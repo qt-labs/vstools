@@ -1,0 +1,12 @@
+#include "%INCLUDE%"
+
+%NAMESPACE_BEGIN%%CLASS%::%CLASS%(%CTORSIG%)%BASEIMPL%
+{
+
+}
+
+%CLASS%::~%CLASS%()
+{
+
+}
+%NAMESPACE_END%

@@ -1,0 +1,31 @@
+;QT_DEBUG_START
+
+QString=<d->data,su> size=<d->size,u>
+QByteArray=<d->data,s> size=<d->size,u>
+QPoint =x=<xp> y=<yp>
+QPointF =x=<xp> y=<yp>
+QRect =x1=<x1> y1=<y1> x2=<x2> y2=<y2>
+QRectF =x=<xp> y=<yp> w=<w> h=<h>
+QSize =width=<wd> height=<ht>
+QSizeF =width=<wd> height=<ht>
+QMap<*> =size=<d->size>
+QVector<*> =size=<d->size>
+QHash<*> =size=<d->size>
+QVarLengthArray<*> =size=<s> data=<ptr>
+
+QUrl=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QUrl@28)
+QEvent=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QEvent@28)
+QList<*>=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QList@28)
+QVariant=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QVariant@28)
+QObject=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QObject@28)
+QLibrary=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QLibrary@28)
+QDir=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QDir@28)
+QFileInfo=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QFileInfo@28)
+QFont=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QFont@28)
+QUrlInfo =$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QUrlInfo@28)
+QDomNode =$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QDomNode@28)
+
+;FIXME
+;QFile=$ADDIN(Qt4EEAddin.dll,_Qt4EEAddIn_QFile@28)
+
+;QT_DEBUG_END

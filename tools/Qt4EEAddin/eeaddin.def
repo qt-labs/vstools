@@ -1,0 +1,12 @@
+
+EXPORTS
+    Qt4EEAddIn_QUrl
+    Qt4EEAddIn_QEvent
+	Qt4EEAddIn_QList
+    Qt4EEAddIn_QVariant
+    Qt4EEAddIn_QObject
+	Qt4EEAddIn_QLibrary
+	Qt4EEAddIn_QDir
+	Qt4EEAddIn_QFileInfo
+    Qt4EEAddIn_QFile
+    

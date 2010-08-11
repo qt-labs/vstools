@@ -1,0 +1,21 @@
+The Qt Visual Studio Add-In version 1.1.3 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Added checks to avoid unneeded access to .vcproj file when saving files
+  with Q_OBJECT. (QTBUG-5813)
+- When using Visual Studio 2005 the project tree is no longer expanded
+  after each build. (QTBUG-6482)
+- Switching between qmake and AddIn projects more robust. (QTBUG-6434)
+- Set target machine explicitly when changing Qt version. (QTBUG-5206)
+- Work around Visual Studio bug to support the simplified Chinese 
+  version of Visual Studio.  (QTBUG-6318)
+- Fixed bug for Windows CE static builds. (QTBUG-3493)
+- Create signature step for Windows CE projects. (QTBUG-3493)
+- Fixed visualizers for QList and QMap. (very simple version for QMap as
+  an appropiate visualization seems impossible in autoexp.dat) (QTBUG-660
+  and QTBUG-3970)
+- Fixed visualizers for QVector. (QTBUG-7121)
+- Support empty base classes in Qt4Class wizard. (QTBUG-6797)
+- Support namespaces when creating Qt classes. (QTBUG-5227)

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+<Extensibility xmlns="http://schemas.microsoft.com/AutomationExtensibility">
+	<HostApplication>
+		<Name>Microsoft Visual Studio</Name>
+		<Version>9.0</Version>
+	</HostApplication>
+	<Addin>
+		<FriendlyName>Qt Add-in Development Version</FriendlyName>
+		<Description>Qt Add-in Development Version</Description>
+		<AboutBoxDetails>For more information about the Qt Add-in, see \r\nhttp://qt.nokia.com\r\nCopyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies)</AboutBoxDetails>
+		<AboutIconData>@AboutIcon</AboutIconData>
+		<Assembly>Qt4VSAddin.dll</Assembly>
+		<FullClassName>Qt4VSAddin.Connect</FullClassName>
+		<LoadBehavior>5</LoadBehavior>
+		<CommandPreload>0</CommandPreload>
+		<CommandLineSafe>1</CommandLineSafe>
+	</Addin>
+</Extensibility>

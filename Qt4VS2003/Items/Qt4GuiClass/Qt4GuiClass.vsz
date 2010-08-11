@@ -1,0 +1,6 @@
+VSWIZARD 7.0
+Wizard=VsWizard.VsWizardEngine.7.1
+
+Param="WIZARD_NAME = Qt4GuiClass"
+Param="ABSOLUTE_PATH = C:\depot\QtVSTools\main\Qt4VS2003\Items\Qt4GuiClass"
+Param="FALLBACK_LCID = 1033"

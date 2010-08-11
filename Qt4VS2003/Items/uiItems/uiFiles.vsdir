@@ -1,0 +1,4 @@
+newUiWidget.ui|{6A7385B4-1D62-46e0-A4E3-AED4475371F0}|Qt Widget Form|80|Qt Widget Form File (.ui)| | |4096|form.ui
+newUiDialogButtonsRight.ui|{6A7385B4-1D62-46e0-A4E3-AED4475371F0}|Qt Dialog Form (Buttons right)|81|Qt Dialog Form File (.ui) with two buttons on the right side.| | |4096|form.ui
+newUiDialogButtonsBottom.ui|{6A7385B4-1D62-46e0-A4E3-AED4475371F0}|Qt Dialog Form (.ui) with two buttons on the bottom.|81|Qt Dialog Form (.ui) with two buttons on the bottom.| | |4096|form.ui
+newUiMainWindow.ui|{6A7385B4-1D62-46e0-A4E3-AED4475371F0}|Qt MainWindow Form|82|Qt MainWindow Form File (.ui)| | |4096|form.ui

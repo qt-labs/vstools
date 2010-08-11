@@ -1,0 +1,39 @@
+The Qt Visual Studio Add-In version 1.1.5 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed setting of preprocessor definitions when changing to a Windows CE
+  Qt version. (QTBUG-10564)
+- Added contribution for QMap visualization. (QTBUG-3970)
+- Recursively look for includes/defines in PropertySheets. (QTBUG-10406)
+- Fixed bugs affecting Q_OBJECTs in .cpp files.
+- On import, the content of .qrc files is added to the Resources filter of the
+  Visual Studio project. (QTBUG-10113)
+- QRC Editor: The add-in will synchronize the list of resources in a .qrc file
+  with the files in the Resources filter of the project.  (QTBUG-6103)
+- QRC Editor: show full resource URL. (QTBUG-3801)
+- Refresh moc steps when PCH options are changed. (QTBUG-7700)
+- You don't have to be admin anymore to set Windows CE Qt versions.
+  (QTBUG-9550)
+- QtAppWrapper: Do not stop listening to new connections if error occurs.
+  (QTBUG-8508)
+- Handle C++ comments correctly. (QTBUG-7641)
+- Support $(PlatformName) for moc, uic and rcc directories. (QTBUG-5814)
+- Fixed exception when exporting non-C++ projects. (QTBUG-9234)
+- Fixed module handling for static libraries. (QTBUG-8670)
+- Resolve %BASECLASS% in Qt4Class template again, to keep old custom class
+  wizard additions working. (QTBUG-8615)
+- Fixed wrong DLL names in Windows CE deployment of Qt modules. (QTBUG-8622)
+- Fixed import of .pro files with library dependency paths that contain
+  whitespace characters. (QTBUG-8493)
+- Added possibility to use mocDir without $(ConfigurationName). (QTBUG-7288)
+- Fixed import for projects with relative moc dir settings. (QTBUG-8372)
+- Fixed import for project without resources.
+- Don't depend on .NET Framework 3.5 SP1. (QTBUG-8415)
+- Fix moc steps for file names, that are contain substrings of variables,
+  like "Config.h" (QTBUG-8218)
+- Detection of invalid class names in projects wizards. (QTBUG-8154)
+- Fixed creation of translation files when custom cultures are present.
+  (QTBUG-11124)
+

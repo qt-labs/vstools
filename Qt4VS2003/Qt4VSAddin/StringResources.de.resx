@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="OK" xml:space="preserve">
+    <value>&amp;OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>&amp;Abbrechen</value>
+  </data>
+  <data name="QtVSIntegration" xml:space="preserve">
+    <value>Qt Visual Studio Add-in</value>
+  </data>
+  <data name="CannotOpenFile" xml:space="preserve">
+    <value>Die Datei {0} kann nicht geöffnet werden!</value>
+  </data>
+  <data name="NotExistingFile" xml:space="preserve">
+    <value>Die Datei {0} existiert nicht!</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ActionDialog_Text" xml:space="preserve">
+    <value>Text:</value>
+  </data>
+  <data name="ActionDialog_ObjectName" xml:space="preserve">
+    <value>Objektname:</value>
+  </data>
+  <data name="ActionDialog_Change" xml:space="preserve">
+    <value>Ändern</value>
+  </data>
+  <data name="ActionDialog_Icon" xml:space="preserve">
+    <value>Icon:</value>
+  </data>
+  <data name="ActionDialog_Properties" xml:space="preserve">
+    <value>Eigenschaften</value>
+  </data>
+  <data name="ActionDialog_AddAction" xml:space="preserve">
+    <value>Neue Aktion hinzufügen</value>
+  </data>
+  <data name="QtModules" xml:space="preserve">
+    <value>Qt Module</value>
+  </data>
+  <data name="ActiveQtContainerLibrary" xml:space="preserve">
+    <value>ActiveQt Container Bibliothek </value>
+  </data>
+  <data name="ActiveQtServerLibrary" xml:space="preserve">
+    <value>ActiveQt Server Bibliothek</value>
+  </data>
+  <data name="TestLibrary" xml:space="preserve">
+    <value>Test Bibliothek</value>
+  </data>
+  <data name="ScriptLibrary" xml:space="preserve">
+    <value>Script Bibliothek</value>
+  </data>
+  <data name="SVGLibrary" xml:space="preserve">
+    <value>SVG Bibliothek</value>
+  </data>
+  <data name="XMLLibrary" xml:space="preserve">
+    <value>XML Bibliothek</value>
+  </data>
+  <data name="Qt3SupportLibrary" xml:space="preserve">
+    <value>Qt3 support Bibliothek</value>
+  </data>
+  <data name="NetworkLibrary" xml:space="preserve">
+    <value>Netzwerk Bibliothek</value>
+  </data>
+  <data name="OpenGLLibrary" xml:space="preserve">
+    <value>OpenGL Bibliothek</value>
+  </data>
+  <data name="SQLLibrary" xml:space="preserve">
+    <value>SQL Bibliothek</value>
+  </data>
+  <data name="GUILibrary" xml:space="preserve">
+    <value>GUI Bibliothek</value>
+  </data>
+  <data name="CoreLibrary" xml:space="preserve">
+    <value>Core Bibliothek</value>
+  </data>
+  <data name="HelpLibrary" xml:space="preserve">
+    <value>Hilfe Bibliothek</value>
+  </data>
+  <data name="WebKitLibrary" xml:space="preserve">
+    <value>WebKit Bibliothek</value>
+  </data>
+  <data name="XmlPatternsLibrary" xml:space="preserve">
+    <value>Xml Patterns Bibliothek</value>
+  </data>
+  <data name="AddQtModule" xml:space="preserve">
+    <value>Qt Modul hinzufügen/entfernen</value>
+  </data>
+  <data name="AddQtVersionDialog_VersionName" xml:space="preserve">
+    <value>Versionsname:</value>
+  </data>
+  <data name="AddQtVersionDialog_Path" xml:space="preserve">
+    <value>Verzeichnis:</value>
+  </data>
+  <data name="AddQtVersionDialog_Title" xml:space="preserve">
+    <value>Neue Qt Version hinzufügen</value>
+  </data>
+  <data name="AddQtVersionDialog_PlatformNotFoundError" xml:space="preserve">
+    <value>Die Plattform "{0}" ist in Visual Studio nicht definiert. Bitte stellen Sie sicher, dass das benötigte SDK installiert ist.</value>
+  </data>
+  <data name="AddTranslationDialog_Language" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
+  <data name="AddTranslationDialog_FileName" xml:space="preserve">
+    <value>Dateiname:</value>
+  </data>
+  <data name="AddTranslationDialog_Title" xml:space="preserve">
+    <value>Übersetzung hinzufügen</value>
+  </data>
+  <data name="BuildOptionsPage_QtBuilds" xml:space="preserve">
+    <value>Qt Versionen:</value>
+  </data>
+  <data name="BuildOptionsPage_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="BuildOptionsPage_Path" xml:space="preserve">
+    <value>Verzeichnis</value>
+  </data>
+  <data name="BuildOptionsPage_DefaultQtVersion" xml:space="preserve">
+    <value>Standard Qt/Win version:</value>
+  </data>
+  <data name="BuildOptionsPage_WinCEQtVersion" xml:space="preserve">
+    <value>Standard Qt/WinCE Version:</value>
+  </data>
+  <data name="BuildSystem_IncompatibleMsg" xml:space="preserve">
+    <value>Die momentan verwendete Qt Version ist nicht kompatibel zu der in der Add-in verwendeten.
+Um das Laden des Plugins in der Add-in zu ermöglichen muß Qt {0} benutzt werden.
+Soll die Qt Version auf Qt {0} geändert werden?</value>
+  </data>
+  <data name="BuildSystem_Problem" xml:space="preserve">
+    <value>Achtung: Eine passende Qt Version konnte nicht gefunden werden,
+d.h. die Qt Visual Studio Add-in kann das erstellte Plugin nicht laden.</value>
+  </data>
+  <data name="BuildSystem_Solution" xml:space="preserve">
+    <value>Gehen Sie auf qt.nokia.com und laden Qt {0} herunter.</value>
+  </data>
+  <data name="EditorFactory_OpenFailure" xml:space="preserve">
+    <value>
+Die Datei {0}
+konnte nicht mit dem Qt 4 Formeditor geöffnet werden.
+Versuchen Sie die Datei mit Hilfe von uic.exe zu konvertieren.</value>
+  </data>
+  <data name="EditorPane_TrySetProperty" xml:space="preserve">
+    <value>Versuche die Werte für die Eigenschaft {0} zu setzen:
+{1} {2}</value>
+  </data>
+  <data name="EditorPane_CannotRunUic" xml:space="preserve">
+    <value>Uic konnte nicht ausgeführt werden!</value>
+  </data>
+  <data name="EditorPane_NoFormClassFound" xml:space="preserve">
+    <value>Das Projekt beinhaltet keine Klasse, die diese Form benutzt!</value>
+  </data>
+  <data name="EditorPane_NoSourceFileFound" xml:space="preserve">
+    <value>Es konnte keine geeignete Datei für die Slotimplementierung gefunden werden!</value>
+  </data>
+  <data name="EditorPane_UnableToRetrieve" xml:space="preserve">
+    <value>Weitere Informationen über {0} konnten nicht gefunden werden.</value>
+  </data>
+  <data name="EditorPane_CannotOpenUi" xml:space="preserve">
+    <value>"Die Datei {0} kann nicht geöffnet werden!</value>
+  </data>
+  <data name="EditorPane_ErrorWhileOpening" xml:space="preserve">
+    <value>Beim Öffnen des Formeditors ist ein Fehler aufgetreten!</value>
+  </data>
+  <data name="EditorPane_Reload" xml:space="preserve">
+    <value>{0}
+
+Die Datei wurde außerhalb des Editors geändert. Soll sie neu geladen werden?</value>
+  </data>
+  <data name="GeneralOptionsPage_ManualBuildSteps" xml:space="preserve">
+    <value>Manuell bearbeitete Buildschritte können zu Problemen führen wenn das Projekt nicht in Visual Studio kompiliert wird.
+Möchten Sie fortfahren?</value>
+  </data>
+  <data name="Helpers_CannotStart" xml:space="preserve">
+    <value>Die Anwendung {0} konnte nicht gestartet werden.
+
+Stellen Sie sicher, dass das momentane Projekt eine gültige Qt Version benutzt.
+Falls Sie noch keine Qt Version spezifiziert haben, öffnen Sie die Qt|Qt Versionen
+Seite unter Extras|Optionen und fügen die relevanten Informationen ein.</value>
+  </data>
+  <data name="Helpers_ExitError" xml:space="preserve">
+    <value>Die Applikation endete mit einem Fehler (Fehlerkode {0}):</value>
+  </data>
+  <data name="IconPropertyDialog_Preview" xml:space="preserve">
+    <value>Vorschau:</value>
+  </data>
+  <data name="IconPropertyDialog_Icon" xml:space="preserve">
+    <value>Symbol:</value>
+  </data>
+  <data name="IconPropertyDialog_Filter" xml:space="preserve">
+    <value>Filter:</value>
+  </data>
+  <data name="IconPropertyDialog_Title" xml:space="preserve">
+    <value>Symboleigenschaften Dialog</value>
+  </data>
+  <data name="PriWatcher_Import" xml:space="preserve">
+    <value>Die überwachte .pri Datei wurde außerhalb Visual Studio's geändert. Möchten Sie die Änderungen in die Visual Studio Projektdatei importieren?</value>
+  </data>
+  <data name="PriWatcher_Title" xml:space="preserve">
+    <value>Die überwachte .pri Datei wurde geändert.</value>
+  </data>
+  <data name="ProjectExtender_Filter" xml:space="preserve">
+    <value>pri Dateien (*.pri)|*.pri</value>
+  </data>
+  <data name="ProjectExtender_CannotUpdate" xml:space="preserve">
+    <value>Die Qt Bibliotheken dieses Projektes konnten nicht aktualisiert werden.</value>
+  </data>
+  <data name="ProjectExtender_CannotUpdateSolution" xml:space="preserve">
+    <value>Stellen Sie sicher, dass der Pfad für diese Qt Version korrekt ist.</value>
+  </data>
+  <data name="ProjectExtender_Warning" xml:space="preserve">
+    <value>Eine Änderung des Pfades zieht eine Aktualierung aller {0} benutzerdefinierten Buildschritte nach
+sich. Eventuelle manuelle Änderungen gehen dabei verloren. Möchten Sie fortfahren?</value>
+  </data>
+  <data name="ProjectExtender_Title" xml:space="preserve">
+    <value>{0} Ausgabepfad</value>
+  </data>
+  <data name="PropertyEditor_DefaultError" xml:space="preserve">
+    <value>Die Defaultwertrückgabefunktion für {0} konnte nicht erstellt werden!</value>
+  </data>
+  <data name="QDateTimeControl_Time" xml:space="preserve">
+    <value>Zeit:</value>
+  </data>
+  <data name="QProcess_UnspecifiedError" xml:space="preserve">
+    <value>&lt;unspezifizierter Rückgabewert&gt;</value>
+  </data>
+  <data name="QtVersionDialog_BoxTitle" xml:space="preserve">
+    <value>Qt Version für gesamte Projektmappe</value>
+  </data>
+  <data name="QtVersionDialog_Title" xml:space="preserve">
+    <value>Projektmappen Qt Version</value>
+  </data>
+  <data name="ResourceDialog_New" xml:space="preserve">
+    <value>Neu</value>
+  </data>
+  <data name="ResourceDialog_Type" xml:space="preserve">
+    <value>Ressourcenart:</value>
+  </data>
+  <data name="ResourceDialog_Import" xml:space="preserve">
+    <value>Importieren...</value>
+  </data>
+  <data name="ResourceDialog_Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="ResourceDialog_Title" xml:space="preserve">
+    <value>Ressourcen Dialog</value>
+  </data>
+  <data name="SignalChooser_Connect" xml:space="preserve">
+    <value>Verbinde Signal</value>
+  </data>
+  <data name="SignalChooser_Title" xml:space="preserve">
+    <value>Verbinde Signals &amp; Slots</value>
+  </data>
+  <data name="ProductDetails" xml:space="preserve">
+    <value>Qt Add-in für Visual Studio .NET</value>
+  </data>
+  <data name="LicenseCheck" xml:space="preserve">
+    <value>Qt Lizenzprüfung</value>
+  </data>
+  <data name="InvalidLicense" xml:space="preserve">
+    <value>Eine gültige Qt Lizenz konnte nicht gefunden werden!
+        
+Bitte kontaktieren Sie qt-sales@nokia.com um eine Qt Lizenz zu kaufen.</value>
+  </data>
+  <data name="InitComponentsFailure" xml:space="preserve">
+    <value>Die Formeditorkomponenten können nicht initialisiert werden!</value>
+  </data>
+  <data name="InitIntegrationFailure" xml:space="preserve">
+    <value>Die Qt Visual Studio Add-in kann nicht initialisiert werden!</value>
+  </data>
+  <data name="InitFactoryFailure" xml:space="preserve">
+    <value>Cannot initialize EditorFactory!</value>
+  </data>
+  <data name="ExtensionServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the extension service of Visual Studio!</value>
+  </data>
+  <data name="CommandServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the command service of Visual Studio!</value>
+  </data>
+  <data name="SelectionServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the selection service of Visual Studio!</value>
+  </data>
+  <data name="HelpServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the help service of Visual Studio!</value>
+  </data>
+  <data name="TrackProjectDocuments2ServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the TrackProjectDocuments2 service of Visual Studio!</value>
+  </data>
+  <data name="SolutionServiceFailure" xml:space="preserve">
+    <value>Cannot retrieve the solution service of Visual Studio!</value>
+  </data>
+  <data name="QtToolBoxFrame" xml:space="preserve">
+    <value>Qt Werkzeugkiste</value>
+  </data>
+  <data name="QtObjectInspectorFrame" xml:space="preserve">
+    <value>Qt Objectinspektor</value>
+  </data>
+  <data name="QtSignalSlotEditorFrame" xml:space="preserve">
+    <value>Qt Signal- und Sloteditor</value>
+  </data>
+  <data name="QtActionEditorFrame" xml:space="preserve">
+    <value>Qt Aktionseditor</value>
+  </data>
+  <data name="QtToolBoxFailure" xml:space="preserve">
+    <value>Die Qt Werkzeugkiste konnte nicht erstellt werden!</value>
+  </data>
+  <data name="QtObjectInspectorFailure" xml:space="preserve">
+    <value>Der Qt Objectinspector konnte nicht erstellt werden!</value>
+  </data>
+  <data name="QtSignalSlotEditorFailure" xml:space="preserve">
+    <value>Der Qt Signal- und Sloteditor konnte nicht erstellt werden!</value>
+  </data>
+  <data name="QtActionEditorFailure" xml:space="preserve">
+    <value>Der Qt Aktionseditor konnte nicht erstellt werden!</value>
+  </data>
+  <data name="QtPropertyAddFailure" xml:space="preserve">
+    <value>Eine Qt Eigenschaft kann nicht zu einer Klasse ohne Q_OBJECT Makro hinzugefügt werden.</value>
+  </data>
+  <data name="InvalidPropertyName" xml:space="preserve">
+    <value>Der Eigenschaftsname ist nicht gültig.</value>
+  </data>
+  <data name="FileNotPartOfSolution" xml:space="preserve">
+    <value>Die Datei {0} ist nicht Teil der Projektmappe!</value>
+  </data>
+  <data name="CannotFindQMake" xml:space="preserve">
+    <value>QMake konnte nicht gefunden werden. Stellen Sie sicher, eine Qt version spezifiziert zu haben.</value>
+  </data>
+  <data name="NoVS2010Support" xml:space="preserve">
+    <value>Visual Studio 2010 wird von der derzeitigen Standard-Qt-Version nicht unterstützt. Um .pro Dateien
+importieren zu können, muss eine Version >=4.7 angegeben werden.</value>
+  </data>
+  <data name="CannotChangeQtVersion" xml:space="preserve">
+    <value>Die Qt Version von mindestens einem Projekt konnte nicht geändert werden.</value>
+  </data>
+  <data name="UicOuputFileCreationFailure" xml:space="preserve">
+    <value>Uic kann die Ausgabedatei {0} nicht erstellen!</value>
+  </data>
+  <data name="MakeSureWritePermission" xml:space="preserve">
+    <value>Stellen Sie sicher, dass Sie Schreibrechte haben.</value>
+  </data>
+  <data name="ImportPriFile" xml:space="preserve">
+    <value>Importiere .pri Datei in {0}...</value>
+  </data>
+  <data name="ExportToProFile" xml:space="preserve">
+    <value>Exportiere {0} in .pri Datei...</value>
+  </data>
+  <data name="ImportingFromProFile" xml:space="preserve">
+    <value>Importiere Projekt(e) aus .pro Datei...</value>
+  </data>
+  <data name="ImportingPriFile" xml:space="preserve">
+    <value>Importiere .pri Datei...</value>
+  </data>
+  <data name="WelcomeDialog_Header" xml:space="preserve">
+    <value>Willkommen zur
+Qt Visual Studio Add-in</value>
+  </data>
+  <data name="WelcomeDialog_MainText" xml:space="preserve">
+    <value>Mit der Add-in lassen sich Qt Applikationen schneller als jemals zu vor entwickeln. Es müssen keine externen Programme gestartet werden da der Qt Formdesigner und die Qt Onlinehilfe integriert sind. Weitere Informationen über die Features sowie die Gebrauchsanleitung stehen in der Onlinehilfe.
+
+Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, dass die Onlinehilfe neu generiert wird was einige Minuten dauern kann.</value>
+  </data>
+  <data name="WelcomeDialog_DontShow" xml:space="preserve">
+    <value>Diesen Dialog nicht mehr zeigen.</value>
+  </data>
+  <data name="WelcomeDialog_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="WelcomeDialog_ShowDocumentation" xml:space="preserve">
+    <value>Dokumentation zeigen</value>
+  </data>
+  <data name="WelcomeDialog_ShowTutorial" xml:space="preserve">
+    <value>Tutorial zeigen</value>
+  </data>
+  <data name="BuildOptionsPage_Title" xml:space="preserve">
+    <value>QT Versionen</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Designer.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ImportPro.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ImportPri.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="13" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ExportPro.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="14" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ExportPri.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Assistant.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Linguist.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Qt.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AboutIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\AboutIcon.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AddRemoveModulesButtonText" xml:space="preserve">
+    <value>Qt Module hinzufügen/entfernen</value>
+  </data>
+  <data name="AddRemoveModulesToolTip" xml:space="preserve">
+    <value>Fügt dem aktuellen Projekt Qt Module hinzu bzw. entfernt diese.</value>
+  </data>
+  <data name="BuildPlatformQtVersionNotFound" xml:space="preserve">
+    <value>Für die momentane Plattform kann kein Qt Version gefunden werden.</value>
+  </data>
+  <data name="ChangeSolutionQtVersionButtonText" xml:space="preserve">
+    <value>Projektmappen Qt Version ändern</value>
+  </data>
+  <data name="ChangeSolutionQtVersionToolTip" xml:space="preserve">
+    <value>Ändert die Qt Version für die aktuelle Projektmappe und alle darin enthaltenen Projekte.</value>
+  </data>
+  <data name="CommandBarsNotRegistered" xml:space="preserve">
+    <value>Befehlsleisten konnten nicht registriert werden.</value>
+  </data>
+  <data name="CommandsNotRegistered" xml:space="preserve">
+    <value>Es konnten nicht alle Qt4VSAddin Befehle registriert werden</value>
+  </data>
+  <data name="CreateNewTranslationFileButtonText" xml:space="preserve">
+    <value>Neue Übersetzungsdatei erstellen</value>
+  </data>
+  <data name="CreateNewTranslationFileToolTip" xml:space="preserve">
+    <value>Erstellt eine neue Übersetzungsdatei für Qt Linguist.</value>
+  </data>
+  <data name="DesignerAddError" xml:space="preserve">
+    <value>.ui Datei konnt in bestehemdem Designer nicht geöffnet werden</value>
+  </data>
+  <data name="ExportPriFileButtonText" xml:space="preserve">
+    <value>Projekt in .pri Datei exportieren...</value>
+  </data>
+  <data name="ExportPriFileToolTip" xml:space="preserve">
+    <value>Exportiert das aktuelle Projekt in eine .pri Datei.</value>
+  </data>
+  <data name="ExportProFileButtonText" xml:space="preserve">
+    <value>Einfache .pro Datei erzeugen...</value>
+  </data>
+  <data name="ExportProFileToolTip" xml:space="preserve">
+    <value>Exportiert das aktuelle Projekt in eine Qt Projektdatei (.pro).</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ImportPriFileButtonText" xml:space="preserve">
+    <value>.pri Datei importieren</value>
+  </data>
+  <data name="ImportPriFileNotRead" xml:space="preserve">
+    <value>--- (Importiert .pri Datei) Datei: {0} konnte nicht gelesen werden.</value>
+  </data>
+  <data name="ImportPriFileNotResolved" xml:space="preserve">
+    <value>--- (Importiert .pri Datei) Datei: {0} konnte nicht aufgelöst werden. Überspringe Datei.</value>
+  </data>
+  <data name="ImportPriFileToolTip" xml:space="preserve">
+    <value>Importiert eine .pri Datei und erzeugt aus dieser ein Qt Projekt.</value>
+  </data>
+  <data name="ImportProFileButtonText" xml:space="preserve">
+    <value>Qt Projektdatei (.pro) öffnen</value>
+  </data>
+  <data name="ImportProFileToolTip" xml:space="preserve">
+    <value>Öffnet eine Qt Projektdatei und erstellt aus dieser eine Projektmappe beziehungsweise fügt das erstellte Projekt der aktuellen Projektmappe hinzu.</value>
+  </data>
+  <data name="InstalledQtVersions" xml:space="preserve">
+    <value>Installierte Qt Versionen</value>
+  </data>
+  <data name="LaunchDesignerButtonText" xml:space="preserve">
+    <value>Designer starten</value>
+  </data>
+  <data name="LaunchDesignerToolTip" xml:space="preserve">
+    <value>Startet Qt Designer.</value>
+  </data>
+  <data name="LaunchLinguistButtonText" xml:space="preserve">
+    <value>Linguist starten</value>
+  </data>
+  <data name="LaunchLinguistToolTip" xml:space="preserve">
+    <value>Startet  Qt Linguist</value>
+  </data>
+  <data name="NoProjectOpened" xml:space="preserve">
+    <value>Kein Projekt geöffnet</value>
+  </data>
+  <data name="ProjectQtSettingsButtonText" xml:space="preserve">
+    <value>Qt Projekteinstellungen</value>
+  </data>
+  <data name="ProjectQtSettingsToolTip" xml:space="preserve">
+    <value>Dient zum Bearbeiten der Qt Einstellungen für das aktuelle Projekt.</value>
+  </data>
+  <data name="ProjectQtVersionNotFoundWarning" xml:space="preserve">
+    <value>WARNUNG: Die mit dem Projekt verknüpfte Qt Version kann nicht gefunden werden. Es wird stattdessen {0} benutzt. Bitte wählen Sie eine existierende Qt Version in den Qt-Projekteinstellungen.</value>
+  </data>
+  <data name="QrcEditorNotFoundError" xml:space="preserve">
+    <value>*** QRC Editor konnte nicht gestartet werden! Bitte stellen Sie sicher, dass sich die qrceditor.exe im Installationsverzeichnis des Addins befindet.</value>
+  </data>
+  <data name="QtDefaultSettings" xml:space="preserve">
+    <value>Qt Standardeinstellungen</value>
+  </data>
+  <data name="QtAppNotFoundErrorMessage" xml:space="preserve">
+    <value>*** {0} konnte nicht gestartet werden!</value>
+  </data>
+  <data name="QtAppNotFoundErrorTitle" xml:space="preserve">
+    <value>{0} nicht gestartet.</value>
+  </data>
+  <data name="SelectQtPath" xml:space="preserve">
+    <value>Qt Verzeichnis wählen</value>
+  </data>
+  <data name="SolutionQtVersion" xml:space="preserve">
+    <value>Qt Version der Projektmappe setzen</value>
+  </data>
+  <data name="VSQtOptionsButtonText" xml:space="preserve">
+    <value>Qt Optionen</value>
+  </data>
+  <data name="VSQtOptionsToolTip" xml:space="preserve">
+    <value>Dient zum Bearbeiten der Qt Standardeinstellungen</value>
+  </data>
+  <data name="OnlyVariableInDir" xml:space="preserve">
+    <value>Der Pfad darf lediglich die Variable "$(ConfigurationName)" und/oder "$(PlatformName)" enthalten! Ein Beispiel für einen gültigen Pfad wäre "./$(ConfigurationName)/moc".</value>
+  </data>
+  <data name="lreleaseProjectButtonText" xml:space="preserve">
+    <value>lrelease alle .ts Dateien im Projekt</value>
+  </data>
+  <data name="lreleaseSolutionButtonText" xml:space="preserve">
+    <value>lrelease alle .ts Dateien in der Projektmappe</value>
+  </data>
+  <data name="lupdateProjectButtonText" xml:space="preserve">
+    <value>lupdate alle .ts Dateien im Projekt</value>
+  </data>
+  <data name="lupdateSolutionButtonText" xml:space="preserve">
+    <value>lupdate alle .ts Dateien in der Projektmappe</value>
+  </data>
+  <data name="ChangeProjectQtVersionButtonText" xml:space="preserve">
+    <value>Qt Version des Projekts ändern</value>
+  </data>
+  <data name="ProjectQtVersion" xml:space="preserve">
+    <value>Qt Version des Projekts setzen</value>
+  </data>
+  <data name="DeleteGeneratedFilesError" xml:space="preserve">
+    <value>Die generierten Dateien konnten nicht gelöscht werden.</value>
+  </data>
+  <data name="ConvertToQMakeButtonText" xml:space="preserve">
+    <value>Projekt in qmake generiertes Projekt umwandeln</value>
+  </data>
+  <data name="ConvertToQtButtonText" xml:space="preserve">
+    <value>Projekt in Qt Add-In Projekt umwandeln</value>
+  </data>
+  <data name="ConvertConfirmation" xml:space="preserve">
+    <value>Möchten Sie das gewählte Projekt wirklich umwandeln?</value>
+  </data>
+  <data name="ConvertTitle" xml:space="preserve">
+    <value>Projekt umwandeln...</value>
+  </data>
+  <data name="PhononLibrary" xml:space="preserve">
+    <value>Phonon Bibliothek</value>
+  </data>
+  <data name="NoDefaultQtVersionError" xml:space="preserve">
+    <value>Es wurde keine Standard-Qt-Version gefunden. Bitte überprüfen Sie Ihre Qt Visual Studio Add-in Einstellungen.</value>
+  </data>
+  <data name="MultimediaLibrary" xml:space="preserve">
+    <value>Multimedia Bibliothek</value>
+  </data>
+  <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
+    <value>Die Datei {0} ist unter Versionskontrolle und im Moment nicht ausgecheckt. Soll die Datei vor dem Öffnen ausgecheckt werden?
+
+Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des Qt Add-ins die Eigenschaft "ask_before_checkout_file" auf "false" setzen.</value>
+  </data>
+  <data name="AddQtVersionDialog_InvalidDirectory" xml:space="preserve">
+    <value>Der angegebene Pfad ist kein gültiges Verzeichnis.</value>
+  </data>
+  <data name="AddQtVersionDialog_NotFound" xml:space="preserve">
+    <value>{0} konnte nicht gefunden werden.</value>
+  </data>
+  <data name="AddQtVersionDialog_VersionAlreadyPresent" xml:space="preserve">
+    <value>Der angegebene Name wurde bereits registriert.</value>
+  </data>
+  <data name="AddQtVersionDialog_NotExistingDirectory" xml:space="preserve">
+    <value>Verzeichnis existiert nicht.</value>
+  </data>
+  <data name="AddQtVersionDialog_MingwQt" xml:space="preserve">
+    <value>Das Qt im angegebenen Verzeichnis wurde mit MinGW gebaut.</value>
+  </data>
+</root>

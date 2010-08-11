@@ -1,0 +1,26 @@
+The Qt Visual Studio Add-In version 1.1.0 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- The custom build step generation has been changed to use a subfolder for
+  every configuration. This solves the problem of heavy changes in the vcproj
+  file whenever the user switches to another build configuration. (Task 251918)
+- Qt Designer, Qt Linguist and the QRC Editor are started via a properly
+  registered editor wrapper. Now its possible to open ui files in other
+  editors, like the built-in XML editor. (Task 250601)
+- Projects can be converted from Qt Add-in projects to qmake generated
+  projects and back. (Task 153484)
+- Fixing the behaviour of adding a file to a filter. (Task 254968)
+- Opening a vcproj file that has a non-defined Qt version works now like in
+  the old Qt VS integration. (Task 258704)
+- The detection of Windows CE Qt builds has been fixed.
+- OpenGL Desktop Windows libraries aren't added to linker options in
+  Windows CE projects. (Task 260550)
+- If there's no Generated Files folder, then we don't try to delete its
+  content. (Task 260723)
+- Fix bug for solutions that contain disabled (unloaded) projects.
+  (Task 259807)
+- Switching between static and dynamic Qt builds has been fixed.
+- Add-in's documentation has been updated.
+

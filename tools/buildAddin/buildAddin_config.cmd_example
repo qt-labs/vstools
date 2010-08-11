@@ -1,0 +1,11 @@
+set QT_VERSION=4.5.0
+set QTDIR=C:\Qt\4.5.0
+set DEV_DIR=D:\dev
+set VS2005=no
+set VS2008=yes
+set VS2010=no
+set VSVARS2005=c:\Program Files\Microsoft Visual Studio 8\Common7\Tools\vsvars32.bat
+set VSVARS2008=c:\Program Files\Microsoft Visual Studio 9.0\Common7\Tools\vsvars32.bat
+set VSVARS2010=c:\Program Files\Microsoft Visual Studio 10.0\Common7\Tools\vsvars32.bat
+set BUILDINSTALLER=no
+

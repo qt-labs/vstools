@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<QtResourceType Name="XML File">
+	<TemplateFile>xmlfile.xml</TemplateFile>
+	<Icon>xmlicon.bmp</Icon>
+</QtResourceType>

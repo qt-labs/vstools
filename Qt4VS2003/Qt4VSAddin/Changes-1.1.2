@@ -1,0 +1,20 @@
+The Qt Visual Studio Add-In version 1.1.2 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed various problems concerning precompiled headers (stdafx as default
+  (QTBUG-5226), change of settings when building...)
+- Increased support for solution folders (QTBUG-4914)
+- Detection of solution .pro files fixed (be aware of possible newline
+  after \)
+- Fixed bug, which could appear when moc steps had to be updated.
+  The update caused an invalid moc commandline which made the build fail.
+- Added support for Q_Gadget macro(QTBUG-5291)
+- Project tree is not expanded on every build when using VS2005 (QTBUG-5291)
+- Fixed conversion from AddIn project to Qmake project and vice
+  versa (QTBUG5380)
+- Repair moc path when importing .pro file (QTBUG-4221)
+- Support of commandline builds (QTBUG-5321)
+  (In VS2005 there are some issues when trying to load AddIns from the
+  commandline. See http://support.microsoft.com/kb/934517)

@@ -1,0 +1,6 @@
+VSWIZARD 7.0
+Wizard=VsWizard.VsWizardEngine.8.0
+
+Param="WIZARD_NAME = Qt4WinCELibProject"
+Param="ABSOLUTE_PATH = C:\depot\QtVSTools\main\Qt4VS2003\Projects\Qt4WinCELibProject"
+Param="FALLBACK_LCID = 1033"

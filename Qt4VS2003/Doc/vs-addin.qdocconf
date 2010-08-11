@@ -1,0 +1,25 @@
+include(stupid_include_hack.qdocconf)
+
+indexes     = $QTDIR/doc/html/qt.index
+
+headerdirs  = 
+sourcedirs  = $$QTVSDIR/Qt4VS2003/Doc
+imagedirs   = $$QTVSDIR/Qt4VS2003/Doc
+outputdir   = $$QTVSDIR/Qt4VS2003/Doc/html
+project     = vsAddin
+description = "Qt Visual Studio Add-in"
+
+qhp.projects                    = vsAddin
+qhp.vsAddin.file                = vs-addin.qhp
+qhp.vsAddin.namespace           = com.trolltech.qt.vs
+qhp.vsAddin.virtualFolder       = qdoc
+qhp.vsAddin.indexTitle          = Qt VS Add-in Documentation
+qhp.vsAddin.indexRoot           =
+
+HTML.{postheader,address} = ""
+HTML.footer = "<p /><address><hr /><div align=\"center\">\n" \
+              "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
+              "<td width=\"30%\">Copyright &copy; \$THISYEAR\$ <a href=\"http://qt.nokia.com\">Nokia</a></td>\n" \
+              "<td width=\"40%\" align=\"center\"><a href=\"http://doc.qt.nokia.com/trademarks.html\">Trademarks</a></td>\n" \
+              "<td width=\"30%\" align=\"right\"><div align=\"right\"><a href=\"ms-help://TrolltechAS.Qt.4_5_1.1033/TrolltechAS_Qt_Help_4_5_1/html/index.html\">Qt</a></div></td>\n" \
+              "</tr></table></div></address>"
