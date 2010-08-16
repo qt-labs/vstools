@@ -30,7 +30,7 @@
 namespace Nokia.QtProjectLib
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Microsoft.VisualStudio.VCProjectEngine;
@@ -486,9 +486,9 @@ namespace Nokia.QtProjectLib
         /// Returns the Windows CE Qt builds which are available.
         /// </summary>
         /// <returns>List of string</returns>
-        public List<string> GetQtWinCEVersions()
+        public ArrayList GetQtWinCEVersions()
         {
-            List<string> list = new List<string>();
+            ArrayList list = new ArrayList();
             QtVersionManager vm = QtVersionManager.The();
 
             foreach (string qtVersion in vm.GetVersions())
