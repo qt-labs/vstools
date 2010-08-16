@@ -14,7 +14,7 @@ DEF_FILE = $$QT_SOURCE_TREE/src/activeqt/control/qaxserver.def
 RC_FILE	 = $$QT_SOURCE_TREE/src/activeqt/control/qaxserver.rc
 
 include($$QT_SOURCE_TREE/mkspecs/features/win32/qaxserver.prf)
-QMAKE_POST_LINK += $$escape_expand(\n\t)
+QMAKE_POST_LINK += $$escape_expand(\\n\\t)
 
 CONFIG(debug, release|debug) {
     DEFINES += DEBUG
