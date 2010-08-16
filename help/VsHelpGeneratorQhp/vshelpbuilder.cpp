@@ -233,8 +233,12 @@ bool VSHelpBuilder::copyAndModifyFiles()
 			return false;        
 	}
 
-    if (!htmlDir.mkpath("images"))
-        return false;
+    QDir srcHTMLDir(m_SrcDir);
+    srcHTMLDir.cd("html");
+    srcHTMLDir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+    foreach (const QString &dirName, srcHTMLDir.entryList())
+        if (!htmlDir.mkpath(dirName))
+            return false;
 
     QString srcDir = m_SrcDir;
 	QString destDir = htmlDir.absolutePath() + "/";
