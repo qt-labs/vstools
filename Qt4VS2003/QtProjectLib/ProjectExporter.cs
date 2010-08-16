@@ -407,16 +407,20 @@ namespace Nokia.QtProjectLib
                         option.List.Add("debug");
                     else
                         option.List.Add("release");
-                }
-                if (linker != null && linker.SubSystem == subSystemOption.subSystemConsole)
-                    option.List.Add("console");
 
-                if (linker != null && linker.AdditionalDependencies.IndexOf("QAxServer") > -1)
-                    option.List.Add("qaxserver");
-                else if (linker != null && linker.AdditionalDependencies.IndexOf("QAxContainer") > -1)
-                    option.List.Add("qaxcontainer");
-                else if (linker != null && linker.AdditionalDependencies.IndexOf("QtHelp") > -1)
-                    option.List.Add("help");
+                    if (linker.SubSystem == subSystemOption.subSystemConsole)
+                        option.List.Add("console");
+
+                    if (linker.AdditionalDependencies != null)
+                    {
+                        if (linker.AdditionalDependencies.IndexOf("QAxServer") > -1)
+                            option.List.Add("qaxserver");
+                        else if (linker.AdditionalDependencies.IndexOf("QAxContainer") > -1)
+                            option.List.Add("qaxcontainer");
+                        else if (linker.AdditionalDependencies.IndexOf("QtHelp") > -1)
+                            option.List.Add("help");
+                    }
+                }
 
                 if (qtPro.IsDesignerPluginProject())
                 {
@@ -613,6 +617,9 @@ namespace Nokia.QtProjectLib
 
         private static void AddPreprocessorDefinitions(ProFileOption option, string preprocessorDefinitions)
         {
+            if (preprocessorDefinitions == null)
+                return;
+
             string excludeList = "UNICODE WIN32 NDEBUG QDESIGNER_EXPORT_WIDGETS ";
             excludeList += "QT_THREAD_SUPPORT QT_PLUGIN QT_NO_DEBUG QT_CORE_LIB QT_GUI_LIB";
 
@@ -625,6 +632,9 @@ namespace Nokia.QtProjectLib
 
         private static void AddIncludePaths(EnvDTE.Project project, ProFileOption option, string includePaths)
         {
+            if (includePaths == null)
+                return;
+
             QtVersionManager versionManager = QtVersionManager.The();
             string qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)

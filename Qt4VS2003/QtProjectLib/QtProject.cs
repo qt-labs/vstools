@@ -2626,6 +2626,8 @@ namespace Nokia.QtProjectLib
                 string configName = projectConfig.ConfigurationName;
                 string platformName = ((VCPlatform)projectConfig.Platform).Name;
                 VCFilter generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
+                if (generatedFiles == null)
+                    return null;
                 foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters)
                     if (filt.Name == configName + "_" + platformName ||
                         filt.Name == configName || filt.Name == platformName)

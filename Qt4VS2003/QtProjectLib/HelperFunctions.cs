@@ -576,9 +576,12 @@ namespace Nokia.QtProjectLib
                 {
                     CompilerToolWrapper compiler = CompilerToolWrapper.Create(activeVCConfig);
                     VCLinkerTool linker = (VCLinkerTool)((IVCCollection)activeVCConfig.Tools).Item("VCLinkerTool");
-                    if (compiler.GetPreprocessorDefinitions().IndexOf("QT_PLUGIN") > -1
-                        && compiler.GetPreprocessorDefinitions().IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
-                        && compiler.GetAdditionalIncludeDirectories().IndexOf("QtDesigner") > -1
+                    string ppdefs = compiler.GetPreprocessorDefinitions();
+                    if (ppdefs != null
+                        && ppdefs.IndexOf("QT_PLUGIN") > -1
+                        && ppdefs.IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
+                        && ppdefs.IndexOf("QtDesigner") > -1
+                        && linker.AdditionalDependencies != null
                         && linker.AdditionalDependencies.IndexOf("QtDesigner") > -1)
                     {
                         qtPro.MarkAsDesignerPluginProject();
@@ -722,7 +725,7 @@ namespace Nokia.QtProjectLib
                         }
 
                         linkerPaths = linkerWrapper.AdditionalLibraryDirectories;
-                        if (linker != null)
+                        if (linker != null && linkerPaths != null)
                         {
                             foreach (string libDir in linkerPaths)
                             {
