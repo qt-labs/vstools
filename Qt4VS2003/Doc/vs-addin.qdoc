@@ -26,8 +26,8 @@
 //
 
 /*!
-    \page vs-addin.html
-    \startpage index.html QtReference Documentation
+    \page index.html
+    \startpage index.html Qt Visual Studio Add-in
     \nextpage Getting Started
     \title Qt Visual Studio Add-in
 
