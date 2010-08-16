@@ -130,17 +130,6 @@ if ($options{qt}) {
     die "qdoc3 failed\n" if ($?);
     print "Add-in documentation created.\n";
 
-    my $patchYearArgs = "";
-    if ($options{vsoline}) {
-        $patchYearArgs = "--replace-mshelp-links";
-    }
-
-    print "Patching year information...\n";
-    chdir "$qtvsDir\\help";
-    system("perl", "patchYear.pl", "--htmlPath", "$qtvsDir\\Qt4VS2003\\Doc\\html", $patchYearArgs);
-    die "patchyear failed\n" if ($?);
-    print "Done!\n";
-
     if ($options{vsoline}) {
         system("zip -r9 vsonlinedocs.zip $qtvsDir\\Qt4VS2003\\Doc\\html\\*");
         die "zip failed\n" if ($?);
