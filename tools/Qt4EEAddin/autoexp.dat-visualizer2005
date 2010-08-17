@@ -341,5 +341,265 @@ QMap<*>{
 }
 
 ;------------------------------------------------------------------------------
+; QHash
+;------------------------------------------------------------------------------
+QHash<*>{
+    preview
+    (
+        #(
+            "[", $e.d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #if ($e.d->size <= 255) (
+            #(
+                #array (
+                    expr: (QHashNode<$T1>*)$c.d->buckets[$i],
+                    size: $c.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: (QHashNode<$T1>*)$c.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        )
+    )
+}
+
+*::QHash<*>{
+    preview
+    (
+        #(
+             "[", $e.d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #if ($e.d->size <= 255) (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2> *)$c.d->buckets[$i],
+                    size: $c.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2> *)$c.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
+; QMultiHash
+;------------------------------------------------------------------------------
+QMultiHash<*>{
+    preview
+    (
+        (*(QHash<$T1>*)(&$c))
+    )
+}
+
+*::QMultiHash<*>{
+    preview
+    (
+        (*($T1::QHash<$T2>*)(&$c))
+    )
+}
+
+;------------------------------------------------------------------------------
+; QHash::iterator
+;------------------------------------------------------------------------------
+QHash<*>::iterator{
+    preview
+    (
+        #(
+            "(", ((QHashNode<$T1>*)($c.i))->key, ", ", ((QHashNode<$T1>*)($c.i))->value, ")"
+        )
+    )
+    children
+    (
+        #(
+            key: ((QHashNode<$T1>*)($c.i))->key,
+            value: ((QHashNode<$T1>*)($c.i))->value
+        )
+    )
+}
+
+*::QHash<*>::iterator{
+    preview
+    (
+        #(
+            "(", (($T1::QHashNode<$T2>*)($c.i))->key, ", ", (($T1::QHashNode<$T2>*)($c.i))->key, ")"
+        )
+    )
+    children
+    (
+        #(
+            key: (($T1::QHashNode<$T2>*)($c.i))->key,
+            value: (($T1::QHashNode<$T2>*)($c.i))->value
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
+; QHashIterator
+;------------------------------------------------------------------------------
+QHashIterator<*>{
+    preview
+    (
+        #(
+            "(", ((QHashNode<$T1>*)((($c).i).i))->key, ", ", ((QHashNode<$T1>*)((($c).i).i))->key, ")"
+        )
+    )
+    children
+    (
+        #(
+            key: ((QHashNode<$T1>*)((($c).i).i))->key,
+            value: ((QHashNode<$T1>*)((($c).i).i))->value
+        )
+    )
+}
+
+*::QHashIterator<*>{
+    preview
+    (
+        #(
+            "(", (($T1::QHashNode<$T2>*)((($c).i).i))->key, ", ", (($T1::QHashNode<$T2>*)((($c).i).i))->key, ")"
+        )
+    )
+    children
+    (
+        #(
+            key: (($T1::QHashNode<$T2>*)((($c).i).i))->key,
+            value: (($T1::QHashNode<$T2>*)((($c).i).i))->value
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
+; QHashNode
+;------------------------------------------------------------------------------
+QHashNode<*>|*::QHashNode<*>{
+    preview
+    (
+        #(
+            "(key = ", $c.key,"; value = ", $c.value, ")"
+        )
+    )
+    children
+    (
+        #(
+            key: $c.key,
+            value: $c.value
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
+; QSet
+;------------------------------------------------------------------------------
+QSet<*>{
+    preview
+    (
+        #(
+             "[", $e.q_hash.d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #if ($e.q_hash.d->size <= 255) (
+            #(
+                #array (
+                    expr: (QHashNode<$T1,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: $c.q_hash.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: (QHashNode<$T1,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        )
+    )
+}
+
+*::QSet<*>{
+    preview
+    (
+        #(
+             "[", $e.q_hash.d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #if ($e.q_hash.d->size <= 255) (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: $c.q_hash.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
 ; Nokia Qt 4.x visualizers -------------------------------------------[ end ]--
-;QT_DEBUG_END
+QT_DEBUG_END

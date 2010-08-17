@@ -722,20 +722,34 @@ QHash<*>{
     preview
     (
         #(
-             "[", $e.d->size, "] (...)"
+            "[", $e.d->size, "] (...)"
         )
     )
     children
     (
-        #(
-            #array (
-                expr: (QHashNode<$T1>*)$c.d->buckets[$i],
-                size: $c.d->numBuckets
-            ) : #list (
-                head: $e,
-                next: next
-            ) : #switch ($e.next != 0) #case 1 (
-                $e
+        #if ($e.d->size <= 255) (
+            #(
+                #array (
+                    expr: (QHashNode<$T1>*)$c.d->buckets[$i],
+                    size: $c.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: (QHashNode<$T1>*)$c.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
             )
         )
     )
@@ -750,15 +764,29 @@ QHash<*>{
     )
     children
     (
-        #(
-            #array (
-                expr: ($T1::QHashNode<$T2> *)$c.d->buckets[$i],
-                size: $c.d->numBuckets
-            ) : #list (
-                head: $e,
-                next: next
-            ) : #switch ($e.next != 0) #case 1 (
-                $e
+        #if ($e.d->size <= 255) (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2> *)$c.d->buckets[$i],
+                    size: $c.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2> *)$c.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e
+                )
             )
         )
     )
@@ -882,15 +910,29 @@ QSet<*>{
     )
     children
     (
-        #(
-            #array (
-                expr: (QHashNode<$T1,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
-                size: $c.q_hash.d->numBuckets
-            ) : #list (
-                head: $e,
-                next: next
-            ) : #switch ($e.next != 0) #case 1 (
-                $e.key
+        #if ($e.q_hash.d->size <= 255) (
+            #(
+                #array (
+                    expr: (QHashNode<$T1,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: $c.q_hash.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: (QHashNode<$T1,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
             )
         )
     )
@@ -905,15 +947,29 @@ QSet<*>{
     )
     children
     (
-        #(
-            #array (
-                expr: ($T1::QHashNode<$T2,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
-                size: $c.q_hash.d->numBuckets
-            ) : #list (
-                head: $e,
-                next: next
-            ) : #switch ($e.next != 0) #case 1 (
-                $e.key
+        #if ($e.q_hash.d->size <= 255) (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: $c.q_hash.d->numBuckets
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
+            )
+        ) #else (
+            #(
+                #array (
+                    expr: ($T1::QHashNode<$T2,QHashDummyValue> *)$c.q_hash.d->buckets[$i],
+                    size: 255
+                ) : #list (
+                    head: $e,
+                    next: next
+                ) : #switch ($e.next != 0) #case 1 (
+                    $e.key
+                )
             )
         )
     )
