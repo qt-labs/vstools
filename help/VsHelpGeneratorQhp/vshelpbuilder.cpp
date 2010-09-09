@@ -475,10 +475,7 @@ void VSHelpBuilder::writeTableOfContents()
 		s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
 		s << "<!DOCTYPE HelpTOC SYSTEM \"ms-help://hx/resources/HelpTOC.DTD\">" << endl;
 		s << "<HelpTOC DTDVersion=\"1.0\">" << endl;
-        if (m_Kind == VSHelpBuilder::VS)
-            s << "\t<HelpTOCNode Title=\"" << m_Title << "\" Url=\"html\\vs-addin.html\">" << endl;
-        else
-		    s << "\t<HelpTOCNode Title=\"" << m_Title << "\" Url=\"html\\index.html\">" << endl;
+        s << "\t<HelpTOCNode Title=\"" << m_Title << "\" Url=\"html\\index.html\">" << endl;
 
 		QList<QHelpDataContentItem*> contents = m_helpData.filterSections().first().contents();
         foreach (QHelpDataContentItem *item, contents) {

@@ -126,7 +126,7 @@ if ($options{qt}) {
 
     $ENV{QT_SOURCE_TREE} = $qtSourceDir;
     $ENV{QTVSDIR} = $qtvsDir;
-    system($qdoc3, "vs-addin.qdocconf");
+    system($qdoc3, "-creator", "vs-addin.qdocconf");
     die "qdoc3 failed\n" if ($?);
     print "Add-in documentation created.\n";
 
