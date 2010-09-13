@@ -1,7 +1,7 @@
 #ifndef %PRE_DEF%
 #define %PRE_DEF%
 
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 
 #ifdef %PRO_LIB_DEFINE%
 # define %PRO_LIB_EXPORT% Q_DECL_EXPORT
