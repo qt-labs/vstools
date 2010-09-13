@@ -154,9 +154,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\..\Documents and Settings\thomas\My Documents\Visual Studio 2008\Addins\Qt4VSAddin - For Testing.AddIn">
-      <Link>Qt4VSAddin - For Testing.AddIn</Link>
-    </Content>
     <Content Include="Qt4VSAddin.AddIn" />
     <None Include="Resources\Qt.bmp" />
     <None Include="Resources\Linguist.bmp" />
