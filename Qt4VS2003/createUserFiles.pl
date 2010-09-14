@@ -70,15 +70,16 @@ sub CreateUserFile {
   my $devenv = $ENV{'DevEnvDir'};
   $devenv =~ s/"//g;
   $devenv .= "\\devenv.exe";
-  
-  my $args = "/useenv /rootsuffix exp";
-  my $vsMajorVSVersion = 7;
-  if ($vsVersion =~ m/(\d)/) {
-    $vsMajorVSVersion = $1;
-  }
-  if ($vsMajorVSVersion == 9) {
-    $args .= " /ranu";
-  }
+
+  my $args = "";
+#  my $args = "/useenv /rootsuffix exp";
+#  my $vsMajorVSVersion = 7;
+#  if ($vsVersion =~ m/(\d)/) {
+#    $vsMajorVSVersion = $1;
+#  }
+#  if ($vsMajorVSVersion == 9) {
+#    $args .= " /ranu";
+#  }
   
   open FILE, ">$fileName" or die $!;
   print FILE "<VisualStudioProject>\n";
