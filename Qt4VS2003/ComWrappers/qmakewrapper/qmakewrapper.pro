@@ -7,7 +7,7 @@ isEmpty(QT_SOURCE_TREE):QT_SOURCE_TREE=$$fromfile($$QT_BUILD_TREE/.qmake.cache, 
 
 TEMPLATE = lib
 
-CONFIG += qt dll qaxserver
+CONFIG += qt dll qaxserver release debug_and_release
 TARGET = qmakewrapper
 VERSION = 1.0.0
 DEF_FILE = $$QT_SOURCE_TREE/src/activeqt/control/qaxserver.def
