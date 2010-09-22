@@ -1768,14 +1768,33 @@ namespace Nokia.QtProjectLib
 
                 if (!string.IsNullOrEmpty(subfilterName))
                 {
+                    string lowerSubFilterName = subfilterName.ToLower();
                     bool subfilterFound = false;
                     foreach (VCFilter subfilt in vfilt.Filters as IVCCollection)
-                        if (subfilt.Name == subfilterName)
+                    {
+                        if (subfilt.Name.ToLower() == lowerSubFilterName)
                         {
                             vfilt = subfilt;
                             subfilterFound = true;
                             break;
                         }
+                    }
+                    if (subfilterFound)
+                    {
+                        // Do filter names differ in upper/lower case?
+                        if (subfilterName != vfilt.Name)
+                        {
+                            try
+                            {
+                                // Try to rename the filter for aesthetic reasons.
+                                vfilt.Name = subfilterName;
+                            }
+                            catch
+                            {
+                                // Renaming didn't work. We don't care.
+                            }
+                        }
+                    }
                     if (!subfilterFound)
                     {
                         if (!vfilt.CanAddFilter(subfilterName))
