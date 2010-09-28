@@ -4,9 +4,7 @@
 #include <%BASECLASS%>
 #include "%UI_HDR%"
 
-using namespace Ui;
-
-%NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%, public %CLASS%Class
+%NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%, public Ui::%CLASS%
 {
     Q_OBJECT
 

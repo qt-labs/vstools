@@ -2,7 +2,7 @@
 #define %PRE_DEF%
 
 #include <%BASECLASS%>
-namespace Ui {class %CLASS%Class;};
+namespace Ui {class %CLASS%;};
 
 %NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%
 {
@@ -13,7 +13,7 @@ public:
     ~%CLASS%();
 
 private:
-    Ui::%CLASS%Class *ui;
+    Ui::%CLASS% *ui;
 };
 
 %NAMESPACE_END%#endif // %PRE_DEF%

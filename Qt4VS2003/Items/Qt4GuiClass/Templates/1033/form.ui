@@ -1,8 +1,8 @@
 <UI version="4.0" >
- <class>%CLASS%Class</class>
- <widget class="%BASECLASS%" name="%CLASS%Class" >
+ <class>%CLASS%</class>
+ <widget class="%BASECLASS%" name="%CLASS%" >
   <property name="objectName" >
-   <string notr="true">%CLASS%Class</string>
+   <string notr="true">%CLASS%</string>
   </property>
   <property name="geometry" >
    <rect>

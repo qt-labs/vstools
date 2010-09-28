@@ -13,7 +13,7 @@ public:
     ~%CLASS%();
 
 private:
-    Ui::%CLASS%Class ui;
+    Ui::%CLASS% ui;
 };
 
 %NAMESPACE_END%#endif // %PRE_DEF%
