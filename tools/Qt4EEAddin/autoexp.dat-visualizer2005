@@ -601,5 +601,86 @@ QSet<*>{
 }
 
 ;------------------------------------------------------------------------------
+; QPolygon
+;------------------------------------------------------------------------------
+QPolygon{
+    preview
+    (
+        #(
+             "[", ((QVector<QPoint>*)(&$c))->d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #(
+            #array
+            (
+                expr: ((QPoint*)(((void*)$c.d) + sizeof(QVectorData)))[$i],
+                size: ((QVector<QPoint>*)(&$c))->d->size
+            )
+        )
+    )
+}
+*::QPolygon{
+    preview
+    (
+        #(
+             "[", (($T1::QVector<$T1::QPoint>*)(&$c))->d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #(
+            #array
+            (
+                expr: (($T1::QPoint*)(((void*)$c.d) + sizeof(QVectorData)))[$i],
+                size: (($T1::QVector<$T1::QPoint>*)(&$c))->d->size
+            )
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
+; QPolygonF
+;------------------------------------------------------------------------------
+QPolygonF{
+    preview
+    (
+        #(
+             "[", ((QVector<QPointF>*)(&$c))->d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #(
+            #array
+            (
+                expr: ((QVector<QPointF>*)(&$c))->p->array[$i],
+                size: ((QVector<QPointF>*)(&$c))->d->size
+            )
+        )
+    )
+}
+
+*::QPolygonF{
+    preview
+    (
+        #(
+             "[", (($T1::QVector<$T1::QPointF>*)(&$c))->d->size, "] (...)"
+        )
+    )
+    children
+    (
+        #(
+            #array
+            (
+                expr: (($T1::QVector<$T1::QPointF>*)(&$c))->p->array[$i],
+                size: (($T1::QVector<$T1::QPointF>*)(&$c))->d->size
+            )
+        )
+    )
+}
+
+;------------------------------------------------------------------------------
 ; Nokia Qt 4.x visualizers -------------------------------------------[ end ]--
 QT_DEBUG_END

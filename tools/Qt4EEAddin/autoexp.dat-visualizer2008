@@ -1410,13 +1410,12 @@ QPolygon{
         #(
             #array
             (
-                expr: ((QVector<QPoint>*)(&$c))->d->array[$i],
+                expr: ((QPoint*)(((void*)$c.d) + sizeof(QVectorData)))[$i],
                 size: ((QVector<QPoint>*)(&$c))->d->size
             )
         )
     )
 }
-
 *::QPolygon{
     preview
     (
@@ -1429,7 +1428,7 @@ QPolygon{
         #(
             #array
             (
-                expr: (($T1::QVector<$T1::QPoint>*)(&$c))->d->array[$i],
+                expr: (($T1::QPoint*)(((void*)$c.d) + sizeof(QVectorData)))[$i],
                 size: (($T1::QVector<$T1::QPoint>*)(&$c))->d->size
             )
         )
@@ -1451,7 +1450,7 @@ QPolygonF{
         #(
             #array
             (
-                expr: ((QVector<QPointF>*)(&$c))->d->array[$i],
+                expr: ((QVector<QPointF>*)(&$c))->p->array[$i],
                 size: ((QVector<QPointF>*)(&$c))->d->size
             )
         )
@@ -1470,7 +1469,7 @@ QPolygonF{
         #(
             #array
             (
-                expr: (($T1::QVector<$T1::QPointF>*)(&$c))->d->array[$i],
+                expr: (($T1::QVector<$T1::QPointF>*)(&$c))->p->array[$i],
                 size: (($T1::QVector<$T1::QPointF>*)(&$c))->d->size
             )
         )
