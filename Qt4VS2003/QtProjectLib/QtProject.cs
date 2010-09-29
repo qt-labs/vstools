@@ -1067,7 +1067,8 @@ namespace Nokia.QtProjectLib
 
                     QtVersionManager versionManager = QtVersionManager.The();
                     VersionInformation versionInfo = new VersionInformation(versionManager.GetInstallPath(envPro));
-                    bool mocSupportsIncludes = versionInfo.qtMajor >= 4 && versionInfo.qtMinor >= 2;
+                    bool mocSupportsIncludes = (versionInfo.qtMajor == 4 && versionInfo.qtMinor >= 2)
+                        || versionInfo.qtMajor >= 5;
 
                     string strDefinesIncludes = "";
                     VCFile cppPropertyFile;
