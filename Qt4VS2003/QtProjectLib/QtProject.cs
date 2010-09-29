@@ -1076,9 +1076,14 @@ namespace Nokia.QtProjectLib
                         cppPropertyFile = GetCppFileForMocStep(file);
                     else
                         cppPropertyFile = GetCppFileForMocStep(mocFile);
-                    VCFileConfiguration cppConfig = GetVCFileConfigurationByName(cppPropertyFile, config.Name);
-                    strDefinesIncludes += GetDefines(cppConfig);
-                    strDefinesIncludes += GetIncludes(cppConfig);
+                    VCFileConfiguration defineIncludeConfig;
+                    if (cppPropertyFile != null)
+                        defineIncludeConfig = GetVCFileConfigurationByName(cppPropertyFile, config.Name);
+                    else
+                        // No file specific defines/includes but at least the project defines/includes are added
+                        defineIncludeConfig = config;
+                    strDefinesIncludes += GetDefines(defineIncludeConfig);
+                    strDefinesIncludes += GetIncludes(defineIncludeConfig);
                     strDefinesIncludes = HelperFunctions.RemoveDuplicates(strDefinesIncludes, ' ');
                     int cmdLineLength = newCmdLine.Length + strDefinesIncludes.Length + 1;
                     if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength() && mocSupportsIncludes)
