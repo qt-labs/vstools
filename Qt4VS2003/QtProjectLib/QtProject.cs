@@ -1102,12 +1102,16 @@ namespace Nokia.QtProjectLib
                             if (i == options.Length - 1)    // first loop
                                 redirectOp = " >> ";
                         }
-                        strDefinesIncludes =  "@" + mocIncludeFile;
+                        strDefinesIncludes = "@" + mocIncludeFile;
                         for (int k = 0; k < i; ++k)
                             if (options[k].Length > 0)
                                 strDefinesIncludes += " " + options[k];
 
                         newCmdLine = mocIncludeCommands + newCmdLine + " " + strDefinesIncludes;
+                    }
+                    else
+                    {
+                        newCmdLine = newCmdLine + " " + strDefinesIncludes;
                     }
 
                     if (tool.CommandLine.Trim().Length > 0)
