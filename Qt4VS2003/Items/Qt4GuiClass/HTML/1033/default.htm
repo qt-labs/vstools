@@ -316,18 +316,17 @@ function IsValid()
 	}
 
 	testVal = UI_NAME.value;
+	if (window.external.ProjectObject.Object.Files.Item(testVal))
+	{
+		window.external.ReportError(".ui File already exists");
+		UI_NAME.focus();
+		return false;
+	}
 	testVal = testVal.toLowerCase().replace(".h",".x"); // don't validate .h files...
 	testVal = testVal.replace(".ui",".h");
 	if (!window.external.dte.VCLanguageManager.ValidateFileName(testVal))
 	{
 		window.external.ReportError("Not a valid .ui file name");
-		UI_NAME.focus();
-		return false;
-	}
-
-	if (window.external.ProjectObject.Object.Files.Item(testVal))
-	{
-		window.external.ReportError(".ui File already exists");
 		UI_NAME.focus();
 		return false;
 	}
