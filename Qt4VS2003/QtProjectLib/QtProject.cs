@@ -1593,11 +1593,6 @@ namespace Nokia.QtProjectLib
         /// <returns></returns>
         public VCFile GetFileFromFilter(FakeFilter filter, string fileName)
         {
-            return GetFileFromFilter(filter, fileName, true);
-        }
-
-        public VCFile GetFileFromFilter(FakeFilter filter, string fileName, bool isRelativeToProject)
-        {
             VCFilter vcfilter = FindFilterFromGuid(filter.UniqueIdentifier);
 
             // try with name as well
@@ -1610,10 +1605,13 @@ namespace Nokia.QtProjectLib
             try 
             {
                 FileInfo fi = null;
-                if (isRelativeToProject)
-                    fi = new FileInfo(ProjectDir + "\\" + fileName);
-                else
+                if (Path.IsPathRooted(fileName))
                     fi = new FileInfo(fileName);
+                else
+                    fi = new FileInfo(ProjectDir + "\\" + fileName);
+
+                if (fi == null)
+                    return null;
                 
                 foreach (VCFile file in (IVCCollection)vcfilter.Files)
                 {
