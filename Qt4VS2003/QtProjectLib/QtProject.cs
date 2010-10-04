@@ -900,6 +900,12 @@ namespace Nokia.QtProjectLib
                 bool hasDifferentMocFilePerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
                 bool mocableIsCPP = mocFileName.ToLower().EndsWith(".moc");
 
+#if VS2010
+                // Fresh C++ headers don't have a usable custom build tool. We must set the item type first.
+                if (!mocableIsCPP && file.ItemType != "CustomBuild")
+                    file.ItemType = "CustomBuild";
+#endif
+
                 foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations)
                 {
                     VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
