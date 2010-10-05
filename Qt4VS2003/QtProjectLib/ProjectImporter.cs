@@ -220,16 +220,14 @@ namespace Nokia.QtProjectLib
 
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
-            QtVSIPSettings.SaveMocDirectory(qtProject.Project, QtVSIPSettings.GetMocDirectory());
-            QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
-            QtVSIPSettings.SaveUicDirectory(qtProject.Project, QtVSIPSettings.GetUicDirectory());
-
             RepairMocSteps(qtProject.Project);
             HelperFunctions.CleanupQMakeDependencies(qtProject.Project);
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
-            qtProject.RefreshRccSteps();
             qtProject.RepairGeneratedFilesStructure();
             qtProject.TranslateFilterNames();
+
+            QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
+            qtProject.RefreshRccSteps();
 
             // collapse the generated files/resources filters afterwards
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);
