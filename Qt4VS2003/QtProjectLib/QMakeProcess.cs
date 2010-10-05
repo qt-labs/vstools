@@ -161,16 +161,16 @@ namespace Nokia.QtProjectLib
             else
                 qmakeArgs += "-o \"" + vcproj + "\"";
 
-            qmakeArgs += " QMAKE_INCDIR_QT=$(QTDIR)\\include ";
+            qmakeArgs += @" QMAKE_INCDIR_QT=$(QTDIR)\\include ";
 
             if (vi.qt4Version) //a dontknowwhyweneedithack
                 qmakeArgs += "QMAKE_LIBDIR_QT=  ";
 
-            qmakeArgs += "QMAKE_LIBDIR=$(QTDIR)\\lib "
-                       + "QMAKE_UIC=_(QTDIR)\\bin\\uic.exe "
-                       + "QMAKE_MOC=_(QTDIR)\\bin\\moc.exe "
-                       + "QMAKE_RCC=_(QTDIR)\\bin\\rcc.exe "
-                       + "QMAKE_QMAKE=$(QTDIR)\\bin\\qmake.exe";
+            qmakeArgs += @"QMAKE_LIBDIR=$(QTDIR)\\lib "
+                       + @"QMAKE_UIC=_(QTDIR)\\bin\\uic.exe "
+                       + @"QMAKE_MOC=_(QTDIR)\\bin\\moc.exe "
+                       + @"QMAKE_RCC=_(QTDIR)\\bin\\rcc.exe "
+                       + @"QMAKE_QMAKE=$(QTDIR)\\bin\\qmake.exe";
 
             qmakeProcess = new System.Diagnostics.Process();
             qmakeProcess.StartInfo.CreateNoWindow = true;
