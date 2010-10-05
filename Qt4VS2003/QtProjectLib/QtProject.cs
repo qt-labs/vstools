@@ -2245,13 +2245,16 @@ namespace Nokia.QtProjectLib
             DeleteGeneratedFiles();
             string[] qobjectMacros = new string[] { "Q_OBJECT", "Q_GADGET" };
             foreach (VCFile file in (IVCCollection)vcPro.Files)
+            {
+                if (!HelperFunctions.HasHeaderFileExtension(file.Name) && !HelperFunctions.HasSourceFileExtension(file.Name))
+                    continue;
+
                 if (HelperFunctions.HasMacros(file, qobjectMacros))
                 {
-                    if (HasMocStep(file))
-                        RemoveMocStep(file);
-
+                    RemoveMocStep(file);
                     AddMocStep(file);
                 }
+            }
         }
 
         public void TranslateFilterNames()
