@@ -1527,14 +1527,16 @@ namespace Nokia.QtProjectLib
                     {
                         foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations)
                         {
-                            VCFile mocFile = GetGeneratedMocFile(file.FullPath, config);
+                            string mocFileName = GetMocFileName(file.Name);
+                            VCFile mocFile = GetGeneratedMocFile(mocFileName, config);
                             if (mocFile != null)
                                 RemoveFileFromFilter(mocFile, Filters.GeneratedFiles());
                         }
                     } 
                     else 
                     {
-                        VCFile mocFile = GetGeneratedMocFile(file.FullPath, null);
+                        string mocFileName = GetMocFileName(file.Name);
+                        VCFile mocFile = GetGeneratedMocFile(mocFileName, null);
                         if (mocFile != null)
                             RemoveFileFromFilter(mocFile, Filters.GeneratedFiles());
                     }
