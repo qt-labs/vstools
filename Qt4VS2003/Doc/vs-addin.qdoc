@@ -32,7 +32,7 @@
     \title Qt Visual Studio Add-in
 
     Nokia Qt Development Frameworks offers a seamless integration of Qt development tools for
-    Microsoft Visual Studio 2005 and 2008. The Qt Visual Studio Add-in allows
+    Microsoft Visual Studio 2005, 2008 and 2010. The Qt Visual Studio Add-in allows
     developers to use this standard development environment without having to
     worry about any Qt-related build steps or tools.
 
