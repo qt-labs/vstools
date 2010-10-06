@@ -473,24 +473,6 @@ namespace Qt4VSAddin
 
         public void buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
         {
-            if (Scope == vsBuildScope.vsBuildScopeProject)
-            {
-                Project project = HelperFunctions.GetSelectedQtProject(Connect._applicationObject);
-                if (project != null)
-                {
-                    QtProject qtPro = QtProject.Create(project);
-                    qtPro.CollapseFilter(Filters.GeneratedFiles().Name);
-                }
-            }
-            else if (Scope == vsBuildScope.vsBuildScopeSolution)
-            {
-                foreach (Project project in HelperFunctions.ProjectsInSolution(dte))
-                    if (HelperFunctions.IsQtProject(project))
-                    {
-                        QtProject qtPro = QtProject.Create(project);
-                        qtPro.CollapseFilter(Filters.GeneratedFiles().Name);
-                    }
-            }
         }
 
         public void DocumentSaved(EnvDTE.Document document)
