@@ -3484,46 +3484,56 @@ namespace Nokia.QtProjectLib
             if (solutionExplorer.UIHierarchyItems.Count == 0)
                 return;
 
+            dte.SuppressUI = true;
             UIHierarchyItem projectItem = FindProjectHierarchyItem(solutionExplorer);
             if (projectItem != null)
             {
-                projectItem.DTE.SuppressUI = true;
-
                 HelperFunctions.CollapseFilter(projectItem, solutionExplorer, filterName);
-
-                projectItem.DTE.SuppressUI = false;
             }
+            dte.SuppressUI = false;
         }
 
         private UIHierarchyItem FindProjectHierarchyItem(UIHierarchy hierarchy)
         {
             if (hierarchy.UIHierarchyItems.Count == 0)
                 return null;
-            UIHierarchyItem rootItem = hierarchy.UIHierarchyItems.Item(1);
-            return FindProjectHierarchyItem(rootItem);
+
+            UIHierarchyItem solution = hierarchy.UIHierarchyItems.Item(1);
+            UIHierarchyItem projectItem = null;
+            foreach (UIHierarchyItem solutionItem in solution.UIHierarchyItems)
+            {
+                projectItem = FindProjectHierarchyItem(solutionItem);
+                if (projectItem != null)
+                    break;
+            }
+            return projectItem;
         }
 
         private UIHierarchyItem FindProjectHierarchyItem(UIHierarchyItem root)
         {
+            UIHierarchyItem projectItem = null;
             try
             {
-                UIHierarchyItems items = root.UIHierarchyItems;
-                for (int i = 1; i <= items.Count; i++)
-                    if (items.Item(i).Name == envPro.Name)
-                    {
-                        return items.Item(i);
-                    }
-                    else if (items.Item(i).UIHierarchyItems.Count > 0)
-                    {
-                        UIHierarchyItem projectItem = FindProjectHierarchyItem(items.Item(i));
-                        if (projectItem != null)
-                            return projectItem;
-                    }
+                if (root.Name == envPro.Name)
+                    return root;
+
+#if VS2005
+                bool expansionState = root.UIHierarchyItems.Expanded;
+#endif
+                foreach (UIHierarchyItem childItem in root.UIHierarchyItems)
+                {
+                    projectItem = FindProjectHierarchyItem(childItem);
+                    if (projectItem != null)
+                        break;
+                }
+#if VS2005
+                root.UIHierarchyItems.Expanded = expansionState;
+#endif
             }
             catch
             {
             }
-            return null;
+            return projectItem;
         }
 
 #if VS2010
