@@ -47,11 +47,11 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_foo.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_foo.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_foo.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,17 +72,17 @@
     <CustomBuild Include="foo.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Debug\main.moc">
+      <Filter>Generated Files\Debug</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Release\main.moc">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
     <CustomBuild Include="GeneratedFiles\Debug\sub.moc">
       <Filter>Generated Files\Debug</Filter>
     </CustomBuild>
     <CustomBuild Include="GeneratedFiles\Release\sub.moc">
       <Filter>Generated Files\Release</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\Release\main.moc">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\Debug\main.moc">
-      <Filter>Generated Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
