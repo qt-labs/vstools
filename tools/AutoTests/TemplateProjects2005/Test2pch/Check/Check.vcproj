@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="Test2"
 	ProjectGUID="{ADA1D5AA-949B-46E9-AA9E-10D2D5ECA5B0}"
 	RootNamespace="Check"
 	Keyword="Qt4VSv1.0"
-	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -80,6 +79,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -149,6 +151,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -313,7 +318,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath=".\GeneratedFiles\Release\main.moc"
+					RelativePath=".\generatedfiles\release\main.moc"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -336,7 +341,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\GeneratedFiles\Release\moc_foo.cpp"
+					RelativePath=".\generatedfiles\release\moc_foo.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -348,7 +353,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\GeneratedFiles\Release\sub.moc"
+					RelativePath=".\generatedfiles\release\sub.moc"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -377,7 +382,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath=".\GeneratedFiles\Debug\main.moc"
+					RelativePath=".\generatedfiles\debug\main.moc"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -400,7 +405,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\GeneratedFiles\Debug\moc_foo.cpp"
+					RelativePath=".\generatedfiles\debug\moc_foo.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -412,7 +417,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\GeneratedFiles\Debug\sub.moc"
+					RelativePath=".\generatedfiles\debug\sub.moc"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
