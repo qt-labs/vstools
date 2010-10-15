@@ -251,6 +251,7 @@ namespace Nokia.QtProjectLib
                             continue;
                         string[] commandLines = tool.CommandLine.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                         string commandLineToSet = "";
+                        bool firstLoop = true;
                         for (int i = 0; i < commandLines.Length; i++)
                         {
                             string commandLine = commandLines[i];
@@ -259,6 +260,10 @@ namespace Nokia.QtProjectLib
                             if (commandLine.Contains("moc.exe") && commandLine.StartsWith("@echo"))
                                 commandLine = commandLine.Substring(commandLine.IndexOf("&&") + 3);
                             commandLine = RepairMocStepString(commandLine);
+                            if (firstLoop)
+                                firstLoop = false;
+                            else
+                                commandLineToSet += "\r\n";
                             commandLineToSet += commandLine;
                         }
                         tool.CommandLine = commandLineToSet;
