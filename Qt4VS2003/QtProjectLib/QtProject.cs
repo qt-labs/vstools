@@ -820,7 +820,15 @@ namespace Nokia.QtProjectLib
             {
                 if (!alreadyAdded.Contains(include))
                 {
-                    string incl = HelperFunctions.NormalizeRelativeFilePath(include);
+                    string incl = include;
+#if VS2010
+                    if (incl.StartsWith("\\\"") && incl.EndsWith("\\\""))
+                    {
+                        incl = incl.Remove(0, 2);
+                        incl = incl.Remove(incl.Length - 2, 2);
+                    }
+#endif
+                    incl = HelperFunctions.NormalizeRelativeFilePath(incl);
                     if (incl.Length > 0)
                     {
                         string cmdline = " ";
