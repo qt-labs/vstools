@@ -95,18 +95,15 @@ namespace Nokia.QtProjectLib
                     if (qtVersion != null)
                     {
                         QtVersionManager.The().SaveSolutionQtVersion(dteObject.Solution, qtVersion);
-                        foreach (Project prj in dteObject.Solution)
+                        foreach (Project prj in HelperFunctions.ProjectsInSolution(dteObject))
                         {
-                            if (prj.Object != null)
-                            {
-                                QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                                QtProject qtPro = QtProject.Create(prj);
+                            QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
+                            QtProject qtPro = QtProject.Create(prj);
 #if VS2010
-                                string newQtDir = QtVersionManager.The().GetInstallPath(qtVersion);
-                                qtPro.UpdateQtDirPropertySheet(newQtDir);
+                            string newQtDir = QtVersionManager.The().GetInstallPath(qtVersion);
+                            qtPro.UpdateQtDirPropertySheet(newQtDir);
 #endif
-                                ApplyPostImportSteps(qtPro);
-                            }
+                            ApplyPostImportSteps(qtPro);
                         }
                     }
                 }
