@@ -503,8 +503,13 @@ namespace Nokia.QtProjectLib
         {
             ConfigurationTypes configType = ConfigurationTypes.typeApplication;
             string targetExtension = ".exe";
+            string qtVersion = null;
             QtVersionManager vm = QtVersionManager.The();
-            if (vi == null) vi = vm.GetVersionInfo(vm.GetDefaultVersion());
+            if (vi == null)
+            {
+                qtVersion = vm.GetDefaultVersion();
+                vi = vm.GetVersionInfo(qtVersion);
+            }
 
             switch (type & TemplateType.ProjectType)
             {
@@ -631,7 +636,9 @@ namespace Nokia.QtProjectLib
             if ((type & TemplateType.PluginProject) != 0)
                 MarkAsDesignerPluginProject();
 #if VS2010
-            UpdateQtDirPropertySheet(vi.qtDir);
+            if (qtVersion == null)
+                qtVersion = vm.GetQtVersionFromInstallDir(vi.qtDir);
+            UpdateQtDirPropertySheet(qtVersion);
 #endif
 
         }
@@ -3088,7 +3095,7 @@ namespace Nokia.QtProjectLib
                 RefreshMocSteps();
 
 #if VS2010
-            UpdateQtDirPropertySheet(viNew.qtDir);
+            UpdateQtDirPropertySheet(newVersion);
 #endif
             HelperFunctions.SetEnvironmentVariable("QTDIR", viNew.qtDir);
 
@@ -3545,8 +3552,14 @@ namespace Nokia.QtProjectLib
         }
 
 #if VS2010
-        public void UpdateQtDirPropertySheet(string newQtDir)
+        public void UpdateQtDirPropertySheet(string newQtVersion)
         {
+            if (string.IsNullOrEmpty(newQtVersion))
+                return;
+
+            string newQtDir = null;
+            if (newQtVersion != "$(QTDIR)")
+                newQtDir = QtVersionManager.The().GetInstallPath(newQtVersion);
             string propSheetFileName = vcPro.ProjectDirectory + Resources.qtSheetKeyword + ".props";
             if (!File.Exists(propSheetFileName))
             {
@@ -3595,17 +3608,25 @@ namespace Nokia.QtProjectLib
                         break;
                     }
                 }
-                if (qtDirMacro == null)
+                // The Qt version to use is not $(QTDIR)
+                if (newQtDir != null)
                 {
-                    qtDirMacro = qtDirSheet.AddUserMacro("QTDIR", newQtDir);
-                    qtDirMacro.PerformEnvironmentSet = true;
-                    qtDirSheet.Save();
+                    if (qtDirMacro == null)
+                    {
+                        qtDirMacro = qtDirSheet.AddUserMacro("QTDIR", newQtDir);
+                        qtDirMacro.PerformEnvironmentSet = true;
+                        qtDirSheet.Save();
+                    }
+                    else if (qtDirMacro.Value != newQtDir)
+                    {
+                        qtDirMacro.Value = newQtDir;
+                        qtDirMacro.PerformEnvironmentSet = true;
+                        qtDirSheet.Save();
+                    }
                 }
-                else if (qtDirMacro.Value != newQtDir)
+                else if (qtDirMacro != null)
                 {
-                    qtDirMacro.Value = newQtDir;
-                    qtDirMacro.PerformEnvironmentSet = true;
-                    qtDirSheet.Save();
+                    qtDirSheet.RemoveUserMacro(qtDirMacro);
                 }
             }
         }

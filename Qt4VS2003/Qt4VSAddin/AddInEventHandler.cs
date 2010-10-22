@@ -798,8 +798,8 @@ namespace Qt4VSAddin
             if (HelperFunctions.IsQtProject(project))
             {
                 QtProject qtPro = QtProject.Create(project);
-                string qtDir = QtVersionManager.The().GetInstallPath(project);
-                qtPro.UpdateQtDirPropertySheet(qtDir);
+                string qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
+                qtPro.UpdateQtDirPropertySheet(qtVersion);
             }
 #endif
         }
@@ -816,8 +816,8 @@ namespace Qt4VSAddin
                 {
 #if VS2010
                     QtProject qtPro = QtProject.Create(p);
-                    string qtDir = QtVersionManager.The().GetInstallPath(p);
-                    qtPro.UpdateQtDirPropertySheet(qtDir);
+                    string qtVersion = QtVersionManager.The().GetProjectQtVersion(p);
+                    qtPro.UpdateQtDirPropertySheet(qtVersion);
 #endif
                     RegisterVCProjectEngineEvents(p);
                 }
