@@ -490,9 +490,8 @@
     located under the \gui{Qt Builds} list.
 
     It is also possible to use the Qt version set in the QTDIR environment
-    variable. In order to do so create a version named \c{$(QTDIR)} in the
-    \gui{Version name:} field. As the path is not needed the \gui{Path:}
-    field will be grayed out.
+    variable. In order to do so create a version named \c{$(QTDIR)}. As the
+    path is not needed the \gui{Path:} field will be grayed out.
     
     \image vs-options-qt-versions.png Screenshot of Qt versions configuration dialog
         
