@@ -522,6 +522,8 @@ namespace Qt4VSAddin
                     List<VCFile> moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
                     if (moccedFiles != null && moccedFiles.Count > 0)
                     {
+                        bool hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
+                        bool hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
                         VCFilter generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
                         foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files)
                         {
@@ -529,21 +531,33 @@ namespace Qt4VSAddin
                             {
                                 foreach (VCFileConfiguration config in (IVCCollection)fileInFilter.FileConfigurations)
                                 {
+                                    bool exclude = true;
                                     VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                    if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower()))
+                                    if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform)
                                     {
-                                        if (config.ExcludedFromBuild)
-                                            config.ExcludedFromBuild = false;
+                                        VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                        string platformName = platform.Name;
+                                        if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower())
+                                            && fileInFilter.RelativePath.ToLower().Contains(platform.Name.ToLower()))
+                                                exclude = false;
                                     }
-                                    else
+                                    else if (hasDifferentMocFilesPerConfig)
                                     {
-                                        if (!config.ExcludedFromBuild)
-                                            config.ExcludedFromBuild = true;
+                                        if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower()))
+                                            exclude = false;
                                     }
+                                    else if (hasDifferentMocFilesPerPlatform)
+                                    {
+                                        VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                        string platformName = platform.Name;
+                                        if (fileInFilter.RelativePath.ToLower().Contains(platformName.ToLower()))
+                                            exclude = false;
+                                    }
+                                    if (config.ExcludedFromBuild != exclude)
+                                        config.ExcludedFromBuild = exclude;
                                 }
                             }
                         }
-
                         foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters)
                         {
                             foreach (VCFile f in (IVCCollection)filt.Files)
@@ -553,7 +567,17 @@ namespace Qt4VSAddin
                                     foreach (VCFileConfiguration config in (IVCCollection)f.FileConfigurations)
                                     {
                                         VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                        if (vcConfig.ConfigurationName == filt.Name)
+                                        string filterToLookFor = "";
+                                        if (hasDifferentMocFilesPerConfig)
+                                            filterToLookFor = vcConfig.ConfigurationName;
+                                        if (hasDifferentMocFilesPerPlatform)
+                                        {
+                                            VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                            if (!string.IsNullOrEmpty(filterToLookFor))
+                                                filterToLookFor += '_';
+                                            filterToLookFor += platform.Name;
+                                        }
+                                        if (filt.Name == filterToLookFor)
                                         {
                                             if (config.ExcludedFromBuild)
                                                 config.ExcludedFromBuild = false;
