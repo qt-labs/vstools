@@ -229,6 +229,13 @@ namespace Nokia.QtProjectLib
             // collapse the generated files/resources filters afterwards
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);
             qtProject.CollapseFilter(Filters.GeneratedFiles().Name);
+
+            try
+            {
+                // save the project after modification
+                qtProject.Project.Save(null);
+            }
+            catch { /* ignore */ }
         }
 
         private static void RepairMocSteps(EnvDTE.Project project)
