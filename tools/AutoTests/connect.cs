@@ -29,6 +29,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using Extensibility;
 using EnvDTE;
 using EnvDTE80;
@@ -45,7 +46,12 @@ namespace AddInAutoTest
     /// <seealso class='IDTExtensibility2' />
     public class Connect : IDTExtensibility2
     {
-
+        enum ProjectDirectory
+        {
+            MocDir,
+            RccDir,
+            UicDir
+        };
         System.Threading.Thread svthread;
         UdpClient server;
 #if VS2005
@@ -59,6 +65,7 @@ namespace AddInAutoTest
         private StreamWriter logger = null;
         private string testPath = null;
         private List<String> extensions = new List<String>();
+        private List<string> mocDirectories = new List<string>();
 
         private String BackupSolution(string path, string name)
         {
@@ -184,106 +191,112 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case1 (adding Q_OBJECT macro) begins (extension: " + extension +")");
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: Could not open solution");
-
-                    Project project = GetProject("Test1", solution);
-
-                    ProjectItem piSource = project.ProjectItems.Item("Source Files");
-                    ProjectItem main = piSource.ProjectItems.Item("main.cpp");
-
-                    currentException = ReplaceStringInProjectItem(main, "//Q_OBJECT_HERE", "Q_OBJECT");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-                    currentException = ReplaceStringInProjectItem(main, "//#include \"main.moc\"", "#include \"main.moc\"");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-
-                    ProjectItem sub = piSource.ProjectItems.Item("sub.cpp");
-
-                    currentException = ReplaceStringInProjectItem(sub, "//Q_OBJECT_HERE", "Q_OBJECT");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-                    currentException = ReplaceStringInProjectItem(sub, "//#include \"sub.moc\"", "#include \"sub.moc\"");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-
-                    ProjectItem piHeader = project.ProjectItems.Item("Header Files");
-                    ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
-
-                    currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-
-
-                    bool excludedCorrectly = true;
-                    VCProject vcProject = project.Object as VCProject;
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
+                    bool success = true;
+                    Exception currentException = null;
+                    try
                     {
-                        if (file.Name == "moc_foo.cpp" || file.Name == "main.moc"
-                                    || file.Name == "sub.moc")
-                        {
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case1 (adding Q_OBJECT macro) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: Could not open solution");
 
-                            ProjectItem fileItem = file.Object as ProjectItem;
-                            VCProjectItem vcFileItem = fileItem.Object as VCProjectItem;
-                            VCFilter itemFilter = vcFileItem.Parent as VCFilter;
-                            if (itemFilter == null)
+                        Project project = GetProject("Test1", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+
+                        ProjectItem piSource = project.ProjectItems.Item("Source Files");
+                        ProjectItem main = piSource.ProjectItems.Item("main.cpp");
+
+                        currentException = ReplaceStringInProjectItem(main, "//Q_OBJECT_HERE", "Q_OBJECT");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+                        currentException = ReplaceStringInProjectItem(main, "//#include \"main.moc\"", "#include \"main.moc\"");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+
+                        ProjectItem sub = piSource.ProjectItems.Item("sub.cpp");
+
+                        currentException = ReplaceStringInProjectItem(sub, "//Q_OBJECT_HERE", "Q_OBJECT");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+                        currentException = ReplaceStringInProjectItem(sub, "//#include \"sub.moc\"", "#include \"sub.moc\"");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+
+                        ProjectItem piHeader = project.ProjectItems.Item("Header Files");
+                        ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
+
+                        currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+
+
+                        bool excludedCorrectly = true;
+                        VCProject vcProject = project.Object as VCProject;
+                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        {
+                            if (file.Name == "moc_foo.cpp" || file.Name == "main.moc"
+                                        || file.Name == "sub.moc")
                             {
-                                success = false;
-                                break;
-                            }
-                            foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
-                            {
-                                foreach (VCConfiguration projectConfig in vcProject.Configurations as IVCCollection)
+
+                                ProjectItem fileItem = file.Object as ProjectItem;
+                                VCProjectItem vcFileItem = fileItem.Object as VCProjectItem;
+                                VCFilter itemFilter = vcFileItem.Parent as VCFilter;
+                                if (itemFilter == null)
                                 {
-                                    if (fileConfig.ExcludedFromBuild == fileConfig.Name.StartsWith(itemFilter.Name))
+                                    success = false;
+                                    break;
+                                }
+                                foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                {
+                                    foreach (VCConfiguration projectConfig in vcProject.Configurations as IVCCollection)
                                     {
-                                        excludedCorrectly = false;
-                                        break;
+                                        if (fileConfig.ExcludedFromBuild == fileConfig.Name.StartsWith(itemFilter.Name))
+                                        {
+                                            excludedCorrectly = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
+                        if (!excludedCorrectly)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case1: Moc Files were not generated (correctly)");
+                        else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case1: Moc Files were generated correctly");
+
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case1: " + currentException.Message);
+                        else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case1: Build process succeeded");
                     }
-                    if (!excludedCorrectly)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case1: Moc Files were not generated (correctly)");
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case1 succeeded");
                     else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case1: Moc Files were generated correctly");
-
-
-                    currentException = RebuildSolution();
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case1: " + currentException.Message);
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case1: Build process succeeded");
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case1 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case1 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case1 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -291,98 +304,104 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    success = true;
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case2 (remove the Q_OBJECT macro from header) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case2: Could not open solution");
-
-                    Project pro = GetProject("Test2", solution);
-
-                    ProjectItem piSource = pro.ProjectItems.Item("Source Files");
-                    ProjectItem main = piSource.ProjectItems.Item("main.cpp");
-
-                    main.Open(EnvDTE.Constants.vsViewKindPrimary);
-                    if (ProjectItemContainsString(main, "//Q_OBJECT"))
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case2: " + "\"Q_OBJECT\" is commented out in " + main.Document.Name);
-                    System.Threading.Thread.Sleep(5000);
-                    main.Document.Close(vsSaveChanges.vsSaveChangesYes);
-                    currentException = ReplaceStringInProjectItem(main, "Q_OBJECT", "//Q_OBJECT_HERE");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case2: "
-                            + currentException.Message);
-                    currentException = ReplaceStringInProjectItem(main, "#include \"main.moc\"", "//#include \"main.moc\"");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-
-                    ProjectItem sub = piSource.ProjectItems.Item("sub.cpp");
-
-                    currentException = ReplaceStringInProjectItem(sub, "Q_OBJECT", "//Q_OBJECT_HERE");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-                    currentException = ReplaceStringInProjectItem(sub, "#include \"sub.moc\"", "//#include \"sub.moc\"");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case1: "
-                            + currentException.Message);
-
-                    ProjectItem piHeader = pro.ProjectItems.Item("Header Files");
-                    ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
-
-                    foo.Open(EnvDTE.Constants.vsViewKindPrimary);
-                    if (ProjectItemContainsString(foo, "//Q_OBJECT_HERE"))
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case2: " + "\"Q_OBJECT\" is commented out in " + foo.Document.Name);
-                    currentException = ReplaceStringInProjectItem(foo, "Q_OBJECT", "//Q_OBJECT_HERE");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case2: "
-                            + currentException.Message);
-
-                    bool mocFound = false;
-                    VCProject vcProject = (VCProject)pro.Object;
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
+                    bool success = true;
+                    Exception currentException = null;
+                    try
                     {
-                        if (file.Name == "main.moc" || file.Name == "moc_foo.cpp" || file.Name == "sub.moc")
-                        {
-                            mocFound = true;
-                            break;
-                        }
-                    }
-                    if (mocFound)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case2: Moc Files were not deleted");
-                    else
+                        success = true;
                         logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case2: Moc Files were deleted as supposed");
+                            + ": Case2 (remove the Q_OBJECT macro from header) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    currentException = RebuildSolution();
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case2: " + currentException.Message);
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case2: Could not open solution");
+
+                        Project pro = GetProject("Test2", solution);
+                        SetProjectDirectory(ref pro, ProjectDirectory.MocDir, mocDirectory);
+
+                        ProjectItem piSource = pro.ProjectItems.Item("Source Files");
+                        ProjectItem main = piSource.ProjectItems.Item("main.cpp");
+
+                        main.Open(EnvDTE.Constants.vsViewKindPrimary);
+                        if (ProjectItemContainsString(main, "//Q_OBJECT"))
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case2: " + "\"Q_OBJECT\" is commented out in " + main.Document.Name);
+                        System.Threading.Thread.Sleep(5000);
+                        main.Document.Close(vsSaveChanges.vsSaveChangesYes);
+                        currentException = ReplaceStringInProjectItem(main, "Q_OBJECT", "//Q_OBJECT_HERE");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case2: "
+                                + currentException.Message);
+                        currentException = ReplaceStringInProjectItem(main, "#include \"main.moc\"", "//#include \"main.moc\"");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+
+                        ProjectItem sub = piSource.ProjectItems.Item("sub.cpp");
+
+                        currentException = ReplaceStringInProjectItem(sub, "Q_OBJECT", "//Q_OBJECT_HERE");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+                        currentException = ReplaceStringInProjectItem(sub, "#include \"sub.moc\"", "//#include \"sub.moc\"");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case1: "
+                                + currentException.Message);
+
+                        ProjectItem piHeader = pro.ProjectItems.Item("Header Files");
+                        ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
+
+                        foo.Open(EnvDTE.Constants.vsViewKindPrimary);
+                        if (ProjectItemContainsString(foo, "//Q_OBJECT_HERE"))
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case2: " + "\"Q_OBJECT\" is commented out in " + foo.Document.Name);
+                        currentException = ReplaceStringInProjectItem(foo, "Q_OBJECT", "//Q_OBJECT_HERE");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case2: "
+                                + currentException.Message);
+
+                        bool mocFound = false;
+                        VCProject vcProject = (VCProject)pro.Object;
+                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        {
+                            if (file.Name == "main.moc" || file.Name == "moc_foo.cpp" || file.Name == "sub.moc")
+                            {
+                                mocFound = true;
+                                break;
+                            }
+                        }
+                        if (mocFound)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case2: Moc Files were not deleted");
+                        else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case2: Moc Files were deleted as supposed");
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case2: " + currentException.Message);
+                        else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case2: Build process succeeded");
+                    }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case2 succeeded");
                     else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case2: Build process succeeded");
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case2 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case2 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case2 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -390,160 +409,166 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                bool subsuccess = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case3 (directly include the moc file and save the header file) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + "Case3: Could not open solution");
-
-                    Project project = GetProject("Test1", solution);
-
-                    ProjectItem piHeader = project.ProjectItems.Item("Header Files");
-                    ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
-
-                    ProjectItem piSource = project.ProjectItems.Item("Source Files");
-                    ProjectItem foocpp = piSource.ProjectItems.Item("foo.cpp");
-
-                    foo.Open(EnvDTE.Constants.vsViewKindPrimary);
-                    if (ProjectItemContainsString(foo, "Q_OBJECT")
-                        && !ProjectItemContainsString(foo, "//Q_OBJECT"))
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case3: \"" + foo.Document.Name + "\" contains Q_OBJECT");
-                    foo.Document.Close(vsSaveChanges.vsSaveChangesNo);
-                    if (foo.IsDirty)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case3: " + foo.Document.Name + " is dirty");
-
-                    string currentInclude = "#include \"moc_foo.cpp\"";
-                    currentException = ReplaceStringInProjectItem(foocpp,
-                        "////#CUSTOMINCLUDE", currentInclude);
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case3: " + currentException.Message);
-                    currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
-
-                    VCProject vcProject = (VCProject)project.Object;
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                    bool success = true;
+                    bool subsuccess = true;
+                    Exception currentException = null;
+                    try
                     {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        success = false;
-                        subsuccess = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
+                        logger.WriteLine(DateTime.Now.ToString()
+                            + ": Case3 (directly include the moc file and save the header file) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
-                        if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case3: " + currentException.Message);
-                            success = false;
-                        }
-                        else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case3: Build process succeeded (using : " + currentInclude + ")");
-                    }
-                    else
-                    {
-                        currentInclude = "////#CUSTOMINCLUDE";
-                        solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
                         _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
-                        solution = _applicationObject.Solution;
-                    }
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + "Case3: Could not open solution");
 
-                    subsuccess = true;
-                    currentException = ChangeIncludeAndUpdateMoc(foo, foocpp, currentInclude, "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case3: " + currentException.Message);
-                    currentInclude = "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla";
+                        Project project = GetProject("Test1", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
 
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        subsuccess = false;
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
+                        ProjectItem piHeader = project.ProjectItems.Item("Header Files");
+                        ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
 
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
+                        ProjectItem piSource = project.ProjectItems.Item("Source Files");
+                        ProjectItem foocpp = piSource.ProjectItems.Item("foo.cpp");
+
+                        foo.Open(EnvDTE.Constants.vsViewKindPrimary);
+                        if (ProjectItemContainsString(foo, "Q_OBJECT")
+                            && !ProjectItemContainsString(foo, "//Q_OBJECT"))
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case3: \"" + foo.Document.Name + "\" contains Q_OBJECT");
+                        foo.Document.Close(vsSaveChanges.vsSaveChangesNo);
+                        if (foo.IsDirty)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case3: " + foo.Document.Name + " is dirty");
+
+                        string currentInclude = "#include \"moc_foo.cpp\"";
+                        currentException = ReplaceStringInProjectItem(foocpp,
+                            "////#CUSTOMINCLUDE", currentInclude);
                         if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
+                            throw new Exception(DateTime.Now.ToString()
                                 + ": Case3: " + currentException.Message);
+                        currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
+
+                        VCProject vcProject = (VCProject)project.Object;
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            success = false;
+                            subsuccess = false;
+                        }
+                        else
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
+
+                        if (subsuccess)
+                        {
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: Build process succeeded (using : " + currentInclude + ")");
+                        }
+                        else
+                        {
+                            currentInclude = "////#CUSTOMINCLUDE";
+                            solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
+                            _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
+                            solution = _applicationObject.Solution;
+                        }
+
+                        subsuccess = true;
+                        currentException = ChangeIncludeAndUpdateMoc(foo, foocpp, currentInclude, "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case3: " + currentException.Message);
+                        currentInclude = "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla";
+
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            subsuccess = false;
                             success = false;
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case3: Build process succeeded (using : " + currentInclude + ")");
-                    }
-                    else
-                    {
-                        currentInclude = "////#CUSTOMINCLUDE";
-                        solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
-                        _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
-                        solution = _applicationObject.Solution;
-                    }
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
 
-                    subsuccess = true;
-                    currentException = ChangeIncludeAndUpdateMoc(foo, foocpp, currentInclude, "#include <moc_foo.cpp>");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case3: " + currentException.Message);
-                    currentInclude = "#include <moc_foo.cpp>";
-
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        subsuccess = false;
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
-
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
-                        if (currentException != null)
+                        if (subsuccess)
                         {
-                            logger.WriteLine(DateTime.Now.ToString()
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: Build process succeeded (using : " + currentInclude + ")");
+                        }
+                        else
+                        {
+                            currentInclude = "////#CUSTOMINCLUDE";
+                            solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
+                            _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
+                            solution = _applicationObject.Solution;
+                        }
+
+                        subsuccess = true;
+                        currentException = ChangeIncludeAndUpdateMoc(foo, foocpp, currentInclude, "#include <moc_foo.cpp>");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
                                 + ": Case3: " + currentException.Message);
+                        currentInclude = "#include <moc_foo.cpp>";
+
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            subsuccess = false;
                             success = false;
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case3: Build process succeeded (using : " + currentInclude + ")");
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case3: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
+
+                        if (subsuccess)
+                        {
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case3: Build process succeeded (using : " + currentInclude + ")");
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case3 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case3 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case3 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case3 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -551,162 +576,168 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                bool subsuccess = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case4 (directly include the moc file and save the source file) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + "Case4: Could not open solution");
-
-                    Project project = GetProject("Test2", solution);
-                    ProjectItem piHeader = project.ProjectItems.Item("Header Files");
-                    ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
-
-                    ProjectItem piSource = project.ProjectItems.Item("Source Files");
-                    ProjectItem foocpp = piSource.ProjectItems.Item("foo.cpp");
-
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case4: "
-                            + currentException.Message);
-
-                    foo.Open(EnvDTE.Constants.vsViewKindPrimary);
-                    if (!ProjectItemContainsString(foo, "Q_OBJECT")
-                        || ProjectItemContainsString(foo, "//Q_OBJECT"))
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case4: \"" + foo.Document.Name + "\" does not contain Q_OBJECT");
-                    foo.Document.Close(vsSaveChanges.vsSaveChangesNo);
-                    if (foo.IsDirty)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case4: " + foo.Document.Name + " is dirty");
-
-                    string currentInclude = "#include \"moc_foo.cpp\"";
-                    currentException = ReplaceStringInProjectItem(foocpp,
-                        "////#CUSTOMINCLUDE", currentInclude);
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case4: " + currentException.Message);
-
-                    VCProject vcProject = (VCProject)project.Object;
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                    bool success = true;
+                    bool subsuccess = true;
+                    Exception currentException = null;
+                    try
                     {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        subsuccess = false;
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
+                        logger.WriteLine(DateTime.Now.ToString()
+                            + ": Case4 (directly include the moc file and save the source file) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
-                        if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case4: " + currentException.Message);
-                            success = false;
-                        }
-                        else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case4: Build process succeeded (using : " + currentInclude + ")");
-                    }
-                    else
-                    {
-                        currentInclude = "////#CUSTOMINCLUDE";
-                        solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
                         _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                        solution = _applicationObject.Solution;
-                    }
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + "Case4: Could not open solution");
 
-                    subsuccess = true;
-                    currentException = ReplaceStringInProjectItem(foocpp, currentInclude, "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case4: " + currentException.Message);
-                    currentInclude = "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla";
+                        Project project = GetProject("Test2", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        ProjectItem piHeader = project.ProjectItems.Item("Header Files");
+                        ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
 
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        subsuccess = false;
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
+                        ProjectItem piSource = project.ProjectItems.Item("Source Files");
+                        ProjectItem foocpp = piSource.ProjectItems.Item("foo.cpp");
 
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
                         if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
+                            throw new Exception(DateTime.Now.ToString() + ": Case4: "
+                                + currentException.Message);
+
+                        foo.Open(EnvDTE.Constants.vsViewKindPrimary);
+                        if (!ProjectItemContainsString(foo, "Q_OBJECT")
+                            || ProjectItemContainsString(foo, "//Q_OBJECT"))
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case4: \"" + foo.Document.Name + "\" does not contain Q_OBJECT");
+                        foo.Document.Close(vsSaveChanges.vsSaveChangesNo);
+                        if (foo.IsDirty)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case4: " + foo.Document.Name + " is dirty");
+
+                        string currentInclude = "#include \"moc_foo.cpp\"";
+                        currentException = ReplaceStringInProjectItem(foocpp,
+                            "////#CUSTOMINCLUDE", currentInclude);
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
                                 + ": Case4: " + currentException.Message);
+
+                        VCProject vcProject = (VCProject)project.Object;
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            subsuccess = false;
                             success = false;
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case4: Build process succeeded (using : " + currentInclude + ")");
-                    }
-                    else
-                    {
-                        currentInclude = "////#CUSTOMINCLUDE";
-                        solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                        solution = _applicationObject.Solution;
-                    }
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
 
-                    subsuccess = true;
-                    currentException = ReplaceStringInProjectItem(foocpp, currentInclude, "#include <moc_foo.cpp>");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString()
-                            + ": Case4: " + currentException.Message);
-                    currentInclude = "#include <moc_foo.cpp>";
-
-                    if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
-                            + "found or not excluded from build (using " + currentInclude + ")");
-                        subsuccess = false;
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
-                            + "excluded from build (using " + currentInclude + ")");
-
-                    if (subsuccess)
-                    {
-                        currentException = RebuildSolution();
-                        if (currentException != null)
+                        if (subsuccess)
                         {
-                            logger.WriteLine(DateTime.Now.ToString()
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: Build process succeeded (using : " + currentInclude + ")");
+                        }
+                        else
+                        {
+                            currentInclude = "////#CUSTOMINCLUDE";
+                            solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                            _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                            solution = _applicationObject.Solution;
+                        }
+
+                        subsuccess = true;
+                        currentException = ReplaceStringInProjectItem(foocpp, currentInclude, "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
                                 + ": Case4: " + currentException.Message);
+                        currentInclude = "/*schnusel*/ #include \"moc_foo.cpp\" // bla bla bla";
+
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            subsuccess = false;
                             success = false;
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case4: Build process succeeded (using : " + currentInclude + ")");
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
+
+                        if (subsuccess)
+                        {
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: Build process succeeded (using : " + currentInclude + ")");
+                        }
+                        else
+                        {
+                            currentInclude = "////#CUSTOMINCLUDE";
+                            solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                            _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                            solution = _applicationObject.Solution;
+                        }
+
+                        subsuccess = true;
+                        currentException = ReplaceStringInProjectItem(foocpp, currentInclude, "#include <moc_foo.cpp>");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString()
+                                + ": Case4: " + currentException.Message);
+                        currentInclude = "#include <moc_foo.cpp>";
+
+                        if (!FileExistsAndExcludedFromBuild(vcProject, "moc_foo.cpp"))
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were not "
+                                + "found or not excluded from build (using " + currentInclude + ")");
+                            subsuccess = false;
+                            success = false;
+                        }
+                        else
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case4: Moc Files were "
+                                + "excluded from build (using " + currentInclude + ")");
+
+                        if (subsuccess)
+                        {
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case4: Build process succeeded (using : " + currentInclude + ")");
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case4 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case4 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case4 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case4 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -714,93 +745,99 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case5 (Change Preprocessor Definitions) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution; 
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case5: Could not open solution");
-
-                    Project project = GetProject("Test2", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-                    foreach (VCConfiguration proConfig in (IVCCollection)vcProject.Configurations)
-                    {
-                        string define = proConfig.Name.Remove(proConfig.Name.IndexOf('|'));
-                        CompilerToolWrapper compiler = new CompilerToolWrapper(proConfig);
-                        compiler.AddPreprocessorDefinitions(define);
-                    }
-
-                    vcProject.Save();
-
-                    currentException = RebuildSolution();
-                    if (currentException != null)
+                    bool success = true;
+                    Exception currentException = null;
+                    try
                     {
                         logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case5: " + currentException.Message);
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case5: Build process succeeded");
+                            + ": Case5 (Change Preprocessor Definitions) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case5: Could not open solution");
+
+                        Project project = GetProject("Test2", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
+                        foreach (VCConfiguration proConfig in (IVCCollection)vcProject.Configurations)
                         {
-                            if (file.Name == "foo.h")
-                            {
-                                IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                                foreach (VCFileConfiguration fileConfig in fileConfigs)
-                                {
-                                    string define = fileConfig.Name.Remove(fileConfig.Name.IndexOf('|'));
-                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                    if (buildTool != null)
-                                    {
-                                        if (!buildTool.CommandLine.Contains(define))
-                                        {
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was not "
-                                                + "added to the custom build step (" + fileConfig.Name + ")");
-                                            success = false;
-                                        }
-                                        else
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was "
-                                                + "added to the custom build step (" + fileConfig.Name + ")");
-                                    }
-                                    else
-                                        success = false;
-                                }
-                            }
+                            string define = proConfig.Name.Remove(proConfig.Name.IndexOf('|'));
+                            CompilerToolWrapper compiler = new CompilerToolWrapper(proConfig);
+                            compiler.AddPreprocessorDefinitions(define);
                         }
 
-                        if (!success)
+                        vcProject.Save();
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
                         {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was not "
-                                + "added to all custom build steps");
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case5: " + currentException.Message);
+                            success = false;
                         }
                         else
-                        {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was "
-                                + "added to all custom build steps");
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case5: Build process succeeded");
 
+                        if (success)
+                        {
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
+                            {
+                                if (file.Name == "foo.h")
+                                {
+                                    IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                    foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                    {
+                                        string define = fileConfig.Name.Remove(fileConfig.Name.IndexOf('|'));
+                                        VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                        if (buildTool != null)
+                                        {
+                                            if (!buildTool.CommandLine.Contains(define))
+                                            {
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was not "
+                                                    + "added to the custom build step (" + fileConfig.Name + ")");
+                                                success = false;
+                                            }
+                                            else
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was "
+                                                    + "added to the custom build step (" + fileConfig.Name + ")");
+                                        }
+                                        else
+                                            success = false;
+                                    }
+                                }
+                            }
+
+                            if (!success)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was not "
+                                    + "added to all custom build steps");
+                            }
+                            else
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case5: Preprocessor definition was "
+                                    + "added to all custom build steps");
+
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case5 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case5 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case5 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case5 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -808,249 +845,257 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case6 (Change Additional Include Directories) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case6: "
-                            + currentException.Message);
-
-                    Project project = GetProject("Test2", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-
-                    foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
-                    {
-                        string include = config.Name.Remove(config.Name.IndexOf('|'));
-                        CompilerToolWrapper compiler = new CompilerToolWrapper(config);
-                        compiler.AddAdditionalIncludeDirectories(include);
-                    }
-                    vcProject.Save();
-
-                    currentException = RebuildSolution();
-                    if (currentException != null)
+                    bool success = true;
+                    Exception currentException = null;
+                    try
                     {
                         logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: " + currentException.Message);
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: Build process succeeded");
+                            + ": Case6 (Change Additional Include Directories) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case6: "
+                                + currentException.Message);
+
+                        Project project = GetProject("Test2", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
+
+                        foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
                         {
-                            if (file.Name == "foo.h")
+                            string include = config.Name.Remove(config.Name.IndexOf('|'));
+                            CompilerToolWrapper compiler = new CompilerToolWrapper(config);
+                            compiler.AddAdditionalIncludeDirectories(include);
+                        }
+                        vcProject.Save();
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
+                        {
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: " + currentException.Message);
+                            success = false;
+                        }
+                        else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: Build process succeeded");
+
+                        if (success)
+                        {
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
                             {
-                                foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                if (file.Name == "foo.h")
                                 {
-                                    string include = fileConfig.Name.Remove(fileConfig.Name.IndexOf('|'));
-                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                    if (buildTool != null)
+                                    foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
                                     {
-                                        if (!buildTool.CommandLine.Contains("\"-I.\\" + include + "\""))
+                                        string include = fileConfig.Name.Remove(fileConfig.Name.IndexOf('|'));
+                                        VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                        if (buildTool != null)
                                         {
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was not added to the custom build step (" + fileConfig.Name + ")");
-                                            success = false;
+                                            if (!buildTool.CommandLine.Contains("\"-I.\\" + include + "\""))
+                                            {
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was not added to the custom build step (" + fileConfig.Name + ")");
+                                                success = false;
+                                            }
+                                            else
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                         }
-                                        else
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                     }
                                 }
                             }
-                        }
 
-                        if (!success)
+                            if (!success)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
+                                    + "added to all custom build steps");
+                            }
+                            else
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
+                                    + "added to all custom build steps");
+
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (!success)
+                    {
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
+                        return;
+                    }
+                    try
+                    {
+                        string include = "$(SolutionDir)";
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case6: "
+                                + currentException.Message);
+
+                        Project project = GetProject("Test2", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
+
+                        foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
                         {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
-                                + "added to all custom build steps");
+                            CompilerToolWrapper compiler = new CompilerToolWrapper(config);
+                            compiler.AddAdditionalIncludeDirectories(include);
+                        }
+                        vcProject.Save();
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
+                        {
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: " + currentException.Message);
+                            success = false;
                         }
                         else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: Build process succeeded");
+
+                        if (success)
                         {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
-                                + "added to all custom build steps");
-
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (!success)
-                {
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
-                    return;
-                }
-                try
-                {
-                    string include = "$(SolutionDir)";
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case6: "
-                            + currentException.Message);
-
-                    Project project = GetProject("Test2", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-
-                    foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
-                    {
-                        CompilerToolWrapper compiler = new CompilerToolWrapper(config);
-                        compiler.AddAdditionalIncludeDirectories(include);
-                    }
-                    vcProject.Save();
-
-                    currentException = RebuildSolution();
-                    if (currentException != null)
-                    {
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: " + currentException.Message);
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: Build process succeeded");
-
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
-                        {
-                            if (file.Name == "foo.h")
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
                             {
-                                foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                if (file.Name == "foo.h")
                                 {
-                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                    if (buildTool != null)
+                                    foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
                                     {
-                                        if (!buildTool.CommandLine.Contains("\"-I" + include + "\\.\""))
+                                        VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                        if (buildTool != null)
                                         {
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was not added to the custom build step (" + fileConfig.Name + ")");
-                                            success = false;
+                                            if (!buildTool.CommandLine.Contains("\"-I" + include + "\\.\""))
+                                            {
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was not added to the custom build step (" + fileConfig.Name + ")");
+                                                success = false;
+                                            }
+                                            else
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                         }
-                                        else
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                     }
                                 }
                             }
-                        }
 
-                        if (!success)
+                            if (!success)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
+                                    + "added to all custom build steps");
+                            }
+                            else
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
+                                    + "added to all custom build steps");
+
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (!success)
+                    {
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
+                        return;
+                    }
+                    try
+                    {
+                        string include = "C:\\FOO\\";
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case6: "
+                                + currentException.Message);
+
+                        Project project = GetProject("Test2", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
+
+                        foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
                         {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
-                                + "added to all custom build steps");
+                            CompilerToolWrapper compiler = new CompilerToolWrapper(config);
+                            compiler.AddAdditionalIncludeDirectories(include);
+                        }
+                        vcProject.Save();
+
+                        currentException = RebuildSolution();
+                        if (currentException != null)
+                        {
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: " + currentException.Message);
+                            success = false;
                         }
                         else
+                            logger.WriteLine(DateTime.Now.ToString()
+                                + ": Case6: Build process succeeded");
+
+                        if (success)
                         {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
-                                + "added to all custom build steps");
-
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (!success)
-                {
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
-                    return;
-                }
-                try
-                {
-                    string include = "C:\\FOO\\";
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case6: "
-                            + currentException.Message);
-
-                    Project project = GetProject("Test2", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-
-                    foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
-                    {
-                        CompilerToolWrapper compiler = new CompilerToolWrapper(config);
-                        compiler.AddAdditionalIncludeDirectories(include);
-                    }
-                    vcProject.Save();
-
-                    currentException = RebuildSolution();
-                    if (currentException != null)
-                    {
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: " + currentException.Message);
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case6: Build process succeeded");
-
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
-                        {
-                            if (file.Name == "foo.h")
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
                             {
-                                foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                if (file.Name == "foo.h")
                                 {
-                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                    if (buildTool != null)
+                                    foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
                                     {
-                                        if (!buildTool.CommandLine.Contains("\"-IC:\\FOO\""))
+                                        VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                        if (buildTool != null)
                                         {
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was not added to the custom build step (" + fileConfig.Name + ")");
-                                            success = false;
+                                            if (!buildTool.CommandLine.Contains("\"-IC:\\FOO\""))
+                                            {
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was not added to the custom build step (" + fileConfig.Name + ")");
+                                                success = false;
+                                            }
+                                            else
+                                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
+                                                    + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                         }
-                                        else
-                                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib "
-                                                + include + " was added to the custom build step (" + fileConfig.Name + ")");
                                     }
                                 }
                             }
-                        }
 
-                        if (!success)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
-                                + "added to all custom build steps");
-                        }
-                        else
-                        {
-                            logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
-                                + "added to all custom build steps");
+                            if (!success)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was not "
+                                    + "added to all custom build steps");
+                            }
+                            else
+                            {
+                                logger.WriteLine(DateTime.Now.ToString() + ": Case6: Additional include lib was "
+                                    + "added to all custom build steps");
 
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case6 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case6 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case6 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -1058,95 +1103,50 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                bool subsuccess = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case7 (Add user defined custom build steps) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case7: "
-                            + currentException.Message);
-
-                    Project project = GetProject("Test1", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
+                    bool success = true;
+                    bool subsuccess = true;
+                    Exception currentException = null;
+                    try
                     {
-                        if (file.Name == "foo.h")
-                        {
-                            IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                            foreach (VCFileConfiguration fileConfig in fileConfigs)
-                            {
-                                VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                buildTool.CommandLine = buildTool.CommandLine + "T3$T$TR1NG";
-                            }
-                        }
-                    }
-                    vcProject.Save();
+                        logger.WriteLine(DateTime.Now.ToString()
+                            + ": Case7 (Add user defined custom build steps) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    ProjectItem piHeader = project.ProjectItems.Item("Header Files");
-                    ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
-
-                    currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case7: "
-                            + currentException.Message);
-
-
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
-                    {
-                        if (file.Name == "foo.h")
-                        {
-                            IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                            foreach (VCFileConfiguration fileConfig in fileConfigs)
-                            {
-                                VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                if (buildTool != null)
-                                    if (!buildTool.CommandLine.Contains("T3$T$TR1NG"))
-                                    {
-                                        subsuccess = false;
-                                        break;
-                                    }
-                            }
-                        }
-                    }
-
-                    if (!subsuccess)
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was not kept "
-                            + "when the Q_OBJECT macro was added");
-                        success = false;
-                    }
-                    else
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was kept "
-                            + "when the Q_OBJECT macro was added");
-                        currentException = RebuildSolution();
-                        if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case7: " + currentException.Message);
-                            success = false;
-                            subsuccess = false;
-                        }
-                        else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case7: Build process succeeded");
-                    }
-
-                    if (!subsuccess)
-                    {
-                        solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
-                        _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
-                        solution = _applicationObject.Solution;
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
                         if (solution == null)
                             throw new Exception(DateTime.Now.ToString() + ": Case7: "
                                 + currentException.Message);
+
+                        Project project = GetProject("Test1", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
+                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        {
+                            if (file.Name == "foo.h")
+                            {
+                                IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                {
+                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                    buildTool.CommandLine = buildTool.CommandLine + "T3$T$TR1NG";
+                                }
+                            }
+                        }
+                        vcProject.Save();
+
+                        ProjectItem piHeader = project.ProjectItems.Item("Header Files");
+                        ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
+
+                        currentException = ReplaceStringInProjectItem(foo, "//Q_OBJECT_HERE", "Q_OBJECT");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case7: "
+                                + currentException.Message);
+
 
                         foreach (VCFile file in (IVCCollection)vcProject.Files)
                         {
@@ -1156,69 +1156,120 @@ namespace AddInAutoTest
                                 foreach (VCFileConfiguration fileConfig in fileConfigs)
                                 {
                                     VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                    buildTool.CommandLine = "T3$T$TR1NG " + buildTool.CommandLine;
+                                    if (buildTool != null)
+                                        if (!buildTool.CommandLine.Contains("T3$T$TR1NG"))
+                                        {
+                                            subsuccess = false;
+                                            break;
+                                        }
                                 }
                             }
                         }
-                        vcProject.Save();
-                    }
 
-                    currentException = ReplaceStringInProjectItem(foo, "Q_OBJECT", "//Q_OBJECT_HERE");
-                    if (currentException != null)
-                        throw new Exception(DateTime.Now.ToString() + "Case7: "
-                            + currentException.Message);
-
-
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
-                    {
-                        if (file.Name == "foo.h")
+                        if (!subsuccess)
                         {
-                            IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                            foreach (VCFileConfiguration fileConfig in fileConfigs)
-                            {
-                                VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
-                                if (buildTool != null)
-                                    if (!buildTool.CommandLine.Contains("T3$T$TR1NG"))
-                                    {
-                                        subsuccess = false;
-                                        break;
-                                    }
-                            }
-                        }
-                    }
-
-                    if (!subsuccess)
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was not kept "
-                            + "when the Q_OBJECT macro was removed");
-                        success = false;
-                    }
-                    else
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was kept "
-                            + "when the Q_OBJECT macro was removed");
-                        currentException = RebuildSolution();
-                        if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case7: " + currentException.Message);
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was not kept "
+                                + "when the Q_OBJECT macro was added");
                             success = false;
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case7: Build process succeeded");
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was kept "
+                                + "when the Q_OBJECT macro was added");
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case7: " + currentException.Message);
+                                success = false;
+                                subsuccess = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case7: Build process succeeded");
+                        }
+
+                        if (!subsuccess)
+                        {
+                            solutionRootDir = BackupSolution(testPath + templatePath, "Test2" + extension);
+                            _applicationObject.Solution.Open(solutionRootDir + "Test2" + extension + ".sln");
+                            solution = _applicationObject.Solution;
+                            if (solution == null)
+                                throw new Exception(DateTime.Now.ToString() + ": Case7: "
+                                    + currentException.Message);
+
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
+                            {
+                                if (file.Name == "foo.h")
+                                {
+                                    IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                    foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                    {
+                                        VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                        buildTool.CommandLine = "T3$T$TR1NG " + buildTool.CommandLine;
+                                    }
+                                }
+                            }
+                            vcProject.Save();
+                        }
+
+                        currentException = ReplaceStringInProjectItem(foo, "Q_OBJECT", "//Q_OBJECT_HERE");
+                        if (currentException != null)
+                            throw new Exception(DateTime.Now.ToString() + "Case7: "
+                                + currentException.Message);
+
+
+                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        {
+                            if (file.Name == "foo.h")
+                            {
+                                IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                {
+                                    VCCustomBuildTool buildTool = (VCCustomBuildTool)fileConfig.Tool;
+                                    if (buildTool != null)
+                                        if (!buildTool.CommandLine.Contains("T3$T$TR1NG"))
+                                        {
+                                            subsuccess = false;
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+
+                        if (!subsuccess)
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was not kept "
+                                + "when the Q_OBJECT macro was removed");
+                            success = false;
+                        }
+                        else
+                        {
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case7: Custom build step was kept "
+                                + "when the Q_OBJECT macro was removed");
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case7: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case7: Build process succeeded");
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case7 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case7 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case7 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case7 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -1226,80 +1277,27 @@ namespace AddInAutoTest
         {
             foreach (String extension in extensions)
             {
-                bool success = true;
-                Exception currentException = null;
-                try
+                foreach (string mocDirectory in mocDirectories)
                 {
-                    logger.WriteLine(DateTime.Now.ToString()
-                        + ": Case8 (Exclusion of mocced files) begins (extension: " + extension + ")");
-
-                    String solutionRootDir = BackupSolution(testPath + templatePath, "Test3" + extension);
-                    _applicationObject.Solution.Open(solutionRootDir + "Test3" + extension + ".sln");
-                    Solution solution = _applicationObject.Solution;
-                    if (solution == null)
-                        throw new Exception(DateTime.Now.ToString() + ": Case8: "
-                            + currentException.Message);
-
-                    Project project = GetProject("Test3", solution);
-                    VCProject vcProject = (VCProject)project.Object;
-                    foreach (VCFile file in (IVCCollection)vcProject.Files)
-                    {
-                        if (file.Name == "foo.h" || file.Name == "foo.cpp" || file.Name == "bar.cpp")
-                        {
-                            IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                            foreach (VCFileConfiguration fileConfig in fileConfigs)
-                            {
-                                if (fileConfig.Name.ToLower().Contains("debug"))
-                                    fileConfig.ExcludedFromBuild = true;
-                            }
-                        }
-                    }
-                    vcProject.Save();
-                    currentException = RebuildSolution();
-                    if (currentException != null)
+                    bool success = true;
+                    Exception currentException = null;
+                    try
                     {
                         logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case8: " + currentException.Message);
-                        success = false;
-                    }
-                    else
-                        logger.WriteLine(DateTime.Now.ToString()
-                            + ": Case8: Build process succeeded");
+                            + ": Case8 (Exclusion of mocced files) begins");
+                        logger.WriteLine("\textension: " + extension);
+                        logger.WriteLine("\tmoc directory: " + mocDirectory);
 
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
-                        {
-                            if (file.Name == "moc_foo.cpp" || file.Name == "bar.moc")
-                            {
-                                IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                                foreach (VCFileConfiguration fileConfig in fileConfigs)
-                                {
-                                    if (fileConfig.Name.ToLower().Contains("debug") && !fileConfig.ExcludedFromBuild)
-                                    {
-                                        success = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!success)
-                                break;
-                        }
-                    }
+                        String solutionRootDir = BackupSolution(testPath + templatePath, "Test3" + extension);
+                        _applicationObject.Solution.Open(solutionRootDir + "Test3" + extension + ".sln");
+                        Solution solution = _applicationObject.Solution;
+                        if (solution == null)
+                            throw new Exception(DateTime.Now.ToString() + ": Case8: "
+                                + currentException.Message);
 
-                    if (!success)
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not excluded from build "
-                            + "when sources were excluded (excluded in debug configuration)");
-                    }
-                    else
-                    {
-                        logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were excluded from build "
-                            + "when sources were excluded (excluded in debug configuration)");
-                    }
-
-                    if (success)
-                    {
+                        Project project = GetProject("Test3", solution);
+                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        VCProject vcProject = (VCProject)project.Object;
                         foreach (VCFile file in (IVCCollection)vcProject.Files)
                         {
                             if (file.Name == "foo.h" || file.Name == "foo.cpp" || file.Name == "bar.cpp")
@@ -1307,7 +1305,7 @@ namespace AddInAutoTest
                                 IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
                                 foreach (VCFileConfiguration fileConfig in fileConfigs)
                                 {
-                                    if (fileConfig.Name.ToLower().Contains("foobar"))
+                                    if (fileConfig.Name.ToLower().Contains("debug"))
                                         fileConfig.ExcludedFromBuild = true;
                                 }
                             }
@@ -1333,10 +1331,8 @@ namespace AddInAutoTest
                                     IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
                                     foreach (VCFileConfiguration fileConfig in fileConfigs)
                                     {
-                                        if (fileConfig.Name.ToLower().Contains("foobar") && !fileConfig.ExcludedFromBuild)
+                                        if (fileConfig.Name.ToLower().Contains("debug") && !fileConfig.ExcludedFromBuild)
                                         {
-                                            logger.WriteLine(DateTime.Now.ToString()
-                                                + ": Case8: mocced file " + file.Name + "was not excluded from build in config " + fileConfig.Name);
                                             success = false;
                                             break;
                                         }
@@ -1345,80 +1341,19 @@ namespace AddInAutoTest
                                 if (!success)
                                     break;
                             }
-
-                            if (!success)
-                            {
-                                logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not excluded from build "
-                                    + "when sources were excluded (excluded in debug & foobar configuration)");
-                                success = false;
-                            }
-                            else
-                            {
-                                logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were excluded from build "
-                                    + "when sources were excluded (excluded in debug & foobar configuration)");
-                            }
                         }
-                    }
 
-                    if (success)
-                    {
-                        foreach (VCFile file in (IVCCollection)vcProject.Files)
+                        if (!success)
                         {
-                            if (file.Name == "foo.h" || file.Name == "foo.cpp" || file.Name == "bar.cpp")
-                            {
-                                IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                                foreach (VCFileConfiguration fileConfig in fileConfigs)
-                                {
-                                    if (fileConfig.Name.ToLower().Contains("foobar"))
-                                        fileConfig.ExcludedFromBuild = false;
-                                }
-                            }
-                        }
-                        vcProject.Save();
-                        currentException = RebuildSolution();
-                        if (currentException != null)
-                        {
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case8: " + currentException.Message);
-                            success = false;
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not excluded from build "
+                                + "when sources were excluded (excluded in debug configuration)");
                         }
                         else
-                            logger.WriteLine(DateTime.Now.ToString()
-                                + ": Case8: Build process succeeded");
-
-                        if (success)
                         {
-                            foreach (VCFile file in (IVCCollection)vcProject.Files)
-                            {
-                                if (file.Name == "moc_foo.cpp" || file.Name == "foo.moc")
-                                {
-                                    VCFilter filter = file.Parent as VCFilter;
-                                    if (filter == null || filter.Name != "foobar")
-                                        continue;
-                                    IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
-                                    foreach (VCFileConfiguration fileConfig in fileConfigs)
-                                    {
-                                        if (fileConfig.Name.ToLower().Contains("foobar") && fileConfig.ExcludedFromBuild)
-                                        {
-                                            success = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!success)
-                                    break;
-                            }
-                            if (!success)
-                            {
-                                logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not included correctly"
-                                    + "when sources were included (excluded in debug configuration)");
-                            }
-                            else
-                            {
-                                logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were included in build "
-                                    + "when sources were included (excluded in debug configuration)");
-                            }
+                            logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were excluded from build "
+                                + "when sources were excluded (excluded in debug configuration)");
                         }
+
                         if (success)
                         {
                             foreach (VCFile file in (IVCCollection)vcProject.Files)
@@ -1428,7 +1363,69 @@ namespace AddInAutoTest
                                     IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
                                     foreach (VCFileConfiguration fileConfig in fileConfigs)
                                     {
-                                        if (fileConfig.Name.ToLower().Contains("debug"))
+                                        if (fileConfig.Name.ToLower().Contains("foobar"))
+                                            fileConfig.ExcludedFromBuild = true;
+                                    }
+                                }
+                            }
+                            vcProject.Save();
+                            currentException = RebuildSolution();
+                            if (currentException != null)
+                            {
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case8: " + currentException.Message);
+                                success = false;
+                            }
+                            else
+                                logger.WriteLine(DateTime.Now.ToString()
+                                    + ": Case8: Build process succeeded");
+
+                            if (success)
+                            {
+                                foreach (VCFile file in (IVCCollection)vcProject.Files)
+                                {
+                                    if (file.Name == "moc_foo.cpp" || file.Name == "bar.moc")
+                                    {
+                                        IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                        foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                        {
+                                            if (fileConfig.Name.ToLower().Contains("foobar") && !fileConfig.ExcludedFromBuild)
+                                            {
+                                                logger.WriteLine(DateTime.Now.ToString()
+                                                    + ": Case8: mocced file " + file.Name + "was not excluded from build in config " + fileConfig.Name);
+                                                success = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (!success)
+                                        break;
+                                }
+
+                                if (!success)
+                                {
+                                    logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not excluded from build "
+                                        + "when sources were excluded (excluded in debug & foobar configuration)");
+                                    success = false;
+                                }
+                                else
+                                {
+                                    logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were excluded from build "
+                                        + "when sources were excluded (excluded in debug & foobar configuration)");
+                                }
+                            }
+                        }
+
+                        if (success)
+                        {
+                            foreach (VCFile file in (IVCCollection)vcProject.Files)
+                            {
+                                if (file.Name == "foo.h" || file.Name == "foo.cpp" || file.Name == "bar.cpp")
+                                {
+                                    IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                    foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                    {
+                                        if (fileConfig.Name.ToLower().Contains("foobar"))
                                             fileConfig.ExcludedFromBuild = false;
                                     }
                                 }
@@ -1452,15 +1449,13 @@ namespace AddInAutoTest
                                     if (file.Name == "moc_foo.cpp" || file.Name == "foo.moc")
                                     {
                                         VCFilter filter = file.Parent as VCFilter;
-                                        if (filter == null || filter.Name != "debug")
+                                        if (filter == null || filter.Name != "foobar")
                                             continue;
                                         IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
                                         foreach (VCFileConfiguration fileConfig in fileConfigs)
                                         {
-                                            if (fileConfig.Name.ToLower().Contains("debug") && fileConfig.ExcludedFromBuild)
+                                            if (fileConfig.Name.ToLower().Contains("foobar") && fileConfig.ExcludedFromBuild)
                                             {
-                                                string configName = fileConfig.Name;
-                                                bool excluded = fileConfig.ExcludedFromBuild;
                                                 success = false;
                                                 break;
                                             }
@@ -1471,28 +1466,90 @@ namespace AddInAutoTest
                                 }
                                 if (!success)
                                 {
-                                    logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not included in build "
-                                        + "when sources were included");
+                                    logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not included correctly"
+                                        + "when sources were included (excluded in debug configuration)");
                                 }
                                 else
                                 {
                                     logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were included in build "
-                                        + "when sources were included");
+                                        + "when sources were included (excluded in debug configuration)");
+                                }
+                            }
+                            if (success)
+                            {
+                                foreach (VCFile file in (IVCCollection)vcProject.Files)
+                                {
+                                    if (file.Name == "foo.h" || file.Name == "foo.cpp" || file.Name == "bar.cpp")
+                                    {
+                                        IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                        foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                        {
+                                            if (fileConfig.Name.ToLower().Contains("debug"))
+                                                fileConfig.ExcludedFromBuild = false;
+                                        }
+                                    }
+                                }
+                                vcProject.Save();
+                                currentException = RebuildSolution();
+                                if (currentException != null)
+                                {
+                                    logger.WriteLine(DateTime.Now.ToString()
+                                        + ": Case8: " + currentException.Message);
+                                    success = false;
+                                }
+                                else
+                                    logger.WriteLine(DateTime.Now.ToString()
+                                        + ": Case8: Build process succeeded");
+
+                                if (success)
+                                {
+                                    foreach (VCFile file in (IVCCollection)vcProject.Files)
+                                    {
+                                        if (file.Name == "moc_foo.cpp" || file.Name == "foo.moc")
+                                        {
+                                            VCFilter filter = file.Parent as VCFilter;
+                                            if (filter == null || filter.Name != "debug")
+                                                continue;
+                                            IVCCollection fileConfigs = (IVCCollection)file.FileConfigurations;
+                                            foreach (VCFileConfiguration fileConfig in fileConfigs)
+                                            {
+                                                if (fileConfig.Name.ToLower().Contains("debug") && fileConfig.ExcludedFromBuild)
+                                                {
+                                                    string configName = fileConfig.Name;
+                                                    bool excluded = fileConfig.ExcludedFromBuild;
+                                                    success = false;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (!success)
+                                            break;
+                                    }
+                                    if (!success)
+                                    {
+                                        logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were not included in build "
+                                            + "when sources were included");
+                                    }
+                                    else
+                                    {
+                                        logger.WriteLine(DateTime.Now.ToString() + ": Case8: mocced Files were included in build "
+                                            + "when sources were included");
+                                    }
                                 }
                             }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        logger.WriteLine(e.Message);
+                    }
+                    if (success)
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case8 succeeded");
+                    else
+                        logger.WriteLine(DateTime.Now.ToString() + ": Case8 failed");
+                    logger.WriteLine("");
                 }
-                catch (Exception e)
-                {
-                    success = false;
-                    logger.WriteLine(e.Message);
-                }
-                if (success)
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case8 succeeded");
-                else
-                    logger.WriteLine(DateTime.Now.ToString() + ": Case8 failed");
-                logger.WriteLine("");
             }
         }
 
@@ -1827,6 +1884,10 @@ namespace AddInAutoTest
         {
             extensions.Add("");
             extensions.Add("pch");
+            mocDirectories.Add("GeneratedFiles");
+            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)");
+            mocDirectories.Add("GeneratedFiles\\$(PlatformName)");
+            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)-$(PlatformName)");
             server = new UdpClient(200);
             IPEndPoint recvpt = new IPEndPoint(IPAddress.Any, 0);
             byte[] data;
@@ -1876,6 +1937,32 @@ namespace AddInAutoTest
                 catch
                 { }
             }
+        }
+
+        private bool SetProjectDirectory(ref Project project, ProjectDirectory directory, string value)
+        {
+#if !VS2010
+            Solution solution = _applicationObject.Solution;
+            string projectPath = project.FullName;
+            solution.Remove(project);
+            XmlDocument document = new XmlDocument();
+            document.Load(projectPath);
+            XmlNodeList nodes = document.GetElementsByTagName("Global");
+            foreach (XmlNode node in nodes)
+            {
+                XmlAttributeCollection attributes = node.Attributes;
+                if (attributes["Name"].Value == directory.ToString())
+                {
+                    attributes["Value"].Value = value;
+                    document.Save(projectPath);
+                    project = solution.AddFromFile(projectPath, false);
+                    return true;
+                }
+            }
+            project = solution.AddFromFile(projectPath, false);
+#else
+#endif
+            return false;
         }
 
         /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
