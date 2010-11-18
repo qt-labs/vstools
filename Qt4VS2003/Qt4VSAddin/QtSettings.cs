@@ -87,7 +87,7 @@ namespace Qt4VSAddin
             if (oldUicDir != newUicDir)
             {
                 QtVSIPSettings.SaveUicDirectory(project, newUicDir);
-                qtPro.UpdateUicSteps(newUicDir);
+                qtPro.UpdateUicSteps(oldUicDir);
             }
 
             if (oldRccDir != newRccDir)
