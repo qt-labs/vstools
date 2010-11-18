@@ -2426,44 +2426,26 @@ namespace Nokia.QtProjectLib
                 CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
                 if (compiler == null)
                     continue;
-                fixedOldDir = FixFilePathForComparison(oldDir);
-                string additionalIncludeDirs = compiler.GetAdditionalIncludeDirectories();
-                if (additionalIncludeDirs == null)
+                List<string> paths = compiler.AdditionalIncludeDirectories;
+                if (paths.Count == 0)
                     continue;
-                string[] paths = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
-                string newPath = "";                
-                incList.Clear();
 
                 if (!oldDirIsUsed)
-                {
-                    // remove old path
-                    foreach (string path in paths)
-                    {
-                        if (FixFilePathForComparison(path) != fixedOldDir)
-                            newPath += ";" + path;
-                    }
-                    if (newPath.StartsWith(";"))
-                        newPath = newPath.Substring(1);
-                    compiler.SetAdditionalIncludeDirectories(newPath);
-                    paths = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
-                    newPath = ""; 
-                }
+                    for (int i = paths.Count - 1; i >= 0; --i)
+                        if (FixFilePathForComparison(paths[i]) == fixedOldDir)
+                            paths.RemoveAt(i);
 
-                foreach (string path in paths) {
+                incList.Clear();
+                foreach (string path in paths)
+                {
                     string tmp = HelperFunctions.NormalizeRelativeFilePath(path);
-                    if (tmp.Length > 0 && !incList.Contains(tmp.ToLower()))
-                    {                           
-                        newPath += ";" + tmp;
+                    if (tmp.Length > 0 && !incList.Contains(tmp))
                         incList.Add(tmp.ToLower());
-                    }
                 }
                 if (!incList.Contains(FixFilePathForComparison(newDir)))
-                    newPath += ";" + HelperFunctions.NormalizeRelativeFilePath(newDir);
+                    incList.Add(HelperFunctions.NormalizeRelativeFilePath(newDir));
                 
-                if (newPath.StartsWith(";"))
-                    newPath = newPath.Substring(1);
-
-                compiler.SetAdditionalIncludeDirectories(newPath);
+                compiler.AdditionalIncludeDirectories = incList;
             }
         }
 
