@@ -252,20 +252,42 @@ namespace AddInAutoTest
                                 ProjectItem fileItem = file.Object as ProjectItem;
                                 VCProjectItem vcFileItem = fileItem.Object as VCProjectItem;
                                 VCFilter itemFilter = vcFileItem.Parent as VCFilter;
-                                if (itemFilter == null)
+                                if (itemFilter == null && (mocDirectory.Contains("$(ConfigurationName") || mocDirectory.Contains("$(PlatformName")))
                                 {
                                     success = false;
                                     break;
                                 }
-                                foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                if (itemFilter != null && !itemFilter.Name.Equals("Generated Files"))  //Configuration-/PlatformName in MocDirectory
                                 {
-                                    foreach (VCConfiguration projectConfig in vcProject.Configurations as IVCCollection)
+                                    foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
                                     {
-                                        if (fileConfig.ExcludedFromBuild == fileConfig.Name.StartsWith(itemFilter.Name))
+                                        VCConfiguration config = fileConfig.ProjectConfiguration as VCConfiguration;
+                                        string filterName = "";
+                                        if (mocDirectory.Contains("$(ConfigurationName"))
+                                            filterName += config.ConfigurationName;
+                                        if (mocDirectory.Contains("$(PlatformName)"))
+                                        {
+                                            if (!string.IsNullOrEmpty(filterName))
+                                                filterName += '_';
+                                            VCPlatform platform = config.Platform as VCPlatform;
+                                            filterName += platform.Name;
+                                        }
+
+                                        bool hasToBeExcluded = !filterName.Equals(itemFilter.Name);
+
+                                        if (fileConfig.ExcludedFromBuild != hasToBeExcluded)
                                         {
                                             excludedCorrectly = false;
                                             break;
                                         }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (VCFileConfiguration fileConfig in (IVCCollection)file.FileConfigurations)
+                                    {
+                                        if (fileConfig.ExcludedFromBuild)
+                                            excludedCorrectly = false;
                                     }
                                 }
                             }
@@ -276,7 +298,6 @@ namespace AddInAutoTest
                         else
                             logger.WriteLine(DateTime.Now.ToString()
                                 + ": Case1: Moc Files were generated correctly");
-
 
                         currentException = RebuildSolution();
                         if (currentException != null)
