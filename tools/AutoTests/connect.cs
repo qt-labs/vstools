@@ -1944,6 +1944,7 @@ namespace AddInAutoTest
 #if !VS2010
             Solution solution = _applicationObject.Solution;
             string projectPath = project.FullName;
+            string defaultValue = DefaultValue(directory);
             solution.Remove(project);
             XmlDocument document = new XmlDocument();
             document.Load(projectPath);
@@ -1952,17 +1953,42 @@ namespace AddInAutoTest
             {
                 XmlAttributeCollection attributes = node.Attributes;
                 if (attributes["Name"].Value == directory.ToString())
-                {
                     attributes["Value"].Value = value;
-                    document.Save(projectPath);
-                    project = solution.AddFromFile(projectPath, false);
-                    return true;
-                }
             }
+            nodes = document.GetElementsByTagName("Tool");
+            foreach (XmlNode node in nodes)
+            {
+                XmlAttributeCollection attributes = node.Attributes;
+                if (attributes["Name"].Value == "VCCLCompilerTool")
+                    if (attributes["AdditionalIncludeDirectories"] != null)
+                    {
+                        string attributeValue = attributes["AdditionalIncludeDirectories"].Value;
+                        attributeValue = attributeValue.Replace(defaultValue, value);
+                        attributes["AdditionalIncludeDirectories"].Value = attributeValue;
+                    }
+            }
+            document.Save(projectPath);
             project = solution.AddFromFile(projectPath, false);
+            return true;
 #else
 #endif
             return false;
+        }
+
+        private string DefaultValue(ProjectDirectory directory)
+        {
+            string defaultString = "GeneratedFiles\\";
+            switch (directory)
+            {
+                case ProjectDirectory.MocDir:
+                    return defaultString + "moc";
+                case ProjectDirectory.RccDir:
+                    return defaultString + "rcc";
+                case ProjectDirectory.UicDir:
+                    return defaultString + "uic";
+                default:
+                    return null;
+            }
         }
 
         /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
