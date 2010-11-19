@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui"
+				AdditionalIncludeDirectories="$(QTDIR)\include;.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;.\GeneratedFiles\moc;.\GeneratedFiles\uic;.\GeneratedFiles\rcc"
 				PreprocessorDefinitions="UNICODE,WIN32,QT_THREAD_SUPPORT,QT_NO_DEBUG,NDEBUG,QT_CORE_LIB,QT_GUI_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui"
+				AdditionalIncludeDirectories="$(QTDIR)\include;.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;.\GeneratedFiles\moc;.\GeneratedFiles\uic;.\GeneratedFiles\rcc"
 				PreprocessorDefinitions="UNICODE,WIN32,QT_THREAD_SUPPORT,QT_CORE_LIB,QT_GUI_LIB"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -237,10 +237,10 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Uic&apos;ing $(InputPath)..."
-						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_foo.h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\uic\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="&quot;.\GeneratedFiles\ui_foo.h&quot;"
+						Outputs="&quot;.\GeneratedFiles\uic\ui_$(InputName).h&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -248,10 +248,10 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Uic&apos;ing $(InputPath)..."
-						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_foo.h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\uic\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="&quot;.\GeneratedFiles\ui_foo.h&quot;"
+						Outputs="&quot;.\GeneratedFiles\uic\ui_$(InputName).h&quot;"
 					/>
 				</FileConfiguration>
 			</File>
@@ -270,10 +270,10 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						AdditionalDependencies=""
-						Outputs=""
+						Description="Rcc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\rcc.exe&quot; -name &quot;$(InputName)&quot; -no-compress &quot;$(InputPath)&quot; -o .\GeneratedFiles\rcc\qrc_$(InputName).cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(InputPath)"
+						Outputs=".\GeneratedFiles\rcc\qrc_$(InputName).cpp"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -281,10 +281,10 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						AdditionalDependencies=""
-						Outputs=""
+						Description="Rcc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\rcc.exe&quot; -name &quot;$(InputName)&quot; -no-compress &quot;$(InputPath)&quot; -o .\GeneratedFiles\rcc\qrc_$(InputName).cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(InputPath)"
+						Outputs=".\GeneratedFiles\rcc\qrc_$(InputName).cpp"
 					/>
 				</FileConfiguration>
 			</File>
@@ -296,7 +296,27 @@
 			SourceControlFiles="false"
 			>
 			<File
-				RelativePath=".\GeneratedFiles\ui_foo.h"
+				RelativePath=".\GeneratedFiles\rcc\qrc_foo.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GeneratedFiles\uic\ui_foo.h"
 				>
 			</File>
 		</Filter>
@@ -304,7 +324,7 @@
 	<Globals>
 		<Global
 			Name="MocDir"
-			Value=".\GeneratedFiles\$(ConfigurationName)"
+			Value=".\GeneratedFiles\moc"
 		/>
 		<Global
 			Name="QtVersion"
@@ -312,11 +332,11 @@
 		/>
 		<Global
 			Name="RccDir"
-			Value=".\GeneratedFiles"
+			Value=".\GeneratedFiles\rcc"
 		/>
 		<Global
 			Name="UicDir"
-			Value=".\GeneratedFiles"
+			Value=".\GeneratedFiles\uic"
 		/>
 	</Globals>
 </VisualStudioProject>
