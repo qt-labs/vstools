@@ -66,6 +66,7 @@ namespace AddInAutoTest
         private string testPath = null;
         private List<String> extensions = new List<String>();
         private List<string> mocDirectories = new List<string>();
+        private string appwrapperPath = null;
 
         private String BackupSolution(string path, string name)
         {
@@ -207,7 +208,7 @@ namespace AddInAutoTest
                             throw new Exception(DateTime.Now.ToString() + "Case1: Could not open solution");
 
                         Project project = GetProject("Test1", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
 
                         ProjectItem piSource = project.ProjectItems.Item("Source Files");
                         ProjectItem main = piSource.ProjectItems.Item("main.cpp");
@@ -344,7 +345,7 @@ namespace AddInAutoTest
                             throw new Exception(DateTime.Now.ToString() + ": Case2: Could not open solution");
 
                         Project pro = GetProject("Test2", solution);
-                        SetProjectDirectory(ref pro, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(pro, ProjectDirectory.MocDir, mocDirectory);
 
                         ProjectItem piSource = pro.ProjectItems.Item("Source Files");
                         ProjectItem main = piSource.ProjectItems.Item("main.cpp");
@@ -449,7 +450,7 @@ namespace AddInAutoTest
                             throw new Exception(DateTime.Now.ToString() + "Case3: Could not open solution");
 
                         Project project = GetProject("Test1", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
 
                         ProjectItem piHeader = project.ProjectItems.Item("Header Files");
                         ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
@@ -616,7 +617,7 @@ namespace AddInAutoTest
                             throw new Exception(DateTime.Now.ToString() + "Case4: Could not open solution");
 
                         Project project = GetProject("Test2", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         ProjectItem piHeader = project.ProjectItems.Item("Header Files");
                         ProjectItem foo = piHeader.ProjectItems.Item("foo.h");
 
@@ -784,7 +785,7 @@ namespace AddInAutoTest
                             throw new Exception(DateTime.Now.ToString() + ": Case5: Could not open solution");
 
                         Project project = GetProject("Test2", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
                         foreach (VCConfiguration proConfig in (IVCCollection)vcProject.Configurations)
                         {
@@ -885,7 +886,7 @@ namespace AddInAutoTest
                                 + currentException.Message);
 
                         Project project = GetProject("Test2", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
 
                         foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
@@ -967,7 +968,7 @@ namespace AddInAutoTest
                                 + currentException.Message);
 
                         Project project = GetProject("Test2", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
 
                         foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
@@ -1047,7 +1048,7 @@ namespace AddInAutoTest
                                 + currentException.Message);
 
                         Project project = GetProject("Test2", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
 
                         foreach (VCConfiguration config in (IVCCollection)vcProject.Configurations)
@@ -1144,7 +1145,7 @@ namespace AddInAutoTest
                                 + currentException.Message);
 
                         Project project = GetProject("Test1", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
                         foreach (VCFile file in (IVCCollection)vcProject.Files)
                         {
@@ -1317,7 +1318,7 @@ namespace AddInAutoTest
                                 + currentException.Message);
 
                         Project project = GetProject("Test3", solution);
-                        SetProjectDirectory(ref project, ProjectDirectory.MocDir, mocDirectory);
+                        SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
                         VCProject vcProject = (VCProject)project.Object;
                         foreach (VCFile file in (IVCCollection)vcProject.Files)
                         {
@@ -1905,10 +1906,10 @@ namespace AddInAutoTest
         {
             extensions.Add("");
             extensions.Add("pch");
-            mocDirectories.Add("GeneratedFiles");
-            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)");
-            mocDirectories.Add("GeneratedFiles\\$(PlatformName)");
-            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)-$(PlatformName)");
+            mocDirectories.Add("GeneratedFiles\\moc");
+            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)\\moc");
+            mocDirectories.Add("GeneratedFiles\\$(PlatformName)\\moc");
+            mocDirectories.Add("GeneratedFiles\\$(ConfigurationName)-$(PlatformName)\\moc");
             server = new UdpClient(200);
             IPEndPoint recvpt = new IPEndPoint(IPAddress.Any, 0);
             byte[] data;
@@ -1960,56 +1961,17 @@ namespace AddInAutoTest
             }
         }
 
-        private bool SetProjectDirectory(ref Project project, ProjectDirectory directory, string value)
+        private bool SetProjectDirectory(Project project, ProjectDirectory directory, string value)
         {
-#if !VS2010
-            Solution solution = _applicationObject.Solution;
-            string projectPath = project.FullName;
-            string defaultValue = DefaultValue(directory);
-            solution.Remove(project);
-            XmlDocument document = new XmlDocument();
-            document.Load(projectPath);
-            XmlNodeList nodes = document.GetElementsByTagName("Global");
-            foreach (XmlNode node in nodes)
-            {
-                XmlAttributeCollection attributes = node.Attributes;
-                if (attributes["Name"].Value == directory.ToString())
-                    attributes["Value"].Value = value;
-            }
-            nodes = document.GetElementsByTagName("Tool");
-            foreach (XmlNode node in nodes)
-            {
-                XmlAttributeCollection attributes = node.Attributes;
-                if (attributes["Name"].Value == "VCCLCompilerTool")
-                    if (attributes["AdditionalIncludeDirectories"] != null)
-                    {
-                        string attributeValue = attributes["AdditionalIncludeDirectories"].Value;
-                        attributeValue = attributeValue.Replace(defaultValue, value);
-                        attributes["AdditionalIncludeDirectories"].Value = attributeValue;
-                    }
-            }
-            document.Save(projectPath);
-            project = solution.AddFromFile(projectPath, false);
-            return true;
-#else
-#endif
-            return false;
-        }
+            if (!File.Exists(appwrapperPath))
+                return false;
 
-        private string DefaultValue(ProjectDirectory directory)
-        {
-            string defaultString = "GeneratedFiles\\";
-            switch (directory)
-            {
-                case ProjectDirectory.MocDir:
-                    return defaultString + "moc";
-                case ProjectDirectory.RccDir:
-                    return defaultString + "rcc";
-                case ProjectDirectory.UicDir:
-                    return defaultString + "uic";
-                default:
-                    return null;
-            }
+            System.Diagnostics.Process appwrapper = new System.Diagnostics.Process();
+            appwrapper.StartInfo.FileName = appwrapperPath;
+            appwrapper.StartInfo.Arguments = "Autotests:set" + directory.ToString() + ':' + value;
+            appwrapper.Start();
+
+            return true;
         }
 
         /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
@@ -2031,6 +1993,8 @@ namespace AddInAutoTest
             testPath = Path.GetDirectoryName(System.Uri.UnescapeDataString(uri.AbsolutePath));
             testPath = testPath.Remove(testPath.LastIndexOf(Path.DirectorySeparatorChar));
             testPath += Path.DirectorySeparatorChar;
+
+            appwrapperPath = Path.Combine(uri.AbsolutePath, "..\\..\\..\\..\\Qt4VS2003\\Qt4VSAddin\\Debug\\qtappwrapper.exe");
 
             svthread = new System.Threading.Thread(new System.Threading.ThreadStart(Startserver));
             svthread.IsBackground = true;
