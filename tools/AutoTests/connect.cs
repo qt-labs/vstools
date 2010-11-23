@@ -507,6 +507,12 @@ namespace AddInAutoTest
                             solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
                             _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
                             solution = _applicationObject.Solution;
+                            project = GetProject("Test1", solution);
+                            SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
+                            piHeader = project.ProjectItems.Item("Header Files");
+                            foo = piHeader.ProjectItems.Item("foo.h");
+                            piSource = project.ProjectItems.Item("Source Files");
+                            foocpp = piSource.ProjectItems.Item("foo.cpp");
                         }
 
                         subsuccess = true;
@@ -546,6 +552,12 @@ namespace AddInAutoTest
                             solutionRootDir = BackupSolution(testPath + templatePath, "Test1" + extension);
                             _applicationObject.Solution.Open(solutionRootDir + "Test1" + extension + ".sln");
                             solution = _applicationObject.Solution;
+                            project = GetProject("Test1", solution);
+                            SetProjectDirectory(project, ProjectDirectory.MocDir, mocDirectory);
+                            piHeader = project.ProjectItems.Item("Header Files");
+                            foo = piHeader.ProjectItems.Item("foo.h");
+                            piSource = project.ProjectItems.Item("Source Files");
+                            foocpp = piSource.ProjectItems.Item("foo.cpp");
                         }
 
                         subsuccess = true;
