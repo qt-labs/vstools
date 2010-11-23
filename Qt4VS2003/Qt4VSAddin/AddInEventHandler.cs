@@ -139,6 +139,40 @@ namespace Qt4VSAddin
 #endif
         }
 
+#if DEBUG
+        private void setDirectory(string dir, string value)
+        {
+            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte))
+            {
+                VCProject vcProject = project.Object as VCProject;
+                if (vcProject == null || vcProject.Files == null)
+                    continue;
+                QtProject qtProject = QtProject.Create(project);
+                if (qtProject == null)
+                    continue;
+
+                if (dir == "MocDir")
+                {
+                    string oldMocDir = QtVSIPSettings.GetMocDirectory(project);
+                    QtVSIPSettings.SaveMocDirectory(project, value);
+                    qtProject.UpdateMocSteps(oldMocDir);
+                }
+                else if (dir == "RccDir")
+                {
+                    string oldRccDir = QtVSIPSettings.GetRccDirectory(project);
+                    QtVSIPSettings.SaveRccDirectory(project, value);
+                    qtProject.RefreshRccSteps(oldRccDir);
+                }
+                else if (dir == "UicDir")
+                {
+                    string oldUicDir = QtVSIPSettings.GetUicDirectory(project);
+                    QtVSIPSettings.SaveUicDirectory(project, value);
+                    qtProject.UpdateUicSteps(oldUicDir);
+                }
+            }
+        }
+#endif
+
         private void OnQRCFileSaved(string fileName)
         {
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte))
@@ -202,18 +236,33 @@ namespace Qt4VSAddin
                 CreateControl();
             }
 
-            public delegate void HandleFileNameFromQtAppWrapperDelegate(string fileName);
+            public delegate void HandleMessageFromQtAppWrapperDelegate(string message);
 
             /// <summary>
             /// This function handle file names in the Addin's main thread,
             /// that come from the QtAppWrapper.
             /// </summary>
-            public void HandleFileNameFromQtAppWrapper(string fileName)
+            public void HandleMessageFromQtAppWrapper(string message)
             {
-                if (fileName.ToLower().EndsWith(".qrc"))
-                    addinEventHandler.OnQRCFileSaved(fileName);
+                if (message.ToLower().EndsWith(".qrc"))
+                    addinEventHandler.OnQRCFileSaved(message);
+#if DEBUG
+                else if (message.StartsWith("Autotests:set"))
+                {
+                    // Messageformat from Autotests is Autotests:set<dir>:<value>
+                    // where dir is MocDir, RccDir or UicDir
+
+                    //remove Autotests:set
+                    message = message.Substring(13);
+
+                    string dir = message.Remove(6);
+                    string value = message.Substring(7);
+
+                    addinEventHandler.setDirectory(dir, value);
+                }
+#endif
                 else
-                    addinEventHandler.OpenFileExternally(fileName);
+                    addinEventHandler.OpenFileExternally(message);
             }
         }
 
@@ -222,8 +271,8 @@ namespace Qt4VSAddin
             if (appWrapperProcess == null)
                 return;
 
-            SimpleThreadMessenger.HandleFileNameFromQtAppWrapperDelegate handleFileNameFromQtAppWrapperDelegate;
-            handleFileNameFromQtAppWrapperDelegate = new SimpleThreadMessenger.HandleFileNameFromQtAppWrapperDelegate(simpleThreadMessenger.HandleFileNameFromQtAppWrapper);
+            SimpleThreadMessenger.HandleMessageFromQtAppWrapperDelegate handleMessageFromQtAppWrapperDelegate;
+            handleMessageFromQtAppWrapperDelegate = new SimpleThreadMessenger.HandleMessageFromQtAppWrapperDelegate(simpleThreadMessenger.HandleMessageFromQtAppWrapper);
 
             bool firstIteration = true;
             while (!terminateEditorThread)
@@ -308,7 +357,7 @@ namespace Qt4VSAddin
                             {
                                 // Actual file opening is done in the main thread.
                                 string file = messageString.Substring(index + 1);
-                                simpleThreadMessenger.Invoke(handleFileNameFromQtAppWrapperDelegate, new object[] { file });
+                                simpleThreadMessenger.Invoke(handleMessageFromQtAppWrapperDelegate, new object[] { file });
                             }
                         }
                     }
