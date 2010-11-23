@@ -456,10 +456,11 @@ namespace Nokia.QtProjectLib
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
 
+                    string fixedIncludeDir = FixFilePathForComparison(info.IncludePath);
                     string[] includeDirs = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
                     foreach (string dir in includeDirs)
                     {
-                        if (FixFilePathForComparison(dir) == FixFilePathForComparison(info.IncludePath))
+                        if (FixFilePathForComparison(dir) == fixedIncludeDir)
                         {
                             foundInIncludes = true;
                             break;
@@ -2114,19 +2115,18 @@ namespace Nokia.QtProjectLib
 
                     string[] paths = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
                     FileInfo fi = new FileInfo(file.FullPath);
-                    string newPath = FixFilePathForComparison(fi.Directory.Name);
-                    newPath = FixFilePathForComparison(HelperFunctions.GetRelativePath(this.ProjectDir, fi.Directory.ToString()));
+                    string relativePath = HelperFunctions.GetRelativePath(this.ProjectDir, fi.Directory.ToString());
+                    string fixedRelativePath = FixFilePathForComparison(relativePath);
                     bool pathFound = false;
                     foreach (string p in paths) {
-                        if (FixFilePathForComparison(p) == newPath)
+                        if (FixFilePathForComparison(p) == fixedRelativePath)
                         {
                             pathFound = true;
                             break;
                         }
                     }
                     if (!pathFound)
-                        compiler.AddAdditionalIncludeDirectories(
-                            HelperFunctions.GetRelativePath(this.ProjectDir, fi.Directory.ToString()));
+                        compiler.AddAdditionalIncludeDirectories(relativePath);
                 }
             }
             return file;
@@ -2442,7 +2442,17 @@ namespace Nokia.QtProjectLib
                     if (tmp.Length > 0 && !incList.Contains(tmp))
                         incList.Add(tmp.ToLower());
                 }
-                if (!incList.Contains(FixFilePathForComparison(newDir)))
+                bool alreadyThere = false;
+                string fixedNewDir = FixFilePathForComparison(newDir);
+                foreach (string include in incList)
+                {
+                    if (FixFilePathForComparison(include) == fixedNewDir)
+                    {
+                        alreadyThere = true;
+                        break;
+                    }
+                }
+                if (!alreadyThere)
                     incList.Add(HelperFunctions.NormalizeRelativeFilePath(newDir));
                 
                 compiler.AdditionalIncludeDirectories = incList;
