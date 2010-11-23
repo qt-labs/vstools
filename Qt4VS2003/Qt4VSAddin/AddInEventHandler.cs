@@ -602,6 +602,10 @@ namespace Qt4VSAddin
                                         if (fileInFilter.RelativePath.ToLower().Contains(platformName.ToLower()))
                                             exclude = false;
                                     }
+                                    else
+                                    {
+                                        exclude = false;
+                                    }
                                     if (config.ExcludedFromBuild != exclude)
                                         config.ExcludedFromBuild = exclude;
                                 }
