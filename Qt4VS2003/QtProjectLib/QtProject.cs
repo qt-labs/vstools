@@ -2440,7 +2440,7 @@ namespace Nokia.QtProjectLib
                 {
                     string tmp = HelperFunctions.NormalizeRelativeFilePath(path);
                     if (tmp.Length > 0 && !incList.Contains(tmp))
-                        incList.Add(tmp.ToLower());
+                        incList.Add(tmp);
                 }
                 bool alreadyThere = false;
                 string fixedNewDir = FixFilePathForComparison(newDir);
