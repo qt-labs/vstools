@@ -1015,7 +1015,7 @@ namespace Nokia.QtProjectLib
                         VCFileConfiguration moccedFileConfig = GetVCFileConfigurationByName(mocFile, config.Name);
                         if (moccedFileConfig != null)
                         {
-                            VCFile cppFile = GetCppFileForMocStep(mocFile);
+                            VCFile cppFile = GetCppFileForMocStep(file);
                             if (cppFile != null && IsMoccedFileIncluded(cppFile))
                             {
                                 if (!moccedFileConfig.ExcludedFromBuild)
