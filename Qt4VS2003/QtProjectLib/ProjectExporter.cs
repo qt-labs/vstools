@@ -271,15 +271,15 @@ namespace Nokia.QtProjectLib
         public static List<string> ConvertFilesToFullPath(List<string> files, string path)
         {
             List<string> ret = new List<string>(files.Count);
-            for (int i=0; i<files.Count; i++)
+            foreach (string file in files)
             {
                 FileInfo fi;
-                if(files[i].IndexOf(":") != 1)
-                    fi = new FileInfo(path + "\\" + (string)files[i]);
+                if(file.IndexOf(":") != 1)
+                    fi = new FileInfo(path + "\\" + file);
                 else
-                    fi = new FileInfo((string)files[i]);
+                    fi = new FileInfo(file);
 
-                ret[i] = fi.FullName;
+                ret.Add(fi.FullName);
             }
             return ret;
         }
