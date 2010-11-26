@@ -18,6 +18,11 @@ QMAKE_POST_LINK += $$escape_expand(\\n\\t)
 
 CONFIG(debug, release|debug) {
     DEFINES += DEBUG
+    QMAKE_POST_LINK += $$quote(aximp debug\\qmakewrapper1.dll)
+}
+
+CONFIG(release, release|debug) {
+    QMAKE_POST_LINK += $$quote(aximp release\\qmakewrapper1.dll)
 }
 
 HEADERS = qmakewrapper.h
