@@ -3,5 +3,15 @@ improvements.
 
 Changes
 -------
-- 
+- Fix import of .pri files. (QTVSADDINBUG-38)
+- Save the modified generated .vc(x)proj after .pro file import.
+  (QTVSADDINBUG-40)
+- Proper handling of moc file exclusion when saving cpp files.
+  (QTVSADDINBUG-33)
+- Remove user macro from property sheed when $(QTDIR) is used in VS2010.
+  (QTVSADDINBUG-12)
+- Documented possibility to add $(QTDIR) version. (QTVSADDINGBUG-19)
+- Fix broken include paths in moc calls for VS 2010. (QTVSADDINBUG-34)
+- Fix import of previously unloaded projects. (QTVSADDINBUG-31)
+- Preserve line breaks in custom build steps after import. (QTVSADDINBUG-32)
 
