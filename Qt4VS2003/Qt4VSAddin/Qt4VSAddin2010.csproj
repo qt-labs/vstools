@@ -70,6 +70,7 @@
     </Reference>
     <Reference Include="qmakewrapper1Lib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1df4359b102cbb2b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\ComWrappers\qmakewrapper\qmakewrapper1Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
