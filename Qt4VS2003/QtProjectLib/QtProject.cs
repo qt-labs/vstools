@@ -629,6 +629,17 @@ namespace Nokia.QtProjectLib
                             }
                         }
                     }
+                    IVCCollection tools = ((IVCCollection)config.Tools);
+                    object cst = tools.Item("VCCodeSignTool");
+                    if (cst != null)
+                    {
+                        Type t = cst.GetType();
+                        object r = t.InvokeMember("ExecutionBucket",
+                            System.Reflection.BindingFlags.GetProperty,
+                            null, cst, null);
+                        if (r != null)
+                            config.ExcludeBuckets = r.ToString();
+                    }
                 }
 #endif
 
