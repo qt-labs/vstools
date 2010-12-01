@@ -534,7 +534,10 @@ namespace Nokia.QtProjectLib
                 // for some stupid reason you have to set this for it to be updated...
                 // the default value is the same...
                 config.OutputDirectory = "$(SolutionDir)$(ConfigurationName)";
+#if ENABLE_WINCE
+                // This is mainly for Visual Studio consistency compared with a smartdevice MFC project.
                 config.IntermediateDirectory = config.OutputDirectory;
+#endif
 
                 // add some common defines
                 compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
