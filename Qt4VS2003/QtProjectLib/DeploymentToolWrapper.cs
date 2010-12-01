@@ -93,10 +93,28 @@ namespace Nokia.QtProjectLib
             int idx = stdlibname.IndexOf('.');
             if (idx >= 0) stdlibname = stdlibname.Remove(idx, 1);
 
-            const string destDir = "%CSIDL_PROGRAM_FILES%\\$(ProjectName)";
+            string destDir = RemoteDirectory;
             string dllSuffix = "";
             if (isDebugConfiguration) dllSuffix = "d";
             Add(stdlibname + dllSuffix + ".dll", "$(BINDIR)\\$(INSTRUCTIONSET)", destDir);
+        }
+
+        public string RemoteDirectory
+        {
+            get
+            {
+                object obj = deploymentToolType.InvokeMember(
+                    "RemoteDirectory",
+                    System.Reflection.BindingFlags.GetProperty,
+                    null,
+                    deploymentToolObj,
+                    null);
+
+                if (obj != null)
+                    return (string)obj;
+
+                return "%CSIDL_PROGRAM_FILES%\\$(ProjectName)";
+            }
         }
 #endif
 

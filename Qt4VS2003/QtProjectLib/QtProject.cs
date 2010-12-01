@@ -3272,7 +3272,7 @@ namespace Nokia.QtProjectLib
             if (deploymentTool == null)
                 return;
 
-            const string destDir = "%CSIDL_PROGRAM_FILES%\\$(ProjectName)";
+            string destDir = deploymentTool.RemoteDirectory;
             const string qtSrcDir = "$(QTDIR)\\lib";
             string filename = moduleInfo.GetDllFileName(IsDebugConfiguration(config));
 
@@ -3294,7 +3294,7 @@ namespace Nokia.QtProjectLib
             if (deploymentTool == null)
                 return;
 
-            const string destDir = "%CSIDL_PROGRAM_FILES%\\$(ProjectName)";
+            string destDir = deploymentTool.RemoteDirectory;
             const string qtSrcDir = "$(QTDIR)\\lib";
             string filename = moduleInfo.GetDllFileName(IsDebugConfiguration(config));
 
