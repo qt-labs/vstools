@@ -5,7 +5,9 @@ use Cwd 'abs_path';
 my $rootDir = abs_path($0);
 $rootDir =~ s/createUserFiles\.pl//;
 
-my $output = `devenv /? 2>&1`;
+# compatible with cygwin perl and activestate
+my $devenvCmd = 'cmd /c "devenv /?"';
+my $output = `$devenvCmd 2>&1`;
 my $vsVersion = "";
 if ($output =~ m/ersion ([\d\.]+)/) {
   $vsVersion = $1;
