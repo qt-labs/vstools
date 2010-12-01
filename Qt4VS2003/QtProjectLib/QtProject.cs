@@ -534,6 +534,7 @@ namespace Nokia.QtProjectLib
                 // for some stupid reason you have to set this for it to be updated...
                 // the default value is the same...
                 config.OutputDirectory = "$(SolutionDir)$(ConfigurationName)";
+                config.IntermediateDirectory = config.OutputDirectory;
 
                 // add some common defines
                 compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
