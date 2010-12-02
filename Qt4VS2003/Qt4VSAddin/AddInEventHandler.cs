@@ -694,13 +694,16 @@ namespace Qt4VSAddin
                         return;
                     }
                     string pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
-                    string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
-                    if (pcHeaderThrough != null && vcFile.Name.ToLower().EndsWith(pcHeaderCreator.ToLower())
-                        && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false))
+                    if (pcHeaderThrough != null)
                     {
-                        //File is used to create precompiled headers
-                        QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
-                        return;
+                        string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
+                        if (vcFile.Name.ToLower().EndsWith(pcHeaderCreator.ToLower())
+                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false))
+                        {
+                            //File is used to create precompiled headers
+                            QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
+                            return;
+                        }
                     }
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, src))
                     {
