@@ -298,7 +298,7 @@ namespace Nokia.QtProjectLib
                     // only add qt projects
                     if (HelperFunctions.IsQtProject(proj))
                     {
-                        content = CreateProFileContent(proj, null);
+                        content = CreateProFileContent(proj);
                         prosln.ProFiles.Add(content);
                     }
                     else if (proj.Kind == ProjectKinds.vsProjectKindSolutionFolder)
@@ -322,7 +322,7 @@ namespace Nokia.QtProjectLib
                 Project containedProject = pi.Object as Project;
                 if (HelperFunctions.IsQtProject(containedProject))
                 {
-                    ProFileContent content = CreateProFileContent(containedProject, null);
+                    ProFileContent content = CreateProFileContent(containedProject);
                     sln.ProFiles.Add(content);
                 }
                 else if (containedProject.Kind == ProjectKinds.vsProjectKindSolutionFolder)
@@ -332,285 +332,287 @@ namespace Nokia.QtProjectLib
             }
         }
 
-        private static ProFileContent CreateProFileContent(EnvDTE.Project project, FileInfo priFile)
+        private static ProFileContent CreateProFileContent(EnvDTE.Project project)
         {
             ProFileOption option;
             QtProject qtPro = QtProject.Create(project);
             ProFileContent content = new ProFileContent(qtPro.VCProject);
 
-            if (priFile == null)
-            {
-                // hack to get active config
-                string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                string activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
-                VCConfiguration config = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
-                CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-                VCLinkerTool linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-                VCLibrarianTool libTool = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
+            // hack to get active config
+            string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+            string activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
+            VCConfiguration config = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
+            CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
+            VCLinkerTool linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
+            VCLibrarianTool libTool = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
 
-                string outPut = config.PrimaryOutput;
-                FileInfo fi = new FileInfo(outPut);
-                string destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
-                destdir = HelperFunctions.ChangePathFormat(destdir);
-                string target = qtPro.VCProject.Name;
+            string outPut = config.PrimaryOutput;
+            FileInfo fi = new FileInfo(outPut);
+            string destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
+            destdir = HelperFunctions.ChangePathFormat(destdir);
+            string target = qtPro.VCProject.Name;
 
-                option = new ProFileOption("TEMPLATE");
-                option.Comment = Resources.ec_Template;
-                option.ShortComment = "Template";
-                option.NewOption = null; // just one option...
-                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                content.Options.Add(option);
-                if (config.ConfigurationType == ConfigurationTypes.typeApplication)
-                    option.List.Add("app");
-                else
-                    option.List.Add("lib");
-
-                option = new ProFileOption("TARGET");
-                option.Comment = Resources.ec_Target;
-                option.ShortComment = "Target Name";
-                option.NewOption = null; // just one option...
-                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                content.Options.Add(option);
-                option.List.Add(target);
-
-                option = new ProFileOption("DESTDIR");
-                option.Comment = Resources.ec_DestDir;
-                option.ShortComment = "Destination Directory";
-                option.NewOption = null; // just one option...
-                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                content.Options.Add(option);
-                option.List.Add(destdir);
-
-                // add the qt option
-                option = new ProFileOption("QT");
-                ProFileOption optionQT = option;
-                option.Comment = Resources.ec_Qt;
-                option.ShortComment = "Qt Options";
-                option.NewOption = " "; // just space between the options...
-                content.Options.Add(option);
-
-                // add the config option
-                option = new ProFileOption("CONFIG");
-                ProFileOption optionCONFIG = option;
-                option.Comment = Resources.ec_Config;
-                option.ShortComment = "Config Options";
-                option.NewOption = " "; // just space between the options...
-                content.Options.Add(option);
-
-                AddModules(qtPro, optionQT, optionCONFIG);
-
-                if (config.ConfigurationType == ConfigurationTypes.typeStaticLibrary)
-                    option.List.Add("staticlib");
-                if (linker != null)
-                {
-                    if (linker.GenerateDebugInformation)
-                        option.List.Add("debug");
-                    else
-                        option.List.Add("release");
-
-                    if (linker.SubSystem == subSystemOption.subSystemConsole)
-                        option.List.Add("console");
-
-                    if (linker.AdditionalDependencies != null)
-                    {
-                        if (linker.AdditionalDependencies.IndexOf("QAxServer") > -1)
-                            option.List.Add("qaxserver");
-                        else if (linker.AdditionalDependencies.IndexOf("QAxContainer") > -1)
-                            option.List.Add("qaxcontainer");
-                        else if (linker.AdditionalDependencies.IndexOf("QtHelp") > -1)
-                            option.List.Add("help");
-                    }
-                }
-
-                if (qtPro.IsDesignerPluginProject())
-                {
-                    option.List.Add("designer");
-                    option.List.Add("plugin");
-                }
-
-                // add defines
-                option = new ProFileOption("DEFINES");
-                option.Comment = Resources.ec_Defines;
-                option.ShortComment = "Defines";
-                option.NewOption = " ";
-                option.AssignSymbol = ProFileOption.AssignType.AT_PlusEquals;
-                content.Options.Add(option);
-                AddPreprocessorDefinitions(option, compiler.GetPreprocessorDefinitions());
-
-                // add the include path option
-                option = new ProFileOption("INCLUDEPATH");
-                option.Comment = Resources.ec_IncludePath;
-                option.ShortComment = "Include Path";
-                content.Options.Add(option);
-                AddIncludePaths(project, option, compiler.GetAdditionalIncludeDirectories());
-
-                option = new ProFileOption("LIBS");
-                option.Comment = Resources.ec_Libs;
-                option.ShortComment = "Additional Libraries";
-                content.Options.Add(option);
-                if (linker != null)
-                {
-                    AddLibraries(project, option, linker.AdditionalLibraryDirectories,
-                        linker.AdditionalDependencies);
-                }
-                else if (libTool != null)
-                {
-                    AddLibraries(project, option, libTool.AdditionalLibraryDirectories,
-                        libTool.AdditionalDependencies);
-                }
-
-                option = new ProFileOption("PRECOMPILED_HEADER");
-                option.Comment = Resources.ec_PrecompiledHeader;
-                option.ShortComment = "Using Precompiled Headers";
-                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                content.Options.Add(option);
-                if (compiler.GetPrecompiledHeaderFile().Length > 0)
-                    option.List.Add(compiler.GetPrecompiledHeaderThrough());
-
-                // add the depend path option
-                option = new ProFileOption("DEPENDPATH");
-                option.Comment = Resources.ec_DependPath;
-                option.ShortComment = "Depend Path";
-                content.Options.Add(option);
-                option.List.Add(".");
-
-                string mocDir = QtVSIPSettings.GetMocDirectory(project, activeConfig.ToLower(), activePlatform.ToLower());
-                mocDir = mocDir.Replace('\\', '/');
-                option = new ProFileOption("MOC_DIR");
-                option.Comment = Resources.ec_MocDir;
-                option.ShortComment = "Moc Directory";
-                option.NewOption = null; // just one option...
-                content.Options.Add(option);
-                option.List.Add(mocDir);
-
-                option = new ProFileOption("OBJECTS_DIR");
-                option.Comment = Resources.ec_ObjDir;
-                option.ShortComment = "Objects Directory";
-                option.NewOption = null; // just one option...
-                content.Options.Add(option);
-                option.List.Add(config.ConfigurationName.ToLower());
-
-                string uiDir = QtVSIPSettings.GetUicDirectory(project);
-                uiDir = uiDir.Replace('\\', '/');
-                option = new ProFileOption("UI_DIR");
-                option.Comment = Resources.ec_UiDir;
-                option.ShortComment = "UI Directory";
-                option.NewOption = null; // just one option...
-                content.Options.Add(option);
-                option.List.Add(uiDir);
-
-                string rccDir = QtVSIPSettings.GetRccDirectory(project);
-                rccDir = rccDir.Replace('\\', '/');
-                option = new ProFileOption("RCC_DIR");
-                option.Comment = Resources.ec_RccDir;
-                option.ShortComment = "RCC Directory";
-                option.NewOption = null; // just one option...
-                content.Options.Add(option);
-                option.List.Add(rccDir);
-
-                // add the include path option
-                option = new ProFileOption("include");
-                option.Comment = Resources.ec_Include;
-                option.ShortComment = "Include file(s)";
-                option.IncludeComment = false; // print the comment in the output file
-                option.AssignSymbol = ProFileOption.AssignType.AT_Function;
-                content.Options.Add(option);
-                option.List.Add(project.Name + ".pri");
-
-                // add the translation files
-                option = new ProFileOption("TRANSLATIONS");
-                option.Comment = Resources.ec_Translations;
-                option.ShortComment = "Translation files";
-                option.IncludeComment = false;
-                content.Options.Add(option);
-                option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
-
-                // add the rc file
-                if (File.Exists(qtPro.VCProject.ProjectDirectory + "\\" + project.Name + ".rc")) 
-                {
-                    option = new ProFileOption("win32:RC_FILE");
-                    option.Comment = Resources.ec_rcFile;
-                    option.ShortComment = "Windows resource file";
-                    option.IncludeComment = false;
-                    option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                    content.Options.Add(option);
-                    option.List.Add(project.Name + ".rc");
-                }
-
-                if (qtPro.IsDesignerPluginProject())
-                {
-                    option = new ProFileOption("target.path");
-                    option.ShortComment = "Install the plugin in the designer plugins directory.";
-                    option.IncludeComment = true;
-                    option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                    option.List.Add("$$[QT_INSTALL_PLUGINS]/designer");
-                    content.Options.Add(option);
-
-                    option = new ProFileOption("INSTALLS");
-                    option.IncludeComment = false;
-                    option.AssignSymbol = ProFileOption.AssignType.AT_PlusEquals;
-                    option.List.Add("target");
-                    content.Options.Add(option);
-                }
-            }
+            option = new ProFileOption("TEMPLATE");
+            option.Comment = Resources.ec_Template;
+            option.ShortComment = "Template";
+            option.NewOption = null; // just one option...
+            option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+            content.Options.Add(option);
+            if (config.ConfigurationType == ConfigurationTypes.typeApplication)
+                option.List.Add("app");
             else
+                option.List.Add("lib");
+
+            option = new ProFileOption("TARGET");
+            option.Comment = Resources.ec_Target;
+            option.ShortComment = "Target Name";
+            option.NewOption = null; // just one option...
+            option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+            content.Options.Add(option);
+            option.List.Add(target);
+
+            option = new ProFileOption("DESTDIR");
+            option.Comment = Resources.ec_DestDir;
+            option.ShortComment = "Destination Directory";
+            option.NewOption = null; // just one option...
+            option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+            content.Options.Add(option);
+            option.List.Add(destdir);
+
+            // add the qt option
+            option = new ProFileOption("QT");
+            ProFileOption optionQT = option;
+            option.Comment = Resources.ec_Qt;
+            option.ShortComment = "Qt Options";
+            option.NewOption = " "; // just space between the options...
+            content.Options.Add(option);
+
+            // add the config option
+            option = new ProFileOption("CONFIG");
+            ProFileOption optionCONFIG = option;
+            option.Comment = Resources.ec_Config;
+            option.ShortComment = "Config Options";
+            option.NewOption = " "; // just space between the options...
+            content.Options.Add(option);
+
+            AddModules(qtPro, optionQT, optionCONFIG);
+
+            if (config.ConfigurationType == ConfigurationTypes.typeStaticLibrary)
+                option.List.Add("staticlib");
+            if (linker != null)
             {
-                bool hasSpaces = false;
+                if (linker.GenerateDebugInformation)
+                    option.List.Add("debug");
+                else
+                    option.List.Add("release");
 
-                // add the header files
-                option = new ProFileOption("HEADERS");
-                option.ShortComment = "Header files";
-                option.IncludeComment = false;
-                content.Options.Add(option);
-                option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles));
-                MakeFilesRelativePath(qtPro.VCProject, option.List, priFile.DirectoryName);
-                if(ContainsFilesWithSpaces(option.List))
-                    hasSpaces = true;
+                if (linker.SubSystem == subSystemOption.subSystemConsole)
+                    option.List.Add("console");
 
-                // add the source files
-                option = new ProFileOption("SOURCES");
-                option.ShortComment = "Source files";
-                option.IncludeComment = false;
-                content.Options.Add(option);
-                option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles));
-                MakeFilesRelativePath(qtPro.VCProject, option.List, priFile.DirectoryName);
-                if(ContainsFilesWithSpaces(option.List))
-                    hasSpaces = true;
-
-                // add the form files
-                option = new ProFileOption("FORMS");
-                option.ShortComment = "Forms";
-                option.IncludeComment = false;
-                content.Options.Add(option);
-                option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles));
-                MakeFilesRelativePath(qtPro.VCProject, option.List, priFile.DirectoryName);
-                if(ContainsFilesWithSpaces(option.List))
-                    hasSpaces = true;
-
-                // add the translation files
-                option = new ProFileOption("TRANSLATIONS");
-                option.Comment = Resources.ec_Translations;
-                option.ShortComment = "Translation file(s)";
-                option.IncludeComment = false;
-                option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
-                MakeFilesRelativePath(qtPro.VCProject, option.List, priFile.DirectoryName);
-                if (ContainsFilesWithSpaces(option.List))
-                    hasSpaces = true;
-                content.Options.Add(option);
-
-                // add the resource files
-                option = new ProFileOption("RESOURCES");
-                option.Comment = Resources.ec_Resources;
-                option.ShortComment = "Resource file(s)";
-                option.IncludeComment = false;
-                content.Options.Add(option);
-
-                foreach (VCFile resFile in qtPro.GetResourceFiles())
-                    option.List.Add(resFile.RelativePath.Replace('\\', '/'));
-
-                if (hasSpaces)
-                    Messages.DisplayWarningMessage(SR.GetString("ExportProject_PriFileContainsSpaces"));
+                if (linker.AdditionalDependencies != null)
+                {
+                    if (linker.AdditionalDependencies.IndexOf("QAxServer") > -1)
+                        option.List.Add("qaxserver");
+                    else if (linker.AdditionalDependencies.IndexOf("QAxContainer") > -1)
+                        option.List.Add("qaxcontainer");
+                    else if (linker.AdditionalDependencies.IndexOf("QtHelp") > -1)
+                        option.List.Add("help");
+                }
             }
+
+            if (qtPro.IsDesignerPluginProject())
+            {
+                option.List.Add("designer");
+                option.List.Add("plugin");
+            }
+
+            // add defines
+            option = new ProFileOption("DEFINES");
+            option.Comment = Resources.ec_Defines;
+            option.ShortComment = "Defines";
+            option.NewOption = " ";
+            option.AssignSymbol = ProFileOption.AssignType.AT_PlusEquals;
+            content.Options.Add(option);
+            AddPreprocessorDefinitions(option, compiler.GetPreprocessorDefinitions());
+
+            // add the include path option
+            option = new ProFileOption("INCLUDEPATH");
+            option.Comment = Resources.ec_IncludePath;
+            option.ShortComment = "Include Path";
+            content.Options.Add(option);
+            AddIncludePaths(project, option, compiler.GetAdditionalIncludeDirectories());
+
+            option = new ProFileOption("LIBS");
+            option.Comment = Resources.ec_Libs;
+            option.ShortComment = "Additional Libraries";
+            content.Options.Add(option);
+            if (linker != null)
+            {
+                AddLibraries(project, option, linker.AdditionalLibraryDirectories,
+                    linker.AdditionalDependencies);
+            }
+            else if (libTool != null)
+            {
+                AddLibraries(project, option, libTool.AdditionalLibraryDirectories,
+                    libTool.AdditionalDependencies);
+            }
+
+            option = new ProFileOption("PRECOMPILED_HEADER");
+            option.Comment = Resources.ec_PrecompiledHeader;
+            option.ShortComment = "Using Precompiled Headers";
+            option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+            content.Options.Add(option);
+            if (compiler.GetPrecompiledHeaderFile().Length > 0)
+                option.List.Add(compiler.GetPrecompiledHeaderThrough());
+
+            // add the depend path option
+            option = new ProFileOption("DEPENDPATH");
+            option.Comment = Resources.ec_DependPath;
+            option.ShortComment = "Depend Path";
+            content.Options.Add(option);
+            option.List.Add(".");
+
+            string mocDir = QtVSIPSettings.GetMocDirectory(project, activeConfig.ToLower(), activePlatform.ToLower());
+            mocDir = mocDir.Replace('\\', '/');
+            option = new ProFileOption("MOC_DIR");
+            option.Comment = Resources.ec_MocDir;
+            option.ShortComment = "Moc Directory";
+            option.NewOption = null; // just one option...
+            content.Options.Add(option);
+            option.List.Add(mocDir);
+
+            option = new ProFileOption("OBJECTS_DIR");
+            option.Comment = Resources.ec_ObjDir;
+            option.ShortComment = "Objects Directory";
+            option.NewOption = null; // just one option...
+            content.Options.Add(option);
+            option.List.Add(config.ConfigurationName.ToLower());
+
+            string uiDir = QtVSIPSettings.GetUicDirectory(project);
+            uiDir = uiDir.Replace('\\', '/');
+            option = new ProFileOption("UI_DIR");
+            option.Comment = Resources.ec_UiDir;
+            option.ShortComment = "UI Directory";
+            option.NewOption = null; // just one option...
+            content.Options.Add(option);
+            option.List.Add(uiDir);
+
+            string rccDir = QtVSIPSettings.GetRccDirectory(project);
+            rccDir = rccDir.Replace('\\', '/');
+            option = new ProFileOption("RCC_DIR");
+            option.Comment = Resources.ec_RccDir;
+            option.ShortComment = "RCC Directory";
+            option.NewOption = null; // just one option...
+            content.Options.Add(option);
+            option.List.Add(rccDir);
+
+            // add the include path option
+            option = new ProFileOption("include");
+            option.Comment = Resources.ec_Include;
+            option.ShortComment = "Include file(s)";
+            option.IncludeComment = false; // print the comment in the output file
+            option.AssignSymbol = ProFileOption.AssignType.AT_Function;
+            content.Options.Add(option);
+
+            // add the translation files
+            option = new ProFileOption("TRANSLATIONS");
+            option.Comment = Resources.ec_Translations;
+            option.ShortComment = "Translation files";
+            option.IncludeComment = false;
+            content.Options.Add(option);
+            option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
+
+            // add the rc file
+            if (File.Exists(qtPro.VCProject.ProjectDirectory + "\\" + project.Name + ".rc")) 
+            {
+                option = new ProFileOption("win32:RC_FILE");
+                option.Comment = Resources.ec_rcFile;
+                option.ShortComment = "Windows resource file";
+                option.IncludeComment = false;
+                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+                content.Options.Add(option);
+                option.List.Add(project.Name + ".rc");
+            }
+
+            if (qtPro.IsDesignerPluginProject())
+            {
+                option = new ProFileOption("target.path");
+                option.ShortComment = "Install the plugin in the designer plugins directory.";
+                option.IncludeComment = true;
+                option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
+                option.List.Add("$$[QT_INSTALL_PLUGINS]/designer");
+                content.Options.Add(option);
+
+                option = new ProFileOption("INSTALLS");
+                option.IncludeComment = false;
+                option.AssignSymbol = ProFileOption.AssignType.AT_PlusEquals;
+                option.List.Add("target");
+                content.Options.Add(option);
+            }
+
+            return content;
+        }
+
+        private static ProFileContent CreatePriFileContent(EnvDTE.Project project, string priFileDirectory)
+        {
+            ProFileOption option;
+            QtProject qtPro = QtProject.Create(project);
+            ProFileContent content = new ProFileContent(qtPro.VCProject);
+            bool hasSpaces = false;
+
+            // add the header files
+            option = new ProFileOption("HEADERS");
+            option.ShortComment = "Header files";
+            option.IncludeComment = false;
+            content.Options.Add(option);
+            option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles));
+            MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
+            if(ContainsFilesWithSpaces(option.List))
+                hasSpaces = true;
+
+            // add the source files
+            option = new ProFileOption("SOURCES");
+            option.ShortComment = "Source files";
+            option.IncludeComment = false;
+            content.Options.Add(option);
+            option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles));
+            MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
+            if(ContainsFilesWithSpaces(option.List))
+                hasSpaces = true;
+
+            // add the form files
+            option = new ProFileOption("FORMS");
+            option.ShortComment = "Forms";
+            option.IncludeComment = false;
+            content.Options.Add(option);
+            option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles));
+            MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
+            if(ContainsFilesWithSpaces(option.List))
+                hasSpaces = true;
+
+            // add the translation files
+            option = new ProFileOption("TRANSLATIONS");
+            option.Comment = Resources.ec_Translations;
+            option.ShortComment = "Translation file(s)";
+            option.IncludeComment = false;
+            option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
+            MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
+            if (ContainsFilesWithSpaces(option.List))
+                hasSpaces = true;
+            content.Options.Add(option);
+
+            // add the resource files
+            option = new ProFileOption("RESOURCES");
+            option.Comment = Resources.ec_Resources;
+            option.ShortComment = "Resource file(s)";
+            option.IncludeComment = false;
+            content.Options.Add(option);
+
+            foreach (VCFile resFile in qtPro.GetResourceFiles())
+                option.List.Add(resFile.RelativePath.Replace('\\', '/'));
+
+            if (hasSpaces)
+                Messages.DisplayWarningMessage(SR.GetString("ExportProject_PriFileContainsSpaces"));
 
             return content;
         }
@@ -793,27 +795,57 @@ namespace Nokia.QtProjectLib
             }
         }
 
-        private void WriteProFile(ProFileContent content, FileInfo priFile, bool openFile)
+        private void WriteProFile(ProFileContent content, string proFile, string priFileToInclude, bool openFile)
         {
             StreamWriter sw;
-            string proFileName = content.Project.ProjectDirectory + content.Project.Name;
-
-            if(priFile == null)
-            {
-                proFileName += ".pro";
-                if(File.Exists(proFileName))
-                    if(MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFileName),
-                        SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                        return;
-            }
-            else
-            {
-                proFileName = priFile.FullName;
-            }
+            if(File.Exists(proFile))
+                if(MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFile),
+                    SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    return;
 
             try
             {
-                sw = new StreamWriter(File.Create(proFileName));
+                sw = new StreamWriter(File.Create(proFile));
+            }
+            catch (System.Exception e)
+            {
+                Messages.DisplayErrorMessage(e);
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(priFileToInclude))
+            {
+                foreach (ProFileOption option in content.Options)
+                {
+                    if (option.Name == "include" && !option.List.Contains(priFileToInclude))
+                    {
+                        string relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
+                        if (relativePriPath.StartsWith(".\\"))
+                            relativePriPath = relativePriPath.Substring(2);
+                        relativePriPath = HelperFunctions.ChangePathFormat(relativePriPath);
+                        option.List.Add(relativePriPath);
+                        break;
+                    }
+                }
+            }
+            using (sw)
+            {
+                sw.WriteLine(Resources.exportPriHeader);
+                WriteProFileOptions(sw, content.Options);
+            }
+
+            // open the file in vs
+            if (openFile)
+                dteObject.OpenFile(EnvDTE.Constants.vsViewKindTextView, proFile).Activate();
+        }
+
+        private void WritePriFile(ProFileContent content, string priFile)
+        {
+            StreamWriter sw;
+
+            try
+            {
+                sw = new StreamWriter(File.Create(priFile));
             }
             catch (System.Exception e)
             {
@@ -823,20 +855,15 @@ namespace Nokia.QtProjectLib
 
             using (sw)
             {
-                if (priFile == null)
-                    sw.WriteLine(Resources.exportProHeader);
-                else
-                    sw.WriteLine(Resources.exportPriHeader);
-                // write options
-                for (int i=0; i<content.Options.Count; i++)
-                {
-                    WriteProFileOption(sw, (ProFileOption)content.Options[i]);
-                }
+                sw.WriteLine(Resources.exportProHeader);
+                WriteProFileOptions(sw, content.Options);
             }
+        }
 
-            // open the file in vs
-            if (openFile)
-                dteObject.OpenFile(EnvDTE.Constants.vsViewKindTextView, proFileName).Activate();
+        private static void WriteProFileOptions(StreamWriter sw, List<ProFileOption> options)
+        {
+            foreach (ProFileOption option in options)
+                WriteProFileOption(sw, option);
         }
 
         private static void WriteProFileOption(StreamWriter sw, ProFileOption option)
@@ -1124,9 +1151,16 @@ namespace Nokia.QtProjectLib
                 {
                     if (profile.Export)
                     {
-                        WriteProFile(profile, null, expDlg.OpenFiles);
+                        Project project = HelperFunctions.VCProjectToProject(profile.Project);
+                        string priFile = null;
                         if (expDlg.CreatePriFile)
-                            ExportToPriFile(HelperFunctions.VCProjectToProject(profile.Project));
+                            priFile = ExportToPriFile(project);
+                        else
+                        {
+                            ProFileContent priContent = CreatePriFileContent(project, profile.Project.ProjectDirectory);
+                            profile.Options.AddRange(priContent.Options);
+                        }
+                        WriteProFile(profile, profile.Project.ProjectDirectory + profile.Project.Name + ".pro", priFile, expDlg.OpenFiles);
                     }
                 }
             }
@@ -1205,7 +1239,7 @@ namespace Nokia.QtProjectLib
             ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
         }
 
-        public void ExportToPriFile(EnvDTE.Project proj)
+        public string ExportToPriFile(EnvDTE.Project proj)
         {
             VCProject vcproj;
 
@@ -1218,7 +1252,7 @@ namespace Nokia.QtProjectLib
                 catch(System.Exception e)
                 {
                     Messages.DisplayErrorMessage(e);
-                    return;
+                    return null;
                 }
 
                 // make the user able to choose .pri file
@@ -1231,20 +1265,20 @@ namespace Nokia.QtProjectLib
                 fd.FileName = vcproj.Name + ".pri";
 
                 if (fd.ShowDialog() != DialogResult.OK)
-                    return;
+                    return null;
 
                 ExportToPriFile(proj, fd.FileName);
+                return fd.FileName;
             }
+            return null;
         }
 
         public void ExportToPriFile(EnvDTE.Project proj, string fileName)
         {
-            ProFileContent content;
-
             FileInfo priFile = new FileInfo(fileName);
 
-            content = CreateProFileContent(proj, priFile);
-            WriteProFile(content, priFile, false);
+            ProFileContent content = CreatePriFileContent(proj, priFile.DirectoryName);
+            WritePriFile(content, priFile.FullName);
         }
     }
 }
