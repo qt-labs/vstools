@@ -162,6 +162,7 @@ namespace Nokia.QtProjectLib
 
             QtModuleInfo moduleInfo = null;
             moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
+            moduleInfo.proVarQT = null;
             moduleInfo.HasDLL = false;
 
             moduleInfo = InitQtModule(QtModule.Test, "QtTest", "");
