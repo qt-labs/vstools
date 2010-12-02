@@ -975,13 +975,34 @@ namespace Nokia.QtProjectLib
                     if (tool == null)
                         throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotFindCustomBuildTool", file.FullPath));
 
-                    if (hasDifferentMocFilePerPlatform && !hasDifferentMocFilePerConfig)
+
+                    if (hasDifferentMocFilePerPlatform && hasDifferentMocFilePerConfig)
+                    {
+                        foreach (VCFileConfiguration mocConf in (IVCCollection)mocFile.FileConfigurations)
+                        {
+                            VCConfiguration projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
+                            if (projectCfg.Name != vcConfig.Name || (IsMoccedFileIncluded(file) && !mocableIsCPP))
+                            {
+                                if (!mocConf.ExcludedFromBuild)
+                                    mocConf.ExcludedFromBuild = true;
+                            }
+                            else
+                            {
+                                if (mocConf.ExcludedFromBuild != config.ExcludedFromBuild)
+                                    mocConf.ExcludedFromBuild = config.ExcludedFromBuild;
+                            }
+                        }
+                    }
+                    else if (hasDifferentMocFilePerPlatform)
                     {
                         foreach (VCFileConfiguration mocConf in (IVCCollection)mocFile.FileConfigurations)
                         {
                             VCConfiguration projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
                             VCPlatform mocConfPlatform = projectCfg.Platform as VCPlatform;
-                            bool exclude = mocConfPlatform.Name != platformName || (IsMoccedFileIncluded(file) && !mocableIsCPP);
+                            if (mocConfPlatform.Name != platformName)
+                                continue;
+
+                            bool exclude = IsMoccedFileIncluded(file) && !mocableIsCPP;
                             if (exclude)
                             {
                                 if (mocConf.ExcludedFromBuild != exclude)
@@ -999,6 +1020,10 @@ namespace Nokia.QtProjectLib
                         foreach (VCFileConfiguration mocConf in (IVCCollection)mocFile.FileConfigurations)
                         {
                             VCConfiguration projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
+                            VCPlatform mocConfPlatform = projectCfg.Platform as VCPlatform;
+                            if (platformName != mocConfPlatform.Name)
+                                continue;
+
                             if (projectCfg.Name != vcConfig.Name || (IsMoccedFileIncluded(file) && !mocableIsCPP))
                             {
                                 if (!mocConf.ExcludedFromBuild)
