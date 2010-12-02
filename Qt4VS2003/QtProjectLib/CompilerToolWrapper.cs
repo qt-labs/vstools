@@ -177,6 +177,41 @@ namespace Nokia.QtProjectLib
                 SetStringProperty("AdditionalIncludeDirectories", value);
         }
 
+        public List<string> PreprocessorDefinitions
+        {
+            get
+            {
+                string ppdefsstr = GetPreprocessorDefinitions();
+                if (String.IsNullOrEmpty(ppdefsstr))
+                    return new List<string>();
+
+                string[] ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                return new List<string>(ppdefs);
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    SetPreprocessorDefinitions("");
+                }
+                else
+                {
+                    string ppdefsstr = "";
+                    bool firstLoop = true;
+                    foreach (string ppdef in value)
+                    {
+                        if (firstLoop)
+                            firstLoop = false;
+                        else
+                            ppdefsstr += ",";
+                        ppdefsstr += ppdef;
+                    }
+                    SetPreprocessorDefinitions(ppdefsstr);
+                }
+            }
+        }
+
         /// <summary>
         /// Adds a single preprocessor definition.
         /// </summary>

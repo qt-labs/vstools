@@ -764,10 +764,10 @@ namespace Nokia.QtProjectLib
 
         public string GetDefines(VCFileConfiguration conf)
         {
-            List<string> defineList = GetDefinesFromCompilerTool(CompilerToolWrapper.Create(conf));
+            List<string> defineList = CompilerToolWrapper.Create(conf).PreprocessorDefinitions;
 
             VCConfiguration projectConfig = conf.ProjectConfiguration as VCConfiguration;
-            defineList.AddRange(GetDefinesFromCompilerTool(CompilerToolWrapper.Create(projectConfig)));
+            defineList.AddRange(CompilerToolWrapper.Create(projectConfig).PreprocessorDefinitions);
 
             IVCCollection propertySheets = projectConfig.PropertySheets as IVCCollection;
             if (propertySheets != null)
@@ -802,27 +802,12 @@ namespace Nokia.QtProjectLib
 
         private List<string> GetDefinesFromPropertySheet(VCPropertySheet sheet)
         {
-            List<string> defines = GetDefinesFromCompilerTool(CompilerToolWrapper.Create(sheet));
+            List<string> defines = CompilerToolWrapper.Create(sheet).PreprocessorDefinitions;
             IVCCollection propertySheets = sheet.PropertySheets as IVCCollection;
             if (propertySheets != null)
                 foreach (VCPropertySheet subSheet in propertySheets)
                     defines.AddRange(GetDefinesFromPropertySheet(subSheet));
             return defines;
-        }
-
-        private static List<string> GetDefinesFromCompilerTool(CompilerToolWrapper compiler)
-        {
-            try
-            {
-                if (compiler.GetPreprocessorDefinitions() != null)
-                {
-                    string[] defines = compiler.GetPreprocessorDefinitions().Split(new char[] { ',', ';' },
-                                                                                   StringSplitOptions.RemoveEmptyEntries);
-                    return new List<string>(defines);
-                }
-            }
-            catch { }
-            return new List<string>();
         }
 
         private string GetIncludes(VCFileConfiguration conf)
@@ -3205,7 +3190,7 @@ namespace Nokia.QtProjectLib
         public static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
         {
             CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-            SimpleSet minuend = new SimpleSet(compiler.GetPreprocessorDefinitions().Split(new char[] { ',' }));
+            SimpleSet minuend = new SimpleSet(compiler.PreprocessorDefinitions);
             SimpleSet subtrahend = new SimpleSet(viOld.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
             compiler.SetPreprocessorDefinitions(minuend.Minus(subtrahend).JoinElements(','));
         }
@@ -3215,7 +3200,7 @@ namespace Nokia.QtProjectLib
             bool isWinPlatform = (!viNew.IsWinCEVersion());
 
             CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-            SimpleSet ppdefs = new SimpleSet(compiler.GetPreprocessorDefinitions().Split(new char[] { ',' }));
+            SimpleSet ppdefs = new SimpleSet(compiler.PreprocessorDefinitions);
             ICollection newPPDefs = viNew.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' });
             compiler.SetPreprocessorDefinitions(ppdefs.Union(newPPDefs).JoinElements(','));
 
