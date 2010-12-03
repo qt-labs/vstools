@@ -683,6 +683,9 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
   <data name="PhononLibrary" xml:space="preserve">
     <value>Phonon library</value>
   </data>
+  <data name="DeclarativeLibrary" xml:space="preserve">
+    <value>Declarative library</value>
+  </data>
   <data name="NoDefaultQtVersionError" xml:space="preserve">
     <value>No default Qt version found. Please check your Qt Visual Studio Add-in settings</value>
   </data>

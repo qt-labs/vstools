@@ -82,6 +82,7 @@ namespace Qt4VSAddin
             this.webKitLib.Text = SR.GetString("WebKitLibrary");
             this.xmlPatternsLib.Text = SR.GetString("XmlPatternsLibrary");
             this.phononLib.Text = SR.GetString("PhononLibrary");
+            this.declarativeLib.Text = SR.GetString("DeclarativeLibrary");
 
             AddMapping(coreLib, QtModule.Core);
             AddMapping(guiLib, QtModule.Gui);
@@ -100,6 +101,7 @@ namespace Qt4VSAddin
             AddMapping(activeQtSLib, QtModule.ActiveQtS);
             AddMapping(activeQtCLib, QtModule.ActiveQtC);
             AddMapping(phononLib, QtModule.Phonon);
+            AddMapping(declarativeLib, QtModule.Declarative);
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             this.KeyPress += new KeyPressEventHandler(this.FormProjectQtSettings_KeyPress);

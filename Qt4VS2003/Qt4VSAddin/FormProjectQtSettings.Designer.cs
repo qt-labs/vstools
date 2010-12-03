@@ -45,6 +45,7 @@
             this.qt3Lib = new System.Windows.Forms.CheckBox();
             this.svgLib = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.multimediaLib = new System.Windows.Forms.CheckBox();
             this.networkLib = new System.Windows.Forms.CheckBox();
             this.coreLib = new System.Windows.Forms.CheckBox();
             this.guiLib = new System.Windows.Forms.CheckBox();
@@ -53,7 +54,7 @@
             this.testLib = new System.Windows.Forms.CheckBox();
             this.scriptLib = new System.Windows.Forms.CheckBox();
             this.xmlPatternsLib = new System.Windows.Forms.CheckBox();
-            this.multimediaLib = new System.Windows.Forms.CheckBox();
+            this.declarativeLib = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -135,6 +136,7 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.Controls.Add(this.declarativeLib);
             this.panel3.Controls.Add(this.phononLib);
             this.panel3.Controls.Add(this.helpLib);
             this.panel3.Controls.Add(this.webKitLib);
@@ -236,6 +238,15 @@
             this.panel2.Size = new System.Drawing.Size(176, 272);
             this.panel2.TabIndex = 11;
             // 
+            // multimediaLib
+            // 
+            this.multimediaLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.multimediaLib.Location = new System.Drawing.Point(8, 56);
+            this.multimediaLib.Name = "multimediaLib";
+            this.multimediaLib.Size = new System.Drawing.Size(168, 24);
+            this.multimediaLib.TabIndex = 2;
+            // 
             // networkLib
             // 
             this.networkLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -308,14 +319,14 @@
             this.xmlPatternsLib.Size = new System.Drawing.Size(160, 24);
             this.xmlPatternsLib.TabIndex = 7;
             // 
-            // multimediaLib
+            // declarativeLib
             // 
-            this.multimediaLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.declarativeLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.multimediaLib.Location = new System.Drawing.Point(8, 56);
-            this.multimediaLib.Name = "multimediaLib";
-            this.multimediaLib.Size = new System.Drawing.Size(168, 24);
-            this.multimediaLib.TabIndex = 2;
+            this.declarativeLib.Location = new System.Drawing.Point(8, 200);
+            this.declarativeLib.Name = "declarativeLib";
+            this.declarativeLib.Size = new System.Drawing.Size(168, 24);
+            this.declarativeLib.TabIndex = 8;
             // 
             // FormProjectQtSettings
             // 
@@ -370,6 +381,7 @@
         private System.Windows.Forms.CheckBox xmlPatternsLib;
         private System.Windows.Forms.CheckBox phononLib;
         private System.Windows.Forms.CheckBox multimediaLib;
+        private System.Windows.Forms.CheckBox declarativeLib;
 
     }
 }

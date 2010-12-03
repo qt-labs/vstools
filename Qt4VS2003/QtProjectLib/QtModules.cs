@@ -56,7 +56,8 @@ namespace Nokia.QtProjectLib
         WebKit = 18,
         XmlPatterns = 19,
         Phonon = 20,
-        Multimedia = 21
+        Multimedia = 21,
+        Declarative = 22
     }
 
     public class QtModuleInfo
@@ -70,7 +71,7 @@ namespace Nokia.QtProjectLib
         public string IncludePath = "";
         public string proVarQT = null;
         public string proVarCONFIG = null;
-        public List<QtModule> dependentModules = new List<QtModule>();
+        public List<QtModule> dependentModules = new List<QtModule>();  // For WinCE deployment.
 
         public QtModuleInfo(QtModule id)
         {
@@ -184,6 +185,12 @@ namespace Nokia.QtProjectLib
             moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB");
             moduleInfo.dependentModules.Add(QtModule.Xml);
 
+            moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB");
+            moduleInfo.dependentModules.Add(QtModule.Script);
+            moduleInfo.dependentModules.Add(QtModule.Sql);
+            moduleInfo.dependentModules.Add(QtModule.XmlPatterns);
+            moduleInfo.dependentModules.Add(QtModule.Network);
+
             moduleInfo = InitQtModule(QtModule.OpenGL, "QtOpenGL", "QT_OPENGL_LIB");
             moduleInfo.AdditionalLibraries.Add("opengl32.lib");
             moduleInfo.AdditionalLibraries.Add("glu32.lib");
@@ -215,7 +222,7 @@ namespace Nokia.QtProjectLib
             dictModulesByDLL.Add(libraryPrefix, moduleId);
             foreach (string str in defines)
             {
-                if (str == null || str.Length == 0)
+                if (string.IsNullOrEmpty(str))
                     continue;
                 moduleInfo.Defines.Add(str);
             }
