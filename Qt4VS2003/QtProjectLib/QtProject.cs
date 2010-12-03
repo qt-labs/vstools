@@ -999,10 +999,10 @@ namespace Nokia.QtProjectLib
                         {
                             VCConfiguration projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
                             VCPlatform mocConfPlatform = projectCfg.Platform as VCPlatform;
-                            if (mocConfPlatform.Name != platformName)
+                            if (projectCfg.ConfigurationName != vcConfig.ConfigurationName)
                                 continue;
 
-                            bool exclude = IsMoccedFileIncluded(file) && !mocableIsCPP;
+                            bool exclude = mocConfPlatform.Name != platformName || (IsMoccedFileIncluded(file) && !mocableIsCPP);
                             if (exclude)
                             {
                                 if (mocConf.ExcludedFromBuild != exclude)
