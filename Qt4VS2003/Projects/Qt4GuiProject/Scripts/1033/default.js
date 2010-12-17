@@ -156,6 +156,8 @@ function AddModules()
         QtEngine.AddModule("QtXmlPatterns");
     if (wizard.FindSymbol('TEST_MODULE'))
         QtEngine.AddModule("QtTest");
+    if (wizard.FindSymbol('DECLARATIVE_MODULE'))
+        QtEngine.AddModule("QtDeclarative");
     if (wizard.FindSymbol('PHONON_MODULE'))
         QtEngine.AddModule("phonon");
 }
