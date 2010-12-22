@@ -76,7 +76,7 @@ namespace Nokia.QtProjectLib
                     {
                         string lineCopy = line;
                         line = "";
-                        for (int i = 0, j = 1; i < lineCopy.Length; ++i, ++j)
+                        for (int i = 0, j = 1; j < lineCopy.Length; ++i, ++j)
                         {
                             if (lineCopy[i] == '/')
                             {
