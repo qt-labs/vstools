@@ -3009,7 +3009,11 @@ namespace Nokia.QtProjectLib
             List<KeyValuePair<SolutionContext, bool>> backup = new List<KeyValuePair<SolutionContext, bool>>();
             foreach (SolutionConfiguration config in solutionConfigs)
             {
-                foreach (SolutionContext context in config.SolutionContexts)
+                SolutionContexts solutionContexts = config.SolutionContexts;
+                if (solutionContexts == null)
+                    continue;
+
+                foreach (SolutionContext context in solutionContexts)
                 {
                     backup.Add(new KeyValuePair<SolutionContext, bool>(context, context.ShouldBuild));
                     if (envPro.FullName.Contains(context.ProjectName)
