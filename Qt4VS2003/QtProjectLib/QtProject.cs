@@ -1131,7 +1131,6 @@ namespace Nokia.QtProjectLib
                         defineIncludeConfig = config;
                     strDefinesIncludes += GetDefines(defineIncludeConfig);
                     strDefinesIncludes += GetIncludes(defineIncludeConfig);
-                    strDefinesIncludes = HelperFunctions.RemoveDuplicates(strDefinesIncludes, ' ');
                     int cmdLineLength = newCmdLine.Length + strDefinesIncludes.Length + 1;
                     if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength() && mocSupportsIncludes)
                     {

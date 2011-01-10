@@ -869,28 +869,6 @@ namespace Nokia.QtProjectLib
         }
 
         /// <summary>
-        /// Function can be used to remove duplicates from a string containing a list
-        /// of entries.
-        /// </summary>
-        /// <param name="entries">string containing the list of entries</param>
-        /// <param name="splitChars">defines the character(s) used between the
-        /// different entries</param>
-        /// <returns>The string without duplicated entries</returns>
-        public static string RemoveDuplicates(string entries, params char[] splitChars)
-        {
-            string[] entryArray = entries.Split(splitChars);
-            string returnString = "";
-            Array.Sort(entryArray);
-            for (int i = 0; i < entryArray.Length - 1; i++)
-            {
-                if (!string.IsNullOrEmpty(entryArray[i]) && entryArray[i] != entryArray[i + 1])
-                    returnString += entryArray[i] + " ";
-            }
-            returnString += entryArray[entryArray.Length - 1];
-            return returnString;
-        }
-
-        /// <summary>
         /// Creates a temporary qt project template file. It creates the filters 
         /// in the order specified by the array.
         /// </summary>
