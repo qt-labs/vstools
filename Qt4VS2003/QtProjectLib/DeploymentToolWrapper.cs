@@ -120,12 +120,20 @@ namespace Nokia.QtProjectLib
 
         public string GetAdditionalFiles()
         {
-            object obj = deploymentToolType.InvokeMember(
-                "AdditionalFiles",
-                System.Reflection.BindingFlags.GetProperty,
-                null,
-                deploymentToolObj,
-                null);
+            object obj;
+            try
+            {
+                obj = deploymentToolType.InvokeMember(
+                    "AdditionalFiles",
+                    System.Reflection.BindingFlags.GetProperty,
+                    null,
+                    deploymentToolObj,
+                    null);
+            }
+            catch
+            {
+                obj = null;
+            }
 
             if (obj != null)
                 return (string)obj;

@@ -480,7 +480,15 @@ namespace Nokia.QtProjectLib
 
         private string GetStringProperty(string name)
         {
-            object obj = compilerType.InvokeMember(name, System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
+            object obj;
+            try
+            {
+                obj = compilerType.InvokeMember(name, System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
+            }
+            catch
+            {
+                obj = null;
+            }
             if (obj == null)
                 return "";
             else
