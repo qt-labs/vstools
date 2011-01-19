@@ -392,7 +392,7 @@ function InitControls()
 	QTMODULES.innerText = strModules;
     
     var strHTML = '<select id="PLATFORM_COMBO" name="PLATFORM_COMBO" style="width: 360px" width="250">';
-    var qtVersions = QtEngine.GetQtWinCEVersions();
+    var qtVersions = QtEngine.GetQtWinCEVersions(window.external.dte);
     var strDefaultQtWinCEVersion = QtEngine.GetDefaultWinCEVersion();
     if (qtVersions.Count > 0) {
         for (var i=0; i < qtVersions.Count; ++i) {

@@ -486,7 +486,7 @@ namespace Nokia.QtProjectLib
         /// Returns the Windows CE Qt builds which are available.
         /// </summary>
         /// <returns>List of string</returns>
-        public ArrayList GetQtWinCEVersions()
+        public ArrayList GetQtWinCEVersions(EnvDTE.DTE dte)
         {
             ArrayList list = new ArrayList();
             QtVersionManager vm = QtVersionManager.The();
@@ -495,7 +495,7 @@ namespace Nokia.QtProjectLib
             {
                 VersionInformation vi = vm.GetVersionInfo(qtVersion);
                 string platformName = GetWinCEPlatformName(qtVersion, vm);
-                if (vi.IsWinCEVersion() && HelperFunctions.IsPlatformAvailable(platformName))
+                if (vi.IsWinCEVersion() && HelperFunctions.IsPlatformAvailable(dte, platformName))
                     list.Add(qtVersion);
             }
             return list;

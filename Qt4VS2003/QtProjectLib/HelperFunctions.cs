@@ -42,6 +42,7 @@ namespace Nokia.QtProjectLib
     using System.Reflection;
     using System.Text.RegularExpressions;
     using EnvDTE;
+    using System.Xml;
 
     public class HelperFunctions
     {
@@ -1643,16 +1644,27 @@ namespace Nokia.QtProjectLib
         /// Returns true if the given platform is available in the global settings of Visual Studio.
         /// On error this function returns false.
         /// </summary>
-        public static bool IsPlatformAvailable(string platformName)
+        public static bool IsPlatformAvailable(EnvDTE.DTE dteObject, string platformName)
         {
-            if (availablePlatforms == null)
+            if (availablePlatforms == null || availablePlatforms.Count == 0)
             {
-                VCProjectEngine engine = new VCProjectEngineObject();
-                IVCCollection platforms = engine.Platforms as IVCCollection;
-                availablePlatforms = new List<string>(platforms.Count);
-                foreach (VCPlatform platform in platforms)
+                availablePlatforms = new List<string>();
+                // Read the available platforms from WCE.VCPlatform.config
+                // instead of using VCProjectEngine, because for some strange
+                // reason the project wizards isn't able to create a project if
+                // we are instantiating the VCProjectEngine here.
+                String vcPlatformCfg = dteObject.FullName;
+                int idx = vcPlatformCfg.LastIndexOf("\\");
+                idx = vcPlatformCfg.LastIndexOf("\\", idx - 1);
+                idx = vcPlatformCfg.LastIndexOf("\\", idx - 1);
+                vcPlatformCfg = vcPlatformCfg.Substring(0, idx + 1);
+                vcPlatformCfg += "VC\\vcpackages\\WCE.VCPlatform.config";
+
+                FileStream stream = new FileStream(vcPlatformCfg, FileMode.Open);
+                XmlReader reader = new XmlTextReader(stream);
+                while (reader.ReadToFollowing("PlatformName"))
                 {
-                    availablePlatforms.Add(platform.Name);
+                    availablePlatforms.Add(reader.ReadElementContentAsString());
                 }
             }
 
