@@ -1649,10 +1649,10 @@ namespace Nokia.QtProjectLib
             if (availablePlatforms == null || availablePlatforms.Count == 0)
             {
                 availablePlatforms = new List<string>();
+#if VS2005
                 // Read the available platforms from WCE.VCPlatform.config
-                // instead of using VCProjectEngine, because for some strange
-                // reason the project wizards isn't able to create a project if
-                // we are instantiating the VCProjectEngine here.
+                // instead of using VCProjectEngine, because the project wizards aren't
+                // able to list the platforms if VS2005 is used.
                 String vcPlatformCfg = dteObject.FullName;
                 int idx = vcPlatformCfg.LastIndexOf("\\");
                 idx = vcPlatformCfg.LastIndexOf("\\", idx - 1);
@@ -1666,6 +1666,14 @@ namespace Nokia.QtProjectLib
                 {
                     availablePlatforms.Add(reader.ReadElementContentAsString());
                 }
+#else
+                VCProjectEngine engine = new VCProjectEngineObject();
+                IVCCollection platforms = engine.Platforms as IVCCollection;
+                foreach (VCPlatform platform in platforms)
+                {
+                    availablePlatforms.Add(platform.Name);
+                }
+#endif
             }
 
             if (availablePlatforms == null)
