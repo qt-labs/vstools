@@ -2,7 +2,7 @@
 **
 ** This file is part of the Qt VS Add-in
 **
-** Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
 **
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nokia Qt Development Frameworks")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiaries.")]
+[assembly: AssemblyCopyright("Copyright (c) 2008-2011 Nokia Corporation and/or its subsidiaries.")]
 [assembly: AssemblyTrademark("Nokia, Qt and their respective logos are trademarks of Nokia Corporation in Finland and/or other countries worldwide. All other trademarks are property of their respective owners.")]
 [assembly: AssemblyCulture("")]
 
