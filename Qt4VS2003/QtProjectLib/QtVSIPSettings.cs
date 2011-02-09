@@ -111,6 +111,26 @@ namespace Nokia.QtProjectLib
             return GetBoolValue(project, Resources.lupdateKeyword);
         }
 
+        public static string GetLUpdateOptions()
+        {
+            return GetOption(Resources.lupdateOptionsKeyword);
+        }
+
+        public static string GetLUpdateOptions(EnvDTE.Project project)
+        {
+            return GetOption(project, Resources.lupdateOptionsKeyword);
+        }
+
+        public static string GetLReleaseOptions()
+        {
+            return GetOption(Resources.lreleaseOptionsKeyword);
+        }
+
+        public static string GetLReleaseOptions(EnvDTE.Project project)
+        {
+            return GetOption(project, Resources.lreleaseOptionsKeyword);
+        }
+
         public static bool GetAskBeforeCheckoutFile()
         {
             return GetBoolValue(Resources.askBeforeCheckoutFileKeyword, true);
@@ -148,6 +168,11 @@ namespace Nokia.QtProjectLib
             SaveOption(project, Resources.mocOptionsKeyword, options);
         }
 
+        public static void SaveMocOptions(string options)
+        {
+            SaveOption(Resources.mocOptionsKeyword, options);
+        }
+
         public static void SaveLUpdateOnBuild(EnvDTE.Project project)
         {
             SetBoolValue(project, Resources.lupdateKeyword, GetLUpdateOnBuild());
@@ -158,9 +183,32 @@ namespace Nokia.QtProjectLib
             SetBoolValue(project, Resources.lupdateKeyword, value);
         }
 
-        public static void SaveMocOptions(string options)
+        public static void SaveLUpdateOptions(EnvDTE.Project project, string options)
         {
-            SaveOption(Resources.mocOptionsKeyword, options);
+            if (options == null)
+            {
+                options = GetLUpdateOptions();
+            }
+            SaveOption(project, Resources.lupdateOptionsKeyword, options);
+        }
+
+        public static void SaveLUpdateOptions(string options)
+        {
+            SaveOption(Resources.lupdateOptionsKeyword, options);
+        }
+
+        public static void SaveLReleaseOptions(EnvDTE.Project project, string options)
+        {
+            if (options == null)
+            {
+                options = GetLReleaseOptions();
+            }
+            SaveOption(project, Resources.lreleaseOptionsKeyword, options);
+        }
+
+        public static void SaveLReleaseOptions(string options)
+        {
+            SaveOption(Resources.lreleaseOptionsKeyword, options);
         }
 
         public static string GetRccDirectory(EnvDTE.Project project)

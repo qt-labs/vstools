@@ -107,6 +107,8 @@ message(""You are running qmake on a generated .pro file. This may not work!"")
         public const string uicDirKeyword = "UicDir";
         public const string rccDirKeyword = "RccDir";
         public const string lupdateKeyword = "lupdateOnBuild";
+        public const string lupdateOptionsKeyword = "lupdateOptions";
+        public const string lreleaseOptionsKeyword = "lreleaseOptions";
         public const string askBeforeCheckoutFileKeyword = "askBeforeCheckoutFile";
         public const string disableCheckoutFilesKeyword = "disableCheckoutFiles";
         public const string disableAutoMocStepsUpdateKeyword = "disableAutoMocStepsUpdate";

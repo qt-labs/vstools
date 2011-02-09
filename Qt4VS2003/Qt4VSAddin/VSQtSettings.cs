@@ -42,6 +42,8 @@ namespace Qt4VSAddin
             newRccDir = QtVSIPSettings.GetRccDirectory();
             newUicDir = QtVSIPSettings.GetUicDirectory();
             newLUpdateOnBuild = QtVSIPSettings.GetLUpdateOnBuild();
+            newLUpdateOptions = QtVSIPSettings.GetLUpdateOptions();
+            newLReleaseOptions = QtVSIPSettings.GetLReleaseOptions();
             newAskBeforeCheckoutFile = QtVSIPSettings.GetAskBeforeCheckoutFile();
             newDisableCheckoutFiles = QtVSIPSettings.GetDisableCheckoutFiles();
             newDisableAutoMOCStepsUpdate = QtVSIPSettings.GetDisableAutoMocStepsUpdate();
@@ -52,6 +54,8 @@ namespace Qt4VSAddin
         private string newRccDir = null;
         private string newUicDir = null;
         private bool newLUpdateOnBuild = false;
+        private string newLUpdateOptions = null;
+        private string newLReleaseOptions = null;
         private bool newAskBeforeCheckoutFile = true;
         private bool newDisableCheckoutFiles = true;
         private bool newDisableAutoMOCStepsUpdate = false;
@@ -63,6 +67,8 @@ namespace Qt4VSAddin
             QtVSIPSettings.SaveUicDirectory(newUicDir);
             QtVSIPSettings.SaveRccDirectory(newRccDir);
             QtVSIPSettings.SaveLUpdateOnBuild(newLUpdateOnBuild);
+            QtVSIPSettings.SaveLUpdateOptions(newLReleaseOptions);
+            QtVSIPSettings.SaveLReleaseOptions(newLUpdateOptions);
             QtVSIPSettings.SaveAskBeforeCheckoutFile(newAskBeforeCheckoutFile);
             QtVSIPSettings.SaveDisableCheckoutFiles(newDisableCheckoutFiles);
             QtVSIPSettings.SaveDisableAutoMocStepsUpdate(newDisableAutoMOCStepsUpdate);
@@ -147,6 +153,32 @@ namespace Qt4VSAddin
             set
             {
                 newLUpdateOnBuild = value;
+            }
+        }
+
+        public string LUpdateOptions
+        {
+            get
+            {
+                return newLUpdateOptions;
+            }
+
+            set
+            {
+                newLUpdateOptions = value;
+            }
+        }
+
+        public string LReleaseOptions
+        {
+            get
+            {
+                return newLReleaseOptions;
+            }
+
+            set
+            {
+                newLReleaseOptions = value;
             }
         }
 

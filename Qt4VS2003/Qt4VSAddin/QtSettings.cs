@@ -46,6 +46,8 @@ namespace Qt4VSAddin
             newRccDir = oldRccDir = QtVSIPSettings.GetRccDirectory(project);
             newUicDir = oldUicDir = QtVSIPSettings.GetUicDirectory(project);
             newLUpdateOnBuild = oldLUpdateOnBuild = QtVSIPSettings.GetLUpdateOnBuild(project);
+            newLUpdateOptions = oldLUpdateOptions = QtVSIPSettings.GetLUpdateOptions(project);
+            newLReleaseOptions = oldLReleaseOptions = QtVSIPSettings.GetLReleaseOptions(project);
             newQtVersion = oldQtVersion = versionManager.GetProjectQtVersion(project);
         }
 
@@ -58,6 +60,8 @@ namespace Qt4VSAddin
         private string oldUicDir = null;
         private string oldQtVersion = null;
         private bool oldLUpdateOnBuild = false;
+        private string oldLUpdateOptions = null;
+        private string oldLReleaseOptions = null;
 
         private string newMocDir = null;
         private string newMocOptions = null;
@@ -65,6 +69,8 @@ namespace Qt4VSAddin
         private string newUicDir = null;
         private string newQtVersion = null;
         private bool newLUpdateOnBuild = false;
+        private string newLUpdateOptions = null;
+        private string newLReleaseOptions = null;
 
         public void SaveSettings()
         {
@@ -98,6 +104,12 @@ namespace Qt4VSAddin
 
             if (oldLUpdateOnBuild != newLUpdateOnBuild)
                 QtVSIPSettings.SaveLUpdateOnBuild(project, newLUpdateOnBuild);
+
+            if (oldLUpdateOptions != newLUpdateOptions)
+                QtVSIPSettings.SaveLUpdateOptions(project, newLUpdateOptions);
+
+            if (oldLReleaseOptions != newLReleaseOptions)
+                QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
 
             if (oldQtVersion != newQtVersion)
             {
@@ -201,6 +213,32 @@ namespace Qt4VSAddin
             set
             {
                 newLUpdateOnBuild = value;
+            }
+        }
+
+        public string LUpdateOptions
+        {
+            get
+            {
+                return newLUpdateOptions;
+            }
+
+            set
+            {
+                newLUpdateOptions = value;
+            }
+        }
+
+        public string LReleaseOptions
+        {
+            get
+            {
+                return newLReleaseOptions;
+            }
+
+            set
+            {
+                newLReleaseOptions = value;
             }
         }
 

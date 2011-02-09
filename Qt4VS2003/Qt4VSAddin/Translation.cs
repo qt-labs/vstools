@@ -45,11 +45,19 @@ namespace Qt4VSAddin
             try
             {
                 VCProject vcProject = vcFile.project as VCProject;
+                string cmdLine = "";
+                if (HelperFunctions.IsQtProject(vcProject))
+                {
+                    string options = QtVSIPSettings.GetLReleaseOptions();
+                    if (!string.IsNullOrEmpty(options))
+                        cmdLine += options + " ";
+                }
                 EnvDTE.Project project = vcProject.Object as EnvDTE.Project;
                 Messages.PaneMessage(project.DTE,
                     "--- (lrelease) file: " + vcFile.FullPath);
 
-                HelperFunctions.StartExternalQtApplication(Resources.lreleaseCommand, vcFile.RelativePath,
+                cmdLine += vcFile.RelativePath;
+                HelperFunctions.StartExternalQtApplication(Resources.lreleaseCommand, cmdLine,
                     vcProject.ProjectDirectory, HelperFunctions.GetSelectedQtProject(project.DTE), true,
                     null);
             }
@@ -111,6 +119,9 @@ namespace Qt4VSAddin
                 return false;
 
             string cmdLine = "";
+            string options = QtVSIPSettings.GetLUpdateOptions(pro);
+            if (!string.IsNullOrEmpty(options))
+                cmdLine += options + " ";
             List<string> headers = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_HFiles);
             List<string> sources = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_CppFiles);
             List<string> uifiles = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_UiFiles);

@@ -143,6 +143,8 @@ namespace Nokia.QtProjectLib
             QtVSIPSettings.SaveMocOptions(pro, null);
             QtVSIPSettings.SaveRccDirectory(pro, null);
             QtVSIPSettings.SaveLUpdateOnBuild(pro);
+            QtVSIPSettings.SaveLUpdateOptions(pro, null);
+            QtVSIPSettings.SaveLReleaseOptions(pro, null);
 
             versionManager.SaveProjectQtVersion(pro, qtVersion);
 
