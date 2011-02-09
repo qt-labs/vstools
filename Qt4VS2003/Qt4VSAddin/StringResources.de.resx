@@ -225,6 +225,12 @@
   <data name="AddQtVersionDialog_PlatformNotFoundError" xml:space="preserve">
     <value>Die Plattform "{0}" ist in Visual Studio nicht definiert. Bitte stellen Sie sicher, dass das benötigte SDK installiert ist.</value>
   </data>
+  <data name="AddQtVersionDialog_IncorrectVSVersion" xml:space="preserve">
+    <value>Die Qt Version ist inkompatibel mit der aktuellen Visual Studio Version (VS Version des Qt Build: {0}, aktuelle Version: {1})</value>
+  </data>
+  <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
+    <value>Die Qt Version nutzt einen nicht unterstützten Makefile Generator (genutzt: {0}, unsterstützt: MSVC.NET)</value>
+  </data>
   <data name="AddTranslationDialog_Language" xml:space="preserve">
     <value>Sprache:</value>
   </data>
