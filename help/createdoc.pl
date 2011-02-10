@@ -92,7 +92,7 @@ if ($options{qt}) {
     if (! -f $qhprepairPath) {
         die "The tool $qhprepairPath does not exist\n";
     }
-    my $qhpFile = "$qtDir/doc/html/qt.qhp";
+    my $qhpFile = "$qtDir/doc-build/html-qt/qt.qhp";
     if (! -f $qhpFile) {
         die "File $qhpFile does not exit. Did you build the Qt docs?\n";
     }
@@ -102,7 +102,7 @@ if ($options{qt}) {
     rmtree("$qtvsDir/help/test");
     mkdir "$qtvsDir/help/test";
     print "Running the VsHelpGenerator on Qt...\n";
-    system($vsHelpBuilder, "/in:$qtDir\\doc\\html", "/out:$qtvsDir\\help\\test", "/title:Qt Reference Documentation ($qtVersion)", "/version:$qtVersion");
+    system($vsHelpBuilder, "/in:$qtDir\\doc-build\\html-qt", "/out:$qtvsDir\\help\\test", "/title:Qt Reference Documentation ($qtVersion)", "/version:$qtVersion");
     die "vshelpbuilder failed\n" if ($?);
 } elsif ($options{vs} || $options{vsoline}) {
     print "Creating VS Add-in HTML documentation...\n";
