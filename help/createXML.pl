@@ -18,7 +18,7 @@ else
   print FILE "      <Name _locID=\"name.1\">Technology</Name>\n";
   print FILE "      <FilterValue>\n";
   print FILE "          <Id>qt$VerNoDot</Id>\n";
-  print FILE "          <Name _locID=\"name.2\">QT $ARGV[0]</Name>\n";
+  print FILE "          <Name _locID=\"name.2\">Qt $ARGV[0]</Name>\n";
   print FILE "          <Meaning>\n";
   print FILE "             <LocalFilterString>(\"DocSet\"=\"qtrefdoc$VerUnderscore\")</LocalFilterString>\n";
   print FILE "             <TocInclude></TocInclude>\n";
