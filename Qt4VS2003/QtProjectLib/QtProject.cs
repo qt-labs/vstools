@@ -651,12 +651,6 @@ namespace Nokia.QtProjectLib
             }
             if ((type & TemplateType.PluginProject) != 0)
                 MarkAsDesignerPluginProject();
-#if VS2010
-            if (qtVersion == null)
-                qtVersion = vm.GetQtVersionFromInstallDir(vi.qtDir);
-            UpdateQtDirPropertySheet(qtVersion);
-#endif
-
         }
 
         public void MarkAsDesignerPluginProject()
@@ -3114,9 +3108,6 @@ namespace Nokia.QtProjectLib
             if (bRefreshMocSteps)
                 RefreshMocSteps();
 
-#if VS2010
-            UpdateQtDirPropertySheet(newVersion);
-#endif
             HelperFunctions.SetEnvironmentVariable("QTDIR", viNew.qtDir);
 
             UpdateModules(viOld, viNew);
@@ -3571,85 +3562,27 @@ namespace Nokia.QtProjectLib
             return projectItem;
         }
 
-#if VS2010
-        public void UpdateQtDirPropertySheet(string newQtVersion)
+        public void SetQtEnvironment()
         {
-            if (string.IsNullOrEmpty(newQtVersion))
+            string qtVersion = QtVersionManager.The().GetProjectQtVersion(envPro);
+            if (string.IsNullOrEmpty(qtVersion))
                 return;
 
-            string newQtDir = null;
-            if (newQtVersion != "$(QTDIR)")
-                newQtDir = QtVersionManager.The().GetInstallPath(newQtVersion);
-            string propSheetFileName = vcPro.ProjectDirectory + Resources.qtSheetKeyword + ".props";
-            if (!File.Exists(propSheetFileName))
+            string qtDir = null;
+            if (qtVersion != "$(QTDIR)")
+                qtDir = QtVersionManager.The().GetInstallPath(qtVersion);
+            HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
+#if VS2010
+            try
             {
-                StreamWriter sw = new StreamWriter(propSheetFileName);
-                sw.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
-                sw.WriteLine(@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">");
-                sw.WriteLine(@"<ImportGroup Label=""PropertySheets"" />");
-                sw.WriteLine(@"<PropertyGroup Label=""UserMacros"" />");
-                sw.WriteLine(@"<PropertyGroup />");
-                sw.WriteLine(@"<ItemDefinitionGroup />");
-                sw.WriteLine(@"<ItemGroup />");
-                sw.WriteLine(@"</Project>");
-                sw.Close();
+                var propertyAccess = (IVCBuildPropertyStorage)vcPro;
+                propertyAccess.SetPropertyValue("QTDIR", null, "UserFile", qtDir);
             }
-            
-            foreach (VCConfiguration vcConfig in vcPro.Configurations as IVCCollection)
+            catch (Exception)
             {
-                VCPropertySheet qtDirSheet = null;
-                IVCCollection sheets = vcConfig.PropertySheets as IVCCollection;
-                foreach (VCPropertySheet sheet in sheets)
-                {
-                    if (sheet.Name == Resources.qtSheetKeyword)
-                    {
-                        qtDirSheet = sheet;
-                        break;
-                    }
-                }
-                if (qtDirSheet == null)
-                {
-                    try
-                    {
-                        qtDirSheet = vcConfig.AddPropertySheet(propSheetFileName);
-                    }
-                    catch (Exception e)
-                    {
-                        Messages.PaneMessage(dte, "Couldn't create property sheet. Exception: " + e.Message);
-                    }
-                }
-
-                VCUserMacro qtDirMacro = null;
-                foreach (VCUserMacro macro in qtDirSheet.UserMacros)
-                {
-                    if (macro.Name == "QTDIR")
-                    {
-                        qtDirMacro = macro;
-                        break;
-                    }
-                }
-                // The Qt version to use is not $(QTDIR)
-                if (newQtDir != null)
-                {
-                    if (qtDirMacro == null)
-                    {
-                        qtDirMacro = qtDirSheet.AddUserMacro("QTDIR", newQtDir);
-                        qtDirMacro.PerformEnvironmentSet = true;
-                        qtDirSheet.Save();
-                    }
-                    else if (qtDirMacro.Value != newQtDir)
-                    {
-                        qtDirMacro.Value = newQtDir;
-                        qtDirMacro.PerformEnvironmentSet = true;
-                        qtDirSheet.Save();
-                    }
-                }
-                else if (qtDirMacro != null)
-                {
-                    qtDirSheet.RemoveUserMacro(qtDirMacro);
-                }
+                Messages.PaneMessage(envPro.DTE, SR.GetString("QtProject_CannotAccessUserFile", vcPro.ItemName));
             }
-        }
 #endif
+        }
     }
 }

@@ -508,7 +508,7 @@ namespace Qt4VSAddin
             if (qtDir == null)
                 return;
 
-            HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
+            qtpro.SetQtEnvironment();
             HelperFunctions.SetDebuggingEnvironment(project);
 
             if (QtVSIPSettings.GetLUpdateOnBuild(project))
@@ -874,14 +874,6 @@ namespace Qt4VSAddin
                     }
                 }
             }
-#if VS2010
-            if (HelperFunctions.IsQtProject(project))
-            {
-                QtProject qtPro = QtProject.Create(project);
-                string qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
-                qtPro.UpdateQtDirPropertySheet(qtVersion);
-            }
-#endif
         }
 
         void SolutionEvents_ProjectRemoved(Project project)
@@ -894,11 +886,6 @@ namespace Qt4VSAddin
             {
                 if (HelperFunctions.IsQtProject(p))
                 {
-#if VS2010
-                    QtProject qtPro = QtProject.Create(p);
-                    string qtVersion = QtVersionManager.The().GetProjectQtVersion(p);
-                    qtPro.UpdateQtDirPropertySheet(qtVersion);
-#endif
                     RegisterVCProjectEngineEvents(p);
                 }
             }

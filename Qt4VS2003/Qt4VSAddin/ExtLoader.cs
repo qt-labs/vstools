@@ -85,7 +85,6 @@ namespace Qt4VSAddin
                 return;
             }
 #endif
-            HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
             if (Connect._applicationObject != null)
             {
                 ProjectImporter proFileImporter = new ProjectImporter(Connect._applicationObject);

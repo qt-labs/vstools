@@ -329,4 +329,7 @@ und diese automatisch wieder dem Projekt hinzuzufügen.</value>
   <data name="QtProject_CannotFindCustomBuildTool" xml:space="preserve">
     <value>Kann Custom Build Tool für {0} nicht finden.</value>
   </data>
+  <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
+    <value>QTDIR konnte nicht zur User Datei von {0} hinzugefügt werden.</value>
+  </data>
 </root>

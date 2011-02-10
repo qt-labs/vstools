@@ -567,9 +567,6 @@ namespace Nokia.QtProjectLib
                 vm.SaveProjectQtVersion(project, qtVersion);
 
                 QtProject qtPro = QtProject.Create(project);
-#if VS2010
-                qtPro.UpdateQtDirPropertySheet(qtVersion);
-#endif
 
                 string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
                 VCConfiguration activeVCConfig = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);

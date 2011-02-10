@@ -99,10 +99,7 @@ namespace Nokia.QtProjectLib
                         {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
                             QtProject qtPro = QtProject.Create(prj);
-#if VS2010
-                            string newQtDir = QtVersionManager.The().GetInstallPath(qtVersion);
-                            qtPro.UpdateQtDirPropertySheet(qtVersion);
-#endif
+                            qtPro.SetQtEnvironment();
                             ApplyPostImportSteps(qtPro);
                         }
                     }
@@ -163,16 +160,13 @@ namespace Nokia.QtProjectLib
                     if (pro != null)
                     {
                         QtProject qtPro = QtProject.Create(pro);
+                        qtPro.SetQtEnvironment();
                         VersionInformation versionInfo = new VersionInformation(null);
                         string platformName = versionInfo.GetVSPlatformName();
 
                         if (qtVersion != null)
                         {
                             QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
-#if VS2010
-                            string newQtDir = QtVersionManager.The().GetInstallPath(qtVersion);
-                            qtPro.UpdateQtDirPropertySheet(qtVersion);
-#endif
                         }
                         if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName))
                         {

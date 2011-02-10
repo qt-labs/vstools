@@ -327,4 +327,7 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="QtProject_CannotFindCustomBuildTool" xml:space="preserve">
     <value>Could not find custom build tool for {0}.</value>
   </data>
+  <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
+    <value>Could not add QTDIR to {0}'s user file.</value>
+  </data>
 </root>
