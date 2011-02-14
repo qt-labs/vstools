@@ -3,6 +3,8 @@ improvements.
 
 Changes
 -------
+- Do not save the QTDIR in a property sheet for VS 2010. (QTVSADDINBUG-12)
+- QtDeclarative module added to the modules page and wizards. (QTVSADDINBUG-44)
 - Fix import of .pri files. (QTVSADDINBUG-38)
 - Save the modified generated .vc(x)proj after .pro file import.
   (QTVSADDINBUG-40)
@@ -14,6 +16,12 @@ Changes
 - Fix broken include paths in moc calls for VS 2010. (QTVSADDINBUG-34)
 - Fix import of previously unloaded projects. (QTVSADDINBUG-31)
 - Preserve line breaks in custom build steps after import. (QTVSADDINBUG-32)
+- Fix exception that could be raised when changing the Qt version of solutions
+  that contained non-C++ projects. (QTVSADDINBUG-50)
+- Fix moc command line creation for include paths that contain whitespace
+  characters. (QTVSADDINBUG-53)
+- Fixed the Windows CE wizards that stopped working under certain circumstances.
+  (QTVSADDINBUG-42)
 - Several fixes for Windows CE project generation.
 - Qt 4.7.2 documentation included.
 
