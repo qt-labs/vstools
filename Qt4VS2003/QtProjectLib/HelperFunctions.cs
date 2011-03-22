@@ -1526,11 +1526,24 @@ namespace Nokia.QtProjectLib
         public static List<EnvDTE.Project> ProjectsInSolution(EnvDTE.DTE dteObject)
         {
             List<EnvDTE.Project> projects = new List<EnvDTE.Project>();
-            if (dteObject.Solution != null && dteObject.Solution.Projects != null)
+            Solution solution = dteObject.Solution;
+            if (solution != null)
             {
-                foreach (EnvDTE.Project prj in dteObject.Solution.Projects)
+                int c = solution.Count;
+                for (int i = 1; i <= c; ++i)
                 {
-                    addSubProjects(prj, ref projects);
+                    try
+                    {
+                        Project prj = solution.Projects.Item(i) as Project;
+                        if (prj == null)
+                            continue;
+                        addSubProjects(prj, ref projects);
+                    }
+                    catch
+                    {
+                        // Ignore this exception... maybe the next project is ok.
+                        // This happens for example for Intel VTune projects.
+                    }
                 }
             }
             return projects;
