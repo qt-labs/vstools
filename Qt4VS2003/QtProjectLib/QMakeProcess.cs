@@ -113,6 +113,7 @@ namespace Nokia.QtProjectLib
         private int errorValue = 0;
         private EnvDTE.DTE dteObject;
         private bool recursive = false;
+        private VersionInformation qtVersionInformation;
         private static Process qmakeProcess = null;
 
         private static int stdOutputLines = 0;
@@ -125,11 +126,12 @@ namespace Nokia.QtProjectLib
             get { return errorValue; }
         }
 
-        public QMake(EnvDTE.DTE dte, string fileName, bool recursiveRun)
+        public QMake(EnvDTE.DTE dte, string fileName, bool recursiveRun, VersionInformation vi)
         {
             dteObject = dte;
             file = fileName;
             recursive = recursiveRun;
+            qtVersionInformation = vi;
         }
 
         public void RunQMake()
@@ -142,18 +144,6 @@ namespace Nokia.QtProjectLib
             vcproj += ".vcproj";
 #endif
 
-            VersionInformation vi = null;
-            try
-            {
-                vi = new VersionInformation(null);
-            }
-            catch (Exception e)
-            {
-                errorValue = -1;
-                InvokeExternalTarget(PaneMessageDataEvent, "*** ERROR (qmake): " + e.Message);
-                InvokeExternalTarget(CloseEvent);
-                return;
-            }
             string qmakeArgs = "-tp vc \"" + fi.Name + "\" ";
 
             if (recursive)
@@ -163,7 +153,7 @@ namespace Nokia.QtProjectLib
 
             qmakeArgs += @" QMAKE_INCDIR_QT=$(QTDIR)\\include ";
 
-            if (vi.qt4Version) //a dontknowwhyweneedithack
+            if (qtVersionInformation.qt4Version) //a dontknowwhyweneedithack
                 qmakeArgs += "QMAKE_LIBDIR_QT=  ";
 
             qmakeArgs += @"QMAKE_LIBDIR=$(QTDIR)\\lib "
@@ -179,7 +169,7 @@ namespace Nokia.QtProjectLib
             qmakeProcess.StartInfo.RedirectStandardOutput = true;
 
             qmakeProcess.StartInfo.Arguments = qmakeArgs;
-            qmakeProcess.StartInfo.FileName = vi.qtDir + "\\bin\\qmake";
+            qmakeProcess.StartInfo.FileName = qtVersionInformation.qtDir + "\\bin\\qmake";
             qmakeProcess.StartInfo.WorkingDirectory = fi.DirectoryName;
 
             // determine which vs version we are currently using and inform qmake about it

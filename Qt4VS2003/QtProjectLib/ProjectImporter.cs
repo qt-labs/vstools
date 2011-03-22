@@ -83,13 +83,14 @@ namespace Nokia.QtProjectLib
 
         private void ImportSolution(FileInfo mainInfo, string qtVersion)
         {
-            FileInfo VCInfo = RunQmake(mainInfo, ".sln", true);
+            VersionInformation versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            FileInfo VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
 
             try
             {
-                if (CheckVersionInfo())
+                if (CheckQtVersion(versionInfo))
                 {
                     dteObject.Solution.Open(VCInfo.FullName);
                     if (qtVersion != null)
@@ -120,13 +121,14 @@ namespace Nokia.QtProjectLib
 #else
             const string projectFileExtension = ".vcproj";
 #endif
-            FileInfo VCInfo = RunQmake(mainInfo, projectFileExtension, false);
+            VersionInformation versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            FileInfo VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
             if (null == VCInfo)
                 return;
 
             try
             {
-                if (CheckVersionInfo())
+                if (CheckQtVersion(versionInfo))
                 {
                     // no need to add the project again if it's already there...
                     if (!HelperFunctions.IsProjectInSolution(dteObject, VCInfo.FullName))
@@ -161,7 +163,6 @@ namespace Nokia.QtProjectLib
                     {
                         QtProject qtPro = QtProject.Create(pro);
                         qtPro.SetQtEnvironment();
-                        VersionInformation versionInfo = new VersionInformation(null);
                         string platformName = versionInfo.GetVSPlatformName();
 
                         if (qtVersion != null)
@@ -285,7 +286,7 @@ namespace Nokia.QtProjectLib
             return str;
         }
 
-        private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive)
+        private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
         {
             string name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
 
@@ -297,7 +298,7 @@ namespace Nokia.QtProjectLib
                 Messages.PaneMessage(dteObject, "--- (Import): Generating new project of " + mainInfo.Name + " file");
 
                 InfoDialog dialog = new InfoDialog(mainInfo.Name);
-                QMake qmake = new QMake(dteObject, mainInfo.FullName, recursive);
+                QMake qmake = new QMake(dteObject, mainInfo.FullName, recursive, vi);
 
                 qmake.CloseEvent += new QMake.ProcessEventHandler(dialog.CloseEventHandler);
                 qmake.PaneMessageDataEvent += new QMake.ProcessEventHandlerArg(this.PaneMessageDataReceived);
@@ -319,9 +320,8 @@ namespace Nokia.QtProjectLib
             Messages.PaneMessage(dteObject, data);
         }
 
-        private static bool CheckVersionInfo()
+        private static bool CheckQtVersion(VersionInformation vi)
         {
-            VersionInformation vi = new VersionInformation(null);
             if (!vi.qt4Version)
             {
                 Messages.DisplayWarningMessage(SR.GetString("ExportProject_EditProjectFileManually"));
