@@ -175,6 +175,11 @@ namespace Nokia.QtProjectLib
             qmakeProcess.StartInfo.FileName = qtVersionInformation.qtDir + "\\bin\\qmake";
             qmakeProcess.StartInfo.WorkingDirectory = fi.DirectoryName;
 
+            // We must set the QTDIR environment variable, because we're clearing QMAKE_LIBDIR_QT above.
+            // If we do not set this, the Qt libraries will be QtCored.lib instead of QtCore4d.lib even
+            // for shared builds.
+            qmakeProcess.StartInfo.EnvironmentVariables["QTDIR"] = qtVersionInformation.qtDir;
+
             // determine which vs version we are currently using and inform qmake about it
             string regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
