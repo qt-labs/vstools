@@ -153,8 +153,11 @@ namespace Nokia.QtProjectLib
 
             qmakeArgs += @" QMAKE_INCDIR_QT=$(QTDIR)\\include ";
 
-            if (qtVersionInformation.qt4Version) //a dontknowwhyweneedithack
+            if (qtVersionInformation.qt4Version) {
+                // We must clear QMAKE_LIBDIR_QT because qmake adds this path
+                // to the additional library paths in the linker settings.
                 qmakeArgs += "QMAKE_LIBDIR_QT=  ";
+            }
 
             qmakeArgs += @"QMAKE_LIBDIR=$(QTDIR)\\lib "
                        + @"QMAKE_UIC=_(QTDIR)\\bin\\uic.exe "
