@@ -5,5 +5,8 @@ Changes
 -------
 - Fix a regression when importing .pro files that was introduced in 1.1.8.
 - Make the add-in work with Intel VTune projects. (QTVSADDINBUG-65)
-
+- Check for compatibility with VS version when adding new Qt version.
+  This will hopefully stop people from trying to use a MinGW Qt build with
+  Visual Studio. (QTVSADDINBUG-58)
+- Added possiblity to specifiy lupdate/lrelease options. (QTVSADDINBUG-48)
 
