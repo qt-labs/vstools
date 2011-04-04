@@ -255,7 +255,7 @@ namespace Qt4VSAddin
             }
 
             string makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-            if (makefileGenerator == "MSVC.NET")
+            if (makefileGenerator == "MSVC.NET" || makefileGenerator == "MSBUILD")
             {
                 string compilerDefines = versionInfo.GetQMakeConfEntry("QMAKE_COMPILER_DEFINES");
                 string mscVersion = "0";
