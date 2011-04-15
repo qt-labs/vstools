@@ -1723,10 +1723,7 @@ namespace Nokia.QtProjectLib
                 if (f.Name.ToLower() == fi.Name.ToLower())
                     tmpList.Add(f);
             }
-            if (tmpList.Count == 0)
-                return null;
-            else
-                return tmpList;
+            return tmpList;
         }
 
         public System.Collections.Generic.List<VCFile> GetAllFilesFromFilter(VCFilter filter)

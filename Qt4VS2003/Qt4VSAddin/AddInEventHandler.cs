@@ -560,16 +560,14 @@ namespace Qt4VSAddin
                 if (qtPro.IsMoccedFileIncluded(file))
                 {
                     // exclude moc_foo.cpp from build
-                    List<VCFile> moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
-                    if (moccedFiles != null && moccedFiles.Count > 0)
-                        foreach (VCFile moccedFile in moccedFiles)
-                            QtProject.ExcludeFromAllBuilds(moccedFile);
+                    foreach (VCFile moccedFile in qtPro.GetFilesFromProject(moccedFileName))
+                        QtProject.ExcludeFromAllBuilds(moccedFile);
                 }
                 else
                 {
                     // make sure that moc_foo.cpp isn't excluded from build
                     List<VCFile> moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
-                    if (moccedFiles != null && moccedFiles.Count > 0)
+                    if (moccedFiles.Count > 0)
                     {
                         bool hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
                         bool hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
