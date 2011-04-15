@@ -459,7 +459,7 @@ namespace Nokia.QtProjectLib
             }
         }
 
-        private static string ReplaceCaseInsensitive(string original,
+        public static string ReplaceCaseInsensitive(string original,
                     string pattern, string replacement)
         {
             int count, position0, position1;

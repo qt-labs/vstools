@@ -152,17 +152,8 @@ namespace Nokia.QtProjectLib
                 qmakeArgs += "-o \"" + vcproj + "\"";
 
             qmakeArgs += @" QMAKE_INCDIR_QT=$(QTDIR)\\include ";
-
-            if (qtVersionInformation.qt4Version) {
-                // We must clear QMAKE_LIBDIR_QT because qmake adds this path
-                // to the additional library paths in the linker settings.
-                qmakeArgs += "QMAKE_LIBDIR_QT=  ";
-            }
-
             qmakeArgs += @"QMAKE_LIBDIR=$(QTDIR)\\lib "
-                       + @"QMAKE_UIC=_(QTDIR)\\bin\\uic.exe "
-                       + @"QMAKE_MOC=_(QTDIR)\\bin\\moc.exe "
-                       + @"QMAKE_RCC=_(QTDIR)\\bin\\rcc.exe "
+                       + @"QMAKE_MOC=$(QTDIR)\\bin\\moc.exe "
                        + @"QMAKE_QMAKE=$(QTDIR)\\bin\\qmake.exe";
 
             qmakeProcess = new System.Diagnostics.Process();
@@ -170,7 +161,6 @@ namespace Nokia.QtProjectLib
             qmakeProcess.StartInfo.UseShellExecute = false;
             qmakeProcess.StartInfo.RedirectStandardError = true;
             qmakeProcess.StartInfo.RedirectStandardOutput = true;
-
             qmakeProcess.StartInfo.Arguments = qmakeArgs;
             qmakeProcess.StartInfo.FileName = qtVersionInformation.qtDir + "\\bin\\qmake";
             qmakeProcess.StartInfo.WorkingDirectory = fi.DirectoryName;
@@ -201,7 +191,7 @@ namespace Nokia.QtProjectLib
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Using: " + qmakeProcess.StartInfo.FileName);
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Working Directory: " + qmakeProcess.StartInfo.WorkingDirectory);
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Arguments: "
-                    + qmakeProcess.StartInfo.Arguments.Replace("_(QTDIR)", "$(QTDIR)")
+                    + qmakeProcess.StartInfo.Arguments
                     + Environment.NewLine);
 
                 if (qmakeProcess.Start())

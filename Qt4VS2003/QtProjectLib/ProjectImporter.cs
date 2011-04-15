@@ -43,6 +43,13 @@ namespace Nokia.QtProjectLib
     {
         private EnvDTE.DTE dteObject = null;
 
+#if VS2010
+        const string projectFileExtension = ".vcxproj";
+#else
+        const string projectFileExtension = ".vcproj";
+#endif
+
+
         public ProjectImporter(EnvDTE.DTE dte)
         {
             dteObject = dte;
@@ -87,6 +94,7 @@ namespace Nokia.QtProjectLib
             FileInfo VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
+            ReplaceAbsoluteQtDirInSolution(VCInfo);
 
             try
             {
@@ -116,15 +124,12 @@ namespace Nokia.QtProjectLib
 
         public void ImportProject(FileInfo mainInfo, string qtVersion)
         {
-#if VS2010
-            const string projectFileExtension = ".vcxproj";
-#else
-            const string projectFileExtension = ".vcproj";
-#endif
             VersionInformation versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
             FileInfo VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
             if (null == VCInfo)
                 return;
+
+            ReplaceAbsoluteQtDirInProject(VCInfo);
 
             try
             {
@@ -210,14 +215,126 @@ namespace Nokia.QtProjectLib
             }
         }
 
+        private static void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile)
+        {
+            List<string> projects = ParseProjectsFromSolution(solutionFile);
+            foreach (string project in projects)
+            {
+                FileInfo projectInfo = new FileInfo(project);
+                ReplaceAbsoluteQtDirInProject(projectInfo);
+            }
+        }
+
+        private static List<string> ParseProjectsFromSolution(FileInfo solutionFile)
+        {
+            StreamReader sr = solutionFile.OpenText();
+            string content = sr.ReadToEnd();
+            sr.Close();
+
+            List<string> projects = new List<string>();
+            int index = content.IndexOf(projectFileExtension);
+            while (index != -1)
+            {
+                int startIndex = content.LastIndexOf('\"', index, index) + 1;
+                int endIndex = content.IndexOf('\"', index);
+                projects.Add(content.Substring(startIndex, endIndex - startIndex));
+                content = content.Substring(endIndex);
+                index = content.IndexOf(projectFileExtension);
+            }
+            return projects;
+        }
+
+        private static void ReplaceAbsoluteQtDirInProject(FileInfo projectFile)
+        {
+            StreamReader sr = projectFile.OpenText();
+            string content = sr.ReadToEnd();
+            sr.Close();
+
+            string qtDir = ParseQtDirFromFileContent(content);
+            if (!string.IsNullOrEmpty(qtDir))
+            {
+                content = HelperFunctions.ReplaceCaseInsensitive(content, qtDir, "$(QTDIR)\\");
+                StreamWriter sw = projectFile.CreateText();
+                sw.Write(content);
+                sw.Flush();
+                sw.Close();
+            }
+            else
+            {
+                Messages.DisplayWarningMessage(SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
+            }
+        }
+
+        private static string ParseQtDirFromFileContent(string vcFileContent)
+        {
+            string uicQtDir = FindQtDirFromExtension(vcFileContent, "bin\\uic.exe");
+            string rccQtDir = FindQtDirFromExtension(vcFileContent, "bin\\rcc.exe");
+            string mkspecQtDir = FindQtDirFromExtension(vcFileContent, "mkspecs\\default");
+            if (!string.IsNullOrEmpty(mkspecQtDir))
+            {
+                if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower())
+                {
+                    return "";
+                }
+                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != mkspecQtDir.ToLower())
+                {
+                    return "";
+                }
+                return mkspecQtDir;
+            }
+            if (!string.IsNullOrEmpty(uicQtDir))
+            {
+                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != uicQtDir.ToLower())
+                {
+                    return "";
+                }
+                return uicQtDir;
+            }
+            if (!string.IsNullOrEmpty(rccQtDir))
+                return rccQtDir;
+            return "";
+        }
+
+        private static string FindQtDirFromExtension(string content, string extension)
+        {
+            string s = "";
+            int index = -1;
+            index = content.ToLower().IndexOf(extension.ToLower());
+            if (index != -1)
+            {
+                s = content.Remove(index);
+                index = s.LastIndexOf("CommandLine=");
+                if (s.LastIndexOf("AdditionalDependencies=") > index)
+                    index = s.LastIndexOf("AdditionalDependencies=");
+                if (index != -1)
+                {
+                    s = s.Substring(index);
+                    s = s.Substring(s.IndexOf('=') + 1);
+                }
+
+                index = s.LastIndexOf(';');
+                if (index != -1)
+                    s = s.Substring(index + 1);
+            }
+            if (!string.IsNullOrEmpty(s))
+            {
+                s = s.Trim(new char[] { ' ', '\"' , ','});
+#if VS2010
+                if (s.StartsWith(">"))
+                    s = s.Substring(1);
+#endif
+            }
+            return s;
+        }
+
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
-            RepairMocSteps(qtProject.Project);
-            HelperFunctions.CleanupQMakeDependencies(qtProject.Project);
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
             qtProject.RepairGeneratedFilesStructure();
             qtProject.TranslateFilterNames();
 
+            QtVSIPSettings.SaveUicDirectory(qtProject.Project, QtVSIPSettings.GetUicDirectory());
+            qtProject.UpdateUicSteps(".");
             QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
             qtProject.RefreshRccSteps();
 
@@ -258,7 +375,6 @@ namespace Nokia.QtProjectLib
                             // command line which we remove.
                             if (commandLine.Contains("moc.exe") && commandLine.StartsWith("@echo"))
                                 commandLine = commandLine.Substring(commandLine.IndexOf("&&") + 3);
-                            commandLine = RepairMocStepString(commandLine);
                             if (firstLoop)
                                 firstLoop = false;
                             else
@@ -266,24 +382,12 @@ namespace Nokia.QtProjectLib
                             commandLineToSet += commandLine;
                         }
                         tool.CommandLine = commandLineToSet;
-                        tool.Description = RepairMocStepString(tool.Description);
-                        tool.Outputs = RepairMocStepString(tool.Outputs);
-                        tool.AdditionalDependencies = RepairMocStepString(tool.AdditionalDependencies);
                     }
                     catch (Exception)
                     {
                     }
                 }
             }
-        }
-
-        private static string RepairMocStepString(string str)
-        {
-            if (str != null)
-            {
-                str = str.Replace("_(QTDIR)", "$(QTDIR)");
-            }
-            return str;
         }
 
         private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
