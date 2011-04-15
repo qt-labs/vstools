@@ -36,6 +36,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.declarativeLib = new System.Windows.Forms.CheckBox();
             this.phononLib = new System.Windows.Forms.CheckBox();
             this.helpLib = new System.Windows.Forms.CheckBox();
             this.webKitLib = new System.Windows.Forms.CheckBox();
@@ -54,7 +55,8 @@
             this.testLib = new System.Windows.Forms.CheckBox();
             this.scriptLib = new System.Windows.Forms.CheckBox();
             this.xmlPatternsLib = new System.Windows.Forms.CheckBox();
-            this.declarativeLib = new System.Windows.Forms.CheckBox();
+            this.uiToolsLib = new System.Windows.Forms.CheckBox();
+            this.scriptToolsLib = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -136,6 +138,7 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.Controls.Add(this.scriptToolsLib);
             this.panel3.Controls.Add(this.declarativeLib);
             this.panel3.Controls.Add(this.phononLib);
             this.panel3.Controls.Add(this.helpLib);
@@ -149,6 +152,15 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(184, 272);
             this.panel3.TabIndex = 12;
+            // 
+            // declarativeLib
+            // 
+            this.declarativeLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.declarativeLib.Location = new System.Drawing.Point(8, 200);
+            this.declarativeLib.Name = "declarativeLib";
+            this.declarativeLib.Size = new System.Drawing.Size(168, 24);
+            this.declarativeLib.TabIndex = 8;
             // 
             // phononLib
             // 
@@ -224,6 +236,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.uiToolsLib);
             this.panel2.Controls.Add(this.multimediaLib);
             this.panel2.Controls.Add(this.networkLib);
             this.panel2.Controls.Add(this.coreLib);
@@ -319,14 +332,23 @@
             this.xmlPatternsLib.Size = new System.Drawing.Size(160, 24);
             this.xmlPatternsLib.TabIndex = 7;
             // 
-            // declarativeLib
+            // uiToolsLib
             // 
-            this.declarativeLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.uiToolsLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.declarativeLib.Location = new System.Drawing.Point(8, 200);
-            this.declarativeLib.Name = "declarativeLib";
-            this.declarativeLib.Size = new System.Drawing.Size(168, 24);
-            this.declarativeLib.TabIndex = 8;
+            this.uiToolsLib.Location = new System.Drawing.Point(8, 230);
+            this.uiToolsLib.Name = "uiToolsLib";
+            this.uiToolsLib.Size = new System.Drawing.Size(168, 24);
+            this.uiToolsLib.TabIndex = 9;
+            // 
+            // scriptToolsLib
+            // 
+            this.scriptToolsLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.scriptToolsLib.Location = new System.Drawing.Point(8, 230);
+            this.scriptToolsLib.Name = "scriptToolsLib";
+            this.scriptToolsLib.Size = new System.Drawing.Size(168, 24);
+            this.scriptToolsLib.TabIndex = 10;
             // 
             // FormProjectQtSettings
             // 
@@ -382,6 +404,8 @@
         private System.Windows.Forms.CheckBox phononLib;
         private System.Windows.Forms.CheckBox multimediaLib;
         private System.Windows.Forms.CheckBox declarativeLib;
+        private System.Windows.Forms.CheckBox scriptToolsLib;
+        private System.Windows.Forms.CheckBox uiToolsLib;
 
     }
 }

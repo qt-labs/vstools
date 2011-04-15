@@ -691,6 +691,12 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
   <data name="DeclarativeLibrary" xml:space="preserve">
     <value>Declarative Bibliothek</value>
   </data>
+  <data name="UiToolsLibrary" xml:space="preserve">
+    <value>UiTools Bibliothek</value>
+  </data>
+  <data name="ScriptToolsLibrary" xml:space="preserve">
+    <value>ScriptTools Bibliothek</value>
+  </data>
   <data name="NoDefaultQtVersionError" xml:space="preserve">
     <value>Es wurde keine Standard-Qt-Version gefunden. Bitte überprüfen Sie Ihre Qt Visual Studio Add-in Einstellungen.</value>
   </data>

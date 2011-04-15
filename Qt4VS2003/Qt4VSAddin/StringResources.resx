@@ -692,6 +692,12 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
   <data name="DeclarativeLibrary" xml:space="preserve">
     <value>Declarative library</value>
   </data>
+  <data name="UiToolsLibrary" xml:space="preserve">
+    <value>UiTools library</value>
+  </data>
+  <data name="ScriptToolsLibrary" xml:space="preserve">
+    <value>ScriptTools library</value>
+  </data>
   <data name="NoDefaultQtVersionError" xml:space="preserve">
     <value>No default Qt version found. Please check your Qt Visual Studio Add-in settings</value>
   </data>

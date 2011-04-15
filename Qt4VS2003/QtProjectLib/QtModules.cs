@@ -57,7 +57,9 @@ namespace Nokia.QtProjectLib
         XmlPatterns = 19,
         Phonon = 20,
         Multimedia = 21,
-        Declarative = 22
+        Declarative = 22,
+        ScriptTools = 23,
+        UiTools = 24,
     }
 
     public class QtModuleInfo
@@ -160,6 +162,7 @@ namespace Nokia.QtProjectLib
             InitQtModule(QtModule.Xml, "QtXml", "QT_XML_LIB");
             InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB");
             InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB");
+            InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB");
 
             QtModuleInfo moduleInfo = null;
             moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
@@ -205,6 +208,10 @@ namespace Nokia.QtProjectLib
             moduleInfo.IncludePath = "$(QTDIR)\\include\\ActiveQt";
 
             moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", "QDESIGNER_EXPORT_WIDGETS");
+            moduleInfo.HasDLL = false;
+
+            moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "");
+            moduleInfo.dependentModules.Add(QtModule.Xml);
             moduleInfo.HasDLL = false;
         }
 
