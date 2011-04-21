@@ -266,12 +266,7 @@ namespace Qt4VSAddin
                     string temporaryMscVersion = compilerDefines.Substring(index);
                     index = temporaryMscVersion.IndexOf('=');
                     if (index != -1)
-                    {
-                        temporaryMscVersion = temporaryMscVersion.Substring(index + 1);
-                        index = temporaryMscVersion.IndexOf(' ');
-                        if (index != -1)
-                            mscVersion = temporaryMscVersion.Remove(index);
-                    }
+                        mscVersion = temporaryMscVersion.Substring(index + 1).Trim();
                 }
 
 #if VS2005
