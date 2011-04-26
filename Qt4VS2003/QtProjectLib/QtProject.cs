@@ -716,11 +716,14 @@ namespace Nokia.QtProjectLib
                 foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) 
                 {
                     VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(config);
-                    tool.AdditionalDependencies = Resources.uic4Command;
-                    tool.Description = "Uic'ing " + ProjectMacros.FileName + "...";
-                    tool.Outputs = "\"" + uiFileMacro + "\"";
-                    tool.CommandLine = "\"" + Resources.uic4Command + "\" -o \"" 
-                        + uiFileMacro + "\" \"" + ProjectMacros.Path + "\"";
+                    if (tool != null)
+                    {
+                        tool.AdditionalDependencies = Resources.uic4Command;
+                        tool.Description = "Uic'ing " + ProjectMacros.FileName + "...";
+                        tool.Outputs = "\"" + uiFileMacro + "\"";
+                        tool.CommandLine = "\"" + Resources.uic4Command + "\" -o \"" 
+                            + uiFileMacro + "\" \"" + ProjectMacros.Path + "\"";
+                    }
 
                     VCConfiguration conf = config.ProjectConfiguration as VCConfiguration;
                     CompilerToolWrapper compiler = CompilerToolWrapper.Create(conf);
