@@ -177,14 +177,17 @@ namespace Nokia.QtProjectLib
         private void RemoveValue(string key, string valueToRemove)
         {
             int pos;
-            string value = entries[key].ToString();
-            do
+            if (entries.Contains(key))
             {
-                pos = value.IndexOf(valueToRemove);
-                if (pos >= 0)
-                    value = value.Remove(pos, valueToRemove.Length);
-            } while (pos >= 0);
-            entries[key] = value;
+                string value = entries[key].ToString();
+                do
+                {
+                    pos = value.IndexOf(valueToRemove);
+                    if (pos >= 0)
+                        value = value.Remove(pos, valueToRemove.Length);
+                } while (pos >= 0);
+                entries[key] = value;
+            }
         }
     }
 }
