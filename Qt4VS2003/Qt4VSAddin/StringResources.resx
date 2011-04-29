@@ -225,9 +225,6 @@
   <data name="AddQtVersionDialog_PlatformNotFoundError" xml:space="preserve">
     <value>The platform "{0}" is not defined within Visual Studio. Make sure you have installed the required SDK.</value>
   </data>
-  <data name="AddQtVersionDialog_IncorrectVSVersion" xml:space="preserve">
-    <value>This Qt version is not compatible to your current Visual Studio (Qt builds VS version: {0}, current version: {1})</value>
-  </data>
   <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
     <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
   </data>

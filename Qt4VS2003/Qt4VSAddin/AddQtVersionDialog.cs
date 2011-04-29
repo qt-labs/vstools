@@ -255,36 +255,7 @@ namespace Qt4VSAddin
             }
 
             string makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-            if (makefileGenerator == "MSVC.NET" || makefileGenerator == "MSBUILD")
-            {
-                string compilerDefines = versionInfo.GetQMakeConfEntry("QMAKE_COMPILER_DEFINES");
-                string mscVersion = "0";
-                string expectedVersion = null;
-                int index = compilerDefines.IndexOf("_MSC_VER");
-                if (index != -1)
-                {
-                    string temporaryMscVersion = compilerDefines.Substring(index);
-                    index = temporaryMscVersion.IndexOf('=');
-                    if (index != -1)
-                        mscVersion = temporaryMscVersion.Substring(index + 1).Trim();
-                }
-
-#if VS2005
-                expectedVersion = "1400";
-#elif VS2008
-                expectedVersion = "1500";
-#elif VS2010
-                expectedVersion = "1600";
-#endif
-                if (mscVersion != expectedVersion)
-                {
-                    MessageBox.Show(SR.GetString("AddQtVersionDialog_IncorrectVSVersion", mscVersion, expectedVersion),
-                                        null, MessageBoxButtons.OK,
-                                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-            }
-            else
+            if (makefileGenerator != "MSVC.NET" && makefileGenerator != "MSBUILD")
             {
                 MessageBox.Show(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", makefileGenerator),
                                             null, MessageBoxButtons.OK,
