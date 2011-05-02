@@ -90,6 +90,9 @@ namespace Nokia.QtProjectLib
         private void ParseLine(string line)
         {
             line = line.Trim();
+            int commentStartIndex = line.IndexOf('#');
+            if (commentStartIndex >= 0)
+                line = line.Remove(commentStartIndex);
             int pos = line.IndexOf('=');
             if (pos > 0)
             {
