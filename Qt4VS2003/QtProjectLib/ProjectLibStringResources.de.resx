@@ -335,4 +335,7 @@ und diese automatisch wieder dem Projekt hinzuzufügen.</value>
   <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
     <value>QTDIR konnte nicht aus Projektdatei {0} geparst werden.</value>
   </data>
+  <data name="Helpers_ExitError" xml:space="preserve">
+    <value>Die Applikation endete mit einem Fehler (Fehlerkode {0}):</value>
+  </data>
 </root>

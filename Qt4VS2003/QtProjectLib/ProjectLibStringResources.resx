@@ -333,4 +333,7 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
     <value>Could not parse QTDIR from project file {0}.</value>
   </data>
+  <data name="Helpers_ExitError" xml:space="preserve">
+    <value>The application exited with an error (ExitCode {0}):</value>
+  </data>
 </root>

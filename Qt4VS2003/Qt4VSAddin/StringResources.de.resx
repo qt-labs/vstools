@@ -308,9 +308,6 @@ Stellen Sie sicher, dass das momentane Projekt eine gültige Qt Version benutzt.
 Falls Sie noch keine Qt Version spezifiziert haben, öffnen Sie die Qt|Qt Versionen
 Seite unter Extras|Optionen und fügen die relevanten Informationen ein.</value>
   </data>
-  <data name="Helpers_ExitError" xml:space="preserve">
-    <value>Die Applikation endete mit einem Fehler (Fehlerkode {0}):</value>
-  </data>
   <data name="IconPropertyDialog_Preview" xml:space="preserve">
     <value>Vorschau:</value>
   </data>

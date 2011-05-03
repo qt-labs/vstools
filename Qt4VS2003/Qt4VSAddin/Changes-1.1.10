@@ -4,4 +4,6 @@ improvements.
 Changes
 -------
 - Be aware of comments when parsing qmake.conf. (QTVSADDINBUG-76)
+- Fixed exception when using using unsupported lupdate parameters
+  (QTVSADDINGBUG-70)
 
