@@ -3082,9 +3082,12 @@ namespace Nokia.QtProjectLib
                 ConfigurationManager configManager = envPro.ConfigurationManager;
                 if (configManager.ActiveConfiguration.PlatformName != vsPlatformNameNew)
                 {
+                    string projectName = envPro.FullName;
                     envPro.Save(null);
                     dte.Solution.Remove(envPro);
-                    envPro = dte.Solution.AddFromFile(envPro.FullName, false);
+                    envPro = dte.Solution.AddFromFile(projectName, false);
+                    dte = envPro.DTE;
+                    vcPro = envPro.Object as VCProject;
                 }
             }
             catch
