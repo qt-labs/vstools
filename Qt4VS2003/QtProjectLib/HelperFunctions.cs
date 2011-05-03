@@ -563,10 +563,19 @@ namespace Nokia.QtProjectLib
                     qtVersion = vm.GetDefaultVersion();
                 if (qtDir == null)
                     qtDir = vm.GetInstallPath(qtVersion);
-
-                vm.SaveProjectQtVersion(project, qtVersion);
-
+                VersionInformation vi = vm.GetVersionInfo(qtVersion);
+                string platformName = vi.GetVSPlatformName();
+                vm.SaveProjectQtVersion(project, qtVersion, platformName);
                 QtProject qtPro = QtProject.Create(project);
+                if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName))
+                {
+                    bool newProject = false;
+                    qtPro.CreatePlatform("Win32", platformName, null, vi, ref newProject);
+                    if (!qtPro.SelectSolutionPlatform(platformName))
+                    {
+                        Messages.PaneMessage(project.DTE, "Can't select the platform " + platformName + ".");
+                    }
+                }
 
                 string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
                 VCConfiguration activeVCConfig = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
