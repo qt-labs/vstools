@@ -696,15 +696,6 @@ namespace Nokia.QtProjectLib
             return true;
         }
 
-		public void AddUic4BuildStep(string fileName)
-		{
-
-            VCFile file = (VCFile)((IVCCollection)vcPro.Files).Item(fileName);
-
-            if (file != null)
-				AddUic4BuildStep(file);
-		}
-
         /// <summary>
         /// This function adds a uic4 build step to a given file.
         /// </summary>
@@ -2519,7 +2510,7 @@ namespace Nokia.QtProjectLib
             {
                 if (file.Name.EndsWith(".ui") && !IsUic3File(file))
                 {
-                    AddUic4BuildStep(file.FullPath);
+                    AddUic4BuildStep(file);
                     Messages.PaneMessage(dte, "Update uic step for " + file.Name + ".");
                     ++updatedFiles;
                 }
