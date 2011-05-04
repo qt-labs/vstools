@@ -35,6 +35,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Nokia.QtProjectLib;
+using EnvDTE80;
 
 namespace Qt4VSAddin
 {
@@ -294,11 +295,24 @@ namespace Qt4VSAddin
                                 string newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
                                 if (newQtVersion != null)
                                 {
+                                    string currentPlatform = null;
+                                    try
+                                    {
+                                        SolutionConfiguration config = _applicationObject.Solution.SolutionBuild.ActiveConfiguration;
+                                        SolutionConfiguration2 config2 = config as SolutionConfiguration2;
+                                        currentPlatform = config2.PlatformName;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                    }
+                                    if (string.IsNullOrEmpty(currentPlatform))
+                                        return;
+
                                     foreach (Project project in HelperFunctions.ProjectsInSolution(_applicationObject))
                                     {
                                         if (HelperFunctions.IsQtProject(project))
                                         {
-                                            string OldQtVersion = vManager.GetProjectQtVersion(project);
+                                            string OldQtVersion = vManager.GetProjectQtVersion(project, currentPlatform);
                                             if (OldQtVersion == null)
                                                 OldQtVersion = vManager.GetDefaultVersion();
 
