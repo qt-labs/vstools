@@ -114,22 +114,9 @@ namespace Qt4VSAddin
             if (oldQtVersion != newQtVersion)
             {
                 bool newProjectCreated = false;
-                bool success = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
-                if (success)
-                {
-                    if (newProjectCreated)
-                        project = qtPro.Project;
-
-                    VersionInformation newVersionInfo = versionManager.GetVersionInfo(newQtVersion);
-                    string newPlatform;
-                    newPlatform = newVersionInfo.GetVSPlatformName();
-                    versionManager.SaveProjectQtVersion(project, newQtVersion, newPlatform);
-                }
-                else
-                {
-                    versionManager.SaveProjectQtVersion(project, oldQtVersion);
-                    Messages.DisplayErrorMessage(SR.GetString("CannotChangeQtVersion"));
-                }
+                bool versionChanged = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
+                if (versionChanged && newProjectCreated)
+                    project = qtPro.Project;
             }
         }
 

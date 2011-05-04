@@ -3089,6 +3089,7 @@ namespace Nokia.QtProjectLib
             }
             catch
             {
+                Messages.DisplayErrorMessage(SR.GetString("CannotChangeQtVersion"));
                 return false;
             }
 
@@ -3107,6 +3108,7 @@ namespace Nokia.QtProjectLib
             HelperFunctions.SetEnvironmentVariable("QTDIR", viNew.qtDir);
 
             UpdateModules(viOld, viNew);
+            versionManager.SaveProjectQtVersion(envPro, newVersion, vsPlatformNameNew);
             return true;
         }
 

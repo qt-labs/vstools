@@ -244,9 +244,12 @@ namespace Nokia.QtProjectLib
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
             string key = "QtVersion " + platform;
-            project.Globals[key] = version;
-            if (!project.Globals.get_VariablePersists(key))
-                project.Globals.set_VariablePersists(key, true);
+            if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
+            {
+                project.Globals[key] = version;
+                if (!project.Globals.get_VariablePersists(key))
+                    project.Globals.set_VariablePersists(key, true);
+            }
             return true;
         }
 

@@ -304,8 +304,7 @@ namespace Qt4VSAddin
 
                                             QtProject qtProject = QtProject.Create(project);
                                             bool newProjectCreated = false;
-                                            if (qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref newProjectCreated))
-                                                vManager.SaveProjectQtVersion(qtProject.Project, newQtVersion);
+                                            qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref newProjectCreated);
                                         }
                                     }
                                     vManager.SaveSolutionQtVersion(_applicationObject.Solution, newQtVersion);

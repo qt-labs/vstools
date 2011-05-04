@@ -485,13 +485,9 @@ namespace Qt4VSAddin
                     return;
                 }
                 bool newProjectCreated = false;
-                if (qtpro.ChangeQtVersion(qtVersion, qtVersionForPlatform, ref newProjectCreated))
-                {
-                    if (newProjectCreated)
-                        project = qtpro.Project;
-                    versionManager.SaveProjectQtVersion(project, qtVersionForPlatform);
-                }
-                qtVersion = qtVersionForPlatform;
+                bool versionChanged = qtpro.ChangeQtVersion(qtVersion, qtVersionForPlatform, ref newProjectCreated);
+                if (versionChanged && newProjectCreated)
+                    project = qtpro.Project;
             }
 
             if (!QtVSIPSettings.GetDisableAutoMocStepsUpdate())
