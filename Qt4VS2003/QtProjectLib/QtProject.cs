@@ -247,7 +247,7 @@ namespace Nokia.QtProjectLib
                     foreach(string define in info.Defines)
                         compiler.AddPreprocessorDefinition(define);
 
-                    if (info.IncludePath.Length > 0)
+                    if (!String.IsNullOrEmpty(info.IncludePath))
                         compiler.AddAdditionalIncludeDirectories(info.IncludePath);
                 }
                 if (linker != null)
@@ -297,8 +297,11 @@ namespace Nokia.QtProjectLib
                     if (additionalIncludeDirs != null)
                     {
                         List<string> lst = new List<string>(additionalIncludeDirs);
-                        lst.Remove(info.IncludePath);
-                        lst.Remove('\"' + info.IncludePath + '\"');
+                        if (!String.IsNullOrEmpty(info.IncludePath))
+                        {
+                            lst.Remove(info.IncludePath);
+                            lst.Remove('\"' + info.IncludePath + '\"');
+                        }
                         compiler.AdditionalIncludeDirectories = lst;
                     }
                 }
@@ -453,6 +456,8 @@ namespace Nokia.QtProjectLib
                 QtModuleInfo info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null)
                 {
+                    if (String.IsNullOrEmpty(info.IncludePath))
+                        break;
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
 

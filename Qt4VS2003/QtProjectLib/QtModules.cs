@@ -70,7 +70,7 @@ namespace Nokia.QtProjectLib
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesWinCE = new List<string>();
-        public string IncludePath = "";
+        public string IncludePath = null;
         public string proVarQT = null;
         public string proVarCONFIG = null;
         public List<QtModule> dependentModules = new List<QtModule>();  // For WinCE deployment.
@@ -168,6 +168,7 @@ namespace Nokia.QtProjectLib
             moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
             moduleInfo.proVarQT = null;
             moduleInfo.HasDLL = false;
+            moduleInfo.IncludePath = null;
 
             moduleInfo = InitQtModule(QtModule.Test, "QtTest", "");
             moduleInfo.proVarQT = null;
