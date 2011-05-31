@@ -71,7 +71,6 @@ namespace Nokia.QtProjectLib
                     return null;
                 line = ProcessString(line, removeStrings);
             } while (line.Length == 0);
-            System.Windows.Forms.MessageBox.Show(line);
             return line;
         }
 
