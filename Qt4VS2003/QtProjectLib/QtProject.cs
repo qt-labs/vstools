@@ -2272,13 +2272,12 @@ namespace Nokia.QtProjectLib
         public void RepairGeneratedFilesStructure()
         {
             DeleteGeneratedFiles();
-            string[] qobjectMacros = new string[] { "Q_OBJECT", "Q_GADGET" };
             foreach (VCFile file in (IVCCollection)vcPro.Files)
             {
                 if (!HelperFunctions.HasHeaderFileExtension(file.Name) && !HelperFunctions.HasSourceFileExtension(file.Name))
                     continue;
 
-                if (HelperFunctions.HasMacros(file, qobjectMacros))
+                if (HelperFunctions.HasQObjectDeclaration(file))
                 {
                     RemoveMocStep(file);
                     AddMocStep(file);

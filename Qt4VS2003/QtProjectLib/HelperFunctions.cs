@@ -1024,11 +1024,6 @@ namespace Nokia.QtProjectLib
             return CxxFileContainsNotCommented(file, new string[] { "Q_OBJECT", "Q_GADGET" }, true);
         }
 
-        public static bool HasMacros(VCFile file, string[] macros)
-        {
-            return CxxFileContainsNotCommented(file, macros, true);
-        }
-
         public static bool CxxFileContainsNotCommented(VCFile file, string str, bool caseSensitive)
         {
             return CxxFileContainsNotCommented(file, new string[] {str}, caseSensitive);
