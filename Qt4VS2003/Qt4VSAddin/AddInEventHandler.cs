@@ -692,7 +692,7 @@ namespace Qt4VSAddin
                     {
                         string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
                         if (vcFile.Name.ToLower().EndsWith(pcHeaderCreator.ToLower())
-                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false))
+                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false, false))
                         {
                             //File is used to create precompiled headers
                             QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);

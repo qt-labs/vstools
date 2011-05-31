@@ -44,6 +44,7 @@ namespace Nokia.QtProjectLib
         }
         private State state = State.Normal;
         private StreamReader sr = null;
+        private string partialLine = "";
 
         public CxxStreamReader(string fileName)
         {
@@ -57,18 +58,24 @@ namespace Nokia.QtProjectLib
 
         public string ReadLine()
         {
+            return ReadLine(false);
+        }
+
+        public string ReadLine(bool removeStrings)
+        {
             string line;
             do
             {
                 line = sr.ReadLine();
                 if (line == null)
                     return null;
-                line = ProcessString(line);
+                line = ProcessString(line, removeStrings);
             } while (line.Length == 0);
+            System.Windows.Forms.MessageBox.Show(line);
             return line;
         }
 
-        private string ProcessString(string line)
+        private string ProcessString(string line, bool removeStrings)
         {
             switch (state)
             {
@@ -113,13 +120,24 @@ namespace Nokia.QtProjectLib
 
                                 if (endIdx < 0)
                                 {
-                                    line += lineCopy.Substring(i);
-                                    state = State.String;
+                                    if (lineCopy.EndsWith("\\"))
+                                    {
+                                        partialLine = line;
+                                        if (!removeStrings)
+                                            partialLine += lineCopy.Substring(i);
+                                        state = State.String;
+                                    }
+                                    else
+                                    {
+                                        state = State.Normal;
+                                    }
+                                    line = "";
                                     break;
                                 }
                                 else
                                 {
-                                    line += lineCopy.Substring(i, endIdx - i + 1);
+                                    if (!removeStrings)
+                                        line += lineCopy.Substring(i, endIdx - i + 1);
                                     i = endIdx;
                                     j = i + 1;
                                     continue;
@@ -146,20 +164,25 @@ namespace Nokia.QtProjectLib
                     break;
                 case State.String:
                     {
-                        int endIdx = line.IndexOf('"');
-                        if (endIdx == 0)
+                        string lineCopy = line;
+                        line = "";
+                        int endIdx = -1;
+                        do
                         {
-                            state = State.Normal;
-                            string lineCopy = line;
-                            line = "\"";
-                            line += ProcessString(lineCopy.Substring(1));
+                            endIdx = lineCopy.IndexOf('"', endIdx + 1);
+                        } while (endIdx >= 0 && lineCopy[endIdx - 1] == '\\');
+                        if (endIdx < 0)
+                        {
+                            if (!removeStrings)
+                                partialLine += lineCopy;
                         }
-                        else if (endIdx > 0)
+                        else
                         {
                             state = State.Normal;
-                            string lineCopy = line;
-                            line = line.Substring(0, endIdx + 1);
-                            line += ProcessString(lineCopy.Substring(endIdx + 1));
+                            line = partialLine;
+                            if (!removeStrings)
+                                line += lineCopy.Substring(0, endIdx + 1);
+                            line += ProcessString(lineCopy.Substring(endIdx + 1), removeStrings);
                         }
                     }
                     break;

@@ -1021,15 +1021,15 @@ namespace Nokia.QtProjectLib
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxFileContainsNotCommented(file, new string[] { "Q_OBJECT", "Q_GADGET" }, true);
+            return CxxFileContainsNotCommented(file, new string[] { "Q_OBJECT", "Q_GADGET" }, true, true);
         }
 
-        public static bool CxxFileContainsNotCommented(VCFile file, string str, bool caseSensitive)
+        public static bool CxxFileContainsNotCommented(VCFile file, string str, bool caseSensitive, bool suppressStrings)
         {
-            return CxxFileContainsNotCommented(file, new string[] {str}, caseSensitive);
+            return CxxFileContainsNotCommented(file, new string[] {str}, caseSensitive, suppressStrings);
         }
 
-        public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive)
+        public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive, bool suppressStrings)
         {
             if (!caseSensitive)
                 for (int i = 0; i < searchStrings.Length; ++i)
@@ -1041,7 +1041,7 @@ namespace Nokia.QtProjectLib
             {
                 string strLine;
                 sr = new CxxStreamReader(file.FullPath);
-                while (!found && (strLine = sr.ReadLine()) != null)
+                while (!found && (strLine = sr.ReadLine(suppressStrings)) != null)
                 {
                     if (!caseSensitive)
                         strLine = strLine.ToLower();
