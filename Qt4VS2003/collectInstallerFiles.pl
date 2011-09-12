@@ -79,12 +79,25 @@ if (!$vsVersion) {
 }
 
 my $vsipVersion = "1.0.0";
+my $vsipVersionMajor = 1;
+my $vsipVersionMinor = 0;
+my $vsipVersionPatch = 0;
 opendir(DIR, $srcRootPath . "\\Qt4VSAddin") or die "Cannot open directory $srcDir: $!";
-  while ( defined(my $file = readdir(DIR))) {
+while (defined(my $file = readdir(DIR))) {
     if ($file =~ m/Changes-(([0-9]|\.)+)/) {
-      $vsipVersion = $1;
+        my $v = $1;
+        my @version = split('\\.', $v);
+        if ( $version[0] > $vsipVersionMajor ||
+            ($version[0] == $vsipVersionMajor && $version[1] > $vsipVersionMinor) ||
+            ($version[0] == $vsipVersionMajor && $version[1] == $vsipVersionMinor && $version[2] > $vsipVersionPatch))
+        {
+            $vsipVersionMajor = $version[0];
+            $vsipVersionMinor = $version[1];
+            $vsipVersionPatch = $version[2];
+            $vsipVersion = $v;
+        }
     }
-  }
+}
 closedir(DIR);
 print "Add-in Version (detected from Changes files): $vsipVersion\n";
 
