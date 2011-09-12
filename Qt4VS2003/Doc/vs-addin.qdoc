@@ -454,6 +454,8 @@
                 \c $(ConfigurationName) variable, to ensure that the \c moc
                 files for different configurations (e.g., \c debug or
                 \c release) do not collide.
+                You may use the variable \c $(PlatformName) to put generated files
+                for different platforms into separate directories.
         \row
             \o  MocOptions
             \o  Additional command line options for the moc build step.
