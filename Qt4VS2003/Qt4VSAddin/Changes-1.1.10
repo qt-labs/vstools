@@ -4,6 +4,16 @@ improvements.
 Changes
 -------
 - Be aware of comments when parsing qmake.conf. (QTVSADDINBUG-76)
-- Fixed exception when using using unsupported lupdate parameters
+- Fixed exception when using using unsupported lupdate parameters.
   (QTVSADDINGBUG-70)
+- Detecting the MSVC version from qmake.conf was fixed.
+- Added QtScriptTools and QtUiTools to project settings. (QTVSADDINBUG-71)
+- Removed the MSC version check when adding Qt versions.
+  As this "feature" seems to cause more trouble than it solves, we
+  decided to remove it. Checking for the makefile generator should at
+  least prevent people from trying to add MinGW builds.
+- Fixed creation of addin projects from 64 bit Qt qmake projects.
+- Do not add the include path "$QTDIR/include/qtmain".
+  This path is a relict and confuses IntelliSense. (QTVSADDINBUG-81)
+- Be aware of strings when looking for Q_OBJECT macros. (QTVSADDINBUG-75)
 
