@@ -53,6 +53,8 @@ namespace Qt4VSAddin
         private EnvDTE.ProjectItemsEvents projectItemsEvents;
         private EnvDTE.vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
         private VCProjectEngineEvents vcProjectEngineEvents = null;
+        private CommandEvents debugStartEvents;
+        private CommandEvents debugStartWithoutDebuggingEvents;
         private System.Threading.Thread appWrapperThread = null;
         private System.Diagnostics.Process appWrapperProcess = null;
         private bool terminateEditorThread = false;
@@ -83,12 +85,19 @@ namespace Qt4VSAddin
             projectItemsEvents.ItemAdded += new _dispProjectItemsEvents_ItemAddedEventHandler(this.ProjectItemsEvents_ItemAdded);
             projectItemsEvents.ItemRemoved += new _dispProjectItemsEvents_ItemRemovedEventHandler(this.ProjectItemsEvents_ItemRemoved);
             projectItemsEvents.ItemRenamed += new _dispProjectItemsEvents_ItemRenamedEventHandler(this.ProjectItemsEvents_ItemRenamed);
-            
+
             solutionEvents = (SolutionEvents)events.SolutionEvents;
             solutionEvents.ProjectAdded += new _dispSolutionEvents_ProjectAddedEventHandler(this.SolutionEvents_ProjectAdded);
             solutionEvents.ProjectRemoved += new _dispSolutionEvents_ProjectRemovedEventHandler(this.SolutionEvents_ProjectRemoved);
             solutionEvents.Opened += new _dispSolutionEvents_OpenedEventHandler(SolutionEvents_Opened);
             solutionEvents.AfterClosing += new _dispSolutionEvents_AfterClosingEventHandler(SolutionEvents_AfterClosing);
+
+            const string debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295) as CommandEvents;
+            debugStartEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartEvents_BeforeExecute);
+
+            debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368) as CommandEvents;
+            debugStartWithoutDebuggingEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartWithoutDebuggingEvents_BeforeExecute);
 
             dispId_VCFileConfiguration_ExcludedFromBuild = GetPropertyDispId(typeof(VCFileConfiguration), "ExcludedFromBuild");
             dispId_VCCLCompilerTool_UsePrecompiledHeader = GetPropertyDispId(typeof(VCCLCompilerTool), "UsePrecompiledHeader");
@@ -109,6 +118,28 @@ namespace Qt4VSAddin
             appWrapperThread = new System.Threading.Thread(new System.Threading.ThreadStart(ListenForRequests));
             appWrapperThread.Name = "QtAppWrapperListener";
             appWrapperThread.Start();
+        }
+
+        void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
+        {
+            EnvDTE.Project selectedProject = HelperFunctions.GetSelectedQtProject(dte);
+            if (selectedProject != null)
+            {
+                QtProject qtProject = QtProject.Create(selectedProject);
+                if (qtProject != null)
+                    qtProject.SetQtEnvironment();
+            }
+        }
+
+        void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
+        {
+            EnvDTE.Project selectedProject = HelperFunctions.GetSelectedQtProject(dte);
+            if (selectedProject != null)
+            {
+                QtProject qtProject = QtProject.Create(selectedProject);
+                if (qtProject != null)
+                    qtProject.SetQtEnvironment();
+            }
         }
 
         private void OpenFileExternally(string fileName)
@@ -415,6 +446,12 @@ namespace Qt4VSAddin
                 solutionEvents.AfterClosing -= new _dispSolutionEvents_AfterClosingEventHandler(SolutionEvents_AfterClosing);
             }
 
+            if (debugStartEvents != null)
+                debugStartEvents.BeforeExecute -= new _dispCommandEvents_BeforeExecuteEventHandler(debugStartEvents_BeforeExecute);
+
+            if (debugStartWithoutDebuggingEvents != null)
+                debugStartWithoutDebuggingEvents.BeforeExecute -= new _dispCommandEvents_BeforeExecuteEventHandler(debugStartWithoutDebuggingEvents_BeforeExecute);
+
             if (vcProjectEngineEvents != null)
                 vcProjectEngineEvents.ItemPropertyChange -= new _dispVCProjectEngineEvents_ItemPropertyChangeEventHandler(OnVCProjectEngineItemPropertyChange);
 
@@ -498,15 +535,7 @@ namespace Qt4VSAddin
                 }
             }
 
-            string qtDir = versionManager.GetInstallPath(project);
-            if (qtDir == null)
-                qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
-            if (qtDir == null)
-                return;
-
             qtpro.SetQtEnvironment();
-            HelperFunctions.SetDebuggingEnvironment(project);
-
             if (QtVSIPSettings.GetLUpdateOnBuild(project))
                 Translation.RunlUpdate(project);
         }

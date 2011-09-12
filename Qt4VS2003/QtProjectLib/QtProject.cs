@@ -3107,8 +3107,7 @@ namespace Nokia.QtProjectLib
             if (bRefreshMocSteps)
                 RefreshMocSteps();
 
-            HelperFunctions.SetEnvironmentVariable("QTDIR", viNew.qtDir);
-
+            SetQtEnvironment();
             UpdateModules(viOld, viNew);
             versionManager.SaveProjectQtVersion(envPro, newVersion, vsPlatformNameNew);
             return true;
@@ -3583,6 +3582,8 @@ namespace Nokia.QtProjectLib
                 Messages.PaneMessage(envPro.DTE, SR.GetString("QtProject_CannotAccessUserFile", vcPro.ItemName));
             }
 #endif
+
+            HelperFunctions.SetDebuggingEnvironment(envPro);
         }
     }
 }
