@@ -163,6 +163,7 @@ namespace Nokia.QtProjectLib
             InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB");
             InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB");
             InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB");
+            InitQtModule(QtModule.Designer, "QtDesigner", "QDESIGNER_EXPORT_WIDGETS");
 
             QtModuleInfo moduleInfo = null;
             moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
@@ -207,9 +208,6 @@ namespace Nokia.QtProjectLib
             moduleInfo = InitQtModule(QtModule.ActiveQtC, "QAxContainer", "");
             moduleInfo.HasDLL = false;
             moduleInfo.IncludePath = "$(QTDIR)\\include\\ActiveQt";
-
-            moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", "QDESIGNER_EXPORT_WIDGETS");
-            moduleInfo.HasDLL = false;
 
             moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "");
             moduleInfo.dependentModules.Add(QtModule.Xml);
