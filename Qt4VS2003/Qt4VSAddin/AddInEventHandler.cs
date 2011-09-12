@@ -93,10 +93,10 @@ namespace Qt4VSAddin
             solutionEvents.AfterClosing += new _dispSolutionEvents_AfterClosingEventHandler(SolutionEvents_AfterClosing);
 
             const string debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
-            debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295) as CommandEvents;
+            debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
             debugStartEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartEvents_BeforeExecute);
 
-            debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368) as CommandEvents;
+            debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368);
             debugStartWithoutDebuggingEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartWithoutDebuggingEvents_BeforeExecute);
 
             dispId_VCFileConfiguration_ExcludedFromBuild = GetPropertyDispId(typeof(VCFileConfiguration), "ExcludedFromBuild");
