@@ -323,6 +323,8 @@ namespace Nokia.QtProjectLib
                 if (s.StartsWith(">"))
                     s = s.Substring(1);
 #endif
+                if (!Path.IsPathRooted(s))
+                    s = null;
             }
             return s;
         }
