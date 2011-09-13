@@ -880,7 +880,7 @@ namespace Nokia.QtProjectLib
             if (!HelperFunctions.HasHeaderFileExtension(file.Name))
                 return "";
 
-            string additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough() + "\" ";
+            string additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough().Replace('\\', '/') + "\" ";
             //Get mocDir without .\\ at the beginning of it
             string mocDir = QtVSIPSettings.GetMocDirectory(envPro);
             if (mocDir.StartsWith(".\\"))
@@ -888,7 +888,7 @@ namespace Nokia.QtProjectLib
 
             //Get the absolute path
             mocDir = vcPro.ProjectDirectory + mocDir;
-            string relPathToFile = HelperFunctions.GetRelativePath(mocDir, file.FullPath);
+            string relPathToFile = HelperFunctions.GetRelativePath(mocDir, file.FullPath).Replace('\\', '/');
             additionalMocOptions += "\"-f" + relPathToFile + "\"";
             return additionalMocOptions;
         }
