@@ -1982,6 +1982,7 @@ namespace AddInAutoTest
             appwrapper.StartInfo.FileName = appwrapperPath;
             appwrapper.StartInfo.Arguments = "Autotests:set" + directory.ToString() + ':' + value;
             appwrapper.Start();
+            System.Threading.Thread.Sleep(500);
 
             return true;
         }
