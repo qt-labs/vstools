@@ -123,10 +123,23 @@ namespace Nokia.QtProjectLib
             return versionKey.GetSubKeyNames();
 		}
 
+        private class QtVersion
+        {
+            public string name;
+            public VersionInformation vi;
+        }
+
+        /// <summary>
+        /// Check if all Qt versions are valid and readable.
+        /// </summary>
+        /// Also sets the default Qt version to the newest version, if needed.
+        /// <param name="errorMessage"></param>
+        /// <returns>true, if we found an invalid version</returns>
         public bool HasInvalidVersions(out string errorMessage)
         {
-            // check if all Qt versions are valid and readable
+            List<QtVersion> validVersions = new List<QtVersion>();
             List<string> invalidVersions = new List<string>();
+
             foreach (string v in GetVersions())
             {
                 if (v == "$(DefaultQtVersion)")
@@ -134,6 +147,10 @@ namespace Nokia.QtProjectLib
                 try
                 {
                     VersionInformation vi = new VersionInformation(GetInstallPath(v));
+                    QtVersion qtVersion = new QtVersion();
+                    qtVersion.name = v;
+                    qtVersion.vi = vi;
+                    validVersions.Add(qtVersion);
                 }
                 catch (Exception)
                 {
@@ -147,6 +164,50 @@ namespace Nokia.QtProjectLib
                 foreach (string invalidVersion in invalidVersions)
                     errorMessage += invalidVersion + " in " + GetInstallPath(invalidVersion) + "\n";
                 errorMessage += "Make sure that you have read access to all files in your Qt directories.";
+
+                // Is the default Qt version invalid?
+                bool isDefaultQtVersionInvalid = false;
+                string defaultQtVersionName = GetDefaultVersion();
+                if (String.IsNullOrEmpty(defaultQtVersionName))
+                {
+                    isDefaultQtVersionInvalid = true;
+                }
+                else
+                {
+                    foreach (string name in invalidVersions)
+                    {
+                        if (name == defaultQtVersionName)
+                        {
+                            isDefaultQtVersionInvalid = true;
+                            break;
+                        }
+                    }
+                }
+
+                // find the newest valid Qt version that can be used as default version
+                if (isDefaultQtVersionInvalid && validVersions.Count > 0)
+                {
+                    QtVersion defaultQtVersion = null;
+                    foreach (QtVersion v in validVersions)
+                    {
+                        if (v.vi.IsWinCEVersion())
+                            continue;
+                        if (defaultQtVersion == null)
+                        {
+                            defaultQtVersion = v;
+                            continue;
+                        }
+                        if (defaultQtVersion.vi.qtMajor < v.vi.qtMajor ||
+                               (defaultQtVersion.vi.qtMajor == v.vi.qtMajor && (defaultQtVersion.vi.qtMinor < v.vi.qtMinor ||
+                                   (defaultQtVersion.vi.qtMinor == v.vi.qtMinor && defaultQtVersion.vi.qtPatch < v.vi.qtPatch))))
+                        {
+                            defaultQtVersion = v;
+                        }
+                    }
+                    if (defaultQtVersion != null)
+                        SaveDefaultVersion(defaultQtVersion.name);
+                }
+
                 return true;
             }
             errorMessage = null;
