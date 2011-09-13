@@ -1809,6 +1809,7 @@ namespace AddInAutoTest
                 if (!File.Exists(testPath + "log.txt"))
                     File.Create(testPath + "log.txt");
                 logger = new StreamWriter(testPath + "log.txt");
+                logger.AutoFlush = true;
 
                 AutoTestCase1();    //- adding Q_OBJECT macro
 
@@ -1946,6 +1947,7 @@ namespace AddInAutoTest
                         if (!File.Exists(testPath + "log.txt"))
                             File.Create(testPath + "log.txt");
                         logger = new StreamWriter(testPath + "log.txt");
+                        logger.AutoFlush = true;
 
                         string tests = str.Substring(6);
                         string[] testArray = tests.Split(';');
