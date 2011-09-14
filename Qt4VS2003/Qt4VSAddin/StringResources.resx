@@ -715,4 +715,7 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
   <data name="AddQtVersionDialog_MingwQt" xml:space="preserve">
     <value>Qt in the given path was built using MinGW.</value>
   </data>
+  <data name="CouldNotConnectToAppwrapper" xml:space="preserve">
+    <value>Could not connect to Appwrapper. Please make sure that TCP port {0} is not blocked.</value>
+  </data>
 </root>

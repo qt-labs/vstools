@@ -717,4 +717,7 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   <data name="AddQtVersionDialog_MingwQt" xml:space="preserve">
     <value>Das Qt im angegebenen Verzeichnis wurde mit MinGW gebaut.</value>
   </data>
+  <data name="CouldNotConnectToAppwrapper" xml:space="preserve">
+    <value>Verbindung zu appwrapper konnte nicht hergestellt werden. Vergewissern Sie sich, dass TCP Port {0} nicht blockiert wird.</value>
+  </data>
 </root>
