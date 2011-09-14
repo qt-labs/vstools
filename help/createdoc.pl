@@ -121,12 +121,14 @@ if ($options{qt}) {
     chdir "$qtvsDir\\Qt4VS2003\\Doc";
 
     open(FILE, ">stupid_include_hack.qdocconf") or die "Can't open stupid_include_hack.qdocconf for writing.\n";
-    print FILE "include($qtSourceDir\\tools\\qdoc3\\test\\qt.qdocconf)\n";
+    print FILE "include($qtSourceDir\\tools\\qdoc3\\test\\qt-project.qdocconf)\n";
     close(FILE);
 
+    $ENV{QT_BUILD_TREE} = $qtDir;
     $ENV{QT_SOURCE_TREE} = $qtSourceDir;
     $ENV{QTVSDIR} = $qtvsDir;
-    system($qdoc3, "-creator", "vs-addin.qdocconf");
+    $ENV{SRCDIR} = "$qtvsDir\\Qt4VS2003\\Doc";
+    system($qdoc3, "vs-addin.qdocconf");
     die "qdoc3 failed\n" if ($?);
     print "Add-in documentation created.\n";
 
