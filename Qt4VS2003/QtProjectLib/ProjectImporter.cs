@@ -215,7 +215,7 @@ namespace Nokia.QtProjectLib
             }
         }
 
-        private static void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile)
+        private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile)
         {
             List<string> projects = ParseProjectsFromSolution(solutionFile);
             foreach (string project in projects)
@@ -244,7 +244,7 @@ namespace Nokia.QtProjectLib
             return projects;
         }
 
-        private static void ReplaceAbsoluteQtDirInProject(FileInfo projectFile)
+        private void ReplaceAbsoluteQtDirInProject(FileInfo projectFile)
         {
             StreamReader sr = projectFile.OpenText();
             string content = sr.ReadToEnd();
@@ -261,7 +261,7 @@ namespace Nokia.QtProjectLib
             }
             else
             {
-                Messages.DisplayWarningMessage(SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
+                Messages.PaneMessage(dteObject, SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
             }
         }
 
