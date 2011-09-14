@@ -407,8 +407,8 @@
         \o \bold{ActiveQt Server:} A simple ActiveX server.
     \endlist
     
-    If you have a Qt for Windows CE license, two additional project types are
-    available:
+    If you're using Visual Studio 2005 or 2008, then two additional project
+    types are available:
     
     \list 1
         \o \bold{Qt WindowsCE Application:} A simple Qt GUI Application for
