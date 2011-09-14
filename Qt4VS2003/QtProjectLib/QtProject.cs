@@ -349,8 +349,8 @@ namespace Nokia.QtProjectLib
                         {
                             if (HasModule(module.ModuleId))
                             {
-                                libsDesktop.AddRange(module.AdditionalLibrariesWinCE);
-                                libsWinCE.AddRange(module.AdditionalLibraries);
+                                libsDesktop.AddRange(module.AdditionalLibraries);
+                                libsWinCE.AddRange(module.AdditionalLibrariesWinCE);
                             }
                         }
                         List<string> libsToAdd = null;
