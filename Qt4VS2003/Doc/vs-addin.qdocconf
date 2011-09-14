@@ -30,7 +30,6 @@ qhp.vsAddin.extraFiles = index.html \
                          images/bullet_up.png \
                          images/horBar.png \
                          images/sprites-combined.png \
-                         images/qtcreator-screenshots.png \
                          style/offline.css
 
 #

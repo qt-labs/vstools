@@ -38,16 +38,29 @@ sub getQtSourceDir
 
 sub getAddinVersion
 {
+    my $addinVersion = "1.0.0";
+    my $addinVersionMajor = 1;
+    my $addinVersionMinor = 0;
+    my $addinVersionPatch = 0;
     my $srcdir = $_[0] . "\\Qt4VS2003\\Qt4VSAddin";
-    my $version = "1.0.0";
-    opendir(DIR, $srcdir) or die "Cannot open directory $srcdir";
-    while ( defined(my $file = readdir(DIR))) {
+    opendir(DIR, $srcdir) or die "Cannot open directory $srcdir: $!";
+    while (defined(my $file = readdir(DIR))) {
         if ($file =~ m/Changes-(([0-9]|\.)+)/) {
-          $version = $1;
+            my $v = $1;
+            my @version = split('\\.', $v);
+            if ( $version[0] > $addinVersionMajor ||
+                ($version[0] == $addinVersionMajor && $version[1] > $addinVersionMinor) ||
+                ($version[0] == $addinVersionMajor && $version[1] == $addinVersionMinor && $version[2] > $addinVersionPatch))
+            {
+                $addinVersionMajor = $version[0];
+                $addinVersionMinor = $version[1];
+                $addinVersionPatch = $version[2];
+                $addinVersion = $v;
+            }
         }
     }
     closedir(DIR);
-    return $version;
+    return $addinVersion;
 }
 
 #--main--
