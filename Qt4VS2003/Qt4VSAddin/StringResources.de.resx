@@ -616,8 +616,8 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
   <data name="ProjectQtSettingsToolTip" xml:space="preserve">
     <value>Dient zum Bearbeiten der Qt Einstellungen für das aktuelle Projekt.</value>
   </data>
-  <data name="ProjectQtVersionNotFoundWarning" xml:space="preserve">
-    <value>WARNUNG: Die mit dem Projekt verknüpfte Qt Version kann nicht gefunden werden. Es wird stattdessen {0} benutzt. Bitte wählen Sie eine existierende Qt Version in den Qt-Projekteinstellungen.</value>
+  <data name="ProjectQtVersionNotFoundError" xml:space="preserve">
+    <value>Es ist keine gültige Qt-Version für die Platform {0} diesem Projekt zugeordnet. Bitte wählen Sie eine existierende Qt Version in den Qt-Projekteinstellungen.</value>
   </data>
   <data name="QrcEditorNotFoundError" xml:space="preserve">
     <value>*** QRC Editor konnte nicht gestartet werden! Bitte stellen Sie sicher, dass sich die qrceditor.exe im Installationsverzeichnis des Addins befindet.</value>

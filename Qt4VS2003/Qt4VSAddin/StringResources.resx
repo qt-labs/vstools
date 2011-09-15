@@ -617,8 +617,8 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
   <data name="ProjectQtSettingsToolTip" xml:space="preserve">
     <value>Edit Qt settings of the current project.</value>
   </data>
-  <data name="ProjectQtVersionNotFoundWarning" xml:space="preserve">
-    <value>WARNING: Can't find the Qt version that's associated with this project. Defaulting to {0} instead. Please assign a valid Qt version to this project in the Qt project settings.</value>
+  <data name="ProjectQtVersionNotFoundError" xml:space="preserve">
+    <value>There's no Qt version assigned to this project for platform {0}. Please use the 'change Qt version' feature and choose a valid Qt version for this platform.</value>
   </data>
   <data name="QrcEditorNotFoundErrorMessage" xml:space="preserve">
     <value>*** Couldn't start QRC editor! Please verify that qrceditor.exe is in the Add-in installation directory.</value>

@@ -502,46 +502,19 @@ namespace Qt4VSAddin
                 }
             }
             if (project == null || !HelperFunctions.IsQtProject(project))
-                return;
-
-            QtProject qtpro = QtProject.Create(project);
-
-            QtVersionManager versionManager = QtVersionManager.The();
-            string qtVersion = versionManager.GetProjectQtVersion(project);
-
-            // check if the projects' Qt version exists
-            if (qtVersion == null)
             {
-                qtVersion = versionManager.GetDefaultVersion();
-                if (qtVersion == null)
-                {
-                    Messages.DisplayCriticalErrorMessage(SR.GetString("NoDefaultQtVersionError"));
-                    return;
-                }
-                string errmsg = SR.GetString("ProjectQtVersionNotFoundWarning", qtVersion);
-                Messages.PaneMessage(dte, errmsg);
-                Messages.ActivateMessagePane();
+                dte.ExecuteCommand("Build.Cancel", "");
+                return;
             }
 
-            // check project platform
-            VersionInformation vi = versionManager.GetVersionInfo(qtVersion);
-            if (vi.GetVSPlatformName() != platform)
+            QtProject qtpro = QtProject.Create(project);
+            QtVersionManager versionManager = QtVersionManager.The();
+            string qtVersion = versionManager.GetProjectQtVersion(project, platform);
+            if (qtVersion == null)
             {
-                string qtVersionForPlatform = versionManager.GetProjectQtVersion(project, platform);
-                if (qtVersionForPlatform == null && platform == "Win32")
-                {
-                    qtVersionForPlatform = versionManager.GetDefaultVersion();
-                }
-
-                if (qtVersionForPlatform == null)
-                {
-                    Messages.DisplayErrorMessage(SR.GetString("BuildPlatformQtVersionNotFound"));
-                    return;
-                }
-                bool newProjectCreated = false;
-                bool versionChanged = qtpro.ChangeQtVersion(qtVersion, qtVersionForPlatform, ref newProjectCreated);
-                if (versionChanged && newProjectCreated)
-                    project = qtpro.Project;
+                Messages.DisplayCriticalErrorMessage(SR.GetString("ProjectQtVersionNotFoundError", platform));
+                dte.ExecuteCommand("Build.Cancel", "");
+                return;
             }
 
             if (!QtVSIPSettings.GetDisableAutoMocStepsUpdate())
@@ -552,7 +525,7 @@ namespace Qt4VSAddin
                 }
             }
 
-            qtpro.SetQtEnvironment();
+            qtpro.SetQtEnvironment(qtVersion);
             if (QtVSIPSettings.GetLUpdateOnBuild(project))
                 Translation.RunlUpdate(project);
         }

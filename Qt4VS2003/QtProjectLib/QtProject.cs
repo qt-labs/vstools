@@ -3107,7 +3107,7 @@ namespace Nokia.QtProjectLib
             if (bRefreshMocSteps)
                 RefreshMocSteps();
 
-            SetQtEnvironment();
+            SetQtEnvironment(newVersion);
             UpdateModules(viOld, viNew);
             versionManager.SaveProjectQtVersion(envPro, newVersion, vsPlatformNameNew);
             return true;
@@ -3561,9 +3561,19 @@ namespace Nokia.QtProjectLib
             return projectItem;
         }
 
+        /// <summary>
+        /// Sets the Qt environment for the project's Qt version.
+        /// </summary>
         public void SetQtEnvironment()
         {
-            string qtVersion = QtVersionManager.The().GetProjectQtVersion(envPro);
+            SetQtEnvironment(QtVersionManager.The().GetProjectQtVersion(envPro));
+        }
+
+        /// <summary>
+        /// Sets the Qt environment for the given Qt version.
+        /// </summary>
+        public void SetQtEnvironment(string qtVersion)
+        {
             if (string.IsNullOrEmpty(qtVersion))
                 return;
 
