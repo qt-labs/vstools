@@ -191,6 +191,11 @@ namespace Nokia.QtProjectLib
 
         public bool is64Bit()
         {
+            // ### This does not work for x64 cross builds of Qt.
+            // ### In that case qmake.exe is 32 bit but the DLLs are 64 bit.
+            // ### So actually we should check QtCore4.dll / QtCored4.dll instead.
+            // ### Unfortunately there's no Win API for checking the architecture of DLLs.
+            // ### We must read the PE header instead.
             string fileToCheck = qtDir + "\\bin\\qmake.exe";
             if (!File.Exists(fileToCheck))
                 throw new Qt4VS2003Exception("Can't find " + fileToCheck);
