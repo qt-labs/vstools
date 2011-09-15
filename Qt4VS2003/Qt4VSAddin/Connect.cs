@@ -302,7 +302,7 @@ namespace Qt4VSAddin
                                         SolutionConfiguration2 config2 = config as SolutionConfiguration2;
                                         currentPlatform = config2.PlatformName;
                                     }
-                                    catch (Exception e)
+                                    catch
                                     {
                                     }
                                     if (string.IsNullOrEmpty(currentPlatform))
