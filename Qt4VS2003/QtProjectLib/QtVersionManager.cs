@@ -316,7 +316,18 @@ namespace Nokia.QtProjectLib
 
 		public string GetProjectQtVersion(EnvDTE.Project project)
 		{
-            string version = GetProjectQtVersion(project, project.ConfigurationManager.ActiveConfiguration.PlatformName);
+            string platformName = null;
+            try
+            {
+                platformName = project.ConfigurationManager.ActiveConfiguration.PlatformName;
+            }
+            catch
+            {
+                // Accessing the ActiveConfiguration property throws an exception
+                // if there's an "unconfigured" platform in the Solution platform combo box.
+                platformName = "Win32";
+            }
+            string version = GetProjectQtVersion(project, platformName);
 
             if (version == null && project.Globals.get_VariablePersists("QtVersion"))
             {
