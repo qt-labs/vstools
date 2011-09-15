@@ -327,9 +327,9 @@ namespace Qt4VSAddin
 
                 client = new TcpClient();
                 int connectionAttempts = 0;
+                int appwrapperPort = 12005;
                 while (!client.Connected && !terminateEditorThread && connectionAttempts < 10)
                 {
-                    int appwrapperPort = 12005;
                     try
                     {
                         client.Connect(IPAddress.Loopback, appwrapperPort);
@@ -339,20 +339,20 @@ namespace Qt4VSAddin
                             System.Threading.Thread.Sleep(1000);
                         }
                     }
-                    catch (SocketException e) {
-                        if (e.SocketErrorCode == SocketError.ConnectionRefused)
-                        {
-                            Messages.DisplayErrorMessage(SR.GetString("CouldNotConnectToAppwrapper", appwrapperPort));
-                            terminateEditorThread = true;
-                        }
-                        else
-                        {
-                            ++connectionAttempts;
-                        }
+                    catch
+                    {
+                        ++connectionAttempts;
+                        System.Threading.Thread.Sleep(1000);
                     }
                 }
-                ++connectionAttempts;
-                if (terminateEditorThread || connectionAttempts > 10)
+
+                if (connectionAttempts >= 10)
+                {
+                    Messages.DisplayErrorMessage(SR.GetString("CouldNotConnectToAppwrapper", appwrapperPort));
+                    terminateEditorThread = true;
+                }
+
+                if (terminateEditorThread)
                 {
                     TerminateClient();
                     return;
