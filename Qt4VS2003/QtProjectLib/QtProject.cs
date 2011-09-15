@@ -1095,7 +1095,7 @@ namespace Nokia.QtProjectLib
                     }
 
                     string newCmdLine = "\"" + Resources.moc4Command + "\" " + QtVSIPSettings.GetMocOptions(envPro)
-                        + " \"" + fileToMoc + "\" -o \""
+                        + " \"" + ProjectMacros.Path + "\" -o \""
                         + outputMocMacro + "\"";
 
                     // Tell moc to include the PCH header if we are using precompiled headers in the project

@@ -112,7 +112,7 @@ namespace Nokia.QtProjectLib
                 {
                     newCmdLine = newCmdLine + "\"" + Resources.moc4Command + "\" "
                         + mocOptions + " " + defines + " " + includes
-                        + " \"" + mocFile + "\" -o \"" + outputFile + "\"";
+                        + " \"" + ProjectMacros.Path + "\" -o \"" + outputFile + "\"";
                     if (newPchParameters != null &&
                         newPchParameters.Length > 0 &&
                         !newCmdLine.Contains(newPchParameters))
