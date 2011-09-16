@@ -109,6 +109,44 @@ namespace Nokia.QtProjectLib
             return compilerTool == null && compilerObj == null;
         }
 
+        public string ObjectFile
+        {
+            get
+            {
+                if (compilerTool != null)
+                    return compilerTool.ObjectFile;
+                else
+                    return GetStringProperty("ObjectFile");
+            }
+
+            set
+            {
+                if (compilerTool != null)
+                    compilerTool.ObjectFile = value;
+                else
+                    SetStringProperty("ObjectFile", value);
+            }
+        }
+
+        public string ProgramDataBaseFileName
+        {
+            get
+            {
+                if (compilerTool != null)
+                    return compilerTool.ProgramDataBaseFileName;
+                else
+                    return GetStringProperty("ProgramDataBaseFileName");
+            }
+
+            set
+            {
+                if (compilerTool != null)
+                    compilerTool.ProgramDataBaseFileName = value;
+                else
+                    SetStringProperty("ProgramDataBaseFileName", value);
+            }
+        }
+
         public List<string> AdditionalIncludeDirectories
         {
             get
