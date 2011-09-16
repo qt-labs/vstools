@@ -331,6 +331,26 @@ namespace Nokia.QtProjectLib
 
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
+            foreach (VCConfiguration cfg in (IVCCollection)qtProject.VCProject.Configurations)
+            {
+#if VS2010
+                cfg.IntermediateDirectory = @"$(Platform)\$(ConfigurationName)";
+#else
+                cfg.IntermediateDirectory = @"$(PlatformName)\$(ConfigurationName)";
+#endif
+                CompilerToolWrapper compilerTool = CompilerToolWrapper.Create(cfg);
+                if (compilerTool != null)
+                {
+#if VS2010
+                    compilerTool.ObjectFile = @"$(IntDir)";
+                    compilerTool.ProgramDataBaseFileName = @"$(IntDir)vc$(PlatformToolsetVersion).pdb";
+#else
+                    compilerTool.ObjectFile = @"$(IntDir)\";
+                    compilerTool.ProgramDataBaseFileName = @"$(IntDir)\vc90.pdb";
+#endif
+                }
+            }
+
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
             qtProject.RepairGeneratedFilesStructure();
             qtProject.TranslateFilterNames();
