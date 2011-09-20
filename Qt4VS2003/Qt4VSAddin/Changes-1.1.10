@@ -16,4 +16,15 @@ Changes
 - Do not add the include path "$QTDIR/include/qtmain".
   This path is a relict and confuses IntelliSense. (QTVSADDINBUG-81)
 - Be aware of strings when looking for Q_OBJECT macros. (QTVSADDINBUG-75)
+- Fix problems with the debugging environment. (QTVSADDINBUG-93)
+- Pass correct QtDesigner4.lib library name to linker. (QTVSADDINBUG-85)
+- Fix cleaning of autoexp.dat on uninstallation for VS 2005. (QTVSADDINBUG-67)
+- Use slashes as path separators in includes in moc files. (QTVSADDINBUG-84)
+- Choose a valid Qt version if the default Qt version becomes invalid.
+  (QTVSADDINBUG-60)
+- Prevent infinite loop if QtAppWrapper cannot connect. (QTVSADDINBUG-73)
+- Add and remove the correct OpenGL libraries when changing project's Qt
+  version. (QTVSADDINBUG-80)
+- Use project macro for filenames in moc step. (QTVSADDINBUG-30)
+- Fixed batch builds of Qt projects for multiple platforms. (QTVSADDINBUG-51)
 
