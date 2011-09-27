@@ -502,10 +502,7 @@ namespace Qt4VSAddin
                 }
             }
             if (project == null || !HelperFunctions.IsQtProject(project))
-            {
-                dte.ExecuteCommand("Build.Cancel", "");
                 return;
-            }
 
             QtProject qtpro = QtProject.Create(project);
             QtVersionManager versionManager = QtVersionManager.The();
