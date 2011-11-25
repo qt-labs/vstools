@@ -205,8 +205,10 @@ if ($copyAddin eq "1") {
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat_entries.txt", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2005", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2008", $outPath);
+  copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2010", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2005", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2008", $outPath);
+  copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2010", $outPath);
 }
 
 ############################################################
