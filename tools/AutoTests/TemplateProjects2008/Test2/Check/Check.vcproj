@@ -373,7 +373,7 @@
 			Value=".\GeneratedFiles\moc"
 		/>
 		<Global
-			Name="QtVersion"
+			Name="QtVersion Win32"
 			Value="$(DefaultQtVersion)"
 		/>
 		<Global

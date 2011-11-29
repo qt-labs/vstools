@@ -382,7 +382,7 @@
 			Value=".\GeneratedFiles\$(ConfigurationName)"
 		/>
 		<Global
-			Name="QtVersion"
+			Name="QtVersion Win32
 			Value="$(DefaultQtVersion)"
 		/>
 		<Global
