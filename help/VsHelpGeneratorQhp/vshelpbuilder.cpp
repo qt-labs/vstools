@@ -233,13 +233,6 @@ bool VSHelpBuilder::copyAndModifyFiles()
 			return false;        
 	}
 
-    QDir srcHTMLDir(m_SrcDir);
-    srcHTMLDir.cd("html");
-    srcHTMLDir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
-    foreach (const QString &dirName, srcHTMLDir.entryList())
-        if (!htmlDir.mkpath(dirName))
-            return false;
-
     QString srcDir = m_SrcDir;
 	QString destDir = htmlDir.absolutePath() + "/";
     QString line;
@@ -259,16 +252,20 @@ bool VSHelpBuilder::copyAndModifyFiles()
                 else
                     continue;
             }
+            QDir destinyDir = fi.dir();
+            if (!destinyDir.exists() && !destinyDir.mkpath(destinyDir.absolutePath()))
+                fprintf(stderr, "Error: Cannot create directory '%s'.", qPrintable(destinyDir.absolutePath()));
             if (!QFile::copy(sourceFile, destinyFile))
-                fprintf(stderr, "Error: Cannot copy file %s.\n", qPrintable(srcDir + file));
+                fprintf(stderr, "Error: Cannot copy file '%s' to '%s'.\n", qPrintable(srcDir + file), qPrintable(destinyFile));
         }
     }
 
     // Copy HTML files by using a QDirIterator, because qt.qhp is inconsistent. :-(
-    QDirIterator dirit(srcDir, QStringList() << "*.html");
+    QDirIterator dirit(srcDir, QStringList() << "*.html", QDir::NoFilter, QDirIterator::Subdirectories);
     while (dirit.hasNext()) {
         QString absFileName = dirit.next();
-        QString file = dirit.fileName();
+        QString file = absFileName;
+        file.remove(0, srcDir.length());
 //        printf("*** %s\n", qPrintable(file));
         QFile srcFile(absFileName);
         QFile destFile(destDir + file);
