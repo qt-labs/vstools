@@ -50,6 +50,9 @@ namespace Nokia.QtProjectLib
             string mocOptions, string mocFile, string newPchParameters,
             string outputFile)
         {
+            string inputMocFile = ProjectMacros.Path;
+            if (outputFile.ToLower().EndsWith(".moc"))
+                inputMocFile = mocFile;
             string[] cmds = SplitIntoCommands(cmdLine);
             int mocPos = MocCommandPosition(cmds);
             if (mocPos < 0)
@@ -112,7 +115,7 @@ namespace Nokia.QtProjectLib
                 {
                     newCmdLine = newCmdLine + "\"" + Resources.moc4Command + "\" "
                         + mocOptions + " " + defines + " " + includes
-                        + " \"" + ProjectMacros.Path + "\" -o \"" + outputFile + "\"";
+                        + " \"" + inputMocFile + "\" -o \"" + outputFile + "\"";
                     if (newPchParameters != null &&
                         newPchParameters.Length > 0 &&
                         !newCmdLine.Contains(newPchParameters))

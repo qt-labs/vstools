@@ -1055,8 +1055,11 @@ namespace Nokia.QtProjectLib
                         tool.AdditionalDependencies = dps + "\"" + Resources.moc4Command + "\";" + fileToMoc;
                     }
 
-                    tool.Description = "Moc'ing " + ProjectMacros.FileName + "...";
+                    tool.Description = "Moc'ing " + file.Name + "...";
 
+                    string inputMocFile = ProjectMacros.Path;
+                    if (mocableIsCPP)
+                        inputMocFile = file.RelativePath;
                     string output = tool.Outputs;
                     string outputMocFile = "";
                     string outputMocMacro = "";
@@ -1095,7 +1098,7 @@ namespace Nokia.QtProjectLib
                     }
 
                     string newCmdLine = "\"" + Resources.moc4Command + "\" " + QtVSIPSettings.GetMocOptions(envPro)
-                        + " \"" + ProjectMacros.Path + "\" -o \""
+                        + " \"" + inputMocFile + "\" -o \""
                         + outputMocMacro + "\"";
 
                     // Tell moc to include the PCH header if we are using precompiled headers in the project
@@ -1504,13 +1507,14 @@ namespace Nokia.QtProjectLib
                             }
                             tool.CommandLine = cmdLine;
                         }
+
+                        Regex reg = new Regex("Moc'ing .+\\.\\.\\.");
                         string addDepends = tool.AdditionalDependencies;
                         addDepends = System.Text.RegularExpressions.Regex.Replace(addDepends,
                             @"(\S*moc.exe|""\S+:\\\.*moc.exe"")", "");
                         addDepends = addDepends.Replace(file.RelativePath, "");
                         tool.AdditionalDependencies = "";
-                        tool.Description = tool.Description.Replace("Moc'ing " + file.Name + "...", "");
-                        tool.Description = tool.Description.Replace("Moc'ing " + ProjectMacros.FileName + "...", "");
+                        tool.Description = reg.Replace(tool.Description, "");
                         tool.Description = tool.Description.Replace("MOC " + file.Name, "");
                         string baseFileName = file.Name.Remove(file.Name.LastIndexOf('.'));
                         string pattern = "(\"(.*\\\\" + GetMocFileName(file.FullPath)
