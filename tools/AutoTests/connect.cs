@@ -1618,7 +1618,20 @@ namespace AddInAutoTest
                     wrapper.SetPrecompiledHeaderFile("test.pch");
                     wrapper.SetPrecompiledHeaderThrough("test.h");
                 }
-                foreach (VCFile file in (IVCCollection)vcProject.Files)
+                VCFilter filter = null;
+                foreach (VCFilter tmpFilter in vcProject.Filters as IVCCollection)
+                {
+                    if (tmpFilter.Name == "Source Files")
+                    {
+                        filter = tmpFilter;
+                    }
+                }
+                if (filter == null)
+                {
+                    success = false;
+                    throw new Exception("Could not find \"Source Files\" filter");
+                }
+                foreach (VCFile file in (IVCCollection)filter.Files)
                 {
                     if (file.Name.EndsWith(".cpp"))
                     {
@@ -1681,7 +1694,20 @@ namespace AddInAutoTest
                     wrapper.SetPrecompiledHeaderFile("stdafx.pch");
                     wrapper.SetPrecompiledHeaderThrough("stdafx.h");
                 }
-                foreach (VCFile file in (IVCCollection)vcProject.Files)
+                filter = null;
+                foreach (VCFilter tmpFilter in vcProject.Filters as IVCCollection)
+                {
+                    if (tmpFilter.Name == "Source Files")
+                    {
+                        filter = tmpFilter;
+                    }
+                }
+                if (filter == null)
+                {
+                    success = false;
+                    throw new Exception("Could not find \"Source Files\" filter");
+                }
+                foreach (VCFile file in (IVCCollection)filter.Files)
                 {
                     if (file.Name.EndsWith(".cpp"))
                     {
