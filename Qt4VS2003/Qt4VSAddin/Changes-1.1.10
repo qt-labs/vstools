@@ -8,7 +8,7 @@ Changes
   (QTVSADDINGBUG-70)
 - Detecting the MSVC version from qmake.conf was fixed.
 - Added QtScriptTools and QtUiTools to project settings. (QTVSADDINBUG-71)
-- Removed the MSC version check when adding Qt versions.
+- Removed the MSVC version check when adding Qt versions.
   As this "feature" seems to cause more trouble than it solves, we
   decided to remove it. Checking for the makefile generator should at
   least prevent people from trying to add MinGW builds.
