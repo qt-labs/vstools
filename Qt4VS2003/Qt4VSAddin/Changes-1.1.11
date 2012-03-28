@@ -1,0 +1,12 @@
+The Qt Visual Studio Add-In version 1.1.11 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Documentation updated
+- Documentation support for Visual Studio 2010. (QTVSADDINBUG-15)
+- Fixed always moc'ing problem. (QTVSADDINBUG-92)
+- Fixed .pro file opening having include to "." path. (QTVSADDINBUG-117)
+- Removed extra back slashes from qmake arg paths.
+- Fixed some additional include dir handling causing same path to be
+  added multiple times to custom build step.
