@@ -2482,7 +2482,7 @@ namespace Nokia.QtProjectLib
             return path.ToLower();
         }
 
-        public void UpdateUicSteps(string oldUicDir)
+        public void UpdateUicSteps(string oldUicDir, bool update_inc_path = true)
         {
             Messages.PaneMessage(dte, "\r\n=== Update uic steps ===");
             VCFilter vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
@@ -2518,7 +2518,10 @@ namespace Nokia.QtProjectLib
                     ++updatedFiles;
                 }
             }
-            UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
+            if (update_inc_path)
+            {
+                UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
+            }
 
             Messages.PaneMessage(dte, "\r\n=== " + updatedFiles.ToString()
                 + " uic steps updated. ===\r\n");

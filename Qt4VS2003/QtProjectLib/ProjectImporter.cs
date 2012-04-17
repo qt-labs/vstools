@@ -356,7 +356,7 @@ namespace Nokia.QtProjectLib
             qtProject.TranslateFilterNames();
 
             QtVSIPSettings.SaveUicDirectory(qtProject.Project, QtVSIPSettings.GetUicDirectory());
-            qtProject.UpdateUicSteps(".");
+            qtProject.UpdateUicSteps(".", false); // false is to not remove given path from includes
             QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
             qtProject.RefreshRccSteps();
 
