@@ -351,6 +351,29 @@ namespace Nokia.QtProjectLib
                 this.AdditionalIncludeDirectories = lst;
         }
 
+        public string[] GetAdditionalIncludeDirectoriesList()
+        {
+#if VS2010
+            string[] includes = this.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
+            string[] fixedincludes;
+            fixedincludes = new string[includes.Length];
+            int i = 0;
+            foreach (string include in includes)
+            {
+                string incl = include;
+                if (incl.StartsWith("\\\"") && incl.EndsWith("\\\""))
+                {
+                    incl = incl.Remove(0, 2);
+                    incl = incl.Remove(incl.Length - 2, 2);
+                }
+                fixedincludes[i++] = incl;
+            }
+            return fixedincludes;
+#else
+            return this.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
+#endif
+        }
+
         public string GetAdditionalIncludeDirectories()
         {
             if (compilerTool != null)

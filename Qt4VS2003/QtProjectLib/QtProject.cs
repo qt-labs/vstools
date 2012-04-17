@@ -462,7 +462,7 @@ namespace Nokia.QtProjectLib
                         continue;
 
                     string fixedIncludeDir = FixFilePathForComparison(info.IncludePath);
-                    string[] includeDirs = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
+                    string[] includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
                     foreach (string dir in includeDirs)
                     {
                         if (FixFilePathForComparison(dir) == fixedIncludeDir)
@@ -537,8 +537,13 @@ namespace Nokia.QtProjectLib
                 VCLibrarianTool librarian = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
 
                 // for some stupid reason you have to set this for it to be updated...
-                // the default value is the same...
-                config.OutputDirectory = "$(SolutionDir)$(ConfigurationName)";
+                // the default value is the same... +platform now
+#if VS2010
+                config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
+#else
+                config.OutputDirectory = "$(SolutionDir)$(PlatformName)\\$(ConfigurationName)";
+#endif
+
 #if ENABLE_WINCE
                 // This is mainly for Visual Studio consistency compared with a smartdevice MFC project.
                 config.IntermediateDirectory = config.OutputDirectory;
@@ -821,22 +826,14 @@ namespace Nokia.QtProjectLib
             {
                 if (!alreadyAdded.Contains(include))
                 {
-                    string incl = include;
-#if VS2010
-                    if (incl.StartsWith("\\\"") && incl.EndsWith("\\\""))
-                    {
-                        incl = incl.Remove(0, 2);
-                        incl = incl.Remove(incl.Length - 2, 2);
-                    }
-#endif
-                    incl = HelperFunctions.NormalizeRelativeFilePath(incl);
+                    string incl = HelperFunctions.NormalizeRelativeFilePath(include);
                     if (incl.Length > 0)
                     {
                         string cmdline = " ";
                         cmdline += SafelyQuoteCommandLineArgument("-I" + incl);
                         includes += cmdline;
                     }
-                    alreadyAdded.Add(incl);
+                    alreadyAdded.Add(include);
                 }
             }
             return includes;
@@ -856,9 +853,9 @@ namespace Nokia.QtProjectLib
         {
             try
             {
-                if (compiler.GetAdditionalIncludeDirectories() != null)
+                if (compiler.GetAdditionalIncludeDirectories() != null && compiler.GetAdditionalIncludeDirectories().Length > 0)
                 {
-                    string[] includes = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
+                    string[] includes = compiler.GetAdditionalIncludeDirectoriesList();
                     return new List<string>(includes);
                 }
             }
@@ -2131,7 +2128,7 @@ namespace Nokia.QtProjectLib
                     if (compiler == null)
                         continue;
 
-                    string[] paths = compiler.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
+                    string[] paths = compiler.GetAdditionalIncludeDirectoriesList();
                     FileInfo fi = new FileInfo(file.FullPath);
                     string relativePath = HelperFunctions.GetRelativePath(this.ProjectDir, fi.Directory.ToString());
                     string fixedRelativePath = FixFilePathForComparison(relativePath);
