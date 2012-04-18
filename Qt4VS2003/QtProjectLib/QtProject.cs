@@ -552,6 +552,11 @@ namespace Nokia.QtProjectLib
                 // add some common defines
                 compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
 
+                if (!vi.IsStaticBuild())
+                {
+                    compiler.AddPreprocessorDefinition("QT_DLL");
+                }
+
                 if (linker != null)
                 {
                     if (vi.IsWinCEVersion())
@@ -608,7 +613,7 @@ namespace Nokia.QtProjectLib
                     compiler.SetRuntimeLibrary(runtimeLibraryOption.rtMultiThreadedDebugDLL);
                 }
                 compiler.AddAdditionalIncludeDirectories(
-                    "$(QTDIR)\\include;" + QtVSIPSettings.GetMocDirectory(envPro));
+                    ".;" + "$(QTDIR)\\include;" + QtVSIPSettings.GetMocDirectory(envPro));
 
                 compiler.SetTreatWChar_tAsBuiltInType(false);
 
@@ -3576,7 +3581,7 @@ namespace Nokia.QtProjectLib
         /// <summary>
         /// Sets the Qt environment for the given Qt version.
         /// </summary>
-        public void SetQtEnvironment(string qtVersion)
+        public void SetQtEnvironment(string qtVersion, string solutionConfig = null)
         {
             if (string.IsNullOrEmpty(qtVersion))
                 return;
@@ -3589,7 +3594,41 @@ namespace Nokia.QtProjectLib
             try
             {
                 var propertyAccess = (IVCBuildPropertyStorage)vcPro;
-                propertyAccess.SetPropertyValue("QTDIR", null, "UserFile", qtDir);
+
+                // Remove old property if one exists
+                // This is set incorrectly for projects by version 1.1.10:
+                // propertyAccess.SetPropertyValue("QTDIR", null, "UserFile", qtDir);
+                propertyAccess.RemoveProperty("QTDIR", null, "UserFile");
+
+                // Get platform name from given solution configuration
+                // or if not available take the active configuration
+                String activePlatformName = "";
+                if (solutionConfig == null)
+                {
+                    // First get active configuration cause not given as parameter
+                    EnvDTE.Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
+                    solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
+                    activePlatformName = activeConf.PlatformName;
+                }
+                else
+                {
+                    activePlatformName = solutionConfig.Split('|')[1];
+                }
+
+                // Find all configurations for platform and set property for all of them
+                // This is to get QTDIR property set for all configurations same time so
+                // we can be sure it is set and is equal between debug and release
+                VCProject vcprj = envPro.Object as VCProject;
+                foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection)
+                {
+                    VCPlatform cur_platform = conf.Platform as VCPlatform;
+                    if (cur_platform.Name == activePlatformName)
+                    {
+                        string cur_solution = conf.ConfigurationName + "|" + cur_platform.Name;
+                        propertyAccess.SetPropertyValue("QTDIR", cur_solution, "UserFile", qtDir);
+                    }
+                }
+
             }
             catch (Exception)
             {

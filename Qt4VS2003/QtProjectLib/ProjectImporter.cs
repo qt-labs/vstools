@@ -334,7 +334,7 @@ namespace Nokia.QtProjectLib
             foreach (VCConfiguration cfg in (IVCCollection)qtProject.VCProject.Configurations)
             {
 #if VS2010
-                cfg.IntermediateDirectory = @"$(Platform)\$(ConfigurationName)";
+                cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)";
 #else
                 cfg.IntermediateDirectory = @"$(PlatformName)\$(ConfigurationName)";
 #endif

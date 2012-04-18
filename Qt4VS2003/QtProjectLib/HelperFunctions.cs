@@ -166,16 +166,36 @@ namespace Nokia.QtProjectLib
             return false;
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj)
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string solutionConfig = null)
         {
-            SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false);
+            SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite)
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite, string solutionConfig = null)
         {
+            // Get platform name from given solution configuration
+            // or if not available take the active configuration
+            String activePlatformName = "";
+            if (solutionConfig == null)
+            {
+                // First get active configuration cause not given as parameter
+                EnvDTE.Configuration activeConf = prj.ConfigurationManager.ActiveConfiguration;
+                solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
+                activePlatformName = activeConf.PlatformName;
+            }
+            else
+            {
+                activePlatformName = solutionConfig.Split('|')[1];
+            }
+
             VCProject vcprj = prj.Object as VCProject;
             foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection)
             {
+                // Set environment only for active (or given) platform
+                VCPlatform cur_platform = conf.Platform as VCPlatform;
+                if (cur_platform.Name != activePlatformName)
+                    continue;
+
                 VCDebugSettings de = conf.DebugSettings as VCDebugSettings;
                 string withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)"));
                 if (overwrite || de.Environment == null || de.Environment.Length == 0)
