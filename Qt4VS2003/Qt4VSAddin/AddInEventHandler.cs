@@ -198,7 +198,7 @@ namespace Qt4VSAddin
                 {
                     string oldUicDir = QtVSIPSettings.GetUicDirectory(project);
                     QtVSIPSettings.SaveUicDirectory(project, value);
-                    qtProject.UpdateUicSteps(oldUicDir);
+                    qtProject.UpdateUicSteps(oldUicDir, true);
                 }
             }
         }

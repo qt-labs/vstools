@@ -166,17 +166,27 @@ namespace Nokia.QtProjectLib
             return false;
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string solutionConfig = null)
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj)
+        {
+            SetDebuggingEnvironment(prj, "");
+        }
+
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string solutionConfig)
         {
             SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite, string solutionConfig = null)
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite)
+        {
+            SetDebuggingEnvironment(prj, envpath, overwrite, "");
+        }
+
+        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite, string solutionConfig)
         {
             // Get platform name from given solution configuration
             // or if not available take the active configuration
             String activePlatformName = "";
-            if (solutionConfig == null)
+            if (solutionConfig == null || solutionConfig.Length == 0)
             {
                 // First get active configuration cause not given as parameter
                 EnvDTE.Configuration activeConf = prj.ConfigurationManager.ActiveConfiguration;

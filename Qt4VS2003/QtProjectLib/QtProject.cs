@@ -2484,7 +2484,7 @@ namespace Nokia.QtProjectLib
             return path.ToLower();
         }
 
-        public void UpdateUicSteps(string oldUicDir, bool update_inc_path = true)
+        public void UpdateUicSteps(string oldUicDir, bool update_inc_path)
         {
             Messages.PaneMessage(dte, "\r\n=== Update uic steps ===");
             VCFilter vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
@@ -3581,7 +3581,15 @@ namespace Nokia.QtProjectLib
         /// <summary>
         /// Sets the Qt environment for the given Qt version.
         /// </summary>
-        public void SetQtEnvironment(string qtVersion, string solutionConfig = null)
+        public void SetQtEnvironment(string qtVersion)
+        {
+            SetQtEnvironment(qtVersion, "");
+        }
+
+        /// <summary>
+        /// Sets the Qt environment for the given Qt version.
+        /// </summary>
+        public void SetQtEnvironment(string qtVersion, string solutionConfig)
         {
             if (string.IsNullOrEmpty(qtVersion))
                 return;
@@ -3603,7 +3611,7 @@ namespace Nokia.QtProjectLib
                 // Get platform name from given solution configuration
                 // or if not available take the active configuration
                 String activePlatformName = "";
-                if (solutionConfig == null)
+                if (solutionConfig == null || solutionConfig.Length == 0)
                 {
                     // First get active configuration cause not given as parameter
                     EnvDTE.Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
