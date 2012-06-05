@@ -1,0 +1,9 @@
+The Qt Visual Studio Add-In version 1.2.0-beta supports Qt5.
+
+Changes
+-------
+- Project creation wizards updated to follow Qt5 module structure
+- Project settings form updated to follow Qt5 module structure
+- No more Qt4 project creation wizards and project settings
+- Support for Visual Studio 2012
+- All project files (*.sln, *.csproj etc) are renamed to Qt5

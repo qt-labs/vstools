@@ -103,7 +103,7 @@ goto :eof
     popd
 
     :: check if main part has been built
-    if not exist vs%1\qtvstools\Qt4VS2003\Qt4VSAddin\Release\Qt4VSAddin.dll (
+    if not exist vs%1\qtvstools\Qt4VS2003\Qt4VSAddin\Release\Qt5VSAddin.dll (
         touch %FAILEDFILE%
         goto :stopthisthing
     )

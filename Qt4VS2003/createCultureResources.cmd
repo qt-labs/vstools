@@ -31,6 +31,6 @@ if not exist %TARGETDIR%\%CULTURE% mkdir %TARGETDIR%\%CULTURE%
 set INRESOURCEFILE=%PROJECTDIR%\StringResources.resources
 if exist %PROJECTDIR%\StringResources.%CULTURE%.resources set INRESOURCEFILE=%PROJECTDIR%\StringResources.%CULTURE%.resources
 echo %CULTURE% %INRESOURCEFILE%
-al /nologo /embed:%INRESOURCEFILE% /v:1.0.0.0 /culture:%CULTURE% /out:%TARGETDIR%\%CULTURE%\Qt4VSAddin.resources.dll
+al /nologo /embed:%INRESOURCEFILE% /v:1.0.0.0 /culture:%CULTURE% /out:%TARGETDIR%\%CULTURE%\Qt5VSAddin.resources.dll
 goto :eof
 

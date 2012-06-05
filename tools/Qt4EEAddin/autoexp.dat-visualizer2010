@@ -1,25 +1,55 @@
 ;QT_DEBUG_START
-; Nokia Qt 4.x visualizers -----------------------------------------[ start ]--
+; Digia Qt 5.x visualizers -----------------------------------------[ start ]--
 ;------------------------------------------------------------------------------
 ; Feel free to modify these visualizers to suit yours needs! But please let us
 ; know about the changes you make, so we continuously improve the visualizers.
 
+; Qt4
+;QString{
+;    preview         ([$e.d->data,su])
+;    stringview      ([$e.d->data,sub])
+;    children
+;    (
+;        #(
+;            d: $c.d,
+;            [size]: $c.d->size,
+;            [referenced]: $c.d->ref._q_value
+;        )
+;    )
+;}
+
+; Qt4
+;QByteArray{
+;    preview         ([$e.d->data,s])
+;    stringview      ([$e.d->data,sb])
+;    children
+;    (
+;        #(
+;            d: $c.d,
+;            [size]: $c.d->size,
+;            [referenced]: $c.d->ref._q_value
+;        )
+;    )
+;}
+
+; Qt5
 QString|*::QString{
-    preview         ([$e.d->data,su])
-    stringview      ([$e.d->data,sub])
+    preview    ([(unsigned short*)$e.d + $e.d->offset/2,su])
+    stringview ([(unsigned short*)$e.d + $e.d->offset/2,sub])
     children
     (
         #(
             d: $c.d,
             [size]: $c.d->size,
-            [referenced]: $c.d->ref._q_value
+            [referenced]: $c.d->ref.atomic._q_value
         )
     )
 }
 
+; Qt5
 QByteArray|*::QByteArray{
-    preview         ([$e.d->data,s])
-    stringview      ([$e.d->data,sb])
+    preview    ([(char*)$e.d + $e.d->offset,s])
+    stringview ([(char*)$e.d + $e.d->offset,sb])
     children
     (
         #(
@@ -1477,5 +1507,5 @@ QPolygonF{
 }
 
 ;------------------------------------------------------------------------------
-; Nokia Qt 4.x visualizers -------------------------------------------[ end ]--
+; Digia Qt 5.x visualizers -------------------------------------------[ end ]--
 ;QT_DEBUG_END

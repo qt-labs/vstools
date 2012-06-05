@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="OK" xml:space="preserve">
     <value>&amp;OK</value>
@@ -335,5 +335,8 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   </data>
   <data name="Helpers_ExitError" xml:space="preserve">
     <value>The application exited with an error (ExitCode {0}):</value>
+  </data>
+  <data name="Resources_OtherFiles" xml:space="preserve">
+    <value>Other Files</value>
   </data>
 </root>

@@ -36,7 +36,7 @@ if ($vsMajorVSVersion == 8) {
   print "Assembly Reference Paths: $refPath\n";
   CreateUserFile("QtProjectEngine\\QtProjectEngineLib2005.csproj");
   CreateUserFile("QtProjectLib\\QtProjectLib2005.csproj");
-  CreateUserFile("Qt4VSAddin\\Qt4VSAddin2005.csproj");
+  CreateUserFile("Qt4VSAddin\\Qt5VSAddin2005.csproj");
 } elsif ($vsMajorVSVersion == 9) {
   my $vsPath = $ENV{'VS90COMNTOOLS'};
   $vsPath =~ s/Common7\\Tools/Common7\\IDE/;
@@ -46,7 +46,7 @@ if ($vsMajorVSVersion == 8) {
   print "Assembly Reference Paths: $refPath\n";
   CreateUserFile("QtProjectEngine\\QtProjectEngineLib2008.csproj");
   CreateUserFile("QtProjectLib\\QtProjectLib2008.csproj");
-  CreateUserFile("Qt4VSAddin\\Qt4VSAddin2008.csproj");
+  CreateUserFile("Qt4VSAddin\\Qt5VSAddin2008.csproj");
 } elsif ($vsMajorVSVersion == 10) {
   my $vsPath = $ENV{'VS100COMNTOOLS'};
   $vsPath =~ s/Common7\\Tools/Common7\\IDE/;
@@ -59,7 +59,7 @@ if ($vsMajorVSVersion == 8) {
   CreateUserFile("Qt4VS2003\\Qt4VS2010.csproj");
   CreateUserFile("QtProjectEngine\\QtProjectEngineLib2010.csproj");
   CreateUserFile("QtProjectLib\\QtProjectLib2010.csproj");
-  CreateUserFile("Qt4VSAddin\\Qt4VSAddin2010.csproj");
+  CreateUserFile("Qt4VSAddin\\Qt5VSAddin2010.csproj");
 }
 
 sub CreateUserFile {

@@ -43,10 +43,12 @@ if ($args{destination} ne "") {
 ############################################################
 
 my $srcRootPath = abs_path($0);
+
 $srcRootPath =~ s/collectInstallerFiles\.pl//;
 $srcRootPath =~ s|^/(\w)/|$1\:/|;      # convert drive letter
 $srcRootPath =~ s|/|\\|g;              # convert to backslashes
 $srcRootPath =~ s|\\$||g;              # remove trailing \
+
 
 my $qtDir = $ENV{'QTDIR'};
 if ($copyQt eq "1" && $qtDir eq "") {
@@ -72,6 +74,9 @@ if ($ENV{VS80COMNTOOLS} =~ /^\Q$ENV{VSINSTALLDIR}/) {
 } elsif ($ENV{VS100COMNTOOLS} =~ /^\Q$ENV{VSINSTALLDIR}/) {
     $vsVersion = '10.0';
     $vsVersionLong = "2010";
+} elsif ($ENV{VS110COMNTOOLS} =~ /^\Q$ENV{VSINSTALLDIR}/) {
+    $vsVersion = '11.0';
+    $vsVersionLong = "2012";
 }
 
 if (!$vsVersion) {
@@ -114,7 +119,9 @@ if (! -d $destRootPath) {
 $outPath = $destRootPath;
 
 copyFile($srcRootPath . "\\ui.ico", $outPath);
-copyFile($srcRootPath . "\\Qt4VSAddin\\Changes-" . $vsipVersion, $outPath);
+# BETA!!
+# USE THIS FOR FINAL copyFile($srcRootPath . "\\Qt4VSAddin\\Changes-" . $vsipVersion, $outPath);
+copyFile($srcRootPath . "\\Qt4VSAddin\\Changes-" . $vsipVersion . "-beta", $outPath);
 
 ############################################################
 # copy Qt libs
@@ -124,18 +131,20 @@ $outPath = $destRootPath . "\\bin";
 mkdir $outPath;
 
 if ($copyQt eq "1") {
-  copyFile($qtDir . "\\bin\\QtCore4.dll", $outPath);
-  copyFile($qtDir . "\\bin\\QtGui4.dll", $outPath);
-  copyFile($qtDir . "\\bin\\QtXml4.dll", $outPath);
-  copyFile($qtDir . "\\bin\\QtSvg4.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtCore5.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtGui5.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtWidgets5.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtXml5.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtSvg5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\platforms\\windows5.dll", $outPath);
   $outPath = $destRootPath . "\\bin\\imageformats";
   mkdir $outPath;
-  copyFile($qtDir . "\\plugins\\imageformats\\qgif4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qico4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qjpeg4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qmng4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qsvg4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qtiff4.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qgif5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qico5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qjpeg5.dll", $outPath);
+#  copyFile($qtDir . "\\plugins\\imageformats\\qmng5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qsvg5.dll", $outPath);
+#  copyFile($qtDir . "\\plugins\\imageformats\\qtiff5.dll", $outPath);
 }
 
 ############################################################
@@ -146,16 +155,16 @@ if ($copyAddin eq "1") {
   $outPath = $destRootPath . "\\bin\\$vsVersion";
   mkpath($outPath);
 
-  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\Qt4VSAddin.dll", $outPath);
-  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\QtProjectLib.dll", $outPath);
-  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\QtProjectEngineLib.dll", $outPath);
-  copyFile($srcRootPath . "\\Qt4VSAddin\\Qt4VSAddin.AddIn", $outPath);
-  copyFile($srcRootPath . "\\ComWrappers\\qmakewrapper\\qmakewrapper1Lib.dll", $outPath);
+  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\Qt5VSAddin.dll", $outPath);
+  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\Qt5ProjectLib.dll", $outPath);
+  copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\Qt5ProjectEngineLib.dll", $outPath);
+  copyFile($srcRootPath . "\\Qt4VSAddin\\Qt5VSAddin.AddIn", $outPath);
+  copyFile($srcRootPath . "\\ComWrappers\\qmakewrapper\\q5makewrapper1Lib.dll", $outPath);
 
   ############################################################
   # Patch .AddIn file
   ############################################################
-  open(FILE, "<" . $outPath . "\\Qt4VSAddin.AddIn");
+  open(FILE, "<" . $outPath . "\\Qt5VSAddin.AddIn");
   while (<FILE>) {
      $_ =~ s/<Version>.*<\/Version>/<Version>$vsVersion<\/Version>/;
      $_ =~ s/Qt Add-in Development Version/Qt Add-in $vsipVersion/;
@@ -163,7 +172,7 @@ if ($copyAddin eq "1") {
      }
   close FILE;
   
-  open(FILE, ">" . $outPath . "\\Qt4VSAddin.AddIn");
+  open(FILE, ">" . $outPath . "\\Qt5VSAddin.AddIn");
   print FILE ("$file");
   close FILE;
 
@@ -185,9 +194,9 @@ if ($copyAddin eq "1") {
   if ($vsVersionLong eq "2008") {
     $outPath = $destRootPath . "\\bin";
     mkpath($outPath);
-    copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\qtappwrapper.exe", $outPath);
-    copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\qrceditor.exe", $outPath);
-    copyFile($srcRootPath . "\\ComWrappers\\qmakewrapper\\release\\qmakewrapper1.dll", $outPath);
+    copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\qt5appwrapper.exe", $outPath);
+    copyFile($srcRootPath . "\\Qt4VSAddin\\Release\\q5rceditor.exe", $outPath);
+    copyFile($srcRootPath . "\\ComWrappers\\qmakewrapper\\release\\q5makewrapper1.dll", $outPath);
   }
 
   $outPath = $destRootBase;
@@ -206,9 +215,11 @@ if ($copyAddin eq "1") {
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2005", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2008", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2010", $outPath);
+  copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-autoexpand2012", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2005", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2008", $outPath);
   copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2010", $outPath);
+  copyFile($srcRootPath . "\\..\\tools\\Qt4EEAddin\\autoexp.dat-visualizer2012", $outPath);
 }
 
 ############################################################
@@ -238,12 +249,12 @@ if ($copyQt eq "1") {
   
   $outPath = $destRootPath . "\\plugins\\imageformats";
   mkdir $outPath;
-  copyFile($qtDir . "\\bin\\QtSvg4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qsvg4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qgif4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qjpeg4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qtiff4.dll", $outPath);
-  copyFile($qtDir . "\\plugins\\imageformats\\qico4.dll", $outPath);
+  copyFile($qtDir . "\\bin\\QtSvg5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qsvg5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qgif5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qjpeg5.dll", $outPath);
+#  copyFile($qtDir . "\\plugins\\imageformats\\qtiff5.dll", $outPath);
+  copyFile($qtDir . "\\plugins\\imageformats\\qico5.dll", $outPath);
 }
 
 ############################################################
@@ -254,19 +265,19 @@ if ($copyTemplates eq "1") {
   $outPath = $destRootPath . "\\projects";
   mkdir $outPath;
   
-  copyTemplate("projects", "Qt4ActiveQtServerProject");
-  copyTemplate("projects", "Qt4ConsoleProject");
-  copyTemplate("projects", "Qt4DesignerPluginProject");
-  copyTemplate("projects", "Qt4GuiProject");
-  copyTemplate("projects", "Qt4LibProject");
-  copyTemplate("projects", "Qt4WinCELibProject");
-  copyTemplate("projects", "Qt4WinCEProject");
+  copyTemplate("projects", "Qt5ActiveQtServerProject");
+  copyTemplate("projects", "Qt5ConsoleProject");
+  copyTemplate("projects", "Qt5DesignerPluginProject");
+  copyTemplate("projects", "Qt5GuiProject");
+  copyTemplate("projects", "Qt5LibProject");
+  copyTemplate("projects", "Qt5WinCELibProject");
+  copyTemplate("projects", "Qt5WinCEProject");
 
   $outPath = $destRootPath . "\\items";
   mkdir $outPath;
 
-  copyTemplate("items", "Qt4Class");
-  copyTemplate("items", "Qt4GuiClass");
+  copyTemplate("items", "Qt5Class");
+  copyTemplate("items", "Qt5GuiClass");
 
   mkdir $outPath . "\\qrcItems";
   copyDir($srcRootPath . "\\Items\\qrcItems\\*.ico", $outPath . "\\qrcItems");
@@ -309,9 +320,9 @@ if ($copyAddin eq "1") {
   $outPath = $destRootPath . "\\help";
   mkdir $outPath;
 
-  if (-e $srcRootPath . "\\..\\help\\test") {
-    copyDir($srcRootPath . "\\..\\help\\test\\qt4vs_*", $outPath);
-    copyDir($srcRootPath . "\\Doc\\html\\*.xml", $outPath);
+  if (-e $srcRootPath . "\\..\\help\\build\\commercial\\VSAddin") {
+    copyDir($srcRootPath . "\\..\\help\\build\\commercial\\VsAddin\\qt4vs_*", $outPath);
+    copyDir($srcRootPath . "\\..\\help\\build\\commercial\\VsAddin\\*.xml", $outPath);
   } else {
     print "Could not copy vsip documentation.\n";
   }

@@ -1,39 +1,52 @@
-﻿/**************************************************************************
+﻿/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using EnvDTE;
-using Nokia.QtProjectLib;
 
-namespace Qt4VSAddin
+
+using Digia.Qt5ProjectLib;
+namespace Qt5VSAddin
 {
     public partial class FormProjectQtSettings : Form
     {
@@ -69,7 +82,6 @@ namespace Qt4VSAddin
             this.testLib.Text = SR.GetString("TestLibrary");
             this.svgLib.Text = SR.GetString("SVGLibrary");
             this.xmlLib.Text = SR.GetString("XMLLibrary");
-            this.qt3Lib.Text = SR.GetString("Qt3SupportLibrary");
             this.networkLib.Text = SR.GetString("NetworkLibrary");
             this.openGLLib.Text = SR.GetString("OpenGLLibrary");
             this.sqlLib.Text = SR.GetString("SQLLibrary");
@@ -82,30 +94,59 @@ namespace Qt4VSAddin
             this.webKitLib.Text = SR.GetString("WebKitLibrary");
             this.xmlPatternsLib.Text = SR.GetString("XmlPatternsLibrary");
             this.phononLib.Text = SR.GetString("PhononLibrary");
-            this.declarativeLib.Text = SR.GetString("DeclarativeLibrary");
-            this.scriptToolsLib.Text = SR.GetString("ScriptToolsLibrary");
-            this.uiToolsLib.Text = SR.GetString("UiToolsLibrary");
 
+            threeDLib.Text = SR.GetString("3DLibrary");
+            locationLib.Text = SR.GetString("LocationLibrary");
+            qmlLib.Text = SR.GetString("QmlLibrary");
+            quickLib.Text = SR.GetString("QuickLibrary");
+            bluetoothLib.Text = SR.GetString("BluetoothLibrary");
+            contactsLib.Text = SR.GetString("ContactsLibrary");
+            organizerLib.Text = SR.GetString("OrganizerLibrary");
+            printSupportLib.Text = SR.GetString("PrintSupportLibrary");
+            pubSubLib.Text = SR.GetString("PubSubLibrary");
+            quick1Lib.Text = SR.GetString("Quick1Library");
+            sensorsLib.Text = SR.GetString("SensorsLibrary");
+            serviceFrameworkLib.Text = SR.GetString("ServiceFwLibrary");
+            systemInfoLib.Text = SR.GetString("SystemInfoLibrary");
+            webkitWidgetsLib.Text = SR.GetString("WebkitWidgetsLibrary");
+            versitLib.Text = SR.GetString("VersitLibrary");
+            widgetsLib.Text = SR.GetString("WidgetsLibrary");
+
+            // essentials
+            AddMapping(threeDLib, QtModule.ThreeD);
             AddMapping(coreLib, QtModule.Core);
             AddMapping(guiLib, QtModule.Gui);
+            AddMapping(locationLib, QtModule.Location);
             AddMapping(multimediaLib, QtModule.Multimedia);
-            AddMapping(sqlLib, QtModule.Sql);
-            AddMapping(openGLLib, QtModule.OpenGL);
             AddMapping(networkLib, QtModule.Network);
-            AddMapping(qt3Lib, QtModule.Compat);
-            AddMapping(xmlLib, QtModule.Xml);
-            AddMapping(svgLib, QtModule.Svg);
+            AddMapping(qmlLib, QtModule.Qml);
+            AddMapping(quickLib, QtModule.Quick);
+            AddMapping(sqlLib, QtModule.Sql);
             AddMapping(testLib, QtModule.Test);
-            AddMapping(scriptLib, QtModule.Script);
-            AddMapping(helpLib, QtModule.Help);
             AddMapping(webKitLib, QtModule.WebKit);
-            AddMapping(xmlPatternsLib, QtModule.XmlPatterns);
-            AddMapping(activeQtSLib, QtModule.ActiveQtS);
+
+            // add-ons
             AddMapping(activeQtCLib, QtModule.ActiveQtC);
+            AddMapping(activeQtSLib, QtModule.ActiveQtS);
+            AddMapping(bluetoothLib, QtModule.Bluetooth);
+            AddMapping(contactsLib, QtModule.Contacts);
+            AddMapping(helpLib, QtModule.Help);
+            AddMapping(openGLLib, QtModule.OpenGL);
+            AddMapping(organizerLib, QtModule.Organizer);
             AddMapping(phononLib, QtModule.Phonon);
-            AddMapping(declarativeLib, QtModule.Declarative);
-            AddMapping(scriptToolsLib, QtModule.ScriptTools);
-            AddMapping(uiToolsLib, QtModule.UiTools);
+            AddMapping(printSupportLib, QtModule.PrintSupport);
+            AddMapping(pubSubLib, QtModule.PublishSubscribe);
+            AddMapping(quick1Lib, QtModule.Quick1);
+            AddMapping(scriptLib, QtModule.Script);
+            AddMapping(sensorsLib, QtModule.Sensors);
+            AddMapping(serviceFrameworkLib, QtModule.ServiceFramework);
+            AddMapping(svgLib, QtModule.Svg);
+            AddMapping(systemInfoLib, QtModule.SystemInfo);
+            AddMapping(webkitWidgetsLib, QtModule.WebkitWidgets);
+            AddMapping(versitLib, QtModule.Versit);
+            AddMapping(widgetsLib, QtModule.Widgets);
+            AddMapping(xmlLib, QtModule.Xml);
+            AddMapping(xmlPatternsLib, QtModule.XmlPatterns);
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             this.KeyPress += new KeyPressEventHandler(this.FormProjectQtSettings_KeyPress);
@@ -144,12 +185,34 @@ namespace Qt4VSAddin
 
         private void InitModules()
         {
-            for (int i=0; i < moduleMap.Count; ++i)
+            QtVersionManager versionManager = QtVersionManager.The();
+            string qtVersion = qtProject.GetQtVersion();
+            string install_path = versionManager.GetInstallPath(qtVersion);
+
+            for (int i = 0; i < moduleMap.Count; ++i)
             {
                 ModuleMapItem item = moduleMap[i];
                 item.initialValue = qtProject.HasModule(item.moduleId);
                 item.checkbox.Checked = item.initialValue;
                 moduleMap[i] = item;
+
+                // Disable if module not installed
+                QtModuleInfo info = QtModules.Instance.ModuleInformation(item.moduleId);
+                string full_path = install_path + "\\lib\\" + info.LibraryPrefix;
+                if (!info.LibraryPrefix.StartsWith("QAx"))
+                {
+                    full_path += "5.lib";
+                }
+                else
+                {
+                    full_path += ".lib";
+                }
+                System.IO.FileInfo fi = new System.IO.FileInfo(full_path);
+                item.checkbox.Enabled = fi.Exists;
+                if (fi.Exists == false)
+                {
+                    item.checkbox.Checked = false;
+                }
             }
         }
 

@@ -1,33 +1,45 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-namespace Nokia.QtProjectLib
+namespace Digia.Qt5ProjectLib
 {
     using System;
     using System.Collections;
@@ -36,12 +48,12 @@ namespace Nokia.QtProjectLib
     using Microsoft.VisualStudio.VCProjectEngine;
     using EnvDTE;
 
-#if VS2005
-    [ProgId("Nokia.QtProjectEngine80"), GuidAttribute("cd13fe7f-d5a9-47f7-9c58-8f7b47836e9a")]
-#elif VS2008
-    [ProgId("Nokia.QtProjectEngine90"), GuidAttribute("ea1a5919-f732-4fd4-a1b8-b2eed84000d2")]
+#if VS2008
+    [ProgId("Digia.Qt5ProjectEngine90"), GuidAttribute("AAB67315-1130-4d99-B381-C66B1DDC931D")]
 #elif VS2010
-    [ProgId("Nokia.QtProjectEngine100"), GuidAttribute("83B731AE-2C32-4597-BC1D-9373EC6DFE82")]
+    [ProgId("Digia.Qt5ProjectEngine100"), GuidAttribute("F964A720-1836-4387-8243-09640D1E18D8")]
+#elif VS2012
+    [ProgId("Digia.Qt5ProjectEngine110"), GuidAttribute("105E7F0C-09AD-43F1-9EB2-5E448B1E696A")]
 #else
 #error GUID must be specified for this Visual Studio version!
 #endif
@@ -82,6 +94,8 @@ namespace Nokia.QtProjectLib
                 return Filters.ResourceFiles();
             else if(filterName == "QT_TRANSLATION_FILTER")
                 return Filters.TranslationFiles();
+            else if (filterName == "QT_OTHER_FILTER")
+                return Filters.OtherFiles();
 
             return null;
         }
@@ -100,7 +114,7 @@ namespace Nokia.QtProjectLib
                 qtVersion = versionManager.GetDefaultVersion();
 
             if (qtVersion == null)
-                throw new Qt4VS2003Exception("Unable to find a Qt build!\r\n"
+                throw new QtVSException("Unable to find a Qt build!\r\n"
                     + "To solve this problem specify a Qt build");
 
             string solutionPath = "";
@@ -306,11 +320,11 @@ namespace Nokia.QtProjectLib
         /// <param name="file">file (result from CopyFileToProjectFolder)</param>
         /// <param name="filter">the filter
         /// can be one of the following: QT_SOURCE_FILTER, QT_HEADER_FILTER, 
-        /// QT_FORM_FILTER, QT_RESOURCE_FILTER, QT_TRANSLATION_FILTER</param>
+        /// QT_FORM_FILTER, QT_RESOURCE_FILTER, QT_TRANSLATION_FILTER, QT_OTHER_FILTER</param>
         public VCFile AddFileToProject(string file, string filter)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.AdjustWhitespace(file);
             return qtPro.AddFileToProject(file, GetFakeFilterFromName(filter));
         }
@@ -324,7 +338,7 @@ namespace Nokia.QtProjectLib
         public string CopyFileToProjectFolder(string srcFile, string destName)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             
             return qtPro.CopyFileToProject(srcFile, destName);
         }
@@ -343,7 +357,7 @@ namespace Nokia.QtProjectLib
 		public string CreateQrcFile(string className, string destName)
 		{
 			if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             return qtPro.CreateQrcFile(className, destName);
 		}
 
@@ -356,7 +370,7 @@ namespace Nokia.QtProjectLib
         public void AddModule(string module)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.AddModule(GetQtModuleFromName(module));
         }
 
@@ -369,8 +383,37 @@ namespace Nokia.QtProjectLib
         public void RemoveModule(string module)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.RemoveModule(GetQtModuleFromName(module));
+        }
+
+        /// <summary>
+        /// Checks if an add-on qt module is installed
+        /// </summary>
+        /// <param name="moduleName">the module to find
+        /// </param>
+        public bool IsModuleInstalled(string moduleName)
+        {
+            QtVersionManager versionManager = QtVersionManager.The();
+            string qtVersion = versionManager.GetDefaultVersion();
+            if (qtVersion == null)
+                throw new QtVSException("Unable to find a Qt build!\r\n"
+                    + "To solve this problem specify a Qt build");
+            string install_path = versionManager.GetInstallPath(qtVersion);
+
+            string full_path = install_path + "\\lib\\" + moduleName;
+            if (!moduleName.StartsWith("QAx"))
+            {
+                full_path += "5.lib";
+            }
+            else
+            {
+                full_path += ".lib";
+            }
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(full_path);
+
+            return fi.Exists;
         }
 
         /// <summary>
@@ -381,7 +424,7 @@ namespace Nokia.QtProjectLib
         public bool AddApplicationIcon(string iconFileName)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             return qtPro.AddApplicationIcon(iconFileName);
         }
 
@@ -428,7 +471,7 @@ namespace Nokia.QtProjectLib
         public void AddActiveQtBuildStep(string version)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.AddActiveQtBuildStep(version);
         }
 
@@ -440,7 +483,7 @@ namespace Nokia.QtProjectLib
         public void AddDefine(string define, string config)
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.AddDefine(define, GetBuildConfigFromName(config));
         }
 
@@ -452,7 +495,7 @@ namespace Nokia.QtProjectLib
             get
             {
                 if (qtPro == null)
-                    throw new Qt4VS2003Exception(commonError);
+                    throw new QtVSException(commonError);
                 return pro;
             }
         }
@@ -463,7 +506,7 @@ namespace Nokia.QtProjectLib
         public void Finish()
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             qtPro.Finish();
         }
 
@@ -471,7 +514,7 @@ namespace Nokia.QtProjectLib
         {
             pro = HelperFunctions.GetSelectedQtProject(app);
             if (pro == null)
-                throw new Qt4VS2003Exception("Can't find a selected project");
+                throw new QtVSException("Can't find a selected project");
 
             qtPro = QtProject.Create(pro);
         }
@@ -540,14 +583,14 @@ namespace Nokia.QtProjectLib
         public bool UsesPrecompiledHeaders()
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             return qtPro.UsesPrecompiledHeaders();
         }
 
         public string GetPrecompiledHeaderThrough()
         {
             if (qtPro == null)
-                throw new Qt4VS2003Exception(commonError);
+                throw new QtVSException(commonError);
             return qtPro.GetPrecompiledHeaderThrough();
         }
     }

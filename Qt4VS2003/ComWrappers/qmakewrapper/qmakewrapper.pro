@@ -7,22 +7,26 @@ isEmpty(QT_SOURCE_TREE):QT_SOURCE_TREE=$$fromfile($$QT_BUILD_TREE/.qmake.cache, 
 
 TEMPLATE = lib
 
-CONFIG += qt dll qaxserver release debug_and_release
-TARGET = qmakewrapper
-VERSION = 1.0.0
-DEF_FILE = $$QT_SOURCE_TREE/src/activeqt/control/qaxserver.def
-RC_FILE	 = $$QT_SOURCE_TREE/src/activeqt/control/qaxserver.rc
+#CONFIG += qt dll qaxserver release debug_and_release
+CONFIG += qt dll qaxserver release
+QT += widgets
 
-include($$QT_SOURCE_TREE/mkspecs/features/win32/qaxserver.prf)
+TARGET = q5makewrapper
+VERSION = 1.0.0
+
+DEF_FILE = $$(QT_SOURCE_TREE)/../qtactiveqt/src/activeqt/control/qaxserver.def
+RC_FILE  = $$(QT_SOURCE_TREE)/../qtactiveqt/src/activeqt/control/qaxserver.rc
+
+include($$(QT_SOURCE_TREE)/mkspecs/features/win32/qaxserver.prf)
 QMAKE_POST_LINK += $$escape_expand(\\n\\t)
 
 CONFIG(debug, release|debug) {
     DEFINES += DEBUG
-    QMAKE_POST_LINK += $$quote(aximp debug\\qmakewrapper1.dll)
+    QMAKE_POST_LINK += $$quote(aximp debug\\q5makewrapper1.dll)
 }
 
 CONFIG(release, release|debug) {
-    QMAKE_POST_LINK += $$quote(aximp release\\qmakewrapper1.dll)
+    QMAKE_POST_LINK += $$quote(aximp release\\q5makewrapper1.dll)
 }
 
 HEADERS = qmakewrapper.h

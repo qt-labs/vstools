@@ -1,16 +1,16 @@
 #ifndef QMAKEWRAPPER_H
 #define QMAKEWRAPPER_H
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 class QMakeDataProvider;
 
 class QMakeWrapper : public QWidget
 {
     Q_OBJECT
-    Q_CLASSINFO("ClassID", "{3DE52853-C379-41ac-8FB8-41FE8DEE6389}")
-    Q_CLASSINFO("InterfaceID", "{3B12CAFA-2475-4696-A42C-A330A44C75CA}")
-    Q_CLASSINFO("EventsID", "{D56442BF-E71C-4b3d-A50A-2960D218F72A}")
+    Q_CLASSINFO("ClassID", "{33BE6C6F-E878-4F76-9676-9D78C44C4086}")
+    Q_CLASSINFO("InterfaceID", "{7BE63374-3234-44CC-9A68-F68E01D3BAF1}")
+    Q_CLASSINFO("EventsID", "{CA15864E-AE89-409F-BE96-F212931383A9}")
 
 public:
     QMakeWrapper(QWidget *parent = 0);

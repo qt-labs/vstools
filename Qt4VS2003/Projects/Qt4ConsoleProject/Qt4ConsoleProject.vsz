@@ -1,6 +1,0 @@
-VSWIZARD 7.0
-Wizard=VsWizard.VsWizardEngine.7.1
-
-Param="WIZARD_NAME = Qt4ConsoleProject"
-Param="ABSOLUTE_PATH = C:\depot\QtVSTools\main\Qt4VS2003\Projects\Qt4ConsoleProject"
-Param="FALLBACK_LCID = 1033"

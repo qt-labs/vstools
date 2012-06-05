@@ -166,49 +166,49 @@
     <value>Qt Modules</value>
   </data>
   <data name="ActiveQtContainerLibrary" xml:space="preserve">
-    <value>ActiveQt container library</value>
+    <value>ActiveQt container</value>
   </data>
   <data name="ActiveQtServerLibrary" xml:space="preserve">
-    <value>ActiveQt server library</value>
+    <value>ActiveQt server</value>
   </data>
   <data name="TestLibrary" xml:space="preserve">
-    <value>Test library</value>
+    <value>Test</value>
   </data>
   <data name="ScriptLibrary" xml:space="preserve">
-    <value>Script library</value>
+    <value>Script</value>
   </data>
   <data name="SVGLibrary" xml:space="preserve">
-    <value>SVG library</value>
+    <value>SVG</value>
   </data>
   <data name="XMLLibrary" xml:space="preserve">
-    <value>XML library</value>
+    <value>XML</value>
   </data>
   <data name="Qt3SupportLibrary" xml:space="preserve">
     <value>Qt3 support library</value>
   </data>
   <data name="NetworkLibrary" xml:space="preserve">
-    <value>Network library</value>
+    <value>Network</value>
   </data>
   <data name="OpenGLLibrary" xml:space="preserve">
-    <value>OpenGL library</value>
+    <value>OpenGL</value>
   </data>
   <data name="SQLLibrary" xml:space="preserve">
-    <value>SQL library</value>
+    <value>SQL</value>
   </data>
   <data name="GUILibrary" xml:space="preserve">
-    <value>GUI library</value>
+    <value>GUI</value>
   </data>
   <data name="CoreLibrary" xml:space="preserve">
-    <value>Core library</value>
+    <value>Core</value>
   </data>
   <data name="HelpLibrary" xml:space="preserve">
-    <value>Help library</value>
+    <value>Help</value>
   </data>
   <data name="WebKitLibrary" xml:space="preserve">
-    <value>WebKit library</value>
+    <value>WebKit</value>
   </data>
   <data name="XmlPatternsLibrary" xml:space="preserve">
-    <value>Xml patterns library</value>
+    <value>XML Patterns</value>
   </data>
   <data name="AddQtModule" xml:space="preserve">
     <value>Add/Remove Qt Module</value>
@@ -261,7 +261,7 @@ To enable the plugin to be loaded, the Qt version {0} has to be used. Do you wan
 The resulting plugin will not work with the current Qt Visual Studio Add-in.</value>
   </data>
   <data name="BuildSystem_Solution" xml:space="preserve">
-    <value>Goto qt.nokia.com and download the binary package of Qt {0}.</value>
+    <value>Goto qt.digia.com and download the binary package of Qt {0}.</value>
   </data>
   <data name="EditorFactory_OpenFailure" xml:space="preserve">
     <value>
@@ -387,7 +387,7 @@ and insert the information about the Qt version you want to use.</value>
   <data name="InvalidLicense" xml:space="preserve">
     <value>A valid Qt license key could not be found or your license has expired!
         
-Please contact qt-sales@nokia.com to order a Qt license.</value>
+Please use contact form at http://qt.digia.com/contact-us to order a Qt license.</value>
   </data>
   <data name="InitComponentsFailure" xml:space="preserve">
     <value>Cannot initialize FormEditor components!</value>
@@ -454,9 +454,8 @@ Please contact qt-sales@nokia.com to order a Qt license.</value>
   </data>
   <data name="NoVS2010Support" xml:space="preserve">
     <value>The default Qt version does not support Visual Studio 2010. In order
-to import .pro files specify a Qt version >=4.7 as default.</value>
+to import .pro files specify a Qt version &gt;=4.7 as default.</value>
   </data>
-
   <data name="CannotChangeQtVersion" xml:space="preserve">
     <value>The Qt version of at least one project could not be changed.</value>
   </data>
@@ -681,7 +680,7 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
     <value>Project Conversion</value>
   </data>
   <data name="PhononLibrary" xml:space="preserve">
-    <value>Phonon library</value>
+    <value>Phonon</value>
   </data>
   <data name="DeclarativeLibrary" xml:space="preserve">
     <value>Declarative library</value>
@@ -696,7 +695,7 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
     <value>No default Qt version found. Please check your Qt Visual Studio Add-in settings</value>
   </data>
   <data name="MultimediaLibrary" xml:space="preserve">
-    <value>Multimedia library</value>
+    <value>Multimedia</value>
   </data>
   <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
     <value>The file {0} is under source control and not checked out. Do you want to check out the file before opening it?
@@ -717,5 +716,53 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
   </data>
   <data name="CouldNotConnectToAppwrapper" xml:space="preserve">
     <value>Could not connect to Appwrapper. Please make sure that TCP port {0} is not blocked.</value>
+  </data>
+  <data name="3DLibrary" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="BluetoothLibrary" xml:space="preserve">
+    <value>Bluetooth</value>
+  </data>
+  <data name="ContactsLibrary" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="LocationLibrary" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="OrganizerLibrary" xml:space="preserve">
+    <value>Organizer</value>
+  </data>
+  <data name="PrintSupportLibrary" xml:space="preserve">
+    <value>Print Support</value>
+  </data>
+  <data name="PubSubLibrary" xml:space="preserve">
+    <value>Publish and Subscribe</value>
+  </data>
+  <data name="QmlLibrary" xml:space="preserve">
+    <value>QML</value>
+  </data>
+  <data name="Quick1Library" xml:space="preserve">
+    <value>Quick1</value>
+  </data>
+  <data name="QuickLibrary" xml:space="preserve">
+    <value>Quick</value>
+  </data>
+  <data name="SensorsLibrary" xml:space="preserve">
+    <value>Sensors</value>
+  </data>
+  <data name="ServiceFwLibrary" xml:space="preserve">
+    <value>Service Framework</value>
+  </data>
+  <data name="SystemInfoLibrary" xml:space="preserve">
+    <value>System Info</value>
+  </data>
+  <data name="VersitLibrary" xml:space="preserve">
+    <value>Versit</value>
+  </data>
+  <data name="WebkitWidgetsLibrary" xml:space="preserve">
+    <value>Webkit Widgets</value>
+  </data>
+  <data name="WidgetsLibrary" xml:space="preserve">
+    <value>Widgets</value>
   </data>
 </root>

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{5565253D-30D1-43A0-A143-80DF756976CD}") = "qt5appwrapper2012", "qt5appwrapper2012.csproj", "{D7914D8C-DE5E-4E8A-A5C7-3E81FD0208E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7914D8C-DE5E-4E8A-A5C7-3E81FD0208E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7914D8C-DE5E-4E8A-A5C7-3E81FD0208E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7914D8C-DE5E-4E8A-A5C7-3E81FD0208E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7914D8C-DE5E-4E8A-A5C7-3E81FD0208E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

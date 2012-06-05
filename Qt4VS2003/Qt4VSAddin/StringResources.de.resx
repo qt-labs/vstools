@@ -172,43 +172,43 @@
     <value>ActiveQt Server Bibliothek</value>
   </data>
   <data name="TestLibrary" xml:space="preserve">
-    <value>Test Bibliothek</value>
+    <value>Test</value>
   </data>
   <data name="ScriptLibrary" xml:space="preserve">
-    <value>Script Bibliothek</value>
+    <value>Script</value>
   </data>
   <data name="SVGLibrary" xml:space="preserve">
-    <value>SVG Bibliothek</value>
+    <value>SVG</value>
   </data>
   <data name="XMLLibrary" xml:space="preserve">
-    <value>XML Bibliothek</value>
+    <value>XML</value>
   </data>
   <data name="Qt3SupportLibrary" xml:space="preserve">
     <value>Qt3 support Bibliothek</value>
   </data>
   <data name="NetworkLibrary" xml:space="preserve">
-    <value>Netzwerk Bibliothek</value>
+    <value>Netzwerk</value>
   </data>
   <data name="OpenGLLibrary" xml:space="preserve">
-    <value>OpenGL Bibliothek</value>
+    <value>OpenGL</value>
   </data>
   <data name="SQLLibrary" xml:space="preserve">
-    <value>SQL Bibliothek</value>
+    <value>SQL</value>
   </data>
   <data name="GUILibrary" xml:space="preserve">
-    <value>GUI Bibliothek</value>
+    <value>GUI</value>
   </data>
   <data name="CoreLibrary" xml:space="preserve">
-    <value>Core Bibliothek</value>
+    <value>Core</value>
   </data>
   <data name="HelpLibrary" xml:space="preserve">
-    <value>Hilfe Bibliothek</value>
+    <value>Hilfe</value>
   </data>
   <data name="WebKitLibrary" xml:space="preserve">
-    <value>WebKit Bibliothek</value>
+    <value>WebKit</value>
   </data>
   <data name="XmlPatternsLibrary" xml:space="preserve">
-    <value>Xml Patterns Bibliothek</value>
+    <value>XML Patterns</value>
   </data>
   <data name="AddQtModule" xml:space="preserve">
     <value>Qt Modul hinzufügen/entfernen</value>
@@ -262,7 +262,7 @@ Soll die Qt Version auf Qt {0} geändert werden?</value>
 d.h. die Qt Visual Studio Add-in kann das erstellte Plugin nicht laden.</value>
   </data>
   <data name="BuildSystem_Solution" xml:space="preserve">
-    <value>Gehen Sie auf qt.nokia.com und laden Qt {0} herunter.</value>
+    <value>Gehen Sie auf qt.digia.com und laden Qt {0} herunter.</value>
   </data>
   <data name="EditorFactory_OpenFailure" xml:space="preserve">
     <value>
@@ -387,7 +387,7 @@ sich. Eventuelle manuelle Änderungen gehen dabei verloren. Möchten Sie fortfah
   <data name="InvalidLicense" xml:space="preserve">
     <value>Eine gültige Qt Lizenz konnte nicht gefunden werden!
         
-Bitte kontaktieren Sie qt-sales@nokia.com um eine Qt Lizenz zu kaufen.</value>
+Bitte benutzen Sie Kontaktformular auf http://qt.digia.com/contact-us eine Qt Lizenz zu bestellen.</value>
   </data>
   <data name="InitComponentsFailure" xml:space="preserve">
     <value>Die Formeditorkomponenten können nicht initialisiert werden!</value>
@@ -680,7 +680,7 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
     <value>Projekt umwandeln...</value>
   </data>
   <data name="PhononLibrary" xml:space="preserve">
-    <value>Phonon Bibliothek</value>
+    <value>Phonon</value>
   </data>
   <data name="DeclarativeLibrary" xml:space="preserve">
     <value>Declarative Bibliothek</value>
@@ -695,7 +695,7 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
     <value>Es wurde keine Standard-Qt-Version gefunden. Bitte überprüfen Sie Ihre Qt Visual Studio Add-in Einstellungen.</value>
   </data>
   <data name="MultimediaLibrary" xml:space="preserve">
-    <value>Multimedia Bibliothek</value>
+    <value>Multimedia</value>
   </data>
   <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
     <value>Die Datei {0} ist unter Versionskontrolle und im Moment nicht ausgecheckt. Soll die Datei vor dem Öffnen ausgecheckt werden?
@@ -719,5 +719,53 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   </data>
   <data name="CouldNotConnectToAppwrapper" xml:space="preserve">
     <value>Verbindung zu appwrapper konnte nicht hergestellt werden. Vergewissern Sie sich, dass TCP Port {0} nicht blockiert wird.</value>
+  </data>
+  <data name="3DLibrary" xml:space="preserve">
+    <value>3D</value>
+  </data>
+  <data name="BluetoothLibrary" xml:space="preserve">
+    <value>Bluetooth</value>
+  </data>
+  <data name="ContactsLibrary" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="LocationLibrary" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="OrganizerLibrary" xml:space="preserve">
+    <value>Organizer</value>
+  </data>
+  <data name="PrintSupportLibrary" xml:space="preserve">
+    <value>Print Support</value>
+  </data>
+  <data name="PubSubLibrary" xml:space="preserve">
+    <value>Publish and Subscribe</value>
+  </data>
+  <data name="QmlLibrary" xml:space="preserve">
+    <value>QML</value>
+  </data>
+  <data name="Quick1Library" xml:space="preserve">
+    <value>Quick1</value>
+  </data>
+  <data name="QuickLibrary" xml:space="preserve">
+    <value>Quick</value>
+  </data>
+  <data name="SensorsLibrary" xml:space="preserve">
+    <value>Sensors</value>
+  </data>
+  <data name="ServiceFwLibrary" xml:space="preserve">
+    <value>Service Framework</value>
+  </data>
+  <data name="SystemInfoLibrary" xml:space="preserve">
+    <value>System Info</value>
+  </data>
+  <data name="VersitLibrary" xml:space="preserve">
+    <value>Versit</value>
+  </data>
+  <data name="WebkitWidgetsLibrary" xml:space="preserve">
+    <value>Webkit Widgets</value>
+  </data>
+  <data name="WidgetsLibrary" xml:space="preserve">
+    <value>Widgets</value>
   </data>
 </root>

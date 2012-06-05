@@ -1,5 +1,5 @@
 TEMPLATE = app
-QT += gui
+QT += gui widgets
 
 include(./shared/qrceditor.pri)
 SOURCES += main.cpp mainwindow.cpp
@@ -17,3 +17,4 @@ CONFIG(release, debug|release) {
     DESTDIR  = ../../Qt4VS2003/Qt4VSAddin/Release
 }
 
+TARGET = q5rceditor

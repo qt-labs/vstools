@@ -1,33 +1,45 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-namespace Nokia.QtProjectLib
+namespace Digia.Qt5ProjectLib
 {
     using EnvDTE;
     using System;
@@ -77,7 +89,7 @@ namespace Nokia.QtProjectLib
         private QtProject(EnvDTE.Project project)
         {
             if (project == null)
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotConstructWithoutValidProject"));
+                throw new QtVSException(SR.GetString("QtProject_CannotConstructWithoutValidProject"));
             envPro = project;
             dte = envPro.DTE;
             vcPro = envPro.Object as VCProject;
@@ -235,6 +247,7 @@ namespace Nokia.QtProjectLib
             VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+            bool isSDK = versionInfo.IsSDK();
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations)
             {
@@ -247,8 +260,9 @@ namespace Nokia.QtProjectLib
                     foreach(string define in info.Defines)
                         compiler.AddPreprocessorDefinition(define);
 
-                    if (!String.IsNullOrEmpty(info.IncludePath))
-                        compiler.AddAdditionalIncludeDirectories(info.IncludePath);
+                    string incPath = info.GetIncludePath(isSDK);
+                    if (!String.IsNullOrEmpty(incPath))
+                        compiler.AddAdditionalIncludeDirectories(incPath);
                 }
                 if (linker != null)
                 {
@@ -297,10 +311,15 @@ namespace Nokia.QtProjectLib
                     if (additionalIncludeDirs != null)
                     {
                         List<string> lst = new List<string>(additionalIncludeDirs);
-                        if (!String.IsNullOrEmpty(info.IncludePath))
+                        if (!String.IsNullOrEmpty(info.sdkIncludePath))
                         {
-                            lst.Remove(info.IncludePath);
-                            lst.Remove('\"' + info.IncludePath + '\"');
+                            lst.Remove(info.sdkIncludePath);
+                            lst.Remove('\"' + info.sdkIncludePath + '\"');
+                        }
+                        if (!String.IsNullOrEmpty(info.srcIncludePath))
+                        {
+                            lst.Remove(info.srcIncludePath);
+                            lst.Remove('\"' + info.srcIncludePath + '\"');
                         }
                         compiler.AdditionalIncludeDirectories = lst;
                     }
@@ -447,6 +466,7 @@ namespace Nokia.QtProjectLib
             VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+            bool isSDK = versionInfo.IsSDK();
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations)
             {
@@ -456,12 +476,13 @@ namespace Nokia.QtProjectLib
                 QtModuleInfo info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null)
                 {
-                    if (String.IsNullOrEmpty(info.IncludePath))
+                    string incPath = info.GetIncludePath(isSDK);
+                    if (String.IsNullOrEmpty(incPath))
                         break;
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
 
-                    string fixedIncludeDir = FixFilePathForComparison(info.IncludePath);
+                    string fixedIncludeDir = FixFilePathForComparison(incPath);
                     string[] includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
                     foreach (string dir in includeDirs)
                     {
@@ -538,7 +559,7 @@ namespace Nokia.QtProjectLib
 
                 // for some stupid reason you have to set this for it to be updated...
                 // the default value is the same... +platform now
-#if VS2010
+#if (VS2010 || VS2012)
                 config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
 #else
                 config.OutputDirectory = "$(SolutionDir)$(PlatformName)\\$(ConfigurationName)";
@@ -745,7 +766,7 @@ namespace Nokia.QtProjectLib
             } 
             catch
             {
-	            throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddUicStep", file.FullPath));
+                throw new QtVSException(SR.GetString("QtProject_CannotAddUicStep", file.FullPath));
             }
         }
 
@@ -911,7 +932,7 @@ namespace Nokia.QtProjectLib
                 bool hasDifferentMocFilePerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
                 bool mocableIsCPP = mocFileName.ToLower().EndsWith(".moc");
 
-#if VS2010
+#if (VS2010 || VS2012)
                 // Fresh C++ headers don't have a usable custom build tool. We must set the item type first.
                 if (!mocableIsCPP && file.ItemType != "CustomBuild")
                     file.ItemType = "CustomBuild";
@@ -941,7 +962,7 @@ namespace Nokia.QtProjectLib
                             fi.Directory.Create();
                         mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
                             mocRelPath);
-#if VS2010
+#if (VS2010 || VS2012)
                         if (mocFileName.ToLower().EndsWith(".moc"))
                         {
                             ProjectItem mocFileItem = mocFile.Object as ProjectItem;
@@ -952,7 +973,7 @@ namespace Nokia.QtProjectLib
                     }
 
                     if (mocFile == null)
-                        throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddMocStep", file.FullPath));
+                        throw new QtVSException(SR.GetString("QtProject_CannotAddMocStep", file.FullPath));
 
                     VCCustomBuildTool tool = null;
                     string fileToMoc = null;
@@ -968,7 +989,7 @@ namespace Nokia.QtProjectLib
                         fileToMoc = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory, file.FullPath);
                     }
                     if (tool == null)
-                        throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotFindCustomBuildTool", file.FullPath));
+                        throw new QtVSException(SR.GetString("QtProject_CannotFindCustomBuildTool", file.FullPath));
 
 
                     if (hasDifferentMocFilePerPlatform && hasDifferentMocFilePerConfig)
@@ -1198,12 +1219,12 @@ namespace Nokia.QtProjectLib
                         tool.CommandLine = newCmdLine;
                     }
                 }
-			}
-			catch 
-			{
-				throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddMocStep", file.FullPath));
-			}
-		}
+            }
+            catch
+            {
+                throw new QtVSException(SR.GetString("QtProject_CannotAddMocStep", file.FullPath));
+            }
+        }
 
         /// <summary>
         /// Helper function for AddMocStep.
@@ -1583,7 +1604,7 @@ namespace Nokia.QtProjectLib
             }
             catch 
             {
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
+                throw new QtVSException(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
             }
 		}
         
@@ -1806,7 +1827,7 @@ namespace Nokia.QtProjectLib
                         // check if user already created this filter... then add guid
                         vfilt = FindFilterFromName(filter.Name);
                         if (vfilt == null)
-                            throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddFilter", filter.Name));
+                            throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
                     }
                     else
                     {
@@ -1851,7 +1872,7 @@ namespace Nokia.QtProjectLib
                     {
                         if (!vfilt.CanAddFilter(subfilterName))
                         {
-                            throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddFilter", filter.Name));
+                            throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
                         }
                         else
                         {
@@ -1874,11 +1895,11 @@ namespace Nokia.QtProjectLib
                 if (vfilt.CanAddFile(fileName))
                     return (VCFile)(vfilt.AddFile(fileName));
                 else
-                    throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddFile", fileName));
+                    throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
             }
             catch 
             {
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotAddFile", fileName));
+                throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
             }
         }
 
@@ -1904,7 +1925,7 @@ namespace Nokia.QtProjectLib
             }
             catch
             {
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotRemoveFile", file.Name));
+                throw new QtVSException(SR.GetString("QtProject_CannotRemoveFile", file.Name));
             }
         }
 
@@ -1990,7 +2011,7 @@ namespace Nokia.QtProjectLib
             }
             catch 
             {
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotFindFilter"));
+                throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
             }
         }
 
@@ -2010,7 +2031,7 @@ namespace Nokia.QtProjectLib
 			}
 			catch 
 			{
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotFindFilter"));
+                throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
 			}
 		}
 
@@ -2025,7 +2046,7 @@ namespace Nokia.QtProjectLib
                     {
                         vfilt = FindFilterFromName(filter.Name);
                         if (vfilt == null)
-                            throw new Qt4VS2003Exception(SR.GetString("QtProject_ProjectCannotAddFilter", filter.Name));
+                            throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddFilter", filter.Name));
                     }
                     else
                     {
@@ -2040,29 +2061,29 @@ namespace Nokia.QtProjectLib
             }
             catch
             {
-                throw new Qt4VS2003Exception(SR.GetString("QtProject_ProjectCannotAddResourceFilter"));
+                throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddResourceFilter"));
             }
         }
-		
-		public void AddDirectories()
-		{
-			try 
-			{
-				// resource directory
-				FileInfo fi = new FileInfo(envPro.FullName);
-				DirectoryInfo dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.resourceDir);
-				dfi.Create();
 
-				// generated files directory
-				dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.generatedFilesDir);
-				dfi.Create();
-			}
-			catch 
-			{
-				throw new Qt4VS2003Exception(SR.GetString("QtProject_CannotCreateResourceDir"));
-			}
+        public void AddDirectories()
+        {
+            try
+            {
+                // resource directory
+                FileInfo fi = new FileInfo(envPro.FullName);
+                DirectoryInfo dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.resourceDir);
+                dfi.Create();
+
+                // generated files directory
+                dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.generatedFilesDir);
+                dfi.Create();
+            }
+            catch
+            {
+                throw new QtVSException(SR.GetString("QtProject_CannotCreateResourceDir"));
+            }
             AddFilterToProject(Filters.ResourceFiles());
-		}
+        }
 
         public void Finish()
         {
@@ -2982,7 +3003,7 @@ namespace Nokia.QtProjectLib
                     RemoveMocStep(file);
                     AddMocStep(file);
                 }
-                catch (Qt4VS2003Exception e)
+                catch (QtVSException e)
                 {
                     Messages.PaneMessage(dte, e.Message);
                     continue;
@@ -3571,6 +3592,14 @@ namespace Nokia.QtProjectLib
         }
 
         /// <summary>
+        /// Gets the Qt version of the project
+        /// </summary>
+        public string GetQtVersion()
+        {
+            return QtVersionManager.The().GetProjectQtVersion(envPro);
+        }
+
+        /// <summary>
         /// Sets the Qt environment for the project's Qt version.
         /// </summary>
         public void SetQtEnvironment()
@@ -3598,7 +3627,7 @@ namespace Nokia.QtProjectLib
             if (qtVersion != "$(QTDIR)")
                 qtDir = QtVersionManager.The().GetInstallPath(qtVersion);
             HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
-#if VS2010
+#if (VS2010 || VS2012)
             try
             {
                 var propertyAccess = (IVCBuildPropertyStorage)vcPro;

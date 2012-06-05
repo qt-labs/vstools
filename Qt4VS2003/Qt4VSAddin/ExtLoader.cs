@@ -1,31 +1,43 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 using EnvDTE;
 using System;
@@ -35,14 +47,14 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.VCProjectEngine;
-using qmakewrapper1Lib;
+using q5makewrapper1Lib;
 using System.Collections;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Threading;
-using Nokia.QtProjectLib;
+using Digia.Qt5ProjectLib;
 
-namespace Qt4VSAddin
+namespace Qt5VSAddin
 // --------------------------------------------------------------------------------------
 {
     public class ExtLoader
@@ -77,11 +89,15 @@ namespace Qt4VSAddin
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
-#if VS2010
+#if (VS2010 || VS2012)
             VersionInformation vi = new VersionInformation(qtDir);
             if (vi.qtMajor == 4 && vi.qtMinor < 7)
             {
+#if VS2010
                 Messages.DisplayErrorMessage(SR.GetString("NoVS2010Support"));
+#else
+                Messages.DisplayErrorMessage(SR.GetString("NoVS2012Support"));
+#endif
                 return;
             }
 #endif
@@ -492,13 +508,13 @@ namespace Qt4VSAddin
             idx = filename.LastIndexOf('\\', idx);
             if (idx > -1)
                 filename = filename.Substring(0, idx + 1);
-            filename += "qrceditor.exe";
+            filename += "q5rceditor.exe";
 
             System.Diagnostics.Process tmp = null;
             try
             {
                 if (!File.Exists(filename))
-                    filename = Connect.Instance().InstallationDir + "qrceditor.exe";
+                    filename = Connect.Instance().InstallationDir + "q5rceditor.exe";
 
                 tmp = new System.Diagnostics.Process();
                 Project prj = HelperFunctions.GetSelectedProject(Connect._applicationObject);

@@ -1,6 +1,0 @@
-VSWIZARD 7.1
-Wizard=VsWizard.VsWizardEngine.8.0
-
-Param="WIZARD_NAME = Qt4WinCEProject"
-Param="ABSOLUTE_PATH = C:\depot\QtVSTools\main\Qt4VS2003\Projects\Qt4WinCEProject"
-Param="FALLBACK_LCID = 1033"

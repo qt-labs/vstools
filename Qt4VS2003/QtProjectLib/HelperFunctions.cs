@@ -1,33 +1,45 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-namespace Nokia.QtProjectLib
+namespace Digia.Qt5ProjectLib
 {
     using Microsoft.Win32;
     using Microsoft.VisualStudio.VCProjectEngine;
@@ -524,11 +536,11 @@ namespace Nokia.QtProjectLib
         {
             string returnString = additionalDependencies;
             returnString =
-                Regex.Replace(returnString, "Qt(\\S+4?)\\.lib", qtDir + "\\lib\\Qt${1}.lib");
+                Regex.Replace(returnString, "Qt(\\S+5?)\\.lib", qtDir + "\\lib\\Qt${1}.lib");
             returnString =
-                Regex.Replace(returnString, "(phonond?4?)\\.lib", qtDir + "\\lib\\${1}.lib");
+                Regex.Replace(returnString, "(phonond?5?)\\.lib", qtDir + "\\lib\\${1}.lib");
             returnString =
-                Regex.Replace(returnString, "(qtmaind?4?)\\.lib", qtDir + "\\lib\\${1}.lib");
+                Regex.Replace(returnString, "(qtmaind?5?)\\.lib", qtDir + "\\lib\\${1}.lib");
             return returnString;
         }
 
@@ -742,9 +754,9 @@ namespace Nokia.QtProjectLib
                                 if (idx == -1)
                                     idx = lowerLibrary.IndexOf("\\lib\\qtmaind.lib");
                                 if (idx == -1)
-                                    idx = lowerLibrary.IndexOf("\\lib\\qtcore4.lib");
+                                    idx = lowerLibrary.IndexOf("\\lib\\qtcore5.lib");
                                 if (idx == -1)
-                                    idx = lowerLibrary.IndexOf("\\lib\\qtcored4.lib");
+                                    idx = lowerLibrary.IndexOf("\\lib\\qtcored5.lib");
                                 if (idx == -1)
                                     continue;
 
@@ -776,8 +788,8 @@ namespace Nokia.QtProjectLib
 
                                 if (File.Exists(dirName + "\\qtmain.lib") ||
                                     File.Exists(dirName + "\\qtmaind.lib") ||
-                                    File.Exists(dirName + "\\QtCore4.lib") ||
-                                    File.Exists(dirName + "\\QtCored4.lib"))
+                                    File.Exists(dirName + "\\QtCore5.lib") ||
+                                    File.Exists(dirName + "\\QtCored5.lib"))
                                 {
                                     return Path.GetDirectoryName(dirName);
                                 }
@@ -865,10 +877,10 @@ namespace Nokia.QtProjectLib
         {
             VCProject vcPro = (VCProject)project.Object;
             // clean up qmake mess
-            Regex rxp1 = new Regex("\\bQt\\w+d?4?\\.lib\\b");
+            Regex rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
             Regex rxp2 = new Regex("\\bQAx\\w+\\.lib\\b");
             Regex rxp3 = new Regex("\\bqtmaind?.lib\\b");
-            Regex rxp4 = new Regex("\\bphonond?4?\\.lib\\b");
+            Regex rxp4 = new Regex("\\bphonond?5?\\.lib\\b");
             foreach (VCConfiguration cfg in (IVCCollection)vcPro.Configurations)
             {
                 VCLinkerTool linker = (VCLinkerTool)((IVCCollection)cfg.Tools).Item("VCLinkerTool");
@@ -1045,7 +1057,7 @@ namespace Nokia.QtProjectLib
             } 
             catch 
             {
-                throw new Qt4VS2003Exception(SR.GetString("HelperFunctions_ErrorSearchForQtTemplatePath"));
+                throw new QtVSException(SR.GetString("HelperFunctions_ErrorSearchForQtTemplatePath"));
             }
         }
 
@@ -1104,7 +1116,7 @@ namespace Nokia.QtProjectLib
             }
             catch
             {
-                throw new Qt4VS2003Exception(SR.GetString("HelperFunctions_CannotWriteEnvQTDIR"));
+                throw new QtVSException(SR.GetString("HelperFunctions_CannotWriteEnvQTDIR"));
             }
         }
 
@@ -1150,13 +1162,10 @@ namespace Nokia.QtProjectLib
             {
                 if (innerItem.Name == nodeToCollapseFilter)
                     CollapseFilter(innerItem, hierarchy);
-#if VS2008
-                // This recursion would expand all filters in VS2005
                 else if (innerItem.UIHierarchyItems.Count > 0)
                 {
                     CollapseFilter(innerItem, hierarchy, nodeToCollapseFilter);
                 }
-#endif
             }
         }
 
@@ -1515,7 +1524,7 @@ namespace Nokia.QtProjectLib
         {
             Assembly a = Assembly.GetExecutingAssembly();
             Image image = null;
-            name = "Nokia." + name;
+            name = "Digia." + name;
             Stream imgStream = a.GetManifestResourceStream(name);
             if(imgStream != null)
             {                    
@@ -1803,7 +1812,7 @@ namespace Nokia.QtProjectLib
             }
             catch
             {
-                throw new Qt4VS2003Exception(SR.GetString("Helpers_CannotStart", proc.StartInfo.FileName));
+                throw new QtVSException(SR.GetString("Helpers_CannotStart", proc.StartInfo.FileName));
             }
         }
 

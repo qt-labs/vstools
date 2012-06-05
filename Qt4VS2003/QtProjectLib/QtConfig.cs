@@ -1,35 +1,47 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of the Qt VS Add-in
+** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/legal
 **
-** Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** This file is part of the Qt VS Add-in.
 **
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** Commercial Usage
-**
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** a written agreement between you and Digia. For licensing terms and
+** conditions see http://qt.digia.com/licensing. For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
+** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Digia gives you certain additional
+** rights. These rights are described in the Digia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 using System.IO;
 
-namespace Nokia.QtProjectLib
+namespace Digia.Qt5ProjectLib
 {
     /// <summary>
     /// Very very simple reader for the qconfig.pri file.
@@ -41,6 +53,7 @@ namespace Nokia.QtProjectLib
     {
         private bool isStaticBuild = false;
         private string signatureFile = null;
+        private bool isSDK = true;
 
         public QtConfig(string qtdir)
         {
@@ -61,6 +74,16 @@ namespace Nokia.QtProjectLib
                 }
                 catch {}
             }
+            // Check if we don't have SDK setup (default)
+            // These folders should not found when own build from src package
+            // Just using some of non existing to do check
+            DirectoryInfo diActiveQt = new DirectoryInfo(qtdir + "\\include\\ActiveQt");
+            DirectoryInfo diDesigner = new DirectoryInfo(qtdir + "\\include\\QtDesigner");
+            DirectoryInfo diPhonon = new DirectoryInfo(qtdir + "\\include\\phonon");
+            if (!diActiveQt.Exists || !diDesigner.Exists || !diPhonon.Exists)
+            {
+                isSDK = false;
+            }
         }
 
         public bool IsStaticBuild
@@ -71,6 +94,11 @@ namespace Nokia.QtProjectLib
         public string SignatureFile
         {
             get { return signatureFile; }
+        }
+
+        public bool IsSDK
+        {
+            get { return isSDK; }
         }
 
         /// <summary>

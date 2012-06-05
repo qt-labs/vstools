@@ -1,4 +1,4 @@
-﻿namespace Qt4VSAddin
+﻿namespace Qt5VSAddin
 {
     partial class FormVSQtSettings
     {
