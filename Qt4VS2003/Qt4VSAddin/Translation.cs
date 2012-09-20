@@ -141,6 +141,17 @@ namespace Qt4VSAddin
             string temporaryProFile = null;
             if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength())
             {
+                string codec = "";
+                if (!string.IsNullOrEmpty(options))
+                {
+                    int cc4tr_location = options.IndexOf("-codecfortr", System.StringComparison.CurrentCultureIgnoreCase);
+                    if (cc4tr_location != -1)
+                    {
+                        codec = options.Substring(cc4tr_location).Split(' ')[1];
+                        string remove_this = options.Substring(cc4tr_location, "-codecfortr".Length + 1 + codec.Length);
+                        options = options.Replace(remove_this, "");
+                    }
+                }
                 VCProject vcPro = (VCProject) pro.Object;
                 temporaryProFile = System.IO.Path.GetTempFileName();
                 temporaryProFile = System.IO.Path.GetDirectoryName(temporaryProFile) + "\\" +
@@ -158,9 +169,17 @@ namespace Qt4VSAddin
                 List<string> tsFiles = new List<string>(1);
                 tsFiles.Add(vcFile.FullPath);
                 writeFilesToPro(sw, "TRANSLATIONS", tsFiles);
+
+                if (!string.IsNullOrEmpty(codec))
+                {
+                    sw.WriteLine("CODECFORTR = " + codec);
+                }
                 sw.Close();
 
-                cmdLine = "\"" + temporaryProFile + "\"";
+                cmdLine = "";
+                if (!string.IsNullOrEmpty(options))
+                    cmdLine += options + " ";
+                cmdLine += "\"" + temporaryProFile + "\"";
             }
 
             bool success = true;
