@@ -12,6 +12,7 @@
     <symbol name="GUI_MODULE" type="checkbox" value="true"></symbol>
     <symbol name="LOCATION_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="MULTIMEDIA_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="MULTIMEDIAWIDGETS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="NETWORK_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="QML_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="QUICK_MODULE" type="checkbox" value="false"></symbol>
@@ -22,6 +23,7 @@
     <symbol name="AQSERVER_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="BLUETOOTH_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="CONTACTS_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="CONCURRENT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="OPENGL_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="ORGANIZER_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="PHONON_MODULE" type="checkbox" value="false"></symbol>
@@ -395,6 +397,8 @@
             strModules += "Location, ";
         if (window.external.FindSymbol('MULTIMEDIA_MODULE'))
             strModules += "Multimedia, ";
+        if (window.external.FindSymbol('MULTIMEDIAWIDGETS_MODULE'))
+            strModules += "Multimedia Widgets, ";
         if (window.external.FindSymbol('NETWORK_MODULE'))
             strModules += "Network, ";
         if (window.external.FindSymbol('QML_MODULE'))
@@ -419,6 +423,8 @@
             strModules += "Bluetooth, ";
         if (window.external.FindSymbol('CONTACTS_MODULE'))
             strModules += "Contacts, ";
+        if (window.external.FindSymbol('CONCURRENT_MODULE'))
+            strModules += "Concurrent, ";
         if (window.external.FindSymbol('FEEDBACK_MODULE'))
             strModules += "Feedback, ";
         if (window.external.FindSymbol('HELP_MODULE'))

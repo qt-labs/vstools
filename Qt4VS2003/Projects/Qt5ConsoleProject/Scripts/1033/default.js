@@ -63,6 +63,8 @@ function AddModules() {
         QtEngine.AddModule("QtLocation");
     if (wizard.FindSymbol('MULTIMEDIA_MODULE'))
         QtEngine.AddModule("QtMultimedia");
+    if (wizard.FindSymbol('MULTIMEDIAWIDGETS_MODULE'))
+        QtEngine.AddModule("QtMultimediaWidgets");
     if (wizard.FindSymbol('NETWORK_MODULE'))
         QtEngine.AddModule("QtNetwork");
     if (wizard.FindSymbol('QML_MODULE'))
@@ -86,6 +88,8 @@ function AddModules() {
         QtEngine.AddModule("QtBluetooth");
     if (wizard.FindSymbol('CONTACTS_MODULE'))
         QtEngine.AddModule("QtContacts");
+    if (wizard.FindSymbol('CONCURRENT_MODULE'))
+        QtEngine.AddModule("QtConcurrent");
     if (wizard.FindSymbol('HELP_MODULE'))
         QtEngine.AddModule("QtHelp");
     if (wizard.FindSymbol('OPENGL_MODULE'))

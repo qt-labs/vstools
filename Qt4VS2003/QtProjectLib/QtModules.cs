@@ -99,6 +99,8 @@ namespace Digia.Qt5ProjectLib
         // CLucene = 48,
         // DesignerComponents = 49,
         WebkitWidgets = 50,
+        Concurrent = 51,
+        MultimediaWidgets = 52,
     }
 
     public class QtModuleInfo
@@ -302,6 +304,9 @@ namespace Digia.Qt5ProjectLib
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtpim\\include;$(QTDIR)\\..\\qtpim\\include\\QtVersit";
 
             InitQtModule(QtModule.WebkitWidgets, "QtWebkitWidgets", "QT_WEBKITWIDGETS_LIB" /*?*/, true);
+
+            InitQtModule(QtModule.Concurrent, "QtConcurrent", "QT_CONCURRENT_LIB", true);
+            InitQtModule(QtModule.MultimediaWidgets, "QtMultimediaWidgets", "QT_MULTIMEDIAWIDGETS_LIB", true);
         }
 
         private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string define, bool doUseSdk4Src)

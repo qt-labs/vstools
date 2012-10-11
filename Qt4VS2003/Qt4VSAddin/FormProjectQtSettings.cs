@@ -112,6 +112,9 @@ namespace Qt5VSAddin
             versitLib.Text = SR.GetString("VersitLibrary");
             widgetsLib.Text = SR.GetString("WidgetsLibrary");
 
+            concurrentLib.Text = SR.GetString("ConcurrentLibrary");
+            multimediaWidgetsLib.Text = SR.GetString("MultimediaWidgetsLibrary");
+
             // essentials
             AddMapping(threeDLib, QtModule.ThreeD);
             AddMapping(coreLib, QtModule.Core);
@@ -147,6 +150,9 @@ namespace Qt5VSAddin
             AddMapping(widgetsLib, QtModule.Widgets);
             AddMapping(xmlLib, QtModule.Xml);
             AddMapping(xmlPatternsLib, QtModule.XmlPatterns);
+
+            AddMapping(concurrentLib, QtModule.Concurrent);
+            AddMapping(multimediaWidgetsLib, QtModule.MultimediaWidgets);
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             this.KeyPress += new KeyPressEventHandler(this.FormProjectQtSettings_KeyPress);
@@ -232,5 +238,6 @@ namespace Qt5VSAddin
                 }
             }
         }
+
     }
 }
