@@ -682,9 +682,6 @@ Note: If Visual Studio is currently not responsive, this is because it updates i
   <data name="PhononLibrary" xml:space="preserve">
     <value>Phonon</value>
   </data>
-  <data name="DeclarativeLibrary" xml:space="preserve">
-    <value>Declarative library</value>
-  </data>
   <data name="UiToolsLibrary" xml:space="preserve">
     <value>UiTools library</value>
   </data>
@@ -741,8 +738,8 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
   <data name="QmlLibrary" xml:space="preserve">
     <value>QML</value>
   </data>
-  <data name="Quick1Library" xml:space="preserve">
-    <value>Quick1</value>
+  <data name="DeclarativeLibrary" xml:space="preserve">
+    <value>Declarative</value>
   </data>
   <data name="QuickLibrary" xml:space="preserve">
     <value>Quick</value>

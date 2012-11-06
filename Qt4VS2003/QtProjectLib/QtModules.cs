@@ -83,7 +83,6 @@ namespace Digia.Qt5ProjectLib
         Organizer = 32,
         PrintSupport = 33,
         PublishSubscribe = 34,
-        Quick1 = 35,
         Sensors = 36,
         ServiceFramework = 37,
         SystemInfo = 38,
@@ -289,7 +288,6 @@ namespace Digia.Qt5ProjectLib
             InitQtModule(QtModule.PrintSupport, "QtPrintSupport", "QT_PRINTSUPPORT_LIB", true);
             moduleInfo = InitQtModule(QtModule.PublishSubscribe, "QtPublishSubscribe", "QT_PUBLISHSUBSCRIBE_LIB", true);
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtsystems\\include;$(QTDIR)\\..\\qtsystems\\include\\QtPublishSubscribe";
-            moduleInfo = InitQtModule(QtModule.Quick1, "QtQuick1", "QT_QUICK1_LIB", true);
 
             moduleInfo = InitQtModule(QtModule.Sensors, "QtSensors", "QT_SENSORS_LIB", false);
             moduleInfo = InitQtModule(QtModule.ServiceFramework, "QtServiceFramework", "QT_SERVICEFRAMEWORK_LIB", true);

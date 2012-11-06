@@ -104,7 +104,7 @@ namespace Qt5VSAddin
             organizerLib.Text = SR.GetString("OrganizerLibrary");
             printSupportLib.Text = SR.GetString("PrintSupportLibrary");
             pubSubLib.Text = SR.GetString("PubSubLibrary");
-            quick1Lib.Text = SR.GetString("Quick1Library");
+            declarativeLib.Text = SR.GetString("DeclarativeLibrary");
             sensorsLib.Text = SR.GetString("SensorsLibrary");
             serviceFrameworkLib.Text = SR.GetString("ServiceFwLibrary");
             systemInfoLib.Text = SR.GetString("SystemInfoLibrary");
@@ -139,7 +139,7 @@ namespace Qt5VSAddin
             AddMapping(phononLib, QtModule.Phonon);
             AddMapping(printSupportLib, QtModule.PrintSupport);
             AddMapping(pubSubLib, QtModule.PublishSubscribe);
-            AddMapping(quick1Lib, QtModule.Quick1);
+            AddMapping(declarativeLib, QtModule.Declarative);
             AddMapping(scriptLib, QtModule.Script);
             AddMapping(sensorsLib, QtModule.Sensors);
             AddMapping(serviceFrameworkLib, QtModule.ServiceFramework);

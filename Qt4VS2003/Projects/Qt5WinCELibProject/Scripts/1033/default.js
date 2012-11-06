@@ -150,8 +150,8 @@ function AddModules() {
         QtEngine.AddModule("QtPrintSupport");
     if (wizard.FindSymbol('PUBSUB_MODULE'))
         QtEngine.AddModule("QtPublishSubscribe");
-    if (wizard.FindSymbol('QUICK1_MODULE'))
-        QtEngine.AddModule("QtQuick1");
+    if (wizard.FindSymbol('DECLARATIVE_MODULE'))
+        QtEngine.AddModule("QtDeclarative");
     if (wizard.FindSymbol('SCRIPT_MODULE'))
         QtEngine.AddModule("QtScript");
     if (wizard.FindSymbol('SENSORS_MODULE'))
@@ -172,8 +172,4 @@ function AddModules() {
         QtEngine.AddModule("QtXml");
     if (wizard.FindSymbol('XMLPATTERNS_MODULE'))
         QtEngine.AddModule("QtXmlPatterns");
-
-    // old modules
-    if (wizard.FindSymbol('DECLARATIVE_MODULE'))
-        QtEngine.AddModule("QtDeclarative");
 }

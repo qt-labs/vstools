@@ -682,9 +682,6 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
   <data name="PhononLibrary" xml:space="preserve">
     <value>Phonon</value>
   </data>
-  <data name="DeclarativeLibrary" xml:space="preserve">
-    <value>Declarative Bibliothek</value>
-  </data>
   <data name="UiToolsLibrary" xml:space="preserve">
     <value>UiTools Bibliothek</value>
   </data>
@@ -744,8 +741,8 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   <data name="QmlLibrary" xml:space="preserve">
     <value>QML</value>
   </data>
-  <data name="Quick1Library" xml:space="preserve">
-    <value>Quick1</value>
+  <data name="DeclarativeLibrary" xml:space="preserve">
+    <value>Declarative</value>
   </data>
   <data name="QuickLibrary" xml:space="preserve">
     <value>Quick</value>

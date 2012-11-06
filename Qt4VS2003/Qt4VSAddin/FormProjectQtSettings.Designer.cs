@@ -58,7 +58,7 @@
             this.systemInfoLib = new System.Windows.Forms.CheckBox();
             this.serviceFrameworkLib = new System.Windows.Forms.CheckBox();
             this.sensorsLib = new System.Windows.Forms.CheckBox();
-            this.quick1Lib = new System.Windows.Forms.CheckBox();
+            this.declarativeLib = new System.Windows.Forms.CheckBox();
             this.pubSubLib = new System.Windows.Forms.CheckBox();
             this.printSupportLib = new System.Windows.Forms.CheckBox();
             this.contactsLib = new System.Windows.Forms.CheckBox();
@@ -170,7 +170,7 @@
             this.panel2.Controls.Add(this.systemInfoLib);
             this.panel2.Controls.Add(this.serviceFrameworkLib);
             this.panel2.Controls.Add(this.sensorsLib);
-            this.panel2.Controls.Add(this.quick1Lib);
+            this.panel2.Controls.Add(this.declarativeLib);
             this.panel2.Controls.Add(this.pubSubLib);
             this.panel2.Controls.Add(this.printSupportLib);
             this.panel2.Controls.Add(this.contactsLib);
@@ -190,18 +190,18 @@
             //
             // quickLib
             //
-            this.quickLib.Location = new System.Drawing.Point(149, 176);
+            this.quickLib.Location = new System.Drawing.Point(149, 200);
             this.quickLib.Name = "quickLib";
             this.quickLib.Size = new System.Drawing.Size(128, 24);
-            this.quickLib.TabIndex = 19;
+            this.quickLib.TabIndex = 20;
             this.quickLib.UseVisualStyleBackColor = true;
             //
             // qmlLib
             //
-            this.qmlLib.Location = new System.Drawing.Point(149, 152);
+            this.qmlLib.Location = new System.Drawing.Point(149, 176);
             this.qmlLib.Name = "qmlLib";
             this.qmlLib.Size = new System.Drawing.Size(128, 24);
-            this.qmlLib.TabIndex = 18;
+            this.qmlLib.TabIndex = 19;
             this.qmlLib.UseVisualStyleBackColor = true;
             //
             // webKitLib
@@ -213,23 +213,23 @@
             //
             // multimediaLib
             //
-            this.multimediaLib.Location = new System.Drawing.Point(5, 248);
+            this.multimediaLib.Location = new System.Drawing.Point(5, 272);
             this.multimediaLib.Name = "multimediaLib";
-            this.multimediaLib.Size = new System.Drawing.Size(111, 24);
-            this.multimediaLib.TabIndex = 10;
+            this.multimediaLib.Size = new System.Drawing.Size(128, 24);
+            this.multimediaLib.TabIndex = 11;
             //
             // networkLib
             //
-            this.networkLib.Location = new System.Drawing.Point(149, 8);
+            this.networkLib.Location = new System.Drawing.Point(149, 32);
             this.networkLib.Name = "networkLib";
-            this.networkLib.Size = new System.Drawing.Size(111, 24);
-            this.networkLib.TabIndex = 12;
+            this.networkLib.Size = new System.Drawing.Size(128, 24);
+            this.networkLib.TabIndex = 13;
             //
             // coreLib
             //
             this.coreLib.Location = new System.Drawing.Point(5, 152);
             this.coreLib.Name = "coreLib";
-            this.coreLib.Size = new System.Drawing.Size(111, 24);
+            this.coreLib.Size = new System.Drawing.Size(128, 24);
             this.coreLib.TabIndex = 6;
             //
             // threeDLib
@@ -242,10 +242,10 @@
             //
             // guiLib
             //
-            this.guiLib.Location = new System.Drawing.Point(5, 176);
+            this.guiLib.Location = new System.Drawing.Point(5, 200);
             this.guiLib.Name = "guiLib";
-            this.guiLib.Size = new System.Drawing.Size(111, 24);
-            this.guiLib.TabIndex = 7;
+            this.guiLib.Size = new System.Drawing.Size(135, 24);
+            this.guiLib.TabIndex = 8;
             //
             // sqlLib
             //
@@ -263,10 +263,10 @@
             //
             // organizerLib
             //
-            this.organizerLib.Location = new System.Drawing.Point(149, 55);
+            this.organizerLib.Location = new System.Drawing.Point(149, 79);
             this.organizerLib.Name = "organizerLib";
             this.organizerLib.Size = new System.Drawing.Size(137, 24);
-            this.organizerLib.TabIndex = 14;
+            this.organizerLib.TabIndex = 15;
             this.organizerLib.UseVisualStyleBackColor = true;
             //
             // svgLib
@@ -278,17 +278,17 @@
             //
             // multimediaWidgetsLib
             //
-            this.multimediaWidgetsLib.Location = new System.Drawing.Point(5, 272);
+            this.multimediaWidgetsLib.Location = new System.Drawing.Point(149, 8);
             this.multimediaWidgetsLib.Name = "multimediaWidgetsLib";
             this.multimediaWidgetsLib.Size = new System.Drawing.Size(118, 24);
-            this.multimediaWidgetsLib.TabIndex = 11;
+            this.multimediaWidgetsLib.TabIndex = 12;
             this.multimediaWidgetsLib.UseVisualStyleBackColor = true;
             //
             // concurrentLib
             //
             this.concurrentLib.Location = new System.Drawing.Point(5, 104);
             this.concurrentLib.Name = "concurrentLib";
-            this.concurrentLib.Size = new System.Drawing.Size(118, 24);
+            this.concurrentLib.Size = new System.Drawing.Size(128, 24);
             this.concurrentLib.TabIndex = 4;
             this.concurrentLib.UseVisualStyleBackColor = true;
             //
@@ -310,10 +310,10 @@
             //
             // locationLib
             //
-            this.locationLib.Location = new System.Drawing.Point(5, 224);
+            this.locationLib.Location = new System.Drawing.Point(5, 248);
             this.locationLib.Name = "locationLib";
             this.locationLib.Size = new System.Drawing.Size(128, 24);
-            this.locationLib.TabIndex = 9;
+            this.locationLib.TabIndex = 10;
             this.locationLib.UseVisualStyleBackColor = true;
             //
             // versitLib
@@ -356,28 +356,28 @@
             this.sensorsLib.TabIndex = 22;
             this.sensorsLib.UseVisualStyleBackColor = true;
             //
-            // quick1Lib
+            // declarativeLib
             //
-            this.quick1Lib.Location = new System.Drawing.Point(149, 200);
-            this.quick1Lib.Name = "quick1Lib";
-            this.quick1Lib.Size = new System.Drawing.Size(135, 24);
-            this.quick1Lib.TabIndex = 20;
-            this.quick1Lib.UseVisualStyleBackColor = true;
+            this.declarativeLib.Location = new System.Drawing.Point(5, 176);
+            this.declarativeLib.Name = "declarativeLib";
+            this.declarativeLib.Size = new System.Drawing.Size(135, 24);
+            this.declarativeLib.TabIndex = 7;
+            this.declarativeLib.UseVisualStyleBackColor = true;
             //
             // pubSubLib
             //
-            this.pubSubLib.Location = new System.Drawing.Point(149, 128);
+            this.pubSubLib.Location = new System.Drawing.Point(149, 152);
             this.pubSubLib.Name = "pubSubLib";
             this.pubSubLib.Size = new System.Drawing.Size(135, 24);
-            this.pubSubLib.TabIndex = 17;
+            this.pubSubLib.TabIndex = 18;
             this.pubSubLib.UseVisualStyleBackColor = true;
             //
             // printSupportLib
             //
-            this.printSupportLib.Location = new System.Drawing.Point(149, 104);
+            this.printSupportLib.Location = new System.Drawing.Point(149, 128);
             this.printSupportLib.Name = "printSupportLib";
             this.printSupportLib.Size = new System.Drawing.Size(135, 24);
-            this.printSupportLib.TabIndex = 16;
+            this.printSupportLib.TabIndex = 17;
             this.printSupportLib.UseVisualStyleBackColor = true;
             //
             // contactsLib
@@ -398,17 +398,17 @@
             //
             // phononLib
             //
-            this.phononLib.Location = new System.Drawing.Point(149, 80);
+            this.phononLib.Location = new System.Drawing.Point(149, 104);
             this.phononLib.Name = "phononLib";
             this.phononLib.Size = new System.Drawing.Size(118, 24);
-            this.phononLib.TabIndex = 15;
+            this.phononLib.TabIndex = 16;
             //
             // helpLib
             //
-            this.helpLib.Location = new System.Drawing.Point(5, 200);
+            this.helpLib.Location = new System.Drawing.Point(5, 224);
             this.helpLib.Name = "helpLib";
-            this.helpLib.Size = new System.Drawing.Size(120, 24);
-            this.helpLib.TabIndex = 8;
+            this.helpLib.Size = new System.Drawing.Size(128, 24);
+            this.helpLib.TabIndex = 9;
             //
             // xmlLib
             //
@@ -421,7 +421,7 @@
             //
             this.activeQtCLib.Location = new System.Drawing.Point(5, 32);
             this.activeQtCLib.Name = "activeQtCLib";
-            this.activeQtCLib.Size = new System.Drawing.Size(118, 24);
+            this.activeQtCLib.Size = new System.Drawing.Size(128, 24);
             this.activeQtCLib.TabIndex = 1;
             //
             // activeQtSLib
@@ -440,16 +440,16 @@
             //
             // openGLLib
             //
-            this.openGLLib.Location = new System.Drawing.Point(149, 32);
+            this.openGLLib.Location = new System.Drawing.Point(149, 56);
             this.openGLLib.Name = "openGLLib";
             this.openGLLib.Size = new System.Drawing.Size(120, 24);
-            this.openGLLib.TabIndex = 13;
+            this.openGLLib.TabIndex = 14;
             //
             // scriptLib
             //
             this.scriptLib.Location = new System.Drawing.Point(149, 224);
             this.scriptLib.Name = "scriptLib";
-            this.scriptLib.Size = new System.Drawing.Size(118, 24);
+            this.scriptLib.Size = new System.Drawing.Size(128, 24);
             this.scriptLib.TabIndex = 21;
             //
             // FormProjectQtSettings
@@ -505,7 +505,7 @@
         private System.Windows.Forms.CheckBox systemInfoLib;
         private System.Windows.Forms.CheckBox serviceFrameworkLib;
         private System.Windows.Forms.CheckBox sensorsLib;
-        private System.Windows.Forms.CheckBox quick1Lib;
+        private System.Windows.Forms.CheckBox declarativeLib;
         private System.Windows.Forms.CheckBox pubSubLib;
         private System.Windows.Forms.CheckBox printSupportLib;
         private System.Windows.Forms.CheckBox contactsLib;

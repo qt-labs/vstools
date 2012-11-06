@@ -29,7 +29,7 @@
     <symbol name="PHONON_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="PRINTSUPPORT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="PUBSUB_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="QUICK1_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="DECLARATIVE_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SCRIPT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SENSORS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SERVICEFRAMEWORK_MODULE" type="checkbox" value="false"></symbol>
@@ -472,8 +472,8 @@
             strModules += "Print Support, ";
         if (window.external.FindSymbol('PUBSUB_MODULE'))
             strModules += "Publish and Subscribe, ";
-        if (window.external.FindSymbol('QUICK1_MODULE'))
-            strModules += "Quick 1, ";
+        if (window.external.FindSymbol('DECLARATIVE_MODULE'))
+            strModules += "Declarative, ";
         if (window.external.FindSymbol('SCRIPT_MODULE'))
             strModules += "Script, ";
         if (window.external.FindSymbol('SENSORS_MODULE'))
@@ -494,9 +494,6 @@
             strModules += "XML, ";
         if (window.external.FindSymbol('XMLPATTERNS_MODULE'))
             strModules += "XML Patterns, ";
-
-        if (window.external.FindSymbol('DECLARATIVE_MODULE'))
-            strModules += "Declarative, ";
 
         if (strModules.length < 1)
             strModules = "None selected";
