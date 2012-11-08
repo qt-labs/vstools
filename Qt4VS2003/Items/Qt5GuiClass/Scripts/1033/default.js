@@ -11,13 +11,13 @@ function OnFinish(selProj, selObj) {
         var dte = wizard.dte;
         var version = dte.version;
         if (version == "8.0")
-            QtEngine = new ActiveXObject("Digia.QtProjectEngine80");
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine80");
         else if (version == "9.0")
-            QtEngine = new ActiveXObject("Digia.QtProjectEngine90");
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine90");
         else if (version == "10.0")
-            QtEngine = new ActiveXObject("Digia.QtProjectEngine100");
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine100");
         else if (version == "11.0")
-            QtEngine = new ActiveXObject("Digia.QtProjectEngine110");
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine110");
 
         var strTemplatePath = wizard.FindSymbol('TEMPLATES_PATH') + "\\";
 
