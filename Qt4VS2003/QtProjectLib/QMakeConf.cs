@@ -42,6 +42,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading;
 
 namespace Digia.Qt5ProjectLib
 {
@@ -49,6 +50,7 @@ namespace Digia.Qt5ProjectLib
     {
         protected Hashtable entries = new Hashtable();
         private FileInfo fileInfo = null;
+        private string qmakespecFolder = "";
 
         public QMakeConf(VersionInformation versionInfo)
         {
@@ -75,7 +77,38 @@ namespace Digia.Qt5ProjectLib
         protected void Init(VersionInformation versionInfo)
         {
             string filename = versionInfo.qtDir + "\\mkspecs\\default\\qmake.conf";
+            fileInfo = new FileInfo(filename);
+
+            // Starting from Qt5 beta2 there is no more "\\mkspecs\\default" folder available
+            // To find location of "qmake.conf" there is a need to run "qmake -query" command
+            // This is what happens below.
+            if (!fileInfo.Exists)
+            {
+                QMakeQuery qmakeQuery = new QMakeQuery(versionInfo);
+
+                qmakeQuery.ReadyEvent += new QMakeQuery.EventHandler(this.CloseEventHandler);
+                System.Threading.Thread qmakeThread = new System.Threading.Thread(new ThreadStart(qmakeQuery.RunQMakeQuery));
+                qmakeThread.Start();
+                qmakeThread.Join();
+
+                if (qmakeQuery.ErrorValue != 0)
+                {
+                    throw new QtVSException("qmake.conf not found");
+                }
+
+                if (qmakespecFolder.Length > 0)
+                {
+                    filename = versionInfo.qtDir + "\\mkspecs\\" + qmakespecFolder + "\\qmake.conf";
+                }
+            }
+
             Init(filename);
+        }
+
+        // Qmake thread calls this handler to set qmake.conf folder
+        private void CloseEventHandler(string foldername)
+        {
+            qmakespecFolder = foldername;
         }
 
         protected void Init(string filename)
