@@ -109,6 +109,7 @@ namespace Digia.Qt5ProjectLib
         public string LibraryPrefix = "";
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
+        public List<string> AdditionalLibrariesDebug = new List<string>();
         public List<string> AdditionalLibrariesWinCE = new List<string>();
         public string sdkIncludePath = null; // default
         public string srcIncludePath = null; // used for own Qt builds from src
@@ -144,26 +145,35 @@ namespace Digia.Qt5ProjectLib
         {
             List<string> libs = new List<string>();
             string libName = LibraryPrefix;
+            if (libName.StartsWith("Qt"))
+                libName = "Qt5" + libName.Substring(2);
             if (isDebugCfg)
                 libName += "d";
-            if (!isStaticBuild && HasDLL)
-                libName += "5";
             libName += ".lib";
             libs.Add(libName);
             if (isWindowsCE)
                 libs.AddRange(AdditionalLibrariesWinCE);
             else
-                libs.AddRange(AdditionalLibraries);
+                libs.AddRange(GetAdditionalLibs(isDebugCfg));
             return libs;
         }
 
         public string GetDllFileName(bool isDebugCfg)
         {
             string fileName = LibraryPrefix;
+            if (fileName.StartsWith("Qt"))
+                fileName = "Qt5" + fileName.Substring(2);
             if (isDebugCfg)
                 fileName += "d";
-            fileName += "5.dll";
+            fileName += ".dll";
             return fileName;
+        }
+
+        private List<string> GetAdditionalLibs(bool isDebugCfg)
+        {
+            if (isDebugCfg && AdditionalLibrariesDebug.Count > 0)
+                return AdditionalLibrariesDebug;
+            return AdditionalLibraries;
         }
     }
 
@@ -257,11 +267,15 @@ namespace Digia.Qt5ProjectLib
             moduleInfo.HasDLL = false;
             moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
+            moduleInfo.AdditionalLibraries.Add("ActiveQt.lib");
+            moduleInfo.AdditionalLibrariesDebug.Add("ActiveQtd.lib");
 
             moduleInfo = InitQtModule(QtModule.ActiveQtC, "QAxContainer", "" /*?*/, true);
             moduleInfo.HasDLL = false;
             moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
+            moduleInfo.AdditionalLibraries.Add("ActiveQt.lib");
+            moduleInfo.AdditionalLibrariesDebug.Add("ActiveQtd.lib");
 
             moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "QT_UITOOLS_LIB", true);
             moduleInfo.dependentModules.Add(QtModule.Xml);

@@ -401,15 +401,11 @@ namespace Digia.Qt5ProjectLib
                     + "To solve this problem specify a Qt build");
             string install_path = versionManager.GetInstallPath(qtVersion);
 
-            string full_path = install_path + "\\lib\\" + moduleName;
-            if (!moduleName.StartsWith("QAx"))
+            if (moduleName.StartsWith("Qt"))
             {
-                full_path += "5.lib";
+                moduleName = "Qt5" + moduleName.Substring(2);
             }
-            else
-            {
-                full_path += ".lib";
-            }
+            string full_path = install_path + "\\lib\\" + moduleName + ".lib";
 
             System.IO.FileInfo fi = new System.IO.FileInfo(full_path);
 
