@@ -419,18 +419,18 @@ namespace Digia.Qt5ProjectLib
                         if (newVersion.IsStaticBuild())
                         {
                             linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+)4\\.lib", "Qt${1}.lib");
+                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+)5\\.lib", "Qt${1}.lib");
                             linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)4\\.lib", "${1}.lib");
+                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)5\\.lib", "${1}.lib");
                             if (compiler != null)
                                 compiler.RemovePreprocessorDefinition("QT_DLL");
                         }
                         else
                         {
                             linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+[^4])\\.lib", "Qt${1}4.lib");
+                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+[^5])\\.lib", "Qt${1}5.lib");
                             linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)\\.lib", "${1}4.lib");
+                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)\\.lib", "${1}5.lib");
                             if (compiler != null)
                                 compiler.AddPreprocessorDefinition("QT_DLL");
                         }
@@ -442,7 +442,7 @@ namespace Digia.Qt5ProjectLib
                         !(oldVersion.IsWinCEVersion() && !oldVersion.IsStaticBuild())) &&
                         config.DeploymentTool != null)
                     {
-                        MatchCollection matches = Regex.Matches(linker.AdditionalDependencies, "Qt(\\S+)4\\.lib");
+                        MatchCollection matches = Regex.Matches(linker.AdditionalDependencies, "Qt(\\S+)5\\.lib");
                         foreach (Match m in matches)
                         {
                             string moduleName = m.ToString().Substring(0, m.ToString().Length - 5);
