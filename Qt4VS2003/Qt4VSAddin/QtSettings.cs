@@ -65,7 +65,7 @@ namespace Qt5VSAddin
 
         private QtVersionManager versionManager;
         private EnvDTE.Project project;
-		
+
         private string oldMocDir = null;
         private string oldMocOptions= null;
         private string oldRccDir = null;
@@ -280,7 +280,7 @@ namespace Qt5VSAddin
             {
                 return true;
             }
-        }	
+        }
 
         private static bool ContainsInvalidVariable(string directory)
         {

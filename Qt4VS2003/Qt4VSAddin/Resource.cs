@@ -46,19 +46,19 @@ namespace Qt5VSAddin
 
     public class Res
     {
-	// The CommandBarName must follow the ProgId
-	// defined in Connect.cs
+    // The CommandBarName must follow the ProgId
+    // defined in Connect.cs
     
     public const string CommandBarName = "Qt5VSAddin";
-	// The command bar constants.
+    // The command bar constants.
 
-	// All the constants for the LaunchDesigner command.
-	public const int DesignerBitmapID = 1 ;
-	public const string 
-	    LaunchDesigner		= "LaunchDesigner",
+    // All the constants for the LaunchDesigner command.
+    public const int DesignerBitmapID = 1 ;
+    public const string
+        LaunchDesigner = "LaunchDesigner",
         LaunchDesignerFullCommand = CommandBarName + ".Connect." + LaunchDesigner;
 
-	// All the constants for the LaunchLinguist command.
+    // All the constants for the LaunchLinguist command.
     public const int LinguistBitmapID = 3;
     public const string
         LaunchLinguist = "LaunchLinguist",

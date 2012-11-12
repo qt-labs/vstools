@@ -50,7 +50,7 @@ namespace Qt5VSAddin
 
     public class AddinInit
     {
-	private Commands cmds = null;
+    private Commands cmds = null;
     private _CommandBars cmdBars = null;
     private CommandBar cmdProjectContext = null;
     private CommandBar cmdSolutionContext = null;
@@ -82,11 +82,11 @@ namespace Qt5VSAddin
     }
 
     // Functions ------------------------------------------------------
-	public AddinInit( _DTE a)
-	{
-	    cmdBars = (_CommandBars)a.CommandBars;
-	    cmds    = a.Commands;
-	    try {
+    public AddinInit( _DTE a)
+    {
+        cmdBars = (_CommandBars)a.CommandBars;
+        cmds    = a.Commands;
+        try {
             cmdProjectContext = FindCommandBar
                 (new Guid("{D309F791-903F-11D0-9EFC-00A0C911004F}"), 1026);
             cmdSolutionContext = FindCommandBar
@@ -94,10 +94,10 @@ namespace Qt5VSAddin
             cmdItemContext = FindCommandBar
                 (new Guid("{D309F791-903F-11D0-9EFC-00A0C911004F}"), 1072);
         }
-	    catch{
+        catch{
         //MessageBox.Show( e.Message );
-	    }
-	}
+        }
+    }
 
     public void removeCommands()
     {
@@ -121,9 +121,9 @@ namespace Qt5VSAddin
         }
     }
 
-	private void registerCommandBar()
-	{
-	    try {
+    private void registerCommandBar()
+    {
+        try {
             CommandBar menuCmdBar = cmdBars["MenuBar"];
             if (qtPopup == null)
             {
@@ -158,16 +158,16 @@ namespace Qt5VSAddin
                 qtPopup.Caption = "&Qt5";
             }
             qtPopup.Visible = true;
-	    }
-	    catch { }
-	}
+        }
+        catch { }
+    }
 
 
-	public void registerCommands()
-	{
+    public void registerCommands()
+    {
         registerCommandBar();
-	    object []contextGUIDS = new object[]{};
-	    try
+        object []contextGUIDS = new object[]{};
+        try
         {
             CommandBar cmdBar = qtPopup.CommandBar;
             if (cmdBar == null)
@@ -433,11 +433,11 @@ namespace Qt5VSAddin
             posBeforeProperties = cmdItemContext.Controls.Count;
             ctrl = (CommandBarButton)cmd.AddControl(cmdItemContext, posBeforeProperties++);
             ctrl.Caption = "lrelease";
-	    }
-	    catch( System.Exception e ) {
-		    MessageBox.Show(SR.GetString("CommandsNotRegistered") + " : " + e.Message + "\r\n" + e.StackTrace.ToString());
-	    }   
-	}
+        }
+        catch( System.Exception e ) {
+            MessageBox.Show(SR.GetString("CommandsNotRegistered") + " : " + e.Message + "\r\n" + e.StackTrace.ToString());
+        }
+    }
 
     }
 }

@@ -89,11 +89,11 @@ namespace Digia.Qt5ProjectLib
         private static string ExceptionToString(System.Exception e)
         {
             if (VerboseException)
-                return e.Message + "\r\n"	+ "(" + e.StackTrace.Trim() + ")";
+                return e.Message + "\r\n" + "(" + e.StackTrace.Trim() + ")";
             else
                 return e.Message;
         }
-    		
+
         private static string ErrorString = SR.GetString("Messages_ErrorOccured");
         private static string WarningString = SR.GetString("Messages_Warning");
         private static string SolutionString = SR.GetString("Messages_SolveProblem");
@@ -107,7 +107,7 @@ namespace Digia.Qt5ProjectLib
         }
 
         static public void DisplayCriticalErrorMessage(string msg)
-        {	
+        {
             MessageBox.Show(ErrorString +
                 MessageToString(msg),
                 Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -139,7 +139,7 @@ namespace Digia.Qt5ProjectLib
         }
 
         static public void DisplayErrorMessage(string msg)
-        {	
+        {
             MessageBox.Show(ErrorString +
                 MessageToString(msg),
                 Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);

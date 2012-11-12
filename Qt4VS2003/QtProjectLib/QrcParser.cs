@@ -81,7 +81,7 @@ namespace Digia.Qt5ProjectLib
         {
             get { return items; }
         }
-		
+
         public QrcPrefix()
         {
             items = new List<QrcItem>();
@@ -101,10 +101,10 @@ namespace Digia.Qt5ProjectLib
 
         public void AddQrcItem(QrcItem i)
         {
-            items.Add(i);			
+            items.Add(i);
         }
     }
-	
+
     public class QrcParser
     {
         private string qrcFileName = null;
@@ -144,7 +144,7 @@ namespace Digia.Qt5ProjectLib
                                 currentPrefix.Prefix = reader.GetAttribute("prefix");
                                 currentPrefix.Language = reader.GetAttribute("lang");
                                 prefixes.Push(currentPrefix);
-                            }				
+                            }
                             else if (reader.LocalName.ToLower() == "file")
                             {
                                 currentItem = new QrcItem();
@@ -161,7 +161,7 @@ namespace Digia.Qt5ProjectLib
                             {
                                 ((QrcPrefix)(prefixes.Peek())).AddQrcItem(currentItem);
                                 currentItem = null;
-                            }						
+                            }
                             break;
                         case XmlNodeType.Text:
                             if (currentItem != null)

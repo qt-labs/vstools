@@ -47,21 +47,21 @@ using System.Collections.Generic;
 
 namespace Digia.Qt5ProjectLib
 {
-	/// <summary>
-	/// Summary description for QtVersionManager.
-	/// </summary>
-	public class QtVersionManager
-	{
+    /// <summary>
+    /// Summary description for QtVersionManager.
+    /// </summary>
+    public class QtVersionManager
+    {
         private static QtVersionManager instance = null;
         private string regVersionPath = null;
         private string strVersionKey = null;
         private Hashtable versionCache = null;
         
-		protected QtVersionManager()
-		{
+        protected QtVersionManager()
+        {
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
-		}
+        }
 
         static public QtVersionManager The()
         {
@@ -126,14 +126,14 @@ namespace Digia.Qt5ProjectLib
 
         public string[] GetVersions(RegistryKey root)
         {
-			RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
-			if (key == null)
-				return new string[] {};
-			RegistryKey versionKey = key.OpenSubKey(strVersionKey, false);
-			if (versionKey == null)
-				return new string[] {};
+            RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            if (key == null)
+                return new string[] {};
+            RegistryKey versionKey = key.OpenSubKey(strVersionKey, false);
+            if (versionKey == null)
+                return new string[] {};
             return versionKey.GetSubKeyNames();
-		}
+        }
 
         private class QtVersion
         {
@@ -225,7 +225,7 @@ namespace Digia.Qt5ProjectLib
             errorMessage = null;
             return false;
         }
-	
+
         public string GetInstallPath(string version)
         {
             if (version == "$(DefaultQtVersion)")
@@ -240,27 +240,27 @@ namespace Digia.Qt5ProjectLib
             if (version == "$(QTDIR)")
                 return System.Environment.GetEnvironmentVariable("QTDIR");
 
-			RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
-			if (key == null)
-				return null;
-			RegistryKey versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
-			if (versionKey == null)
-				return null;
-			return (string)versionKey.GetValue("InstallDir");
-		}
+            RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            if (key == null)
+                return null;
+            RegistryKey versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
+            if (versionKey == null)
+                return null;
+            return (string)versionKey.GetValue("InstallDir");
+        }
 
-		public string GetInstallPath(EnvDTE.Project project)
-		{
-			string version = GetProjectQtVersion(project);
+        public string GetInstallPath(EnvDTE.Project project)
+        {
+            string version = GetProjectQtVersion(project);
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
-			if (version == null)
-				return null;
-			return GetInstallPath(version);
-		}
+            if (version == null)
+                return null;
+            return GetInstallPath(version);
+        }
 
-		public bool SaveVersion(string versionName, string path)
-		{
+        public bool SaveVersion(string versionName, string path)
+        {
             string verName = versionName.Trim();
             string dir = "";
             if (verName != "$(QTDIR)")
@@ -270,27 +270,27 @@ namespace Digia.Qt5ProjectLib
                     return false;
                 dir = di.FullName;
             }
-			RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
             if (key == null)
             {
                 key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryRootPath);
                 if (key == null)
                     return false;
             }
-			RegistryKey versionKey = key.CreateSubKey(strVersionKey + "\\" + verName);
-			if (versionKey == null)
-				return false;
-			versionKey.SetValue("InstallDir", dir);
-			return true;
-		}
+            RegistryKey versionKey = key.CreateSubKey(strVersionKey + "\\" + verName);
+            if (versionKey == null)
+                return false;
+            versionKey.SetValue("InstallDir", dir);
+            return true;
+        }
 
-		public void RemoveVersion(string versionName)
-		{
-			RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
-			if (key == null)
-				return;
-			key.DeleteSubKey(versionName);			
-		}
+        public void RemoveVersion(string versionName)
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
+            if (key == null)
+                return;
+            key.DeleteSubKey(versionName);
+        }
 
         private bool IsVersionAvailable(string version)
         {
@@ -307,10 +307,10 @@ namespace Digia.Qt5ProjectLib
             return versionAvailable;
         }
 
-		public bool SaveProjectQtVersion(EnvDTE.Project project, string version)
-		{
+        public bool SaveProjectQtVersion(EnvDTE.Project project, string version)
+        {
             return SaveProjectQtVersion(project, version, project.ConfigurationManager.ActiveConfiguration.PlatformName);
-		}
+        }
 
         public bool SaveProjectQtVersion(EnvDTE.Project project, string version, string platform)
         {
@@ -326,8 +326,8 @@ namespace Digia.Qt5ProjectLib
             return true;
         }
 
-		public string GetProjectQtVersion(EnvDTE.Project project)
-		{
+        public string GetProjectQtVersion(EnvDTE.Project project)
+        {
             string platformName = null;
             try
             {
@@ -352,7 +352,7 @@ namespace Digia.Qt5ProjectLib
                 version = GetSolutionQtVersion(project.DTE.Solution);
 
             return version;
-		}
+        }
 
         public string GetProjectQtVersion(EnvDTE.Project project, string platform)
         {
@@ -411,18 +411,18 @@ namespace Digia.Qt5ProjectLib
         }
 
         public string GetDefaultVersion(RegistryKey root)
-		{
-			string defaultVersion = null;
-			try 
-			{
+        {
+            string defaultVersion = null;
+            try
+            {
                 RegistryKey key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
-				if (key != null)
-					defaultVersion = (string)key.GetValue("DefaultQtVersion");				
-			}
-			catch
-			{
+                if (key != null)
+                    defaultVersion = (string)key.GetValue("DefaultQtVersion");
+            }
+            catch
+            {
                 Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
-			}
+            }
             
             if (defaultVersion == null)
             {
@@ -449,7 +449,7 @@ namespace Digia.Qt5ProjectLib
                 }                
             }
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
-		}
+        }
 
         public string GetDefaultWinCEVersion()
         {
@@ -471,16 +471,16 @@ namespace Digia.Qt5ProjectLib
             return version;
         }
 
-		public bool SaveDefaultVersion(string version)
-		{
+        public bool SaveDefaultVersion(string version)
+        {
             if (version == "$(DefaultQtVersion)")
                 return false;
-			RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
-			if (key == null)
-				return false;
-			key.SetValue("DefaultQtVersion", version);
-			return true;
-		}
+            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
+            if (key == null)
+                return false;
+            key.SetValue("DefaultQtVersion", version);
+            return true;
+        }
 
         public bool SaveDefaultWinCEVersion(string version)
         {
@@ -561,5 +561,5 @@ namespace Digia.Qt5ProjectLib
 
             return false;
         }
-	}
+    }
 }

@@ -46,11 +46,11 @@ using System.Windows.Forms;
 
 namespace Qt5VSAddin
 {
-	/// <summary>
-	/// Summary description for Translation.
-	/// </summary>
-	public class Translation
-	{
+    /// <summary>
+    /// Summary description for Translation.
+    /// </summary>
+    public class Translation
+    {
         public static bool RunlRelease(VCFile vcFile)
         {
             bool success = true;

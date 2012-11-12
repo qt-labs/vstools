@@ -44,7 +44,7 @@ namespace Digia.Qt5ProjectLib
     using Microsoft.Win32;
     using Microsoft.VisualStudio.VCProjectEngine;
     using System;
-	using System.IO;
+    using System.IO;
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using System.Collections;
@@ -387,10 +387,10 @@ namespace Digia.Qt5ProjectLib
             while (dir.EndsWith("\\"))
                 dir = dir.Remove(dir.Length-1, 1);
             string[] diArray = dir.Split(separator);
-			
-            int minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;			
+
+            int minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
             int i=0, j=0, commonParts=0;
-			
+
             while (i<minLen && fiArray[i].ToLower() == diArray[i].ToLower()) 
             {
                 commonParts++;
@@ -401,7 +401,7 @@ namespace Digia.Qt5ProjectLib
                 return fi.FullName;
 
             string result = "";
-			
+
             for (j=i; j<fiArray.Length; j++)
             {
                 if (j==i)
@@ -1151,8 +1151,6 @@ namespace Digia.Qt5ProjectLib
             return false;
         }
 
-
-
         public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy, string nodeToCollapseFilter)
         {
             if (string.IsNullOrEmpty(nodeToCollapseFilter))
@@ -1272,7 +1270,6 @@ namespace Digia.Qt5ProjectLib
             string configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
 
             foreach(VCFile vcfile in (IVCCollection)vcpro.Files)
-
             {
                 bool excluded = false;
                 IVCCollection fileConfigurations = (IVCCollection)vcfile.FileConfigurations;
@@ -1362,36 +1359,36 @@ namespace Digia.Qt5ProjectLib
             if (dteObject == null)
                 return false;
 
-			try
-			{
-				System.Guid guid = new Guid("{6bb5f8f0-4483-11d3-8bcf-00c04f8ec28c}");
-				EnvDTE.SelectedItems itms = dteObject.SelectedItems;
+            try
+            {
+                System.Guid guid = new Guid("{6bb5f8f0-4483-11d3-8bcf-00c04f8ec28c}");
+                EnvDTE.SelectedItems itms = dteObject.SelectedItems;
 
-				foreach (EnvDTE.SelectedItem selItem in itms)
-				{
-					if (selItem.ProjectItem == null)
-						continue;
-					string kindGuid = selItem.ProjectItem.Kind.Substring(1, selItem.ProjectItem.Kind.Length - 2);
-					if (kindGuid.ToLower() == guid.ToString().ToLower())
-					{
-						VCFilter filt = (VCFilter)selItem.ProjectItem.Object;
-						if (filt != null && filt.UniqueIdentifier != null
-							&& filt.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower()
-							&& HelperFunctions.IsQtProject(GetSelectedQtProject(dteObject)))
-							return true;
-					}
-				}
-				return false;
-			}
-			catch {}
-        
-            return false;        
+                foreach (EnvDTE.SelectedItem selItem in itms)
+                {
+                    if (selItem.ProjectItem == null)
+                        continue;
+                    string kindGuid = selItem.ProjectItem.Kind.Substring(1, selItem.ProjectItem.Kind.Length - 2);
+                    if (kindGuid.ToLower() == guid.ToString().ToLower())
+                    {
+                        VCFilter filt = (VCFilter)selItem.ProjectItem.Object;
+                        if (filt != null && filt.UniqueIdentifier != null
+                            && filt.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower()
+                            && HelperFunctions.IsQtProject(GetSelectedQtProject(dteObject)))
+                            return true;
+                    }
+                }
+                return false;
+            }
+            catch {}
+
+            return false;
         }
 
         public static EnvDTE.Project GetSelectedProject(EnvDTE.DTE dteObject)
         {
-			if (dteObject == null)
-				return null;
+            if (dteObject == null)
+                return null;
             System.Array prjs = null;
             try
             {
@@ -1404,7 +1401,7 @@ namespace Digia.Qt5ProjectLib
             }
             if (prjs == null || prjs.Length < 1)
                 return null;
-        
+
             // don't handle multiple selection... use the first one
             if (prjs.GetValue(0) is EnvDTE.Project)
                 return (EnvDTE.Project)prjs.GetValue(0);
@@ -1413,8 +1410,8 @@ namespace Digia.Qt5ProjectLib
 
         public static EnvDTE.Project GetActiveDocumentProject(EnvDTE.DTE dteObject)
         {
-			if (dteObject == null)
-				return null;
+            if (dteObject == null)
+                return null;
             EnvDTE.Document doc = dteObject.ActiveDocument;
             if (doc == null) 
                 return null;
@@ -1429,7 +1426,7 @@ namespace Digia.Qt5ProjectLib
         {
             List<Project> projectList = ProjectsInSolution(dteObject);
             if (dteObject == null || dteObject.Solution == null ||
-				projectList.Count != 1)
+                    projectList.Count != 1)
                 return null; // no way to know which one to select
 
             return projectList[0];
@@ -1519,7 +1516,7 @@ namespace Digia.Qt5ProjectLib
             files[items.Count] = null;
             return files;
         }
-        
+
         public static Image GetSharedImage(string name)
         {
             Assembly a = Assembly.GetExecutingAssembly();
@@ -1563,7 +1560,7 @@ namespace Digia.Qt5ProjectLib
 
         public static EnvDTE.Project VCProjectToProject(VCProject vcproj)
         {
-			return (EnvDTE.Project)vcproj.Object;
+            return (EnvDTE.Project)vcproj.Object;
         }
 
         public static List<EnvDTE.Project> ProjectsInSolution(EnvDTE.DTE dteObject)

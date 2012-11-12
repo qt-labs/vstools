@@ -52,12 +52,12 @@ using EnvDTE80;
 namespace Qt5VSAddin
 {
     [GuidAttribute("C80C78C8-F64B-43df-9A53-96F7C44A1EB6"), ProgId("Qt5VSAddin")]
-	/// <summary>The object for implementing an Add-in.</summary>
-	/// <seealso class='IDTExtensibility2' />
+    /// <summary>The object for implementing an Add-in.</summary>
+    /// <seealso class='IDTExtensibility2' />
     public class Connect : IDTExtensibility2, IDTCommandTarget
-	{
-		public static DTE _applicationObject = null;
-		public static AddIn _addInInstance = null;
+    {
+        public static DTE _applicationObject = null;
+        public static AddIn _addInInstance = null;
         public static ExtLoader extLoader = null;
         public static bool menuVisible = false;
 
@@ -75,10 +75,10 @@ namespace Qt5VSAddin
             return _addInInstance.Object as Connect;
         }
 
-		/// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
-		public Connect()
-		{
-		}
+        /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
+        public Connect()
+        {
+        }
 
         public string InstallationDir
         {
@@ -113,13 +113,13 @@ namespace Qt5VSAddin
             }
         }
 
-		/// <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>
-		/// <param term='application'>Root object of the host application.</param>
-		/// <param term='connectMode'>Describes how the Add-in is being loaded.</param>
-		/// <param term='addInInst'>Object representing this Add-in.</param>
-		/// <seealso class='IDTExtensibility2' />
-		public void OnConnection(object application, ext_ConnectMode connectMode, object addInInst, ref Array custom)
-		{
+        /// <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>
+        /// <param term='application'>Root object of the host application.</param>
+        /// <param term='connectMode'>Describes how the Add-in is being loaded.</param>
+        /// <param term='addInInst'>Object representing this Add-in.</param>
+        /// <seealso class='IDTExtensibility2' />
+        public void OnConnection(object application, ext_ConnectMode connectMode, object addInInst, ref Array custom)
+        {
             _applicationObject = (DTE)application;
             _addInInstance = (AddIn)addInInst;
 
@@ -435,12 +435,12 @@ namespace Qt5VSAddin
             }
         }
 
-		/// <summary>Implements the OnDisconnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being unloaded.</summary>
-		/// <param term='disconnectMode'>Describes how the Add-in is being unloaded.</param>
-		/// <param term='custom'>Array of parameters that are host application specific.</param>
-		/// <seealso class='IDTExtensibility2' />
-		public void OnDisconnection(ext_DisconnectMode disconnectMode, ref Array custom)
-		{
+        /// <summary>Implements the OnDisconnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being unloaded.</summary>
+        /// <param term='disconnectMode'>Describes how the Add-in is being unloaded.</param>
+        /// <param term='custom'>Array of parameters that are host application specific.</param>
+        /// <seealso class='IDTExtensibility2' />
+        public void OnDisconnection(ext_DisconnectMode disconnectMode, ref Array custom)
+        {
             eventHandler.Disconnect();
             if (!commandLine)
             {
@@ -453,27 +453,27 @@ namespace Qt5VSAddin
                     MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                 }
             }
-		}
+        }
 
-		/// <summary>Implements the OnAddInsUpdate method of the IDTExtensibility2 interface. Receives notification when the collection of Add-ins has changed.</summary>
-		/// <param term='custom'>Array of parameters that are host application specific.</param>
-		/// <seealso class='IDTExtensibility2' />		
-		public void OnAddInsUpdate(ref Array custom)
-		{
-		}
+        /// <summary>Implements the OnAddInsUpdate method of the IDTExtensibility2 interface. Receives notification when the collection of Add-ins has changed.</summary>
+        /// <param term='custom'>Array of parameters that are host application specific.</param>
+        /// <seealso class='IDTExtensibility2' />
+        public void OnAddInsUpdate(ref Array custom)
+        {
+        }
 
-		/// <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
-		/// <param term='custom'>Array of parameters that are host application specific.</param>
-		/// <seealso class='IDTExtensibility2' />
-		public void OnStartupComplete(ref Array custom)
-		{
-		}
+        /// <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
+        /// <param term='custom'>Array of parameters that are host application specific.</param>
+        /// <seealso class='IDTExtensibility2' />
+        public void OnStartupComplete(ref Array custom)
+        {
+        }
 
-		/// <summary>Implements the OnBeginShutdown method of the IDTExtensibility2 interface. Receives notification that the host application is being unloaded.</summary>
-		/// <param term='custom'>Array of parameters that are host application specific.</param>
-		/// <seealso class='IDTExtensibility2' />
-		public void OnBeginShutdown(ref Array custom)
-		{
-		}
+        /// <summary>Implements the OnBeginShutdown method of the IDTExtensibility2 interface. Receives notification that the host application is being unloaded.</summary>
+        /// <param term='custom'>Array of parameters that are host application specific.</param>
+        /// <seealso class='IDTExtensibility2' />
+        public void OnBeginShutdown(ref Array custom)
+        {
+        }
     }
 }

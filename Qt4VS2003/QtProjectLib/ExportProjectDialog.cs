@@ -44,38 +44,38 @@ using System.Windows.Forms;
 
 namespace Digia.Qt5ProjectLib
 {
-	/// <summary>
-	/// Summary description for ExportProjectDialog.
-	/// </summary>
-	internal class ExportProjectDialog : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.Label projLabel;
-		private System.Windows.Forms.ListBox optionListBox;
-		private System.Windows.Forms.Label optionLabel;
-		private System.Windows.Forms.ComboBox optionComboBox;
-		private System.Windows.Forms.Label commentLabel;
-		private System.Windows.Forms.TextBox optionTextBox;
-		private System.Windows.Forms.CheckBox openCheckBox;
-		private System.Windows.Forms.CheckedListBox projListBox;
-		private System.Windows.Forms.GroupBox lineBox;
+    /// <summary>
+    /// Summary description for ExportProjectDialog.
+    /// </summary>
+    internal class ExportProjectDialog : System.Windows.Forms.Form
+    {
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Label projLabel;
+        private System.Windows.Forms.ListBox optionListBox;
+        private System.Windows.Forms.Label optionLabel;
+        private System.Windows.Forms.ComboBox optionComboBox;
+        private System.Windows.Forms.Label commentLabel;
+        private System.Windows.Forms.TextBox optionTextBox;
+        private System.Windows.Forms.CheckBox openCheckBox;
+        private System.Windows.Forms.CheckedListBox projListBox;
+        private System.Windows.Forms.GroupBox lineBox;
         private System.Windows.Forms.CheckBox createPriFileCheckBox;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button newButton;
         private System.Windows.Forms.Button delButton;
         /// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
-		public ExportProjectDialog()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+        public ExportProjectDialog()
+        {
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
 
             this.cancelButton.Text = SR.GetString("ExportProjectDialog_Cancel");
             this.okButton.Text = SR.GetString("ExportProjectDialog_OK");
@@ -92,33 +92,33 @@ namespace Digia.Qt5ProjectLib
                 this.Size = new Size(400, 300);
 
             ShowInTaskbar = false;
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+            //
+            // TODO: Add any constructor code after InitializeComponent call
+            //
+        }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
 			if( disposing )
-			{
+            {
 				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose( disposing );
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.projLabel = new System.Windows.Forms.Label();
@@ -327,151 +327,151 @@ namespace Digia.Qt5ProjectLib
             this.ResumeLayout(false);
 
         }
-		#endregion
+        #endregion
 
-		public ProSolution ProFileSolution
-		{
-			set
-			{
-				proSln = value;
-				InitProSolution();
-			}
-		}
+        public ProSolution ProFileSolution
+        {
+            set
+            {
+                proSln = value;
+                InitProSolution();
+            }
+        }
 
-		private void InitProSolution()
-		{
-			projListBox.DataSource = proSln.ProFiles;
-			projListBox.SelectedIndex = 0;
-		}
+        private void InitProSolution()
+        {
+            projListBox.DataSource = proSln.ProFiles;
+            projListBox.SelectedIndex = 0;
+        }
 
-		private ProSolution proSln;
-		private ProFileContent currentPro;
-		private ProFileOption currentOpt;
+        private ProSolution proSln;
+        private ProFileContent currentPro;
+        private ProFileOption currentOpt;
 
-		private void optionComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			currentOpt = (ProFileOption)currentPro.Options[optionComboBox.SelectedIndex];
-			UpdateCurrentListItem();
+        private void optionComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            currentOpt = (ProFileOption)currentPro.Options[optionComboBox.SelectedIndex];
+            UpdateCurrentListItem();
 
-			optionTextBox.Text = "";
+            optionTextBox.Text = "";
 
-			// update comment field
+            // update comment field
             commentLabel.Text = currentOpt.Comment;
-			UpdateButtons();
-		}
+            UpdateButtons();
+        }
 
-		private void optionListBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
+        private void optionListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
             int idx = optionListBox.SelectedIndex;
             if (idx < 0)
                 return;
-			optionTextBox.Text = (string)currentOpt.List[optionListBox.SelectedIndex];
-			optionTextBox.Focus();
+            optionTextBox.Text = (string)currentOpt.List[optionListBox.SelectedIndex];
+            optionTextBox.Focus();
             UpdateButtons();
-		}
+        }
 
-		private void optionTextBox_TextChanged(object sender, System.EventArgs e)
-		{
+        private void optionTextBox_TextChanged(object sender, System.EventArgs e)
+        {
 			if(optionListBox.SelectedIndex < 0)
-			{
-				optionTextBox.Enabled = false;
-			}
-			else
-			{
-				optionTextBox.Enabled = true;
-				currentOpt.List[optionListBox.SelectedIndex] = optionTextBox.Text;
-				int index = optionListBox.SelectedIndex;
-				UpdateCurrentListItem();
-				optionListBox.SelectedIndex = index;
-			}
-		}
+            {
+                optionTextBox.Enabled = false;
+            }
+            else
+            {
+                optionTextBox.Enabled = true;
+                currentOpt.List[optionListBox.SelectedIndex] = optionTextBox.Text;
+                int index = optionListBox.SelectedIndex;
+                UpdateCurrentListItem();
+                optionListBox.SelectedIndex = index;
+            }
+        }
 
-		private void UpdateCurrentListItem()
-		{
-			optionListBox.BeginUpdate();
-			optionListBox.Items.Clear();
+        private void UpdateCurrentListItem()
+        {
+            optionListBox.BeginUpdate();
+            optionListBox.Items.Clear();
 			foreach(string tag in currentOpt.List)
-			{
-				optionListBox.Items.Add(tag);
-			}
-			optionListBox.EndUpdate();
-		}
+            {
+                optionListBox.Items.Add(tag);
+            }
+            optionListBox.EndUpdate();
+        }
 
-		private void newButton_Click(object sender, System.EventArgs e)
-		{
+        private void newButton_Click(object sender, System.EventArgs e)
+        {
             currentOpt.List.Add("{New}");
             int index = currentOpt.List.Count - 1;
-			UpdateCurrentListItem();
-			optionListBox.SelectedIndex = index;
-			optionTextBox.SelectAll();
-		}
+            UpdateCurrentListItem();
+            optionListBox.SelectedIndex = index;
+            optionTextBox.SelectAll();
+        }
 
-		private void UpdateButtons()
-		{
-			bool delEnabled = true;
-			bool addEnabled = true;
+        private void UpdateButtons()
+        {
+            bool delEnabled = true;
+            bool addEnabled = true;
 
 			if(optionListBox.SelectedIndex < 0)
-				delEnabled = false;
+                delEnabled = false;
 
 			if(optionListBox.Items.Count <= 0)
-				delEnabled = false;
+                delEnabled = false;
 
 			if((optionListBox.Items.Count > 0) && (currentOpt.NewOption == null))
                 addEnabled = false;
 
-			delButton.Enabled = delEnabled;
-			newButton.Enabled = addEnabled;
-		}
+            delButton.Enabled = delEnabled;
+            newButton.Enabled = addEnabled;
+        }
 
-		private void delButton_Click(object sender, System.EventArgs e)
-		{
-			int index = optionListBox.SelectedIndex;
-			currentOpt.List.RemoveAt(optionListBox.SelectedIndex);
-			UpdateCurrentListItem();
+        private void delButton_Click(object sender, System.EventArgs e)
+        {
+            int index = optionListBox.SelectedIndex;
+            currentOpt.List.RemoveAt(optionListBox.SelectedIndex);
+            UpdateCurrentListItem();
 
-			if (index > (optionListBox.Items.Count-1))
-				index--;
+            if (index > (optionListBox.Items.Count-1))
+                index--;
 
-			optionListBox.SelectedIndex = index;
+            optionListBox.SelectedIndex = index;
 
-			if (index < 0)
-			{
-				optionTextBox.Text = "";
-				UpdateButtons();
-			}
-		}
+            if (index < 0)
+            {
+                optionTextBox.Text = "";
+                UpdateButtons();
+            }
+        }
 
-		private void projListBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			currentPro = (ProFileContent)proSln.ProFiles[projListBox.SelectedIndex];
-			optionComboBox.DataSource = currentPro.Options;
-		}
+        private void projListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            currentPro = (ProFileContent)proSln.ProFiles[projListBox.SelectedIndex];
+            optionComboBox.DataSource = currentPro.Options;
+        }
 
-		private void projListBox_ItemCheck(object sender, ItemCheckEventArgs e)
-		{
-			if (e.NewValue == CheckState.Checked)
+        private void projListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked)
                 ((ProFileContent)proSln.ProFiles[e.Index]).Export = true;
-			else
-				((ProFileContent)proSln.ProFiles[e.Index]).Export = false;
-		}
+            else
+                ((ProFileContent)proSln.ProFiles[e.Index]).Export = false;
+        }
 
-		private void ExportProjectDialog_Load(object sender, System.EventArgs e)
-		{
-			for (int i=0; i<projListBox.Items.Count; i++)
-			{
-				projListBox.SetItemChecked(i,true);
-			}
-		}
+        private void ExportProjectDialog_Load(object sender, System.EventArgs e)
+        {
+            for (int i=0; i<projListBox.Items.Count; i++)
+            {
+                projListBox.SetItemChecked(i,true);
+            }
+        }
         
         public bool OpenFiles
-		{
-			get { return openCheckBox.Checked; }
-		}
+        {
+            get { return openCheckBox.Checked; }
+        }
 
         public bool CreatePriFile
         {
             get { return createPriFileCheckBox.Checked; }
         }
-	}
+    }
 }

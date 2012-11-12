@@ -85,7 +85,7 @@ namespace Digia.Qt5ProjectLib
                     project.Globals.set_VariablePersists("RccPrefix" + id, true);
             }
         }
-		
+
         public bool CompressFiles
         {
             get
@@ -106,7 +106,7 @@ namespace Digia.Qt5ProjectLib
                     project.Globals.set_VariablePersists("RccCompressFiles" + id, true);
             }
         }
-		
+
         public int CompressLevel
         {
             get
@@ -123,7 +123,7 @@ namespace Digia.Qt5ProjectLib
                     project.Globals.set_VariablePersists("RccCompressLevel" + id, true);
             }
         }
-		
+
         public int CompressThreshold
         {
             get

@@ -58,7 +58,7 @@ namespace Digia.Qt5ProjectLib
 #error GUID must be specified for this Visual Studio version!
 #endif
     public class QtProjectEngine
-	{
+    {
         private EnvDTE.Project pro = null;
         private QtProject qtPro = null;
         private const string commonError = 
@@ -348,18 +348,18 @@ namespace Digia.Qt5ProjectLib
             return QtProject.CopyFileToFolder(srcFile, destFolder, destName);
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="destName"></param>
-		/// <returns></returns>
-		public string CreateQrcFile(string className, string destName)
-		{
-			if (qtPro == null)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="destName"></param>
+        /// <returns></returns>
+        public string CreateQrcFile(string className, string destName)
+        {
+            if (qtPro == null)
                 throw new QtVSException(commonError);
             return qtPro.CreateQrcFile(className, destName);
-		}
+        }
 
         /// <summary>
         /// Adds a qt module to the project

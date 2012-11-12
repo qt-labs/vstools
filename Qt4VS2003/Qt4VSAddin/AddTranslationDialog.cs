@@ -44,11 +44,11 @@ using System.Globalization;
 
 namespace Qt5VSAddin
 {
-	/// <summary>
-	/// Summary description for AddTranslationDialog.
-	/// </summary>
-	public class AddTranslationDialog : System.Windows.Forms.Form
-	{
+    /// <summary>
+    /// Summary description for AddTranslationDialog.
+    /// </summary>
+    public class AddTranslationDialog : System.Windows.Forms.Form
+    {
         private System.Windows.Forms.Label langLabel;
         private System.Windows.Forms.ComboBox langComboBox;
         private System.Windows.Forms.Label label1;
@@ -57,18 +57,18 @@ namespace Qt5VSAddin
         private System.Windows.Forms.TextBox fileTextBox;
         private EnvDTE.Project project;
         private System.Windows.Forms.Panel panel1;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
-		public AddTranslationDialog(EnvDTE.Project pro)
-		{
+        public AddTranslationDialog(EnvDTE.Project pro)
+        {
             project = pro;
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
             ShowInTaskbar = false;
 
             this.langLabel.Text = SR.GetString("AddTranslationDialog_Language");
@@ -87,7 +87,7 @@ namespace Qt5VSAddin
             //    this.okButton.Size = new System.Drawing.Size(84, 24);
             //}
             this.KeyPress += new KeyPressEventHandler(this.AddTranslationDialog_KeyPress);
-		}
+        }
 
         void AddTranslationDialog_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -97,35 +97,34 @@ namespace Qt5VSAddin
                 Close();
             }
         }
-		
 
         public string TranslationFile
         {
             get { return fileTextBox.Text; }
         }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
 			if( disposing )
-			{
+            {
 				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose( disposing );
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.langLabel = new System.Windows.Forms.Label();
             this.langComboBox = new System.Windows.Forms.ComboBox();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -232,7 +231,7 @@ namespace Qt5VSAddin
             this.ResumeLayout(false);
 
         }
-		#endregion
+        #endregion
 
         private void AddTranslationDialog_Load(object sender, System.EventArgs e)
         {
@@ -246,7 +245,7 @@ namespace Qt5VSAddin
             string country = ((TranslationItem)langComboBox.SelectedItem).TwoLetterISOLanguageName;
             fileTextBox.Text = project.Name.ToLower() + "_" + country + ".ts";
         }        
-	}
+    }
 
     public class TranslationItem : System.Globalization.CultureInfo
     {

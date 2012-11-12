@@ -52,10 +52,10 @@ namespace Digia.Qt5ProjectLib
     using Microsoft.VisualStudio.VCProjectEngine;
 
     /// <summary>
-	/// QtProject holds the Qt specific properties for a Visual Studio project.
+    /// QtProject holds the Qt specific properties for a Visual Studio project.
     /// There exists at most one QtProject per EnvDTE.Project.
     /// Use QtProject.Create to get the QtProject for a Project or VCProject.
-	/// </summary>
+    /// </summary>
     public class QtProject
     {
         private EnvDTE.DTE dte = null;
@@ -212,16 +212,16 @@ namespace Digia.Qt5ProjectLib
         {
             if (vcPro == null)
                 return null;
-			return vcPro.keyword.Remove(0, Resources.qtProjectKeyword.Length);
+            return vcPro.keyword.Remove(0, Resources.qtProjectKeyword.Length);
         }
-	
+
         /// <summary>
         /// Marks the specified project as a Qt project.
         /// </summary>
         /// <param name="proj">project</param>
         public void MarkAsQtProject(string version)
         {
-			vcPro.keyword = Resources.qtProjectKeyword + version;
+            vcPro.keyword = Resources.qtProjectKeyword + version;
         }
 
         public void AddDefine(string define, uint bldConf)
@@ -234,7 +234,7 @@ namespace Digia.Qt5ProjectLib
                     ((IsDebugConfiguration(config)) && ((bldConf & BuildConfig.Debug) != 0)))
                 {
                     compiler.AddPreprocessorDefinition(define);
-                }				
+                }
             }
         }
 
@@ -917,13 +917,13 @@ namespace Digia.Qt5ProjectLib
         }
 
         /// <summary>
-		/// Adds a moc step to a given file for this project.
-		/// </summary>
-		/// <param name="file">file</param>
-		public void AddMocStep(VCFile file)
-		{
+        /// Adds a moc step to a given file for this project.
+        /// </summary>
+        /// <param name="file">file</param>
+        public void AddMocStep(VCFile file)
+        {
             try
-			{
+            {
                 string mocFileName = GetMocFileName(file.FullPath);
                 if (mocFileName == null)
                     return;
@@ -1279,8 +1279,8 @@ namespace Digia.Qt5ProjectLib
             return HasMocStep(file, null);
         }
 
-		public bool HasMocStep(VCFile file, string mocOutDir)
-		{
+        public bool HasMocStep(VCFile file, string mocOutDir)
+        {
             if (HelperFunctions.HasHeaderFileExtension(file.Name))
             {
                 return CheckForCommand(file, "moc.exe");
@@ -1312,7 +1312,7 @@ namespace Digia.Qt5ProjectLib
                 }
             }
             return false;
-		}
+        }
 
         public static bool HasUicStep(VCFile file)
         {
@@ -1487,12 +1487,12 @@ namespace Digia.Qt5ProjectLib
                     conf.ExcludedFromBuild = true;
         }
 
-		/// <summary>
-		/// Removes the custom build step of a given file.
-		/// </summary>
-		/// <param name="file">file</param>
-		public void RemoveMocStep(VCFile file)
-		{
+        /// <summary>
+        /// Removes the custom build step of a given file.
+        /// </summary>
+        /// <param name="file">file</param>
+        public void RemoveMocStep(VCFile file)
+        {
             try
             {
                 if (!HasMocStep(file))
@@ -1606,13 +1606,13 @@ namespace Digia.Qt5ProjectLib
             {
                 throw new QtVSException(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
             }
-		}
+        }
         
         public void RemoveUiHeaderFile(VCFile file)
         {
-			if (file == null)
-				return;
-			try 
+            if (file == null)
+                return;
+            try
             {
                 string headerFile = GetUiGeneratedFileName(file.Name);
                 VCFile hFile = GetFileFromProject(headerFile);
@@ -1626,20 +1626,20 @@ namespace Digia.Qt5ProjectLib
             }
         }
 
-		public void RemoveUic4BuildStep(VCFile file)
-		{
-			if (file == null)
-				return;
-			foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations)
-			{
+        public void RemoveUic4BuildStep(VCFile file)
+        {
+            if (file == null)
+                return;
+            foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations)
+            {
                 VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(config);
-				tool.AdditionalDependencies = "";
-				tool.Description = "";
-				tool.CommandLine = "";
-				tool.Outputs = "";
-			}
-			RemoveUiHeaderFile(file);
-		}
+                tool.AdditionalDependencies = "";
+                tool.Description = "";
+                tool.CommandLine = "";
+                tool.Outputs = "";
+            }
+            RemoveUiHeaderFile(file);
+        }
 
         public List<VCFile> GetResourceFiles()
         {
@@ -1687,9 +1687,9 @@ namespace Digia.Qt5ProjectLib
                         return file;
                 }
             }
-            catch {}			
-			return null;
-		}
+            catch {}
+            return null;
+        }
 
         /// <summary>
         /// Returns the file (VCFile) specified by the file name from a given
@@ -2015,29 +2015,29 @@ namespace Digia.Qt5ProjectLib
             }
         }
 
-		public VCFilter FindFilterFromGuid(string filterguid)
-		{
-			try 
-			{
-				foreach (VCFilter vcfilt in (IVCCollection)vcPro.Filters)
-				{
-					if (vcfilt.UniqueIdentifier != null
+        public VCFilter FindFilterFromGuid(string filterguid)
+        {
+            try
+            {
+                foreach (VCFilter vcfilt in (IVCCollection)vcPro.Filters)
+                {
+                    if (vcfilt.UniqueIdentifier != null
                         && vcfilt.UniqueIdentifier.ToLower() == filterguid.ToLower())
-					{
-						return vcfilt;
-					}
-				}
-				return null;
-			}
-			catch 
-			{
+                    {
+                        return vcfilt;
+                    }
+                }
+                return null;
+            }
+            catch
+            {
                 throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
-			}
-		}
+            }
+        }
 
         public VCFilter AddFilterToProject(FakeFilter filter)
         {
-            try 
+            try
             {
                 VCFilter vfilt = FindFilterFromGuid(filter.UniqueIdentifier);
                 if (vfilt == null)
@@ -2333,30 +2333,30 @@ namespace Digia.Qt5ProjectLib
             }
         }
 
-		public string CreateQrcFile(string className, string destName)
-		{
-			string fullDestName = vcPro.ProjectDirectory + "\\" + destName;
+        public string CreateQrcFile(string className, string destName)
+        {
+            string fullDestName = vcPro.ProjectDirectory + "\\" + destName;
 
-			if (!File.Exists(fullDestName))
-			{
-				FileStream s = File.Open(fullDestName, FileMode.CreateNew);
-				if (s.CanWrite) 
-				{
-					StreamWriter sw = new StreamWriter(s);
-					sw.WriteLine("<RCC>");
-					sw.WriteLine("    <qresource prefix=\"" + className + "\">");
-					sw.WriteLine("    </qresource>");
-					sw.WriteLine("</RCC>");
-					sw.Close();
-				}
-				s.Close();
-				FileAttributes attribs = File.GetAttributes(fullDestName);
-				File.SetAttributes(fullDestName, attribs & (~FileAttributes.ReadOnly));
-			}
+            if (!File.Exists(fullDestName))
+            {
+                FileStream s = File.Open(fullDestName, FileMode.CreateNew);
+                if (s.CanWrite)
+                {
+                    StreamWriter sw = new StreamWriter(s);
+                    sw.WriteLine("<RCC>");
+                    sw.WriteLine("    <qresource prefix=\"" + className + "\">");
+                    sw.WriteLine("    </qresource>");
+                    sw.WriteLine("</RCC>");
+                    sw.Close();
+                }
+                s.Close();
+                FileAttributes attribs = File.GetAttributes(fullDestName);
+                File.SetAttributes(fullDestName, attribs & (~FileAttributes.ReadOnly));
+            }
 
-			FileInfo fi = new FileInfo(fullDestName);
-			return fi.FullName;		
-		}
+            FileInfo fi = new FileInfo(fullDestName);
+            return fi.FullName;
+        }
 
         public static void EnableSection(string file, string sectionName, bool enable)
         {
