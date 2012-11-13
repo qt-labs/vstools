@@ -53,7 +53,7 @@ using System.Reflection;
 [assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).")]
 [assembly: AssemblyTrademark("Digia, Qt and their respective logos are trademarks of Digia Plc in Finland and/or other countries worldwide. All other trademarks are property of their respective owners.")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCulture("")]
 
 //
 // Version information for an assembly consists of the following four values:

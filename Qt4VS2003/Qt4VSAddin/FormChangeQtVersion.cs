@@ -60,7 +60,7 @@ namespace Qt5VSAddin
             lQtVersions.Text = SR.GetString("InstalledQtVersions");
             lbQtVersions.DoubleClick += new EventHandler(lbQtVersions_DoubleClick);
             this.KeyPress += new KeyPressEventHandler(this.FormChangeQtVersion_KeyPress);
-		}
+        }
 
         void lbQtVersions_DoubleClick(object sender, EventArgs e)
         {

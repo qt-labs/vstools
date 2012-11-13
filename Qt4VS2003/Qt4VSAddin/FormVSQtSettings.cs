@@ -90,7 +90,7 @@ namespace Qt5VSAddin
 
             this.KeyPress += new KeyPressEventHandler(this.FormQtVersions_KeyPress);
             this.Shown += new EventHandler(FormQtVersions_Shown);
-		}
+        }
 
         void FormQtVersions_KeyPress(object sender, KeyPressEventArgs e)
         {

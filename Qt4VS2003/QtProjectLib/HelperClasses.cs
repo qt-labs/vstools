@@ -99,18 +99,18 @@ namespace Digia.Qt5ProjectLib
 
     public struct BuildConfig
     {
-        public const uint Both		= 0x03;
-        public const uint Release	= 0x01;
-        public const uint Debug		= 0x02;
+        public const uint Both    = 0x03;
+        public const uint Release = 0x01;
+        public const uint Debug   = 0x02;
     }
 
     public enum FilesToList 
     {
-        FL_Resources	= 1,
-        FL_CppFiles		= 2,
-        FL_HFiles		= 3,
-        FL_UiFiles		= 4,
-        FL_Generated	= 5,
+        FL_Resources    = 1,
+        FL_CppFiles     = 2,
+        FL_HFiles       = 3,
+        FL_UiFiles      = 4,
+        FL_Generated    = 5,
         FL_Translation  = 6,
         FL_WinResource  = 7
     }
@@ -118,13 +118,13 @@ namespace Digia.Qt5ProjectLib
     public struct TemplateType
     {
         // project type
-        public const uint ProjectType		= 0x003; // 0011
-        public const uint Application		= 0x000; // 0000
-        public const uint DynamicLibrary	= 0x001; // 0001
-        public const uint StaticLibrary		= 0x002; // 0010
+        public const uint ProjectType       = 0x003; // 0011
+        public const uint Application       = 0x000; // 0000
+        public const uint DynamicLibrary    = 0x001; // 0001
+        public const uint StaticLibrary     = 0x002; // 0010
         // subsystem
-        public const uint GUISystem			= 0x004; // 0100
-        public const uint ConsoleSystem		= 0x008; // 1000
+        public const uint GUISystem         = 0x004; // 0100
+        public const uint ConsoleSystem     = 0x008; // 1000
         // qt3
         public const uint Qt3Project        = 0x010; //10000
         // plugin
@@ -138,7 +138,7 @@ namespace Digia.Qt5ProjectLib
     {
         public QtVSException(string message)
             : base(message)
-        {			
+        {
         }
     }
 
@@ -150,7 +150,7 @@ namespace Digia.Qt5ProjectLib
         {
             dteObject = dte;
         }
-		
+
         #region IWin32Window Members
         public System.IntPtr Handle
         {

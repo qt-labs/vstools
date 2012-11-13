@@ -46,20 +46,20 @@ using System.Windows.Forms;
 using Digia.Qt5ProjectLib;
 namespace Qt5VSAddin
 {
-	/// <summary>
-	/// Summary description for QtVersionDialog.
-	/// </summary>
-	public class QtVersionDialog : System.Windows.Forms.Form
-	{
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Summary description for QtVersionDialog.
+    /// </summary>
+    public class QtVersionDialog : System.Windows.Forms.Form
+    {
+        private System.ComponentModel.Container components = null;
         private System.Windows.Forms.ComboBox versionComboBox;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private EnvDTE.DTE dteObj = null;
 
-		public QtVersionDialog(EnvDTE.DTE dte)
-		{
+        public QtVersionDialog(EnvDTE.DTE dte)
+        {
             dteObj = dte;
             QtVersionManager vM = QtVersionManager.The();
             InitializeComponent();
@@ -101,7 +101,7 @@ namespace Qt5VSAddin
             //    this.okButton.Size = new Size(80, 22);
             //}
             this.KeyPress += new KeyPressEventHandler(this.QtVersionDialog_KeyPress);
-		}
+        }
 
         void QtVersionDialog_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -117,28 +117,28 @@ namespace Qt5VSAddin
             get { return this.versionComboBox.Text; }
         }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
             if (disposing)
-			{
+            {
                 if (components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose( disposing );
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.versionComboBox = new System.Windows.Forms.ComboBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
