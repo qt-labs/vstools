@@ -1140,7 +1140,7 @@ namespace Digia.Qt5ProjectLib
             {
                 item = (VCProjectItem)item.Parent;
 
-                if(item.Kind == "VCFilter")
+                if (item.Kind == "VCFilter")
                 {
                     VCFilter f = (VCFilter)item;
                     if (f.UniqueIdentifier != null
@@ -1446,7 +1446,7 @@ namespace Digia.Qt5ProjectLib
 
             EnvDTE.Project pro;
             
-            if((pro = GetSelectedProject(dteObject)) == null)
+            if ((pro = GetSelectedProject(dteObject)) == null)
                 if ((pro = GetSingleProjectInSolution(dteObject)) == null)
                     pro = GetActiveDocumentProject(dteObject);
 
@@ -1523,7 +1523,7 @@ namespace Digia.Qt5ProjectLib
             Image image = null;
             name = "Digia." + name;
             Stream imgStream = a.GetManifestResourceStream(name);
-            if(imgStream != null)
+            if (imgStream != null)
             {                    
                 image = Image.FromStream(imgStream);
                 imgStream.Close();

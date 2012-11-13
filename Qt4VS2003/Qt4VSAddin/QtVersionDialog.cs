@@ -122,9 +122,9 @@ namespace Qt5VSAddin
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing )
+            if (disposing)
 			{
-				if(components != null)
+                if (components != null)
 				{
 					components.Dispose();
 				}

@@ -260,7 +260,7 @@ namespace Digia.Qt5ProjectLib
             for(int i=0; i<files.Count; i++)
             {
                 string relPath;
-                if(files[i].IndexOf(":") != 1)
+                if (files[i].IndexOf(":") != 1)
                     relPath = HelperFunctions.GetRelativePath(path,
                         vcproj.ProjectDirectory + "\\" + (string)files[i]);
                 else
@@ -273,7 +273,7 @@ namespace Digia.Qt5ProjectLib
         {
             for (int i=0; i<files.Count; i++)
             {
-                if(files[i].IndexOf(' ') != -1)
+                if (files[i].IndexOf(' ') != -1)
                     return true;
             }
 
@@ -286,7 +286,7 @@ namespace Digia.Qt5ProjectLib
             foreach (string file in files)
             {
                 FileInfo fi;
-                if(file.IndexOf(":") != 1)
+                if (file.IndexOf(":") != 1)
                     fi = new FileInfo(path + "\\" + file);
                 else
                     fi = new FileInfo(file);
@@ -580,7 +580,7 @@ namespace Digia.Qt5ProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if(ContainsFilesWithSpaces(option.List))
+            if (ContainsFilesWithSpaces(option.List))
                 hasSpaces = true;
 
             // add the source files
@@ -590,7 +590,7 @@ namespace Digia.Qt5ProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if(ContainsFilesWithSpaces(option.List))
+            if (ContainsFilesWithSpaces(option.List))
                 hasSpaces = true;
 
             // add the form files
@@ -600,7 +600,7 @@ namespace Digia.Qt5ProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if(ContainsFilesWithSpaces(option.List))
+            if (ContainsFilesWithSpaces(option.List))
                 hasSpaces = true;
 
             // add the translation files
@@ -754,7 +754,7 @@ namespace Digia.Qt5ProjectLib
                 string slnName = HelperFunctions.RemoveFileNameExtension(fi);
                 string slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
 
-                if(File.Exists(slnFileName))
+                if (File.Exists(slnFileName))
                     if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", slnFileName),
                         SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                         return;
@@ -811,8 +811,8 @@ namespace Digia.Qt5ProjectLib
         private void WriteProFile(ProFileContent content, string proFile, string priFileToInclude, bool openFile)
         {
             StreamWriter sw;
-            if(File.Exists(proFile))
-                if(MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFile),
+            if (File.Exists(proFile))
+                if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFile),
                     SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                     return;
 
@@ -981,7 +981,7 @@ namespace Digia.Qt5ProjectLib
                     break;
 
                 line = line.Trim();
-                if(line.StartsWith(tag))
+                if (line.StartsWith(tag))
                 {
                     line = line.Remove(0, tag.Length);
                     parsing = true;
@@ -1256,7 +1256,7 @@ namespace Digia.Qt5ProjectLib
         {
             VCProject vcproj;
 
-            if(HelperFunctions.IsQtProject(proj))
+            if (HelperFunctions.IsQtProject(proj))
             {
                 try
                 {

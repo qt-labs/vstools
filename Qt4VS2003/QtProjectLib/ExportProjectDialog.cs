@@ -102,9 +102,9 @@ namespace Digia.Qt5ProjectLib
         /// </summary>
         protected override void Dispose( bool disposing )
         {
-			if( disposing )
+            if (disposing)
             {
-				if(components != null)
+                if (components != null)
                 {
                     components.Dispose();
                 }
@@ -372,7 +372,7 @@ namespace Digia.Qt5ProjectLib
 
         private void optionTextBox_TextChanged(object sender, System.EventArgs e)
         {
-			if(optionListBox.SelectedIndex < 0)
+            if (optionListBox.SelectedIndex < 0)
             {
                 optionTextBox.Enabled = false;
             }
@@ -411,13 +411,13 @@ namespace Digia.Qt5ProjectLib
             bool delEnabled = true;
             bool addEnabled = true;
 
-			if(optionListBox.SelectedIndex < 0)
+            if (optionListBox.SelectedIndex < 0)
                 delEnabled = false;
 
-			if(optionListBox.Items.Count <= 0)
+            if (optionListBox.Items.Count <= 0)
                 delEnabled = false;
 
-			if((optionListBox.Items.Count > 0) && (currentOpt.NewOption == null))
+            if ((optionListBox.Items.Count > 0) && (currentOpt.NewOption == null))
                 addEnabled = false;
 
             delButton.Enabled = delEnabled;

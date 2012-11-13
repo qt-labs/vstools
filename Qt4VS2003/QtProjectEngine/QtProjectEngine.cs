@@ -84,15 +84,15 @@ namespace Digia.Qt5ProjectLib
 
         private FakeFilter GetFakeFilterFromName(string filterName)
         {
-            if(filterName == "QT_SOURCE_FILTER")
+            if (filterName == "QT_SOURCE_FILTER")
                 return Filters.SourceFiles();
-            else if(filterName == "QT_HEADER_FILTER")
+            else if (filterName == "QT_HEADER_FILTER")
                 return Filters.HeaderFiles();
-            else if(filterName == "QT_FORM_FILTER")
+            else if (filterName == "QT_FORM_FILTER")
                 return Filters.FormFiles();
-            else if(filterName == "QT_RESOURCE_FILTER")
+            else if (filterName == "QT_RESOURCE_FILTER")
                 return Filters.ResourceFiles();
-            else if(filterName == "QT_TRANSLATION_FILTER")
+            else if (filterName == "QT_TRANSLATION_FILTER")
                 return Filters.TranslationFiles();
             else if (filterName == "QT_OTHER_FILTER")
                 return Filters.OtherFiles();
@@ -138,7 +138,7 @@ namespace Digia.Qt5ProjectLib
                 }
             }
 
-            if(!string.IsNullOrEmpty(slnName) && (exclusive == true))
+            if (!string.IsNullOrEmpty(slnName) && (exclusive == true))
             {
                 solutionPath = proPath.Substring(0, proPath.LastIndexOf("\\"));
                 newSolution.Create(solutionPath, slnName);
