@@ -1,19 +1,19 @@
 //
-// This file is part of the Qt VS Add-in
+// Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+// Contact: http://www.qt-project.org/legal
 //
-// Copyright (c) 2011 Nokia Corporation and/or its subsidiary(-ies).
+// This file is part of the Qt VS Add-in.
 //
-// Contact: Nokia Corporation (qt-info@nokia.com)
-//
-// Commercial Usage
-//
-// Licensees holding valid Qt Commercial licenses may use this file in
-// accordance with the Qt Commercial License Agreement provided with the
+// $QT_BEGIN_LICENSE:LGPL$
+// Commercial License Usage
+// Licensees holding valid commercial Qt licenses may use this file in
+// accordance with the commercial license agreement provided with the
 // Software or, alternatively, in accordance with the terms contained in
-// a written agreement between you and Nokia.
+// a written agreement between you and Digia. For licensing terms and
+// conditions see http://qt.digia.com/licensing. For further information
+// use the contact form at http://qt.digia.com/contact-us.
 //
 // GNU Lesser General Public License Usage
-//
 // Alternatively, this file may be used under the terms of the GNU Lesser
 // General Public License version 2.1 as published by the Free Software
 // Foundation and appearing in the file LICENSE.LGPL included in the
@@ -21,8 +21,20 @@
 // ensure the GNU Lesser General Public License version 2.1 requirements
 // will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 //
-// If you are unsure which license is appropriate for your use, please
-// contact the sales department at http://qt.nokia.com/contact.
+// In addition, as a special exception, Digia gives you certain additional
+// rights. These rights are described in the Digia Qt LGPL Exception
+// version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+//
+// GNU General Public License Usage
+// Alternatively, this file may be used under the terms of the GNU
+// General Public License version 3.0 as published by the Free Software
+// Foundation and appearing in the file LICENSE.GPL included in the
+// packaging of this file. Please review the following information to
+// ensure the GNU General Public License version 3.0 requirements will be
+// met: http://www.gnu.org/copyleft/gpl.html.
+//
+//
+// $QT_END_LICENSE$
 //
 
 /*!
@@ -31,8 +43,8 @@
     \nextpage Getting Started
     \title Qt Visual Studio Add-in
 
-    Nokia Qt Development Frameworks offers a seamless integration of Qt development tools for
-    Microsoft Visual Studio 2005, 2008 and 2010. The Qt Visual Studio Add-in allows
+    Digia Qt Development Frameworks offers a seamless integration of Qt development tools for
+    Microsoft Visual Studio 2008, 2010 and 2012. The Qt Visual Studio Add-in allows
     developers to use this standard development environment without having to
     worry about any Qt-related build steps or tools.
 
@@ -103,7 +115,7 @@
     \section1 Designing the Main Dialog
 
     Next, we will design the application's main dialog using \QD. See the
-    \l{http://doc.qt.nokia.com/designer-manual.html}{\QD Manual} for
+    \l{http://qt-project.org/doc/qt-5.0/designer-manual.html}{\QD Manual} for
     more information.
 
     We begin by adding the widgets and setting their properties. These
@@ -176,7 +188,7 @@
 
     We start by designing the dialog. This time, there is no ready-made
     \c{.ui} file available in the project. So, we select
-    \gui{Project|Add Class...|Qt4 Classes|Qt4GuiClass}. This will invoke a
+    \gui{Project|Add Class...|Qt5 Classes|Qt5GuiClass}. This will invoke a
     wizard requesting for a class name.  Enter "AddDialog" as the name
     and "QDialog" as the base class. Then, check the "Multiple Inheritance"
     checkbox and click on the \gui{Finish} button.
@@ -227,7 +239,7 @@
 
     We want the \gui{OK} button to invoke the QDialog::accept() slot, and we
     do this by clicking on the \gui{Edit Signals/Slots} toolbar button. You will
-    then enter \QD's \l{http://doc.qt.nokia.com/designer-connection-mode.html}
+    then enter \QD's \l{http://qt-project.org/doc/qt-5.0/designer-connection-mode.html}
     {Signals and Slots Editing Mode}.
 
     Click on the \gui{OK} button and drag the mouse cursor to an empty area of
@@ -396,18 +408,18 @@
     \section1 Creating New Qt Projects
 
     Once you have installed the add-in, Visual Studio's \gui{New Project}
-    dialog will contain a \gui{Qt Projects} folder with the following project
+    dialog will contain a \gui{Qt5 Projects} folder with the following project
     templates:
 
     \list 1
         \o \bold{Qt Application:} A simple Qt GUI Application with one form.
         \o \bold{Qt Console Application:} A basic Qt console application.
         \o \bold{Qt Library:} A basic Qt-based dynamic library.
-        \o \bold{Qt4 Designer Plugin:} A Qt Designer custom widget plugin.
+        \o \bold{Qt5 Designer Plugin:} A Qt Designer custom widget plugin.
         \o \bold{ActiveQt Server:} A simple ActiveX server.
     \endlist
     
-    If you're using Visual Studio 2005 or 2008, then two additional project
+    If you're using Visual Studio 2008, then two additional project
     types are available:
     
     \list 1
@@ -477,15 +489,15 @@
     \section1 Basic Qt Version Management
 
     The Visual Studio Add-in offers its own simple Qt version management,
-    enabling you to use multiple versions of Qt 4 in parallel, e.g., Qt 4.5.0
-    and 4.5.1. When you install the add-in, the information about Qt
+    enabling you to use multiple versions of Qt 5 in parallel, e.g., Qt 5.0.0
+    and 5.0.1. When you install the add-in, the information about Qt
     versions is added to the user registry hive. So, another user will have to
     add a new Qt version since no default version will be set.
     
     To add or remove Qt versions, click \gui{Qt|Configure Qt Versions} and select the
     \gui{Qt Versions} page. Click \gui{Add}, then enter a name for the Qt
     version and the path to Qt's root directory, for example,
-    \c{C:\\Qt\\4.5.0"}. The first added Qt version is automatically
+    \c{C:\\Qt\\5.0.0"}. The first added Qt version is automatically
     the default version which will be used when creating new projects or
     importing a project from a \c{.pro} file. The default versions for Qt
     Windows or Windows CE projects can be changed using the combo boxes
@@ -610,7 +622,7 @@
     \title Adding Form Files to the Project
 
     The Visual Studio Add-in lets you launch \QD simply by double-clicking on a
-    \c .ui file. See the \l{http://doc.qt.nokia.com/designer-manual.html}
+    \c .ui file. See the \l{http://qt-project.org/doc/qt-5.0/designer-manual.html}
     {\QD} manual} for more information.
 
     To add a new \c .ui file to the project, select \gui{Project|Add New Item}
@@ -619,8 +631,8 @@
 
     Normally, you will need to wrap the code generated for the form file into
     a QWidget subclass to add signals or slots to it. A convenient way to do
-    this is to select \gui{Project|Add Class} and then select \gui{Qt4GuiClass}
-    from the \gui{Qt4Classes} folder. This will create a \c .ui file, a \c .h
+    this is to select \gui{Project|Add Class} and then select \gui{Qt5GuiClass}
+    from the \gui{Qt5Classes} folder. This will create a \c .ui file, a \c .h
     file, and a \c .cpp file for you.
 
     \section1 Creating Form Templates
@@ -671,7 +683,7 @@
     Using the context menu, you can rename the predefined prefix or add other
     prefixes to the \c .qrc file.
     
-    See the \l{http://doc.qt.nokia.com/resources.html}{Qt Resource System}
+    See the \l{http://qt-project.org/doc/qt-5.0/resources.html}{Qt Resource System}
     document for more information.
 */
 
@@ -690,7 +702,7 @@
     Studio's Solution Explorer. Right-clicking on a translation file displays
     a menu that allows you to invoke \c lupdate, \c lrelease, and \QL.
 
-    See the \l{http://doc.qt.nokia.com/linguist-manual.html}{\QL manual} for
+    See the \l{http://qt-project.org/doc/qt-5.0/linguist-manual.html}{\QL manual} for
     more information on Qt's translation tools.
 */
 

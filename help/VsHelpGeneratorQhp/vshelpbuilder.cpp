@@ -65,16 +65,16 @@ m_FilterName(title)
 	m_Version = m_Version.replace('.', '_');
     m_OutPath = QDir::temp().absolutePath();
     if (m_Kind == VSHelpBuilder::VS) {
-        m_UniqueID = "TrolltechAS_Qt4VS_Help_" + m_Version;    
-        m_FileRoot = "qt4vs_" + version;
-        m_Namespace = "TrolltechAS.Qt4VS." + m_Version + ".1033";
-        m_DocSet = "qt4vsdoc" + m_Version;
-	    m_LinkGroup = "qt4vsdoclg" + m_Version;
+        m_UniqueID = "DigiaPlc_Qt5VS_Help_" + m_Version;
+        m_FileRoot = "qt5vs_" + version;
+        m_Namespace = "DigiaPlc.Qt5VS." + m_Version + ".1033";
+        m_DocSet = "qt5vsdoc" + m_Version;
+        m_LinkGroup = "qt5vsdoclg" + m_Version;
         m_LinkGroupTitle = "Qt Integration " + m_Version;
     } else {
-        m_UniqueID = "TrolltechAS_Qt_Help_" + m_Version;
+        m_UniqueID = "DigiaPlc_Qt_Help_" + m_Version;
         m_FileRoot = "qt_" + version;
-        m_Namespace = "TrolltechAS.Qt." + m_Version + ".1033";
+        m_Namespace = "DigiaPlc.Qt." + m_Version + ".1033";
         m_DocSet = "qtrefdoc" + m_Version;
 	    m_LinkGroup = "qtrefdoclg" + m_Version;
         m_LinkGroupTitle = "Qt Help " + m_Version;
@@ -209,7 +209,7 @@ void VSHelpBuilder::setOutPath(const QString &path)
 	m_OutPath = path;
 	QString filePrefix;
     if (m_Kind == VSHelpBuilder::VS)
-        filePrefix = "qt4vs_";
+        filePrefix = "qt5vs_";
     else
         filePrefix = "qt_";
     QString rootFileName = m_OutPath + "\\" + filePrefix + m_Version;
@@ -362,7 +362,7 @@ void VSHelpBuilder::writeHelpCollectionFile()
 		s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
 		s << "<!DOCTYPE HelpCollection SYSTEM \"ms-help://hx/resources/HelpCollection.DTD\">" << endl;
 		s << "<HelpCollection DTDVersion=\"1.0\" LangId=\"1033\" Title=\"" << m_Title << "\" ";
-		s << "FileVersion=\"" << m_FileVersion << "\" Copyright=\"Trolltech AS\">" << endl;
+        s << "FileVersion=\"" << m_FileVersion << "\" Copyright=\"Digia Plc\">" << endl;
 		s << "\t<CompilerOptions CreateFullTextIndex=\"Yes\" CompileResult=\"Hxs\">" << endl;
 		s << "\t\t<IncludeFile File=\"" << HxFFile << "\"/>" << endl;
 		s << "\t</CompilerOptions>" << endl;
@@ -583,7 +583,7 @@ void VSHelpBuilder::writeCollectionLevelFiles()
 		s << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
 		s << "<!DOCTYPE HelpCollection>" << endl;
 		s << "<HelpCollection DTDVersion=\"1.0\" FileVersion=\"" << m_FileVersion << "\" LangId=\"1033\" "
-			<< "Title=\"" << m_Title << "\" Copyright=\"Trolltech AS\">" << endl;
+            << "Title=\"" << m_Title << "\" Copyright=\"Digia Plc\">" << endl;
 		s << "\t<AttributeDef File=\"" << HxAColFile << "\"/>" << endl;
 		s << "\t<TOCDef File=\"" << HxTColFile << "\"/>" << endl;
 		s << "\t<KeywordIndexDef File=\"" << HxKKColFile << "\"/>" << endl;

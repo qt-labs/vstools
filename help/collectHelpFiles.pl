@@ -17,7 +17,7 @@ my $writeTitleInIndices = 0;
 
 my $title = "Qt Help Collection";
 my $fileVersion = "1.0.0.0";
-my $namespace = "TrolltechAS.Qt.1033";
+my $namespace = "DigiaPlc.Qt.1033";
 my $uniqueID = "QtHelp" . $version;
 
 my $docSet = "qtrefdoc" . $version;
@@ -181,7 +181,7 @@ $fullName = $outPath . $outHxCFile;
 open HxC, "> $fullName" or die "can not open file $fullName";
 print HxC "<?xml version=\"1.0\"?>\n";
 print HxC "<!DOCTYPE HelpCollection SYSTEM \"ms-help://hx/resources/HelpCollection.DTD\">\n";
-print HxC "<HelpCollection DTDVersion=\"1.0\" LangId=\"1033\" Title=\"$title\" FileVersion=\"$fileVersion\" Copyright=\"Trolltech AS\">\n";
+print HxC "<HelpCollection DTDVersion=\"1.0\" LangId=\"1033\" Title=\"$title\" FileVersion=\"$fileVersion\" Copyright=\"Digia Plc\">\n";
 print HxC "\t<CompilerOptions CreateFullTextIndex=\"Yes\" CompileResult=\"Hxs\">\n";
 print HxC "\t\t<IncludeFile File=\"$outHxFFile\"/>\n";
 print HxC "\t</CompilerOptions>\n";
@@ -404,7 +404,7 @@ $fullName = $outCollectionPath . $outHxCColFile;
 open HxCCOL, "> $fullName" or die "can not open file $fullName";
 print HxCCOL "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n"; 
 print HxCCOL "<!DOCTYPE HelpCollection>\n";
-print HxCCOL "<HelpCollection DTDVersion=\"1.0\" FileVersion=\"$fileVersion\" LangId=\"1033\" Title=\"$title\" Copyright=\"Trolltech AS\">\n";
+print HxCCOL "<HelpCollection DTDVersion=\"1.0\" FileVersion=\"$fileVersion\" LangId=\"1033\" Title=\"$title\" Copyright=\"Digia Plc\">\n";
 print HxCCOL "\t<AttributeDef File=\"$outHxAColFile\"/>\n";
 print HxCCOL "\t<TOCDef File=\"$outHxTColFile\"/>\n";   
 print HxCCOL "\t<KeywordIndexDef File=\"$outHxKKColFile\"/>\n";
