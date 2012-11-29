@@ -39,38 +39,29 @@
 **
 ****************************************************************************/
 
-#include "qmakedataprovider.h"
-#include <QDebug>
-#include <QStringList>
-#include <QFileInfo>
+#include "evalhandler.h"
 
-void printList(const QString section, const QStringList values)
+void EvalHandler::message(int type, const QString &msg, const QString &fileName, int lineNo)
 {
-    qDebug() << section;
-    foreach(const QString i, values) {
-        qDebug() << "  *" << i;
-    }
+    Q_UNUSED(type);
+    Q_UNUSED(msg);
+    Q_UNUSED(fileName);
+    Q_UNUSED(lineNo);
 }
 
-int main(int argc, char *argv[])
+void EvalHandler::fileMessage(const QString &msg)
 {
-    if (argc < 2) {
-        fputs("Please provide a filename as argument.\n", stderr);
-        return -1;
-    }
-
-    QMakeDataProvider dataProvider;
-    dataProvider.readFile(QFileInfo(QString::fromLocal8Bit(argv[1])).absoluteFilePath());
-
-    qDebug() << "valid ==" << dataProvider.isValid();
-    qDebug() << "flat ==" << dataProvider.isFlat();
-    qDebug() << "";
-
-    printList("Source files", dataProvider.getSourceFiles());
-    printList("Header files", dataProvider.getHeaderFiles());
-    printList("Resource files", dataProvider.getResourceFiles());
-    printList("Form files", dataProvider.getFormFiles());
-
-    return 0;
+    Q_UNUSED(msg);
 }
 
+void EvalHandler::aboutToEval(ProFile *parent, ProFile *proFile, EvalFileType type)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(proFile);
+    Q_UNUSED(type);
+}
+
+void EvalHandler::doneWithEval(ProFile *parent)
+{
+    Q_UNUSED(parent);
+}

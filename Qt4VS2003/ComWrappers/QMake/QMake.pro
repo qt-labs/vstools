@@ -7,5 +7,5 @@ CONFIG += \
 TARGET = demo
 
 SOURCES += \
-    $${PWD}/demo.cpp \
+    demo.cpp
 

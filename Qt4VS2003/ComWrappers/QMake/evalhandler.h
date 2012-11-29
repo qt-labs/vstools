@@ -39,38 +39,21 @@
 **
 ****************************************************************************/
 
-#include "qmakedataprovider.h"
-#include <QDebug>
-#include <QStringList>
-#include <QFileInfo>
+#ifndef EVALHANDLER_H
+#define EVALHANDLER_H
 
-void printList(const QString section, const QStringList values)
+#include <qmakeevaluator.h>
+
+/**
+ * Dummy handler to please qmake's parser.
+ */
+class EvalHandler : public QMakeHandler
 {
-    qDebug() << section;
-    foreach(const QString i, values) {
-        qDebug() << "  *" << i;
-    }
-}
+public:
+    void message(int type, const QString &msg, const QString &fileName, int lineNo);
+    void fileMessage(const QString &msg);
+    void aboutToEval(ProFile *parent, ProFile *proFile, EvalFileType type);
+    void doneWithEval(ProFile *parent);
+};
 
-int main(int argc, char *argv[])
-{
-    if (argc < 2) {
-        fputs("Please provide a filename as argument.\n", stderr);
-        return -1;
-    }
-
-    QMakeDataProvider dataProvider;
-    dataProvider.readFile(QFileInfo(QString::fromLocal8Bit(argv[1])).absoluteFilePath());
-
-    qDebug() << "valid ==" << dataProvider.isValid();
-    qDebug() << "flat ==" << dataProvider.isFlat();
-    qDebug() << "";
-
-    printList("Source files", dataProvider.getSourceFiles());
-    printList("Header files", dataProvider.getHeaderFiles());
-    printList("Resource files", dataProvider.getResourceFiles());
-    printList("Form files", dataProvider.getFormFiles());
-
-    return 0;
-}
-
+#endif // EVALHANDLER_H

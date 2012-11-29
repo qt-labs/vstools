@@ -1,33 +1,24 @@
-!win32 {
-    error("This lib can only be built under Windows!")
-}
-
-isEmpty(QT_BUILD_TREE):QT_BUILD_TREE=$(QTDIR)
-isEmpty(QT_SOURCE_TREE):QT_SOURCE_TREE=$$fromfile($$QT_BUILD_TREE/.qmake.cache, QT_SOURCE_TREE)
-
 TEMPLATE = lib
 
-#CONFIG += qt dll qaxserver release debug_and_release
-CONFIG += qt dll qaxserver release
-QT += widgets
-
+QT += axserver
+CONFIG += qaxserver_no_postlink release
 TARGET = q5makewrapper
+DESTDIR = ./
 VERSION = 1.0.0
+DEF_FILE = qmakewrapper.def
+RC_FILE = qmakewrapper.rc
 
-DEF_FILE = $$(QT_SOURCE_TREE)/../qtactiveqt/src/activeqt/control/qaxserver.def
-RC_FILE  = $$(QT_SOURCE_TREE)/../qtactiveqt/src/activeqt/control/qaxserver.rc
+NEWLINE = $$escape_expand(\\n\\t)
 
-include($$(QT_SOURCE_TREE)/mkspecs/features/win32/qaxserver.prf)
-QMAKE_POST_LINK += $$escape_expand(\\n\\t)
+!isEmpty(QMAKE_POST_LINK):QMAKE_POST_LINK += $$NEWLINE
+QMAKE_POST_LINK += $$quote(idc q5makewrapper1.dll /idl q5makewrapper.idl -version 1.0.0$$NEWLINE)
+QMAKE_POST_LINK += $$quote(midl q5makewrapper.idl /nologo /tlb q5makewrapper.tlb$$NEWLINE)
+QMAKE_POST_LINK += $$quote(idc q5makewrapper1.dll /tlb q5makewrapper.tlb$$NEWLINE)
+QMAKE_POST_LINK += $$quote(idc q5makewrapper1.dll /regserver$$NEWLINE)
+QMAKE_POST_LINK += $$quote(aximp q5makewrapper1.dll)
+QMAKE_CLEAN += q5makewrapper.idl q5makewrapper.tlb
 
-CONFIG(debug, release|debug) {
-    DEFINES += DEBUG
-    QMAKE_POST_LINK += $$quote(aximp debug\\q5makewrapper1.dll)
-}
-
-CONFIG(release, release|debug) {
-    QMAKE_POST_LINK += $$quote(aximp release\\q5makewrapper1.dll)
-}
+INCLUDEPATH += ../qmake
 
 HEADERS = qmakewrapper.h
            

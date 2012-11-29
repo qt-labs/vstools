@@ -40,56 +40,73 @@
 ****************************************************************************/
 
 #include "qmakedataprovider.h"
-#include <project.h>
-#include <property.h>
-#include <option.h>
-#include <QString>
-#include <QStringList>
-#include <QHash>
-#include <QDir>
+#include "evalhandler.h"
+#include <qmakeevaluator.h>
+#include <qmakeglobals.h>
+#include <QtCore/QFileInfo>
+#include <QtCore/QList>
+#include <QtCore/QPair>
 
 class QMakeDataProviderPrivate
 {
 public:
-    QHash<QString, QStringList> m_vars;
+    QStringList m_headerFiles;
+    QStringList m_sourceFiles;
+    QStringList m_resourceFiles;
+    QStringList m_formFiles;
+    typedef QPair<QStringList *, ProKey> Mapping;
+    QList<Mapping> m_variableMappings;
     bool m_valid;
     bool m_flat;
     QString m_qtdir;
 
-    QMakeDataProviderPrivate(const QString fileName)
+    QMakeDataProviderPrivate()
     {
-        readFile(fileName);
+        m_variableMappings
+                << qMakePair(&m_headerFiles, ProKey("HEADERS"))
+                << qMakePair(&m_sourceFiles, ProKey("SOURCES"))
+                << qMakePair(&m_resourceFiles, ProKey("RESOURCES"))
+                << qMakePair(&m_formFiles, ProKey("FORMS"));
     }
 
     bool readFile(const QString &fileName)
     {
-        m_vars.clear();
+        QFileInfo fi(fileName);
+        if (fi.isRelative())
+            qWarning("qmakewrapper: expecting an absolute filename.");
+
+        m_headerFiles.clear();
+        m_sourceFiles.clear();
+        m_resourceFiles.clear();
+        m_formFiles.clear();
         m_valid = false;
         m_flat = true;
 
-        if (fileName.isEmpty())
+        QMakeGlobals globals;
+        ProFileCache proFileCache;
+        EvalHandler handler;
+        QMakeParser parser(&proFileCache, &handler);
+        QMakeEvaluator evaluator(&globals, &parser, &handler);
+        if (evaluator.evaluateFile(fileName, QMakeHandler::EvalProjectFile,
+                                   QMakeEvaluator::LoadProOnly) != QMakeEvaluator::ReturnTrue)
+        {
+            qWarning("qmakewrapper: failed to parse %s", qPrintable(fileName));
             return false;
-
-        // NOTE: needed to make QMake code work
-        Option::mkfile::do_cache = true;
-        Option::mkfile::cachefile = m_qtdir + "\\.qmake.cache";
-
-        QMakeProperty prop;
-        QMakeProject project(&prop);
-
-        m_valid = project.read(fileName, QMakeProject::ReadProFile);
-        if (m_valid) {
-            m_vars = project.variables();
-            m_flat = project.isActiveConfig("flat");
         }
-        return m_valid;
+
+        m_valid = true;
+        m_flat = evaluator.isActiveConfig(QStringLiteral("flat"));
+
+        foreach (const Mapping &mapping, m_variableMappings)
+            *mapping.first = evaluator.values(mapping.second).toQStringList();
+
+        return true;
     }
 };
 
-QMakeDataProvider::QMakeDataProvider(const QString fileName)
-        : d(new QMakeDataProviderPrivate(fileName))
+QMakeDataProvider::QMakeDataProvider()
+    : d(new QMakeDataProviderPrivate())
 {
-    // noop
 }
 
 QMakeDataProvider::~QMakeDataProvider()
@@ -109,22 +126,22 @@ void QMakeDataProvider::setQtDir(const QString &qtdir)
 
 QStringList QMakeDataProvider::getFormFiles() const
 {
-    return d->m_vars.value("FORMS");
+    return d->m_formFiles;
 }
 
 QStringList QMakeDataProvider::getHeaderFiles() const
 {
-    return d->m_vars.value("HEADERS");
+    return d->m_headerFiles;
 }
 
 QStringList QMakeDataProvider::getResourceFiles() const
 {
-    return d->m_vars.value("RESOURCES");
+    return d->m_resourceFiles;
 }
 
 QStringList QMakeDataProvider::getSourceFiles() const
 {
-    return d->m_vars.value("SOURCES");
+    return d->m_sourceFiles;
 }
 
 bool QMakeDataProvider::isFlat() const
@@ -136,56 +153,3 @@ bool QMakeDataProvider::isValid() const
 {
     return d->m_valid;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// BEGIN -- Modified copy from QMake's main.cpp
-Q_GLOBAL_STATIC(QString, globalPwd);
-
-QString qmake_getpwd()
-{
-    QString & pwd = *(globalPwd());
-    if(pwd.isNull())
-        pwd = QDir::currentPath();
-    return pwd;
-}
-
-bool qmake_setpwd(const QString &p)
-{
-    if(QDir::setCurrent(p)) {
-        QString & pwd = *(globalPwd());
-        pwd = QDir::currentPath();
-        return true;
-    }
-    return false;
-}
-// END -- from QMake's main.cpp
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// BEGIN -- Copy from QMake's generators/projectgenerator.cpp
-QString project_builtin_regx() //calculate the builtin regular expression..
-{
-    QString ret;
-    QStringList builtin_exts;
-    builtin_exts << Option::c_ext << Option::ui_ext << Option::yacc_ext << Option::lex_ext << ".ts" << ".xlf" << ".qrc";
-    builtin_exts += Option::h_ext + Option::cpp_ext;
-    for(int i = 0; i < builtin_exts.size(); ++i) {
-        if(!ret.isEmpty())
-            ret += "; ";
-        ret += QString("*") + builtin_exts[i];
-    }
-    return ret;
-}
-// END -- from QMake's generators/projectgenerator.cpp
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// BEGIN -- Modified copy from QLibraryInfo
-QString
-QLibraryInfo::rawLocation(LibraryLocation loc, PathGroup group)
-{
-    return ""; // Modified to return empty string
-}
-
-// END -- from QLibraryInfo
-////////////////////////////////////////////////////////////////////////////////

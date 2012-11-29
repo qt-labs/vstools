@@ -43,8 +43,8 @@
 #define QMAKEDATAPROVIDER_H
 
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
-class QStringList;
 class QMakeDataProviderPrivate;
 
 class QMakeDataProvider {
@@ -52,7 +52,7 @@ class QMakeDataProvider {
     QMakeDataProviderPrivate * const d;
 
 public:
-    QMakeDataProvider(const QString fileName = QString());
+    QMakeDataProvider();
     ~QMakeDataProvider();
 
     bool readFile(const QString &fileName);

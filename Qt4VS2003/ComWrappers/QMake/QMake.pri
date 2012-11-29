@@ -1,24 +1,25 @@
-QMAKE_SOURCE_DIR=$$(QT_SOURCE_TREE)/qmake
+QMAKE_PARSER_DIR=$$PWD/evaluator
 
 INCLUDEPATH += \
-    $${QMAKE_SOURCE_DIR} \
-    $$(QT_SOURCE_TREE)/tools/shared \
-    $$PWD
-
-DEFINES += \
-    QT_BUILD_QMAKE\
-    QT_BUILD_QMAKE_LIBRARY QT_QMAKE_PARSER_ONLY
+    $$QMAKE_PARSER_DIR
 
 HEADERS += \
-    $$PWD/qmakedataprovider.h
+    $$PWD/evalhandler.h \
+    $$PWD/qmakedataprovider.h \
+    $$QMAKE_PARSER_DIR/ioutils.h \
+    $$QMAKE_PARSER_DIR/proitems.h \
+    $$QMAKE_PARSER_DIR/qmakeevaluator.h \
+    $$QMAKE_PARSER_DIR/qmakeevaluator_p.h \
+    $$QMAKE_PARSER_DIR/qmakeglobals.h \
+    $$QMAKE_PARSER_DIR/qmakeparser.h \
+    $$QMAKE_PARSER_DIR/qmake_global.h
 
 SOURCES += \
-    $${QMAKE_SOURCE_DIR}/option.cpp \
-    $${QMAKE_SOURCE_DIR}/project.cpp \
-    $${QMAKE_SOURCE_DIR}/property.cpp \
-    $${QMAKE_SOURCE_DIR}/generators/metamakefile.cpp \
-    $$(QT_SOURCE_TREE)/tools/shared/windows/registry.cpp \
-    \
-    $$PWD/qmakedataprovider.cpp
-
-LIBS += ole32.lib advapi32.lib
+    $$PWD/evalhandler.cpp \
+    $$PWD/qmakedataprovider.cpp \
+    $$QMAKE_PARSER_DIR/ioutils.cpp \
+    $$QMAKE_PARSER_DIR/proitems.cpp \
+    $$QMAKE_PARSER_DIR/qmakebuiltins.cpp \
+    $$QMAKE_PARSER_DIR/qmakeevaluator.cpp \
+    $$QMAKE_PARSER_DIR/qmakeglobals.cpp \
+    $$QMAKE_PARSER_DIR/qmakeparser.cpp

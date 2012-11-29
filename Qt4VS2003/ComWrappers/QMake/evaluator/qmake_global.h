@@ -3,34 +3,34 @@
 ** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the Qt VS Add-in.
+** This file is part of the qmake application of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia. For licensing terms and
-** conditions see http://qt.digia.com/licensing. For further information
+** a written agreement between you and Digia.  For licensing terms and
+** conditions see http://qt.digia.com/licensing.  For further information
 ** use the contact form at http://qt.digia.com/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Digia gives you certain additional
-** rights. These rights are described in the Digia Qt LGPL Exception
+** rights.  These rights are described in the Digia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
 ** General Public License version 3.0 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file. Please review the following information to
+** packaging of this file.  Please review the following information to
 ** ensure the GNU General Public License version 3.0 requirements will be
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
@@ -39,38 +39,29 @@
 **
 ****************************************************************************/
 
-#include "qmakedataprovider.h"
-#include <QDebug>
-#include <QStringList>
-#include <QFileInfo>
+#ifndef QMAKE_GLOBAL_H
+#define QMAKE_GLOBAL_H
 
-void printList(const QString section, const QStringList values)
-{
-    qDebug() << section;
-    foreach(const QString i, values) {
-        qDebug() << "  *" << i;
-    }
-}
+#include <qglobal.h>
 
-int main(int argc, char *argv[])
-{
-    if (argc < 2) {
-        fputs("Please provide a filename as argument.\n", stderr);
-        return -1;
-    }
+#if defined(QMAKE_AS_LIBRARY)
+#  if defined(QMAKE_LIBRARY)
+#    define QMAKE_EXPORT Q_DECL_EXPORT
+#  else
+#    define QMAKE_EXPORT Q_DECL_IMPORT
+#  endif
+#else
+#  define QMAKE_EXPORT
+#endif
 
-    QMakeDataProvider dataProvider;
-    dataProvider.readFile(QFileInfo(QString::fromLocal8Bit(argv[1])).absoluteFilePath());
+// Be fast even for debug builds
+// MinGW GCC 4.5+ has a problem with always_inline putTok and putBlockLen
+#if defined(__GNUC__) && !(defined(__MINGW32__) && __GNUC__ == 4 && __GNUC_MINOR__ >= 5)
+# define ALWAYS_INLINE inline __attribute__((always_inline))
+#elif defined(_MSC_VER)
+# define ALWAYS_INLINE __forceinline
+#else
+# define ALWAYS_INLINE inline
+#endif
 
-    qDebug() << "valid ==" << dataProvider.isValid();
-    qDebug() << "flat ==" << dataProvider.isFlat();
-    qDebug() << "";
-
-    printList("Source files", dataProvider.getSourceFiles());
-    printList("Header files", dataProvider.getHeaderFiles());
-    printList("Resource files", dataProvider.getResourceFiles());
-    printList("Form files", dataProvider.getFormFiles());
-
-    return 0;
-}
-
+#endif
