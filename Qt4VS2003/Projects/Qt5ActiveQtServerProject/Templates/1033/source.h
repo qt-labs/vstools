@@ -8,7 +8,7 @@
 
 class %CLASS% : public QWidget, public QAxBindable
 {
-    Q_OBJECT    
+    Q_OBJECT
 
 public:
     %CLASS%(QWidget *parent = 0);
