@@ -263,19 +263,19 @@ namespace Digia.Qt5ProjectLib
             moduleInfo.AdditionalLibraries.Add("glu32.lib");
             moduleInfo.AdditionalLibrariesWinCE.Add("libgles_cm.lib");
 
-            moduleInfo = InitQtModule(QtModule.ActiveQtS, "QAxServer", "QAXSERVER", true);
+            moduleInfo = InitQtModule(QtModule.ActiveQtS, "QtAxServer", "QAXSERVER", true);
             moduleInfo.HasDLL = false;
             moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
-            moduleInfo.AdditionalLibraries.Add("ActiveQt.lib");
-            moduleInfo.AdditionalLibrariesDebug.Add("ActiveQtd.lib");
+            moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");
+            moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
-            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QAxContainer", "" /*?*/, true);
+            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QtAxContainer", "", true);
             moduleInfo.HasDLL = false;
             moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
-            moduleInfo.AdditionalLibraries.Add("ActiveQt.lib");
-            moduleInfo.AdditionalLibrariesDebug.Add("ActiveQtd.lib");
+            moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");
+            moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
             moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "QT_UITOOLS_LIB", true);
             moduleInfo.dependentModules.Add(QtModule.Xml);

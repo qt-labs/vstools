@@ -134,9 +134,9 @@ function AddModules() {
     // Add-on modules
     // Active Qt better split to server and container
     if (wizard.FindSymbol('AQCONTAINER_MODULE'))
-        QtEngine.AddModule("QAxContainer");
+        QtEngine.AddModule("QtAxContainer");
     if (wizard.FindSymbol('AQSERVER_MODULE'))
-        QtEngine.AddModule("QAxServer");
+        QtEngine.AddModule("QtAxServer");
     if (wizard.FindSymbol('BLUETOOTH_MODULE'))
         QtEngine.AddModule("QtBluetooth");
     if (wizard.FindSymbol('CONTACTS_MODULE'))
