@@ -9,7 +9,7 @@ class %CLASS% : public %BASECLASS%
     Q_OBJECT
 
 public:
-    %CLASS%(QWidget *parent = 0, Qt::WFlags flags = 0);
+    %CLASS%(QWidget *parent = 0);
     ~%CLASS%();
 
 private:

@@ -1,7 +1,7 @@
 #ifndef %PLUGIN_HEADER_PRE_DEF%
 #define %PLUGIN_HEADER_PRE_DEF%
 
-#include <QDesignerCustomWidgetInterface>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 class %PLUGIN_CLASS% : public QObject, public QDesignerCustomWidgetInterface
 {
