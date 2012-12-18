@@ -204,15 +204,12 @@ namespace Qt5VSAddin
 
                 // Disable if module not installed
                 QtModuleInfo info = QtModules.Instance.ModuleInformation(item.moduleId);
-                string full_path = install_path + "\\lib\\" + info.LibraryPrefix;
-                if (!info.LibraryPrefix.StartsWith("QAx"))
+                string libraryPrefix = info.LibraryPrefix;
+                if (libraryPrefix.StartsWith("Qt"))
                 {
-                    full_path += "5.lib";
+                    libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
                 }
-                else
-                {
-                    full_path += ".lib";
-                }
+                string full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
                 System.IO.FileInfo fi = new System.IO.FileInfo(full_path);
                 item.checkbox.Enabled = fi.Exists;
                 if (fi.Exists == false)
