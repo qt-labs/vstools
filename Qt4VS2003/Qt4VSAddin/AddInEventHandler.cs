@@ -339,7 +339,7 @@ namespace Qt5VSAddin
 
                 client = new TcpClient();
                 int connectionAttempts = 0;
-                int appwrapperPort = 12005;
+                int appwrapperPort = 12015;
                 while (!client.Connected && !terminateEditorThread && connectionAttempts < 10)
                 {
                     try

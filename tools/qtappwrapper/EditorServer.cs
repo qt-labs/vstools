@@ -132,7 +132,7 @@ namespace QtAppWrapper
         public static void SendFileNameToServer(string fileName, string processId)
         {
             TcpClient client = new TcpClient();
-            IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, 12005);
+            IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, 12015);
             bool clientConnected = false;
             try
             {
@@ -179,7 +179,7 @@ namespace QtAppWrapper
         public EditorServer()
         {
             clientList = new List<TcpClient>();
-            listener = new TcpListener(IPAddress.Loopback, 12005);
+            listener = new TcpListener(IPAddress.Loopback, 12015);
             listenThread = new Thread(new ThreadStart(ListenForClients));
             listenThread.Name = "listenThread";
             listenThread.Start();

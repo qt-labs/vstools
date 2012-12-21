@@ -316,7 +316,7 @@ namespace Digia.Qt5ProjectLib
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
-            string key = "QtVersion " + platform;
+            string key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
             {
                 project.Globals[key] = version;
@@ -341,9 +341,9 @@ namespace Digia.Qt5ProjectLib
             }
             string version = GetProjectQtVersion(project, platformName);
 
-            if (version == null && project.Globals.get_VariablePersists("QtVersion"))
+            if (version == null && project.Globals.get_VariablePersists("Qt5Version"))
             {
-                version = (string)project.Globals["QtVersion"];
+                version = (string)project.Globals["Qt5Version"];
                 ExpandEnvironmentVariablesInQtVersion(ref version);
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
@@ -356,7 +356,7 @@ namespace Digia.Qt5ProjectLib
 
         public string GetProjectQtVersion(EnvDTE.Project project, string platform)
         {
-            string key = "QtVersion " + platform;
+            string key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
             string version = (string)project.Globals[key];
@@ -385,9 +385,9 @@ namespace Digia.Qt5ProjectLib
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
-            solution.Globals["QtVersion"] = version;
-            if (!solution.Globals.get_VariablePersists("QtVersion"))
-                solution.Globals.set_VariablePersists("QtVersion", true);
+            solution.Globals["Qt5Version"] = version;
+            if (!solution.Globals.get_VariablePersists("Qt5Version"))
+                solution.Globals.set_VariablePersists("Qt5Version", true);
             return true;
         }
 
@@ -396,9 +396,9 @@ namespace Digia.Qt5ProjectLib
             if (solution == null)
                 return null;
 
-            if (solution.Globals.get_VariableExists("QtVersion"))
+            if (solution.Globals.get_VariableExists("Qt5Version"))
             {
-                string version = (string)solution.Globals["QtVersion"];
+                string version = (string)solution.Globals["Qt5Version"];
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
             
@@ -496,8 +496,8 @@ namespace Digia.Qt5ProjectLib
             if (project == null)
                 return false;
             string platform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
-            if (project.Globals.get_VariablePersists("QtVersion " + platform)
-                || project.Globals.get_VariablePersists("QtVersion"))
+            if (project.Globals.get_VariablePersists("Qt5Version " + platform)
+                || project.Globals.get_VariablePersists("Qt5Version"))
                 return true;
             else 
                 return false;

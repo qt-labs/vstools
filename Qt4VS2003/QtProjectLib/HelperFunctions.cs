@@ -564,7 +564,7 @@ namespace Digia.Qt5ProjectLib
 
                 foreach (string global in (string[])project.Globals.VariableNames)
                 {
-                    if (global.StartsWith("QtVersion"))
+                    if (global.StartsWith("Qt5Version"))
                     {
                         project.Globals.set_VariablePersists(global, false);
                     }
@@ -818,7 +818,7 @@ namespace Digia.Qt5ProjectLib
                 return false;
 
             foreach (string global in envPro.Globals.VariableNames as string[])
-                if (global.StartsWith("QtVersion") && envPro.Globals.get_VariablePersists(global))
+                if (global.StartsWith("Qt5Version") && envPro.Globals.get_VariablePersists(global))
                     return true;
             return false;
         }
