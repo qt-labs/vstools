@@ -418,19 +418,11 @@ namespace Digia.Qt5ProjectLib
                         CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
                         if (newVersion.IsStaticBuild())
                         {
-                            linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+)5\\.lib", "Qt${1}.lib");
-                            linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)5\\.lib", "${1}.lib");
                             if (compiler != null)
                                 compiler.RemovePreprocessorDefinition("QT_DLL");
                         }
                         else
                         {
-                            linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "Qt(\\S+[^5])\\.lib", "Qt${1}5.lib");
-                            linker.AdditionalDependencies =
-                                Regex.Replace(linker.AdditionalDependencies, "(phonond?)\\.lib", "${1}5.lib");
                             if (compiler != null)
                                 compiler.AddPreprocessorDefinition("QT_DLL");
                         }

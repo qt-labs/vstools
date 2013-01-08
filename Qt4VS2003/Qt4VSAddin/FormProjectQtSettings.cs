@@ -214,7 +214,9 @@ namespace Qt5VSAddin
                 item.checkbox.Enabled = fi.Exists;
                 if (fi.Exists == false)
                 {
-                    item.checkbox.Checked = false;
+                    // Don't disable item if qtVersion not available
+                    if (qtVersion != null)
+                        item.checkbox.Checked = false;
                 }
             }
         }
