@@ -216,12 +216,12 @@ namespace Digia.Qt5ProjectLib
         {
             QtModuleInfo moduleInfo = null;
             InitQtModule(QtModule.Core, "QtCore", "QT_CORE_LIB", true);
-            InitQtModule(QtModule.Multimedia, "QtMultimedia", "QT_MULTIMEDIA_LIB", false);
+            InitQtModule(QtModule.Multimedia, "QtMultimedia", "QT_MULTIMEDIA_LIB", true);
             InitQtModule(QtModule.Sql, "QtSql", "QT_SQL_LIB", true);
             InitQtModule(QtModule.Network, "QtNetwork", "QT_NETWORK_LIB", true);
             InitQtModule(QtModule.Xml, "QtXml", "QT_XML_LIB", true);
-            InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB", false);
-            InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB", false);
+            InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB", true);
+            InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB", true);
             moduleInfo = InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB", true);
             moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtscript\\include;$(QTDIR)\\..\\qtscript\\include\\QtScriptTools";
 
@@ -249,10 +249,10 @@ namespace Digia.Qt5ProjectLib
             moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "", true);
             moduleInfo.dependentModules.Add(QtModule.Phonon);
 
-            moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB", false);
+            moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB", true);
             moduleInfo.dependentModules.Add(QtModule.Xml);
 
-            moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB" /*?*/, false);
+            moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB" /*?*/, true);
             moduleInfo.dependentModules.Add(QtModule.Script);
             moduleInfo.dependentModules.Add(QtModule.Sql);
             moduleInfo.dependentModules.Add(QtModule.XmlPatterns);
