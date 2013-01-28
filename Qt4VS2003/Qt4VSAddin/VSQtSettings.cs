@@ -79,8 +79,8 @@ namespace Qt5VSAddin
             QtVSIPSettings.SaveUicDirectory(newUicDir);
             QtVSIPSettings.SaveRccDirectory(newRccDir);
             QtVSIPSettings.SaveLUpdateOnBuild(newLUpdateOnBuild);
-            QtVSIPSettings.SaveLUpdateOptions(newLReleaseOptions);
-            QtVSIPSettings.SaveLReleaseOptions(newLUpdateOptions);
+            QtVSIPSettings.SaveLUpdateOptions(newLUpdateOptions);
+            QtVSIPSettings.SaveLReleaseOptions(newLReleaseOptions);
             QtVSIPSettings.SaveAskBeforeCheckoutFile(newAskBeforeCheckoutFile);
             QtVSIPSettings.SaveDisableCheckoutFiles(newDisableCheckoutFiles);
             QtVSIPSettings.SaveDisableAutoMocStepsUpdate(newDisableAutoMOCStepsUpdate);
