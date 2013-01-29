@@ -2633,7 +2633,7 @@ namespace Digia.Qt5ProjectLib
             {
                 string header = compiler.GetPrecompiledHeaderThrough();
                 if (!string.IsNullOrEmpty(header))
-                    return header;
+                    return header.ToLower();
             }
             catch { }
             return null;
