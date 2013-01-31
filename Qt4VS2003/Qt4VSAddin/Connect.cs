@@ -43,6 +43,7 @@ using System;
 using Extensibility;
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
+using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -146,6 +147,7 @@ namespace Qt5VSAddin
                         initializer = new AddinInit(_applicationObject);
                         initializer.removeCommands();
                         initializer.registerCommands();
+                        UpdateDefaultEditors(true);
                     }
                     catch (System.Exception e)
                     {
@@ -447,6 +449,7 @@ namespace Qt5VSAddin
                 try
                 {
                     initializer.removeCommands();
+                    UpdateDefaultEditors(false);
                 }
                 catch (System.Exception e)
                 {
@@ -460,6 +463,21 @@ namespace Qt5VSAddin
         /// <seealso class='IDTExtensibility2' />
         public void OnAddInsUpdate(ref Array custom)
         {
+            try
+            {
+                // Check if Qt4 addin version is found
+                AddIn qt4addin = _applicationObject.AddIns.Item("Qt4VSAddin.Connect");
+                // Close it if found and running
+                if (_addInInstance.Connected && qt4addin.Connected)
+                {
+                    qt4addin.Connected = false;
+                    Messages.PaneMessage(_applicationObject, SR.GetString("Qt4Unloaded_pane_msg"));
+                }
+            }
+            catch (COMException)
+            {
+                // Just catching exception if Qt4 addin not found
+            }
         }
 
         /// <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
@@ -474,6 +492,30 @@ namespace Qt5VSAddin
         /// <seealso class='IDTExtensibility2' />
         public void OnBeginShutdown(ref Array custom)
         {
+        }
+
+        /// <summary>This is to support Qt5 and Qt5 development at the same time. Default editor values in registry are changed so that Qt4 add-in is default and Qt5 values are set only when this add-in is loaded.</summary>
+        /// <param term='startup'>Is this Qt5 add-in starting (true) or closing (false).</param>
+        private void UpdateDefaultEditors(bool startup)
+        {
+            // This add-in starts so just setting correct default editor
+            // registry values for .qrc, .ts and .ui extensions.
+            if (startup)
+            {
+                Qt5DefaultEditors qt5 = new Qt5DefaultEditors();
+                qt5.WriteRegistryValues();
+            }
+            // This add-in closing so checking...
+            else
+            {
+                // ...if also Qt4 addin is installed and setting correct
+                // registry values for it
+                Qt4DefaultEditors qt4 = new Qt4DefaultEditors();
+                if (qt4.IsAddinInstalled())
+                {
+                    qt4.WriteRegistryValues();
+                }
+            }
         }
     }
 }

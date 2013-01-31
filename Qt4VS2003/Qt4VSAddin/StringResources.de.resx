@@ -771,4 +771,9 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   <data name="MultimediaWidgetsLibrary" xml:space="preserve">
     <value>Multimedia Widgets</value>
   </data>
+  <data name="Qt4Unloaded_pane_msg" xml:space="preserve">
+    <value>!!! Qt4 Add-in was found and closed! !!!
+Qt4 and Qt5 versions can't be used at the same time.
+Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt4 Add-in.</value>
+  </data>
 </root>
