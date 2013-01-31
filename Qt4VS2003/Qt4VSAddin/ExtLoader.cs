@@ -154,7 +154,7 @@ namespace Qt5VSAddin
 
             FileInfo priFileInfo = new FileInfo(fileName);
 
-            QMakeWrapper qmake = new QMakeWrapper();
+            Q5MakeWrapper qmake = new Q5MakeWrapper();
             qmake.setQtDir(qtDir);
             if (qmake.readFile(priFileInfo.FullName))
             {

@@ -5,7 +5,7 @@
 
 class QMakeDataProvider;
 
-class QMakeWrapper : public QWidget
+class Q5MakeWrapper : public QWidget
 {
     Q_OBJECT
     Q_CLASSINFO("ClassID", "{33BE6C6F-E878-4F76-9676-9D78C44C4086}")
@@ -13,7 +13,7 @@ class QMakeWrapper : public QWidget
     Q_CLASSINFO("EventsID", "{CA15864E-AE89-409F-BE96-F212931383A9}")
 
 public:
-    QMakeWrapper(QWidget *parent = 0);
+    Q5MakeWrapper(QWidget *parent = 0);
 
 public slots:
     bool readFile(const QString &fileName);

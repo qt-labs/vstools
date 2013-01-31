@@ -42,49 +42,48 @@
 #include "qmakewrapper.h"
 #include "qmakedataprovider.h"
 
-QMakeWrapper::QMakeWrapper(QWidget *parent)
+Q5MakeWrapper::Q5MakeWrapper(QWidget *parent)
     : QWidget(parent)
 {
     m_qmakeDataProvider = new QMakeDataProvider();
 }
 
-bool QMakeWrapper::readFile(const QString &fileName)
+bool Q5MakeWrapper::readFile(const QString &fileName)
 {
     return m_qmakeDataProvider->readFile(fileName);
 }
 
-void QMakeWrapper::setQtDir(const QString& qtdir)
+void Q5MakeWrapper::setQtDir(const QString& qtdir)
 {
     m_qmakeDataProvider->setQtDir(qtdir);
 }
 
-QStringList QMakeWrapper::sourceFiles() const
+QStringList Q5MakeWrapper::sourceFiles() const
 {
     return m_qmakeDataProvider->getSourceFiles();
 }
 
-QStringList QMakeWrapper::headerFiles() const
+QStringList Q5MakeWrapper::headerFiles() const
 {
     return m_qmakeDataProvider->getHeaderFiles();
 }
 
-QStringList QMakeWrapper::formFiles() const
+QStringList Q5MakeWrapper::formFiles() const
 {
     return m_qmakeDataProvider->getFormFiles();
 }
 
-QStringList QMakeWrapper::resourceFiles() const
+QStringList Q5MakeWrapper::resourceFiles() const
 {
     return m_qmakeDataProvider->getResourceFiles();
 }
 
-bool QMakeWrapper::isValid() const
+bool Q5MakeWrapper::isValid() const
 {
     return m_qmakeDataProvider->isValid();
 }
 
-bool QMakeWrapper::isFlat() const
+bool Q5MakeWrapper::isFlat() const
 {
     return m_qmakeDataProvider->isFlat();
 }
-
