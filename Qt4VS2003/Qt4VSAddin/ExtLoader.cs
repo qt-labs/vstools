@@ -47,7 +47,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.VCProjectEngine;
-using q5makewrapper1Lib;
 using System.Collections;
 using System.Net.Sockets;
 using System.Collections.Generic;

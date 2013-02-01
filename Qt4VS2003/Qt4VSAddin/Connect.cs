@@ -69,6 +69,7 @@ namespace Qt5VSAddin
         private FormProjectQtSettings formProjectQtSettings = null;
         private string installationDir = null;
         private string appWrapperPath = null;
+        private string qmakeFileReaderPath = null;
         private bool commandLine = false;
 
         public static Connect Instance()
@@ -94,24 +95,37 @@ namespace Qt5VSAddin
             get
             {
                 if (appWrapperPath == null)
-                {
-                    string exeName = "qt5appwrapper.exe";
-                    appWrapperPath = installationDir + exeName;
-                    if (!File.Exists(appWrapperPath))
-                    {
-                        appWrapperPath = installationDir;
-                        if (appWrapperPath.EndsWith("\\"))
-                            appWrapperPath = appWrapperPath.Remove(appWrapperPath.Length - 1);
-                        int idx = appWrapperPath.LastIndexOf('\\');
-                        if (idx >= 0 && idx < appWrapperPath.Length - 1)
-                            appWrapperPath = appWrapperPath.Remove(idx + 1);
-                        appWrapperPath += exeName;
-                        if (!File.Exists(appWrapperPath))
-                            appWrapperPath = null;
-                    }
-                }
+                    appWrapperPath = locateHelperExecutable("qt5appwrapper.exe");
                 return appWrapperPath;
             }
+        }
+
+        public string QMakeFileReaderPath
+        {
+            get
+            {
+                if (qmakeFileReaderPath == null)
+                    qmakeFileReaderPath = locateHelperExecutable("qmakefilereader.exe");
+                return qmakeFileReaderPath;
+            }
+        }
+
+        private string locateHelperExecutable(string exeName)
+        {
+            string filePath = installationDir + exeName;
+            if (!File.Exists(filePath))
+            {
+                filePath = installationDir;
+                if (filePath.EndsWith("\\"))
+                    filePath = filePath.Remove(filePath.Length - 1);
+                int idx = filePath.LastIndexOf('\\');
+                if (idx >= 0 && idx < filePath.Length - 1)
+                    filePath = filePath.Remove(idx + 1);
+                filePath += exeName;
+                if (!File.Exists(filePath))
+                    filePath = null;
+            }
+            return filePath;
         }
 
         /// <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{459BD34A-235E-45D5-A1A7-D2AAE2F1D98D}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -85,6 +85,7 @@
     <Compile Include="FormVSQtSettings.Designer.cs">
       <DependentUpon>FormVSQtSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="QMakeWrapper.cs" />
     <Compile Include="QtSettings.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -148,14 +149,6 @@
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-    <COMReference Include="q5makewrapper1Lib">
-      <Guid>{C9750D9B-554C-4828-AFDC-A8352E600344}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
     <COMReference Include="stdole">

@@ -108,6 +108,7 @@
       <DependentUpon>FormVSQtSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="QtDefaultEditorsHelper.cs" />
+    <Compile Include="QMakeWrapper.cs" />
     <Compile Include="QtSettings.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -170,15 +171,6 @@
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
-    </COMReference>
-    <COMReference Include="q5makewrapper1Lib">
-      <Guid>{C9750D9B-554C-4828-AFDC-A8352E600344}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="stdole">
       <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
