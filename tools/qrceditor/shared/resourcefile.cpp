@@ -41,18 +41,18 @@
 
 #include "resourcefile_p.h"
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QFile>
-#include <QtCore/QMimeData>
-#include <QtCore/QtAlgorithms>
-#include <QtCore/QTextStream>
+#include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
+#include <QFile>
+#include <QMimeData>
+#include <QtAlgorithms>
+#include <QTextStream>
 
-#include <QtGui/QIcon>
-#include <QtGui/QImageReader>
+#include <QIcon>
+#include <QImageReader>
 
-#include <QtXml/QDomDocument>
+#include <QDomDocument>
 
 QT_BEGIN_NAMESPACE
 
@@ -507,8 +507,6 @@ void ResourceFile::clearPrefixList()
 ResourceModel::ResourceModel(const ResourceFile &resource_file, QObject *parent)
     : QAbstractItemModel(parent), m_resource_file(resource_file),  m_dirty(false)
 {
-    // Only action that works for QListWidget and the like.
-    setSupportedDragActions(Qt::CopyAction);
 }
 
 void ResourceModel::setDirty(bool b)
@@ -601,6 +599,12 @@ bool ResourceModel::hasChildren(const QModelIndex &parent) const
     return rowCount(parent) != 0;
 }
 
+Qt::DropActions ResourceModel::supportedDropActions() const
+{
+    // Only action that works for QListWidget and the like.
+    return Qt::CopyAction;
+}
+
 bool ResourceModel::iconFileExtension(const QString &path)
 {
     static QStringList ext_list;
@@ -608,7 +612,7 @@ bool ResourceModel::iconFileExtension(const QString &path)
         const QList<QByteArray> _ext_list = QImageReader::supportedImageFormats();
         foreach (const QByteArray &ext, _ext_list) {
             QString dotExt = QString(QLatin1Char('.'));
-            dotExt  += QString::fromAscii(ext);
+            dotExt  += QString::fromLocal8Bit(ext);
             ext_list.append(dotExt);
         }
     }
@@ -941,10 +945,11 @@ QModelIndex ResourceModel::deleteItem(const QModelIndex &idx)
 
 bool ResourceModel::reload()
 {
+    beginResetModel();
     const bool result = m_resource_file.load();
     if (result)
         setDirty(false);
-    reset();
+    endResetModel();
     return result;
 }
 

@@ -210,6 +210,7 @@ public:
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     bool hasChildren(const QModelIndex &parent) const;
+    Qt::DropActions supportedDropActions() const;
 
 protected:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
