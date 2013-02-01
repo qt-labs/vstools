@@ -158,7 +158,7 @@ void MainWindow::slotSave()
 void MainWindow::slotAbout()
 {
     QMessageBox::about(this, tr("About Qt Resource Editor"),
-        tr("Qt Resource Editor") + "\n\n" + tr("Copyright (C) 2009-2011 Nokia Corporation and/or its subsidiary(-ies)"));
+        tr("Qt Resource Editor") + "\n\n" + tr("Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies)"));
 }
 
 void MainWindow::slotAboutQt()
