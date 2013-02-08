@@ -109,6 +109,7 @@
     <Compile Include="FormVSQtSettings.Designer.cs">
       <DependentUpon>FormVSQtSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="QtDefaultEditorsHelper.cs" />
     <Compile Include="QMakeWrapper.cs" />
     <Compile Include="QtSettings.cs">
       <SubType>Code</SubType>
