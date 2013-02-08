@@ -123,13 +123,6 @@ namespace Digia.Qt5ProjectLib
             return qtConfig.SignatureFile;
         }
 
-        public bool IsSDK()
-        {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
-            return qtConfig.IsSDK;
-        }
-
         public string GetQMakeConfEntry(string entryName)
         {
             if (qmakeConf == null)

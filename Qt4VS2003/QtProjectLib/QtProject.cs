@@ -247,7 +247,6 @@ namespace Digia.Qt5ProjectLib
             VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-            bool isSDK = versionInfo.IsSDK();
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations)
             {
@@ -260,7 +259,7 @@ namespace Digia.Qt5ProjectLib
                     foreach(string define in info.Defines)
                         compiler.AddPreprocessorDefinition(define);
 
-                    string incPath = info.GetIncludePath(isSDK);
+                    string incPath = info.GetIncludePath();
                     if (!String.IsNullOrEmpty(incPath))
                         compiler.AddAdditionalIncludeDirectories(incPath);
                 }
@@ -311,15 +310,10 @@ namespace Digia.Qt5ProjectLib
                     if (additionalIncludeDirs != null)
                     {
                         List<string> lst = new List<string>(additionalIncludeDirs);
-                        if (!String.IsNullOrEmpty(info.sdkIncludePath))
+                        if (!String.IsNullOrEmpty(info.IncludePath))
                         {
-                            lst.Remove(info.sdkIncludePath);
-                            lst.Remove('\"' + info.sdkIncludePath + '\"');
-                        }
-                        if (!String.IsNullOrEmpty(info.srcIncludePath))
-                        {
-                            lst.Remove(info.srcIncludePath);
-                            lst.Remove('\"' + info.srcIncludePath + '\"');
+                            lst.Remove(info.IncludePath);
+                            lst.Remove('\"' + info.IncludePath + '\"');
                         }
                         compiler.AdditionalIncludeDirectories = lst;
                     }
@@ -458,7 +452,6 @@ namespace Digia.Qt5ProjectLib
             VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-            bool isSDK = versionInfo.IsSDK();
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations)
             {
@@ -468,7 +461,7 @@ namespace Digia.Qt5ProjectLib
                 QtModuleInfo info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null)
                 {
-                    string incPath = info.GetIncludePath(isSDK);
+                    string incPath = info.GetIncludePath();
                     if (String.IsNullOrEmpty(incPath))
                         break;
                     if (compiler.GetAdditionalIncludeDirectories() == null)

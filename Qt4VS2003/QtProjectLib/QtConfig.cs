@@ -53,7 +53,6 @@ namespace Digia.Qt5ProjectLib
     {
         private bool isStaticBuild = false;
         private string signatureFile = null;
-        private bool isSDK = true;
 
         public QtConfig(string qtdir)
         {
@@ -74,16 +73,6 @@ namespace Digia.Qt5ProjectLib
                 }
                 catch {}
             }
-            // Check if we don't have SDK setup (default)
-            // These folders should not found when own build from src package
-            // Just using some of non existing to do check
-            DirectoryInfo diActiveQt = new DirectoryInfo(qtdir + "\\include\\ActiveQt");
-            DirectoryInfo diDesigner = new DirectoryInfo(qtdir + "\\include\\QtDesigner");
-            DirectoryInfo diPhonon = new DirectoryInfo(qtdir + "\\include\\phonon");
-            if (!diActiveQt.Exists || !diDesigner.Exists || !diPhonon.Exists)
-            {
-                isSDK = false;
-            }
         }
 
         public bool IsStaticBuild
@@ -94,11 +83,6 @@ namespace Digia.Qt5ProjectLib
         public string SignatureFile
         {
             get { return signatureFile; }
-        }
-
-        public bool IsSDK
-        {
-            get { return isSDK; }
         }
 
         /// <summary>

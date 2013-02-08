@@ -111,8 +111,7 @@ namespace Digia.Qt5ProjectLib
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
         public List<string> AdditionalLibrariesWinCE = new List<string>();
-        public string sdkIncludePath = null; // default
-        public string srcIncludePath = null; // used for own Qt builds from src
+        public string IncludePath = null;
         public string proVarQT = null;
         public string proVarCONFIG = null;
         public List<QtModule> dependentModules = new List<QtModule>();  // For WinCE deployment.
@@ -127,13 +126,9 @@ namespace Digia.Qt5ProjectLib
             get { return moduleId; }
         }
 
-        public string GetIncludePath(bool isSDK)
+        public string GetIncludePath()
         {
-            if (isSDK)
-            {
-                return sdkIncludePath;
-            }
-            return srcIncludePath;
+            return IncludePath;
         }
 
         public List<string> GetLibs(bool isDebugCfg, VersionInformation vi)
@@ -215,133 +210,102 @@ namespace Digia.Qt5ProjectLib
         private QtModules()
         {
             QtModuleInfo moduleInfo = null;
-            InitQtModule(QtModule.Core, "QtCore", "QT_CORE_LIB", true);
-            InitQtModule(QtModule.Multimedia, "QtMultimedia", "QT_MULTIMEDIA_LIB", true);
-            InitQtModule(QtModule.Sql, "QtSql", "QT_SQL_LIB", true);
-            InitQtModule(QtModule.Network, "QtNetwork", "QT_NETWORK_LIB", true);
-            InitQtModule(QtModule.Xml, "QtXml", "QT_XML_LIB", true);
-            InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB", true);
-            InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB", true);
-            moduleInfo = InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtscript\\include;$(QTDIR)\\..\\qtscript\\include\\QtScriptTools";
-
-            moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", new string[]{"QDESIGNER_EXPORT_WIDGETS", "QT_DESIGNER_LIB"}, true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qttools\\include;$(QTDIR)\\..\\qttools\\include\\QtDesigner";
-
-            moduleInfo = InitQtModule(QtModule.Main, "qtmain", "", true);
+            InitQtModule(QtModule.Core, "QtCore", "QT_CORE_LIB");
+            InitQtModule(QtModule.Multimedia, "QtMultimedia", "QT_MULTIMEDIA_LIB");
+            InitQtModule(QtModule.Sql, "QtSql", "QT_SQL_LIB");
+            InitQtModule(QtModule.Network, "QtNetwork", "QT_NETWORK_LIB");
+            InitQtModule(QtModule.Xml, "QtXml", "QT_XML_LIB");
+            InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB");
+            InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB");
+            moduleInfo = InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB");
+            moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", new string[]{"QDESIGNER_EXPORT_WIDGETS", "QT_DESIGNER_LIB"});
+            moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
             moduleInfo.proVarQT = null;
             moduleInfo.HasDLL = false;
-            moduleInfo.sdkIncludePath = null;
-            moduleInfo.srcIncludePath = null;
+            moduleInfo.IncludePath = null;
 
-            moduleInfo = InitQtModule(QtModule.Test, "QtTest", "QT_TESTLIB_LIB", true);
+            moduleInfo = InitQtModule(QtModule.Test, "QtTest", "QT_TESTLIB_LIB");
             moduleInfo.proVarQT = null;
             moduleInfo.proVarCONFIG = "qtestlib";
 
-            moduleInfo = InitQtModule(QtModule.Help, "QtHelp", "QT_HELP_LIB", true);
+            moduleInfo = InitQtModule(QtModule.Help, "QtHelp", "QT_HELP_LIB");
             moduleInfo.proVarQT = null;
             moduleInfo.proVarCONFIG = "help";
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qttools\\include;$(QTDIR)\\..\\qttools\\include\\QtHelp";
-
-            moduleInfo = InitQtModule(QtModule.Phonon, "phonon", "QT_PHONON_LIB" /*?*/, true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtphonon\\include;$(QTDIR)\\..\\qtphonon\\include\\phonon";
-
-            moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "", true);
+            moduleInfo = InitQtModule(QtModule.Phonon, "phonon", "QT_PHONON_LIB");
+            moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "");
             moduleInfo.dependentModules.Add(QtModule.Phonon);
 
-            moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB", true);
+            moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB");
             moduleInfo.dependentModules.Add(QtModule.Xml);
 
-            moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB" /*?*/, true);
+            moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB");
             moduleInfo.dependentModules.Add(QtModule.Script);
             moduleInfo.dependentModules.Add(QtModule.Sql);
             moduleInfo.dependentModules.Add(QtModule.XmlPatterns);
             moduleInfo.dependentModules.Add(QtModule.Network);
 
-            moduleInfo = InitQtModule(QtModule.OpenGL, "QtOpenGL", "QT_OPENGL_LIB", true);
+            moduleInfo = InitQtModule(QtModule.OpenGL, "QtOpenGL", "QT_OPENGL_LIB");
             moduleInfo.AdditionalLibraries.Add("opengl32.lib");
             moduleInfo.AdditionalLibraries.Add("glu32.lib");
             moduleInfo.AdditionalLibrariesWinCE.Add("libgles_cm.lib");
 
-            moduleInfo = InitQtModule(QtModule.ActiveQtS, "QtAxServer", "QAXSERVER", true);
+            moduleInfo = InitQtModule(QtModule.ActiveQtS, "QtAxServer", "QAXSERVER");
             moduleInfo.HasDLL = false;
-            moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
+            moduleInfo.IncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");
             moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
-            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QtAxContainer", "", true);
+            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QtAxContainer", "");
             moduleInfo.HasDLL = false;
-            moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\ActiveQt";
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtactiveqt\\include;$(QTDIR)\\..\\qtactiveqt\\include\\ActiveQt";
+            moduleInfo.IncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");
             moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
-            moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "QT_UITOOLS_LIB", true);
+            moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "QT_UITOOLS_LIB");
             moduleInfo.dependentModules.Add(QtModule.Xml);
             moduleInfo.HasDLL = false;
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qttools\\include;$(QTDIR)\\..\\qttools\\include\\QtUiTools";
 
             // Qt5
-            InitQtModule(QtModule.Widgets, "QtWidgets", "QT_WIDGETS_LIB", true);
+            InitQtModule(QtModule.Widgets, "QtWidgets", "QT_WIDGETS_LIB");
 
-            moduleInfo = InitQtModule(QtModule.Gui, "QtGui", "QT_GUI_LIB", true);
+            moduleInfo = InitQtModule(QtModule.Gui, "QtGui", "QT_GUI_LIB");
             moduleInfo.dependentModules.Add(QtModule.Widgets);
 
-            InitQtModule(QtModule.ThreeD, "Qt3D", "QT_3D_LIB", false);
-            InitQtModule(QtModule.Location, "QtLocation", "QT_LOCATION_LIB", false);
+            InitQtModule(QtModule.ThreeD, "Qt3D", "QT_3D_LIB");
+            InitQtModule(QtModule.Location, "QtLocation", "QT_LOCATION_LIB");
 
-            InitQtModule(QtModule.Qml, "QtQml", "QT_QML_LIB", true);
-            moduleInfo = InitQtModule(QtModule.Bluetooth, "QtBluetooth", "QT_BLUETOOTH_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtconnectivity\\include;$(QTDIR)\\..\\qtconnectivity\\include\\QtBluetooth";
-            moduleInfo = InitQtModule(QtModule.Contacts, "QtContacts", "QT_CONTACTS_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtpim\\include;$(QTDIR)\\..\\qtpim\\include\\QtContacts";
+            InitQtModule(QtModule.Qml, "QtQml", "QT_QML_LIB");
+            moduleInfo = InitQtModule(QtModule.Bluetooth, "QtBluetooth", "QT_BLUETOOTH_LIB");
+            moduleInfo = InitQtModule(QtModule.Contacts, "QtContacts", "QT_CONTACTS_LIB");
 
-            moduleInfo = InitQtModule(QtModule.Organizer, "QtOrganizer", "QT_ORGANIZER_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtpim\\include;$(QTDIR)\\..\\qtpim\\include\\QtOrganizer";
-            InitQtModule(QtModule.PrintSupport, "QtPrintSupport", "QT_PRINTSUPPORT_LIB", true);
-            moduleInfo = InitQtModule(QtModule.PublishSubscribe, "QtPublishSubscribe", "QT_PUBLISHSUBSCRIBE_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtsystems\\include;$(QTDIR)\\..\\qtsystems\\include\\QtPublishSubscribe";
+            moduleInfo = InitQtModule(QtModule.Organizer, "QtOrganizer", "QT_ORGANIZER_LIB");
+            InitQtModule(QtModule.PrintSupport, "QtPrintSupport", "QT_PRINTSUPPORT_LIB");
+            moduleInfo = InitQtModule(QtModule.PublishSubscribe, "QtPublishSubscribe", "QT_PUBLISHSUBSCRIBE_LIB");
 
-            moduleInfo = InitQtModule(QtModule.Sensors, "QtSensors", "QT_SENSORS_LIB", false);
-            moduleInfo = InitQtModule(QtModule.ServiceFramework, "QtServiceFramework", "QT_SERVICEFRAMEWORK_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtsystems\\include;$(QTDIR)\\..\\qtsystems\\include\\QtServiceFramework";
-            moduleInfo = InitQtModule(QtModule.SystemInfo, "QtSystemInfo", "QT_SYSTEMINFO_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtsystems\\include;$(QTDIR)\\..\\qtsystems\\include\\QtSystemInfo";
-            InitQtModule(QtModule.Quick, "QtQuick", "QT_QUICK_LIB", true);
+            moduleInfo = InitQtModule(QtModule.Sensors, "QtSensors", "QT_SENSORS_LIB");
+            moduleInfo = InitQtModule(QtModule.ServiceFramework, "QtServiceFramework", "QT_SERVICEFRAMEWORK_LIB");
+            moduleInfo = InitQtModule(QtModule.SystemInfo, "QtSystemInfo", "QT_SYSTEMINFO_LIB");
+            InitQtModule(QtModule.Quick, "QtQuick", "QT_QUICK_LIB");
 
-            InitQtModule(QtModule.ThreeDQuick, "Qt3DQuick", "QT_3DQUICK_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qt3d\\include;$(QTDIR)\\..\\qt3d\\include\\Qt3DQuick";
-            InitQtModule(QtModule.Versit, "QtVersit", "QT_VERSIT_LIB", true);
-            moduleInfo.srcIncludePath = "$(QTDIR)\\..\\qtpim\\include;$(QTDIR)\\..\\qtpim\\include\\QtVersit";
+            InitQtModule(QtModule.ThreeDQuick, "Qt3DQuick", "QT_3DQUICK_LIB");
+            InitQtModule(QtModule.Versit, "QtVersit", "QT_VERSIT_LIB");
 
-            InitQtModule(QtModule.WebkitWidgets, "QtWebkitWidgets", "QT_WEBKITWIDGETS_LIB" /*?*/, true);
+            InitQtModule(QtModule.WebkitWidgets, "QtWebkitWidgets", "QT_WEBKITWIDGETS_LIB");
 
-            InitQtModule(QtModule.Concurrent, "QtConcurrent", "QT_CONCURRENT_LIB", true);
-            InitQtModule(QtModule.MultimediaWidgets, "QtMultimediaWidgets", "QT_MULTIMEDIAWIDGETS_LIB", true);
+            InitQtModule(QtModule.Concurrent, "QtConcurrent", "QT_CONCURRENT_LIB");
+            InitQtModule(QtModule.MultimediaWidgets, "QtMultimediaWidgets", "QT_MULTIMEDIAWIDGETS_LIB");
         }
 
-        private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string define, bool doUseSdk4Src)
+        private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string define)
         {
-            return InitQtModule(moduleId, libraryPrefix, new string[] { define }, doUseSdk4Src);
+            return InitQtModule(moduleId, libraryPrefix, new string[] { define });
         }
 
-        private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string[] defines, bool doUseSdk4Src)
+        private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string[] defines)
         {
             QtModuleInfo moduleInfo = new QtModuleInfo(moduleId);
             moduleInfo.LibraryPrefix = libraryPrefix;
-            moduleInfo.sdkIncludePath = "$(QTDIR)\\include\\" + libraryPrefix;
-            if (doUseSdk4Src)
-            {
-                moduleInfo.srcIncludePath = moduleInfo.sdkIncludePath;
-            }
-            else
-            {
-                // Generate src inc path
-                // example: "$(QTDIR)\\..\\qtsvg\\include\\QtSvg;$(QTDIR)\\..\\qtsvg\\include";
-                moduleInfo.srcIncludePath = "$(QTDIR)\\..\\" + libraryPrefix.ToLower() + "\\include\\" + libraryPrefix;
-                moduleInfo.srcIncludePath += ";$(QTDIR)\\..\\" + libraryPrefix.ToLower() + "\\include";
-            }
+            moduleInfo.IncludePath = "$(QTDIR)\\include\\" + libraryPrefix;
             moduleInfo.Defines = new List<string>();
             dictModulesByDLL.Add(libraryPrefix, moduleId);
             foreach (string str in defines)
