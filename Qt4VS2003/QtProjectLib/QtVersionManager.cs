@@ -318,11 +318,9 @@ namespace Digia.Qt5ProjectLib
                 return false;
             string key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
-            {
                 project.Globals[key] = version;
-                if (!project.Globals.get_VariablePersists(key))
-                    project.Globals.set_VariablePersists(key, true);
-            }
+            if (!project.Globals.get_VariablePersists(key))
+                project.Globals.set_VariablePersists(key, true);
             return true;
         }
 
