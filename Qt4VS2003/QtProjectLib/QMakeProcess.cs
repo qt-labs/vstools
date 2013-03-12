@@ -350,6 +350,10 @@ namespace Digia.Qt5ProjectLib
                         {
                             result = result.Substring(result.IndexOf("win32")).Trim();
                         }
+                        else if (result.IndexOf("wince") > 0)
+                        {
+                            result = result.Substring(result.IndexOf("wince")).Trim();
+                        }
                     }
                 }
 
