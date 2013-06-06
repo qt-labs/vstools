@@ -3616,22 +3616,7 @@ namespace Digia.Qt5ProjectLib
             try
             {
                 var propertyAccess = (IVCBuildPropertyStorage)vcPro;
-
-                // Remove old property if one exists
-                // This is set incorrectly for projects by version 1.1.10:
-                // propertyAccess.SetPropertyValue("QTDIR", null, "UserFile", qtDir);
                 VCProject vcprj = envPro.Object as VCProject;
-                if (!string.IsNullOrEmpty(propertyAccess.GetPropertyValue("QTDIR", null, "UserFile")))
-                {
-                    propertyAccess.RemoveProperty("QTDIR", null, "UserFile");
-                    // Also remove all debugger paths cause those may be invalid
-                    foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection)
-                    {
-                        VCPlatform cur_platform = conf.Platform as VCPlatform;
-                        string cur_solution = conf.ConfigurationName + "|" + cur_platform.Name;
-                        propertyAccess.RemoveProperty("LocalDebuggerEnvironment", cur_solution, "UserFile");
-                    }
-                }
 
                 // Get platform name from given solution configuration
                 // or if not available take the active configuration
