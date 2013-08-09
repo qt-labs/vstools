@@ -621,7 +621,7 @@ namespace Digia.Qt5ProjectLib
                 compiler.AddAdditionalIncludeDirectories(
                     ".;" + "$(QTDIR)\\include;" + QtVSIPSettings.GetMocDirectory(envPro));
 
-                compiler.SetTreatWChar_tAsBuiltInType(false);
+                compiler.SetTreatWChar_tAsBuiltInType(true);
 
                 if (linker != null)
                     linker.GenerateDebugInformation = isDebugConfiguration;
