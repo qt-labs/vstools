@@ -321,7 +321,7 @@ namespace Digia.Qt5ProjectLib
         public void RunQMakeQuery()
         {
             string result = "";
-            CreateQmakeProcess("-query QMAKE_SPEC", qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
+            CreateQmakeProcess("-query QMAKE_XSPEC", qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
 
             try
             {
