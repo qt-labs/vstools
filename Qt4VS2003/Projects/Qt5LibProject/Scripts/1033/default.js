@@ -18,6 +18,8 @@ function OnFinish(selProj, selObj) {
             QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine100");
         else if (version == "11.0")
             QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine110");
+        else if (version == "12.0")
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine120");
 
         var strProjectPath = wizard.FindSymbol('PROJECT_PATH');
         var strProjectName = wizard.FindSymbol('PROJECT_NAME');

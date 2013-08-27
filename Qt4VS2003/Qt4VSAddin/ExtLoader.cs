@@ -88,14 +88,16 @@ namespace Qt5VSAddin
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
             VersionInformation vi = new VersionInformation(qtDir);
-            if (vi.qtMajor == 4 && vi.qtMinor < 7)
+            if (vi.qtMajor < 5)
             {
 #if VS2010
                 Messages.DisplayErrorMessage(SR.GetString("NoVS2010Support"));
-#else
+#elif VS2012
                 Messages.DisplayErrorMessage(SR.GetString("NoVS2012Support"));
+#else
+                Messages.DisplayErrorMessage(SR.GetString("NoVS2013Support"));
 #endif
                 return;
             }

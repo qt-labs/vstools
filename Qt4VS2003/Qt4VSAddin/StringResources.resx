@@ -454,7 +454,7 @@ Please use contact form at http://qt.digia.com/contact-us to order a Qt license.
   </data>
   <data name="NoVS2010Support" xml:space="preserve">
     <value>The default Qt version does not support Visual Studio 2010. In order
-to import .pro files specify a Qt version &gt;=4.7 as default.</value>
+to import .pro files specify a Qt version &gt;=5.0 as default.</value>
   </data>
   <data name="CannotChangeQtVersion" xml:space="preserve">
     <value>The Qt version of at least one project could not be changed.</value>
@@ -773,4 +773,13 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
 Qt4 and Qt5 versions can't be used at the same time.
 Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt4 Add-in.</value>
   </data>
+  <data name="NoVS2012Support" xml:space="preserve">
+    <value>The default Qt version does not support Visual Studio 2012. In order
+to import .pro files specify a Qt version &gt;=5.0 as default.</value>
+  </data>
+  <data name="NoVS2013Support" xml:space="preserve">
+    <value>The default Qt version does not support Visual Studio 2013. In order
+to import .pro files specify a Qt version &gt;=5.2 as default.</value>
+  </data>
+
 </root>

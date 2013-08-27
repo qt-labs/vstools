@@ -166,7 +166,7 @@ namespace Digia.Qt5ProjectLib
                 string directories = GetAdditionalIncludeDirectories();
                 if (directories == null)
                     return new List<string>();
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                 // double quotes are escaped
                 directories = directories.Replace("\\\"", "\"");
 #endif
@@ -365,7 +365,7 @@ namespace Digia.Qt5ProjectLib
 
         public string[] GetAdditionalIncludeDirectoriesList()
         {
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
             string[] includes = this.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
             string[] fixedincludes;
             fixedincludes = new string[includes.Length];

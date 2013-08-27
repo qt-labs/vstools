@@ -62,8 +62,8 @@ namespace Qt5VSAddin
         // Check if add-in is installed in any supported VS version
         public bool IsAddinInstalled()
         {
-            // Check VS2008, VS2010 and VS2012
-            return IsAddinInstalled(9) || IsAddinInstalled(10) || IsAddinInstalled(11);
+            // Check VS2008, VS2010, VS2012 and VS2013
+            return IsAddinInstalled(9) || IsAddinInstalled(10) || IsAddinInstalled(11) || IsAddinInstalled(12);
         }
 
         // Write default editor values to registry for all supported VS
@@ -76,12 +76,15 @@ namespace Qt5VSAddin
                 WriteRegistryValues(10);
             if (IsAddinInstalled(11))
                 WriteRegistryValues(11);
+            if (IsAddinInstalled(12))
+                WriteRegistryValues(12);
         }
 
         // Write default editor values to registry for given VS version
         //  9 == VS2008
         // 10 == VS2010
         // 11 == VS2012
+        // 12 == VS2013
         protected void WriteRegistryValues(int vs_ver)
         {
             string inst_path = GetAddinInstallPath(vs_ver);

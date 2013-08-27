@@ -150,7 +150,7 @@ namespace Digia.Qt5ProjectLib
         {
             FileInfo fi = new FileInfo(file);
             string vcproj = HelperFunctions.RemoveFileNameExtension(fi);
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
             vcproj += ".vcxproj";
 #else
             vcproj += ".vcproj";

@@ -374,6 +374,8 @@
             QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine100");
         else if (version == "11.0")
             QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine110");
+        else if (version == "12.0")
+            QtEngine = new ActiveXObject("Digia.Qt5ProjectEngine120");
         else {
             window.external.ReportError("Cannot instantiate QtProjectEngine object!");
             return false;

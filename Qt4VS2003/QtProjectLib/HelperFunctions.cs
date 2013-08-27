@@ -1271,6 +1271,11 @@ namespace Digia.Qt5ProjectLib
 
             foreach(VCFile vcfile in (IVCCollection)vcpro.Files)
             {
+#if (VS2012 || VS2013)
+                // Why project files are also returned?
+                if (vcfile.ItemName.EndsWith(".vcxproj.filters"))
+                    continue;
+#endif
                 bool excluded = false;
                 IVCCollection fileConfigurations = (IVCCollection)vcfile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations)

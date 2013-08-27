@@ -776,4 +776,12 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
 Qt4 and Qt5 versions can't be used at the same time.
 Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt4 Add-in.</value>
   </data>
+  <data name="NoVS2012Support" xml:space="preserve">
+    <value>Visual Studio 2012 wird von der derzeitigen Standard-Qt-Version nicht unterstützt. Um .pro Dateien
+importieren zu können, muss eine Version &gt;=5.0 angegeben werden.</value>
+  </data>
+  <data name="NoVS2013Support" xml:space="preserve">
+    <value>Visual Studio 2013 wird von der derzeitigen Standard-Qt-Version nicht unterstützt. Um .pro Dateien
+importieren zu können, muss eine Version &gt;=5.2 angegeben werden.</value>
+  </data>
 </root>

@@ -544,7 +544,7 @@ namespace Digia.Qt5ProjectLib
 
                 // for some stupid reason you have to set this for it to be updated...
                 // the default value is the same... +platform now
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                 config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
 #else
                 config.OutputDirectory = "$(SolutionDir)$(PlatformName)\\$(ConfigurationName)";
@@ -917,7 +917,7 @@ namespace Digia.Qt5ProjectLib
                 bool hasDifferentMocFilePerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
                 bool mocableIsCPP = mocFileName.ToLower().EndsWith(".moc");
 
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                 // Fresh C++ headers don't have a usable custom build tool. We must set the item type first.
                 if (!mocableIsCPP && file.ItemType != "CustomBuild")
                     file.ItemType = "CustomBuild";
@@ -947,7 +947,7 @@ namespace Digia.Qt5ProjectLib
                             fi.Directory.Create();
                         mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
                             mocRelPath);
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                         if (mocFileName.ToLower().EndsWith(".moc"))
                         {
                             ProjectItem mocFileItem = mocFile.Object as ProjectItem;
@@ -3612,7 +3612,7 @@ namespace Digia.Qt5ProjectLib
             if (qtVersion != "$(QTDIR)")
                 qtDir = QtVersionManager.The().GetInstallPath(qtVersion);
             HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
             try
             {
                 var propertyAccess = (IVCBuildPropertyStorage)vcPro;

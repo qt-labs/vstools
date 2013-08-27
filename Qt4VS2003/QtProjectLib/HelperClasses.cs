@@ -47,7 +47,7 @@ namespace Digia.Qt5ProjectLib
 
     public class ProjectMacros
     {
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
         public const string Name = "%(Filename)";
         public const string FileName = "%(Identity)";
         public const string Path = "%(FullPath)";

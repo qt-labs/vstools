@@ -135,6 +135,8 @@ message(""You are running qmake on a generated .pro file. This may not work!"")
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2010";
 #elif VS2012
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2012";
+#elif VS2013
+        public const string registryPackagePath = registryRootPath + "\\Qt5VS2013";
 #else
 #error Unknown Visual Studio version!
 #endif

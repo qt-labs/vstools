@@ -55,7 +55,7 @@ namespace Digia.Qt5ProjectLib
     {
         private EnvDTE.DTE dteObject = null;
 
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
         const string projectFileExtension = ".vcxproj";
 #else
         const string projectFileExtension = ".vcproj";
@@ -331,7 +331,7 @@ namespace Digia.Qt5ProjectLib
             if (!string.IsNullOrEmpty(s))
             {
                 s = s.Trim(new char[] { ' ', '\"' , ','});
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                 if (s.StartsWith(">"))
                     s = s.Substring(1);
 #endif
@@ -345,7 +345,7 @@ namespace Digia.Qt5ProjectLib
         {
             foreach (VCConfiguration cfg in (IVCCollection)qtProject.VCProject.Configurations)
             {
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                 cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)";
 #else
                 cfg.IntermediateDirectory = @"$(PlatformName)\$(ConfigurationName)";
@@ -353,7 +353,7 @@ namespace Digia.Qt5ProjectLib
                 CompilerToolWrapper compilerTool = CompilerToolWrapper.Create(cfg);
                 if (compilerTool != null)
                 {
-#if (VS2010 || VS2012)
+#if (VS2010 || VS2012 || VS2013)
                     compilerTool.ObjectFile = @"$(IntDir)";
                     compilerTool.ProgramDataBaseFileName = @"$(IntDir)vc$(PlatformToolsetVersion).pdb";
 #else

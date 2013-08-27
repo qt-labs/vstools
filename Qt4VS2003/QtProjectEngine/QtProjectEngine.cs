@@ -54,6 +54,8 @@ namespace Digia.Qt5ProjectLib
     [ProgId("Digia.Qt5ProjectEngine100"), GuidAttribute("F964A720-1836-4387-8243-09640D1E18D8")]
 #elif VS2012
     [ProgId("Digia.Qt5ProjectEngine110"), GuidAttribute("105E7F0C-09AD-43F1-9EB2-5E448B1E696A")]
+#elif VS2013
+    [ProgId("Digia.Qt5ProjectEngine120"), GuidAttribute("95821D7C-037F-451C-AEE4-3692748F6985")]
 #else
 #error GUID must be specified for this Visual Studio version!
 #endif
