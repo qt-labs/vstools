@@ -346,7 +346,7 @@ namespace Digia.Qt5ProjectLib
             foreach (VCConfiguration cfg in (IVCCollection)qtProject.VCProject.Configurations)
             {
 #if (VS2010 || VS2012 || VS2013)
-                cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)";
+                cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)\";
 #else
                 cfg.IntermediateDirectory = @"$(PlatformName)\$(ConfigurationName)";
 #endif
