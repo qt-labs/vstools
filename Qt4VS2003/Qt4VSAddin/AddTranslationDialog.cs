@@ -270,12 +270,16 @@ namespace Qt5VSAddin
         {
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures
                 & ~CultureTypes.UserCustomCulture & ~CultureTypes.ReplacementCultures);
-            TranslationItem[] transItems = new TranslationItem[cultures.Length];
+            List<TranslationItem> transItems = new List<TranslationItem>();
             for(int i=0; i<cultures.Length; i++)
             {
-                transItems[i] = new TranslationItem(cultures[i].LCID);
+                // Locales without a LCID are given LCID 0x1000 (http://msdn.microsoft.com/en-us/library/dn363603.aspx)
+                // Trying to create a TranslationItem for these will cause an exception to be thrown.
+                int lcid = cultures[i].LCID;
+                if (lcid != 0x1000)
+                    transItems.Add(new TranslationItem(lcid));
             }
-            return transItems;
+            return transItems.ToArray();
         }
     }
 }
