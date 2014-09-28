@@ -41,6 +41,7 @@
 
 using System.Windows.Forms;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Qt5VSAddin
 {
