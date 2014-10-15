@@ -876,9 +876,11 @@ namespace Digia.Qt5ProjectLib
 
         private static bool IsDebugConfiguration(VCConfiguration conf)
         {
-            VCCLCompilerTool compiler = (VCCLCompilerTool)((IVCCollection)conf.Tools).Item("VCCLCompilerTool");
-            if (compiler != null && (compiler.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebug ||
-                compiler.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebugDLL))
+
+            object compiler = ((IVCCollection)conf.Tools).Item("VCCLCompilerTool");
+            VCCLCompilerTool tool = compiler as VCCLCompilerTool;
+            if (tool != null && (tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebug ||
+                tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebugDLL))
                 return true;
             return false;
         }
