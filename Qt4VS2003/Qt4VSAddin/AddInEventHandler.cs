@@ -922,7 +922,7 @@ namespace Qt5VSAddin
                                     qtDir = qtDir.Remove(qtDir.LastIndexOf("\\"));
                                 }
                                 qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
-                                HelperFunctions.SetDebuggingEnvironment(project, "PATH=" + qtDir + "\\bin;$(PATH)", true);
+                                HelperFunctions.SetDebuggingEnvironment(project, "PATH=" + qtDir + "\\bin;$(PATH)", false);
                             }
                         }
                     }
