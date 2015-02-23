@@ -94,6 +94,8 @@ namespace Qt5VSAddin
             this.webKitLib.Text = SR.GetString("WebKitLibrary");
             this.xmlPatternsLib.Text = SR.GetString("XmlPatternsLibrary");
             this.phononLib.Text = SR.GetString("PhononLibrary");
+            this.scriptToolsLib.Text = SR.GetString("ScriptToolsLibrary");
+            this.uiToolsLib.Text = SR.GetString("UiToolsLibrary");
 
             threeDLib.Text = SR.GetString("3DLibrary");
             locationLib.Text = SR.GetString("LocationLibrary");
@@ -137,6 +139,8 @@ namespace Qt5VSAddin
             AddMapping(openGLLib, QtModule.OpenGL);
             AddMapping(organizerLib, QtModule.Organizer);
             AddMapping(phononLib, QtModule.Phonon);
+            AddMapping(scriptToolsLib, QtModule.ScriptTools);
+            AddMapping(uiToolsLib, QtModule.UiTools);
             AddMapping(printSupportLib, QtModule.PrintSupport);
             AddMapping(pubSubLib, QtModule.PublishSubscribe);
             AddMapping(declarativeLib, QtModule.Declarative);
