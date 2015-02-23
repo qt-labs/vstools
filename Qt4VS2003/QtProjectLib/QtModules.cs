@@ -67,7 +67,6 @@ namespace Digia.Qt5ProjectLib
         Help = 17,
         WebKit = 18,
         XmlPatterns = 19,
-        Phonon = 20,
         Multimedia = 21,
         Declarative = 22,
         ScriptTools = 23,
@@ -79,13 +78,8 @@ namespace Digia.Qt5ProjectLib
 
         Qml = 29,
         Bluetooth = 30,
-        Contacts = 31,
-        Organizer = 32,
         PrintSupport = 33,
-        PublishSubscribe = 34,
         Sensors = 36,
-        ServiceFramework = 37,
-        SystemInfo = 38,
         // JSBackend = 39,
         Quick = 40,
         ThreeDQuick = 41,
@@ -94,7 +88,6 @@ namespace Digia.Qt5ProjectLib
         // QLALR = 44,
         // RepoTools = 45,
         // Translations = 46,
-        Versit = 47,
         // CLucene = 48,
         // DesignerComponents = 49,
         WebkitWidgets = 50,
@@ -231,9 +224,7 @@ namespace Digia.Qt5ProjectLib
             moduleInfo = InitQtModule(QtModule.Help, "QtHelp", "QT_HELP_LIB");
             moduleInfo.proVarQT = null;
             moduleInfo.proVarCONFIG = "help";
-            moduleInfo = InitQtModule(QtModule.Phonon, "phonon", "QT_PHONON_LIB");
             moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "");
-            moduleInfo.dependentModules.Add(QtModule.Phonon);
 
             moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB");
             moduleInfo.dependentModules.Add(QtModule.Xml);
@@ -276,19 +267,12 @@ namespace Digia.Qt5ProjectLib
 
             InitQtModule(QtModule.Qml, "QtQml", "QT_QML_LIB");
             moduleInfo = InitQtModule(QtModule.Bluetooth, "QtBluetooth", "QT_BLUETOOTH_LIB");
-            moduleInfo = InitQtModule(QtModule.Contacts, "QtContacts", "QT_CONTACTS_LIB");
-
-            moduleInfo = InitQtModule(QtModule.Organizer, "QtOrganizer", "QT_ORGANIZER_LIB");
             InitQtModule(QtModule.PrintSupport, "QtPrintSupport", "QT_PRINTSUPPORT_LIB");
-            moduleInfo = InitQtModule(QtModule.PublishSubscribe, "QtPublishSubscribe", "QT_PUBLISHSUBSCRIBE_LIB");
 
             moduleInfo = InitQtModule(QtModule.Sensors, "QtSensors", "QT_SENSORS_LIB");
-            moduleInfo = InitQtModule(QtModule.ServiceFramework, "QtServiceFramework", "QT_SERVICEFRAMEWORK_LIB");
-            moduleInfo = InitQtModule(QtModule.SystemInfo, "QtSystemInfo", "QT_SYSTEMINFO_LIB");
             InitQtModule(QtModule.Quick, "QtQuick", "QT_QUICK_LIB");
 
             InitQtModule(QtModule.ThreeDQuick, "Qt3DQuick", "QT_3DQUICK_LIB");
-            InitQtModule(QtModule.Versit, "QtVersit", "QT_VERSIT_LIB");
 
             InitQtModule(QtModule.WebkitWidgets, "QtWebkitWidgets", "QT_WEBKITWIDGETS_LIB");
 

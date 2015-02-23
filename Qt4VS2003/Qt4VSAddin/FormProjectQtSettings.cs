@@ -93,7 +93,6 @@ namespace Qt5VSAddin
             this.helpLib.Text = SR.GetString("HelpLibrary");
             this.webKitLib.Text = SR.GetString("WebKitLibrary");
             this.xmlPatternsLib.Text = SR.GetString("XmlPatternsLibrary");
-            this.phononLib.Text = SR.GetString("PhononLibrary");
             this.scriptToolsLib.Text = SR.GetString("ScriptToolsLibrary");
             this.uiToolsLib.Text = SR.GetString("UiToolsLibrary");
 
@@ -102,16 +101,10 @@ namespace Qt5VSAddin
             qmlLib.Text = SR.GetString("QmlLibrary");
             quickLib.Text = SR.GetString("QuickLibrary");
             bluetoothLib.Text = SR.GetString("BluetoothLibrary");
-            contactsLib.Text = SR.GetString("ContactsLibrary");
-            organizerLib.Text = SR.GetString("OrganizerLibrary");
             printSupportLib.Text = SR.GetString("PrintSupportLibrary");
-            pubSubLib.Text = SR.GetString("PubSubLibrary");
             declarativeLib.Text = SR.GetString("DeclarativeLibrary");
             sensorsLib.Text = SR.GetString("SensorsLibrary");
-            serviceFrameworkLib.Text = SR.GetString("ServiceFwLibrary");
-            systemInfoLib.Text = SR.GetString("SystemInfoLibrary");
             webkitWidgetsLib.Text = SR.GetString("WebkitWidgetsLibrary");
-            versitLib.Text = SR.GetString("VersitLibrary");
             widgetsLib.Text = SR.GetString("WidgetsLibrary");
 
             concurrentLib.Text = SR.GetString("ConcurrentLibrary");
@@ -134,23 +127,16 @@ namespace Qt5VSAddin
             AddMapping(activeQtCLib, QtModule.ActiveQtC);
             AddMapping(activeQtSLib, QtModule.ActiveQtS);
             AddMapping(bluetoothLib, QtModule.Bluetooth);
-            AddMapping(contactsLib, QtModule.Contacts);
             AddMapping(helpLib, QtModule.Help);
             AddMapping(openGLLib, QtModule.OpenGL);
-            AddMapping(organizerLib, QtModule.Organizer);
-            AddMapping(phononLib, QtModule.Phonon);
             AddMapping(scriptToolsLib, QtModule.ScriptTools);
             AddMapping(uiToolsLib, QtModule.UiTools);
             AddMapping(printSupportLib, QtModule.PrintSupport);
-            AddMapping(pubSubLib, QtModule.PublishSubscribe);
             AddMapping(declarativeLib, QtModule.Declarative);
             AddMapping(scriptLib, QtModule.Script);
             AddMapping(sensorsLib, QtModule.Sensors);
-            AddMapping(serviceFrameworkLib, QtModule.ServiceFramework);
             AddMapping(svgLib, QtModule.Svg);
-            AddMapping(systemInfoLib, QtModule.SystemInfo);
             AddMapping(webkitWidgetsLib, QtModule.WebkitWidgets);
-            AddMapping(versitLib, QtModule.Versit);
             AddMapping(widgetsLib, QtModule.Widgets);
             AddMapping(xmlLib, QtModule.Xml);
             AddMapping(xmlPatternsLib, QtModule.XmlPatterns);

@@ -538,8 +538,6 @@ namespace Digia.Qt5ProjectLib
             returnString =
                 Regex.Replace(returnString, "Qt(\\S+5?)\\.lib", qtDir + "\\lib\\Qt${1}.lib");
             returnString =
-                Regex.Replace(returnString, "(phonond?5?)\\.lib", qtDir + "\\lib\\${1}.lib");
-            returnString =
                 Regex.Replace(returnString, "(qtmaind?5?)\\.lib", qtDir + "\\lib\\${1}.lib");
             return returnString;
         }
@@ -880,7 +878,6 @@ namespace Digia.Qt5ProjectLib
             Regex rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
             Regex rxp2 = new Regex("\\bQAx\\w+\\.lib\\b");
             Regex rxp3 = new Regex("\\bqtmaind?.lib\\b");
-            Regex rxp4 = new Regex("\\bphonond?5?\\.lib\\b");
             foreach (VCConfiguration cfg in (IVCCollection)vcPro.Configurations)
             {
                 VCLinkerTool linker = (VCLinkerTool)((IVCCollection)cfg.Tools).Item("VCLinkerTool");
@@ -894,15 +891,12 @@ namespace Digia.Qt5ProjectLib
                     Match m1 = rxp1.Match(lib);
                     Match m2 = rxp2.Match(lib);
                     Match m3 = rxp3.Match(lib);
-                    Match m4 = rxp4.Match(lib);
                     if (m1.Success)
                         newDeps.Add(m1.ToString());
                     else if (m2.Success)
                         newDeps.Add(m2.ToString());
                     else if (m3.Success)
                         newDeps.Add(m3.ToString());
-                    else if (m4.Success)
-                        newDeps.Add(m4.ToString());
                     else
                         newDeps.Add(lib);
                 }

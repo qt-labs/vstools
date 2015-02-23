@@ -679,9 +679,6 @@ Achtung: Falls Visual Studio im Moment nicht reagieren sollte, liegt es daran, d
   <data name="ConvertTitle" xml:space="preserve">
     <value>Projekt umwandeln...</value>
   </data>
-  <data name="PhononLibrary" xml:space="preserve">
-    <value>Phonon</value>
-  </data>
   <data name="UiToolsLibrary" xml:space="preserve">
     <value>UI Tools</value>
   </data>
@@ -723,20 +720,11 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   <data name="BluetoothLibrary" xml:space="preserve">
     <value>Bluetooth</value>
   </data>
-  <data name="ContactsLibrary" xml:space="preserve">
-    <value>Contacts</value>
-  </data>
   <data name="LocationLibrary" xml:space="preserve">
     <value>Location</value>
   </data>
-  <data name="OrganizerLibrary" xml:space="preserve">
-    <value>Organizer</value>
-  </data>
   <data name="PrintSupportLibrary" xml:space="preserve">
     <value>Print Support</value>
-  </data>
-  <data name="PubSubLibrary" xml:space="preserve">
-    <value>Publish and Subscribe</value>
   </data>
   <data name="QmlLibrary" xml:space="preserve">
     <value>QML</value>
@@ -749,15 +737,6 @@ Hinweis: Sie können diese Frage ausschalten, indem Sie in den Einstellungen des
   </data>
   <data name="SensorsLibrary" xml:space="preserve">
     <value>Sensors</value>
-  </data>
-  <data name="ServiceFwLibrary" xml:space="preserve">
-    <value>Service Framework</value>
-  </data>
-  <data name="SystemInfoLibrary" xml:space="preserve">
-    <value>System Info</value>
-  </data>
-  <data name="VersitLibrary" xml:space="preserve">
-    <value>Versit</value>
   </data>
   <data name="WebkitWidgetsLibrary" xml:space="preserve">
     <value>Webkit Widgets</value>
