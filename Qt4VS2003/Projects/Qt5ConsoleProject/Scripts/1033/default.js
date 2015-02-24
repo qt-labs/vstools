@@ -88,40 +88,44 @@ function AddModules() {
         QtEngine.AddModule("QtAxServer");
     if (wizard.FindSymbol('BLUETOOTH_MODULE'))
         QtEngine.AddModule("QtBluetooth");
-    if (wizard.FindSymbol('CONTACTS_MODULE'))
-        QtEngine.AddModule("QtContacts");
     if (wizard.FindSymbol('CONCURRENT_MODULE'))
         QtEngine.AddModule("QtConcurrent");
-    if (wizard.FindSymbol('HELP_MODULE'))
-        QtEngine.AddModule("QtHelp");
-    if (wizard.FindSymbol('OPENGL_MODULE'))
-        QtEngine.AddModule("QtOpenGL");
-    if (wizard.FindSymbol('ORGANIZER_MODULE'))
-        QtEngine.AddModule("QtOrganizer");
-    if (wizard.FindSymbol('PHONON_MODULE'))
-        QtEngine.AddModule("phonon");
-    if (wizard.FindSymbol('PRINTSUPPORT_MODULE'))
-        QtEngine.AddModule("QtPrintSupport");
-    if (wizard.FindSymbol('PUBSUB_MODULE'))
-        QtEngine.AddModule("QtPublishSubscribe");
     if (wizard.FindSymbol('DECLARATIVE_MODULE'))
         QtEngine.AddModule("QtDeclarative");
+    if (wizard.FindSymbol('ENGINIO_MODULE'))
+        QtEngine.AddModule("Enginio");
+    if (wizard.FindSymbol('HELP_MODULE'))
+        QtEngine.AddModule("QtHelp");
+    if (wizard.FindSymbol('NFC_MODULE'))
+        QtEngine.AddModule("QtNfc");
+    if (wizard.FindSymbol('OPENGL_MODULE'))
+        QtEngine.AddModule("QtOpenGL");
+    if (wizard.FindSymbol('POSITIONING_MODULE'))
+        QtEngine.AddModule("QtPositioning");
+    if (wizard.FindSymbol('PRINTSUPPORT_MODULE'))
+        QtEngine.AddModule("QtPrintSupport");
     if (wizard.FindSymbol('SCRIPT_MODULE'))
         QtEngine.AddModule("QtScript");
+    if (wizard.FindSymbol('SCRIPTTOOLS_MODULE'))
+        QtEngine.AddModule("QtScriptTools");
     if (wizard.FindSymbol('SENSORS_MODULE'))
         QtEngine.AddModule("QtSensors");
-    if (wizard.FindSymbol('SERVICEFRAMEWORK_MODULE'))
-        QtEngine.AddModule("QtServiceFramework");
+    if (wizard.FindSymbol('SERIALPORT_MODULE'))
+        QtEngine.AddModule("QtSerialPort");
     if (wizard.FindSymbol('SVG_MODULE'))
         QtEngine.AddModule("QtSvg");
-    if (wizard.FindSymbol('SYSTEMINFO_MODULE'))
-        QtEngine.AddModule("QtSystemInfo");
-    if (wizard.FindSymbol('VERSIT_MODULE'))
-        QtEngine.AddModule("QtVersit");
+    if (wizard.FindSymbol('UITOOLS_MODULE'))
+        QtEngine.AddModule("QtUiTools");
+    if (wizard.FindSymbol('WEBCHANNEL_MODULE'))
+        QtEngine.AddModule("QtWebChannel");
     if (wizard.FindSymbol('WEBKITWIDGETS_MODULE'))
         QtEngine.AddModule("QtWebkitWidgets"); // ??
+    if (wizard.FindSymbol('WEBSOCKETS_MODULE'))
+        QtEngine.AddModule("QtWebSockets");
     if (wizard.FindSymbol('WIDGETS_MODULE'))
         QtEngine.AddModule("QtWidgets");
+    if (wizard.FindSymbol('WINDOWSEXTRAS_MODULE'))
+        QtEngine.AddModule("QtWinExtras");
     if (wizard.FindSymbol('XML_MODULE'))
         QtEngine.AddModule("QtXml");
     if (wizard.FindSymbol('XMLPATTERNS_MODULE'))

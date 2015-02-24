@@ -8,36 +8,39 @@
     <!--  -->
     <symbol name="WIZARD_DIALOG_TITLE" type="text" value="Qt5 Windows CE Project Wizard"></symbol>
     <symbol name="THREED_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="AQCONTAINER_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="AQSERVER_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="BLUETOOTH_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="CONCURRENT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="CORE_MODULE" type="checkbox" value="true"></symbol>
+    <symbol name="ENGINIO_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="DECLARATIVE_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="GUI_MODULE" type="checkbox" value="true"></symbol>
+    <symbol name="HELP_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="LOCATION_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="MULTIMEDIA_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="MULTIMEDIAWIDGETS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="NETWORK_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="NFC_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="OPENGL_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="POSITIONING_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="PRINTSUPPORT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="QML_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="QUICK_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="SQL_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="TEST_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="WEBKIT_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="AQCONTAINER_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="AQSERVER_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="BLUETOOTH_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="CONTACTS_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="CONCURRENT_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="OPENGL_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="ORGANIZER_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="PHONON_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="PRINTSUPPORT_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="PUBSUB_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="DECLARATIVE_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SCRIPT_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="SCRIPTTOOLS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SENSORS_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="SERVICEFRAMEWORK_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="SERIALPORT_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="SQL_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="SVG_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="SYSTEMINFO_MODULE" type="checkbox" value="false"></symbol>
-    <symbol name="VERSIT_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="TEST_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="UITOOLS_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="WEBCHANNEL_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="WEBKIT_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="WEBKITWIDGETS_MODULE" type="checkbox" value="false"></symbol>
+    <symbol name="WEBSOCKETS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="WIDGETS_MODULE" type="checkbox" value="true"></symbol>
+    <symbol name="WINDOWSEXTRAS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="XML_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="XMLPATTERNS_MODULE" type="checkbox" value="false"></symbol>
     <symbol name="CLASSNAME_TEXT" type="text" value=""></symbol>
@@ -457,42 +460,44 @@
 
         if (window.external.FindSymbol('BLUETOOTH_MODULE'))
             strModules += "Bluetooth, ";
-        if (window.external.FindSymbol('CONTACTS_MODULE'))
-            strModules += "Contacts, ";
         if (window.external.FindSymbol('CONCURRENT_MODULE'))
             strModules += "Concurrent, ";
-        if (window.external.FindSymbol('FEEDBACK_MODULE'))
-            strModules += "Feedback, ";
-        if (window.external.FindSymbol('HELP_MODULE'))
-            strModules += "Help, ";
-        if (window.external.FindSymbol('OPENGL_MODULE'))
-            strModules += "OpenGL, ";
-        if (window.external.FindSymbol('ORGANIZER_MODULE'))
-            strModules += "Organizer, ";
-        if (window.external.FindSymbol('PHONON_MODULE'))
-            strModules += "Phonon, ";
-        if (window.external.FindSymbol('PRINTSUPPORT_MODULE'))
-            strModules += "Print Support, ";
-        if (window.external.FindSymbol('PUBSUB_MODULE'))
-            strModules += "Publish and Subscribe, ";
         if (window.external.FindSymbol('DECLARATIVE_MODULE'))
             strModules += "Declarative, ";
+        if (window.external.FindSymbol('ENGINIO_MODULE'))
+            strModules += "Enginio, ";
+        if (window.external.FindSymbol('HELP_MODULE'))
+            strModules += "Help, ";
+        if (window.external.FindSymbol('NFC_MODULE'))
+            strModules += "NFC, ";
+        if (window.external.FindSymbol('OPENGL_MODULE'))
+            strModules += "OpenGL, ";
+        if (window.external.FindSymbol('POSITIONING_MODULE'))
+            strModules += "Positioning, ";
+        if (window.external.FindSymbol('PRINTSUPPORT_MODULE'))
+            strModules += "Print Support, ";
         if (window.external.FindSymbol('SCRIPT_MODULE'))
             strModules += "Script, ";
+        if (window.external.FindSymbol('SCRIPTTOOLS_MODULE'))
+            strModules += "Script Tools, ";
         if (window.external.FindSymbol('SENSORS_MODULE'))
             strModules += "Sensors, ";
-        if (window.external.FindSymbol('SERVICEFRAMEWORK_MODULE'))
-            strModules += "Service and Framework, ";
+        if (window.external.FindSymbol('SERIALPORT_MODULE'))
+            strModules += "Serial Port, ";
         if (window.external.FindSymbol('SVG_MODULE'))
             strModules += "SVG, ";
-        if (window.external.FindSymbol('SYSTEMINFO_MODULE'))
-            strModules += "System Info, ";
+        if (window.external.FindSymbol('UITOOLS_MODULE'))
+            strModules += "UI Tools, ";
+        if (window.external.FindSymbol('WEBCHANNEL_MODULE'))
+            strModules += "Web Channel, ";
         if (window.external.FindSymbol('WEBKITWIDGETS_MODULE'))
             strModules += "Webkit Widgets, ";
-        if (window.external.FindSymbol('VERSIT_MODULE'))
-            strModules += "Versit, ";
+        if (window.external.FindSymbol('WEBSOCKETS_MODULE'))
+            strModules += "Web Sockets, ";
         if (window.external.FindSymbol('WIDGETS_MODULE'))
             strModules += "Widgets, ";
+        if (window.external.FindSymbol('WINDOWSEXTRAS_MODULE'))
+            strModules += "Windows Extras, ";
         if (window.external.FindSymbol('XML_MODULE'))
             strModules += "XML, ";
         if (window.external.FindSymbol('XMLPATTERNS_MODULE'))
