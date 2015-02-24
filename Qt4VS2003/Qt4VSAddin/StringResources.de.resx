@@ -763,4 +763,25 @@ importieren zu können, muss eine Version &gt;=5.0 angegeben werden.</value>
     <value>Visual Studio 2013 wird von der derzeitigen Standard-Qt-Version nicht unterstützt. Um .pro Dateien
 importieren zu können, muss eine Version &gt;=5.2 angegeben werden.</value>
   </data>
+  <data name="EnginioLibrary" xml:space="preserve">
+    <value>Enginio</value>
+  </data>
+  <data name="NfcLibrary" xml:space="preserve">
+    <value>NFC</value>
+  </data>
+  <data name="PositioningLibrary" xml:space="preserve">
+    <value>Positioning</value>
+  </data>
+  <data name="SerialPortLibrary" xml:space="preserve">
+    <value>Serial Port</value>
+  </data>
+  <data name="WebChannelLibrary" xml:space="preserve">
+    <value>Web Channel</value>
+  </data>
+  <data name="WebSocketsLibrary" xml:space="preserve">
+    <value>Web Sockets</value>
+  </data>
+  <data name="WindowsExtrasLibrary" xml:space="preserve">
+    <value>Windows Extras</value>
+  </data>
 </root>

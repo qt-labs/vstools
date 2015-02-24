@@ -760,5 +760,25 @@ to import .pro files specify a Qt version &gt;=5.0 as default.</value>
     <value>The default Qt version does not support Visual Studio 2013. In order
 to import .pro files specify a Qt version &gt;=5.2 as default.</value>
   </data>
-
+  <data name="EnginioLibrary" xml:space="preserve">
+    <value>Enginio</value>
+  </data>
+  <data name="NfcLibrary" xml:space="preserve">
+    <value>NFC</value>
+  </data>
+  <data name="PositioningLibrary" xml:space="preserve">
+    <value>Positioning</value>
+  </data>
+  <data name="SerialPortLibrary" xml:space="preserve">
+    <value>Serial Port</value>
+  </data>
+  <data name="WebChannelLibrary" xml:space="preserve">
+    <value>Web Channel</value>
+  </data>
+  <data name="WebSocketsLibrary" xml:space="preserve">
+    <value>Web Sockets</value>
+  </data>
+  <data name="WindowsExtrasLibrary" xml:space="preserve">
+    <value>Windows Extras</value>
+  </data>
 </root>

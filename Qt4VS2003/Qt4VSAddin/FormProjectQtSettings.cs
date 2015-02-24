@@ -110,6 +110,14 @@ namespace Qt5VSAddin
             concurrentLib.Text = SR.GetString("ConcurrentLibrary");
             multimediaWidgetsLib.Text = SR.GetString("MultimediaWidgetsLibrary");
 
+            enginioLib.Text = SR.GetString("EnginioLibrary");
+            nfcLib.Text = SR.GetString("NfcLibrary");
+            positioningLib.Text = SR.GetString("PositioningLibrary");
+            serialPortLib.Text = SR.GetString("SerialPortLibrary");
+            webChannelLib.Text = SR.GetString("WebChannelLibrary");
+            webSocketsLib.Text = SR.GetString("WebSocketsLibrary");
+            windowsExtrasLib.Text = SR.GetString("WindowsExtrasLibrary");
+
             // essentials
             AddMapping(threeDLib, QtModule.ThreeD);
             AddMapping(coreLib, QtModule.Core);
@@ -143,6 +151,15 @@ namespace Qt5VSAddin
 
             AddMapping(concurrentLib, QtModule.Concurrent);
             AddMapping(multimediaWidgetsLib, QtModule.MultimediaWidgets);
+
+            AddMapping(enginioLib, QtModule.Enginio);
+            AddMapping(nfcLib, QtModule.Nfc);
+            AddMapping(positioningLib, QtModule.Positioning);
+            AddMapping(serialPortLib, QtModule.SerialPort);
+            AddMapping(webChannelLib, QtModule.WebChannel);
+            AddMapping(webSocketsLib, QtModule.WebSockets);
+            AddMapping(windowsExtrasLib, QtModule.WindowsExtras);
+
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             this.KeyPress += new KeyPressEventHandler(this.FormProjectQtSettings_KeyPress);

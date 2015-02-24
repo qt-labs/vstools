@@ -67,6 +67,7 @@ namespace Digia.Qt5ProjectLib
         Help = 17,
         WebKit = 18,
         XmlPatterns = 19,
+        Enginio = 20,
         Multimedia = 21,
         Declarative = 22,
         ScriptTools = 23,
@@ -75,11 +76,16 @@ namespace Digia.Qt5ProjectLib
         Widgets = 25,
         ThreeD = 26,
         Location = 27,
-
+        Nfc = 28,
         Qml = 29,
         Bluetooth = 30,
+        Positioning = 31,
+        SerialPort = 32,
         PrintSupport = 33,
+        WebChannel = 34,
+        WebSockets = 35,
         Sensors = 36,
+        WindowsExtras = 37,
         // JSBackend = 39,
         Quick = 40,
         ThreeDQuick = 41,
@@ -278,6 +284,18 @@ namespace Digia.Qt5ProjectLib
 
             InitQtModule(QtModule.Concurrent, "QtConcurrent", "QT_CONCURRENT_LIB");
             InitQtModule(QtModule.MultimediaWidgets, "QtMultimediaWidgets", "QT_MULTIMEDIAWIDGETS_LIB");
+
+            moduleInfo = InitQtModule(QtModule.Enginio, "Enginio", "QT_ENGINIO_LIB");
+            moduleInfo.dependentModules.Add(QtModule.Network);
+
+            InitQtModule(QtModule.Nfc, "QtNfc", "QT_NFC_LIB");
+            InitQtModule(QtModule.Positioning, "QtPositioning", "QT_POSITIONING_LIB");
+            InitQtModule(QtModule.SerialPort, "QtSerialPort", "QT_SERIALPORT_LIB");
+            InitQtModule(QtModule.WebChannel, "QtWebChannel", "QT_WEBCHANNEL_LIB");
+            moduleInfo = InitQtModule(QtModule.WebSockets, "QtWebSockets", "QT_WEBSOCKETS_LIB");
+            moduleInfo.dependentModules.Add(QtModule.Network);
+            InitQtModule(QtModule.WindowsExtras, "QtWinExtras", "QT_WINEXTRAS_LIB");
+
         }
 
         private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string define)

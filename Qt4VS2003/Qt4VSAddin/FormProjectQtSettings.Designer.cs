@@ -35,7 +35,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.uiToolsLib = new System.Windows.Forms.CheckBox();
+            this.scriptToolsLib = new System.Windows.Forms.CheckBox();
             this.quickLib = new System.Windows.Forms.CheckBox();
             this.qmlLib = new System.Windows.Forms.CheckBox();
             this.webKitLib = new System.Windows.Forms.CheckBox();
@@ -49,7 +50,6 @@
             this.svgLib = new System.Windows.Forms.CheckBox();
             this.multimediaWidgetsLib = new System.Windows.Forms.CheckBox();
             this.concurrentLib = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.widgetsLib = new System.Windows.Forms.CheckBox();
             this.locationLib = new System.Windows.Forms.CheckBox();
             this.webkitWidgetsLib = new System.Windows.Forms.CheckBox();
@@ -64,13 +64,17 @@
             this.xmlPatternsLib = new System.Windows.Forms.CheckBox();
             this.openGLLib = new System.Windows.Forms.CheckBox();
             this.scriptLib = new System.Windows.Forms.CheckBox();
-            this.scriptToolsLib = new System.Windows.Forms.CheckBox();
-            this.uiToolsLib = new System.Windows.Forms.CheckBox();
+            this.enginioLib = new System.Windows.Forms.CheckBox();
+            this.nfcLib = new System.Windows.Forms.CheckBox();
+            this.positioningLib = new System.Windows.Forms.CheckBox();
+            this.serialPortLib = new System.Windows.Forms.CheckBox();
+            this.webChannelLib = new System.Windows.Forms.CheckBox();
+            this.webSocketsLib = new System.Windows.Forms.CheckBox();
+            this.windowsExtrasLib = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // OptionsPropertyGrid
@@ -133,7 +137,42 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage2.Controls.Add(this.panel2);
+            this.tabPage2.Controls.Add(this.windowsExtrasLib);
+            this.tabPage2.Controls.Add(this.webSocketsLib);
+            this.tabPage2.Controls.Add(this.webChannelLib);
+            this.tabPage2.Controls.Add(this.serialPortLib);
+            this.tabPage2.Controls.Add(this.positioningLib);
+            this.tabPage2.Controls.Add(this.nfcLib);
+            this.tabPage2.Controls.Add(this.enginioLib);
+            this.tabPage2.Controls.Add(this.uiToolsLib);
+            this.tabPage2.Controls.Add(this.scriptToolsLib);
+            this.tabPage2.Controls.Add(this.quickLib);
+            this.tabPage2.Controls.Add(this.qmlLib);
+            this.tabPage2.Controls.Add(this.webKitLib);
+            this.tabPage2.Controls.Add(this.multimediaLib);
+            this.tabPage2.Controls.Add(this.networkLib);
+            this.tabPage2.Controls.Add(this.coreLib);
+            this.tabPage2.Controls.Add(this.threeDLib);
+            this.tabPage2.Controls.Add(this.guiLib);
+            this.tabPage2.Controls.Add(this.sqlLib);
+            this.tabPage2.Controls.Add(this.testLib);
+            this.tabPage2.Controls.Add(this.svgLib);
+            this.tabPage2.Controls.Add(this.multimediaWidgetsLib);
+            this.tabPage2.Controls.Add(this.concurrentLib);
+            this.tabPage2.Controls.Add(this.widgetsLib);
+            this.tabPage2.Controls.Add(this.locationLib);
+            this.tabPage2.Controls.Add(this.webkitWidgetsLib);
+            this.tabPage2.Controls.Add(this.sensorsLib);
+            this.tabPage2.Controls.Add(this.declarativeLib);
+            this.tabPage2.Controls.Add(this.printSupportLib);
+            this.tabPage2.Controls.Add(this.bluetoothLib);
+            this.tabPage2.Controls.Add(this.helpLib);
+            this.tabPage2.Controls.Add(this.xmlLib);
+            this.tabPage2.Controls.Add(this.activeQtCLib);
+            this.tabPage2.Controls.Add(this.activeQtSLib);
+            this.tabPage2.Controls.Add(this.xmlPatternsLib);
+            this.tabPage2.Controls.Add(this.openGLLib);
+            this.tabPage2.Controls.Add(this.scriptLib);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -141,267 +180,274 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Add/Remove Qt Modules";
             // 
-            // panel2
+            // uiToolsLib
             // 
-            this.panel2.Controls.Add(this.uiToolsLib);
-            this.panel2.Controls.Add(this.scriptToolsLib);
-            this.panel2.Controls.Add(this.quickLib);
-            this.panel2.Controls.Add(this.qmlLib);
-            this.panel2.Controls.Add(this.webKitLib);
-            this.panel2.Controls.Add(this.multimediaLib);
-            this.panel2.Controls.Add(this.networkLib);
-            this.panel2.Controls.Add(this.coreLib);
-            this.panel2.Controls.Add(this.threeDLib);
-            this.panel2.Controls.Add(this.guiLib);
-            this.panel2.Controls.Add(this.sqlLib);
-            this.panel2.Controls.Add(this.testLib);
-            this.panel2.Controls.Add(this.svgLib);
-            this.panel2.Controls.Add(this.multimediaWidgetsLib);
-            this.panel2.Controls.Add(this.concurrentLib);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.widgetsLib);
-            this.panel2.Controls.Add(this.locationLib);
-            this.panel2.Controls.Add(this.webkitWidgetsLib);
-            this.panel2.Controls.Add(this.sensorsLib);
-            this.panel2.Controls.Add(this.declarativeLib);
-            this.panel2.Controls.Add(this.printSupportLib);
-            this.panel2.Controls.Add(this.bluetoothLib);
-            this.panel2.Controls.Add(this.helpLib);
-            this.panel2.Controls.Add(this.xmlLib);
-            this.panel2.Controls.Add(this.activeQtCLib);
-            this.panel2.Controls.Add(this.activeQtSLib);
-            this.panel2.Controls.Add(this.xmlPatternsLib);
-            this.panel2.Controls.Add(this.openGLLib);
-            this.panel2.Controls.Add(this.scriptLib);
-            this.panel2.Location = new System.Drawing.Point(0, 6);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(449, 303);
-            this.panel2.TabIndex = 11;
+            this.uiToolsLib.Location = new System.Drawing.Point(294, 27);
+            this.uiToolsLib.Name = "uiToolsLib";
+            this.uiToolsLib.Size = new System.Drawing.Size(135, 24);
+            this.uiToolsLib.TabIndex = 56;
+            this.uiToolsLib.UseVisualStyleBackColor = true;
+            // 
+            // scriptToolsLib
+            // 
+            this.scriptToolsLib.Location = new System.Drawing.Point(150, 195);
+            this.scriptToolsLib.Name = "scriptToolsLib";
+            this.scriptToolsLib.Size = new System.Drawing.Size(135, 24);
+            this.scriptToolsLib.TabIndex = 50;
+            this.scriptToolsLib.UseVisualStyleBackColor = true;
             // 
             // quickLib
             // 
-            this.quickLib.Location = new System.Drawing.Point(149, 104);
+            this.quickLib.Location = new System.Drawing.Point(150, 147);
             this.quickLib.Name = "quickLib";
             this.quickLib.Size = new System.Drawing.Size(128, 24);
-            this.quickLib.TabIndex = 16;
+            this.quickLib.TabIndex = 48;
             this.quickLib.UseVisualStyleBackColor = true;
             // 
             // qmlLib
             // 
-            this.qmlLib.Location = new System.Drawing.Point(149, 80);
+            this.qmlLib.Location = new System.Drawing.Point(150, 123);
             this.qmlLib.Name = "qmlLib";
             this.qmlLib.Size = new System.Drawing.Size(128, 24);
-            this.qmlLib.TabIndex = 15;
+            this.qmlLib.TabIndex = 47;
             this.qmlLib.UseVisualStyleBackColor = true;
             // 
             // webKitLib
             // 
-            this.webKitLib.Location = new System.Drawing.Point(296, 32);
+            this.webKitLib.Location = new System.Drawing.Point(294, 75);
             this.webKitLib.Name = "webKitLib";
             this.webKitLib.Size = new System.Drawing.Size(111, 24);
-            this.webKitLib.TabIndex = 25;
+            this.webKitLib.TabIndex = 58;
             // 
             // multimediaLib
             // 
-            this.multimediaLib.Location = new System.Drawing.Point(5, 248);
+            this.multimediaLib.Location = new System.Drawing.Point(6, 267);
             this.multimediaLib.Name = "multimediaLib";
             this.multimediaLib.Size = new System.Drawing.Size(128, 24);
-            this.multimediaLib.TabIndex = 10;
+            this.multimediaLib.TabIndex = 40;
             // 
             // networkLib
             // 
-            this.networkLib.Location = new System.Drawing.Point(149, 8);
+            this.networkLib.Location = new System.Drawing.Point(150, 3);
             this.networkLib.Name = "networkLib";
             this.networkLib.Size = new System.Drawing.Size(128, 24);
-            this.networkLib.TabIndex = 12;
+            this.networkLib.TabIndex = 42;
             // 
             // coreLib
             // 
-            this.coreLib.Location = new System.Drawing.Point(5, 128);
+            this.coreLib.Location = new System.Drawing.Point(6, 123);
             this.coreLib.Name = "coreLib";
             this.coreLib.Size = new System.Drawing.Size(128, 24);
-            this.coreLib.TabIndex = 5;
+            this.coreLib.TabIndex = 34;
             // 
             // threeDLib
             // 
-            this.threeDLib.Location = new System.Drawing.Point(5, 8);
+            this.threeDLib.Location = new System.Drawing.Point(6, 3);
             this.threeDLib.Name = "threeDLib";
             this.threeDLib.Size = new System.Drawing.Size(128, 24);
-            this.threeDLib.TabIndex = 0;
+            this.threeDLib.TabIndex = 29;
             this.threeDLib.UseVisualStyleBackColor = true;
             // 
             // guiLib
             // 
-            this.guiLib.Location = new System.Drawing.Point(5, 176);
+            this.guiLib.Location = new System.Drawing.Point(6, 195);
             this.guiLib.Name = "guiLib";
             this.guiLib.Size = new System.Drawing.Size(135, 24);
-            this.guiLib.TabIndex = 7;
+            this.guiLib.TabIndex = 37;
             // 
             // sqlLib
             // 
-            this.sqlLib.Location = new System.Drawing.Point(149, 200);
+            this.sqlLib.Location = new System.Drawing.Point(150, 267);
             this.sqlLib.Name = "sqlLib";
             this.sqlLib.Size = new System.Drawing.Size(111, 24);
-            this.sqlLib.TabIndex = 20;
+            this.sqlLib.TabIndex = 53;
             // 
             // testLib
             // 
-            this.testLib.Location = new System.Drawing.Point(296, 8);
+            this.testLib.Location = new System.Drawing.Point(294, 3);
             this.testLib.Name = "testLib";
             this.testLib.Size = new System.Drawing.Size(111, 24);
-            this.testLib.TabIndex = 24;
+            this.testLib.TabIndex = 55;
             // 
             // svgLib
             // 
-            this.svgLib.Location = new System.Drawing.Point(149, 271);
+            this.svgLib.Location = new System.Drawing.Point(150, 291);
             this.svgLib.Name = "svgLib";
             this.svgLib.Size = new System.Drawing.Size(118, 24);
-            this.svgLib.TabIndex = 23;
+            this.svgLib.TabIndex = 54;
             // 
             // multimediaWidgetsLib
             // 
-            this.multimediaWidgetsLib.Location = new System.Drawing.Point(5, 276);
+            this.multimediaWidgetsLib.Location = new System.Drawing.Point(6, 291);
             this.multimediaWidgetsLib.Name = "multimediaWidgetsLib";
             this.multimediaWidgetsLib.Size = new System.Drawing.Size(118, 24);
-            this.multimediaWidgetsLib.TabIndex = 11;
+            this.multimediaWidgetsLib.TabIndex = 41;
             this.multimediaWidgetsLib.UseVisualStyleBackColor = true;
             // 
             // concurrentLib
             // 
-            this.concurrentLib.Location = new System.Drawing.Point(5, 104);
+            this.concurrentLib.Location = new System.Drawing.Point(6, 99);
             this.concurrentLib.Name = "concurrentLib";
             this.concurrentLib.Size = new System.Drawing.Size(128, 24);
-            this.concurrentLib.TabIndex = 4;
+            this.concurrentLib.TabIndex = 33;
             this.concurrentLib.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label1.Location = new System.Drawing.Point(2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(443, 1);
-            this.label1.TabIndex = 21;
             // 
             // widgetsLib
             // 
-            this.widgetsLib.Location = new System.Drawing.Point(296, 80);
+            this.widgetsLib.Location = new System.Drawing.Point(294, 147);
             this.widgetsLib.Name = "widgetsLib";
             this.widgetsLib.Size = new System.Drawing.Size(135, 24);
-            this.widgetsLib.TabIndex = 27;
+            this.widgetsLib.TabIndex = 61;
             this.widgetsLib.UseVisualStyleBackColor = true;
             // 
             // locationLib
             // 
-            this.locationLib.Location = new System.Drawing.Point(5, 224);
+            this.locationLib.Location = new System.Drawing.Point(6, 243);
             this.locationLib.Name = "locationLib";
             this.locationLib.Size = new System.Drawing.Size(128, 24);
-            this.locationLib.TabIndex = 9;
+            this.locationLib.TabIndex = 39;
             this.locationLib.UseVisualStyleBackColor = true;
             // 
             // webkitWidgetsLib
             // 
-            this.webkitWidgetsLib.Location = new System.Drawing.Point(296, 56);
+            this.webkitWidgetsLib.Location = new System.Drawing.Point(294, 99);
             this.webkitWidgetsLib.Name = "webkitWidgetsLib";
             this.webkitWidgetsLib.Size = new System.Drawing.Size(135, 24);
-            this.webkitWidgetsLib.TabIndex = 26;
+            this.webkitWidgetsLib.TabIndex = 59;
             this.webkitWidgetsLib.UseVisualStyleBackColor = true;
             // 
             // sensorsLib
             // 
-            this.sensorsLib.Location = new System.Drawing.Point(149, 176);
+            this.sensorsLib.Location = new System.Drawing.Point(150, 219);
             this.sensorsLib.Name = "sensorsLib";
             this.sensorsLib.Size = new System.Drawing.Size(135, 24);
-            this.sensorsLib.TabIndex = 19;
+            this.sensorsLib.TabIndex = 51;
             this.sensorsLib.UseVisualStyleBackColor = true;
             // 
             // declarativeLib
             // 
-            this.declarativeLib.Location = new System.Drawing.Point(5, 152);
+            this.declarativeLib.Location = new System.Drawing.Point(6, 171);
             this.declarativeLib.Name = "declarativeLib";
             this.declarativeLib.Size = new System.Drawing.Size(135, 24);
-            this.declarativeLib.TabIndex = 6;
+            this.declarativeLib.TabIndex = 36;
             this.declarativeLib.UseVisualStyleBackColor = true;
             // 
             // printSupportLib
             // 
-            this.printSupportLib.Location = new System.Drawing.Point(149, 56);
+            this.printSupportLib.Location = new System.Drawing.Point(150, 99);
             this.printSupportLib.Name = "printSupportLib";
             this.printSupportLib.Size = new System.Drawing.Size(135, 24);
-            this.printSupportLib.TabIndex = 14;
+            this.printSupportLib.TabIndex = 46;
             this.printSupportLib.UseVisualStyleBackColor = true;
             // 
             // bluetoothLib
             // 
-            this.bluetoothLib.Location = new System.Drawing.Point(5, 80);
+            this.bluetoothLib.Location = new System.Drawing.Point(6, 75);
             this.bluetoothLib.Name = "bluetoothLib";
             this.bluetoothLib.Size = new System.Drawing.Size(137, 24);
-            this.bluetoothLib.TabIndex = 3;
+            this.bluetoothLib.TabIndex = 32;
             this.bluetoothLib.UseVisualStyleBackColor = true;
             // 
             // helpLib
             // 
-            this.helpLib.Location = new System.Drawing.Point(5, 200);
+            this.helpLib.Location = new System.Drawing.Point(6, 219);
             this.helpLib.Name = "helpLib";
             this.helpLib.Size = new System.Drawing.Size(128, 24);
-            this.helpLib.TabIndex = 8;
+            this.helpLib.TabIndex = 38;
             // 
             // xmlLib
             // 
-            this.xmlLib.Location = new System.Drawing.Point(296, 104);
+            this.xmlLib.Location = new System.Drawing.Point(294, 195);
             this.xmlLib.Name = "xmlLib";
             this.xmlLib.Size = new System.Drawing.Size(118, 24);
-            this.xmlLib.TabIndex = 28;
+            this.xmlLib.TabIndex = 63;
             // 
             // activeQtCLib
             // 
-            this.activeQtCLib.Location = new System.Drawing.Point(5, 32);
+            this.activeQtCLib.Location = new System.Drawing.Point(6, 27);
             this.activeQtCLib.Name = "activeQtCLib";
             this.activeQtCLib.Size = new System.Drawing.Size(128, 24);
-            this.activeQtCLib.TabIndex = 1;
+            this.activeQtCLib.TabIndex = 30;
             // 
             // activeQtSLib
             // 
-            this.activeQtSLib.Location = new System.Drawing.Point(5, 55);
+            this.activeQtSLib.Location = new System.Drawing.Point(6, 51);
             this.activeQtSLib.Name = "activeQtSLib";
             this.activeQtSLib.Size = new System.Drawing.Size(120, 24);
-            this.activeQtSLib.TabIndex = 2;
+            this.activeQtSLib.TabIndex = 31;
             // 
             // xmlPatternsLib
             // 
-            this.xmlPatternsLib.Location = new System.Drawing.Point(149, 247);
+            this.xmlPatternsLib.Location = new System.Drawing.Point(294, 219);
             this.xmlPatternsLib.Name = "xmlPatternsLib";
             this.xmlPatternsLib.Size = new System.Drawing.Size(118, 24);
-            this.xmlPatternsLib.TabIndex = 22;
+            this.xmlPatternsLib.TabIndex = 64;
             // 
             // openGLLib
             // 
-            this.openGLLib.Location = new System.Drawing.Point(149, 32);
+            this.openGLLib.Location = new System.Drawing.Point(150, 51);
             this.openGLLib.Name = "openGLLib";
             this.openGLLib.Size = new System.Drawing.Size(120, 24);
-            this.openGLLib.TabIndex = 13;
+            this.openGLLib.TabIndex = 44;
             // 
             // scriptLib
             // 
-            this.scriptLib.Location = new System.Drawing.Point(149, 128);
+            this.scriptLib.Location = new System.Drawing.Point(150, 171);
             this.scriptLib.Name = "scriptLib";
             this.scriptLib.Size = new System.Drawing.Size(128, 24);
-            this.scriptLib.TabIndex = 17;
+            this.scriptLib.TabIndex = 49;
             // 
-            // scriptToolsLib
+            // enginioLib
             // 
-            this.scriptToolsLib.Location = new System.Drawing.Point(149, 152);
-            this.scriptToolsLib.Name = "scriptToolsLib";
-            this.scriptToolsLib.Size = new System.Drawing.Size(135, 24);
-            this.scriptToolsLib.TabIndex = 18;
-            this.scriptToolsLib.UseVisualStyleBackColor = true;
+            this.enginioLib.Location = new System.Drawing.Point(6, 147);
+            this.enginioLib.Name = "enginioLib";
+            this.enginioLib.Size = new System.Drawing.Size(128, 24);
+            this.enginioLib.TabIndex = 35;
             // 
-            // uiToolsLib
+            // nfcLib
             // 
-            this.uiToolsLib.Location = new System.Drawing.Point(149, 223);
-            this.uiToolsLib.Name = "uiToolsLib";
-            this.uiToolsLib.Size = new System.Drawing.Size(135, 24);
-            this.uiToolsLib.TabIndex = 21;
-            this.uiToolsLib.UseVisualStyleBackColor = true;
+            this.nfcLib.Location = new System.Drawing.Point(150, 27);
+            this.nfcLib.Name = "nfcLib";
+            this.nfcLib.Size = new System.Drawing.Size(128, 24);
+            this.nfcLib.TabIndex = 43;
+            // 
+            // positioningLib
+            // 
+            this.positioningLib.Location = new System.Drawing.Point(150, 75);
+            this.positioningLib.Name = "positioningLib";
+            this.positioningLib.Size = new System.Drawing.Size(120, 24);
+            this.positioningLib.TabIndex = 45;
+            // 
+            // serialPortLib
+            // 
+            this.serialPortLib.Location = new System.Drawing.Point(150, 243);
+            this.serialPortLib.Name = "serialPortLib";
+            this.serialPortLib.Size = new System.Drawing.Size(135, 24);
+            this.serialPortLib.TabIndex = 52;
+            this.serialPortLib.UseVisualStyleBackColor = true;
+            // 
+            // webChannelLib
+            // 
+            this.webChannelLib.Location = new System.Drawing.Point(294, 51);
+            this.webChannelLib.Name = "webChannelLib";
+            this.webChannelLib.Size = new System.Drawing.Size(111, 24);
+            this.webChannelLib.TabIndex = 57;
+            // 
+            // webSocketsLib
+            // 
+            this.webSocketsLib.Location = new System.Drawing.Point(294, 123);
+            this.webSocketsLib.Name = "webSocketsLib";
+            this.webSocketsLib.Size = new System.Drawing.Size(135, 24);
+            this.webSocketsLib.TabIndex = 60;
+            this.webSocketsLib.UseVisualStyleBackColor = true;
+            // 
+            // windowsExtrasLib
+            // 
+            this.windowsExtrasLib.Location = new System.Drawing.Point(294, 171);
+            this.windowsExtrasLib.Name = "windowsExtrasLib";
+            this.windowsExtrasLib.Size = new System.Drawing.Size(135, 24);
+            this.windowsExtrasLib.TabIndex = 62;
+            this.windowsExtrasLib.UseVisualStyleBackColor = true;
             // 
             // FormProjectQtSettings
             // 
@@ -422,7 +468,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -436,19 +481,21 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.CheckBox uiToolsLib;
+        private System.Windows.Forms.CheckBox scriptToolsLib;
+        private System.Windows.Forms.CheckBox quickLib;
+        private System.Windows.Forms.CheckBox qmlLib;
         private System.Windows.Forms.CheckBox webKitLib;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.CheckBox multimediaLib;
         private System.Windows.Forms.CheckBox networkLib;
         private System.Windows.Forms.CheckBox coreLib;
+        private System.Windows.Forms.CheckBox threeDLib;
         private System.Windows.Forms.CheckBox guiLib;
         private System.Windows.Forms.CheckBox sqlLib;
         private System.Windows.Forms.CheckBox testLib;
-        private System.Windows.Forms.CheckBox multimediaLib;
-        private System.Windows.Forms.CheckBox quickLib;
-        private System.Windows.Forms.CheckBox qmlLib;
+        private System.Windows.Forms.CheckBox svgLib;
         private System.Windows.Forms.CheckBox multimediaWidgetsLib;
         private System.Windows.Forms.CheckBox concurrentLib;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox widgetsLib;
         private System.Windows.Forms.CheckBox locationLib;
         private System.Windows.Forms.CheckBox webkitWidgetsLib;
@@ -463,9 +510,12 @@
         private System.Windows.Forms.CheckBox xmlPatternsLib;
         private System.Windows.Forms.CheckBox openGLLib;
         private System.Windows.Forms.CheckBox scriptLib;
-        private System.Windows.Forms.CheckBox threeDLib;
-        private System.Windows.Forms.CheckBox svgLib;
-        private System.Windows.Forms.CheckBox uiToolsLib;
-        private System.Windows.Forms.CheckBox scriptToolsLib;
+        private System.Windows.Forms.CheckBox enginioLib;
+        private System.Windows.Forms.CheckBox nfcLib;
+        private System.Windows.Forms.CheckBox positioningLib;
+        private System.Windows.Forms.CheckBox serialPortLib;
+        private System.Windows.Forms.CheckBox webChannelLib;
+        private System.Windows.Forms.CheckBox webSocketsLib;
+        private System.Windows.Forms.CheckBox windowsExtrasLib;
     }
 }
