@@ -157,6 +157,8 @@ function AddModules() {
         QtEngine.AddModule("QtPositioning");
     if (wizard.FindSymbol('PRINTSUPPORT_MODULE'))
         QtEngine.AddModule("QtPrintSupport");
+    if (wizard.FindSymbol('QUICKWIDGETS_MODULE'))
+        QtEngine.AddModule("QtQuickWidgets");
     if (wizard.FindSymbol('SCRIPT_MODULE'))
         QtEngine.AddModule("QtScript");
     if (wizard.FindSymbol('SCRIPTTOOLS_MODULE'))

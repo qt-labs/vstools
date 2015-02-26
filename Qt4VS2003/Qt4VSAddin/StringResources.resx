@@ -781,4 +781,7 @@ to import .pro files specify a Qt version &gt;=5.2 as default.</value>
   <data name="WindowsExtrasLibrary" xml:space="preserve">
     <value>Windows Extras</value>
   </data>
+  <data name="QuickWidgetsLibrary" xml:space="preserve">
+    <value>Quick Widgets</value>
+  </data>
 </root>

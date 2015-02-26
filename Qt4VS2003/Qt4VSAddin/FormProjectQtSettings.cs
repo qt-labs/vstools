@@ -117,6 +117,7 @@ namespace Qt5VSAddin
             webChannelLib.Text = SR.GetString("WebChannelLibrary");
             webSocketsLib.Text = SR.GetString("WebSocketsLibrary");
             windowsExtrasLib.Text = SR.GetString("WindowsExtrasLibrary");
+            quickWidgetsLib.Text = SR.GetString("QuickWidgetsLibrary");
 
             // essentials
             AddMapping(threeDLib, QtModule.ThreeD);
@@ -159,6 +160,7 @@ namespace Qt5VSAddin
             AddMapping(webChannelLib, QtModule.WebChannel);
             AddMapping(webSocketsLib, QtModule.WebSockets);
             AddMapping(windowsExtrasLib, QtModule.WindowsExtras);
+            AddMapping(quickWidgetsLib, QtModule.QuickWidgets);
 
 
             FormBorderStyle = FormBorderStyle.FixedDialog;

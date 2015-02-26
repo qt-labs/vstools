@@ -86,6 +86,7 @@ namespace Digia.Qt5ProjectLib
         WebSockets = 35,
         Sensors = 36,
         WindowsExtras = 37,
+        QuickWidgets = 38,
         // JSBackend = 39,
         Quick = 40,
         ThreeDQuick = 41,
@@ -295,6 +296,7 @@ namespace Digia.Qt5ProjectLib
             moduleInfo = InitQtModule(QtModule.WebSockets, "QtWebSockets", "QT_WEBSOCKETS_LIB");
             moduleInfo.dependentModules.Add(QtModule.Network);
             InitQtModule(QtModule.WindowsExtras, "QtWinExtras", "QT_WINEXTRAS_LIB");
+            InitQtModule(QtModule.QuickWidgets, "QtQuickWidgets", "QT_QUICKWIDGETS_LIB");
 
         }
 

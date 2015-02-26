@@ -784,4 +784,7 @@ importieren zu können, muss eine Version &gt;=5.2 angegeben werden.</value>
   <data name="WindowsExtrasLibrary" xml:space="preserve">
     <value>Windows Extras</value>
   </data>
+  <data name="QuickWidgetsLibrary" xml:space="preserve">
+    <value>Quick Widgets</value>
+  </data>
 </root>
