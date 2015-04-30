@@ -2807,9 +2807,21 @@ namespace Digia.Qt5ProjectLib
                     bool mocableIsCPP = (srcMocFile == cppFile);
 
                     string pchParameters = null;
-                    VCFileConfiguration cppConfig = GetVCFileConfigurationByName(cppFile, config.Name);
-                    CompilerToolWrapper compiler = CompilerToolWrapper.Create(cppConfig);
-                    if (compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
+                    VCFileConfiguration defineIncludeConfig = null;
+                    CompilerToolWrapper compiler = null;
+                    if (cppFile == null)
+                    {
+                        // No file specific defines/includes but at least the project defines/includes are added
+                        defineIncludeConfig = config;
+                        compiler = CompilerToolWrapper.Create(config.ProjectConfiguration as VCConfiguration);
+                    }
+                    else
+                    {
+                        defineIncludeConfig = GetVCFileConfigurationByName(cppFile, config.Name);
+                        compiler = CompilerToolWrapper.Create(defineIncludeConfig);
+                    }
+
+                    if (compiler != null && compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
                         pchParameters = GetPCHMocOptions(srcMocFile, compiler);
 
                     string outputFileName = QtVSIPSettings.GetMocDirectory(envPro) + "\\";
@@ -2826,8 +2838,8 @@ namespace Digia.Qt5ProjectLib
                     }
 
                     string newCmdLine = mocCmdChecker.NewCmdLine(tool.CommandLine,
-                        GetIncludes(cppConfig),
-                        GetDefines(cppConfig),
+                        GetIncludes(defineIncludeConfig),
+                        GetDefines(defineIncludeConfig),
                         QtVSIPSettings.GetMocOptions(envPro), srcMocFile.RelativePath,
                         pchParameters,
                         outputFileName);
