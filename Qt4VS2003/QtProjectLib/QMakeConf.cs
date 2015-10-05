@@ -91,15 +91,14 @@ namespace Digia.Qt5ProjectLib
                 qmakeThread.Start();
                 qmakeThread.Join();
 
-                if (qmakeQuery.ErrorValue != 0)
-                {
-                    throw new QtVSException("qmake.conf not found");
-                }
-
-                if (qmakespecFolder.Length > 0)
+                if (qmakeQuery.ErrorValue == 0 && qmakespecFolder.Length > 0)
                 {
                     filename = versionInfo.qtDir + "\\mkspecs\\" + qmakespecFolder + "\\qmake.conf";
+                    fileInfo = new FileInfo(filename);
                 }
+
+                if (qmakeQuery.ErrorValue != 0 || !fileInfo.Exists)
+                    throw new QtVSException("qmake.conf expected at " +  filename + " not found");
             }
 
             Init(filename);
