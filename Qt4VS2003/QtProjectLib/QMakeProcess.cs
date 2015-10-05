@@ -346,17 +346,15 @@ namespace Digia.Qt5ProjectLib
                     if (stdOutputLines > 0)
                     {
                         result = stdOutput.ToString();
-                        if (result.IndexOf("win32") > 0)
-                        {
-                            result = result.Substring(result.IndexOf("win32")).Trim();
-                        }
-                        else if (result.IndexOf("wince") > 0)
-                        {
-                            result = result.Substring(result.IndexOf("wince")).Trim();
+                        int dashIndex = result.IndexOf('-');
+                        if (dashIndex == -1) {
+                            errorValue = -1;
+                            result = "";
+                        } else {
+                            result = result.Substring(dashIndex + 1).Trim();
                         }
                     }
                 }
-
                 qmakeProcess.Close();
             }
             catch (Exception e)
