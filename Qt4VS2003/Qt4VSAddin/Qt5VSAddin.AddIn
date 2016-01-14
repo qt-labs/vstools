@@ -7,7 +7,7 @@
 	<Addin>
 		<FriendlyName>Qt Add-in Development Version</FriendlyName>
 		<Description>Qt Add-in Development Version</Description>
-    <AboutBoxDetails>This is Visual Studio Add-in component for Qt. For more information about Qt, see \r\nhttp://qt.digia.com\r\nCopyright (C) 2012 Digia Plc and/or its subsidiary(-ies)</AboutBoxDetails>
+    <AboutBoxDetails>This is Visual Studio Add-in component for Qt. For more information about Qt, see \r\nhttp://www.qt.io\r\nCopyright (C) 2016 The Qt Company Ltd.</AboutBoxDetails>
 		<AboutIconData>@AboutIcon</AboutIconData>
 		<Assembly>Qt5VSAddin.dll</Assembly>
 		<FullClassName>Qt5VSAddin.Connect</FullClassName>

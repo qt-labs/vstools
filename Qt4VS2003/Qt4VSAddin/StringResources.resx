@@ -261,7 +261,7 @@ To enable the plugin to be loaded, the Qt version {0} has to be used. Do you wan
 The resulting plugin will not work with the current Qt Visual Studio Add-in.</value>
   </data>
   <data name="BuildSystem_Solution" xml:space="preserve">
-    <value>Goto qt.digia.com and download the binary package of Qt {0}.</value>
+    <value>Goto www.qt.io and download the binary package of Qt {0}.</value>
   </data>
   <data name="EditorFactory_OpenFailure" xml:space="preserve">
     <value>
@@ -387,7 +387,7 @@ and insert the information about the Qt version you want to use.</value>
   <data name="InvalidLicense" xml:space="preserve">
     <value>A valid Qt license key could not be found or your license has expired!
         
-Please use contact form at http://qt.digia.com/contact-us to order a Qt license.</value>
+Please use contact form at https://www.qt.io/buy-product/ to order a Qt license.</value>
   </data>
   <data name="InitComponentsFailure" xml:space="preserve">
     <value>Cannot initialize FormEditor components!</value>

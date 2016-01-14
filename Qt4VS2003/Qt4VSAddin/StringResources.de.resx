@@ -262,7 +262,7 @@ Soll die Qt Version auf Qt {0} geändert werden?</value>
 d.h. die Qt Visual Studio Add-in kann das erstellte Plugin nicht laden.</value>
   </data>
   <data name="BuildSystem_Solution" xml:space="preserve">
-    <value>Gehen Sie auf qt.digia.com und laden Qt {0} herunter.</value>
+    <value>Gehen Sie auf www.qt.io und laden Qt {0} herunter.</value>
   </data>
   <data name="EditorFactory_OpenFailure" xml:space="preserve">
     <value>
@@ -387,7 +387,7 @@ sich. Eventuelle manuelle Änderungen gehen dabei verloren. Möchten Sie fortfah
   <data name="InvalidLicense" xml:space="preserve">
     <value>Eine gültige Qt Lizenz konnte nicht gefunden werden!
         
-Bitte benutzen Sie Kontaktformular auf http://qt.digia.com/contact-us eine Qt Lizenz zu bestellen.</value>
+Bitte benutzen Sie Kontaktformular auf https://www.qt.io/buy-product eine Qt Lizenz zu bestellen.</value>
   </data>
   <data name="InitComponentsFailure" xml:space="preserve">
     <value>Die Formeditorkomponenten können nicht initialisiert werden!</value>

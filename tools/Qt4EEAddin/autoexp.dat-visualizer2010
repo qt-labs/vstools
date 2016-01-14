@@ -1,5 +1,5 @@
 ;QT_DEBUG_START
-; Digia Qt 5.x visualizers -----------------------------------------[ start ]--
+; The Qt Company Ltd. Qt 5.x visualizers -----------------------------------------[ start ]--
 ;------------------------------------------------------------------------------
 ; Feel free to modify these visualizers to suit yours needs! But please let us
 ; know about the changes you make, so we continuously improve the visualizers.
@@ -1507,5 +1507,5 @@ QPolygonF{
 }
 
 ;------------------------------------------------------------------------------
-; Digia Qt 5.x visualizers -------------------------------------------[ end ]--
+; The Qt Company Ltd. Qt 5.x visualizers -------------------------------------------[ end ]--
 ;QT_DEBUG_END
