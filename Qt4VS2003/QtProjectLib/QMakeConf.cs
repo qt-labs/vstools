@@ -35,7 +35,7 @@ namespace Digia.Qt5ProjectLib
 {
     public class QMakeConf
     {
-        protected Hashtable entries = new Hashtable();
+        protected Hashtable mEntries = new Hashtable();
         private FileInfo fileInfo = null;
         private string qmakespecFolder = "";
 
@@ -99,6 +99,16 @@ namespace Digia.Qt5ProjectLib
 
         protected void Init(string filename)
         {
+            ParseFile(filename, ref mEntries);
+        }
+
+        public string Get(string key)
+        {
+            return (string)mEntries[key];
+        }
+
+        private void ParseFile(string filename, ref Hashtable entries)
+        {
             fileInfo = new FileInfo(filename);
             if (fileInfo.Exists)
             {
@@ -106,75 +116,56 @@ namespace Digia.Qt5ProjectLib
                 string line = streamReader.ReadLine();
                 while (line != null)
                 {
-                    ParseLine(line);
+                    line = line.Trim();
+                    int commentStartIndex = line.IndexOf('#');
+                    if (commentStartIndex >= 0)
+                        line = line.Remove(commentStartIndex);
+                    int pos = line.IndexOf('=');
+                    if (pos > 0)
+                    {
+                        string op = "=";
+                        if (line[pos - 1] == '+' || line[pos - 1] == '-')
+                            op = line[pos - 1] + "=";
+
+                        string lineKey;
+                        string lineValue;
+                        lineKey = line.Substring(0, pos - op.Length + 1).Trim();
+                        lineValue = ExpandVariables(line.Substring(pos + 1).Trim(), entries);
+
+                        if (op == "+=")
+                        {
+                            entries[lineKey] += " " + lineValue;
+                        }
+                        else if (op == "-=")
+                        {
+                            foreach (string remval in lineValue.Split(new char[] { ' ', '\t' }))
+                                RemoveValue(lineKey, remval, entries);
+                        }
+                        else
+                            entries[lineKey] = lineValue;
+                    }
+                    else if (line.StartsWith("include"))
+                    {
+                        pos = line.IndexOf('(');
+                        int posEnd = line.LastIndexOf(')');
+                        if (pos > 0 && pos < posEnd)
+                        {
+                            string filenameToInclude = line.Substring(pos + 1, posEnd - pos - 1);
+                            string saveCurrentDir = Environment.CurrentDirectory;
+                            Environment.CurrentDirectory = fileInfo.Directory.FullName;
+                            FileInfo fileInfoToInclude = new FileInfo(filenameToInclude);
+                            if (fileInfoToInclude.Exists)
+                                ParseFile(fileInfoToInclude.FullName, ref entries);
+                            Environment.CurrentDirectory = saveCurrentDir;
+                        }
+                    }
                     line = streamReader.ReadLine();
                 }
                 streamReader.Close();
             }
         }
 
-        public string Get(string key)
-        {
-            return (string)entries[key];
-        }
-
-        private void ParseLine(string line)
-        {
-            line = line.Trim();
-            int commentStartIndex = line.IndexOf('#');
-            if (commentStartIndex >= 0)
-                line = line.Remove(commentStartIndex);
-            int pos = line.IndexOf('=');
-            if (pos > 0)
-            {
-                string op = "=";
-                if (line[pos - 1] == '+' || line[pos - 1] == '-')
-                    op = line[pos - 1] + "=";
-
-                string lineKey;
-                string lineValue;
-                lineKey = line.Substring(0, pos - op.Length + 1).Trim();
-                lineValue = ExpandVariables(line.Substring(pos + 1).Trim());
-
-                if (op == "+=")
-                {
-                    entries[lineKey] += " " + lineValue;
-                }
-                else if (op == "-=")
-                {
-                    foreach (string remval in lineValue.Split(new char[] { ' ', '\t' }))
-                        RemoveValue(lineKey, remval);
-                }
-                else
-                    entries[lineKey] = lineValue;
-            }
-            else if (line.StartsWith("include"))
-            {
-                pos = line.IndexOf('(');
-                int posEnd = line.LastIndexOf(')');
-                if (pos > 0 && pos < posEnd)
-                {
-                    string filenameToInclude = line.Substring(pos + 1, posEnd - pos - 1);
-                    string saveCurrentDir = Environment.CurrentDirectory;
-                    Environment.CurrentDirectory = fileInfo.Directory.FullName;
-                    FileInfo fileInfoToInclude = new FileInfo(filenameToInclude);
-                    if (fileInfoToInclude.Exists)
-                    {
-                        QMakeConf includeConf = new QMakeConf(fileInfoToInclude.FullName, InitType.InitQMakeConf);
-                        foreach (string key in includeConf.entries.Keys)
-                        {
-                            if (entries.ContainsKey(key))
-                                entries[key] += includeConf.entries[key].ToString();
-                            else
-                                entries[key] = includeConf.entries[key].ToString();
-                        }
-                    }
-                    Environment.CurrentDirectory = saveCurrentDir;
-                }
-            }
-        }
-
-        private string ExpandVariables(string value)
+        private string ExpandVariables(string value, Hashtable entries)
         {
             int pos = value.IndexOf("$$");
             while (pos != -1)
@@ -208,20 +199,20 @@ namespace Digia.Qt5ProjectLib
             return value;
         }
 
-        private void RemoveValue(string key, string valueToRemove)
+        private void RemoveValue(string key, string valueToRemove, Hashtable entries)
         {
             int pos;
-            if (entries.Contains(key))
+            if (!entries.Contains(key))
+                return;
+
+            string value = entries[key].ToString();
+            do
             {
-                string value = entries[key].ToString();
-                do
-                {
-                    pos = value.IndexOf(valueToRemove);
-                    if (pos >= 0)
-                        value = value.Remove(pos, valueToRemove.Length);
-                } while (pos >= 0);
-                entries[key] = value;
-            }
+                pos = value.IndexOf(valueToRemove);
+                if (pos >= 0)
+                    value = value.Remove(pos, valueToRemove.Length);
+            } while (pos >= 0);
+            entries[key] = value;
         }
     }
 }
