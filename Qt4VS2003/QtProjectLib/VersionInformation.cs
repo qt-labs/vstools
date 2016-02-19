@@ -64,22 +64,39 @@ namespace Digia.Qt5ProjectLib
             // Find version number
             try 
             {
-                StreamReader inF = new StreamReader(Locate_qglobal_h());
-                Regex rgxpVersion = new Regex( "#define\\s*QT_VERSION\\s*0x(?<number>\\d+)", RegexOptions.Multiline );
-                string contents = inF.ReadToEnd();
-                inF.Close();
-                Match matchObj = rgxpVersion.Match( contents );
-                if (!matchObj.Success) 
+                QMakeQuery qmakeQuery = new QMakeQuery(this);
+                string strVersion = qmakeQuery.query("QT_VERSION");
+                if (qmakeQuery.ErrorValue == 0 && strVersion.Length > 0)
                 {
-                    qtDir = null;
-                    return;
+                    string[] versionParts = strVersion.Split('.');
+                    if (versionParts.Length != 3)
+                    {
+                        qtDir = null;
+                        return;
+                    }
+                    qtMajor = uint.Parse(versionParts[0]);
+                    qtMinor = uint.Parse(versionParts[1]);
+                    qtPatch = uint.Parse(versionParts[2]);
                 }
+                else
+                {
+                    StreamReader inF = new StreamReader(Locate_qglobal_h());
+                    Regex rgxpVersion = new Regex("#define\\s*QT_VERSION\\s*0x(?<number>\\d+)", RegexOptions.Multiline);
+                    string contents = inF.ReadToEnd();
+                    inF.Close();
+                    Match matchObj = rgxpVersion.Match(contents);
+                    if (!matchObj.Success)
+                    {
+                        qtDir = null;
+                        return;
+                    }
 
-                string strVersion = matchObj.Groups[1].ToString();
-                uint version = Convert.ToUInt32(strVersion, 16);
-                qtMajor = version >> 16;
-                qtMinor = (version >> 8) & 0xFF;
-                qtPatch = version & 0xFF;
+                    strVersion = matchObj.Groups[1].ToString();
+                    uint version = Convert.ToUInt32(strVersion, 16);
+                    qtMajor = version >> 16;
+                    qtMinor = (version >> 8) & 0xFF;
+                    qtPatch = version & 0xFF;
+                }
 
                 if (qtMajor == 5)
                 {
