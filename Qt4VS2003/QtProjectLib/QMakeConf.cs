@@ -72,11 +72,7 @@ namespace Digia.Qt5ProjectLib
             if (!fileInfo.Exists)
             {
                 QMakeQuery qmakeQuery = new QMakeQuery(versionInfo);
-
-                qmakeQuery.ReadyEvent += new QMakeQuery.EventHandler(this.CloseEventHandler);
-                System.Threading.Thread qmakeThread = new System.Threading.Thread(new ThreadStart(qmakeQuery.RunQMakeQuery));
-                qmakeThread.Start();
-                qmakeThread.Join();
+                qmakespecFolder = qmakeQuery.query("QMAKE_XSPEC");
 
                 if (qmakeQuery.ErrorValue == 0 && qmakespecFolder.Length > 0)
                 {
@@ -89,12 +85,6 @@ namespace Digia.Qt5ProjectLib
             }
 
             Init(filename);
-        }
-
-        // Qmake thread calls this handler to set qmake.conf folder
-        private void CloseEventHandler(string foldername)
-        {
-            qmakespecFolder = foldername;
         }
 
         protected void Init(string filename)

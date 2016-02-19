@@ -112,7 +112,7 @@ namespace Digia.Qt5ProjectLib
         protected int errorValue = 0;
         private EnvDTE.DTE dteObject;
         private bool recursive = false;
-        protected static Process qmakeProcess = null;
+        protected Process qmakeProcess = null;
         protected VersionInformation qtVersionInformation;
 
         protected static int stdOutputLines = 0;
@@ -155,7 +155,7 @@ namespace Digia.Qt5ProjectLib
                        + @"QMAKE_MOC=$(QTDIR)\bin\moc.exe "
                        + @"QMAKE_QMAKE=$(QTDIR)\bin\qmake.exe";
 
-            CreateQmakeProcess(qmakeArgs, qtVersionInformation.qtDir + "\\bin\\qmake", fi.DirectoryName);
+            qmakeProcess = CreateQmakeProcess(qmakeArgs, qtVersionInformation.qtDir + "\\bin\\qmake", fi.DirectoryName);
 
             // We must set the QTDIR environment variable, because we're clearing QMAKE_LIBDIR_QT above.
             // If we do not set this, the Qt libraries will be QtCored.lib instead of QtCore4d.lib even
@@ -233,9 +233,9 @@ namespace Digia.Qt5ProjectLib
             }
         }
 
-        protected void CreateQmakeProcess(string qmakeArgs, string filename, string workingDir)
+        protected Process CreateQmakeProcess(string qmakeArgs, string filename, string workingDir)
         {
-            qmakeProcess = new System.Diagnostics.Process();
+            Process qmakeProcess = new System.Diagnostics.Process();
             qmakeProcess.StartInfo.CreateNoWindow = true;
             qmakeProcess.StartInfo.UseShellExecute = false;
             qmakeProcess.StartInfo.RedirectStandardError = true;
@@ -243,6 +243,7 @@ namespace Digia.Qt5ProjectLib
             qmakeProcess.StartInfo.Arguments = qmakeArgs;
             qmakeProcess.StartInfo.FileName = filename;
             qmakeProcess.StartInfo.WorkingDirectory = workingDir;
+            return qmakeProcess;
         }
 
         protected static void InvokeExternalTarget(Delegate dlg, params object[] objList)
@@ -296,8 +297,9 @@ namespace Digia.Qt5ProjectLib
 
     class QMakeQuery : QMake
     {
-        public delegate void EventHandler(string param);
+        public delegate void EventHandler(string result);
         public event EventHandler ReadyEvent;
+        private string queryResult;
 
         public QMakeQuery(VersionInformation vi)
             : base(null, "", false, vi)
@@ -305,11 +307,29 @@ namespace Digia.Qt5ProjectLib
             qtVersionInformation = vi;
         }
 
-        public void RunQMakeQuery()
+        public string query(string property)
         {
-            string result = "";
-            CreateQmakeProcess("-query QMAKE_XSPEC", qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
+            ReadyEvent += new QMakeQuery.EventHandler(this.resultObtained);
+            System.Threading.Thread qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(this.RunQMakeQuery));
+            qmakeThread.Start(property);
+            qmakeThread.Join();
+            return queryResult;
+        }
 
+        private void resultObtained(string result)
+        {
+            queryResult = result;
+        }
+
+        private void RunQMakeQuery(object property)
+        {
+            if (property == null)
+                return;
+
+            string propertyString = property.ToString();
+            string result = "";
+
+            qmakeProcess = CreateQmakeProcess("-query " + propertyString.Trim(), qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
             try
             {
                 if (qmakeProcess.Start())
@@ -344,7 +364,7 @@ namespace Digia.Qt5ProjectLib
                 }
                 qmakeProcess.Close();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 qmakeProcess = null;
                 errorValue = -1;
