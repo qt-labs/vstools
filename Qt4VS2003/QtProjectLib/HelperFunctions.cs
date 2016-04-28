@@ -1708,12 +1708,53 @@ namespace Digia.Qt5ProjectLib
                 {
                     availablePlatforms.Add(reader.ReadElementContentAsString());
                 }
-#else
+#elif VS2008
                 VCProjectEngine engine = new VCProjectEngineObject();
                 IVCCollection platforms = engine.Platforms as IVCCollection;
                 foreach (VCPlatform platform in platforms)
                 {
                     availablePlatforms.Add(platform.Name);
+                }
+#else
+                // new VCProjectEngineObject(); does no longer work since VS2010 thus we have to fall
+                // back to parsing properties.xml inside the Windows CE SDK directories directly
+                RegistryKey base32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                                     RegistryView.Registry32);
+                if (base32 == null)
+                    return false;
+                RegistryKey sdks = base32.OpenSubKey("Software\\Microsoft\\Windows CE Tools\\SDKs", false);
+                if (sdks == null)
+                    return false;
+                foreach (string platform in sdks.GetSubKeyNames())
+                {
+                    string sdkName = "";
+                    string ideFamily = "";
+                    RegistryKey platformKey = sdks.OpenSubKey(platform);
+                    string path = platformKey.GetValue(null).ToString();
+                    path += "Properties.xml";
+
+                    try
+                    {
+                        FileStream stream = new FileStream(path, FileMode.Open);
+                        XmlReader reader = new XmlTextReader(stream);
+                        while (reader.ReadToFollowing("Property"))
+                        {
+                            string attr = reader.GetAttribute("NAME");
+                            if (attr == "SDK name")
+                                sdkName = reader.ReadString();
+                            else if (attr == "IdeFamily")
+                                ideFamily = reader.ReadString();
+                            if (sdkName.Length != 0 && ideFamily.Length != 0)
+                            {
+                                availablePlatforms.Add(sdkName + " (" + ideFamily + ')');
+                                break;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
                 }
 #endif
             }
