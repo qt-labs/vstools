@@ -115,6 +115,8 @@ namespace Digia.Qt5ProjectLib
 
 #if VS2013
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2013";
+#elif VS2015
+        public const string registryPackagePath = registryRootPath + "\\Qt5VS2015";
 #else
 #error Unknown Visual Studio version!
 #endif

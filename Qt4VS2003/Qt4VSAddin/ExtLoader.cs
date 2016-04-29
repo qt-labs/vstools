@@ -78,9 +78,7 @@ namespace Qt5VSAddin
             VersionInformation vi = new VersionInformation(qtDir);
             if (vi.qtMajor < 5)
             {
-#if VS2013
-                Messages.DisplayErrorMessage(SR.GetString("NoVS2013Support"));
-#endif
+                Messages.DisplayErrorMessage(SR.GetString("NoVSSupport"));
                 return;
             }
             if (Connect._applicationObject != null)

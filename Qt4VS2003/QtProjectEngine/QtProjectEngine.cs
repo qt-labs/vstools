@@ -37,6 +37,8 @@ namespace Digia.Qt5ProjectLib
 
 #if VS2013
     [ProgId("Digia.Qt5ProjectEngine120"), GuidAttribute("95821D7C-037F-451C-AEE4-3692748F6985")]
+#elif VS2015
+    [ProgId("Digia.Qt5ProjectEngine140"), GuidAttribute("A497F79F-D264-491F-A8C9-6CEEF8BE01CE")]
 #else
 #error GUID must be specified for this Visual Studio version!
 #endif

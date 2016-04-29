@@ -27,10 +27,9 @@
 ****************************************************************************/
 
 using System;
-using Extensibility;
 using EnvDTE;
-using Microsoft.VisualStudio.VCProjectEngine;
-using Microsoft.Win32;
+using Microsoft.VisualStudio.Shell;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -39,17 +38,25 @@ using EnvDTE80;
 
 namespace Qt5VSAddin
 {
-    [GuidAttribute("C80C78C8-F64B-43df-9A53-96F7C44A1EB6"), ProgId("Qt5VSAddin")]
-    /// <summary>The object for implementing an Add-in.</summary>
-    /// <seealso class='IDTExtensibility2' />
-    public class Connect : IDTExtensibility2, IDTCommandTarget
+    [Guid(Connect.PackageGuid)]
+    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules",
+        "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+        Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+    [InstalledProductRegistration("#110", "#112", "1.0.0", IconResourceID = 400)]
+    [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
+    public sealed class Connect : Package
     {
-        public static DTE _applicationObject = null;
-        public static AddIn _addInInstance = null;
-        public static ExtLoader extLoader = null;
-        public static bool menuVisible = false;
+        /// <summary>
+        /// The package GUID string.
+        /// </summary>
+        public const string PackageGuid = "15021976-647e-4876-9040-2507afde45d2";
 
-        private AddinInit initializer = null;
+        public static DTE _applicationObject = null;
+        public static Connect _addInInstance = null;
+        public static ExtLoader extLoader = null;
+
         private AddInEventHandler eventHandler = null;
         private FormChangeQtVersion formChangeQtVersion = null;
         private FormVSQtSettings formQtVersions = null;
@@ -57,11 +64,10 @@ namespace Qt5VSAddin
         private string installationDir = null;
         private string appWrapperPath = null;
         private string qmakeFileReaderPath = null;
-        private bool commandLine = false;
 
         public static Connect Instance()
         {
-            return _addInInstance.Object as Connect;
+            return _addInInstance;
         }
 
         /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
@@ -115,25 +121,23 @@ namespace Qt5VSAddin
             return filePath;
         }
 
-        /// <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>
-        /// <param term='application'>Root object of the host application.</param>
-        /// <param term='connectMode'>Describes how the Add-in is being loaded.</param>
-        /// <param term='addInInst'>Object representing this Add-in.</param>
-        /// <seealso class='IDTExtensibility2' />
-        public void OnConnection(object application, ext_ConnectMode connectMode, object addInInst, ref Array custom)
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited,
+        /// so this is the place where you can put all the initialization code that rely on services
+        /// provided by VisualStudio.
+        /// </summary>
+        protected override void Initialize()
         {
-            _applicationObject = (DTE)application;
-            _addInInstance = (AddIn)addInInst;
+            base.Initialize();
+
+            _addInInstance = this;
+            _applicationObject = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
 
             // determine the installation directory
             System.Uri uri = new System.Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             installationDir = Path.GetDirectoryName(System.Uri.UnescapeDataString(uri.AbsolutePath));
             installationDir += "\\";
 
-            // General startup code
-            if ((ext_ConnectMode.ext_cm_AfterStartup == connectMode) ||
-                (ext_ConnectMode.ext_cm_Startup == connectMode) ||
-                (ext_ConnectMode.ext_cm_CommandLine == connectMode))
             {
                 QtVersionManager vm = QtVersionManager.The();
                 string error = null;
@@ -141,23 +145,43 @@ namespace Qt5VSAddin
                     Messages.DisplayErrorMessage(error);
                 eventHandler = new AddInEventHandler(_applicationObject);
                 extLoader = new ExtLoader();
-                if (ext_ConnectMode.ext_cm_CommandLine != connectMode)
+
+                QtMainMenu.Initialize(this);
+                QtSolutionContextMenu.Initialize(this);
+                QtProjectContextMenu.Initialize(this);
+                QtItemContextMenu.Initialize(this);
+
                 {
                     try
                     {
-                        initializer = new AddinInit(_applicationObject);
-                        initializer.removeCommands();
-                        initializer.registerCommands();
-                        UpdateDefaultEditors(true);
+                        // TODO: Do we need this?
+                        // UpdateDefaultEditors(true);
                     }
                     catch (System.Exception e)
                     {
                         MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                     }
                 }
-                else
-                    commandLine = true;
             }
+        }
+
+        /// <summary>
+        /// Called to ask the package if the shell can be closed.
+        /// </summary>
+        /// <param term='canClose'>Returns true if the shell can be closed, otherwise false.</param>
+        /// <returns>
+        /// Microsoft.VisualStudio.VSConstants.S_OK if the method succeeded, otherwise an error code.
+        /// </returns>
+        protected override int QueryClose(out bool canClose)
+        {
+            eventHandler.Disconnect();
+            try {
+                // TODO: Do we need this?
+                // UpdateDefaultEditors(false);
+            } catch (System.Exception e) {
+                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            }
+            return base.QueryClose(out canClose);
         }
 
         public void QueryStatus(string commandName,
@@ -436,63 +460,6 @@ namespace Qt5VSAddin
             {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
-        }
-
-        /// <summary>Implements the OnDisconnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being unloaded.</summary>
-        /// <param term='disconnectMode'>Describes how the Add-in is being unloaded.</param>
-        /// <param term='custom'>Array of parameters that are host application specific.</param>
-        /// <seealso class='IDTExtensibility2' />
-        public void OnDisconnection(ext_DisconnectMode disconnectMode, ref Array custom)
-        {
-            eventHandler.Disconnect();
-            if (!commandLine)
-            {
-                try
-                {
-                    initializer.removeCommands();
-                    UpdateDefaultEditors(false);
-                }
-                catch (System.Exception e)
-                {
-                    MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-                }
-            }
-        }
-
-        /// <summary>Implements the OnAddInsUpdate method of the IDTExtensibility2 interface. Receives notification when the collection of Add-ins has changed.</summary>
-        /// <param term='custom'>Array of parameters that are host application specific.</param>
-        /// <seealso class='IDTExtensibility2' />
-        public void OnAddInsUpdate(ref Array custom)
-        {
-            try
-            {
-                // Check if Qt4 addin version is found
-                AddIn qt4addin = _applicationObject.AddIns.Item("Qt4VSAddin.Connect");
-                // Close it if found and running
-                if (_addInInstance.Connected && qt4addin.Connected)
-                {
-                    qt4addin.Connected = false;
-                    Messages.PaneMessage(_applicationObject, SR.GetString("Qt4Unloaded_pane_msg"));
-                }
-            }
-            catch (COMException)
-            {
-                // Just catching exception if Qt4 addin not found
-            }
-        }
-
-        /// <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
-        /// <param term='custom'>Array of parameters that are host application specific.</param>
-        /// <seealso class='IDTExtensibility2' />
-        public void OnStartupComplete(ref Array custom)
-        {
-        }
-
-        /// <summary>Implements the OnBeginShutdown method of the IDTExtensibility2 interface. Receives notification that the host application is being unloaded.</summary>
-        /// <param term='custom'>Array of parameters that are host application specific.</param>
-        /// <seealso class='IDTExtensibility2' />
-        public void OnBeginShutdown(ref Array custom)
-        {
         }
 
         /// <summary>This is to support Qt5 and Qt5 development at the same time. Default editor values in registry are changed so that Qt4 add-in is default and Qt5 values are set only when this add-in is loaded.</summary>

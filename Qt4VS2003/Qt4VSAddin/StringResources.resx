@@ -748,11 +748,10 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
 Qt4 and Qt5 versions can't be used at the same time.
 Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt4 Add-in.</value>
   </data>
-  <data name="NoVS2013Support" xml:space="preserve">
-    <value>The default Qt version does not support Visual Studio 2013. In order
-to import .pro files specify a Qt version &gt;=5.2 as default.</value>
-  </data>
   <data name="EnginioLibrary" xml:space="preserve">
+  <data name="NoVSSupport" xml:space="preserve">
+    <value>The default Qt version does not support Visual Studio. In order to import .pro files specify a Qt version &gt;=5.6 as default.</value>
+  </data>
     <value>Enginio</value>
   </data>
   <data name="NfcLibrary" xml:space="preserve">
