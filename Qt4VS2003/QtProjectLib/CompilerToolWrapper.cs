@@ -153,10 +153,8 @@ namespace Digia.Qt5ProjectLib
                 string directories = GetAdditionalIncludeDirectories();
                 if (directories == null)
                     return new List<string>();
-#if (VS2010 || VS2012 || VS2013)
                 // double quotes are escaped
                 directories = directories.Replace("\\\"", "\"");
-#endif
                 string[] dirArray = directories.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
                 List<string> lst = new List<string>(dirArray);
                 int i = 0;
@@ -352,7 +350,6 @@ namespace Digia.Qt5ProjectLib
 
         public string[] GetAdditionalIncludeDirectoriesList()
         {
-#if (VS2010 || VS2012 || VS2013)
             string[] includes = this.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
             string[] fixedincludes;
             fixedincludes = new string[includes.Length];
@@ -368,9 +365,6 @@ namespace Digia.Qt5ProjectLib
                 fixedincludes[i++] = incl;
             }
             return fixedincludes;
-#else
-            return this.GetAdditionalIncludeDirectories().Split(new char[] { ',', ';' });
-#endif
         }
 
         public string GetAdditionalIncludeDirectories()

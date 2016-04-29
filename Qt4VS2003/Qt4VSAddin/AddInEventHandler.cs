@@ -573,7 +573,6 @@ namespace Qt5VSAddin
                 if (qtPro.IsMoccedFileIncluded(file))
                 {
                     // exclude moc_foo.cpp from build
-#if (VS2012 || VS2013)
                     // Code copied here from 'GetFilesFromProject'
                     // For some reason error CS1771 was generated from function call
                     List<VCFile> tmpList = new System.Collections.Generic.List<VCFile>();
@@ -587,15 +586,10 @@ namespace Qt5VSAddin
                     }
                     foreach (VCFile moccedFile in tmpList)
                         QtProject.ExcludeFromAllBuilds(moccedFile);
-#else
-                    foreach (VCFile moccedFile in qtPro.GetFilesFromProject(moccedFileName))
-                        QtProject.ExcludeFromAllBuilds(moccedFile);
-#endif
                 }
                 else
                 {
                     // make sure that moc_foo.cpp isn't excluded from build
-#if (VS2012 || VS2013)
                     // Code copied here from 'GetFilesFromProject'
                     // For some reason error CS1771 was generated from function call
                     List<VCFile> moccedFiles = new System.Collections.Generic.List<VCFile>();
@@ -607,9 +601,6 @@ namespace Qt5VSAddin
                         if (f.Name.ToLower() == fi.Name.ToLower())
                             moccedFiles.Add(f);
                     }
-#else
-                    List<VCFile> moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
-#endif
                     if (moccedFiles.Count > 0)
                     {
                         bool hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
@@ -760,9 +751,7 @@ namespace Qt5VSAddin
                     }
                     if (HelperFunctions.HasQObjectDeclaration(vcFile))
                     {
-#if (VS2010 || VS2012 || VS2013)
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-#endif
                         qtPro.AddMocStep(vcFile);
                     }
                 }
@@ -784,9 +773,7 @@ namespace Qt5VSAddin
                     }
                     if (HelperFunctions.HasQObjectDeclaration(vcFile))
                     {
-#if (VS2010 || VS2012 || VS2013)
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-#endif
                         qtPro.AddMocStep(vcFile);
                     }
                 }
@@ -804,9 +791,7 @@ namespace Qt5VSAddin
                         qtPro.RemoveItem(projectItem);
                         qtPro.AddFileToProject(vcFile.FullPath, ui);
                     }
-#if (VS2010 || VS2012 || VS2013)
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-#endif
                     qtPro.AddUic4BuildStep(vcFile);
                 }
                 else if (vcFile.Name.EndsWith(".qrc"))
@@ -823,9 +808,7 @@ namespace Qt5VSAddin
                         qtPro.RemoveItem(projectItem);
                         qtPro.AddFileToProject(vcFile.FullPath, qrc);
                     }
-#if (VS2010 || VS2012 || VS2013)
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-#endif
                     qtPro.UpdateRccStep(vcFile, null);
                 }
                 else if (HelperFunctions.IsTranslationFile(vcFile))

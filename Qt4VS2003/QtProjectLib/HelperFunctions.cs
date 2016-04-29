@@ -940,13 +940,7 @@ namespace Digia.Qt5ProjectLib
                 sw.WriteLine("<?xml version=\"1.0\" encoding = \"Windows-1252\"?>");
             sw.WriteLine("<VisualStudioProject");
             sw.WriteLine("	ProjectType=\"Visual C++\"");
-#if VS2005
-            sw.WriteLine("	Version=\"8.00\"");
-#elif VS2008
-            sw.WriteLine("  Version=\"9.00\"");
-#else
-			sw.WriteLine("	Version=\"7.10\"");
-#endif
+            sw.WriteLine("	Version=\"7.10\"");
             sw.WriteLine("	ProjectGUID=\"{B12702AD-ABFB-343A-A199-8E24837244A3}\"");
             if (useKeyword)
                 sw.WriteLine("	Keyword=\"" + Resources.qtProjectKeyword + "\">");
@@ -1258,11 +1252,9 @@ namespace Digia.Qt5ProjectLib
 
             foreach(VCFile vcfile in (IVCCollection)vcpro.Files)
             {
-#if (VS2012 || VS2013)
                 // Why project files are also returned?
                 if (vcfile.ItemName.EndsWith(".vcxproj.filters"))
                     continue;
-#endif
                 bool excluded = false;
                 IVCCollection fileConfigurations = (IVCCollection)vcfile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations)
@@ -1691,31 +1683,10 @@ namespace Digia.Qt5ProjectLib
             if (availablePlatforms == null || availablePlatforms.Count == 0)
             {
                 availablePlatforms = new List<string>();
-#if VS2005
-                // Read the available platforms from WCE.VCPlatform.config
-                // instead of using VCProjectEngine, because the project wizards aren't
-                // able to list the platforms if VS2005 is used.
-                String vcPlatformCfg = dteObject.FullName;
-                int idx = vcPlatformCfg.LastIndexOf("\\");
-                idx = vcPlatformCfg.LastIndexOf("\\", idx - 1);
-                idx = vcPlatformCfg.LastIndexOf("\\", idx - 1);
-                vcPlatformCfg = vcPlatformCfg.Substring(0, idx + 1);
-                vcPlatformCfg += "VC\\vcpackages\\WCE.VCPlatform.config";
-
-                FileStream stream = new FileStream(vcPlatformCfg, FileMode.Open);
-                XmlReader reader = new XmlTextReader(stream);
-                while (reader.ReadToFollowing("PlatformName"))
-                {
-                    availablePlatforms.Add(reader.ReadElementContentAsString());
-                }
-#else
                 VCProjectEngine engine = new VCProjectEngineObject();
                 IVCCollection platforms = engine.Platforms as IVCCollection;
                 foreach (VCPlatform platform in platforms)
-                {
                     availablePlatforms.Add(platform.Name);
-                }
-#endif
             }
 
             if (availablePlatforms == null)

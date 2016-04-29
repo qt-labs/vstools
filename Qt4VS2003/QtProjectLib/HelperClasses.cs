@@ -34,15 +34,9 @@ namespace Digia.Qt5ProjectLib
 
     public class ProjectMacros
     {
-#if (VS2010 || VS2012 || VS2013)
         public const string Name = "%(Filename)";
         public const string FileName = "%(Identity)";
         public const string Path = "%(FullPath)";
-#else
-        public const string Name = "$(InputName)";
-        public const string FileName = "$(InputFileName)";
-        public const string Path = "$(InputPath)";
-#endif
     }
 
     public class FakeFilter

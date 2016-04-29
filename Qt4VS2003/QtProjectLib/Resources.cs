@@ -113,15 +113,7 @@ namespace Digia.Qt5ProjectLib
 
         public const string registryRootPath = "Digia";
 
-#if VS2005
-        public const string registryPackagePath = registryRootPath + "\\Qt5VS2005";
-#elif VS2008
-        public const string registryPackagePath = registryRootPath + "\\Qt5VS2008";
-#elif VS2010
-        public const string registryPackagePath = registryRootPath + "\\Qt5VS2010";
-#elif VS2012
-        public const string registryPackagePath = registryRootPath + "\\Qt5VS2012";
-#elif VS2013
+#if VS2013
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2013";
 #else
 #error Unknown Visual Studio version!
@@ -197,6 +189,5 @@ namespace Digia.Qt5ProjectLib
             f.SCCFiles = false;
             return f;
         }
-
     }
 }

@@ -75,20 +75,14 @@ namespace Qt5VSAddin
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
-#if (VS2010 || VS2012 || VS2013)
             VersionInformation vi = new VersionInformation(qtDir);
             if (vi.qtMajor < 5)
             {
-#if VS2010
-                Messages.DisplayErrorMessage(SR.GetString("NoVS2010Support"));
-#elif VS2012
-                Messages.DisplayErrorMessage(SR.GetString("NoVS2012Support"));
-#else
+#if VS2013
                 Messages.DisplayErrorMessage(SR.GetString("NoVS2013Support"));
 #endif
                 return;
             }
-#endif
             if (Connect._applicationObject != null)
             {
                 ProjectImporter proFileImporter = new ProjectImporter(Connect._applicationObject);

@@ -136,12 +136,7 @@ namespace Digia.Qt5ProjectLib
         public void RunQMake()
         {
             FileInfo fi = new FileInfo(file);
-            string vcproj = HelperFunctions.RemoveFileNameExtension(fi);
-#if (VS2010 || VS2012 || VS2013)
-            vcproj += ".vcxproj";
-#else
-            vcproj += ".vcproj";
-#endif
+            string vcproj = HelperFunctions.RemoveFileNameExtension(fi) + ".vcxproj";
 
             string qmakeArgs = "-tp vc \"" + fi.Name + "\" ";
 
