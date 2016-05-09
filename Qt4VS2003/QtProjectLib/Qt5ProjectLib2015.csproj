@@ -131,7 +131,6 @@
     <Compile Include="Resources.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleSet.cs" />
     <Compile Include="VersionInformation.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>

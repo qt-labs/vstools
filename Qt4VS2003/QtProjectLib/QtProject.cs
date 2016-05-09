@@ -3217,9 +3217,9 @@ namespace Digia.Qt5ProjectLib
         public static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
         {
             CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-            SimpleSet minuend = new SimpleSet(compiler.PreprocessorDefinitions);
-            SimpleSet subtrahend = new SimpleSet(viOld.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
-            compiler.SetPreprocessorDefinitions(minuend.Minus(subtrahend).JoinElements(','));
+            var minuend = new HashSet<string>(compiler.PreprocessorDefinitions);
+            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
+            compiler.SetPreprocessorDefinitions(string.Join(",", minuend));
         }
 
         public void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
@@ -3227,9 +3227,9 @@ namespace Digia.Qt5ProjectLib
             bool isWinPlatform = (!viNew.IsWinCEVersion());
 
             CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-            SimpleSet ppdefs = new SimpleSet(compiler.PreprocessorDefinitions);
-            ICollection newPPDefs = viNew.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' });
-            compiler.SetPreprocessorDefinitions(ppdefs.Union(newPPDefs).JoinElements(','));
+            var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
+            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
+            compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
 
 #if ENABLE_WINCE
             // search prepocessor definitions for Qt modules and add deployment settings
