@@ -48,6 +48,12 @@ namespace Qt5VSAddin
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
     public sealed class Connect : Package
     {
+        private enum Mode
+        {
+            Startup = 0,
+            Shutdown
+        }
+
         /// <summary>
         /// The package GUID string.
         /// </summary>
@@ -151,16 +157,10 @@ namespace Qt5VSAddin
                 QtProjectContextMenu.Initialize(this);
                 QtItemContextMenu.Initialize(this);
 
-                {
-                    try
-                    {
-                        // TODO: Do we need this?
-                        // UpdateDefaultEditors(true);
-                    }
-                    catch (System.Exception e)
-                    {
-                        MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-                    }
+                try {
+                    UpdateDefaultEditors(Mode.Startup);
+                } catch (System.Exception e) {
+                    MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                 }
             }
         }
@@ -176,8 +176,7 @@ namespace Qt5VSAddin
         {
             eventHandler.Disconnect();
             try {
-                // TODO: Do we need this?
-                // UpdateDefaultEditors(false);
+                UpdateDefaultEditors(Mode.Shutdown);
             } catch (System.Exception e) {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
@@ -462,27 +461,22 @@ namespace Qt5VSAddin
             }
         }
 
-        /// <summary>This is to support Qt5 and Qt5 development at the same time. Default editor values in registry are changed so that Qt4 add-in is default and Qt5 values are set only when this add-in is loaded.</summary>
-        /// <param term='startup'>Is this Qt5 add-in starting (true) or closing (false).</param>
-        private void UpdateDefaultEditors(bool startup)
+        /// <summary>
+        /// This is to support VS2013, both VSIX and Qt4 or Qt5 Add-In installed. Default editor
+        /// values in the registry are changed so that Qt4 or Qt5 Add-in values are default and
+        /// Qt5 VSIX values are set only when the VSIX is loaded. On startup, Qt5 related registry
+        /// values for *.qrc, *.ts and *.ui extensions are written, while on shutdown possible
+        /// existing Add-in values are written back.
+        /// </summary>
+        private void UpdateDefaultEditors(Mode mode)
         {
-            // This add-in starts so just setting correct default editor
-            // registry values for .qrc, .ts and .ui extensions.
-            if (startup)
-            {
-                Qt5DefaultEditors qt5 = new Qt5DefaultEditors();
-                qt5.WriteRegistryValues();
-            }
-            // This add-in closing so checking...
-            else
-            {
-                // ...if also Qt4 addin is installed and setting correct
-                // registry values for it
-                Qt4DefaultEditors qt4 = new Qt4DefaultEditors();
-                if (qt4.IsAddinInstalled())
-                {
-                    qt4.WriteRegistryValues();
-                }
+            var qt5 = new Qt5DefaultEditors();
+            if (mode == Mode.Shutdown) {
+                qt5.WriteAddinRegistryValues();
+                var qt4 = new Qt4DefaultEditors();
+                qt4.WriteAddinRegistryValues();
+            } else {
+                qt5.WriteVsixRegistryValues(installationDir);
             }
         }
     }
