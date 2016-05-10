@@ -105,14 +105,14 @@ namespace Qt5VSAddin
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             RegisterVCProjectEngineEvents();
 
-            if (Connect.Instance.AppWrapperPath == null)
+            if (Vsix.Instance.AppWrapperPath == null)
             {
                 Messages.DisplayCriticalErrorMessage("QtAppWrapper can't be found in the installation directory.");
             }
             else
             {
                 appWrapperProcess = new System.Diagnostics.Process();
-                appWrapperProcess.StartInfo.FileName = Connect.Instance.AppWrapperPath;
+                appWrapperProcess.StartInfo.FileName = Vsix.Instance.AppWrapperPath;
             }
             appWrapperThread = new System.Threading.Thread(new System.Threading.ThreadStart(ListenForRequests));
             appWrapperThread.Name = "QtAppWrapperListener";
@@ -151,7 +151,7 @@ namespace Qt5VSAddin
             string lowerCaseFileName = fileName.ToLower();
             if (lowerCaseFileName.EndsWith(".ui"))
             {
-                Connect.Instance.ExtLoader.loadDesigner(fileName);
+                Vsix.Instance.ExtLoader.loadDesigner(fileName);
 
                 // Designer can't cope with many files in a short time.
                 System.Threading.Thread.Sleep(1000);
@@ -683,7 +683,7 @@ namespace Qt5VSAddin
 
         public void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
         {
-            Project project = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+            Project project = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             QtProject qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
@@ -834,7 +834,7 @@ namespace Qt5VSAddin
 
         void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
         {
-            Project pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+            Project pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -846,7 +846,7 @@ namespace Qt5VSAddin
         {
             if (OldName == null)
                 return;
-            Project pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+            Project pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -906,7 +906,7 @@ namespace Qt5VSAddin
 
         void SolutionEvents_Opened()
         {
-            foreach (Project p in HelperFunctions.ProjectsInSolution(Connect.Instance.Dte))
+            foreach (Project p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte))
             {
                 if (HelperFunctions.IsQtProject(p))
                 {

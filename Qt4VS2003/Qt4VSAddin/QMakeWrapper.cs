@@ -57,7 +57,7 @@ namespace Qt5VSAddin
             string output;
             try
             {
-                string exeFilePath = Connect.Instance.QMakeFileReaderPath;
+                string exeFilePath = Vsix.Instance.QMakeFileReaderPath;
                 if (!System.IO.File.Exists(exeFilePath))
                     return false;
 

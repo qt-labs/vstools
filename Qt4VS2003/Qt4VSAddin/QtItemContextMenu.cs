@@ -121,11 +121,11 @@ namespace Qt5VSAddin
 
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Connect.Instance.Dte),
-                    HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte),
+                    HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
                 break;
             case lReleaseOnItemId:
-                Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Connect.Instance.Dte));
+                Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));
                 break;
             default:
                 break;
@@ -141,11 +141,11 @@ namespace Qt5VSAddin
             command.Enabled = false;
             command.Visible = false;
 
-            var prj = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
-            if (!HelperFunctions.IsQtProject(prj) || Connect.Instance.Dte.SelectedItems.Count <= 0)
+            var prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+            if (!HelperFunctions.IsQtProject(prj) || Vsix.Instance.Dte.SelectedItems.Count <= 0)
                 return;
 
-            foreach (SelectedItem si in Connect.Instance.Dte.SelectedItems) {
+            foreach (SelectedItem si in Vsix.Instance.Dte.SelectedItems) {
                 if (!si.Name.ToLower().EndsWith(".ts"))
                     return; // Don't display commands if one of the selected files is not a .ts file.
             }

@@ -132,7 +132,7 @@ namespace Qt5VSAddin
 
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.LaunchDesignerId:
-                Connect.Instance.ExtLoader.loadDesigner(null);
+                Vsix.Instance.ExtLoader.loadDesigner(null);
                 break;
             case CommandId.LaunchLinguistId:
                 ExtLoader.loadLinguist(null);
@@ -141,7 +141,7 @@ namespace Qt5VSAddin
                 ExtLoader.ImportProFile();
                 break;
             case CommandId.ImportPriFileId:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
                 break;
             case CommandId.ExportPriFileId:
                 ExtLoader.ExportPriFile();
@@ -150,7 +150,7 @@ namespace Qt5VSAddin
                 ExtLoader.ExportProFile();
                 break;
             case CommandId.CreateNewTsFileId:
-                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(Connect
+                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(Vsix
                     .Instance.Dte));
                 break;
             case CommandId.ConvertToQtId:
@@ -158,28 +158,28 @@ namespace Qt5VSAddin
                 var caption = SR.GetString("ConvertTitle");
                 var text = SR.GetString("ConvertConfirmation");
                 if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Connect
+                    HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Vsix
                         .Instance.Dte));
                 }
             }   break;
             case CommandId.QtProjectSettingsId: {
-                var pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+                var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                 if (pro != null) {
                     var formProjectQtSettings = new FormProjectQtSettings();
                     formProjectQtSettings.SetProject(pro);
                     formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
-                    var ww = new MainWinWrapper(Connect.Instance.Dte);
+                    var ww = new MainWinWrapper(Vsix.Instance.Dte);
                     formProjectQtSettings.ShowDialog(ww);
                 } else {
                     MessageBox.Show(SR.GetString("NoProjectOpened"));
                 }
             }   break;
             case CommandId.ChangeProjectQtVersionId: {
-                var pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+                var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                 if (HelperFunctions.IsQMakeProject(pro)) {
                     var formChangeQtVersion = new FormChangeQtVersion();
                     formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                    var ww = new MainWinWrapper(Connect.Instance.Dte);
+                    var ww = new MainWinWrapper(Vsix.Instance.Dte);
                     if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                         string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
                         HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
@@ -191,7 +191,7 @@ namespace Qt5VSAddin
                 var formQtVersions = new FormVSQtSettings();
                 formQtVersions.LoadSettings();
                 formQtVersions.StartPosition = FormStartPosition.CenterParent;
-                var ww = new MainWinWrapper(Connect.Instance.Dte);
+                var ww = new MainWinWrapper(Vsix.Instance.Dte);
                 if (formQtVersions.ShowDialog(ww) == DialogResult.OK)
                     formQtVersions.SaveSettings();
             }   break;
@@ -220,12 +220,12 @@ namespace Qt5VSAddin
             case CommandId.CreateNewTsFileId: {
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
-                    .GetSelectedProject(Connect.Instance.Dte));
+                    .GetSelectedProject(Vsix.Instance.Dte));
             }   break;
             case CommandId.ConvertToQmakeId:
             case CommandId.QtProjectSettingsId: {
                 var status = vsCommandStatus.vsCommandStatusSupported;
-                var project = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if (project != null) {
                     if (HelperFunctions.IsQtProject(project))
                         status |= vsCommandStatus.vsCommandStatusEnabled;
@@ -238,7 +238,7 @@ namespace Qt5VSAddin
             case CommandId.ConvertToQtId:
             case CommandId.ChangeProjectQtVersionId: {
                 var status = vsCommandStatus.vsCommandStatusSupported;
-                var project = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if ((project == null) || HelperFunctions.IsQtProject(project))
                     status |= vsCommandStatus.vsCommandStatusInvisible;
                 else if (HelperFunctions.IsQMakeProject(project))

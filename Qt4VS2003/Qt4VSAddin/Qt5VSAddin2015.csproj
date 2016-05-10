@@ -58,7 +58,7 @@
     <Compile Include="AddTranslationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Connect.cs" />
+    <Compile Include="Vsix.cs" />
     <Compile Include="ExtLoader.cs" />
     <Compile Include="FormChangeQtVersion.cs">
       <SubType>Form</SubType>

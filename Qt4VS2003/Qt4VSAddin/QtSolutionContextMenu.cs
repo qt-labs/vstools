@@ -123,10 +123,10 @@ namespace Qt5VSAddin
 
             switch (command.CommandID.ID) {
             case lUpdateOnSolutionId:
-                Translation.RunlUpdate(Connect.Instance.Dte.Solution);
+                Translation.RunlUpdate(Vsix.Instance.Dte.Solution);
                 break;
             case lReleaseOnSolutionId:
-                Translation.RunlRelease(Connect.Instance.Dte.Solution);
+                Translation.RunlRelease(Vsix.Instance.Dte.Solution);
                 break;
             case ChangeSolutionQtVersionId:
                 var formChangeQtVersion = new FormChangeQtVersion();
@@ -140,14 +140,14 @@ namespace Qt5VSAddin
 
                 string currentPlatform = null;
                 try {
-                    var config2 = Connect.Instance.Dte.Solution.SolutionBuild
+                    var config2 = Vsix.Instance.Dte.Solution.SolutionBuild
                         .ActiveConfiguration as SolutionConfiguration2;
                     currentPlatform = config2.PlatformName;
                 } catch { }
                 if (string.IsNullOrEmpty(currentPlatform))
                     return;
 
-                var dte = Connect.Instance.Dte;
+                var dte = Vsix.Instance.Dte;
                 foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
                     if (HelperFunctions.IsQtProject(project)) {
                         var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,

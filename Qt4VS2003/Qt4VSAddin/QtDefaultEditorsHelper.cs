@@ -66,13 +66,13 @@ namespace Qt5VSAddin
         /// </summary>
         public void WriteVsixRegistryValues()
         {
-            if (Connect.Instance.Dte != null) {
-                var basePath = string.Format(registryBasePath, Connect.Instance.Dte.Version)
+            if (Vsix.Instance.Dte != null) {
+                var basePath = string.Format(registryBasePath, Vsix.Instance.Dte.Version)
 #if DEBUG
                     + @"Exp"
 #endif
                 ;
-                WriteRegistryValues(basePath, Connect.Instance.PkgInstallPath);
+                WriteRegistryValues(basePath, Vsix.Instance.PkgInstallPath);
             }
         }
 

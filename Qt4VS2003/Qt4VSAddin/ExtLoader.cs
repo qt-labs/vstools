@@ -81,9 +81,9 @@ namespace Qt5VSAddin
                 Messages.DisplayErrorMessage(SR.GetString("NoVSSupport"));
                 return;
             }
-            if (Connect.Instance.Dte != null)
+            if (Vsix.Instance.Dte != null)
             {
-                ProjectImporter proFileImporter = new ProjectImporter(Connect.Instance.Dte);
+                ProjectImporter proFileImporter = new ProjectImporter(Vsix.Instance.Dte);
                 proFileImporter.ImportProFile(qtVersion);
             }
         }
@@ -220,16 +220,16 @@ namespace Qt5VSAddin
 
         public static void ExportProFile()
         {
-            if (Connect.Instance.Dte != null)
+            if (Vsix.Instance.Dte != null)
             {
-                ProjectExporter proFileExporter = new ProjectExporter(Connect.Instance.Dte);
+                ProjectExporter proFileExporter = new ProjectExporter(Vsix.Instance.Dte);
                 proFileExporter.ExportToProFile();
             }
         }
 
         public static void ExportPriFile()
         {
-            EnvDTE.DTE dte = Connect.Instance.Dte;
+            EnvDTE.DTE dte = Vsix.Instance.Dte;
             if (dte != null)
             {
                 ProjectExporter proFileExporter = new ProjectExporter(dte);
@@ -256,11 +256,11 @@ namespace Qt5VSAddin
                 process.StartInfo.WorkingDirectory = workingDir;
             }
             if (!File.Exists(process.StartInfo.FileName)
-                && HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte) != null)
+                && HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte) != null)
             {   // Try to find apllication in project's Qt dir first
                 string path = null;
                 QtVersionManager vm = QtVersionManager.The();
-                Project prj = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+                Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                 if (prj != null)
                     path = vm.GetInstallPath(prj);
                 if (path != null)
@@ -293,7 +293,7 @@ namespace Qt5VSAddin
 
         public void loadDesigner(string fileName)
         {
-            Project prj = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+            Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             string qtVersion = null;
             QtVersionManager vm = QtVersionManager.The();
             if (prj != null)
@@ -302,7 +302,7 @@ namespace Qt5VSAddin
             }
             else
             {
-                prj = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if (prj != null && HelperFunctions.IsQMakeProject(prj)) {
                     string qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
                     qtVersion = vm.GetQtVersionFromInstallDir(qmakeQtDir);
@@ -424,7 +424,7 @@ namespace Qt5VSAddin
 
         public static void loadLinguist(string fileName)
         {
-            Project prj = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+            Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             string qtVersion = null;
             QtVersionManager vm = QtVersionManager.The();
             if (prj != null)
@@ -433,7 +433,7 @@ namespace Qt5VSAddin
             }
             else
             {
-                prj = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if (prj != null && HelperFunctions.IsQMakeProject(prj)) {
                     string qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
                     qtVersion = vm.GetQtVersionFromInstallDir(qmakeQtDir);
@@ -482,7 +482,7 @@ namespace Qt5VSAddin
                 resourceFile = "\"" + file + "\"";
 
             // locate qrceditor.exe in the parent directory of the installation directory
-            string filename = Connect.Instance.PkgInstallPath;
+            string filename = Vsix.Instance.PkgInstallPath;
             int idx = filename.Length - 1;
             if (filename.EndsWith("\\")) idx--;
             idx = filename.LastIndexOf('\\', idx);
@@ -494,10 +494,10 @@ namespace Qt5VSAddin
             try
             {
                 if (!File.Exists(filename))
-                    filename = Connect.Instance.PkgInstallPath + "q5rceditor.exe";
+                    filename = Vsix.Instance.PkgInstallPath + "q5rceditor.exe";
 
                 tmp = new System.Diagnostics.Process();
-                Project prj = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                Project prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 tmp.StartInfo.FileName = filename;
                 tmp.StartInfo.Arguments = resourceFile;
                 tmp.StartInfo.WorkingDirectory = Path.GetFullPath(prj.FullName);

@@ -241,7 +241,7 @@ namespace Qt5VSAddin
 
         public override string ToString()
         {
-            CultureInfo currentCulture = CultureInfo.GetCultureInfo(Connect.Instance.Dte.LocaleID);
+            CultureInfo currentCulture = CultureInfo.GetCultureInfo(Vsix.Instance.Dte.LocaleID);
             if (NativeName != DisplayName ||
                 currentCulture.TwoLetterISOLanguageName == this.TwoLetterISOLanguageName)
                 return DisplayName;

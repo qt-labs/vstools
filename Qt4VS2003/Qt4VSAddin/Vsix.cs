@@ -37,7 +37,7 @@ using System.Windows.Forms;
 
 namespace Qt5VSAddin
 {
-    [Guid(Connect.PackageGuid)]
+    [Guid(Vsix.PackageGuid)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules",
         "SA1650:ElementDocumentationMustBeSpelledCorrectly",
@@ -45,7 +45,7 @@ namespace Qt5VSAddin
     [InstalledProductRegistration("#110", "#112", "1.0.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
-    public sealed class Connect : Package
+    public sealed class Vsix : Package
     {
         #region public
 
@@ -78,7 +78,7 @@ namespace Qt5VSAddin
         /// <summary>
         /// Gets the instance of the package.
         /// </summary>
-        public static Connect Instance {
+        public static Vsix Instance {
             get;
             private set;
         }
