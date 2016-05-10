@@ -41,13 +41,7 @@ namespace Qt5VSAddin
     /// </summary>
     internal sealed class QtSolutionContextMenu
     {
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int lUpdateOnSolutionId = 0x0111;
-        public const int lReleaseOnSolutionId = 0x0112;
-        public const int ChangeSolutionQtVersionId = 0x0113;
-
+        #region public
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -71,10 +65,21 @@ namespace Qt5VSAddin
             Instance = new QtSolutionContextMenu(package);
         }
 
+        #endregion public
+
+        #region private
+
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
         private readonly Package m_package;
+
+        /// <summary>
+        /// Command ID.
+        /// </summary>
+        private const int lUpdateOnSolutionId = 0x0111;
+        private const int lReleaseOnSolutionId = 0x0112;
+        private const int ChangeSolutionQtVersionId = 0x0113;
 
         /// <summary>
         /// Gets the service provider from the owner package.
@@ -95,7 +100,7 @@ namespace Qt5VSAddin
 
             m_package = package;
 
-            OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
                 as OleMenuCommandService;
             if (commandService == null)
                 return;
@@ -159,5 +164,7 @@ namespace Qt5VSAddin
                 break;
             }
         }
+
+        #endregion private
     }
 }

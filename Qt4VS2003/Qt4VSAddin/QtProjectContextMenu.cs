@@ -40,6 +40,8 @@ namespace Qt5VSAddin
     /// </summary>
     internal sealed class QtProjectContextMenu
     {
+        #region public
+
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
@@ -61,6 +63,10 @@ namespace Qt5VSAddin
         {
             Instance = new QtProjectContextMenu(package);
         }
+
+        #endregion public
+
+        #region private
 
         /// <summary>
         /// Command ID.
@@ -103,7 +109,7 @@ namespace Qt5VSAddin
 
             m_package = package;
 
-            OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
                 as OleMenuCommandService;
             if (commandService == null)
                 return;
@@ -228,5 +234,7 @@ namespace Qt5VSAddin
                 break;
             }
         }
+
+        #endregion private
     }
 }
