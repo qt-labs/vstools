@@ -209,7 +209,7 @@ namespace Qt5VSAddin
             QtVersionManager.The().ClearVersionCache();
             AddQtVersionDialog dia = new AddQtVersionDialog();
             dia.StartPosition = FormStartPosition.CenterParent;
-            MainWinWrapper ww = new MainWinWrapper(Connect._applicationObject);
+            MainWinWrapper ww = new MainWinWrapper(Connect.Instance.Dte);
             if (dia.ShowDialog(ww) == DialogResult.OK)
             {
                 UpdateListBox();

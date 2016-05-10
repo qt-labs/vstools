@@ -48,84 +48,63 @@ namespace Qt5VSAddin
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
     public sealed class Connect : Package
     {
-        private enum Mode
-        {
-            Startup = 0,
-            Shutdown
-        }
+        #region public
 
         /// <summary>
         /// The package GUID string.
         /// </summary>
         public const string PackageGuid = "15021976-647e-4876-9040-2507afde45d2";
 
-        public static DTE _applicationObject = null;
-        public static Connect _addInInstance = null;
-        public static ExtLoader extLoader = null;
+        /// <summary>
+        /// Gets the Visual Studio application object that hosts the package.
+        /// </summary>
+        public DTE Dte {
+            get;
+            private set;
+        }
 
-        private AddInEventHandler eventHandler = null;
-        private FormChangeQtVersion formChangeQtVersion = null;
-        private FormVSQtSettings formQtVersions = null;
-        private FormProjectQtSettings formProjectQtSettings = null;
-        private string installationDir = null;
+        public ExtLoader ExtLoader {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the installation path of the package.
+        /// </summary>
+        public string PkgInstallPath {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the instance of the package.
+        /// </summary>
+        public static Connect Instance {
+            get;
+            private set;
+        }
+
         private string appWrapperPath = null;
-        private string qmakeFileReaderPath = null;
-
-        public static Connect Instance()
-        {
-            return _addInInstance;
-        }
-
-        /// <summary>Implements the constructor for the Add-in object. Place your initialization code within this method.</summary>
-        public Connect()
-        {
-        }
-
-        public string InstallationDir
-        {
-            get
-            {
-                return installationDir;
-            }
-        }
-
-        public string AppWrapperPath
-        {
-            get
-            {
+        public string AppWrapperPath {
+            get {
                 if (appWrapperPath == null)
                     appWrapperPath = locateHelperExecutable("qt5appwrapper.exe");
                 return appWrapperPath;
             }
         }
 
-        public string QMakeFileReaderPath
-        {
-            get
-            {
+        private string qmakeFileReaderPath = null;
+        public string QMakeFileReaderPath {
+            get {
                 if (qmakeFileReaderPath == null)
                     qmakeFileReaderPath = locateHelperExecutable("qmakefilereader.exe");
                 return qmakeFileReaderPath;
             }
         }
 
-        private string locateHelperExecutable(string exeName)
-        {
-            string filePath = installationDir + exeName;
-            if (!File.Exists(filePath))
-            {
-                filePath = installationDir;
-                if (filePath.EndsWith("\\"))
-                    filePath = filePath.Remove(filePath.Length - 1);
-                int idx = filePath.LastIndexOf('\\');
-                if (idx >= 0 && idx < filePath.Length - 1)
-                    filePath = filePath.Remove(idx + 1);
-                filePath += exeName;
-                if (!File.Exists(filePath))
-                    filePath = null;
-            }
-            return filePath;
-        }
+        #endregion public
+
+        #region protected
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited,
@@ -134,34 +113,31 @@ namespace Qt5VSAddin
         /// </summary>
         protected override void Initialize()
         {
+            Instance = this;
             base.Initialize();
 
-            _addInInstance = this;
-            _applicationObject = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
+            Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
 
-            // determine the installation directory
-            System.Uri uri = new System.Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-            installationDir = Path.GetDirectoryName(System.Uri.UnescapeDataString(uri.AbsolutePath));
-            installationDir += "\\";
+            // determine the package installation directory
+            var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
+            PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
-            {
-                QtVersionManager vm = QtVersionManager.The();
-                string error = null;
-                if (vm.HasInvalidVersions(out error))
-                    Messages.DisplayErrorMessage(error);
-                eventHandler = new AddInEventHandler(_applicationObject);
-                extLoader = new ExtLoader();
+            QtVersionManager vm = QtVersionManager.The();
+            string error = null;
+            if (vm.HasInvalidVersions(out error))
+                Messages.DisplayErrorMessage(error);
+            eventHandler = new AddInEventHandler(Dte);
+            ExtLoader = new ExtLoader();
 
-                QtMainMenu.Initialize(this);
-                QtSolutionContextMenu.Initialize(this);
-                QtProjectContextMenu.Initialize(this);
-                QtItemContextMenu.Initialize(this);
+            QtMainMenu.Initialize(this);
+            QtSolutionContextMenu.Initialize(this);
+            QtProjectContextMenu.Initialize(this);
+            QtItemContextMenu.Initialize(this);
 
-                try {
-                    UpdateDefaultEditors(Mode.Startup);
-                } catch (System.Exception e) {
-                    MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-                }
+            try {
+                UpdateDefaultEditors(Mode.Startup);
+            } catch (System.Exception e) {
+                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
 
@@ -182,6 +158,8 @@ namespace Qt5VSAddin
             }
             return base.QueryClose(out canClose);
         }
+
+        #endregion protected
 
         public void QueryStatus(string commandName,
                  EnvDTE.vsCommandStatusTextWanted neededText,
@@ -207,7 +185,7 @@ namespace Qt5VSAddin
                         (commandName == Res.lupdateProjectFullCommand) ||
                         (commandName == Res.lreleaseProjectFullCommand))
                     {
-                        Project prj = HelperFunctions.GetSelectedProject(_applicationObject);
+                        Project prj = HelperFunctions.GetSelectedProject(Dte);
                         if (prj != null && HelperFunctions.IsQtProject(prj))
                             status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
                                                     | vsCommandStatus.vsCommandStatusEnabled;
@@ -217,7 +195,7 @@ namespace Qt5VSAddin
                     else if (commandName == Res.ProjectQtSettingsFullCommand ||
                         commandName == Res.ConvertToQMakeFullCommand)
                     {
-                        Project prj = HelperFunctions.GetSelectedProject(_applicationObject);
+                        Project prj = HelperFunctions.GetSelectedProject(Dte);
                         if (prj == null)
                             status = vsCommandStatus.vsCommandStatusSupported;
                         else if (HelperFunctions.IsQtProject(prj))
@@ -231,7 +209,7 @@ namespace Qt5VSAddin
                     else if (commandName == Res.ChangeProjectQtVersionFullCommand ||
                         commandName == Res.ConvertToQtFullCommand)
                     {
-                        Project prj = HelperFunctions.GetSelectedProject(_applicationObject);
+                        Project prj = HelperFunctions.GetSelectedProject(Dte);
                         if (prj == null || HelperFunctions.IsQtProject(prj))
                             status = vsCommandStatus.vsCommandStatusInvisible;
                         else if (HelperFunctions.IsQMakeProject(prj))
@@ -244,7 +222,7 @@ namespace Qt5VSAddin
                         (commandName == Res.lupdateSolutionFullCommand) ||
                         (commandName == Res.lreleaseSolutionFullCommand))
                     {
-                        if (_applicationObject.Solution.IsOpen)
+                        if (Dte.Solution.IsOpen)
                             status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
                             | vsCommandStatus.vsCommandStatusEnabled;
                         else
@@ -253,9 +231,9 @@ namespace Qt5VSAddin
                     else if (commandName == Res.CommandBarName + ".Connect.lupdate" ||
                         commandName == Res.CommandBarName + ".Connect.lrelease")
                     {
-                        Project prj = HelperFunctions.GetSelectedProject(_applicationObject);
+                        Project prj = HelperFunctions.GetSelectedProject(Dte);
                         if (prj == null || !HelperFunctions.IsQtProject(prj) ||
-                            _applicationObject.SelectedItems.Count == 0)
+                            Dte.SelectedItems.Count == 0)
                         {
                             status = vsCommandStatus.vsCommandStatusInvisible;
                         }
@@ -268,7 +246,7 @@ namespace Qt5VSAddin
                         if (status != vsCommandStatus.vsCommandStatusInvisible)
                         {
                             // Don't display commands if one of the selected files is not a .ts file.
-                            foreach (SelectedItem si in _applicationObject.SelectedItems)
+                            foreach (SelectedItem si in Dte.SelectedItems)
                             {
                                 if (!si.Name.ToLower().EndsWith(".ts"))
                                 {
@@ -301,7 +279,7 @@ namespace Qt5VSAddin
                     {
                         case Res.LaunchDesignerFullCommand:
                             handled = true;
-                            extLoader.loadDesigner(null);
+                            ExtLoader.loadDesigner(null);
                             break;
                         case Res.LaunchLinguistFullCommand:
                             handled = true;
@@ -313,7 +291,7 @@ namespace Qt5VSAddin
                             break;
                         case Res.ImportPriFileFullCommand:
                             handled = true;
-                            ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(_applicationObject));
+                            ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Dte));
                             break;
                         case Res.ExportPriFileFullCommand:
                             handled = true;
@@ -336,7 +314,7 @@ namespace Qt5VSAddin
                                     string currentPlatform = null;
                                     try
                                     {
-                                        SolutionConfiguration config = _applicationObject.Solution.SolutionBuild.ActiveConfiguration;
+                                        SolutionConfiguration config = Dte.Solution.SolutionBuild.ActiveConfiguration;
                                         SolutionConfiguration2 config2 = config as SolutionConfiguration2;
                                         currentPlatform = config2.PlatformName;
                                     }
@@ -346,7 +324,7 @@ namespace Qt5VSAddin
                                     if (string.IsNullOrEmpty(currentPlatform))
                                         return;
 
-                                    foreach (Project project in HelperFunctions.ProjectsInSolution(_applicationObject))
+                                    foreach (Project project in HelperFunctions.ProjectsInSolution(Dte))
                                     {
                                         if (HelperFunctions.IsQtProject(project))
                                         {
@@ -359,13 +337,13 @@ namespace Qt5VSAddin
                                             qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref newProjectCreated);
                                         }
                                     }
-                                    vManager.SaveSolutionQtVersion(_applicationObject.Solution, newQtVersion);
+                                    vManager.SaveSolutionQtVersion(Dte.Solution, newQtVersion);
                                 }
                             }
                             break;
                         case Res.ProjectQtSettingsFullCommand:
                             handled = true;
-                            EnvDTE.DTE dte = _applicationObject;
+                            EnvDTE.DTE dte = Dte;
                             Project pro = HelperFunctions.GetSelectedQtProject(dte);
                             if (pro != null)
                             {
@@ -381,7 +359,7 @@ namespace Qt5VSAddin
                             break;
                         case Res.ChangeProjectQtVersionFullCommand:
                             handled = true;
-                            dte = _applicationObject;
+                            dte = Dte;
                             pro = HelperFunctions.GetSelectedProject(dte);
                             if (pro != null && HelperFunctions.IsQMakeProject(pro))
                             {
@@ -406,49 +384,48 @@ namespace Qt5VSAddin
                                 formQtVersions.LoadSettings();
                             }
                             formQtVersions.StartPosition = FormStartPosition.CenterParent;
-                            MainWinWrapper mww = new MainWinWrapper(_applicationObject);
+                            MainWinWrapper mww = new MainWinWrapper(Dte);
                             if (formQtVersions.ShowDialog(mww) == DialogResult.OK)
                                 formQtVersions.SaveSettings();
                             break;
                         case Res.CreateNewTranslationFileFullCommand:
                             handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(_applicationObject);
+                            pro = HelperFunctions.GetSelectedQtProject(Dte);
                             Translation.CreateNewTranslationFile(pro);
                             break;
                         case Res.CommandBarName + ".Connect.lupdate":
                             handled = true;
-                            Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(_applicationObject), 
-                                HelperFunctions.GetSelectedQtProject(_applicationObject));
+                            Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Dte),
+                                HelperFunctions.GetSelectedQtProject(Dte));
                             break;
                         case Res.CommandBarName + ".Connect.lrelease":
                             handled = true;
-                            Translation.RunlRelease(HelperFunctions.GetSelectedFiles(_applicationObject));
+                            Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Dte));
                             break;
                         case Res.lupdateProjectFullCommand:
                             handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(Connect._applicationObject);
+                            pro = HelperFunctions.GetSelectedQtProject(Dte);
                             Translation.RunlUpdate(pro);
                             break;
                         case Res.lreleaseProjectFullCommand:
                             handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(Connect._applicationObject);
+                            pro = HelperFunctions.GetSelectedQtProject(Dte);
                             Translation.RunlRelease(pro);
                             break;
                         case Res.lupdateSolutionFullCommand:
                             handled = true;
-                            Translation.RunlUpdate(Connect._applicationObject.Solution);
+                            Translation.RunlUpdate(Dte.Solution);
                             break;
                         case Res.lreleaseSolutionFullCommand:
                             handled = true;
-                            Translation.RunlRelease(Connect._applicationObject.Solution);
+                            Translation.RunlRelease(Dte.Solution);
                             break;
                         case Res.ConvertToQtFullCommand:
                         case Res.ConvertToQMakeFullCommand:
                             if (MessageBox.Show(SR.GetString("ConvertConfirmation"), SR.GetString("ConvertTitle"), MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 handled = true;
-                                dte = _applicationObject;
-                                pro = HelperFunctions.GetSelectedProject(dte);
+                                pro = HelperFunctions.GetSelectedProject(Dte);
                                 HelperFunctions.ToggleProjectKind(pro);
                             }
                             break;
@@ -459,6 +436,36 @@ namespace Qt5VSAddin
             {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
+        }
+
+        #region private
+
+        private enum Mode
+        {
+            Startup = 0,
+            Shutdown
+        }
+
+        private AddInEventHandler eventHandler = null;
+        private FormChangeQtVersion formChangeQtVersion = null;
+        private FormVSQtSettings formQtVersions = null;
+        private FormProjectQtSettings formProjectQtSettings = null;
+
+        private string locateHelperExecutable(string exeName)
+        {
+            string filePath = PkgInstallPath + exeName;
+            if (!File.Exists(filePath)) {
+                filePath = PkgInstallPath;
+                if (filePath.EndsWith("\\"))
+                    filePath = filePath.Remove(filePath.Length - 1);
+                int idx = filePath.LastIndexOf('\\');
+                if (idx >= 0 && idx < filePath.Length - 1)
+                    filePath = filePath.Remove(idx + 1);
+                filePath += exeName;
+                if (!File.Exists(filePath))
+                    filePath = null;
+            }
+            return filePath;
         }
 
         /// <summary>
@@ -476,8 +483,10 @@ namespace Qt5VSAddin
                 var qt4 = new Qt4DefaultEditors();
                 qt4.WriteAddinRegistryValues();
             } else {
-                qt5.WriteVsixRegistryValues(installationDir);
+                qt5.WriteVsixRegistryValues();
             }
         }
+
+        #endregion private
     }
 }

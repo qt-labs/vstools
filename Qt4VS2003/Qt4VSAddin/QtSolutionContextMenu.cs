@@ -118,15 +118,15 @@ namespace Qt5VSAddin
             bool handled = false;
             switch (command.CommandID.ID) {
             case lUpdateOnSolutionId:
-                Connect.Instance().Exec(Res.lupdateSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
+                Connect.Instance.Exec(Res.lupdateSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
                     ref obj, ref obj, ref handled);
                 break;
             case lReleaseOnSolutionId:
-                Connect.Instance().Exec(Res.lreleaseSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
+                Connect.Instance.Exec(Res.lreleaseSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
                     ref obj, ref obj, ref handled);
                 break;
             case ChangeSolutionQtVersionId:
-                Connect.Instance().Exec(Res.ChangeSolutionQtVersionFullCommand,
+                Connect.Instance.Exec(Res.ChangeSolutionQtVersionFullCommand,
                     VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
                 break;
             default:

@@ -119,11 +119,11 @@ namespace Qt5VSAddin
             bool handled = false;
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Connect.Instance().Exec(Res.CommandBarName + @".Connect.lupdate",
+                Connect.Instance.Exec(Res.CommandBarName + @".Connect.lupdate",
                     VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
                 break;
             case lReleaseOnItemId:
-                Connect.Instance().Exec(Res.CommandBarName + @".Connect.lrelease",
+                Connect.Instance.Exec(Res.CommandBarName + @".Connect.lrelease",
                     VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
                 break;
             default:
@@ -141,11 +141,11 @@ namespace Qt5VSAddin
             EnvDTE.vsCommandStatus status = EnvDTE.vsCommandStatus.vsCommandStatusUnsupported;
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Connect.Instance().QueryStatus(Res.CommandBarName + @".Connect.lupdate",
+                Connect.Instance.QueryStatus(Res.CommandBarName + @".Connect.lupdate",
                     VsCSTW.vsCommandStatusTextWantedNone, ref status, ref obj);
                 break;
             case lReleaseOnItemId:
-                Connect.Instance().QueryStatus(Res.CommandBarName + @".Connect.lrelease",
+                Connect.Instance.QueryStatus(Res.CommandBarName + @".Connect.lrelease",
                     VsCSTW.vsCommandStatusTextWantedNone, ref status, ref obj);
                 break;
             default:

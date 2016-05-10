@@ -244,7 +244,7 @@ namespace Qt5VSAddin
             {
                 // check whether we have an SDK installed for this platform
                 string platformName = versionInfo.GetVSPlatformName();
-                if (!HelperFunctions.IsPlatformAvailable(Connect._applicationObject, platformName))
+                if (!HelperFunctions.IsPlatformAvailable(Connect.Instance.Dte, platformName))
                 {
                     MessageBox.Show(SR.GetString("AddQtVersionDialog_PlatformNotFoundError", platformName),
                                     null, MessageBoxButtons.OK,

@@ -64,16 +64,15 @@ namespace Qt5VSAddin
         /// Write default editor values to registry for Visual Studio 2013 and above. Uses the VSIX
         /// install path.
         /// </summary>
-        public void WriteVsixRegistryValues(string vsixInstallPath)
+        public void WriteVsixRegistryValues()
         {
-            var dte = Connect._applicationObject;
-            if (dte != null) {
-                var basePath = string.Format(registryBasePath, dte.Version)
+            if (Connect.Instance.Dte != null) {
+                var basePath = string.Format(registryBasePath, Connect.Instance.Dte.Version)
 #if DEBUG
                     + @"Exp"
 #endif
                 ;
-                WriteRegistryValues(basePath, vsixInstallPath);
+                WriteRegistryValues(basePath, Connect.Instance.PkgInstallPath);
             }
         }
 

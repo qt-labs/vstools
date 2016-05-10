@@ -76,7 +76,7 @@ namespace Qt5VSAddin
             string qtVer = null;
             if (change == ChangeFor.Solution)
             {
-                qtVer = vm.GetSolutionQtVersion(Connect._applicationObject.Solution);
+                qtVer = vm.GetSolutionQtVersion(Connect.Instance.Dte.Solution);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();
                 if (qtVer != null)
@@ -85,7 +85,7 @@ namespace Qt5VSAddin
             }
             else
             {
-                Project pro = HelperFunctions.GetSelectedProject(Connect._applicationObject);
+                Project pro = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
                 qtVer = vm.GetProjectQtVersion(pro);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();

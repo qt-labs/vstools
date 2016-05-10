@@ -104,7 +104,7 @@ namespace Qt5VSAddin
         internal SR() 
         {
             defaultCultureInfo = CultureInfo.GetCultureInfo("en");
-            appCultureInfo = CultureInfo.GetCultureInfo(Connect._applicationObject.LocaleID);
+            appCultureInfo = CultureInfo.GetCultureInfo(Connect.Instance.Dte.LocaleID);
             if (appCultureInfo.Name.StartsWith("en"))
                 appCultureInfo = null;
             resources = new System.Resources.ResourceManager("Qt5VSAddin.StringResources", this.GetType().Assembly);

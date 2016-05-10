@@ -148,7 +148,7 @@ namespace Qt5VSAddin
 
             object obj = null;
             bool handled = false;
-            Connect.Instance().Exec(resCommand, VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj,
+            Connect.Instance.Exec(resCommand, VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj,
                 ref handled);
         }
 
@@ -164,7 +164,7 @@ namespace Qt5VSAddin
 
             object obj = null;
             EnvDTE.vsCommandStatus status = EnvDTE.vsCommandStatus.vsCommandStatusUnsupported;
-            Connect.Instance().QueryStatus(resCommand, VsCSTW.vsCommandStatusTextWantedNone, ref status,
+            Connect.Instance.QueryStatus(resCommand, VsCSTW.vsCommandStatusTextWantedNone, ref status,
                 ref obj);
             command.Enabled = ((status & EnvDTE.vsCommandStatus.vsCommandStatusEnabled) != 0);
             command.Visible = ((status & EnvDTE.vsCommandStatus.vsCommandStatusInvisible) == 0);
