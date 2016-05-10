@@ -240,19 +240,6 @@ namespace Qt5VSAddin
                 }
             }
 
-            if (versionInfo.IsWinCEVersion())
-            {
-                // check whether we have an SDK installed for this platform
-                string platformName = versionInfo.GetVSPlatformName();
-                if (!HelperFunctions.IsPlatformAvailable(Vsix.Instance.Dte, platformName))
-                {
-                    MessageBox.Show(SR.GetString("AddQtVersionDialog_PlatformNotFoundError", platformName),
-                                    null, MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    return;
-                }
-            }
-
             string makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
             if (makefileGenerator != "MSVC.NET" && makefileGenerator != "MSBUILD")
             {

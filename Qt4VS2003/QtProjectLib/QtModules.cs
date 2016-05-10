@@ -97,11 +97,9 @@ namespace Digia.Qt5ProjectLib
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
-        public List<string> AdditionalLibrariesWinCE = new List<string>();
         public string IncludePath = null;
         public string proVarQT = null;
         public string proVarCONFIG = null;
-        public List<QtModule> dependentModules = new List<QtModule>();  // For WinCE deployment.
 
         public QtModuleInfo(QtModule id)
         {
@@ -120,10 +118,10 @@ namespace Digia.Qt5ProjectLib
 
         public List<string> GetLibs(bool isDebugCfg, VersionInformation vi)
         {
-            return GetLibs(isDebugCfg, vi.IsStaticBuild(), vi.IsWinCEVersion());
+            return GetLibs(isDebugCfg, vi.IsStaticBuild());
         }
 
-        public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild, bool isWindowsCE)
+        public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild)
         {
             List<string> libs = new List<string>();
             string libName = LibraryPrefix;
@@ -133,10 +131,7 @@ namespace Digia.Qt5ProjectLib
                 libName += "d";
             libName += ".lib";
             libs.Add(libName);
-            if (isWindowsCE)
-                libs.AddRange(AdditionalLibrariesWinCE);
-            else
-                libs.AddRange(GetAdditionalLibs(isDebugCfg));
+            libs.AddRange(GetAdditionalLibs(isDebugCfg));
             return libs;
         }
 
@@ -221,18 +216,12 @@ namespace Digia.Qt5ProjectLib
             moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "");
 
             moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Xml);
 
             moduleInfo = InitQtModule(QtModule.Declarative, "QtDeclarative", "QT_DECLARATIVE_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Script);
-            moduleInfo.dependentModules.Add(QtModule.Sql);
-            moduleInfo.dependentModules.Add(QtModule.XmlPatterns);
-            moduleInfo.dependentModules.Add(QtModule.Network);
 
             moduleInfo = InitQtModule(QtModule.OpenGL, "QtOpenGL", "QT_OPENGL_LIB");
             moduleInfo.AdditionalLibraries.Add("opengl32.lib");
             moduleInfo.AdditionalLibraries.Add("glu32.lib");
-            moduleInfo.AdditionalLibrariesWinCE.Add("libgles_cm.lib");
 
             moduleInfo = InitQtModule(QtModule.ActiveQtS, "QtAxServer", "QAXSERVER");
             moduleInfo.HasDLL = false;
@@ -247,14 +236,12 @@ namespace Digia.Qt5ProjectLib
             moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
             moduleInfo = InitQtModule(QtModule.UiTools, "QtUiTools", "QT_UITOOLS_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Xml);
             moduleInfo.HasDLL = false;
 
             // Qt5
             InitQtModule(QtModule.Widgets, "QtWidgets", "QT_WIDGETS_LIB");
 
             moduleInfo = InitQtModule(QtModule.Gui, "QtGui", "QT_GUI_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Widgets);
 
             InitQtModule(QtModule.ThreeD, "Qt3D", "QT_3D_LIB");
             InitQtModule(QtModule.Location, "QtLocation", "QT_LOCATION_LIB");
@@ -274,14 +261,12 @@ namespace Digia.Qt5ProjectLib
             InitQtModule(QtModule.MultimediaWidgets, "QtMultimediaWidgets", "QT_MULTIMEDIAWIDGETS_LIB");
 
             moduleInfo = InitQtModule(QtModule.Enginio, "Enginio", "QT_ENGINIO_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Network);
 
             InitQtModule(QtModule.Nfc, "QtNfc", "QT_NFC_LIB");
             InitQtModule(QtModule.Positioning, "QtPositioning", "QT_POSITIONING_LIB");
             InitQtModule(QtModule.SerialPort, "QtSerialPort", "QT_SERIALPORT_LIB");
             InitQtModule(QtModule.WebChannel, "QtWebChannel", "QT_WEBCHANNEL_LIB");
             moduleInfo = InitQtModule(QtModule.WebSockets, "QtWebSockets", "QT_WEBSOCKETS_LIB");
-            moduleInfo.dependentModules.Add(QtModule.Network);
             InitQtModule(QtModule.WindowsExtras, "QtWinExtras", "QT_WINEXTRAS_LIB");
             InitQtModule(QtModule.QuickWidgets, "QtQuickWidgets", "QT_QUICKWIDGETS_LIB");
 

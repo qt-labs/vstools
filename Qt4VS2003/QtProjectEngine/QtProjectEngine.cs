@@ -224,71 +224,6 @@ namespace Digia.Qt5ProjectLib
             qtPro.AddModule(QtModule.Main);
         }
 
-        /// <summary>
-        /// Creates an initializes a new qt application project for Windows CE.
-        /// Call this function before calling other functions in this class.
-        /// </summary>
-        /// <param name="app">The DTE object</param>
-        /// <param name="proName">Name of the project to create</param>
-        /// <param name="proPath">The path to the new project</param>
-        /// <param name="slnName">Name of solution to create (If this is empty it will create a solution with
-        /// the same name as the project)</param>
-        /// <param name="exclusive">true if the project should be opened in a new solution</param>
-        public void CreateWinCEApplicationProject(EnvDTE.DTE app, string proName,
-            string proPath, string slnName, bool exclusive, string qtVersion, bool usePrecompiledHeaders)
-        {
-            const uint projType = TemplateType.Application | TemplateType.GUISystem | TemplateType.WinCEProject;
-            CreateWinCEProject(app, proName, proPath, slnName, exclusive, qtVersion, projType, usePrecompiledHeaders);
-        }
-
-        /// <summary>
-        /// Creates an initializes a new qt library project for Windows CE.
-        /// Call this function before calling other functions in this class.
-        /// </summary>
-        /// <param name="app">The DTE object</param>
-        /// <param name="proName">Name of the project to create</param>
-        /// <param name="proPath">The path to the new project</param>
-        /// <param name="slnName">Name of solution to create (If this is empty it will create a solution with
-        /// the same name as the project)</param>
-        /// <param name="exclusive">true if the project should be opened in a new solution</param>
-        public void CreateWinCELibraryProject(EnvDTE.DTE app, string proName,
-            string proPath, string slnName, bool exclusive, string qtVersion, bool bStaticLib, bool usePrecompiledHeaders)
-        {
-            uint projType = TemplateType.GUISystem | TemplateType.WinCEProject;
-            if (bStaticLib)
-                projType |= TemplateType.StaticLibrary;
-            else
-                projType |= TemplateType.DynamicLibrary;
-
-            CreateWinCEProject(app, proName, proPath, slnName, exclusive, qtVersion, projType, usePrecompiledHeaders);
-        }
-
-        private void CreateWinCEProject(EnvDTE.DTE app, string proName, string proPath, string slnName,
-            bool exclusive, string qtVersion, uint projType, bool usePrecompiledHeaders)
-        {
-            FakeFilter[] filters = {Filters.SourceFiles(), Filters.HeaderFiles(), 
-                                       Filters.FormFiles(), Filters.ResourceFiles(), Filters.GeneratedFiles()};
-
-            QtVersionManager versionManager = QtVersionManager.The();
-            if (qtVersion == null) qtVersion = versionManager.GetDefaultWinCEVersion();
-            VersionInformation qtVersionInfo = versionManager.GetVersionInfo(qtVersion);
-            string platformName = null;
-
-            try
-            {
-                platformName = qtVersionInfo.GetVSPlatformName();
-            }
-            catch
-            {
-                // fallback to some standard platform...
-                platformName = "Windows Mobile 5.0 Pocket PC SDK (ARMV4I)";
-            }
-
-            CreateProject(app, proName, proPath, slnName, exclusive, filters, qtVersion, platformName);
-            qtPro.WriteProjectBasicConfigurations(projType, usePrecompiledHeaders, qtVersionInfo);
-            qtPro.AddModule(QtModule.Main);
-        }
-
         public void CreatePluginProject(EnvDTE.DTE app, string proName,
             string proPath, string slnName, bool exclusive, bool usePrecompiledHeaders)
         {
@@ -508,49 +443,6 @@ namespace Digia.Qt5ProjectLib
             if (pro == null)
                 return false;
             return true;
-        }
-
-        /// <summary>
-        /// Returns the Windows CE Qt builds which are available.
-        /// </summary>
-        /// <returns>List of string</returns>
-        public ArrayList GetQtWinCEVersions(EnvDTE.DTE dte)
-        {
-            ArrayList list = new ArrayList();
-            QtVersionManager vm = QtVersionManager.The();
-
-            foreach (string qtVersion in vm.GetVersions())
-            {
-                VersionInformation vi = vm.GetVersionInfo(qtVersion);
-                string platformName = GetWinCEPlatformName(qtVersion, vm);
-                if (vi.IsWinCEVersion() && HelperFunctions.IsPlatformAvailable(dte, platformName))
-                    list.Add(qtVersion);
-            }
-            return list;
-        }
-
-        public string GetDefaultWinCEVersion()
-        {
-            QtVersionManager vm = QtVersionManager.The();
-            return vm.GetDefaultWinCEVersion();
-        }
-
-        public string GetWinCEPlatformName(string qtVersion)
-        {
-            return GetWinCEPlatformName(qtVersion, QtVersionManager.The());
-        }
-
-        private string GetWinCEPlatformName(string qtVersion, QtVersionManager versionManager)
-        {
-            VersionInformation vi = versionManager.GetVersionInfo(qtVersion);
-            try
-            {
-                return vi.GetVSPlatformName();
-            }
-            catch
-            {
-                return "(unknown platform)";
-            }
         }
 
         public string ShowOpenFolderDialog(string directory)

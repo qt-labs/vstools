@@ -110,8 +110,6 @@ namespace Digia.Qt5ProjectLib
         public const uint Qt3Project        = 0x010; //10000
         // plugin
         public const uint PluginProject     = 0x100;
-        // Windows CE
-        public const uint WinCEProject      = 0x200;
     }
 
     [Serializable]

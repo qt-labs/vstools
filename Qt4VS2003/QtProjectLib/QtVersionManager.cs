@@ -189,8 +189,6 @@ namespace Digia.Qt5ProjectLib
                     QtVersion defaultQtVersion = null;
                     foreach (QtVersion v in validVersions)
                     {
-                        if (v.vi.IsWinCEVersion())
-                            continue;
                         if (defaultQtVersion == null)
                         {
                             defaultQtVersion = v;
@@ -436,26 +434,6 @@ namespace Digia.Qt5ProjectLib
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
         }
 
-        public string GetDefaultWinCEVersion()
-        {
-            string version = null;
-            try
-            {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
-                if (key != null)
-                    version = (string)key.GetValue("WinCEQtVersion");
-            }
-            catch
-            {
-                Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
-            }
-
-            if (version == null)
-                version = GetDefaultVersion();
-
-            return version;
-        }
-
         public bool SaveDefaultVersion(string version)
         {
             if (version == "$(DefaultQtVersion)")
@@ -464,15 +442,6 @@ namespace Digia.Qt5ProjectLib
             if (key == null)
                 return false;
             key.SetValue("DefaultQtVersion", version);
-            return true;
-        }
-
-        public bool SaveDefaultWinCEVersion(string version)
-        {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
-            if (key == null)
-                return false;
-            key.SetValue("WinCEQtVersion", version);
             return true;
         }
 

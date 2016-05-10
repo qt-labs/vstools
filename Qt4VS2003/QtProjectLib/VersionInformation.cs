@@ -44,7 +44,6 @@ namespace Digia.Qt5ProjectLib
         private QtConfig qtConfig = null;
         private QMakeConf qmakeConf = null;
         private string vsPlatformName = null;
-        private bool qtWinCEVersion = false;
     
         public VersionInformation(string qtDirIn)
         {
@@ -142,31 +141,14 @@ namespace Digia.Qt5ProjectLib
             return vsPlatformName;
         }
 
-        public bool IsWinCEVersion()
-        {
-            return qtWinCEVersion;
-        }
-
         /// <summary>
-        /// Read platform name and whether this is a WinCE version from qmake.conf.
+        /// Read platform name from qmake.conf.
         /// </summary>
         private void SetupPlatformSpecificData()
         {
             if (qmakeConf == null)
-                qmakeConf = new QMakeConf(this);
-
-            qtWinCEVersion = false;
-            string ceSDK = qmakeConf.Get("CE_SDK");
-            string ceArch = qmakeConf.Get("CE_ARCH");
-            if (ceSDK != null && ceArch != null)
-            {
-                vsPlatformName = ceSDK + " (" + ceArch + ")";
-                qtWinCEVersion = true;
-            }
-            else if (is64Bit())
-                vsPlatformName = "x64";
-            else
-                vsPlatformName = "Win32";
+                qmakeConf = new QMakeConf(this); // TODO: Do we need this?
+            vsPlatformName = (is64Bit()) ? @"x64" : @"Win32";
         }
 
         private String Locate_qglobal_h()

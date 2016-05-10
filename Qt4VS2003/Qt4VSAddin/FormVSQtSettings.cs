@@ -49,26 +49,12 @@ namespace Qt5VSAddin
             addButton.Text = SR.GetString(SR.Add);
             deleteButton.Text = SR.GetString(SR.Delete);
             label2.Text = SR.GetString("BuildOptionsPage_DefaultQtVersion");
-            label3.Text = SR.GetString("BuildOptionsPage_WinCEQtVersion");
             okButton.Text = SR.GetString("OK");
             cancelButton.Text = SR.GetString("Cancel");
             tabControl1.TabPages[0].Text = SR.GetString("BuildOptionsPage_Title");
             tabControl1.TabPages[1].Text = SR.GetString("QtDefaultSettings");
 
-#if !ENABLE_WINCE
-            // Just hide the Windows CE specific combobox and occupy the released screen space.
-            int distance = label3.Top - label2.Top;
-            label3.Hide();
-            winCECombo.Hide();
-            label2.Top = label3.Top;
-            defaultCombo.Top = winCECombo.Top;
-            System.Drawing.Rectangle rect = listView.Bounds;
-            rect.Height += distance;
-            listView.Bounds = rect;
-#endif
-
             SetupDefaultVersionComboBox(null);
-            SetupWinCEVersionComboBox(null);
             UpdateListBox();
             FormBorderStyle = FormBorderStyle.FixedDialog;
 
@@ -98,13 +84,11 @@ namespace Qt5VSAddin
         public void LoadSettings()
         {
             SetupDefaultVersionComboBox(versionManager.GetDefaultVersion());
-            SetupWinCEVersionComboBox(versionManager.GetDefaultWinCEVersion());
         }
 
         public void SaveSettings()
         {
             versionManager.SaveDefaultVersion(defaultCombo.Text);
-            versionManager.SaveDefaultWinCEVersion(winCECombo.Text);
         }
 
         private void UpdateListBox()
@@ -132,62 +116,30 @@ namespace Qt5VSAddin
             }
         }
 
-        private delegate bool VIBoolPredicate(VersionInformation vi);
-
-        private static bool isDesktopQt(VersionInformation vi)
-        {
-            return !vi.IsWinCEVersion();
-        }
-
         private void SetupDefaultVersionComboBox(string version)
         {
-            SetupVersionComboBox(defaultCombo, version, new VIBoolPredicate(isDesktopQt));
-        }
-
-        private static bool isQtWinCE(VersionInformation vi)
-        {
-            return vi.IsWinCEVersion();
-        }
-
-        private void SetupWinCEVersionComboBox(string version)
-        {
-#if ENABLE_WINCE
-            SetupVersionComboBox(winCECombo, version, new VIBoolPredicate(isQtWinCE));
-#endif
-        }
-
-        private void SetupVersionComboBox(ComboBox box, string version, VIBoolPredicate versionInfoCheck)
-        {
-            string currentItem = box.Text;
+            string currentItem = defaultCombo.Text;
             if (version != null)
                 currentItem = version;
-            box.Items.Clear();
+            defaultCombo.Items.Clear();
 
             foreach (string v in versionManager.GetVersions())
             {
                 if (v == "$(DefaultQtVersion)")
                     continue;
-                try
-                {
-                    VersionInformation vi = new VersionInformation(versionManager.GetInstallPath(v));
-                    if (versionInfoCheck(vi))
-                        box.Items.Add(v);
-                }
-                catch (Exception)
-                {
-                }
+                defaultCombo.Items.Add(v);
             }
 
-            if (box.Items.Count > 0)
+            if (defaultCombo.Items.Count > 0)
             {
-                if (box.Items.Contains(currentItem))
-                    box.Text = currentItem;
+                if (defaultCombo.Items.Contains(currentItem))
+                    defaultCombo.Text = currentItem;
                 else
-                    box.Text = (string)box.Items[0];
+                    defaultCombo.Text = (string)defaultCombo.Items[0];
             }
             else
             {
-                box.Text = "";
+                defaultCombo.Text = "";
             }
         }
 
@@ -200,7 +152,6 @@ namespace Qt5VSAddin
                 versionManager.RemoveVersion(name);
                 listView.Items.Remove(itm);
                 SetupDefaultVersionComboBox(null);
-                SetupWinCEVersionComboBox(null);
             }
         }
 
@@ -214,7 +165,6 @@ namespace Qt5VSAddin
             {
                 UpdateListBox();
                 SetupDefaultVersionComboBox(null);
-                SetupWinCEVersionComboBox(null);
             }
         }
 

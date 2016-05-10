@@ -32,8 +32,6 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.winCECombo = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.defaultCombo = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.deleteButton = new System.Windows.Forms.Button();
@@ -81,8 +79,6 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage1.Controls.Add(this.winCECombo);
-            this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.defaultCombo);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.deleteButton);
@@ -95,27 +91,10 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             // 
-            // winCECombo
-            // 
-            this.winCECombo.FormattingEnabled = true;
-            this.winCECombo.Location = new System.Drawing.Point(146, 209);
-            this.winCECombo.Name = "winCECombo";
-            this.winCECombo.Size = new System.Drawing.Size(145, 21);
-            this.winCECombo.TabIndex = 24;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 210);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(133, 13);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "Default Qt/WinCE version:";
-            // 
             // defaultCombo
             // 
             this.defaultCombo.FormattingEnabled = true;
-            this.defaultCombo.Location = new System.Drawing.Point(146, 176);
+            this.defaultCombo.Location = new System.Drawing.Point(146, 207);
             this.defaultCombo.Name = "defaultCombo";
             this.defaultCombo.Size = new System.Drawing.Size(145, 21);
             this.defaultCombo.TabIndex = 22;
@@ -123,7 +102,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 180);
+            this.label2.Location = new System.Drawing.Point(6, 210);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(119, 13);
             this.label2.TabIndex = 21;
@@ -156,7 +135,7 @@
             this.listView.Location = new System.Drawing.Point(6, 6);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(285, 160);
+            this.listView.Size = new System.Drawing.Size(285, 195);
             this.listView.TabIndex = 18;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -212,8 +191,6 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ComboBox winCECombo;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox defaultCombo;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button deleteButton;

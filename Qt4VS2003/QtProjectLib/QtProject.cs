@@ -273,11 +273,6 @@ namespace Digia.Qt5ProjectLib
                     if (dependenciesChanged)
                         linkerWrapper.AdditionalDependencies = additionalDeps;
                 }
-
-#if ENABLE_WINCE
-                if (info.HasDLL && config.DeploymentTool != null)
-                    AddDeploySettings(null, module, config, info, versionInfo);
-#endif
             }
         }
 
@@ -322,11 +317,6 @@ namespace Digia.Qt5ProjectLib
                     if (dependenciesChanged)
                         linkerWrapper.AdditionalDependencies = additionalDependencies;
                 }
-
-#if ENABLE_WINCE
-                if (info.HasDLL && config.DeploymentTool != null)
-                    RemoveDeploySettings(null, module, config, info);
-#endif
             }
         }
 
@@ -338,40 +328,22 @@ namespace Digia.Qt5ProjectLib
 
                 if (linker != null)
                 {
-                    if (oldVersion == null || oldVersion.IsWinCEVersion() != newVersion.IsWinCEVersion())
+                    if (oldVersion == null)
                     {
                         LinkerToolWrapper linkerWrapper = new LinkerToolWrapper(linker);
                         List<string> additionalDependencies = linkerWrapper.AdditionalDependencies;
 
                         List<string> libsDesktop = new List<string>();
-                        List<string> libsWinCE = new List<string>();
                         foreach (QtModuleInfo module in QtModules.Instance.GetAvailableModuleInformation())
                         {
                             if (HasModule(module.ModuleId))
                             {
                                 libsDesktop.AddRange(module.AdditionalLibraries);
-                                libsWinCE.AddRange(module.AdditionalLibrariesWinCE);
                             }
                         }
-                        List<string> libsToAdd = null;
-                        List<string> libsToRemove = null;
-                        if (newVersion.IsWinCEVersion())
-                        {
-                            libsToAdd = libsWinCE;
-                            libsToRemove = libsDesktop;
-                        }
-                        else
-                        {
-                            libsToAdd = libsDesktop;
-                            libsToRemove = libsWinCE;
-                        }
+                        List<string> libsToAdd = libsDesktop;
 
                         bool changed = false;
-                        foreach (string libToRemove in libsToRemove)
-                        {
-                            if (additionalDependencies.Remove(libToRemove))
-                                changed = true;
-                        }
                         foreach (string libToAdd in libsToAdd)
                         {
                             if (!additionalDependencies.Contains(libToAdd))
@@ -383,16 +355,6 @@ namespace Digia.Qt5ProjectLib
                         if (changed)
                             linkerWrapper.AdditionalDependencies = additionalDependencies;
                     }
-
-#if ENABLE_WINCE
-                    if (newVersion.IsWinCEVersion() && newVersion.IsStaticBuild() &&
-                        oldVersion != null &&
-                        !(oldVersion.IsWinCEVersion() && oldVersion.IsStaticBuild()) &&
-                        config.DeploymentTool != null)
-                    {
-                        RemoveQtDeploys(config);
-                    }
-#endif
 
                     if (oldVersion == null || newVersion.IsStaticBuild() != oldVersion.IsStaticBuild())
                     {
@@ -408,24 +370,6 @@ namespace Digia.Qt5ProjectLib
                                 compiler.AddPreprocessorDefinition("QT_DLL");
                         }
                     }
-
-#if ENABLE_WINCE
-                    if (newVersion.IsWinCEVersion() && !newVersion.IsStaticBuild() &&
-                        (oldVersion == null ||
-                        !(oldVersion.IsWinCEVersion() && !oldVersion.IsStaticBuild())) &&
-                        config.DeploymentTool != null)
-                    {
-                        MatchCollection matches = Regex.Matches(linker.AdditionalDependencies, "Qt(\\S+)5\\.lib");
-                        foreach (Match m in matches)
-                        {
-                            string moduleName = m.ToString().Substring(0, m.ToString().Length - 5);
-                            if (config.ConfigurationName.StartsWith("Debug"))
-                                moduleName = moduleName.Substring(0, moduleName.Length - 1);
-                            QtModule module = QtModules.Instance.ModuleIdByName(moduleName);
-                            AddDeploySettings(null, module, config, null, newVersion);
-                        }
-                    }
-#endif
                 }
             }
         }
@@ -533,11 +477,6 @@ namespace Digia.Qt5ProjectLib
                 // the default value is the same... +platform now
                 config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
 
-#if ENABLE_WINCE
-                // This is mainly for Visual Studio consistency compared with a smartdevice MFC project.
-                config.IntermediateDirectory = config.OutputDirectory;
-#endif
-
                 // add some common defines
                 compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
 
@@ -548,18 +487,11 @@ namespace Digia.Qt5ProjectLib
 
                 if (linker != null)
                 {
-                    if (vi.IsWinCEVersion())
-                    {
-                        linker.SubSystem = subSystemOption.subSystemNotSet;
-                        SetTargetMachine(linker, vi);
-                    }
+                    if ((type & TemplateType.ConsoleSystem) != 0)
+                        linker.SubSystem = subSystemOption.subSystemConsole;
                     else
-                    {
-                        if ((type & TemplateType.ConsoleSystem) != 0)
-                            linker.SubSystem = subSystemOption.subSystemConsole;
-                        else
-                            linker.SubSystem = subSystemOption.subSystemWindows;
-                    }
+                        linker.SubSystem = subSystemOption.subSystemWindows;
+
                     linker.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
                     linker.AdditionalLibraryDirectories = "$(QTDIR)\\lib";
                     if (vi.IsStaticBuild())
@@ -568,8 +500,6 @@ namespace Digia.Qt5ProjectLib
                         if ((type & TemplateType.GUISystem) != 0)
                         {
                             linker.AdditionalDependencies += " " + vi.GetQMakeConfEntry("QMAKE_LIBS_GUI");
-                            if (vi.IsWinCEVersion())
-                                linker.AdditionalDependencies += " qmenu_wince.res";
                         }
                     }
                 }
@@ -608,47 +538,6 @@ namespace Digia.Qt5ProjectLib
 
                 if (linker != null)
                     linker.GenerateDebugInformation = isDebugConfiguration;
-
-#if ENABLE_WINCE
-                if (vi.IsWinCEVersion())
-                {
-                    compiler.SetWarningLevel(warningLevelOption.warningLevel_3);
-                    compiler.SetBufferSecurityCheck(isDebugConfiguration);
-                    DeploymentToolWrapper deploymentTool = DeploymentToolWrapper.Create(config);
-                    if (deploymentTool != null)
-                    {
-                        deploymentTool.AddWinCEMSVCStandardLib(isDebugConfiguration, dte);
-
-                        string signatureFile = vi.GetSignatureFile();
-                        if (signatureFile != null)
-                        {
-                            Object postBuildEventToolObj = ((IVCCollection)config.Tools).Item("VCPostBuildEventTool");
-                            VCPostBuildEventTool postBuildEventTool = postBuildEventToolObj as VCPostBuildEventTool;
-                            if (postBuildEventTool != null)
-                            {
-                                string cmdline = postBuildEventTool.CommandLine;
-                                if (cmdline == null)
-                                    cmdline = "";
-                                if (cmdline.Length > 0)
-                                    postBuildEventTool.CommandLine += "\n";
-                                cmdline += "signtool sign /F " + signatureFile + " \"$(TargetPath)\"";
-                                postBuildEventTool.CommandLine = cmdline;
-                            }
-                        }
-                    }
-                    IVCCollection tools = ((IVCCollection)config.Tools);
-                    object cst = tools.Item("VCCodeSignTool");
-                    if (cst != null)
-                    {
-                        Type t = cst.GetType();
-                        object r = t.InvokeMember("ExecutionBucket",
-                            System.Reflection.BindingFlags.GetProperty,
-                            null, cst, null);
-                        if (r != null)
-                            config.ExcludeBuckets = r.ToString();
-                    }
-                }
-#endif
 
                 if (usePrecompiledHeader)
                     UsePrecompiledHeaders(config);
@@ -3224,118 +3113,18 @@ namespace Digia.Qt5ProjectLib
 
         public void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
         {
-            bool isWinPlatform = (!viNew.IsWinCEVersion());
-
             CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
             var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
             ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
             compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
 
-#if ENABLE_WINCE
-            // search prepocessor definitions for Qt modules and add deployment settings
-            if (!isWinPlatform)
-            {
-                DeploymentToolWrapper deploymentTool = DeploymentToolWrapper.Create(config);
-                if (deploymentTool != null)
-                {
-                    deploymentTool.Clear();
-                    deploymentTool.AddWinCEMSVCStandardLib(IsDebugConfiguration(config), dte);
-
-                    List<QtModuleInfo> availableQtModules = QtModules.Instance.GetAvailableModuleInformation();
-                    foreach (string s in ppdefs.Elements)
-                    {
-                        foreach (QtModuleInfo moduleInfo in availableQtModules)
-                        {
-                            if (moduleInfo.Defines.Contains(s))
-                                AddDeploySettings(deploymentTool, moduleInfo.ModuleId, config, null, viNew);
-                        }
-                    }
-                }
-            }
-#endif
-
             VCLinkerTool linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
             if (linker == null)
                 return;
 
-            if (isWinPlatform)
-                linker.SubSystem = subSystemOption.subSystemWindows;
-            else
-                linker.SubSystem = subSystemOption.subSystemNotSet;
-
+            linker.SubSystem = subSystemOption.subSystemWindows;
             SetTargetMachine(linker, viNew);
         }
-
-#if ENABLE_WINCE
-        private void AddDeploySettings(DeploymentToolWrapper deploymentTool, QtModule module,
-                                       VCConfiguration config, QtModuleInfo moduleInfo,
-                                       VersionInformation versionInfo)
-        {
-            // for static Qt builds it doesn't make sense 
-            // to add deployment settings for Qt modules
-            if (versionInfo.IsStaticBuild())
-                return;
-
-            if (moduleInfo == null)
-                moduleInfo = QtModules.Instance.ModuleInformation(module);
-
-            if (moduleInfo == null || !moduleInfo.HasDLL)
-                return;
-
-            if (deploymentTool == null)
-                deploymentTool = DeploymentToolWrapper.Create(config);
-            if (deploymentTool == null)
-                return;
-
-            string destDir = deploymentTool.RemoteDirectory;
-            const string qtSrcDir = "$(QTDIR)\\lib";
-            string filename = moduleInfo.GetDllFileName(IsDebugConfiguration(config));
-
-            if (deploymentTool.GetAdditionalFiles().IndexOf(filename) < 0)
-                deploymentTool.Add(filename, qtSrcDir, destDir);
-
-            // add dependent modules
-            foreach (QtModule dependentModule in moduleInfo.dependentModules)
-                AddDeploySettings(deploymentTool, dependentModule, config, null, versionInfo);
-        }
-
-        private void RemoveDeploySettings(DeploymentToolWrapper deploymentTool, QtModule module,
-                                       VCConfiguration config, QtModuleInfo moduleInfo)
-        {
-            if (moduleInfo == null)
-                moduleInfo = QtModules.Instance.ModuleInformation(module);
-            if (deploymentTool == null)
-                deploymentTool = DeploymentToolWrapper.Create(config);
-            if (deploymentTool == null)
-                return;
-
-            string destDir = deploymentTool.RemoteDirectory;
-            const string qtSrcDir = "$(QTDIR)\\lib";
-            string filename = moduleInfo.GetDllFileName(IsDebugConfiguration(config));
-
-            if (deploymentTool.GetAdditionalFiles().IndexOf(filename) >= 0)
-                deploymentTool.Remove(filename, qtSrcDir, destDir);
-
-            // remove dependent modules
-            foreach (QtModule dependentModule in moduleInfo.dependentModules)
-            {
-                if (!HasModule(dependentModule))
-                    RemoveDeploySettings(deploymentTool, dependentModule, config, null);
-            }
-        }
-
-        private static void RemoveQtDeploys(VCConfiguration config)
-        {
-            DeploymentToolWrapper deploymentTool = DeploymentToolWrapper.Create(config);
-            if (deploymentTool == null)
-                return;
-            string additionalFiles = deploymentTool.GetAdditionalFiles();
-            additionalFiles = Regex.Replace(additionalFiles, "Qt[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^;^$]*[;$]{0,1}", "");
-            if (additionalFiles.EndsWith(";"))
-                additionalFiles = additionalFiles.Substring(0, additionalFiles.Length - 1);
-            deploymentTool.SetAdditionalFiles(additionalFiles);
-        }
-#endif
 
         private void DeleteGeneratedFiles()
         {

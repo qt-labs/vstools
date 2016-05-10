@@ -249,9 +249,6 @@
   <data name="BuildOptionsPage_DefaultQtVersion" xml:space="preserve">
     <value>Standard Qt/Win version:</value>
   </data>
-  <data name="BuildOptionsPage_WinCEQtVersion" xml:space="preserve">
-    <value>Standard Qt/WinCE Version:</value>
-  </data>
   <data name="BuildSystem_IncompatibleMsg" xml:space="preserve">
     <value>Die momentan verwendete Qt Version ist nicht kompatibel zu der in der Add-in verwendeten.
 Um das Laden des Plugins in der Add-in zu ermöglichen muß Qt {0} benutzt werden.
