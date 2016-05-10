@@ -170,15 +170,7 @@ namespace Qt5VSAddin
             {
                 if (neededText == EnvDTE.vsCommandStatusTextWanted.vsCommandStatusTextWantedNone)
                 {
-                    if ((commandName == Res.LaunchDesignerFullCommand) ||
-                        (commandName == Res.LaunchLinguistFullCommand) ||
-                        (commandName == Res.VSQtOptionsFullCommand) ||
-                        (commandName == Res.ImportProFileFullCommand))
-                    {
-                        status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                            | vsCommandStatus.vsCommandStatusEnabled;
-                    }
-                    else if ((commandName == Res.ImportPriFileFullCommand) ||
+                    if ((commandName == Res.ImportPriFileFullCommand) ||
                         (commandName == Res.ExportPriFileFullCommand) ||
                         (commandName == Res.ExportProFileFullCommand) ||
                         (commandName == Res.CreateNewTranslationFileFullCommand) ||
@@ -239,18 +231,6 @@ namespace Qt5VSAddin
                 {
                     switch (commandName)
                     {
-                        case Res.LaunchDesignerFullCommand:
-                            handled = true;
-                            ExtLoader.loadDesigner(null);
-                            break;
-                        case Res.LaunchLinguistFullCommand:
-                            handled = true;
-                            ExtLoader.loadLinguist(null);
-                            break;
-                        case Res.ImportProFileFullCommand:
-                            handled = true;
-                            ExtLoader.ImportProFile();
-                            break;
                         case Res.ImportPriFileFullCommand:
                             handled = true;
                             ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Dte));
@@ -298,18 +278,6 @@ namespace Qt5VSAddin
                                 }
                             }
                             break;
-                        case Res.VSQtOptionsFullCommand:
-                            handled = true;
-                            if (formQtVersions == null)
-                            {
-                                formQtVersions = new FormVSQtSettings();
-                                formQtVersions.LoadSettings();
-                            }
-                            formQtVersions.StartPosition = FormStartPosition.CenterParent;
-                            MainWinWrapper mww = new MainWinWrapper(Dte);
-                            if (formQtVersions.ShowDialog(mww) == DialogResult.OK)
-                                formQtVersions.SaveSettings();
-                            break;
                         case Res.CreateNewTranslationFileFullCommand:
                             handled = true;
                             pro = HelperFunctions.GetSelectedQtProject(Dte);
@@ -353,7 +321,6 @@ namespace Qt5VSAddin
 
         private AddInEventHandler eventHandler = null;
         private FormChangeQtVersion formChangeQtVersion = null;
-        private FormVSQtSettings formQtVersions = null;
         private FormProjectQtSettings formProjectQtSettings = null;
 
         private string locateHelperExecutable(string exeName)
