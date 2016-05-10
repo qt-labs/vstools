@@ -26,15 +26,14 @@
 **
 ****************************************************************************/
 
-using System;
+using Digia.Qt5ProjectLib;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using Digia.Qt5ProjectLib;
-using EnvDTE80;
+using System.Windows.Forms;
 
 namespace Qt5VSAddin
 {
@@ -161,156 +160,6 @@ namespace Qt5VSAddin
 
         #endregion protected
 
-        public void QueryStatus(string commandName,
-                 EnvDTE.vsCommandStatusTextWanted neededText,
-                 ref EnvDTE.vsCommandStatus status,
-                 ref object commandText)
-        {
-            try
-            {
-                if (neededText == EnvDTE.vsCommandStatusTextWanted.vsCommandStatusTextWantedNone)
-                {
-                    if ((commandName == Res.ImportPriFileFullCommand) ||
-                        (commandName == Res.ExportPriFileFullCommand) ||
-                        (commandName == Res.ExportProFileFullCommand) ||
-                        (commandName == Res.CreateNewTranslationFileFullCommand) ||
-                        (commandName == Res.lupdateProjectFullCommand) ||
-                        (commandName == Res.lreleaseProjectFullCommand))
-                    {
-                        Project prj = HelperFunctions.GetSelectedProject(Dte);
-                        if (prj != null && HelperFunctions.IsQtProject(prj))
-                            status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                                                    | vsCommandStatus.vsCommandStatusEnabled;
-                        else
-                            status = vsCommandStatus.vsCommandStatusSupported;
-                    }
-                    else if (commandName == Res.ProjectQtSettingsFullCommand ||
-                        commandName == Res.ConvertToQMakeFullCommand)
-                    {
-                        Project prj = HelperFunctions.GetSelectedProject(Dte);
-                        if (prj == null)
-                            status = vsCommandStatus.vsCommandStatusSupported;
-                        else if (HelperFunctions.IsQtProject(prj))
-                            status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                                                    | vsCommandStatus.vsCommandStatusEnabled;
-                        else if (HelperFunctions.IsQMakeProject(prj))
-                            status = vsCommandStatus.vsCommandStatusInvisible;
-                        else
-                            status = vsCommandStatus.vsCommandStatusSupported;
-                    }
-                    else if (commandName == Res.ChangeProjectQtVersionFullCommand ||
-                        commandName == Res.ConvertToQtFullCommand)
-                    {
-                        Project prj = HelperFunctions.GetSelectedProject(Dte);
-                        if (prj == null || HelperFunctions.IsQtProject(prj))
-                            status = vsCommandStatus.vsCommandStatusInvisible;
-                        else if (HelperFunctions.IsQMakeProject(prj))
-                            status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                                                    | vsCommandStatus.vsCommandStatusEnabled;
-                        else
-                            status = vsCommandStatus.vsCommandStatusInvisible;
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
-        }
-
-        public void Exec(string commandName,
-                  EnvDTE.vsCommandExecOption executeOption,
-                  ref object varIn,
-                  ref object varOut,
-                  ref bool handled)
-        {
-            try
-            {
-                handled = false;
-                if (executeOption == EnvDTE.vsCommandExecOption.vsCommandExecOptionDoDefault)
-                {
-                    switch (commandName)
-                    {
-                        case Res.ImportPriFileFullCommand:
-                            handled = true;
-                            ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Dte));
-                            break;
-                        case Res.ExportPriFileFullCommand:
-                            handled = true;
-                            ExtLoader.ExportPriFile();
-                            break;
-                        case Res.ExportProFileFullCommand:
-                            handled = true;
-                            ExtLoader.ExportProFile();
-                            break;
-                        case Res.ProjectQtSettingsFullCommand:
-                            handled = true;
-                            EnvDTE.DTE dte = Dte;
-                            Project pro = HelperFunctions.GetSelectedQtProject(dte);
-                            if (pro != null)
-                            {
-                                if (formProjectQtSettings == null)
-                                    formProjectQtSettings = new FormProjectQtSettings();
-                                formProjectQtSettings.SetProject(pro);
-                                formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
-                                MainWinWrapper ww = new MainWinWrapper(dte);
-                                formProjectQtSettings.ShowDialog(ww);
-                            }
-                            else
-                                MessageBox.Show(SR.GetString("NoProjectOpened"));
-                            break;
-                        case Res.ChangeProjectQtVersionFullCommand:
-                            handled = true;
-                            dte = Dte;
-                            pro = HelperFunctions.GetSelectedProject(dte);
-                            if (pro != null && HelperFunctions.IsQMakeProject(pro))
-                            {
-                                if (formChangeQtVersion == null)
-                                    formChangeQtVersion = new FormChangeQtVersion();
-                                formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                                MainWinWrapper ww = new MainWinWrapper(dte);
-                                if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK)
-                                {
-                                    string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                                    QtVersionManager vm = QtVersionManager.The();
-                                    string qtPath = vm.GetInstallPath(qtVersion);
-                                    HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + qtPath + "\\bin;$(PATH)", true);
-                                }
-                            }
-                            break;
-                        case Res.CreateNewTranslationFileFullCommand:
-                            handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(Dte);
-                            Translation.CreateNewTranslationFile(pro);
-                            break;
-                        case Res.lupdateProjectFullCommand:
-                            handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(Dte);
-                            Translation.RunlUpdate(pro);
-                            break;
-                        case Res.lreleaseProjectFullCommand:
-                            handled = true;
-                            pro = HelperFunctions.GetSelectedQtProject(Dte);
-                            Translation.RunlRelease(pro);
-                            break;
-                        case Res.ConvertToQtFullCommand:
-                        case Res.ConvertToQMakeFullCommand:
-                            if (MessageBox.Show(SR.GetString("ConvertConfirmation"), SR.GetString("ConvertTitle"), MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                handled = true;
-                                pro = HelperFunctions.GetSelectedProject(Dte);
-                                HelperFunctions.ToggleProjectKind(pro);
-                            }
-                            break;
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
-        }
-
         #region private
 
         private enum Mode
@@ -320,8 +169,6 @@ namespace Qt5VSAddin
         }
 
         private AddInEventHandler eventHandler = null;
-        private FormChangeQtVersion formChangeQtVersion = null;
-        private FormProjectQtSettings formProjectQtSettings = null;
 
         private string locateHelperExecutable(string exeName)
         {

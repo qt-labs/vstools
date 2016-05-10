@@ -307,7 +307,7 @@
                     <ToolTipText>This will import a .pri file and create a Qt project from it.</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="ExportProFileProjectId" priority="0x0100" type="Button">
+            <Button guid="ProjectContextMenuGuid" id="ExportPriFileProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ExportProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -316,7 +316,7 @@
                     <ToolTipText>This will export the current project to a .pri file.</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="CreateProFileProjectId" priority="0x0100" type="Button">
+            <Button guid="ProjectContextMenuGuid" id="ExportProFileProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="CreateProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -488,8 +488,8 @@
 
             <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
             <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
-            <IDSymbol name="ExportProFileProjectId" value="0x0115" />
-            <IDSymbol name="CreateProFileProjectId" value="0x0116" />
+            <IDSymbol name="ExportPriFileProjectId" value="0x0115" />
+            <IDSymbol name="ExportProFileProjectId" value="0x0116" />
 
             <IDSymbol name="ProjectContextTsMenuGroup" value="0x1028" />
             <IDSymbol name="CreateNewTsFileProjectId" value="0x0117" />

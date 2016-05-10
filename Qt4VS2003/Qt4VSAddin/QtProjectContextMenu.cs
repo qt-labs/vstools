@@ -26,13 +26,12 @@
 **
 ****************************************************************************/
 
+using Digia.Qt5ProjectLib;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-
-using VsCEO = EnvDTE.vsCommandExecOption;
-using VsCSTW = EnvDTE.vsCommandStatusTextWanted;
+using System.Windows.Forms;
 
 namespace Qt5VSAddin
 {
@@ -41,20 +40,6 @@ namespace Qt5VSAddin
     /// </summary>
     internal sealed class QtProjectContextMenu
     {
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int ImportPriFileProjectId = 0x0114;
-        public const int ExportProFileProjectId = 0x0115;
-        public const int CreateProFileProjectId = 0x0116;
-        public const int CreateNewTsFileProjectId = 0x0117;
-        public const int lUpdateOnProjectId = 0x0118;
-        public const int lReleaseOnProjectId = 0x0119;
-        public const int ConvertToQtProjectId = 0x0120;
-        public const int ConvertToQmakeProjectId = 0x0121;
-        public const int QtProjectSettingsProjectId = 0x0122;
-        public const int ChangeProjectQtVersionProjectId = 0x0123;
-
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
@@ -78,6 +63,23 @@ namespace Qt5VSAddin
         }
 
         /// <summary>
+        /// Command ID.
+        /// </summary>
+        private enum CommandId : int
+        {
+            ImportPriFileProjectId = 0x0114,
+            ExportPriFileProjectId = 0x0115,
+            ExportProFileProjectId = 0x0116,
+            CreateNewTsFileProjectId = 0x0117,
+            lUpdateOnProjectId = 0x0118,
+            lReleaseOnProjectId = 0x0119,
+            ConvertToQtProjectId = 0x0120,
+            ConvertToQmakeProjectId = 0x0121,
+            QtProjectSettingsProjectId = 0x0122,
+            ChangeProjectQtVersionProjectId = 0x0123
+        }
+
+        /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
         private readonly Package m_package;
@@ -88,11 +90,6 @@ namespace Qt5VSAddin
         private IServiceProvider ServiceProvider {
             get { return m_package; }
         }
-
-        /// <summary>
-        /// Command ID dictionary maps new menu ids to old addin menu ids.
-        /// </summary>
-        private readonly Dictionary<int, string> commandIds;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QtMainMenu"/> class.
@@ -111,22 +108,9 @@ namespace Qt5VSAddin
             if (commandService == null)
                 return;
 
-            commandIds = new Dictionary<int, string> {
-                { ImportPriFileProjectId, Res.ImportPriFileFullCommand },
-                { ExportProFileProjectId, Res.ExportPriFileFullCommand },
-                { CreateProFileProjectId, Res.ExportProFileFullCommand },
-                { CreateNewTsFileProjectId, Res.CreateNewTranslationFileFullCommand },
-                { lUpdateOnProjectId, Res.lupdateProjectFullCommand },
-                { lReleaseOnProjectId, Res.lreleaseProjectFullCommand },
-                { ConvertToQtProjectId, Res.ConvertToQtFullCommand },
-                { ConvertToQmakeProjectId, Res.ConvertToQMakeFullCommand },
-                { QtProjectSettingsProjectId, Res.ProjectQtSettingsFullCommand },
-                { ChangeProjectQtVersionProjectId, Res.ChangeProjectQtVersionFullCommand }
-            };
-
-            foreach (var id in commandIds.Keys) {
+            foreach (var id in Enum.GetValues(typeof(CommandId))) {
                 var command = new OleMenuCommand(new EventHandler(execHandler),
-                    new CommandID(ProjectContextMenuGuid, id));
+                    new CommandID(ProjectContextMenuGuid, (int)id));
                 command.BeforeQueryStatus += new EventHandler(beforeQueryStatus);
                 commandService.AddCommand(command);
             }
@@ -138,14 +122,63 @@ namespace Qt5VSAddin
             if (command == null)
                 return;
 
-            string resCommand = null;
-            if (!commandIds.TryGetValue(command.CommandID.ID, out resCommand))
-                return;
-
-            object obj = null;
-            bool handled = false;
-            Connect.Instance.Exec(resCommand, VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj,
-                ref handled);
+            switch ((CommandId)command.CommandID.ID) {
+            case CommandId.ImportPriFileProjectId:
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
+                break;
+            case CommandId.ExportPriFileProjectId:
+                ExtLoader.ExportPriFile();
+                break;
+            case CommandId.ExportProFileProjectId:
+                ExtLoader.ExportProFile();
+                break;
+            case CommandId.CreateNewTsFileProjectId:
+                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(Connect
+                    .Instance.Dte));
+                break;
+            case CommandId.lUpdateOnProjectId:
+                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
+                break;
+            case CommandId.lReleaseOnProjectId:
+                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
+                break;
+            case CommandId.ConvertToQtProjectId:
+            case CommandId.ConvertToQmakeProjectId: {
+                var caption = SR.GetString("ConvertTitle");
+                var text = SR.GetString("ConvertConfirmation");
+                if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                    HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Connect
+                        .Instance.Dte));
+                }
+            } break;
+            case CommandId.QtProjectSettingsProjectId: {
+                var pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+                if (pro != null) {
+                    var formProjectQtSettings = new FormProjectQtSettings();
+                    formProjectQtSettings.SetProject(pro);
+                    formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
+                    var ww = new MainWinWrapper(Connect.Instance.Dte);
+                    formProjectQtSettings.ShowDialog(ww);
+                } else {
+                    MessageBox.Show(SR.GetString("NoProjectOpened"));
+                }
+            }   break;
+            case CommandId.ChangeProjectQtVersionProjectId: {
+                var pro = HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte);
+                if (HelperFunctions.IsQMakeProject(pro)) {
+                    var formChangeQtVersion = new FormChangeQtVersion();
+                    formChangeQtVersion.UpdateContent(ChangeFor.Project);
+                    var ww = new MainWinWrapper(Connect.Instance.Dte);
+                    if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
+                        string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
+                        HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
+                            .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
+                    }
+                }
+            }   break;
+            default:
+                break;
+            }
         }
 
         private void beforeQueryStatus(object sender, EventArgs e)
@@ -154,16 +187,46 @@ namespace Qt5VSAddin
             if (command == null)
                 return;
 
-            string resCommand = null;
-            if (!commandIds.TryGetValue(command.CommandID.ID, out resCommand))
-                return;
-
-            object obj = null;
-            EnvDTE.vsCommandStatus status = EnvDTE.vsCommandStatus.vsCommandStatusUnsupported;
-            Connect.Instance.QueryStatus(resCommand, VsCSTW.vsCommandStatusTextWantedNone, ref status,
-                ref obj);
-            command.Enabled = ((status & EnvDTE.vsCommandStatus.vsCommandStatusEnabled) != 0);
-            command.Visible = ((status & EnvDTE.vsCommandStatus.vsCommandStatusInvisible) == 0);
+            switch ((CommandId)command.CommandID.ID) {
+            case CommandId.ImportPriFileProjectId:
+            case CommandId.ExportPriFileProjectId:
+            case CommandId.ExportProFileProjectId:
+            case CommandId.CreateNewTsFileProjectId:
+            case CommandId.lUpdateOnProjectId:
+            case CommandId.lReleaseOnProjectId:
+                command.Visible = true;
+                command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
+                    .GetSelectedProject(Connect.Instance.Dte));
+                break;
+            case CommandId.ConvertToQmakeProjectId:
+            case CommandId.QtProjectSettingsProjectId: {
+                var status = vsCommandStatus.vsCommandStatusSupported;
+                var project = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                if (project != null) {
+                    if (HelperFunctions.IsQtProject(project))
+                        status |= vsCommandStatus.vsCommandStatusEnabled;
+                    else if ((project != null) && HelperFunctions.IsQMakeProject(project))
+                        status |= vsCommandStatus.vsCommandStatusInvisible;
+                }
+                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
+                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+            } break;
+            case CommandId.ConvertToQtProjectId:
+            case CommandId.ChangeProjectQtVersionProjectId: {
+                var status = vsCommandStatus.vsCommandStatusSupported;
+                var project = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+                if ((project == null) || HelperFunctions.IsQtProject(project))
+                    status |= vsCommandStatus.vsCommandStatusInvisible;
+                else if (HelperFunctions.IsQMakeProject(project))
+                    status |= vsCommandStatus.vsCommandStatusEnabled;
+                else
+                    status |= vsCommandStatus.vsCommandStatusInvisible;
+                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
+                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+            } break;
+            default:
+                break;
+            }
         }
     }
 }
