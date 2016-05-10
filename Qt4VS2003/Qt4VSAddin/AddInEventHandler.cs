@@ -617,7 +617,6 @@ namespace Qt5VSAddin
                                     if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform)
                                     {
                                         VCPlatform platform = vcConfig.Platform as VCPlatform;
-                                        string platformName = platform.Name;
                                         if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower())
                                             && fileInFilter.RelativePath.ToLower().Contains(platform.Name.ToLower()))
                                                 exclude = false;

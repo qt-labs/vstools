@@ -354,46 +354,6 @@ namespace Digia.Qt5ProjectLib
             catch { /* ignore */ }
         }
 
-        private static void RepairMocSteps(EnvDTE.Project project)
-        {
-            VCProject vcProject = project.Object as VCProject;
-            if (vcProject == null)
-                return;
-
-            foreach (VCFile vcfile in (IVCCollection)vcProject.Files)
-            {
-                foreach (VCFileConfiguration config in (IVCCollection)vcfile.FileConfigurations)
-                {
-                    try
-                    {
-                        VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(config);
-                        if (tool == null)
-                            continue;
-                        string[] commandLines = tool.CommandLine.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        string commandLineToSet = "";
-                        bool firstLoop = true;
-                        for (int i = 0; i < commandLines.Length; i++)
-                        {
-                            string commandLine = commandLines[i];
-                            // If CONFIG contains silent in the pro file, there is an @echo at the beginning of the
-                            // command line which we remove.
-                            if (commandLine.Contains("moc.exe") && commandLine.StartsWith("@echo"))
-                                commandLine = commandLine.Substring(commandLine.IndexOf("&&") + 3);
-                            if (firstLoop)
-                                firstLoop = false;
-                            else
-                                commandLineToSet += "\r\n";
-                            commandLineToSet += commandLine;
-                        }
-                        tool.CommandLine = commandLineToSet;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-        }
-
         private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
         {
             string name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));

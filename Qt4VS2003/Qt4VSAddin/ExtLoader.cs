@@ -166,11 +166,6 @@ namespace Qt5VSAddin
             }
         }
 
-        private static List<String> ResolveFilesFromQMake(System.Array files, EnvDTE.Project project, string path)
-        {
-            return ResolveFilesFromQMake(files as string[], project, path);
-        }
-
         private static List<String> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
         {
             List<string> lst = new List<string>();

@@ -460,6 +460,7 @@ namespace Digia.Qt5ProjectLib
 
             try
             {
+                // TODO: The return value is not used at all?
                 string cmdLine = tool.CommandLine;
             }
             catch
