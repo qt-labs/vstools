@@ -218,16 +218,6 @@ namespace Qt5VSAddin
                         else
                             status = vsCommandStatus.vsCommandStatusInvisible;
                     }
-                    else if ((commandName == Res.ChangeSolutionQtVersionFullCommand) ||
-                        (commandName == Res.lupdateSolutionFullCommand) ||
-                        (commandName == Res.lreleaseSolutionFullCommand))
-                    {
-                        if (Dte.Solution.IsOpen)
-                            status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                            | vsCommandStatus.vsCommandStatusEnabled;
-                        else
-                            status = vsCommandStatus.vsCommandStatusSupported;
-                    }
                 }
             }
             catch (System.Exception e)
@@ -272,46 +262,6 @@ namespace Qt5VSAddin
                         case Res.ExportProFileFullCommand:
                             handled = true;
                             ExtLoader.ExportProFile();
-                            break;
-                        case Res.ChangeSolutionQtVersionFullCommand:
-                            QtVersionManager vManager = QtVersionManager.The();
-                            if (formChangeQtVersion == null)
-                                formChangeQtVersion = new FormChangeQtVersion();
-                            formChangeQtVersion.UpdateContent(ChangeFor.Solution);
-                            if (formChangeQtVersion.ShowDialog() == DialogResult.OK)
-                            {
-                                string newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                                if (newQtVersion != null)
-                                {
-                                    string currentPlatform = null;
-                                    try
-                                    {
-                                        SolutionConfiguration config = Dte.Solution.SolutionBuild.ActiveConfiguration;
-                                        SolutionConfiguration2 config2 = config as SolutionConfiguration2;
-                                        currentPlatform = config2.PlatformName;
-                                    }
-                                    catch
-                                    {
-                                    }
-                                    if (string.IsNullOrEmpty(currentPlatform))
-                                        return;
-
-                                    foreach (Project project in HelperFunctions.ProjectsInSolution(Dte))
-                                    {
-                                        if (HelperFunctions.IsQtProject(project))
-                                        {
-                                            string OldQtVersion = vManager.GetProjectQtVersion(project, currentPlatform);
-                                            if (OldQtVersion == null)
-                                                OldQtVersion = vManager.GetDefaultVersion();
-
-                                            QtProject qtProject = QtProject.Create(project);
-                                            bool newProjectCreated = false;
-                                            qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref newProjectCreated);
-                                        }
-                                    }
-                                    vManager.SaveSolutionQtVersion(Dte.Solution, newQtVersion);
-                                }
-                            }
                             break;
                         case Res.ProjectQtSettingsFullCommand:
                             handled = true;
@@ -374,14 +324,6 @@ namespace Qt5VSAddin
                             handled = true;
                             pro = HelperFunctions.GetSelectedQtProject(Dte);
                             Translation.RunlRelease(pro);
-                            break;
-                        case Res.lupdateSolutionFullCommand:
-                            handled = true;
-                            Translation.RunlUpdate(Dte.Solution);
-                            break;
-                        case Res.lreleaseSolutionFullCommand:
-                            handled = true;
-                            Translation.RunlRelease(Dte.Solution);
                             break;
                         case Res.ConvertToQtFullCommand:
                         case Res.ConvertToQMakeFullCommand:

@@ -26,11 +26,13 @@
 **
 ****************************************************************************/
 
+using Digia.Qt5ProjectLib;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-
-using VsCEO = EnvDTE.vsCommandExecOption;
+using System.Windows.Forms;
 
 namespace Qt5VSAddin
 {
@@ -114,22 +116,46 @@ namespace Qt5VSAddin
             if (command == null)
                 return;
 
-            object obj = null;
-            bool handled = false;
             switch (command.CommandID.ID) {
             case lUpdateOnSolutionId:
-                Connect.Instance.Exec(Res.lupdateSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
-                    ref obj, ref obj, ref handled);
+                Translation.RunlUpdate(Connect.Instance.Dte.Solution);
                 break;
             case lReleaseOnSolutionId:
-                Connect.Instance.Exec(Res.lreleaseSolutionFullCommand, VsCEO.vsCommandExecOptionDoDefault,
-                    ref obj, ref obj, ref handled);
+                Translation.RunlRelease(Connect.Instance.Dte.Solution);
                 break;
             case ChangeSolutionQtVersionId:
-                Connect.Instance.Exec(Res.ChangeSolutionQtVersionFullCommand,
-                    VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
-                break;
-            default:
+                var formChangeQtVersion = new FormChangeQtVersion();
+                formChangeQtVersion.UpdateContent(ChangeFor.Solution);
+                if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
+                    return;
+
+                var newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
+                if (newQtVersion == null)
+                    return;
+
+                string currentPlatform = null;
+                try {
+                    var config2 = Connect.Instance.Dte.Solution.SolutionBuild
+                        .ActiveConfiguration as SolutionConfiguration2;
+                    currentPlatform = config2.PlatformName;
+                } catch { }
+                if (string.IsNullOrEmpty(currentPlatform))
+                    return;
+
+                var dte = Connect.Instance.Dte;
+                foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
+                    if (HelperFunctions.IsQtProject(project)) {
+                        var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,
+                            currentPlatform);
+                        if (OldQtVersion == null)
+                            OldQtVersion = QtVersionManager.The().GetDefaultVersion();
+
+                        bool created = false;
+                        var qtProject = QtProject.Create(project);
+                        qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
+                    }
+                }
+                QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);
                 break;
             }
         }
