@@ -26,12 +26,11 @@
 **
 ****************************************************************************/
 
+using Digia.Qt5ProjectLib;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-
-using VsCEO = EnvDTE.vsCommandExecOption;
-using VsCSTW = EnvDTE.vsCommandStatusTextWanted;
 
 namespace Qt5VSAddin
 {
@@ -103,8 +102,8 @@ namespace Qt5VSAddin
             command.BeforeQueryStatus += new EventHandler(beforeQueryStatus);
             commandService.AddCommand(command);
 
-            command = new OleMenuCommand(new EventHandler(execHandler), new CommandID(ItemContextMenuGuid,
-                lReleaseOnItemId));
+            command = new OleMenuCommand(new EventHandler(execHandler),
+                new CommandID(ItemContextMenuGuid, lReleaseOnItemId));
             command.BeforeQueryStatus += new EventHandler(beforeQueryStatus);
             commandService.AddCommand(command);
         }
@@ -115,16 +114,13 @@ namespace Qt5VSAddin
             if (command == null)
                 return;
 
-            object obj = null;
-            bool handled = false;
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Connect.Instance.Exec(Res.CommandBarName + @".Connect.lupdate",
-                    VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
+                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Connect.Instance.Dte),
+                    HelperFunctions.GetSelectedQtProject(Connect.Instance.Dte));
                 break;
             case lReleaseOnItemId:
-                Connect.Instance.Exec(Res.CommandBarName + @".Connect.lrelease",
-                    VsCEO.vsCommandExecOptionDoDefault, ref obj, ref obj, ref handled);
+                Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Connect.Instance.Dte));
                 break;
             default:
                 break;
@@ -137,23 +133,20 @@ namespace Qt5VSAddin
             if (command == null)
                 return;
 
-            object obj = null;
-            EnvDTE.vsCommandStatus status = EnvDTE.vsCommandStatus.vsCommandStatusUnsupported;
-            switch (command.CommandID.ID) {
-            case lUpdateOnItemId:
-                Connect.Instance.QueryStatus(Res.CommandBarName + @".Connect.lupdate",
-                    VsCSTW.vsCommandStatusTextWantedNone, ref status, ref obj);
-                break;
-            case lReleaseOnItemId:
-                Connect.Instance.QueryStatus(Res.CommandBarName + @".Connect.lrelease",
-                    VsCSTW.vsCommandStatusTextWantedNone, ref status, ref obj);
-                break;
-            default:
+            command.Enabled = false;
+            command.Visible = false;
+
+            var prj = HelperFunctions.GetSelectedProject(Connect.Instance.Dte);
+            if (!HelperFunctions.IsQtProject(prj) || Connect.Instance.Dte.SelectedItems.Count <= 0)
                 return;
+
+            foreach (SelectedItem si in Connect.Instance.Dte.SelectedItems) {
+                if (!si.Name.ToLower().EndsWith(".ts"))
+                    return; // Don't display commands if one of the selected files is not a .ts file.
             }
 
-            command.Enabled = ((status & EnvDTE.vsCommandStatus.vsCommandStatusEnabled) != 0);
-            command.Visible = ((status & EnvDTE.vsCommandStatus.vsCommandStatusInvisible) == 0);
+            command.Enabled = true;
+            command.Visible = true;
         }
     }
 }

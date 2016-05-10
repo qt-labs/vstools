@@ -228,34 +228,6 @@ namespace Qt5VSAddin
                         else
                             status = vsCommandStatus.vsCommandStatusSupported;
                     }
-                    else if (commandName == Res.CommandBarName + ".Connect.lupdate" ||
-                        commandName == Res.CommandBarName + ".Connect.lrelease")
-                    {
-                        Project prj = HelperFunctions.GetSelectedProject(Dte);
-                        if (prj == null || !HelperFunctions.IsQtProject(prj) ||
-                            Dte.SelectedItems.Count == 0)
-                        {
-                            status = vsCommandStatus.vsCommandStatusInvisible;
-                        }
-                        else
-                        {
-                            status = (vsCommandStatus)vsCommandStatus.vsCommandStatusSupported
-                                | vsCommandStatus.vsCommandStatusEnabled;
-                        }
-
-                        if (status != vsCommandStatus.vsCommandStatusInvisible)
-                        {
-                            // Don't display commands if one of the selected files is not a .ts file.
-                            foreach (SelectedItem si in Dte.SelectedItems)
-                            {
-                                if (!si.Name.ToLower().EndsWith(".ts"))
-                                {
-                                    status = vsCommandStatus.vsCommandStatusInvisible;
-                                    break;
-                                }
-                            }
-                        }
-                    }
                 }
             }
             catch (System.Exception e)
@@ -392,15 +364,6 @@ namespace Qt5VSAddin
                             handled = true;
                             pro = HelperFunctions.GetSelectedQtProject(Dte);
                             Translation.CreateNewTranslationFile(pro);
-                            break;
-                        case Res.CommandBarName + ".Connect.lupdate":
-                            handled = true;
-                            Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Dte),
-                                HelperFunctions.GetSelectedQtProject(Dte));
-                            break;
-                        case Res.CommandBarName + ".Connect.lrelease":
-                            handled = true;
-                            Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Dte));
                             break;
                         case Res.lupdateProjectFullCommand:
                             handled = true;
