@@ -29,6 +29,8 @@
 using System;
 
 using Digia.Qt5ProjectLib;
+using System.ComponentModel;
+
 namespace Qt5VSAddin
 {
     public class VSQtSettings
@@ -181,6 +183,7 @@ namespace Qt5VSAddin
             }
         }
 
+        [DisplayName("Ask before checkout files")]
         public bool ask_before_checkout_file
         {
             get
@@ -193,6 +196,7 @@ namespace Qt5VSAddin
             }
         }
 
+        [DisplayName("Disable checkout files")]
         public bool disable_checkout_files
         {
             get
@@ -206,6 +210,7 @@ namespace Qt5VSAddin
             }
         }
 
+        [DisplayName("Disable auto MOC steps update")]
         public bool disable_auto_MOC_steps_update
         {
             get
