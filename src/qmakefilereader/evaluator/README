@@ -1,0 +1,6 @@
+This is a copy of qmake's parser and evaluator from qmake/library
+directory in the qtbase repository at git://gitorious.org/qt/qtbase.git.
+It has been taken at 5e525d283d308fe462e83955996fc53d80465c1b.
+
+If you do changes to these files, please make sure they are upstreamed!
+

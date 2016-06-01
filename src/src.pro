@@ -3,3 +3,4 @@ SUBDIRS = \
     qmakefilereader \
     qrceditor
 
+include(src.pri)
