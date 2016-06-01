@@ -45,9 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassNameValidationRule.cs" />
+    <Compile Include="ConsoleWizard.cs" />
     <Compile Include="FileNameValidationRule.cs" />
     <Compile Include="IntroPage.xaml.cs">
       <DependentUpon>IntroPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModulePage.xaml.cs">
+      <DependentUpon>ModulePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VCLanguageManagerValidationRule.cs" />
@@ -77,6 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="IntroPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModulePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
