@@ -3,14 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtAppWrapper", "qtappwrapper\QtAppWrapper.csproj", "{6E591BB2-3C81-4AB5-B3B0-096045754C3A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizer", "Visualizer", "{56BEEACF-C297-483D-9E64-C0A7C3B7680E}"
 	ProjectSection(SolutionItems) = preProject
 		qtvisualizer\qt5.natvis = qtvisualizer\qt5.natvis
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtAppWrapper", "qtappwrapper\QtAppWrapper.csproj", "{6E591BB2-3C81-4AB5-B3B0-096045754C3A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtArchiveGen", "qtarchivegen\QtArchiveGen.csproj", "{9B8DB88E-3805-492F-BF35-B83B7789C931}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtProjectLib", "qtprojectlib\QtProjectLib.csproj", "{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{9B8DB88E-3805-492F-BF35-B83B7789C931}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B8DB88E-3805-492F-BF35-B83B7789C931}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8DB88E-3805-492F-BF35-B83B7789C931}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

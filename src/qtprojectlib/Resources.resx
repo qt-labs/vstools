@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="OK" xml:space="preserve">
+    <value>&amp;OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>&amp;Cancel</value>
+  </data>
+  <data name="ExportSolution" xml:space="preserve">
+    <value>Export Solution</value>
+  </data>
+  <data name="OpenSolution" xml:space="preserve">
+    <value>Open Solution</value>
+  </data>
+  <data name="ProjectExists" xml:space="preserve">
+    <value>Project file exists!</value>
+  </data>
+  <data name="ExportProject_CheckFileAndSyntax" xml:space="preserve">
+    <value>1. Check that all the files exists.
+2. Check for syntax errors in the pri file.</value>
+  </data>
+  <data name="ExportProject_EditProjectFileManually" xml:space="preserve">
+    <value>qmake has generated a .vcproj file, but it needs to be converted.
+To do this you must open the .vcproj file manually.
+(Reason: qmake in Qt3 does not support generation of Visual Studio 2005 .vcproj files)</value>
+  </data>
+  <data name="ExportProject_ErrorParsingPriFile" xml:space="preserve">
+    <value>Error while parsing pri file! ({0})</value>
+  </data>
+  <data name="ExportProject_ExistsOverwriteQuestion" xml:space="preserve">
+    <value>{0} already exists.
+
+Do you want to overwrite it?</value>
+  </data>
+  <data name="ExportProject_ExportPriFile" xml:space="preserve">
+    <value>Export to .pri file</value>
+  </data>
+  <data name="ExportProject_ImportPriFile" xml:space="preserve">
+    <value>Import from .pri file</value>
+  </data>
+  <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
+    <value>Did not find any Qt4 projects to export.</value>
+  </data>
+  <data name="ExportProject_PriFileContainsSpaces" xml:space="preserve">
+    <value>The generated pri file contains paths with spaces. You will not be able to import from this file!
+1. Manually edit the generated pri file.
+2. Move your project to a location without spaces in the path.
+3. Place the pri file in another directory.</value>
+  </data>
+  <data name="ExportProject_ProjectExistsRegenerateOrReuse" xml:space="preserve">
+    <value>{0} already exists!
+Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
+  </data>
+  <data name="ExportProject_ProjectOrSolutionCorrupt" xml:space="preserve">
+    <value>{0}
+(Maybe the .vcproj or .sln file is corrupt?)</value>
+  </data>
+  <data name="ExportProject_SelectQtProjectToAdd" xml:space="preserve">
+    <value>Select a Qt Project to add to the Solution</value>
+  </data>
+  <data name="ExportProject_SolutionProFileBuildIn" xml:space="preserve">
+    <value>Do you want a solution .pro file to be built in {0}?</value>
+  </data>
+  <data name="ExportProject_SubdirsProfileSolutionClose" xml:space="preserve">
+    <value>It looks like this is a SUBDIRS .pro file. In order to open this
+file the existing solution needs to be closed (pending changes will be saved).</value>
+  </data>
+  <data name="ExportProjectDialog_Cancel" xml:space="preserve">
+    <value>&amp;Cancel</value>
+  </data>
+  <data name="ExportProjectDialog_OK" xml:space="preserve">
+    <value>&amp;OK</value>
+  </data>
+  <data name="ExportProjectDialog_CreatePro" xml:space="preserve">
+    <value>Create .pro files for:</value>
+  </data>
+  <data name="ExportProjectDialog_Project" xml:space="preserve">
+    <value>Project &amp;tag:</value>
+  </data>
+  <data name="ExportProjectDialog_Open" xml:space="preserve">
+    <value>Open Created Files</value>
+  </data>
+  <data name="ExportProjectDialog_CreatePri" xml:space="preserve">
+    <value>Create .pri File</value>
+  </data>
+  <data name="ExportProjectDialog_Title" xml:space="preserve">
+    <value>Export Project</value>
+  </data>
+  <data name="QMakeProcess_OpenSolutionFromFile" xml:space="preserve">
+    <value>Open Solution from File: </value>
+  </data>
+  <data name="HelperFunctions_TryCreatingNewProject" xml:space="preserve">
+    <value>Try creating a new project.</value>
+  </data>
+  <data name="HelperFunctions_ErrorSearchForQtTemplatePath" xml:space="preserve">
+    <value>An error occured while searching for the Qt templates path.</value>
+  </data>
+  <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
+    <value>Cannot write environment variable QTDIR.</value>
+  </data>
+  <data name="Messages_ErrorOccured" xml:space="preserve">
+    <value>The following error occured:
+</value>
+  </data>
+  <data name="Messages_Warning" xml:space="preserve">
+    <value>Warning:
+</value>
+  </data>
+  <data name="Messages_SolveProblem" xml:space="preserve">
+    <value>
+      
+To solve this problem:
+</value>
+  </data>
+  <data name="QtProject_CannotConstructWithoutValidProject" xml:space="preserve">
+    <value>Cannot construct a QtProject object without a valid project!</value>
+  </data>
+  <data name="QtProject_CannotAddUicStep" xml:space="preserve">
+    <value>Cannot add uic step to file {0}</value>
+  </data>
+  <data name="QtProject_CannotAddMocStep" xml:space="preserve">
+    <value>Cannot add moc step to file {0}</value>
+  </data>
+  <data name="QtProject_CannotRemoveMocStep" xml:space="preserve">
+    <value>Cannot remove moc step from file {0}</value>
+  </data>
+  <data name="QtProject_CannotAddFilter" xml:space="preserve">
+    <value>Project can't add filter {0}</value>
+  </data>
+  <data name="QtProject_CannotAddFile" xml:space="preserve">
+    <value>Cannot add file {0} to filter.</value>
+  </data>
+  <data name="QtProject_CannotRemoveFile" xml:space="preserve">
+    <value>Cannot remove file {0} from filter.</value>
+  </data>
+  <data name="QtProject_DeletedFolderFullOrProteced" xml:space="preserve">
+    <value>1. Maybe your deleted folder is full.
+2. Or maybe it's write protected.</value>
+  </data>
+  <data name="QtProject_CannotFindFilter" xml:space="preserve">
+    <value>Cannot find filter.</value>
+  </data>
+  <data name="QtProject_ProjectCannotAddFilter" xml:space="preserve">
+    <value>Project can't add filter {0}</value>
+  </data>
+  <data name="QtProject_ProjectCannotAddResourceFilter" xml:space="preserve">
+    <value>Cannot add resource filter.</value>
+  </data>
+  <data name="QtProject_CannotCreateResourceDir" xml:space="preserve">
+    <value>Cannot create resource directory.</value>
+  </data>
+  <data name="QtProject_CannotAdjustWhitespaces" xml:space="preserve">
+    <value>Can't adjust whitespaces or tabs in file (write).
+({0})</value>
+  </data>
+  <data name="QtProject_CannotReplaceTokenRead" xml:space="preserve">
+    <value>Can't replace token ({0} -&gt; {1}) in file (read).
+({3})</value>
+  </data>
+  <data name="QtProject_CannotReplaceTokenWrite" xml:space="preserve">
+    <value>Can't replace token ({0} -&gt; {1}) in file (write).
+({3})</value>
+  </data>
+  <data name="QtProject_CannotEnableSectionRead" xml:space="preserve">
+    <value>Can't enable section {0} in file (read).
+({1})</value>
+  </data>
+  <data name="QtProject_CannotEnableSectionWrite" xml:space="preserve">
+    <value>Can't enable section {0} in file (write).
+({1})</value>
+  </data>
+  <data name="QtProject_CannotUpdateUicStep" xml:space="preserve">
+    <value>Cannot update uic steps!</value>
+  </data>
+  <data name="QtProject_FileExistsInProjectFolder" xml:space="preserve">
+    <value>The file {0} existst in your project folder. Visual Studio Add-in will overwrite the existing file!
+
+Select 'Yes' to overwrite, select 'No' to keep the existing file and automatically readd it to the project.</value>
+  </data>
+  <data name="QtVersionManager_CannotLoadQtVersion" xml:space="preserve">
+    <value>Cannot load the default Qt version.</value>
+  </data>
+  <data name="Resources_QtVisualStudioIntegration" xml:space="preserve">
+    <value>Qt Visual Studio Add-in</value>
+  </data>
+  <data name="Resources_AddQtResource" xml:space="preserve">
+    <value>Add Qt Resource</value>
+  </data>
+  <data name="Resources_SourceFiles" xml:space="preserve">
+    <value>Source Files</value>
+  </data>
+  <data name="Resources_HeaderFiles" xml:space="preserve">
+    <value>Header Files</value>
+  </data>
+  <data name="Resources_FormFiles" xml:space="preserve">
+    <value>Form Files</value>
+  </data>
+  <data name="Resources_ResourceFiles" xml:space="preserve">
+    <value>Resource Files</value>
+  </data>
+  <data name="Resources_TranslationFiles" xml:space="preserve">
+    <value>Translation Files</value>
+  </data>
+  <data name="Resources_GeneratedFiles" xml:space="preserve">
+    <value>Generated Files</value>
+  </data>
+  <data name="CommandBarNotFound" xml:space="preserve">
+    <value>Could not add "Qt" entry to command bar.</value>
+  </data>
+  <data name="QtProject_CannotFindCustomBuildTool" xml:space="preserve">
+    <value>Could not find custom build tool for {0}.</value>
+  </data>
+  <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
+    <value>Could not add QTDIR to {0}'s user file.</value>
+  </data>
+  <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
+    <value>Could not parse QTDIR from project file {0}.</value>
+  </data>
+  <data name="Helpers_ExitError" xml:space="preserve">
+    <value>The application exited with an error (ExitCode {0}):</value>
+  </data>
+  <data name="Resources_OtherFiles" xml:space="preserve">
+    <value>Other Files</value>
+  </data>
+</root>
