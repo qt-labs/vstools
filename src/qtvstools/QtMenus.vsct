@@ -1,0 +1,542 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2016 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+-->
+
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!--
+        This is the file that defines the actual layout and type of the commands.
+        It is divided in different sections (e.g. command definition, command
+        placement, ...), with each defining a specific set of properties.
+        See the comment before each section for more details about how to
+        use it.
+    -->
+
+    <!--
+        The VSCT compiler (the tool that translates this file into the binary
+        format that VisualStudio will consume) has the ability to run a preprocessor
+        on the vsct file; this preprocessor is (usually) the C++ preprocessor, so
+        it is possible to define includes and macros with the same syntax used
+        in C++ files. Using this ability of the compiler here, we include some files
+        defining some of the constants that we will use inside the file.
+    -->
+
+    <!-- This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+    <Extern href="stdidcmd.h"/>
+
+    <!-- This header contains the command ids for the menus provided by the shell. -->
+    <Extern href="vsshlids.h"/>
+
+    <!--
+        The Commands section is where commands, menus, and menu groups are defined.
+        This section uses a Guid to identify the package that provides the command defined inside it.
+    -->
+    <Commands package="PackageGuid">
+        <!--
+            Inside this section we have different sub-sections: one for the menus, another
+            for the menu groups, one for the buttons (the actual commands), one for the combos
+            and the last one for the bitmaps used. Each element is identified by a command id that
+            is a unique pair of guid and numeric identifier; the guid part of the identifier is usually
+            called "command set" and is used to group different command inside a logically related
+            group; your package should define its own command set in order to avoid collisions
+            with command ids defined by other packages.
+        -->
+        <Menus>
+            <Menu guid="MainMenuGuid" id="QtMainMenu" priority="0x700" type="Menu">
+                <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS" />
+                <Strings>
+                    <ButtonText>Qt VS Tools</ButtonText>
+                </Strings>
+            </Menu>
+        </Menus>
+
+        <!--
+            In this section you can define new menu groups. A menu group is a container for
+            other menus or buttons (commands); from a visual point of view you can see the
+            group as the part of a menu contained between two lines. The parent of a group
+            must be a menu.
+        -->
+        <Groups>
+
+            <!-- Region Main menu groups -->
+
+            <Group guid="MainMenuGuid" id="LaunchMenuGroup" priority="0x0600">
+                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            </Group>
+            <Group guid="MainMenuGuid" id="ProjectMenuGroup" priority="0x0600">
+                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            </Group>
+            <Group guid="MainMenuGuid" id="OthersMenuGroup" priority="0x0600">
+                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            </Group>
+            <Group guid="MainMenuGuid" id="OptionsMenuGroup" priority="0x0600">
+                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            </Group>
+
+            <!-- Endregion Main menu groups -->
+
+            <!-- Region Solution context menu groups -->
+
+            <Group guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
+            </Group>
+            <Group guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
+            </Group>
+
+            <!-- Endregion Solution context menu groups -->
+
+            <!-- Region Project context menu groups -->
+
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+            </Group>
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+            </Group>
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+            </Group>
+
+            <!-- Endregion Project context menu groups -->
+
+            <Group guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+            </Group>
+
+        </Groups>
+
+        <!--
+            This section defines the elements the user can interact with, like a menu command or a button
+            or combo box in a toolbar.
+        -->
+        <Buttons>
+            <!--
+                To define a menu group you have to specify its ID, the parent menu and its display priority.
+                The command is visible and enabled by default. If you need to change the visibility, status,
+                etc, you can use the CommandFlag node. You can add more than one CommandFlag node e.g.:
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                If you do not want an image next to your command, remove the Icon node />
+            -->
+
+            <!-- Region Main menu buttons -->
+
+            <Button guid="MainMenuGuid" id="LaunchDesignerId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchDesignerBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Launch Designer</ButtonText>
+                    <ToolTipText>This will start Qt Designer.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="LaunchLinguistId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Launch Linguist</ButtonText>
+                    <ToolTipText>This will start Qt Linguist.</ToolTipText>
+                </Strings>
+            </Button>
+
+            <Button guid="MainMenuGuid" id="OpenProFileId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+                <Icon guid="MenuImages" id="OpenProFileBitmap" />
+                <Strings>
+                    <ButtonText>Open Qt Project File (.pro)...</ButtonText>
+                    <ToolTipText>Opens a Qt Project File (.pro) and creates a new solution respectively adds a new project to the current solution.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ImportPriFileId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+                <Icon guid="MenuImages" id="ImportPriFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Import .pri File to Project...</ButtonText>
+                    <ToolTipText>This will import a .pri file and create a Qt project from it.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ExportPriFileId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+                <Icon guid="MenuImages" id="ExportProFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Export Project to .pri File...</ButtonText>
+                    <ToolTipText>This will export the current project to a .pri file.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ExportProFileId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+                <Icon guid="MenuImages" id="CreateProFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Create basic .pro File...</ButtonText>
+                    <ToolTipText>This will export the current project to a Qt Project file (.pro).</ToolTipText>
+                </Strings>
+            </Button>
+
+            <Button guid="MainMenuGuid" id="CreateNewTsFileId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Create new Translation File</ButtonText>
+                    <ToolTipText>Creates a new translation file for Qt Linguist.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ConvertToQtId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert project to Qt Add-in project</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ConvertToQmakeId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert project to QMake generated project</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="QtProjectSettingsId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Qt Project Settings</ButtonText>
+                    <ToolTipText>Edit Qt settings of the current project.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="MainMenuGuid" id="ChangeProjectQtVersionId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Change project's Qt Version</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="MainMenuGuid" id="QtOptionsId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
+                <Icon guid="MenuImages" id="QtLogoBitmap" />
+                <Strings>
+                    <ButtonText>Qt Options</ButtonText>
+                    <ToolTipText>Configure the default Qt settings.</ToolTipText>
+                </Strings>
+            </Button>
+
+            <!-- Endregion Main menu buttons -->
+
+            <!-- Region Solution context menu button -->
+
+            <Button guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId" priority="0x0100" type="Button">
+                <Parent guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>lupdate all .ts files in solution</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId" priority="0x0100" type="Button">
+                <Parent guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>lrelease all .ts files in solution</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId" priority="0x0100" type="Button">
+                <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Change Solution's Qt Version</ButtonText>
+                    <ToolTipText>Change the Qt version for this solution and all contained projects.</ToolTipText>
+                </Strings>
+            </Button>
+
+            <!-- Endregion Solution context menu button -->
+
+            <!-- Region Project context menu button -->
+
+            <Button guid="ProjectContextMenuGuid" id="ImportPriFileProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
+                <Icon guid="MenuImages" id="ImportPriFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Import .pri File to Project...</ButtonText>
+                    <ToolTipText>This will import a .pri file and create a Qt project from it.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="ExportPriFileProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
+                <Icon guid="MenuImages" id="ExportProFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Export Project to .pri File...</ButtonText>
+                    <ToolTipText>This will export the current project to a .pri file.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="ExportProFileProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
+                <Icon guid="MenuImages" id="CreateProFileBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Create basic .pro File...</ButtonText>
+                    <ToolTipText>This will export the current project to a Qt Project file (.pro).</ToolTipText>
+                </Strings>
+            </Button>
+
+            <Button guid="ProjectContextMenuGuid" id="CreateNewTsFileProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Create new Translation File</ButtonText>
+                    <ToolTipText>Creates a new translation file for Qt Linguist.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="lUpdateOnProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>lupdate all .ts files in project</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="lReleaseOnProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>lrelease all .ts files in project</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="ProjectContextMenuGuid" id="ConvertToQtProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert project to Qt Add-in project</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="ConvertToQmakeProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert project to QMake generated project</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="QtProjectSettingsProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Qt Project Settings</ButtonText>
+                    <ToolTipText>Edit Qt settings of the current project.</ToolTipText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="ChangeProjectQtVersionProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Change project's Qt Version</ButtonText>
+                </Strings>
+            </Button>
+
+            <!-- Endregion Project context menu button -->
+
+            <!-- Region Item context menu buttons -->
+
+            <Button guid="ItemContextMenuGuid" id="lUpdateOnItemId" priority="0x0100" type="Button">
+                <Parent guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>lupdate</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="ItemContextMenuGuid" id="lReleaseOnItemId" priority="0x0100" type="Button">
+                <Parent guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" />
+                <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>lrelease</ButtonText>
+                </Strings>
+            </Button>
+
+            <!-- Endregion Item context menu buttons -->
+
+        </Buttons>
+
+        <!-- The bitmaps section is used to define the bitmaps that are used for the commands. -->
+        <Bitmaps>
+            <!--
+                The bitmap id is defined in a way that is a little bit different from the others:
+                the declaration starts with a guid for the bitmap strip, then there is the resource
+                id of the bitmap strip containing the bitmaps and then there are the numeric ids of
+                the elements used inside a button definition. An important aspect of this declaration
+                is that the element id must be the actual index (1-based) of the bitmap inside the
+                bitmap strip.
+            -->
+            <Bitmap guid="MenuImages" href="Resources\menuimages.png" usedList="LaunchDesignerBitmap,
+                LaunchLinguistBitmap, OpenProFileBitmap, ImportPriFileBitmap, ExportProFileBitmap,
+                CreateProFileBitmap, QtLogoBitmap" />
+        </Bitmaps>
+    </Commands>
+
+    <Symbols>
+        <!-- This is the package guid. -->
+        <GuidSymbol name="PackageGuid" value="{15021976-647e-4876-9040-2507afde45d2}" />
+
+        <!-- This is the guid used to group the menu commands together -->
+        <GuidSymbol name="MainMenuGuid" value="{58f83fff-d39d-4c66-810b-2702e1f04e73}">
+
+            <!-- Region Main menu buttons Ids-->
+
+            <IDSymbol name="QtMainMenu" value="0x1020"/>
+
+            <IDSymbol name="LaunchMenuGroup" value="0x1021" />
+            <IDSymbol name="LaunchDesignerId" value="0x0100" />
+            <IDSymbol name="LaunchLinguistId" value="0x0101" />
+
+            <IDSymbol name="ProjectMenuGroup" value="0x1022" />
+            <IDSymbol name="OpenProFileId" value="0x0102" />
+            <IDSymbol name="ImportPriFileId" value="0x0103" />
+            <IDSymbol name="ExportPriFileId" value="0x0104" />
+            <IDSymbol name="ExportProFileId" value="0x0105" />
+
+            <IDSymbol name="OthersMenuGroup" value="0x1023" />
+            <IDSymbol name="CreateNewTsFileId" value="0x0107" />
+            <IDSymbol name="ConvertToQtId" value="0x0124" />
+            <IDSymbol name="ConvertToQmakeId" value="0x0108" />
+            <IDSymbol name="QtProjectSettingsId" value="0x0109" />
+            <IDSymbol name="ChangeProjectQtVersionId" value="0x0126" />
+
+            <IDSymbol name="OptionsMenuGroup" value="0x1024" />
+            <IDSymbol name="QtOptionsId" value="0x0110" />
+
+            <!-- Endregion Main menu buttons Ids -->
+
+        </GuidSymbol>
+
+        <GuidSymbol  name="SolutionContextMenuGuid" value="{6dcda34f-4d22-4d6a-a176-5507069c5a3e}">
+
+            <!-- Region Solution context menu button Ids -->
+
+            <IDSymbol name="SolutionContextTsMenuGroup" value="0x1025" />
+            <IDSymbol name="lUpdateOnSolutionId" value="0x0111" />
+            <IDSymbol name="lReleaseOnSolutionId" value="0x0112" />
+
+            <IDSymbol name="SolutionContextQtMenuGroup" value="0x1026" />
+            <IDSymbol name="ChangeSolutionQtVersionId" value="0x0113" />
+
+            <!-- Endregion Solution context menu button Ids -->
+
+        </GuidSymbol>
+
+        <GuidSymbol name="ProjectContextMenuGuid" value="{5732faa9-6074-4e07-b035-2816e809f50e}" >
+
+            <!-- Region Project context menu button Ids -->
+
+            <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
+            <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
+            <IDSymbol name="ExportPriFileProjectId" value="0x0115" />
+            <IDSymbol name="ExportProFileProjectId" value="0x0116" />
+
+            <IDSymbol name="ProjectContextTsMenuGroup" value="0x1028" />
+            <IDSymbol name="CreateNewTsFileProjectId" value="0x0117" />
+            <IDSymbol name="lUpdateOnProjectId" value="0x0118" />
+            <IDSymbol name="lReleaseOnProjectId" value="0x0119" />
+
+            <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1029" />
+            <IDSymbol name="ConvertToQtProjectId" value="0x0120" />
+            <IDSymbol name="ConvertToQmakeProjectId" value="0x0121" />
+            <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
+            <IDSymbol name="ChangeProjectQtVersionProjectId" value="0x0123" />
+
+            <!-- Endregion Project context menu button Ids -->
+
+        </GuidSymbol>
+
+        <GuidSymbol name="ItemContextMenuGuid" value="{9f67a0bd-ee0a-47e3-b656-5efb12e3c770}">
+
+            <IDSymbol name="ItemContextTsMenuGroup" value="0x1030" />
+            <IDSymbol name="lUpdateOnItemId" value="0x0125" />
+            <IDSymbol name="lReleaseOnItemId" value="0x0126" />
+
+        </GuidSymbol>
+
+        <GuidSymbol name="MenuImages" value="{d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec}" >
+            <IDSymbol name="LaunchDesignerBitmap" value="1" />
+            <IDSymbol name="LaunchLinguistBitmap" value="2" />
+            <IDSymbol name="OpenProFileBitmap" value="3" />
+            <IDSymbol name="ImportPriFileBitmap" value="4" />
+            <IDSymbol name="ExportProFileBitmap" value="5" />
+            <IDSymbol name="CreateProFileBitmap" value="6" />
+            <IDSymbol name="QtLogoBitmap" value="7" />
+        </GuidSymbol>
+    </Symbols>
+
+    <VisibilityConstraints>
+        <VisibilityItem guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId"
+            context="UICONTEXT_SolutionHasSingleProject" />
+        <VisibilityItem guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId"
+            context="UICONTEXT_SolutionHasMultipleProjects" />
+        <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
+            context="UICONTEXT_SolutionHasSingleProject" />
+        <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
+            context="UICONTEXT_SolutionHasMultipleProjects" />
+        <VisibilityItem guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId"
+            context="UICONTEXT_SolutionHasSingleProject" />
+        <VisibilityItem guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId"
+            context="UICONTEXT_SolutionHasMultipleProjects" />
+    </VisibilityConstraints>
+</CommandTable>

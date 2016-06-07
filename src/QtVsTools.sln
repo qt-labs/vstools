@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtArchiveGen", "qtarchivege
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtProjectLib", "qtprojectlib\QtProjectLib.csproj", "{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools", "qtvstools\QtVsTools.csproj", "{FD7A42DB-8692-4FBE-AC50-F70AF423275B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD7A42DB-8692-4FBE-AC50-F70AF423275B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD7A42DB-8692-4FBE-AC50-F70AF423275B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD7A42DB-8692-4FBE-AC50-F70AF423275B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD7A42DB-8692-4FBE-AC50-F70AF423275B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
