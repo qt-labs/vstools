@@ -15,6 +15,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtProjectLib", "qtprojectlib\QtProjectLib.csproj", "{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools", "qtvstools\QtVsTools.csproj", "{FD7A42DB-8692-4FBE-AC50-F70AF423275B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9B8DB88E-3805-492F-BF35-B83B7789C931} = {9B8DB88E-3805-492F-BF35-B83B7789C931}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
