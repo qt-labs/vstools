@@ -28,6 +28,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "qttemplates\cons
 		{244991B0-42AD-4324-B166-A26FB6E8CA5B} = {244991B0-42AD-4324-B166-A26FB6E8CA5B}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gui", "qttemplates\gui\Gui.csproj", "{3E1F9741-01D3-480A-A484-3CD373AE4A7F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{244991B0-42AD-4324-B166-A26FB6E8CA5B} = {244991B0-42AD-4324-B166-A26FB6E8CA5B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,11 +63,16 @@ Global
 		{71E4F2B9-3628-45E2-A664-A2F6E3AAFE55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E4F2B9-3628-45E2-A664-A2F6E3AAFE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71E4F2B9-3628-45E2-A664-A2F6E3AAFE55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E1F9741-01D3-480A-A484-3CD373AE4A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E1F9741-01D3-480A-A484-3CD373AE4A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E1F9741-01D3-480A-A484-3CD373AE4A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E1F9741-01D3-480A-A484-3CD373AE4A7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{71E4F2B9-3628-45E2-A664-A2F6E3AAFE55} = {D73514C8-019E-44FB-8D42-F1FD52C1FD72}
+		{3E1F9741-01D3-480A-A484-3CD373AE4A7F} = {D73514C8-019E-44FB-8D42-F1FD52C1FD72}
 	EndGlobalSection
 EndGlobal
