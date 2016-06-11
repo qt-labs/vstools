@@ -1,0 +1,102 @@
+﻿<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2016 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+-->
+
+<local:WizardPage x:Class="QtProjectWizard.IntroPage"
+                  xmlns:local="clr-namespace:QtProjectWizard"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  KeepAlive="True"
+                  mc:Ignorable="d"
+                  d:DesignHeight="445"
+                  d:DesignWidth="585">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0"
+               HorizontalAlignment="Center"
+               Source="Resources/Qt-logo-small.png"
+               VerticalAlignment="Top"
+               Margin="0,25,0,0"
+               RenderTransformOrigin="1,0">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="0.86"
+                                    ScaleX="0.86" />
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Grid Grid.Column="1"
+              Margin="25,25,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock TextWrapping="Wrap"
+                       Grid.Row="0">
+                <Run FontWeight="Bold"
+                     Text="{Binding Path=Header}" />
+                <LineBreak />
+                <LineBreak />
+                <Run Text="{Binding Path=Message}" />
+            </TextBlock>
+            <StackPanel HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Grid.Row="1"
+                        Margin="0,0,0,10">
+                <Button Click="OnPreviousButtonClick"
+                        Name="PreviousButton"
+                        IsEnabled="{Binding Path=PreviousButtonEnabled}"
+                        MinWidth="75">&lt; _Previous</Button>
+                <Button MinWidth="75"
+                        Name="NextButton"
+                        Click="OnNextButtonClick"
+                        IsEnabled="{Binding Path=NextButtonEnabled}"
+                        Margin="10,0,0,0">_Next &gt;</Button>
+                <Button MinWidth="75"
+                        Click="OnFinishButtonClick"
+                        Margin="10,0,0,0"
+                        IsDefault="True"
+                        IsEnabled="{Binding Path=FinishButtonEnabled}"
+                        Name="FinishButton"
+                        VerticalAlignment="Bottom">_Finish</Button>
+                <Button Click="OnCancelButtonClick"
+                        MinWidth="75"
+                        Margin="10,0,0,0"
+                        Name="CancelButton"
+                        IsEnabled="{Binding Path=CancelButtonEnabled}"
+                        IsCancel="True">_Cancel</Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</local:WizardPage>
