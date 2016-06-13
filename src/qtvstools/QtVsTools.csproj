@@ -192,6 +192,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\server\Server.csproj">
+      <Project>{8AE9D385-A379-4F5F-A703-3DF643DA6742}</Project>
+      <Name>Server</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qtwizard\QtProjectWizard.csproj">
       <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
       <Name>QtProjectWizard</Name>

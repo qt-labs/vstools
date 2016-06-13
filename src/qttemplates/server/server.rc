@@ -1,0 +1,2 @@
+1 TYPELIB "$pro_name$.rc"
+1 ICON DISCARDABLE "$pro_name$.ico"

@@ -1,0 +1,20 @@
+<UI version="4.0" >
+ <class>$classname$Class</class>
+ <widget class="QWidget" name="$classname$Class" >
+  <property name="objectName" >
+   <string notr="true">$classname$Class</string>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>482</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>$classname$</string>
+  </property>
+ </widget>
+ <layoutDefault spacing="6" margin="11" />
+</UI>
