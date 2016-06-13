@@ -1,0 +1,5 @@
+#include "$include$"
+
+$classname$::$classname$()
+{
+}

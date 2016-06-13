@@ -54,6 +54,10 @@
     <Compile Include="IntroPage.xaml.cs">
       <DependentUpon>IntroPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LibraryClassPage.xaml.cs">
+      <DependentUpon>LibraryClassPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LibraryWizard.cs" />
     <Compile Include="ModulePage.xaml.cs">
       <DependentUpon>ModulePage.xaml</DependentUpon>
     </Compile>
@@ -89,6 +93,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="IntroPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LibraryClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

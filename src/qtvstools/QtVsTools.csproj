@@ -185,6 +185,13 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\lib\Lib.csproj">
+      <Project>{191B1B91-D9FD-4138-A72A-AB0B149958C6}</Project>
+      <Name>Lib</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qtwizard\QtProjectWizard.csproj">
       <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
       <Name>QtProjectWizard</Name>
