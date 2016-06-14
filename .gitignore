@@ -24,3 +24,7 @@ Qt4VS2003/Doc/html
 Qt4VS2003/Qt4VSAddin/StringResources*.resources
 *.UnmanagedRegistration.cache
 Trolltech.Qt4VS200?Base.xml
+*_wrapper.bat
+*_plugin_import.cpp
+src/qrceditor/bin/
+src/qmakefilereader/bin/
