@@ -46,6 +46,10 @@
   <ItemGroup>
     <Compile Include="ClassNameValidationRule.cs" />
     <Compile Include="ConsoleWizard.cs" />
+    <Compile Include="DesignerPage.xaml.cs">
+      <DependentUpon>DesignerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DesignerWizard.cs" />
     <Compile Include="FileNameValidationRule.cs" />
     <Compile Include="GuiClassPage.xaml.cs">
       <DependentUpon>GuiClassPage.xaml</DependentUpon>
@@ -92,6 +96,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DesignerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GuiClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

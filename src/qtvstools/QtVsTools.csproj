@@ -177,6 +177,13 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\designer\Designer.csproj">
+      <Project>{191B2B91-D5FD-4138-A72A-AB0B149988C6}</Project>
+      <Name>Designer</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qttemplates\gui\Gui.csproj">
       <Project>{3E1F9741-01D3-480A-A484-3CD373AE4A7F}</Project>
       <Name>Gui</Name>
