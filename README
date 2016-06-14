@@ -1,0 +1,41 @@
+How to build
+============
+
+The instructions should help you build the Qt Visual Studio Tools from scratch.
+
+
+
+Get the sources
+---------------
+
+Use Git to check out the Qt Visual Studio Tools sources that are hosted at:
+
+http://code.qt.io/cgit/qt-labs/vstools.git/
+
+
+
+Build a static Qt
+-----------------
+
+Building the Qt Visual Studio Tools from sources requires a static build of Qt (version 5.6.0
+or newer). Supported compilers are MSVC 2013 or newer, GCC 4.7 or newer, and Clang 3.1 or newer.
+
+See the Qt documentation for the prerequisites and steps to build Qt from sources.
+
+Recommended configuration options:
+
+configure -prefix %CD%\qtbase -release -static -static-runtime -accessibility -no-opengl -no-icu -no-sql-sqlite -no-qml-debug -nomake examples -nomake tests -skip qtactiveqt -skip qtenginio -skip qtlocation -skip qtmultimedia -skip qtserialport -skip qtquick1 -skip qtquickcontrols -skip qtscript -skip qtsensors -skip qtwebkit -skip qtwebsockets -skip qtxmlpatterns
+
+
+
+Build the Qt Visual Studio Tools
+--------------------------------
+
+Change the directory into 'src' and run 'qmake && make' (or 'mingw32-make', 'nmake' ...) to build
+the Qt Visual Studio Tools command line applications. Once finished, open the solution QtVsTools.sln
+in Visual Studio and build the solution.
+
+To debug the resulting VSIX, select the 'QtVsTools' node, right click and choose 'Properties|Debug'.
+Update 'Start Action|Start external program:' to point to your Visual Studio 'devenv.exe' application.
+Update 'Start Options|Command line arguments:' with '/rootSuffix Exp'. Note: The implemented post
+build targets will only work reliable if you use the 'Exp' hive of Visual Studio.

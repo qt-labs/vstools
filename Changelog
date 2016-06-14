@@ -1,0 +1,368 @@
+The Qt Visual Studio Add-In version 1.2.5 contains an update of the Qt documentation
+and some bug fixes.
+
+Changes
+-------
+- Qt 5.6 help documents included.
+- Fixed wrong VCProjectEngine dependency for 2012 installer, which prevented the Add-In from being
+  loaded (QTVSADDINBUG-392)
+- Use correct solution platform when creating projects using x64 Qt build (QTVSADDINBUG-377)
+- Fixed several issues with projects' Qt modules settings (QTVSADDINBUG-344, QTVSADDINBUG-359,
+  QTVSADDINBUG-388, QTVSADDINBUG-390)
+- Do not overwrite debugging environment on project loading (QTVSADDINBUG-375)
+- Fixed issues that prevented Qt 5.6 version from being registered to the Add-In (QTVSADDINBUG-418)
+
+The Qt Visual Studio Add-In version 1.2.4 contains updated help
+documents and a bug fixes.
+
+Changes
+-------
+- Qt 5.4 help documents included.
+- Fixed crash when creating new Qt5 app in VS2008 (QTVSADDINBUG-385)
+
+The Qt Visual Studio Add-In version 1.2.3 contains support for VS2013,
+updated help documents and some bug fixes.
+
+Changes
+-------
+- Visual Studio 2013 support.
+- Qt 5.3 help documents included.
+- Handle wchar_t as builtin type, fixed. (QTVSADDINBUG-171)
+- Fix for detecting wince build. (QTVSADDINBUG-176)
+- Release project with debug info enabled links wrong qt dll's, fixed.(QTVSADDINBUG-350)
+- Generated pri/pro files have mixed line endings (LF/CRLF), fixed.(QTVSADDINBUG-351)
+- Intermediate Directory needs a trailing slash, fixed.(QTVSADDINBUG-356)
+
+The Qt Visual Studio Add-In version 1.2.2 contains updated help documents and
+two bug fixes.
+
+Changes
+-------
+- Qt 5.1 help documents included.
+- Incorrect overwriting of the environment setting value on every build/run
+  removed. (QTVSADDINBUG-159)
+- Links in Qt help not working, fixed. (QTVSADDINBUG-160)
+
+The Qt Visual Studio Add-In version 1.2.1 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Qt 5.0.1 help documents included
+- Qmake wrapper COM component removed and replaced with command line tool
+  qmakefilereader to avoid need to load Qt5 library binaries to Visual Studio
+  process. And to get installation of add-in easier, especially with VS2008.
+- Qt4 add-in is not allowed to run same time, if found it will be closed.
+  Also if Qt4 add-in is present in system, default editor values for .ts, .ui
+  and .qrc file types are not permanently overwritten by Qt5 add-in. Values are
+  written when Qt5 add-in loads and Qt4 values are set when Qt5 add-in unloads.
+  This should make it possible to install and use both Qt4 and Qt5 versions of
+  add-in. Not to use same time but in turns. Though user must be careful what he
+  does.
+- Recognizing Qt5 CE build. (QTVSADDINBUG-153)
+- Incorrect additional directories paths set when Qt modules added/removed from
+  Qt Project Settings page. (QTVSADDINBUG-151)
+- Include directories search path for some Qt modules fixed (QTVSADDINBUG-150)
+- Invalid Qt module names fixed (QTVSADDINBUG-142)
+- Crash when importing .pri file fixed (QTVSADDINBUG-139)
+- Qt default settings saving problem fixed (QTVSADDINBUG-137)
+- Naming of precompiled header fixed (QTVSADDINBUG-132)
+- Support for debugger visualizers in VS2012 (QTVSADDINBUG-129)
+- Setting Qt libraries path for debugging session fixed (QTVSADDINBUG-125)
+
+The Qt Visual Studio Add-In version 1.2.0 supports Qt 5.0.
+
+Changes
+-------
+- Parameter passing to lupdate fixed (QTVSADDINBUG-131)
+- Project creation wizards updated to follow Qt5 module structure
+- Project settings form updated to follow Qt5 module structure
+- Help documents updated to Qt5
+- No more Qt4 project creation wizards and project settings
+- Support for Visual Studio 2012
+- All project files (*.sln, *.csproj etc) are renamed to Qt5
+
+The Qt Visual Studio Add-In version 1.1.11 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Documentation updated
+- Documentation support for Visual Studio 2010. (QTVSADDINBUG-15)
+- Fixed always moc'ing problem. (QTVSADDINBUG-92)
+- Fixed .pro file opening having include to "." path. (QTVSADDINBUG-117)
+- Removed extra back slashes from qmake arg paths.
+- Fixed some additional include dir handling causing same path to be added multiple times to custom
+  build step.
+
+The Qt Visual Studio Add-In version 1.1.10 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Be aware of comments when parsing qmake.conf. (QTVSADDINBUG-76)
+- Fixed exception when using using unsupported lupdate parameters. (QTVSADDINGBUG-70)
+- Detecting the MSVC version from qmake.conf was fixed.
+- Added QtScriptTools and QtUiTools to project settings. (QTVSADDINBUG-71)
+- Removed the MSVC version check when adding Qt versions. As this "feature" seems to cause more
+  trouble than it solves, we decided to remove it. Checking for the makefile generator should at
+  least prevent people from trying to add MinGW builds.
+- Fixed creation of addin projects from 64 bit Qt qmake projects.
+- Do not add the include path "$QTDIR/include/qtmain".
+  This path is a relict and confuses IntelliSense. (QTVSADDINBUG-81)
+- Be aware of strings when looking for Q_OBJECT macros. (QTVSADDINBUG-75)
+- Fix problems with the debugging environment. (QTVSADDINBUG-93)
+- Pass correct QtDesigner4.lib library name to linker. (QTVSADDINBUG-85)
+- Fix cleaning of autoexp.dat on uninstallation for VS 2005. (QTVSADDINBUG-67)
+- Use slashes as path separators in includes in moc files. (QTVSADDINBUG-84)
+- Choose a valid Qt version if the default Qt version becomes invalid. (QTVSADDINBUG-60)
+- Prevent infinite loop if QtAppWrapper cannot connect. (QTVSADDINBUG-73)
+- Add and remove the correct OpenGL libraries when changing project's Qt version. (QTVSADDINBUG-80)
+- Use project macro for filenames in moc step. (QTVSADDINBUG-30)
+- Fixed batch builds of Qt projects for multiple platforms. (QTVSADDINBUG-51)
+
+The Qt Visual Studio Add-In version 1.1.9 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fix a regression when importing .pro files that was introduced in 1.1.8.
+- Make the add-in work with Intel VTune projects. (QTVSADDINBUG-65)
+- Check for compatibility with VS version when adding new Qt version. This will hopefully stop
+  people from trying to use a MinGW Qt build with Visual Studio. (QTVSADDINBUG-58)
+- Added possiblity to specifiy lupdate/lrelease options. (QTVSADDINBUG-48)
+
+The Qt Visual Studio Add-In version 1.1.8 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Do not save the QTDIR in a property sheet for VS 2010. (QTVSADDINBUG-12)
+- QtDeclarative module added to the modules page and wizards. (QTVSADDINBUG-44)
+- Fix import of .pri files. (QTVSADDINBUG-38)
+- Save the modified generated .vc(x)proj after .pro file import. (QTVSADDINBUG-40)
+- Proper handling of moc file exclusion when saving cpp files. (QTVSADDINBUG-33)
+- Remove user macro from property sheed when $(QTDIR) is used in VS2010. (QTVSADDINBUG-12)
+- Documented possibility to add $(QTDIR) version. (QTVSADDINGBUG-19)
+- Fix broken include paths in moc calls for VS 2010. (QTVSADDINBUG-34)
+- Fix import of previously unloaded projects. (QTVSADDINBUG-31)
+- Preserve line breaks in custom build steps after import. (QTVSADDINBUG-32)
+- Fix exception that could be raised when changing the Qt version of solutions that contained
+  non-C++ projects. (QTVSADDINBUG-50)
+- Fix moc command line creation for include paths that contain whitespace
+  characters. (QTVSADDINBUG-53)
+- Fixed the Windows CE wizards that stopped working under certain circumstances. (QTVSADDINBUG-42)
+- Several fixes for Windows CE project generation.
+- Qt 4.7.2 documentation included.
+
+The Qt Visual Studio Add-In version 1.1.7 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fix import of .pro files with "CONFIG -= flat". (QTVSADDINBUG-10)
+- Fix naming of classes in generated .ui files. (QTVSADDINBUG-9)
+- Visualizers for QPolygon and QPolygonF fixed. (QTVSADDINBUG-8)
+- Fix expanding filters on build.
+- Fix Qt 4.7 qmake warning wrt backslash escaping on import.
+- VS2010: fix AddMocStep for new header files. (QTVSADDINBUG-2)
+- GUI class wizard: fix .ui file overwriting check. (QTVSADDINBUG-3)
+- When adding moc step, do not assume that cpp file is present. (QTVSADDINBUG-1)
+
+The Qt Visual Studio Add-In version 1.1.6 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed collapse of Generated files after import/build on Visual Studio
+2005. (QTBUG-4750)
+- Support for Visual Studio 2010. (QTBUG-5374)
+- Added check for invalid variables in Rcc/Uic directories in Qt (project) settings. (QTBUG-6818)
+- Updated documentation for changing the target platform. (QTBUG-7262)
+- Translate filter names on .pro file import or when switching from a qmake generated
+  (qmake -tp vc) project to an Add-in project. (QTBUG-11325)
+- Fixed regression in custom build step generation. (QTBUG-11527)
+- Fixed "Change Solution's Qt version" for solutions that contain Intel Fortran
+  projects. (QTBUG-11567)
+- Fix output paths for custom build steps in release configuration. (QTBUG-12145)
+- Fix import if CONFIG contains "silent". (QTBUG-12344)
+- Phonon is added automatically if WebKit is selected. (QTBUG-10154)
+- Fixed display of uninitialized QSet and QHash object. (QTBUG-12890)
+
+The Qt Visual Studio Add-In version 1.1.5 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed setting of preprocessor definitions when changing to a Windows CE Qt version. (QTBUG-10564)
+- Added contribution for QMap visualization. (QTBUG-3970)
+- Recursively look for includes/defines in PropertySheets. (QTBUG-10406)
+- Fixed bugs affecting Q_OBJECTs in .cpp files.
+- On import, the content of .qrc files is added to the Resources filter of the Visual Studio
+  project. (QTBUG-10113)
+- QRC Editor: The add-in will synchronize the list of resources in a .qrc file with the files in
+  the Resources filter of the project.  (QTBUG-6103)
+- QRC Editor: show full resource URL. (QTBUG-3801)
+- Refresh moc steps when PCH options are changed. (QTBUG-7700)
+- You don't have to be admin anymore to set Windows CE Qt versions. (QTBUG-9550)
+- QtAppWrapper: Do not stop listening to new connections if error occurs. (QTBUG-8508)
+- Handle C++ comments correctly. (QTBUG-7641)
+- Support $(PlatformName) for moc, uic and rcc directories. (QTBUG-5814)
+- Fixed exception when exporting non-C++ projects. (QTBUG-9234)
+- Fixed module handling for static libraries. (QTBUG-8670)
+- Resolve %BASECLASS% in Qt4Class template again, to keep old custom class wizard additions
+  working. (QTBUG-8615)
+- Fixed wrong DLL names in Windows CE deployment of Qt modules. (QTBUG-8622)
+- Fixed import of .pro files with library dependency paths that contain whitespace
+  characters. (QTBUG-8493)
+- Added possibility to use mocDir without $(ConfigurationName). (QTBUG-7288)
+- Fixed import for projects with relative moc dir settings. (QTBUG-8372)
+- Fixed import for project without resources.
+- Don't depend on .NET Framework 3.5 SP1. (QTBUG-8415)
+- Fix moc steps for file names, that are contain substrings of variables,
+  like "Config.h" (QTBUG-8218)
+- Detection of invalid class names in projects wizards. (QTBUG-8154)
+- Fixed creation of translation files when custom cultures are present. (QTBUG-11124)
+
+The Qt Visual Studio Add-In version 1.1.4 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Several bugs when opening .ui and .ts files have been fixed. The qtappwrapper has been
+  overhauled. (QTBUG-6857, QTBUG-7491)
+- Importing .pro files with source files in subdirectories does not longer cause creation of
+  invalid moc steps. (QTBUG-7603)
+- The Qt Multimedia module is now available in all project wizards and the Qt modules
+  dialog. (QTBUG-7487)
+- The "Generated Files" filter is collapsed after .pro file import. (QTBUG-7687)
+- Automatically checkout .ui, .qrc and .ts files if they are under source control. (QTBUG-7680)
+- Remove .res files from the "Generated Files" filter after .pro file import as
+  they are not needed. (QTBUG-7494)
+- Class wizards: Take care of forbidden characters when building include guards for
+  header files. (QTBUG-7811)
+- Fix exception when accessing the Qt project settings for projects, that do not have
+  a compiler tool. (QTBUG-7930)
+- Fix bug in moc step update, which occured when there was more than one file in
+  the "Outputs" property of the custom build step. (QTBUG-7937)
+- Added an option to turn off the automatic moc steps update. (QTBUG-7938)
+
+The Qt Visual Studio Add-In version 1.1.3 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Added checks to avoid unneeded access to .vcproj file when saving files
+  with Q_OBJECT. (QTBUG-5813)
+- When using Visual Studio 2005 the project tree is no longer expanded
+  after each build. (QTBUG-6482)
+- Switching between qmake and AddIn projects more robust. (QTBUG-6434)
+- Set target machine explicitly when changing Qt version. (QTBUG-5206)
+- Work around Visual Studio bug to support the simplified Chinese
+  version of Visual Studio.  (QTBUG-6318)
+- Fixed bug for Windows CE static builds. (QTBUG-3493)
+- Create signature step for Windows CE projects. (QTBUG-3493)
+- Fixed visualizers for QList and QMap. (very simple version for QMap as
+  an appropiate visualization seems impossible in autoexp.dat) (QTBUG-660
+  and QTBUG-3970)
+- Fixed visualizers for QVector. (QTBUG-7121)
+- Support empty base classes in Qt4Class wizard. (QTBUG-6797)
+- Support namespaces when creating Qt classes. (QTBUG-5227)
+
+The Qt Visual Studio Add-In version 1.1.2 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed various problems concerning precompiled headers (stdafx as default
+  (QTBUG-5226), change of settings when building...)
+- Increased support for solution folders (QTBUG-4914)
+- Detection of solution .pro files fixed (be aware of possible newline
+  after \)
+- Fixed bug, which could appear when moc steps had to be updated.
+  The update caused an invalid moc commandline which made the build fail.
+- Added support for Q_Gadget macro(QTBUG-5291)
+- Project tree is not expanded on every build when using VS2005 (QTBUG-5291)
+- Fixed conversion from AddIn project to Qmake project and vice
+  versa (QTBUG5380)
+- Repair moc path when importing .pro file (QTBUG-4221)
+- Support of commandline builds (QTBUG-5321)
+  (In VS2005 there are some issues when trying to load AddIns from the
+  commandline. See http://support.microsoft.com/kb/934517)
+
+The Qt Visual Studio Add-In version 1.1.1 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- Fixed startup of Qt Designer and Qt Linguist when the application was
+  not build for the current project's Qt Version. The Add-In tries to find
+  the needed tool inside the directory of the other registered Qt Versions.
+- "Generate basic pro file" gets disabled in project's context menu and Qt
+  menu if the current project is a qmake generated project.
+- When importing a solution file while a solution is opened, the user gets
+  the possibility to automatically close the current solution.
+- Avoid infinite recursion in inclusion which happened when moccing .cpp
+  files, which used precompiled headers.
+- Translation files are added when exporting project to a .pri file.
+- Project is cleaned, when its Qt version is changed.
+- As there is no way to avoid the expansion of generated files filter when
+  the project is built the first time, the generated files are collapsed
+  after the build has finished (QTBUG-4750).
+- Changing the project's Qt Version after importing a .pro file does not
+  longer make the build fail (QTBUG-4756)
+- Exclusion of .cpp and .h files cause the mocced files to be excluded from
+  build too (QTBUG-3404)
+- Adding a Qt class no longer implies that precompiled headers are used.
+- Fixed processing of lupdate in projects with a big amount of files
+(QTBUG-4783).
+
+The Qt Visual Studio Add-In version 1.1.0 contains multiple bugfixes and
+improvements.
+
+Changes
+-------
+- The custom build step generation has been changed to use a subfolder for
+  every configuration. This solves the problem of heavy changes in the vcproj
+  file whenever the user switches to another build configuration. (Task 251918)
+- Qt Designer, Qt Linguist and the QRC Editor are started via a properly
+  registered editor wrapper. Now its possible to open ui files in other
+  editors, like the built-in XML editor. (Task 250601)
+- Projects can be converted from Qt Add-in projects to qmake generated
+  projects and back. (Task 153484)
+- Fixing the behaviour of adding a file to a filter. (Task 254968)
+- Opening a vcproj file that has a non-defined Qt version works now like in
+  the old Qt VS integration. (Task 258704)
+- The detection of Windows CE Qt builds has been fixed.
+- OpenGL Desktop Windows libraries aren't added to linker options in
+  Windows CE projects. (Task 260550)
+- If there's no Generated Files folder, then we don't try to delete its
+  content. (Task 260723)
+- Fix bug for solutions that contain disabled (unloaded) projects. (Task 259807)
+- Switching between static and dynamic Qt builds has been fixed.
+- Add-in's documentation has been updated.
+
+The Qt Visual Studio Add-In version 1.0.2 contains multiple bugfixes.
+
+Changes
+-------
+- Platform was not set correctly when solution contains several projects.
+- Repair broken QTDIR Variable when project is added to solution.
+- Fix problem with dots in pro file names.
+- Qt module Phonon added to wizards and dialogs.
+- Don't mess around with whitespaces in every source file we add. (Task  251987)
+- Prevent duplicates in additional dependencies, includes etc.
+- Fix rare exception when importing solution pro file.
+- Fix switching between static and dynamic Qt build.
+- Enable the user to add a "$(QTDIR)" Qt version even if QTDIR is not set.
+
+The Qt Visual Studio Add-In version 1.0.1 contains multiple bugfixes.
+
+Changes
+-------
+- Qt .pro file import fixed for projects containing SUBDIRS.
+- Fixed moc file build exclusion when saving a .cpp file.
+- Keep user defined debugging environment when adding the Qt environment.
+- Fix the display of full file paths in custom build tool descriptions.
+- Documentation updated.
+
