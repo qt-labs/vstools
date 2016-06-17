@@ -184,6 +184,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\dialogbuttonbottom\DialogButtonBottom.csproj">
+      <Project>{F7407750-5F72-460F-9C53-27CF509A39B1}</Project>
+      <Name>DialogButtonBottom</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qttemplates\gui\Gui.csproj">
       <Project>{3E1F9741-01D3-480A-A484-3CD373AE4A7F}</Project>
       <Name>Gui</Name>
