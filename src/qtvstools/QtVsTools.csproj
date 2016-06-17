@@ -199,6 +199,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\resource\Resource.csproj">
+      <Project>{BDA1CD69-624B-4D9D-9B88-ACBEB14AC471}</Project>
+      <Name>Resource</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qttemplates\server\Server.csproj">
       <Project>{8AE9D385-A379-4F5F-A703-3DF643DA6742}</Project>
       <Name>Server</Name>

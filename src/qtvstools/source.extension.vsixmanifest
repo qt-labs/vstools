@@ -57,5 +57,6 @@
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Lib" d:TargetPath="|Lib;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Server" d:TargetPath="|Server;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Designer" d:TargetPath="|Designer;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Resource" d:TargetPath="|Resource;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
     </Assets>
 </PackageManifest>
