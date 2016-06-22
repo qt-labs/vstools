@@ -54,7 +54,8 @@ namespace QtProjectWizard
 
                 try {
                     var wizard = new WizardWindow(new List<WizardPage>() {
-                        new IntroPage() {
+                        new IntroPage {
+                            Data = data,
                             Header = @"Welcome to the Qt Console Application Wizard",
                             Message = @"This wizard generates a Qt console application "
                                 + @"project. The application derives from QCoreApplication "
@@ -65,7 +66,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ModulePage(data) {
+                        new ModulePage {
+                            Data = data,
                             Header = @"Welcome to the Qt Console Application Wizard",
                             Message = @"Select the modules you want to include in your project. The "
                                 + @"recommended modules for this project are selected by default.",

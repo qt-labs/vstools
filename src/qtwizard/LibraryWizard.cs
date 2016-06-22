@@ -130,7 +130,8 @@ namespace QtProjectWizard
                     data.ClassSourceFile = safeprojectname + @".cpp";
 
                     var wizard = new WizardWindow(new List<WizardPage>() {
-                        new IntroPage() {
+                        new IntroPage {
+                            Data = data,
                             Header = @"Welcome to the Qt Class Library Wizard",
                             Message = @"This wizard generates a Qt Class Library project. The "
                                 + @"resulting library is linked dynamically with Qt."
@@ -141,7 +142,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ModulePage(data) {
+                        new ModulePage {
+                            Data = data,
                             Header = @"Welcome to the Qt Class Library Wizard",
                             Message = @"Select the modules you want to include in your project. The "
                                 + @"recommended modules for this project are selected by default.",
@@ -150,7 +152,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new LibraryClassPage(data) {
+                        new LibraryClassPage {
+                            Data = data,
                             Header = @"Welcome to the Qt Class Library Wizard",
                             Message = @"This wizard generates a Qt Class Library project. The "
                                 + @"resulting library is linked dynamically with Qt.",

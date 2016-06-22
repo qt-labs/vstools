@@ -33,12 +33,10 @@ namespace QtProjectWizard
 {
     public partial class LibraryClassPage : WizardPage
     {
-        public LibraryClassPage(WizardData data)
+        public LibraryClassPage()
         {
             InitializeComponent();
-
-            Data = data;
-            DataContext = this;
+            this.DataContext = this;
         }
 
         private void OnClassNameChanged(object sender, TextChangedEventArgs e)

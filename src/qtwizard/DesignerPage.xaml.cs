@@ -33,12 +33,10 @@ namespace QtProjectWizard
 {
     public partial class DesignerPage : WizardPage
     {
-        public DesignerPage(WizardData data)
+        public DesignerPage()
         {
             InitializeComponent();
-
-            Data = data;
-            DataContext = this;
+            this.DataContext = this;
         }
 
         private void OnClassNameChanged(object sender, TextChangedEventArgs e)

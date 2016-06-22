@@ -139,7 +139,8 @@ namespace QtProjectWizard
                     data.UiFile = data.ClassName + @".ui";
 
                     var wizard = new WizardWindow(new List<WizardPage>() {
-                        new IntroPage() {
+                        new IntroPage {
+                            Data = data,
                             Header = @"Welcome to the Qt ActiveQt Server Wizard",
                             Message = @"This wizard generates a Qt ActiveQt server project. It "
                                 + @"creates a simple ActiveQt widget with the required files."
@@ -150,7 +151,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ModulePage(data) {
+                        new ModulePage {
+                            Data = data,
                             Header = @"Welcome to the Qt ActiveQt Server Wizard",
                             Message = @"Select the modules you want to include in your project. The "
                                 + @"recommended modules for this project are selected by default.",
@@ -159,7 +161,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ServerPage(data) {
+                        new ServerPage {
+                            Data = data,
                             Header = @"Welcome to the Qt ActiveQt Server Wizard",
                             Message = @"This wizard generates a Qt ActiveQt server project. It "
                                 + @"creates a simple ActiveQt widget with the required files.",

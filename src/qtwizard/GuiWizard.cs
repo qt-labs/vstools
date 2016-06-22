@@ -76,7 +76,8 @@ namespace QtProjectWizard
                     data.QrcFile = data.ClassName + @".qrc";
 
                     var wizard = new WizardWindow(new List<WizardPage>() {
-                        new IntroPage() {
+                        new IntroPage {
+                            Data = data,
                             Header = @"Welcome to the Qt GUI Application Wizard",
                             Message = @"This wizard generates a Qt GUI application project. The "
                                 + @"application derives from QApplication and includes an empty "
@@ -87,7 +88,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ModulePage(data) {
+                        new ModulePage {
+                            Data = data,
                             Header = @"Welcome to the Qt GUI Application Wizard",
                             Message = @"Select the modules you want to include in your project. The "
                                 + @"recommended modules for this project are selected by default.",
@@ -96,7 +98,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new GuiPage(data) {
+                        new GuiPage {
+                            Data = data,
                             Header = @"Welcome to the Qt GUI Application Wizard",
                             Message = @"This wizard generates a Qt GUI application project. The "
                                 + @"application derives from QApplication and includes an empty "

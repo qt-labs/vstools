@@ -33,12 +33,10 @@ namespace QtProjectWizard
 {
     public partial class GuiPage : WizardPage
     {
-        public GuiPage(WizardData data)
+        public GuiPage()
         {
             InitializeComponent();
-
-            Data = data;
-            DataContext = this;
+            this.DataContext = this;
         }
 
         private void OnClassNameChanged(object sender, TextChangedEventArgs e)

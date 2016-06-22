@@ -30,25 +30,22 @@ using QtProjectLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 
 namespace QtProjectWizard
 {
     public partial class ModulePage : WizardPage
     {
-        public ModulePage(WizardData data)
+        public ModulePage()
         {
             InitializeComponent();
-
-            Data = data;
-            DataContext = this;
+            this.DataContext = this;
 
             try {
                 var projectEngine = new QtProjectEngine();
                 foreach (var checkBox in Children<CheckBox>(ModuleGrid))
                     checkBox.IsEnabled = projectEngine.IsModuleInstalled(checkBox.Name);
 
-                foreach (var module in data.DefaultModules) {
+                foreach (var module in Data.DefaultModules) {
                     var checkbox = ModuleGrid.FindName(module) as CheckBox;
                     if (checkbox == null)
                         continue;

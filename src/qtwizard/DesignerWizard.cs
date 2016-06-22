@@ -147,7 +147,8 @@ namespace QtProjectWizard
                     data.PluginSourceFile = data.PluginClass + @".cpp";
 
                     var wizard = new WizardWindow(new List<WizardPage>() {
-                        new IntroPage() {
+                        new IntroPage {
+                            Data = data,
                             Header = @"Welcome to the Qt Custom Designer Widget",
                             Message = @"This wizard generates a custom designer widget which can be "
                                 + @"used in Qt Designer or Visual Studio."
@@ -158,7 +159,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new ModulePage(data) {
+                        new ModulePage {
+                            Data = data,
                             Header = @"Welcome to the Qt Custom Designer Widget",
                             Message = @"Select the modules you want to include in your project. The "
                                 + @"recommended modules for this project are selected by default.",
@@ -167,7 +169,8 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new DesignerPage(data) {
+                        new DesignerPage {
+                            Data = data,
                             Header = @"Welcome to the Qt Custom Designer Widget",
                             Message = @"This wizard generates a custom designer widget which can be "
                                 + @"used in Qt Designer or Visual Studio.",
