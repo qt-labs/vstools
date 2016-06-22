@@ -33,13 +33,12 @@ namespace QtVsTools
     // Base class to support writing default editor values to registry
     public class DefaultEditorsBase
     {
-        private const string templatesDir = "TemplatesDir";
         private const string registryBasePath = @"SOFTWARE\Microsoft\VisualStudio\{0}";
         private const string newProjectTemplates = @"\NewProjectTemplates\TemplateDirs\{0}\/1";
 
-        private const string linguist = @"\Default Editors\ts\Qt Linguist";
-        private const string designer = @"\Default Editors\ui\Qt Designer";
-        private const string qrcEditor = @"\Default Editors\qrc\Qt Resource Editor";
+        private const string linguist = @"Qt Linguist";
+        private const string designer = @"Qt Designer";
+        private const string qrcEditor = @"Qt Resource Editor";
 
         protected static string addinGuid = null;
         protected static string appWrapper = null;
@@ -82,7 +81,7 @@ namespace QtVsTools
             if (key == null)
                 return null;
 
-            var templatesDirPath = key.GetValue(templatesDir) as string;
+            var templatesDirPath = key.GetValue(@"TemplatesDir") as string;
             if (string.IsNullOrEmpty(templatesDirPath))
                 return null;
 
@@ -112,16 +111,31 @@ namespace QtVsTools
             if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(installPath))
                 return;
 
-            var key = GetCUKey(basePath + linguist, true);
-            key.SetValue(@"", installPath + @"\" + appWrapper);
+            installPath += @"\";
+            WriteCustomTypeEditor(basePath + @"\Default Editors\ts", linguist);
+            var key = GetCUKey(basePath + @"\Default Editors\ts\" + linguist, true);
+            key.SetValue(@"", installPath + appWrapper);
 
-            key = GetCUKey(basePath + designer, true);
-            key.SetValue(@"", installPath + @"\" + appWrapper);
+            WriteCustomTypeEditor(basePath + @"\Default Editors\ui", designer);
+            key = GetCUKey(basePath + @"\Default Editors\ui\" + designer, true);
+            key.SetValue(@"", installPath + appWrapper);
 
-            key = GetCUKey(basePath + qrcEditor, true);
-            key.SetValue(@"", installPath + @"\" + qrcEditorName);
+            WriteCustomTypeEditor(basePath + @"\Default Editors\qrc", qrcEditor);
+            key = GetCUKey(basePath + @"\Default Editors\qrc\" + qrcEditor, true);
+            key.SetValue(@"", installPath + qrcEditorName);
+        }
+
+        private void WriteCustomTypeEditor(string path, string customEditor)
+        {
+            var key = Registry.CurrentUser.OpenSubKey(path, true);
+            if (key == null) {
+                key = Registry.CurrentUser.CreateSubKey(path);
+                key.SetValue(@"Custom", customEditor);
+                key.SetValue(@"Type", 0x00000002, RegistryValueKind.DWord);
+            }
         }
     }
+
     // Default editor handling for Qt4 add-in
     public class Qt4DefaultEditors : DefaultEditorsBase
     {
