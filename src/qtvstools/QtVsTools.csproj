@@ -234,6 +234,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\widget\Widget.csproj">
+      <Project>{40ADFD6A-64EA-4C77-9D4B-3A91D6AB76B4}</Project>
+      <Name>Widget</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\qtwizard\QtProjectWizard.csproj">
       <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
       <Name>QtProjectWizard</Name>
