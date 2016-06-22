@@ -96,7 +96,7 @@ namespace QtProjectWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new GuiClassPage(data) {
+                        new GuiPage(data) {
                             Header = @"Welcome to the Qt GUI Application Wizard",
                             Message = @"This wizard generates a Qt GUI application project. The "
                                 + @"application derives from QApplication and includes an empty "

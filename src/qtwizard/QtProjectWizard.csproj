@@ -51,8 +51,8 @@
     </Compile>
     <Compile Include="DesignerWizard.cs" />
     <Compile Include="FileNameValidationRule.cs" />
-    <Compile Include="GuiClassPage.xaml.cs">
-      <DependentUpon>GuiClassPage.xaml</DependentUpon>
+    <Compile Include="GuiPage.xaml.cs">
+      <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="GuiWizard.cs" />
     <Compile Include="IntroPage.xaml.cs">
@@ -100,7 +100,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GuiClassPage.xaml">
+    <Page Include="GuiPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

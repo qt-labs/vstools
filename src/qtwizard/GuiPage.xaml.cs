@@ -31,9 +31,9 @@ using System.Windows.Controls;
 
 namespace QtProjectWizard
 {
-    public partial class GuiClassPage : WizardPage
+    public partial class GuiPage : WizardPage
     {
-        public GuiClassPage(WizardData data)
+        public GuiPage(WizardData data)
         {
             InitializeComponent();
 
