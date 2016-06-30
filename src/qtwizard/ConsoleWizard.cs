@@ -78,7 +78,7 @@ namespace QtProjectWizard
                         }
                     })
                     {
-                        Title = @"Qt Console Application Wizard",
+                        Title = @"Qt Console Application Wizard"
                     };
                     WindowHelper.ShowModal(wizard, hwnd);
                     if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)

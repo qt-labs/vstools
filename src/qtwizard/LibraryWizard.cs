@@ -164,7 +164,7 @@ namespace QtProjectWizard
                         }
                     })
                     {
-                        Title = @"Qt Class Library Wizard",
+                        Title = @"Qt Class Library Wizard"
                     };
                     WindowHelper.ShowModal(wizard, hwnd);
                     if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)

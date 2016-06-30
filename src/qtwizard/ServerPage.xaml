@@ -149,7 +149,7 @@
                     <TextBlock Grid.Row="2"
                                Grid.Column="0"
                                Margin="0,0,10,5"
-                               Text="User Interface (.ui) file" />
+                               Text="User Interface (.ui) file:" />
                     <TextBox Grid.Row="3"
                              Grid.Column="0"
                              Margin="0,0,10,0"

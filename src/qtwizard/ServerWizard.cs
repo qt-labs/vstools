@@ -173,7 +173,7 @@ namespace QtProjectWizard
                         }
                     })
                     {
-                        Title = @"Qt ActiveQt Server Wizard",
+                        Title = @"Qt ActiveQt Server Wizard"
                     };
 
                     WindowHelper.ShowModal(wizard, hwnd);
