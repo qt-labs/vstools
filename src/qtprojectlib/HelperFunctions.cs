@@ -35,8 +35,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -45,10 +43,6 @@ namespace QtProjectLib
 
     public class HelperFunctions
     {
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetEnvironmentVariable(string lpName, string lpValue);
-
         // used when creating a new template (needs to be static)
         private static System.CodeDom.Compiler.TempFileCollection tmpFiles = null;
 
@@ -986,12 +980,10 @@ namespace QtProjectLib
             return found;
         }
 
-        public static bool SetEnvironmentVariableEx(string environmentVariable, string variableValue)
+        public static void SetEnvironmentVariableEx(string environmentVariable, string variableValue)
         {
             try {
-                EnvironmentPermission environmentPermission = new EnvironmentPermission(EnvironmentPermissionAccess.Write, environmentVariable);
-                environmentPermission.Demand();
-                return SetEnvironmentVariable(environmentVariable, variableValue);
+                Environment.SetEnvironmentVariable(environmentVariable, variableValue);
             } catch {
                 throw new QtVSException(SR.GetString("HelperFunctions_CannotWriteEnvQTDIR"));
             }
