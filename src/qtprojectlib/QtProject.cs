@@ -1910,19 +1910,25 @@ namespace QtProjectLib
 
         public string CreateQrcFile(string className, string destName)
         {
-            string fullDestName = vcPro.ProjectDirectory + "\\" + destName;
+            var fullDestName = vcPro.ProjectDirectory + "\\" + destName;
 
             if (!File.Exists(fullDestName)) {
-                FileStream s = File.Open(fullDestName, FileMode.CreateNew);
-                if (s.CanWrite) {
-                    StreamWriter sw = new StreamWriter(s);
-                    sw.WriteLine("<RCC>");
-                    sw.WriteLine("    <qresource prefix=\"" + className + "\">");
-                    sw.WriteLine("    </qresource>");
-                    sw.WriteLine("</RCC>");
-                    sw.Close();
+                FileStream s = null;
+                try {
+                    s = File.Open(fullDestName, FileMode.CreateNew);
+                    if (s.CanWrite) {
+                        using (var sw = new StreamWriter(s)) {
+                            s = null;
+                            sw.WriteLine("<RCC>");
+                            sw.WriteLine("    <qresource prefix=\"" + className + "\">");
+                            sw.WriteLine("    </qresource>");
+                            sw.WriteLine("</RCC>");
+                        }
+                    }
+                } finally {
+                    if (s != null)
+                        s.Dispose();
                 }
-                s.Close();
                 FileAttributes attribs = File.GetAttributes(fullDestName);
                 File.SetAttributes(fullDestName, attribs & (~FileAttributes.ReadOnly));
             }

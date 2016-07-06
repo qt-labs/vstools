@@ -239,11 +239,17 @@ namespace QtProjectWizard
 
                     var rcFile = vcProject.ProjectDirectory + "\\" + vcProject.ItemName + ".rc";
                     if (!File.Exists(rcFile)) {
-                        using (var fs = File.Create(rcFile)) {
+                        FileStream fs = null;
+                        try {
+                            fs = File.Create(rcFile);
                             using (var sw = new StreamWriter(fs)) {
+                                fs = null;
                                 sw.WriteLine("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\""
                                     + vcProject.ItemName + ".ico\"" + sw.NewLine);
                             }
+                        } finally {
+                            if (fs != null)
+                                fs.Dispose();
                         }
                         vcProject.AddFile(rcFile);
                     }

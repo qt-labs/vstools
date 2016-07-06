@@ -42,10 +42,13 @@ namespace QtArchiveGen
 
             var EXIT_SUCCESS = 0;
             var EXIT_FAILURE = 1;
+
+            FileStream vsixToOpen = null;
             try {
-                using (var vsixToOpen = new FileStream(parseArgs("target="), FileMode.Open))
+                vsixToOpen = new FileStream(parseArgs("target="), FileMode.Open);
                 using (var vsix = new ZipArchive(vsixToOpen, ZipArchiveMode.Update)) {
 
+                    vsixToOpen = null;
                     var vsixEntry = vsix.CreateEntry(Path.GetFileName(parseArgs("source=")));
                     if (vsixEntry == null)
                         return EXIT_FAILURE;
@@ -60,7 +63,11 @@ namespace QtArchiveGen
                 }
             } catch {
                 return EXIT_FAILURE;
+            } finally {
+                if (vsixToOpen != null)
+                    vsixToOpen.Dispose();
             }
+
             return EXIT_SUCCESS;
         }
     }
