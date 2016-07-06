@@ -38,8 +38,26 @@ namespace QtProjectWizard
         public ModulePage()
         {
             InitializeComponent();
-            this.DataContext = this;
 
+            DataContext = this;
+            Loaded += OnLoaded;
+        }
+
+        protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
+        {
+            CollectSelectedModules();
+            base.OnNextButtonClick(sender, e);
+        }
+
+        protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
+        {
+            CollectSelectedModules();
+            base.OnFinishButtonClick(sender, e);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnLoaded;
             try {
                 var projectEngine = new QtProjectEngine();
                 foreach (var checkBox in Children<CheckBox>(ModuleGrid))
@@ -56,18 +74,6 @@ namespace QtProjectWizard
                 // Ignore if we can't find out if the library is installed.
                 // We either disable and or un-check the button in the UI.
             }
-        }
-
-        protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
-        {
-            CollectSelectedModules();
-            base.OnNextButtonClick(sender, e);
-        }
-
-        protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
-        {
-            CollectSelectedModules();
-            base.OnFinishButtonClick(sender, e);
         }
 
         private void CollectSelectedModules()
