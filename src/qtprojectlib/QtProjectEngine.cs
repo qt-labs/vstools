@@ -390,14 +390,11 @@ namespace QtProjectLib
         /// <summary>
         /// The created project.
         /// </summary>
-        public EnvDTE.Project Project
+        public EnvDTE.Project Project()
         {
-            get
-            {
-                if (qtPro == null)
-                    throw new QtVSException(commonError);
-                return pro;
-            }
+            if (qtPro == null)
+                throw new QtVSException(commonError);
+            return pro;
         }
 
         /// <summary>
