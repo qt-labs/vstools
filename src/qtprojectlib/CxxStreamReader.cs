@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using System;
 using System.IO;
 
 namespace QtProjectLib
@@ -34,7 +35,7 @@ namespace QtProjectLib
     /// StreamReader for C++ files.
     /// Removes comments, takes care of strings and skips empty lines.
     /// </summary>
-    class CxxStreamReader
+    class CxxStreamReader : IDisposable
     {
         private enum State
         {
@@ -43,15 +44,38 @@ namespace QtProjectLib
         private State state = State.Normal;
         private StreamReader sr = null;
         private string partialLine = "";
+        bool disposed = false;
 
         public CxxStreamReader(string fileName)
         {
             sr = new StreamReader(fileName);
         }
 
+        ~CxxStreamReader()
+        {
+            Dispose(false);
+        }
+
         public void Close()
         {
-            sr.Close();
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+                sr.Dispose();
+
+            disposed = true;
         }
 
         public string ReadLine()
