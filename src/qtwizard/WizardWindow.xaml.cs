@@ -29,16 +29,27 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Navigation;
 
 namespace QtProjectWizard
 {
+    internal static class NativeMethods
+    {
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern int GetWindowLong(IntPtr hwnd, int index);
+    }
+
+    internal static class UnsafeNativeMethods
+    {
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern int SetWindowLong(IntPtr hwnd, int index, int value);
+    }
+
     public partial class WizardWindow : NavigationWindow
     {
-        [DllImport("user32.dll")]
-        extern private static int GetWindowLong(IntPtr hwnd, int index);
-        [DllImport("user32.dll")]
-        extern private static int SetWindowLong(IntPtr hwnd, int index, int value);
 
         public WizardWindow(List<WizardPage> pages)
         {
@@ -79,7 +90,8 @@ namespace QtProjectWizard
             try {
                 const int STYLE = -16; // see winuser.h
                 var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-                SetWindowLong(hwnd, STYLE, GetWindowLong(hwnd, STYLE) & ~(0x10000 | 0x20000));
+                UnsafeNativeMethods.SetWindowLong(hwnd, STYLE,
+                    NativeMethods.GetWindowLong(hwnd, STYLE) & ~(0x10000 | 0x20000));
             } catch {
                 // Ignore if we can't remove the buttons.
                 SourceInitialized -= onSourceInitialized;

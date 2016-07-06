@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
 namespace QtProjectLib
@@ -170,8 +171,16 @@ namespace QtProjectLib
             throw new QtVSException("qglobal.h not found");
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern int GetBinaryTypeA(string lpApplicationName, ref int lpBinaryType);
+        internal static class NativeMethods
+        {
+            [DllImport("kernel32.dll",
+                BestFitMapping = false,
+                CharSet = CharSet.Auto,
+                SetLastError = true)
+            ]
+            [ResourceExposure(ResourceScope.None)]
+            internal static extern int GetBinaryType(string lpApplicationName, ref int lpBinaryType);
+        }
 
         public bool is64Bit()
         {
@@ -187,7 +196,7 @@ namespace QtProjectLib
             const int SCS_32BIT_BINARY = 0;
             const int SCS_64BIT_BINARY = 6;
             int binaryType = 0;
-            bool success = GetBinaryTypeA(fileToCheck, ref binaryType) != 0;
+            bool success = NativeMethods.GetBinaryType(fileToCheck, ref binaryType) != 0;
             if (!success)
                 throw new QtVSException("GetBinaryTypeA failed");
 

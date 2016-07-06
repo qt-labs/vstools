@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -42,6 +43,15 @@ using System.Windows.Forms;
 namespace QtVsTools
 // --------------------------------------------------------------------------------------
 {
+
+    internal static class NativeMethods
+    {
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern void SwitchToThisWindow(IntPtr hWnd,
+            [MarshalAs(UnmanagedType.Bool)] bool fAltTab);
+    }
+
     public class ExtLoader
     {
 
@@ -50,9 +60,6 @@ namespace QtVsTools
             public System.Diagnostics.Process process;
             public int port;
         }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 
         private static Dictionary<string, DesignerData> designerDict
             = new Dictionary<string, DesignerData>();
@@ -349,7 +356,7 @@ namespace QtVsTools
                         designerDict[qtDir] = data;
                     }
                 }
-                SwitchToThisWindow(designerDict[qtDir].process.MainWindowHandle, true);
+                NativeMethods.SwitchToThisWindow(designerDict[qtDir].process.MainWindowHandle, true);
             } catch {
                 // silent
             }
