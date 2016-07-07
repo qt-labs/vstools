@@ -93,8 +93,10 @@ namespace QtVsTools
 
         public static void ImportPriFile(EnvDTE.Project project)
         {
-            VCProject vcproj;
+            if (project == null)
+                return;
 
+            VCProject vcproj;
             if (!HelperFunctions.IsQtProject(project))
                 return;
 
@@ -118,8 +120,10 @@ namespace QtVsTools
 
         public static void ImportPriFile(EnvDTE.Project project, string fileName)
         {
-            VCProject vcproj;
+            if (project == null)
+                return;
 
+            VCProject vcproj;
             if (!HelperFunctions.IsQtProject(project))
                 return;
 

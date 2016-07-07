@@ -40,6 +40,9 @@ namespace QtVsTools
     {
         public static bool RunlRelease(VCFile vcFile)
         {
+            if (vcFile == null)
+                return false;
+
             bool success = true;
             try {
                 VCProject vcProject = vcFile.project as VCProject;
@@ -67,6 +70,9 @@ namespace QtVsTools
 
         public static void RunlRelease(VCFile[] vcFiles)
         {
+            if (vcFiles == null)
+                return;
+
             foreach (VCFile vcFile in vcFiles) {
                 if (vcFile == null)
                     continue;
@@ -100,12 +106,18 @@ namespace QtVsTools
 
         public static void RunlRelease(EnvDTE.Solution solution)
         {
+            if (solution == null)
+                return;
+
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(solution.DTE))
                 RunlRelease(project);
         }
 
         public static bool RunlUpdate(VCFile vcFile, EnvDTE.Project pro)
         {
+            if (vcFile == null || pro == null)
+                return false;
+
             if (!HelperFunctions.IsQtProject(pro))
                 return false;
 
@@ -205,6 +217,9 @@ namespace QtVsTools
 
         public static void RunlUpdate(VCFile[] vcFiles, EnvDTE.Project pro)
         {
+            if (vcFiles == null)
+                return;
+
             foreach (VCFile vcFile in vcFiles) {
                 if (vcFile == null)
                     continue;
@@ -238,6 +253,9 @@ namespace QtVsTools
 
         public static void RunlUpdate(EnvDTE.Solution solution)
         {
+            if (solution == null)
+                return;
+
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(solution.DTE))
                 RunlUpdate(project);
         }
