@@ -36,7 +36,7 @@ namespace QtVsTools
     /// <summary>
     /// Summary description for Translation.
     /// </summary>
-    public class Translation
+    public static class Translation
     {
         public static bool RunlRelease(VCFile vcFile)
         {

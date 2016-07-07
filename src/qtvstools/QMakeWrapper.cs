@@ -114,12 +114,12 @@ namespace QtVsTools
             return forms;
         }
 
-        private bool stringToBool(string str)
+        private static bool stringToBool(string str)
         {
             return str == "true";
         }
 
-        private string[] readFileElements(XmlReader reader, string tag)
+        private static string[] readFileElements(XmlReader reader, string tag)
         {
             List<string> fileNames = new List<string>();
             if (reader.ReadToFollowing(tag)) {
@@ -133,7 +133,7 @@ namespace QtVsTools
             return fileNames.ToArray();
         }
 
-        private string shellQuote(string filePath)
+        private static string shellQuote(string filePath)
         {
             return filePath.Contains(" ")
                 ? ('"' + filePath + '"')

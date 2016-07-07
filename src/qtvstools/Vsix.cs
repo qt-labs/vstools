@@ -198,7 +198,7 @@ namespace QtVsTools
         /// values for *.qrc, *.ts and *.ui extensions are written, while on shutdown possible
         /// existing Add-in values are written back.
         /// </summary>
-        private void UpdateDefaultEditors(Mode mode)
+        private static void UpdateDefaultEditors(Mode mode)
         {
             if (mode == Mode.Shutdown) {
                 var qt5 = new Qt5DefaultEditors();
