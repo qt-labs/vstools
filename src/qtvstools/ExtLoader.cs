@@ -41,9 +41,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 namespace QtVsTools
-// --------------------------------------------------------------------------------------
 {
-
     internal static class NativeMethods
     {
         [ResourceExposure(ResourceScope.None)]
@@ -54,7 +52,6 @@ namespace QtVsTools
 
     public class ExtLoader
     {
-
         private struct DesignerData
         {
             public System.Diagnostics.Process process;
@@ -65,11 +62,6 @@ namespace QtVsTools
             = new Dictionary<string, DesignerData>();
         private static ManualResetEvent portFound = new ManualResetEvent(false);
         private static int designerPort = 0;
-
-        // Functions ------------------------------------------------------
-        public ExtLoader()
-        {
-        }
 
         public static void ImportProFile()
         {

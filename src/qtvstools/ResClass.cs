@@ -128,19 +128,6 @@ namespace QtVsTools
             get { return appCultureInfo; }
         }
 
-        public static ResourceManager Resources
-        {
-            get
-            {
-                return GetLoader().resources;
-            }
-        }
-
-        public static String LanguageName
-        {
-            get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName; }
-        }
-
         public static string GetString(string name, params object[] args)
         {
             string res = GetString(name);
@@ -160,22 +147,6 @@ namespace QtVsTools
                 result = sys.resources.GetString(name, SR.Culture);
             } catch (Exception) {
                 result = sys.resources.GetString(name, defaultCultureInfo);
-            }
-
-            return result;
-        }
-
-        public static object GetObject(string name)
-        {
-            SR sys = GetLoader();
-            if (sys == null)
-                return null;
-
-            object result;
-            try {
-                result = sys.resources.GetObject(name, SR.Culture);
-            } catch (Exception) {
-                result = sys.resources.GetObject(name, defaultCultureInfo);
             }
 
             return result;
