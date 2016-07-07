@@ -59,25 +59,35 @@ namespace QtVsTools
                 if (!System.IO.File.Exists(exeFilePath))
                     return false;
 
-                Process process = new Process();
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.FileName = exeFilePath;
-                process.StartInfo.Arguments = shellQuote(qtdir) + ' ' + shellQuote(filePath);
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                if (!process.Start())
-                    return false;
-                output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                using (var process = new Process()) {
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.FileName = exeFilePath;
+                    process.StartInfo.Arguments = shellQuote(qtdir) + ' ' + shellQuote(filePath);
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    if (!process.Start())
+                        return false;
+                    output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                }
 
-                XmlReader reader = new XmlTextReader(new System.IO.StringReader(output));
-                reader.ReadToFollowing("content");
-                valid = stringToBool(reader.GetAttribute("valid"));
-                flat = stringToBool(reader.GetAttribute("flat"));
-                sources = readFileElements(reader, "SOURCES");
-                headers = readFileElements(reader, "HEADERS");
-                resources = readFileElements(reader, "RESOURCES");
-                forms = readFileElements(reader, "FORMS");
+                System.IO.StringReader stringReader = null;
+                try {
+                    stringReader = new System.IO.StringReader(output);
+                    using (var reader = new XmlTextReader(stringReader)) {
+                        stringReader = null;
+                        reader.ReadToFollowing("content");
+                        valid = stringToBool(reader.GetAttribute("valid"));
+                        flat = stringToBool(reader.GetAttribute("flat"));
+                        sources = readFileElements(reader, "SOURCES");
+                        headers = readFileElements(reader, "HEADERS");
+                        resources = readFileElements(reader, "RESOURCES");
+                        forms = readFileElements(reader, "FORMS");
+                    }
+                } finally {
+                    if (stringReader != null)
+                        stringReader.Dispose();
+                }
             } catch {
                 return false;
             }

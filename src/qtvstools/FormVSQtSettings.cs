@@ -152,12 +152,13 @@ namespace QtVsTools
         private void addButton_Click(object sender, EventArgs e)
         {
             QtVersionManager.The().ClearVersionCache();
-            AddQtVersionDialog dia = new AddQtVersionDialog();
-            dia.StartPosition = FormStartPosition.CenterParent;
-            MainWinWrapper ww = new MainWinWrapper(Vsix.Instance.Dte);
-            if (dia.ShowDialog(ww) == DialogResult.OK) {
-                UpdateListBox();
-                SetupDefaultVersionComboBox(null);
+            using (var dia = new AddQtVersionDialog()) {
+                dia.StartPosition = FormStartPosition.CenterParent;
+                MainWinWrapper ww = new MainWinWrapper(Vsix.Instance.Dte);
+                if (dia.ShowDialog(ww) == DialogResult.OK) {
+                    UpdateListBox();
+                    SetupDefaultVersionComboBox(null);
+                }
             }
         }
 

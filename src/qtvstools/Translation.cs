@@ -158,22 +158,22 @@ namespace QtVsTools
                                    System.IO.Path.GetFileNameWithoutExtension(temporaryProFile) + ".pro";
                 if (System.IO.File.Exists(temporaryProFile))
                     System.IO.File.Delete(temporaryProFile);
-                System.IO.StreamWriter sw = new System.IO.StreamWriter(temporaryProFile);
-                writeFilesToPro(sw, "HEADERS",
-                    ProjectExporter.ConvertFilesToFullPath(headers, vcPro.ProjectDirectory));
-                writeFilesToPro(sw, "SOURCES",
-                    ProjectExporter.ConvertFilesToFullPath(sources, vcPro.ProjectDirectory));
-                writeFilesToPro(sw, "FORMS",
-                    ProjectExporter.ConvertFilesToFullPath(uifiles, vcPro.ProjectDirectory));
 
-                List<string> tsFiles = new List<string>(1);
-                tsFiles.Add(vcFile.FullPath);
-                writeFilesToPro(sw, "TRANSLATIONS", tsFiles);
+                using (var sw = new System.IO.StreamWriter(temporaryProFile)) {
+                    writeFilesToPro(sw, "HEADERS",
+                        ProjectExporter.ConvertFilesToFullPath(headers, vcPro.ProjectDirectory));
+                    writeFilesToPro(sw, "SOURCES",
+                        ProjectExporter.ConvertFilesToFullPath(sources, vcPro.ProjectDirectory));
+                    writeFilesToPro(sw, "FORMS",
+                        ProjectExporter.ConvertFilesToFullPath(uifiles, vcPro.ProjectDirectory));
 
-                if (!string.IsNullOrEmpty(codec)) {
-                    sw.WriteLine("CODECFORTR = " + codec);
+                    List<string> tsFiles = new List<string>(1);
+                    tsFiles.Add(vcFile.FullPath);
+                    writeFilesToPro(sw, "TRANSLATIONS", tsFiles);
+
+                    if (!string.IsNullOrEmpty(codec))
+                        sw.WriteLine("CODECFORTR = " + codec);
                 }
-                sw.Close();
 
                 cmdLine = "";
                 if (!string.IsNullOrEmpty(options))
@@ -265,17 +265,18 @@ namespace QtVsTools
             if (project == null)
                 return;
 
-            AddTranslationDialog transDlg = new AddTranslationDialog(project);
-            if (transDlg.ShowDialog() == DialogResult.OK) {
-                try {
-                    QtProject qtPro = QtProject.Create(project);
-                    VCFile file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
-                        transDlg.TranslationFile, true);
-                    Translation.RunlUpdate(file, project);
-                } catch (QtVSException e) {
-                    Messages.DisplayErrorMessage(e.Message);
-                } catch (System.Exception ex) {
-                    Messages.DisplayErrorMessage(ex.Message);
+            using (var transDlg = new AddTranslationDialog(project)) {
+                if (transDlg.ShowDialog() == DialogResult.OK) {
+                    try {
+                        QtProject qtPro = QtProject.Create(project);
+                        VCFile file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
+                            transDlg.TranslationFile, true);
+                        Translation.RunlUpdate(file, project);
+                    } catch (QtVSException e) {
+                        Messages.DisplayErrorMessage(e.Message);
+                    } catch (System.Exception ex) {
+                        Messages.DisplayErrorMessage(ex.Message);
+                    }
                 }
             }
         }

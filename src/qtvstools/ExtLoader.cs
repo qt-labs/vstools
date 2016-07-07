@@ -105,17 +105,18 @@ namespace QtVsTools
                 return;
 
             // make the user able to choose .pri file
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Multiselect = false;
-            fd.CheckFileExists = true;
-            fd.Title = SR.GetString("ExportProject_ImportPriFile");
-            fd.Filter = "Project Include Files (*.pri)|*.pri";
-            fd.FileName = vcproj.ProjectDirectory + vcproj.Name + ".pri";
+            using (var fd = new OpenFileDialog()) {
+                fd.Multiselect = false;
+                fd.CheckFileExists = true;
+                fd.Title = SR.GetString("ExportProject_ImportPriFile");
+                fd.Filter = "Project Include Files (*.pri)|*.pri";
+                fd.FileName = vcproj.ProjectDirectory + vcproj.Name + ".pri";
 
-            if (fd.ShowDialog() != DialogResult.OK)
-                return;
+                if (fd.ShowDialog() != DialogResult.OK)
+                    return;
 
-            ImportPriFile(project, fd.FileName);
+                ImportPriFile(project, fd.FileName);
+            }
         }
 
         public static void ImportPriFile(EnvDTE.Project project, string fileName)
@@ -334,13 +335,13 @@ namespace QtVsTools
                     designerDict[qtDir] = data;
                 } else if (fileName != null) {
                     try {
-                        TcpClient c = new TcpClient("127.0.0.1", designerDict[qtDir].port);
-                        System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
-                        byte[] bArray = enc.GetBytes(fileName + "\n");
-                        Stream stream = c.GetStream();
-                        stream.Write(bArray, 0, bArray.Length);
-                        c.Close();
-                        stream.Close();
+                        using (var c = new TcpClient("127.0.0.1", designerDict[qtDir].port)) {
+                            System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
+                            byte[] bArray = enc.GetBytes(fileName + "\n");
+                            Stream stream = c.GetStream();
+                            stream.Write(bArray, 0, bArray.Length);
+                            stream.Close();
+                        }
                     } catch {
                         Messages.DisplayErrorMessage(SR.GetString("DesignerAddError"));
                     }

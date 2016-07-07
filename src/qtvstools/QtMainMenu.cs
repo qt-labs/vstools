@@ -170,11 +170,12 @@ namespace QtVsTools
                 {
                     var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                     if (pro != null) {
-                        var formProjectQtSettings = new FormProjectQtSettings();
-                        formProjectQtSettings.SetProject(pro);
-                        formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
-                        var ww = new MainWinWrapper(Vsix.Instance.Dte);
-                        formProjectQtSettings.ShowDialog(ww);
+                        using (var formProjectQtSettings = new FormProjectQtSettings()) {
+                            formProjectQtSettings.SetProject(pro);
+                            formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
+                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            formProjectQtSettings.ShowDialog(ww);
+                        }
                     } else {
                         MessageBox.Show(SR.GetString("NoProjectOpened"));
                     }
@@ -184,25 +185,27 @@ namespace QtVsTools
                 {
                     var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                     if (HelperFunctions.IsQMakeProject(pro)) {
-                        var formChangeQtVersion = new FormChangeQtVersion();
-                        formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                        var ww = new MainWinWrapper(Vsix.Instance.Dte);
-                        if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
-                            string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                            HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
-                                .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
+                        using (var formChangeQtVersion = new FormChangeQtVersion()) {
+                            formChangeQtVersion.UpdateContent(ChangeFor.Project);
+                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
+                                string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
+                                HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
+                                    .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
+                            }
                         }
                     }
                 }
                 break;
             case CommandId.QtOptionsId:
                 {
-                    var formQtVersions = new FormVSQtSettings();
-                    formQtVersions.LoadSettings();
-                    formQtVersions.StartPosition = FormStartPosition.CenterParent;
-                    var ww = new MainWinWrapper(Vsix.Instance.Dte);
-                    if (formQtVersions.ShowDialog(ww) == DialogResult.OK)
-                        formQtVersions.SaveSettings();
+                    using (var formQtVersions = new FormVSQtSettings()) {
+                        formQtVersions.LoadSettings();
+                        formQtVersions.StartPosition = FormStartPosition.CenterParent;
+                        var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                        if (formQtVersions.ShowDialog(ww) == DialogResult.OK)
+                            formQtVersions.SaveSettings();
+                    }
                 }
                 break;
             default:

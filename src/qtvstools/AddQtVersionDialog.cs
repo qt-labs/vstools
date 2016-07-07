@@ -322,14 +322,14 @@ namespace QtVsTools
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog fd = new FolderBrowserDialog();
-            fd.Description = SR.GetString("SelectQtPath");
-            fd.SelectedPath = RestoreLastSelectedPath();
-            if (fd.ShowDialog() == DialogResult.OK) {
-                pathBox.Text = fd.SelectedPath;
-                SaveLastSelectedPath(fd.SelectedPath);
+            using (var fd = new FolderBrowserDialog()) {
+                fd.Description = SR.GetString("SelectQtPath");
+                fd.SelectedPath = RestoreLastSelectedPath();
+                if (fd.ShowDialog() == DialogResult.OK) {
+                    pathBox.Text = fd.SelectedPath;
+                    SaveLastSelectedPath(fd.SelectedPath);
+                }
             }
-            fd.Dispose();
         }
 
         private static string RestoreLastSelectedPath()
