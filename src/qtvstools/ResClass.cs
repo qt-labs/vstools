@@ -89,6 +89,7 @@ namespace QtVsTools
     {
         static SR loader = null;
         ResourceManager resources;
+        static readonly Object obj = new Object();
 
         internal const string OK = "OK";
         internal const string Cancel = "Cancel";
@@ -114,12 +115,11 @@ namespace QtVsTools
         private static SR GetLoader()
         {
             if (loader == null) {
-                lock (typeof(SR)) {
+                lock (obj) {
                     if (loader == null)
                         loader = new SR();
                 }
             }
-
             return loader;
         }
 

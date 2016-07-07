@@ -89,6 +89,7 @@ namespace QtProjectLib
     {
         static SR loader = null;
         ResourceManager resources;
+        static readonly Object obj = new Object();
 
         internal SR()
         {
@@ -98,7 +99,7 @@ namespace QtProjectLib
         private static SR GetLoader()
         {
             if (loader == null) {
-                lock (typeof(SR)) {
+                lock (obj) {
                     if (loader == null) {
                         loader = new SR();
                     }
