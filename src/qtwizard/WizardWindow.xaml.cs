@@ -57,7 +57,7 @@ namespace QtProjectWizard
             SourceInitialized += onSourceInitialized;
 
             Pages = pages ?? new List<WizardPage>();
-            foreach (var page in pages) {
+            foreach (var page in Pages) {
                 page.Wizard = this;
                 page.NavigateForward += OnNavigateForward;
                 page.NavigatedBackward += OnNavigatedBackwards;
