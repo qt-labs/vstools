@@ -154,7 +154,8 @@
                     <TextBlock Text="Base class:" />
                     <ComboBox Margin="0,0,0,15"
                               IsReadOnly="True"
-                              SelectedItem="{Binding Path=Data.BaseClass}"
+                              SelectedIndex="0"
+                              Text="{Binding Path=Data.BaseClass}"
                               IsSynchronizedWithCurrentItem="True"
                               TabIndex="1">
                         <ComboBoxItem Content="QMainWindow"
