@@ -91,6 +91,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\qtvisualizer\qt5.natvis">
+      <Link>Visualizer\qt5.natvis</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
