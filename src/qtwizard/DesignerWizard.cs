@@ -246,7 +246,7 @@ namespace QtProjectWizard
 
         private readonly WizardData data = new WizardData()
         {
-            DefaultModules = new List<string>() {
+            DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets", @"QtXml"
             }
         };
