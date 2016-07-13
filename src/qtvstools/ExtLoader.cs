@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System;

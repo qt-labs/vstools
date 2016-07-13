@@ -27,7 +27,6 @@
 ****************************************************************************/
 
 using QtProjectLib;
-using System;
 using System.ComponentModel;
 
 namespace QtVsTools

@@ -26,8 +26,6 @@
 **
 ****************************************************************************/
 
-using System.Windows;
-using System.Windows.Navigation;
 
 namespace QtProjectWizard
 {

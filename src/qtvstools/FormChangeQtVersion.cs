@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
 using QtProjectLib;
 using System;
 using System.Windows.Forms;

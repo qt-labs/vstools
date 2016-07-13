@@ -31,7 +31,6 @@ using EnvDTE80;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
