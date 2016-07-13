@@ -132,7 +132,7 @@ namespace QtVsTools
         {
             string res = GetString(name);
             if (args != null && args.Length > 0)
-                return String.Format(res, args);
+                return string.Format(res, args);
             return res;
         }
 

@@ -161,7 +161,7 @@ namespace QtProjectLib
                 // Is the default Qt version invalid?
                 bool isDefaultQtVersionInvalid = false;
                 string defaultQtVersionName = GetDefaultVersion();
-                if (String.IsNullOrEmpty(defaultQtVersionName)) {
+                if (string.IsNullOrEmpty(defaultQtVersionName)) {
                     isDefaultQtVersionInvalid = true;
                 } else {
                     foreach (string name in invalidVersions) {

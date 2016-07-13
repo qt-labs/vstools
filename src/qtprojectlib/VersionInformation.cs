@@ -141,7 +141,7 @@ namespace QtProjectLib
             vsPlatformName = (is64Bit()) ? @"x64" : @"Win32";
         }
 
-        private String Locate_qglobal_h()
+        private string Locate_qglobal_h()
         {
             string[] candidates = {qtDir + "\\include\\qglobal.h",
                                    qtDir + "\\src\\corelib\\global\\qglobal.h",

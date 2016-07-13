@@ -162,7 +162,7 @@ namespace QtVsTools
             }
         }
 
-        private static List<String> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
+        private static List<string> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
         {
             List<string> lst = new List<string>();
             foreach (string file in files) {
@@ -361,7 +361,7 @@ namespace QtVsTools
 
         private void designerOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!String.IsNullOrEmpty(outLine.Data)) {
+            if (!string.IsNullOrEmpty(outLine.Data)) {
                 try {
                     designerPort = Convert.ToInt32(outLine.Data);
                     System.Diagnostics.Process tmp = sendingProcess as System.Diagnostics.Process;

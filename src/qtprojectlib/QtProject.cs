@@ -235,7 +235,7 @@ namespace QtProjectLib
                         compiler.AddPreprocessorDefinition(define);
 
                     string incPath = info.GetIncludePath();
-                    if (!String.IsNullOrEmpty(incPath))
+                    if (!string.IsNullOrEmpty(incPath))
                         compiler.AddAdditionalIncludeDirectories(incPath);
                 }
                 if (linker != null) {
@@ -272,7 +272,7 @@ namespace QtProjectLib
                     List<string> additionalIncludeDirs = compiler.AdditionalIncludeDirectories;
                     if (additionalIncludeDirs != null) {
                         List<string> lst = new List<string>(additionalIncludeDirs);
-                        if (!String.IsNullOrEmpty(info.IncludePath)) {
+                        if (!string.IsNullOrEmpty(info.IncludePath)) {
                             lst.Remove(info.IncludePath);
                             lst.Remove('\"' + info.IncludePath + '\"');
                         }
@@ -358,7 +358,7 @@ namespace QtProjectLib
                 QtModuleInfo info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null) {
                     string incPath = info.GetIncludePath();
-                    if (String.IsNullOrEmpty(incPath))
+                    if (string.IsNullOrEmpty(incPath))
                         break;
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
@@ -2848,7 +2848,7 @@ namespace QtProjectLib
 
         static private void SetTargetMachine(VCLinkerTool linker, VersionInformation versionInfo)
         {
-            String qMakeLFlagsWindows = versionInfo.GetQMakeConfEntry("QMAKE_LFLAGS_WINDOWS");
+            string qMakeLFlagsWindows = versionInfo.GetQMakeConfEntry("QMAKE_LFLAGS_WINDOWS");
             Regex rex = new Regex("/MACHINE:(\\S+)");
             Match match = rex.Match(qMakeLFlagsWindows);
             if (match.Success) {
@@ -2863,8 +2863,8 @@ namespace QtProjectLib
                     linker.TargetMachine = machineTypeOption.machineNotSet;
             }
 
-            String subsystemOption = "";
-            String linkerOptions = linker.AdditionalOptions;
+            string subsystemOption = "";
+            string linkerOptions = linker.AdditionalOptions;
             if (linkerOptions == null)
                 linkerOptions = "";
 
@@ -2978,7 +2978,7 @@ namespace QtProjectLib
 
                 // Get platform name from given solution configuration
                 // or if not available take the active configuration
-                String activePlatformName = "";
+                string activePlatformName = "";
                 if (solutionConfig == null || solutionConfig.Length == 0) {
                     // First get active configuration cause not given as parameter
                     EnvDTE.Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;

@@ -265,7 +265,7 @@ namespace QtVsTools
 
         private static bool ContainsInvalidVariable(string directory)
         {
-            if (String.IsNullOrEmpty(directory))
+            if (string.IsNullOrEmpty(directory))
                 return false;
 
             string pattern = "\\$\\([^\\)]+\\)";

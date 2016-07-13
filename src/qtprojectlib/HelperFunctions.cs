@@ -160,7 +160,7 @@ namespace QtProjectLib
         {
             // Get platform name from given solution configuration
             // or if not available take the active configuration
-            String activePlatformName = "";
+            string activePlatformName = "";
             if (solutionConfig == null || solutionConfig.Length == 0) {
                 // First get active configuration cause not given as parameter
                 EnvDTE.Configuration activeConf = prj.ConfigurationManager.ActiveConfiguration;

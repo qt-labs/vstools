@@ -203,7 +203,7 @@ namespace QtProjectLib
             get
             {
                 string ppdefsstr = GetPreprocessorDefinitions();
-                if (String.IsNullOrEmpty(ppdefsstr))
+                if (string.IsNullOrEmpty(ppdefsstr))
                     return new List<string>();
 
                 string[] ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);

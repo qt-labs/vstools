@@ -123,7 +123,7 @@ namespace QtProjectLib
             }
         }
 
-        public static String LanguageName
+        public static string LanguageName
         {
             get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName; }
             //get { return Culture.TwoLetterISOLanguageName; }
@@ -137,7 +137,7 @@ namespace QtProjectLib
             string res = sys.resources.GetString(name, SR.Culture);
 
             if (args != null && args.Length > 0)
-                return String.Format(res, args);
+                return string.Format(res, args);
             return res;
         }
 
