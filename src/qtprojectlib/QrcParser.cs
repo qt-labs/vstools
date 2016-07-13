@@ -112,11 +112,11 @@ namespace QtProjectLib
 
         public bool parse()
         {
-            System.IO.FileInfo fi = new System.IO.FileInfo(qrcFileName);
+            var fi = new System.IO.FileInfo(qrcFileName);
             if (!fi.Exists)
                 return false;
             try {
-                XmlTextReader reader = new XmlTextReader(qrcFileName);
+                var reader = new XmlTextReader(qrcFileName);
                 QrcItem currentItem = null;
                 QrcPrefix currentPrefix = null;
                 while (reader.Read()) {

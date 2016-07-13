@@ -79,12 +79,12 @@ namespace QtAppWrapper
             int iParentPid = 0;
             int iCurrentPid = Process.GetCurrentProcess().Id;
 
-            IntPtr oHnd = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+            var oHnd = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
             if (oHnd == IntPtr.Zero)
                 return null;
 
-            PROCESSENTRY32 oProcInfo = new PROCESSENTRY32();
+            var oProcInfo = new PROCESSENTRY32();
 
             oProcInfo.dwSize =
                 (uint) System.Runtime.InteropServices.Marshal.SizeOf(typeof(PROCESSENTRY32));
@@ -106,7 +106,7 @@ namespace QtAppWrapper
         public static void SendFileNameToServer(string fileName)
         {
             int ppid = -1;
-            Process parentProcess = GetParentProcess();
+            var parentProcess = GetParentProcess();
             if (parentProcess != null)
                 ppid = parentProcess.Id;
             SendFileNameToServer(fileName, ppid.ToString());
@@ -114,8 +114,8 @@ namespace QtAppWrapper
 
         public static void SendFileNameToServer(string fileName, string processId)
         {
-            TcpClient client = new TcpClient();
-            IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, 12015);
+            var client = new TcpClient();
+            var serverEndPoint = new IPEndPoint(IPAddress.Loopback, 12015);
             bool clientConnected = false;
             try {
                 client.Connect(serverEndPoint);
@@ -131,10 +131,10 @@ namespace QtAppWrapper
             try {
                 string data = processId + " " + fileName;
                 data += "\n";
-                NetworkStream stream = client.GetStream();
+                var stream = client.GetStream();
 
-                UnicodeEncoding encoder = new UnicodeEncoding();
-                byte[] buffer = encoder.GetBytes(data);
+                var encoder = new UnicodeEncoding();
+                var buffer = encoder.GetBytes(data);
 
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
@@ -160,7 +160,7 @@ namespace QtAppWrapper
 
             // The server will run for ever if no connection from an add-in occurs.
             // So we'll check after a certain time, if there's something in the client list.
-            System.Timers.Timer watchDogTimer = new System.Timers.Timer();
+            var watchDogTimer = new System.Timers.Timer();
             watchDogTimer.Interval = 60000;
             watchDogTimer.Elapsed += WatchDog;
             watchDogTimer.Start();
@@ -198,20 +198,20 @@ namespace QtAppWrapper
                     }
 
                     //blocks until a client has connected to the server
-                    TcpClient client = listener.AcceptTcpClient();
+                    var client = listener.AcceptTcpClient();
                     if (client == null || aboutToExit)
                         break;
 
                     byte[] message = new byte[4096];
-                    NetworkStream stream = client.GetStream();
-                    int bytesRead = stream.Read(message, 0, message.Length);
+                    var stream = client.GetStream();
+                    var bytesRead = stream.Read(message, 0, message.Length);
                     if (IsAddinHelloMessage(message, bytesRead)) {
                         Debug.WriteLine("Add-in connected to qtappwrapper");
                         lock (clientList)
                             clientList.Add(client);
 
                         // Create a thread to handle communication with connected client.
-                        Thread clientThread = new Thread(new ParameterizedThreadStart(WatchAddinConnection));
+                        var clientThread = new Thread(new ParameterizedThreadStart(WatchAddinConnection));
                         clientThread.Name = "WatchAddinConnection";
                         clientThread.Start(client);
                     } else {
@@ -227,10 +227,10 @@ namespace QtAppWrapper
 
         private void WatchAddinConnection(object clientObj)
         {
-            TcpClient client = clientObj as TcpClient;
+            var client = clientObj as TcpClient;
 
             try {
-                NetworkStream stream = client.GetStream();
+                var stream = client.GetStream();
 
                 try {
                     byte[] buffer = new byte[1024];
@@ -271,7 +271,7 @@ namespace QtAppWrapper
             lock (clientList) {
                 foreach (TcpClient c in clientList) {
                     try {
-                        NetworkStream clientStream = c.GetStream();
+                        var clientStream = c.GetStream();
                         clientStream.Write(data, 0, dataSize);
                         clientStream.Flush();
                     } catch (Exception e) {

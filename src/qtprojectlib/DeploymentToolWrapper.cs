@@ -65,7 +65,7 @@ namespace QtProjectLib
 
         public void Add(string filename, string sourceDir, string destDir)
         {
-            string filesToDeploy = GetAdditionalFiles();
+            var filesToDeploy = GetAdditionalFiles();
             if (filesToDeploy.Length > 0)
                 filesToDeploy += ";";
             filesToDeploy += filename + "|" + sourceDir + "|" + destDir + "|0";
@@ -74,7 +74,7 @@ namespace QtProjectLib
 
         public void Remove(string filename, string sourceDir, string destDir)
         {
-            string filesToDeploy = GetAdditionalFiles();
+            var filesToDeploy = GetAdditionalFiles();
             filesToDeploy = filesToDeploy.Replace(filename + "|" + sourceDir + "|" + destDir + "|0", "");
             filesToDeploy = filesToDeploy.Replace(";;", ";");
             if (filesToDeploy.EndsWith(";"))

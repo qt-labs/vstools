@@ -43,7 +43,7 @@ namespace QtProjectLib
     {
         public static string FindQtDirWithTools(Project project)
         {
-            QtVersionManager versionManager = QtVersionManager.The();
+            var versionManager = QtVersionManager.The();
             string projectQtVersion = null;
             if (HelperFunctions.IsQtProject(project)) {
                 projectQtVersion = versionManager.GetProjectQtVersion(project);
@@ -66,7 +66,7 @@ namespace QtProjectLib
                     tool += ".exe";
             }
 
-            QtVersionManager versionManager = QtVersionManager.The();
+            var versionManager = QtVersionManager.The();
             string qtDir = null;
             if (projectQtVersion != null)
                 qtDir = versionManager.GetInstallPath(projectQtVersion);
@@ -84,9 +84,9 @@ namespace QtProjectLib
                 VersionInformation exactlyMatchingVersion = null;
                 VersionInformation matchingVersion = null;
                 VersionInformation somehowMatchingVersion = null;
-                VersionInformation viProjectQtVersion = versionManager.GetVersionInfo(projectQtVersion);
+                var viProjectQtVersion = versionManager.GetVersionInfo(projectQtVersion);
                 foreach (string qtVersion in versionManager.GetVersions()) {
-                    VersionInformation vi = versionManager.GetVersionInfo(qtVersion);
+                    var vi = versionManager.GetVersionInfo(qtVersion);
                     if (tool == null)
                         found = File.Exists(vi.qtDir + "\\bin\\designer.exe")
                             && File.Exists(vi.qtDir + "\\bin\\linguist.exe");
@@ -170,19 +170,19 @@ namespace QtProjectLib
                 activePlatformName = solutionConfig.Split('|')[1];
             }
 
-            VCProject vcprj = prj.Object as VCProject;
+            var vcprj = prj.Object as VCProject;
             foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection) {
                 // Set environment only for active (or given) platform
-                VCPlatform cur_platform = conf.Platform as VCPlatform;
+                var cur_platform = conf.Platform as VCPlatform;
                 if (cur_platform.Name != activePlatformName)
                     continue;
 
-                VCDebugSettings de = conf.DebugSettings as VCDebugSettings;
-                string withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)"));
+                var de = conf.DebugSettings as VCDebugSettings;
+                var withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)"));
                 if (overwrite || de.Environment == null || de.Environment.Length == 0)
                     de.Environment = envpath;
                 else if (!de.Environment.Contains(envpath) && !de.Environment.Contains(withoutPath)) {
-                    Match m = Regex.Match(de.Environment, "PATH\\s*=\\s*");
+                    var m = Regex.Match(de.Environment, "PATH\\s*=\\s*");
                     if (m.Success) {
                         de.Environment = Regex.Replace(de.Environment, "PATH\\s*=\\s*", withoutPath + ";");
                         if (!de.Environment.Contains("$(PATH)") && !de.Environment.Contains("%PATH%")) {
@@ -201,7 +201,7 @@ namespace QtProjectLib
 
         public static bool IsProjectInSolution(EnvDTE.DTE dteObject, string fullName)
         {
-            FileInfo fi = new FileInfo(fullName);
+            var fi = new FileInfo(fullName);
 
             foreach (EnvDTE.Project p in HelperFunctions.ProjectsInSolution(dteObject)) {
                 if (p.FullName.ToLower() == fi.FullName.ToLower())
@@ -216,7 +216,7 @@ namespace QtProjectLib
         /// <param name="name">file name</param>
         static public string NormalizeFilePath(string name)
         {
-            FileInfo fi = new FileInfo(name);
+            var fi = new FileInfo(name);
             return fi.FullName;
         }
 
@@ -279,10 +279,10 @@ namespace QtProjectLib
         /// <returns>the composite string</returns>
         static private string ReadProFileLine(StreamReader streamReader)
         {
-            string line = streamReader.ReadLine();
+            var line = streamReader.ReadLine();
             while (line != null && line.EndsWith("\\")) {
                 line = line.Remove(line.Length - 1);
-                string appendix = streamReader.ReadLine();
+                var appendix = streamReader.ReadLine();
                 if (appendix != null) line += appendix;
             }
             return line;
@@ -296,7 +296,7 @@ namespace QtProjectLib
         static public bool IsSubDirsFile(string profile)
         {
             try {
-                StreamReader sr = new StreamReader(profile);
+                var sr = new StreamReader(profile);
                 string strLine = "";
 
                 while ((strLine = ReadProFileLine(sr)) != null) {
@@ -324,15 +324,15 @@ namespace QtProjectLib
         {
             if (file == null || path == null)
                 return "";
-            FileInfo fi = new FileInfo(file);
-            DirectoryInfo di = new DirectoryInfo(path);
+            var fi = new FileInfo(file);
+            var di = new DirectoryInfo(path);
 
             char[] separator = { '\\' };
-            string[] fiArray = fi.FullName.Split(separator);
+            var fiArray = fi.FullName.Split(separator);
             string dir = di.FullName;
             while (dir.EndsWith("\\"))
                 dir = dir.Remove(dir.Length - 1, 1);
-            string[] diArray = dir.Split(separator);
+            var diArray = dir.Split(separator);
 
             int minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
             int i = 0, j = 0, commonParts = 0;
@@ -373,14 +373,14 @@ namespace QtProjectLib
         /// <returns></returns>
         public static void ReplaceInCustomBuildTools(EnvDTE.Project project, string oldString, string replaceString)
         {
-            VCProject vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject) project.Object;
             if (vcPro == null)
                 return;
 
             foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                     try {
-                        VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(config);
+                        var tool = HelperFunctions.GetCustomBuildTool(config);
                         if (tool == null)
                             continue;
 
@@ -404,7 +404,7 @@ namespace QtProjectLib
         /// <returns></returns>
         static public VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
-            VCCustomBuildTool tool = config.Tool as VCCustomBuildTool;
+            var tool = config.Tool as VCCustomBuildTool;
             if (tool == null)
                 return null;
 
@@ -439,8 +439,8 @@ namespace QtProjectLib
         {
             int count, position0, position1;
             count = position0 = position1 = 0;
-            string upperString = original.ToUpper();
-            string upperPattern = pattern.ToUpper();
+            var upperString = original.ToUpper();
+            var upperPattern = pattern.ToUpper();
             int inc = (original.Length / pattern.Length) *
                       (replacement.Length - pattern.Length);
             char[] chars = new char[original.Length + Math.Max(0, inc)];
@@ -485,12 +485,12 @@ namespace QtProjectLib
         public static void ToggleProjectKind(EnvDTE.Project project)
         {
             string qtDir = null;
-            VCProject vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject) project.Object;
             if (!IsQMakeProject(project))
                 return;
             if (IsQtProject(project)) {
-                QtProject qtPro = QtProject.Create(project);
-                QtVersionManager vm = QtVersionManager.The();
+                var qtPro = QtProject.Create(project);
+                var vm = QtVersionManager.The();
                 qtDir = vm.GetInstallPath(project);
 
                 foreach (string global in (string[]) project.Globals.VariableNames) {
@@ -500,11 +500,11 @@ namespace QtProjectLib
                 }
 
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
-                    CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-                    VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
-                    VCLibrarianTool librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
+                    var compiler = CompilerToolWrapper.Create(config);
+                    var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+                    var librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
                     if (compiler != null) {
-                        string additionalIncludes = compiler.GetAdditionalIncludeDirectories();
+                        var additionalIncludes = compiler.GetAdditionalIncludeDirectories();
                         additionalIncludes = ReplaceCaseInsensitive(additionalIncludes, "$(QTDIR)", qtDir);
                         compiler.SetAdditionalIncludeDirectories(additionalIncludes);
                     }
@@ -521,16 +521,16 @@ namespace QtProjectLib
             } else {
                 qtDir = GetQtDirFromQMakeProject(project);
 
-                QtVersionManager vm = QtVersionManager.The();
-                string qtVersion = vm.GetQtVersionFromInstallDir(qtDir);
+                var vm = QtVersionManager.The();
+                var qtVersion = vm.GetQtVersionFromInstallDir(qtDir);
                 if (qtVersion == null)
                     qtVersion = vm.GetDefaultVersion();
                 if (qtDir == null)
                     qtDir = vm.GetInstallPath(qtVersion);
-                VersionInformation vi = vm.GetVersionInfo(qtVersion);
-                string platformName = vi.GetVSPlatformName();
+                var vi = vm.GetVersionInfo(qtVersion);
+                var platformName = vi.GetVSPlatformName();
                 vm.SaveProjectQtVersion(project, qtVersion, platformName);
-                QtProject qtPro = QtProject.Create(project);
+                var qtPro = QtProject.Create(project);
                 if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
                     bool newProject = false;
                     qtPro.CreatePlatform("Win32", platformName, null, vi, ref newProject);
@@ -540,11 +540,11 @@ namespace QtProjectLib
                 }
 
                 string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                VCConfiguration activeVCConfig = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+                var activeVCConfig = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
                 if (activeVCConfig.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
-                    CompilerToolWrapper compiler = CompilerToolWrapper.Create(activeVCConfig);
-                    VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) activeVCConfig.Tools).Item("VCLinkerTool");
-                    string ppdefs = compiler.GetPreprocessorDefinitions();
+                    var compiler = CompilerToolWrapper.Create(activeVCConfig);
+                    var linker = (VCLinkerTool) ((IVCCollection) activeVCConfig.Tools).Item("VCLinkerTool");
+                    var ppdefs = compiler.GetPreprocessorDefinitions();
                     if (ppdefs != null
                         && ppdefs.IndexOf("QT_PLUGIN") > -1
                         && ppdefs.IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
@@ -558,8 +558,8 @@ namespace QtProjectLib
                 HelperFunctions.CleanupQMakeDependencies(project);
 
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
-                    CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-                    VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+                    var compiler = CompilerToolWrapper.Create(config);
+                    var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
 
                     if (compiler != null) {
                         List<string> additionalIncludes = compiler.AdditionalIncludeDirectories;
@@ -569,7 +569,7 @@ namespace QtProjectLib
                         }
                     }
                     if (linker != null) {
-                        LinkerToolWrapper linkerToolWrapper = new LinkerToolWrapper(linker);
+                        var linkerToolWrapper = new LinkerToolWrapper(linker);
                         List<string> paths = linkerToolWrapper.AdditionalLibraryDirectories;
                         if (paths != null) {
                             ReplaceDirectory(ref paths, qtDir, "$(QTDIR)", project);
@@ -603,7 +603,7 @@ namespace QtProjectLib
                     // convert to absolute path
                     dirName = Path.Combine(Path.GetDirectoryName(project.FullName), dirName);
                     dirName = Path.GetFullPath(dirName);
-                    string alteredDirName = ReplaceCaseInsensitive(dirName, oldDirectory, replacement);
+                    var alteredDirName = ReplaceCaseInsensitive(dirName, oldDirectory, replacement);
                     if (alteredDirName == dirName)
                         continue;
                     dirName = alteredDirName;
@@ -616,24 +616,24 @@ namespace QtProjectLib
 
         public static string GetQtDirFromQMakeProject(Project project)
         {
-            VCProject vcProject = project.Object as VCProject;
+            var vcProject = project.Object as VCProject;
             if (vcProject == null)
                 return null;
 
             try {
                 foreach (VCConfiguration projectConfig in vcProject.Configurations as IVCCollection) {
-                    CompilerToolWrapper compiler = CompilerToolWrapper.Create(projectConfig);
+                    var compiler = CompilerToolWrapper.Create(projectConfig);
                     if (compiler != null) {
                         List<string> additionalIncludeDirectories = compiler.AdditionalIncludeDirectories;
                         if (additionalIncludeDirectories != null) {
                             foreach (string dir in additionalIncludeDirectories) {
-                                string subdir = Path.GetFileName(dir);
+                                var subdir = Path.GetFileName(dir);
                                 if (subdir != "QtCore" && subdir != "QtGui")    // looking for Qt include directories
                                     continue;
-                                string dirName = Path.GetDirectoryName(dir);    // cd ..
+                                var dirName = Path.GetDirectoryName(dir);    // cd ..
                                 dirName = Path.GetDirectoryName(dirName);       // cd ..
                                 if (!Path.IsPathRooted(dirName)) {
-                                    string projectDir = Path.GetDirectoryName(project.FullName);
+                                    var projectDir = Path.GetDirectoryName(project.FullName);
                                     dirName = Path.Combine(projectDir, dirName);
                                     dirName = Path.GetFullPath(dirName);
                                 }
@@ -642,14 +642,14 @@ namespace QtProjectLib
                         }
                     }
 
-                    VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) projectConfig.Tools).Item("VCLinkerTool");
+                    var linker = (VCLinkerTool) ((IVCCollection) projectConfig.Tools).Item("VCLinkerTool");
                     if (linker != null) {
-                        LinkerToolWrapper linkerWrapper = new LinkerToolWrapper(linker);
+                        var linkerWrapper = new LinkerToolWrapper(linker);
                         List<string> linkerPaths = linkerWrapper.AdditionalDependencies;
                         if (linkerPaths != null) {
                             foreach (string library in linkerPaths) {
-                                string lowerLibrary = library.ToLower();
-                                int idx = lowerLibrary.IndexOf("\\lib\\qtmain.lib");
+                                var lowerLibrary = library.ToLower();
+                                var idx = lowerLibrary.IndexOf("\\lib\\qtmain.lib");
                                 if (idx == -1)
                                     idx = lowerLibrary.IndexOf("\\lib\\qtmaind.lib");
                                 if (idx == -1)
@@ -659,10 +659,10 @@ namespace QtProjectLib
                                 if (idx == -1)
                                     continue;
 
-                                string dirName = Path.GetDirectoryName(library);
+                                var dirName = Path.GetDirectoryName(library);
                                 dirName = Path.GetDirectoryName(dirName);   // cd ..
                                 if (!Path.IsPathRooted(dirName)) {
-                                    string projectDir = Path.GetDirectoryName(project.FullName);
+                                    var projectDir = Path.GetDirectoryName(project.FullName);
                                     dirName = Path.Combine(projectDir, dirName);
                                     dirName = Path.GetFullPath(dirName);
                                 }
@@ -676,7 +676,7 @@ namespace QtProjectLib
                             foreach (string libDir in linkerPaths) {
                                 string dirName = libDir;
                                 if (!Path.IsPathRooted(dirName)) {
-                                    string projectDir = Path.GetDirectoryName(project.FullName);
+                                    var projectDir = Path.GetDirectoryName(project.FullName);
                                     dirName = Path.Combine(projectDir, dirName);
                                     dirName = Path.GetFullPath(dirName);
                                 }
@@ -706,7 +706,7 @@ namespace QtProjectLib
             if (!IsQMakeProject(proj))
                 return false;
 
-            EnvDTE.Project envPro = proj.Object as EnvDTE.Project;
+            var envPro = proj.Object as EnvDTE.Project;
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
                 return false;
 
@@ -762,24 +762,24 @@ namespace QtProjectLib
 
         public static void CleanupQMakeDependencies(EnvDTE.Project project)
         {
-            VCProject vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject) project.Object;
             // clean up qmake mess
-            Regex rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
-            Regex rxp2 = new Regex("\\bQAx\\w+\\.lib\\b");
-            Regex rxp3 = new Regex("\\bqtmaind?.lib\\b");
-            Regex rxp4 = new Regex("\\benginiod?.lib\\b");
+            var rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
+            var rxp2 = new Regex("\\bQAx\\w+\\.lib\\b");
+            var rxp3 = new Regex("\\bqtmaind?.lib\\b");
+            var rxp4 = new Regex("\\benginiod?.lib\\b");
             foreach (VCConfiguration cfg in (IVCCollection) vcPro.Configurations) {
-                VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) cfg.Tools).Item("VCLinkerTool");
+                var linker = (VCLinkerTool) ((IVCCollection) cfg.Tools).Item("VCLinkerTool");
                 if (linker == null || linker.AdditionalDependencies == null)
                     continue;
-                LinkerToolWrapper linkerWrapper = new LinkerToolWrapper(linker);
+                var linkerWrapper = new LinkerToolWrapper(linker);
                 List<string> deps = linkerWrapper.AdditionalDependencies;
-                List<string> newDeps = new List<string>();
+                var newDeps = new List<string>();
                 foreach (string lib in deps) {
-                    Match m1 = rxp1.Match(lib);
-                    Match m2 = rxp2.Match(lib);
-                    Match m3 = rxp3.Match(lib);
-                    Match m4 = rxp4.Match(lib);
+                    var m1 = rxp1.Match(lib);
+                    var m2 = rxp2.Match(lib);
+                    var m3 = rxp3.Match(lib);
+                    var m4 = rxp4.Match(lib);
                     if (m1.Success)
                         newDeps.Add(m1.ToString());
                     else if (m2.Success)
@@ -792,11 +792,11 @@ namespace QtProjectLib
                         newDeps.Add(lib);
                 }
                 // Remove Duplicates
-                Dictionary<string, int> uniques = new Dictionary<string, int>();
+                var uniques = new Dictionary<string, int>();
                 foreach (string dep in newDeps) {
                     uniques[dep] = 1;
                 }
-                List<string> uniqueList = new List<string>(uniques.Keys);
+                var uniqueList = new List<string>(uniques.Keys);
                 linkerWrapper.AdditionalDependencies = uniqueList;
             }
         }
@@ -809,7 +809,7 @@ namespace QtProjectLib
         /// <param term='file'>Start point of the deletion</param>
         public static void DeleteEmptyParentDirs(VCFile file)
         {
-            string dir = file.FullPath.Remove(file.FullPath.LastIndexOf(Path.DirectorySeparatorChar));
+            var dir = file.FullPath.Remove(file.FullPath.LastIndexOf(Path.DirectorySeparatorChar));
             DeleteEmptyParentDirs(dir);
         }
 
@@ -820,7 +820,7 @@ namespace QtProjectLib
         /// <param term='file'>Start point of the deletion</param>
         public static void DeleteEmptyParentDirs(string directory)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(directory);
+            var dirInfo = new DirectoryInfo(directory);
             while (dirInfo.Exists && dirInfo.GetFileSystemInfos().Length == 0) {
                 DirectoryInfo tmp = dirInfo;
                 dirInfo = dirInfo.Parent;
@@ -883,19 +883,19 @@ namespace QtProjectLib
 
         public static string RemoveFileNameExtension(FileInfo fi)
         {
-            int lastIndex = fi.Name.LastIndexOf(fi.Extension);
+            var lastIndex = fi.Name.LastIndexOf(fi.Extension);
             return fi.Name.Remove(lastIndex, fi.Extension.Length);
         }
 
         public static bool IsInFilter(VCFile vcfile, FakeFilter filter)
         {
-            VCProjectItem item = (VCProjectItem) vcfile;
+            var item = (VCProjectItem) vcfile;
 
             while ((item.Parent != null) && (item.Kind != "VCProject")) {
                 item = (VCProjectItem) item.Parent;
 
                 if (item.Kind == "VCFilter") {
-                    VCFilter f = (VCFilter) item;
+                    var f = (VCFilter) item;
                     if (f.UniqueIdentifier != null
                         && f.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower())
                         return true;
@@ -992,7 +992,7 @@ namespace QtProjectLib
 
         public static List<string> GetProjectFiles(EnvDTE.Project pro, FilesToList filter)
         {
-            List<string> fileList = new List<string>();
+            var fileList = new List<string>();
 
             VCProject vcpro;
             try {
@@ -1009,7 +1009,7 @@ namespace QtProjectLib
                 if (vcfile.ItemName.EndsWith(".vcxproj.filters"))
                     continue;
                 bool excluded = false;
-                IVCCollection fileConfigurations = (IVCCollection) vcfile.FileConfigurations;
+                var fileConfigurations = (IVCCollection) vcfile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations) {
                     if (config.ExcludedFromBuild && config.MatchName(configurationName, false)) {
                         excluded = true;
@@ -1068,8 +1068,8 @@ namespace QtProjectLib
         /// <param name="fileName"></param>
         public static void RemoveFileInProject(VCProject vcpro, string fileName)
         {
-            QtProject qtProj = QtProject.Create(vcpro);
-            FileInfo fi = new FileInfo(fileName);
+            var qtProj = QtProject.Create(vcpro);
+            var fi = new FileInfo(fileName);
 
             foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
                 if (vcfile.FullPath.ToLower() == fi.FullName.ToLower()) {
@@ -1115,7 +1115,7 @@ namespace QtProjectLib
 
         public static EnvDTE.Project GetSingleProjectInSolution(EnvDTE.DTE dteObject)
         {
-            List<Project> projectList = ProjectsInSolution(dteObject);
+            var projectList = ProjectsInSolution(dteObject);
             if (dteObject == null || dteObject.Solution == null ||
                     projectList.Count != 1)
                 return null; // no way to know which one to select
@@ -1153,7 +1153,7 @@ namespace QtProjectLib
                 return null;
 
             // choose the first one
-            EnvDTE.SelectedItem item = dteObject.SelectedItems.Item(1);
+            var item = dteObject.SelectedItems.Item(1);
 
             if (item.ProjectItem == null)
                 return null;
@@ -1183,7 +1183,7 @@ namespace QtProjectLib
 
             VCFile[] files = new VCFile[items.Count + 1];
             for (int i = 1; i <= items.Count; ++i) {
-                EnvDTE.SelectedItem item = items.Item(i);
+                var item = items.Item(i);
                 if (item.ProjectItem == null)
                     continue;
 
@@ -1203,10 +1203,10 @@ namespace QtProjectLib
 
         public static Image GetSharedImage(string name)
         {
-            Assembly a = Assembly.GetExecutingAssembly();
+            var a = Assembly.GetExecutingAssembly();
             Image image = null;
             name = "Digia." + name;
-            Stream imgStream = a.GetManifestResourceStream(name);
+            var imgStream = a.GetManifestResourceStream(name);
             if (imgStream != null) {
                 image = Image.FromStream(imgStream);
                 imgStream.Close();
@@ -1216,14 +1216,14 @@ namespace QtProjectLib
 
         public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)
         {
-            EnvDTE.Project pro = HelperFunctions.VCProjectToProject((VCProject) qrcFile.project);
+            var pro = HelperFunctions.VCProjectToProject((VCProject) qrcFile.project);
 
-            RccOptions rccOpts = new RccOptions(pro, qrcFile);
+            var rccOpts = new RccOptions(pro, qrcFile);
 
             if (cmdLine.Length > 0) {
-                string[] cmdSplit = cmdLine.Split(new Char[] { ' ', '\t' });
+                var cmdSplit = cmdLine.Split(new Char[] { ' ', '\t' });
                 for (int i = 0; i < cmdSplit.Length; ++i) {
-                    string lowercmdSplit = cmdSplit[i].ToLower();
+                    var lowercmdSplit = cmdSplit[i].ToLower();
                     if (lowercmdSplit.Equals("-threshold")) {
                         rccOpts.CompressFiles = true;
                         rccOpts.CompressThreshold = int.Parse(cmdSplit[i + 1]);
@@ -1243,13 +1243,13 @@ namespace QtProjectLib
 
         public static List<EnvDTE.Project> ProjectsInSolution(EnvDTE.DTE dteObject)
         {
-            List<EnvDTE.Project> projects = new List<EnvDTE.Project>();
+            var projects = new List<EnvDTE.Project>();
             Solution solution = dteObject.Solution;
             if (solution != null) {
                 int c = solution.Count;
                 for (int i = 1; i <= c; ++i) {
                     try {
-                        Project prj = solution.Projects.Item(i) as Project;
+                        var prj = solution.Projects.Item(i) as Project;
                         if (prj == null)
                             continue;
                         addSubProjects(prj, ref projects);
@@ -1385,7 +1385,7 @@ namespace QtProjectLib
 
             EnvDTE.DTE dte = project.DTE;
             Messages.ActivateMessagePane();
-            string qtDir = HelperFunctions.FindQtDirWithTools(project);
+            var qtDir = HelperFunctions.FindQtDirWithTools(project);
 
             proc.StartInfo.FileName = qtDir + application;
             proc.StartInfo.Arguments = arguments;
@@ -1396,7 +1396,7 @@ namespace QtProjectLib
                 proc.Start();
                 if (checkExitCode && application.ToLower().IndexOf("lupdate.exe") > -1 ||
                     checkExitCode && application.ToLower().IndexOf("lrelease.exe") > -1) {
-                    System.Threading.Thread errorThread
+                    var errorThread
                         = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(ReadQtStandardError));
 
                     errorThread.Start(dte);
@@ -1406,12 +1406,12 @@ namespace QtProjectLib
                     int exitCode = proc.ExitCode;
                     if (exitCode == 0) {
                         string arg = arguments;
-                        int index = arg.IndexOf("-ts");
+                        var index = arg.IndexOf("-ts");
                         string file = "file: " + arg + " ";
                         if (index > 0)
                             file = "file: " + arg.Substring(index + 3) + " ";
 
-                        FileInfo info = new FileInfo(application);
+                        var info = new FileInfo(application);
                         Messages.PaneMessage(project.DTE, "--- (" +
                             HelperFunctions.RemoveFileNameExtension(info) + ") " +
                             file + ": Exit Code: " + exitCode);
@@ -1428,7 +1428,7 @@ namespace QtProjectLib
 
         private static void ReadQtStandardError(object param)
         {
-            DTE dte = param as DTE;
+            var dte = param as DTE;
             if (proc == null)
                 return;
 
@@ -1442,7 +1442,7 @@ namespace QtProjectLib
 
         private static void QtApplicationExited(object sender, EventArgs e)
         {
-            QProcess proc = (QProcess) sender;
+            var proc = (QProcess) sender;
             DisplayErrorMessage(proc);
             proc.Exited -= QtApplicationExited;
         }
@@ -1462,8 +1462,8 @@ namespace QtProjectLib
 
         public static string FindFileInPATH(string fileName)
         {
-            string envPATH = System.Environment.ExpandEnvironmentVariables("%PATH%");
-            string[] directories = envPATH.Split(new Char[] { ';' });
+            var envPATH = System.Environment.ExpandEnvironmentVariables("%PATH%");
+            var directories = envPATH.Split(new Char[] { ';' });
             foreach (string directory in directories) {
                 string fullFilePath = directory;
                 if (!fullFilePath.EndsWith("\\")) fullFilePath += '\\';

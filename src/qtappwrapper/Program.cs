@@ -59,7 +59,7 @@ namespace QtAppWrapper
                     else
                         EditorServer.SendFileNameToServer(fileName);
                 } else {
-                    EditorServer server = new EditorServer();
+                    var server = new EditorServer();
                 }
             } catch (Exception e) {
                 MessageBox.Show(e.ToString(), "Exception in QtAppWrapper", MessageBoxButtons.OK,

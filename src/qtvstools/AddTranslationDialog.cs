@@ -213,7 +213,7 @@ namespace QtVsTools
 
         private void AddTranslationDialog_Load(object sender, System.EventArgs e)
         {
-            TranslationItem[] cultures = TranslationItem.GetTranslationItems();
+            var cultures = TranslationItem.GetTranslationItems();
             langComboBox.Items.AddRange(cultures);
             langComboBox.SelectedItem = TranslationItem.SystemLanguage();
         }
@@ -251,9 +251,9 @@ namespace QtVsTools
 
         public static TranslationItem[] GetTranslationItems()
         {
-            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures
+            var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures
                 & ~CultureTypes.UserCustomCulture & ~CultureTypes.ReplacementCultures);
-            List<TranslationItem> transItems = new List<TranslationItem>();
+            var transItems = new List<TranslationItem>();
             for (int i = 0; i < cultures.Length; i++) {
                 // Locales without a LCID are given LCID 0x1000 (http://msdn.microsoft.com/en-us/library/dn363603.aspx)
                 // Trying to create a TranslationItem for these will cause an exception to be thrown.

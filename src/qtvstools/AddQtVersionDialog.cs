@@ -217,13 +217,13 @@ namespace QtVsTools
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            QtVersionManager vm = QtVersionManager.The();
+            var vm = QtVersionManager.The();
             VersionInformation versionInfo = null;
             try {
                 versionInfo = new VersionInformation(pathBox.Text);
             } catch (Exception exception) {
                 if (nameBox.Text == "$(QTDIR)") {
-                    string defaultVersion = vm.GetDefaultVersion();
+                    var defaultVersion = vm.GetDefaultVersion();
                     versionInfo = vm.GetVersionInfo(defaultVersion);
                 } else {
                     Messages.DisplayErrorMessage(exception.Message);
@@ -231,7 +231,7 @@ namespace QtVsTools
                 }
             }
 
-            string makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+            var makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
             if (makefileGenerator != "MSVC.NET" && makefileGenerator != "MSBUILD") {
                 MessageBox.Show(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator",
                     makefileGenerator), null, MessageBoxButtons.OK, MessageBoxIcon.Error,
@@ -248,7 +248,7 @@ namespace QtVsTools
             errorLabel.Text = "";
             errorTimer.Stop();
             errorTimer.Start();
-            string name = nameBox.Text.Trim();
+            var name = nameBox.Text.Trim();
             string path = pathBox.Text;
 
             if (sender == nameBox)
@@ -261,7 +261,7 @@ namespace QtVsTools
                 else
                     str = path;
 
-                int pos = str.LastIndexOf('\\');
+                var pos = str.LastIndexOf('\\');
                 name = str.Substring(pos + 1);
                 nameBox.TextChanged -= DataChanged;
                 nameBox.Text = name;
@@ -278,7 +278,7 @@ namespace QtVsTools
 
             if (name != "$(QTDIR)") {
                 try {
-                    System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(pathBox.Text);
+                    var di = new System.IO.DirectoryInfo(pathBox.Text);
                     if (!di.Exists) {
                         lastErrorString = "";
                         okButton.Enabled = false;
@@ -290,7 +290,7 @@ namespace QtVsTools
                     return;
                 }
 
-                FileInfo fi = new FileInfo(pathBox.Text + "\\lib\\libqtmain.a");
+                var fi = new FileInfo(pathBox.Text + "\\lib\\libqtmain.a");
                 if (!fi.Exists)
                     fi = new FileInfo(pathBox.Text + "\\lib\\libqtmaind.a");
                 if (fi.Exists) {
@@ -335,7 +335,7 @@ namespace QtVsTools
         private static string RestoreLastSelectedPath()
         {
             try {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\"
+                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\"
                     + Resources.registryPackagePath, false);
                 if (key != null)
                     return (string) key.GetValue("QtVersionLastSelectedPath");
@@ -347,7 +347,7 @@ namespace QtVsTools
 
         private static void SaveLastSelectedPath(string path)
         {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\"
+            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\"
                 + Resources.registryPackagePath);
             if (key != null)
                 key.SetValue("QtVersionLastSelectedPath", path);

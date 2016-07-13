@@ -68,7 +68,7 @@ namespace QtProjectLib
             // To find location of "qmake.conf" there is a need to run "qmake -query" command
             // This is what happens below.
             if (!fileInfo.Exists) {
-                QMakeQuery qmakeQuery = new QMakeQuery(versionInfo);
+                var qmakeQuery = new QMakeQuery(versionInfo);
                 qmakespecFolder = qmakeQuery.query("QMAKE_XSPEC");
 
                 if (qmakeQuery.ErrorValue == 0 && qmakespecFolder.Length > 0) {
@@ -97,14 +97,14 @@ namespace QtProjectLib
         {
             fileInfo = new FileInfo(filename);
             if (fileInfo.Exists) {
-                StreamReader streamReader = new StreamReader(filename);
-                string line = streamReader.ReadLine();
+                var streamReader = new StreamReader(filename);
+                var line = streamReader.ReadLine();
                 while (line != null) {
                     line = line.Trim();
-                    int commentStartIndex = line.IndexOf('#');
+                    var commentStartIndex = line.IndexOf('#');
                     if (commentStartIndex >= 0)
                         line = line.Remove(commentStartIndex);
-                    int pos = line.IndexOf('=');
+                    var pos = line.IndexOf('=');
                     if (pos > 0) {
                         string op = "=";
                         if (line[pos - 1] == '+' || line[pos - 1] == '-')
@@ -124,12 +124,12 @@ namespace QtProjectLib
                             entries[lineKey] = lineValue;
                     } else if (line.StartsWith("include")) {
                         pos = line.IndexOf('(');
-                        int posEnd = line.LastIndexOf(')');
+                        var posEnd = line.LastIndexOf(')');
                         if (pos > 0 && pos < posEnd) {
-                            string filenameToInclude = line.Substring(pos + 1, posEnd - pos - 1);
+                            var filenameToInclude = line.Substring(pos + 1, posEnd - pos - 1);
                             string saveCurrentDir = Environment.CurrentDirectory;
                             Environment.CurrentDirectory = fileInfo.Directory.FullName;
-                            FileInfo fileInfoToInclude = new FileInfo(filenameToInclude);
+                            var fileInfoToInclude = new FileInfo(filenameToInclude);
                             if (fileInfoToInclude.Exists)
                                 ParseFile(fileInfoToInclude.FullName, ref entries);
                             Environment.CurrentDirectory = saveCurrentDir;
@@ -143,7 +143,7 @@ namespace QtProjectLib
 
         private string ExpandVariables(string value, Hashtable entries)
         {
-            int pos = value.IndexOf("$$");
+            var pos = value.IndexOf("$$");
             while (pos != -1) {
                 int startPos = pos + 2;
                 int endPos = startPos;
@@ -157,7 +157,7 @@ namespace QtProjectLib
                         }
                     }
                     if (endPos > startPos) {
-                        string varName = value.Substring(startPos, endPos - startPos);
+                        var varName = value.Substring(startPos, endPos - startPos);
                         object varValueObj = entries[varName];
                         string varValue = "";
                         if (varValueObj != null) varValue = varValueObj.ToString();
@@ -177,7 +177,7 @@ namespace QtProjectLib
             if (!entries.Contains(key))
                 return;
 
-            string value = entries[key].ToString();
+            var value = entries[key].ToString();
             do {
                 pos = value.IndexOf(valueToRemove);
                 if (pos >= 0)

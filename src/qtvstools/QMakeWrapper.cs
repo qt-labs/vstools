@@ -131,11 +131,11 @@ namespace QtVsTools
 
         private static string[] readFileElements(XmlReader reader, string tag)
         {
-            List<string> fileNames = new List<string>();
+            var fileNames = new List<string>();
             if (reader.ReadToFollowing(tag)) {
                 if (reader.ReadToDescendant("file")) {
                     do {
-                        string fname = reader.ReadString();
+                        var fname = reader.ReadString();
                         fileNames.Add(fname);
                     } while (reader.ReadToNextSibling("file"));
                 }

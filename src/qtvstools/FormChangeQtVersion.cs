@@ -66,7 +66,7 @@ namespace QtVsTools
         public void UpdateContent(ChangeFor change)
         {
             lbQtVersions.Items.Clear();
-            QtVersionManager vm = QtVersionManager.The();
+            var vm = QtVersionManager.The();
             foreach (string versionName in vm.GetVersions()) {
                 lbQtVersions.Items.Add(versionName);
             }
@@ -80,7 +80,7 @@ namespace QtVsTools
                     lbQtVersions.SelectedItem = qtVer;
                 Text = SR.GetString("SolutionQtVersion");
             } else {
-                Project pro = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                var pro = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 qtVer = vm.GetProjectQtVersion(pro);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();

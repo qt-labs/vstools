@@ -75,7 +75,7 @@ namespace QtProjectLib
 
         public static string GetMocDirectory(EnvDTE.Project project, string configName, string platformName)
         {
-            string dir = GetDirectory(project, Resources.mocDirKeyword);
+            var dir = GetDirectory(project, Resources.mocDirKeyword);
             if (!string.IsNullOrEmpty(configName))
                 dir = dir.Replace("$(ConfigurationName)", configName);
             if (!string.IsNullOrEmpty(platformName))
@@ -85,13 +85,13 @@ namespace QtProjectLib
 
         public static bool HasDifferentMocFilePerConfig(EnvDTE.Project project)
         {
-            string mocDir = GetMocDirectory(project);
+            var mocDir = GetMocDirectory(project);
             return mocDir.Contains("$(ConfigurationName)");
         }
 
         public static bool HasDifferentMocFilePerPlatform(EnvDTE.Project project)
         {
-            string mocDir = GetMocDirectory(project);
+            var mocDir = GetMocDirectory(project);
             return mocDir.Contains("$(PlatformName)");
         }
 
@@ -228,9 +228,9 @@ namespace QtProjectLib
         private static string GetDirectory(string type)
         {
             try {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
                 if (key != null) {
-                    string path = (string) key.GetValue(type, null);
+                    var path = (string) key.GetValue(type, null);
                     if (path != null)
                         return HelperFunctions.NormalizeRelativeFilePath(path);
                 }
@@ -243,9 +243,9 @@ namespace QtProjectLib
         private static string GetOption(string type)
         {
             try {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
                 if (key != null) {
-                    string opt = (string) key.GetValue(type, null);
+                    var opt = (string) key.GetValue(type, null);
                     if (opt != null)
                         return opt;
                 }
@@ -291,7 +291,7 @@ namespace QtProjectLib
                         VCCustomBuildTool tool = null;
                         string configName = null;
                         string platformName = null;
-                        VCProject vcpro = (VCProject) project.Object;
+                        var vcpro = (VCProject) project.Object;
                         foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
                             if ((type == Resources.mocDirKeyword &&
                                 (HelperFunctions.HasHeaderFileExtension(vcfile.Name) || vcfile.Name.ToLower().EndsWith(".moc")))
@@ -300,8 +300,8 @@ namespace QtProjectLib
                                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                                     tool = HelperFunctions.GetCustomBuildTool(config);
                                     configName = config.Name.Remove(config.Name.IndexOf('|'));
-                                    VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                    VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
+                                    var platform = vcConfig.Platform as VCPlatform;
                                     platformName = platform.Name;
                                     if (tool != null && (tool.CommandLine.ToLower().IndexOf("moc.exe") != -1
                                         || (tool.CommandLine.ToLower().IndexOf("uic.exe") != -1)
@@ -317,7 +317,7 @@ namespace QtProjectLib
 
                         if (tool != null) {
                             string dir = null;
-                            int lastindex = tool.Outputs.LastIndexOf('\\');
+                            var lastindex = tool.Outputs.LastIndexOf('\\');
                             if (tool.Outputs.LastIndexOf('/') > lastindex)
                                 lastindex = tool.Outputs.LastIndexOf('/');
 
@@ -370,8 +370,8 @@ namespace QtProjectLib
             // - globally defined default option
             // - empty options
             if (project != null && project.Globals.get_VariablePersists(type)) {
-                string valueString = (string) project.Globals[type];
-                int val = Convert.ToInt32(valueString);
+                var valueString = (string) project.Globals[type];
+                var val = Convert.ToInt32(valueString);
                 bool v = val > 0 ? true : false;
                 return v;
             }
@@ -420,7 +420,7 @@ namespace QtProjectLib
         public static void cleanUpCache(EnvDTE.Project project)
         {
             try {
-                IDictionaryEnumerator mocEnumerator = mocDirCache.GetEnumerator();
+                var mocEnumerator = mocDirCache.GetEnumerator();
                 while (mocEnumerator.MoveNext()) {
                     if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) mocEnumerator.Key)) {
                         mocDirCache.Remove(mocEnumerator.Key);
@@ -428,7 +428,7 @@ namespace QtProjectLib
                     }
                 }
 
-                IDictionaryEnumerator uicEnumerator = uicDirCache.GetEnumerator();
+                var uicEnumerator = uicDirCache.GetEnumerator();
                 while (uicEnumerator.MoveNext()) {
                     if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) uicEnumerator.Key)) {
                         uicDirCache.Remove(uicEnumerator.Key);
@@ -436,7 +436,7 @@ namespace QtProjectLib
                     }
                 }
 
-                IDictionaryEnumerator rccEnumerator = rccDirCache.GetEnumerator();
+                var rccEnumerator = rccDirCache.GetEnumerator();
                 while (rccEnumerator.MoveNext()) {
                     if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) rccEnumerator.Key)) {
                         rccDirCache.Remove(rccEnumerator.Key);
@@ -449,7 +449,7 @@ namespace QtProjectLib
         private static void SaveDirectory(string type, string dir)
         {
             dir = HelperFunctions.NormalizeRelativeFilePath(dir);
-            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (key == null)
                 return;
             key.SetValue(type, dir);
@@ -457,7 +457,7 @@ namespace QtProjectLib
 
         private static void SaveOption(string type, string option)
         {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (key == null)
                 return;
             if (option == null)
@@ -467,7 +467,7 @@ namespace QtProjectLib
 
         public static Size Size()
         {
-            Size s = new Size();
+            var s = new Size();
             s.Width = GetGridValue("gridX", 10);
             s.Height = GetGridValue("gridY", 10);
             return s;
@@ -536,9 +536,9 @@ namespace QtProjectLib
         private static bool GetBoolValue(string key, bool defaultValue)
         {
             bool v;
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey != null) {
-                int val = (int) regKey.GetValue(key, defaultValue ? (object) 1 : (object) 0);
+                var val = (int) regKey.GetValue(key, defaultValue ? (object) 1 : (object) 0);
                 v = val > 0 ? true : false;
             } else {
                 v = defaultValue;
@@ -548,7 +548,7 @@ namespace QtProjectLib
 
         private static bool ValueExists(string key)
         {
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey != null) {
                 foreach (string s in regKey.GetValueNames())
                     if (s == key)
@@ -559,7 +559,7 @@ namespace QtProjectLib
 
         private static void SetBoolValue(string key, bool val)
         {
-            RegistryKey regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey == null)
                 return;
             regKey.SetValue(key, val ? 1 : 0);
@@ -567,10 +567,10 @@ namespace QtProjectLib
 
         private static int GetGridValue(string key, int defaultValue)
         {
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey != null) {
                 try {
-                    int val = Convert.ToInt32((regKey.GetValue(key, defaultValue)));
+                    var val = Convert.ToInt32((regKey.GetValue(key, defaultValue)));
                     if (val <= 0 || val > 100)
                         return defaultValue;
                     return val;
@@ -583,7 +583,7 @@ namespace QtProjectLib
 
         private static void SetGridValue(string key, int val)
         {
-            RegistryKey regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey == null)
                 return;
             regKey.SetValue(key, val.ToString());

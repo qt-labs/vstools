@@ -48,10 +48,10 @@ namespace QtProjectLib
 
         private void Init(string qtdir)
         {
-            FileInfo fi = new FileInfo(qtdir + "\\mkspecs\\qconfig.pri");
+            var fi = new FileInfo(qtdir + "\\mkspecs\\qconfig.pri");
             if (fi.Exists) {
                 try {
-                    StreamReader reader = new StreamReader(fi.FullName);
+                    var reader = new StreamReader(fi.FullName);
                     string line = null;
                     while ((line = reader.ReadLine()) != null)
                         parseLine(line);
@@ -77,7 +77,7 @@ namespace QtProjectLib
         {
             line = line.Trim();
             if (line.StartsWith("CONFIG")) {
-                string[] values = line.Substring(6).Split(new char[] { ' ', '\t' });
+                var values = line.Substring(6).Split(new char[] { ' ', '\t' });
                 foreach (string s in values) {
                     if (s == "static")
                         isStaticBuild = true;
@@ -85,7 +85,7 @@ namespace QtProjectLib
                         isStaticBuild = false;
                 }
             } else if (line.StartsWith("DEFAULT_SIGNATURE")) {
-                int idx = line.IndexOf('=');
+                var idx = line.IndexOf('=');
                 if (idx < 0)
                     return;
                 signatureFile = line.Remove(0, idx + 1).Trim();

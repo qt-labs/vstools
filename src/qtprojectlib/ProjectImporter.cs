@@ -57,7 +57,7 @@ namespace QtProjectLib
             if (DialogResult.OK != toOpen.ShowDialog())
                 return;
 
-            FileInfo mainInfo = new FileInfo(toOpen.FileName);
+            var mainInfo = new FileInfo(toOpen.FileName);
             if (HelperFunctions.IsSubDirsFile(mainInfo.FullName)) {
                 // we use the safe way. Make the user close the existing solution manually
                 if ((!string.IsNullOrEmpty(dteObject.Solution.FullName))
@@ -79,8 +79,8 @@ namespace QtProjectLib
 
         private void ImportSolution(FileInfo mainInfo, string qtVersion)
         {
-            VersionInformation versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            FileInfo VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
+            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            var VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
             ReplaceAbsoluteQtDirInSolution(VCInfo);
@@ -92,7 +92,7 @@ namespace QtProjectLib
                         QtVersionManager.The().SaveSolutionQtVersion(dteObject.Solution, qtVersion);
                         foreach (Project prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                            QtProject qtPro = QtProject.Create(prj);
+                            var qtPro = QtProject.Create(prj);
                             qtPro.SetQtEnvironment();
                             ApplyPostImportSteps(qtPro);
                         }
@@ -107,8 +107,8 @@ namespace QtProjectLib
 
         public void ImportProject(FileInfo mainInfo, string qtVersion)
         {
-            VersionInformation versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            FileInfo VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
+            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            var VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
             if (null == VCInfo)
                 return;
 
@@ -138,9 +138,9 @@ namespace QtProjectLib
                         }
                     }
                     if (pro != null) {
-                        QtProject qtPro = QtProject.Create(pro);
+                        var qtPro = QtProject.Create(pro);
                         qtPro.SetQtEnvironment();
-                        string platformName = versionInfo.GetVSPlatformName();
+                        var platformName = versionInfo.GetVSPlatformName();
 
                         if (qtVersion != null) {
                             QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
@@ -156,10 +156,10 @@ namespace QtProjectLib
                         // try to figure out if the project is a plugin project
                         try {
                             string activeConfig = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                            VCConfiguration config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+                            var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
                             if (config.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
-                                CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-                                VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+                                var compiler = CompilerToolWrapper.Create(config);
+                                var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
                                 if (compiler.GetPreprocessorDefinitions().IndexOf("QT_PLUGIN") > -1
                                     && compiler.GetPreprocessorDefinitions().IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
                                     && compiler.GetAdditionalIncludeDirectories().IndexOf("QtDesigner") > -1
@@ -179,24 +179,24 @@ namespace QtProjectLib
 
         private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile)
         {
-            List<string> projects = ParseProjectsFromSolution(solutionFile);
+            var projects = ParseProjectsFromSolution(solutionFile);
             foreach (string project in projects) {
-                FileInfo projectInfo = new FileInfo(project);
+                var projectInfo = new FileInfo(project);
                 ReplaceAbsoluteQtDirInProject(projectInfo);
             }
         }
 
         private static List<string> ParseProjectsFromSolution(FileInfo solutionFile)
         {
-            StreamReader sr = solutionFile.OpenText();
-            string content = sr.ReadToEnd();
+            var sr = solutionFile.OpenText();
+            var content = sr.ReadToEnd();
             sr.Close();
 
-            List<string> projects = new List<string>();
-            int index = content.IndexOf(projectFileExtension);
+            var projects = new List<string>();
+            var index = content.IndexOf(projectFileExtension);
             while (index != -1) {
                 int startIndex = content.LastIndexOf('\"', index, index) + 1;
-                int endIndex = content.IndexOf('\"', index);
+                var endIndex = content.IndexOf('\"', index);
                 projects.Add(content.Substring(startIndex, endIndex - startIndex));
                 content = content.Substring(endIndex);
                 index = content.IndexOf(projectFileExtension);
@@ -206,14 +206,14 @@ namespace QtProjectLib
 
         private void ReplaceAbsoluteQtDirInProject(FileInfo projectFile)
         {
-            StreamReader sr = projectFile.OpenText();
-            string content = sr.ReadToEnd();
+            var sr = projectFile.OpenText();
+            var content = sr.ReadToEnd();
             sr.Close();
 
-            string qtDir = ParseQtDirFromFileContent(content);
+            var qtDir = ParseQtDirFromFileContent(content);
             if (!string.IsNullOrEmpty(qtDir)) {
                 content = HelperFunctions.ReplaceCaseInsensitive(content, qtDir, "$(QTDIR)\\");
-                StreamWriter sw = projectFile.CreateText();
+                var sw = projectFile.CreateText();
                 sw.Write(content);
                 sw.Flush();
                 sw.Close();
@@ -224,9 +224,9 @@ namespace QtProjectLib
 
         private static string ParseQtDirFromFileContent(string vcFileContent)
         {
-            string uicQtDir = FindQtDirFromExtension(vcFileContent, "bin\\uic.exe");
-            string rccQtDir = FindQtDirFromExtension(vcFileContent, "bin\\rcc.exe");
-            string mkspecQtDir = FindQtDirFromExtension(vcFileContent, "mkspecs\\default");
+            var uicQtDir = FindQtDirFromExtension(vcFileContent, "bin\\uic.exe");
+            var rccQtDir = FindQtDirFromExtension(vcFileContent, "bin\\rcc.exe");
+            var mkspecQtDir = FindQtDirFromExtension(vcFileContent, "mkspecs\\default");
             if (!string.IsNullOrEmpty(mkspecQtDir)) {
                 if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower()) {
                     return "";
@@ -280,7 +280,7 @@ namespace QtProjectLib
         {
             foreach (VCConfiguration cfg in (IVCCollection) qtProject.VCProject.Configurations) {
                 cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)\";
-                CompilerToolWrapper compilerTool = CompilerToolWrapper.Create(cfg);
+                var compilerTool = CompilerToolWrapper.Create(cfg);
                 if (compilerTool != null) {
                     compilerTool.ObjectFile = @"$(IntDir)";
                     compilerTool.ProgramDataBaseFileName = @"$(IntDir)vc$(PlatformToolsetVersion).pdb";
@@ -308,21 +308,21 @@ namespace QtProjectLib
 
         private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
         {
-            string name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
+            var name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
 
-            FileInfo VCInfo = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);
+            var VCInfo = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);
 
             if (!VCInfo.Exists || DialogResult.Yes == MessageBox.Show(SR.GetString("ExportProject_ProjectExistsRegenerateOrReuse", VCInfo.Name),
                 SR.GetString("ProjectExists"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                 Messages.PaneMessage(dteObject, "--- (Import): Generating new project of " + mainInfo.Name + " file");
 
-                InfoDialog dialog = new InfoDialog(mainInfo.Name);
-                QMake qmake = new QMake(dteObject, mainInfo.FullName, recursive, vi);
+                var dialog = new InfoDialog(mainInfo.Name);
+                var qmake = new QMake(dteObject, mainInfo.FullName, recursive, vi);
 
                 qmake.CloseEvent += dialog.CloseEventHandler;
                 qmake.PaneMessageDataEvent += PaneMessageDataReceived;
 
-                System.Threading.Thread qmakeThread = new System.Threading.Thread(new ThreadStart(qmake.RunQMake));
+                var qmakeThread = new System.Threading.Thread(new ThreadStart(qmake.RunQMake));
                 qmakeThread.Start();
                 dialog.ShowDialog();
                 qmakeThread.Join();

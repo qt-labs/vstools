@@ -130,7 +130,7 @@ namespace QtVsTools
 
         public static string GetString(string name, params object[] args)
         {
-            string res = GetString(name);
+            var res = GetString(name);
             if (args != null && args.Length > 0)
                 return string.Format(res, args);
             return res;
@@ -138,7 +138,7 @@ namespace QtVsTools
 
         public static string GetString(string name)
         {
-            SR sys = GetLoader();
+            var sys = GetLoader();
             if (sys == null)
                 return null;
 

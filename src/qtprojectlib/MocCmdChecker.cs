@@ -39,7 +39,7 @@ namespace QtProjectLib
 
         private string NormalizePath(string path)
         {
-            string s = path.ToLower().Trim();
+            var s = path.ToLower().Trim();
             s = backslashRegEx.Replace(s, "\\");
             s = endRegEx.Replace(s, "");
             return s;
@@ -52,17 +52,17 @@ namespace QtProjectLib
             string inputMocFile = ProjectMacros.Path;
             if (outputFile.ToLower().EndsWith(".moc"))
                 inputMocFile = mocFile;
-            string[] cmds = SplitIntoCommands(cmdLine);
-            int mocPos = MocCommandPosition(cmds);
+            var cmds = SplitIntoCommands(cmdLine);
+            var mocPos = MocCommandPosition(cmds);
             if (mocPos < 0)
                 return null;
 
             string mocCmd = cmds[mocPos];
-            List<string> defs = ExtractDefines(mocCmd);
-            List<string> incs = ExtractIncludes(mocCmd);
-            string pchParameters = ExtractPCHOptions(mocCmd);
-            List<string> newIncludes = ExtractIncludes(includes);
-            List<string> newDefines = ExtractDefines(defines);
+            var defs = ExtractDefines(mocCmd);
+            var incs = ExtractIncludes(mocCmd);
+            var pchParameters = ExtractPCHOptions(mocCmd);
+            var newIncludes = ExtractIncludes(includes);
+            var newDefines = ExtractDefines(defines);
 
             bool equal = true;
 
@@ -117,7 +117,7 @@ namespace QtProjectLib
 
         private static string[] SplitIntoCommands(string cmdLine)
         {
-            string[] cmds = cmdLine.Split(new string[] { "&&", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var cmds = cmdLine.Split(new string[] { "&&", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             string[] res = new string[cmds.Length];
             for (int i = 0; i < cmds.Length; ++i)
                 res[i] = cmds[i].Trim();
@@ -127,9 +127,9 @@ namespace QtProjectLib
         private static int MocCommandPosition(string[] cmds)
         {
             int res = -1;
-            Regex reg = new Regex(@"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
+            var reg = new Regex(@"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
             for (int i = 0; i < cmds.Length; ++i) {
-                Match m = reg.Match(cmds[i]);
+                var m = reg.Match(cmds[i]);
                 if (m.Success)
                     return i;
             }
@@ -138,9 +138,9 @@ namespace QtProjectLib
 
         private static List<string> ExtractDefines(string cmdLine)
         {
-            Regex reg = new Regex(@"-D(\S+)");
-            MatchCollection col = reg.Matches(cmdLine);
-            List<string> lst = new List<string>(col.Count);
+            var reg = new Regex(@"-D(\S+)");
+            var col = reg.Matches(cmdLine);
+            var lst = new List<string>(col.Count);
             for (int i = 0; i < col.Count; ++i)
                 lst.Add(col[i].Groups[1].ToString());
             return lst;
@@ -148,11 +148,11 @@ namespace QtProjectLib
 
         private List<string> ExtractIncludes(string cmdLine)
         {
-            Regex reg = new Regex(@"-I([^\s""]+)|-I""([^""]+)""");
-            MatchCollection col = reg.Matches(cmdLine);
-            List<string> lst = new List<string>(col.Count);
+            var reg = new Regex(@"-I([^\s""]+)|-I""([^""]+)""");
+            var col = reg.Matches(cmdLine);
+            var lst = new List<string>(col.Count);
             for (int i = 0; i < col.Count; ++i) {
-                string s = col[i].Groups[1].ToString();
+                var s = col[i].Groups[1].ToString();
                 if (s.Length != 0)
                     lst.Add(NormalizePath(s));
                 else
@@ -163,8 +163,8 @@ namespace QtProjectLib
 
         private static string ExtractPCHOptions(string cmdLine)
         {
-            Regex reg = new Regex(@"""-f(\S+)"" ""-f(\S+)");
-            MatchCollection col = reg.Matches(cmdLine);
+            var reg = new Regex(@"""-f(\S+)"" ""-f(\S+)");
+            var col = reg.Matches(cmdLine);
             if (col.Count != 1)
                 return null;
             return col[0].ToString();

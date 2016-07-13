@@ -82,7 +82,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == newMocDir.ToLower())
                     return;
 
@@ -114,7 +114,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == newUicDir.ToLower())
                     return;
 
@@ -133,7 +133,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == newRccDir.ToLower())
                     return;
 
@@ -229,8 +229,8 @@ namespace QtVsTools
                 return false;
 
             string pattern = "\\$\\([^\\)]+\\)";
-            System.Text.RegularExpressions.Regex regExp = new System.Text.RegularExpressions.Regex(pattern);
-            System.Text.RegularExpressions.MatchCollection matchList = regExp.Matches(directory);
+            var regExp = new System.Text.RegularExpressions.Regex(pattern);
+            var matchList = regExp.Matches(directory);
             for (int i = 0; i < matchList.Count; i++) {
                 if (matchList[i].ToString() != "$(ConfigurationName)"
                     && matchList[i].ToString() != "$(PlatformName)")

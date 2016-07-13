@@ -47,7 +47,7 @@ namespace QtVsTools
         public QtVersionDialog(EnvDTE.DTE dte)
         {
             dteObj = dte;
-            QtVersionManager vM = QtVersionManager.The();
+            var vM = QtVersionManager.The();
             InitializeComponent();
 
             cancelButton.Text = SR.GetString(SR.Cancel);
@@ -57,14 +57,14 @@ namespace QtVsTools
 
             versionComboBox.Items.AddRange(vM.GetVersions());
             if (versionComboBox.Items.Count > 0) {
-                string defVersion = vM.GetSolutionQtVersion(dteObj.Solution);
+                var defVersion = vM.GetSolutionQtVersion(dteObj.Solution);
                 if (defVersion != null && defVersion.Length > 0) {
                     versionComboBox.Text = defVersion;
                 } else if (dte.Solution != null && HelperFunctions.ProjectsInSolution(dte) != null) {
                     IEnumerator prjEnum = HelperFunctions.ProjectsInSolution(dte).GetEnumerator();
                     prjEnum.Reset();
                     if (prjEnum.MoveNext()) {
-                        EnvDTE.Project prj = prjEnum.Current as EnvDTE.Project;
+                        var prj = prjEnum.Current as EnvDTE.Project;
                         defVersion = vM.GetProjectQtVersion(prj);
                     }
                 }

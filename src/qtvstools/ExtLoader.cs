@@ -65,20 +65,20 @@ namespace QtVsTools
 
         public static void ImportProFile()
         {
-            QtVersionManager vm = QtVersionManager.The();
-            string qtVersion = vm.GetDefaultVersion();
-            string qtDir = vm.GetInstallPath(qtVersion);
+            var vm = QtVersionManager.The();
+            var qtVersion = vm.GetDefaultVersion();
+            var qtDir = vm.GetInstallPath(qtVersion);
             if (qtDir == null) {
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
-            VersionInformation vi = new VersionInformation(qtDir);
+            var vi = new VersionInformation(qtDir);
             if (vi.qtMajor < 5) {
                 Messages.DisplayErrorMessage(SR.GetString("NoVSSupport"));
                 return;
             }
             if (Vsix.Instance.Dte != null) {
-                ProjectImporter proFileImporter = new ProjectImporter(Vsix.Instance.Dte);
+                var proFileImporter = new ProjectImporter(Vsix.Instance.Dte);
                 proFileImporter.ImportProFile(qtVersion);
             }
         }
@@ -124,21 +124,21 @@ namespace QtVsTools
             if (vcproj == null)
                 return;
 
-            QtVersionManager vm = QtVersionManager.The();
-            string qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
+            var vm = QtVersionManager.The();
+            var qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
             if (qtDir == null) {
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
 
-            FileInfo priFileInfo = new FileInfo(fileName);
+            var priFileInfo = new FileInfo(fileName);
 
-            QMakeWrapper qmake = new QMakeWrapper();
+            var qmake = new QMakeWrapper();
             qmake.setQtDir(qtDir);
             if (qmake.readFile(priFileInfo.FullName)) {
-                bool flat = qmake.isFlat();
-                List<string> priFiles = ResolveFilesFromQMake(qmake.sourceFiles(), project, priFileInfo.DirectoryName);
-                List<string> projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles);
+                var flat = qmake.isFlat();
+                var priFiles = ResolveFilesFromQMake(qmake.sourceFiles(), project, priFileInfo.DirectoryName);
+                var projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles);
                 projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
                 ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, flat, Filters.SourceFiles());
 
@@ -164,9 +164,9 @@ namespace QtVsTools
 
         private static List<string> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
         {
-            List<string> lst = new List<string>();
+            var lst = new List<string>();
             foreach (string file in files) {
-                string s = ResolveEnvironmentVariables(file, project);
+                var s = ResolveEnvironmentVariables(file, project);
                 if (s == null) {
                     Messages.PaneMessage(project.DTE, SR.GetString("ImportPriFileNotResolved", file));
                 } else {
@@ -182,12 +182,12 @@ namespace QtVsTools
         {
             string env = null;
             string val = null;
-            Regex reg = new Regex(@"\$\(([^\s\(\)]+)\)");
-            MatchCollection col = reg.Matches(str);
+            var reg = new Regex(@"\$\(([^\s\(\)]+)\)");
+            var col = reg.Matches(str);
             for (int i = 0; i < col.Count; ++i) {
                 env = col[i].Groups[1].ToString();
                 if (env == "QTDIR") {
-                    QtVersionManager vm = QtVersionManager.The();
+                    var vm = QtVersionManager.The();
                     val = vm.GetInstallPath(project);
                     if (val == null)
                         val = System.Environment.GetEnvironmentVariable(env);
@@ -204,7 +204,7 @@ namespace QtVsTools
         public static void ExportProFile()
         {
             if (Vsix.Instance.Dte != null) {
-                ProjectExporter proFileExporter = new ProjectExporter(Vsix.Instance.Dte);
+                var proFileExporter = new ProjectExporter(Vsix.Instance.Dte);
                 proFileExporter.ExportToProFile();
             }
         }
@@ -213,7 +213,7 @@ namespace QtVsTools
         {
             EnvDTE.DTE dte = Vsix.Instance.Dte;
             if (dte != null) {
-                ProjectExporter proFileExporter = new ProjectExporter(dte);
+                var proFileExporter = new ProjectExporter(dte);
                 proFileExporter.ExportToPriFile(HelperFunctions.GetSelectedQtProject
                     (dte));
             }
@@ -227,7 +227,7 @@ namespace QtVsTools
             if (!applicationName.ToLower().EndsWith(".exe"))
                 applicationName += ".exe";
 
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            var process = new System.Diagnostics.Process();
             process.StartInfo.Arguments = arguments;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
 
@@ -238,8 +238,8 @@ namespace QtVsTools
             if (!File.Exists(process.StartInfo.FileName)
                 && HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte) != null) {   // Try to find apllication in project's Qt dir first
                 string path = null;
-                QtVersionManager vm = QtVersionManager.The();
-                Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+                var vm = QtVersionManager.The();
+                var prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
                 if (prj != null)
                     path = vm.GetInstallPath(prj);
                 if (path != null) {
@@ -257,8 +257,8 @@ namespace QtVsTools
 
             if (!File.Exists(process.StartInfo.FileName)) // try to start application of the default Qt version
             {
-                QtVersionManager vm = QtVersionManager.The();
-                string qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
+                var vm = QtVersionManager.The();
+                var qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
                 process.StartInfo.FileName = qtDir + "\\bin\\" + applicationName;
                 process.StartInfo.WorkingDirectory = qtDir + "\\bin";
             }
@@ -271,19 +271,19 @@ namespace QtVsTools
 
         public void loadDesigner(string fileName)
         {
-            Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             string qtVersion = null;
-            QtVersionManager vm = QtVersionManager.The();
+            var vm = QtVersionManager.The();
             if (prj != null) {
                 qtVersion = vm.GetProjectQtVersion(prj);
             } else {
                 prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if (prj != null && HelperFunctions.IsQMakeProject(prj)) {
-                    string qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
+                    var qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
                     qtVersion = vm.GetQtVersionFromInstallDir(qmakeQtDir);
                 }
             }
-            string qtDir = HelperFunctions.FindQtDirWithTools("designer", qtVersion);
+            var qtDir = HelperFunctions.FindQtDirWithTools("designer", qtVersion);
             if (qtDir == null || qtDir.Length == 0) {
                 MessageBox.Show(SR.GetString("NoDefaultQtVersionError"),
                                 Resources.msgBoxCaption);
@@ -308,7 +308,7 @@ namespace QtVsTools
                     }
 
                     string launchCMD = "-server " + formFile;
-                    System.Diagnostics.Process tmp = getQtApplicationProcess("designer", launchCMD, workingDir, qtDir);
+                    var tmp = getQtApplicationProcess("designer", launchCMD, workingDir, qtDir);
                     tmp.StartInfo.UseShellExecute = false;
                     tmp.StartInfo.RedirectStandardOutput = true;
                     tmp.OutputDataReceived += designerOutputHandler;
@@ -328,8 +328,8 @@ namespace QtVsTools
                 } else if (fileName != null) {
                     try {
                         using (var c = new TcpClient("127.0.0.1", designerDict[qtDir].port)) {
-                            System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
-                            byte[] bArray = enc.GetBytes(fileName + "\n");
+                            var enc = new System.Text.UTF8Encoding();
+                            var bArray = enc.GetBytes(fileName + "\n");
                             Stream stream = c.GetStream();
                             stream.Write(bArray, 0, bArray.Length);
                             stream.Close();
@@ -345,7 +345,7 @@ namespace QtVsTools
             }
             try {
                 if ((int) designerDict[qtDir].process.MainWindowHandle == 0) {
-                    System.Diagnostics.Process prc = System.Diagnostics.Process.GetProcessById(designerDict[qtDir].process.Id);
+                    var prc = System.Diagnostics.Process.GetProcessById(designerDict[qtDir].process.Id);
                     if ((int) prc.MainWindowHandle != 0) {
                         DesignerData data;
                         data.process = prc;
@@ -364,7 +364,7 @@ namespace QtVsTools
             if (!string.IsNullOrEmpty(outLine.Data)) {
                 try {
                     designerPort = Convert.ToInt32(outLine.Data);
-                    System.Diagnostics.Process tmp = sendingProcess as System.Diagnostics.Process;
+                    var tmp = sendingProcess as System.Diagnostics.Process;
                     tmp.CancelOutputRead();
                     portFound.Set();
                 } catch { }
@@ -373,19 +373,19 @@ namespace QtVsTools
 
         public static void loadLinguist(string fileName)
         {
-            Project prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var prj = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             string qtVersion = null;
-            QtVersionManager vm = QtVersionManager.The();
+            var vm = QtVersionManager.The();
             if (prj != null) {
                 qtVersion = vm.GetProjectQtVersion(prj);
             } else {
                 prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 if (prj != null && HelperFunctions.IsQMakeProject(prj)) {
-                    string qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
+                    var qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(prj);
                     qtVersion = vm.GetQtVersionFromInstallDir(qmakeQtDir);
                 }
             }
-            string qtDir = HelperFunctions.FindQtDirWithTools("linguist", qtVersion);
+            var qtDir = HelperFunctions.FindQtDirWithTools("linguist", qtVersion);
             if (qtDir == null || qtDir.Length == 0) {
                 MessageBox.Show(SR.GetString("NoDefaultQtVersionError"),
                                 Resources.msgBoxCaption);
@@ -406,7 +406,7 @@ namespace QtVsTools
                     }
                 }
 
-                System.Diagnostics.Process tmp = getQtApplicationProcess("linguist", arguments, workingDir, qtDir);
+                var tmp = getQtApplicationProcess("linguist", arguments, workingDir, qtDir);
                 tmp.Start();
             } catch {
                 MessageBox.Show(SR.GetString("QtAppNotFoundErrorMessage", "Qt Linguist"),
@@ -435,7 +435,7 @@ namespace QtVsTools
                     filename = Vsix.Instance.PkgInstallPath + "QrcEditor.exe";
 
                 tmp = new System.Diagnostics.Process();
-                Project prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                var prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                 tmp.StartInfo.FileName = filename;
                 tmp.StartInfo.Arguments = resourceFile;
                 tmp.StartInfo.WorkingDirectory = Path.GetFullPath(prj.FullName);

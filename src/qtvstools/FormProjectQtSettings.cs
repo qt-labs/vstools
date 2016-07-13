@@ -184,9 +184,9 @@ namespace QtVsTools
 
         private void InitModules()
         {
-            QtVersionManager versionManager = QtVersionManager.The();
-            string qtVersion = qtProject.GetQtVersion();
-            string install_path = versionManager.GetInstallPath(qtVersion);
+            var versionManager = QtVersionManager.The();
+            var qtVersion = qtProject.GetQtVersion();
+            var install_path = versionManager.GetInstallPath(qtVersion);
 
             for (int i = 0; i < moduleMap.Count; ++i) {
                 ModuleMapItem item = moduleMap[i];
@@ -195,13 +195,13 @@ namespace QtVsTools
                 moduleMap[i] = item;
 
                 // Disable if module not installed
-                QtModuleInfo info = QtModules.Instance.ModuleInformation(item.moduleId);
+                var info = QtModules.Instance.ModuleInformation(item.moduleId);
                 string libraryPrefix = info.LibraryPrefix;
                 if (libraryPrefix.StartsWith("Qt")) {
                     libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
                 }
                 string full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
-                System.IO.FileInfo fi = new System.IO.FileInfo(full_path);
+                var fi = new System.IO.FileInfo(full_path);
                 item.checkbox.Enabled = fi.Exists;
                 if (fi.Exists == false) {
                     // Don't disable item if qtVersion not available

@@ -69,7 +69,7 @@ namespace QtVsTools
         {
             simpleThreadMessenger = new SimpleThreadMessenger(this);
             dte = _dte;
-            Events2 events = dte.Events as Events2;
+            var events = dte.Events as Events2;
 
             buildEvents = (EnvDTE.BuildEvents) events.BuildEvents;
             buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
@@ -117,9 +117,9 @@ namespace QtVsTools
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
-            EnvDTE.Project selectedProject = HelperFunctions.GetSelectedQtProject(dte);
+            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
-                QtProject qtProject = QtProject.Create(selectedProject);
+                var qtProject = QtProject.Create(selectedProject);
                 if (qtProject != null)
                     qtProject.SetQtEnvironment();
             }
@@ -127,9 +127,9 @@ namespace QtVsTools
 
         void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
-            EnvDTE.Project selectedProject = HelperFunctions.GetSelectedQtProject(dte);
+            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
-                QtProject qtProject = QtProject.Create(selectedProject);
+                var qtProject = QtProject.Create(selectedProject);
                 if (qtProject != null)
                     qtProject.SetQtEnvironment();
             }
@@ -142,7 +142,7 @@ namespace QtVsTools
             if (abortOperation)
                 return;
 
-            string lowerCaseFileName = fileName.ToLower();
+            var lowerCaseFileName = fileName.ToLower();
             if (lowerCaseFileName.EndsWith(".ui")) {
                 Vsix.Instance.ExtLoader.loadDesigner(fileName);
 
@@ -164,23 +164,23 @@ namespace QtVsTools
         private void setDirectory(string dir, string value)
         {
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
-                VCProject vcProject = project.Object as VCProject;
+                var vcProject = project.Object as VCProject;
                 if (vcProject == null || vcProject.Files == null)
                     continue;
-                QtProject qtProject = QtProject.Create(project);
+                var qtProject = QtProject.Create(project);
                 if (qtProject == null)
                     continue;
 
                 if (dir == "MocDir") {
-                    string oldMocDir = QtVSIPSettings.GetMocDirectory(project);
+                    var oldMocDir = QtVSIPSettings.GetMocDirectory(project);
                     QtVSIPSettings.SaveMocDirectory(project, value);
                     qtProject.UpdateMocSteps(oldMocDir);
                 } else if (dir == "RccDir") {
-                    string oldRccDir = QtVSIPSettings.GetRccDirectory(project);
+                    var oldRccDir = QtVSIPSettings.GetRccDirectory(project);
                     QtVSIPSettings.SaveRccDirectory(project, value);
                     qtProject.RefreshRccSteps(oldRccDir);
                 } else if (dir == "UicDir") {
-                    string oldUicDir = QtVSIPSettings.GetUicDirectory(project);
+                    var oldUicDir = QtVSIPSettings.GetUicDirectory(project);
                     QtVSIPSettings.SaveUicDirectory(project, value);
                     qtProject.UpdateUicSteps(oldUicDir, true);
                 }
@@ -191,15 +191,15 @@ namespace QtVsTools
         private void OnQRCFileSaved(string fileName)
         {
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
-                VCProject vcProject = project.Object as VCProject;
+                var vcProject = project.Object as VCProject;
                 if (vcProject == null || vcProject.Files == null)
                     continue;
 
-                VCFile vcFile = (VCFile) ((IVCCollection) vcProject.Files).Item(fileName);
+                var vcFile = (VCFile) ((IVCCollection) vcProject.Files).Item(fileName);
                 if (vcFile == null)
                     continue;
 
-                QtProject qtProject = QtProject.Create(project);
+                var qtProject = QtProject.Create(project);
                 qtProject.UpdateRccStep(vcFile, null);
             }
         }
@@ -222,8 +222,8 @@ namespace QtVsTools
                 return;
 
             if (QtVSIPSettings.GetAskBeforeCheckoutFile()) {
-                string shortFileName = System.IO.Path.GetFileName(fileName);
-                DialogResult dr = MessageBox.Show(
+                var shortFileName = System.IO.Path.GetFileName(fileName);
+                var dr = MessageBox.Show(
                                     SR.GetString("QuestionSCCCheckoutOnOpen", shortFileName),
                                     Resources.msgBoxCaption, MessageBoxButtons.YesNoCancel,
                                     MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
@@ -267,8 +267,8 @@ namespace QtVsTools
                     //remove Autotests:set
                     message = message.Substring(13);
 
-                    string dir = message.Remove(6);
-                    string value = message.Substring(7);
+                    var dir = message.Remove(6);
+                    var value = message.Substring(7);
 
                     addinEventHandler.setDirectory(dir, value);
                 }
@@ -325,7 +325,7 @@ namespace QtVsTools
                     return;
                 }
 
-                NetworkStream clientStream = client.GetStream();
+                var clientStream = client.GetStream();
 
                 // say hello to qtappwrapper
                 clientStream.Write(qtAppWrapperHelloMessage, 0, qtAppWrapperHelloMessage.Length);
@@ -354,16 +354,16 @@ namespace QtVsTools
                         }
 
                         //message has successfully been received
-                        UnicodeEncoding encoder = new UnicodeEncoding();
-                        string fullMessageString = encoder.GetString(message, 0, bytesRead);
-                        string[] messages = fullMessageString.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        var encoder = new UnicodeEncoding();
+                        var fullMessageString = encoder.GetString(message, 0, bytesRead);
+                        var messages = fullMessageString.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                         foreach (string messageString in messages) {
-                            int index = messageString.IndexOf(' ');
-                            int requestedPid = Convert.ToInt32(messageString.Substring(0, index));
+                            var index = messageString.IndexOf(' ');
+                            var requestedPid = Convert.ToInt32(messageString.Substring(0, index));
                             int currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
                             if (requestedPid == currentPid) {
                                 // Actual file opening is done in the main thread.
-                                string file = messageString.Substring(index + 1);
+                                var file = messageString.Substring(index + 1);
                                 simpleThreadMessenger.Invoke(handleMessageFromQtAppWrapperDelegate, new object[] { file });
                             }
                         }
@@ -379,7 +379,7 @@ namespace QtVsTools
         {
             try {
                 if (client != null && client.Connected) {
-                    NetworkStream stream = client.GetStream();
+                    var stream = client.GetStream();
                     if (stream != null)
                         stream.Close();
                     client.Close();
@@ -448,9 +448,9 @@ namespace QtVsTools
             if (project == null || !HelperFunctions.IsQtProject(project))
                 return;
 
-            QtProject qtpro = QtProject.Create(project);
-            QtVersionManager versionManager = QtVersionManager.The();
-            string qtVersion = versionManager.GetProjectQtVersion(project, platform);
+            var qtpro = QtProject.Create(project);
+            var versionManager = QtVersionManager.The();
+            var qtVersion = versionManager.GetProjectQtVersion(project, platform);
             if (qtVersion == null) {
                 Messages.DisplayCriticalErrorMessage(SR.GetString("ProjectQtVersionNotFoundError", platform));
                 dte.ExecuteCommand("Build.Cancel", "");
@@ -481,12 +481,12 @@ namespace QtVsTools
 
         public void DocumentSaved(EnvDTE.Document document)
         {
-            QtProject qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
+            var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
 
             if (!HelperFunctions.IsQtProject(qtPro.VCProject))
                 return;
 
-            VCFile file = (VCFile) ((IVCCollection) qtPro.VCProject.Files).Item(document.FullName);
+            var file = (VCFile) ((IVCCollection) qtPro.VCProject.Files).Item(document.FullName);
 
             if (file.Extension == ".ui") {
                 if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
@@ -511,10 +511,10 @@ namespace QtVsTools
                     // exclude moc_foo.cpp from build
                     // Code copied here from 'GetFilesFromProject'
                     // For some reason error CS1771 was generated from function call
-                    List<VCFile> tmpList = new System.Collections.Generic.List<VCFile>();
+                    var tmpList = new System.Collections.Generic.List<VCFile>();
                     moccedFileName = HelperFunctions.NormalizeRelativeFilePath(moccedFileName);
 
-                    FileInfo fi = new FileInfo(moccedFileName);
+                    var fi = new FileInfo(moccedFileName);
                     foreach (VCFile f in (IVCCollection) qtPro.VCProject.Files) {
                         if (f.Name.ToLower() == fi.Name.ToLower())
                             tmpList.Add(f);
@@ -525,25 +525,25 @@ namespace QtVsTools
                     // make sure that moc_foo.cpp isn't excluded from build
                     // Code copied here from 'GetFilesFromProject'
                     // For some reason error CS1771 was generated from function call
-                    List<VCFile> moccedFiles = new System.Collections.Generic.List<VCFile>();
+                    var moccedFiles = new System.Collections.Generic.List<VCFile>();
                     moccedFileName = HelperFunctions.NormalizeRelativeFilePath(moccedFileName);
 
-                    FileInfo fi = new FileInfo(moccedFileName);
+                    var fi = new FileInfo(moccedFileName);
                     foreach (VCFile f in (IVCCollection) qtPro.VCProject.Files) {
                         if (f.Name.ToLower() == fi.Name.ToLower())
                             moccedFiles.Add(f);
                     }
                     if (moccedFiles.Count > 0) {
-                        bool hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
-                        bool hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
-                        VCFilter generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
+                        var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
+                        var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
+                        var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
                         foreach (VCFile fileInFilter in (IVCCollection) generatedFiles.Files) {
                             if (fileInFilter.Name == moccedFileName) {
                                 foreach (VCFileConfiguration config in (IVCCollection) fileInFilter.FileConfigurations) {
                                     bool exclude = true;
-                                    VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
+                                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                     if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform) {
-                                        VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                        var platform = vcConfig.Platform as VCPlatform;
                                         if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower())
                                             && fileInFilter.RelativePath.ToLower().Contains(platform.Name.ToLower()))
                                             exclude = false;
@@ -551,7 +551,7 @@ namespace QtVsTools
                                         if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower()))
                                             exclude = false;
                                     } else if (hasDifferentMocFilesPerPlatform) {
-                                        VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                        var platform = vcConfig.Platform as VCPlatform;
                                         string platformName = platform.Name;
                                         if (fileInFilter.RelativePath.ToLower().Contains(platformName.ToLower()))
                                             exclude = false;
@@ -567,12 +567,12 @@ namespace QtVsTools
                             foreach (VCFile f in (IVCCollection) filt.Files) {
                                 if (f.Name == moccedFileName) {
                                     foreach (VCFileConfiguration config in (IVCCollection) f.FileConfigurations) {
-                                        VCConfiguration vcConfig = config.ProjectConfiguration as VCConfiguration;
+                                        var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                         string filterToLookFor = "";
                                         if (hasDifferentMocFilesPerConfig)
                                             filterToLookFor = vcConfig.ConfigurationName;
                                         if (hasDifferentMocFilesPerPlatform) {
-                                            VCPlatform platform = vcConfig.Platform as VCPlatform;
+                                            var platform = vcConfig.Platform as VCPlatform;
                                             if (!string.IsNullOrEmpty(filterToLookFor))
                                                 filterToLookFor += '_';
                                             filterToLookFor += platform.Name;
@@ -595,12 +595,12 @@ namespace QtVsTools
 
         public void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
         {
-            Project project = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
-            QtProject qtPro = QtProject.Create(project);
+            var project = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
             VCFilter filter = null;
-            VCFile vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
+            var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
             if (vcFile == null)
                 return;
 
@@ -612,17 +612,17 @@ namespace QtVsTools
             } catch { }
 
             try {
-                FakeFilter ui = Filters.FormFiles();
-                FakeFilter qrc = Filters.ResourceFiles();
-                FakeFilter ts = Filters.TranslationFiles();
-                FakeFilter h = Filters.HeaderFiles();
-                FakeFilter src = Filters.SourceFiles();
+                var ui = Filters.FormFiles();
+                var qrc = Filters.ResourceFiles();
+                var ts = Filters.TranslationFiles();
+                var h = Filters.HeaderFiles();
+                var src = Filters.SourceFiles();
 
-                VCFilter uiFilter = qtPro.FindFilterFromGuid(ui.UniqueIdentifier);
-                VCFilter tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
-                VCFilter qrcFilter = qtPro.FindFilterFromGuid(qrc.UniqueIdentifier);
-                VCFilter hFilter = qtPro.FindFilterFromGuid(h.UniqueIdentifier);
-                VCFilter srcFilter = qtPro.FindFilterFromGuid(src.UniqueIdentifier);
+                var uiFilter = qtPro.FindFilterFromGuid(ui.UniqueIdentifier);
+                var tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
+                var qrcFilter = qtPro.FindFilterFromGuid(qrc.UniqueIdentifier);
+                var hFilter = qtPro.FindFilterFromGuid(h.UniqueIdentifier);
+                var srcFilter = qtPro.FindFilterFromGuid(src.UniqueIdentifier);
 
                 if (HelperFunctions.HasSourceFileExtension(vcFile.Name)) {
                     if (vcFile.Name.ToLower().StartsWith("moc_"))
@@ -632,7 +632,7 @@ namespace QtVsTools
                         QtProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
                     }
-                    string pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
+                    var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
                     if (pcHeaderThrough != null) {
                         string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
                         if (vcFile.Name.ToLower().EndsWith(pcHeaderCreator.ToLower())
@@ -718,11 +718,11 @@ namespace QtVsTools
 
         void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
         {
-            Project pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             if (pro == null)
                 return;
 
-            QtProject qtPro = QtProject.Create(pro);
+            var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(ProjectItem.Name);
         }
 
@@ -730,11 +730,11 @@ namespace QtVsTools
         {
             if (OldName == null)
                 return;
-            Project pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
             if (pro == null)
                 return;
 
-            QtProject qtPro = QtProject.Create(pro);
+            var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(OldName);
             ProjectItemsEvents_ItemAdded(ProjectItem);
         }
@@ -743,7 +743,7 @@ namespace QtVsTools
         {
             if (HelperFunctions.IsQMakeProject(project)) {
                 RegisterVCProjectEngineEvents(project);
-                VCProject vcpro = project.Object as VCProject;
+                var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection)
                     if (f.Name == Filters.HeaderFiles().Name) {
@@ -753,13 +753,13 @@ namespace QtVsTools
                 if (filter != null) {
                     foreach (VCFile file in filter.Files as IVCCollection) {
                         foreach (VCFileConfiguration config in file.FileConfigurations as IVCCollection) {
-                            VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(config);
+                            var tool = HelperFunctions.GetCustomBuildTool(config);
                             if (tool != null && tool.CommandLine != null && tool.CommandLine.Contains("moc.exe")) {
-                                Regex reg = new Regex("[^ ^\n]+moc\\.exe");
-                                MatchCollection matches = reg.Matches(tool.CommandLine);
+                                var reg = new Regex("[^ ^\n]+moc\\.exe");
+                                var matches = reg.Matches(tool.CommandLine);
                                 string qtDir = null;
                                 if (matches.Count != 1) {
-                                    QtVersionManager vm = QtVersionManager.The();
+                                    var vm = QtVersionManager.The();
                                     qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
                                 } else {
                                     qtDir = matches[0].ToString();
@@ -811,8 +811,8 @@ namespace QtVsTools
             if (vcProjectEngineEvents != null)
                 return;
 
-            VCProject vcPrj = p.Object as VCProject;
-            VCProjectEngine prjEngine = vcPrj.VCProjectEngine as VCProjectEngine;
+            var vcPrj = p.Object as VCProject;
+            var prjEngine = vcPrj.VCProjectEngine as VCProjectEngine;
             if (prjEngine != null) {
                 vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
                 if (vcProjectEngineEvents != null) {
@@ -828,14 +828,14 @@ namespace QtVsTools
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
         {
             //System.Diagnostics.Debug.WriteLine("OnVCProjectEngineItemPropertyChange " + dispid.ToString());
-            VCFileConfiguration vcFileCfg = item as VCFileConfiguration;
+            var vcFileCfg = item as VCFileConfiguration;
             if (vcFileCfg == null) {
                 // A global or project specific property has changed.
 
-                VCConfiguration vcCfg = item as VCConfiguration;
+                var vcCfg = item as VCConfiguration;
                 if (vcCfg == null)
                     return;
-                VCProject vcPrj = vcCfg.project as VCProject;
+                var vcPrj = vcCfg.project as VCProject;
                 if (vcPrj == null)
                     return;
                 if (!HelperFunctions.IsQtProject(vcPrj))
@@ -845,29 +845,29 @@ namespace QtVsTools
                     || dispid == dispId_VCCLCompilerTool_PrecompiledHeaderThrough
                     || dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories
                     || dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
-                    QtProject qtPrj = QtProject.Create(vcPrj);
+                    var qtPrj = QtProject.Create(vcPrj);
                     qtPrj.RefreshMocSteps();
                 }
             } else {
                 // A file specific property has changed.
 
-                VCFile vcFile = vcFileCfg.File as VCFile;
+                var vcFile = vcFileCfg.File as VCFile;
                 if (vcFile == null)
                     return;
-                VCProject vcPrj = vcFile.project as VCProject;
+                var vcPrj = vcFile.project as VCProject;
                 if (vcPrj == null)
                     return;
                 if (!HelperFunctions.IsQtProject(vcPrj))
                     return;
 
                 if (dispid == dispId_VCFileConfiguration_ExcludedFromBuild) {
-                    QtProject qtPrj = QtProject.Create(vcPrj);
+                    var qtPrj = QtProject.Create(vcPrj);
                     qtPrj.OnExcludedFromBuildChanged(vcFile, vcFileCfg);
                 } else if (dispid == dispId_VCCLCompilerTool_UsePrecompiledHeader
                       || dispid == dispId_VCCLCompilerTool_PrecompiledHeaderThrough
                       || dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories
                       || dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
-                    QtProject qtPrj = QtProject.Create(vcPrj);
+                    var qtPrj = QtProject.Create(vcPrj);
                     qtPrj.RefreshMocStep(vcFile);
                 }
             }
@@ -887,10 +887,10 @@ namespace QtVsTools
         /// </summary>
         private static int GetPropertyDispId(Type type, string propertyName)
         {
-            System.Reflection.PropertyInfo pi = type.GetProperty(propertyName);
+            var pi = type.GetProperty(propertyName);
             if (pi != null) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {
-                    DispIdAttribute dispIdAttribute = attribute as DispIdAttribute;
+                    var dispIdAttribute = attribute as DispIdAttribute;
                     if (dispIdAttribute != null) {
                         return dispIdAttribute.Value;
                     }

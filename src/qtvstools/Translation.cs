@@ -45,14 +45,14 @@ namespace QtVsTools
 
             bool success = true;
             try {
-                VCProject vcProject = vcFile.project as VCProject;
+                var vcProject = vcFile.project as VCProject;
                 string cmdLine = "";
                 if (HelperFunctions.IsQtProject(vcProject)) {
-                    string options = QtVSIPSettings.GetLReleaseOptions();
+                    var options = QtVSIPSettings.GetLReleaseOptions();
                     if (!string.IsNullOrEmpty(options))
                         cmdLine += options + " ";
                 }
-                EnvDTE.Project project = vcProject.Object as EnvDTE.Project;
+                var project = vcProject.Object as EnvDTE.Project;
                 Messages.PaneMessage(project.DTE,
                     "--- (lrelease) file: " + vcFile.FullPath);
 
@@ -85,18 +85,18 @@ namespace QtVsTools
 
         public static void RunlRelease(EnvDTE.Project project)
         {
-            QtProject qtPro = QtProject.Create(project);
+            var qtPro = QtProject.Create(project);
             if (qtPro == null)
                 return;
 
-            FakeFilter ts = Filters.TranslationFiles();
-            VCFilter tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
+            var ts = Filters.TranslationFiles();
+            var tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
             if (tsFilter == null)
                 return;
 
-            IVCCollection files = tsFilter.Files as IVCCollection;
+            var files = tsFilter.Files as IVCCollection;
             foreach (VCFile file in files) {
-                VCFile vcFile = file as VCFile;
+                var vcFile = file as VCFile;
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlRelease(vcFile))
                         return;
@@ -122,12 +122,12 @@ namespace QtVsTools
                 return false;
 
             string cmdLine = "";
-            string options = QtVSIPSettings.GetLUpdateOptions(pro);
+            var options = QtVSIPSettings.GetLUpdateOptions(pro);
             if (!string.IsNullOrEmpty(options))
                 cmdLine += options + " ";
-            List<string> headers = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_HFiles);
-            List<string> sources = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_CppFiles);
-            List<string> uifiles = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_UiFiles);
+            var headers = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_HFiles);
+            var sources = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_CppFiles);
+            var uifiles = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_UiFiles);
 
             foreach (string file in headers)
                 cmdLine += file + " ";
@@ -145,14 +145,14 @@ namespace QtVsTools
             if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength()) {
                 string codec = "";
                 if (!string.IsNullOrEmpty(options)) {
-                    int cc4tr_location = options.IndexOf("-codecfortr", System.StringComparison.CurrentCultureIgnoreCase);
+                    var cc4tr_location = options.IndexOf("-codecfortr", System.StringComparison.CurrentCultureIgnoreCase);
                     if (cc4tr_location != -1) {
                         codec = options.Substring(cc4tr_location).Split(' ')[1];
-                        string remove_this = options.Substring(cc4tr_location, "-codecfortr".Length + 1 + codec.Length);
+                        var remove_this = options.Substring(cc4tr_location, "-codecfortr".Length + 1 + codec.Length);
                         options = options.Replace(remove_this, "");
                     }
                 }
-                VCProject vcPro = (VCProject) pro.Object;
+                var vcPro = (VCProject) pro.Object;
                 temporaryProFile = System.IO.Path.GetTempFileName();
                 temporaryProFile = System.IO.Path.GetDirectoryName(temporaryProFile) + "\\" +
                                    System.IO.Path.GetFileNameWithoutExtension(temporaryProFile) + ".pro";
@@ -167,7 +167,7 @@ namespace QtVsTools
                     writeFilesToPro(sw, "FORMS",
                         ProjectExporter.ConvertFilesToFullPath(uifiles, vcPro.ProjectDirectory));
 
-                    List<string> tsFiles = new List<string>(1);
+                    var tsFiles = new List<string>(1);
                     tsFiles.Add(vcFile.FullPath);
                     writeFilesToPro(sw, "TRANSLATIONS", tsFiles);
 
@@ -232,18 +232,18 @@ namespace QtVsTools
 
         public static void RunlUpdate(EnvDTE.Project project)
         {
-            QtProject qtPro = QtProject.Create(project);
+            var qtPro = QtProject.Create(project);
             if (qtPro == null)
                 return;
 
-            FakeFilter ts = Filters.TranslationFiles();
-            VCFilter tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
+            var ts = Filters.TranslationFiles();
+            var tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
             if (tsFilter == null)
                 return;
 
-            IVCCollection files = tsFilter.Files as IVCCollection;
+            var files = tsFilter.Files as IVCCollection;
             foreach (VCFile file in files) {
-                VCFile vcFile = file as VCFile;
+                var vcFile = file as VCFile;
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlUpdate(vcFile, project))
                         return;
@@ -268,8 +268,8 @@ namespace QtVsTools
             using (var transDlg = new AddTranslationDialog(project)) {
                 if (transDlg.ShowDialog() == DialogResult.OK) {
                     try {
-                        QtProject qtPro = QtProject.Create(project);
-                        VCFile file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
+                        var qtPro = QtProject.Create(project);
+                        var file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
                             transDlg.TranslationFile, true);
                         Translation.RunlUpdate(file, project);
                     } catch (QtVSException e) {

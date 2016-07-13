@@ -107,7 +107,7 @@ namespace QtVsTools
                     path = versionManager.GetInstallPath(version);
                 if (path == null && version != "$(QTDIR)")
                     continue;
-                ListViewItem itm = new ListViewItem();
+                var itm = new ListViewItem();
                 itm.Tag = version;
                 itm.Text = version;
                 itm.SubItems.Add(path);
@@ -154,7 +154,7 @@ namespace QtVsTools
             QtVersionManager.The().ClearVersionCache();
             using (var dia = new AddQtVersionDialog()) {
                 dia.StartPosition = FormStartPosition.CenterParent;
-                MainWinWrapper ww = new MainWinWrapper(Vsix.Instance.Dte);
+                var ww = new MainWinWrapper(Vsix.Instance.Dte);
                 if (dia.ShowDialog(ww) == DialogResult.OK) {
                     UpdateListBox();
                     SetupDefaultVersionComboBox(null);

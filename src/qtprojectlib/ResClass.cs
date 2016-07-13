@@ -131,10 +131,10 @@ namespace QtProjectLib
 
         public static string GetString(string name, params object[] args)
         {
-            SR sys = GetLoader();
+            var sys = GetLoader();
             if (sys == null)
                 return null;
-            string res = sys.resources.GetString(name, SR.Culture);
+            var res = sys.resources.GetString(name, SR.Culture);
 
             if (args != null && args.Length > 0)
                 return string.Format(res, args);
@@ -143,7 +143,7 @@ namespace QtProjectLib
 
         public static string GetString(string name)
         {
-            SR sys = GetLoader();
+            var sys = GetLoader();
             if (sys == null)
                 return null;
             return sys.resources.GetString(name, SR.Culture);
@@ -151,7 +151,7 @@ namespace QtProjectLib
 
         public static object GetObject(string name)
         {
-            SR sys = GetLoader();
+            var sys = GetLoader();
             if (sys == null)
                 return null;
             return sys.resources.GetObject(name, SR.Culture);

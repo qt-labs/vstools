@@ -63,10 +63,10 @@ namespace QtProjectLib
 
             // Find version number
             try {
-                QMakeQuery qmakeQuery = new QMakeQuery(this);
-                string strVersion = qmakeQuery.query("QT_VERSION");
+                var qmakeQuery = new QMakeQuery(this);
+                var strVersion = qmakeQuery.query("QT_VERSION");
                 if (qmakeQuery.ErrorValue == 0 && strVersion.Length > 0) {
-                    string[] versionParts = strVersion.Split('.');
+                    var versionParts = strVersion.Split('.');
                     if (versionParts.Length != 3) {
                         qtDir = null;
                         return;
@@ -75,18 +75,18 @@ namespace QtProjectLib
                     qtMinor = uint.Parse(versionParts[1]);
                     qtPatch = uint.Parse(versionParts[2]);
                 } else {
-                    StreamReader inF = new StreamReader(Locate_qglobal_h());
-                    Regex rgxpVersion = new Regex("#define\\s*QT_VERSION\\s*0x(?<number>\\d+)", RegexOptions.Multiline);
-                    string contents = inF.ReadToEnd();
+                    var inF = new StreamReader(Locate_qglobal_h());
+                    var rgxpVersion = new Regex("#define\\s*QT_VERSION\\s*0x(?<number>\\d+)", RegexOptions.Multiline);
+                    var contents = inF.ReadToEnd();
                     inF.Close();
-                    Match matchObj = rgxpVersion.Match(contents);
+                    var matchObj = rgxpVersion.Match(contents);
                     if (!matchObj.Success) {
                         qtDir = null;
                         return;
                     }
 
                     strVersion = matchObj.Groups[1].ToString();
-                    uint version = Convert.ToUInt32(strVersion, 16);
+                    var version = Convert.ToUInt32(strVersion, 16);
                     qtMajor = version >> 16;
                     qtMinor = (version >> 8) & 0xFF;
                     qtPatch = version & 0xFF;
@@ -150,17 +150,17 @@ namespace QtProjectLib
             foreach (string filename in candidates) {
                 if (File.Exists(filename)) {
                     // check whether we look at the real qglobal.h or just a "pointer"
-                    StreamReader inF = new StreamReader(filename);
-                    Regex rgxpVersion = new Regex("#include\\s+\"(.+global.h)\"", RegexOptions.Multiline);
-                    Match matchObj = rgxpVersion.Match(inF.ReadToEnd());
+                    var inF = new StreamReader(filename);
+                    var rgxpVersion = new Regex("#include\\s+\"(.+global.h)\"", RegexOptions.Multiline);
+                    var matchObj = rgxpVersion.Match(inF.ReadToEnd());
                     inF.Close();
                     if (!matchObj.Success)
                         return filename;
 
                     if (matchObj.Groups.Count >= 2) {
-                        string origCurrentDirectory = Directory.GetCurrentDirectory();
+                        var origCurrentDirectory = Directory.GetCurrentDirectory();
                         Directory.SetCurrentDirectory(filename.Substring(0, filename.Length - 10));   // remove "\\qglobal.h"
-                        string absIncludeFile = Path.GetFullPath(matchObj.Groups[1].ToString());
+                        var absIncludeFile = Path.GetFullPath(matchObj.Groups[1].ToString());
                         Directory.SetCurrentDirectory(origCurrentDirectory);
                         if (File.Exists(absIncludeFile))
                             return absIncludeFile;

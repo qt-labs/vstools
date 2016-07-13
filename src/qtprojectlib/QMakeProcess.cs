@@ -134,7 +134,7 @@ namespace QtProjectLib
 
         public void RunQMake()
         {
-            FileInfo fi = new FileInfo(file);
+            var fi = new FileInfo(file);
             string vcproj = HelperFunctions.RemoveFileNameExtension(fi) + ".vcxproj";
 
             string qmakeArgs = "-tp vc \"" + fi.Name + "\" ";
@@ -158,9 +158,9 @@ namespace QtProjectLib
 
             // determine which vs version we are currently using and inform qmake about it
             string regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
             if (key != null) {
-                string keyValue = key.GetValue("ProductDir", (object) "").ToString();
+                var keyValue = key.GetValue("ProductDir", (object) "").ToString();
                 string envVar = qmakeProcess.StartInfo.EnvironmentVariables["path"];
                 if (envVar != null) {
                     string value = envVar + ";" + keyValue;
@@ -181,8 +181,8 @@ namespace QtProjectLib
                     errOutputLines = 0;
                     stdOutput = new StringBuilder();
                     stdOutputLines = 0;
-                    Thread errorThread = new Thread(new ThreadStart(ReadStandardError));
-                    Thread outputThread = new Thread(new ThreadStart(ReadStandardOutput));
+                    var errorThread = new Thread(new ThreadStart(ReadStandardError));
+                    var outputThread = new Thread(new ThreadStart(ReadStandardOutput));
                     errorThread.Start();
                     outputThread.Start();
 
@@ -218,7 +218,7 @@ namespace QtProjectLib
 
         protected Process CreateQmakeProcess(string qmakeArgs, string filename, string workingDir)
         {
-            Process qmakeProcess = new System.Diagnostics.Process();
+            var qmakeProcess = new System.Diagnostics.Process();
             qmakeProcess.StartInfo.CreateNoWindow = true;
             qmakeProcess.StartInfo.UseShellExecute = false;
             qmakeProcess.StartInfo.RedirectStandardError = true;
@@ -233,13 +233,13 @@ namespace QtProjectLib
         {
             try {
                 // make sure there are delegates assigned...
-                Delegate[] invocationList = dlg.GetInvocationList();
+                var invocationList = dlg.GetInvocationList();
                 if (invocationList == null)
                     return;
 
                 // we can only call one delegate at the time...
                 foreach (Delegate singleDelegate in invocationList) {
-                    ISynchronizeInvoke synchronizeTarget = singleDelegate.Target as ISynchronizeInvoke;
+                    var synchronizeTarget = singleDelegate.Target as ISynchronizeInvoke;
                     if (synchronizeTarget == null)
                         singleDelegate.DynamicInvoke(objList);
                     else
@@ -288,7 +288,7 @@ namespace QtProjectLib
         public string query(string property)
         {
             ReadyEvent += resultObtained;
-            System.Threading.Thread qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(RunQMakeQuery));
+            var qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(RunQMakeQuery));
             qmakeThread.Start(property);
             qmakeThread.Join();
             return queryResult;
@@ -304,7 +304,7 @@ namespace QtProjectLib
             if (property == null)
                 return;
 
-            string propertyString = property.ToString();
+            var propertyString = property.ToString();
             string result = "";
 
             qmakeProcess = CreateQmakeProcess("-query " + propertyString.Trim(), qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
@@ -314,8 +314,8 @@ namespace QtProjectLib
                     errOutputLines = 0;
                     stdOutput = new StringBuilder();
                     stdOutputLines = 0;
-                    Thread errorThread = new Thread(new ThreadStart(ReadStandardError));
-                    Thread outputThread = new Thread(new ThreadStart(ReadStandardOutput));
+                    var errorThread = new Thread(new ThreadStart(ReadStandardError));
+                    var outputThread = new Thread(new ThreadStart(ReadStandardOutput));
                     errorThread.Start();
                     outputThread.Start();
 
@@ -328,7 +328,7 @@ namespace QtProjectLib
 
                     if (stdOutputLines > 0) {
                         result = stdOutput.ToString();
-                        int dashIndex = result.IndexOf('-');
+                        var dashIndex = result.IndexOf('-');
                         if (dashIndex == -1) {
                             errorValue = -1;
                             result = "";

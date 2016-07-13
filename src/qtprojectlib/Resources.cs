@@ -127,7 +127,7 @@ namespace QtProjectLib
     {
         public static FakeFilter SourceFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{4FC737F1-C7A5-4376-A066-2A32D752A2FF}";
             f.Name = SR.GetString("Resources_SourceFiles");
             f.Filter = "cpp;cxx;c;def";
@@ -136,7 +136,7 @@ namespace QtProjectLib
 
         public static FakeFilter HeaderFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{93995380-89BD-4b04-88EB-625FBE52EBFB}";
             f.Name = SR.GetString("Resources_HeaderFiles");
             f.Filter = "h";
@@ -145,7 +145,7 @@ namespace QtProjectLib
 
         public static FakeFilter FormFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{99349809-55BA-4b9d-BF79-8FDBB0286EB3}";
             f.Name = SR.GetString("Resources_FormFiles");
             f.Filter = "ui";
@@ -154,7 +154,7 @@ namespace QtProjectLib
 
         public static FakeFilter ResourceFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}";
             f.Name = SR.GetString("Resources_ResourceFiles");
             f.ParseFiles = false;
@@ -164,7 +164,7 @@ namespace QtProjectLib
 
         public static FakeFilter TranslationFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}";
             f.Name = SR.GetString("Resources_TranslationFiles");
             f.Filter = "ts";
@@ -174,7 +174,7 @@ namespace QtProjectLib
 
         public static FakeFilter GeneratedFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}";
             f.Name = SR.GetString("Resources_GeneratedFiles");
             f.Filter = "moc;h;cpp";
@@ -184,7 +184,7 @@ namespace QtProjectLib
 
         public static FakeFilter OtherFiles()
         {
-            FakeFilter f = new FakeFilter();
+            var f = new FakeFilter();
             f.UniqueIdentifier = "{B67473BF-9FA1-4674-831E-CB28F72D4791}";
             f.Name = SR.GetString("Resources_OtherFiles");
             f.Filter = "*";

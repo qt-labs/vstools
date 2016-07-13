@@ -44,13 +44,13 @@ namespace QtProjectLib
         }
         public static void PaneMessage(EnvDTE.DTE dte, string str)
         {
-            OutputWindow wnd = (EnvDTE.OutputWindow) dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
+            var wnd = (EnvDTE.OutputWindow) dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
             if (wndp == null) {
                 wndp = wnd.OutputWindowPanes.Add(Resources.msgBoxCaption);
             }
 
             wndp.OutputString(str + "\r\n");
-            OutputWindowPane buildPane = GetBuildPane(wnd);
+            var buildPane = GetBuildPane(wnd);
             // show buildPane if a build is in progress
             if (dte.Solution.SolutionBuild.BuildState == vsBuildState.vsBuildStateInProgress && buildPane != null)
                 buildPane.Activate();

@@ -187,7 +187,7 @@ namespace QtVsTools
                             formChangeQtVersion.UpdateContent(ChangeFor.Project);
                             var ww = new MainWinWrapper(Vsix.Instance.Dte);
                             if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
-                                string qtVersion = formChangeQtVersion.GetSelectedQtVersion();
+                                var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
                                 HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
                                     .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
                             }

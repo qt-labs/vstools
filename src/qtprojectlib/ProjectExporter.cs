@@ -264,7 +264,7 @@ namespace QtProjectLib
 
         public static List<string> ConvertFilesToFullPath(List<string> files, string path)
         {
-            List<string> ret = new List<string>(files.Count);
+            var ret = new List<string>(files.Count);
             foreach (string file in files) {
                 FileInfo fi;
                 if (file.IndexOf(":") != 1)
@@ -282,7 +282,7 @@ namespace QtProjectLib
         private ProSolution CreateProFileSolution(EnvDTE.Solution sln)
         {
             ProFileContent content;
-            ProSolution prosln = new ProSolution(sln);
+            var prosln = new ProSolution(sln);
 
             foreach (EnvDTE.Project proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
                 try {
@@ -304,9 +304,9 @@ namespace QtProjectLib
         private void addProjectsInFolder(EnvDTE.Project solutionFolder, ProSolution sln)
         {
             foreach (ProjectItem pi in solutionFolder.ProjectItems) {
-                Project containedProject = pi.Object as Project;
+                var containedProject = pi.Object as Project;
                 if (HelperFunctions.IsQtProject(containedProject)) {
-                    ProFileContent content = CreateProFileContent(containedProject);
+                    var content = CreateProFileContent(containedProject);
                     sln.ProFiles.Add(content);
                 } else if (containedProject.Kind == ProjectKinds.vsProjectKindSolutionFolder) {
                     addProjectsInFolder(containedProject, sln);
@@ -317,20 +317,20 @@ namespace QtProjectLib
         private static ProFileContent CreateProFileContent(EnvDTE.Project project)
         {
             ProFileOption option;
-            QtProject qtPro = QtProject.Create(project);
-            ProFileContent content = new ProFileContent(qtPro.VCProject);
+            var qtPro = QtProject.Create(project);
+            var content = new ProFileContent(qtPro.VCProject);
 
             // hack to get active config
             string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
             string activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
-            VCConfiguration config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
-            CompilerToolWrapper compiler = CompilerToolWrapper.Create(config);
-            VCLinkerTool linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
-            VCLibrarianTool libTool = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
+            var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+            var compiler = CompilerToolWrapper.Create(config);
+            var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+            var libTool = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
 
             string outPut = config.PrimaryOutput;
-            FileInfo fi = new FileInfo(outPut);
-            string destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
+            var fi = new FileInfo(outPut);
+            var destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
             destdir = HelperFunctions.ChangePathFormat(destdir);
             string target = qtPro.VCProject.Name;
 
@@ -449,7 +449,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.Add(".");
 
-            string mocDir = QtVSIPSettings.GetMocDirectory(project, activeConfig.ToLower(), activePlatform.ToLower());
+            var mocDir = QtVSIPSettings.GetMocDirectory(project, activeConfig.ToLower(), activePlatform.ToLower());
             mocDir = mocDir.Replace('\\', '/');
             option = new ProFileOption("MOC_DIR");
             option.Comment = Resources.ec_MocDir;
@@ -465,7 +465,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.Add(config.ConfigurationName.ToLower());
 
-            string uiDir = QtVSIPSettings.GetUicDirectory(project);
+            var uiDir = QtVSIPSettings.GetUicDirectory(project);
             uiDir = uiDir.Replace('\\', '/');
             option = new ProFileOption("UI_DIR");
             option.Comment = Resources.ec_UiDir;
@@ -474,7 +474,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.Add(uiDir);
 
-            string rccDir = QtVSIPSettings.GetRccDirectory(project);
+            var rccDir = QtVSIPSettings.GetRccDirectory(project);
             rccDir = rccDir.Replace('\\', '/');
             option = new ProFileOption("RCC_DIR");
             option.Comment = Resources.ec_RccDir;
@@ -531,8 +531,8 @@ namespace QtProjectLib
         private static ProFileContent CreatePriFileContent(EnvDTE.Project project, string priFileDirectory)
         {
             ProFileOption option;
-            QtProject qtPro = QtProject.Create(project);
-            ProFileContent content = new ProFileContent(qtPro.VCProject);
+            var qtPro = QtProject.Create(project);
+            var content = new ProFileContent(qtPro.VCProject);
             bool hasSpaces = false;
 
             // add the header files
@@ -611,8 +611,8 @@ namespace QtProjectLib
             if (includePaths == null)
                 return;
 
-            QtVersionManager versionManager = QtVersionManager.The();
-            string qtDir = versionManager.GetInstallPath(project);
+            var versionManager = QtVersionManager.The();
+            var qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)
                 qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
@@ -621,7 +621,7 @@ namespace QtProjectLib
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
 
             foreach (string s in includePaths.Split(new char[] { ';', ',' })) {
-                string d = HelperFunctions.NormalizeRelativeFilePath(s);
+                var d = HelperFunctions.NormalizeRelativeFilePath(s);
                 if (!d.ToLower().StartsWith("$(qtdir)\\include") &&
                     !d.ToLower().StartsWith(qtDir + "\\include") &&
                     !d.ToLower().EndsWith("win32-msvc2005")) {
@@ -637,8 +637,8 @@ namespace QtProjectLib
 
         private static void AddLibraries(EnvDTE.Project project, ProFileOption option, string paths, string deps)
         {
-            QtVersionManager versionManager = QtVersionManager.The();
-            string qtDir = versionManager.GetInstallPath(project);
+            var versionManager = QtVersionManager.The();
+            var qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)
                 qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
@@ -648,7 +648,7 @@ namespace QtProjectLib
 
             if (paths != null) {
                 foreach (string s in paths.Split(new char[] { ';', ',' })) {
-                    string d = HelperFunctions.NormalizeRelativeFilePath(s);
+                    var d = HelperFunctions.NormalizeRelativeFilePath(s);
                     if (!d.ToLower().StartsWith("$(qtdir)\\lib") &&
                         !d.ToLower().StartsWith(qtDir + "\\lib")) {
                         if (HelperFunctions.IsAbsoluteFilePath(d))
@@ -661,7 +661,7 @@ namespace QtProjectLib
 
             if (deps != null) {
                 foreach (string s in deps.Split(new char[] { ' ' })) {
-                    string d = s.ToLower();
+                    var d = s.ToLower();
                     if (d.Length > 0 &&
                         !d.StartsWith("$(qtdir)\\lib") &&
                         !d.StartsWith(qtDir + "\\lib") &&
@@ -690,7 +690,7 @@ namespace QtProjectLib
             if (string.IsNullOrEmpty(sln.FileName))
                 return;
 
-            FileInfo fi = new FileInfo(sln.FullName);
+            var fi = new FileInfo(sln.FullName);
             DirectoryInfo slnDir = fi.Directory;
             bool createSlnFile = false;
 
@@ -702,7 +702,7 @@ namespace QtProjectLib
 
             if (createSlnFile) {
                 StreamWriter sw;
-                string slnName = HelperFunctions.RemoveFileNameExtension(fi);
+                var slnName = HelperFunctions.RemoveFileNameExtension(fi);
                 string slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
 
                 if (File.Exists(slnFileName))
@@ -717,9 +717,9 @@ namespace QtProjectLib
                     return;
                 }
 
-                ProFileContent content = new ProFileContent(null);
+                var content = new ProFileContent(null);
 
-                ProFileOption option = new ProFileOption("TEMPLATE");
+                var option = new ProFileOption("TEMPLATE");
                 option.NewOption = null; // just one option...
                 option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
                 content.Options.Add(option);
@@ -732,8 +732,8 @@ namespace QtProjectLib
                 string proFullName, relativePath;
                 char[] trimChars = { '\\' };
                 foreach (ProFileContent profile in prosln.ProFiles) {
-                    FileInfo fiProject = new FileInfo(profile.Project.ProjectFile);
-                    string projectBaseName = HelperFunctions.RemoveFileNameExtension(fiProject);
+                    var fiProject = new FileInfo(profile.Project.ProjectFile);
+                    var projectBaseName = HelperFunctions.RemoveFileNameExtension(fiProject);
                     proFullName = profile.Project.ProjectDirectory + projectBaseName + ".pro";
                     relativePath = HelperFunctions.GetRelativePath(slnDir.FullName, proFullName);
                     relativePath = relativePath.TrimEnd(trimChars);
@@ -771,7 +771,7 @@ namespace QtProjectLib
             if (!string.IsNullOrEmpty(priFileToInclude)) {
                 foreach (ProFileOption option in content.Options) {
                     if (option.Name == "include" && !option.List.Contains(priFileToInclude)) {
-                        string relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
+                        var relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
                         if (relativePriPath.StartsWith(".\\"))
                             relativePriPath = relativePriPath.Substring(2);
                         relativePriPath = HelperFunctions.ChangePathFormat(relativePriPath);
@@ -849,7 +849,7 @@ namespace QtProjectLib
         private static List<string> GetFilesInPriFile(FileInfo priFileInfo, FilesToList ftl)
         {
             StreamReader sr;
-            List<string> fileList = new List<string>();
+            var fileList = new List<string>();
 
             try {
                 if (!priFileInfo.Exists)
@@ -872,7 +872,7 @@ namespace QtProjectLib
 
             // the filelist should contain the entire path since we can select
             // any .pri file..
-            List<string> ret = new List<string>();
+            var ret = new List<string>();
             try {
                 ret = ConvertFilesToFullPath(ret, priFileInfo.DirectoryName);
             } catch (System.Exception e) {
@@ -916,7 +916,7 @@ namespace QtProjectLib
                     line = line.TrimEnd(trimChars);
 
                     // remove comments
-                    int comStart = line.IndexOf('#');
+                    var comStart = line.IndexOf('#');
                     if (comStart != -1)
                         line = line.Remove(comStart, line.Length - comStart);
 
@@ -973,20 +973,20 @@ namespace QtProjectLib
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
             List<string> projFiles, EnvDTE.DTE dte, bool flat, FakeFilter fakeFilter)
         {
-            List<string> cmpPriFiles = new List<string>(priFiles.Count);
+            var cmpPriFiles = new List<string>(priFiles.Count);
             foreach (string s in priFiles)
                 cmpPriFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
             cmpPriFiles.Sort();
 
-            List<string> cmpProjFiles = new List<string>(projFiles.Count);
+            var cmpProjFiles = new List<string>(projFiles.Count);
             foreach (string s in projFiles)
                 cmpProjFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
 
-            QtProject qtPro = QtProject.Create(vcproj);
-            Hashtable filterPathTable = new Hashtable(17);
-            Hashtable pathFilterTable = new Hashtable(17);
+            var qtPro = QtProject.Create(vcproj);
+            var filterPathTable = new Hashtable(17);
+            var pathFilterTable = new Hashtable(17);
             if (!flat && fakeFilter != null) {
-                VCFilter rootFilter = qtPro.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                var rootFilter = qtPro.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
                 if (rootFilter == null)
                     qtPro.AddFilterToProject(Filters.SourceFiles());
 
@@ -1001,30 +1001,30 @@ namespace QtProjectLib
                 if (flat) {
                     vcproj.AddFile(file); // the file is not in the project
                 } else {
-                    string path = HelperFunctions.GetRelativePath(vcproj.ProjectDirectory, file);
+                    var path = HelperFunctions.GetRelativePath(vcproj.ProjectDirectory, file);
                     if (path.StartsWith(".\\"))
                         path = path.Substring(2);
 
-                    int i = path.LastIndexOf('\\');
+                    var i = path.LastIndexOf('\\');
                     if (i > -1)
                         path = path.Substring(0, i);
                     else
                         path = ".";
 
                     if (pathFilterTable.Contains(path)) {
-                        VCFilter f = pathFilterTable[path] as VCFilter;
+                        var f = pathFilterTable[path] as VCFilter;
                         f.AddFile(file);
                         continue;
                     }
 
-                    VCFilter filter = BestMatch(path, pathFilterTable);
+                    var filter = BestMatch(path, pathFilterTable);
 
-                    string filterDir = filterPathTable[filter] as string;
+                    var filterDir = filterPathTable[filter] as string;
                     string name = path;
                     if (!name.StartsWith("..") && name.StartsWith(filterDir))
                         name = name.Substring(filterDir.Length + 1);
 
-                    VCFilter newFilter = filter.AddFilter(name) as VCFilter;
+                    var newFilter = filter.AddFilter(name) as VCFilter;
                     newFilter.AddFile(file);
 
                     filterPathTable.Add(newFilter, path);
@@ -1037,7 +1037,7 @@ namespace QtProjectLib
                 if (cmpPriFiles.IndexOf(file) == -1) {
                     // the file is not in the pri file
                     // (only removes it from the project, does not del. the file)
-                    FileInfo info = new FileInfo(file);
+                    var info = new FileInfo(file);
                     HelperFunctions.RemoveFileInProject(vcproj, file);
                     Messages.PaneMessage(dte, "--- (Importing .pri file) file: " + info.Name +
                         " does not exist in .pri file, move to " + vcproj.ProjectDirectory + "Deleted");
@@ -1048,10 +1048,10 @@ namespace QtProjectLib
 
         public void ExportToProFile()
         {
-            ExportProjectDialog expDlg = new ExportProjectDialog();
+            var expDlg = new ExportProjectDialog();
 
             EnvDTE.Solution sln = dteObject.Solution;
-            ProSolution prosln = CreateProFileSolution(sln);
+            var prosln = CreateProFileSolution(sln);
 
             if (prosln.ProFiles.Count <= 0) {
                 Messages.DisplayWarningMessage(SR.GetString("ExportProject_NoProjectsToExport"));
@@ -1060,19 +1060,19 @@ namespace QtProjectLib
 
             expDlg.ProFileSolution = prosln;
             expDlg.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            MainWinWrapper ww = new MainWinWrapper(dteObject);
+            var ww = new MainWinWrapper(dteObject);
             if (expDlg.ShowDialog(ww) == DialogResult.OK) {
                 WriteProSolution(prosln, expDlg.OpenFiles);
 
                 // create all the project .pro files
                 foreach (ProFileContent profile in prosln.ProFiles) {
                     if (profile.Export) {
-                        Project project = HelperFunctions.VCProjectToProject(profile.Project);
+                        var project = HelperFunctions.VCProjectToProject(profile.Project);
                         string priFile = null;
                         if (expDlg.CreatePriFile)
                             priFile = ExportToPriFile(project);
                         else {
-                            ProFileContent priContent = CreatePriFileContent(project, profile.Project.ProjectDirectory);
+                            var priContent = CreatePriFileContent(project, profile.Project.ProjectDirectory);
                             profile.Options.AddRange(priContent.Options);
                         }
                         WriteProFile(profile, profile.Project.ProjectDirectory + profile.Project.Name + ".pro", priFile, expDlg.OpenFiles);
@@ -1094,7 +1094,7 @@ namespace QtProjectLib
                 }
 
                 // make the user able to choose .pri file
-                OpenFileDialog fd = new OpenFileDialog();
+                var fd = new OpenFileDialog();
                 fd.Multiselect = false;
                 fd.CheckFileExists = true;
                 fd.Title = SR.GetString("ExportProject_ImportPriFile");
@@ -1123,7 +1123,7 @@ namespace QtProjectLib
                 return;
             }
 
-            FileInfo priFileInfo = new FileInfo(fileName);
+            var priFileInfo = new FileInfo(fileName);
 
             // source files
             if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_CppFiles)) == null)
@@ -1160,7 +1160,7 @@ namespace QtProjectLib
                 }
 
                 // make the user able to choose .pri file
-                SaveFileDialog fd = new SaveFileDialog();
+                var fd = new SaveFileDialog();
                 fd.OverwritePrompt = true;
                 fd.CheckPathExists = true;
                 fd.Title = SR.GetString("ExportProject_ExportPriFile");
@@ -1179,9 +1179,9 @@ namespace QtProjectLib
 
         public void ExportToPriFile(EnvDTE.Project proj, string fileName)
         {
-            FileInfo priFile = new FileInfo(fileName);
+            var priFile = new FileInfo(fileName);
 
-            ProFileContent content = CreatePriFileContent(proj, priFile.DirectoryName);
+            var content = CreatePriFileContent(proj, priFile.DirectoryName);
             WritePriFile(content, priFile.FullName);
         }
     }

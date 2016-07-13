@@ -125,7 +125,7 @@ namespace QtVsTools
             var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
-            QtVersionManager vm = QtVersionManager.The();
+            var vm = QtVersionManager.The();
             string error = null;
             if (vm.HasInvalidVersions(out error))
                 Messages.DisplayErrorMessage(error);
@@ -181,7 +181,7 @@ namespace QtVsTools
                 filePath = PkgInstallPath;
                 if (filePath.EndsWith("\\"))
                     filePath = filePath.Remove(filePath.Length - 1);
-                int idx = filePath.LastIndexOf('\\');
+                var idx = filePath.LastIndexOf('\\');
                 if (idx >= 0 && idx < filePath.Length - 1)
                     filePath = filePath.Remove(idx + 1);
                 filePath += exeName;

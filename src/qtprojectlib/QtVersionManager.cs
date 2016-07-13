@@ -66,11 +66,11 @@ namespace QtProjectLib
             if (versionCache == null)
                 versionCache = new Hashtable();
 
-            VersionInformation vi = versionCache[name] as VersionInformation;
+            var vi = versionCache[name] as VersionInformation;
             if (vi != null)
                 return vi;
 
-            string qtdir = GetInstallPath(name);
+            var qtdir = GetInstallPath(name);
             vi = new VersionInformation(qtdir);
             versionCache[name] = vi;
             return vi;
@@ -98,9 +98,9 @@ namespace QtProjectLib
                 return null;
 
             qtDir = qtDir.ToLower();
-            string[] versions = GetVersions();
+            var versions = GetVersions();
             foreach (string version in versions) {
-                string installPath = GetInstallPath(version);
+                var installPath = GetInstallPath(version);
                 if (installPath == null)
                     continue;
                 if (installPath.ToLower() == qtDir)
@@ -112,10 +112,10 @@ namespace QtProjectLib
 
         public string[] GetVersions(RegistryKey root)
         {
-            RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
             if (key == null)
                 return new string[] { };
-            RegistryKey versionKey = key.OpenSubKey(strVersionKey, false);
+            var versionKey = key.OpenSubKey(strVersionKey, false);
             if (versionKey == null)
                 return new string[] { };
             return versionKey.GetSubKeyNames();
@@ -135,15 +135,15 @@ namespace QtProjectLib
         /// <returns>true, if we found an invalid version</returns>
         public bool HasInvalidVersions(out string errorMessage)
         {
-            List<QtVersion> validVersions = new List<QtVersion>();
-            List<string> invalidVersions = new List<string>();
+            var validVersions = new List<QtVersion>();
+            var invalidVersions = new List<string>();
 
             foreach (string v in GetVersions()) {
                 if (v == "$(DefaultQtVersion)")
                     continue;
                 try {
-                    VersionInformation vi = new VersionInformation(GetInstallPath(v));
-                    QtVersion qtVersion = new QtVersion();
+                    var vi = new VersionInformation(GetInstallPath(v));
+                    var qtVersion = new QtVersion();
                     qtVersion.name = v;
                     qtVersion.vi = vi;
                     validVersions.Add(qtVersion);
@@ -160,7 +160,7 @@ namespace QtProjectLib
 
                 // Is the default Qt version invalid?
                 bool isDefaultQtVersionInvalid = false;
-                string defaultQtVersionName = GetDefaultVersion();
+                var defaultQtVersionName = GetDefaultVersion();
                 if (string.IsNullOrEmpty(defaultQtVersionName)) {
                     isDefaultQtVersionInvalid = true;
                 } else {
@@ -210,10 +210,10 @@ namespace QtProjectLib
             if (version == "$(QTDIR)")
                 return System.Environment.GetEnvironmentVariable("QTDIR");
 
-            RegistryKey key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
             if (key == null)
                 return null;
-            RegistryKey versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
+            var versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
             if (versionKey == null)
                 return null;
             return (string) versionKey.GetValue("InstallDir");
@@ -221,7 +221,7 @@ namespace QtProjectLib
 
         public string GetInstallPath(EnvDTE.Project project)
         {
-            string version = GetProjectQtVersion(project);
+            var version = GetProjectQtVersion(project);
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             if (version == null)
@@ -231,21 +231,21 @@ namespace QtProjectLib
 
         public bool SaveVersion(string versionName, string path)
         {
-            string verName = versionName.Trim();
+            var verName = versionName.Trim();
             string dir = "";
             if (verName != "$(QTDIR)") {
-                DirectoryInfo di = new DirectoryInfo(path);
+                var di = new DirectoryInfo(path);
                 if (verName.Length < 1 || !di.Exists)
                     return false;
                 dir = di.FullName;
             }
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
+            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
             if (key == null) {
                 key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryRootPath);
                 if (key == null)
                     return false;
             }
-            RegistryKey versionKey = key.CreateSubKey(strVersionKey + "\\" + verName);
+            var versionKey = key.CreateSubKey(strVersionKey + "\\" + verName);
             if (versionKey == null)
                 return false;
             versionKey.SetValue("InstallDir", dir);
@@ -254,7 +254,7 @@ namespace QtProjectLib
 
         public void RemoveVersion(string versionName)
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
+            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);
@@ -263,7 +263,7 @@ namespace QtProjectLib
         private bool IsVersionAvailable(string version)
         {
             bool versionAvailable = false;
-            string[] versions = GetVersions();
+            var versions = GetVersions();
             foreach (string ver in versions) {
                 if (version == ver) {
                     versionAvailable = true;
@@ -300,7 +300,7 @@ namespace QtProjectLib
                 // if there's an "unconfigured" platform in the Solution platform combo box.
                 platformName = "Win32";
             }
-            string version = GetProjectQtVersion(project, platformName);
+            var version = GetProjectQtVersion(project, platformName);
 
             if (version == null && project.Globals.get_VariablePersists("Qt5Version")) {
                 version = (string) project.Globals["Qt5Version"];
@@ -319,7 +319,7 @@ namespace QtProjectLib
             string key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
-            string version = (string) project.Globals[key];
+            var version = (string) project.Globals[key];
             ExpandEnvironmentVariablesInQtVersion(ref version);
             return VerifyIfQtVersionExists(version) ? version : null;
         }
@@ -329,9 +329,9 @@ namespace QtProjectLib
             if (version != "$(QTDIR)" && version != "$(DefaultQtVersion)") {
                 // Make it possible to specify the version name
                 // via an environment variable
-                System.Text.RegularExpressions.Regex regExp =
+                var regExp =
                     new System.Text.RegularExpressions.Regex("\\$\\((?<VarName>\\S+)\\)");
-                System.Text.RegularExpressions.Match match = regExp.Match(version);
+                var match = regExp.Match(version);
                 if (match.Success) {
                     string env = match.Groups["VarName"].Value;
                     version = System.Environment.GetEnvironmentVariable(env);
@@ -355,7 +355,7 @@ namespace QtProjectLib
                 return null;
 
             if (solution.Globals.get_VariableExists("Qt5Version")) {
-                string version = (string) solution.Globals["Qt5Version"];
+                var version = (string) solution.Globals["Qt5Version"];
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
 
@@ -371,7 +371,7 @@ namespace QtProjectLib
         {
             string defaultVersion = null;
             try {
-                RegistryKey key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
                 if (key != null)
                     defaultVersion = (string) key.GetValue("DefaultQtVersion");
             } catch {
@@ -380,9 +380,9 @@ namespace QtProjectLib
 
             if (defaultVersion == null) {
                 MergeVersions();
-                RegistryKey key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
                 if (key != null) {
-                    string[] versions = GetVersions();
+                    var versions = GetVersions();
                     if (versions != null && versions.Length > 0)
                         defaultVersion = versions[versions.Length - 1];
                     if (defaultVersion != null)
@@ -390,10 +390,10 @@ namespace QtProjectLib
                 }
                 if (defaultVersion == null) {
                     // last fallback... try QTDIR
-                    string qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
+                    var qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
                     if (qtDir == null)
                         return null;
-                    DirectoryInfo d = new DirectoryInfo(qtDir);
+                    var d = new DirectoryInfo(qtDir);
                     SaveVersion(d.Name, d.FullName);
                     if (SaveDefaultVersion(d.Name))
                         defaultVersion = d.Name;
@@ -406,7 +406,7 @@ namespace QtProjectLib
         {
             if (version == "$(DefaultQtVersion)")
                 return false;
-            RegistryKey key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
+            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
             if (key == null)
                 return false;
             key.SetValue("DefaultQtVersion", version);
@@ -426,8 +426,8 @@ namespace QtProjectLib
 
         private void MergeVersions()
         {
-            string[] hkcuVersions = GetVersions();
-            string[] hklmVersions = GetVersions(Registry.LocalMachine);
+            var hkcuVersions = GetVersions();
+            var hklmVersions = GetVersions(Registry.LocalMachine);
 
             string[] hkcuInstDirs = new string[hkcuVersions.Length];
             for (int i = 0; i < hkcuVersions.Length; ++i)
@@ -467,7 +467,7 @@ namespace QtProjectLib
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             if (version != null && version.Length > 0) {
-                System.Text.RegularExpressions.Regex regExp =
+                var regExp =
                     new System.Text.RegularExpressions.Regex("\\$\\(.*\\)");
                 if (regExp.IsMatch(version))
                     return true;

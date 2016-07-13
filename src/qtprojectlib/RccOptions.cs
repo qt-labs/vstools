@@ -129,7 +129,7 @@ namespace QtProjectLib
                 if (project.Globals.get_VariablePersists("RccOutput" + id)) {
                     return (string) project.Globals["RccOutput" + id];
                 } else {
-                    string s = name.Replace('\\', '/');
+                    var s = name.Replace('\\', '/');
                     s = s.Substring(s.LastIndexOf('/') + 1);
                     return "qrc_" + s + ".cpp";
                 }
@@ -154,7 +154,7 @@ namespace QtProjectLib
                 if (project.Globals.get_VariablePersists("RccInitName" + id)) {
                     return (string) project.Globals["RccInitName" + id];
                 } else {
-                    string s = name.Replace('\\', '/');
+                    var s = name.Replace('\\', '/');
                     s = s.Substring(s.LastIndexOf('/') + 1);
                     return s;
                 }

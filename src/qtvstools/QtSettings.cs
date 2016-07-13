@@ -73,7 +73,7 @@ namespace QtVsTools
         public void SaveSettings()
         {
             bool updateMoc = false;
-            QtProject qtPro = QtProject.Create(project);
+            var qtPro = QtProject.Create(project);
 
             if (oldMocDir != newMocDir) {
                 QtVSIPSettings.SaveMocDirectory(project, newMocDir);
@@ -107,7 +107,7 @@ namespace QtVsTools
 
             if (oldQtVersion != newQtVersion) {
                 bool newProjectCreated = false;
-                bool versionChanged = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
+                var versionChanged = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
                 if (versionChanged && newProjectCreated)
                     project = qtPro.Project;
             }
@@ -121,7 +121,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == oldMocDir.ToLower())
                     return;
 
@@ -153,7 +153,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == oldUicDir.ToLower())
                     return;
 
@@ -172,7 +172,7 @@ namespace QtVsTools
             }
             set
             {
-                string tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
                 if (tmp.ToLower() == oldRccDir.ToLower())
                     return;
 
@@ -251,7 +251,7 @@ namespace QtVsTools
 
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                string[] versions = versionManager.GetVersions();
+                var versions = versionManager.GetVersions();
                 Array.Resize(ref versions, versions.Length + 1);
                 versions[versions.Length - 1] = "$(DefaultQtVersion)";
                 return new StandardValuesCollection(versions);
@@ -269,8 +269,8 @@ namespace QtVsTools
                 return false;
 
             string pattern = "\\$\\([^\\)]+\\)";
-            System.Text.RegularExpressions.Regex regExp = new System.Text.RegularExpressions.Regex(pattern);
-            System.Text.RegularExpressions.MatchCollection matchList = regExp.Matches(directory);
+            var regExp = new System.Text.RegularExpressions.Regex(pattern);
+            var matchList = regExp.Matches(directory);
             for (int i = 0; i < matchList.Count; i++) {
                 if (matchList[i].ToString() != "$(ConfigurationName)"
                     && matchList[i].ToString() != "$(PlatformName)")

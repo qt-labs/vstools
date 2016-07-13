@@ -139,14 +139,14 @@ namespace QtProjectLib
         {
             get
             {
-                string directories = GetAdditionalIncludeDirectories();
+                var directories = GetAdditionalIncludeDirectories();
                 if (directories == null)
                     return new List<string>();
                 // double quotes are escaped
                 directories = directories.Replace("\\\"", "\"");
-                string[] dirArray = directories.Split(new char[] { ';', ',' }, StringSplitOptions
+                var dirArray = directories.Split(new char[] { ';', ',' }, StringSplitOptions
                     .RemoveEmptyEntries);
-                List<string> lst = new List<string>(dirArray);
+                var lst = new List<string>(dirArray);
                 int i = 0;
                 while (i < lst.Count) {
                     string item = lst[i];
@@ -202,11 +202,11 @@ namespace QtProjectLib
         {
             get
             {
-                string ppdefsstr = GetPreprocessorDefinitions();
+                var ppdefsstr = GetPreprocessorDefinitions();
                 if (string.IsNullOrEmpty(ppdefsstr))
                     return new List<string>();
 
-                string[] ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                var ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 return new List<string>(ppdefs);
             }
 
@@ -235,11 +235,11 @@ namespace QtProjectLib
         /// <param name="value"></param>
         public void AddPreprocessorDefinition(string value)
         {
-            string preprocessorDefs = GetPreprocessorDefinitions();
+            var preprocessorDefs = GetPreprocessorDefinitions();
             if (preprocessorDefs != null) {
-                string[] definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
+                var definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
                     StringSplitOptions.RemoveEmptyEntries);
-                List<string> definesList = new List<string>(definesArray);
+                var definesList = new List<string>(definesArray);
                 if (definesList.Contains(value))
                     return;
                 if (preprocessorDefs.Length > 0
@@ -258,13 +258,13 @@ namespace QtProjectLib
         /// <param name="value"></param>
         public void RemovePreprocessorDefinition(string value)
         {
-            string preprocessorDefs = GetPreprocessorDefinitions();
+            var preprocessorDefs = GetPreprocessorDefinitions();
             if (preprocessorDefs == null)
                 return;
 
-            string[] definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
+            var definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
                 StringSplitOptions.RemoveEmptyEntries);
-            List<string> definesList = new List<string>(definesArray);
+            var definesList = new List<string>(definesArray);
             if (definesList == null || !definesList.Remove(value))
                 return;
             preprocessorDefs = "";
@@ -317,7 +317,7 @@ namespace QtProjectLib
                 return;
 
             bool directoryAdded = false;
-            string[] directories = value.Split(new char[] { ';', ',' }, StringSplitOptions
+            var directories = value.Split(new char[] { ';', ',' }, StringSplitOptions
                 .RemoveEmptyEntries);
             List<string> lst = AdditionalIncludeDirectories;
             foreach (string directory in directories) {
@@ -334,7 +334,7 @@ namespace QtProjectLib
 
         public string[] GetAdditionalIncludeDirectoriesList()
         {
-            string[] includes = GetAdditionalIncludeDirectories()
+            var includes = GetAdditionalIncludeDirectories()
                 .Split(new char[] { ',', ';' });
             string[] fixedincludes;
             fixedincludes = new string[includes.Length];
@@ -376,7 +376,7 @@ namespace QtProjectLib
             if (compilerTool != null)
                 return compilerTool.UsePrecompiledHeader;
             else {
-                object obj = compilerType.InvokeMember("UsePrecompiledHeader",
+                var obj = compilerType.InvokeMember("UsePrecompiledHeader",
                     System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
                 if (obj == null)
                     return pchOption.pchNone;

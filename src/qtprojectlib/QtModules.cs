@@ -122,7 +122,7 @@ namespace QtProjectLib
 
         public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild)
         {
-            List<string> libs = new List<string>();
+            var libs = new List<string>();
             string libName = LibraryPrefix;
             if (libName.StartsWith("Qt"))
                 libName = "Qt5" + libName.Substring(2);
@@ -196,7 +196,7 @@ namespace QtProjectLib
 
         public List<QtModuleInfo> GetAvailableModuleInformation()
         {
-            List<QtModuleInfo> lst = new List<QtModuleInfo>(dictModuleInfos.Count);
+            var lst = new List<QtModuleInfo>(dictModuleInfos.Count);
             foreach (KeyValuePair<QtModule, QtModuleInfo> entry in dictModuleInfos)
                 lst.Add(entry.Value);
             return lst;
@@ -292,7 +292,7 @@ namespace QtProjectLib
 
         private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string[] defines)
         {
-            QtModuleInfo moduleInfo = new QtModuleInfo(moduleId);
+            var moduleInfo = new QtModuleInfo(moduleId);
             moduleInfo.LibraryPrefix = libraryPrefix;
             moduleInfo.IncludePath = "$(QTDIR)\\include\\" + libraryPrefix;
             moduleInfo.Defines = new List<string>();

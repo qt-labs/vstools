@@ -232,7 +232,7 @@ namespace QtProjectWizard
                     var icon = vcProject.ProjectDirectory + "\\" + vcProject.ItemName + ".ico";
                     if (!File.Exists(icon)) {
                         File.Move(vcProject.ProjectDirectory + "\\gui.ico", icon);
-                        FileAttributes attribs = File.GetAttributes(icon);
+                        var attribs = File.GetAttributes(icon);
                         File.SetAttributes(icon, attribs & (~FileAttributes.ReadOnly));
                     }
 

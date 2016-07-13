@@ -91,7 +91,7 @@ namespace QtVsTools
         // Get/create registry key under HKCU
         private static RegistryKey GetCUKey(string key_path, bool writable)
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(key_path, writable);
+            var key = Registry.CurrentUser.OpenSubKey(key_path, writable);
             if (key == null && writable)
                 key = Registry.CurrentUser.CreateSubKey(key_path);
             return key;
@@ -100,7 +100,7 @@ namespace QtVsTools
         // Get/create registry key under HKLM
         private static RegistryKey GetLMKey(string key_path, bool writable)
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(key_path, writable);
+            var key = Registry.LocalMachine.OpenSubKey(key_path, writable);
             if (key == null && writable)
                 key = Registry.LocalMachine.CreateSubKey(key_path);
             return key;
