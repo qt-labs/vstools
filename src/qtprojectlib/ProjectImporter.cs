@@ -319,8 +319,8 @@ namespace QtProjectLib
                 InfoDialog dialog = new InfoDialog(mainInfo.Name);
                 QMake qmake = new QMake(dteObject, mainInfo.FullName, recursive, vi);
 
-                qmake.CloseEvent += new QMake.ProcessEventHandler(dialog.CloseEventHandler);
-                qmake.PaneMessageDataEvent += new QMake.ProcessEventHandlerArg(this.PaneMessageDataReceived);
+                qmake.CloseEvent += dialog.CloseEventHandler;
+                qmake.PaneMessageDataEvent += PaneMessageDataReceived;
 
                 System.Threading.Thread qmakeThread = new System.Threading.Thread(new ThreadStart(qmake.RunQMake));
                 qmakeThread.Start();

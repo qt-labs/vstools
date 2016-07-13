@@ -106,7 +106,7 @@ namespace QtVsTools
             okButton.Name = "okButton";
             okButton.Size = new System.Drawing.Size(75, 23);
             okButton.TabIndex = 0;
-            okButton.Click += new System.EventHandler(okButton_Click);
+            okButton.Click += okButton_Click;
             //
             // cancelButton
             //

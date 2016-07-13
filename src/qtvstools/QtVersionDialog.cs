@@ -81,7 +81,7 @@ namespace QtVsTools
             //    okButton.Location = new System.Drawing.Point(138, 72);
             //    okButton.Size = new Size(80, 22);
             //}
-            KeyPress += new KeyPressEventHandler(QtVersionDialog_KeyPress);
+            KeyPress += QtVersionDialog_KeyPress;
         }
 
         void QtVersionDialog_KeyPress(object sender, KeyPressEventArgs e)

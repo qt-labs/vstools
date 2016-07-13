@@ -311,7 +311,7 @@ namespace QtVsTools
                     System.Diagnostics.Process tmp = getQtApplicationProcess("designer", launchCMD, workingDir, qtDir);
                     tmp.StartInfo.UseShellExecute = false;
                     tmp.StartInfo.RedirectStandardOutput = true;
-                    tmp.OutputDataReceived += new DataReceivedEventHandler(designerOutputHandler);
+                    tmp.OutputDataReceived += designerOutputHandler;
                     tmp.Start();
                     tmp.BeginOutputReadLine();
                     try {

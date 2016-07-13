@@ -45,8 +45,8 @@ namespace QtVsTools
             btnCancel.Text = SR.GetString("Cancel");
             Text = SR.GetString("SolutionQtVersion");
             lQtVersions.Text = SR.GetString("InstalledQtVersions");
-            lbQtVersions.DoubleClick += new EventHandler(lbQtVersions_DoubleClick);
-            KeyPress += new KeyPressEventHandler(FormChangeQtVersion_KeyPress);
+            lbQtVersions.DoubleClick += lbQtVersions_DoubleClick;
+            KeyPress += FormChangeQtVersion_KeyPress;
         }
 
         void lbQtVersions_DoubleClick(object sender, EventArgs e)

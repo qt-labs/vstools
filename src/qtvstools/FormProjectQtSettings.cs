@@ -149,7 +149,7 @@ namespace QtVsTools
             AddMapping(quickWidgetsLib, QtModule.QuickWidgets);
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            KeyPress += new KeyPressEventHandler(FormProjectQtSettings_KeyPress);
+            KeyPress += FormProjectQtSettings_KeyPress;
         }
 
         private void AddMapping(CheckBox checkbox, QtModule moduleId)

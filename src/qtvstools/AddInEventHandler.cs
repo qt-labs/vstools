@@ -72,30 +72,30 @@ namespace QtVsTools
             Events2 events = dte.Events as Events2;
 
             buildEvents = (EnvDTE.BuildEvents) events.BuildEvents;
-            buildEvents.OnBuildBegin += new _dispBuildEvents_OnBuildBeginEventHandler(buildEvents_OnBuildBegin);
-            buildEvents.OnBuildProjConfigBegin += new _dispBuildEvents_OnBuildProjConfigBeginEventHandler(OnBuildProjConfigBegin);
-            buildEvents.OnBuildDone += new _dispBuildEvents_OnBuildDoneEventHandler(buildEvents_OnBuildDone);
+            buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
+            buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
+            buildEvents.OnBuildDone += buildEvents_OnBuildDone;
 
             documentEvents = (EnvDTE.DocumentEvents) events.get_DocumentEvents(null);
-            documentEvents.DocumentSaved += new _dispDocumentEvents_DocumentSavedEventHandler(DocumentSaved);
+            documentEvents.DocumentSaved += DocumentSaved;
 
             projectItemsEvents = (ProjectItemsEvents) events.ProjectItemsEvents;
-            projectItemsEvents.ItemAdded += new _dispProjectItemsEvents_ItemAddedEventHandler(ProjectItemsEvents_ItemAdded);
-            projectItemsEvents.ItemRemoved += new _dispProjectItemsEvents_ItemRemovedEventHandler(ProjectItemsEvents_ItemRemoved);
-            projectItemsEvents.ItemRenamed += new _dispProjectItemsEvents_ItemRenamedEventHandler(ProjectItemsEvents_ItemRenamed);
+            projectItemsEvents.ItemAdded += ProjectItemsEvents_ItemAdded;
+            projectItemsEvents.ItemRemoved += ProjectItemsEvents_ItemRemoved;
+            projectItemsEvents.ItemRenamed += ProjectItemsEvents_ItemRenamed;
 
             solutionEvents = (SolutionEvents) events.SolutionEvents;
-            solutionEvents.ProjectAdded += new _dispSolutionEvents_ProjectAddedEventHandler(SolutionEvents_ProjectAdded);
-            solutionEvents.ProjectRemoved += new _dispSolutionEvents_ProjectRemovedEventHandler(SolutionEvents_ProjectRemoved);
-            solutionEvents.Opened += new _dispSolutionEvents_OpenedEventHandler(SolutionEvents_Opened);
-            solutionEvents.AfterClosing += new _dispSolutionEvents_AfterClosingEventHandler(SolutionEvents_AfterClosing);
+            solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
+            solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
+            solutionEvents.Opened += SolutionEvents_Opened;
+            solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
 
             const string debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
             debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
-            debugStartEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartEvents_BeforeExecute);
+            debugStartEvents.BeforeExecute += debugStartEvents_BeforeExecute;
 
             debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368);
-            debugStartWithoutDebuggingEvents.BeforeExecute += new _dispCommandEvents_BeforeExecuteEventHandler(debugStartWithoutDebuggingEvents_BeforeExecute);
+            debugStartWithoutDebuggingEvents.BeforeExecute += debugStartWithoutDebuggingEvents_BeforeExecute;
 
             dispId_VCFileConfiguration_ExcludedFromBuild = GetPropertyDispId(typeof(VCFileConfiguration), "ExcludedFromBuild");
             dispId_VCCLCompilerTool_UsePrecompiledHeader = GetPropertyDispId(typeof(VCCLCompilerTool), "UsePrecompiledHeader");
@@ -391,35 +391,35 @@ namespace QtVsTools
         public void Disconnect()
         {
             if (buildEvents != null) {
-                buildEvents.OnBuildBegin -= new _dispBuildEvents_OnBuildBeginEventHandler(buildEvents_OnBuildBegin);
-                buildEvents.OnBuildProjConfigBegin -= new _dispBuildEvents_OnBuildProjConfigBeginEventHandler(OnBuildProjConfigBegin);
-                buildEvents.OnBuildDone -= new _dispBuildEvents_OnBuildDoneEventHandler(buildEvents_OnBuildDone);
+                buildEvents.OnBuildBegin -= buildEvents_OnBuildBegin;
+                buildEvents.OnBuildProjConfigBegin -= OnBuildProjConfigBegin;
+                buildEvents.OnBuildDone -= buildEvents_OnBuildDone;
             }
 
             if (documentEvents != null)
-                documentEvents.DocumentSaved -= new _dispDocumentEvents_DocumentSavedEventHandler(DocumentSaved);
+                documentEvents.DocumentSaved -= DocumentSaved;
 
             if (projectItemsEvents != null) {
-                projectItemsEvents.ItemAdded -= new _dispProjectItemsEvents_ItemAddedEventHandler(ProjectItemsEvents_ItemAdded);
-                projectItemsEvents.ItemRemoved -= new _dispProjectItemsEvents_ItemRemovedEventHandler(ProjectItemsEvents_ItemRemoved);
-                projectItemsEvents.ItemRenamed -= new _dispProjectItemsEvents_ItemRenamedEventHandler(ProjectItemsEvents_ItemRenamed);
+                projectItemsEvents.ItemAdded -= ProjectItemsEvents_ItemAdded;
+                projectItemsEvents.ItemRemoved -= ProjectItemsEvents_ItemRemoved;
+                projectItemsEvents.ItemRenamed -= ProjectItemsEvents_ItemRenamed;
             }
 
             if (solutionEvents != null) {
-                solutionEvents.ProjectAdded -= new _dispSolutionEvents_ProjectAddedEventHandler(SolutionEvents_ProjectAdded);
-                solutionEvents.ProjectRemoved -= new _dispSolutionEvents_ProjectRemovedEventHandler(SolutionEvents_ProjectRemoved);
-                solutionEvents.Opened -= new _dispSolutionEvents_OpenedEventHandler(SolutionEvents_Opened);
-                solutionEvents.AfterClosing -= new _dispSolutionEvents_AfterClosingEventHandler(SolutionEvents_AfterClosing);
+                solutionEvents.ProjectAdded -= SolutionEvents_ProjectAdded;
+                solutionEvents.ProjectRemoved -= SolutionEvents_ProjectRemoved;
+                solutionEvents.Opened -= SolutionEvents_Opened;
+                solutionEvents.AfterClosing -= SolutionEvents_AfterClosing;
             }
 
             if (debugStartEvents != null)
-                debugStartEvents.BeforeExecute -= new _dispCommandEvents_BeforeExecuteEventHandler(debugStartEvents_BeforeExecute);
+                debugStartEvents.BeforeExecute -= debugStartEvents_BeforeExecute;
 
             if (debugStartWithoutDebuggingEvents != null)
-                debugStartWithoutDebuggingEvents.BeforeExecute -= new _dispCommandEvents_BeforeExecuteEventHandler(debugStartWithoutDebuggingEvents_BeforeExecute);
+                debugStartWithoutDebuggingEvents.BeforeExecute -= debugStartWithoutDebuggingEvents_BeforeExecute;
 
             if (vcProjectEngineEvents != null)
-                vcProjectEngineEvents.ItemPropertyChange -= new _dispVCProjectEngineEvents_ItemPropertyChangeEventHandler(OnVCProjectEngineItemPropertyChange);
+                vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
 
             if (appWrapperThread != null) {
                 terminateEditorThread = true;
@@ -817,7 +817,7 @@ namespace QtVsTools
                 vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
                 if (vcProjectEngineEvents != null) {
                     try {
-                        vcProjectEngineEvents.ItemPropertyChange += new _dispVCProjectEngineEvents_ItemPropertyChangeEventHandler(OnVCProjectEngineItemPropertyChange);
+                        vcProjectEngineEvents.ItemPropertyChange += OnVCProjectEngineItemPropertyChange;
                     } catch {
                         Messages.DisplayErrorMessage("VCProjectEngine events could not be registered.");
                     }

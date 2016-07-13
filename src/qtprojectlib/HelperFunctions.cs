@@ -1390,7 +1390,7 @@ namespace QtProjectLib
             proc.StartInfo.FileName = qtDir + application;
             proc.StartInfo.Arguments = arguments;
             if (checkExitCode && application.ToLower().IndexOf("uic.exe") > -1)
-                proc.Exited += new EventHandler(QtApplicationExited);
+                proc.Exited += QtApplicationExited;
 
             try {
                 proc.Start();
@@ -1444,7 +1444,7 @@ namespace QtProjectLib
         {
             QProcess proc = (QProcess) sender;
             DisplayErrorMessage(proc);
-            proc.Exited -= new EventHandler(QtApplicationExited);
+            proc.Exited -= QtApplicationExited;
         }
 
         private static void DisplayErrorMessage(QProcess proc)

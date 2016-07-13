@@ -67,10 +67,10 @@ namespace QtVsTools
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 
             errorTimer = new Timer();
-            errorTimer.Tick += new EventHandler(errorTimer_Tick);
+            errorTimer.Tick += errorTimer_Tick;
             errorTimer.Interval = 3000;
 
-            KeyPress += new KeyPressEventHandler(AddQtVersionDialog_KeyPress);
+            KeyPress += AddQtVersionDialog_KeyPress;
         }
 
         void errorTimer_Tick(object sender, EventArgs e)
@@ -142,7 +142,7 @@ namespace QtVsTools
             okButton.Size = new System.Drawing.Size(75, 23);
             okButton.TabIndex = 2;
             okButton.Text = "&OK";
-            okButton.Click += new System.EventHandler(okButton_Click);
+            okButton.Click += okButton_Click;
             //
             // cancelButton
             //
@@ -161,7 +161,7 @@ namespace QtVsTools
             nameBox.Name = "nameBox";
             nameBox.Size = new System.Drawing.Size(200, 20);
             nameBox.TabIndex = 4;
-            nameBox.TextChanged += new System.EventHandler(DataChanged);
+            nameBox.TextChanged += DataChanged;
             //
             // pathBox
             //
@@ -170,7 +170,7 @@ namespace QtVsTools
             pathBox.Name = "pathBox";
             pathBox.Size = new System.Drawing.Size(176, 20);
             pathBox.TabIndex = 5;
-            pathBox.TextChanged += new System.EventHandler(DataChanged);
+            pathBox.TextChanged += DataChanged;
             //
             // browseButton
             //
@@ -180,7 +180,7 @@ namespace QtVsTools
             browseButton.Size = new System.Drawing.Size(24, 20);
             browseButton.TabIndex = 6;
             browseButton.Text = "...";
-            browseButton.Click += new System.EventHandler(browseButton_Click);
+            browseButton.Click += browseButton_Click;
             //
             // errorLabel
             //
@@ -263,9 +263,9 @@ namespace QtVsTools
 
                 int pos = str.LastIndexOf('\\');
                 name = str.Substring(pos + 1);
-                nameBox.TextChanged -= new System.EventHandler(DataChanged);
+                nameBox.TextChanged -= DataChanged;
                 nameBox.Text = name;
-                nameBox.TextChanged += new System.EventHandler(DataChanged);
+                nameBox.TextChanged += DataChanged;
             }
 
             pathBox.Enabled = name != "$(QTDIR)";

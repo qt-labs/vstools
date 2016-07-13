@@ -67,7 +67,7 @@ namespace QtVsTools
             Text = SR.GetString("AddTranslationDialog_Title");
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            KeyPress += new KeyPressEventHandler(AddTranslationDialog_KeyPress);
+            KeyPress += AddTranslationDialog_KeyPress;
         }
 
         void AddTranslationDialog_KeyPress(object sender, KeyPressEventArgs e)
@@ -134,7 +134,7 @@ namespace QtVsTools
             langComboBox.Size = new System.Drawing.Size(192, 21);
             langComboBox.Sorted = true;
             langComboBox.TabIndex = 1;
-            langComboBox.SelectedIndexChanged += new EventHandler(langComboBox_SelectedIndexChanged);
+            langComboBox.SelectedIndexChanged += langComboBox_SelectedIndexChanged;
             //
             // cancelButton
             //
@@ -203,7 +203,7 @@ namespace QtVsTools
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Add Translation";
-            Load += new EventHandler(AddTranslationDialog_Load);
+            Load += AddTranslationDialog_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

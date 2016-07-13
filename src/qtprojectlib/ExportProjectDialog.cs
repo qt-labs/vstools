@@ -163,7 +163,7 @@ namespace QtProjectLib
             this.optionListBox.Name = "optionListBox";
             this.optionListBox.Size = new System.Drawing.Size(200, 82);
             this.optionListBox.TabIndex = 3;
-            this.optionListBox.SelectedIndexChanged += new System.EventHandler(this.optionListBox_SelectedIndexChanged);
+            this.optionListBox.SelectedIndexChanged += optionListBox_SelectedIndexChanged;
             //
             // optionLabel
             //
@@ -179,7 +179,7 @@ namespace QtProjectLib
             this.optionComboBox.Name = "optionComboBox";
             this.optionComboBox.Size = new System.Drawing.Size(200, 21);
             this.optionComboBox.TabIndex = 2;
-            this.optionComboBox.SelectedIndexChanged += new System.EventHandler(this.optionComboBox_SelectedIndexChanged);
+            this.optionComboBox.SelectedIndexChanged += optionComboBox_SelectedIndexChanged;
             //
             // commentLabel
             //
@@ -197,7 +197,7 @@ namespace QtProjectLib
             this.optionTextBox.Size = new System.Drawing.Size(136, 20);
             this.optionTextBox.TabIndex = 7;
             this.optionTextBox.Text = "";
-            this.optionTextBox.TextChanged += new System.EventHandler(this.optionTextBox_TextChanged);
+            this.optionTextBox.TextChanged += optionTextBox_TextChanged;
             //
             // projListBox
             //
@@ -207,8 +207,8 @@ namespace QtProjectLib
             this.projListBox.Name = "projListBox";
             this.projListBox.Size = new System.Drawing.Size(200, 124);
             this.projListBox.TabIndex = 10;
-            this.projListBox.SelectedIndexChanged += new System.EventHandler(this.projListBox_SelectedIndexChanged);
-            this.projListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.projListBox_ItemCheck);
+            this.projListBox.SelectedIndexChanged += projListBox_SelectedIndexChanged;
+            this.projListBox.ItemCheck += projListBox_ItemCheck;
             //
             // openCheckBox
             //
@@ -277,7 +277,7 @@ namespace QtProjectLib
             this.newButton.Name = "button1";
             this.newButton.Size = new System.Drawing.Size(24, 23);
             this.newButton.TabIndex = 8;
-            this.newButton.Click += new System.EventHandler(this.newButton_Click);
+            this.newButton.Click += newButton_Click;
 
             //
             // delButton
@@ -286,7 +286,7 @@ namespace QtProjectLib
             this.delButton.Name = "button2";
             this.delButton.Size = new System.Drawing.Size(24, 23);
             this.delButton.TabIndex = 9;
-            this.delButton.Click += new System.EventHandler(this.delButton_Click);
+            this.delButton.Click += delButton_Click;
 
             //
             // ExportProjectDialog
@@ -306,7 +306,7 @@ namespace QtProjectLib
             this.Name = "ExportProjectDialog";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Export Project";
-            this.Load += new System.EventHandler(this.ExportProjectDialog_Load);
+            this.Load += ExportProjectDialog_Load;
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);

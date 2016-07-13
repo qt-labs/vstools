@@ -53,7 +53,7 @@ namespace QtVsTools
             okButton.TabIndex = 18;
             okButton.Text = "&OK";
             okButton.UseVisualStyleBackColor = true;
-            okButton.Click += new System.EventHandler(okButton_Click);
+            okButton.Click += okButton_Click;
             //
             // cancelButton
             //
@@ -64,7 +64,7 @@ namespace QtVsTools
             cancelButton.TabIndex = 19;
             cancelButton.Text = "&Cancel";
             cancelButton.UseVisualStyleBackColor = true;
-            cancelButton.Click += new System.EventHandler(cancelButton_Click);
+            cancelButton.Click += cancelButton_Click;
             //
             // tabControl1
             //
@@ -116,7 +116,7 @@ namespace QtVsTools
             deleteButton.TabIndex = 20;
             deleteButton.Text = "&Delete";
             deleteButton.UseVisualStyleBackColor = true;
-            deleteButton.Click += new System.EventHandler(deleteButton_Click);
+            deleteButton.Click += deleteButton_Click;
             //
             // addButton
             //
@@ -126,7 +126,7 @@ namespace QtVsTools
             addButton.TabIndex = 19;
             addButton.Text = "&Add";
             addButton.UseVisualStyleBackColor = true;
-            addButton.Click += new System.EventHandler(addButton_Click);
+            addButton.Click += addButton_Click;
             //
             // listView
             //

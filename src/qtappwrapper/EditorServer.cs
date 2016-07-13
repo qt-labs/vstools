@@ -162,7 +162,7 @@ namespace QtAppWrapper
             // So we'll check after a certain time, if there's something in the client list.
             System.Timers.Timer watchDogTimer = new System.Timers.Timer();
             watchDogTimer.Interval = 60000;
-            watchDogTimer.Elapsed += new System.Timers.ElapsedEventHandler(WatchDog);
+            watchDogTimer.Elapsed += WatchDog;
             watchDogTimer.Start();
         }
 

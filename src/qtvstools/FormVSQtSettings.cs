@@ -62,8 +62,8 @@ namespace QtVsTools
             vsQtSettings = new VSQtSettings();
             optionsPropertyGrid.SelectedObject = vsQtSettings;
 
-            KeyPress += new KeyPressEventHandler(FormQtVersions_KeyPress);
-            Shown += new EventHandler(FormQtVersions_Shown);
+            KeyPress += FormQtVersions_KeyPress;
+            Shown += FormQtVersions_Shown;
         }
 
         void FormQtVersions_KeyPress(object sender, KeyPressEventArgs e)

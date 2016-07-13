@@ -287,7 +287,7 @@ namespace QtProjectLib
 
         public string query(string property)
         {
-            ReadyEvent += new QMakeQuery.EventHandler(this.resultObtained);
+            ReadyEvent += resultObtained;
             System.Threading.Thread qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(this.RunQMakeQuery));
             qmakeThread.Start(property);
             qmakeThread.Join();
