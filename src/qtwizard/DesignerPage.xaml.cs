@@ -36,7 +36,7 @@ namespace QtProjectWizard
         public DesignerPage()
         {
             InitializeComponent();
-            this.DataContext = this;
+            DataContext = this;
         }
 
         private void OnClassNameChanged(object sender, TextChangedEventArgs e)

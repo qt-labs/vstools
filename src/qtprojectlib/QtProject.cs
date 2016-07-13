@@ -221,7 +221,7 @@ namespace QtProjectLib
                 return;
 
             QtVersionManager vm = QtVersionManager.The();
-            VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
+            VersionInformation versionInfo = vm.GetVersionInfo(Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
 
@@ -282,7 +282,7 @@ namespace QtProjectLib
                 if (linker != null && linker.AdditionalDependencies != null) {
                     LinkerToolWrapper linkerWrapper = new LinkerToolWrapper(linker);
                     QtVersionManager vm = QtVersionManager.The();
-                    VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
+                    VersionInformation versionInfo = vm.GetVersionInfo(Project);
                     if (versionInfo == null)
                         versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
 
@@ -347,7 +347,7 @@ namespace QtProjectLib
             bool foundInLibs = false;
 
             QtVersionManager vm = QtVersionManager.The();
-            VersionInformation versionInfo = vm.GetVersionInfo(this.Project);
+            VersionInformation versionInfo = vm.GetVersionInfo(Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
 
@@ -532,7 +532,7 @@ namespace QtProjectLib
         public void AddUic4BuildStep(VCFile file)
         {
             try {
-                string uiFile = this.GetUiGeneratedFileName(file.FullPath);
+                string uiFile = GetUiGeneratedFileName(file.FullPath);
                 string uiBaseName = file.Name.Remove(file.Name.LastIndexOf('.'));
                 string uiFileMacro = uiFile.Replace(uiBaseName, ProjectMacros.Name);
                 bool uiFileExists = GetFileFromProject(uiFile) != null;
@@ -735,7 +735,7 @@ namespace QtProjectLib
                     }
                     VCFile mocFile = GetFileFromProject(mocRelPath);
                     if (mocFile == null) {
-                        FileInfo fi = new FileInfo(this.VCProject.ProjectDirectory + "\\" + mocRelPath);
+                        FileInfo fi = new FileInfo(VCProject.ProjectDirectory + "\\" + mocRelPath);
                         if (!fi.Directory.Exists)
                             fi.Directory.Create();
                         mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
@@ -1103,7 +1103,7 @@ namespace QtProjectLib
 
                 foreach (QrcPrefix prfx in parser.Prefixes) {
                     foreach (QrcItem itm in prfx.Items) {
-                        string relativeQrcItemPath = HelperFunctions.GetRelativePath(this.vcPro.ProjectDirectory,
+                        string relativeQrcItemPath = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory,
                             qrcDir + itm.Path);
                         filesInQrcFile += ";" + relativeQrcItemPath;
                         try {
@@ -1442,7 +1442,7 @@ namespace QtProjectLib
 
         public void RemoveItem(ProjectItem item)
         {
-            foreach (ProjectItem tmpFilter in this.Project.ProjectItems) {
+            foreach (ProjectItem tmpFilter in Project.ProjectItems) {
                 if (tmpFilter.Name == item.Name) {
                     tmpFilter.Remove();
                     return;
@@ -1749,7 +1749,7 @@ namespace QtProjectLib
 
                     string[] paths = compiler.GetAdditionalIncludeDirectoriesList();
                     FileInfo fi = new FileInfo(file.FullPath);
-                    string relativePath = HelperFunctions.GetRelativePath(this.ProjectDir, fi.Directory.ToString());
+                    string relativePath = HelperFunctions.GetRelativePath(ProjectDir, fi.Directory.ToString());
                     string fixedRelativePath = FixFilePathForComparison(relativePath);
                     bool pathFound = false;
                     foreach (string p in paths) {

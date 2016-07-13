@@ -93,7 +93,7 @@ namespace QtProjectLib
 
         internal SR()
         {
-            resources = new System.Resources.ResourceManager("QtProjectLib.Resources", this.GetType().Assembly);
+            resources = new System.Resources.ResourceManager("QtProjectLib.Resources", GetType().Assembly);
         }
 
         private static SR GetLoader()

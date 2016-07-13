@@ -93,7 +93,7 @@ namespace QtProjectWizard
         public AddClassPage()
         {
             InitializeComponent();
-            this.DataContext = this;
+            DataContext = this;
 
             Classes = new List<Class> {
                 new Class {

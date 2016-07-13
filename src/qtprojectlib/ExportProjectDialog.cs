@@ -64,19 +64,19 @@ namespace QtProjectLib
             //
             InitializeComponent();
 
-            this.cancelButton.Text = SR.GetString("ExportProjectDialog_Cancel");
-            this.okButton.Text = SR.GetString("ExportProjectDialog_OK");
-            this.projLabel.Text = SR.GetString("ExportProjectDialog_CreatePro");
-            this.optionLabel.Text = SR.GetString("ExportProjectDialog_Project");
-            this.optionTextBox.Text = "";
-            this.openCheckBox.Text = SR.GetString("ExportProjectDialog_Open");
-            this.createPriFileCheckBox.Text = SR.GetString("ExportProjectDialog_CreatePri");
-            this.Text = SR.GetString("ExportProjectDialog_Title");
+            cancelButton.Text = SR.GetString("ExportProjectDialog_Cancel");
+            okButton.Text = SR.GetString("ExportProjectDialog_OK");
+            projLabel.Text = SR.GetString("ExportProjectDialog_CreatePro");
+            optionLabel.Text = SR.GetString("ExportProjectDialog_Project");
+            optionTextBox.Text = "";
+            openCheckBox.Text = SR.GetString("ExportProjectDialog_Open");
+            createPriFileCheckBox.Text = SR.GetString("ExportProjectDialog_CreatePri");
+            Text = SR.GetString("ExportProjectDialog_Title");
 
             if (SR.LanguageName == "de")
-                this.Size = new Size(470, 300);
+                Size = new Size(470, 300);
             else
-                this.Size = new Size(400, 300);
+                Size = new Size(400, 300);
 
             ShowInTaskbar = false;
             //
@@ -104,212 +104,212 @@ namespace QtProjectLib
         /// </summary>
         private void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
-            this.projLabel = new System.Windows.Forms.Label();
-            this.optionListBox = new System.Windows.Forms.ListBox();
-            this.optionLabel = new System.Windows.Forms.Label();
-            this.optionComboBox = new System.Windows.Forms.ComboBox();
-            this.commentLabel = new System.Windows.Forms.Label();
-            this.optionTextBox = new System.Windows.Forms.TextBox();
-            this.projListBox = new System.Windows.Forms.CheckedListBox();
-            this.openCheckBox = new System.Windows.Forms.CheckBox();
-            this.lineBox = new System.Windows.Forms.GroupBox();
-            this.createPriFileCheckBox = new System.Windows.Forms.CheckBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            cancelButton = new System.Windows.Forms.Button();
+            okButton = new System.Windows.Forms.Button();
+            projLabel = new System.Windows.Forms.Label();
+            optionListBox = new System.Windows.Forms.ListBox();
+            optionLabel = new System.Windows.Forms.Label();
+            optionComboBox = new System.Windows.Forms.ComboBox();
+            commentLabel = new System.Windows.Forms.Label();
+            optionTextBox = new System.Windows.Forms.TextBox();
+            projListBox = new System.Windows.Forms.CheckedListBox();
+            openCheckBox = new System.Windows.Forms.CheckBox();
+            lineBox = new System.Windows.Forms.GroupBox();
+            createPriFileCheckBox = new System.Windows.Forms.CheckBox();
+            panel1 = new System.Windows.Forms.Panel();
+            panel2 = new System.Windows.Forms.Panel();
 
-            this.newButton = new ImageButton(HelperFunctions.GetSharedImage("QtProjectLib.Resources.newitem.png"),
+            newButton = new ImageButton(HelperFunctions.GetSharedImage("QtProjectLib.Resources.newitem.png"),
                 HelperFunctions.GetSharedImage("QtProjectLib.Resources.newitem_d.png"));
-            this.delButton = new ImageButton(HelperFunctions.GetSharedImage("QtProjectLib.Resources.delete.png"),
+            delButton = new ImageButton(HelperFunctions.GetSharedImage("QtProjectLib.Resources.delete.png"),
                 HelperFunctions.GetSharedImage("QtProjectLib.Resources.delete_d.png"));
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
+            SuspendLayout();
             //
             // cancelButton
             //
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(352, 232);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(72, 24);
-            this.cancelButton.TabIndex = 5;
-            this.cancelButton.Text = "Cancel";
+            cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(352, 232);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(72, 24);
+            cancelButton.TabIndex = 5;
+            cancelButton.Text = "Cancel";
             //
             // okButton
             //
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(272, 232);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(72, 24);
-            this.okButton.TabIndex = 4;
-            this.okButton.Text = "OK";
+            okButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(272, 232);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(72, 24);
+            okButton.TabIndex = 4;
+            okButton.Text = "OK";
             //
             // projLabel
             //
-            this.projLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            projLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.projLabel.Location = new System.Drawing.Point(0, 8);
-            this.projLabel.Name = "projLabel";
-            this.projLabel.Size = new System.Drawing.Size(200, 16);
-            this.projLabel.TabIndex = 3;
-            this.projLabel.Text = "Create .pro files for:";
+            projLabel.Location = new System.Drawing.Point(0, 8);
+            projLabel.Name = "projLabel";
+            projLabel.Size = new System.Drawing.Size(200, 16);
+            projLabel.TabIndex = 3;
+            projLabel.Text = "Create .pro files for:";
             //
             // optionListBox
             //
-            this.optionListBox.Location = new System.Drawing.Point(0, 72);
-            this.optionListBox.Name = "optionListBox";
-            this.optionListBox.Size = new System.Drawing.Size(200, 82);
-            this.optionListBox.TabIndex = 3;
-            this.optionListBox.SelectedIndexChanged += optionListBox_SelectedIndexChanged;
+            optionListBox.Location = new System.Drawing.Point(0, 72);
+            optionListBox.Name = "optionListBox";
+            optionListBox.Size = new System.Drawing.Size(200, 82);
+            optionListBox.TabIndex = 3;
+            optionListBox.SelectedIndexChanged += optionListBox_SelectedIndexChanged;
             //
             // optionLabel
             //
-            this.optionLabel.Location = new System.Drawing.Point(0, 8);
-            this.optionLabel.Name = "optionLabel";
-            this.optionLabel.Size = new System.Drawing.Size(200, 16);
-            this.optionLabel.TabIndex = 5;
-            this.optionLabel.Text = "Project &tag:";
+            optionLabel.Location = new System.Drawing.Point(0, 8);
+            optionLabel.Name = "optionLabel";
+            optionLabel.Size = new System.Drawing.Size(200, 16);
+            optionLabel.TabIndex = 5;
+            optionLabel.Text = "Project &tag:";
             //
             // optionComboBox
             //
-            this.optionComboBox.Location = new System.Drawing.Point(0, 24);
-            this.optionComboBox.Name = "optionComboBox";
-            this.optionComboBox.Size = new System.Drawing.Size(200, 21);
-            this.optionComboBox.TabIndex = 2;
-            this.optionComboBox.SelectedIndexChanged += optionComboBox_SelectedIndexChanged;
+            optionComboBox.Location = new System.Drawing.Point(0, 24);
+            optionComboBox.Name = "optionComboBox";
+            optionComboBox.Size = new System.Drawing.Size(200, 21);
+            optionComboBox.TabIndex = 2;
+            optionComboBox.SelectedIndexChanged += optionComboBox_SelectedIndexChanged;
             //
             // commentLabel
             //
-            this.commentLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.commentLabel.Location = new System.Drawing.Point(0, 160);
-            this.commentLabel.Name = "commentLabel";
-            this.commentLabel.Size = new System.Drawing.Size(200, 48);
-            this.commentLabel.TabIndex = 6;
+            commentLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            commentLabel.Location = new System.Drawing.Point(0, 160);
+            commentLabel.Name = "commentLabel";
+            commentLabel.Size = new System.Drawing.Size(200, 48);
+            commentLabel.TabIndex = 6;
             //
             // optionTextBox
             //
-            this.optionTextBox.Enabled = false;
-            this.optionTextBox.Location = new System.Drawing.Point(0, 48);
-            this.optionTextBox.Name = "optionTextBox";
-            this.optionTextBox.Size = new System.Drawing.Size(136, 20);
-            this.optionTextBox.TabIndex = 7;
-            this.optionTextBox.Text = "";
-            this.optionTextBox.TextChanged += optionTextBox_TextChanged;
+            optionTextBox.Enabled = false;
+            optionTextBox.Location = new System.Drawing.Point(0, 48);
+            optionTextBox.Name = "optionTextBox";
+            optionTextBox.Size = new System.Drawing.Size(136, 20);
+            optionTextBox.TabIndex = 7;
+            optionTextBox.Text = "";
+            optionTextBox.TextChanged += optionTextBox_TextChanged;
             //
             // projListBox
             //
-            this.projListBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            projListBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.projListBox.Location = new System.Drawing.Point(0, 24);
-            this.projListBox.Name = "projListBox";
-            this.projListBox.Size = new System.Drawing.Size(200, 124);
-            this.projListBox.TabIndex = 10;
-            this.projListBox.SelectedIndexChanged += projListBox_SelectedIndexChanged;
-            this.projListBox.ItemCheck += projListBox_ItemCheck;
+            projListBox.Location = new System.Drawing.Point(0, 24);
+            projListBox.Name = "projListBox";
+            projListBox.Size = new System.Drawing.Size(200, 124);
+            projListBox.TabIndex = 10;
+            projListBox.SelectedIndexChanged += projListBox_SelectedIndexChanged;
+            projListBox.ItemCheck += projListBox_ItemCheck;
             //
             // openCheckBox
             //
-            this.openCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            openCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.openCheckBox.Checked = true;
-            this.openCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.openCheckBox.Location = new System.Drawing.Point(0, 184);
-            this.openCheckBox.Name = "openCheckBox";
-            this.openCheckBox.Size = new System.Drawing.Size(208, 24);
-            this.openCheckBox.TabIndex = 11;
-            this.openCheckBox.Text = "Open Created Files";
+            openCheckBox.Checked = true;
+            openCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            openCheckBox.Location = new System.Drawing.Point(0, 184);
+            openCheckBox.Name = "openCheckBox";
+            openCheckBox.Size = new System.Drawing.Size(208, 24);
+            openCheckBox.TabIndex = 11;
+            openCheckBox.Text = "Open Created Files";
             //
             // lineBox
             //
-            this.lineBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lineBox.Location = new System.Drawing.Point(-8, 216);
-            this.lineBox.Name = "lineBox";
-            this.lineBox.Size = new System.Drawing.Size(536, 8);
-            this.lineBox.TabIndex = 12;
-            this.lineBox.TabStop = false;
+            lineBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            lineBox.Location = new System.Drawing.Point(-8, 216);
+            lineBox.Name = "lineBox";
+            lineBox.Size = new System.Drawing.Size(536, 8);
+            lineBox.TabIndex = 12;
+            lineBox.TabStop = false;
             //
             // createPriFileCheckBox
             //
-            this.createPriFileCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            createPriFileCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.createPriFileCheckBox.Checked = true;
-            this.createPriFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.createPriFileCheckBox.Location = new System.Drawing.Point(0, 160);
-            this.createPriFileCheckBox.Name = "createPriFileCheckBox";
-            this.createPriFileCheckBox.Size = new System.Drawing.Size(200, 24);
-            this.createPriFileCheckBox.TabIndex = 13;
-            this.createPriFileCheckBox.Text = "Create .pri File";
+            createPriFileCheckBox.Checked = true;
+            createPriFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            createPriFileCheckBox.Location = new System.Drawing.Point(0, 160);
+            createPriFileCheckBox.Name = "createPriFileCheckBox";
+            createPriFileCheckBox.Size = new System.Drawing.Size(200, 24);
+            createPriFileCheckBox.TabIndex = 13;
+            createPriFileCheckBox.Text = "Create .pri File";
             //
             // panel1
             //
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            panel1.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.projLabel);
-            this.panel1.Controls.Add(this.projListBox);
-            this.panel1.Controls.Add(this.createPriFileCheckBox);
-            this.panel1.Controls.Add(this.openCheckBox);
-            this.panel1.Location = new System.Drawing.Point(8, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 208);
-            this.panel1.TabIndex = 14;
+            panel1.Controls.Add(projLabel);
+            panel1.Controls.Add(projListBox);
+            panel1.Controls.Add(createPriFileCheckBox);
+            panel1.Controls.Add(openCheckBox);
+            panel1.Location = new System.Drawing.Point(8, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(200, 208);
+            panel1.TabIndex = 14;
             //
             // panel2
             //
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.newButton);
-            this.panel2.Controls.Add(this.delButton);
-            this.panel2.Controls.Add(this.optionLabel);
-            this.panel2.Controls.Add(this.optionComboBox);
-            this.panel2.Controls.Add(this.optionTextBox);
-            this.panel2.Controls.Add(this.optionListBox);
-            this.panel2.Controls.Add(this.commentLabel);
-            this.panel2.Location = new System.Drawing.Point(216, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(208, 208);
-            this.panel2.TabIndex = 15;
+            panel2.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            panel2.Controls.Add(newButton);
+            panel2.Controls.Add(delButton);
+            panel2.Controls.Add(optionLabel);
+            panel2.Controls.Add(optionComboBox);
+            panel2.Controls.Add(optionTextBox);
+            panel2.Controls.Add(optionListBox);
+            panel2.Controls.Add(commentLabel);
+            panel2.Location = new System.Drawing.Point(216, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(208, 208);
+            panel2.TabIndex = 15;
             //
             // newButton
             //
-            this.newButton.Location = new System.Drawing.Point(144, 48);
-            this.newButton.Name = "button1";
-            this.newButton.Size = new System.Drawing.Size(24, 23);
-            this.newButton.TabIndex = 8;
-            this.newButton.Click += newButton_Click;
+            newButton.Location = new System.Drawing.Point(144, 48);
+            newButton.Name = "button1";
+            newButton.Size = new System.Drawing.Size(24, 23);
+            newButton.TabIndex = 8;
+            newButton.Click += newButton_Click;
 
             //
             // delButton
             //
-            this.delButton.Location = new System.Drawing.Point(176, 48);
-            this.delButton.Name = "button2";
-            this.delButton.Size = new System.Drawing.Size(24, 23);
-            this.delButton.TabIndex = 9;
-            this.delButton.Click += delButton_Click;
+            delButton.Location = new System.Drawing.Point(176, 48);
+            delButton.Name = "button2";
+            delButton.Size = new System.Drawing.Size(24, 23);
+            delButton.TabIndex = 9;
+            delButton.Click += delButton_Click;
 
             //
             // ExportProjectDialog
             //
-            this.AcceptButton = okButton;
-            this.CancelButton = cancelButton;
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(432, 262);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.lineBox);
-            this.Controls.Add(this.okButton);
-            this.Controls.Add(this.cancelButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ExportProjectDialog";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Export Project";
-            this.Load += ExportProjectDialog_Load;
-            this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AcceptButton = okButton;
+            CancelButton = cancelButton;
+            AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            ClientSize = new System.Drawing.Size(432, 262);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
+            Controls.Add(lineBox);
+            Controls.Add(okButton);
+            Controls.Add(cancelButton);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ExportProjectDialog";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            Text = "Export Project";
+            Load += ExportProjectDialog_Load;
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
         #endregion

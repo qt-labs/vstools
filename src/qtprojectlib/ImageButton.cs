@@ -64,7 +64,7 @@ namespace QtProjectLib
             if (yoffset < 0)
                 imgHeight = Size.Height;
 
-            if ((dimg != null) && (!this.Enabled))
+            if ((dimg != null) && (!Enabled))
                 e.Graphics.DrawImage(dimg, xoffset, yoffset,
                     imgWidth, imgHeight);
             else if (img != null)

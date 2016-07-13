@@ -53,49 +53,49 @@ namespace QtProjectLib
 
         public InfoDialog(string name)
         {
-            this.label1 = new Label();
-            this.components = new Container();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.SuspendLayout();
+            label1 = new Label();
+            components = new Container();
+            progressBar1 = new System.Windows.Forms.ProgressBar();
+            SuspendLayout();
             //
             // label1
             //
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(370, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = SR.GetString("QMakeProcess_OpenSolutionFromFile") + name;
+            label1.Location = new System.Drawing.Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(370, 13);
+            label1.TabIndex = 0;
+            label1.Text = SR.GetString("QMakeProcess_OpenSolutionFromFile") + name;
             //
             // progressBar1
             //
-            this.progressBar1.Location = new System.Drawing.Point(13, 28);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(369, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 1;
+            progressBar1.Location = new System.Drawing.Point(13, 28);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new System.Drawing.Size(369, 23);
+            progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            progressBar1.TabIndex = 1;
             //
             // Form1
             //
-            this.ClientSize = new System.Drawing.Size(394, 67);
-            this.MinimumSize = new System.Drawing.Size(402, 94);
-            this.ControlBox = false;
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "Form1";
-            this.ShowInTaskbar = false;
-            this.Text = Resources.msgBoxCaption;
-            this.StartPosition = FormStartPosition.CenterParent;
+            ClientSize = new System.Drawing.Size(394, 67);
+            MinimumSize = new System.Drawing.Size(402, 94);
+            ControlBox = false;
+            Controls.Add(progressBar1);
+            Controls.Add(label1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "Form1";
+            ShowInTaskbar = false;
+            Text = Resources.msgBoxCaption;
+            StartPosition = FormStartPosition.CenterParent;
 
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         public void CloseEventHandler()
         {
-            this.Close();
+            Close();
         }
     }
 
@@ -288,7 +288,7 @@ namespace QtProjectLib
         public string query(string property)
         {
             ReadyEvent += resultObtained;
-            System.Threading.Thread qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(this.RunQMakeQuery));
+            System.Threading.Thread qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(RunQMakeQuery));
             qmakeThread.Start(property);
             qmakeThread.Join();
             return queryResult;

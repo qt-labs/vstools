@@ -36,7 +36,7 @@ namespace QtProjectWizard
         public IntroPage()
         {
             InitializeComponent();
-            this.DataContext = this;
+            DataContext = this;
         }
     }
 }

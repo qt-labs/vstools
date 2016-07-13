@@ -319,7 +319,7 @@ namespace QtProjectLib
             bool directoryAdded = false;
             string[] directories = value.Split(new char[] { ';', ',' }, StringSplitOptions
                 .RemoveEmptyEntries);
-            List<string> lst = this.AdditionalIncludeDirectories;
+            List<string> lst = AdditionalIncludeDirectories;
             foreach (string directory in directories) {
                 if (lst.Contains(directory))
                     continue;
@@ -329,12 +329,12 @@ namespace QtProjectLib
             }
 
             if (directoryAdded)
-                this.AdditionalIncludeDirectories = lst;
+                AdditionalIncludeDirectories = lst;
         }
 
         public string[] GetAdditionalIncludeDirectoriesList()
         {
-            string[] includes = this.GetAdditionalIncludeDirectories()
+            string[] includes = GetAdditionalIncludeDirectories()
                 .Split(new char[] { ',', ';' });
             string[] fixedincludes;
             fixedincludes = new string[includes.Length];
