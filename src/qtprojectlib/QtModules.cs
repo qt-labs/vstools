@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System.Collections.Generic;
+using System.IO;
 
 namespace QtProjectLib
 {
@@ -149,6 +150,21 @@ namespace QtProjectLib
             if (isDebugCfg && AdditionalLibrariesDebug.Count > 0)
                 return AdditionalLibrariesDebug;
             return AdditionalLibraries;
+        }
+
+        public static bool IsModuleInstalled(string moduleName)
+        {
+            var qtVersion = QtVersionManager.The().GetDefaultVersion();
+            if (qtVersion == null) {
+                throw new QtVSException("Unable to find a Qt build!" + System.Environment.NewLine
+                    + "To solve this problem specify a Qt build.");
+            }
+
+            var installPath = QtVersionManager.The().GetInstallPath(qtVersion);
+            if (moduleName.StartsWith("Qt", System.StringComparison.Ordinal))
+                moduleName = "Qt5" + moduleName.Substring(2);
+
+            return new FileInfo(Path.Combine(installPath, "lib", moduleName + ".lib")).Exists;
         }
     }
 

@@ -159,7 +159,7 @@ namespace QtProjectWizard
                                 + @"resulting library is linked dynamically with Qt.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = new QtProjectEngine().IsModuleInstalled(@"QtCore"),
+                            FinishButtonEnabled = QtModuleInfo.IsModuleInstalled(@"QtCore"),
                             CancelButtonEnabled = true
                         }
                     })

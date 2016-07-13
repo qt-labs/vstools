@@ -126,9 +126,8 @@ namespace QtProjectWizard
 
                 try {
                     bool defaultModulesInstalled = true;
-                    var projectEngine = new QtProjectEngine();
                     foreach (var module in data.DefaultModules)
-                        defaultModulesInstalled |= projectEngine.IsModuleInstalled(module);
+                        defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
                     var className = replacements["$safeprojectname$"];
                     className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);

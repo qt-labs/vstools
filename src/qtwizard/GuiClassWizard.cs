@@ -53,9 +53,8 @@ namespace QtProjectWizard
 
                 try {
                     bool defaultModulesInstalled = true;
-                    var projectEngine = new QtProjectEngine();
                     foreach (var module in data.DefaultModules)
-                        defaultModulesInstalled |= projectEngine.IsModuleInstalled(module);
+                        defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
                     if (string.IsNullOrEmpty(name))
                         name = @"QtGuiClass";

@@ -81,7 +81,7 @@ namespace QtProjectWizard
                                 + @"wizard creates a .h and .cpp file.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = new QtProjectEngine().IsModuleInstalled(@"QtCore"),
+                            FinishButtonEnabled = QtModuleInfo.IsModuleInstalled(@"QtCore"),
                             CancelButtonEnabled = true
                         }
                     })

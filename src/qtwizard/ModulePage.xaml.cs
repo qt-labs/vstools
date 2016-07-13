@@ -59,15 +59,14 @@ namespace QtProjectWizard
         {
             Loaded -= OnLoaded;
             try {
-                var projectEngine = new QtProjectEngine();
                 foreach (var checkBox in Children<CheckBox>(ModuleGrid))
-                    checkBox.IsEnabled = projectEngine.IsModuleInstalled(checkBox.Name);
+                    checkBox.IsEnabled = QtModuleInfo.IsModuleInstalled(checkBox.Name);
 
                 foreach (var module in Data.DefaultModules) {
                     var checkbox = ModuleGrid.FindName(module) as CheckBox;
                     if (checkbox == null)
                         continue;
-                    checkbox.IsChecked = projectEngine.IsModuleInstalled(module);
+                    checkbox.IsChecked = QtModuleInfo.IsModuleInstalled(module);
                     checkbox.IsEnabled = false; // Required module, always disabled.
                 }
             } catch {

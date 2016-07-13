@@ -63,7 +63,6 @@
     <Compile Include="QtConfig.cs" />
     <Compile Include="QtModules.cs" />
     <Compile Include="QtProject.cs" />
-    <Compile Include="QtProjectEngine.cs" />
     <Compile Include="QtVersionManager.cs" />
     <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="RccOptions.cs" />
