@@ -28,7 +28,6 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
-using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,18 +39,8 @@ using System.Windows.Forms;
 
 namespace QtProjectLib
 {
-
     public class HelperFunctions
     {
-        // used when creating a new template (needs to be static)
-        private static System.CodeDom.Compiler.TempFileCollection tmpFiles = null;
-
-        public static string FindQtDirWithTools()
-        {
-            string empty = null;
-            return FindQtDirWithTools(empty);
-        }
-
         public static string FindQtDirWithTools(Project project)
         {
             QtVersionManager versionManager = QtVersionManager.The();
@@ -1090,39 +1079,6 @@ namespace QtProjectLib
             }
         }
 
-        /// <summary>
-        /// Returns true if the filter specified by its guid is currently
-        /// selected and the filter is part of a Qt project. Otherwise, this
-        /// function returns false.
-        /// </summary>
-        /// <param name="filterguid">A FakeFilter object.</param>
-        public static bool IsFilterSelected(EnvDTE.DTE dteObject, FakeFilter filter)
-        {
-            if (dteObject == null)
-                return false;
-
-            try {
-                System.Guid guid = new Guid("{6bb5f8f0-4483-11d3-8bcf-00c04f8ec28c}");
-                EnvDTE.SelectedItems itms = dteObject.SelectedItems;
-
-                foreach (EnvDTE.SelectedItem selItem in itms) {
-                    if (selItem.ProjectItem == null)
-                        continue;
-                    string kindGuid = selItem.ProjectItem.Kind.Substring(1, selItem.ProjectItem.Kind.Length - 2);
-                    if (kindGuid.ToLower() == guid.ToString().ToLower()) {
-                        VCFilter filt = (VCFilter) selItem.ProjectItem.Object;
-                        if (filt != null && filt.UniqueIdentifier != null
-                            && filt.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower()
-                            && HelperFunctions.IsQtProject(GetSelectedQtProject(dteObject)))
-                            return true;
-                    }
-                }
-                return false;
-            } catch { }
-
-            return false;
-        }
-
         public static EnvDTE.Project GetSelectedProject(EnvDTE.DTE dteObject)
         {
             if (dteObject == null)
@@ -1394,28 +1350,6 @@ namespace QtProjectLib
             default:
                 return machineTypeOption.machineNotSet;
             }
-        }
-
-        private static List<string> availablePlatforms;
-
-        /// <summary>
-        /// Returns true if the given platform is available in the global settings of Visual Studio.
-        /// On error this function returns false.
-        /// </summary>
-        public static bool IsPlatformAvailable(EnvDTE.DTE dteObject, string platformName)
-        {
-            if (availablePlatforms == null || availablePlatforms.Count == 0) {
-                availablePlatforms = new List<string>();
-                VCProjectEngine engine = new VCProjectEngineObject();
-                IVCCollection platforms = engine.Platforms as IVCCollection;
-                foreach (VCPlatform platform in platforms)
-                    availablePlatforms.Add(platform.Name);
-            }
-
-            if (availablePlatforms == null)
-                return false;
-
-            return availablePlatforms.Contains(platformName);
         }
 
         public static bool ArraysEqual(Array array1, Array array2)
