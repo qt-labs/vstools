@@ -813,80 +813,6 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Creates a temporary qt project template file. It creates the filters
-        /// in the order specified by the array.
-        /// </summary>
-        /// <param name="filters">The filters to add to the project file</param>
-        /// <returns></returns>
-        public static string CreateProjectTemplateFile(FakeFilter[] filters, bool useKeyword, string platformName)
-        {
-            // just to be safe
-            ReleaseProjectTemplateFile();
-
-            StreamWriter sw;
-            tmpFiles = new System.CodeDom.Compiler.TempFileCollection();
-            tmpFiles.KeepFiles = false;
-
-            string tmpFile = tmpFiles.AddExtension("vcproj");
-
-            try {
-                if (SR.LanguageName == "ja")
-                    sw = new StreamWriter(tmpFile, false, System.Text.Encoding.GetEncoding(932));
-                else
-                    sw = new StreamWriter(tmpFile, false);
-            } catch (System.Exception e) {
-                Messages.DisplayErrorMessage(e, SR.GetString("HelperFunctions_TryCreatingNewProject"));
-                return null;
-            }
-
-            if (SR.LanguageName == "ja")
-                sw.WriteLine("<?xml version=\"1.0\" encoding = \"shift_jis\"?>");
-            else
-                sw.WriteLine("<?xml version=\"1.0\" encoding = \"Windows-1252\"?>");
-            sw.WriteLine("<VisualStudioProject");
-            sw.WriteLine("	ProjectType=\"Visual C++\"");
-            sw.WriteLine("	Version=\"7.10\"");
-            sw.WriteLine("	ProjectGUID=\"{B12702AD-ABFB-343A-A199-8E24837244A3}\"");
-            if (useKeyword)
-                sw.WriteLine("	Keyword=\"" + Resources.qtProjectKeyword + "\">");
-            else
-                sw.WriteLine(">");
-
-            sw.WriteLine("	<Platforms>");
-            sw.WriteLine("		<Platform");
-            sw.WriteLine("			Name=\"" + platformName + "\"/>");
-            sw.WriteLine("	</Platforms>");
-            sw.WriteLine("	<Configurations>");
-            sw.WriteLine("		<Configuration");
-            sw.WriteLine("			Name=\"Release|" + platformName + "\">");
-            sw.WriteLine("		</Configuration>");
-            sw.WriteLine("		<Configuration");
-            sw.WriteLine("			Name=\"Debug|" + platformName + "\">");
-            sw.WriteLine("		</Configuration>");
-            sw.WriteLine("	</Configurations>");
-            sw.WriteLine("	<Files>");
-
-            for (int i = 0; i < filters.Length; i++) {
-                sw.WriteLine("		<Filter");
-                sw.WriteLine("		    Name=\"" + filters[i].Name + "\"");
-                sw.WriteLine("			Filter=\"" + filters[i].Filter + "\"");
-                if (!filters[i].ParseFiles)
-                    sw.WriteLine("			ParseFiles=\"FALSE\"");
-                if (!filters[i].SCCFiles)
-                    sw.WriteLine("			SourceControlFiles=\"FALSE\"");
-                sw.WriteLine("			UniqueIdentifier=\"" + filters[i].UniqueIdentifier + "\">");
-                sw.WriteLine("		</Filter>");
-            }
-
-            sw.WriteLine("	</Files>");
-            sw.WriteLine("</VisualStudioProject>");
-
-            sw.Close();
-
-            return tmpFile;
-        }
-
-        /// <summary>
         /// Deletes the file's directory if it is empty (not deleting the file itself so it must
         /// have been deleted before) and every empty parent directory until the first, non-empty
         /// directory is found.
@@ -910,34 +836,6 @@ namespace QtProjectLib
                 DirectoryInfo tmp = dirInfo;
                 dirInfo = dirInfo.Parent;
                 tmp.Delete();
-            }
-        }
-
-        /// <summary>
-        /// Deletes the temporary project file.
-        /// </summary>
-        public static void ReleaseProjectTemplateFile()
-        {
-            if (tmpFiles != null)
-                tmpFiles.Delete();
-        }
-
-        /// <summary>
-        /// Returns the template path. The returned path represents the common
-        /// template directory of all templates, i.e. the special template
-        /// directory e.g. for new projects has to be added.
-        /// </summary>
-        public static string GetTemplatePath()
-        {
-            try {
-                string path = "c:\\";
-                RegistryKey hkcu = Registry.LocalMachine;
-                RegistryKey hkQVSIP = hkcu.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-                if (hkQVSIP == null)
-                    return path;
-                return (string) (hkQVSIP.GetValue("TemplateBasePath"));
-            } catch {
-                throw new QtVSException(SR.GetString("HelperFunctions_ErrorSearchForQtTemplatePath"));
             }
         }
 
