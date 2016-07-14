@@ -101,13 +101,6 @@ namespace QtProjectLib
 
         public string ObjectFile
         {
-            get
-            {
-                if (compilerTool != null)
-                    return compilerTool.ObjectFile;
-                return GetStringProperty("ObjectFile");
-            }
-
             set
             {
                 if (compilerTool != null)
@@ -119,13 +112,6 @@ namespace QtProjectLib
 
         public string ProgramDataBaseFileName
         {
-            get
-            {
-                if (compilerTool != null)
-                    return compilerTool.ProgramDataBaseFileName;
-                return GetStringProperty("ProgramDataBaseFileName");
-            }
-
             set
             {
                 if (compilerTool != null)
@@ -208,24 +194,6 @@ namespace QtProjectLib
 
                 var ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 return new List<string>(ppdefs);
-            }
-
-            set
-            {
-                if (value == null) {
-                    SetPreprocessorDefinitions("");
-                } else {
-                    string ppdefsstr = "";
-                    bool firstLoop = true;
-                    foreach (string ppdef in value) {
-                        if (firstLoop)
-                            firstLoop = false;
-                        else
-                            ppdefsstr += ",";
-                        ppdefsstr += ppdef;
-                    }
-                    SetPreprocessorDefinitions(ppdefsstr);
-                }
             }
         }
 
@@ -430,32 +398,6 @@ namespace QtProjectLib
             else
                 compilerType.InvokeMember(
                     "TreatWChar_tAsBuiltInType",
-                    System.Reflection.BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { @value });
-        }
-
-        public void SetWarningLevel(warningLevelOption value)
-        {
-            if (compilerTool != null)
-                compilerTool.WarningLevel = value;
-            else
-                compilerType.InvokeMember(
-                    "WarningLevel",
-                    System.Reflection.BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { @value });
-        }
-
-        public void SetBufferSecurityCheck(bool value)
-        {
-            if (compilerTool != null)
-                compilerTool.BufferSecurityCheck = value;
-            else
-                compilerType.InvokeMember(
-                    "BufferSecurityCheck",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,

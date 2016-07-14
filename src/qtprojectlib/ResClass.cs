@@ -115,14 +115,6 @@ namespace QtProjectLib
             //get { return new CultureInfo("de-DE"); }
         }
 
-        public static ResourceManager Resources
-        {
-            get
-            {
-                return GetLoader().resources;
-            }
-        }
-
         public static string LanguageName
         {
             get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName; }
@@ -147,14 +139,6 @@ namespace QtProjectLib
             if (sys == null)
                 return null;
             return sys.resources.GetString(name, SR.Culture);
-        }
-
-        public static object GetObject(string name)
-        {
-            var sys = GetLoader();
-            if (sys == null)
-                return null;
-            return sys.resources.GetObject(name, SR.Culture);
         }
     }
 }

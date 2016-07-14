@@ -38,7 +38,6 @@
   <ItemGroup>
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
-    <Compile Include="DeploymentToolWrapper.cs" />
     <Compile Include="ExportProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>

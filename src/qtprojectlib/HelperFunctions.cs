@@ -489,6 +489,7 @@ namespace QtProjectLib
             if (!IsQMakeProject(project))
                 return;
             if (IsQtProject(project)) {
+                // TODO: qtPro is never used.
                 var qtPro = QtProject.Create(project);
                 var vm = QtVersionManager.The();
                 qtDir = vm.GetInstallPath(project);

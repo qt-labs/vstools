@@ -41,7 +41,7 @@ using System.Windows.Controls;
 
 namespace QtProjectWizard
 {
-    class LibraryWizard : IWizard
+    public class LibraryWizard : IWizard
     {
         public void BeforeOpeningFile(ProjectItem projectItem)
         {

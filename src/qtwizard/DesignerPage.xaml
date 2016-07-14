@@ -271,6 +271,9 @@
                                         <Condition Binding="{Binding ElementName=ClassName,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
+                                        <Condition Binding="{Binding ElementName=BaseClass,
+                                            Path=(Validation.HasError)}"
+                                                   Value="false" />
                                         <Condition Binding="{Binding ElementName=ClassHeaderFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />

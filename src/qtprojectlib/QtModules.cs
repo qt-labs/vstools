@@ -122,6 +122,7 @@ namespace QtProjectLib
 
         public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild)
         {
+            // TODO: isStaticBuild is never used.
             var libs = new List<string>();
             string libName = LibraryPrefix;
             if (libName.StartsWith("Qt"))

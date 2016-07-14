@@ -40,7 +40,7 @@ using System.Windows.Controls;
 
 namespace QtProjectWizard
 {
-    class ServerWizard : IWizard
+    public class ServerWizard : IWizard
     {
         public void BeforeOpeningFile(EnvDTE.ProjectItem projectItem)
         {
