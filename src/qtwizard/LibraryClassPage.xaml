@@ -197,7 +197,7 @@
                         Margin="10,0,0,0"
                         IsDefault="True"
                         Name="FinishButton"
-                        Content="_Finsih"
+                        Content="_Finish"
                         VerticalAlignment="Bottom">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
