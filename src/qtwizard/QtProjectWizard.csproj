@@ -39,22 +39,42 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="QtProjectWizard.ico" />
+    <Resource Include="Resources\medium.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Qt-logo-small.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\small.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddClassPage.xaml.cs">
+      <DependentUpon>AddClassPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AddClassWizard.cs" />
     <Compile Include="ClassNameValidationRule.cs" />
     <Compile Include="ConsoleWizard.cs" />
+    <Compile Include="CoreClassPage.xaml.cs">
+      <DependentUpon>CoreClassPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CoreClassWizard.cs" />
     <Compile Include="DesignerPage.xaml.cs">
       <DependentUpon>DesignerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DesignerWizard.cs" />
+    <Compile Include="FileExistsInFilterValidationRule.cs" />
     <Compile Include="FileNameValidationRule.cs" />
+    <Compile Include="GuiClassPage.xaml.cs">
+      <DependentUpon>GuiClassPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GuiClassWizard.cs" />
     <Compile Include="GuiPage.xaml.cs">
       <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="GuiWizard.cs" />
+    <Compile Include="IClassWizard.cs" />
     <Compile Include="IntroPage.xaml.cs">
       <DependentUpon>IntroPage.xaml</DependentUpon>
     </Compile>
@@ -70,6 +90,7 @@
       <DependentUpon>ServerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ServerWizard.cs" />
+    <Compile Include="UiClassInclusion.cs" />
     <Compile Include="VCLanguageManagerValidationRule.cs" />
     <Compile Include="WizardData.cs" />
     <Compile Include="WizardPage.cs" />
@@ -79,7 +100,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AddClassPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CoreClassPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DesignerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GuiClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +129,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModulePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ExpanderStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

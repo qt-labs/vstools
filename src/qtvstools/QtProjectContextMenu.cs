@@ -28,7 +28,9 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
+using QtProjectWizard;
 using System;
 using System.ComponentModel.Design;
 using System.Windows.Forms;
@@ -83,7 +85,8 @@ namespace QtVsTools
             ConvertToQtProjectId = 0x0120,
             ConvertToQmakeProjectId = 0x0121,
             QtProjectSettingsProjectId = 0x0122,
-            ChangeProjectQtVersionProjectId = 0x0123
+            ChangeProjectQtVersionProjectId = 0x0123,
+            ProjectAddNewQtClassProjectId = 0x200
         }
 
         /// <summary>
@@ -192,7 +195,27 @@ namespace QtVsTools
                     }
                 }
                 break;
-            default:
+            case CommandId.ProjectAddNewQtClassProjectId:
+                {
+                    try {
+                        var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                        if (!HelperFunctions.IsQtProject(project))
+                            return;
+
+                        var vcProject = project.Object as VCProject;
+                        if (vcProject == null)
+                            return;
+
+                        bool loop = true;
+                        do {
+                            var classWizard = new AddClassWizard();
+                            loop = classWizard.Run(Vsix.Instance.Dte, vcProject.Name,
+                                vcProject.ProjectDirectory) == WizardResult.Exception;
+                        } while (loop);
+                    } catch {
+                        // Deliberately ignore any kind of exception but close the dialog.
+                    }
+                }
                 break;
             }
         }
@@ -216,6 +239,7 @@ namespace QtVsTools
                 break;
             case CommandId.ConvertToQmakeProjectId:
             case CommandId.QtProjectSettingsProjectId:
+            case CommandId.ProjectAddNewQtClassProjectId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);

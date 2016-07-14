@@ -28,7 +28,7 @@
     *****************************************************************************
 -->
 
-<local:WizardPage x:Class="QtProjectWizard.DesignerPage"
+<local:WizardPage x:Class="QtProjectWizard.CoreClassPage"
                   xmlns:local="clr-namespace:QtProjectWizard"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -80,10 +80,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -102,33 +98,59 @@
                     </Style>
                 </Grid.Resources>
                 <TextBlock Grid.Row="0"
-                           Margin="0,0,10,5">
-                    <Run FontWeight="Bold"
-                         Text="Custom Widget "/>
-                    <Run Text="- Class Name:"/>
-                </TextBlock>
+                           Text="Class Name:"
+                           Margin="0,0,10,0" />
                 <TextBox Grid.Row="1"
                          Margin="0,0,10,10"
-                         x:Name="ClassName"
-                         TextChanged="OnClassNameChanged">
+                         Name="ClassName"
+                         TextChanged="OnClassNameChanged"
+                         TabIndex="0">
                     <TextBox.Text>
                         <Binding Path="Data.ClassName"
                                  NotifyOnValidationError="True"
                                  UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
-                                <local:ClassNameValidationRule />
+                                <local:ClassNameValidationRule SupportNamespaces="True" />
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <TextBlock Grid.Column="1"
-                           Grid.Row="0"
+                <TextBlock TextWrapping="Wrap"
+                           Text="Constructor signature:"
+                           Grid.Row="2"
+                           Margin="0,0,10,5" />
+                <ComboBox Grid.Row="3"
+                          VerticalAlignment="Top"
+                          TabIndex="2"
+                          IsSynchronizedWithCurrentItem="True"
+                          Margin="0,0,10,30"
+                          SelectedIndex="0"
+                          Text="{Binding Path=Data.ConstructorSignature}">
+                    <ComboBoxItem Content="QObject *parent"
+                                  IsSelected="True" />
+                    <ComboBoxItem Content="QWidget *parent" />
+                    <ComboBoxItem Content="" />
+                    <ComboBox.Style>
+                        <Style TargetType="{x:Type ComboBox}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=BaseClass, Path=Text}"
+                                             Value="">
+                                    <Setter Property="IsEnabled"
+                                            Value="false" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+                <TextBlock TextWrapping="Wrap"
                            Text="Base class:"
-                           Margin="0,0,0,5" />
-                <TextBox  Grid.Column="1"
-                          Grid.Row="1"
-                          Name="BaseClass"
-                          Margin="0,0,0,10">
+                           Margin="0,0,10,0"
+                           Grid.Column="1" />
+                <TextBox Margin="0,0,0,10"
+                         TabIndex="1"
+                         Grid.Column="1"
+                         Grid.Row="1"
+                         Name="BaseClass">
                     <TextBox.Text>
                         <Binding Path="Data.BaseClass"
                                  NotifyOnValidationError="True"
@@ -139,105 +161,80 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <TextBlock Grid.Row="2"
-                           Margin="0,0,10,5"
-                           Text="Header (.h) file:" />
-                <TextBox Grid.Row="3"
-                         Margin="0,0,10,30"
-                         Name="ClassHeaderFile">
-                    <TextBox.Text>
-                        <Binding Path="Data.ClassHeaderFile"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <local:FileNameValidationRule FileExt=".h" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBlock Grid.Column="1"
-                           Grid.Row="2"
-                           Margin="0,0,0,5"
-                           Text="Source (.cpp) file:" />
-                <TextBox Grid.Column="1"
-                         Grid.Row="3"
-                         Margin="0,0,0,30"
-                         Name="ClassSourceFile">
-                    <TextBox.Text>
-                        <Binding Path="Data.ClassSourceFile"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <local:FileNameValidationRule FileExt=".cpp" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBlock Grid.Column="0"
-                           Grid.Row="4"
-                           Margin="0,0,0,5"
-                           >
-                    <Run FontWeight="Bold"
-                         Text="Plugin"/>
-                    <Run Text=" - Class Name:"/>
-                </TextBlock>
-                <TextBox Grid.Column="0"
-                         Grid.Row="5"
-                         Margin="0,0,0,10"
-                         Name="PluginClass">
-                    <TextBox.Text>
-                        <Binding Path="Data.PluginClass"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <local:ClassNameValidationRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBlock Grid.Row="6"
-                           Margin="0,0,10,5"
-                           Text="Header (.h) file:" />
-                <TextBox Grid.Row="7"
-                         Margin="0,0,10,0"
-                         Name="PluginHeaderFile">
-                    <TextBox.Text>
-                        <Binding Path="Data.PluginHeaderFile"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <local:FileNameValidationRule FileExt=".h" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBlock Grid.Column="1"
-                           Grid.Row="6"
-                           Margin="0,0,0,5"
-                           Text="Source (.cpp) file:" />
-                <TextBox Grid.Column="1"
-                         Grid.Row="7"
-                         Margin="0"
-                         Name="PluginSourceFile">
-                    <TextBox.Text>
-                        <Binding Path="Data.PluginSourceFile"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <local:FileNameValidationRule FileExt=".cpp" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <CheckBox Grid.Row="8"
+                <Grid Grid.Row="4"
+                      Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Margin="0,0,10,5"
+                               Text="Header (.h) file:" />
+                    <TextBox Grid.Row="1"
+                             Margin="0,0,10,0"
+                             Name="ClassHeaderFile"
+                             TabIndex="4">
+                        <TextBox.Text>
+                            <Binding Path="Data.ClassHeaderFile"
+                                     NotifyOnValidationError="True"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:FileNameValidationRule FileExt=".h" />
+                                    <local:FileExistsinFilterValidationRule Filter="FL_HFiles" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="0,0,0,5"
+                               Text="Source (.cpp) file:" />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="0,0,0,00"
+                             Name="ClassSourceFile"
+                             TabIndex="5">
+                        <TextBox.Text>
+                            <Binding Path="Data.ClassSourceFile"
+                                     NotifyOnValidationError="True"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:FileNameValidationRule FileExt=".cpp" />
+                                    <local:FileExistsinFilterValidationRule Filter="FL_CppFiles" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </Grid>
+                <CheckBox Grid.Row="5"
                           Content="Lower case file names"
-                          Margin="0,20,0,5"
                           Name="LowerCaseFileNames"
-                          Click="OnLowerCaseFileNamesClick" />
-                <CheckBox Grid.Row="9"
-                          Content="Precompiled header"
-                          Margin="0,10,0,0"
-                          IsChecked="{Binding Path=Data.UsePrecompiledHeader}" />
+                          Click="OnLowerCaseFileNamesClick"
+                          Margin="0,20,10,5"
+                          TabIndex="6" />
+                <CheckBox Content="Insert Q__OBJECT macro"
+                          Grid.Column="1"
+                          Grid.Row="3"
+                          VerticalAlignment="Center"
+                          Margin="0,0,0,30"
+                          TabIndex="3"
+                          IsChecked="True">
+                    <CheckBox.Style>
+                        <Style TargetType="{x:Type CheckBox}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=BaseClass, Path=Text}"
+                                             Value="">
+                                    <Setter Property="IsEnabled"
+                                            Value="false" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </CheckBox.Style>
+                </CheckBox>
             </Grid>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal"
@@ -257,7 +254,7 @@
                         Margin="10,0,0,0"
                         IsDefault="True"
                         Name="FinishButton"
-                        Content="_Finsih"
+                        Content="_Finish"
                         VerticalAlignment="Bottom">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -271,19 +268,13 @@
                                         <Condition Binding="{Binding ElementName=ClassName,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
+                                        <Condition Binding="{Binding ElementName=BaseClass,
+                                            Path=(Validation.HasError)}"
+                                                   Value="false" />
                                         <Condition Binding="{Binding ElementName=ClassHeaderFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
                                         <Condition Binding="{Binding ElementName=ClassSourceFile,
-                                            Path=(Validation.HasError)}"
-                                                   Value="false" />
-                                        <Condition Binding="{Binding ElementName=PluginClass,
-                                            Path=(Validation.HasError)}"
-                                                   Value="false" />
-                                        <Condition Binding="{Binding ElementName=PluginHeaderFile,
-                                            Path=(Validation.HasError)}"
-                                                   Value="false" />
-                                        <Condition Binding="{Binding ElementName=PluginSourceFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
                                     </MultiDataTrigger.Conditions>

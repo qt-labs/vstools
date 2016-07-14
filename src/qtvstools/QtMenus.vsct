@@ -125,8 +125,15 @@
             <Group guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
             </Group>
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextAddNewQtClassMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="cmdidShellWindowNavigate7"/>
+            </Group>
 
             <!-- Endregion Project context menu groups -->
+
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextAddNewQtClassMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_PROJECT" />
+            </Group>
 
             <Group guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
@@ -386,6 +393,16 @@
                     <ButtonText>Change project's Qt Version</ButtonText>
                 </Strings>
             </Button>
+            <Button guid="ProjectContextMenuGuid" id="ProjectAddNewQtClassProjectId" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextAddNewQtClassMenuGroup" />
+                <Icon guid="MenuImages" id="AddNewQtClassBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Add Qt Class...</ButtonText>
+                </Strings>
+            </Button>
 
             <!-- Endregion Project context menu button -->
 
@@ -428,7 +445,7 @@
             -->
             <Bitmap guid="MenuImages" href="Resources\menuimages.png" usedList="LaunchDesignerBitmap,
                 LaunchLinguistBitmap, OpenProFileBitmap, ImportPriFileBitmap, ExportProFileBitmap,
-                CreateProFileBitmap, QtLogoBitmap" />
+                CreateProFileBitmap, QtLogoBitmap, AddNewQtClassBitmap" />
         </Bitmaps>
     </Commands>
 
@@ -502,6 +519,9 @@
             <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
             <IDSymbol name="ChangeProjectQtVersionProjectId" value="0x0123" />
 
+            <IDSymbol name="ProjectContextAddNewQtClassMenuGroup" value="0x1031" />
+            <IDSymbol name="ProjectAddNewQtClassProjectId" value="0x0200" />
+
             <!-- Endregion Project context menu button Ids -->
 
         </GuidSymbol>
@@ -522,6 +542,7 @@
             <IDSymbol name="ExportProFileBitmap" value="5" />
             <IDSymbol name="CreateProFileBitmap" value="6" />
             <IDSymbol name="QtLogoBitmap" value="7" />
+            <IDSymbol name="AddNewQtClassBitmap" value="8" />
         </GuidSymbol>
     </Symbols>
 

@@ -26,8 +26,12 @@
 **
 ****************************************************************************/
 
-public enum WizardResult
+namespace QtProjectWizard
 {
-    Canceled,
-    Finished
+    public enum WizardResult
+    {
+        Canceled,
+        Finished,
+        Exception
+    }
 }

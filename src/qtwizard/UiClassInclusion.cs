@@ -26,38 +26,12 @@
 **
 ****************************************************************************/
 
-using System.Collections.Generic;
-
 namespace QtProjectWizard
 {
-    public class WizardData
+    public enum UiClassInclusion
     {
-        public WizardData()
-        {
-            Modules = new List<string>();
-            DefaultModules = new List<string>();
-        }
-
-        public string ClassName { get; set; }
-        public string BaseClass { get; set; }
-        public string PluginClass { get; set; }
-        public string ConstructorSignature { get; set; }
-
-        public string ClassHeaderFile { get; set; }
-        public string ClassSourceFile { get; set; }
-        public string PluginHeaderFile { get; set; }
-        public string PluginSourceFile { get; set; }
-
-        public string UiFile { get; set; }
-        public string QrcFile { get; set; }
-
-        public List<string> Modules { get; set; }
-        public List<string> DefaultModules { get; set; }
-
-        public bool AddDefaultAppIcon { get; set; }
-        public bool CreateStaticLibrary { get; set; }
-        public bool UsePrecompiledHeader { get; set; }
-        public bool InsertQObjectMacro { get; set; }
-        public UiClassInclusion UiClassInclusion { get; set; }
+        Member,
+        MemberPointer,
+        MultipleInheritance
     }
 }

@@ -26,38 +26,41 @@
 **
 ****************************************************************************/
 
-using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace QtProjectWizard
 {
-    public class WizardData
+    public partial class CoreClassPage : WizardPage
     {
-        public WizardData()
+        public CoreClassPage()
         {
-            Modules = new List<string>();
-            DefaultModules = new List<string>();
+            InitializeComponent();
+            this.DataContext = this;
         }
 
-        public string ClassName { get; set; }
-        public string BaseClass { get; set; }
-        public string PluginClass { get; set; }
-        public string ConstructorSignature { get; set; }
+        private void OnClassNameChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateFileNames();
+        }
 
-        public string ClassHeaderFile { get; set; }
-        public string ClassSourceFile { get; set; }
-        public string PluginHeaderFile { get; set; }
-        public string PluginSourceFile { get; set; }
+        private void OnLowerCaseFileNamesClick(object sender, RoutedEventArgs e)
+        {
+            UpdateFileNames();
+        }
 
-        public string UiFile { get; set; }
-        public string QrcFile { get; set; }
+        private void UpdateFileNames()
+        {
+            var filename = ClassName.Text;
+            if (LowerCaseFileNames.IsChecked.GetValueOrDefault())
+                filename = filename.ToLower();
 
-        public List<string> Modules { get; set; }
-        public List<string> DefaultModules { get; set; }
+            var index = filename.LastIndexOf(@":", System.StringComparison.Ordinal);
+            if (index >= 0)
+                filename = filename.Substring(index + 1);
 
-        public bool AddDefaultAppIcon { get; set; }
-        public bool CreateStaticLibrary { get; set; }
-        public bool UsePrecompiledHeader { get; set; }
-        public bool InsertQObjectMacro { get; set; }
-        public UiClassInclusion UiClassInclusion { get; set; }
+            ClassHeaderFile.Text = filename + @".h";
+            ClassSourceFile.Text = filename + @".cpp";
+        }
     }
 }

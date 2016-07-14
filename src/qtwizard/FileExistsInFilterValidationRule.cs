@@ -26,39 +26,41 @@
 **
 ****************************************************************************/
 
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using QtProjectLib;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace QtProjectWizard
 {
-    public class ClassNameValidationRule : VCLanguageManagerValidationRule
+    public class FileExistsinFilterValidationRule : VCLanguageManagerValidationRule
     {
-        public ClassNameValidationRule()
-        {
-            SupportNamespaces = false;
-            AllowEmptyIdentifier = false;
-        }
-
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             if (value is string) {
-                var identifier = value as string;
-                if (AllowEmptyIdentifier && string.IsNullOrEmpty(identifier))
+                var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+                if (dte == null)
                     return ValidationResult.ValidResult;
 
-                if (SupportNamespaces) {
-                    var index = identifier.LastIndexOf(@"::", System.StringComparison.Ordinal);
-                    if (index >= 0)
-                        identifier = identifier.Substring(index + 2);
-                }
-
-                if (Vclm.ValidateIdentifier(identifier) && !Vclm.IsReservedName(identifier))
+                var project = HelperFunctions.GetSelectedProject(dte);
+                if (project == null)
                     return ValidationResult.ValidResult;
+
+                var files = HelperFunctions.GetProjectFiles(project, Filter);
+                if (files.Count == 0)
+                    return ValidationResult.ValidResult;
+
+                var fileName = (value as string).ToUpperInvariant();
+                if (files.FirstOrDefault(x => x.ToUpperInvariant() == fileName) != null)
+                    return new ValidationResult(false, @"File already exists.");
+                return ValidationResult.ValidResult;
             }
-            return new ValidationResult(false, @"Invalid identifier.");
+            return new ValidationResult(false, @"Invalid file name.");
         }
 
-        public bool SupportNamespaces { get; set; }
-        public bool AllowEmptyIdentifier { get; set; }
+        public FilesToList Filter { get; set; }
     }
 }
