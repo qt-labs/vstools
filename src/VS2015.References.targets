@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);VS2015</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup Condition=" '$(VisualStudioVersion)' == '14.0' ">
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -25,4 +30,5 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
 </Project>
