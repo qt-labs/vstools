@@ -1204,13 +1204,11 @@ namespace QtProjectLib
 
         public static Image GetSharedImage(string name)
         {
-            var a = Assembly.GetExecutingAssembly();
             Image image = null;
-            name = "Digia." + name;
-            var imgStream = a.GetManifestResourceStream(name);
-            if (imgStream != null) {
-                image = Image.FromStream(imgStream);
-                imgStream.Close();
+            var a = Assembly.GetExecutingAssembly();
+            using (var imgStream = a.GetManifestResourceStream(name)) {
+                if (imgStream != null)
+                    image = Image.FromStream(imgStream);
             }
             return image;
         }
