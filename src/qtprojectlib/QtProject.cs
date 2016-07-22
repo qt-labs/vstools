@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio.VCCodeModel;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
@@ -955,41 +956,53 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Helper function for AddMocStep.
+        /// Parses the given file to find an occurrence of a moc.exe generated file include. If
+        /// the given file is a header file, the function tries to find the corresponding source
+        /// file to use it instead of the header file. Helper function for AddMocStep.
         /// </summary>
-        /// <param name="file">header or source file name</param>
-        /// <returns>True, if the file contains an include of the
-        /// corresponding moc_xxx.cpp file. False in all other cases</returns>
-        public bool IsMoccedFileIncluded(VCFile file)
+        /// <param name="vcFile">Header or source file name.</param>
+        /// <returns>
+        /// Returns true if the file contains an include of the corresponding moc_xxx.cpp file;
+        /// otherwise returns false.
+        /// </returns>
+        public bool IsMoccedFileIncluded(VCFile vcFile)
         {
-            var isHeaderFile = HelperFunctions.HasHeaderFileExtension(file.FullPath);
-            if (isHeaderFile || HelperFunctions.HasSourceFileExtension(file.FullPath)) {
-                string srcName;
-                if (isHeaderFile)
-                    srcName = file.FullPath.Substring(0, file.FullPath.LastIndexOf(".")) + ".cpp";
-                else
-                    srcName = file.FullPath;
-                var f = GetFileFromProject(srcName);
-                CxxStreamReader sr = null;
-                if (f != null) {
-                    try {
-                        string strLine;
-                        sr = new CxxStreamReader(f.FullPath);
-                        var baseName = file.Name.Substring(0, file.Name.LastIndexOf("."));
-                        while ((strLine = sr.ReadLine()) != null) {
-                            if (strLine.IndexOf("#include \"moc_" + baseName + ".cpp\"") != -1 ||
-                                strLine.IndexOf("#include <moc_" + baseName + ".cpp>") != -1) {
-                                sr.Close();
+            var fullPath = vcFile.FullPath;
+            if (HelperFunctions.HasHeaderFileExtension(vcFile.FullPath))
+                fullPath = Path.ChangeExtension(vcFile.FullPath, ".cpp");
+
+            if (HelperFunctions.HasSourceFileExtension(fullPath)) {
+                vcFile = GetFileFromProject(fullPath);
+                if (vcFile == null)
+                    return false;
+
+                var mocFile = "moc_" + Path.GetFileNameWithoutExtension(vcFile.FullPath) + ".cpp";
+
+                // Try reusing the vc file code model,
+                var projectItem = vcFile.Object as ProjectItem;
+                if (projectItem != null) {
+                    var vcFileCodeModel = projectItem.FileCodeModel as VCFileCodeModel;
+                    if (vcFileCodeModel != null) {
+                        foreach (VCCodeInclude include in vcFileCodeModel.Includes) {
+                            if (include.FullName == mocFile)
                                 return true;
-                            }
                         }
-                        sr.Close();
-                    } catch (System.Exception) {
-                        // do nothing
-                        if (sr != null)
-                            sr.Close();
                         return false;
                     }
+                }
+
+                // if we fail, we parse the file on our own...
+                CxxStreamReader cxxStream = null;
+                try {
+                    string line;
+                    cxxStream = new CxxStreamReader(vcFile.FullPath);
+                    while ((line = cxxStream.ReadLine()) != null) {
+                        if (Regex.IsMatch(line, "#include *(<|\")" + mocFile + "(\"|>)"))
+                            return true;
+                    }
+                } catch { } finally {
+                    if (cxxStream != null)
+                        cxxStream.Dispose();
                 }
             }
             return false;
