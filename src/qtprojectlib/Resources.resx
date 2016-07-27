@@ -290,7 +290,7 @@ To solve this problem:
     <value>Cannot update uic steps!</value>
   </data>
   <data name="QtProject_FileExistsInProjectFolder" xml:space="preserve">
-    <value>The file {0} existst in your project folder. Visual Studio Add-in will overwrite the existing file!
+    <value>The file {0} existst in your project folder. Qt Visual Studio Tools will overwrite the existing file!
 
 Select 'Yes' to overwrite, select 'No' to keep the existing file and automatically readd it to the project.</value>
   </data>
@@ -298,7 +298,7 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
     <value>Cannot load the default Qt version.</value>
   </data>
   <data name="Resources_QtVisualStudioIntegration" xml:space="preserve">
-    <value>Qt Visual Studio Add-in</value>
+    <value>Qt Visual Studio Tools</value>
   </data>
   <data name="Resources_AddQtResource" xml:space="preserve">
     <value>Add Qt Resource</value>

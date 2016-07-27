@@ -478,7 +478,7 @@ namespace QtProjectLib
 
         /// <summary>
         /// Toggles the kind of a project. If the project is a QMake generated project (qmake -tp vc)
-        /// it is transformed to an Add-in Qt project and vice versa.
+        /// it is transformed to an Qt VS Tools project and vice versa.
         /// </summary>
         /// <param name="project">Project</param>
         /// <returns></returns>

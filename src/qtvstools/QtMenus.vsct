@@ -226,7 +226,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to Qt Add-in project</ButtonText>
+                    <ButtonText>Convert project to Qt VS Tools project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ConvertToQmakeId" priority="0x0100" type="Button">
@@ -364,7 +364,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to Qt Add-in project</ButtonText>
+                    <ButtonText>Convert project to Qt VS Tools project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ConvertToQmakeProjectId" priority="0x0100" type="Button">

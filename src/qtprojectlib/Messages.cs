@@ -57,7 +57,7 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Activates the message pane of the Qt Add-in / integration
+        /// Activates the message pane of the Qt VS Tools extension.
         /// </summary>
         public static void ActivateMessagePane()
         {

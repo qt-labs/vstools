@@ -40,7 +40,7 @@ namespace QtVsTools
         private const string designer = @"Qt Designer";
         private const string qrcEditor = @"Qt Resource Editor";
 
-        protected static string addinGuid = null;
+        protected static string guid = null;
         protected static string appWrapper = null;
         protected static string qrcEditorName = null;
 
@@ -51,7 +51,7 @@ namespace QtVsTools
         public void WriteAddinRegistryValues()
         {
             var basePath = string.Format(registryBasePath, @"12.0");
-            var projectTemplates = basePath + string.Format(newProjectTemplates, addinGuid);
+            var projectTemplates = basePath + string.Format(newProjectTemplates, guid);
 
             var addinInstallPath = GetAddinInstallPath(GetCUKey(projectTemplates, false));
             if (string.IsNullOrEmpty(addinInstallPath))
@@ -142,7 +142,7 @@ namespace QtVsTools
         public Qt4DefaultEditors()
         {
             // Set add-in specific values
-            addinGuid = @"{6A7385B4-1D62-46e0-A4E3-AED4475371F0}";
+            guid = @"{6A7385B4-1D62-46e0-A4E3-AED4475371F0}";
             appWrapper = @"qtappwrapper.exe";
             qrcEditorName = @"qrceditor.exe";
         }
@@ -154,19 +154,19 @@ namespace QtVsTools
         public Qt5DefaultEditors()
         {
             // Set add-in specific values
-            addinGuid = @"{C80C78C8-F64B-43df-9A53-96F7C44A1EB6}";
+            guid = @"{C80C78C8-F64B-43df-9A53-96F7C44A1EB6}";
             appWrapper = @"qt5appwrapper.exe";
             qrcEditorName = @"q5rceditor.exe";
         }
     }
 
-    // Default editor handling for Qt5 add-in
+    // Default editor handling for Qt VS Tools
     public class QtVsToolsDefaultEditors : DefaultEditorsBase
     {
         public QtVsToolsDefaultEditors()
         {
-            // Set add-in specific values
-            addinGuid = @"{15021976-2F08-4C44-BFF4-73CCDCB50473}";
+            // Set VSIX specific values
+            guid = @"{15021976-2F08-4C44-BFF4-73CCDCB50473}";
             appWrapper = @"QtAppWrapper.exe";
             qrcEditorName = @"QrcEditor.exe";
         }

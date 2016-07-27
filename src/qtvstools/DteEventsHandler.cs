@@ -430,7 +430,7 @@ namespace QtVsTools
             try {
                 // Try to find the filter, the file is located in
                 // If the file is not inside any filter, move it to
-                // the according one, used by the Add-in
+                // the according one, used by the Qt VS Tools
                 filter = (VCFilter) vcFile.Parent;
             } catch { }
 

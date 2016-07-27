@@ -211,12 +211,12 @@
     <value>Can't find a Qt version for the current build platform.</value>
   </data>
   <data name="BuildSystem_IncompatibleMsg" xml:space="preserve">
-    <value>The currently selected Qt version is not compatible to the one used by the Visual Studio Add-in.
+    <value>The currently selected Qt version is not compatible to the one used by the Qt Visual Studio Tools.
 To enable the plugin to be loaded, the Qt version {0} has to be used. Do you want to switch Qt version?</value>
   </data>
   <data name="BuildSystem_Problem" xml:space="preserve">
-    <value>Warning: A matching Qt version for the Add-in could not be found!
-The resulting plugin will not work with the current Qt Visual Studio Add-in.</value>
+    <value>Warning: A matching Qt version could not be found!
+The resulting plugin will not work with the current Qt Visual Studio Tools.</value>
   </data>
   <data name="BuildSystem_Solution" xml:space="preserve">
     <value>Goto www.qt.io and download the binary package of Qt {0}.</value>
@@ -415,7 +415,7 @@ and insert the information about the Qt version you want to use.</value>
     <value>Cannot initialize EditorFactory!</value>
   </data>
   <data name="InitIntegrationFailure" xml:space="preserve">
-    <value>The VS Add-in of Qt could not be initialized!</value>
+    <value>The Qt Visual Studio Tools could not be initialized!</value>
   </data>
   <data name="InstalledQtVersions" xml:space="preserve">
     <value>Installed Qt Versions</value>
@@ -474,7 +474,7 @@ Please use contact form at https://www.qt.io/buy-product/ to order a Qt license.
     <value>NFC</value>
   </data>
   <data name="NoDefaultQtVersionError" xml:space="preserve">
-    <value>No default Qt version found. Please check your Qt Visual Studio Add-in settings</value>
+    <value>No default Qt version found. Please check your Qt Visual Studio Tools settings</value>
   </data>
   <data name="NoProjectOpened" xml:space="preserve">
     <value>No Project Opened</value>
@@ -502,9 +502,6 @@ Please use contact form at https://www.qt.io/buy-product/ to order a Qt license.
   </data>
   <data name="PriWatcher_Title" xml:space="preserve">
     <value>Watched .pri file changed</value>
-  </data>
-  <data name="ProductDetails" xml:space="preserve">
-    <value>Qt Add-in for Visual Studio .NET</value>
   </data>
   <data name="ProjectExtender_CannotUpdate" xml:space="preserve">
     <value>Cannot update the Qt libraries in your project to reflect the currently selected version.</value>
@@ -546,15 +543,10 @@ Please use contact form at https://www.qt.io/buy-product/ to order a Qt license.
     <value>&lt;unspecified return code&gt;</value>
   </data>
   <data name="QrcEditorNotFoundErrorMessage" xml:space="preserve">
-    <value>*** Couldn't start QRC editor! Please verify that QrcEditor.exe is in the Add-in installation directory.</value>
+    <value>*** Couldn't start QRC editor! Please verify that QrcEditor.exe is in the Qt Visual Studio Tools Extension installation directory.</value>
   </data>
   <data name="Qt3SupportLibrary" xml:space="preserve">
     <value>Qt3 support library</value>
-  </data>
-  <data name="Qt4Unloaded_pane_msg" xml:space="preserve">
-    <value>!!! Qt4 Add-in was found and closed! !!!
-Qt4 and Qt5 versions can't be used at the same time.
-Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt4 Add-in.</value>
   </data>
   <data name="QtActionEditorFailure" xml:space="preserve">
     <value>Failed to create the Qt Action Editor!</value>
@@ -602,12 +594,12 @@ Add-in Manager from Tools menu can be used to close Qt5 Add-in and to restart Qt
     <value>Change Qt Version for Solution</value>
   </data>
   <data name="QtVSIntegration" xml:space="preserve">
-    <value>Qt Visual Studio Add-in</value>
+    <value>Qt Visual Studio Tools</value>
   </data>
   <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
     <value>The file {0} is under source control and not checked out. Do you want to check out the file before opening it?
 
-Note: You can turn off this question by setting "ask_before_checkout_file" to "false" in the options menu of the Qt add-in.</value>
+Note: You can turn off this question by setting "ask_before_checkout_file" to "false" in the options menu of the Qt Vs Tools.</value>
   </data>
   <data name="QuickLibrary" xml:space="preserve">
     <value>Quick</value>
@@ -704,15 +696,6 @@ Note: You can turn off this question by setting "ask_before_checkout_file" to "f
   </data>
   <data name="WelcomeDialog_DontShow" xml:space="preserve">
     <value>Don't show this dialog again.</value>
-  </data>
-  <data name="WelcomeDialog_Header" xml:space="preserve">
-    <value>Welcome to the
-Qt Visual Studio Add-in</value>
-  </data>
-  <data name="WelcomeDialog_MainText" xml:space="preserve">
-    <value>The Add-in enables you to develop Qt applications faster than ever. With its integrated form designer and help browser, there is no need for starting any external applications. More information about features and usage can be found in the documentation.
-
-Note: If Visual Studio is currently not responsive, this is because it updates its help system, which can take a few minutes.</value>
   </data>
   <data name="WelcomeDialog_ShowDocumentation" xml:space="preserve">
     <value>Show Documentation</value>
