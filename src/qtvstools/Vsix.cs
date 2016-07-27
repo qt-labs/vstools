@@ -129,7 +129,7 @@ namespace QtVsTools
             string error = null;
             if (vm.HasInvalidVersions(out error))
                 Messages.DisplayErrorMessage(error);
-            eventHandler = new AddInEventHandler(Dte);
+            eventHandler = new DteEventsHandler(Dte);
             ExtLoader = new ExtLoader();
 
             QtMainMenu.Initialize(this);
@@ -172,7 +172,7 @@ namespace QtVsTools
             Shutdown
         }
 
-        private AddInEventHandler eventHandler = null;
+        private DteEventsHandler eventHandler = null;
 
         private string locateHelperExecutable(string exeName)
         {

@@ -44,7 +44,7 @@ namespace QtVsTools
             get; private set;
         }
 
-        public static void Initialize(AddInEventHandler handler)
+        public static void Initialize(DteEventsHandler handler)
         {
             Instance = new DefaultEditorsClient(handler);
         }
@@ -71,7 +71,7 @@ namespace QtVsTools
         }
 
         private TcpClient client;
-        private AddinEventHandler handler;
+        private DteEventsHandler handler;
         private volatile bool aboutToExit;
         private Thread listenForBroadcastThread;
         private Thread handleBroadcastMessageThread;
@@ -81,7 +81,7 @@ namespace QtVsTools
         private static readonly byte[] helloMessage = { 0x48, 0x45, 0x4C, 0x4C, 0x4F };
         private readonly ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
 
-        private DefaultEditorsClient(AddInEventHandler handler)
+        private DefaultEditorsClient(DteEventsHandler handler)
         {
             this.handler = handler;
             listenForBroadcastThread = new Thread(ListenForBroadcastMessage) {

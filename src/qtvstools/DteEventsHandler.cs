@@ -38,7 +38,7 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    class AddInEventHandler
+    class DteEventsHandler
     {
         private DTE dte;
         private EnvDTE.SolutionEvents solutionEvents;
@@ -55,7 +55,7 @@ namespace QtVsTools
         private int dispId_VCCLCompilerTool_PreprocessorDefinitions;
         private int dispId_VCCLCompilerTool_AdditionalIncludeDirectories;
 
-        public AddInEventHandler(DTE _dte)
+        public DteEventsHandler(DTE _dte)
         {
             dte = _dte;
             var events = dte.Events as Events2;
