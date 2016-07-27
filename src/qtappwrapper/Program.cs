@@ -27,44 +27,51 @@
 ****************************************************************************/
 
 using System;
-using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace QtAppWrapper
 {
+    /// <summary>
+    /// This application serves two different purposes. The first one is to run as a standalone
+    /// server application. The second purpose is to be registered by a VSIX instance as default
+    /// handler for .ui and .ts files. Once a user starts editing a file inside VS, the default
+    /// registered file handler (this application) is started as new instance with the file name
+    /// as argument. We now simply forward the file and PID to the running server, that will then
+    /// broadcast the incoming data to connected VSIX instances. The VSIX instance matching the
+    /// PID will now lookup the right Qt Designer or Qt Linguist and open the corresponding file.
+    /// </summary>
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        ///
-        /// Usage of qtappwrapper.exe:
-        ///     qtappwrapper
-        ///         Tries to start the qtappwrapper server and starts to listen.
-        ///
-        ///     qtappwrapper filename.ui
-        ///         Sends the process id of the calling process and the file name
-        ///         to the qtappwrapper server.
-        ///
-        ///     qtappwrapper filename.ui -pid 1234
-        ///         Sends the given process id and the file name to the qtappwrapper
-        ///         server.
-        /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
+            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+            Debug.AutoFlush = true;
+            Debug.WriteLine("Entering Main function.");
+            Debug.Indent();
+
             try {
-                if (args.Length >= 1) {
-                    string fileName = args[0];
-                    if (args.Length >= 2 && args[1].StartsWith("-pid "))
-                        EditorServer.SendFileNameToServer(fileName, args[1].Substring(5));
-                    else
-                        EditorServer.SendFileNameToServer(fileName);
-                } else {
-                    var server = new EditorServer();
+                switch (args.Length) {
+                case 0:
+                    // Try to start the server and begin to listen.
+                    Debug.WriteLine("Starting the server instance.");
+                    DefaultEditorsServer.StartListen();
+                    break;
+                default:
+                    // Forward incoming arguments to the running server instance.
+                    Debug.WriteLine("Sending file name to server instance.");
+                    DefaultEditorsHandler.SendFileNameToDefaultEditorsServer(args);
+                    break;
                 }
             } catch (Exception e) {
-                MessageBox.Show(e.ToString(), "Exception in QtAppWrapper", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Debug.WriteLine("Exception thrown:");
+                Debug.Indent();
+                Debug.WriteLine(e.Message);
+                Debug.Unindent();
             }
+
+            Debug.Unindent();
+            Debug.WriteLine("Leaving Main function");
         }
     }
 }

@@ -5,7 +5,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6E591BB2-3C81-4AB5-B3B0-096045754C3A}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">WinExe</OutputType>
+    <OutputType Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QtAppWrapper</RootNamespace>
     <AssemblyName>QtAppWrapper</AssemblyName>
@@ -40,7 +41,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditorServer.cs" />
+    <Compile Include="DefaultEditorsHandler.cs" />
+    <Compile Include="DefaultEditorsServer.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
