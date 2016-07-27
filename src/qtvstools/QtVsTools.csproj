@@ -82,6 +82,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ResClass.cs" />
+    <Compile Include="DefaultEditorsClient.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Vsix.cs" />
     <Compile Include="VSQtSettings.cs" />

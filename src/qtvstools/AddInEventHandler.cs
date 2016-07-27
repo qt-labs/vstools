@@ -32,10 +32,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -52,12 +49,6 @@ namespace QtVsTools
         private VCProjectEngineEvents vcProjectEngineEvents = null;
         private CommandEvents debugStartEvents;
         private CommandEvents debugStartWithoutDebuggingEvents;
-        private System.Threading.Thread appWrapperThread = null;
-        private System.Diagnostics.Process appWrapperProcess = null;
-        private bool terminateEditorThread = false;
-        private TcpClient client = null;
-        private byte[] qtAppWrapperHelloMessage = new byte[] { 0x48, 0x45, 0x4C, 0x4C, 0x4F };
-        private SimpleThreadMessenger simpleThreadMessenger = null;
         private int dispId_VCFileConfiguration_ExcludedFromBuild;
         private int dispId_VCCLCompilerTool_UsePrecompiledHeader;
         private int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
@@ -66,7 +57,6 @@ namespace QtVsTools
 
         public AddInEventHandler(DTE _dte)
         {
-            simpleThreadMessenger = new SimpleThreadMessenger(this);
             dte = _dte;
             var events = dte.Events as Events2;
 
@@ -103,15 +93,8 @@ namespace QtVsTools
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             RegisterVCProjectEngineEvents();
 
-            if (Vsix.Instance.AppWrapperPath == null) {
-                Messages.DisplayCriticalErrorMessage("QtAppWrapper can't be found in the installation directory.");
-            } else {
-                appWrapperProcess = new System.Diagnostics.Process();
-                appWrapperProcess.StartInfo.FileName = Vsix.Instance.AppWrapperPath;
-            }
-            appWrapperThread = new System.Threading.Thread(new System.Threading.ThreadStart(ListenForRequests));
-            appWrapperThread.Name = "QtAppWrapperListener";
-            appWrapperThread.Start();
+            DefaultEditorsClient.Initialize(this);
+            DefaultEditorsClient.Instance.Listen();
         }
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
@@ -134,7 +117,7 @@ namespace QtVsTools
             }
         }
 
-        private void OpenFileExternally(string fileName)
+        public void OpenFileExternally(string fileName)
         {
             bool abortOperation;
             CheckoutFileIfNeeded(fileName, out abortOperation);
@@ -160,7 +143,7 @@ namespace QtVsTools
         }
 
 #if DEBUG
-        private void setDirectory(string dir, string value)
+        public void setDirectory(string dir, string value)
         {
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
                 var vcProject = project.Object as VCProject;
@@ -187,7 +170,7 @@ namespace QtVsTools
         }
 #endif
 
-        private void OnQRCFileSaved(string fileName)
+        public void OnQRCFileSaved(string fileName)
         {
             foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
                 var vcProject = project.Object as VCProject;
@@ -235,158 +218,6 @@ namespace QtVsTools
             sourceControl.CheckOutItem(fileName);
         }
 
-        /// <summary>
-        /// Dumb control to send stuff from one thread to another.
-        /// </summary>
-        private class SimpleThreadMessenger : Control
-        {
-            private AddInEventHandler addinEventHandler = null;
-
-            public SimpleThreadMessenger(AddInEventHandler handler)
-            {
-                addinEventHandler = handler;
-                CreateControl();
-            }
-
-            public delegate void HandleMessageFromQtAppWrapperDelegate(string message);
-
-            /// <summary>
-            /// This function handle file names in the Addin's main thread,
-            /// that come from the QtAppWrapper.
-            /// </summary>
-            public void HandleMessageFromQtAppWrapper(string message)
-            {
-                if (message.ToLower().EndsWith(".qrc"))
-                    addinEventHandler.OnQRCFileSaved(message);
-#if DEBUG
-                else if (message.StartsWith("Autotests:set")) {
-                    // Messageformat from Autotests is Autotests:set<dir>:<value>
-                    // where dir is MocDir, RccDir or UicDir
-
-                    //remove Autotests:set
-                    message = message.Substring(13);
-
-                    var dir = message.Remove(6);
-                    var value = message.Substring(7);
-
-                    addinEventHandler.setDirectory(dir, value);
-                }
-#endif
-                else
-                    addinEventHandler.OpenFileExternally(message);
-            }
-        }
-
-        private void ListenForRequests()
-        {
-            if (appWrapperProcess == null)
-                return;
-
-            SimpleThreadMessenger.HandleMessageFromQtAppWrapperDelegate handleMessageFromQtAppWrapperDelegate;
-            handleMessageFromQtAppWrapperDelegate = new SimpleThreadMessenger.HandleMessageFromQtAppWrapperDelegate(simpleThreadMessenger.HandleMessageFromQtAppWrapper);
-
-            bool firstIteration = true;
-            while (!terminateEditorThread) {
-                try {
-                    if (!firstIteration) {
-                        if (appWrapperProcess.HasExited)
-                            appWrapperProcess.Close();
-                    } else {
-                        firstIteration = false;
-                    }
-                } catch { }
-
-                appWrapperProcess.Start();
-
-                client = new TcpClient();
-                int connectionAttempts = 0;
-                int appwrapperPort = 12015;
-                while (!client.Connected && !terminateEditorThread && connectionAttempts < 10) {
-                    try {
-                        client.Connect(IPAddress.Loopback, appwrapperPort);
-                        if (!client.Connected) {
-                            ++connectionAttempts;
-                            System.Threading.Thread.Sleep(1000);
-                        }
-                    } catch {
-                        ++connectionAttempts;
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                }
-
-                if (connectionAttempts >= 10) {
-                    Messages.DisplayErrorMessage(SR.GetString("CouldNotConnectToAppwrapper", appwrapperPort));
-                    terminateEditorThread = true;
-                }
-
-                if (terminateEditorThread) {
-                    TerminateClient();
-                    return;
-                }
-
-                var clientStream = client.GetStream();
-
-                // say hello to qtappwrapper
-                clientStream.Write(qtAppWrapperHelloMessage, 0, qtAppWrapperHelloMessage.Length);
-                clientStream.Flush();
-
-                byte[] message = new byte[4096];
-                int bytesRead;
-
-                while (!terminateEditorThread) {
-                    try {
-                        bytesRead = 0;
-
-                        try {
-                            //blocks until a client sends a message
-                            bytesRead = clientStream.Read(message, 0, 4096);
-                        } catch {
-                            // A socket error has occured, probably because
-                            // the QtAppWrapper has been terminated.
-                            // Break and then try to restart the QtAppWrapper.
-                            break;
-                        }
-
-                        if (bytesRead == 0) {
-                            //the client has disconnected from the server
-                            break;
-                        }
-
-                        //message has successfully been received
-                        var encoder = new UnicodeEncoding();
-                        var fullMessageString = encoder.GetString(message, 0, bytesRead);
-                        var messages = fullMessageString.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string messageString in messages) {
-                            var index = messageString.IndexOf(' ');
-                            var requestedPid = Convert.ToInt32(messageString.Substring(0, index));
-                            int currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
-                            if (requestedPid == currentPid) {
-                                // Actual file opening is done in the main thread.
-                                var file = messageString.Substring(index + 1);
-                                simpleThreadMessenger.Invoke(handleMessageFromQtAppWrapperDelegate, new object[] { file });
-                            }
-                        }
-                    } catch (System.Threading.ThreadAbortException) {
-                        break;
-                    } catch { }
-                }
-                TerminateClient();
-            }
-        }
-
-        private void TerminateClient()
-        {
-            try {
-                if (client != null && client.Connected) {
-                    var stream = client.GetStream();
-                    if (stream != null)
-                        stream.Close();
-                    client.Close();
-                    client = null;
-                }
-            } catch { /* ignore */ }
-        }
-
         public void Disconnect()
         {
             if (buildEvents != null) {
@@ -420,14 +251,7 @@ namespace QtVsTools
             if (vcProjectEngineEvents != null)
                 vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
 
-            if (appWrapperThread != null) {
-                terminateEditorThread = true;
-                if (appWrapperThread.IsAlive) {
-                    TerminateClient();
-                    if (!appWrapperThread.Join(1000))
-                        appWrapperThread.Abort();
-                }
-            }
+            DefaultEditorsClient.Instance.Shutdown();
         }
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)
