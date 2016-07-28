@@ -56,7 +56,7 @@ namespace QtAppWrapper
             get; private set;
         }
 
-        private bool aboutToExit;
+        private volatile bool aboutToExit;
         private Thread listenThread;
         private TcpListener tcpListener;
         private readonly List<TcpClient> clientList = new List<TcpClient>();
