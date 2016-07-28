@@ -133,13 +133,6 @@ namespace QtVsTools
             } else if (lowerCaseFileName.EndsWith(".ts")) {
                 ExtLoader.loadLinguist(fileName);
             }
-#if false
-            // QRC files are directly opened, using the QRC editor.
-            else if (lowerCaseFileName.EndsWith(".qrc"))
-            {
-                Connect.extLoader.loadQrcEditor(fileName);
-            }
-#endif
         }
 
 #if DEBUG

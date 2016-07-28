@@ -542,9 +542,6 @@ Please use contact form at https://www.qt.io/buy-product/ to order a Qt license.
   <data name="QProcess_UnspecifiedError" xml:space="preserve">
     <value>&lt;unspecified return code&gt;</value>
   </data>
-  <data name="QrcEditorNotFoundErrorMessage" xml:space="preserve">
-    <value>*** Couldn't start QRC editor! Please verify that QrcEditor.exe is in the Qt Visual Studio Tools Extension installation directory.</value>
-  </data>
   <data name="Qt3SupportLibrary" xml:space="preserve">
     <value>Qt3 support library</value>
   </data>

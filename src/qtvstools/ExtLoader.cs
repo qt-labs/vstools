@@ -412,42 +412,5 @@ namespace QtVsTools
                     SR.GetString("QtAppNotFoundErrorTitle", "Linguist"));
             }
         }
-
-        public static void loadQrcEditor(string file)
-        {
-            string resourceFile = null;
-            if (file != null && file.Length != 0 && file.ToLower().EndsWith(".qrc"))
-                resourceFile = "\"" + file + "\"";
-
-            // locate qrceditor.exe in the parent directory of the installation directory
-            string filename = Vsix.Instance.PkgInstallPath;
-            int idx = filename.Length - 1;
-            if (filename.EndsWith("\\")) idx--;
-            idx = filename.LastIndexOf('\\', idx);
-            if (idx > -1)
-                filename = filename.Substring(0, idx + 1);
-            filename += "QrcEditor.exe";
-
-            System.Diagnostics.Process tmp = null;
-            try {
-                if (!File.Exists(filename))
-                    filename = Vsix.Instance.PkgInstallPath + "QrcEditor.exe";
-
-                tmp = new System.Diagnostics.Process();
-                var prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
-                tmp.StartInfo.FileName = filename;
-                tmp.StartInfo.Arguments = resourceFile;
-                tmp.StartInfo.WorkingDirectory = Path.GetFullPath(prj.FullName);
-                tmp.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                tmp.Start();
-            } catch {
-                tmp = null;
-            }
-
-            if (tmp == null) {
-                MessageBox.Show(SR.GetString("QrcEditorNotFoundErrorMessage"),
-                         SR.GetString("QtAppNotFoundErrorTitle", "QrcEditor"));
-            }
-        }
     }
 }
