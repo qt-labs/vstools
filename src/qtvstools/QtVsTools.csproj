@@ -44,6 +44,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DefaultEditorsHandler.cs" />
     <Compile Include="DteEventsHandler.cs" />
     <Compile Include="AddQtVersionDialog.cs">
       <SubType>Form</SubType>

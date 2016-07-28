@@ -136,6 +136,7 @@ namespace QtVsTools
             QtSolutionContextMenu.Initialize(this);
             QtProjectContextMenu.Initialize(this);
             QtItemContextMenu.Initialize(this);
+            DefaultEditorsHandler.Initialize(Dte);
 
             try {
                 UpdateDefaultEditors(Mode.Startup);

@@ -117,24 +117,6 @@ namespace QtVsTools
             }
         }
 
-        public void OpenFileExternally(string fileName)
-        {
-            bool abortOperation;
-            CheckoutFileIfNeeded(fileName, out abortOperation);
-            if (abortOperation)
-                return;
-
-            var lowerCaseFileName = fileName.ToLower();
-            if (lowerCaseFileName.EndsWith(".ui")) {
-                Vsix.Instance.ExtLoader.loadDesigner(fileName);
-
-                // Designer can't cope with many files in a short time.
-                System.Threading.Thread.Sleep(1000);
-            } else if (lowerCaseFileName.EndsWith(".ts")) {
-                ExtLoader.loadLinguist(fileName);
-            }
-        }
-
 #if DEBUG
         public void setDirectory(string dir, string value)
         {
@@ -177,38 +159,6 @@ namespace QtVsTools
                 var qtProject = QtProject.Create(project);
                 qtProject.UpdateRccStep(vcFile, null);
             }
-        }
-
-        private void CheckoutFileIfNeeded(string fileName, out bool abortOperation)
-        {
-            abortOperation = false;
-
-            if (QtVSIPSettings.GetDisableCheckoutFiles())
-                return;
-
-            SourceControl sourceControl = dte.SourceControl;
-            if (sourceControl == null)
-                return;
-
-            if (!sourceControl.IsItemUnderSCC(fileName))
-                return;
-
-            if (sourceControl.IsItemCheckedOut(fileName))
-                return;
-
-            if (QtVSIPSettings.GetAskBeforeCheckoutFile()) {
-                var shortFileName = System.IO.Path.GetFileName(fileName);
-                var dr = MessageBox.Show(
-                                    SR.GetString("QuestionSCCCheckoutOnOpen", shortFileName),
-                                    Resources.msgBoxCaption, MessageBoxButtons.YesNoCancel,
-                                    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                if (dr == DialogResult.Cancel)
-                    abortOperation = true;
-                if (dr != DialogResult.Yes)
-                    return;
-            }
-
-            sourceControl.CheckOutItem(fileName);
         }
 
         public void Disconnect()

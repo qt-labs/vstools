@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -117,7 +117,7 @@ namespace QtVsTools
                         handler.setDirectory(dir, value);
 #endif
                     } else {
-                        handler.OpenFileExternally(message);
+                        DefaultEditorsHandler.Instance.StartEditor(message);
                     }
                 }
             }

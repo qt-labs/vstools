@@ -31,6 +31,18 @@ using System.Windows.Forms;
 
 namespace QtProjectLib
 {
+    public static class Extensions
+    {
+        public static string Quoute(this string input)
+        {
+            if (!input.StartsWith("\"", StringComparison.Ordinal))
+                input = "\"" + input;
+            if (!input.EndsWith("\"", StringComparison.Ordinal))
+                input += "\"";
+            return input;
+        }
+    }
+
     public class ProjectMacros
     {
         public const string Name = "%(Filename)";
