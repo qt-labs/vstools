@@ -258,20 +258,6 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Returns the normalized file path of a given file. If quote
-        /// is true the returned string will be set in quotes otherwise
-        /// not.
-        /// </summary>
-        /// <param name="name">file name</param>
-        /// <param name="quote">quote</param>
-        static public string NormalizeFilePath(string name, bool quote)
-        {
-            if (quote == true)
-                return "\"" + NormalizeFilePath(name) + "\"";
-            return NormalizeFilePath(name);
-        }
-
-        /// <summary>
         /// Reads lines from a .pro file that is opened with a StreamReader
         /// and concatenates strings that end with a backslash.
         /// </summary>
