@@ -471,12 +471,12 @@ namespace QtProjectLib
                 if (config.Name.StartsWith("Release")) {
                     compiler.AddPreprocessorDefinition("QT_NO_DEBUG,NDEBUG");
                     compiler.SetDebugInformationFormat(debugOption.debugDisabled);
-                    compiler.SetRuntimeLibrary(runtimeLibraryOption.rtMultiThreadedDLL);
+                    compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDLL;
                 } else if (config.Name.StartsWith("Debug")) {
                     isDebugConfiguration = true;
                     compiler.SetOptimization(optimizeOption.optimizeDisabled);
                     compiler.SetDebugInformationFormat(debugOption.debugEnabled);
-                    compiler.SetRuntimeLibrary(runtimeLibraryOption.rtMultiThreadedDebugDLL);
+                    compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDebugDLL;
                 }
                 compiler.AddAdditionalIncludeDirectories(
                     ".;" + "$(QTDIR)\\include;" + QtVSIPSettings.GetMocDirectory(envPro));
@@ -673,12 +673,11 @@ namespace QtProjectLib
 
         private static bool IsDebugConfiguration(VCConfiguration conf)
         {
-
-            var compiler = ((IVCCollection) conf.Tools).Item("VCCLCompilerTool");
-            var tool = compiler as VCCLCompilerTool;
-            if (tool != null && (tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebug ||
-                tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebugDLL))
-                return true;
+            var tool = CompilerToolWrapper.Create(conf);
+            if (tool != null) {
+                return tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebug
+                    || tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebugDLL;
+            }
             return false;
         }
 

@@ -30,6 +30,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace QtProjectLib
 {
@@ -365,17 +366,27 @@ namespace QtProjectLib
                     new object[] { @value });
         }
 
-        public void SetRuntimeLibrary(runtimeLibraryOption value)
+        public runtimeLibraryOption RuntimeLibrary
         {
-            if (compilerTool != null)
-                compilerTool.RuntimeLibrary = value;
-            else
-                compilerType.InvokeMember(
-                    "RuntimeLibrary",
-                    System.Reflection.BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { @value });
+            get {
+                if (compilerTool != null)
+                    return compilerTool.RuntimeLibrary;
+
+                var obj = compilerType.InvokeMember("RuntimeLibrary", BindingFlags.GetProperty,
+                    null, compilerObj, null);
+                if (obj == null)
+                    return runtimeLibraryOption.rtMultiThreaded;
+                return (runtimeLibraryOption) obj;
+            }
+
+            set {
+                if (compilerTool == null) {
+                    compilerType.InvokeMember("RuntimeLibrary", BindingFlags.SetProperty,
+                        null, compilerObj, new object[] { @value });
+                } else {
+                    compilerTool.RuntimeLibrary = value;
+                }
+            }
         }
 
         public void SetOptimization(optimizeOption value)
