@@ -977,6 +977,10 @@ namespace QtProjectLib
 
                 var mocFile = "moc_" + Path.GetFileNameWithoutExtension(vcFile.FullPath) + ".cpp";
 
+#if TODO
+                // TODO: Newly created projects need a manual solution rescan if we access the
+                // code model too early, right now it fails to properly parse the created files.
+
                 // Try reusing the vc file code model,
                 var projectItem = vcFile.Object as ProjectItem;
                 if (projectItem != null) {
@@ -991,6 +995,7 @@ namespace QtProjectLib
                 }
 
                 // if we fail, we parse the file on our own...
+#endif
                 CxxStreamReader cxxStream = null;
                 try {
                     string line;
