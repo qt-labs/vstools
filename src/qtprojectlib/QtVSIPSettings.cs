@@ -465,20 +465,6 @@ namespace QtProjectLib
             key.SetValue(type, option);
         }
 
-        public static Size Size()
-        {
-            var s = new Size();
-            s.Width = GetGridValue("gridX", 10);
-            s.Height = GetGridValue("gridY", 10);
-            return s;
-        }
-
-        public static void SetSize(Size s)
-        {
-            SetGridValue("gridX", s.Width);
-            SetGridValue("gridY", s.Height);
-        }
-
         public static bool Visible()
         {
             return GetBoolValue("visible", true);
@@ -563,30 +549,6 @@ namespace QtProjectLib
             if (regKey == null)
                 return;
             regKey.SetValue(key, val ? 1 : 0);
-        }
-
-        private static int GetGridValue(string key, int defaultValue)
-        {
-            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (regKey != null) {
-                try {
-                    var val = Convert.ToInt32((regKey.GetValue(key, defaultValue)));
-                    if (val <= 0 || val > 100)
-                        return defaultValue;
-                    return val;
-                } catch (Exception) {
-                    return defaultValue;
-                }
-            }
-            return defaultValue;
-        }
-
-        private static void SetGridValue(string key, int val)
-        {
-            var regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (regKey == null)
-                return;
-            regKey.SetValue(key, val.ToString());
         }
     }
 }
