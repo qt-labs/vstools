@@ -253,6 +253,8 @@
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Target Name="AfterBuild">
     <Message Text="Running post build target for $(ProjectName)." Importance="high" />
+    <Message Text="Set $(ProjectName) installation target to [$(VisualStudioVersion)]." Importance="high" />
+    <Exec Command="$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe target=$(TargetDir)\$(TargetName).vsix version=[$(VisualStudioVersion)]" />
     <Message Text="Copy '$(SolutionDir)\qrceditor\bin\QrcEditor.exe' to '$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\'." Importance="high" />
     <Copy SourceFiles="$(SolutionDir)\qrceditor\bin\QrcEditor.exe" DestinationFolder="$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
     <Message Text="Copy '$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe' to '$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\'." Importance="high" />

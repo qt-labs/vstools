@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -49,17 +50,54 @@ namespace QtArchiveGen
                 using (var vsix = new ZipArchive(vsixToOpen, ZipArchiveMode.Update)) {
 
                     vsixToOpen = null;
-                    var vsixEntry = vsix.CreateEntry(Path.GetFileName(parseArgs("source=")));
-                    if (vsixEntry == null)
-                        return EXIT_FAILURE;
 
-                    using (var sourceStream = new FileStream(parseArgs("source="), FileMode.Open))
-                    using (var targetWriter = new BinaryWriter(vsixEntry.Open())) {
-                        int bytesRead;
-                        byte[] buffer = new byte[1024];
-                        while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
-                            targetWriter.Write(buffer, 0, bytesRead);
+                    var source = parseArgs("source=");
+                    if (!string.IsNullOrEmpty(source)) {
+                        var vsixEntry = vsix.CreateEntry(Path.GetFileName(source));
+                        if (vsixEntry == null)
+                            return EXIT_FAILURE;
+
+                        using (var sourceStream = new FileStream(source, FileMode.Open))
+                        using (var targetWriter = new BinaryWriter(vsixEntry.Open())) {
+                            int bytesRead;
+                            byte[] buffer = new byte[1024];
+                            while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                                targetWriter.Write(buffer, 0, bytesRead);
+                        }
                     }
+
+                    var version = parseArgs("version=");
+                    if (!string.IsNullOrEmpty(version)) {
+                        var vsixEntry = vsix.GetEntry("extension.vsixmanifest");
+                        if (vsixEntry == null)
+                            return EXIT_FAILURE;
+
+                        var manifest = string.Empty;
+                        using (var reader = new StreamReader(vsixEntry.Open())) {
+                            manifest = reader.ReadToEnd();
+                        }
+
+                        var index = manifest.IndexOf("</Metadata>", StringComparison.Ordinal);
+                        if (index < 0)
+                            return EXIT_FAILURE;
+
+                        manifest = manifest.Insert(index + "</Metadata>\r\n".Length,
+                                string.Format(CultureInfo.InvariantCulture,
+                                      "  <Installation InstalledByMsi=\"false\">\r\n"
+                                    + "    <{0}.Pro\" Version=\"{1}\" />\r\n"
+                                    + "    <{0}.Premium\" Version=\"{1}\" />\r\n"
+                                    + "    <{0}.Ultimate\" Version=\"{1}\" />\r\n"
+                                    + "    <{0}.Community\" Version=\"{1}\" />\r\n"
+                                    + "  </Installation>\r\n",
+                                "InstallationTarget Id=\"Microsoft.VisualStudio", version));
+
+                        using (var writer = new StreamWriter(vsixEntry.Open())) {
+                            writer.Write(manifest);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(source) && string.IsNullOrEmpty(version))
+                        return EXIT_FAILURE;
                 }
             } catch {
                 return EXIT_FAILURE;
