@@ -89,6 +89,16 @@
     <Compile Include="VSQtSettings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\LICENSE.GPL3-EXCEPT">
+      <Link>LICENSE.GPL3-EXCEPT</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\Changelog">
+      <Link>Changelog</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
     </None>
   </ItemGroup>

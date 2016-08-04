@@ -37,6 +37,8 @@
         <DisplayName>Qt Visual Studio Tools</DisplayName>
         <Description xml:space="preserve">The Qt Visual Studio Tools allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</Description>
         <MoreInfo>http://www.qt.io</MoreInfo>
+        <License>LICENSE.GPL3-EXCEPT</License>
+        <ReleaseNotes>Changelog</ReleaseNotes>
         <Icon>qt.ico</Icon>
         <PreviewImage>preview.png</PreviewImage>
     </Metadata>
