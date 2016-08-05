@@ -21,10 +21,10 @@ Building the Qt Visual Studio Tools from sources requires a static build of Qt (
 or newer). Supported compilers are MSVC 2013 or newer, GCC 4.7 or newer, and Clang 3.1 or newer.
 
 See the Qt documentation for the prerequisites and steps to build Qt from sources.
+https://wiki.qt.io/Building_Qt_5_from_Git#Windows
 
 Recommended configuration options:
-
-configure -prefix %CD%\qtbase -release -static -static-runtime -accessibility -no-opengl -no-icu -no-sql-sqlite -no-qml-debug -nomake examples -nomake tests -skip qtactiveqt -skip qtenginio -skip qtlocation -skip qtmultimedia -skip qtserialport -skip qtquick1 -skip qtquickcontrols -skip qtscript -skip qtsensors -skip qtwebkit -skip qtwebsockets -skip qtxmlpatterns
+configure -prefix %CD%\qtbase -release -static -static-runtime -opensource -nomake examples -nomake tests
 
 
 
@@ -39,3 +39,45 @@ To debug the resulting VSIX, select the 'QtVsTools' node, right click and choose
 Update 'Start Action|Start external program:' to point to your Visual Studio 'devenv.exe' application.
 Update 'Start Options|Command line arguments:' with '/rootSuffix Exp'. Note: The implemented post
 build targets will only work reliable if you use the 'Exp' hive of Visual Studio.
+
+
+
+Product name or Publisher name update
+-------------------------------------
+
+Open the file 'source.extension.vsixmanifest' inside the 'src\qtvstools' directory and update the
+'DisplayName' tag's value or the 'Identity' tag's 'Publisher' attribute.
+Important: Updating the information requires also updating the MsBuild 'AfterTargets' information
+at the bottom of the 'QtVsTools.csproj' file in the same directory.
+
+
+
+Version number update
+---------------------
+
+Open the file 'source.extension.vsixmanifest' inside the 'src\qtvstools' directory and update the
+'Identity' tag's 'Version' attribute.
+Important: Updating the version number there requires also updating the 'VsixVersion' tag at the
+top of the 'QtVsTools.csproj' file in the same directory.
+
+
+
+Support for newer Visual Studio Versions
+----------------------------------------
+
+Add a new file in 'src' named 'VS{NewVersion}.References.targets' by copying one of the existing.
+Update the 'Project' tag's 'ToolsVersion' attribute to match the new VS tools version.
+Update the 'DefineConstants' tag's value to match the new VS version.
+Update the 'ItemGroup' tag's 'Condition' attribute to match the new VS version.
+Update the 'Reference' tag's 'Include' attribute to match the new VS version, most likely the following:
+    - Microsoft.VisualStudio.ExtensionsExplorer.UI
+    - Microsoft.VisualStudio.Shell.{VersionNumber}
+    - Microsoft.VisualStudio.VCCodeModel
+    - Microsoft.VisualStudio.VCProjectEngine
+
+Update the file 'QtVsTools.csproj' inside the 'src\qtvstools' directory to include the newly created
+'VS{NewVersion}.References.targets' file. To do search for the something along the following
+
+<Import Project="..\VS2013.References.targets" Condition=" '$(VisualStudioVersion)' == '12.0' " />
+
+and add a new line using the Visual Studio version and 'VS{NewVersion}.References.targets' file.

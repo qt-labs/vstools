@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <VsixVersion Condition="'$(VsixVersion)' == ''">1.0.0</VsixVersion>
     <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <UseCodebase>true</UseCodebase>
@@ -252,17 +253,25 @@
   <Import Project="..\VS2015.References.targets" Condition=" '$(VisualStudioVersion)' == '14.0' " />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Target Name="AfterBuild">
+    <PropertyGroup>
+      <QrcEditor>$(SolutionDir)\qrceditor\bin\QrcEditor.exe</QrcEditor>
+      <QtArchiveGen>$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe</QtArchiveGen>
+      <QMakeFileReader>$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe</QMakeFileReader>
+      <DestFolder>$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\$(VsixVersion)\</DestFolder>
+    </PropertyGroup>
     <Message Text="Running post build target for $(ProjectName)." Importance="high" />
     <Message Text="Set $(ProjectName) installation target to [$(VisualStudioVersion)]." Importance="high" />
-    <Exec Command="$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe target=$(TargetDir)\$(TargetName).vsix version=[$(VisualStudioVersion)]" />
-    <Message Text="Copy '$(SolutionDir)\qrceditor\bin\QrcEditor.exe' to '$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\'." Importance="high" />
-    <Copy SourceFiles="$(SolutionDir)\qrceditor\bin\QrcEditor.exe" DestinationFolder="$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
-    <Message Text="Copy '$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe' to '$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\'." Importance="high" />
-    <Copy SourceFiles="$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe" DestinationFolder="$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\1.0.0\" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
-    <Message Text="Copy '$(SolutionDir)\qrceditor\bin\QrcEditor.exe' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
-    <Exec Command="$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe source=$(SolutionDir)\qrceditor\bin\QrcEditor.exe target=$(TargetDir)\$(TargetName).vsix" />
-    <Message Text="Copy '$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
-    <Exec Command="$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe source=$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe target=$(TargetDir)\$(TargetName).vsix" />
+    <Exec Command="$(QtArchiveGen) target=$(TargetDir)\$(TargetName).vsix version=[$(VisualStudioVersion)]" />
+    <Message Text="Copy '$(QrcEditor)' to '$(DestFolder)'." Importance="high" />
+    <Copy SourceFiles="$(QrcEditor)" DestinationFolder="$(DestFolder)" OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+    <Message Text="Copy '$(QMakeFileReader)' to '$(DestFolder)'." Importance="high" />
+    <Copy SourceFiles="$(QMakeFileReader)" DestinationFolder="$(DestFolder)" OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+    <Message Text="Copy '$(QrcEditor)' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
+    <Exec Command="$(QtArchiveGen) source=$(QrcEditor) target=$(TargetDir)\$(TargetName).vsix" />
+    <Message Text="Copy '$(QMakeFileReader)' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
+    <Exec Command="$(QtArchiveGen) source=$(QMakeFileReader) target=$(TargetDir)\$(TargetName).vsix" />
     <Message Text="Completed post build target for $(ProjectName)." Importance="high" />
   </Target>
 </Project>
