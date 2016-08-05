@@ -1,3 +1,11 @@
+The Qt Visual Studio Tools version 1.0.0 is an update of the existing Add-In implementation
+to the newer Visual Studio Package (VSIX extension) system.
+
+Changes
+-------
+- Rewrite the Add-In as VSIX extension
+- Known issues: Missing QML, help and localization support
+
 The Qt Visual Studio Add-In version 1.2.5 contains an update of the Qt documentation
 and some bug fixes.
 
