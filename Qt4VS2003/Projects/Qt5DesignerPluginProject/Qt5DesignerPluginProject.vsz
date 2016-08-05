@@ -1,6 +1,0 @@
-VSWIZARD 7.0
-Wizard=VsWizard.VsWizardEngine.9.0
-
-Param="WIZARD_NAME = Qt5DesignerPluginProject"
-Param="ABSOLUTE_PATH = C:\Program Files (x86)\Digia\Qt4VSAddin\wizards\Qt5DesignerPluginProject"
-Param="FALLBACK_LCID = 1033"
