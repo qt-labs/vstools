@@ -29,6 +29,7 @@
 using QtProjectLib;
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace QtVsTools
 {
@@ -268,12 +269,9 @@ namespace QtVsTools
             if (string.IsNullOrEmpty(directory))
                 return false;
 
-            string pattern = "\\$\\([^\\)]+\\)";
-            var regExp = new System.Text.RegularExpressions.Regex(pattern);
-            var matchList = regExp.Matches(directory);
-            for (int i = 0; i < matchList.Count; i++) {
-                if (matchList[i].ToString() != "$(ConfigurationName)"
-                    && matchList[i].ToString() != "$(PlatformName)")
+            var matches = Regex.Matches(directory, "\\$\\([^\\)]+\\)");
+            foreach (var m in matches) {
+                if (m.ToString() != "$(ConfigurationName)" && m.ToString() != "$(PlatformName)")
                     return true;
             }
             return false;
