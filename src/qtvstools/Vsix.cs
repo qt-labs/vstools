@@ -38,7 +38,7 @@ namespace QtVsTools
 {
     [Guid(Vsix.PackageGuid)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
-    [InstalledProductRegistration("#110", "#112", "1.0.0", IconResourceID = 400)]
+    [InstalledProductRegistration("#110", "#112", "2.0.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
     public sealed class Vsix : Package
