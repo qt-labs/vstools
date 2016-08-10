@@ -74,7 +74,7 @@ namespace QtVsTools
         /// <summary>
         /// Command ID.
         /// </summary>
-        private enum CommandId : int
+        private enum CommandId
         {
             ImportPriFileProjectId = 0x0114,
             ExportPriFileProjectId = 0x0115,

@@ -72,7 +72,7 @@ namespace QtVsTools
         /// <summary>
         /// Command ID.
         /// </summary>
-        private enum CommandId : int
+        private enum CommandId
         {
             LaunchDesignerId = 0x0100,
             LaunchLinguistId = 0x0101,
