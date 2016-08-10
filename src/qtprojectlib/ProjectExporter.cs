@@ -542,8 +542,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if (ContainsFilesWithSpaces(option.List))
-                hasSpaces = true;
+            hasSpaces |= ContainsFilesWithSpaces(option.List);
 
             // add the source files
             option = new ProFileOption("SOURCES");
@@ -552,8 +551,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if (ContainsFilesWithSpaces(option.List))
-                hasSpaces = true;
+            hasSpaces |= ContainsFilesWithSpaces(option.List);
 
             // add the form files
             option = new ProFileOption("FORMS");
@@ -562,8 +560,7 @@ namespace QtProjectLib
             content.Options.Add(option);
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if (ContainsFilesWithSpaces(option.List))
-                hasSpaces = true;
+            hasSpaces |= ContainsFilesWithSpaces(option.List);
 
             // add the translation files
             option = new ProFileOption("TRANSLATIONS");
@@ -572,8 +569,7 @@ namespace QtProjectLib
             option.IncludeComment = false;
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
             MakeFilesRelativePath(qtPro.VCProject, option.List, priFileDirectory);
-            if (ContainsFilesWithSpaces(option.List))
-                hasSpaces = true;
+            hasSpaces |= ContainsFilesWithSpaces(option.List);
             content.Options.Add(option);
 
             // add the resource files

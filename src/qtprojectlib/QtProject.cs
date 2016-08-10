@@ -291,8 +291,7 @@ namespace QtProjectLib
                     List<string> additionalDependencies = linkerWrapper.AdditionalDependencies;
                     bool dependenciesChanged = false;
                     foreach (string moduleLib in moduleLibs)
-                        if (additionalDependencies.Remove(moduleLib))
-                            dependenciesChanged = true;
+                        dependenciesChanged |= additionalDependencies.Remove(moduleLib);
                     if (dependenciesChanged)
                         linkerWrapper.AdditionalDependencies = additionalDependencies;
                 }
@@ -2774,8 +2773,7 @@ namespace QtProjectLib
                 }
             }
             foreach (VCFilter filt in filter.Filters as IVCCollection)
-                if (DeleteFilesFromFilter(filt))
-                    error = true;
+                error |= DeleteFilesFromFilter(filt);
             return error;
         }
 
