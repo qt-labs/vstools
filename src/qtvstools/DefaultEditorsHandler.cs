@@ -306,7 +306,7 @@ namespace QtVsTools
                     FileName = fileName,
                     WorkingDirectory = workingDir,
                     WindowStyle = ProcessWindowStyle.Normal
-                },
+                }
             };
         }
     }

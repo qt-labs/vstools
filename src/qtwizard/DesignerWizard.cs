@@ -177,10 +177,10 @@ namespace QtProjectWizard
                             NextButtonEnabled = false,
                             FinishButtonEnabled = defaultModulesInstalled,
                             CancelButtonEnabled = true
-                        },
+                        }
                     })
                     {
-                        Title = @"Qt Custom Designer Widget",
+                        Title = @"Qt Custom Designer Widget"
                     };
                     WindowHelper.ShowModal(wizard, hwnd);
                     if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
