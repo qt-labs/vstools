@@ -162,7 +162,6 @@ namespace QtProjectLib
         /// Every appearance of "$(ConfigurationName)" in the path will be
         /// replaced by the value of configName.
         /// <param name="file">full file name of either the header or the source file</param>
-        /// <param name="config">file configuration</param>
         /// <returns></returns>
         private string GetRelativeMocFilePath(string file, string configName, string platformName)
         {
@@ -198,7 +197,6 @@ namespace QtProjectLib
         /// <summary>
         /// Marks the specified project as a Qt project.
         /// </summary>
-        /// <param name="proj">project</param>
         public void MarkAsQtProject(string version)
         {
             vcPro.keyword = Resources.qtProjectKeyword + version;
@@ -1377,7 +1375,6 @@ namespace QtProjectLib
         /// Returns the file (VCFile) specified by the file name from a given
         /// project.
         /// </summary>
-        /// <param name="proj">project</param>
         /// <param name="fileName">file name (relative path)</param>
         /// <returns></returns>
         public VCFile GetFileFromProject(string fileName)
@@ -1411,10 +1408,9 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Returns the files (List<VCFile>) specified by the file name from a given
-        /// project.
+        /// Returns the files specified by the file name from a given project as list of VCFile
+        /// objects.
         /// </summary>
-        /// <param name="proj">project</param>
         /// <param name="fileName">file name (relative path)</param>
         /// <returns></returns>
         public System.Collections.Generic.List<VCFile> GetFilesFromProject(string fileName)
@@ -1561,7 +1557,6 @@ namespace QtProjectLib
         /// Removes a file from the filter.
         /// This file will be deleted!
         /// </summary>
-        /// <param name="project">project</param>
         /// <param name="file">file</param>
         public void RemoveFileFromFilter(VCFile file, FakeFilter filter)
         {
@@ -1584,7 +1579,6 @@ namespace QtProjectLib
         /// Removes a file from the filter.
         /// This file will be deleted!
         /// </summary>
-        /// <param name="project">project</param>
         /// <param name="file">file</param>
         public void RemoveFileFromFilter(VCFile file, VCFilter filter)
         {
@@ -1741,8 +1735,6 @@ namespace QtProjectLib
         /// <summary>
         /// Adds a file to a specified filter in a project.
         /// </summary>
-        /// <param name="project">VCProject</param>
-        /// <param name="srcFile">full name of the file to add</param>
         /// <param name="destName">name of the file in the project (relative to the project directory)</param>
         /// <param name="filter">filter</param>
         /// <returns>VCFile</returns>

@@ -448,7 +448,6 @@ namespace QtProjectLib
         /// As Qmake -tp vc Adds the full path to the additional dependencies
         /// we need to do the same when toggling project kind to qmake generated.
         /// </summary>
-        /// <param name="project">Project</param>
         /// <returns></returns>
         private static string AddFullPathToAdditionalDependencies(string qtDir, string additionalDependencies)
         {
@@ -577,7 +576,6 @@ namespace QtProjectLib
         /// This function converts relative directories to absolute paths internally
         /// and replaces them, if necessary. If no replacement is done, the path isn't altered.
         /// </summary>
-        /// <param name="files"></param>
         /// <param name="project">The project is needed to convert relative paths to absolute paths.</param>
         private static void ReplaceDirectory(ref List<string> paths, string oldDirectory, string replacement, Project project)
         {
