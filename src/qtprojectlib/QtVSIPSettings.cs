@@ -370,12 +370,8 @@ namespace QtProjectLib
             // - stored in project
             // - globally defined default option
             // - empty options
-            if (project != null && project.Globals.get_VariablePersists(type)) {
-                var valueString = (string) project.Globals[type];
-                var val = Convert.ToInt32(valueString);
-                bool v = val > 0 ? true : false;
-                return v;
-            }
+            if (project != null && project.Globals.get_VariablePersists(type))
+                return Convert.ToInt32(project.Globals[type] as string) > 0;
             return GetBoolValue(type, false);
         }
 
@@ -522,15 +518,10 @@ namespace QtProjectLib
 
         private static bool GetBoolValue(string key, bool defaultValue)
         {
-            bool v;
             var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (regKey != null) {
-                var val = (int) regKey.GetValue(key, defaultValue ? (object) 1 : (object) 0);
-                v = val > 0 ? true : false;
-            } else {
-                v = defaultValue;
-            }
-            return v;
+            if (regKey == null)
+                return defaultValue;
+            return ((int) regKey.GetValue(key, (defaultValue ? 1 : 0) as object)) > 0;
         }
 
         private static bool ValueExists(string key)
