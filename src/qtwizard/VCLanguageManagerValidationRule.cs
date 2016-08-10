@@ -35,8 +35,7 @@ namespace QtProjectWizard
 {
     public abstract class VCLanguageManagerValidationRule : ValidationRule
     {
-        public VCLanguageManagerValidationRule()
-            : base()
+        protected VCLanguageManagerValidationRule()
         {
             ValidatesOnTargetUpdated = true;
 

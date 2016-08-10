@@ -42,10 +42,6 @@ namespace QtVsTools
         private string[] resources;
         private string[] forms;
 
-        public QMakeWrapper()
-        {
-        }
-
         public void setQtDir(string path)
         {
             qtdir = path;
