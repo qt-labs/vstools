@@ -43,7 +43,7 @@ namespace QtProjectLib
         }
     }
 
-    public class ProjectMacros
+    public static class ProjectMacros
     {
         public const string Name = "%(Filename)";
         public const string FileName = "%(Identity)";

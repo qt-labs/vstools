@@ -34,7 +34,7 @@ using System.Drawing;
 
 namespace QtProjectLib
 {
-    public class QtVSIPSettings
+    public static class QtVSIPSettings
     {
         static Hashtable mocDirCache = new Hashtable();
         static Hashtable uicDirCache = new Hashtable();

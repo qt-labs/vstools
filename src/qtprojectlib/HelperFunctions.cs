@@ -39,7 +39,7 @@ using System.Windows.Forms;
 
 namespace QtProjectLib
 {
-    public class HelperFunctions
+    public static class HelperFunctions
     {
         public static string FindQtDirWithTools(Project project)
         {

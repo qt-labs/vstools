@@ -35,7 +35,7 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    public class ExtLoader
+    public static class ExtLoader
     {
         public static void ImportProFile()
         {

@@ -59,12 +59,6 @@ namespace QtVsTools
             private set;
         }
 
-        public ExtLoader ExtLoader
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// Gets the installation path of the package.
         /// </summary>
@@ -130,7 +124,6 @@ namespace QtVsTools
             if (vm.HasInvalidVersions(out error))
                 Messages.DisplayErrorMessage(error);
             eventHandler = new DteEventsHandler(Dte);
-            ExtLoader = new ExtLoader();
 
             QtMainMenu.Initialize(this);
             QtSolutionContextMenu.Initialize(this);

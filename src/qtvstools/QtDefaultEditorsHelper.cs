@@ -76,7 +76,7 @@ namespace QtVsTools
         }
 
         // Get add-in installation path using a registry key
-        private string GetAddinInstallPath(RegistryKey key)
+        private static string GetAddinInstallPath(RegistryKey key)
         {
             if (key == null)
                 return null;
@@ -126,7 +126,7 @@ namespace QtVsTools
             key.SetValue(@"", installPath + qrcEditorName);
         }
 
-        private void WriteCustomTypeEditor(string path, string customEditor)
+        private static void WriteCustomTypeEditor(string path, string customEditor)
         {
             var key = Registry.CurrentUser.OpenSubKey(path, true);
             if (key == null) {

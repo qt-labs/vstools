@@ -31,7 +31,7 @@ namespace QtProjectLib
     /// <summary>
     /// Summary description for Resources.
     /// </summary>
-    public class Resources
+    public static class Resources
     {
         // export things
         public const string exportProHeader =
@@ -123,7 +123,7 @@ namespace QtProjectLib
         public const string registryVersionPath = registryRootPath + "\\Versions";
     }
 
-    public class Filters
+    public static class Filters
     {
         public static FakeFilter SourceFiles()
         {

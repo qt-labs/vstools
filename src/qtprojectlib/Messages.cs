@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 namespace QtProjectLib
 {
-    public class Messages
+    public static class Messages
     {
         private static OutputWindowPane wndp = null;
 
