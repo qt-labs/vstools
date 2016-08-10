@@ -40,9 +40,9 @@ namespace QtVsTools
         private const string designer = @"Qt Designer";
         private const string qrcEditor = @"Qt Resource Editor";
 
-        protected static string guid = null;
-        protected static string appWrapper = null;
-        protected static string qrcEditorName = null;
+        private readonly string guid = null;
+        private readonly string appWrapper = null;
+        private readonly string qrcEditorName = null;
 
         /// <summary>
         /// Write default editor values to registry for VS 2013 if add-in is installed. Applies
@@ -73,6 +73,13 @@ namespace QtVsTools
                 ;
                 WriteRegistryValues(basePath, Vsix.Instance.PkgInstallPath);
             }
+        }
+
+        protected DefaultEditorsBase(string uid, string wrapper, string editor)
+        {
+            guid = uid;
+            appWrapper = wrapper;
+            qrcEditorName = editor;
         }
 
         // Get add-in installation path using a registry key
@@ -141,11 +148,9 @@ namespace QtVsTools
     public class Qt4DefaultEditors : DefaultEditorsBase
     {
         public Qt4DefaultEditors()
+            : base(uid: @"{6A7385B4-1D62-46e0-A4E3-AED4475371F0}",
+                  wrapper: @"qtappwrapper.exe", editor: @"qrceditor.exe")
         {
-            // Set add-in specific values
-            guid = @"{6A7385B4-1D62-46e0-A4E3-AED4475371F0}";
-            appWrapper = @"qtappwrapper.exe";
-            qrcEditorName = @"qrceditor.exe";
         }
     }
 
@@ -153,23 +158,19 @@ namespace QtVsTools
     public class Qt5DefaultEditors : DefaultEditorsBase
     {
         public Qt5DefaultEditors()
+            : base(uid: @"{C80C78C8-F64B-43df-9A53-96F7C44A1EB6}",
+                  wrapper: @"qt5appwrapper.exe", editor: @"q5rceditor.exe")
         {
-            // Set add-in specific values
-            guid = @"{C80C78C8-F64B-43df-9A53-96F7C44A1EB6}";
-            appWrapper = @"qt5appwrapper.exe";
-            qrcEditorName = @"q5rceditor.exe";
         }
     }
 
     // Default editor handling for Qt VS Tools
     public class QtVsToolsDefaultEditors : DefaultEditorsBase
     {
-        public QtVsToolsDefaultEditors()
+        public QtVsToolsDefaultEditors() // Set VSIX specific values
+            : base(uid: @"{15021976-2F08-4C44-BFF4-73CCDCB50473}",
+                  wrapper: @"QtAppWrapper.exe", editor: @"QrcEditor.exe")
         {
-            // Set VSIX specific values
-            guid = @"{15021976-2F08-4C44-BFF4-73CCDCB50473}";
-            appWrapper = @"QtAppWrapper.exe";
-            qrcEditorName = @"QrcEditor.exe";
         }
     }
 }
