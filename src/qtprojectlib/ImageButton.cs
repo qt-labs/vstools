@@ -49,9 +49,9 @@ namespace QtProjectLib
             BackColor = System.Drawing.SystemColors.Control;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs pevent)
         {
-            base.OnPaint(e);
+            base.OnPaint(pevent);
 
             int xoffset = (Size.Width - img.Width) / 2;
             int yoffset = (Size.Height - img.Height) / 2;
@@ -65,10 +65,10 @@ namespace QtProjectLib
                 imgHeight = Size.Height;
 
             if ((dimg != null) && (!Enabled))
-                e.Graphics.DrawImage(dimg, xoffset, yoffset,
+                pevent.Graphics.DrawImage(dimg, xoffset, yoffset,
                     imgWidth, imgHeight);
             else if (img != null)
-                e.Graphics.DrawImage(img, xoffset, yoffset,
+                pevent.Graphics.DrawImage(img, xoffset, yoffset,
                     imgWidth, imgHeight);
         }
     }
