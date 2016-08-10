@@ -137,7 +137,7 @@ namespace QtProjectWizard
                     data.ClassSourceFile = safeprojectname + @".cpp";
                     data.UiFile = data.ClassName + @".ui";
 
-                    var wizard = new WizardWindow(new List<WizardPage>() {
+                    var wizard = new WizardWindow(new List<WizardPage> {
                         new IntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt ActiveQt Server Wizard",
@@ -233,7 +233,7 @@ namespace QtProjectWizard
         }
 
         private string safeprojectname;
-        private readonly WizardData data = new WizardData()
+        private readonly WizardData data = new WizardData
         {
             DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets", @"QtAxServer"

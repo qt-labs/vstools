@@ -145,7 +145,7 @@ namespace QtProjectWizard
                     data.PluginHeaderFile = data.PluginClass + @".h";
                     data.PluginSourceFile = data.PluginClass + @".cpp";
 
-                    var wizard = new WizardWindow(new List<WizardPage>() {
+                    var wizard = new WizardWindow(new List<WizardPage> {
                         new IntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt Custom Designer Widget",
@@ -243,7 +243,7 @@ namespace QtProjectWizard
             return true;
         }
 
-        private readonly WizardData data = new WizardData()
+        private readonly WizardData data = new WizardData
         {
             DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets", @"QtXml"

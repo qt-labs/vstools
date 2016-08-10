@@ -53,7 +53,7 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    var wizard = new WizardWindow(new List<WizardPage>() {
+                    var wizard = new WizardWindow(new List<WizardPage> {
                         new IntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt Console Application Wizard",
@@ -165,7 +165,7 @@ namespace QtProjectWizard
         {
         }
 
-        private readonly WizardData data = new WizardData()
+        private readonly WizardData data = new WizardData
         {
             DefaultModules = new List<string> { @"QtCore" }
         };

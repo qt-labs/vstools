@@ -62,7 +62,7 @@ namespace QtProjectWizard
                     data.ClassHeaderFile = name + @".h";
                     data.ClassSourceFile = name + @".cpp";
 
-                    var wizard = new WizardWindow(new List<WizardPage>() {
+                    var wizard = new WizardWindow(new List<WizardPage> {
                         new IntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt Class Wizard",
@@ -139,7 +139,7 @@ namespace QtProjectWizard
             return WizardResult.Finished;
         }
 
-        private readonly WizardData data = new WizardData()
+        private readonly WizardData data = new WizardData
         {
             DefaultModules = new List<string> {
                 @"QtCore"
