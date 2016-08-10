@@ -268,8 +268,6 @@ namespace QtVsTools
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }
                 break;
-            default:
-                break;
             }
         }
 

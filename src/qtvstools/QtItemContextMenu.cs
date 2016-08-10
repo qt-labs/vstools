@@ -129,8 +129,6 @@ namespace QtVsTools
             case lReleaseOnItemId:
                 Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));
                 break;
-            default:
-                break;
             }
         }
 

@@ -208,8 +208,6 @@ namespace QtVsTools
                     }
                 }
                 break;
-            default:
-                break;
             }
         }
 
@@ -266,8 +264,6 @@ namespace QtVsTools
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }
-                break;
-            default:
                 break;
             }
         }
