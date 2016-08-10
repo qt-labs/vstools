@@ -38,7 +38,7 @@ namespace QtProjectLib
     internal sealed class SRDescriptionAttribute : DescriptionAttribute
     {
 
-        private bool replaced = false;
+        private bool replaced;
 
         /// <summary>
         ///     Constructs a new sys description.
@@ -87,8 +87,9 @@ namespace QtProjectLib
 
     internal sealed class SR
     {
-        static SR loader = null;
+        static SR loader;
         ResourceManager resources;
+
         static readonly Object obj = new Object();
 
         internal SR()

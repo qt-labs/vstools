@@ -232,7 +232,7 @@ namespace QtProjectLib
 
     public class ProjectExporter
     {
-        private EnvDTE.DTE dteObject = null;
+        private EnvDTE.DTE dteObject;
 
         public ProjectExporter(EnvDTE.DTE dte)
         {

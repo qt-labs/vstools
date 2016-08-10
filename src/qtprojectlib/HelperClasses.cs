@@ -134,7 +134,7 @@ namespace QtProjectLib
 
     public class MainWinWrapper : IWin32Window
     {
-        private EnvDTE.DTE dteObject = null;
+        private EnvDTE.DTE dteObject;
 
         public MainWinWrapper(EnvDTE.DTE dte)
         {

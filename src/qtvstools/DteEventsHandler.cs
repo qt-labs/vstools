@@ -45,7 +45,7 @@ namespace QtVsTools
         private EnvDTE.DocumentEvents documentEvents;
         private EnvDTE.ProjectItemsEvents projectItemsEvents;
         private EnvDTE.vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
-        private VCProjectEngineEvents vcProjectEngineEvents = null;
+        private VCProjectEngineEvents vcProjectEngineEvents;
         private CommandEvents debugStartEvents;
         private CommandEvents debugStartWithoutDebuggingEvents;
         private int dispId_VCFileConfiguration_ExcludedFromBuild;

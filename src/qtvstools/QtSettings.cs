@@ -52,23 +52,23 @@ namespace QtVsTools
         private QtVersionManager versionManager;
         private EnvDTE.Project project;
 
-        private string oldMocDir = null;
-        private string oldMocOptions = null;
-        private string oldRccDir = null;
-        private string oldUicDir = null;
-        private string oldQtVersion = null;
-        private bool oldLUpdateOnBuild = false;
-        private string oldLUpdateOptions = null;
-        private string oldLReleaseOptions = null;
+        private string oldMocDir;
+        private string oldMocOptions;
+        private string oldRccDir;
+        private string oldUicDir;
+        private string oldQtVersion;
+        private bool oldLUpdateOnBuild;
+        private string oldLUpdateOptions;
+        private string oldLReleaseOptions;
 
-        private string newMocDir = null;
-        private string newMocOptions = null;
-        private string newRccDir = null;
-        private string newUicDir = null;
-        private string newQtVersion = null;
-        private bool newLUpdateOnBuild = false;
-        private string newLUpdateOptions = null;
-        private string newLReleaseOptions = null;
+        private string newMocDir;
+        private string newMocOptions;
+        private string newRccDir;
+        private string newUicDir;
+        private string newQtVersion;
+        private bool newLUpdateOnBuild;
+        private string newLUpdateOptions;
+        private string newLReleaseOptions;
 
         public void SaveSettings()
         {

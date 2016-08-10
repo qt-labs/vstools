@@ -43,12 +43,12 @@ namespace QtVsTools
         private System.Windows.Forms.TextBox nameBox;
         private System.Windows.Forms.TextBox pathBox;
         private System.Windows.Forms.Button browseButton;
-        private bool nameBoxDirty = false;
+        private bool nameBoxDirty;
         private Timer errorTimer;
         private Label errorLabel;
-        private string lastErrorString = "";
+        private string lastErrorString = string.Empty;
 
-        private System.ComponentModel.Container components = null;
+        private System.ComponentModel.Container components;
 
         public AddQtVersionDialog()
         {

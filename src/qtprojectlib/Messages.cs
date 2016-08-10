@@ -33,7 +33,7 @@ namespace QtProjectLib
 {
     public static class Messages
     {
-        private static OutputWindowPane wndp = null;
+        private static OutputWindowPane wndp;
 
         private static OutputWindowPane GetBuildPane(OutputWindow outputWindow)
         {

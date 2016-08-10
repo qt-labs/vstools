@@ -33,8 +33,8 @@ namespace QtProjectLib
 {
     public class QrcItem
     {
-        private string path = null;
-        private string alias = null;
+        private string path;
+        private string alias;
 
         public QrcItem()
         {
@@ -61,9 +61,10 @@ namespace QtProjectLib
 
     public class QrcPrefix
     {
-        private string prefix = null;
-        private string lang = null;
+        private string prefix;
+        private string lang;
         private List<QrcItem> items;
+
         public List<QrcItem> Items
         {
             get { return items; }
@@ -94,8 +95,8 @@ namespace QtProjectLib
 
     public class QrcParser
     {
-        private string qrcFileName = null;
-        private Stack<QrcPrefix> prefixes = null;
+        private string qrcFileName;
+        private Stack<QrcPrefix> prefixes;
         private List<QrcPrefix> prefxs;
 
         public List<QrcPrefix> Prefixes

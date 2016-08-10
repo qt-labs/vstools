@@ -35,7 +35,7 @@ namespace QtProjectLib
     public class QMakeConf
     {
         protected Hashtable mEntries = new Hashtable();
-        private FileInfo fileInfo = null;
+        private FileInfo fileInfo;
         private string qmakespecFolder = "";
 
         public QMakeConf(VersionInformation versionInfo)

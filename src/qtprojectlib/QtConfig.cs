@@ -39,8 +39,8 @@ namespace QtProjectLib
     /// </summary>
     class QtConfig
     {
-        private bool isStaticBuild = false;
-        private string signatureFile = null;
+        private bool isStaticBuild;
+        private string signatureFile;
 
         public QtConfig(string qtdir)
         {

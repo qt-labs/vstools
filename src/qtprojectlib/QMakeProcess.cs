@@ -40,9 +40,10 @@ namespace QtProjectLib
 
     class InfoDialog : Form
     {
-        private Label label1 = null;
-        private IContainer components = null;
-        private ProgressBar progressBar1 = null;
+        private Label label1;
+        private IContainer components;
+        private ProgressBar progressBar1;
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null)) {
@@ -107,17 +108,17 @@ namespace QtProjectLib
         public delegate void ProcessEventHandlerArg(string data);
         public event ProcessEventHandlerArg PaneMessageDataEvent;
 
-        private string file = null;
-        protected int errorValue = 0;
+        private string file;
+        protected int errorValue;
         private EnvDTE.DTE dteObject;
-        private bool recursive = false;
-        protected Process qmakeProcess = null;
+        private bool recursive;
+        protected Process qmakeProcess;
         protected VersionInformation qtVersionInformation;
 
-        protected static int stdOutputLines = 0;
-        protected static int errOutputLines = 0;
-        protected static StringBuilder stdOutput = null;
-        protected static StringBuilder errOutput = null;
+        protected static int stdOutputLines;
+        protected static int errOutputLines;
+        protected static StringBuilder stdOutput;
+        protected static StringBuilder errOutput;
 
         public int ErrorValue
         {

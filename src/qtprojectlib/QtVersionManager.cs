@@ -39,10 +39,10 @@ namespace QtProjectLib
     /// </summary>
     public class QtVersionManager
     {
-        private static QtVersionManager instance = null;
-        private string regVersionPath = null;
-        private string strVersionKey = null;
-        private Hashtable versionCache = null;
+        private static QtVersionManager instance;
+        private string regVersionPath;
+        private string strVersionKey;
+        private Hashtable versionCache;
 
         protected QtVersionManager()
         {

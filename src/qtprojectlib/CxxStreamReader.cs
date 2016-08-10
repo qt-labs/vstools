@@ -42,9 +42,9 @@ namespace QtProjectLib
             Normal, Comment, String
         }
         private State state = State.Normal;
-        private StreamReader sr = null;
-        private string partialLine = "";
-        bool disposed = false;
+        private StreamReader sr;
+        private string partialLine = string.Empty;
+        bool disposed;
 
         public CxxStreamReader(string fileName)
         {

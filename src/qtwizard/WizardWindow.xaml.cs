@@ -83,7 +83,7 @@ namespace QtProjectWizard
             private set;
         }
 
-        private int currentPage = 0;
+        private int currentPage;
 
         private void onSourceInitialized(object sender, EventArgs e)
         {

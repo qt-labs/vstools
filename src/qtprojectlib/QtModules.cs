@@ -97,9 +97,9 @@ namespace QtProjectLib
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
-        public string IncludePath = null;
-        public string proVarQT = null;
-        public string proVarCONFIG = null;
+        public string IncludePath;
+        public string proVarQT;
+        public string proVarCONFIG;
 
         public QtModuleInfo(QtModule id)
         {

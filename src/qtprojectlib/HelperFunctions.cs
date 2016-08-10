@@ -1347,7 +1347,7 @@ namespace QtProjectLib
             return true;
         }
 
-        private static QProcess proc = null;
+        private static QProcess proc;
 
         public static void StartExternalQtApplication(string application, string arguments, string workingDir,
             EnvDTE.Project project, bool checkExitCode, Hashtable errorCodes)

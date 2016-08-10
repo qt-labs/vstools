@@ -38,7 +38,7 @@ namespace QtVsTools
     {
         private Project project;
         private QtProject qtProject;
-        private ProjectQtSettings qtSettings = null;
+        private ProjectQtSettings qtSettings;
 
         private struct ModuleMapItem
         {

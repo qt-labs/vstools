@@ -48,16 +48,16 @@ namespace QtVsTools
             newDisableAutoMOCStepsUpdate = QtVSIPSettings.GetDisableAutoMocStepsUpdate();
         }
 
-        private string newMocDir = null;
-        private string newMocOptions = null;
-        private string newRccDir = null;
-        private string newUicDir = null;
-        private bool newLUpdateOnBuild = false;
-        private string newLUpdateOptions = null;
-        private string newLReleaseOptions = null;
+        private string newMocDir;
+        private string newMocOptions;
+        private string newRccDir;
+        private string newUicDir;
+        private bool newLUpdateOnBuild;
+        private string newLUpdateOptions;
+        private string newLReleaseOptions;
         private bool newAskBeforeCheckoutFile = true;
         private bool newDisableCheckoutFiles = true;
-        private bool newDisableAutoMOCStepsUpdate = false;
+        private bool newDisableAutoMOCStepsUpdate;
 
         public void SaveSettings()
         {

@@ -108,7 +108,8 @@ namespace QtVsTools
         }
 
         private EnvDTE.DTE dte;
-        private static int port = 0;
+        private static int port;
+
         private static ManualResetEvent portFound = new ManualResetEvent(false);
         private static Dictionary<string, Server> servers = new Dictionary<string, Server>();
 

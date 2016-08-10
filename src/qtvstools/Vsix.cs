@@ -77,7 +77,7 @@ namespace QtVsTools
             private set;
         }
 
-        private string appWrapperPath = null;
+        private string appWrapperPath;
         public string AppWrapperPath
         {
             get
@@ -88,7 +88,7 @@ namespace QtVsTools
             }
         }
 
-        private string qmakeFileReaderPath = null;
+        private string qmakeFileReaderPath;
         public string QMakeFileReaderPath
         {
             get
@@ -166,7 +166,7 @@ namespace QtVsTools
             Shutdown
         }
 
-        private DteEventsHandler eventHandler = null;
+        private DteEventsHandler eventHandler;
 
         private string locateHelperExecutable(string exeName)
         {

@@ -40,9 +40,9 @@ namespace QtVsTools
         private const string designer = @"Qt Designer";
         private const string qrcEditor = @"Qt Resource Editor";
 
-        private readonly string guid = null;
-        private readonly string appWrapper = null;
-        private readonly string qrcEditorName = null;
+        private readonly string guid;
+        private readonly string appWrapper;
+        private readonly string qrcEditorName;
 
         /// <summary>
         /// Write default editor values to registry for VS 2013 if add-in is installed. Applies

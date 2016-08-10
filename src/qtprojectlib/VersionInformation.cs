@@ -37,14 +37,14 @@ namespace QtProjectLib
     public class VersionInformation
     {
         //fields
-        public string qtDir = null;
-        public uint qtMajor = 0; // X in version x.y.z
-        public uint qtMinor = 0; // Y in version x.y.z
-        public uint qtPatch = 0; // Z in version x.y.z
+        public string qtDir;
+        public uint qtMajor; // X in version x.y.z
+        public uint qtMinor; // Y in version x.y.z
+        public uint qtPatch; // Z in version x.y.z
         public bool qt5Version = true;
-        private QtConfig qtConfig = null;
-        private QMakeConf qmakeConf = null;
-        private string vsPlatformName = null;
+        private QtConfig qtConfig;
+        private QMakeConf qmakeConf;
+        private string vsPlatformName;
 
         public VersionInformation(string qtDirIn)
         {

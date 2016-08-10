@@ -37,7 +37,7 @@ namespace QtVsTools
     internal sealed class SRDescriptionAttribute : DescriptionAttribute
     {
 
-        private bool replaced = false;
+        private bool replaced;
 
         /// <summary>
         ///     Constructs a new sys description.
@@ -86,7 +86,7 @@ namespace QtVsTools
 
     internal sealed class SR
     {
-        static SR loader = null;
+        static SR loader;
         ResourceManager resources;
         static readonly Object obj = new Object();
 
@@ -99,8 +99,8 @@ namespace QtVsTools
         internal const string Edit = "Edit";
         internal const string Remove = "Remove";
         internal const string Delete = "Delete";
-        internal static CultureInfo appCultureInfo = null;
-        internal static CultureInfo defaultCultureInfo = null;
+        internal static CultureInfo appCultureInfo;
+        internal static CultureInfo defaultCultureInfo;
 
         internal SR()
         {

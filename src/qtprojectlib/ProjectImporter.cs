@@ -38,7 +38,7 @@ namespace QtProjectLib
 {
     public class ProjectImporter
     {
-        private EnvDTE.DTE dteObject = null;
+        private EnvDTE.DTE dteObject;
         const string projectFileExtension = ".vcxproj";
 
         public ProjectImporter(EnvDTE.DTE dte)

@@ -45,11 +45,11 @@ namespace QtProjectLib
     /// </summary>
     public class QtProject
     {
-        private EnvDTE.DTE dte = null;
-        private EnvDTE.Project envPro = null;
-        private VCProject vcPro = null;
-        private MocCmdChecker mocCmdChecker = null;
-        private Array lastConfigurationRowNames = null;
+        private EnvDTE.DTE dte;
+        private EnvDTE.Project envPro;
+        private VCProject vcPro;
+        private MocCmdChecker mocCmdChecker;
+        private Array lastConfigurationRowNames;
         private static Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
 
         public static QtProject Create(VCProject vcProject)
