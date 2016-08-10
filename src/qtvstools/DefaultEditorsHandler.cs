@@ -107,9 +107,8 @@ namespace QtVsTools
                 [MarshalAs(UnmanagedType.Bool)] bool fAltTab);
         }
 
-        private EnvDTE.DTE dte;
+        private readonly EnvDTE.DTE dte;
         private static int port;
-
         private static ManualResetEvent portFound = new ManualResetEvent(false);
         private static Dictionary<string, Server> servers = new Dictionary<string, Server>();
 

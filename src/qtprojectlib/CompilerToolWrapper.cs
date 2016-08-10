@@ -45,8 +45,8 @@ namespace QtProjectLib
     class CompilerToolWrapper
     {
         private VCCLCompilerTool compilerTool;
-        private Object compilerObj;
-        private Type compilerType;
+        private readonly Object compilerObj;
+        private readonly Type compilerType;
 
         public static CompilerToolWrapper Create(VCConfiguration config)
         {

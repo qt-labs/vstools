@@ -43,7 +43,7 @@ namespace QtVsTools
         private Button okButton;
         private Button cancelButton;
         private TextBox fileTextBox;
-        private EnvDTE.Project project;
+        private readonly EnvDTE.Project project;
         private Panel panel1;
         /// <summary>
         /// Required designer variable.

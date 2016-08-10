@@ -33,8 +33,8 @@ namespace QtProjectLib
 {
     public class ImageButton : System.Windows.Forms.Button
     {
-        private Image img;
-        private Image dimg;
+        private readonly Image img;
+        private readonly Image dimg;
         public ImageButton(Image image)
         {
             img = image;

@@ -63,7 +63,7 @@ namespace QtProjectLib
     {
         private string prefix;
         private string lang;
-        private List<QrcItem> items;
+        private readonly List<QrcItem> items;
 
         public List<QrcItem> Items
         {
@@ -95,9 +95,9 @@ namespace QtProjectLib
 
     public class QrcParser
     {
-        private string qrcFileName;
-        private Stack<QrcPrefix> prefixes;
-        private List<QrcPrefix> prefxs;
+        private readonly string qrcFileName;
+        private readonly Stack<QrcPrefix> prefixes;
+        private readonly List<QrcPrefix> prefxs;
 
         public List<QrcPrefix> Prefixes
         {

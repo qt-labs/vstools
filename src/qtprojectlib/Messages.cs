@@ -79,10 +79,10 @@ namespace QtProjectLib
             return e.Message;
         }
 
-        private static string ErrorString = SR.GetString("Messages_ErrorOccured");
-        private static string WarningString = SR.GetString("Messages_Warning");
-        private static string SolutionString = SR.GetString("Messages_SolveProblem");
-        private static bool VerboseException = true;
+        private static readonly string ErrorString = SR.GetString("Messages_ErrorOccured");
+        private static readonly string WarningString = SR.GetString("Messages_Warning");
+        private static readonly string SolutionString = SR.GetString("Messages_SolveProblem");
+        private static readonly bool VerboseException = true;
 
         static public void DisplayCriticalErrorMessage(System.Exception e)
         {

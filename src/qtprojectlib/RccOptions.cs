@@ -36,10 +36,10 @@ namespace QtProjectLib
     /// </summary>
     public class RccOptions
     {
-        private EnvDTE.Project project;
-        private string id;
-        private string name;
-        private string qrcFileName;
+        private readonly EnvDTE.Project project;
+        private readonly string id;
+        private readonly string name;
+        private readonly string qrcFileName;
 
         public RccOptions(EnvDTE.Project pro, VCFile qrcFile)
         {

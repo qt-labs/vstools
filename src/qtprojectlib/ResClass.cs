@@ -88,8 +88,7 @@ namespace QtProjectLib
     internal sealed class SR
     {
         static SR loader;
-        ResourceManager resources;
-
+        readonly ResourceManager resources;
         static readonly Object obj = new Object();
 
         internal SR()

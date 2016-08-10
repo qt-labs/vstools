@@ -173,8 +173,8 @@ namespace QtProjectLib
     public class QtModules
     {
         private static QtModules instance = new QtModules();
-        private Dictionary<string, QtModule> dictModulesByDLL = new Dictionary<string, QtModule>();
-        private Dictionary<QtModule, QtModuleInfo> dictModuleInfos = new Dictionary<QtModule, QtModuleInfo>();
+        private readonly Dictionary<string, QtModule> dictModulesByDLL = new Dictionary<string, QtModule>();
+        private readonly Dictionary<QtModule, QtModuleInfo> dictModuleInfos = new Dictionary<QtModule, QtModuleInfo>();
 
         public static QtModules Instance
         {
