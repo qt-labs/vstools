@@ -148,7 +148,7 @@ namespace QtVsTools
                 return;
 
             foreach (SelectedItem si in Vsix.Instance.Dte.SelectedItems) {
-                if (!si.Name.ToLower().EndsWith(".ts"))
+                if (!si.Name.EndsWith(".ts", StringComparison.OrdinalIgnoreCase))
                     return; // Don't display commands if one of the selected files is not a .ts file.
             }
 

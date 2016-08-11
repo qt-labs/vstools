@@ -56,7 +56,7 @@ namespace QtProjectLib
                 var lst = new List<string>(dirArray);
                 for (int i = 0; i < lst.Count; ++i) {
                     string item = lst[i];
-                    if (item.StartsWith("\"") && item.EndsWith("\"")) {
+                    if (item.StartsWith("\"", StringComparison.Ordinal) && item.EndsWith("\"", StringComparison.Ordinal)) {
                         item = item.Remove(0, 1);
                         item = item.Remove(item.Length - 1, 1);
                         lst[i] = item;

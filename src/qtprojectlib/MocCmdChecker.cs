@@ -50,7 +50,7 @@ namespace QtProjectLib
             string outputFile)
         {
             string inputMocFile = ProjectMacros.Path;
-            if (outputFile.ToLower().EndsWith(".moc"))
+            if (outputFile.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
                 inputMocFile = mocFile;
             var cmds = SplitIntoCommands(cmdLine);
             var mocPos = MocCommandPosition(cmds);
@@ -107,7 +107,7 @@ namespace QtProjectLib
                 } else {
                     newCmdLine = newCmdLine + cmds[i];
                 }
-                if (i < cmds.Length - 1 && !newCmdLine.EndsWith("\r\n"))
+                if (i < cmds.Length - 1 && !newCmdLine.EndsWith("\r\n", StringComparison.Ordinal))
                     newCmdLine = newCmdLine + "\r\n";
             }
             return newCmdLine;

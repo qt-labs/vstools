@@ -29,6 +29,7 @@
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.VCProjectEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -243,7 +244,7 @@ namespace QtProjectLib
         {
             for (int i = 0; i < files.Count; i++) {
                 string relPath;
-                if (files[i].IndexOf(":") != 1)
+                if (files[i].IndexOf(':') != 1)
                     relPath = HelperFunctions.GetRelativePath(path,
                         vcproj.ProjectDirectory + "\\" + (string) files[i]);
                 else
@@ -267,7 +268,7 @@ namespace QtProjectLib
             var ret = new List<string>(files.Count);
             foreach (string file in files) {
                 FileInfo fi;
-                if (file.IndexOf(":") != 1)
+                if (file.IndexOf(':') != 1)
                     fi = new FileInfo(path + "\\" + file);
                 else
                     fi = new FileInfo(file);
@@ -391,11 +392,11 @@ namespace QtProjectLib
                     option.List.Add("console");
 
                 if (linker.AdditionalDependencies != null) {
-                    if (linker.AdditionalDependencies.IndexOf("QAxServer") > -1)
+                    if (linker.AdditionalDependencies.IndexOf("QAxServer", StringComparison.Ordinal) > -1)
                         option.List.Add("qaxserver");
-                    else if (linker.AdditionalDependencies.IndexOf("QAxContainer") > -1)
+                    else if (linker.AdditionalDependencies.IndexOf("QAxContainer", StringComparison.Ordinal) > -1)
                         option.List.Add("qaxcontainer");
-                    else if (linker.AdditionalDependencies.IndexOf("QtHelp") > -1)
+                    else if (linker.AdditionalDependencies.IndexOf("QtHelp", StringComparison.Ordinal) > -1)
                         option.List.Add("help");
                 }
             }
@@ -597,7 +598,7 @@ namespace QtProjectLib
             excludeList += "QT_THREAD_SUPPORT QT_PLUGIN QT_NO_DEBUG QT_CORE_LIB QT_GUI_LIB";
 
             foreach (string define in preprocessorDefinitions.Split(new char[] { ';', ',' })) {
-                if (excludeList.IndexOf(define.ToUpper()) == -1)
+                if (excludeList.IndexOf(define, StringComparison.OrdinalIgnoreCase) == -1)
                     option.List.Add(define);
             }
         }
@@ -618,9 +619,9 @@ namespace QtProjectLib
 
             foreach (string s in includePaths.Split(new char[] { ';', ',' })) {
                 var d = HelperFunctions.NormalizeRelativeFilePath(s);
-                if (!d.ToLower().StartsWith("$(qtdir)\\include") &&
-                    !d.ToLower().StartsWith(qtDir + "\\include") &&
-                    !d.ToLower().EndsWith("win32-msvc2005")) {
+                if (!d.StartsWith("$(qtdir)\\include", StringComparison.OrdinalIgnoreCase) &&
+                    !d.StartsWith(qtDir + "\\include", StringComparison.OrdinalIgnoreCase) &&
+                    !d.EndsWith("win32-msvc2005", StringComparison.OrdinalIgnoreCase)) {
                     d = d.Replace("$(ConfigurationName)", project.ConfigurationManager.ActiveConfiguration.ConfigurationName);
                     d = d.Replace("$(PlatformName)", project.ConfigurationManager.ActiveConfiguration.PlatformName);
                     if (HelperFunctions.IsAbsoluteFilePath(d))
@@ -645,8 +646,8 @@ namespace QtProjectLib
             if (paths != null) {
                 foreach (string s in paths.Split(new char[] { ';', ',' })) {
                     var d = HelperFunctions.NormalizeRelativeFilePath(s);
-                    if (!d.ToLower().StartsWith("$(qtdir)\\lib") &&
-                        !d.ToLower().StartsWith(qtDir + "\\lib")) {
+                    if (!d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
+                        !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase)) {
                         if (HelperFunctions.IsAbsoluteFilePath(d))
                             d = HelperFunctions.GetRelativePath(project.FullName, d);
                         if (!HelperFunctions.IsAbsoluteFilePath(d))
@@ -656,13 +657,13 @@ namespace QtProjectLib
             }
 
             if (deps != null) {
-                foreach (string s in deps.Split(new char[] { ' ' })) {
-                    var d = s.ToLower();
+                foreach (string d in deps.Split(new char[] { ' ' })) {
                     if (d.Length > 0 &&
-                        !d.StartsWith("$(qtdir)\\lib") &&
-                        !d.StartsWith(qtDir + "\\lib") &&
-                        !d.StartsWith("qt") && !d.StartsWith(".\\qt") && d != ".")
-                        option.List.Add("-l" + HelperFunctions.ChangePathFormat(s).Replace(".lib", ""));
+                        !d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
+                        !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase) &&
+                        !d.StartsWith("qt", StringComparison.OrdinalIgnoreCase) &&
+                        !d.StartsWith(".\\qt", StringComparison.OrdinalIgnoreCase) && d != ".")
+                        option.List.Add("-l" + HelperFunctions.ChangePathFormat(d).Replace(".lib", ""));
                 }
             }
         }
@@ -768,7 +769,7 @@ namespace QtProjectLib
                 foreach (ProFileOption option in content.Options) {
                     if (option.Name == "include" && !option.List.Contains(priFileToInclude)) {
                         var relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
-                        if (relativePriPath.StartsWith(".\\"))
+                        if (relativePriPath.StartsWith(".\\", StringComparison.Ordinal))
                             relativePriPath = relativePriPath.Substring(2);
                         relativePriPath = HelperFunctions.ChangePathFormat(relativePriPath);
                         option.List.Add(relativePriPath);
@@ -897,7 +898,7 @@ namespace QtProjectLib
                     break;
 
                 line = line.Trim();
-                if (line.StartsWith(tag)) {
+                if (line.StartsWith(tag, StringComparison.Ordinal)) {
                     line = line.Remove(0, tag.Length);
                     parsing = true;
                 }
@@ -905,8 +906,8 @@ namespace QtProjectLib
                 if (parsing) {
                     // remove pwd, as we build the full path ourself
                     string pwd = "$$PWD";
-                    if (line.IndexOf(pwd) > -1)
-                        line = line.Remove(line.IndexOf(pwd), pwd.Length);
+                    if (line.IndexOf(pwd, StringComparison.Ordinal) > -1)
+                        line = line.Remove(line.IndexOf(pwd, StringComparison.Ordinal), pwd.Length);
 
                     line = line.TrimStart(trimChars);
                     line = line.TrimEnd(trimChars);
@@ -926,7 +927,7 @@ namespace QtProjectLib
         {
             string bestMatch = ".";
             string inPath = path;
-            if (inPath.StartsWith(".\\"))
+            if (inPath.StartsWith(".\\", StringComparison.Ordinal))
                 inPath = inPath.Substring(2);
             foreach (string p in pathFilterTable.Keys) {
                 int best = 0;
@@ -951,7 +952,7 @@ namespace QtProjectLib
             newPath = newPath.ToLower().Trim();
             newPath = Regex.Replace(newPath, @"\\+\.?\\+", "\\");
             newPath = Regex.Replace(newPath, @"\\\.?$", "");
-            if (newPath.StartsWith(".\\"))
+            if (newPath.StartsWith(".\\", StringComparison.Ordinal))
                 newPath = newPath.Substring(2);
             filterPathTable.Add(filter, newPath);
             pathFilterTable.Add(newPath, filter);
@@ -998,7 +999,7 @@ namespace QtProjectLib
                     vcproj.AddFile(file); // the file is not in the project
                 } else {
                     var path = HelperFunctions.GetRelativePath(vcproj.ProjectDirectory, file);
-                    if (path.StartsWith(".\\"))
+                    if (path.StartsWith(".\\", StringComparison.Ordinal))
                         path = path.Substring(2);
 
                     var i = path.LastIndexOf('\\');
@@ -1017,7 +1018,7 @@ namespace QtProjectLib
 
                     var filterDir = filterPathTable[filter] as string;
                     string name = path;
-                    if (!name.StartsWith("..") && name.StartsWith(filterDir))
+                    if (!name.StartsWith("..", StringComparison.Ordinal) && name.StartsWith(filterDir, StringComparison.Ordinal))
                         name = name.Substring(filterDir.Length + 1);
 
                     var newFilter = filter.AddFilter(name) as VCFilter;

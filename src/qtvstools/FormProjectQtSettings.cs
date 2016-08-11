@@ -197,7 +197,7 @@ namespace QtVsTools
                 // Disable if module not installed
                 var info = QtModules.Instance.ModuleInformation(item.moduleId);
                 string libraryPrefix = info.LibraryPrefix;
-                if (libraryPrefix.StartsWith("Qt")) {
+                if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal)) {
                     libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
                 }
                 string full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";

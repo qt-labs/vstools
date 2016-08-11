@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using System;
 using System.IO;
 
 namespace QtProjectLib
@@ -76,7 +77,7 @@ namespace QtProjectLib
         private void parseLine(string line)
         {
             line = line.Trim();
-            if (line.StartsWith("CONFIG")) {
+            if (line.StartsWith("CONFIG", StringComparison.Ordinal)) {
                 var values = line.Substring(6).Split(new char[] { ' ', '\t' });
                 foreach (string s in values) {
                     if (s == "static")
@@ -84,7 +85,7 @@ namespace QtProjectLib
                     else if (s == "shared")
                         isStaticBuild = false;
                 }
-            } else if (line.StartsWith("DEFAULT_SIGNATURE")) {
+            } else if (line.StartsWith("DEFAULT_SIGNATURE", StringComparison.Ordinal)) {
                 var idx = line.IndexOf('=');
                 if (idx < 0)
                     return;

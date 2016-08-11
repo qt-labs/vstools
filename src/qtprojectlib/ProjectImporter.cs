@@ -160,10 +160,10 @@ namespace QtProjectLib
                             if (config.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
                                 var compiler = CompilerToolWrapper.Create(config);
                                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
-                                if (compiler.GetPreprocessorDefinitions().IndexOf("QT_PLUGIN") > -1
-                                    && compiler.GetPreprocessorDefinitions().IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
-                                    && compiler.GetAdditionalIncludeDirectories().IndexOf("QtDesigner") > -1
-                                    && linker.AdditionalDependencies.IndexOf("QtDesigner") > -1) {
+                                if (compiler.GetPreprocessorDefinitions().IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1
+                                    && compiler.GetPreprocessorDefinitions().IndexOf("QDESIGNER_EXPORT_WIDGETS", StringComparison.Ordinal) > -1
+                                    && compiler.GetAdditionalIncludeDirectories().IndexOf("QtDesigner", StringComparison.Ordinal) > -1
+                                    && linker.AdditionalDependencies.IndexOf("QtDesigner", StringComparison.Ordinal) > -1) {
                                     qtPro.MarkAsDesignerPluginProject();
                                 }
                             }
@@ -193,13 +193,13 @@ namespace QtProjectLib
             sr.Close();
 
             var projects = new List<string>();
-            var index = content.IndexOf(projectFileExtension);
+            var index = content.IndexOf(projectFileExtension, StringComparison.Ordinal);
             while (index != -1) {
                 int startIndex = content.LastIndexOf('\"', index, index) + 1;
                 var endIndex = content.IndexOf('\"', index);
                 projects.Add(content.Substring(startIndex, endIndex - startIndex));
                 content = content.Substring(endIndex);
-                index = content.IndexOf(projectFileExtension);
+                index = content.IndexOf(projectFileExtension, StringComparison.Ordinal);
             }
             return projects;
         }
@@ -251,12 +251,12 @@ namespace QtProjectLib
         {
             string s = "";
             int index = -1;
-            index = content.ToLower().IndexOf(extension.ToLower());
+            index = content.IndexOf(extension.ToLower(), StringComparison.OrdinalIgnoreCase);
             if (index != -1) {
                 s = content.Remove(index);
-                index = s.LastIndexOf("CommandLine=");
-                if (s.LastIndexOf("AdditionalDependencies=") > index)
-                    index = s.LastIndexOf("AdditionalDependencies=");
+                index = s.LastIndexOf("CommandLine=", StringComparison.Ordinal);
+                if (s.LastIndexOf("AdditionalDependencies=", StringComparison.Ordinal) > index)
+                    index = s.LastIndexOf("AdditionalDependencies=", StringComparison.Ordinal);
                 if (index != -1) {
                     s = s.Substring(index);
                     s = s.Substring(s.IndexOf('=') + 1);
@@ -268,7 +268,7 @@ namespace QtProjectLib
             }
             if (!string.IsNullOrEmpty(s)) {
                 s = s.Trim(new char[] { ' ', '\"', ',' });
-                if (s.StartsWith(">"))
+                if (s.StartsWith(">", StringComparison.Ordinal))
                     s = s.Substring(1);
                 if (!Path.IsPathRooted(s))
                     s = null;

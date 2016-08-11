@@ -465,11 +465,11 @@ namespace QtProjectLib
                 }
 
                 bool isDebugConfiguration = false;
-                if (config.Name.StartsWith("Release")) {
+                if (config.Name.StartsWith("Release", StringComparison.Ordinal)) {
                     compiler.AddPreprocessorDefinition("QT_NO_DEBUG,NDEBUG");
                     compiler.SetDebugInformationFormat(debugOption.debugDisabled);
                     compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDLL;
-                } else if (config.Name.StartsWith("Debug")) {
+                } else if (config.Name.StartsWith("Debug", StringComparison.Ordinal)) {
                     isDebugConfiguration = true;
                     compiler.SetOptimization(optimizeOption.optimizeDisabled);
                     compiler.SetDebugInformationFormat(debugOption.debugEnabled);
@@ -549,7 +549,7 @@ namespace QtProjectLib
                     var compiler = CompilerToolWrapper.Create(conf);
                     if (compiler != null && !uiFileExists) {
                         var uiDir = QtVSIPSettings.GetUicDirectory(envPro);
-                        if (compiler.GetAdditionalIncludeDirectories().IndexOf(uiDir) < 0)
+                        if (compiler.GetAdditionalIncludeDirectories().IndexOf(uiDir, StringComparison.Ordinal) < 0)
                             compiler.AddAdditionalIncludeDirectories(uiDir);
                     }
                 }
@@ -568,9 +568,9 @@ namespace QtProjectLib
         private static string SafelyQuoteCommandLineArgument(string arg)
         {
             arg = "\"" + arg;
-            if (arg.EndsWith("\\"))
+            if (arg.EndsWith("\\", StringComparison.Ordinal))
                 arg += ".";     // make sure, that we don't escape the trailing double quote
-            else if (arg.EndsWith(")"))
+            else if (arg.EndsWith(")", StringComparison.Ordinal))
                 arg += "\\.";   // macro value could end with backslash. That would escape the trailing double quote.
             arg += "\"";
             return arg;
@@ -687,7 +687,7 @@ namespace QtProjectLib
             string additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough().Replace('\\', '/') + "\" ";
             //Get mocDir without .\\ at the beginning of it
             var mocDir = QtVSIPSettings.GetMocDirectory(envPro);
-            if (mocDir.StartsWith(".\\"))
+            if (mocDir.StartsWith(".\\", StringComparison.Ordinal))
                 mocDir = mocDir.Substring(2);
 
             //Get the absolute path
@@ -710,7 +710,7 @@ namespace QtProjectLib
 
                 var hasDifferentMocFilePerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(envPro);
                 var hasDifferentMocFilePerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
-                var mocableIsCPP = mocFileName.ToLower().EndsWith(".moc");
+                var mocableIsCPP = mocFileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase);
 
                 // Fresh C++ headers don't have a usable custom build tool. We must set the item type first.
                 if (!mocableIsCPP && file.ItemType != "CustomBuild")
@@ -737,7 +737,7 @@ namespace QtProjectLib
                             fi.Directory.Create();
                         mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
                             mocRelPath);
-                        if (mocFileName.ToLower().EndsWith(".moc")) {
+                        if (mocFileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
                             var mocFileItem = mocFile.Object as ProjectItem;
                             if (mocFileItem != null)
                                 HelperFunctions.EnsureCustomBuildToolAvailable(mocFileItem);
@@ -816,8 +816,8 @@ namespace QtProjectLib
                     }
 
                     string dps = tool.AdditionalDependencies;
-                    if (dps.IndexOf("\"" + Resources.moc4Command + "\"") < 0) {
-                        if (dps.Length > 0 && !dps.EndsWith(";"))
+                    if (dps.IndexOf("\"" + Resources.moc4Command + "\"", StringComparison.Ordinal) < 0) {
+                        if (dps.Length > 0 && !dps.EndsWith(";", StringComparison.Ordinal))
                             dps += ";";
                         tool.AdditionalDependencies = dps + "\"" + Resources.moc4Command + "\";" + fileToMoc;
                     }
@@ -841,9 +841,9 @@ namespace QtProjectLib
                         } else if (matchList[1].Length > 1) {
                             outputMocFile = matchList[1].ToString();
                         }
-                        if (outputMocFile.StartsWith("\""))
+                        if (outputMocFile.StartsWith("\"", StringComparison.Ordinal))
                             outputMocFile = outputMocFile.Substring(1);
-                        if (outputMocFile.EndsWith("\""))
+                        if (outputMocFile.EndsWith("\"", StringComparison.Ordinal))
                             outputMocFile = outputMocFile.Substring(0, outputMocFile.Length - 1);
                         var outputMocPath = Path.GetDirectoryName(outputMocFile);
                         var stringToReplace = Path.GetFileName(outputMocFile);
@@ -853,7 +853,7 @@ namespace QtProjectLib
                         var outputMocPath = Path.GetDirectoryName(outputMocFile);
                         var stringToReplace = Path.GetFileName(outputMocFile);
                         outputMocMacro = outputMocPath + "\\" + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
-                        if (output.Length > 0 && !output.EndsWith(";"))
+                        if (output.Length > 0 && !output.EndsWith(";", StringComparison.Ordinal))
                             output += ";";
                         tool.Outputs = output + "\"" + outputMocMacro + "\"";
                     }
@@ -932,8 +932,8 @@ namespace QtProjectLib
 
                         if (m.Success) {
                             int start = m.Index;
-                            var end = cmdLine.IndexOf("&&", start);
-                            var a = cmdLine.IndexOf("\r\n", start);
+                            var end = cmdLine.IndexOf("&&", start, StringComparison.Ordinal);
+                            var a = cmdLine.IndexOf("\r\n", start, StringComparison.Ordinal);
                             if ((a > -1 && a < end) || (end < 0 && a > -1))
                                 end = a;
                             if (end < 0)
@@ -1070,7 +1070,7 @@ namespace QtProjectLib
                 var filterFiles = (IVCCollection) vcFilter.Files;
                 var filesToDelete = new List<VCFile>();
                 foreach (VCFile rmFile in filterFiles) {
-                    if (rmFile.Name.ToLower().StartsWith("qrc_"))
+                    if (rmFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase))
                         filesToDelete.Add(rmFile);
                 }
                 foreach (VCFile rmFile in filesToDelete) {
@@ -1217,15 +1217,15 @@ namespace QtProjectLib
                                     break;
 
                                 int start = m.Index;
-                                var end = cmdLine.IndexOf("&&", start);
-                                var a = cmdLine.IndexOf("\r\n", start);
+                                var end = cmdLine.IndexOf("&&", start, StringComparison.Ordinal);
+                                var a = cmdLine.IndexOf("\r\n", start, StringComparison.Ordinal);
                                 if ((a > -1 && a < end) || (end < 0 && a > -1))
                                     end = a;
                                 if (end < 0)
                                     end = cmdLine.Length;
 
                                 cmdLine = cmdLine.Remove(start, end - start).Trim();
-                                if (cmdLine.StartsWith("&&"))
+                                if (cmdLine.StartsWith("&&", StringComparison.Ordinal))
                                     cmdLine = cmdLine.Remove(0, 2).Trim();
                             }
                             tool.CommandLine = cmdLine;
@@ -1261,9 +1261,9 @@ namespace QtProjectLib
                             @"(^\s*;|\s*;\s*$)", "", RegexOptions.Multiline);
 
                         if (outputMocFile != null) {
-                            if (outputMocFile.StartsWith("\""))
+                            if (outputMocFile.StartsWith("\"", StringComparison.Ordinal))
                                 outputMocFile = outputMocFile.Substring(1);
-                            if (outputMocFile.EndsWith("\""))
+                            if (outputMocFile.EndsWith("\"", StringComparison.Ordinal))
                                 outputMocFile = outputMocFile.Substring(0, outputMocFile.Length - 1);
                             outputMocFile = outputMocFile.Replace("$(ConfigurationName)",
                                 config.Name.Substring(0, config.Name.IndexOf('|')));
@@ -1616,7 +1616,7 @@ namespace QtProjectLib
 
                 while (File.Exists(destName)) {
                     fileNr++;
-                    destName = destName.Substring(0, destName.LastIndexOf(".")) + ".b";
+                    destName = destName.Substring(0, destName.LastIndexOf('.')) + ".b";
                     destName += fileNr.ToString("00");
                 }
 
@@ -1777,7 +1777,8 @@ namespace QtProjectLib
         {
             // only replace whitespaces in known types
             if (!HelperFunctions.HasSourceFileExtension(file) &&
-                !HelperFunctions.HasHeaderFileExtension(file) && !file.EndsWith(".ui"))
+                !HelperFunctions.HasHeaderFileExtension(file) &&
+                !file.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
                 return;
 
             try {
@@ -1792,7 +1793,7 @@ namespace QtProjectLib
                 var reader = new StreamReader(file);
                 var line = reader.ReadLine();
                 while (line != null) {
-                    if (line.StartsWith(oldValue))
+                    if (line.StartsWith(oldValue, StringComparison.Ordinal))
                         line = line.Replace(oldValue, newValue);
                     list.Add(line);
                     line = reader.ReadLine();
@@ -1950,9 +1951,9 @@ namespace QtProjectLib
                 var line = reader.ReadLine();
                 bool skip = false;
                 while (line != null) {
-                    if (line.StartsWith("#Begin_" + sectionName)) {
+                    if (line.StartsWith("#Begin_" + sectionName, StringComparison.Ordinal)) {
                         skip = !enable;
-                    } else if (line.StartsWith("#End_" + sectionName)) {
+                    } else if (line.StartsWith("#End_" + sectionName, StringComparison.Ordinal)) {
                         skip = false;
                     } else if (!skip) {
                         if (firstLine) {
@@ -2071,7 +2072,7 @@ namespace QtProjectLib
                 var filterFiles = (IVCCollection) vcFilter.Files;
                 for (int i = filterFiles.Count; i > 0; i--) {
                     var file = (VCFile) filterFiles.Item(i);
-                    if (file.Name.ToLower().StartsWith("ui_")) {
+                    if (file.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase)) {
                         RemoveFileFromFilter(file, vcFilter);
                         HelperFunctions.DeleteEmptyParentDirs(file);
                     }
@@ -2087,7 +2088,7 @@ namespace QtProjectLib
             }
 
             foreach (VCFile file in files) {
-                if (file.Name.EndsWith(".ui") && !IsUic3File(file)) {
+                if (file.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase) && !IsUic3File(file)) {
                     AddUic4BuildStep(file);
                     Messages.PaneMessage(dte, "Update uic step for " + file.Name + ".");
                     ++updatedFiles;
@@ -2106,7 +2107,7 @@ namespace QtProjectLib
                 var tool = HelperFunctions.GetCustomBuildTool(config);
                 if (tool == null)
                     return false;
-                if (tool.CommandLine.IndexOf("uic3.exe") > -1)
+                if (tool.CommandLine.IndexOf("uic3.exe", StringComparison.OrdinalIgnoreCase) > -1)
                     return true;
             }
             return false;
@@ -2254,14 +2255,14 @@ namespace QtProjectLib
                     if (filt.Name == configName + "_" + platformName ||
                         filt.Name == configName || filt.Name == platformName)
                         foreach (VCFile filtFile in (IVCCollection) filt.Files)
-                            if (filtFile.FullPath.EndsWith(fileName))
+                            if (filtFile.FullPath.EndsWith(fileName, StringComparison.Ordinal))
                                 return filtFile;
 
                 //If a project from the an AddIn prior to 1.1.0 was loaded, the generated files are located directly
                 //in the generated files filter.
                 string relativeMocPath = QtVSIPSettings.GetMocDirectory(envPro, configName, platformName) + '\\' + fileName;
                 //Remove .\ at the beginning of the mocPath
-                if (relativeMocPath.StartsWith(".\\"))
+                if (relativeMocPath.StartsWith(".\\", StringComparison.Ordinal))
                     relativeMocPath = relativeMocPath.Remove(0, 2);
                 foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
                     if (filtFile.FullPath.EndsWith(relativeMocPath, StringComparison.OrdinalIgnoreCase))
@@ -2269,7 +2270,7 @@ namespace QtProjectLib
             } else {
                 var generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
                 foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
-                    if (filtFile.FullPath.EndsWith('\\' + fileName))
+                    if (filtFile.FullPath.EndsWith('\\' + fileName, StringComparison.Ordinal))
                         return filtFile;
             }
             return null;
@@ -2332,7 +2333,7 @@ namespace QtProjectLib
                             }
                         }
                     }
-                    if (tool == null || tool.CommandLine.ToLower().IndexOf("moc.exe") == -1)
+                    if (tool == null || tool.CommandLine.IndexOf("moc.exe", StringComparison.OrdinalIgnoreCase) == -1)
                         continue;
 
                     var srcMocFile = GetSourceFileForMocStep(mocable);
@@ -2376,13 +2377,13 @@ namespace QtProjectLib
                     // The tool's command line automatically gets a trailing "\r\n".
                     // We have to remove it to make the check below work.
                     string origCommandLine = tool.CommandLine;
-                    if (origCommandLine.EndsWith("\r\n"))
+                    if (origCommandLine.EndsWith("\r\n", StringComparison.Ordinal))
                         origCommandLine = origCommandLine.Substring(0, origCommandLine.Length - 2);
 
                     if (newCmdLine != null && newCmdLine != origCommandLine) {
                         // We have to delete the old moc file in order to trigger custom build step.
-                        var configName = config.Name.Remove(config.Name.IndexOf("|"));
-                        var platformName = config.Name.Substring(config.Name.IndexOf("|") + 1);
+                        var configName = config.Name.Remove(config.Name.IndexOf('|'));
+                        var platformName = config.Name.Substring(config.Name.IndexOf('|') + 1);
                         var projectPath = envPro.FullName.Remove(envPro.FullName.LastIndexOf('\\'));
                         var mocRelPath = GetRelativeMocFilePath(srcMocFile.FullPath, configName, platformName);
                         var mocPath = Path.Combine(projectPath, mocRelPath);
@@ -2433,11 +2434,11 @@ namespace QtProjectLib
             if (HelperFunctions.HasHeaderFileExtension(file.Name))
                 return file;
             string fileName = file.Name;
-            if (fileName.ToLower().EndsWith(".moc")) {
+            if (fileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
                 fileName = fileName.Substring(0, fileName.Length - 4) + ".cpp";
                 if (fileName.Length > 0) {
                     foreach (VCFile f in (IVCCollection) vcPro.Files) {
-                        if (f.FullPath.ToLower().EndsWith("\\" + fileName.ToLower()))
+                        if (f.FullPath.EndsWith("\\" + fileName, StringComparison.Ordinal))
                             return f;
                     }
                 }
@@ -2453,11 +2454,11 @@ namespace QtProjectLib
         private VCFile GetCppFileForMocStep(VCFile file)
         {
             string fileName = null;
-            if (HelperFunctions.HasHeaderFileExtension(file.Name) || file.Name.EndsWith(".moc"))
+            if (HelperFunctions.HasHeaderFileExtension(file.Name) || file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
                 fileName = file.Name.Remove(file.Name.LastIndexOf('.')) + ".cpp";
             if (!string.IsNullOrEmpty(fileName)) {
                 foreach (VCFile f in (IVCCollection) vcPro.Files) {
-                    if (f.FullPath.ToLower().EndsWith("\\" + fileName.ToLower()))
+                    if (f.FullPath.EndsWith("\\" + fileName, StringComparison.Ordinal))
                         return f;
                 }
             }
@@ -2475,15 +2476,15 @@ namespace QtProjectLib
                 for (int i = generatedFiles.Count - 1; i >= 0; i--) {
                     VCFile file = generatedFiles[i];
                     string fileName = null;
-                    if (file.Name.ToLower().StartsWith("moc_")) {
+                    if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase)) {
                         fileName = file.Name.Substring(4, file.Name.Length - 8) + ".h";
-                    } else if (file.Name.ToLower().EndsWith(".moc")) {
+                    } else if (file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
                         fileName = file.Name.Substring(0, file.Name.Length - 4) + ".cpp";
                     }
                     if (fileName != null) {
                         bool found = false;
                         foreach (VCFile f in (IVCCollection) vcPro.Files) {
-                            if (f.FullPath.ToLower().EndsWith("\\" + fileName.ToLower())) {
+                            if (f.FullPath.EndsWith("\\" + fileName, StringComparison.OrdinalIgnoreCase)) {
                                 if (!orgFiles.Contains(f) && HasMocStep(f, oldMocDir))
                                     orgFiles.Add(f);
                                 RemoveFileFromFilter(file, vcFilter);
@@ -2767,16 +2768,16 @@ namespace QtProjectLib
         public void RemoveGeneratedFiles(string fileName)
         {
             var fi = new FileInfo(fileName);
-            var lastIndex = fileName.LastIndexOf(fi.Extension);
+            var lastIndex = fileName.LastIndexOf(fi.Extension, StringComparison.Ordinal);
             var baseName = fi.Name.Remove(lastIndex, fi.Extension.Length);
             string delName = null;
             if (HelperFunctions.HasHeaderFileExtension(fileName))
                 delName = "moc_" + baseName + ".cpp";
-            else if (HelperFunctions.HasSourceFileExtension(fileName) && !fileName.ToLower().StartsWith("moc_"))
+            else if (HelperFunctions.HasSourceFileExtension(fileName) && !fileName.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                 delName = baseName + ".moc";
-            else if (fileName.ToLower().EndsWith(".ui"))
+            else if (fileName.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
                 delName = "ui_" + baseName + ".h";
-            else if (fileName.ToLower().EndsWith(".qrc"))
+            else if (fileName.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))
                 delName = "qrc_" + baseName + ".cpp";
 
             if (delName != null) {
@@ -2793,7 +2794,7 @@ namespace QtProjectLib
                 return;
 
             foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
-                if (filtFile.FullPath.ToLower().EndsWith(".res"))
+                if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
                     filesToRemove.Add(filtFile);
             foreach (VCFile resFile in filesToRemove)
                 resFile.Remove();

@@ -85,7 +85,8 @@ namespace QtVsTools
             if (string.IsNullOrEmpty(templatesDirPath))
                 return null;
 
-            return templatesDirPath.Substring(0, templatesDirPath.IndexOf(@"\projects\"));
+            return templatesDirPath.Substring(0, templatesDirPath.IndexOf(@"\projects\",
+                System.StringComparison.Ordinal));
         }
 
         // Get/create registry key under HKCU

@@ -180,7 +180,7 @@ namespace QtVsTools
             string filePath = PkgInstallPath + exeName;
             if (!File.Exists(filePath)) {
                 filePath = PkgInstallPath;
-                if (filePath.EndsWith("\\"))
+                if (filePath.EndsWith("\\", StringComparison.Ordinal))
                     filePath = filePath.Remove(filePath.Length - 1);
                 var idx = filePath.LastIndexOf('\\');
                 if (idx >= 0 && idx < filePath.Length - 1)

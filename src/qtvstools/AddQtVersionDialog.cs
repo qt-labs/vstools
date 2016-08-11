@@ -256,7 +256,7 @@ namespace QtVsTools
 
             if (!nameBoxDirty) {
                 string str;
-                if (path.EndsWith("\\"))
+                if (path.EndsWith("\\", StringComparison.Ordinal))
                     str = path.Substring(0, path.Length - 1);
                 else
                     str = path;

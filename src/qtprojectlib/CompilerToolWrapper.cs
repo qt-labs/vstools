@@ -137,7 +137,7 @@ namespace QtProjectLib
                 int i = 0;
                 while (i < lst.Count) {
                     string item = lst[i];
-                    if (item.StartsWith("\"") && item.EndsWith("\"")) {
+                    if (item.StartsWith("\"", StringComparison.Ordinal) && item.EndsWith("\"", StringComparison.Ordinal)) {
                         item = item.Remove(0, 1);
                         item = item.Remove(item.Length - 1, 1);
                         lst[i] = item;
@@ -212,8 +212,8 @@ namespace QtProjectLib
                 if (definesList.Contains(value))
                     return;
                 if (preprocessorDefs.Length > 0
-                    && !preprocessorDefs.EndsWith(";")
-                    && !value.StartsWith(";")) {
+                    && !preprocessorDefs.EndsWith(";", StringComparison.Ordinal)
+                    && !value.StartsWith(";", StringComparison.Ordinal)) {
                     preprocessorDefs += ";";
                 }
             }
@@ -258,10 +258,10 @@ namespace QtProjectLib
             preprocessorDefs = preprocessorDefs.Replace(',', ';');
 
             idx = 0;
-            while ((idx = preprocessorDefs.IndexOf(";;", idx)) != -1)
+            while ((idx = preprocessorDefs.IndexOf(";;", idx, StringComparison.Ordinal)) != -1)
                 preprocessorDefs = preprocessorDefs.Remove(idx, 1);
 
-            if (preprocessorDefs.EndsWith(";"))
+            if (preprocessorDefs.EndsWith(";", StringComparison.Ordinal))
                 preprocessorDefs = preprocessorDefs.Remove(preprocessorDefs.Length - 1);
         }
 
@@ -310,7 +310,7 @@ namespace QtProjectLib
             int i = 0;
             foreach (string include in includes) {
                 string incl = include;
-                if (incl.StartsWith("\\\"") && incl.EndsWith("\\\"")) {
+                if (incl.StartsWith("\\\"", StringComparison.Ordinal) && incl.EndsWith("\\\"", StringComparison.Ordinal)) {
                     incl = incl.Remove(0, 2);
                     incl = incl.Remove(incl.Length - 2, 2);
                 }

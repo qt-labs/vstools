@@ -47,9 +47,9 @@ namespace QtProjectLib
             id = qrcFile.RelativePath;
             qrcFileName = qrcFile.FullPath;
             name = id;
-            if (id.StartsWith(".\\"))
+            if (id.StartsWith(".\\", StringComparison.Ordinal))
                 name = name.Substring(2);
-            if (name.EndsWith(".qrc"))
+            if (name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))
                 name = name.Substring(0, name.Length - 4);
         }
 

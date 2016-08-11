@@ -294,18 +294,19 @@ namespace QtProjectLib
                         var vcpro = (VCProject) project.Object;
                         foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
                             if ((type == Resources.mocDirKeyword &&
-                                (HelperFunctions.HasHeaderFileExtension(vcfile.Name) || vcfile.Name.ToLower().EndsWith(".moc")))
-                                || (type == Resources.uicDirKeyword && vcfile.Name.ToLower().EndsWith(".ui"))
-                                || (type == Resources.rccDirKeyword && vcfile.Name.ToLower().EndsWith(".qrc"))) {
+                                (HelperFunctions.HasHeaderFileExtension(vcfile.Name)
+                                || vcfile.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)))
+                                || (type == Resources.uicDirKeyword && vcfile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
+                                || (type == Resources.rccDirKeyword && vcfile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))) {
                                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                                     tool = HelperFunctions.GetCustomBuildTool(config);
                                     configName = config.Name.Remove(config.Name.IndexOf('|'));
                                     var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                     var platform = vcConfig.Platform as VCPlatform;
                                     platformName = platform.Name;
-                                    if (tool != null && (tool.CommandLine.ToLower().IndexOf("moc.exe") != -1
-                                        || (tool.CommandLine.ToLower().IndexOf("uic.exe") != -1)
-                                        || (tool.CommandLine.ToLower().IndexOf("rcc.exe") != -1)))
+                                    if (tool != null && (tool.CommandLine.IndexOf("moc.exe", StringComparison.OrdinalIgnoreCase) != -1
+                                        || (tool.CommandLine.IndexOf("uic.exe", StringComparison.OrdinalIgnoreCase) != -1)
+                                        || (tool.CommandLine.IndexOf("rcc.exe", StringComparison.OrdinalIgnoreCase) != -1)))
                                         break;
                                     tool = null;
                                 }
@@ -329,9 +330,9 @@ namespace QtProjectLib
 
                             if (type == Resources.mocDirKeyword) {
                                 int index;
-                                if ((index = dir.ToLower().IndexOf(configName.ToLower())) != -1)
+                                if ((index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase)) != -1)
                                     dir = dir.Replace(dir.Substring(index, configName.Length), "$(ConfigurationName)");
-                                if ((index = dir.ToLower().IndexOf(platformName.ToLower())) != -1)
+                                if ((index = dir.IndexOf(platformName, StringComparison.OrdinalIgnoreCase)) != -1)
                                     dir = dir.Replace(dir.Substring(index, platformName.Length), "$(PlatformName)");
 
                                 mocDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));

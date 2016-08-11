@@ -106,7 +106,7 @@ namespace QtVsTools
         {
             defaultCultureInfo = CultureInfo.GetCultureInfo("en");
             appCultureInfo = CultureInfo.GetCultureInfo(Vsix.Instance.Dte.LocaleID);
-            if (appCultureInfo.Name.StartsWith("en"))
+            if (appCultureInfo.Name.StartsWith("en", StringComparison.Ordinal))
                 appCultureInfo = null;
             resources = new ResourceManager("QtVsTools.Resources", GetType().Assembly);
         }

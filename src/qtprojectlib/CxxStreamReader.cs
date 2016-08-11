@@ -106,7 +106,7 @@ namespace QtProjectLib
                         if (lineCopy[i] == '/' && j < lineCopy.Length) {
                             if (lineCopy[j] == '*') {
                                 // C style comment detected
-                                var endIdx = lineCopy.IndexOf("*/", j + 1);
+                                var endIdx = lineCopy.IndexOf("*/", j + 1, StringComparison.Ordinal);
                                 if (endIdx >= 0) {
                                     i = endIdx + 1;
                                     j = i + 1;
@@ -127,7 +127,7 @@ namespace QtProjectLib
                             } while (endIdx >= 0 && lineCopy[endIdx - 1] == '\\');
 
                             if (endIdx < 0) {
-                                if (lineCopy.EndsWith("\\")) {
+                                if (lineCopy.EndsWith("\\", StringComparison.Ordinal)) {
                                     partialLine = line;
                                     if (!removeStrings)
                                         partialLine += lineCopy.Substring(i);
@@ -151,7 +151,7 @@ namespace QtProjectLib
                 break;
             case State.Comment:
                 {
-                    var idx = line.IndexOf("*/");
+                    var idx = line.IndexOf("*/", StringComparison.Ordinal);
                     if (idx >= 0) {
                         state = State.Normal;
                         line = line.Substring(idx + 2);

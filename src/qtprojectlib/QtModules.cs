@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -125,7 +126,7 @@ namespace QtProjectLib
             // TODO: isStaticBuild is never used.
             var libs = new List<string>();
             string libName = LibraryPrefix;
-            if (libName.StartsWith("Qt"))
+            if (libName.StartsWith("Qt", StringComparison.Ordinal))
                 libName = "Qt5" + libName.Substring(2);
             if (isDebugCfg)
                 libName += "d";
@@ -138,7 +139,7 @@ namespace QtProjectLib
         public string GetDllFileName(bool isDebugCfg)
         {
             string fileName = LibraryPrefix;
-            if (fileName.StartsWith("Qt"))
+            if (fileName.StartsWith("Qt", StringComparison.Ordinal))
                 fileName = "Qt5" + fileName.Substring(2);
             if (isDebugCfg)
                 fileName += "d";
@@ -305,7 +306,7 @@ namespace QtProjectLib
             }
             dictModuleInfos.Add(moduleId, moduleInfo);
 
-            if (libraryPrefix.StartsWith("Qt"))
+            if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))
                 moduleInfo.proVarQT = libraryPrefix.Substring(2).ToLower();
             else
                 moduleInfo.proVarQT = libraryPrefix.ToLower();

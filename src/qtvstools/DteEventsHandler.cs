@@ -390,9 +390,9 @@ namespace QtVsTools
                 var srcFilter = qtPro.FindFilterFromGuid(src.UniqueIdentifier);
 
                 if (HelperFunctions.HasSourceFileExtension(vcFile.Name)) {
-                    if (vcFile.Name.ToLower().StartsWith("moc_"))
+                    if (vcFile.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         return;
-                    else if (vcFile.Name.ToLower().StartsWith("qrc_")) {
+                    else if (vcFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase)) {
                         // Do not use precompiled headers with these files
                         QtProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
@@ -400,7 +400,7 @@ namespace QtVsTools
                     var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
                     if (pcHeaderThrough != null) {
                         string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
-                        if (vcFile.Name.ToLower().EndsWith(pcHeaderCreator.ToLower())
+                        if (vcFile.Name.EndsWith(pcHeaderCreator, StringComparison.OrdinalIgnoreCase)
                             && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false, false)) {
                             //File is used to create precompiled headers
                             QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
@@ -422,7 +422,7 @@ namespace QtVsTools
                         qtPro.AddMocStep(vcFile);
                     }
                 } else if (HelperFunctions.HasHeaderFileExtension(vcFile.Name)) {
-                    if (vcFile.Name.ToLower().StartsWith("ui_"))
+                    if (vcFile.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase))
                         return;
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, h)) {
                         if (null == hFilter && qtPro.VCProject.CanAddFilter(h.Name)) {
@@ -438,7 +438,7 @@ namespace QtVsTools
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
-                } else if (vcFile.Name.EndsWith(".ui")) {
+                } else if (vcFile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, ui)) {
                         if (null == uiFilter && qtPro.VCProject.CanAddFilter(ui.Name)) {
                             uiFilter = (VCFilter) qtPro.VCProject.AddFilter(ui.Name);
@@ -451,7 +451,7 @@ namespace QtVsTools
                     }
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                } else if (vcFile.Name.EndsWith(".qrc")) {
+                } else if (vcFile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, qrc)) {
                         if (null == qrcFilter && qtPro.VCProject.CanAddFilter(qrc.Name)) {
                             qrcFilter = (VCFilter) qtPro.VCProject.AddFilter(qrc.Name);
@@ -528,8 +528,8 @@ namespace QtVsTools
                                     qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
                                 } else {
                                     qtDir = matches[0].ToString();
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf("\\"));
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf("\\"));
+                                    qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
+                                    qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
                                 }
                                 qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
                                 HelperFunctions.SetDebuggingEnvironment(project, "PATH=" + qtDir + "\\bin;$(PATH)", false);

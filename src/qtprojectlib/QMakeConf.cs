@@ -122,7 +122,7 @@ namespace QtProjectLib
                                 RemoveValue(lineKey, remval, entries);
                         } else
                             entries[lineKey] = lineValue;
-                    } else if (line.StartsWith("include")) {
+                    } else if (line.StartsWith("include", StringComparison.Ordinal)) {
                         pos = line.IndexOf('(');
                         var posEnd = line.LastIndexOf(')');
                         if (pos > 0 && pos < posEnd) {
@@ -143,7 +143,7 @@ namespace QtProjectLib
 
         private string ExpandVariables(string value, Hashtable entries)
         {
-            var pos = value.IndexOf("$$");
+            var pos = value.IndexOf("$$", StringComparison.Ordinal);
             while (pos != -1) {
                 int startPos = pos + 2;
                 int endPos = startPos;
@@ -166,7 +166,7 @@ namespace QtProjectLib
                     }
                 }
 
-                pos = value.IndexOf("$$", endPos);
+                pos = value.IndexOf("$$", endPos, StringComparison.Ordinal);
             }
             return value;
         }
@@ -179,7 +179,7 @@ namespace QtProjectLib
 
             var value = entries[key].ToString();
             do {
-                pos = value.IndexOf(valueToRemove);
+                pos = value.IndexOf(valueToRemove, StringComparison.Ordinal);
                 if (pos >= 0)
                     value = value.Remove(pos, valueToRemove.Length);
             } while (pos >= 0);

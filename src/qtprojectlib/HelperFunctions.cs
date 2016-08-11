@@ -60,9 +60,9 @@ namespace QtProjectLib
         public static string FindQtDirWithTools(string tool, string projectQtVersion)
         {
             if (!string.IsNullOrEmpty(tool)) {
-                if (!tool.ToLower().StartsWith("\\bin\\"))
+                if (!tool.StartsWith("\\bin\\", StringComparison.OrdinalIgnoreCase))
                     tool = "\\bin\\" + tool;
-                if (!tool.ToLower().EndsWith(".exe"))
+                if (!tool.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                     tool += ".exe";
             }
 
@@ -125,20 +125,16 @@ namespace QtProjectLib
 
         static public bool HasSourceFileExtension(string fileName)
         {
-            fileName = fileName.ToLower();
-            if (fileName.EndsWith(".cpp") || fileName.EndsWith(".c")
-                || fileName.EndsWith(".cxx"))
-                return true;
-            return false;
+            return fileName.EndsWith(".c", StringComparison.OrdinalIgnoreCase)
+                || fileName.EndsWith(".cpp", StringComparison.OrdinalIgnoreCase)
+                || fileName.EndsWith(".cxx", StringComparison.OrdinalIgnoreCase);
         }
 
         static public bool HasHeaderFileExtension(string fileName)
         {
-            fileName = fileName.ToLower();
-            if (fileName.EndsWith(".h") || fileName.EndsWith(".hpp")
-                || fileName.EndsWith(".hxx"))
-                return true;
-            return false;
+            return fileName.EndsWith(".h", StringComparison.OrdinalIgnoreCase)
+                || fileName.EndsWith(".hpp", StringComparison.OrdinalIgnoreCase)
+                || fileName.EndsWith(".hxx", StringComparison.OrdinalIgnoreCase);
         }
 
         static public void SetDebuggingEnvironment(EnvDTE.Project prj)
@@ -178,7 +174,7 @@ namespace QtProjectLib
                     continue;
 
                 var de = conf.DebugSettings as VCDebugSettings;
-                var withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)"));
+                var withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)", StringComparison.Ordinal));
                 if (overwrite || string.IsNullOrEmpty(de.Environment))
                     de.Environment = envpath;
                 else if (!de.Environment.Contains(envpath) && !de.Environment.Contains(withoutPath)) {
@@ -186,7 +182,7 @@ namespace QtProjectLib
                     if (m.Success) {
                         de.Environment = Regex.Replace(de.Environment, "PATH\\s*=\\s*", withoutPath + ";");
                         if (!de.Environment.Contains("$(PATH)") && !de.Environment.Contains("%PATH%")) {
-                            if (!de.Environment.EndsWith(";"))
+                            if (!de.Environment.EndsWith(";", StringComparison.Ordinal))
                                 de.Environment = de.Environment + ";";
                             de.Environment += "$(PATH)";
                         }
@@ -236,11 +232,11 @@ namespace QtProjectLib
 
             path = path.Replace("\"", "");
 
-            if (path != "." && !IsAbsoluteFilePath(path) && !path.StartsWith(".\\")
-                 && !path.StartsWith("$"))
+            if (path != "." && !IsAbsoluteFilePath(path) && !path.StartsWith(".\\", StringComparison.Ordinal)
+                 && !path.StartsWith("$", StringComparison.Ordinal))
                 path = ".\\" + path;
 
-            if (path.EndsWith("\\"))
+            if (path.EndsWith("\\", StringComparison.Ordinal))
                 path = path.Substring(0, path.Length - 1);
 
             return path;
@@ -251,7 +247,7 @@ namespace QtProjectLib
             path = path.Trim();
             if (path.Length >= 2 && path[1] == ':')
                 return true;
-            if (path.StartsWith("\\") || path.StartsWith("/"))
+            if (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal))
                 return true;
 
             return false;
@@ -266,7 +262,7 @@ namespace QtProjectLib
         static private string ReadProFileLine(StreamReader streamReader)
         {
             var line = streamReader.ReadLine();
-            while (line != null && line.EndsWith("\\")) {
+            while (line != null && line.EndsWith("\\", StringComparison.Ordinal)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
                 if (appendix != null) line += appendix;
@@ -287,9 +283,9 @@ namespace QtProjectLib
 
                 while ((strLine = ReadProFileLine(sr)) != null) {
                     strLine = strLine.Replace(" ", "").Replace("\t", "").ToLower();
-                    if (strLine.StartsWith("template")) {
+                    if (strLine.StartsWith("template", StringComparison.Ordinal)) {
                         sr.Close();
-                        if (strLine.StartsWith("template=subdirs"))
+                        if (strLine.StartsWith("template=subdirs", StringComparison.Ordinal))
                             return true;
                         return false;
                     }
@@ -316,7 +312,7 @@ namespace QtProjectLib
             char[] separator = { '\\' };
             var fiArray = fi.FullName.Split(separator);
             string dir = di.FullName;
-            while (dir.EndsWith("\\"))
+            while (dir.EndsWith("\\", StringComparison.Ordinal))
                 dir = dir.Remove(dir.Length - 1, 1);
             var diArray = dir.Split(separator);
 
@@ -344,7 +340,7 @@ namespace QtProjectLib
                 i++;
             }
             //MessageBox.Show(path + "\n" + file + "\n" + result);
-            if (result.StartsWith("..\\"))
+            if (result.StartsWith("..\\", StringComparison.Ordinal))
                 return result;
             return ".\\" + result;
         }
@@ -431,7 +427,7 @@ namespace QtProjectLib
                       (replacement.Length - pattern.Length);
             char[] chars = new char[original.Length + Math.Max(0, inc)];
             while ((position1 = upperString.IndexOf(upperPattern,
-                                              position0)) != -1) {
+                                              position0, StringComparison.Ordinal)) != -1) {
                 for (int i = position0; i < position1; ++i)
                     chars[count++] = original[i];
                 for (int i = 0; i < replacement.Length; ++i)
@@ -480,7 +476,7 @@ namespace QtProjectLib
                 qtDir = vm.GetInstallPath(project);
 
                 foreach (string global in (string[]) project.Globals.VariableNames) {
-                    if (global.StartsWith("Qt5Version")) {
+                    if (global.StartsWith("Qt5Version", StringComparison.Ordinal)) {
                         project.Globals.set_VariablePersists(global, false);
                     }
                 }
@@ -532,11 +528,11 @@ namespace QtProjectLib
                     var linker = (VCLinkerTool) ((IVCCollection) activeVCConfig.Tools).Item("VCLinkerTool");
                     var ppdefs = compiler.GetPreprocessorDefinitions();
                     if (ppdefs != null
-                        && ppdefs.IndexOf("QT_PLUGIN") > -1
-                        && ppdefs.IndexOf("QDESIGNER_EXPORT_WIDGETS") > -1
-                        && ppdefs.IndexOf("QtDesigner") > -1
+                        && ppdefs.IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1
+                        && ppdefs.IndexOf("QDESIGNER_EXPORT_WIDGETS", StringComparison.Ordinal) > -1
+                        && ppdefs.IndexOf("QtDesigner", StringComparison.Ordinal) > -1
                         && linker.AdditionalDependencies != null
-                        && linker.AdditionalDependencies.IndexOf("QtDesigner") > -1) {
+                        && linker.AdditionalDependencies.IndexOf("QtDesigner", StringComparison.Ordinal) > -1) {
                         qtPro.MarkAsDesignerPluginProject();
                     }
                 }
@@ -581,7 +577,7 @@ namespace QtProjectLib
         {
             for (int i = 0; i < paths.Count; ++i) {
                 string dirName = paths[i];
-                if (dirName.StartsWith("\"") && dirName.EndsWith("\"")) {
+                if (dirName.StartsWith("\"", StringComparison.Ordinal) && dirName.EndsWith("\"", StringComparison.Ordinal)) {
                     dirName = dirName.Substring(1, dirName.Length - 2);
                 }
                 if (!Path.IsPathRooted(dirName)) {
@@ -633,14 +629,13 @@ namespace QtProjectLib
                         List<string> linkerPaths = linkerWrapper.AdditionalDependencies;
                         if (linkerPaths != null) {
                             foreach (string library in linkerPaths) {
-                                var lowerLibrary = library.ToLower();
-                                var idx = lowerLibrary.IndexOf("\\lib\\qtmain.lib");
+                                var idx = library.IndexOf("\\lib\\qtmain.lib", StringComparison.OrdinalIgnoreCase);
                                 if (idx == -1)
-                                    idx = lowerLibrary.IndexOf("\\lib\\qtmaind.lib");
+                                    idx = library.IndexOf("\\lib\\qtmaind.lib", StringComparison.OrdinalIgnoreCase);
                                 if (idx == -1)
-                                    idx = lowerLibrary.IndexOf("\\lib\\qtcore5.lib");
+                                    idx = library.IndexOf("\\lib\\qtcore5.lib", StringComparison.OrdinalIgnoreCase);
                                 if (idx == -1)
-                                    idx = lowerLibrary.IndexOf("\\lib\\qtcored5.lib");
+                                    idx = library.IndexOf("\\lib\\qtcored5.lib", StringComparison.OrdinalIgnoreCase);
                                 if (idx == -1)
                                     continue;
 
@@ -696,7 +691,7 @@ namespace QtProjectLib
                 return false;
 
             foreach (string global in envPro.Globals.VariableNames as string[])
-                if (global.StartsWith("Qt5Version") && envPro.Globals.get_VariablePersists(global))
+                if (global.StartsWith("Qt5Version", StringComparison.Ordinal) && envPro.Globals.get_VariablePersists(global))
                     return true;
             return false;
         }
@@ -725,7 +720,7 @@ namespace QtProjectLib
             if (proj == null)
                 return false;
             string keyword = proj.keyword;
-            if (keyword == null || !keyword.StartsWith(Resources.qtProjectKeyword))
+            if (keyword == null || !keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
                 return false;
 
             return true;
@@ -838,7 +833,7 @@ namespace QtProjectLib
                     if (!caseSensitive)
                         strLine = strLine.ToLower();
                     foreach (string str in searchStrings) {
-                        if (strLine.IndexOf(str) != -1) {
+                        if (strLine.IndexOf(str, StringComparison.Ordinal) != -1) {
                             found = true;
                             break;
                         }
@@ -868,7 +863,7 @@ namespace QtProjectLib
 
         public static string RemoveFileNameExtension(FileInfo fi)
         {
-            var lastIndex = fi.Name.LastIndexOf(fi.Extension);
+            var lastIndex = fi.Name.LastIndexOf(fi.Extension, StringComparison.Ordinal);
             return fi.Name.Remove(lastIndex, fi.Extension.Length);
         }
 
@@ -991,7 +986,7 @@ namespace QtProjectLib
 
             foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
                 // Why project files are also returned?
-                if (vcfile.ItemName.EndsWith(".vcxproj.filters"))
+                if (vcfile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
                     continue;
                 bool excluded = false;
                 var fileConfigurations = (IVCCollection) vcfile.FileConfigurations;
@@ -1372,13 +1367,13 @@ namespace QtProjectLib
 
             proc.StartInfo.FileName = qtDir + application;
             proc.StartInfo.Arguments = arguments;
-            if (checkExitCode && application.ToLower().IndexOf("uic.exe") > -1)
+            if (checkExitCode && application.IndexOf("uic.exe", StringComparison.OrdinalIgnoreCase) > -1)
                 proc.Exited += QtApplicationExited;
 
             try {
                 proc.Start();
-                if (checkExitCode && application.ToLower().IndexOf("lupdate.exe") > -1 ||
-                    checkExitCode && application.ToLower().IndexOf("lrelease.exe") > -1) {
+                if (checkExitCode && application.IndexOf("lupdate.exe", StringComparison.OrdinalIgnoreCase) > -1 ||
+                    checkExitCode && application.IndexOf("lrelease.exe", StringComparison.OrdinalIgnoreCase) > -1) {
                     var errorThread
                         = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(ReadQtStandardError));
 
@@ -1389,7 +1384,7 @@ namespace QtProjectLib
                     int exitCode = proc.ExitCode;
                     if (exitCode == 0) {
                         string arg = arguments;
-                        var index = arg.IndexOf("-ts");
+                        var index = arg.IndexOf("-ts", StringComparison.Ordinal);
                         string file = "file: " + arg + " ";
                         if (index > 0)
                             file = "file: " + arg.Substring(index + 3) + " ";
@@ -1449,7 +1444,7 @@ namespace QtProjectLib
             var directories = envPATH.Split(new Char[] { ';' });
             foreach (string directory in directories) {
                 string fullFilePath = directory;
-                if (!fullFilePath.EndsWith("\\")) fullFilePath += '\\';
+                if (!fullFilePath.EndsWith("\\", StringComparison.Ordinal)) fullFilePath += '\\';
                 fullFilePath += fileName;
                 if (File.Exists(fullFilePath))
                     return fullFilePath;
