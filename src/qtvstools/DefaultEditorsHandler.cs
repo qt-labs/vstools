@@ -157,8 +157,8 @@ namespace QtVsTools
             try {
                 var workingDir = string.Empty;
                 if (!string.IsNullOrEmpty(fileName)) {
-                    fileName = fileName.Quoute();
                     workingDir = Path.GetDirectoryName(fileName);
+                    fileName = fileName.Quoute();
                 }
                 GetEditorProcess("linguist.exe", fileName, workingDir, qtDir).Start();
             } catch {
