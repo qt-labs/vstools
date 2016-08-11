@@ -102,9 +102,7 @@ namespace QtProjectLib
                         + mocOptions
                         + " \"" + inputMocFile + "\" -o \"" + outputFile + "\""
                         + " " + defines + " " + includes;
-                    if (newPchParameters != null &&
-                        newPchParameters.Length > 0 &&
-                        !newCmdLine.Contains(newPchParameters))
+                    if (!string.IsNullOrEmpty(newPchParameters) && !newCmdLine.Contains(newPchParameters))
                         newCmdLine += " " + newPchParameters;
                 } else {
                     newCmdLine = newCmdLine + cmds[i];

@@ -161,7 +161,7 @@ namespace QtProjectLib
             // Get platform name from given solution configuration
             // or if not available take the active configuration
             string activePlatformName = "";
-            if (solutionConfig == null || solutionConfig.Length == 0) {
+            if (string.IsNullOrEmpty(solutionConfig)) {
                 // First get active configuration cause not given as parameter
                 EnvDTE.Configuration activeConf = prj.ConfigurationManager.ActiveConfiguration;
                 solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
@@ -179,7 +179,7 @@ namespace QtProjectLib
 
                 var de = conf.DebugSettings as VCDebugSettings;
                 var withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)"));
-                if (overwrite || de.Environment == null || de.Environment.Length == 0)
+                if (overwrite || string.IsNullOrEmpty(de.Environment))
                     de.Environment = envpath;
                 else if (!de.Environment.Contains(envpath) && !de.Environment.Contains(withoutPath)) {
                     var m = Regex.Match(de.Environment, "PATH\\s*=\\s*");

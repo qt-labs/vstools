@@ -660,7 +660,7 @@ namespace QtProjectLib
         private static List<string> GetIncludesFromCompilerTool(CompilerToolWrapper compiler)
         {
             try {
-                if (compiler.GetAdditionalIncludeDirectories() != null && compiler.GetAdditionalIncludeDirectories().Length > 0) {
+                if (!string.IsNullOrEmpty(compiler.GetAdditionalIncludeDirectories())) {
                     var includes = compiler.GetAdditionalIncludeDirectoriesList();
                     return new List<string>(includes);
                 }
@@ -2460,7 +2460,7 @@ namespace QtProjectLib
             string fileName = null;
             if (HelperFunctions.HasHeaderFileExtension(file.Name) || file.Name.EndsWith(".moc"))
                 fileName = file.Name.Remove(file.Name.LastIndexOf('.')) + ".cpp";
-            if (fileName != null && fileName.Length > 0) {
+            if (!string.IsNullOrEmpty(fileName)) {
                 foreach (VCFile f in (IVCCollection) vcPro.Files) {
                     if (f.FullPath.ToLower().EndsWith("\\" + fileName.ToLower()))
                         return f;
@@ -2986,7 +2986,7 @@ namespace QtProjectLib
                 // Get platform name from given solution configuration
                 // or if not available take the active configuration
                 string activePlatformName = "";
-                if (solutionConfig == null || solutionConfig.Length == 0) {
+                if (string.IsNullOrEmpty(solutionConfig)) {
                     // First get active configuration cause not given as parameter
                     EnvDTE.Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
                     solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;

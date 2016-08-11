@@ -466,7 +466,7 @@ namespace QtProjectLib
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
-            if (version != null && version.Length > 0) {
+            if (!string.IsNullOrEmpty(version)) {
                 var regExp =
                     new System.Text.RegularExpressions.Regex("\\$\\(.*\\)");
                 if (regExp.IsMatch(version))

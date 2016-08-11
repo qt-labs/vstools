@@ -58,7 +58,7 @@ namespace QtVsTools
             versionComboBox.Items.AddRange(vM.GetVersions());
             if (versionComboBox.Items.Count > 0) {
                 var defVersion = vM.GetSolutionQtVersion(dteObj.Solution);
-                if (defVersion != null && defVersion.Length > 0) {
+                if (!string.IsNullOrEmpty(defVersion)) {
                     versionComboBox.Text = defVersion;
                 } else if (dte.Solution != null && HelperFunctions.ProjectsInSolution(dte) != null) {
                     IEnumerator prjEnum = HelperFunctions.ProjectsInSolution(dte).GetEnumerator();
@@ -68,7 +68,7 @@ namespace QtVsTools
                         defVersion = vM.GetProjectQtVersion(prj);
                     }
                 }
-                if (defVersion != null && defVersion.Length > 0)
+                if (!string.IsNullOrEmpty(defVersion))
                     versionComboBox.Text = defVersion;
                 else
                     versionComboBox.Text = (string) versionComboBox.Items[0];
