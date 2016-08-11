@@ -41,21 +41,16 @@ namespace QtProjectLib
     class InfoDialog : Form
     {
         private Label label1;
-        private IContainer components;
         private ProgressBar progressBar1;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         public InfoDialog(string name)
         {
             label1 = new Label();
-            components = new Container();
             progressBar1 = new System.Windows.Forms.ProgressBar();
             SuspendLayout();
             //

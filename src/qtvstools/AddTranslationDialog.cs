@@ -45,10 +45,6 @@ namespace QtVsTools
         private TextBox fileTextBox;
         private readonly EnvDTE.Project project;
         private Panel panel1;
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.Container components;
 
         public AddTranslationDialog(EnvDTE.Project pro)
         {
@@ -87,11 +83,6 @@ namespace QtVsTools
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {
-                if (components != null) {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 

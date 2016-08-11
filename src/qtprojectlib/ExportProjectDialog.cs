@@ -52,10 +52,6 @@ namespace QtProjectLib
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button newButton;
         private System.Windows.Forms.Button delButton;
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.Container components;
 
         public ExportProjectDialog()
         {
@@ -89,11 +85,6 @@ namespace QtProjectLib
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {
-                if (components != null) {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 

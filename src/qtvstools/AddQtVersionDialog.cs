@@ -48,8 +48,6 @@ namespace QtVsTools
         private Label errorLabel;
         private string lastErrorString = string.Empty;
 
-        private System.ComponentModel.Container components;
-
         public AddQtVersionDialog()
         {
             InitializeComponent();
@@ -88,11 +86,6 @@ namespace QtVsTools
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {
-                if (components != null) {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 

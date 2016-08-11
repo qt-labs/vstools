@@ -37,7 +37,6 @@ namespace QtVsTools
     /// </summary>
     public class QtVersionDialog : System.Windows.Forms.Form
     {
-        private System.ComponentModel.Container components;
         private System.Windows.Forms.ComboBox versionComboBox;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
@@ -102,11 +101,6 @@ namespace QtVsTools
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {
-                if (components != null) {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 
