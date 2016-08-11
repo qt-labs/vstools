@@ -262,10 +262,15 @@ namespace QtProjectLib
         static private string ReadProFileLine(StreamReader streamReader)
         {
             var line = streamReader.ReadLine();
-            while (line != null && line.EndsWith("\\", StringComparison.Ordinal)) {
+            if (line == null)
+                return null;
+
+            line = line.TrimEnd(new char[] { ' ', '\t' });
+            while (line.EndsWith("\\", StringComparison.Ordinal)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
-                if (appendix != null) line += appendix;
+                if (appendix != null)
+                    line += appendix.TrimEnd(new char[] { ' ', '\t' });
             }
             return line;
         }
@@ -277,22 +282,21 @@ namespace QtProjectLib
         /// <returns>true if this is a subdirs file</returns>
         static public bool IsSubDirsFile(string profile)
         {
+            StreamReader sr = null;
             try {
-                var sr = new StreamReader(profile);
-                string strLine = "";
+                sr = new StreamReader(profile);
 
-                while ((strLine = ReadProFileLine(sr)) != null) {
-                    strLine = strLine.Replace(" ", "").Replace("\t", "").ToLower();
-                    if (strLine.StartsWith("template", StringComparison.Ordinal)) {
-                        sr.Close();
-                        if (strLine.StartsWith("template=subdirs", StringComparison.Ordinal))
-                            return true;
-                        return false;
-                    }
+                var line = string.Empty;
+                while ((line = ReadProFileLine(sr)) != null) {
+                    line = line.Replace(" ", "").Replace("\t", "");
+                    if (line.StartsWith("TEMPLATE", StringComparison.Ordinal))
+                        return line.StartsWith("TEMPLATE=subdirs", StringComparison.Ordinal);
                 }
-                sr.Close();
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
+            } finally {
+                if (sr != null)
+                    sr.Dispose();
             }
             return false;
         }
