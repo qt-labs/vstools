@@ -370,10 +370,14 @@ namespace QtProjectLib
                         if (tool == null)
                             continue;
 
-                        tool.CommandLine = ReplaceCaseInsensitive(tool.CommandLine, oldString, replaceString);
-                        tool.Description = ReplaceCaseInsensitive(tool.Description, oldString, replaceString);
-                        tool.Outputs = ReplaceCaseInsensitive(tool.Outputs, oldString, replaceString);
-                        tool.AdditionalDependencies = ReplaceCaseInsensitive(tool.AdditionalDependencies, oldString, replaceString);
+                        tool.CommandLine = tool.CommandLine.Replace(oldString, replaceString,
+                            StringComparison.OrdinalIgnoreCase);
+                        tool.Description = tool.Description.Replace(oldString, replaceString,
+                            StringComparison.OrdinalIgnoreCase);
+                        tool.Outputs = tool.Outputs.Replace(oldString, replaceString,
+                            StringComparison.OrdinalIgnoreCase);
+                        tool.AdditionalDependencies = tool.AdditionalDependencies
+                            .Replace(oldString, replaceString, StringComparison.OrdinalIgnoreCase);
                     } catch (Exception) {
                     }
                 }
@@ -418,30 +422,6 @@ namespace QtProjectLib
                     break;
                 }
             }
-        }
-
-        public static string ReplaceCaseInsensitive(string original,
-                    string pattern, string replacement)
-        {
-            int count, position0, position1;
-            count = position0 = position1 = 0;
-            var upperString = original.ToUpper();
-            var upperPattern = pattern.ToUpper();
-            int inc = (original.Length / pattern.Length) *
-                      (replacement.Length - pattern.Length);
-            char[] chars = new char[original.Length + Math.Max(0, inc)];
-            while ((position1 = upperString.IndexOf(upperPattern,
-                                              position0, StringComparison.Ordinal)) != -1) {
-                for (int i = position0; i < position1; ++i)
-                    chars[count++] = original[i];
-                for (int i = 0; i < replacement.Length; ++i)
-                    chars[count++] = replacement[i];
-                position0 = position1 + pattern.Length;
-            }
-            if (position0 == 0) return original;
-            for (int i = position0; i < original.Length; ++i)
-                chars[count++] = original[i];
-            return new string(chars, 0, count);
         }
 
         /// <summary>
@@ -491,14 +471,17 @@ namespace QtProjectLib
                     var librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
                     if (compiler != null) {
                         var additionalIncludes = compiler.GetAdditionalIncludeDirectories();
-                        additionalIncludes = ReplaceCaseInsensitive(additionalIncludes, "$(QTDIR)", qtDir);
+                        additionalIncludes = additionalIncludes.Replace("$(QTDIR)", qtDir,
+                            StringComparison.OrdinalIgnoreCase);
                         compiler.SetAdditionalIncludeDirectories(additionalIncludes);
                     }
                     if (linker != null) {
-                        linker.AdditionalLibraryDirectories = ReplaceCaseInsensitive(linker.AdditionalLibraryDirectories, "$(QTDIR)", qtDir);
+                        linker.AdditionalLibraryDirectories = linker.AdditionalLibraryDirectories.
+                            Replace("$(QTDIR)", qtDir, StringComparison.OrdinalIgnoreCase);
                         linker.AdditionalDependencies = AddFullPathToAdditionalDependencies(qtDir, linker.AdditionalDependencies);
                     } else {
-                        librarian.AdditionalLibraryDirectories = ReplaceCaseInsensitive(librarian.AdditionalLibraryDirectories, "$(QTDIR)", qtDir);
+                        librarian.AdditionalLibraryDirectories = librarian.AdditionalLibraryDirectories
+                            .Replace("$(QTDIR)", qtDir, StringComparison.OrdinalIgnoreCase);
                         librarian.AdditionalDependencies = AddFullPathToAdditionalDependencies(qtDir, librarian.AdditionalDependencies);
                     }
                 }
@@ -588,12 +571,14 @@ namespace QtProjectLib
                     // convert to absolute path
                     dirName = Path.Combine(Path.GetDirectoryName(project.FullName), dirName);
                     dirName = Path.GetFullPath(dirName);
-                    var alteredDirName = ReplaceCaseInsensitive(dirName, oldDirectory, replacement);
+                    var alteredDirName = dirName.Replace(oldDirectory, replacement, StringComparison
+                        .OrdinalIgnoreCase);
                     if (alteredDirName == dirName)
                         continue;
                     dirName = alteredDirName;
                 } else {
-                    dirName = ReplaceCaseInsensitive(dirName, oldDirectory, replacement);
+                    dirName = dirName.Replace(oldDirectory, replacement, StringComparison
+                        .OrdinalIgnoreCase);
                 }
                 paths[i] = dirName;
             }

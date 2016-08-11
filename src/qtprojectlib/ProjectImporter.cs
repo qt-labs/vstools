@@ -212,7 +212,7 @@ namespace QtProjectLib
 
             var qtDir = ParseQtDirFromFileContent(content);
             if (!string.IsNullOrEmpty(qtDir)) {
-                content = HelperFunctions.ReplaceCaseInsensitive(content, qtDir, "$(QTDIR)\\");
+                content = content.Replace(qtDir, "$(QTDIR)\\", StringComparison.OrdinalIgnoreCase);
                 var sw = projectFile.CreateText();
                 sw.Write(content);
                 sw.Flush();

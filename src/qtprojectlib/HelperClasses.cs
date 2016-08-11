@@ -41,6 +41,24 @@ namespace QtProjectLib
                 input += "\"";
             return input;
         }
+
+        public static string Replace(this string original, string oldValue, string newValue,
+            StringComparison comparison)
+        {
+            newValue = newValue ?? string.Empty;
+            if (string.IsNullOrEmpty(original) || string.IsNullOrEmpty(oldValue)
+                || string.Equals(oldValue, newValue, comparison)) {
+                return original;
+            }
+
+            int pos = 0, index = 0;
+            var result = new System.Text.StringBuilder();
+            while ((index = original.IndexOf(oldValue, pos, comparison)) >= 0) {
+                result.Append(original, pos, index - pos).Append(newValue);
+                pos = index + oldValue.Length;
+            }
+            return result.Append(original, pos, original.Length - pos).ToString();
+        }
     }
 
     public static class ProjectMacros
