@@ -195,12 +195,12 @@ namespace QtProjectLib
 
                     if (stdOutputLines > 0) {
                         InvokeExternalTarget(PaneMessageDataEvent, stdOutput.ToString());
-                        InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Success: " + stdOutputLines.ToString());
+                        InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Success: " + stdOutputLines);
                     }
 
                     if (errOutputLines > 0) {
                         InvokeExternalTarget(PaneMessageDataEvent, errOutput.ToString());
-                        InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Error(s): " + errOutputLines.ToString());
+                        InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Error(s): " + errOutputLines);
                     }
                 }
 
@@ -256,7 +256,7 @@ namespace QtProjectLib
             string error;
             while ((error = qmakeProcess.StandardError.ReadLine()) != null) {
                 errOutputLines++;
-                errOutput.Append("[" + errOutputLines.ToString() + "] - " + error.Trim() + "\n");
+                errOutput.Append("[" + errOutputLines + "] - " + error.Trim() + "\n");
             }
         }
 
@@ -268,7 +268,7 @@ namespace QtProjectLib
             string output;
             while ((output = qmakeProcess.StandardOutput.ReadLine()) != null) {
                 stdOutputLines++;
-                stdOutput.Append("[" + stdOutputLines.ToString() + "] - " + output.Trim() + "\n");
+                stdOutput.Append("[" + stdOutputLines + "] - " + output.Trim() + "\n");
             }
         }
     }

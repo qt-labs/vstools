@@ -1085,8 +1085,7 @@ namespace QtProjectLib
                 UpdateRccStep(file, options);
             }
 
-            Messages.PaneMessage(dte, "\r\n=== " + files.Count.ToString()
-                + " rcc steps updated. ===\r\n");
+            Messages.PaneMessage(dte, "\r\n=== " + files.Count + " rcc steps updated. ===\r\n");
         }
 
         public void RefreshRccSteps(string oldRccDir)
@@ -1151,8 +1150,8 @@ namespace QtProjectLib
                         rccOptsCfg = HelperFunctions.ParseRccOptions(cbt.CommandLine, qrcFile);
 
                     if (rccOptsCfg.CompressFiles) {
-                        cmdLine += " -threshold " + rccOptsCfg.CompressThreshold.ToString();
-                        cmdLine += " -compress " + rccOptsCfg.CompressLevel.ToString();
+                        cmdLine += " -threshold " + rccOptsCfg.CompressThreshold;
+                        cmdLine += " -compress " + rccOptsCfg.CompressLevel;
                     } else {
                         cmdLine += " -no-compress";
                     }
@@ -1618,10 +1617,7 @@ namespace QtProjectLib
                 while (File.Exists(destName)) {
                     fileNr++;
                     destName = destName.Substring(0, destName.LastIndexOf(".")) + ".b";
-                    if (fileNr > 9)
-                        destName += fileNr.ToString();
-                    else
-                        destName += "0" + fileNr.ToString();
+                    destName += fileNr.ToString("00");
                 }
 
                 srcFile.MoveTo(destName);
@@ -2101,8 +2097,7 @@ namespace QtProjectLib
                 UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
             }
 
-            Messages.PaneMessage(dte, "\r\n=== " + updatedFiles.ToString()
-                + " uic steps updated. ===\r\n");
+            Messages.PaneMessage(dte, "\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
         }
 
         private static bool IsUic3File(VCFile file)
@@ -2523,8 +2518,8 @@ namespace QtProjectLib
                 Messages.PaneMessage(dte, "Moc step update failed for " + s +
                     ". Reason: Could not determine source file for moccing.");
 
-            Messages.PaneMessage(dte, "\r\n=== Moc steps updated. Successful: " + orgFiles.Count.ToString()
-                + "   Failed: " + abandonedMocFiles.Count.ToString() + " ===\r\n");
+            Messages.PaneMessage(dte, "\r\n=== Moc steps updated. Successful: " + orgFiles.Count
+                + "   Failed: " + abandonedMocFiles.Count + " ===\r\n");
 
             CleanupFilter(vcFilter);
         }
