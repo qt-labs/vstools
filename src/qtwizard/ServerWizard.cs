@@ -127,7 +127,12 @@ namespace QtProjectWizard
                     foreach (var module in data.DefaultModules)
                         defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
-                    var className = replacements["$safeprojectname$"].Replace(" ", "");
+                    // midl.exe does not support spaces in project name. Fails while generating the
+                    // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
+                    if (replacements["$safeprojectname$"].Contains(" "))
+                        throw new QtVSException("Project name shall not contain spaces.");
+
+                    var className = replacements["$safeprojectname$"];
                     var result = new ClassNameValidationRule().Validate(className, null);
                     if (result != ValidationResult.ValidResult)
                         className = @"ActiveQtServer";
