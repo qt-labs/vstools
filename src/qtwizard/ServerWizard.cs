@@ -97,7 +97,7 @@ namespace QtProjectWizard
             qtProject.AddFileToProject(safeprojectname + @".ico", null);
             qtProject.AddFileToProject(safeprojectname + @".def", Filters.SourceFiles());
 
-            qtProject.AddActiveQtBuildStep(@"1.0");
+            qtProject.AddActiveQtBuildStep(@"1.0", safeprojectname + @".def");
             qtProject.SetQtEnvironment(qtVersion);
             qtProject.Finish(); // Collapses all project nodes.
         }
