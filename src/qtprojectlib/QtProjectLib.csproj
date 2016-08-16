@@ -41,6 +41,7 @@
     <Compile Include="ExportProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Filters.cs" />
     <Compile Include="HelperClasses.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="ImageButton.cs">
