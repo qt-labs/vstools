@@ -216,6 +216,8 @@ namespace QtProjectWizard
                 replacements["$include$"] = strHeaderInclude;
                 replacements["$ui_hdr$"] = "ui_" + Path.GetFileNameWithoutExtension(data.UiFile)
                     + ".h";
+
+                safeprojectname = data.LowerCaseFileNames ? safeprojectname.ToLower() : safeprojectname;
                 replacements["$pro_name$"] = safeprojectname;
                 safeprojectname = replacements["$safeprojectname$"];
 

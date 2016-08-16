@@ -58,6 +58,7 @@ namespace QtProjectWizard
         public bool CreateStaticLibrary { get; set; }
         public bool UsePrecompiledHeader { get; set; }
         public bool InsertQObjectMacro { get; set; }
+        public bool LowerCaseFileNames { get; set; }
         public UiClassInclusion UiClassInclusion { get; set; }
     }
 }
