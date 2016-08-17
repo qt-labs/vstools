@@ -132,10 +132,10 @@ namespace QtProjectWizard
                     if (replacements["$safeprojectname$"].Contains(" "))
                         throw new QtVSException("Project name shall not contain spaces.");
 
-                    var className = replacements["$safeprojectname$"];
-                    var result = new ClassNameValidationRule().Validate(className, null);
+                    safeprojectname = replacements["$safeprojectname$"];
+                    var result = new ClassNameValidationRule().Validate(safeprojectname, null);
                     if (result != ValidationResult.ValidResult)
-                        className = @"ActiveQtServer";
+                        safeprojectname = @"ActiveQtServer";
 
                     data.ClassName = safeprojectname;
                     data.ClassHeaderFile = safeprojectname + @".h";
@@ -219,7 +219,6 @@ namespace QtProjectWizard
 
                 safeprojectname = data.LowerCaseFileNames ? safeprojectname.ToLower() : safeprojectname;
                 replacements["$pro_name$"] = safeprojectname;
-                safeprojectname = replacements["$safeprojectname$"];
 
             } catch {
                 try {
