@@ -285,25 +285,23 @@ namespace QtVsTools
         public static void StartProcess(string fileName, string arguments, string workingDirectory,
             EnvDTE.Project project)
         {
-            Messages.ActivateMessagePane();
+            Process process = null;
+            try {
+                Messages.ActivateMessagePane();
 
-            var qtDir = HelperFunctions.FindQtDirWithTools(project);
-            var process = new Process
-            {
-                EnableRaisingEvents = true,
-                StartInfo = new ProcessStartInfo
+                process = new Process();
+                process.EnableRaisingEvents = true;
+                process.StartInfo = new ProcessStartInfo
                 {
                     Arguments = arguments,
-                    FileName = qtDir + fileName,
                     WorkingDirectory = workingDirectory,
+                    FileName = HelperFunctions.FindQtDirWithTools(project) + fileName,
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true
-                }
-            };
+                };
 
-            try {
                 process.Start();
                 var thread = new Thread(ReadQtStandardError);
                 thread.Start(new ThreadParameter
@@ -326,10 +324,11 @@ namespace QtVsTools
                 } else {
                     DisplayErrorMessage(process);
                 }
-
-                process.Close();
             } catch {
                 throw new QtVSException(SR.GetString("Helpers_CannotStart", process.StartInfo.FileName));
+            } finally {
+                if (process != null)
+                    process.Dispose();
             }
         }
 

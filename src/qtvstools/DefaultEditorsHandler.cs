@@ -302,16 +302,22 @@ namespace QtVsTools
             if (!File.Exists(fileName))
                 return null;
 
-            return new Process
-            {
-                StartInfo = new ProcessStartInfo
+            Process process = null;
+            try {
+                process = new Process();
+                process.StartInfo = new ProcessStartInfo
                 {
                     Arguments = args,
                     FileName = fileName,
                     WorkingDirectory = workingDir,
                     WindowStyle = ProcessWindowStyle.Normal
-                },
-            };
+                };
+            } catch {
+                if (process != null)
+                    process.Dispose();
+                process = null;
+            }
+            return process;
         }
     }
 }
