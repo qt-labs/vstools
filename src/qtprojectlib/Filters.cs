@@ -84,7 +84,8 @@ namespace QtProjectLib
 
         public static FakeFilter GeneratedFiles()
         {
-            return new FakeFilter {
+            return new FakeFilter
+            {
                 UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}",
                 Name = SR.GetString("Resources_GeneratedFiles"),
                 Filter = "moc;h;cpp",
@@ -94,7 +95,8 @@ namespace QtProjectLib
 
         public static FakeFilter OtherFiles()
         {
-            return new FakeFilter {
+            return new FakeFilter
+            {
                 UniqueIdentifier = "{B67473BF-9FA1-4674-831E-CB28F72D4791}",
                 Name = SR.GetString("Resources_OtherFiles"),
                 Filter = "*",

@@ -74,7 +74,7 @@ namespace QtProjectWizard
                     data.UiFile = data.ClassName + @".ui";
                     data.QrcFile = data.ClassName + @".qrc";
 
-                    var wizard = new WizardWindow(new List<WizardPage>() {
+                    var wizard = new WizardWindow(new List<WizardPage> {
                         new IntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt GUI Application Wizard",
@@ -276,7 +276,7 @@ namespace QtProjectWizard
         {
         }
 
-        private readonly WizardData data = new WizardData()
+        private readonly WizardData data = new WizardData
         {
             DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets"

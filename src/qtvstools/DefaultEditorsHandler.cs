@@ -196,7 +196,8 @@ namespace QtVsTools
                     }
 
                     process.WaitForInputIdle();
-                    servers[qtDir] = new Server {
+                    servers[qtDir] = new Server
+                    {
                         Port = port,
                         Process = process
                     };
@@ -225,7 +226,8 @@ namespace QtVsTools
                 if (servers[qtDir].Process.MainWindowHandle == IntPtr.Zero) {
                     var process = Process.GetProcessById(servers[qtDir].Process.Id);
                     if (process.MainWindowHandle != IntPtr.Zero) {
-                        servers[qtDir] = new Server {
+                        servers[qtDir] = new Server
+                        {
                             Process = process,
                             Port = servers[qtDir].Port
                         };
@@ -300,8 +302,10 @@ namespace QtVsTools
             if (!File.Exists(fileName))
                 return null;
 
-            return new Process {
-                StartInfo = new ProcessStartInfo {
+            return new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
                     Arguments = args,
                     FileName = fileName,
                     WorkingDirectory = workingDir,

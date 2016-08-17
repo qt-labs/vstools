@@ -84,10 +84,12 @@ namespace QtVsTools
         private DefaultEditorsClient(DteEventsHandler handler)
         {
             this.handler = handler;
-            listenForBroadcastThread = new Thread(ListenForBroadcastMessage) {
+            listenForBroadcastThread = new Thread(ListenForBroadcastMessage)
+            {
                 Name = "ListenForBroadcastMessage"
             };
-            handleBroadcastMessageThread = new Thread(HandleBroadcastMessage) {
+            handleBroadcastMessageThread = new Thread(HandleBroadcastMessage)
+            {
                 Name = "HandleBroadcastMessage"
             };
         }

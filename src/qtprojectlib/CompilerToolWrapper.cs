@@ -368,7 +368,8 @@ namespace QtProjectLib
 
         public runtimeLibraryOption RuntimeLibrary
         {
-            get {
+            get
+            {
                 if (compilerTool != null)
                     return compilerTool.RuntimeLibrary;
 
@@ -379,7 +380,8 @@ namespace QtProjectLib
                 return (runtimeLibraryOption) obj;
             }
 
-            set {
+            set
+            {
                 if (compilerTool == null) {
                     compilerType.InvokeMember("RuntimeLibrary", BindingFlags.SetProperty,
                         null, compilerObj, new object[] { @value });
