@@ -57,9 +57,6 @@
     <Compile Include="QMakeProcess.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="QProcess.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="QrcParser.cs" />
     <Compile Include="QtConfig.cs" />
     <Compile Include="QtModules.cs" />

@@ -29,7 +29,6 @@
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -1352,97 +1351,6 @@ namespace QtProjectLib
                 if (!Object.Equals(array1.GetValue(i), array2.GetValue(i)))
                     return false;
             return true;
-        }
-
-        private static QProcess proc = null;
-
-        public static void StartExternalQtApplication(string application, string arguments, string workingDir,
-            EnvDTE.Project project, bool checkExitCode, Hashtable errorCodes)
-        {
-            proc = new QProcess();
-            proc.ErrorCodes = errorCodes;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.UseShellExecute = false;
-            proc.EnableRaisingEvents = true;
-            proc.StartInfo.WorkingDirectory = workingDir;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.RedirectStandardOutput = true;
-
-            EnvDTE.DTE dte = project.DTE;
-            Messages.ActivateMessagePane();
-            var qtDir = HelperFunctions.FindQtDirWithTools(project);
-
-            proc.StartInfo.FileName = qtDir + application;
-            proc.StartInfo.Arguments = arguments;
-            if (checkExitCode && application.ToLower().IndexOf("uic.exe") > -1)
-                proc.Exited += QtApplicationExited;
-
-            try {
-                proc.Start();
-                if (checkExitCode && application.ToLower().IndexOf("lupdate.exe") > -1 ||
-                    checkExitCode && application.ToLower().IndexOf("lrelease.exe") > -1) {
-                    var errorThread
-                        = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(ReadQtStandardError));
-
-                    errorThread.Start(dte);
-                    proc.WaitForExit();
-                    errorThread.Join();
-
-                    int exitCode = proc.ExitCode;
-                    if (exitCode == 0) {
-                        string arg = arguments;
-                        var index = arg.IndexOf("-ts");
-                        string file = "file: " + arg + " ";
-                        if (index > 0)
-                            file = "file: " + arg.Substring(index + 3) + " ";
-
-                        var info = new FileInfo(application);
-                        Messages.PaneMessage(project.DTE, "--- (" +
-                            HelperFunctions.RemoveFileNameExtension(info) + ") " +
-                            file + ": Exit Code: " + exitCode);
-                    } else {
-                        DisplayErrorMessage(proc);
-                    }
-
-                    proc.Close();
-                }
-            } catch {
-                throw new QtVSException(SR.GetString("Helpers_CannotStart", proc.StartInfo.FileName));
-            }
-        }
-
-        private static void ReadQtStandardError(object param)
-        {
-            var dte = param as DTE;
-            if (proc == null)
-                return;
-
-            string error;
-            while ((error = proc.StandardError.ReadLine()) != null) {
-                error = error.Trim();
-                if (error.Length != 0)
-                    Messages.PaneMessage(dte, "--- " + error);
-            }
-        }
-
-        private static void QtApplicationExited(object sender, EventArgs e)
-        {
-            var proc = (QProcess) sender;
-            DisplayErrorMessage(proc);
-            proc.Exited -= QtApplicationExited;
-        }
-
-        private static void DisplayErrorMessage(QProcess proc)
-        {
-            if (proc.ExitCode != 0) {
-                if (proc.solutionString(proc.ExitCode) != null)
-                    Messages.DisplayErrorMessage(SR.GetString("Helpers_ExitError", proc.ExitCode.ToString())
-                        + "\r\n" + proc.errorString(proc.ExitCode),
-                        proc.solutionString(proc.ExitCode));
-                else
-                    Messages.DisplayErrorMessage(SR.GetString("Helpers_ExitError", proc.ExitCode.ToString())
-                        + "\r\n" + proc.errorString(proc.ExitCode));
-            }
         }
 
         public static string FindFileInPATH(string fileName)
