@@ -59,7 +59,7 @@ namespace QtVsTools
                 Messages.PaneMessage(project.DTE,
                     "--- (lrelease) file: " + vcFile.FullPath);
 
-                cmdLine += vcFile.RelativePath;
+                cmdLine += vcFile.RelativePath.Quoute();
                 StartProcess(Resources.lreleaseCommand, cmdLine, vcProject.ProjectDirectory,
                     HelperFunctions.GetSelectedQtProject(project.DTE));
             } catch (QtVSException e) {
@@ -137,7 +137,7 @@ namespace QtVsTools
             foreach (string file in uifiles)
                 cmdLine += file + " ";
 
-            cmdLine += "-ts " + vcFile.RelativePath;
+            cmdLine += "-ts " + vcFile.RelativePath.Quoute();
 
             int cmdLineLength = cmdLine.Length + Resources.lupdateCommand.Length + 1;
             string temporaryProFile = null;
