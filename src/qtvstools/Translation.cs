@@ -29,6 +29,9 @@
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -56,10 +59,9 @@ namespace QtVsTools
                 Messages.PaneMessage(project.DTE,
                     "--- (lrelease) file: " + vcFile.FullPath);
 
-                cmdLine += vcFile.RelativePath;
-                HelperFunctions.StartExternalQtApplication(Resources.lreleaseCommand, cmdLine,
-                    vcProject.ProjectDirectory, HelperFunctions.GetSelectedQtProject(project.DTE),
-                    true, null);
+                cmdLine += vcFile.RelativePath.Quoute();
+                StartProcess(Resources.lreleaseCommand, cmdLine, vcProject.ProjectDirectory,
+                    HelperFunctions.GetSelectedQtProject(project.DTE));
             } catch (QtVSException e) {
                 success = false;
                 Messages.DisplayErrorMessage(e.Message);
@@ -73,9 +75,7 @@ namespace QtVsTools
             if (vcFiles == null)
                 return;
 
-            foreach (VCFile vcFile in vcFiles) {
-                if (vcFile == null)
-                    continue;
+            foreach (var vcFile in vcFiles) {
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlRelease(vcFile))
                         return;
@@ -95,8 +95,7 @@ namespace QtVsTools
                 return;
 
             var files = tsFilter.Files as IVCCollection;
-            foreach (VCFile file in files) {
-                var vcFile = file as VCFile;
+            foreach (VCFile vcFile in files) {
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlRelease(vcFile))
                         return;
@@ -138,7 +137,7 @@ namespace QtVsTools
             foreach (string file in uifiles)
                 cmdLine += file + " ";
 
-            cmdLine += "-ts " + vcFile.RelativePath;
+            cmdLine += "-ts " + vcFile.RelativePath.Quoute();
 
             int cmdLineLength = cmdLine.Length + Resources.lupdateCommand.Length + 1;
             string temporaryProFile = null;
@@ -184,9 +183,8 @@ namespace QtVsTools
             bool success = true;
             try {
                 Messages.PaneMessage(pro.DTE, "--- (lupdate) file: " + vcFile.FullPath);
-
-                HelperFunctions.StartExternalQtApplication(Resources.lupdateCommand, cmdLine,
-                    ((VCProject) vcFile.project).ProjectDirectory, pro, true, null);
+                StartProcess(Resources.lupdateCommand, cmdLine, (vcFile.project as VCProject)
+                    .ProjectDirectory, pro);
             } catch (QtVSException e) {
                 success = false;
                 Messages.DisplayErrorMessage(e.Message);
@@ -220,9 +218,7 @@ namespace QtVsTools
             if (vcFiles == null)
                 return;
 
-            foreach (VCFile vcFile in vcFiles) {
-                if (vcFile == null)
-                    continue;
+            foreach (var vcFile in vcFiles) {
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlUpdate(vcFile, pro))
                         return;
@@ -242,8 +238,7 @@ namespace QtVsTools
                 return;
 
             var files = tsFilter.Files as IVCCollection;
-            foreach (VCFile file in files) {
-                var vcFile = file as VCFile;
+            foreach (VCFile vcFile in files) {
                 if (HelperFunctions.IsTranslationFile(vcFile)) {
                     if (!RunlUpdate(vcFile, project))
                         return;
@@ -278,6 +273,84 @@ namespace QtVsTools
                         Messages.DisplayErrorMessage(ex.Message);
                     }
                 }
+            }
+        }
+
+        internal sealed class ThreadParameter
+        {
+            public EnvDTE.DTE Dte { get; set; }
+            public Process Process { get; set; }
+        }
+
+        public static void StartProcess(string fileName, string arguments, string workingDirectory,
+            EnvDTE.Project project)
+        {
+            Process process = null;
+            try {
+                Messages.ActivateMessagePane();
+
+                process = new Process();
+                process.EnableRaisingEvents = true;
+                process.StartInfo = new ProcessStartInfo
+                {
+                    Arguments = arguments,
+                    WorkingDirectory = workingDirectory,
+                    FileName = HelperFunctions.FindQtDirWithTools(project) + fileName,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+
+                process.Start();
+                var thread = new Thread(ReadQtStandardError);
+                thread.Start(new ThreadParameter
+                {
+                    Dte = project.DTE,
+                    Process = process
+                });
+                process.WaitForExit();
+                thread.Join();
+
+                if (process.ExitCode == 0) {
+                    var index = arguments.IndexOf("-ts", System.StringComparison.OrdinalIgnoreCase);
+                    string file = "file: " + arguments + " ";
+                    if (index > 0)
+                        file = "file: " + arguments.Substring(index + 3) + " ";
+
+                    Messages.PaneMessage(project.DTE,
+                        "--- (" + Path.GetFileNameWithoutExtension(fileName) + ") " + file
+                        + ": Exit Code: " + process.ExitCode);
+                } else {
+                    DisplayErrorMessage(process);
+                }
+            } catch {
+                throw new QtVSException(SR.GetString("Helpers_CannotStart", process.StartInfo.FileName));
+            } finally {
+                if (process != null)
+                    process.Dispose();
+            }
+        }
+
+        private static void ReadQtStandardError(object obj)
+        {
+            var tp = obj as ThreadParameter;
+            if (tp == null)
+                return;
+
+            var error = string.Empty;
+            while ((error = tp.Process.StandardError.ReadLine()) != null) {
+                error = error.Trim();
+                if (error.Length != 0)
+                    Messages.PaneMessage(tp.Dte, "--- " + error);
+            }
+        }
+
+        private static void DisplayErrorMessage(Process proccess)
+        {
+            if (proccess.ExitCode != 0) {
+                Messages.DisplayErrorMessage(SR.GetString("Helpers_ExitError", proccess.ExitCode
+                    .ToString()) + "\r\n" + SR.GetString("QProcess_UnspecifiedError"));
             }
         }
     }

@@ -51,9 +51,8 @@ namespace QtProjectWizard
 
         private void UpdateFileNames()
         {
-            var filename = ClassName.Text;
-            if (LowerCaseFileNames.IsChecked.GetValueOrDefault())
-                filename = filename.ToLower();
+            Data.LowerCaseFileNames = LowerCaseFileNames.IsChecked.GetValueOrDefault();
+            var filename = Data.LowerCaseFileNames ? ClassName.Text.ToLower() : ClassName.Text;
 
             ClassHeaderFile.Text = filename + @".h";
             ClassSourceFile.Text = filename + @".cpp";

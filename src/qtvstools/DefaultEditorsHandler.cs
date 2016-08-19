@@ -157,8 +157,8 @@ namespace QtVsTools
             try {
                 var workingDir = string.Empty;
                 if (!string.IsNullOrEmpty(fileName)) {
-                    fileName = fileName.Quoute();
                     workingDir = Path.GetDirectoryName(fileName);
+                    fileName = fileName.Quoute();
                 }
                 GetEditorProcess("linguist.exe", fileName, workingDir, qtDir).Start();
             } catch {
@@ -196,7 +196,8 @@ namespace QtVsTools
                     }
 
                     process.WaitForInputIdle();
-                    servers[qtDir] = new Server {
+                    servers[qtDir] = new Server
+                    {
                         Port = port,
                         Process = process
                     };
@@ -225,7 +226,8 @@ namespace QtVsTools
                 if (servers[qtDir].Process.MainWindowHandle == IntPtr.Zero) {
                     var process = Process.GetProcessById(servers[qtDir].Process.Id);
                     if (process.MainWindowHandle != IntPtr.Zero) {
-                        servers[qtDir] = new Server {
+                        servers[qtDir] = new Server
+                        {
                             Process = process,
                             Port = servers[qtDir].Port
                         };
@@ -300,14 +302,22 @@ namespace QtVsTools
             if (!File.Exists(fileName))
                 return null;
 
-            return new Process {
-                StartInfo = new ProcessStartInfo {
+            Process process = null;
+            try {
+                process = new Process();
+                process.StartInfo = new ProcessStartInfo
+                {
                     Arguments = args,
                     FileName = fileName,
                     WorkingDirectory = workingDir,
                     WindowStyle = ProcessWindowStyle.Normal
-                }
-            };
+                };
+            } catch {
+                if (process != null)
+                    process.Dispose();
+                process = null;
+            }
+            return process;
         }
     }
 }

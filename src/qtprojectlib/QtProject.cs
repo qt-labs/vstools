@@ -1980,7 +1980,7 @@ namespace QtProjectLib
             }
         }
 
-        public void AddActiveQtBuildStep(string version)
+        public void AddActiveQtBuildStep(string version, string defFile = null)
         {
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                 string idlFile = "\"$(IntDir)/" + envPro.Name + ".idl\"";
@@ -2000,9 +2000,9 @@ namespace QtProjectLib
 
                 if (linker != null) {
                     linker.Version = version;
-                    linker.ModuleDefinitionFile = envPro.Name + ".def";
+                    linker.ModuleDefinitionFile = defFile ?? envPro.Name + ".def";
                 } else {
-                    librarian.ModuleDefinitionFile = envPro.Name + ".def";
+                    librarian.ModuleDefinitionFile = defFile ?? envPro.Name + ".def";
                 }
             }
         }

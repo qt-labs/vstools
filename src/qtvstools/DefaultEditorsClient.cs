@@ -84,10 +84,12 @@ namespace QtVsTools
         private DefaultEditorsClient(DteEventsHandler handler)
         {
             this.handler = handler;
-            listenForBroadcastThread = new Thread(ListenForBroadcastMessage) {
+            listenForBroadcastThread = new Thread(ListenForBroadcastMessage)
+            {
                 Name = "ListenForBroadcastMessage"
             };
-            handleBroadcastMessageThread = new Thread(HandleBroadcastMessage) {
+            handleBroadcastMessageThread = new Thread(HandleBroadcastMessage)
+            {
                 Name = "HandleBroadcastMessage"
             };
         }
@@ -130,82 +132,87 @@ namespace QtVsTools
                     + "installation directory."); aboutToExit = true; return;
             }
 
-            var qtAppWrapperProcess = new Process();
-            qtAppWrapperProcess.StartInfo.FileName = Vsix.Instance.AppWrapperPath;
+            Process qtAppWrapperProcess = null;
+            try {
+                qtAppWrapperProcess = new Process();
+                qtAppWrapperProcess.StartInfo.FileName = Vsix.Instance.AppWrapperPath;
 
-            bool firstIteration = true;
-            while (!aboutToExit) {
-                try {
-                    if (!firstIteration) {
-                        if (qtAppWrapperProcess.HasExited)
-                            qtAppWrapperProcess.Close();
-                    }
-                } catch { } finally {
-                    firstIteration = false;
-                    qtAppWrapperProcess.Start();
-                }
-
-                var connectionAttempts = 0;
-                if (!aboutToExit) {
-                    client = new TcpClient();
-                    while (!aboutToExit && !client.Connected && connectionAttempts < 10) {
-                        try {
-                            client.Connect(IPAddress.Loopback, qtAppWrapperPort);
-                            if (!client.Connected)
-                                Thread.Sleep(1000);
-                        } catch {
-                            Thread.Sleep(1000);
-                        } finally {
-                            ++connectionAttempts;
-                        }
-                    }
-                }
-
-                if (connectionAttempts >= 10) {
-                    Messages.DisplayErrorMessage(SR.GetString("CouldNotConnectToAppwrapper",
-                        qtAppWrapperPort));
-                    aboutToExit = true;
-                }
-
-                if (!aboutToExit) {
-                    var stream = client.GetStream();
-                    stream.Write(helloMessage, 0, helloMessage.Length);
-                    stream.Flush(); // say hello to qt application wrapper
-                }
-
-                byte[] data = new byte[4096];
+                bool firstIteration = true;
                 while (!aboutToExit) {
                     try {
-                        var bytesRead = 0;
+                        if (!firstIteration && qtAppWrapperProcess.HasExited)
+                            qtAppWrapperProcess.Close();
+                    } catch { } finally {
+                        firstIteration = false;
+                        qtAppWrapperProcess.Start();
+                    }
+
+                    var connectionAttempts = 0;
+                    if (!aboutToExit) {
+                        client = new TcpClient();
+                        while (!aboutToExit && !client.Connected && connectionAttempts < 10) {
+                            try {
+                                client.Connect(IPAddress.Loopback, qtAppWrapperPort);
+                                if (!client.Connected)
+                                    Thread.Sleep(1000);
+                            } catch {
+                                Thread.Sleep(1000);
+                            } finally {
+                                ++connectionAttempts;
+                            }
+                        }
+                    }
+
+                    if (connectionAttempts >= 10) {
+                        Messages.DisplayErrorMessage(SR.GetString("CouldNotConnectToAppwrapper",
+                            qtAppWrapperPort));
+                        aboutToExit = true;
+                    }
+
+                    if (!aboutToExit) {
+                        var stream = client.GetStream();
+                        stream.Write(helloMessage, 0, helloMessage.Length);
+                        stream.Flush(); // say hello to qt application wrapper
+                    }
+
+                    byte[] data = new byte[4096];
+                    while (!aboutToExit) {
                         try {
-                            // blocks until the default editors server sends a message
-                            var stream = client.GetStream();
-                            bytesRead = stream.Read(data, 0, 4096);
-                        } catch {
-                            // A socket error has occurred, probably because the QtAppWrapper
-                            // has been terminated. Break and then try to restart the QtAppWrapper.
+                            var bytesRead = 0;
+                            try {
+                                // blocks until the default editors server sends a message
+                                var stream = client.GetStream();
+                                bytesRead = stream.Read(data, 0, 4096);
+                            } catch {
+                                // A socket error has occurred, probably because the QtAppWrapper
+                                // has been terminated. Break and then try to restart the QtAppWrapper.
+                                break;
+                            }
+
+                            if (bytesRead == 0)
+                                break; // The server has disconnected from us.
+
+                            // data has successfully been received
+                            var decodedData = new UnicodeEncoding().GetString(data, 0, bytesRead);
+                            var messages = decodedData.Split(new char[] { '\n' },
+                                StringSplitOptions.RemoveEmptyEntries);
+
+                            foreach (var message in messages) {
+                                var index = message.IndexOf(' ');
+                                var requestedPid = Convert.ToInt32(message.Substring(0, index));
+                                if (requestedPid == Process.GetCurrentProcess().Id)
+                                    messageQueue.Enqueue(message.Substring(index + 1));
+                            }
+                            autoResetEvent.Set(); // Actual file opening is done in a different thread.
+                        } catch (ThreadAbortException) {
                             break;
-                        }
-
-                        if (bytesRead == 0)
-                            break; // The server has disconnected from us.
-
-                        // data has successfully been received
-                        var decodedData = new UnicodeEncoding().GetString(data, 0, bytesRead);
-                        var messages = decodedData.Split(new char[] { '\n' },
-                            StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (var message in messages) {
-                            var index = message.IndexOf(' ');
-                            var requestedPid = Convert.ToInt32(message.Substring(0, index));
-                            if (requestedPid == Process.GetCurrentProcess().Id)
-                                messageQueue.Enqueue(message.Substring(index + 1));
-                        }
-                        autoResetEvent.Set(); // Actual file opening is done in a different thread.
-                    } catch (ThreadAbortException) {
-                        break;
-                    } catch { }
+                        } catch { }
+                    }
+                    TerminateClient();
                 }
+            } finally {
+                if (qtAppWrapperProcess != null)
+                    qtAppWrapperProcess.Dispose();
                 TerminateClient();
             }
         }

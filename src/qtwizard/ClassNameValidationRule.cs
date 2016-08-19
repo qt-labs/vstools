@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 
 namespace QtProjectWizard
@@ -52,7 +53,7 @@ namespace QtProjectWizard
                         identifier = identifier.Substring(index + 2);
                 }
 
-                if (Vclm.ValidateIdentifier(identifier) && !Vclm.IsReservedName(identifier))
+                if (Regex.IsMatch(identifier, pattern) && !Vclm.IsReservedName(identifier))
                     return ValidationResult.ValidResult;
             }
             return new ValidationResult(false, @"Invalid identifier.");
@@ -60,5 +61,7 @@ namespace QtProjectWizard
 
         public bool SupportNamespaces { get; set; }
         public bool AllowEmptyIdentifier { get; set; }
+
+        const string pattern = @"^[a-zA-Z_][a-zA-Z0-9_]*$";
     }
 }

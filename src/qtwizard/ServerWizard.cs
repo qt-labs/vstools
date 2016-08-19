@@ -97,7 +97,7 @@ namespace QtProjectWizard
             qtProject.AddFileToProject(safeprojectname + @".ico", null);
             qtProject.AddFileToProject(safeprojectname + @".def", Filters.SourceFiles());
 
-            qtProject.AddActiveQtBuildStep(@"1.0");
+            qtProject.AddActiveQtBuildStep(@"1.0", safeprojectname + @".def");
             qtProject.SetQtEnvironment(qtVersion);
             qtProject.Finish(); // Collapses all project nodes.
         }
@@ -127,10 +127,15 @@ namespace QtProjectWizard
                     foreach (var module in data.DefaultModules)
                         defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
-                    var className = replacements["$safeprojectname$"].Replace(" ", "");
-                    var result = new ClassNameValidationRule().Validate(className, null);
+                    // midl.exe does not support spaces in project name. Fails while generating the
+                    // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
+                    if (replacements["$safeprojectname$"].Contains(" "))
+                        throw new QtVSException("Project name shall not contain spaces.");
+
+                    safeprojectname = replacements["$safeprojectname$"];
+                    var result = new ClassNameValidationRule().Validate(safeprojectname, null);
                     if (result != ValidationResult.ValidResult)
-                        className = @"ActiveQtServer";
+                        safeprojectname = @"ActiveQtServer";
 
                     data.ClassName = safeprojectname;
                     data.ClassHeaderFile = safeprojectname + @".h";
@@ -211,8 +216,9 @@ namespace QtProjectWizard
                 replacements["$include$"] = strHeaderInclude;
                 replacements["$ui_hdr$"] = "ui_" + Path.GetFileNameWithoutExtension(data.UiFile)
                     + ".h";
+
+                safeprojectname = data.LowerCaseFileNames ? safeprojectname.ToLower() : safeprojectname;
                 replacements["$pro_name$"] = safeprojectname;
-                safeprojectname = replacements["$safeprojectname$"];
 
             } catch {
                 try {

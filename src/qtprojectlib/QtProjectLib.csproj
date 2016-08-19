@@ -41,6 +41,7 @@
     <Compile Include="ExportProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Filters.cs" />
     <Compile Include="HelperClasses.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="ImageButton.cs">
@@ -55,9 +56,6 @@
     <Compile Include="QMakeConf.cs" />
     <Compile Include="QMakeProcess.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="QProcess.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="QrcParser.cs" />
     <Compile Include="QtConfig.cs" />
