@@ -87,11 +87,19 @@
                           Name="VisualCppView"
                           Background="{DynamicResource {x:Static ee:ColorResources.WonderbarBrushKey}}"
                           TabIndex="4">
+                    <TreeView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="{DynamicResource {x:Static ee:ColorResources.WonderbarTreeSelectedColorKey}}" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                         Color="{DynamicResource {x:Static ee:ColorResources.WonderbarTreeInactiveSelectedColorKey}}" />
+                    </TreeView.Resources>
                     <TreeViewItem IsExpanded="True"
-                                  Header="Visual C++">
+                                  Header="Visual C++"
+                                  Foreground="{DynamicResource {x:Static ee:ColorResources.WonderbarTextBrushKey}}">
                         <TreeViewItem IsExpanded="True"
                                       Header="Qt "
-                                      IsSelected="True" />
+                                      IsSelected="True"
+                                      Foreground="{DynamicResource {x:Static ee:ColorResources.WonderbarTextBrushKey}}" />
                     </TreeViewItem>
                 </TreeView>
             </Expander>
@@ -117,7 +125,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
                                Text="Sort by:"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource {x:Static ee:ColorResources.BackgroundLowerRegionTextBrushKey}}" />
                     <ComboBox Grid.Column="1"
                               Margin="10,0,0,0"
                               IsReadOnly="True"
@@ -175,7 +184,8 @@
                         <DataTemplate x:Key="EmptyTemplate">
                             <TextBlock Text="No items found."
                                        HorizontalAlignment="Center"
-                                       VerticalAlignment="Top" />
+                                       VerticalAlignment="Top"
+                                       Foreground="{DynamicResource {x:Static ee:ColorResources.ContentTextBrushKey}}" />
                         </DataTemplate>
                         <DataTemplate x:Key="SmallTemplate">
                             <Grid>
@@ -196,7 +206,8 @@
                                            MinWidth="80"
                                            Text="{Binding ClassName}"
                                            TextTrimming="CharacterEllipsis"
-                                           VerticalAlignment="Center" />
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource {x:Static ee:ColorResources.ContentTextBrushKey}}" />
                             </Grid>
                         </DataTemplate>
                         <DataTemplate x:Key="MediumTemplate">
@@ -218,14 +229,16 @@
                                            MinWidth="80"
                                            Text="{Binding ClassName}"
                                            TextTrimming="CharacterEllipsis"
-                                           VerticalAlignment="Center" />
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource {x:Static ee:ColorResources.ContentTextBrushKey}}" />
                                 <TextBlock Grid.Column="2"
                                            MinWidth="60"
                                            MaxWidth="140"
                                            Text="{Binding Type}"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left"
-                                           TextTrimming="CharacterEllipsis" />
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource {x:Static ee:ColorResources.ContentTextBrushKey}}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.Resources>
@@ -249,13 +262,15 @@
                                    Text="Type:"
                                    FontWeight="Bold"
                                    Margin="10,10,0,10"
-                                   TextTrimming="CharacterEllipsis" />
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource {x:Static ee:ColorResources.DetailsTextBrushKey}}" />
                         <TextBlock x:Name="Type"
                                    Grid.Column="1"
                                    Grid.Row="0"
                                    Text="Dummy"
                                    Margin="10,10,10,10"
-                                   TextTrimming="CharacterEllipsis" />
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource {x:Static ee:ColorResources.DetailsTextBrushKey}}" />
                         <TextBlock x:Name="Description"
                                    Grid.Column="0"
                                    Grid.Row="1"
@@ -263,7 +278,8 @@
                                    TextWrapping="Wrap"
                                    Grid.ColumnSpan="2"
                                    Margin="10,0,10,10"
-                                   TextTrimming="CharacterEllipsis" />
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource {x:Static ee:ColorResources.DetailsTextBrushKey}}" />
                     </Grid>
                 </Border>
             </Grid>
@@ -295,12 +311,14 @@
                        Grid.Row="1"
                        Margin="10,0,0,0"
                        Height="18"
-                       VerticalAlignment="Center" />
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource {x:Static ee:ColorResources.BackgroundLowerRegionTextBrushKey}}" />
             <TextBlock TextWrapping="Wrap"
                        Text="Location:"
                        Grid.Row="2"
                        Margin="10,0,0,10"
-                       VerticalAlignment="Center" />
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource {x:Static ee:ColorResources.BackgroundLowerRegionTextBrushKey}}" />
             <TextBox x:Name="DefaultNameTextBox"
                      TextWrapping="Wrap"
                      Grid.Column="1"
