@@ -360,7 +360,7 @@ Do you want to continue?</value>
     <value>Cannot start {0}
 
 Make sure that you have specified a valid Qt version in the current project.
-If you haven't specified a Qt version at all, goto Tools|Options|Qt|Builds
+If you haven't specified a Qt version at all, goto Qt VS Tools|Qt Project Settings|Version
 and insert the information about the Qt version you want to use.</value>
   </data>
   <data name="HelpLibrary" xml:space="preserve">
