@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace Digia.QmlClassifier
+namespace QtVsTools
 {
     internal static class ClassifierClassificationDefinition
     {

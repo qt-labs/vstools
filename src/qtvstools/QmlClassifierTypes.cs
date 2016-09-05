@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     class ClassifierTypes
     {

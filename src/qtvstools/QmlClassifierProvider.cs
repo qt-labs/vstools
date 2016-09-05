@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     /// <summary>
     /// This class causes a classifier to be added to the set of classifiers.

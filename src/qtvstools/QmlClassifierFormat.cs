@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     class ClassifierDefinitions
     {

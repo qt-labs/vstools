@@ -29,7 +29,7 @@
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     public sealed class QmlContentTypeDefinition
     {

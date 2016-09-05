@@ -29,7 +29,7 @@
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     public abstract class Token
     {

@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using System;
 using System.Collections.Generic;
 
-namespace QmlClassifier
+namespace QtVsTools
 {
     /// <summary>
     /// Classifier that classifies all text as an instance of the OrinaryClassifierType
