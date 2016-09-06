@@ -194,6 +194,7 @@ namespace QtVsTools
             }
             // End not found, use full length
             token.Length = length - index;
+            token.State = 1;
             return token;
         }
 
