@@ -155,8 +155,8 @@ namespace QtVsTools
             /// </summary>
             internal StringFormatDefinition()
             {
-                // ARGB value: #FF008000
-                ForegroundColor = Colors.Green;
+                // ARGB value: #FF800000
+                ForegroundColor = Colors.Maroon;
                 DisplayName = "String (qml)"; //human readable version of the name
             }
         }
