@@ -75,12 +75,12 @@ namespace QtVsTools
         {
         }
 
-        public MultilineCommentToken(IClassificationType classificationType, ITrackingSpan trackingSpan, ITextVersion textVersion)
+        public MultilineCommentToken(IClassificationType type, ITrackingSpan span, ITextVersion version)
             : base(TokenType.MultilineComment)
         {
-            classificationType = classificationType;
-            trackingSpan = trackingSpan;
-            textVersion = textVersion;
+            classificationType = type;
+            trackingSpan = span;
+            textVersion = version;
         }
 
         public IClassificationType Classification()
@@ -119,12 +119,12 @@ namespace QtVsTools
         {
         }
 
-        public PropertyToken(IClassificationType classificationType, ITrackingSpan trackingSpan, ITextVersion textVersion)
+        public PropertyToken(IClassificationType type, ITrackingSpan span, ITextVersion version)
             : base(TokenType.Property)
         {
-            classificationType = classificationType;
-            trackingSpan = trackingSpan;
-            textVersion = textVersion;
+            classificationType = type;
+            trackingSpan = span;
+            textVersion = version;
         }
 
         public IClassificationType Classification()
