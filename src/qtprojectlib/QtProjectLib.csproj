@@ -66,6 +66,7 @@
     <Compile Include="RccOptions.cs" />
     <Compile Include="ResClass.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Statics.cs" />
     <Compile Include="VersionInformation.cs" />
   </ItemGroup>
   <ItemGroup>

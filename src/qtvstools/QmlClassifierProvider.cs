@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -40,6 +41,9 @@ namespace QtVsTools
     [ContentType(QmlContentTypeDefinition.ContentType)]
     internal class ClassifierProvider : IClassifierProvider
     {
+        [Import(typeof(SVsServiceProvider))]
+        System.IServiceProvider ServiceProvider { get; set; }
+
         /// <summary>
         /// Import the classification registry to be used for getting a reference to the custom
         /// classification type later.
@@ -51,7 +55,7 @@ namespace QtVsTools
         {
             return buffer.Properties.GetOrCreateSingletonProperty(() =>
             {
-                return new Classifier(classificationRegistry);
+                return new Classifier(classificationRegistry, ServiceProvider);
             });
         }
     }

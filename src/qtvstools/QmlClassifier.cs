@@ -26,6 +26,9 @@
 **
 ****************************************************************************/
 
+using QtProjectLib;
+using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using System;
@@ -49,6 +52,8 @@ namespace QtVsTools
         protected List<char> separators;
         protected char[] whiteSpaceChars;
 
+        readonly bool QmlClassifierEnabled;
+
         //#pragma warning disable 67
         // This event gets raised if a non-text change would affect the classification in some way,
         // for example typing /* would cause the classification to change in C# without directly
@@ -57,10 +62,15 @@ namespace QtVsTools
         //#pragma warning restore 67
         readonly IClassificationTypeRegistryService classificationRegistryService;
 
-        internal Classifier(IClassificationTypeRegistryService registry)
+        internal Classifier(IClassificationTypeRegistryService registry, IServiceProvider isp)
         {
             classificationRegistryService = registry;
             multiLineCommentTokens = new List<MultilineCommentToken>();
+
+            var settingsManager = new ShellSettingsManager(isp);
+            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+            QmlClassifierEnabled = store.GetBoolean(Statics.QtVsToolsQmlClassifierPath,
+                Statics.QtVsToolsQmlClassifierKey, true);
 
             whiteSpaceChars = new char[] { ' ', '\t' };
             separators = new List<char>
@@ -389,6 +399,8 @@ namespace QtVsTools
         {
             // create a list to hold the results
             var classifications = new List<ClassificationSpan>();
+            if (!QmlClassifierEnabled)
+                return classifications;
 
             var insideMultiLineComment = false;
             // Scan all known multi-line comments to check if incoming span intersects
