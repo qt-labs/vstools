@@ -52,7 +52,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF008000
                 ForegroundColor = Colors.Green;
-                DisplayName = "Comment (qml)"; //human readable version of the name
+                DisplayName = "QML Comment"; //human readable version of the name
             }
         }
 
@@ -73,7 +73,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF808000
                 ForegroundColor = Colors.Olive;
-                DisplayName = "Keyword (qml)"; //human readable version of the name
+                DisplayName = "QML Keyword"; //human readable version of the name
             }
         }
 
@@ -94,7 +94,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF808000
                 ForegroundColor = Colors.Olive;
-                DisplayName = "Property (qml)"; //human readable version of the name
+                DisplayName = "QML Property"; //human readable version of the name
             }
         }
 
@@ -115,7 +115,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF808000
                 ForegroundColor = Colors.Olive;
-                DisplayName = "JS Keyword (qml)"; //human readable version of the name
+                DisplayName = "QML JS Keyword"; //human readable version of the name
             }
         }
 
@@ -136,7 +136,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF800080
                 ForegroundColor = Colors.Purple;
-                DisplayName = "Type (qml)"; //human readable version of the name
+                DisplayName = "QML Type"; //human readable version of the name
             }
         }
 
@@ -157,7 +157,7 @@ namespace QtVsTools
             {
                 // ARGB value: #FF800000
                 ForegroundColor = Colors.Maroon;
-                DisplayName = "String (qml)"; //human readable version of the name
+                DisplayName = "QML String"; //human readable version of the name
             }
         }
 
@@ -176,7 +176,7 @@ namespace QtVsTools
             /// </summary>
             internal OtherFormatDefinition()
             {
-                DisplayName = "Other (qml)"; //human readable version of the name
+                DisplayName = "QML Other"; //human readable version of the name
             }
         }
     }
