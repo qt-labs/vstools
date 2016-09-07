@@ -177,45 +177,24 @@ namespace QtVsTools
                 ClassificationChanged(this, new ClassificationChangedEventArgs(span));
         }
 
-        protected Token ReadMultiLineEOL(string text, int index, int length)
+        protected Token GetMultiLineCommentToken(string text, int index, int length)
         {
-            var token = new MultilineCommentToken();
-            for (int i = index; i < length; i++) {
-                try {
-                    char ch = text[i];
-                    char next_ch = text[i + 1];
-                    if (ch == '*' && next_ch == '/') {
-                        token.Length = index + i + 2;
-                        return token;
-                    }
-                } catch (System.IndexOutOfRangeException) {
-                    // end not found :(
-                }
-            }
-            // End not found, use full length
-            token.Length = length - index;
-            token.ContinueParsing = true;
-            return token;
+            var indexOf = text.IndexOf("*/", index, StringComparison.OrdinalIgnoreCase);
+            return new MultilineCommentToken
+            {
+                ContinueParsing = (indexOf == -1),
+                Length = ((indexOf == -1) ? length - index : indexOf - index + 2) // "*/".Length
+            };
         }
 
-        protected Token ReadString(string text, int index, int length)
+        protected Token GetStringToken(string text, int index, int length)
         {
-            var token = new StringToken();
-            for (int i = index; i < length; i++) {
-                try {
-                    char ch = text[i];
-                    char next_ch = text[i + 1];
-                    if (next_ch == '\"') {
-                        token.Length = i - index + 2;
-                        return token;
-                    }
-                } catch (System.IndexOutOfRangeException) {
-                    // end not found :(
-                }
-            }
-            // End not found, use full length
-            token.Length = length - index;
-            return token;
+            var indexOf = text.IndexOf('"', index + 1);
+            return new StringToken
+            {
+                ContinueParsing = (indexOf == -1),
+                Length = ((indexOf == -1) ? length - index : indexOf - index + 1) // '"'.Length
+            };
         }
 
         protected Token GetToken(string word, bool colonComing = false, string following = "")
@@ -248,7 +227,7 @@ namespace QtVsTools
         {
             // End of multi-line comment not reached yet, so find it.
             if (tokenType == TokenType.MultilineComment && continueParsing)
-                return ReadMultiLineEOL(text, index, length);
+                return GetMultiLineCommentToken(text, index, length);
 
             // Special case for finding property stuff
             if (text.Substring(index).StartsWith("property ", StringComparison.Ordinal)) {
@@ -298,7 +277,7 @@ namespace QtVsTools
                     }
                     // If string start found, read rest of it
                     if (ch == '\"') {
-                        return ReadString(text, index, length);
+                        return GetStringToken(text, index, length);
                     }
                     // Single line comment start found,
                     else if (ch == '/' && next_ch == '/') {
@@ -312,30 +291,12 @@ namespace QtVsTools
                         var token = new OtherToken();
                         token.Length = 1;
                         return token;
-                    }
-                    // Multi-line comment start found (or sure can be one liner also)
-                    else if (ch == '/' && next_ch == '*') {
-                        // Multi-line comment starting, perhaps
+                    } else if (ch == '/' && next_ch == '*') {
+                        // Multi-line comment start found (can be one liner also)
+                        var token = GetMultiLineCommentToken(text, i, length);
+                        if (!token.ContinueParsing)
+                            return new CommentToken { Length = token.Length };
                         inMultilineComment = true;
-                        // Skip over comment starts '/*'
-                        for (int j = i + 2; j < length; j++) {
-                            i = j;
-                            try {
-                                ch = text[j];
-                                next_ch = text[j + 1];
-                                next_ch = text[j + 1];
-                                if (ch == '*' && next_ch == '/') {
-                                    // This was one liner so using normal comment token
-                                    var token = new CommentToken();
-                                    token.Length = j - index + 2;
-                                    return token;
-                                }
-                            } catch (System.IndexOutOfRangeException) {
-                                if (ch == '\r' || ch == '\n') {
-                                    continue;
-                                }
-                            }
-                        }
                     }
                 }
                 // Cut now if string starting next
