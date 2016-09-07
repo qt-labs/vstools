@@ -169,6 +169,7 @@ namespace QtProjectLib
                             }
                         } catch (Exception) { }
 
+                        qtPro.SetQtEnvironment();
                         ApplyPostImportSteps(qtPro);
                     }
                 }
