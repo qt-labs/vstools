@@ -351,6 +351,8 @@ namespace QtProjectLib
             var versionInfo = vm.GetVersionInfo(Project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+            if (versionInfo == null)
+                return false; // neither a default or project Qt version
 
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
