@@ -35,13 +35,11 @@ namespace QtVsTools
     {
         protected Token(TokenType type)
         {
-            State = 0;
-            Length = 0;
             Type = type;
         }
 
-        public int State { get; set; }
         public int Length { get; set; }
+        public bool ContinueParsing { get; set; }
         public TokenType Type { get; private set; }
     }
 

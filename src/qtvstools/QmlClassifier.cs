@@ -194,7 +194,7 @@ namespace QtVsTools
             }
             // End not found, use full length
             token.Length = length - index;
-            token.State = 1;
+            token.ContinueParsing = true;
             return token;
         }
 
@@ -244,10 +244,10 @@ namespace QtVsTools
         }
 
         protected Token Scan(string text, int index, int length, TokenType tokenType = TokenType.None,
-                             int state = 0)
+                             bool continueParsing = false)
         {
             // End of multi-line comment not reached yet, so find it.
-            if (tokenType == TokenType.MultilineComment && state != 0)
+            if (tokenType == TokenType.MultilineComment && continueParsing)
                 return ReadMultiLineEOL(text, index, length);
 
             // Special case for finding property stuff
@@ -349,7 +349,7 @@ namespace QtVsTools
                     Token token = null;
                     if (inMultilineComment) {
                         token = new MultilineCommentToken();
-                        token.State = 1;
+                        token.ContinueParsing = true;
                     } else {
                         var tmp = text.Substring(index, i - index);
                         var follows = text.Substring(index + tmp.Length);
@@ -361,7 +361,7 @@ namespace QtVsTools
                     Token token = null;
                     if (inMultilineComment) {
                         token = new MultilineCommentToken();
-                        token.State = 1;
+                        token.ContinueParsing = true;
                     } else {
                         token = GetToken(text.Substring(index, i - index));
                     }
@@ -400,7 +400,7 @@ namespace QtVsTools
             if (inMultilineComment) {
                 var token = new MultilineCommentToken();
                 token.Length = length - index;
-                token.State = 1;
+                token.ContinueParsing = true;
                 return token;
             } else {
                 var tmp = text.Substring(index, length - index);
@@ -468,11 +468,11 @@ namespace QtVsTools
                         end = start + token.Length;
                         // If token not ending in the current span, continue reading text
                         // until the whole token is read
-                        while (end < span.Snapshot.Length && token.State != 0 && token != null) {
+                        while (end < span.Snapshot.Length && token != null && token.ContinueParsing) {
                             var bufferSize = Math.Min(span.Snapshot.Length - end, 2048);
                             text = span.Snapshot.GetText(end, bufferSize);
                             // Scan next token, continuing from previous
-                            token = Scan(text, 0, text.Length, token.Type, token.State);
+                            token = Scan(text, 0, text.Length, token.Type, token.ContinueParsing);
                             if (token != null)
                                 end += token.Length;
                         }
