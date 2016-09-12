@@ -100,6 +100,16 @@ namespace QtProjectLib
             } catch (Exception /*e*/) {
                 qtDir = null;
             }
+
+            try {
+                var qmakeQuery = new QMakeQuery(this);
+                QtInstallDocs = qmakeQuery.query("QT_INSTALL_DOCS");
+            } catch { }
+        }
+
+        public string QtInstallDocs
+        {
+            get; private set;
         }
 
         public bool IsStaticBuild()

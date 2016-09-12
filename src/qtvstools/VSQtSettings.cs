@@ -26,6 +26,8 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -47,6 +49,11 @@ namespace QtVsTools
             newAskBeforeCheckoutFile = QtVSIPSettings.GetAskBeforeCheckoutFile();
             newDisableCheckoutFiles = QtVSIPSettings.GetDisableCheckoutFiles();
             newDisableAutoMOCStepsUpdate = QtVSIPSettings.GetDisableAutoMocStepsUpdate();
+
+            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+            EnableQmlClassifier = store.GetBoolean(Statics.QtVsToolsQmlClassifierPath,
+                Statics.QtVsToolsQmlClassifierKey, true);
         }
 
         private string newMocDir;
@@ -72,6 +79,12 @@ namespace QtVsTools
             QtVSIPSettings.SaveAskBeforeCheckoutFile(newAskBeforeCheckoutFile);
             QtVSIPSettings.SaveDisableCheckoutFiles(newDisableCheckoutFiles);
             QtVSIPSettings.SaveDisableAutoMocStepsUpdate(newDisableAutoMOCStepsUpdate);
+
+            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            store.CreateCollection(Statics.QtVsToolsQmlClassifierPath);
+            store.SetBoolean(Statics.QtVsToolsQmlClassifierPath, Statics.QtVsToolsQmlClassifierKey,
+                EnableQmlClassifier);
         }
 
         public string MocDirectory
@@ -222,6 +235,9 @@ namespace QtVsTools
                 newDisableAutoMOCStepsUpdate = value;
             }
         }
+
+        [DisplayName("Enable QML classifier")]
+        public bool EnableQmlClassifier { get; set; }
 
         private static bool ContainsInvalidVariable(string directory)
         {

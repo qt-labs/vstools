@@ -186,7 +186,7 @@ namespace QtVsTools
         {
             var versionManager = QtVersionManager.The();
             var qtVersion = qtProject.GetQtVersion();
-            var install_path = versionManager.GetInstallPath(qtVersion);
+            var install_path = versionManager.GetInstallPath(qtVersion) ?? string.Empty;
 
             for (int i = 0; i < moduleMap.Count; ++i) {
                 ModuleMapItem item = moduleMap[i];

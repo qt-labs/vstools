@@ -48,6 +48,8 @@
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%"
             Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%"
+            Path="|%CurrentProject%|" />
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtAppWrapper" Path="|QtAppWrapper|" AssemblyName="|QtAppWrapper;AssemblyName|" />
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtProjectWizard" Path="|QtProjectWizard|" AssemblyName="|QtProjectWizard;AssemblyName|" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Console" d:TargetPath="|Console;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
@@ -61,5 +63,13 @@
         <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="MainWindow" d:TargetPath="|MainWindow;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
         <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Widget" d:TargetPath="|Widget;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
         <Asset Type="NativeVisualizer" d:Source="File" Path="Visualizer\qt5.natvis" />
-    </Assets>
+    <Asset Type="File"
+           d:Source="File"
+           Path="x64\SQLite.Interop.dll"
+           d:VsixSubPath="x64" />
+    <Asset Type="file"
+           d:Source="File"
+           Path="x86\SQLite.Interop.dll"
+           d:VsixSubPath="x86" />
+  </Assets>
 </PackageManifest>

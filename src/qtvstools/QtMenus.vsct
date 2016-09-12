@@ -55,6 +55,9 @@
     <!-- This header contains the command ids for the menus provided by the shell. -->
     <Extern href="vsshlids.h"/>
 
+    <!--  Include the definitions for images included in the VS image catalog -->
+    <Include href="KnownImageIds.vsct"/>
+
     <!--
         The Commands section is where commands, menus, and menu groups are defined.
         This section uses a Guid to identify the package that provides the command defined inside it.
@@ -74,6 +77,13 @@
                 <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS" />
                 <Strings>
                     <ButtonText>Qt VS Tools</ButtonText>
+                </Strings>
+            </Menu>
+
+            <Menu guid="HelpMenuGroupGuid" id="HelpMenuSubMenuId" priority="0x0700" type="Menu">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuGroupId" />
+                <Strings>
+                    <ButtonText>Set Qt Help Preference</ButtonText>
                 </Strings>
             </Menu>
         </Menus>
@@ -137,6 +147,14 @@
 
             <Group guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+            </Group>
+
+            <Group guid="HelpMenuGroupGuid" id="HelpMenuGroupId" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_HELP"/>
+            </Group>
+
+            <Group guid="HelpMenuGroupGuid" id="HelpMenuSubGroupId" priority="0x0600">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuSubMenuId"/>
             </Group>
 
         </Groups>
@@ -431,6 +449,38 @@
 
             <!-- Endregion Item context menu buttons -->
 
+            <Button guid="HelpMenuGroupGuid" id="F1QtHelpId" priority="0x0100" type="Button">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuGroupId" />
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <Strings>
+                    <ButtonText>F1 Qt Help</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="HelpMenuGroupGuid" id="ViewQtHelpId" priority="0x0100" type="Button">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuGroupId" />
+                <Icon guid="MenuImages" id="QtLogoBitmap" />
+                <Strings>
+                    <ButtonText>View Qt Help</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="HelpMenuGroupGuid" id="OnlineDocumentationId" priority="0x0100" type="Button">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuSubGroupId" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Use Online Documentation</ButtonText>
+                </Strings>
+            </Button>
+
+            <Button guid="HelpMenuGroupGuid" id="OfflineDocumentationId" priority="0x0100" type="Button">
+                <Parent guid="HelpMenuGroupGuid" id="HelpMenuSubGroupId" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <Strings>
+                    <ButtonText>Use Offline Documentation</ButtonText>
+                </Strings>
+            </Button>
+
         </Buttons>
 
         <!-- The bitmaps section is used to define the bitmaps that are used for the commands. -->
@@ -534,6 +584,18 @@
 
         </GuidSymbol>
 
+        <GuidSymbol name="HelpMenuGroupGuid" value="{fc6244f9-ec84-4370-a59c-b009b2eafd1b}">
+
+            <IDSymbol name="HelpMenuGroupId" value="0x1040" />
+            <IDSymbol name="HelpMenuSubMenuId" value="0x1050" />
+            <IDSymbol name="HelpMenuSubGroupId" value="0x1060" />
+            <IDSymbol name="F1QtHelpId" value="0x0100" />
+            <IDSymbol name="ViewQtHelpId" value="0x0101" />
+            <IDSymbol name="OnlineDocumentationId" value="0x0102" />
+            <IDSymbol name="OfflineDocumentationId" value="0x0103" />
+
+        </GuidSymbol>
+
         <GuidSymbol name="MenuImages" value="{d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec}" >
             <IDSymbol name="LaunchDesignerBitmap" value="1" />
             <IDSymbol name="LaunchLinguistBitmap" value="2" />
@@ -560,4 +622,8 @@
         <VisibilityItem guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId"
             context="UICONTEXT_SolutionHasMultipleProjects" />
     </VisibilityConstraints>
+
+    <KeyBindings>
+        <KeyBinding guid="HelpMenuGroupGuid" id="F1QtHelpId" key1="VK_F1" mod1="ALT" editor="guidVSStd97" />
+    </KeyBindings>
 </CommandTable>
