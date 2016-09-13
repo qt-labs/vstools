@@ -138,7 +138,16 @@ namespace QtProjectLib
                     line = streamReader.ReadLine();
                 }
                 streamReader.Close();
+
+                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_CONSOLE", ref entries);
+                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_WINDOWS", ref entries);
             }
+        }
+
+        static void RemoveQmakeSubsystemSuffix(string key, ref Hashtable hash)
+        {
+            if (hash.Contains(key))
+                hash[key] = hash[key].ToString().Replace("@QMAKE_SUBSYSTEM_SUFFIX@", string.Empty);
         }
 
         private string ExpandVariables(string value, Hashtable entries)
