@@ -112,6 +112,11 @@ namespace QtProjectLib
             get; private set;
         }
 
+        public string QMakeSpecDirectory
+        {
+            get { return qmakeConf.QMakeSpecDirectory; }
+        }
+
         public bool IsStaticBuild()
         {
             if (qtConfig == null)

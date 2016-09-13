@@ -175,6 +175,17 @@ namespace QtProjectLib
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Arguments: "
                     + qmakeProcess.StartInfo.Arguments
                     + Environment.NewLine);
+                if (qmakeProcess.StartInfo.EnvironmentVariables.ContainsKey("QMAKESPEC")) {
+                    var qmakeSpec = qmakeProcess.StartInfo.EnvironmentVariables["QMAKESPEC"];
+                    if (qmakeSpec != qtVersionInformation.QMakeSpecDirectory) {
+                        InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Environment "
+                            + "variable QMAKESPEC overwriting Qt version QMAKESPEC.");
+                        InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Qt version "
+                            + "QMAKESPEC: " + qtVersionInformation.QMakeSpecDirectory);
+                        InvokeExternalTarget(PaneMessageDataEvent,"--- (qmake) : Environment "
+                            + "variable QMAKESPEC: " + qmakeSpec + Environment.NewLine);
+                    }
+                }
 
                 if (qmakeProcess.Start()) {
                     errOutput = new StringBuilder();
