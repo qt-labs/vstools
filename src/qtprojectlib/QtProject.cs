@@ -2558,7 +2558,12 @@ namespace QtProjectLib
                         context.ShouldBuild = false;
                 }
             }
-            envPro.DTE.Solution.SolutionBuild.Clean(true);
+            try {
+                envPro.DTE.Solution.SolutionBuild.Clean(true);
+            } catch (System.Runtime.InteropServices.COMException e) {
+                // TODO: Implement some logging mechanism for exceptions.
+            }
+
             foreach (KeyValuePair<SolutionContext, bool> item in backup)
                 item.Key.ShouldBuild = item.Value;
         }

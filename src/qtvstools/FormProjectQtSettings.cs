@@ -176,6 +176,12 @@ namespace QtVsTools
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            // Disable the buttons since some operations are quite expensive (e.g. changing
+            // the Qt version) and take some to finish. Keeping the buttons enables allows to hit
+            // the buttons several times resulting in successive executions of these operations.
+            okButton.Enabled = false;
+            cancelButton.Enabled = false;
+
             qtSettings.SaveSettings();
             saveModules();
             okButton.DialogResult = DialogResult.OK;
