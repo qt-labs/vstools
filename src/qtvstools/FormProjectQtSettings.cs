@@ -82,7 +82,7 @@ namespace QtVsTools
             scriptToolsLib.Text = SR.GetString("ScriptToolsLibrary");
             uiToolsLib.Text = SR.GetString("UiToolsLibrary");
 
-            threeDLib.Text = SR.GetString("3DLibrary");
+            threeDLib.Text = SR.GetString("ThreeDLibrary");
             locationLib.Text = SR.GetString("LocationLibrary");
             qmlLib.Text = SR.GetString("QmlLibrary");
             quickLib.Text = SR.GetString("QuickLibrary");

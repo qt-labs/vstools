@@ -323,7 +323,10 @@ This file has changed outside the editor. Do you want to reload it?</value>
     <value>Unable to retrieve more information for {0}.</value>
   </data>
   <data name="EnginioLibrary" xml:space="preserve">
-    <value>The default Qt version does not support Visual Studio. In order to import .pro files specify a Qt version &gt;=5.6 as default.</value>
+    <value>Enginio</value>
+  </data>
+  <data name="NoVSSupport" xml:space="preserve">
+    <value>The default Qt version does not support Visual Studio. In order to import .pro files specify a Qt version &gt;=5.0 as default.</value>
   </data>
   <data name="ExportPriFileButtonText" xml:space="preserve">
     <value>Export Project to .pri File...</value>
