@@ -3,7 +3,7 @@ CONFIG += console
 DESTDIR = $$PWD/bin
 TARGET = QMakeFileReader
 
-include(../src.pri)
+include(../../vstools.pri)
 include(./evaluator/evaluator.pri)
 
 SOURCES += main.cpp \

@@ -1,7 +1,9 @@
-!isEmpty(QT_VS_TOOLS_PRI) {
-    error("src.pri already included")
+!isEmpty(QTVSOOLS_PRI) {
+    error("vstools.pri already included")
 }
-QT_VS_TOOLS_PRI = 1
+QTVSTOOLS_PRI = 1
+QTVSTOOLS_VERSION = 2.0.0
+QTVSTOOLS_VERSION_TAG = 200
 
 defineTest(minQtVersion) {
     maj = $$1

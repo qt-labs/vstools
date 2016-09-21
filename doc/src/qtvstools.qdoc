@@ -1,0 +1,717 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Free Documentation License Usage
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file. Please review the following information to ensure
+** the GNU Free Documentation License version 1.3 requirements
+** will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \page index.html
+    \nextpage Getting Started
+    \title Qt VS Tools Manual
+
+    Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
+    2013, and later. This enables developers to use the standard Windows
+    development environment without having to worry about Qt-related build steps
+    or tools.
+
+    The main features of Qt VS Tools are:
+
+    \list
+        \li Wizards for creating new Qt projects and classes.
+        \li Automated build setup for the \l {Using the Meta-Object Compiler
+            (moc)}{Meta-Object Compiler (moc)}, \l {User Interface Compiler
+            (uic)}, and \l {Resource Compiler (rcc)}.
+        \li Import and export of Qt project files (\c .pro) and project include
+            files (\c .pri).
+        \li Automated conversion of a Qt VS Tools project to a \l {qmake Manual}
+            {qmake} project, or the other way around.
+        \li Integrated Qt resource management.
+        \li Integrated Qt documentation.
+        \li Debugging extensions for Qt data types.
+    \endlist
+
+    \section1 Table of Contents
+
+    \list
+        \li \l {Getting Started}
+        \li \l {Managing Projects}
+        \li \l {Adding Form Files to Projects}
+        \li \l {Managing Resources}
+        \li \l {Creating Qt Translation Files for Projects}
+        \li \l {FAQ}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-getting-started.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Qt VS Tools Manual
+    \nextpage Managing Projects
+    \title Getting Started
+
+    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt GUI}
+    application. You will create a project using a project wizard and design an
+    UI using \QD. In addition, you will learn how to convert a Visual Studio
+    project file into a qmake compatible \c .pro file.
+
+    To create a Qt VS Tools project, you must add at least one
+    \l{Managing Qt Versions}{Qt version}.
+
+    You must also download Qt VS Tools from \l {Qt Downloads} or by
+    using your \l {Qt Account} and install them.
+
+    \section1 Creating Qt GUI Application Projects
+
+    To create a Qt GUI application project in Visual Studio:
+
+    \list 1
+        \li Select \uicontrol {New Project} > \uicontrol Installed >
+            \uicontrol Templates > \uicontrol {Visual C++} > \uicontrol Qt >
+            \uicontrol {Qt GUI Application}.
+        \li In the \uicontrol Name field, enter \e AddressBook, and then select
+            \uicontrol OK.
+        \li To acknowledge the \uicontrol Welcome dialog, select
+            \uicontrol Next.
+        \li Select the modules to include in the project, and then select
+            \uicontrol Next.
+
+            The modules that are typically needed in GUI application projects
+            are selected by default.
+        \li In the \uicontrol {Base class} field, enter \uicontrol QWidget as
+            the base class type.
+        \li Select the \uicontrol {Use lower case filenames} check box to
+            only use lower case characters in the names of the generated files.
+        \li Select \uicontrol Finish to create the project.
+    \endlist
+
+    You now have a small working Qt application. Select \uicontrol Build >
+    \uicontrol {Build Solution} to build it, and then select \uicontrol Debug >
+    \uicontrol {Start Debugging} to run it. For now, the result is an empty
+    window.
+
+    \section1 Designing the Main Window
+
+    You can use \QD to design the application's main window, which contains
+    some widgets placed in layouts:
+
+    \image qtvstools-addressbook-mainwindow.png AddressBook's main dialog
+
+    For more information about using \QD, see the \l{Qt Designer Manual}.
+
+    \section2 Adding Widgets
+
+    To add widgets to the UI and to set properties for them:
+
+    \list 1
+        \li In Visual Studio's Solution Explorer, double-click the
+            \c addressbook.ui file to open it in \QD.
+        \li In \QD's \uicontrol Widgetbox, select \uicontrol {List Widget} and
+            drag and drop it to the form to add a \l QListWidget.
+        \li In the \uicontrol {Property Editor}, set the \c ObjectName property
+            to \e addressList.
+        \li Drag and drop two \uicontrol {Push Button} widgets to the top-right
+            corner of the form to add \l QPushButton objects for the
+            \uicontrol Add and \uicontrol Delete buttons.
+        \li Set the button names to \e addButton and \e deleteButton and
+            \uicontrol text property values to \e Add and \e Delete.
+        \li Drag and drop two \uicontrol {Label} widgets to the form to add
+            \l QLabel objects for displaying the selected item in the list.
+        \li Rename the first label to \e nameLabel and change its
+            \uicontrol text property to \e {<No item selected>}.
+        \li Rename the second label to \e emailLabel and leave its
+            \uicontrol text property empty.
+    \endlist
+
+    Position the widgets approximately as they appear in the screenshot above.
+    In order to properly position the widgets and to ensure that they are
+    resized correctly when the form is resized, you need to add layouts to the
+    form.
+
+    \section2 Adding Widgets to Layouts
+
+    You will need a vertical layout for the buttons as well as a spacer to push
+    the buttons to the top of the layout. In addition, you will need a second
+    layout to manage the positioning of the other widgets as well as the button
+    layout.
+
+    To add wigdets to layouts:
+
+    \list 1
+        \li Drag a \uicontrol {Vertical Spacer} item to the form to add a
+            spacer.
+        \li Select the buttons and the spacer, and then select \uicontrol Form >
+            \uicontrol {Lay Out Vertically} to add a vertical layout
+            (\l QVBoxLayout).
+        \li Select the list widgets, the two labels, and the button layout,
+            and then select \uicontrol Form > \uicontrol {Lay Out in a Grid} to
+            add a grid layout (\l QGridLayout).
+
+            \note Make sure that the labels are almost as wide as the form.
+            Otherwise, the grid layout will make them only as wide as the
+            address list.
+        \li Select \uicontrol Form > \uicontrol Preview to preview your form
+            without compiling it.
+        \li Select \uicontrol File > \uicontrol Save to save the form.
+    \endlist
+
+    Build and run the application to check the main window.
+
+    \section1 Adding Dialogs
+
+    Now that the main window is ready, you can move on to add functionality to
+    the application. To have the application open a dialog when the user clicks
+    the \uicontrol Add button, you must create an \uicontrol {Add Address}
+    dialog and invoke the dialog from a slot connected to the \uicontrol Add
+    button.
+
+    You can use a Qt file wizard in Visual Studio to create a UI form that
+    contains the \uicontrol OK and \uicontrol Cancel buttons connected to the
+    QDialog::accept() and QDialog::reject() slots, respectively. You can use \QD
+    to add other widgets to the form.
+
+    \section2 Creating the Dialog
+
+    To add a dialog to a project:
+
+    \list 1
+        \li In Visual Studio, select \uicontrol Project >
+            \uicontrol {Add Qt Class} > \uicontrol Installed >
+            \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt GUI Class}.
+        \li In the \uicontrol Name field, enter \e AddDialog, and then select
+            \uicontrol Add.
+        \li To acknowledge the \uicontrol Welcome dialog, select
+            \uicontrol Next.
+        \li In the \uicontrol {Base class} field, enter \uicontrol QDialog as
+            the base class type.
+        \li Select the \uicontrol {Multiple inheritance} radio button.
+        \li Select the \uicontrol {Use lower case filenames} check box to
+            only use lower case characters in the names of the generated files.
+        \li Select \uicontrol Finish to create source, header, and UI files for
+            the dialog.
+    \endlist
+
+    \section2 Designing the Dialog
+
+    \image qtvstools-addressbook-adddialog.png Add Address Dialog
+
+    To design the dialog:
+
+    \list 1
+        \li In Visual Studio's Solution Explorer, double-click the
+            \c adddialog.ui file to open it in \QD.
+        \li In \QD, set \e {Add Address} as the \uicontrol windowTitle.
+        \li Add a \uicontrol Label to the form and set its \uicontrol objectName
+            property to \e nameText and \uicontrol text property to \e {Name:}.
+        \li Add another \uicontrol Label and set its \uicontrol objectName
+            property to \e emailText and \uicontrol text property to
+            \e {Email:}.
+        \li Add a \uicontrol {Line Edit} (\l QLineEdit) and set its
+            \uicontrol objectName property to \e nameEdit. Leave the
+            \uicontrol text property empty.
+        \li Add another \uicontrol {Line Edit} and set its \uicontrol objectName
+            property to \e emailEdit. Leave the \uicontrol text property empty.
+        \li Select the labels and line edits, and then select \uicontrol Form >
+            \uicontrol {Lay Out in a Grid} to add a grid layout.
+        \li Add a \uicontrol {Push Button} and set its \uicontrol objectName
+            property to \e okButton and \uicontrol text property to \e OK.
+        \li Add a horizontal spacer to the left of the button.
+        \li Add a horizontal layout for the spacer and the button.
+        \li Add a vertical spacer between the labels and the button.
+        \li Add a grid layout for both layouts.
+        \li Select \uicontrol Form > \uicontrol Preview to preview your form
+            without compiling it.
+        \li Select \uicontrol File > \uicontrol Save to save the form.
+    \endlist
+
+    \section1 Connecting to the Dialog's OK Button
+
+    To have the \uicontrol OK button invoke the QDialog::accept() slot, click
+    the \uicontrol {Edit Signals/Slots} toolbar button to enter
+    \l {Qt Designer's Signals and Slots Editing Mode}.
+
+    Click the \uicontrol OK button, drag the mouse cursor to an empty area of
+    the form, and release the mouse button. In the
+    \uicontrol {Configure Connection} dialog, connect the button's
+    QPushButton::clicked() signal to the form's QDialog::accept() slot.
+
+    \section1 Opening Dialogs from the Main Window
+
+    To invoke the dialog when the user selects \uicontrol Add in the main
+    window, you must add a slot to the \c AddressBook class and invoke
+    \c AddDialog from this slot.
+
+    Forms that are created using \QD call QMetaObject::connectSlotsByName() to
+    establish connections between signals emitted by the form's child widgets
+    and slots that follow the naming convention \c {on_<sender>_<signal>()}.
+    For the application to react appropriately when the \uicontrol Add button is
+    clicked, you must implement a slot called \c{on_addButton_clicked()}.
+
+    To implement the slot, open the \c addressbook.h file in Visual Studio and
+    add a declaration for the slot:
+
+    \badcode
+    private slots:
+        void on_addButton_clicked();
+    \endcode
+
+    Then open \c addressbook.cpp and add the slot definition:
+
+    \badcode
+    void AddressBook::on_addButton_clicked()
+    {
+        AddDialog dialog(this);
+        dialog.exec();
+    }
+    \endcode
+
+    To connect to some other signal, you must add the signal to the
+    \c AddressBook class. This requires editing both the header file,
+    \c addressbook.h, and the implementation file, \c addressbook.cpp.
+
+    Include \c adddialog.h to \c addressbook.cpp:
+
+    \quotefromfile AddressBook/addressbook.cpp
+    \skipto adddialog
+    \printuntil adddialog.h
+
+    To test your changes, build and run the application. Select the
+    \uicontrol Add button to open the \uicontrol {Add Address} dialog, and then
+    select \uicontrol OK to close it.
+
+    \section1 Adding Items to the List Widget
+
+    When the user selects \uicontrol OK, an item should be added to the
+    QListWidget. To implement this function, modify the code in the
+    \c {on_addButton_clicked()} slot, as follows:
+
+    \skipto AddDialog dialog(this);
+    \printuntil }
+    \printuntil }
+
+    The dialog is executed. If the user accepts it by selecting \uicontrol OK,
+    the \uicontrol Name and \uicontrol Email fields are extracted and a
+    QListWidgetItem that contains the specified information is created.
+
+    \section1 Displaying the Selected Item
+
+    When the user selects an item in the list widget, the \c nameLabel and
+    \c emailLabel at the bottom of the form should be updated. This behavior
+    requires another slot to be added to the \c AddressBook class.
+
+    In the \c addressbook.h file, add the following code in the
+    \c{private slots} section of the class:
+
+    \quotefromfile AddressBook/addressbook.h
+    \skipto on_addressList_currentItemChanged()
+    \printuntil ;
+
+    Then, add the block of code below to \c addressbook.cpp:
+
+    \quotefromfile AddressBook/addressbook.cpp
+    \skipto on_addressList_currentItemChanged()
+    \printuntil /^\}/
+
+    Thanks to the naming convention, this slot will automatically be connected
+    to the QListWidget::currentItemChanged() signal of \c{addressList} and
+    invoked whenever the selected item in the list changes.
+
+    \section1 Adding Functionality for the Delete Button
+
+    To implement a slot for the \uicontrol Delete button, open the
+    \c addressbook.h file in Visual Studio and add a declaration for the
+    \c on_deleteButton_clicked() slot. Then open \c addressbook.cpp and add the
+    slot definition for \c on_deleteButton_clicked().
+
+    Type the following code in the slot's body:
+
+    \skipto on_deleteButton_clicked()
+    \printuntil /^\}/
+
+    Your application is now complete.
+
+    \section1 Creating Qt Project Files
+
+    To build the application on other platforms, you need to create a \c .pro
+    file for the project.
+
+    To let Qt VS Tools create a basic \c .pro file for you:
+
+    \list 1
+        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Create Basic .pro
+            File}.
+        \li In the \uicontrol {Export Project} dialog, make sure that the
+            \uicontrol {Create .pri file} check box is selected, and then select
+            \uicontrol OK.
+        \li Select \uicontrol Save to use the default location and name for
+            saving the \c .pri file.
+    \endlist
+
+    For more information about \c .pro files and their associated \c .pri files,
+    see \l {Managing Projects}.
+
+    You should now have a working \c .pro file and \c .pri file for your
+    project. For more complex projects, manually editing the \c .pro file
+    is required to make it work on all platforms. However, for the example
+    project, the generated \c .pro file is sufficient.
+*/
+
+/*!
+    \page qtvstools-managing-projects.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Getting Started
+    \nextpage Adding Form Files to Projects
+    \title Managing Projects
+
+    Once you have installed Qt VS Tools, you can select the following project
+    templates in Visual Studio in \uicontrol File > \uicontrol {New Project} >
+    \uicontrol Installed > \uicontrol Templates > \uicontrol {Visual C++} >
+    \uicontrol Qt:
+
+    \list
+        \li \uicontrol {Qt GUI Application} creates a simple Qt GUI Application
+            with one form.
+        \li \uicontrol {Qt Custom Designer Widget} creates a \QD custom widget
+            plugin.
+        \li \uicontrol {Qt Console Application} creates a basic Qt console
+            application.
+        \li \uicontrol {Qt Class Library} creates a basic Qt-based dynamic
+            library.
+        \li \uicontrol {Qt ActiveQt Server} creates a simple ActiveX server.
+    \endlist
+
+    Each Qt project provides a wizard that allows you to specify the Qt modules
+    required for your project. For some projects, the wizard will also generate
+    a skeleton class that you can use to get started.
+
+    To start writing Qt code and building your projects, you must tell Visual
+    Studio where to find the Qt version that you want to use.
+
+    \section1 Managing Qt Versions
+
+    Qt VS Tools provide you with basic Qt version management that enables you to
+    use multiple versions of Qt 5 in parallel. For example, Qt 5.6.1 and 5.7.0.
+    When you install Qt VS Tools, the information about Qt versions is added to
+    the user registry hive. So, other users will have to add a new Qt version,
+    because no default version will be set.
+
+    \image qtvstools-qt-versions.png Qt Versions
+
+    To manage Qt versions:
+
+    \list 1
+        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Qt Options} >
+            \uicontrol {Qt Versions} > \uicontrol Add.
+        \li In the \uicontrol {Version name} field, enter a name for the Qt
+            version.
+        \li In the \uicontrol Path field, enter the path to the Qt root
+            directory. For example: \c {C:\Qt5\5.7\msvc2013_64}.
+        \li Select \uicontrol OK.
+        \li In the \uicontrol {Default Qt/Win version} field, select the Qt
+            version to be used by default when creating new projects or
+            importing a project from a \c {.pro} file.
+    \endlist
+
+    To use the Qt version set in the \c QTDIR environment variable, create a
+    version named \c {$(QTDIR)}. Because the path is not needed, the
+    \uicontrol Path field is disabled.
+
+    To specify the Qt version that the selected project should use, select
+    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
+    \uicontrol Properties > \uicontrol Version.
+
+    To change the Qt version for all projects in a solution, select
+    \uicontrol {Change Solutions' Qt Version} in the context menu, and then
+    select a Qt version in the \uicontrol {Installed Qt Versions} field.
+
+    \note When you set a Qt version for the solution, it becomes the default
+    version for the new projects that you add to the solution.
+
+    Using Qt VS Tools does not require a globally set Qt environment variable.
+    In fact, Qt VS Tools will always overwrite the existing global Qt
+    environment variable.
+
+    \note If building Qt projects fails with the error message
+    \tt{The following environment variables were not found: $(QTDIR)},
+    the project might have an invalid Qt build specified. For example, the
+    specified Qt version has been uninstalled. To fix this error, specify a
+    valid Qt version for the project.
+
+    Qt VS Tools handle everything you need in order to create applications for
+    Windows, so you do not need to add a platform manually using the Visual
+    Studio Configuration Manager. Qt VS Tools create the platform required for
+    the selected Qt version, if necessary.
+
+    To switch between platforms, choose the appropriate Qt version in the
+    \uicontrol Version field.
+
+    \section1 Modifying Project Properties
+
+    The properties of new Qt projects are initialized to the values specified in
+    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings}.
+
+    To modify properties for a particular Qt project, select it in the solution
+    explorer, and then select \uicontrol {Qt VS Tools} >
+    \uicontrol {Qt Project Settings}.
+
+    \image qtvstools-qt-project-settings.png Qt Project Settings dialog
+
+    You can change the following Qt project settings in the
+    \uicontrol Properties tab:
+
+    \table
+        \header
+            \li Property
+            \li Description
+        \row
+            \li LReleaseOptions
+            \li Additional command-line options for the \l {Using lrelease}
+                {lrelease} tool.
+        \row
+            \li lupdateOnBuild
+            \li A flag that determines whether to create the translation files
+                while building the project.
+        \row
+            \li LUpdateOptions
+            \li Additional command-line options for the \l {Using lupdate}
+                {lupdate} tool.
+        \row
+            \li MocDirectory
+            \li The directory (relative to the project) where the generated
+                \l {Using the Meta-Object Compiler (moc)}{moc} files are put.
+                This directory must include the \c $(ConfigurationName) variable
+                to ensure that the \c moc files for different configurations
+                (such as \c debug or \c release) do not collide. You can use the
+                \c $(PlatformName) variable to place the files generated for
+                different platforms into separate directories.
+        \row
+            \li MocOptions
+            \li Additional command-line options for the \c moc build step.
+        \row
+            \li RccDirectory
+            \li The directory (relative to the project) where the
+            \l {Resource Compiler (rcc)}{rcc} generated source files are put.
+        \row
+            \li UicDirectory
+            \li The directory (relative to the project) where the
+            \l {User Interface Compiler (uic)}{uic} generated header files are
+                put.
+        \row
+            \li Version
+            \li The \l {Managing Qt Versions}{Qt version} to use for this
+                project.
+    \endtable
+
+    Select \uicontrol {Qt Modules} to add and delete dependencies for the
+    project.
+
+    \section1 Importing and Exporting Projects
+
+    Qt and Visual Studio use different file formats to save projects. If you
+    build your application on multiple platforms, you probably already use
+    Qt \c .pro files with \l {qmake Manual}{qmake}. Otherwise, you might use
+    \c .vcproj files and Visual Studio to build your project, which is usually
+    more convenient for Windows-only development.
+
+    Qt VS Tools provide a way to combine both approaches so that you do not have
+    to manually maintain \c .pro files and \c .vcproj files in parallel. You
+    start by creating a \c .vcproj file, as usual. When you need a qmake
+    \c .pro file for storing Linux and macOS specific settings, select
+    \uicontrol {Qt VS Tools} > \uicontrol {Create Basic .pro File}.
+
+    \image qtvstools-export-project.png Export Projects dialog
+
+    If you have multiple Qt projects in one Visual Studio solution, the basic
+    \c .pro file generator can create a master \c .pro file of type \c subdirs
+    that includes all of the projects.
+
+    The generated \c .pro file is not meant to be a complete file, but a simple
+    starting point for porting to other platforms. However, these files
+    should be sufficient for compiling the skeleton projects created by the
+    predefined Qt project wizards. The \c .pro file includes a \c .pri file.
+
+    The \c .pri file contains the list of source files, header files, \c .ui
+    files, and \c .qrc files in the project. To generate the \c .pri file,
+    select \uicontrol {Qt VS Tools} > \uicontrol {Export Project to .pri File}.
+    When you add or remove a file from the Visual Studio project file, you must
+    regenerate the \c .pri file to ensure that the application can still be
+    built on other platforms.
+
+    Also, make sure that the \c .pri file included in the \c .pro file points to
+    the correct file. If you saved the \c .pri file using the suggested path and
+    name, this reference should be correct.
+
+    Developers on platforms other than Windows might add or remove files to the
+    project by editing the \c .pri file. When this happens, Windows developers
+    must select \uicontrol {Qt VS Tools} > \uicontrol {Import .pri File to
+    Project} to synchronize the Visual Studio project file with the \c .pri
+    file.
+
+    If your project contains platform-specific source files, you should list
+    them in the \c .pro file so that they are not overwritten by Qt VS Tools.
+
+    To summarize, a cross-platform Qt project consists of the following files:
+
+    \list
+        \li A \c .vcproj file containing Windows-specific settings and listing
+            the files in the project.
+        \li A \c .pro file containing Linux and macOS specific settings.
+        \li A \c .pri file (a \c qmake include file) listing the files in the
+            project.
+    \endlist
+
+    If you already have a \c .pro file but no \c .vcproj file, select
+    \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)} to
+    convert your \c .pro file to a \c .vcproj file. The generated \c .vcproj
+    only contains Windows-specific settings. Also, there is no other way to
+    convert a \c .vcproj file back to the \c .pro file format than using the
+    \uicontrol {Create Basic .pro File} function.
+*/
+
+/*!
+    \page qtvstools-form-files.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Managing Projects
+    \nextpage Managing Resources
+    \title Adding Form Files to Projects
+
+    You can start \QD from Qt VS Tools by double-clicking a \c .ui file. For
+    more information about using \QD, see the \l{Qt Designer Manual}.
+
+    To add a new \c .ui file to the project, select \uicontrol Project >
+    \uicontrol {Add Qt Class} > \uicontrol Installed > \uicontrol {Visual C++} >
+    \uicontrol Qt > \uicontrol {Qt GUI Class}.
+
+    \image qtvstools-qt-gui-class-wizard.png
+
+    Typically, you need to wrap the code generated for the form file into a
+    QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
+    create a \c .h and \c .cpp file for you, along with an empty UI form.
+*/
+
+/*!
+    \page qtvstools-managing-resources.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Adding Form Files to Projects
+    \nextpage Creating Qt Translation Files for Projects
+    \title Managing Resources
+
+    Adding new resources to a Qt project is similar to adding resources to a
+    normal C++ project. The main difference is that \c .qrc files (Qt
+    resource files) are used instead of Windows \c .rc files. Unlike \c .rc
+    files, \c .qrc files work on all platforms supported by Qt and are trivial
+    to load from Qt code.
+
+    \image qtvstools-qrc-editor.png Qt Resource Editor dialog
+
+    To add new resources:
+
+    \list 1
+        \li Select \uicontrol Project > \uicontrol {Add New Item} >
+            \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt >
+            \uicontrol {Qt Resource File}.
+        \li In the \uicontrol Name field, enter a name for the resource file.
+        \li In the \uicontrol Location field, specify a location for the file.
+        \li Select \uicontrol Add to create a \c .qrc file and to open it in the
+            \uicontrol {Qt Resource Editor}.
+        \li To add resources to the file, select \uicontrol Add >
+            \uicontrol {Add Files}.
+        \li In the \uicontrol Prefix field, you can change the prefix.
+    \endlist
+
+    When referring to the resources later on from Qt code, you must prepend the
+    prefix, the file name, and a colon. For example, \c{:/MyProject/print.bmp}.
+
+    To add prefixes to the \c .qrc file, select \uicontrol Add >
+    \uicontrol {Add Prefix} in the \uicontrol {Qt Resource Editor}.
+
+    For more information, see \l{The Qt Resource System}.
+*/
+
+/*!
+    \page qtvstools-translation-files.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Managing Resources
+    \nextpage FAQ
+    \title Creating Qt Translation Files for Projects
+
+    To add a new translation file to the project:
+
+    \list 1
+        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Create New Translation
+            File}.
+        \li In the \uicontrol Language field, select a language from the list of
+            supported languages.
+        \li In the \uicontrol Filename field, enter a filename for the
+            translation file.
+        \li Select \uicontrol OK to create the file and have it listed in
+            \uicontrol {Translation Files} in Visual Studio's Solution Explorer.
+        \li Right-click a translation file to open a context menu with options
+            for running \c lupdate and \c lrelease.
+    \endlist
+
+    To start \QL, select \uicontrol {Qt VS Tools} >
+    \uicontrol {Launch Qt Linguist} or double-click a \c .ts file in the
+    Solution Explorer.
+
+    For more information about Qt's translation tools, see the
+    \l {Qt Linguist Manual}.
+*/
+
+/*!
+    \page qtvstools-faq.html
+    \contentspage {Qt VS Tools}{Contents}
+    \previouspage Creating Qt Translation Files for Projects
+    \title FAQ
+
+    \section1 How to set up F1 help?
+
+    \list 1
+        \li Select \uicontrol Tools > \uicontrol Options >
+            \uicontrol Environment > \uicontrol Keyboard.
+        \li In the \uicontrol {Show commands containing} field, enter
+            \e {Help.F1QtHelp}.
+        \li Select the \uicontrol {Press shortcut keys} field and press your
+            preferred keys to add them to the field. The default shortcut is
+            \key {Alt+F1}.
+        \li Select \uicontrol Assign, and then select \uicontrol OK.
+    \endlist
+
+    \section1 Why is code completion not working?
+
+    You might be referencing objects from a \c .ui file. The Visual Studio code
+    model parser only parses C++ sources, and therefore widgets or objects
+    defined in \c .ui files will not be accessible.
+
+    As a workaround, Qt VS Tools automatically generate C++ code from the \c .ui
+    file by saving the file and running \c uic on it each time the project is
+    built.
+
+    If code completion does not work, try to rebuild the project. You might have
+    to wait some time before code completion fully works after updating a \c .ui
+    file. For more information, see \l{Modifying Project Properties}.
+
+    If rebuilding does not help, refresh the code model by selecting
+    \uicontrol {Rescan Solution} in the context menu of the project.
+*/
+
