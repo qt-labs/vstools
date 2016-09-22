@@ -28,10 +28,6 @@ defineTest(minQtVersion) {
     return(false)
 }
 
-!static {
-    error("Please use a static Qt to build the tools.")
-}
-
 !minQtVersion(5, 6, 0) {
     message("Cannot build Qt VS Tools with Qt version $${QT_VERSION}.")
     error("Use at least Qt 5.6.0.")
