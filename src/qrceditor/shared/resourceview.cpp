@@ -405,7 +405,7 @@ QModelIndex ResourceView::addPrefix()
 
 QStringList ResourceView::fileNamesToAdd()
 {
-    return QFileDialog::getOpenFileNames(this, tr("Open file"),
+    return QFileDialog::getOpenFileNames(this, tr("Open File"),
             m_qrcModel->absolutePath(QString()),
             tr("All files (*)"));
 }
@@ -500,7 +500,7 @@ void ResourceView::changePrefix(const QModelIndex &index)
     QString dummy;
     m_qrcModel->getItem(preindex, prefixBefore, dummy);
 
-    QString const prefixAfter = QInputDialog::getText(this, tr("Change Prefix"), tr("Input Prefix:"),
+    QString const prefixAfter = QInputDialog::getText(this, tr("Change Prefix"), tr("Input prefix:"),
         QLineEdit::Normal, prefixBefore, &ok);
 
     if (ok)

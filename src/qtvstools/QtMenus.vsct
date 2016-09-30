@@ -180,8 +180,8 @@
                 <Icon guid="MenuImages" id="LaunchDesignerBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Launch Designer</ButtonText>
-                    <ToolTipText>This will start Qt Designer.</ToolTipText>
+                    <ButtonText>Launch Qt Designer</ButtonText>
+                    <ToolTipText>Start Qt Designer</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="LaunchLinguistId" priority="0x0100" type="Button">
@@ -189,8 +189,8 @@
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Launch Linguist</ButtonText>
-                    <ToolTipText>This will start Qt Linguist.</ToolTipText>
+                    <ButtonText>Launch Qt Linguist</ButtonText>
+                    <ToolTipText>Start Qt Linguist</ToolTipText>
                 </Strings>
             </Button>
 
@@ -199,7 +199,7 @@
                 <Icon guid="MenuImages" id="OpenProFileBitmap" />
                 <Strings>
                     <ButtonText>Open Qt Project File (.pro)...</ButtonText>
-                    <ToolTipText>Opens a Qt Project File (.pro) and creates a new solution respectively adds a new project to the current solution.</ToolTipText>
+                    <ToolTipText>Open a Qt Project File (.pro), create a new solution, and add a new project to it</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ImportPriFileId" priority="0x0100" type="Button">
@@ -208,7 +208,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <ButtonText>Import .pri File to Project...</ButtonText>
-                    <ToolTipText>This will import a .pri file and create a Qt project from it.</ToolTipText>
+                    <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ExportPriFileId" priority="0x0100" type="Button">
@@ -217,7 +217,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <ButtonText>Export Project to .pri File...</ButtonText>
-                    <ToolTipText>This will export the current project to a .pri file.</ToolTipText>
+                    <ToolTipText>Export the current project to a .pri file</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ExportProFileId" priority="0x0100" type="Button">
@@ -225,8 +225,8 @@
                 <Icon guid="MenuImages" id="CreateProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Create basic .pro File...</ButtonText>
-                    <ToolTipText>This will export the current project to a Qt Project file (.pro).</ToolTipText>
+                    <ButtonText>Create Basic .pro File...</ButtonText>
+                    <ToolTipText>Export the current project to a Qt project file (.pro)</ToolTipText>
                 </Strings>
             </Button>
 
@@ -234,8 +234,8 @@
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Create new Translation File</ButtonText>
-                    <ToolTipText>Creates a new translation file for Qt Linguist.</ToolTipText>
+                    <ButtonText>Create New Translation File</ButtonText>
+                    <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ConvertToQtId" priority="0x0100" type="Button">
@@ -244,7 +244,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to Qt VS Tools project</ButtonText>
+                    <ButtonText>Convert Project to Qt VS Tools Project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ConvertToQmakeId" priority="0x0100" type="Button">
@@ -252,7 +252,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to QMake generated project</ButtonText>
+                    <ButtonText>Convert Project to QMake Generated Project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="QtProjectSettingsId" priority="0x0100" type="Button">
@@ -261,7 +261,7 @@
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Qt Project Settings</ButtonText>
-                    <ToolTipText>Edit Qt settings of the current project.</ToolTipText>
+                    <ToolTipText>Edit Qt settings of the current project</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="MainMenuGuid" id="ChangeProjectQtVersionId" priority="0x0100" type="Button">
@@ -270,7 +270,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Change project's Qt Version</ButtonText>
+                    <ButtonText>Change Project's Qt Version</ButtonText>
                 </Strings>
             </Button>
 
@@ -279,7 +279,7 @@
                 <Icon guid="MenuImages" id="QtLogoBitmap" />
                 <Strings>
                     <ButtonText>Qt Options</ButtonText>
-                    <ToolTipText>Configure the default Qt settings.</ToolTipText>
+                    <ToolTipText>Configure the default Qt settings</ToolTipText>
                 </Strings>
             </Button>
 
@@ -294,7 +294,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>lupdate all .ts files in solution</ButtonText>
+                    <ButtonText>lupdate All .ts Files in Solution</ButtonText>
                 </Strings>
             </Button>
             <Button guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId" priority="0x0100" type="Button">
@@ -304,7 +304,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>lrelease all .ts files in solution</ButtonText>
+                    <ButtonText>lrelease All .ts Files in Solution</ButtonText>
                 </Strings>
             </Button>
 
@@ -315,7 +315,7 @@
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Change Solution's Qt Version</ButtonText>
-                    <ToolTipText>Change the Qt version for this solution and all contained projects.</ToolTipText>
+                    <ToolTipText>Change the Qt version for this solution and all contained projects</ToolTipText>
                 </Strings>
             </Button>
 
@@ -329,7 +329,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <ButtonText>Import .pri File to Project...</ButtonText>
-                    <ToolTipText>This will import a .pri file and create a Qt project from it.</ToolTipText>
+                    <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ExportPriFileProjectId" priority="0x0100" type="Button">
@@ -338,7 +338,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <ButtonText>Export Project to .pri File...</ButtonText>
-                    <ToolTipText>This will export the current project to a .pri file.</ToolTipText>
+                    <ToolTipText>Export the current project to a .pri file</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ExportProFileProjectId" priority="0x0100" type="Button">
@@ -346,8 +346,8 @@
                 <Icon guid="MenuImages" id="CreateProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Create basic .pro File...</ButtonText>
-                    <ToolTipText>This will export the current project to a Qt Project file (.pro).</ToolTipText>
+                    <ButtonText>Create Basic .pro File...</ButtonText>
+                    <ToolTipText>Export the current project to a Qt Project file (.pro)</ToolTipText>
                 </Strings>
             </Button>
 
@@ -355,8 +355,8 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>Create new Translation File</ButtonText>
-                    <ToolTipText>Creates a new translation file for Qt Linguist.</ToolTipText>
+                    <ButtonText>Create New Translation File</ButtonText>
+                    <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="lUpdateOnProjectId" priority="0x0100" type="Button">
@@ -364,7 +364,7 @@
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>lupdate all .ts files in project</ButtonText>
+                    <ButtonText>lupdate All .ts Files in Project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="lReleaseOnProjectId" priority="0x0100" type="Button">
@@ -372,7 +372,7 @@
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
-                    <ButtonText>lrelease all .ts files in project</ButtonText>
+                    <ButtonText>lrelease All .ts Files in Project</ButtonText>
                 </Strings>
             </Button>
 
@@ -382,7 +382,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to Qt VS Tools project</ButtonText>
+                    <ButtonText>Convert Project to Qt VS Tools Project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ConvertToQmakeProjectId" priority="0x0100" type="Button">
@@ -390,7 +390,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Convert project to QMake generated project</ButtonText>
+                    <ButtonText>Convert Project to QMake Generated Project</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="QtProjectSettingsProjectId" priority="0x0100" type="Button">
@@ -399,7 +399,7 @@
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Qt Project Settings</ButtonText>
-                    <ToolTipText>Edit Qt settings of the current project.</ToolTipText>
+                    <ToolTipText>Edit Qt settings of the current project</ToolTipText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ChangeProjectQtVersionProjectId" priority="0x0100" type="Button">
@@ -408,7 +408,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
-                    <ButtonText>Change project's Qt Version</ButtonText>
+                    <ButtonText>Change Project's Qt Version</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ProjectAddNewQtClassProjectId" priority="0x0100" type="Button">

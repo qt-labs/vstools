@@ -34,7 +34,7 @@
             xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
             Type="Item">
     <TemplateData>
-        <Name>Qt Dialog Form File (Button right)</Name>
+        <Name>Qt Dialog Form File (Button Right)</Name>
         <Icon>dialogbuttonright.ico</Icon>
         <ProjectType>VC</ProjectType>
         <AppliesTo>VisualC</AppliesTo>
