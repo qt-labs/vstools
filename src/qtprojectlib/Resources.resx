@@ -144,10 +144,10 @@ To do this you must open the .vcproj file manually.
 Do you want to overwrite it?</value>
   </data>
   <data name="ExportProject_ExportPriFile" xml:space="preserve">
-    <value>Export to .pri file.</value>
+    <value>Export to .pri File</value>
   </data>
   <data name="ExportProject_ImportPriFile" xml:space="preserve">
-    <value>Import from .pri file.</value>
+    <value>Import from .pri File</value>
   </data>
   <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
     <value>Cannot find any Qt 4 projects to export.</value>
@@ -167,7 +167,7 @@ Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
 (Maybe the .vcproj or .sln file is corrupt?)</value>
   </data>
   <data name="ExportProject_SelectQtProjectToAdd" xml:space="preserve">
-    <value>Select a Qt project to add to the solution.</value>
+    <value>Select a Qt Project to Add to the Solution</value>
   </data>
   <data name="ExportProject_SolutionProFileBuildIn" xml:space="preserve">
     <value>Do you want a solution .pro file to be built in {0}?</value>
