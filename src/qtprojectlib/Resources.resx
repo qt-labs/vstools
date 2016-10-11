@@ -285,7 +285,7 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="QtVersionManager_CannotLoadQtVersion" xml:space="preserve">
     <value>Cannot load the default Qt version.</value>
   </data>
-  <data name="Resources_QtVisualStudioIntegration" xml:space="preserve">
+  <data name="Resources_QtVsTools" xml:space="preserve">
     <value>Qt VS Tools</value>
   </data>
   <data name="Resources_AddQtResource" xml:space="preserve">

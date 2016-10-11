@@ -98,8 +98,6 @@ namespace QtProjectLib
         public const string generatedFilesDir = "GeneratedFiles";
         #endregion
 
-        public static string msgBoxCaption = SR.GetString("Resources_QtVisualStudioIntegration");
-
         public const string mocDirKeyword = "MocDir";
         public const string mocOptionsKeyword = "MocOptions";
         public const string uicDirKeyword = "UicDir";

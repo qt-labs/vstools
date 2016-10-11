@@ -86,7 +86,7 @@ namespace QtProjectLib
             MinimizeBox = false;
             Name = "Form1";
             ShowInTaskbar = false;
-            Text = Resources.msgBoxCaption;
+            Text = SR.GetString("Resources_QtVsTools");
             StartPosition = FormStartPosition.CenterParent;
 
             ResumeLayout(false);

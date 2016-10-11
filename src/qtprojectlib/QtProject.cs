@@ -1851,7 +1851,7 @@ namespace QtProjectLib
             bool replace = true;
             if (File.Exists(fullDestName)) {
                 if (DialogResult.No == MessageBox.Show(SR.GetString("QtProject_FileExistsInProjectFolder", destName)
-                    , Resources.msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
+                    , SR.GetString("Resources_QtVsTools"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                     replace = false;
                 }
             }
