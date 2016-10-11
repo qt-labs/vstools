@@ -137,7 +137,7 @@ namespace QtVsTools
             if (QtVSIPSettings.GetAskBeforeCheckoutFile()) {
                 var shortFileName = Path.GetFileName(fileName);
                 var dr = MessageBox.Show(SR.GetString("QuestionSCCCheckoutOnOpen", shortFileName),
-                    Resources.msgBoxCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                    SR.GetString("Resources_QtVsTools"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1);
                 if (dr == DialogResult.Cancel)
                     abortOperation = true;
@@ -267,7 +267,7 @@ namespace QtVsTools
 
             qtDir = HelperFunctions.FindQtDirWithTools(tool, qtVersion);
             if (string.IsNullOrEmpty(qtDir))
-                MessageBox.Show(SR.GetString("NoDefaultQtVersionError"), Resources.msgBoxCaption);
+                MessageBox.Show(SR.GetString("NoDefaultQtVersionError"), SR.GetString("Resources_QtVsTools"));
             return !string.IsNullOrEmpty(qtDir);
         }
 

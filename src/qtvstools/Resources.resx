@@ -384,4 +384,13 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   <data name="XmlPatternsLibrary" xml:space="preserve">
     <value>XML Patterns</value>
   </data>
+  <data name="ExportProject_ImportPriFile" xml:space="preserve">
+    <value>Import from .pri file</value>
+  </data>
+  <data name="Helpers_ExitError" xml:space="preserve">
+    <value>The application exited with an error (ExitCode {0}):</value>
+  </data>
+  <data name="Resources_QtVsTools" xml:space="preserve">
+    <value>Qt VS Tools</value>
+  </data>
 </root>
