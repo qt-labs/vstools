@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="OK" xml:space="preserve">
-    <value>&amp;OK</value>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
-  </data>
   <data name="ExportSolution" xml:space="preserve">
     <value>Export Solution</value>
   </data>
@@ -205,12 +199,6 @@ Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
   </data>
   <data name="QMakeProcess_OpenSolutionFromFile" xml:space="preserve">
     <value>Open solution from file: </value>
-  </data>
-  <data name="HelperFunctions_TryCreatingNewProject" xml:space="preserve">
-    <value>Try creating a new project.</value>
-  </data>
-  <data name="HelperFunctions_ErrorSearchForQtTemplatePath" xml:space="preserve">
-    <value>An error occurred while searching for the Qt templates path.</value>
   </data>
   <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
     <value>Cannot write environment variable QTDIR.</value>
@@ -321,9 +309,6 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="Resources_GeneratedFiles" xml:space="preserve">
     <value>Generated Files</value>
   </data>
-  <data name="CommandBarNotFound" xml:space="preserve">
-    <value>Could not add "Qt" entry to command bar.</value>
-  </data>
   <data name="QtProject_CannotFindCustomBuildTool" xml:space="preserve">
     <value>Could not find custom build tool for {0}.</value>
   </data>
@@ -332,9 +317,6 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   </data>
   <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
     <value>Could not parse QTDIR from project file {0}.</value>
-  </data>
-  <data name="Helpers_ExitError" xml:space="preserve">
-    <value>The application exited with an error (ExitCode {0}):</value>
   </data>
   <data name="Resources_OtherFiles" xml:space="preserve">
     <value>Other Files</value>
