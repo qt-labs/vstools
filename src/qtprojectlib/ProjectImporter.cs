@@ -83,7 +83,7 @@ namespace QtProjectLib
             var VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
-            ReplaceAbsoluteQtDirInSolution(VCInfo);
+            ReplaceAbsoluteQtDirInSolution(VCInfo, versionInfo);
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -112,7 +112,7 @@ namespace QtProjectLib
             if (null == VCInfo)
                 return;
 
-            ReplaceAbsoluteQtDirInProject(VCInfo);
+            ReplaceQtDirInProject(VCInfo, versionInfo);
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -178,12 +178,12 @@ namespace QtProjectLib
             }
         }
 
-        private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile)
+        private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
             foreach (string project in projects) {
                 var projectInfo = new FileInfo(project);
-                ReplaceAbsoluteQtDirInProject(projectInfo);
+                ReplaceQtDirInProject(projectInfo, vi);
             }
         }
 
@@ -205,15 +205,18 @@ namespace QtProjectLib
             return projects;
         }
 
-        private void ReplaceAbsoluteQtDirInProject(FileInfo projectFile)
+        private void ReplaceQtDirInProject(FileInfo projectFile, VersionInformation vi)
         {
             var sr = projectFile.OpenText();
             var content = sr.ReadToEnd();
             sr.Close();
 
-            var qtDir = ParseQtDirFromFileContent(content);
+            var qtDir = ParseQtDirFromFileContent(content, vi);
             if (!string.IsNullOrEmpty(qtDir)) {
                 content = HelperFunctions.ReplaceCaseInsensitive(content, qtDir, "$(QTDIR)\\");
+                // qmake tends to write relative and absolute paths into the .vcxproj file
+                if (!Path.IsPathRooted(qtDir)) // if the project is on the same drive as Qt.
+                    content = HelperFunctions.ReplaceCaseInsensitive(content, vi.qtDir + '\\', "$(QTDIR)\\");
                 var sw = projectFile.CreateText();
                 sw.Write(content);
                 sw.Flush();
@@ -223,11 +226,18 @@ namespace QtProjectLib
             }
         }
 
-        private static string ParseQtDirFromFileContent(string vcFileContent)
+        private static string ParseQtDirFromFileContent(string vcFileContent, VersionInformation vi)
         {
+            // Starting with Qt5 beta2 the "\\mkspecs\\default" folder is not available anymore,
+            var mkspecs = "mkspecs\\"; // try to use the spec we run qmake with.
+            var index = vi.QMakeSpecDirectory.IndexOf(mkspecs, StringComparison.OrdinalIgnoreCase);
+            if (!string.IsNullOrEmpty(vi.QMakeSpecDirectory) && index >= 0)
+                mkspecs = vi.QMakeSpecDirectory.Substring(index);
+
             var uicQtDir = FindQtDirFromExtension(vcFileContent, "bin\\uic.exe");
             var rccQtDir = FindQtDirFromExtension(vcFileContent, "bin\\rcc.exe");
-            var mkspecQtDir = FindQtDirFromExtension(vcFileContent, "mkspecs\\default");
+            var mkspecQtDir = FindQtDirFromExtension(vcFileContent, mkspecs);
+
             if (!string.IsNullOrEmpty(mkspecQtDir)) {
                 if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower()) {
                     return "";
@@ -271,8 +281,6 @@ namespace QtProjectLib
                 s = s.Trim(new char[] { ' ', '\"', ',' });
                 if (s.StartsWith(">"))
                     s = s.Substring(1);
-                if (!Path.IsPathRooted(s))
-                    s = null;
             }
             return s;
         }
