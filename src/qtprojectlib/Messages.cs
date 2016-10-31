@@ -46,7 +46,7 @@ namespace QtProjectLib
         {
             var wnd = (EnvDTE.OutputWindow) dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
             if (wndp == null) {
-                wndp = wnd.OutputWindowPanes.Add(Resources.msgBoxCaption);
+                wndp = wnd.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
             }
 
             wndp.OutputString(str + "\r\n");
@@ -88,14 +88,14 @@ namespace QtProjectLib
         {
             MessageBox.Show(ErrorString +
                 ExceptionToString(e),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayCriticalErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
                 MessageToString(msg),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayErrorMessage(System.Exception e, string solution)
@@ -104,7 +104,7 @@ namespace QtProjectLib
                 ExceptionToString(e) +
                 SolutionString +
                 solution,
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayErrorMessage(string msg, string solution)
@@ -113,21 +113,21 @@ namespace QtProjectLib
                 MessageToString(msg) +
                 SolutionString +
                 solution,
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayErrorMessage(System.Exception e)
         {
             MessageBox.Show(ErrorString +
                 ExceptionToString(e),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
                 MessageToString(msg),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static public void DisplayWarningMessage(System.Exception e, string solution)
@@ -136,7 +136,7 @@ namespace QtProjectLib
                 ExceptionToString(e) +
                 SolutionString +
                 solution,
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         static public void DisplayWarningMessage(string msg, string solution)
@@ -145,21 +145,21 @@ namespace QtProjectLib
                 MessageToString(msg) +
                 SolutionString +
                 solution,
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         static public void DisplayWarningMessage(System.Exception e)
         {
             MessageBox.Show(WarningString +
                 ExceptionToString(e),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         static public void DisplayWarningMessage(string msg)
         {
             MessageBox.Show(WarningString +
                 MessageToString(msg),
-                Resources.msgBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

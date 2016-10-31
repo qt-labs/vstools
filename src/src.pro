@@ -4,3 +4,4 @@ SUBDIRS = \
     qrceditor
 
 include(src.pri)
+include(../vstools.pri)

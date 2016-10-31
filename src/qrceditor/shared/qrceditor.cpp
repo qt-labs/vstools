@@ -226,7 +226,7 @@ void QrcEditor::resolveLocationIssues(QStringList &files)
         } else {
             // Path troublesome -> query user
             QMessageBox message(this);
-            message.setWindowTitle(tr("Invalid file location"));
+            message.setWindowTitle(tr("Invalid File Location"));
             message.setIcon(QMessageBox::Warning);
             QPushButton * const copyButton = message.addButton(tr("Copy"), QMessageBox::ActionRole);
             QPushButton * skipButton = NULL;
@@ -262,7 +262,7 @@ void QrcEditor::resolveLocationIssues(QStringList &files)
                     }
                     if (QFile::exists(copyName)) {
                         if (!QFile::remove(copyName)) {
-                            QMessageBox::critical(this, tr("Overwrite failed"),
+                            QMessageBox::critical(this, tr("Overwrite Failed"),
                                                   tr("Could not overwrite file %1.")
                                                   .arg(QDir::toNativeSeparators(copyName)));
                             // Remove file
@@ -273,7 +273,7 @@ void QrcEditor::resolveLocationIssues(QStringList &files)
                         }
                     }
                     if (!QFile::copy(file, copyName)) {
-                        QMessageBox::critical(this, tr("Copying failed"),
+                        QMessageBox::critical(this, tr("Copying Failed"),
                                               tr("Could not copy the file to %1.")
                                               .arg(QDir::toNativeSeparators(copyName)));
                         // Remove file

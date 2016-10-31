@@ -36,7 +36,6 @@ namespace QtProjectLib
     {
         protected Hashtable mEntries = new Hashtable();
         private FileInfo fileInfo;
-        private string qmakespecFolder = "";
 
         public QMakeConf(VersionInformation versionInfo)
         {
@@ -59,28 +58,30 @@ namespace QtProjectLib
             }
         }
 
+        public string QMakeSpecDirectory { get; private set; }
+
         protected void Init(VersionInformation versionInfo)
         {
-            string filename = versionInfo.qtDir + "\\mkspecs\\default\\qmake.conf";
-            fileInfo = new FileInfo(filename);
+            QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", "default");
+            var qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
 
             // Starting from Qt5 beta2 there is no more "\\mkspecs\\default" folder available
             // To find location of "qmake.conf" there is a need to run "qmake -query" command
             // This is what happens below.
-            if (!fileInfo.Exists) {
+            if (!File.Exists(qmakeConf)) {
                 var qmakeQuery = new QMakeQuery(versionInfo);
-                qmakespecFolder = qmakeQuery.query("QMAKE_XSPEC");
+                var qmakespecDir = qmakeQuery.query("QMAKE_XSPEC");
 
-                if (qmakeQuery.ErrorValue == 0 && qmakespecFolder.Length > 0) {
-                    filename = versionInfo.qtDir + "\\mkspecs\\" + qmakespecFolder + "\\qmake.conf";
-                    fileInfo = new FileInfo(filename);
+                if (qmakeQuery.ErrorValue == 0 && !string.IsNullOrEmpty(qmakespecDir)) {
+                    QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", qmakespecDir);
+                    qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
                 }
 
-                if (qmakeQuery.ErrorValue != 0 || !fileInfo.Exists)
-                    throw new QtVSException("qmake.conf expected at " + filename + " not found");
+                if (qmakeQuery.ErrorValue != 0 || !File.Exists(qmakeConf))
+                    throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
             }
 
-            Init(filename);
+            Init(qmakeConf);
         }
 
         protected void Init(string filename)
@@ -138,7 +139,16 @@ namespace QtProjectLib
                     line = streamReader.ReadLine();
                 }
                 streamReader.Close();
+
+                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_CONSOLE", ref entries);
+                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_WINDOWS", ref entries);
             }
+        }
+
+        static void RemoveQmakeSubsystemSuffix(string key, ref Hashtable hash)
+        {
+            if (hash.Contains(key))
+                hash[key] = hash[key].ToString().Replace("@QMAKE_SUBSYSTEM_SUFFIX@", string.Empty);
         }
 
         private string ExpandVariables(string value, Hashtable entries)

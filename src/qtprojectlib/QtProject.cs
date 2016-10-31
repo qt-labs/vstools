@@ -1839,7 +1839,7 @@ namespace QtProjectLib
             bool replace = true;
             if (File.Exists(fullDestName)) {
                 if (DialogResult.No == MessageBox.Show(SR.GetString("QtProject_FileExistsInProjectFolder", destName)
-                    , Resources.msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
+                    , SR.GetString("Resources_QtVsTools"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                     replace = false;
                 }
             }
@@ -2545,7 +2545,12 @@ namespace QtProjectLib
                         context.ShouldBuild = false;
                 }
             }
-            envPro.DTE.Solution.SolutionBuild.Clean(true);
+            try {
+                envPro.DTE.Solution.SolutionBuild.Clean(true);
+            } catch (System.Runtime.InteropServices.COMException e) {
+                // TODO: Implement some logging mechanism for exceptions.
+            }
+
             foreach (KeyValuePair<SolutionContext, bool> item in backup)
                 item.Key.ShouldBuild = item.Value;
         }

@@ -158,9 +158,12 @@ namespace QtProjectLib
             string activePlatformName = "";
             if (string.IsNullOrEmpty(solutionConfig)) {
                 // First get active configuration cause not given as parameter
-                EnvDTE.Configuration activeConf = prj.ConfigurationManager.ActiveConfiguration;
-                solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
-                activePlatformName = activeConf.PlatformName;
+                try {
+                    var activeConf = prj.ConfigurationManager.ActiveConfiguration;
+                    activePlatformName = activeConf.PlatformName;
+                } catch {
+                    Messages.PaneMessage(prj.DTE, "Could not get the active platform name.");
+                }
             } else {
                 activePlatformName = solutionConfig.Split('|')[1];
             }

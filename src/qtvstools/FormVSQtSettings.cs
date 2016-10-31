@@ -47,8 +47,8 @@ namespace QtVsTools
                 HorizontalAlignment.Left);
             listView.Columns.Add(SR.GetString("BuildOptionsPage_Path"), 180,
                 HorizontalAlignment.Left);
-            addButton.Text = SR.GetString(SR.Add);
-            deleteButton.Text = SR.GetString(SR.Delete);
+            addButton.Text = SR.GetString("Add");
+            deleteButton.Text = SR.GetString("Delete");
             label2.Text = SR.GetString("BuildOptionsPage_DefaultQtVersion");
             okButton.Text = SR.GetString("OK");
             cancelButton.Text = SR.GetString("Cancel");

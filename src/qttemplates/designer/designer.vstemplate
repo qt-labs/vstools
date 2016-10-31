@@ -34,8 +34,8 @@
             xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
             Type="Project" >
     <TemplateData>
-        <Name>Qt Custom Designer Widget</Name>
-        <Description>This wizard generates a Qt Custom Designer widget.</Description>
+        <Name>Qt Designer Custom Widget</Name>
+        <Description>This wizard generates a Qt Designer Custom widget.</Description>
         <ProjectType>VC</ProjectType>
         <SortOrder>1000</SortOrder>
         <CreateNewFolder>true</CreateNewFolder>

@@ -44,6 +44,18 @@ build targets will only work reliable if you use the 'Exp' hive of Visual Studio
 
 
 
+Build the Qt Visual Studio Tools documentation
+----------------------------------------------
+
+Run 'qmake && make docs' (or 'mingw32-make docs', 'nmake docs' ...) from the root directory to
+build the Qt Visual Studio Tools documentation. You need to have 'qdoc' and friends built already.
+
+See the Qt documentation for the prerequisites and steps to build Qt documentation from sources.
+https://wiki.qt.io/Building_Qt_Documentation
+
+
+
+
 Product name or Publisher name update
 -------------------------------------
 

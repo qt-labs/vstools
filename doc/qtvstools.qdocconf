@@ -1,0 +1,2 @@
+include(config/qtvstools-project.qdocconf)
+include($QT_INSTALL_DOCS/global/qt-html-templates-offline.qdocconf)

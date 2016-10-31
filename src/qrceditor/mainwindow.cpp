@@ -51,7 +51,7 @@ MainWindow::MainWindow() :
     QToolBar* tb = new QToolBar("Title", this);
     tb->setMovable(false);
     addToolBar(Qt::TopToolBarArea, tb);
-    
+
     QAction* oa = fMenu->addAction(tr("&Open..."));
     oa->setShortcut(tr("Ctrl+O", "File|Open"));
     oa->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
@@ -108,12 +108,12 @@ void MainWindow::openFile(QString fileName)
         setWindowTitle(tr("Qt Resource Editor") + " - " + fi.fileName());
     }
     else
-        statusBar()->showMessage(tr("Unable to open %1!").arg(fileName));
+        statusBar()->showMessage(tr("Unable to open %1.").arg(fileName));
 }
 
 void MainWindow::slotOpen()
 {
-    const QString fileName = QFileDialog::getOpenFileName(this, tr("Choose resource file"),
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Choose Resource File"),
                                                           QString(),
                                                           tr("Resource files (*.qrc)"));
     this->openFile(fileName);
@@ -125,7 +125,7 @@ void MainWindow::slotSave()
     QString fileName = oldFileName;
 
     if (fileName.isEmpty()) {
-        fileName = QFileDialog::getSaveFileName(this, tr("Save resource file"),
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Resource File"),
                                                 QString(),
                                                 tr("Resource files (*.qrc)"));
         if (fileName.isEmpty())
@@ -137,7 +137,7 @@ void MainWindow::slotSave()
         statusBar()->showMessage(tr("%1 written").arg(fileName));
         sendFileNameToQtAppWrapper();
     } else {
-        statusBar()->showMessage(tr("Unable to write %1!").arg(fileName));
+        statusBar()->showMessage(tr("Unable to write %1.").arg(fileName));
         m_qrcEditor->setFileName(oldFileName);
     }
 }
@@ -177,7 +177,7 @@ int MainWindow::fileChangedDialog()
     QMessageBox message(this);
     message.setText(tr("The .qrc file has been modified."));
     message.setWindowTitle("Qt Resource Editor");
-    message.setInformativeText(tr("Do you want the changes to be saved?"));
+    message.setInformativeText(tr("Do you want to save the changes?"));
     message.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     message.setDefaultButton(QMessageBox::Yes);
     return message.exec();

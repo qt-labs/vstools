@@ -4,6 +4,7 @@ TARGET = QrcEditor
 DESTDIR = $$PWD/bin
 
 include(../src.pri)
+include(../../vstools.pri)
 include(./shared/qrceditor.pri)
 
 SOURCES += main.cpp \

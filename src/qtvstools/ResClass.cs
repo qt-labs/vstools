@@ -92,13 +92,7 @@ namespace QtVsTools
 
         internal const string OK = "OK";
         internal const string Cancel = "Cancel";
-        internal const string QtVSIntegration = "QtVSIntegration";
-        internal const string CannotOpenFile = "CannotOpenFile";
-        internal const string NotExistingFile = "NotExistingFile";
-        internal const string Add = "Add";
-        internal const string Edit = "Edit";
-        internal const string Remove = "Remove";
-        internal const string Delete = "Delete";
+
         internal static CultureInfo appCultureInfo;
         internal static CultureInfo defaultCultureInfo;
 

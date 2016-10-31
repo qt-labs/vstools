@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="OK" xml:space="preserve">
-    <value>&amp;OK</value>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
-  </data>
   <data name="ExportSolution" xml:space="preserve">
     <value>Export Solution</value>
   </data>
@@ -130,11 +124,11 @@
     <value>Open Solution</value>
   </data>
   <data name="ProjectExists" xml:space="preserve">
-    <value>Project file exists!</value>
+    <value>Project file already exists.</value>
   </data>
   <data name="ExportProject_CheckFileAndSyntax" xml:space="preserve">
-    <value>1. Check that all the files exists.
-2. Check for syntax errors in the pri file.</value>
+    <value>1. Check that all the files exist.
+2. Check for syntax errors in the .pri file.</value>
   </data>
   <data name="ExportProject_EditProjectFileManually" xml:space="preserve">
     <value>qmake has generated a .vcproj file, but it needs to be converted.
@@ -142,7 +136,7 @@ To do this you must open the .vcproj file manually.
 (Reason: qmake in Qt3 does not support generation of Visual Studio 2005 .vcproj files)</value>
   </data>
   <data name="ExportProject_ErrorParsingPriFile" xml:space="preserve">
-    <value>Error while parsing pri file! ({0})</value>
+    <value>Error while parsing .pri file. ({0})</value>
   </data>
   <data name="ExportProject_ExistsOverwriteQuestion" xml:space="preserve">
     <value>{0} already exists.
@@ -150,22 +144,22 @@ To do this you must open the .vcproj file manually.
 Do you want to overwrite it?</value>
   </data>
   <data name="ExportProject_ExportPriFile" xml:space="preserve">
-    <value>Export to .pri file</value>
+    <value>Export to .pri File</value>
   </data>
   <data name="ExportProject_ImportPriFile" xml:space="preserve">
-    <value>Import from .pri file</value>
+    <value>Import from .pri File</value>
   </data>
   <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
-    <value>Did not find any Qt4 projects to export.</value>
+    <value>Cannot find any Qt 4 projects to export.</value>
   </data>
   <data name="ExportProject_PriFileContainsSpaces" xml:space="preserve">
-    <value>The generated pri file contains paths with spaces. You will not be able to import from this file!
-1. Manually edit the generated pri file.
+    <value>The generated .pri file contains paths with spaces. You will not be able to import from this file.
+1. Manually edit the generated .pri file.
 2. Move your project to a location without spaces in the path.
-3. Place the pri file in another directory.</value>
+3. Place the .pri file in another directory.</value>
   </data>
   <data name="ExportProject_ProjectExistsRegenerateOrReuse" xml:space="preserve">
-    <value>{0} already exists!
+    <value>{0} already exists.
 Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
   </data>
   <data name="ExportProject_ProjectOrSolutionCorrupt" xml:space="preserve">
@@ -173,14 +167,14 @@ Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
 (Maybe the .vcproj or .sln file is corrupt?)</value>
   </data>
   <data name="ExportProject_SelectQtProjectToAdd" xml:space="preserve">
-    <value>Select a Qt Project to add to the Solution</value>
+    <value>Select a Qt Project to Add to the Solution</value>
   </data>
   <data name="ExportProject_SolutionProFileBuildIn" xml:space="preserve">
     <value>Do you want a solution .pro file to be built in {0}?</value>
   </data>
   <data name="ExportProject_SubdirsProfileSolutionClose" xml:space="preserve">
-    <value>It looks like this is a SUBDIRS .pro file. In order to open this
-file the existing solution needs to be closed (pending changes will be saved).</value>
+    <value>This seems to be a SUBDIRS .pro file. To open this file, the existing
+    solution needs to be closed (pending changes will be saved).</value>
   </data>
   <data name="ExportProjectDialog_Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
@@ -204,19 +198,13 @@ file the existing solution needs to be closed (pending changes will be saved).</
     <value>Export Project</value>
   </data>
   <data name="QMakeProcess_OpenSolutionFromFile" xml:space="preserve">
-    <value>Open Solution from File: </value>
-  </data>
-  <data name="HelperFunctions_TryCreatingNewProject" xml:space="preserve">
-    <value>Try creating a new project.</value>
-  </data>
-  <data name="HelperFunctions_ErrorSearchForQtTemplatePath" xml:space="preserve">
-    <value>An error occured while searching for the Qt templates path.</value>
+    <value>Open solution from file: </value>
   </data>
   <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
     <value>Cannot write environment variable QTDIR.</value>
   </data>
   <data name="Messages_ErrorOccured" xml:space="preserve">
-    <value>The following error occured:
+    <value>The following error occurred:
 </value>
   </data>
   <data name="Messages_Warning" xml:space="preserve">
@@ -225,24 +213,24 @@ file the existing solution needs to be closed (pending changes will be saved).</
   </data>
   <data name="Messages_SolveProblem" xml:space="preserve">
     <value>
-      
+
 To solve this problem:
 </value>
   </data>
   <data name="QtProject_CannotConstructWithoutValidProject" xml:space="preserve">
-    <value>Cannot construct a QtProject object without a valid project!</value>
+    <value>Cannot construct a QtProject object without a valid project.</value>
   </data>
   <data name="QtProject_CannotAddUicStep" xml:space="preserve">
-    <value>Cannot add uic step to file {0}</value>
+    <value>Cannot add a uic step to file {0}</value>
   </data>
   <data name="QtProject_CannotAddMocStep" xml:space="preserve">
-    <value>Cannot add moc step to file {0}</value>
+    <value>Cannot add a moc step to file {0}</value>
   </data>
   <data name="QtProject_CannotRemoveMocStep" xml:space="preserve">
-    <value>Cannot remove moc step from file {0}</value>
+    <value>Cannot remove a moc step from file {0}</value>
   </data>
   <data name="QtProject_CannotAddFilter" xml:space="preserve">
-    <value>Project can't add filter {0}</value>
+    <value>Project cannot add filter {0}</value>
   </data>
   <data name="QtProject_CannotAddFile" xml:space="preserve">
     <value>Cannot add file {0} to filter.</value>
@@ -258,47 +246,47 @@ To solve this problem:
     <value>Cannot find filter.</value>
   </data>
   <data name="QtProject_ProjectCannotAddFilter" xml:space="preserve">
-    <value>Project can't add filter {0}</value>
+    <value>Project cannot add filter {0}</value>
   </data>
   <data name="QtProject_ProjectCannotAddResourceFilter" xml:space="preserve">
-    <value>Cannot add resource filter.</value>
+    <value>Cannot add a resource filter.</value>
   </data>
   <data name="QtProject_CannotCreateResourceDir" xml:space="preserve">
-    <value>Cannot create resource directory.</value>
+    <value>Cannot create a resource directory.</value>
   </data>
   <data name="QtProject_CannotAdjustWhitespaces" xml:space="preserve">
-    <value>Can't adjust whitespaces or tabs in file (write).
+    <value>Cannot adjust whitespace or tabs in file (write).
 ({0})</value>
   </data>
   <data name="QtProject_CannotReplaceTokenRead" xml:space="preserve">
-    <value>Can't replace token ({0} -&gt; {1}) in file (read).
+    <value>Cannot replace token ({0} -&gt; {1}) in file (read).
 ({3})</value>
   </data>
   <data name="QtProject_CannotReplaceTokenWrite" xml:space="preserve">
-    <value>Can't replace token ({0} -&gt; {1}) in file (write).
+    <value>Cannot replace token ({0} -&gt; {1}) in file (write).
 ({3})</value>
   </data>
   <data name="QtProject_CannotEnableSectionRead" xml:space="preserve">
-    <value>Can't enable section {0} in file (read).
+    <value>Cannot enable section {0} in file (read).
 ({1})</value>
   </data>
   <data name="QtProject_CannotEnableSectionWrite" xml:space="preserve">
-    <value>Can't enable section {0} in file (write).
+    <value>Cannot enable section {0} in file (write).
 ({1})</value>
   </data>
   <data name="QtProject_CannotUpdateUicStep" xml:space="preserve">
-    <value>Cannot update uic steps!</value>
+    <value>Cannot update uic steps.</value>
   </data>
   <data name="QtProject_FileExistsInProjectFolder" xml:space="preserve">
-    <value>The file {0} existst in your project folder. Qt Visual Studio Tools will overwrite the existing file!
+    <value>The file {0} exists in your project folder. Qt VS Tools will overwrite the existing file.
 
-Select 'Yes' to overwrite, select 'No' to keep the existing file and automatically readd it to the project.</value>
+Select 'Yes' to overwrite, select 'No' to keep the existing file and automatically add it to the project.</value>
   </data>
   <data name="QtVersionManager_CannotLoadQtVersion" xml:space="preserve">
     <value>Cannot load the default Qt version.</value>
   </data>
-  <data name="Resources_QtVisualStudioIntegration" xml:space="preserve">
-    <value>Qt Visual Studio Tools</value>
+  <data name="Resources_QtVsTools" xml:space="preserve">
+    <value>Qt VS Tools</value>
   </data>
   <data name="Resources_AddQtResource" xml:space="preserve">
     <value>Add Qt Resource</value>
@@ -321,20 +309,14 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="Resources_GeneratedFiles" xml:space="preserve">
     <value>Generated Files</value>
   </data>
-  <data name="CommandBarNotFound" xml:space="preserve">
-    <value>Could not add "Qt" entry to command bar.</value>
-  </data>
   <data name="QtProject_CannotFindCustomBuildTool" xml:space="preserve">
     <value>Could not find custom build tool for {0}.</value>
   </data>
   <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
-    <value>Could not add QTDIR to {0}'s user file.</value>
+    <value>Could not add QTDIR to {0}'s .user file.</value>
   </data>
   <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
     <value>Could not parse QTDIR from project file {0}.</value>
-  </data>
-  <data name="Helpers_ExitError" xml:space="preserve">
-    <value>The application exited with an error (ExitCode {0}):</value>
   </data>
   <data name="Resources_OtherFiles" xml:space="preserve">
     <value>Other Files</value>
