@@ -171,19 +171,9 @@ namespace QtVsTools
 
         private string locateHelperExecutable(string exeName)
         {
-            string filePath = PkgInstallPath + exeName;
-            if (!File.Exists(filePath)) {
-                filePath = PkgInstallPath;
-                if (filePath.EndsWith("\\", StringComparison.Ordinal))
-                    filePath = filePath.Remove(filePath.Length - 1);
-                var idx = filePath.LastIndexOf('\\');
-                if (idx >= 0 && idx < filePath.Length - 1)
-                    filePath = filePath.Remove(idx + 1);
-                filePath += exeName;
-                if (!File.Exists(filePath))
-                    filePath = null;
-            }
-            return filePath;
+            if (File.Exists(PkgInstallPath + exeName))
+                return PkgInstallPath + exeName;
+            return null;
         }
 
         /// <summary>
