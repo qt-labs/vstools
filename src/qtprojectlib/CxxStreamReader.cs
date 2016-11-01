@@ -43,7 +43,7 @@ namespace QtProjectLib
         }
         private State state = State.Normal;
         private StreamReader sr;
-        private string partialLine = string.Empty;
+        private string partialLine;
         bool disposed;
 
         public CxxStreamReader(string fileName)

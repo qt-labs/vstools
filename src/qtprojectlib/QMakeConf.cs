@@ -168,9 +168,7 @@ namespace QtProjectLib
                     }
                     if (endPos > startPos) {
                         var varName = value.Substring(startPos, endPos - startPos);
-                        object varValueObj = entries[varName];
-                        string varValue = "";
-                        if (varValueObj != null) varValue = varValueObj.ToString();
+                        var varValue = (entries[varName] ?? string.Empty).ToString();
                         value = value.Substring(0, pos) + varValue + value.Substring(endPos);
                         endPos = pos + varValue.Length;
                     }

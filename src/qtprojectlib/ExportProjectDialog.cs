@@ -341,7 +341,7 @@ namespace QtProjectLib
             int idx = optionListBox.SelectedIndex;
             if (idx < 0)
                 return;
-            optionTextBox.Text = (string) currentOpt.List[optionListBox.SelectedIndex];
+            optionTextBox.Text = currentOpt.List[optionListBox.SelectedIndex];
             optionTextBox.Focus();
             UpdateButtons();
         }

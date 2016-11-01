@@ -638,11 +638,8 @@ namespace QtProjectLib
             foreach (string include in includeList) {
                 if (!alreadyAdded.Contains(include)) {
                     var incl = HelperFunctions.NormalizeRelativeFilePath(include);
-                    if (incl.Length > 0) {
-                        string cmdline = " ";
-                        cmdline += SafelyQuoteCommandLineArgument("-I" + incl);
-                        includes += cmdline;
-                    }
+                    if (incl.Length > 0)
+                        includes += " " + SafelyQuoteCommandLineArgument("-I" + incl);
                     alreadyAdded.Add(include);
                 }
             }
@@ -1157,8 +1154,8 @@ namespace QtProjectLib
                     } else {
                         cmdLine += " -no-compress";
                     }
-                    cmdLine += " \"" + ProjectMacros.Path + "\" -o " + cbt.Outputs;
-                    cbt.CommandLine = cmdLine;
+
+                    cbt.CommandLine = cmdLine + " \"" + ProjectMacros.Path + "\" -o " + cbt.Outputs;
                 }
                 AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
             } catch (System.Exception /*e*/) {
@@ -2874,9 +2871,7 @@ namespace QtProjectLib
             }
 
             string subsystemOption = "";
-            string linkerOptions = linker.AdditionalOptions;
-            if (linkerOptions == null)
-                linkerOptions = "";
+            var linkerOptions = linker.AdditionalOptions ?? string.Empty;
 
             rex = new Regex("(/SUBSYSTEM:\\S+)");
             match = rex.Match(qMakeLFlagsWindows);
