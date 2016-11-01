@@ -46,10 +46,10 @@ namespace QtVsTools
             if (vcFile == null)
                 return false;
 
-            bool success = true;
+            var success = true;
             try {
                 var vcProject = vcFile.project as VCProject;
-                string cmdLine = "";
+                var cmdLine = string.Empty;
                 if (HelperFunctions.IsQtProject(vcProject)) {
                     var options = QtVSIPSettings.GetLReleaseOptions();
                     if (!string.IsNullOrEmpty(options))
@@ -120,7 +120,7 @@ namespace QtVsTools
             if (!HelperFunctions.IsQtProject(pro))
                 return false;
 
-            string cmdLine = "";
+            var cmdLine = string.Empty;
             var options = QtVSIPSettings.GetLUpdateOptions(pro);
             if (!string.IsNullOrEmpty(options))
                 cmdLine += options + " ";
@@ -128,21 +128,21 @@ namespace QtVsTools
             var sources = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_CppFiles);
             var uifiles = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_UiFiles);
 
-            foreach (string file in headers)
+            foreach (var file in headers)
                 cmdLine += file + " ";
 
-            foreach (string file in sources)
+            foreach (var file in sources)
                 cmdLine += file + " ";
 
-            foreach (string file in uifiles)
+            foreach (var file in uifiles)
                 cmdLine += file + " ";
 
             cmdLine += "-ts " + vcFile.RelativePath.Quoute();
 
-            int cmdLineLength = cmdLine.Length + Resources.lupdateCommand.Length + 1;
+            var cmdLineLength = cmdLine.Length + Resources.lupdateCommand.Length + 1;
             string temporaryProFile = null;
             if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength()) {
-                string codec = "";
+                var codec = string.Empty;
                 if (!string.IsNullOrEmpty(options)) {
                     var cc4tr_location = options.IndexOf("-codecfortr", System.StringComparison.CurrentCultureIgnoreCase);
                     if (cc4tr_location != -1) {
@@ -180,7 +180,7 @@ namespace QtVsTools
                 cmdLine += "\"" + temporaryProFile + "\"";
             }
 
-            bool success = true;
+            var success = true;
             try {
                 Messages.PaneMessage(pro.DTE, "--- (lupdate) file: " + vcFile.FullPath);
                 StartProcess(Resources.lupdateCommand, cmdLine, (vcFile.project as VCProject)
@@ -205,7 +205,7 @@ namespace QtVsTools
         {
             if (files.Count > 0) {
                 pro.Write(section + " = ");
-                foreach (string file in files) {
+                foreach (var file in files) {
                     pro.WriteLine("\\");
                     pro.Write("\"" + file + "\"");
                 }
@@ -314,7 +314,7 @@ namespace QtVsTools
 
                 if (process.ExitCode == 0) {
                     var index = arguments.IndexOf("-ts", System.StringComparison.OrdinalIgnoreCase);
-                    string file = "file: " + arguments + " ";
+                    var file = "file: " + arguments + " ";
                     if (index > 0)
                         file = "file: " + arguments.Substring(index + 3) + " ";
 

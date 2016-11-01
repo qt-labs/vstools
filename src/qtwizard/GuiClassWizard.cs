@@ -52,7 +52,7 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    bool defaultModulesInstalled = true;
+                    var defaultModulesInstalled = true;
                     foreach (var module in data.DefaultModules)
                         defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
@@ -102,7 +102,7 @@ namespace QtProjectWizard
                     data.ClassName = array.LastOrDefault();
 
                     string nsBegin = string.Empty, nsEnd = string.Empty;
-                    for (int i = 0; i < array.Length - 1; ++i) {
+                    for (var i = 0; i < array.Length - 1; ++i) {
                         nsBegin += "namespace " + array[i] + " {\r\n";
                         nsEnd = "} // namespace " + array[i] + "\r\n" + nsEnd;
                     }
@@ -267,8 +267,7 @@ namespace QtProjectWizard
 
         private string AddProjectItemHpp(string location)
         {
-            bool replaceUiHeader = true;
-
+            var replaceUiHeader = true;
             var hppFile = Path.GetTempFileName();
             using (var tmp = new StreamWriter(hppFile)) {
                 var content = string.Empty;
@@ -300,9 +299,9 @@ namespace QtProjectWizard
 
         private string AddProjectItemCpp(string location, string pch)
         {
-            bool replaceUiHeader = false;
-
+            var replaceUiHeader = false;
             var cppFile = Path.GetTempFileName();
+
             using (var tmp = new StreamWriter(cppFile)) {
                 var content = string.Empty;
                 switch (data.UiClassInclusion) {

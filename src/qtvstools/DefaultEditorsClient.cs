@@ -175,7 +175,7 @@ namespace QtVsTools
                         stream.Flush(); // say hello to qt application wrapper
                     }
 
-                    byte[] data = new byte[4096];
+                    var data = new byte[4096];
                     while (!aboutToExit) {
                         try {
                             var bytesRead = 0;

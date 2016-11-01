@@ -88,7 +88,7 @@ namespace QtProjectWizard
         private void onSourceInitialized(object sender, EventArgs e)
         {
             try {
-                const int STYLE = -16; // see winuser.h
+                var STYLE = -16; // see winuser.h
                 var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
                 UnsafeNativeMethods.SetWindowLong(hwnd, STYLE,
                     NativeMethods.GetWindowLong(hwnd, STYLE) & ~(0x10000 | 0x20000));

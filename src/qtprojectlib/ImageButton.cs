@@ -53,10 +53,10 @@ namespace QtProjectLib
         {
             base.OnPaint(pevent);
 
-            int xoffset = (Size.Width - img.Width) / 2;
-            int yoffset = (Size.Height - img.Height) / 2;
-            int imgWidth = img.Width;
-            int imgHeight = img.Height;
+            var xoffset = (Size.Width - img.Width) / 2;
+            var yoffset = (Size.Height - img.Height) / 2;
+            var imgWidth = img.Width;
+            var imgHeight = img.Height;
 
             // make it smaller if necessary
             if (xoffset < 0)

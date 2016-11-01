@@ -206,7 +206,7 @@ namespace QtVsTools
                         if (vcProject == null)
                             return;
 
-                        bool loop = true;
+                        var loop = true;
                         do {
                             var classWizard = new AddClassWizard();
                             loop = classWizard.Run(Vsix.Instance.Dte, vcProject.Name,

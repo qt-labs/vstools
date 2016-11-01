@@ -99,7 +99,7 @@ namespace QtProjectLib
 
             qtDir = qtDir.ToLower();
             var versions = GetVersions();
-            foreach (string version in versions) {
+            foreach (var version in versions) {
                 var installPath = GetInstallPath(version);
                 if (installPath == null)
                     continue;
@@ -138,7 +138,7 @@ namespace QtProjectLib
             var validVersions = new List<QtVersion>();
             var invalidVersions = new List<string>();
 
-            foreach (string v in GetVersions()) {
+            foreach (var v in GetVersions()) {
                 if (v == "$(DefaultQtVersion)")
                     continue;
                 try {
@@ -154,17 +154,17 @@ namespace QtProjectLib
 
             if (invalidVersions.Count > 0) {
                 errorMessage = "These Qt version are inaccessible:\n";
-                foreach (string invalidVersion in invalidVersions)
+                foreach (var invalidVersion in invalidVersions)
                     errorMessage += invalidVersion + " in " + GetInstallPath(invalidVersion) + "\n";
                 errorMessage += "Make sure that you have read access to all files in your Qt directories.";
 
                 // Is the default Qt version invalid?
-                bool isDefaultQtVersionInvalid = false;
+                var isDefaultQtVersionInvalid = false;
                 var defaultQtVersionName = GetDefaultVersion();
                 if (string.IsNullOrEmpty(defaultQtVersionName)) {
                     isDefaultQtVersionInvalid = true;
                 } else {
-                    foreach (string name in invalidVersions) {
+                    foreach (var name in invalidVersions) {
                         if (name == defaultQtVersionName) {
                             isDefaultQtVersionInvalid = true;
                             break;
@@ -232,7 +232,7 @@ namespace QtProjectLib
         public bool SaveVersion(string versionName, string path)
         {
             var verName = versionName.Trim();
-            string dir = "";
+            var dir = string.Empty;
             if (verName != "$(QTDIR)") {
                 var di = new DirectoryInfo(path);
                 if (verName.Length < 1 || !di.Exists)
@@ -262,9 +262,9 @@ namespace QtProjectLib
 
         private bool IsVersionAvailable(string version)
         {
-            bool versionAvailable = false;
+            var versionAvailable = false;
             var versions = GetVersions();
-            foreach (string ver in versions) {
+            foreach (var ver in versions) {
                 if (version == ver) {
                     versionAvailable = true;
                     break;
@@ -282,7 +282,7 @@ namespace QtProjectLib
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
-            string key = "Qt5Version " + platform;
+            var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
                 project.Globals[key] = version;
             if (!project.Globals.get_VariablePersists(key))
@@ -316,7 +316,7 @@ namespace QtProjectLib
 
         public string GetProjectQtVersion(EnvDTE.Project project, string platform)
         {
-            string key = "Qt5Version " + platform;
+            var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
             var version = (string) project.Globals[key];
@@ -333,7 +333,7 @@ namespace QtProjectLib
                     new System.Text.RegularExpressions.Regex("\\$\\((?<VarName>\\S+)\\)");
                 var match = regExp.Match(version);
                 if (match.Success) {
-                    string env = match.Groups["VarName"].Value;
+                    var env = match.Groups["VarName"].Value;
                     version = System.Environment.GetEnvironmentVariable(env);
                 }
             }
@@ -417,7 +417,7 @@ namespace QtProjectLib
         {
             if (project == null)
                 return false;
-            string platform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
+            var platform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
             if (project.Globals.get_VariablePersists("Qt5Version " + platform)
                 || project.Globals.get_VariablePersists("Qt5Version"))
                 return true;
@@ -429,19 +429,19 @@ namespace QtProjectLib
             var hkcuVersions = GetVersions();
             var hklmVersions = GetVersions(Registry.LocalMachine);
 
-            string[] hkcuInstDirs = new string[hkcuVersions.Length];
-            for (int i = 0; i < hkcuVersions.Length; ++i)
+            var hkcuInstDirs = new string[hkcuVersions.Length];
+            for (var i = 0; i < hkcuVersions.Length; ++i)
                 hkcuInstDirs[i] = GetInstallPath(hkcuVersions[i]);
-            string[] hklmInstDirs = new string[hklmVersions.Length];
-            for (int i = 0; i < hklmVersions.Length; ++i)
+            var hklmInstDirs = new string[hklmVersions.Length];
+            for (var i = 0; i < hklmVersions.Length; ++i)
                 hklmInstDirs[i] = GetInstallPath(hklmVersions[i], Registry.LocalMachine);
 
-            for (int i = 0; i < hklmVersions.Length; ++i) {
+            for (var i = 0; i < hklmVersions.Length; ++i) {
                 if (hklmInstDirs[i] == null)
                     continue;
 
-                bool found = false;
-                for (int j = 0; j < hkcuInstDirs.Length; ++j) {
+                var found = false;
+                for (var j = 0; j < hkcuInstDirs.Length; ++j) {
                     if (hkcuInstDirs[j] != null
                         && hkcuInstDirs[j].ToLower() == hklmInstDirs[i].ToLower()) {
                         found = true;
@@ -449,7 +449,7 @@ namespace QtProjectLib
                     }
                 }
                 if (!found) {
-                    for (int j = 0; j < hkcuVersions.Length; ++j) {
+                    for (var j = 0; j < hkcuVersions.Length; ++j) {
                         if (hkcuVersions[j] != null
                             && hkcuVersions[j] == hklmVersions[i]) {
                             found = true;

@@ -134,9 +134,9 @@ namespace QtProjectLib
                 var dirArray = directories.Split(new char[] { ';', ',' }, StringSplitOptions
                     .RemoveEmptyEntries);
                 var lst = new List<string>(dirArray);
-                int i = 0;
+                var i = 0;
                 while (i < lst.Count) {
-                    string item = lst[i];
+                    var item = lst[i];
                     if (item.StartsWith("\"", StringComparison.Ordinal) && item.EndsWith("\"", StringComparison.Ordinal)) {
                         item = item.Remove(0, 1);
                         item = item.Remove(item.Length - 1, 1);
@@ -157,9 +157,9 @@ namespace QtProjectLib
                     SetAdditionalIncludeDirectories(null);
                     return;
                 }
-                string newDirectories = "";
-                bool firstLoop = true;
-                foreach (string dir in value) {
+                var newDirectories = string.Empty;
+                var firstLoop = true;
+                foreach (var dir in value) {
                     if (firstLoop)
                         firstLoop = false;
                     else
@@ -238,7 +238,7 @@ namespace QtProjectLib
                 return;
             preprocessorDefs = "";
             bool firstIteration = true;
-            foreach (string define in definesList) {
+            foreach (var define in definesList) {
                 if (firstIteration)
                     firstIteration = false;
                 else
@@ -289,7 +289,7 @@ namespace QtProjectLib
             var directories = value.Split(new char[] { ';', ',' }, StringSplitOptions
                 .RemoveEmptyEntries);
             List<string> lst = AdditionalIncludeDirectories;
-            foreach (string directory in directories) {
+            foreach (var directory in directories) {
                 if (lst.Contains(directory))
                     continue;
 
@@ -308,8 +308,8 @@ namespace QtProjectLib
             string[] fixedincludes;
             fixedincludes = new string[includes.Length];
             int i = 0;
-            foreach (string include in includes) {
-                string incl = include;
+            foreach (var include in includes) {
+                var incl = include;
                 if (incl.StartsWith("\\\"", StringComparison.Ordinal) && incl.EndsWith("\\\"", StringComparison.Ordinal)) {
                     incl = incl.Remove(0, 2);
                     incl = incl.Remove(incl.Length - 2, 2);

@@ -73,7 +73,7 @@ namespace QtProjectLib
             if (qtDir == null)
                 qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
 
-            bool found = false;
+            var found = false;
             if (tool == null)
                 found = File.Exists(qtDir + "\\bin\\designer.exe")
                     && File.Exists(qtDir + "\\bin\\linguist.exe");
@@ -84,7 +84,7 @@ namespace QtProjectLib
                 VersionInformation matchingVersion = null;
                 VersionInformation somehowMatchingVersion = null;
                 var viProjectQtVersion = versionManager.GetVersionInfo(projectQtVersion);
-                foreach (string qtVersion in versionManager.GetVersions()) {
+                foreach (var qtVersion in versionManager.GetVersions()) {
                     var vi = versionManager.GetVersionInfo(qtVersion);
                     if (tool == null)
                         found = File.Exists(vi.qtDir + "\\bin\\designer.exe")
@@ -155,7 +155,7 @@ namespace QtProjectLib
         {
             // Get platform name from given solution configuration
             // or if not available take the active configuration
-            string activePlatformName = "";
+            var activePlatformName = string.Empty;
             if (string.IsNullOrEmpty(solutionConfig)) {
                 // First get active configuration cause not given as parameter
                 try {
@@ -226,7 +226,7 @@ namespace QtProjectLib
             path = path.Trim();
             path = path.Replace("/", "\\");
 
-            string tmp = "";
+            var tmp = string.Empty;
             while (tmp != path) {
                 tmp = path;
                 path = path.Replace("\\\\", "\\");
@@ -317,7 +317,7 @@ namespace QtProjectLib
 
             char[] separator = { '\\' };
             var fiArray = fi.FullName.Split(separator);
-            string dir = di.FullName;
+            var dir = di.FullName;
             while (dir.EndsWith("\\", StringComparison.Ordinal))
                 dir = dir.Remove(dir.Length - 1, 1);
             var diArray = dir.Split(separator);
@@ -333,7 +333,7 @@ namespace QtProjectLib
             if (commonParts < 1)
                 return fi.FullName;
 
-            string result = "";
+            var result = string.Empty;
 
             for (j = i; j < fiArray.Length; j++) {
                 if (j == i)
@@ -402,7 +402,7 @@ namespace QtProjectLib
 
             try {
                 // TODO: The return value is not used at all?
-                string cmdLine = tool.CommandLine;
+                var cmdLine = tool.CommandLine;
             } catch {
                 return null;
             }
@@ -433,7 +433,7 @@ namespace QtProjectLib
         /// <returns></returns>
         private static string AddFullPathToAdditionalDependencies(string qtDir, string additionalDependencies)
         {
-            string returnString = additionalDependencies;
+            var returnString = additionalDependencies;
             returnString =
                 Regex.Replace(returnString, "Qt(\\S+5?)\\.lib", qtDir + "\\lib\\Qt${1}.lib");
             returnString =
@@ -461,7 +461,7 @@ namespace QtProjectLib
                 var vm = QtVersionManager.The();
                 qtDir = vm.GetInstallPath(project);
 
-                foreach (string global in (string[]) project.Globals.VariableNames) {
+                foreach (var global in (string[]) project.Globals.VariableNames) {
                     if (global.StartsWith("Qt5Version", StringComparison.Ordinal)) {
                         project.Globals.set_VariablePersists(global, false);
                     }
@@ -503,14 +503,14 @@ namespace QtProjectLib
                 vm.SaveProjectQtVersion(project, qtVersion, platformName);
                 var qtPro = QtProject.Create(project);
                 if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
-                    bool newProject = false;
+                    var newProject = false;
                     qtPro.CreatePlatform("Win32", platformName, null, vi, ref newProject);
                     if (!qtPro.SelectSolutionPlatform(platformName)) {
                         Messages.PaneMessage(project.DTE, "Can't select the platform " + platformName + ".");
                     }
                 }
 
-                string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+                var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
                 var activeVCConfig = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
                 if (activeVCConfig.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
                     var compiler = CompilerToolWrapper.Create(activeVCConfig);
@@ -533,7 +533,7 @@ namespace QtProjectLib
                     var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
 
                     if (compiler != null) {
-                        List<string> additionalIncludes = compiler.AdditionalIncludeDirectories;
+                        var additionalIncludes = compiler.AdditionalIncludeDirectories;
                         if (additionalIncludes != null) {
                             ReplaceDirectory(ref additionalIncludes, qtDir, "$(QTDIR)", project);
                             compiler.AdditionalIncludeDirectories = additionalIncludes;
@@ -541,7 +541,7 @@ namespace QtProjectLib
                     }
                     if (linker != null) {
                         var linkerToolWrapper = new LinkerToolWrapper(linker);
-                        List<string> paths = linkerToolWrapper.AdditionalLibraryDirectories;
+                        var paths = linkerToolWrapper.AdditionalLibraryDirectories;
                         if (paths != null) {
                             ReplaceDirectory(ref paths, qtDir, "$(QTDIR)", project);
                             linkerToolWrapper.AdditionalLibraryDirectories = paths;
@@ -564,8 +564,8 @@ namespace QtProjectLib
         /// <param name="project">The project is needed to convert relative paths to absolute paths.</param>
         private static void ReplaceDirectory(ref List<string> paths, string oldDirectory, string replacement, Project project)
         {
-            for (int i = 0; i < paths.Count; ++i) {
-                string dirName = paths[i];
+            for (var i = 0; i < paths.Count; ++i) {
+                var dirName = paths[i];
                 if (dirName.StartsWith("\"", StringComparison.Ordinal) && dirName.EndsWith("\"", StringComparison.Ordinal)) {
                     dirName = dirName.Substring(1, dirName.Length - 2);
                 }
@@ -596,9 +596,9 @@ namespace QtProjectLib
                 foreach (VCConfiguration projectConfig in vcProject.Configurations as IVCCollection) {
                     var compiler = CompilerToolWrapper.Create(projectConfig);
                     if (compiler != null) {
-                        List<string> additionalIncludeDirectories = compiler.AdditionalIncludeDirectories;
+                        var additionalIncludeDirectories = compiler.AdditionalIncludeDirectories;
                         if (additionalIncludeDirectories != null) {
-                            foreach (string dir in additionalIncludeDirectories) {
+                            foreach (var dir in additionalIncludeDirectories) {
                                 var subdir = Path.GetFileName(dir);
                                 if (subdir != "QtCore" && subdir != "QtGui")    // looking for Qt include directories
                                     continue;
@@ -617,9 +617,9 @@ namespace QtProjectLib
                     var linker = (VCLinkerTool) ((IVCCollection) projectConfig.Tools).Item("VCLinkerTool");
                     if (linker != null) {
                         var linkerWrapper = new LinkerToolWrapper(linker);
-                        List<string> linkerPaths = linkerWrapper.AdditionalDependencies;
+                        var linkerPaths = linkerWrapper.AdditionalDependencies;
                         if (linkerPaths != null) {
-                            foreach (string library in linkerPaths) {
+                            foreach (var library in linkerPaths) {
                                 var idx = library.IndexOf("\\lib\\qtmain.lib", StringComparison.OrdinalIgnoreCase);
                                 if (idx == -1)
                                     idx = library.IndexOf("\\lib\\qtmaind.lib", StringComparison.OrdinalIgnoreCase);
@@ -644,8 +644,8 @@ namespace QtProjectLib
 
                         linkerPaths = linkerWrapper.AdditionalLibraryDirectories;
                         if (linker != null && linkerPaths != null) {
-                            foreach (string libDir in linkerPaths) {
-                                string dirName = libDir;
+                            foreach (var libDir in linkerPaths) {
+                                var dirName = libDir;
                                 if (!Path.IsPathRooted(dirName)) {
                                     var projectDir = Path.GetDirectoryName(project.FullName);
                                     dirName = Path.Combine(projectDir, dirName);
@@ -681,9 +681,10 @@ namespace QtProjectLib
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
                 return false;
 
-            foreach (string global in envPro.Globals.VariableNames as string[])
+            foreach (var global in envPro.Globals.VariableNames as string[]) {
                 if (global.StartsWith("Qt5Version", StringComparison.Ordinal) && envPro.Globals.get_VariablePersists(global))
                     return true;
+            }
             return false;
         }
 
@@ -710,7 +711,7 @@ namespace QtProjectLib
         {
             if (proj == null)
                 return false;
-            string keyword = proj.keyword;
+            var keyword = proj.keyword;
             if (keyword == null || !keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
                 return false;
 
@@ -744,9 +745,9 @@ namespace QtProjectLib
                 if (linker == null || linker.AdditionalDependencies == null)
                     continue;
                 var linkerWrapper = new LinkerToolWrapper(linker);
-                List<string> deps = linkerWrapper.AdditionalDependencies;
+                var deps = linkerWrapper.AdditionalDependencies;
                 var newDeps = new List<string>();
-                foreach (string lib in deps) {
+                foreach (var lib in deps) {
                     var m1 = rxp1.Match(lib);
                     var m2 = rxp2.Match(lib);
                     var m3 = rxp3.Match(lib);
@@ -764,9 +765,9 @@ namespace QtProjectLib
                 }
                 // Remove Duplicates
                 var uniques = new Dictionary<string, int>();
-                foreach (string dep in newDeps) {
+                foreach (var dep in newDeps)
                     uniques[dep] = 1;
-                }
+
                 var uniqueList = new List<string>(uniques.Keys);
                 linkerWrapper.AdditionalDependencies = uniqueList;
             }
@@ -812,18 +813,18 @@ namespace QtProjectLib
         public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive, bool suppressStrings)
         {
             if (!caseSensitive)
-                for (int i = 0; i < searchStrings.Length; ++i)
+                for (var i = 0; i < searchStrings.Length; ++i)
                     searchStrings[i] = searchStrings[i].ToLower();
 
             CxxStreamReader sr = null;
-            bool found = false;
+            var found = false;
             try {
-                string strLine;
+                var strLine = string.Empty;
                 sr = new CxxStreamReader(file.FullPath);
                 while (!found && (strLine = sr.ReadLine(suppressStrings)) != null) {
                     if (!caseSensitive)
                         strLine = strLine.ToLower();
-                    foreach (string str in searchStrings) {
+                    foreach (var str in searchStrings) {
                         if (strLine.IndexOf(str, StringComparison.Ordinal) != -1) {
                             found = true;
                             break;
@@ -973,13 +974,13 @@ namespace QtProjectLib
                 return null;
             }
 
-            string configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+            var configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
 
             foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
                 // Why project files are also returned?
                 if (vcfile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
                     continue;
-                bool excluded = false;
+                var excluded = false;
                 var fileConfigurations = (IVCCollection) vcfile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations) {
                     if (config.ExcludedFromBuild && config.MatchName(configurationName, false)) {
@@ -1152,8 +1153,8 @@ namespace QtProjectLib
 
             EnvDTE.SelectedItems items = dteObject.SelectedItems;
 
-            VCFile[] files = new VCFile[items.Count + 1];
-            for (int i = 1; i <= items.Count; ++i) {
+            var files = new VCFile[items.Count + 1];
+            for (var i = 1; i <= items.Count; ++i) {
                 var item = items.Item(i);
                 if (item.ProjectItem == null)
                     continue;
@@ -1191,7 +1192,7 @@ namespace QtProjectLib
 
             if (cmdLine.Length > 0) {
                 var cmdSplit = cmdLine.Split(new Char[] { ' ', '\t' });
-                for (int i = 0; i < cmdSplit.Length; ++i) {
+                for (var i = 0; i < cmdSplit.Length; ++i) {
                     var lowercmdSplit = cmdSplit[i].ToLower();
                     if (lowercmdSplit.Equals("-threshold")) {
                         rccOpts.CompressFiles = true;
@@ -1215,8 +1216,8 @@ namespace QtProjectLib
             var projects = new List<EnvDTE.Project>();
             Solution solution = dteObject.Solution;
             if (solution != null) {
-                int c = solution.Count;
-                for (int i = 1; i <= c; ++i) {
+                var c = solution.Count;
+                for (var i = 1; i <= c; ++i) {
                     try {
                         var prj = solution.Projects.Item(i) as Project;
                         if (prj == null)
@@ -1267,7 +1268,7 @@ namespace QtProjectLib
 
         public static int GetMaximumCommandLineLength()
         {
-            const int epsilon = 10;       // just to be sure :)
+            var epsilon = 10;       // just to be sure :)
             System.OperatingSystem os = System.Environment.OSVersion;
             if (os.Version.Major >= 6 ||
                 (os.Version.Major == 5 && os.Version.Minor >= 1))
@@ -1332,7 +1333,7 @@ namespace QtProjectLib
             if (array1.Length != array2.Length)
                 return false;
 
-            for (int i = 0; i < array1.Length; i++)
+            for (var i = 0; i < array1.Length; i++)
                 if (!Object.Equals(array1.GetValue(i), array2.GetValue(i)))
                     return false;
             return true;
@@ -1342,8 +1343,8 @@ namespace QtProjectLib
         {
             var envPATH = System.Environment.ExpandEnvironmentVariables("%PATH%");
             var directories = envPATH.Split(new Char[] { ';' });
-            foreach (string directory in directories) {
-                string fullFilePath = directory;
+            foreach (var directory in directories) {
+                var fullFilePath = directory;
                 if (!fullFilePath.EndsWith("\\", StringComparison.Ordinal)) fullFilePath += '\\';
                 fullFilePath += fileName;
                 if (File.Exists(fullFilePath))

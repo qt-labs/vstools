@@ -139,7 +139,7 @@ namespace QtVsTools
         private static List<string> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
         {
             var lst = new List<string>();
-            foreach (string file in files) {
+            foreach (var file in files) {
                 var s = ResolveEnvironmentVariables(file, project);
                 if (s == null) {
                     Messages.PaneMessage(project.DTE, SR.GetString("ImportPriFileNotResolved", file));
@@ -158,7 +158,7 @@ namespace QtVsTools
             string val = null;
             var reg = new Regex(@"\$\(([^\s\(\)]+)\)");
             var col = reg.Matches(str);
-            for (int i = 0; i < col.Count; ++i) {
+            for (var i = 0; i < col.Count; ++i) {
                 env = col[i].Groups[1].ToString();
                 if (env == "QTDIR") {
                     var vm = QtVersionManager.The();

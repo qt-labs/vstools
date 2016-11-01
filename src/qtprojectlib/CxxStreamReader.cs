@@ -85,7 +85,7 @@ namespace QtProjectLib
 
         public string ReadLine(bool removeStrings)
         {
-            string line;
+            var line = string.Empty;
             do {
                 line = sr.ReadLine();
                 if (line == null)
@@ -100,7 +100,7 @@ namespace QtProjectLib
             switch (state) {
             case State.Normal:
                 {
-                    string lineCopy = line;
+                    var lineCopy = line;
                     line = string.Empty;
                     for (int i = 0, j = 1; i < lineCopy.Length; ++i, ++j) {
                         if (lineCopy[i] == '/' && j < lineCopy.Length) {
@@ -121,7 +121,7 @@ namespace QtProjectLib
                             }
                         } else if (lineCopy[i] == '"') {
                             // start of a string detected
-                            int endIdx = j - 1;
+                            var endIdx = j - 1;
                             do {
                                 endIdx = lineCopy.IndexOf('"', endIdx + 1);
                             } while (endIdx >= 0 && lineCopy[endIdx - 1] == '\\');
@@ -163,9 +163,9 @@ namespace QtProjectLib
                 break;
             case State.String:
                 {
-                    string lineCopy = line;
+                    var lineCopy = line;
                     line = string.Empty;
-                    int endIdx = -1;
+                    var endIdx = -1;
                     do {
                         endIdx = lineCopy.IndexOf('"', endIdx + 1);
                     } while (endIdx >= 0 && lineCopy[endIdx - 1] == '\\');

@@ -107,19 +107,17 @@ namespace QtProjectLib
                         line = line.Remove(commentStartIndex);
                     var pos = line.IndexOf('=');
                     if (pos > 0) {
-                        string op = "=";
+                        var op = "=";
                         if (line[pos - 1] == '+' || line[pos - 1] == '-')
                             op = line[pos - 1] + "=";
 
-                        string lineKey;
-                        string lineValue;
-                        lineKey = line.Substring(0, pos - op.Length + 1).Trim();
-                        lineValue = ExpandVariables(line.Substring(pos + 1).Trim(), entries);
+                        var lineKey = line.Substring(0, pos - op.Length + 1).Trim();
+                        var lineValue = ExpandVariables(line.Substring(pos + 1).Trim(), entries);
 
                         if (op == "+=") {
                             entries[lineKey] += " " + lineValue;
                         } else if (op == "-=") {
-                            foreach (string remval in lineValue.Split(new char[] { ' ', '\t' }))
+                            foreach (var remval in lineValue.Split(new char[] { ' ', '\t' }))
                                 RemoveValue(lineKey, remval, entries);
                         } else
                             entries[lineKey] = lineValue;
@@ -128,7 +126,7 @@ namespace QtProjectLib
                         var posEnd = line.LastIndexOf(')');
                         if (pos > 0 && pos < posEnd) {
                             var filenameToInclude = line.Substring(pos + 1, posEnd - pos - 1);
-                            string saveCurrentDir = Environment.CurrentDirectory;
+                            var saveCurrentDir = Environment.CurrentDirectory;
                             Environment.CurrentDirectory = fileInfo.Directory.FullName;
                             var fileInfoToInclude = new FileInfo(filenameToInclude);
                             if (fileInfoToInclude.Exists)
@@ -155,8 +153,8 @@ namespace QtProjectLib
         {
             var pos = value.IndexOf("$$", StringComparison.Ordinal);
             while (pos != -1) {
-                int startPos = pos + 2;
-                int endPos = startPos;
+                var startPos = pos + 2;
+                var endPos = startPos;
 
                 if (value[startPos] != '[')  // at the moment no handling of qmake internal variables
                 {
@@ -181,7 +179,7 @@ namespace QtProjectLib
 
         private void RemoveValue(string key, string valueToRemove, Hashtable entries)
         {
-            int pos;
+            var pos = -1;
             if (!entries.Contains(key))
                 return;
 

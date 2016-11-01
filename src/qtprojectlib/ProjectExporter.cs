@@ -242,8 +242,8 @@ namespace QtProjectLib
         #region Helper Functions
         private static void MakeFilesRelativePath(VCProject vcproj, List<string> files, string path)
         {
-            for (int i = 0; i < files.Count; i++) {
-                string relPath;
+            for (var i = 0; i < files.Count; i++) {
+                var relPath = string.Empty;
                 if (files[i].IndexOf(':') != 1)
                     relPath = HelperFunctions.GetRelativePath(path,
                         vcproj.ProjectDirectory + "\\" + (string) files[i]);
@@ -255,7 +255,7 @@ namespace QtProjectLib
 
         private static bool ContainsFilesWithSpaces(List<string> files)
         {
-            for (int i = 0; i < files.Count; i++) {
+            for (var i = 0; i < files.Count; i++) {
                 if (files[i].IndexOf(' ') != -1)
                     return true;
             }
@@ -266,7 +266,7 @@ namespace QtProjectLib
         public static List<string> ConvertFilesToFullPath(List<string> files, string path)
         {
             var ret = new List<string>(files.Count);
-            foreach (string file in files) {
+            foreach (var file in files) {
                 FileInfo fi;
                 if (file.IndexOf(':') != 1)
                     fi = new FileInfo(path + "\\" + file);
@@ -322,18 +322,18 @@ namespace QtProjectLib
             var content = new ProFileContent(qtPro.VCProject);
 
             // hack to get active config
-            string activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            string activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
+            var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+            var activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
             var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
             var compiler = CompilerToolWrapper.Create(config);
             var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
             var libTool = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
 
-            string outPut = config.PrimaryOutput;
+            var outPut = config.PrimaryOutput;
             var fi = new FileInfo(outPut);
             var destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
             destdir = HelperFunctions.ChangePathFormat(destdir);
-            string target = qtPro.VCProject.Name;
+            var target = qtPro.VCProject.Name;
 
             option = new ProFileOption("TEMPLATE");
             option.Comment = Resources.ec_Template;
@@ -534,7 +534,7 @@ namespace QtProjectLib
             ProFileOption option;
             var qtPro = QtProject.Create(project);
             var content = new ProFileContent(qtPro.VCProject);
-            bool hasSpaces = false;
+            var hasSpaces = false;
 
             // add the header files
             option = new ProFileOption("HEADERS");
@@ -594,10 +594,10 @@ namespace QtProjectLib
             if (preprocessorDefinitions == null)
                 return;
 
-            string excludeList = "UNICODE WIN32 NDEBUG QDESIGNER_EXPORT_WIDGETS ";
+            var excludeList = "UNICODE WIN32 NDEBUG QDESIGNER_EXPORT_WIDGETS ";
             excludeList += "QT_THREAD_SUPPORT QT_PLUGIN QT_NO_DEBUG QT_CORE_LIB QT_GUI_LIB";
 
-            foreach (string define in preprocessorDefinitions.Split(new char[] { ';', ',' })) {
+            foreach (var define in preprocessorDefinitions.Split(new char[] { ';', ',' })) {
                 if (excludeList.IndexOf(define, StringComparison.OrdinalIgnoreCase) == -1)
                     option.List.Add(define);
             }
@@ -617,7 +617,7 @@ namespace QtProjectLib
 
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
 
-            foreach (string s in includePaths.Split(new char[] { ';', ',' })) {
+            foreach (var s in includePaths.Split(new char[] { ';', ',' })) {
                 var d = HelperFunctions.NormalizeRelativeFilePath(s);
                 if (!d.StartsWith("$(qtdir)\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.StartsWith(qtDir + "\\include", StringComparison.OrdinalIgnoreCase) &&
@@ -644,7 +644,7 @@ namespace QtProjectLib
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
 
             if (paths != null) {
-                foreach (string s in paths.Split(new char[] { ';', ',' })) {
+                foreach (var s in paths.Split(new char[] { ';', ',' })) {
                     var d = HelperFunctions.NormalizeRelativeFilePath(s);
                     if (!d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase)) {
@@ -657,7 +657,7 @@ namespace QtProjectLib
             }
 
             if (deps != null) {
-                foreach (string d in deps.Split(new char[] { ' ' })) {
+                foreach (var d in deps.Split(new char[] { ' ' })) {
                     if (d.Length > 0 &&
                         !d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase) &&
@@ -683,13 +683,13 @@ namespace QtProjectLib
 
         private void WriteProSolution(ProSolution prosln, bool openFile)
         {
-            EnvDTE.Solution sln = prosln.ProjectSolution;
+            var sln = prosln.ProjectSolution;
             if (string.IsNullOrEmpty(sln.FileName))
                 return;
 
             var fi = new FileInfo(sln.FullName);
-            DirectoryInfo slnDir = fi.Directory;
-            bool createSlnFile = false;
+            var slnDir = fi.Directory;
+            var createSlnFile = false;
 
             if ((slnDir != null) && (prosln.ProFiles.Count > 1)) {
                 if (MessageBox.Show(SR.GetString("ExportProject_SolutionProFileBuildIn", slnDir.FullName),
@@ -700,7 +700,7 @@ namespace QtProjectLib
             if (createSlnFile) {
                 StreamWriter sw;
                 var slnName = HelperFunctions.RemoveFileNameExtension(fi);
-                string slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
+                var slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
 
                 if (File.Exists(slnFileName))
                     if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", slnFileName),
@@ -830,14 +830,12 @@ namespace QtProjectLib
                     sw.Write(" += "); break;
                 }
 
-                for (int i = 0; i < option.List.Count - 1; i++) {
+                for (var i = 0; i < option.List.Count - 1; i++)
                     sw.Write((string) option.List[i] + option.NewOption);
-                }
                 sw.Write((string) option.List[option.List.Count - 1] + sw.NewLine);
             } else {
-                for (int i = 0; i < option.List.Count; i++) {
+                for (var i = 0; i < option.List.Count; i++)
                     sw.WriteLine(option.Name + "(" + (string) option.List[i] + ")");
-                }
             }
         }
         #endregion
@@ -888,8 +886,8 @@ namespace QtProjectLib
             // start parsing from the beginning...
             sr.BaseStream.Position = 0;
 
-            string line;
-            bool parsing = false;
+            var line = string.Empty;
+            var parsing = false;
             char[] trimChars = { '/', '\\', ' ', '\t', '=', '+', '-' };
             char[] sepChars = { '\t', ' ' };
 
@@ -905,7 +903,7 @@ namespace QtProjectLib
 
                 if (parsing) {
                     // remove pwd, as we build the full path ourself
-                    string pwd = "$$PWD";
+                    var pwd = "$$PWD";
                     if (line.IndexOf(pwd, StringComparison.Ordinal) > -1)
                         line = line.Remove(line.IndexOf(pwd, StringComparison.Ordinal), pwd.Length);
 
@@ -925,13 +923,13 @@ namespace QtProjectLib
 
         private static VCFilter BestMatch(string path, Hashtable pathFilterTable)
         {
-            string bestMatch = ".";
-            string inPath = path;
+            var bestMatch = ".";
+            var inPath = path;
             if (inPath.StartsWith(".\\", StringComparison.Ordinal))
                 inPath = inPath.Substring(2);
             foreach (string p in pathFilterTable.Keys) {
-                int best = 0;
-                for (int i = 0; i < inPath.Length; ++i) {
+                var best = 0;
+                for (var i = 0; i < inPath.Length; ++i) {
                     if (i < p.Length && inPath[i] == p[i])
                         ++best;
                     else
@@ -946,7 +944,7 @@ namespace QtProjectLib
         private static void CollectFilters(VCFilter filter, string path, ref Hashtable filterPathTable,
             ref Hashtable pathFilterTable)
         {
-            string newPath = ".";
+            var newPath = ".";
             if (path != null)
                 newPath = path + "\\" + filter.Name;
             newPath = newPath.ToLower().Trim();
@@ -971,12 +969,12 @@ namespace QtProjectLib
             List<string> projFiles, EnvDTE.DTE dte, bool flat, FakeFilter fakeFilter)
         {
             var cmpPriFiles = new List<string>(priFiles.Count);
-            foreach (string s in priFiles)
+            foreach (var s in priFiles)
                 cmpPriFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
             cmpPriFiles.Sort();
 
             var cmpProjFiles = new List<string>(projFiles.Count);
-            foreach (string s in projFiles)
+            foreach (var s in projFiles)
                 cmpProjFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
 
             var qtPro = QtProject.Create(vcproj);
@@ -991,7 +989,7 @@ namespace QtProjectLib
             }
 
             // first check for new files
-            foreach (string file in cmpPriFiles) {
+            foreach (var file in cmpPriFiles) {
                 if (cmpProjFiles.IndexOf(file) > -1)
                     continue;
 
@@ -1017,7 +1015,7 @@ namespace QtProjectLib
                     var filter = BestMatch(path, pathFilterTable);
 
                     var filterDir = filterPathTable[filter] as string;
-                    string name = path;
+                    var name = path;
                     if (!name.StartsWith("..", StringComparison.Ordinal) && name.StartsWith(filterDir, StringComparison.Ordinal))
                         name = name.Substring(filterDir.Length + 1);
 
@@ -1030,7 +1028,7 @@ namespace QtProjectLib
             }
 
             // then check for deleted files
-            foreach (string file in cmpProjFiles) {
+            foreach (var file in cmpProjFiles) {
                 if (cmpPriFiles.IndexOf(file) == -1) {
                     // the file is not in the pri file
                     // (only removes it from the project, does not del. the file)

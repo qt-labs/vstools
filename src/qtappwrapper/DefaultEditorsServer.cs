@@ -149,7 +149,7 @@ namespace QtAppWrapper
                         if (client == null || aboutToExit)
                             break;
 
-                        byte[] message = new byte[4096];
+                        var message = new byte[4096];
                         var stream = client.GetStream();
                         var bytesRead = stream.Read(message, 0, message.Length);
                         if (MessageReceived(message, bytesRead) == MessageType.Hello) {
@@ -189,7 +189,7 @@ namespace QtAppWrapper
                 var stream = tcpClient.GetStream();
 
                 try {
-                    byte[] buffer = new byte[1024];
+                    var buffer = new byte[1024];
                     stream.Read(buffer, 0, buffer.Length);
                 } catch (System.IO.IOException e) {
                     Debug.WriteLine("Exception thrown:");
@@ -229,7 +229,7 @@ namespace QtAppWrapper
                 if (length < helloMessage.Length)
                     return MessageType.Data;
 
-                for (int i = 0; i < helloMessage.Length; ++i) {
+                for (var i = 0; i < helloMessage.Length; ++i) {
                     if (message[i] != helloMessage[i])
                         return MessageType.Data;
                 }

@@ -146,7 +146,7 @@ namespace QtProjectLib
                             QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
                         }
                         if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
-                            bool newProject = false;
+                            var newProject = false;
                             qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
                             if (!qtPro.SelectSolutionPlatform(platformName)) {
                                 Messages.PaneMessage(dteObject, "Can't select the platform " + platformName + ".");
@@ -155,7 +155,7 @@ namespace QtProjectLib
 
                         // try to figure out if the project is a plugin project
                         try {
-                            string activeConfig = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+                            var activeConfig = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
                             var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
                             if (config.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
                                 var compiler = CompilerToolWrapper.Create(config);
@@ -181,7 +181,7 @@ namespace QtProjectLib
         private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
-            foreach (string project in projects) {
+            foreach (var project in projects) {
                 var projectInfo = new FileInfo(project);
                 ReplaceQtDirInProject(projectInfo, vi);
             }
@@ -196,7 +196,7 @@ namespace QtProjectLib
             var projects = new List<string>();
             var index = content.IndexOf(projectFileExtension, StringComparison.Ordinal);
             while (index != -1) {
-                int startIndex = content.LastIndexOf('\"', index, index) + 1;
+                var startIndex = content.LastIndexOf('\"', index, index) + 1;
                 var endIndex = content.IndexOf('\"', index);
                 projects.Add(content.Substring(startIndex, endIndex - startIndex));
                 content = content.Substring(endIndex);
@@ -260,8 +260,8 @@ namespace QtProjectLib
 
         private static string FindQtDirFromExtension(string content, string extension)
         {
-            string s = "";
-            int index = -1;
+            var s = string.Empty;
+            var index = -1;
             index = content.IndexOf(extension.ToLower(), StringComparison.OrdinalIgnoreCase);
             if (index != -1) {
                 s = content.Remove(index);

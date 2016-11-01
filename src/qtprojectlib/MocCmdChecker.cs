@@ -49,7 +49,7 @@ namespace QtProjectLib
             string mocOptions, string mocFile, string newPchParameters,
             string outputFile)
         {
-            string inputMocFile = ProjectMacros.Path;
+            var inputMocFile = ProjectMacros.Path;
             if (outputFile.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
                 inputMocFile = mocFile;
             var cmds = SplitIntoCommands(cmdLine);
@@ -57,17 +57,16 @@ namespace QtProjectLib
             if (mocPos < 0)
                 return null;
 
-            string mocCmd = cmds[mocPos];
+            var mocCmd = cmds[mocPos];
             var defs = ExtractDefines(mocCmd);
             var incs = ExtractIncludes(mocCmd);
             var pchParameters = ExtractPCHOptions(mocCmd);
             var newIncludes = ExtractIncludes(includes);
             var newDefines = ExtractDefines(defines);
 
-            bool equal = true;
-
+            var equal = true;
             if (newDefines.Count == defs.Count) {
-                foreach (string s in newDefines) {
+                foreach (var s in newDefines) {
                     if (defs.Contains(s)) {
                         defs.Remove(s);
                     } else {
@@ -81,7 +80,7 @@ namespace QtProjectLib
 
             equal = equal && newIncludes.Count == incs.Count;
             if (equal) {
-                foreach (string s in newIncludes) {
+                foreach (var s in newIncludes) {
                     if (incs.Contains(s)) {
                         incs.Remove(s);
                     } else {
@@ -95,8 +94,8 @@ namespace QtProjectLib
             if (equal)
                 return null;
 
-            string newCmdLine = "";
-            for (int i = 0; i < cmds.Length; ++i) {
+            var newCmdLine = string.Empty;
+            for (var i = 0; i < cmds.Length; ++i) {
                 if (i == mocPos) {
                     newCmdLine = newCmdLine + "\"" + Resources.moc4Command + "\" "
                         + mocOptions
@@ -116,17 +115,17 @@ namespace QtProjectLib
         private static string[] SplitIntoCommands(string cmdLine)
         {
             var cmds = cmdLine.Split(new string[] { "&&", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            string[] res = new string[cmds.Length];
-            for (int i = 0; i < cmds.Length; ++i)
+            var res = new string[cmds.Length];
+            for (var i = 0; i < cmds.Length; ++i)
                 res[i] = cmds[i].Trim();
             return res;
         }
 
         private static int MocCommandPosition(string[] cmds)
         {
-            int res = -1;
+            var res = -1;
             var reg = new Regex(@"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
-            for (int i = 0; i < cmds.Length; ++i) {
+            for (var i = 0; i < cmds.Length; ++i) {
                 var m = reg.Match(cmds[i]);
                 if (m.Success)
                     return i;
@@ -139,7 +138,7 @@ namespace QtProjectLib
             var reg = new Regex(@"-D(\S+)");
             var col = reg.Matches(cmdLine);
             var lst = new List<string>(col.Count);
-            for (int i = 0; i < col.Count; ++i)
+            for (var i = 0; i < col.Count; ++i)
                 lst.Add(col[i].Groups[1].ToString());
             return lst;
         }
@@ -149,7 +148,7 @@ namespace QtProjectLib
             var reg = new Regex(@"-I([^\s""]+)|-I""([^""]+)""");
             var col = reg.Matches(cmdLine);
             var lst = new List<string>(col.Count);
-            for (int i = 0; i < col.Count; ++i) {
+            for (var i = 0; i < col.Count; ++i) {
                 var s = col[i].Groups[1].ToString();
                 if (s.Length != 0)
                     lst.Add(NormalizePath(s));

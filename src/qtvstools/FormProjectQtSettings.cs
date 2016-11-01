@@ -194,7 +194,7 @@ namespace QtVsTools
             var qtVersion = qtProject.GetQtVersion();
             var install_path = versionManager.GetInstallPath(qtVersion) ?? string.Empty;
 
-            for (int i = 0; i < moduleMap.Count; ++i) {
+            for (var i = 0; i < moduleMap.Count; ++i) {
                 ModuleMapItem item = moduleMap[i];
                 item.initialValue = qtProject.HasModule(item.moduleId);
                 item.checkbox.Checked = item.initialValue;
@@ -202,11 +202,11 @@ namespace QtVsTools
 
                 // Disable if module not installed
                 var info = QtModules.Instance.ModuleInformation(item.moduleId);
-                string libraryPrefix = info.LibraryPrefix;
+                var libraryPrefix = info.LibraryPrefix;
                 if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal)) {
                     libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
                 }
-                string full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
+                var full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
                 var fi = new System.IO.FileInfo(full_path);
                 item.checkbox.Enabled = fi.Exists;
                 if (fi.Exists == false) {
@@ -220,9 +220,9 @@ namespace QtVsTools
         private void saveModules()
         {
             qtProject = QtProject.Create(project);
-            for (int i = 0; i < moduleMap.Count; ++i) {
+            for (var i = 0; i < moduleMap.Count; ++i) {
                 ModuleMapItem item = moduleMap[i];
-                bool isModuleChecked = item.checkbox.Checked;
+                var isModuleChecked = item.checkbox.Checked;
                 if (isModuleChecked != item.initialValue) {
                     if (isModuleChecked)
                         qtProject.AddModule(item.moduleId);

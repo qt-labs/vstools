@@ -242,7 +242,7 @@ namespace QtVsTools
             // Special case for finding property stuff
             if (text.Substring(index).StartsWith("property ", StringComparison.Ordinal)) {
                 var possibly_property_type = text.Substring(index, length - index);
-                int value_len = 0;
+                var value_len = 0;
                 try {
                     foreach (var value in properties) {
                         if (possibly_property_type.StartsWith(value, StringComparison.Ordinal)) {
@@ -270,11 +270,11 @@ namespace QtVsTools
 
             }
 
-            bool inMultilineComment = false;
-            for (int i = index; i < length; i++) {
-                char ch = text[i];
+            var inMultilineComment = false;
+            for (var i = index; i < length; i++) {
+                var ch = text[i];
 
-                char next_ch = '\0'; // doesn't matter which the default is until not '*' or '/'
+                var next_ch = '\0'; // doesn't matter which the default is until not '*' or '/'
                 try {
                     next_ch = text[i + 1];
                 } catch (System.IndexOutOfRangeException) {
@@ -404,7 +404,7 @@ namespace QtVsTools
 
             var insideMultiLineComment = false;
             // Scan all known multi-line comments to check if incoming span intersects
-            for (int i = multiLineCommentTokens.Count - 1; i >= 0; i--) {
+            for (var i = multiLineCommentTokens.Count - 1; i >= 0; i--) {
                 var multilineSpan = multiLineCommentTokens[i].Tracking().GetSpan(span.Snapshot);
                 if (multilineSpan.Length != 0) {
                     if (span.IntersectsWith(multilineSpan)) {
@@ -456,7 +456,7 @@ namespace QtVsTools
 
                         // If we have multi-line comment in out hands add it into the list
                         if (token.Type == TokenType.MultilineComment) {
-                            bool alreadyFound = false;
+                            var alreadyFound = false;
                             foreach (var mlToken in multiLineCommentTokens) {
                                 if (mlToken.Tracking().GetSpan(span.Snapshot).Span == tokenSpan.Span) {
                                     alreadyFound = true;

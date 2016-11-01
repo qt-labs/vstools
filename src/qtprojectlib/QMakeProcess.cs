@@ -131,9 +131,9 @@ namespace QtProjectLib
         public void RunQMake()
         {
             var fi = new FileInfo(file);
-            string vcproj = HelperFunctions.RemoveFileNameExtension(fi) + ".vcxproj";
+            var vcproj = HelperFunctions.RemoveFileNameExtension(fi) + ".vcxproj";
 
-            string qmakeArgs = "-tp vc \"" + fi.Name + "\" ";
+            var qmakeArgs = "-tp vc \"" + fi.Name + "\" ";
 
             if (recursive)
                 qmakeArgs += "-recursive";
@@ -153,13 +153,13 @@ namespace QtProjectLib
             qmakeProcess.StartInfo.EnvironmentVariables["QTDIR"] = qtVersionInformation.qtDir;
 
             // determine which vs version we are currently using and inform qmake about it
-            string regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
+            var regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
             var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
             if (key != null) {
                 var keyValue = key.GetValue("ProductDir", (object) "").ToString();
-                string envVar = qmakeProcess.StartInfo.EnvironmentVariables["path"];
+                var envVar = qmakeProcess.StartInfo.EnvironmentVariables["path"];
                 if (envVar != null) {
-                    string value = envVar + ";" + keyValue;
+                    var value = envVar + ";" + keyValue;
                     qmakeProcess.StartInfo.EnvironmentVariables["path"] = value;
                 } else
                     qmakeProcess.StartInfo.EnvironmentVariables.Add("path", keyValue);
@@ -312,7 +312,7 @@ namespace QtProjectLib
                 return;
 
             var propertyString = property.ToString();
-            string result = "";
+            var result = string.Empty;
 
             qmakeProcess = CreateQmakeProcess("-query " + propertyString.Trim(), qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
             try {

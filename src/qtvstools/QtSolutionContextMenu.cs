@@ -131,7 +131,7 @@ namespace QtVsTools
                 Translation.RunlRelease(Vsix.Instance.Dte.Solution);
                 break;
             case ChangeSolutionQtVersionId:
-                string newQtVersion = string.Empty;
+                var newQtVersion = string.Empty;
                 using (var formChangeQtVersion = new FormChangeQtVersion()) {
                     formChangeQtVersion.UpdateContent(ChangeFor.Solution);
                     if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
@@ -159,7 +159,7 @@ namespace QtVsTools
                         if (OldQtVersion == null)
                             OldQtVersion = QtVersionManager.The().GetDefaultVersion();
 
-                        bool created = false;
+                        var created = false;
                         var qtProject = QtProject.Create(project);
                         qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
                     }

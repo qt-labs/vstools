@@ -242,7 +242,7 @@ namespace QtVsTools
             errorTimer.Stop();
             errorTimer.Start();
             var name = nameBox.Text.Trim();
-            string path = pathBox.Text;
+            var path = pathBox.Text;
 
             if (sender == nameBox)
                 nameBoxDirty = true;
@@ -300,8 +300,8 @@ namespace QtVsTools
                 }
             }
 
-            bool found = false;
-            foreach (string s in QtVersionManager.The().GetVersions()) {
+            var found = false;
+            foreach (var s in QtVersionManager.The().GetVersions()) {
                 if (nameBox.Text == s) {
                     lastErrorString = SR.GetString("AddQtVersionDialog_VersionAlreadyPresent");
                     found = true;

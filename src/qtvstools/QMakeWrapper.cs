@@ -51,7 +51,7 @@ namespace QtVsTools
         {
             string output;
             try {
-                string exeFilePath = Vsix.Instance.QMakeFileReaderPath;
+                var exeFilePath = Vsix.Instance.QMakeFileReaderPath;
                 if (!System.IO.File.Exists(exeFilePath))
                     return false;
 

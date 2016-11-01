@@ -99,7 +99,7 @@ namespace QtVsTools
         private void UpdateListBox(string defaultQtVersionDir)
         {
             listView.Items.Clear();
-            foreach (string version in versionManager.GetVersions()) {
+            foreach (var version in QtVersionManager.The().GetVersions()) {
                 string path = null;
                 if (defaultQtVersionDir != null && version == "$(DefaultQtVersion)")
                     path = defaultQtVersionDir;
@@ -117,12 +117,12 @@ namespace QtVsTools
 
         private void SetupDefaultVersionComboBox(string version)
         {
-            string currentItem = defaultCombo.Text;
+            var currentItem = defaultCombo.Text;
             if (version != null)
                 currentItem = version;
             defaultCombo.Items.Clear();
 
-            foreach (string v in versionManager.GetVersions()) {
+            foreach (var v in QtVersionManager.The().GetVersions()) {
                 if (v == "$(DefaultQtVersion)")
                     continue;
                 defaultCombo.Items.Add(v);
@@ -142,7 +142,7 @@ namespace QtVsTools
         {
             QtVersionManager.The().ClearVersionCache();
             foreach (ListViewItem itm in listView.SelectedItems) {
-                string name = itm.Text;
+                var name = itm.Text;
                 versionManager.RemoveVersion(name);
                 listView.Items.Remove(itm);
                 SetupDefaultVersionComboBox(null);

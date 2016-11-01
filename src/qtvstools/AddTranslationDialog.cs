@@ -244,10 +244,10 @@ namespace QtVsTools
             var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures
                 & ~CultureTypes.UserCustomCulture & ~CultureTypes.ReplacementCultures);
             var transItems = new List<TranslationItem>();
-            for (int i = 0; i < cultures.Length; i++) {
+            for (var i = 0; i < cultures.Length; i++) {
                 // Locales without a LCID are given LCID 0x1000 (http://msdn.microsoft.com/en-us/library/dn363603.aspx)
                 // Trying to create a TranslationItem for these will cause an exception to be thrown.
-                int lcid = cultures[i].LCID;
+                var lcid = cultures[i].LCID;
                 if (lcid != 0x1000)
                     transItems.Add(new TranslationItem(lcid));
             }

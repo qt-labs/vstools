@@ -338,7 +338,7 @@ namespace QtProjectLib
 
         private void optionListBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            int idx = optionListBox.SelectedIndex;
+            var idx = optionListBox.SelectedIndex;
             if (idx < 0)
                 return;
             optionTextBox.Text = currentOpt.List[optionListBox.SelectedIndex];
@@ -353,7 +353,7 @@ namespace QtProjectLib
             } else {
                 optionTextBox.Enabled = true;
                 currentOpt.List[optionListBox.SelectedIndex] = optionTextBox.Text;
-                int index = optionListBox.SelectedIndex;
+                var index = optionListBox.SelectedIndex;
                 UpdateCurrentListItem();
                 optionListBox.SelectedIndex = index;
             }
@@ -363,16 +363,15 @@ namespace QtProjectLib
         {
             optionListBox.BeginUpdate();
             optionListBox.Items.Clear();
-            foreach (string tag in currentOpt.List) {
+            foreach (var tag in currentOpt.List)
                 optionListBox.Items.Add(tag);
-            }
             optionListBox.EndUpdate();
         }
 
         private void newButton_Click(object sender, System.EventArgs e)
         {
             currentOpt.List.Add("{New}");
-            int index = currentOpt.List.Count - 1;
+            var index = currentOpt.List.Count - 1;
             UpdateCurrentListItem();
             optionListBox.SelectedIndex = index;
             optionTextBox.SelectAll();
@@ -380,8 +379,8 @@ namespace QtProjectLib
 
         private void UpdateButtons()
         {
-            bool delEnabled = true;
-            bool addEnabled = true;
+            var delEnabled = true;
+            var addEnabled = true;
 
             if (optionListBox.SelectedIndex < 0)
                 delEnabled = false;
@@ -398,7 +397,7 @@ namespace QtProjectLib
 
         private void delButton_Click(object sender, System.EventArgs e)
         {
-            int index = optionListBox.SelectedIndex;
+            var index = optionListBox.SelectedIndex;
             currentOpt.List.RemoveAt(optionListBox.SelectedIndex);
             UpdateCurrentListItem();
 
@@ -429,9 +428,8 @@ namespace QtProjectLib
 
         private void ExportProjectDialog_Load(object sender, System.EventArgs e)
         {
-            for (int i = 0; i < projListBox.Items.Count; i++) {
+            for (var i = 0; i < projListBox.Items.Count; i++)
                 projListBox.SetItemChecked(i, true);
-            }
         }
 
         public bool OpenFiles

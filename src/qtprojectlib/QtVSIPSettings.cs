@@ -528,9 +528,10 @@ namespace QtProjectLib
         {
             var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey != null) {
-                foreach (string s in regKey.GetValueNames())
+                foreach (var s in regKey.GetValueNames()) {
                     if (s == key)
                         return true;
+                }
             }
             return false;
         }

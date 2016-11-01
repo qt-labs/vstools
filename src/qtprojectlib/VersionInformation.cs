@@ -162,7 +162,7 @@ namespace QtProjectLib
                                    qtDir + "\\src\\corelib\\global\\qglobal.h",
                                    qtDir + "\\include\\QtCore\\qglobal.h"};
 
-            foreach (string filename in candidates) {
+            foreach (var filename in candidates) {
                 if (File.Exists(filename)) {
                     // check whether we look at the real qglobal.h or just a "pointer"
                     var inF = new StreamReader(filename);
@@ -204,14 +204,14 @@ namespace QtProjectLib
             // ### So actually we should check QtCore4.dll / QtCored4.dll instead.
             // ### Unfortunately there's no Win API for checking the architecture of DLLs.
             // ### We must read the PE header instead.
-            string fileToCheck = qtDir + "\\bin\\qmake.exe";
+            var fileToCheck = qtDir + "\\bin\\qmake.exe";
             if (!File.Exists(fileToCheck))
                 throw new QtVSException("Can't find " + fileToCheck);
 
-            const int SCS_32BIT_BINARY = 0;
-            const int SCS_64BIT_BINARY = 6;
-            int binaryType = 0;
-            bool success = NativeMethods.GetBinaryType(fileToCheck, ref binaryType) != 0;
+            var SCS_32BIT_BINARY = 0;
+            var SCS_64BIT_BINARY = 6;
+            var binaryType = 0;
+            var success = NativeMethods.GetBinaryType(fileToCheck, ref binaryType) != 0;
             if (!success)
                 throw new QtVSException("GetBinaryTypeA failed");
 

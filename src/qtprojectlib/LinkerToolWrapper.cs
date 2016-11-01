@@ -54,8 +54,8 @@ namespace QtProjectLib
                     return null;
                 var dirArray = linker.AdditionalLibraryDirectories.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
                 var lst = new List<string>(dirArray);
-                for (int i = 0; i < lst.Count; ++i) {
-                    string item = lst[i];
+                for (var i = 0; i < lst.Count; ++i) {
+                    var item = lst[i];
                     if (item.StartsWith("\"", StringComparison.Ordinal) && item.EndsWith("\"", StringComparison.Ordinal)) {
                         item = item.Remove(0, 1);
                         item = item.Remove(item.Length - 1, 1);
@@ -72,9 +72,9 @@ namespace QtProjectLib
                     return;
                 }
 
-                string newAdditionalLibraryDirectories = "";
-                bool firstLoop = true;
-                foreach (string item in value) {
+                var newAdditionalLibraryDirectories = string.Empty;
+                var firstLoop = true;
+                foreach (var item in value) {
                     if (firstLoop)
                         firstLoop = false;
                     else
@@ -106,10 +106,10 @@ namespace QtProjectLib
                     return;
                 }
 
-                string newAdditionalDependencies = "";
+                var newAdditionalDependencies = string.Empty;
                 var separators = new char[] { ' ', '\t' };
-                bool firstLoop = true;
-                foreach (string item in value) {
+                var firstLoop = true;
+                foreach (var item in value) {
                     if (firstLoop)
                         firstLoop = false;
                     else
@@ -139,11 +139,11 @@ namespace QtProjectLib
                 return new List<string>(str.Split(separators, StringSplitOptions.RemoveEmptyEntries));
 
             var ret = new List<string>();
-            int startIndex = 0;
+            var startIndex = 0;
             var r = new Regex(@"""[^""]*""");
             var mc = r.Matches(str);
             foreach (Match match in mc) {
-                string item = match.Value;
+                var item = match.Value;
                 item = item.Remove(0, 1);
                 item = item.Remove(item.Length - 1, 1);
 

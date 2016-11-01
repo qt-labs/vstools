@@ -78,7 +78,7 @@ namespace QtVsTools
             solutionEvents.Opened += SolutionEvents_Opened;
             solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
 
-            const string debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
             debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
             debugStartEvents.BeforeExecute += debugStartEvents_BeforeExecute;
 
@@ -270,7 +270,7 @@ namespace QtVsTools
             }
 
             if (HelperFunctions.HasSourceFileExtension(file.Name)) {
-                string moccedFileName = "moc_" + file.Name;
+                var moccedFileName = "moc_" + file.Name;
 
                 if (qtPro.IsMoccedFileIncluded(file)) {
                     // exclude moc_foo.cpp from build
@@ -305,7 +305,7 @@ namespace QtVsTools
                         foreach (VCFile fileInFilter in (IVCCollection) generatedFiles.Files) {
                             if (fileInFilter.Name == moccedFileName) {
                                 foreach (VCFileConfiguration config in (IVCCollection) fileInFilter.FileConfigurations) {
-                                    bool exclude = true;
+                                    var exclude = true;
                                     var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                     if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform) {
                                         var platform = vcConfig.Platform as VCPlatform;
@@ -317,7 +317,7 @@ namespace QtVsTools
                                             exclude = false;
                                     } else if (hasDifferentMocFilesPerPlatform) {
                                         var platform = vcConfig.Platform as VCPlatform;
-                                        string platformName = platform.Name;
+                                        var platformName = platform.Name;
                                         if (fileInFilter.RelativePath.ToLower().Contains(platformName.ToLower()))
                                             exclude = false;
                                     } else {
@@ -333,7 +333,7 @@ namespace QtVsTools
                                 if (f.Name == moccedFileName) {
                                     foreach (VCFileConfiguration config in (IVCCollection) f.FileConfigurations) {
                                         var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                        string filterToLookFor = "";
+                                        var filterToLookFor = string.Empty;
                                         if (hasDifferentMocFilesPerConfig)
                                             filterToLookFor = vcConfig.ConfigurationName;
                                         if (hasDifferentMocFilesPerPlatform) {
@@ -399,7 +399,7 @@ namespace QtVsTools
                     }
                     var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
                     if (pcHeaderThrough != null) {
-                        string pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
+                        var pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
                         if (vcFile.Name.EndsWith(pcHeaderCreator, StringComparison.OrdinalIgnoreCase)
                             && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", false, false)) {
                             //File is used to create precompiled headers

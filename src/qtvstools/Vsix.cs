@@ -120,7 +120,7 @@ namespace QtVsTools
             PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
             var vm = QtVersionManager.The();
-            string error = null;
+            var error = string.Empty;
             if (vm.HasInvalidVersions(out error))
                 Messages.DisplayErrorMessage(error);
             eventHandler = new DteEventsHandler(Dte);

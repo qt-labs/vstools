@@ -73,7 +73,7 @@ namespace QtVsTools
 
         public void SaveSettings()
         {
-            bool updateMoc = false;
+            var updateMoc = false;
             var qtPro = QtProject.Create(project);
 
             if (oldMocDir != newMocDir) {
@@ -107,7 +107,7 @@ namespace QtVsTools
                 QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
 
             if (oldQtVersion != newQtVersion) {
-                bool newProjectCreated = false;
+                var newProjectCreated = false;
                 var versionChanged = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
                 if (versionChanged && newProjectCreated)
                     project = qtPro.Project;

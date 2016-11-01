@@ -97,7 +97,7 @@ namespace QtProjectWizard
                     data.ClassName = array.LastOrDefault();
 
                     string nsBegin = string.Empty, nsEnd = string.Empty;
-                    for (int i = 0; i < array.Length - 1; ++i) {
+                    for (var i = 0; i < array.Length - 1; ++i) {
                         nsBegin += "namespace " + array[i] + " {\r\n";
                         nsEnd = "} // namespace " + array[i] + "\r\n" + nsEnd;
                     }

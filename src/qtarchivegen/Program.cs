@@ -59,8 +59,8 @@ namespace QtArchiveGen
 
                         using (var sourceStream = new FileStream(source, FileMode.Open))
                         using (var targetWriter = new BinaryWriter(vsixEntry.Open())) {
-                            int bytesRead;
-                            byte[] buffer = new byte[1024];
+                            var bytesRead = 0;
+                            var buffer = new byte[1024];
                             while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
                                 targetWriter.Write(buffer, 0, bytesRead);
                         }

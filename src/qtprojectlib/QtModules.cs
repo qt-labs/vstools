@@ -125,7 +125,7 @@ namespace QtProjectLib
         {
             // TODO: isStaticBuild is never used.
             var libs = new List<string>();
-            string libName = LibraryPrefix;
+            var libName = LibraryPrefix;
             if (libName.StartsWith("Qt", StringComparison.Ordinal))
                 libName = "Qt5" + libName.Substring(2);
             if (isDebugCfg)
@@ -138,7 +138,7 @@ namespace QtProjectLib
 
         public string GetDllFileName(bool isDebugCfg)
         {
-            string fileName = LibraryPrefix;
+            var fileName = LibraryPrefix;
             if (fileName.StartsWith("Qt", StringComparison.Ordinal))
                 fileName = "Qt5" + fileName.Substring(2);
             if (isDebugCfg)
@@ -299,7 +299,7 @@ namespace QtProjectLib
             moduleInfo.IncludePath = "$(QTDIR)\\include\\" + libraryPrefix;
             moduleInfo.Defines = new List<string>();
             dictModulesByDLL.Add(libraryPrefix, moduleId);
-            foreach (string str in defines) {
+            foreach (var str in defines) {
                 if (string.IsNullOrEmpty(str))
                     continue;
                 moduleInfo.Defines.Add(str);

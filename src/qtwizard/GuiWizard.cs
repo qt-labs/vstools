@@ -56,7 +56,7 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    bool defaultModulesInstalled = true;
+                    var defaultModulesInstalled = true;
                     foreach (var module in data.DefaultModules)
                         defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
 
