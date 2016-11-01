@@ -134,7 +134,7 @@ namespace QtVsTools
                 else
                     defaultCombo.Text = (string) defaultCombo.Items[0];
             } else {
-                defaultCombo.Text = "";
+                defaultCombo.Text = string.Empty;
             }
         }
 

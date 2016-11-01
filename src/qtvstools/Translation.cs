@@ -174,7 +174,7 @@ namespace QtVsTools
                         sw.WriteLine("CODECFORTR = " + codec);
                 }
 
-                cmdLine = "";
+                cmdLine = string.Empty;
                 if (!string.IsNullOrEmpty(options))
                     cmdLine += options + " ";
                 cmdLine += "\"" + temporaryProFile + "\"";

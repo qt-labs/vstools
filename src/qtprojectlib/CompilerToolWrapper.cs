@@ -178,7 +178,7 @@ namespace QtProjectLib
         public void SetAdditionalIncludeDirectories(string value)
         {
             // Prevent setting of empty substring, as they break the build
-            value = value.Replace("\"\",", "");
+            value = value.Replace("\"\",", string.Empty);
             if (compilerTool != null)
                 compilerTool.AdditionalIncludeDirectories = value;
             else
@@ -476,7 +476,7 @@ namespace QtProjectLib
                 obj = null;
             }
             if (obj == null)
-                return "";
+                return string.Empty;
             return (string) obj;
         }
 

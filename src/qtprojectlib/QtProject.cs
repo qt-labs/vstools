@@ -681,7 +681,7 @@ namespace QtProjectLib
         {
             // As .moc files are included, we should not add anything there
             if (!HelperFunctions.HasHeaderFileExtension(file.Name))
-                return "";
+                return string.Empty;
 
             string additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough().Replace('\\', '/') + "\" ";
             //Get mocDir without .\\ at the beginning of it
@@ -923,7 +923,7 @@ namespace QtProjectLib
                         // remove the moc option file commands
                         {
                             var rex = new Regex("^echo.+[.](moc|cpp)[.]inc\"\r\n", RegexOptions.Multiline);
-                            cmdLine = rex.Replace(cmdLine, "");
+                            cmdLine = rex.Replace(cmdLine, string.Empty);
                         }
 
                         var m = System.Text.RegularExpressions.Regex.Match(cmdLine,
@@ -1233,11 +1233,11 @@ namespace QtProjectLib
                         var reg = new Regex("Moc'ing .+\\.\\.\\.");
                         string addDepends = tool.AdditionalDependencies;
                         addDepends = System.Text.RegularExpressions.Regex.Replace(addDepends,
-                            @"(\S*moc.exe|""\S+:\\\.*moc.exe"")", "");
-                        addDepends = addDepends.Replace(file.RelativePath, "");
-                        tool.AdditionalDependencies = "";
-                        tool.Description = reg.Replace(tool.Description, "");
-                        tool.Description = tool.Description.Replace("MOC " + file.Name, "");
+                            @"(\S*moc.exe|""\S+:\\\.*moc.exe"")", string.Empty);
+                        addDepends = addDepends.Replace(file.RelativePath, string.Empty);
+                        tool.AdditionalDependencies = string.Empty;
+                        tool.Description = reg.Replace(tool.Description, string.Empty);
+                        tool.Description = tool.Description.Replace("MOC " + file.Name, string.Empty);
                         var baseFileName = file.Name.Remove(file.Name.LastIndexOf('.'));
                         string pattern = "(\"(.*\\\\" + GetMocFileName(file.FullPath)
                             + ")\"|(\\S*" + GetMocFileName(file.FullPath) + "))";
@@ -1252,12 +1252,12 @@ namespace QtProjectLib
                                 outputMocFile = matchList[1].ToString();
                             }
                         }
-                        tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs, pattern, "",
-                            RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                        tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
+                            pattern, string.Empty, RegexOptions.Multiline | RegexOptions.IgnoreCase);
                         tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
                             @"\s*;\s*;\s*", ";", RegexOptions.Multiline);
                         tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
-                            @"(^\s*;|\s*;\s*$)", "", RegexOptions.Multiline);
+                            @"(^\s*;|\s*;\s*$)", string.Empty, RegexOptions.Multiline);
 
                         if (outputMocFile != null) {
                             if (outputMocFile.StartsWith("\"", StringComparison.Ordinal))
@@ -1315,10 +1315,10 @@ namespace QtProjectLib
                 return;
             foreach (VCFileConfiguration config in (IVCCollection) file.FileConfigurations) {
                 var tool = HelperFunctions.GetCustomBuildTool(config);
-                tool.AdditionalDependencies = "";
-                tool.Description = "";
-                tool.CommandLine = "";
-                tool.Outputs = "";
+                tool.AdditionalDependencies = string.Empty;
+                tool.Description = string.Empty;
+                tool.CommandLine = string.Empty;
+                tool.Outputs = string.Empty;
             }
             RemoveUiHeaderFile(file);
         }
@@ -1992,7 +1992,7 @@ namespace QtProjectLib
                 string idc3 = "$(QTDIR)\\bin\\idc.exe \"$(TargetPath)\" /regserver";
 
                 tool.CommandLine = idc + "\r\n" + midl + "\r\n" + idc2 + "\r\n" + idc3;
-                tool.Description = "";
+                tool.Description = string.Empty;
 
                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
                 var librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
@@ -2962,7 +2962,7 @@ namespace QtProjectLib
         /// </summary>
         public void SetQtEnvironment(string qtVersion)
         {
-            SetQtEnvironment(qtVersion, "");
+            SetQtEnvironment(qtVersion, string.Empty);
         }
 
         /// <summary>

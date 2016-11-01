@@ -176,10 +176,10 @@ namespace QtProjectWizard
             QtProject.ReplaceTokenInFile(hppFile, "%BASECLASS%", data.BaseClass);
 
             if (string.IsNullOrEmpty(data.BaseClass)) {
-                QtProject.ReplaceTokenInFile(hppFile, "%BASEDECL%", "");
-                QtProject.ReplaceTokenInFile(hppFile, "%BASECLASSINCLUDE%", "");
-                QtProject.ReplaceTokenInFile(hppFile, "%Q_OBJECT%", "");
-                QtProject.ReplaceTokenInFile(hppFile, "%CTORSIG%", "");
+                QtProject.ReplaceTokenInFile(hppFile, "%BASEDECL%", string.Empty);
+                QtProject.ReplaceTokenInFile(hppFile, "%BASECLASSINCLUDE%", string.Empty);
+                QtProject.ReplaceTokenInFile(hppFile, "%Q_OBJECT%", string.Empty);
+                QtProject.ReplaceTokenInFile(hppFile, "%CTORSIG%", string.Empty);
             } else {
                 QtProject.ReplaceTokenInFile(hppFile, "%BASEDECL%", " : public "
                     + data.BaseClass);

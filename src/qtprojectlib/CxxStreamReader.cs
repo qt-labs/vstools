@@ -101,7 +101,7 @@ namespace QtProjectLib
             case State.Normal:
                 {
                     string lineCopy = line;
-                    line = "";
+                    line = string.Empty;
                     for (int i = 0, j = 1; i < lineCopy.Length; ++i, ++j) {
                         if (lineCopy[i] == '/' && j < lineCopy.Length) {
                             if (lineCopy[j] == '*') {
@@ -135,7 +135,7 @@ namespace QtProjectLib
                                 } else {
                                     state = State.Normal;
                                 }
-                                line = "";
+                                line = string.Empty;
                                 break;
                             } else {
                                 if (!removeStrings)
@@ -157,14 +157,14 @@ namespace QtProjectLib
                         line = line.Substring(idx + 2);
                         break;
                     } else {
-                        line = "";  // skip line
+                        line = string.Empty;  // skip line
                     }
                 }
                 break;
             case State.String:
                 {
                     string lineCopy = line;
-                    line = "";
+                    line = string.Empty;
                     int endIdx = -1;
                     do {
                         endIdx = lineCopy.IndexOf('"', endIdx + 1);

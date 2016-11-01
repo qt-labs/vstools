@@ -329,7 +329,7 @@ namespace QtProjectLib
             currentOpt = (ProFileOption) currentPro.Options[optionComboBox.SelectedIndex];
             UpdateCurrentListItem();
 
-            optionTextBox.Text = "";
+            optionTextBox.Text = string.Empty;
 
             // update comment field
             commentLabel.Text = currentOpt.Comment;
@@ -408,7 +408,7 @@ namespace QtProjectLib
             optionListBox.SelectedIndex = index;
 
             if (index < 0) {
-                optionTextBox.Text = "";
+                optionTextBox.Text = string.Empty;
                 UpdateButtons();
             }
         }

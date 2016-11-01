@@ -93,7 +93,7 @@ namespace QtProjectLib
     {
         private QtModule moduleId = QtModule.Invalid;
         public List<string> Defines = new List<string>();
-        public string LibraryPrefix = "";
+        public string LibraryPrefix = string.Empty;
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
@@ -216,7 +216,7 @@ namespace QtProjectLib
             InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB");
             moduleInfo = InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB");
             moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", new string[] { "QDESIGNER_EXPORT_WIDGETS", "QT_DESIGNER_LIB" });
-            moduleInfo = InitQtModule(QtModule.Main, "qtmain", "");
+            moduleInfo = InitQtModule(QtModule.Main, "qtmain", string.Empty);
             moduleInfo.proVarQT = null;
             moduleInfo.HasDLL = false;
             moduleInfo.IncludePath = null;
@@ -228,7 +228,7 @@ namespace QtProjectLib
             moduleInfo = InitQtModule(QtModule.Help, "QtHelp", "QT_HELP_LIB");
             moduleInfo.proVarQT = null;
             moduleInfo.proVarCONFIG = "help";
-            moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", "");
+            moduleInfo = InitQtModule(QtModule.WebKit, "QtWebKit", string.Empty);
 
             moduleInfo = InitQtModule(QtModule.Svg, "QtSvg", "QT_SVG_LIB");
 
@@ -244,7 +244,7 @@ namespace QtProjectLib
             moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");
             moduleInfo.AdditionalLibrariesDebug.Add("Qt5AxBased.lib");
 
-            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QtAxContainer", "");
+            moduleInfo = InitQtModule(QtModule.ActiveQtC, "QtAxContainer", string.Empty);
             moduleInfo.HasDLL = false;
             moduleInfo.IncludePath = "$(QTDIR)\\include\\ActiveQt";
             moduleInfo.AdditionalLibraries.Add("Qt5AxBase.lib");

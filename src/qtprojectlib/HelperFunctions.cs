@@ -138,7 +138,7 @@ namespace QtProjectLib
 
         static public void SetDebuggingEnvironment(EnvDTE.Project prj)
         {
-            SetDebuggingEnvironment(prj, "");
+            SetDebuggingEnvironment(prj, string.Empty);
         }
 
         static public void SetDebuggingEnvironment(EnvDTE.Project prj, string solutionConfig)
@@ -148,7 +148,7 @@ namespace QtProjectLib
 
         static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite)
         {
-            SetDebuggingEnvironment(prj, envpath, overwrite, "");
+            SetDebuggingEnvironment(prj, envpath, overwrite, string.Empty);
         }
 
         static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite, string solutionConfig)
@@ -290,7 +290,7 @@ namespace QtProjectLib
 
                 var line = string.Empty;
                 while ((line = ReadProFileLine(sr)) != null) {
-                    line = line.Replace(" ", "").Replace("\t", "");
+                    line = line.Replace(" ", string.Empty).Replace("\t", string.Empty);
                     if (line.StartsWith("TEMPLATE", StringComparison.Ordinal))
                         return line.StartsWith("TEMPLATE=subdirs", StringComparison.Ordinal);
                 }

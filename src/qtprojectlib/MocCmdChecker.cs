@@ -41,7 +41,7 @@ namespace QtProjectLib
         {
             var s = path.ToLower().Trim();
             s = backslashRegEx.Replace(s, "\\");
-            s = endRegEx.Replace(s, "");
+            s = endRegEx.Replace(s, string.Empty);
             return s;
         }
 

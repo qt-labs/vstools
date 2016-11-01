@@ -97,7 +97,7 @@ namespace QtProjectWizard
 
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
-                replacements["$PlatformToolset$"] = version.Replace(".", "");
+                replacements["$PlatformToolset$"] = version.Replace(".", string.Empty);
             } catch {
                 try {
                     Directory.Delete(replacements["$destinationdirectory$"]);

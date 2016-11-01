@@ -255,7 +255,7 @@ namespace QtProjectLib
             }
             if (!string.IsNullOrEmpty(rccQtDir))
                 return rccQtDir;
-            return "";
+            return string.Empty;
         }
 
         private static string FindQtDirFromExtension(string content, string extension)

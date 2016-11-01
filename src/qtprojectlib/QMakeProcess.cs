@@ -287,7 +287,7 @@ namespace QtProjectLib
         private string queryResult;
 
         public QMakeQuery(VersionInformation vi)
-            : base(null, "", false, vi)
+            : base(null, string.Empty, false, vi)
         {
             qtVersionInformation = vi;
         }
@@ -338,7 +338,7 @@ namespace QtProjectLib
                         var dashIndex = result.IndexOf('-');
                         if (dashIndex == -1) {
                             errorValue = -1;
-                            result = "";
+                            result = string.Empty;
                         } else {
                             result = result.Substring(dashIndex + 1).Trim();
                         }

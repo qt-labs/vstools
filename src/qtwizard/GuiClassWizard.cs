@@ -378,7 +378,7 @@ namespace QtProjectWizard
                 QtProject.ReplaceTokenInFile(uiFile, "%CENTRAL_WIDGET%",
                     "\r\n  <widget class=\"QWidget\" name=\"widget\" />");
             } else {
-                QtProject.ReplaceTokenInFile(uiFile, "%CENTRAL_WIDGET%", "");
+                QtProject.ReplaceTokenInFile(uiFile, "%CENTRAL_WIDGET%", string.Empty);
             }
 
             return uiFile;

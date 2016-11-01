@@ -238,7 +238,7 @@ namespace QtVsTools
 
         private void DataChanged(object sender, EventArgs e)
         {
-            errorLabel.Text = "";
+            errorLabel.Text = string.Empty;
             errorTimer.Stop();
             errorTimer.Start();
             var name = nameBox.Text.Trim();
@@ -273,7 +273,7 @@ namespace QtVsTools
                 try {
                     var di = new System.IO.DirectoryInfo(pathBox.Text);
                     if (!di.Exists) {
-                        lastErrorString = "";
+                        lastErrorString = string.Empty;
                         okButton.Enabled = false;
                         return;
                     }
@@ -310,7 +310,7 @@ namespace QtVsTools
             }
             okButton.Enabled = !found;
             if (!found)
-                lastErrorString = "";
+                lastErrorString = string.Empty;
         }
 
         private void browseButton_Click(object sender, EventArgs e)
@@ -335,7 +335,7 @@ namespace QtVsTools
             } catch {
             }
 
-            return "";
+            return string.Empty;
         }
 
         private static void SaveLastSelectedPath(string path)

@@ -70,9 +70,9 @@ namespace QtProjectLib
 
     public class FakeFilter
     {
-        private string uniqueIdentifier = "";
-        private string name = "";
-        private string filter = "";
+        private string uniqueIdentifier = string.Empty;
+        private string name = string.Empty;
+        private string filter = string.Empty;
         private bool parseFiles = true;
         private bool sccFiles = true;
 
