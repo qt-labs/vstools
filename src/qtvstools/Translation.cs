@@ -152,13 +152,13 @@ namespace QtVsTools
                     }
                 }
                 var vcPro = (VCProject) pro.Object;
-                temporaryProFile = System.IO.Path.GetTempFileName();
-                temporaryProFile = System.IO.Path.GetDirectoryName(temporaryProFile) + "\\" +
-                                   System.IO.Path.GetFileNameWithoutExtension(temporaryProFile) + ".pro";
-                if (System.IO.File.Exists(temporaryProFile))
-                    System.IO.File.Delete(temporaryProFile);
+                temporaryProFile = Path.GetTempFileName();
+                temporaryProFile = Path.GetDirectoryName(temporaryProFile) + "\\"
+                    + Path.GetFileNameWithoutExtension(temporaryProFile) + ".pro";
+                if (File.Exists(temporaryProFile))
+                    File.Delete(temporaryProFile);
 
-                using (var sw = new System.IO.StreamWriter(temporaryProFile)) {
+                using (var sw = new StreamWriter(temporaryProFile)) {
                     writeFilesToPro(sw, "HEADERS",
                         ProjectExporter.ConvertFilesToFullPath(headers, vcPro.ProjectDirectory));
                     writeFilesToPro(sw, "SOURCES",
@@ -190,18 +190,18 @@ namespace QtVsTools
                 Messages.DisplayErrorMessage(e.Message);
             }
 
-            if (temporaryProFile != null && System.IO.File.Exists(temporaryProFile)) {
-                System.IO.File.Delete(temporaryProFile);
+            if (temporaryProFile != null && File.Exists(temporaryProFile)) {
+                File.Delete(temporaryProFile);
                 temporaryProFile = temporaryProFile.Substring(0, temporaryProFile.Length - 3);
                 temporaryProFile += "TMP";
-                if (System.IO.File.Exists(temporaryProFile))
-                    System.IO.File.Delete(temporaryProFile);
+                if (File.Exists(temporaryProFile))
+                    File.Delete(temporaryProFile);
             }
 
             return success;
         }
 
-        private static void writeFilesToPro(System.IO.StreamWriter pro, string section, List<string> files)
+        private static void writeFilesToPro(StreamWriter pro, string section, List<string> files)
         {
             if (files.Count > 0) {
                 pro.Write(section + " = ");
@@ -266,7 +266,7 @@ namespace QtVsTools
                         var qtPro = QtProject.Create(project);
                         var file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
                             transDlg.TranslationFile, true);
-                        Translation.RunlUpdate(file, project);
+                        RunlUpdate(file, project);
                     } catch (QtVSException e) {
                         Messages.DisplayErrorMessage(e.Message);
                     } catch (System.Exception ex) {

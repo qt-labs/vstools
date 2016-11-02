@@ -517,7 +517,7 @@ namespace QtProjectLib
             var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey == null)
                 return defaultValue;
-            return ((int) regKey.GetValue(key, (defaultValue ? 1 : 0) as object)) > 0;
+            return ((int) regKey.GetValue(key, defaultValue ? 1 : 0)) > 0;
         }
 
         private static bool ValueExists(string key)

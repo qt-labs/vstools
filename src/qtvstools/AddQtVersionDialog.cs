@@ -34,15 +34,15 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    public class AddQtVersionDialog : System.Windows.Forms.Form
+    public class AddQtVersionDialog : Form
     {
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.TextBox nameBox;
-        private System.Windows.Forms.TextBox pathBox;
-        private System.Windows.Forms.Button browseButton;
+        private Label label1;
+        private Label label2;
+        private Button okButton;
+        private Button cancelButton;
+        private TextBox nameBox;
+        private TextBox pathBox;
+        private Button browseButton;
         private bool nameBoxDirty;
         private Timer errorTimer;
         private Label errorLabel;
@@ -62,7 +62,7 @@ namespace QtVsTools
             cancelButton.Text = SR.GetString(SR.Cancel);
             Text = SR.GetString("AddQtVersionDialog_Title");
 
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
 
             errorTimer = new Timer();
             errorTimer.Tick += errorTimer_Tick;
@@ -271,7 +271,7 @@ namespace QtVsTools
 
             if (name != "$(QTDIR)") {
                 try {
-                    var di = new System.IO.DirectoryInfo(pathBox.Text);
+                    var di = new DirectoryInfo(pathBox.Text);
                     if (!di.Exists) {
                         lastErrorString = string.Empty;
                         okButton.Enabled = false;

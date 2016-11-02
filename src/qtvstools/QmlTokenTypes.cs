@@ -38,6 +38,6 @@ namespace QtVsTools
         Keyword,
         JsKeyword,
         String,
-        Property,
+        Property
     }
 }

@@ -119,7 +119,7 @@ namespace QtVsTools
                 return;
 
             foreach (var id in Enum.GetValues(typeof(CommandId))) {
-                var command = new OleMenuCommand(new EventHandler(execHandler),
+                var command = new OleMenuCommand(execHandler,
                     new CommandID(MainMenuGuid, (int) id));
                 command.BeforeQueryStatus += beforeQueryStatus;
                 commandService.AddCommand(command);

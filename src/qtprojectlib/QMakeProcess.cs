@@ -51,7 +51,7 @@ namespace QtProjectLib
         public InfoDialog(string name)
         {
             label1 = new Label();
-            progressBar1 = new System.Windows.Forms.ProgressBar();
+            progressBar1 = new ProgressBar();
             SuspendLayout();
             //
             // label1
@@ -67,7 +67,7 @@ namespace QtProjectLib
             progressBar1.Location = new System.Drawing.Point(13, 28);
             progressBar1.Name = "progressBar1";
             progressBar1.Size = new System.Drawing.Size(369, 23);
-            progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            progressBar1.Style = ProgressBarStyle.Marquee;
             progressBar1.TabIndex = 1;
             //
             // Form1
@@ -77,7 +77,7 @@ namespace QtProjectLib
             ControlBox = false;
             Controls.Add(progressBar1);
             Controls.Add(label1);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form1";
@@ -156,7 +156,7 @@ namespace QtProjectLib
             var regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
             var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
             if (key != null) {
-                var keyValue = key.GetValue("ProductDir", (object) "").ToString();
+                var keyValue = key.GetValue("ProductDir", "").ToString();
                 var envVar = qmakeProcess.StartInfo.EnvironmentVariables["path"];
                 if (envVar != null) {
                     var value = envVar + ";" + keyValue;
@@ -178,7 +178,7 @@ namespace QtProjectLib
                             + "variable QMAKESPEC overwriting Qt version QMAKESPEC.");
                         InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Qt version "
                             + "QMAKESPEC: " + qtVersionInformation.QMakeSpecDirectory);
-                        InvokeExternalTarget(PaneMessageDataEvent,"--- (qmake) : Environment "
+                        InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Environment "
                             + "variable QMAKESPEC: " + qmakeSpec + Environment.NewLine);
                     }
                 }
@@ -188,8 +188,8 @@ namespace QtProjectLib
                     errOutputLines = 0;
                     stdOutput = new StringBuilder();
                     stdOutputLines = 0;
-                    var errorThread = new Thread(new ThreadStart(ReadStandardError));
-                    var outputThread = new Thread(new ThreadStart(ReadStandardOutput));
+                    var errorThread = new Thread(ReadStandardError);
+                    var outputThread = new Thread(ReadStandardOutput);
                     errorThread.Start();
                     outputThread.Start();
 
@@ -225,7 +225,7 @@ namespace QtProjectLib
 
         protected Process CreateQmakeProcess(string qmakeArgs, string filename, string workingDir)
         {
-            var qmakeProcess = new System.Diagnostics.Process();
+            var qmakeProcess = new Process();
             qmakeProcess.StartInfo.CreateNoWindow = true;
             qmakeProcess.StartInfo.UseShellExecute = false;
             qmakeProcess.StartInfo.RedirectStandardError = true;
@@ -295,7 +295,7 @@ namespace QtProjectLib
         public string query(string property)
         {
             ReadyEvent += resultObtained;
-            var qmakeThread = new System.Threading.Thread(new ParameterizedThreadStart(RunQMakeQuery));
+            var qmakeThread = new Thread(RunQMakeQuery);
             qmakeThread.Start(property);
             qmakeThread.Join();
             return queryResult;
@@ -321,8 +321,8 @@ namespace QtProjectLib
                     errOutputLines = 0;
                     stdOutput = new StringBuilder();
                     stdOutputLines = 0;
-                    var errorThread = new Thread(new ThreadStart(ReadStandardError));
-                    var outputThread = new Thread(new ThreadStart(ReadStandardOutput));
+                    var errorThread = new Thread(ReadStandardError);
+                    var outputThread = new Thread(ReadStandardOutput);
                     errorThread.Start();
                     outputThread.Start();
 

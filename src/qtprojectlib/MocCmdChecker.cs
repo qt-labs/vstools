@@ -114,7 +114,7 @@ namespace QtProjectLib
 
         private static string[] SplitIntoCommands(string cmdLine)
         {
-            var cmds = cmdLine.Split(new string[] { "&&", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var cmds = cmdLine.Split(new[] { "&&", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var res = new string[cmds.Length];
             for (var i = 0; i < cmds.Length; ++i)
                 res[i] = cmds[i].Trim();

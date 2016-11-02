@@ -42,7 +42,7 @@ namespace QtProjectWizard
 {
     public class ServerWizard : IWizard
     {
-        public void BeforeOpeningFile(EnvDTE.ProjectItem projectItem)
+        public void BeforeOpeningFile(ProjectItem projectItem)
         {
             if (projectItem.FileCount >= 1) {
                 var qtProject = QtProject.Create(projectItem.ContainingProject);
@@ -51,7 +51,7 @@ namespace QtProjectWizard
             }
         }
 
-        public void ProjectFinishedGenerating(EnvDTE.Project project)
+        public void ProjectFinishedGenerating(Project project)
         {
             var qtProject = QtProject.Create(project);
 
@@ -102,7 +102,7 @@ namespace QtProjectWizard
             qtProject.Finish(); // Collapses all project nodes.
         }
 
-        public void ProjectItemFinishedGenerating(EnvDTE.ProjectItem projectItem)
+        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
         }
 

@@ -129,7 +129,7 @@ namespace QtVsTools
                 var objTextDocument = dte.ActiveDocument.Object() as TextDocument;
 
                 var keyword = string.Empty;
-                var selection = objTextDocument.Selection as TextSelection;
+                var selection = objTextDocument.Selection;
                 if (selection.IsEmpty) { // no selection inside the document
                     var line = selection.ActivePoint.Line; // current line
                     var offset = selection.ActivePoint.LineCharOffset; // current char offset
@@ -175,7 +175,7 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return;
 
-                var settingsManager = new ShellSettingsManager(QtHelpMenu.Instance.ServiceProvider);
+                var settingsManager = new ShellSettingsManager(Instance.ServiceProvider);
                 var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
                 var offline = store.GetBoolean(QtVsToolsHelpPreferencePath, "Offline", true);
 
@@ -243,7 +243,7 @@ namespace QtVsTools
                 }
 
                 if (string.IsNullOrEmpty(uri)) { // offline mode without a single search hit
-                    VsShellUtilities.ShowMessageBox(QtHelpMenu.Instance.ServiceProvider,
+                    VsShellUtilities.ShowMessageBox(Instance.ServiceProvider,
                         "Your search - " + keyword + " - did not match any documents.",
                         string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
                         OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);

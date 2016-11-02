@@ -208,7 +208,7 @@ namespace QtProjectLib
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion(root);
             if (version == "$(QTDIR)")
-                return System.Environment.GetEnvironmentVariable("QTDIR");
+                return Environment.GetEnvironmentVariable("QTDIR");
 
             var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
             if (key == null)
@@ -334,7 +334,7 @@ namespace QtProjectLib
                 var match = regExp.Match(version);
                 if (match.Success) {
                     var env = match.Groups["VarName"].Value;
-                    version = System.Environment.GetEnvironmentVariable(env);
+                    version = Environment.GetEnvironmentVariable(env);
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace QtProjectLib
                 }
                 if (defaultVersion == null) {
                     // last fallback... try QTDIR
-                    var qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
+                    var qtDir = Environment.GetEnvironmentVariable("QTDIR");
                     if (qtDir == null)
                         return null;
                     var d = new DirectoryInfo(qtDir);

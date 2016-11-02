@@ -104,12 +104,12 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            var command = new OleMenuCommand(new EventHandler(execHandler),
+            var command = new OleMenuCommand(execHandler,
                 new CommandID(ItemContextMenuGuid, lUpdateOnItemId));
             command.BeforeQueryStatus += beforeQueryStatus;
             commandService.AddCommand(command);
 
-            command = new OleMenuCommand(new EventHandler(execHandler),
+            command = new OleMenuCommand(execHandler,
                 new CommandID(ItemContextMenuGuid, lReleaseOnItemId));
             command.BeforeQueryStatus += beforeQueryStatus;
             commandService.AddCommand(command);

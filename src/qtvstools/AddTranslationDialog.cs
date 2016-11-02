@@ -215,7 +215,7 @@ namespace QtVsTools
         }
     }
 
-    public class TranslationItem : System.Globalization.CultureInfo
+    public class TranslationItem : CultureInfo
     {
         public TranslationItem(int culture)
             : base(culture)
@@ -227,7 +227,7 @@ namespace QtVsTools
             if (NativeName != DisplayName)
                 return DisplayName;
 
-            var culture = CultureInfo.GetCultureInfo(Vsix.Instance.Dte.LocaleID);
+            var culture = GetCultureInfo(Vsix.Instance.Dte.LocaleID);
             if (culture.TwoLetterISOLanguageName == TwoLetterISOLanguageName)
                 return DisplayName;
 
@@ -236,12 +236,12 @@ namespace QtVsTools
 
         public static TranslationItem SystemLanguage()
         {
-            return new TranslationItem(CultureInfo.CurrentCulture.LCID);
+            return new TranslationItem(CurrentCulture.LCID);
         }
 
         public static TranslationItem[] GetTranslationItems()
         {
-            var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures
+            var cultures = GetCultures(CultureTypes.SpecificCultures
                 & ~CultureTypes.UserCustomCulture & ~CultureTypes.ReplacementCultures);
             var transItems = new List<TranslationItem>();
             for (var i = 0; i < cultures.Length; i++) {

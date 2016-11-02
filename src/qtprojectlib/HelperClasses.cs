@@ -160,13 +160,13 @@ namespace QtProjectLib
         }
 
         #region IWin32Window Members
-        public System.IntPtr Handle
+        public IntPtr Handle
         {
             get
             {
                 if (dteObject != null)
-                    return new System.IntPtr(dteObject.MainWindow.HWnd);
-                return new System.IntPtr(0);
+                    return new IntPtr(dteObject.MainWindow.HWnd);
+                return new IntPtr(0);
             }
         }
         #endregion

@@ -31,14 +31,14 @@ using System.Windows.Forms;
 
 namespace QtProjectLib
 {
-    public class ImageButton : System.Windows.Forms.Button
+    public class ImageButton : Button
     {
         private readonly Image img;
         private readonly Image dimg;
         public ImageButton(Image image)
         {
             img = image;
-            BackColor = System.Drawing.SystemColors.Control;
+            BackColor = SystemColors.Control;
         }
 
         // support for disabled image
@@ -46,7 +46,7 @@ namespace QtProjectLib
         {
             img = image;
             dimg = dimage;
-            BackColor = System.Drawing.SystemColors.Control;
+            BackColor = SystemColors.Control;
         }
 
         protected override void OnPaint(PaintEventArgs pevent)

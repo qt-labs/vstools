@@ -137,7 +137,7 @@ namespace QtVsTools
 
             string result;
             try {
-                result = sys.resources.GetString(name, SR.Culture);
+                result = sys.resources.GetString(name, Culture);
             } catch (Exception) {
                 result = sys.resources.GetString(name, defaultCultureInfo);
             }

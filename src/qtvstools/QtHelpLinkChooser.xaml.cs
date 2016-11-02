@@ -57,7 +57,7 @@ namespace QtVsTools
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var view = CollectionViewSource.GetDefaultView(linkListBox.ItemsSource);
-            view.Filter = (obj) =>
+            view.Filter = obj =>
             {
                 if (string.IsNullOrEmpty(searchBox.Text))
                     return true;
@@ -81,7 +81,7 @@ namespace QtVsTools
                 OnShowButton_Click(sender, null);
         }
 
-        private void OnShowButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void OnShowButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             Close();

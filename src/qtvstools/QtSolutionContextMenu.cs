@@ -107,13 +107,13 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            commandService.AddCommand(new OleMenuCommand(new EventHandler(execHandler),
+            commandService.AddCommand(new OleMenuCommand(execHandler,
                 new CommandID(SolutionContextMenuGuid, lUpdateOnSolutionId)));
 
-            commandService.AddCommand(new OleMenuCommand(new EventHandler(execHandler),
+            commandService.AddCommand(new OleMenuCommand(execHandler,
                 new CommandID(SolutionContextMenuGuid, lReleaseOnSolutionId)));
 
-            commandService.AddCommand(new OleMenuCommand(new EventHandler(execHandler),
+            commandService.AddCommand(new OleMenuCommand(execHandler,
                 new CommandID(SolutionContextMenuGuid, ChangeSolutionQtVersionId)));
         }
 

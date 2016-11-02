@@ -243,14 +243,14 @@ namespace QtProjectWizard
                 .GetValueOrDefault()));
         }
 
-        private void OnSmallIconsChecked(object sender, System.Windows.RoutedEventArgs e)
+        private void OnSmallIconsChecked(object sender, RoutedEventArgs e)
         {
             MediumIcons.IsChecked = false;
             if (ClassView != null)
                 ClassView.ItemTemplate = ClassView.FindResource("SmallTemplate") as DataTemplate;
         }
 
-        private void OnMediumIconsChecked(object sender, System.Windows.RoutedEventArgs e)
+        private void OnMediumIconsChecked(object sender, RoutedEventArgs e)
         {
             SmallIcons.IsChecked = false;
             if (ClassView != null)

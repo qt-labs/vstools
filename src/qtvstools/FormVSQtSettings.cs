@@ -74,7 +74,7 @@ namespace QtVsTools
             }
         }
 
-        void FormQtVersions_Shown(object sender, System.EventArgs args)
+        void FormQtVersions_Shown(object sender, EventArgs args)
         {
             string error = null;
             if (versionManager.HasInvalidVersions(out error))

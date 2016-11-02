@@ -86,7 +86,7 @@ namespace QtProjectLib
         // DesignerComponents = 49,
         WebkitWidgets = 50,
         Concurrent = 51,
-        MultimediaWidgets = 52,
+        MultimediaWidgets = 52
     }
 
     public class QtModuleInfo
@@ -158,12 +158,12 @@ namespace QtProjectLib
         {
             var qtVersion = QtVersionManager.The().GetDefaultVersion();
             if (qtVersion == null) {
-                throw new QtVSException("Unable to find a Qt build!" + System.Environment.NewLine
+                throw new QtVSException("Unable to find a Qt build!" + Environment.NewLine
                     + "To solve this problem specify a Qt build.");
             }
 
             var installPath = QtVersionManager.The().GetInstallPath(qtVersion);
-            if (moduleName.StartsWith("Qt", System.StringComparison.Ordinal))
+            if (moduleName.StartsWith("Qt", StringComparison.Ordinal))
                 moduleName = "Qt5" + moduleName.Substring(2);
 
             return new FileInfo(Path.Combine(installPath, "lib", moduleName + ".lib")).Exists;
@@ -215,7 +215,7 @@ namespace QtProjectLib
             InitQtModule(QtModule.Script, "QtScript", "QT_SCRIPT_LIB");
             InitQtModule(QtModule.XmlPatterns, "QtXmlPatterns", "QT_XMLPATTERNS_LIB");
             moduleInfo = InitQtModule(QtModule.ScriptTools, "QtScriptTools", "QT_SCRIPTTOOLS_LIB");
-            moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", new string[] { "QDESIGNER_EXPORT_WIDGETS", "QT_DESIGNER_LIB" });
+            moduleInfo = InitQtModule(QtModule.Designer, "QtDesigner", new[] { "QDESIGNER_EXPORT_WIDGETS", "QT_DESIGNER_LIB" });
             moduleInfo = InitQtModule(QtModule.Main, "qtmain", string.Empty);
             moduleInfo.proVarQT = null;
             moduleInfo.HasDLL = false;
@@ -289,7 +289,7 @@ namespace QtProjectLib
 
         private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string define)
         {
-            return InitQtModule(moduleId, libraryPrefix, new string[] { define });
+            return InitQtModule(moduleId, libraryPrefix, new[] { define });
         }
 
         private QtModuleInfo InitQtModule(QtModule moduleId, string libraryPrefix, string[] defines)

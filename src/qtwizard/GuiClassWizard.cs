@@ -97,7 +97,7 @@ namespace QtProjectWizard
                     if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
                         throw new System.Exception("Unexpected wizard return value.");
 
-                    var array = data.ClassName.Split(new string[] { "::" }, System
+                    var array = data.ClassName.Split(new[] { "::" }, System
                         .StringSplitOptions.RemoveEmptyEntries);
                     data.ClassName = array.LastOrDefault();
 
@@ -107,7 +107,7 @@ namespace QtProjectWizard
                         nsEnd = "} // namespace " + array[i] + "\r\n" + nsEnd;
                     }
 
-                    var pro = HelperFunctions.GetSelectedQtProject(dte as EnvDTE.DTE);
+                    var pro = HelperFunctions.GetSelectedQtProject(dte);
                     if (pro == null)
                         throw new QtVSException("Can't find a selected project");
 

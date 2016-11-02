@@ -48,7 +48,7 @@ namespace QtAppWrapper
             public uint dwFlags;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szExeFile;
-        };
+        }
 
         internal const int TH32CS_SNAPPROCESS = 0x00000002;
         internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);

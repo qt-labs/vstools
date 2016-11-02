@@ -35,12 +35,12 @@ namespace QtVsTools
     /// <summary>
     /// Summary description for QtVersionDialog.
     /// </summary>
-    public class QtVersionDialog : System.Windows.Forms.Form
+    public class QtVersionDialog : Form
     {
-        private System.Windows.Forms.ComboBox versionComboBox;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private ComboBox versionComboBox;
+        private Button cancelButton;
+        private Button okButton;
+        private GroupBox groupBox1;
         private EnvDTE.DTE dteObj;
 
         public QtVersionDialog(EnvDTE.DTE dte)

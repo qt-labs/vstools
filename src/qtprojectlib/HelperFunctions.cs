@@ -44,7 +44,7 @@ namespace QtProjectLib
         {
             var versionManager = QtVersionManager.The();
             string projectQtVersion = null;
-            if (HelperFunctions.IsQtProject(project))
+            if (IsQtProject(project))
                 projectQtVersion = versionManager.GetProjectQtVersion(project);
             return FindQtDirWithTools(projectQtVersion);
         }
@@ -70,7 +70,7 @@ namespace QtProjectLib
                 qtDir = versionManager.GetInstallPath(projectQtVersion);
 
             if (qtDir == null)
-                qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
+                qtDir = Environment.GetEnvironmentVariable("QTDIR");
 
             var found = false;
             if (tool == null) {
@@ -136,22 +136,22 @@ namespace QtProjectLib
                 || fileName.EndsWith(".hxx", StringComparison.OrdinalIgnoreCase);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj)
+        static public void SetDebuggingEnvironment(Project prj)
         {
             SetDebuggingEnvironment(prj, string.Empty);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string solutionConfig)
+        static public void SetDebuggingEnvironment(Project prj, string solutionConfig)
         {
             SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite)
+        static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite)
         {
             SetDebuggingEnvironment(prj, envpath, overwrite, string.Empty);
         }
 
-        static public void SetDebuggingEnvironment(EnvDTE.Project prj, string envpath, bool overwrite, string solutionConfig)
+        static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
         {
             // Get platform name from given solution configuration
             // or if not available take the active configuration
@@ -197,11 +197,11 @@ namespace QtProjectLib
             }
         }
 
-        public static bool IsProjectInSolution(EnvDTE.DTE dteObject, string fullName)
+        public static bool IsProjectInSolution(DTE dteObject, string fullName)
         {
             var fi = new FileInfo(fullName);
 
-            foreach (EnvDTE.Project p in HelperFunctions.ProjectsInSolution(dteObject)) {
+            foreach (Project p in ProjectsInSolution(dteObject)) {
                 if (p.FullName.ToLower() == fi.FullName.ToLower())
                     return true;
             }
@@ -267,12 +267,12 @@ namespace QtProjectLib
             if (line == null)
                 return null;
 
-            line = line.TrimEnd(new char[] { ' ', '\t' });
+            line = line.TrimEnd(' ', '\t');
             while (line.EndsWith("\\", StringComparison.Ordinal)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
                 if (appendix != null)
-                    line += appendix.TrimEnd(new char[] { ' ', '\t' });
+                    line += appendix.TrimEnd(' ', '\t');
             }
             return line;
         }
@@ -359,7 +359,7 @@ namespace QtProjectLib
         /// <param name="oldString">String, which is going to be replaced</param>
         /// <param name="oldString">String, which is going to replace the other one</param>
         /// <returns></returns>
-        public static void ReplaceInCustomBuildTools(EnvDTE.Project project, string oldString, string replaceString)
+        public static void ReplaceInCustomBuildTools(Project project, string oldString, string replaceString)
         {
             var vcPro = (VCProject) project.Object;
             if (vcPro == null)
@@ -368,7 +368,7 @@ namespace QtProjectLib
             foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                     try {
-                        var tool = HelperFunctions.GetCustomBuildTool(config);
+                        var tool = GetCustomBuildTool(config);
                         if (tool == null)
                             continue;
 
@@ -449,7 +449,7 @@ namespace QtProjectLib
         /// </summary>
         /// <param name="project">Project</param>
         /// <returns></returns>
-        public static void ToggleProjectKind(EnvDTE.Project project)
+        public static void ToggleProjectKind(Project project)
         {
             string qtDir = null;
             var vcPro = (VCProject) project.Object;
@@ -524,7 +524,7 @@ namespace QtProjectLib
                     }
                 }
 
-                HelperFunctions.CleanupQMakeDependencies(project);
+                CleanupQMakeDependencies(project);
 
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                     var compiler = CompilerToolWrapper.Create(config);
@@ -675,7 +675,7 @@ namespace QtProjectLib
             if (!IsQMakeProject(proj))
                 return false;
 
-            var envPro = proj.Object as EnvDTE.Project;
+            var envPro = proj.Object as Project;
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
                 return false;
 
@@ -690,11 +690,11 @@ namespace QtProjectLib
         /// Returns true if the specified project is a Qt Project.
         /// </summary>
         /// <param name="proj">project</param>
-        public static bool IsQtProject(EnvDTE.Project proj)
+        public static bool IsQtProject(Project proj)
         {
             try {
                 if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
-                    return HelperFunctions.IsQtProject(proj.Object as VCProject);
+                    return IsQtProject(proj.Object as VCProject);
             } catch { }
             return false;
         }
@@ -719,16 +719,16 @@ namespace QtProjectLib
         /// Returns true if the specified project is a QMake -tp vc Project.
         /// </summary>
         /// <param name="proj">project</param>
-        public static bool IsQMakeProject(EnvDTE.Project proj)
+        public static bool IsQMakeProject(Project proj)
         {
             try {
                 if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
-                    return HelperFunctions.IsQMakeProject(proj.Object as VCProject);
+                    return IsQMakeProject(proj.Object as VCProject);
             } catch { }
             return false;
         }
 
-        public static void CleanupQMakeDependencies(EnvDTE.Project project)
+        public static void CleanupQMakeDependencies(Project project)
         {
             var vcPro = (VCProject) project.Object;
             // clean up qmake mess
@@ -797,12 +797,12 @@ namespace QtProjectLib
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxFileContainsNotCommented(file, new string[] { "Q_OBJECT", "Q_GADGET" }, true, true);
+            return CxxFileContainsNotCommented(file, new[] { "Q_OBJECT", "Q_GADGET" }, true, true);
         }
 
         public static bool CxxFileContainsNotCommented(VCFile file, string str, bool caseSensitive, bool suppressStrings)
         {
-            return CxxFileContainsNotCommented(file, new string[] { str }, caseSensitive, suppressStrings);
+            return CxxFileContainsNotCommented(file, new[] { str }, caseSensitive, suppressStrings);
         }
 
         public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive, bool suppressStrings)
@@ -828,7 +828,7 @@ namespace QtProjectLib
                     }
                 }
                 sr.Close();
-            } catch (System.Exception) {
+            } catch (Exception) {
                 if (sr != null)
                     sr.Close();
             }
@@ -895,7 +895,7 @@ namespace QtProjectLib
 
                         if (innerItem.UIHierarchyItems.Expanded) {
                             innerItem.UIHierarchyItems.Expanded = false;
-                            if (innerItem.UIHierarchyItems.Expanded == true) {
+                            if (innerItem.UIHierarchyItems.Expanded) {
                                 innerItem.Select(vsUISelectionType.vsUISelectionTypeSelect);
                                 hierarchy.DoDefaultAction();
                             }
@@ -905,7 +905,7 @@ namespace QtProjectLib
             }
             if (item.UIHierarchyItems.Expanded) {
                 item.UIHierarchyItems.Expanded = false;
-                if (item.UIHierarchyItems.Expanded == true) {
+                if (item.UIHierarchyItems.Expanded) {
                     item.Select(vsUISelectionType.vsUISelectionTypeSelect);
                     hierarchy.DoDefaultAction();
                 }
@@ -917,7 +917,7 @@ namespace QtProjectLib
         {
             try {
                 return IsInFilter(vcfile, Filters.GeneratedFiles());
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 MessageBox.Show(e.ToString());
                 return true;
             }
@@ -952,19 +952,19 @@ namespace QtProjectLib
         {
             try {
                 return IsInFilter(vcfile, Filters.ResourceFiles());
-            } catch (System.Exception) {
+            } catch (Exception) {
                 return false;
             }
         }
 
-        public static List<string> GetProjectFiles(EnvDTE.Project pro, FilesToList filter)
+        public static List<string> GetProjectFiles(Project pro, FilesToList filter)
         {
             var fileList = new List<string>();
 
             VCProject vcpro;
             try {
                 vcpro = (VCProject) pro.Object;
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
                 return null;
             }
@@ -1015,11 +1015,11 @@ namespace QtProjectLib
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_HFiles:
-                    if (HelperFunctions.HasHeaderFileExtension(vcfile.Name))
+                    if (HasHeaderFileExtension(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_CppFiles:
-                    if (HelperFunctions.HasSourceFileExtension(vcfile.Name))
+                    if (HasSourceFileExtension(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 }
@@ -1046,13 +1046,13 @@ namespace QtProjectLib
             }
         }
 
-        public static EnvDTE.Project GetSelectedProject(EnvDTE.DTE dteObject)
+        public static Project GetSelectedProject(DTE dteObject)
         {
             if (dteObject == null)
                 return null;
-            System.Array prjs = null;
+            Array prjs = null;
             try {
-                prjs = (System.Array) dteObject.ActiveSolutionProjects;
+                prjs = (Array) dteObject.ActiveSolutionProjects;
             } catch {
                 // When VS2010 is started from the command line,
                 // we may catch a "Unspecified error" here.
@@ -1061,16 +1061,16 @@ namespace QtProjectLib
                 return null;
 
             // don't handle multiple selection... use the first one
-            if (prjs.GetValue(0) is EnvDTE.Project)
-                return (EnvDTE.Project) prjs.GetValue(0);
+            if (prjs.GetValue(0) is Project)
+                return (Project) prjs.GetValue(0);
             return null;
         }
 
-        public static EnvDTE.Project GetActiveDocumentProject(EnvDTE.DTE dteObject)
+        public static Project GetActiveDocumentProject(DTE dteObject)
         {
             if (dteObject == null)
                 return null;
-            EnvDTE.Document doc = dteObject.ActiveDocument;
+            Document doc = dteObject.ActiveDocument;
             if (doc == null)
                 return null;
 
@@ -1080,7 +1080,7 @@ namespace QtProjectLib
             return doc.ProjectItem.ContainingProject;
         }
 
-        public static EnvDTE.Project GetSingleProjectInSolution(EnvDTE.DTE dteObject)
+        public static Project GetSingleProjectInSolution(DTE dteObject)
         {
             var projectList = ProjectsInSolution(dteObject);
             if (dteObject == null || dteObject.Solution == null ||
@@ -1095,23 +1095,23 @@ namespace QtProjectLib
         /// is selected or if the selected project is not a Qt project
         /// this function returns null.
         /// </summary>
-        public static EnvDTE.Project GetSelectedQtProject(EnvDTE.DTE dteObject)
+        public static Project GetSelectedQtProject(DTE dteObject)
         {
             // can happen sometimes shortly after starting VS
             if (dteObject == null || dteObject.Solution == null
-                || HelperFunctions.ProjectsInSolution(dteObject).Count == 0)
+                || ProjectsInSolution(dteObject).Count == 0)
                 return null;
 
-            EnvDTE.Project pro;
+            Project pro;
 
             if ((pro = GetSelectedProject(dteObject)) == null) {
                 if ((pro = GetSingleProjectInSolution(dteObject)) == null)
                     pro = GetActiveDocumentProject(dteObject);
             }
-            return HelperFunctions.IsQtProject(pro) ? pro : null;
+            return IsQtProject(pro) ? pro : null;
         }
 
-        public static VCFile GetSelectedFile(EnvDTE.DTE dteObject)
+        public static VCFile GetSelectedFile(DTE dteObject)
         {
             if (GetSelectedQtProject(dteObject) == null)
                 return null;
@@ -1128,7 +1128,7 @@ namespace QtProjectLib
             VCProjectItem vcitem;
             try {
                 vcitem = (VCProjectItem) item.ProjectItem.Object;
-            } catch (System.Exception) {
+            } catch (Exception) {
                 return null;
             }
 
@@ -1138,7 +1138,7 @@ namespace QtProjectLib
             return null;
         }
 
-        public static VCFile[] GetSelectedFiles(EnvDTE.DTE dteObject)
+        public static VCFile[] GetSelectedFiles(DTE dteObject)
         {
             if (GetSelectedQtProject(dteObject) == null)
                 return null;
@@ -1146,7 +1146,7 @@ namespace QtProjectLib
             if (dteObject.SelectedItems.Count <= 0)
                 return null;
 
-            EnvDTE.SelectedItems items = dteObject.SelectedItems;
+            SelectedItems items = dteObject.SelectedItems;
 
             var files = new VCFile[items.Count + 1];
             for (var i = 1; i <= items.Count; ++i) {
@@ -1157,7 +1157,7 @@ namespace QtProjectLib
                 VCProjectItem vcitem;
                 try {
                     vcitem = (VCProjectItem) item.ProjectItem.Object;
-                } catch (System.Exception) {
+                } catch (Exception) {
                     return null;
                 }
 
@@ -1181,12 +1181,12 @@ namespace QtProjectLib
 
         public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)
         {
-            var pro = HelperFunctions.VCProjectToProject((VCProject) qrcFile.project);
+            var pro = VCProjectToProject((VCProject) qrcFile.project);
 
             var rccOpts = new RccOptions(pro, qrcFile);
 
             if (cmdLine.Length > 0) {
-                var cmdSplit = cmdLine.Split(new Char[] { ' ', '\t' });
+                var cmdSplit = cmdLine.Split(' ', '\t');
                 for (var i = 0; i < cmdSplit.Length; ++i) {
                     var lowercmdSplit = cmdSplit[i].ToLower();
                     if (lowercmdSplit.Equals("-threshold")) {
@@ -1201,20 +1201,20 @@ namespace QtProjectLib
             return rccOpts;
         }
 
-        public static EnvDTE.Project VCProjectToProject(VCProject vcproj)
+        public static Project VCProjectToProject(VCProject vcproj)
         {
-            return (EnvDTE.Project) vcproj.Object;
+            return (Project) vcproj.Object;
         }
 
-        public static List<EnvDTE.Project> ProjectsInSolution(EnvDTE.DTE dteObject)
+        public static List<Project> ProjectsInSolution(DTE dteObject)
         {
-            var projects = new List<EnvDTE.Project>();
+            var projects = new List<Project>();
             Solution solution = dteObject.Solution;
             if (solution != null) {
                 var c = solution.Count;
                 for (var i = 1; i <= c; ++i) {
                     try {
-                        var prj = solution.Projects.Item(i) as Project;
+                        var prj = solution.Projects.Item(i);
                         if (prj == null)
                             continue;
                         addSubProjects(prj, ref projects);
@@ -1227,7 +1227,7 @@ namespace QtProjectLib
             return projects;
         }
 
-        private static void addSubProjects(EnvDTE.Project prj, ref List<Project> projects)
+        private static void addSubProjects(Project prj, ref List<Project> projects)
         {
             // If the actual object of the project is null then the project was probably unloaded.
             if (prj.Object == null)
@@ -1243,7 +1243,7 @@ namespace QtProjectLib
             }
         }
 
-        private static void addSubProjects(EnvDTE.ProjectItems subItems, ref List<Project> projects)
+        private static void addSubProjects(ProjectItems subItems, ref List<Project> projects)
         {
             if (subItems == null)
                 return;
@@ -1264,7 +1264,7 @@ namespace QtProjectLib
         public static int GetMaximumCommandLineLength()
         {
             var epsilon = 10;       // just to be sure :)
-            System.OperatingSystem os = System.Environment.OSVersion;
+            OperatingSystem os = Environment.OSVersion;
             if (os.Version.Major >= 6 ||
                 (os.Version.Major == 5 && os.Version.Minor >= 1))
                 return 8191 - epsilon;    // Windows XP and above
@@ -1329,7 +1329,7 @@ namespace QtProjectLib
                 return false;
 
             for (var i = 0; i < array1.Length; i++) {
-                if (!Object.Equals(array1.GetValue(i), array2.GetValue(i)))
+                if (!Equals(array1.GetValue(i), array2.GetValue(i)))
                     return false;
             }
             return true;
@@ -1337,11 +1337,12 @@ namespace QtProjectLib
 
         public static string FindFileInPATH(string fileName)
         {
-            var envPATH = System.Environment.ExpandEnvironmentVariables("%PATH%");
-            var directories = envPATH.Split(new Char[] { ';' });
+            var envPATH = Environment.ExpandEnvironmentVariables("%PATH%");
+            var directories = envPATH.Split(';');
             foreach (var directory in directories) {
                 var fullFilePath = directory;
-                if (!fullFilePath.EndsWith("\\", StringComparison.Ordinal)) fullFilePath += '\\';
+                if (!fullFilePath.EndsWith("\\", StringComparison.Ordinal))
+                    fullFilePath += '\\';
                 fullFilePath += fileName;
                 if (File.Exists(fullFilePath))
                     return fullFilePath;

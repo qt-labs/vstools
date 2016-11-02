@@ -34,24 +34,24 @@ namespace QtProjectLib
     /// <summary>
     /// Summary description for ExportProjectDialog.
     /// </summary>
-    internal class ExportProjectDialog : System.Windows.Forms.Form
+    internal class ExportProjectDialog : Form
     {
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Label projLabel;
-        private System.Windows.Forms.ListBox optionListBox;
-        private System.Windows.Forms.Label optionLabel;
-        private System.Windows.Forms.ComboBox optionComboBox;
-        private System.Windows.Forms.Label commentLabel;
-        private System.Windows.Forms.TextBox optionTextBox;
-        private System.Windows.Forms.CheckBox openCheckBox;
-        private System.Windows.Forms.CheckedListBox projListBox;
-        private System.Windows.Forms.GroupBox lineBox;
-        private System.Windows.Forms.CheckBox createPriFileCheckBox;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button newButton;
-        private System.Windows.Forms.Button delButton;
+        private Button cancelButton;
+        private Button okButton;
+        private Label projLabel;
+        private ListBox optionListBox;
+        private Label optionLabel;
+        private ComboBox optionComboBox;
+        private Label commentLabel;
+        private TextBox optionTextBox;
+        private CheckBox openCheckBox;
+        private CheckedListBox projListBox;
+        private GroupBox lineBox;
+        private CheckBox createPriFileCheckBox;
+        private Panel panel1;
+        private Panel panel2;
+        private Button newButton;
+        private Button delButton;
 
         public ExportProjectDialog()
         {
@@ -326,7 +326,7 @@ namespace QtProjectLib
 
         private void optionComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            currentOpt = (ProFileOption) currentPro.Options[optionComboBox.SelectedIndex];
+            currentOpt = currentPro.Options[optionComboBox.SelectedIndex];
             UpdateCurrentListItem();
 
             optionTextBox.Text = string.Empty;
@@ -414,16 +414,16 @@ namespace QtProjectLib
 
         private void projListBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            currentPro = (ProFileContent) proSln.ProFiles[projListBox.SelectedIndex];
+            currentPro = proSln.ProFiles[projListBox.SelectedIndex];
             optionComboBox.DataSource = currentPro.Options;
         }
 
         private void projListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if (e.NewValue == CheckState.Checked)
-                ((ProFileContent) proSln.ProFiles[e.Index]).Export = true;
+                proSln.ProFiles[e.Index].Export = true;
             else
-                ((ProFileContent) proSln.ProFiles[e.Index]).Export = false;
+                proSln.ProFiles[e.Index].Export = false;
         }
 
         private void ExportProjectDialog_Load(object sender, System.EventArgs e)

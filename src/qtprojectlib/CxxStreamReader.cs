@@ -111,11 +111,11 @@ namespace QtProjectLib
                                     i = endIdx + 1;
                                     j = i + 1;
                                     continue;
-                                } else {
-                                    state = State.Comment;
-                                    break;
                                 }
-                            } else if (lineCopy[j] == '/') {
+                                state = State.Comment;
+                                break;
+                            }
+                            if (lineCopy[j] == '/') {
                                 // C++ style comment detected
                                 break;
                             }
@@ -137,13 +137,12 @@ namespace QtProjectLib
                                 }
                                 line = string.Empty;
                                 break;
-                            } else {
-                                if (!removeStrings)
-                                    line += lineCopy.Substring(i, endIdx - i + 1);
-                                i = endIdx;
-                                j = i + 1;
-                                continue;
                             }
+                            if (!removeStrings)
+                                line += lineCopy.Substring(i, endIdx - i + 1);
+                            i = endIdx;
+                            j = i + 1;
+                            continue;
                         }
                         line += lineCopy[i];
                     }
@@ -155,7 +154,6 @@ namespace QtProjectLib
                     if (idx >= 0) {
                         state = State.Normal;
                         line = line.Substring(idx + 2);
-                        break;
                     } else {
                         line = string.Empty;  // skip line
                     }

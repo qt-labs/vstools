@@ -40,11 +40,11 @@ namespace QtVsTools
     class DteEventsHandler
     {
         private DTE dte;
-        private EnvDTE.SolutionEvents solutionEvents;
-        private EnvDTE.BuildEvents buildEvents;
-        private EnvDTE.DocumentEvents documentEvents;
-        private EnvDTE.ProjectItemsEvents projectItemsEvents;
-        private EnvDTE.vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
+        private SolutionEvents solutionEvents;
+        private BuildEvents buildEvents;
+        private DocumentEvents documentEvents;
+        private ProjectItemsEvents projectItemsEvents;
+        private vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
         private VCProjectEngineEvents vcProjectEngineEvents;
         private CommandEvents debugStartEvents;
         private CommandEvents debugStartWithoutDebuggingEvents;
@@ -59,20 +59,20 @@ namespace QtVsTools
             dte = _dte;
             var events = dte.Events as Events2;
 
-            buildEvents = (EnvDTE.BuildEvents) events.BuildEvents;
+            buildEvents = events.BuildEvents;
             buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
             buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
             buildEvents.OnBuildDone += buildEvents_OnBuildDone;
 
-            documentEvents = (EnvDTE.DocumentEvents) events.get_DocumentEvents(null);
+            documentEvents = events.get_DocumentEvents(null);
             documentEvents.DocumentSaved += DocumentSaved;
 
-            projectItemsEvents = (ProjectItemsEvents) events.ProjectItemsEvents;
+            projectItemsEvents = events.ProjectItemsEvents;
             projectItemsEvents.ItemAdded += ProjectItemsEvents_ItemAdded;
             projectItemsEvents.ItemRemoved += ProjectItemsEvents_ItemRemoved;
             projectItemsEvents.ItemRenamed += ProjectItemsEvents_ItemRenamed;
 
-            solutionEvents = (SolutionEvents) events.SolutionEvents;
+            solutionEvents = events.SolutionEvents;
             solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
             solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
             solutionEvents.Opened += SolutionEvents_Opened;
@@ -146,7 +146,7 @@ namespace QtVsTools
 
         public void OnQRCFileSaved(string fileName)
         {
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
+            foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
                 var vcProject = project.Object as VCProject;
                 if (vcProject == null || vcProject.Files == null)
                     continue;
@@ -203,8 +203,8 @@ namespace QtVsTools
                 return;     // Don't do anything, if we're not building.
             }
 
-            EnvDTE.Project project = null;
-            foreach (EnvDTE.Project p in HelperFunctions.ProjectsInSolution(dte)) {
+            Project project = null;
+            foreach (Project p in HelperFunctions.ProjectsInSolution(dte)) {
                 if (p.UniqueName == projectName) {
                     project = p;
                     break;
@@ -243,7 +243,7 @@ namespace QtVsTools
         {
         }
 
-        public void DocumentSaved(EnvDTE.Document document)
+        public void DocumentSaved(Document document)
         {
             var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
 
@@ -476,8 +476,6 @@ namespace QtVsTools
                     }
                 }
             } catch { }
-
-            return;
         }
 
         void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
@@ -562,7 +560,7 @@ namespace QtVsTools
         /// </summary>
         void RegisterVCProjectEngineEvents()
         {
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
+            foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (project != null && HelperFunctions.IsQtProject(project))
                     RegisterVCProjectEngineEvents(project);
             }

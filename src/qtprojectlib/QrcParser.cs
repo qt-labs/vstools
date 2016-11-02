@@ -138,7 +138,7 @@ namespace QtProjectLib
                             prefxs.Add(prefixes.Pop());
                         } else if (reader.LocalName.ToLower() == "file"
                               && prefixes.Peek() != null && currentItem != null) {
-                            ((QrcPrefix) (prefixes.Peek())).AddQrcItem(currentItem);
+                            prefixes.Peek().AddQrcItem(currentItem);
                             currentItem = null;
                         }
                         break;

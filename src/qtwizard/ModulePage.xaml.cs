@@ -100,7 +100,6 @@ namespace QtProjectWizard
                         yield return t;
                 }
             }
-            yield break;
         }
     }
 }

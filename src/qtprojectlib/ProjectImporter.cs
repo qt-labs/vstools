@@ -38,10 +38,10 @@ namespace QtProjectLib
 {
     public class ProjectImporter
     {
-        private EnvDTE.DTE dteObject;
+        private DTE dteObject;
         const string projectFileExtension = ".vcxproj";
 
-        public ProjectImporter(EnvDTE.DTE dte)
+        public ProjectImporter(DTE dte)
         {
             dteObject = dte;
         }
@@ -130,8 +130,8 @@ namespace QtProjectLib
                         Messages.PaneMessage(dteObject, "Project already in Solution");
                     }
 
-                    EnvDTE.Project pro = null;
-                    foreach (EnvDTE.Project p in HelperFunctions.ProjectsInSolution(dteObject)) {
+                    Project pro = null;
+                    foreach (Project p in HelperFunctions.ProjectsInSolution(dteObject)) {
                         if (p.FullName.ToLower() == VCInfo.FullName.ToLower()) {
                             pro = p;
                             break;
@@ -274,7 +274,7 @@ namespace QtProjectLib
                     s = s.Substring(index + 1);
             }
             if (!string.IsNullOrEmpty(s)) {
-                s = s.Trim(new char[] { ' ', '\"', ',' });
+                s = s.Trim(' ', '\"', ',');
                 if (s.StartsWith(">", StringComparison.Ordinal))
                     s = s.Substring(1);
             }
@@ -327,7 +327,7 @@ namespace QtProjectLib
                 qmake.CloseEvent += dialog.CloseEventHandler;
                 qmake.PaneMessageDataEvent += PaneMessageDataReceived;
 
-                var qmakeThread = new System.Threading.Thread(new ThreadStart(qmake.RunQMake));
+                var qmakeThread = new System.Threading.Thread(qmake.RunQMake);
                 qmakeThread.Start();
                 dialog.ShowDialog();
                 qmakeThread.Join();

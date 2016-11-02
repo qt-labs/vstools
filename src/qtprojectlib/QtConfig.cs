@@ -78,7 +78,7 @@ namespace QtProjectLib
         {
             line = line.Trim();
             if (line.StartsWith("CONFIG", StringComparison.Ordinal)) {
-                var values = line.Substring(6).Split(new char[] { ' ', '\t' });
+                var values = line.Substring(6).Split(' ', '\t');
                 foreach (var s in values) {
                     if (s == "static")
                         isStaticBuild = true;

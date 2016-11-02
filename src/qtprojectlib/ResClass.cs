@@ -93,7 +93,7 @@ namespace QtProjectLib
 
         internal SR()
         {
-            resources = new System.Resources.ResourceManager("QtProjectLib.Resources", GetType().Assembly);
+            resources = new ResourceManager("QtProjectLib.Resources", GetType().Assembly);
         }
 
         private static SR GetLoader()
@@ -125,7 +125,7 @@ namespace QtProjectLib
             var sys = GetLoader();
             if (sys == null)
                 return null;
-            var res = sys.resources.GetString(name, SR.Culture);
+            var res = sys.resources.GetString(name, Culture);
 
             if (args != null && args.Length > 0)
                 return string.Format(res, args);
@@ -137,7 +137,7 @@ namespace QtProjectLib
             var sys = GetLoader();
             if (sys == null)
                 return null;
-            return sys.resources.GetString(name, SR.Culture);
+            return sys.resources.GetString(name, Culture);
         }
     }
 }

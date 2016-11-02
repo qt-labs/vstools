@@ -43,9 +43,9 @@ namespace QtProjectLib
             }
             return null;
         }
-        public static void PaneMessage(EnvDTE.DTE dte, string str)
+        public static void PaneMessage(DTE dte, string str)
         {
-            var wnd = (EnvDTE.OutputWindow) dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
+            var wnd = (OutputWindow) dte.Windows.Item(Constants.vsWindowKindOutput).Object;
             if (wndp == null)
                 wndp = wnd.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
 

@@ -117,7 +117,7 @@ namespace QtProjectLib
                         if (op == "+=") {
                             entries[lineKey] += " " + lineValue;
                         } else if (op == "-=") {
-                            foreach (var remval in lineValue.Split(new char[] { ' ', '\t' }))
+                            foreach (var remval in lineValue.Split(' ', '\t'))
                                 RemoveValue(lineKey, remval, entries);
                         } else {
                             entries[lineKey] = lineValue;

@@ -194,7 +194,7 @@ namespace QtVsTools
 
                             // data has successfully been received
                             var decodedData = new UnicodeEncoding().GetString(data, 0, bytesRead);
-                            var messages = decodedData.Split(new char[] { '\n' },
+                            var messages = decodedData.Split(new[] { '\n' },
                                 StringSplitOptions.RemoveEmptyEntries);
 
                             foreach (var message in messages) {

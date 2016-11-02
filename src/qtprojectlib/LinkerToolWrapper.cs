@@ -52,7 +52,7 @@ namespace QtProjectLib
             {
                 if (linker.AdditionalLibraryDirectories == null)
                     return null;
-                var dirArray = linker.AdditionalLibraryDirectories.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var dirArray = linker.AdditionalLibraryDirectories.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
                 var lst = new List<string>(dirArray);
                 for (var i = 0; i < lst.Count; ++i) {
                     var item = lst[i];
@@ -80,7 +80,7 @@ namespace QtProjectLib
                     else
                         newAdditionalLibraryDirectories += ";";
 
-                    if (!Path.IsPathRooted(item) || item.IndexOfAny(new char[] { ' ', '\t' }) > 0)
+                    if (!Path.IsPathRooted(item) || item.IndexOfAny(new[] { ' ', '\t' }) > 0)
                         newAdditionalLibraryDirectories += "\"" + item + "\"";
                     else
                         newAdditionalLibraryDirectories += item;
@@ -107,7 +107,7 @@ namespace QtProjectLib
                 }
 
                 var newAdditionalDependencies = string.Empty;
-                var separators = new char[] { ' ', '\t' };
+                var separators = new[] { ' ', '\t' };
                 var firstLoop = true;
                 foreach (var item in value) {
                     if (firstLoop)
@@ -133,7 +133,7 @@ namespace QtProjectLib
         /// <returns></returns>
         private static List<string> splitByWhitespace(string str)
         {
-            var separators = new char[] { ' ', '\t' };
+            var separators = new[] { ' ', '\t' };
             var i = str.IndexOf('"');
             if (i == -1)
                 return new List<string>(str.Split(separators, StringSplitOptions.RemoveEmptyEntries));

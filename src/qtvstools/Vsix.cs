@@ -36,7 +36,7 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    [Guid(Vsix.PackageGuid)]
+    [Guid(PackageGuid)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "2.0.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -134,7 +134,7 @@ namespace QtVsTools
 
             try {
                 UpdateDefaultEditors(Mode.Startup);
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
@@ -151,7 +151,7 @@ namespace QtVsTools
             eventHandler.Disconnect();
             try {
                 UpdateDefaultEditors(Mode.Shutdown);
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
             return base.QueryClose(out canClose);

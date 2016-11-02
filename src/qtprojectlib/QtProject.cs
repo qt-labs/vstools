@@ -45,8 +45,8 @@ namespace QtProjectLib
     /// </summary>
     public class QtProject
     {
-        private EnvDTE.DTE dte;
-        private EnvDTE.Project envPro;
+        private DTE dte;
+        private Project envPro;
         private VCProject vcPro;
         private MocCmdChecker mocCmdChecker;
         private Array lastConfigurationRowNames;
@@ -54,10 +54,10 @@ namespace QtProjectLib
 
         public static QtProject Create(VCProject vcProject)
         {
-            return Create((EnvDTE.Project) vcProject.Object);
+            return Create((Project) vcProject.Object);
         }
 
-        public static QtProject Create(EnvDTE.Project project)
+        public static QtProject Create(Project project)
         {
             QtProject qtProject = null;
             if (project != null && !instances.TryGetValue(project, out qtProject)) {
@@ -72,7 +72,7 @@ namespace QtProjectLib
             instances.Clear();
         }
 
-        private QtProject(EnvDTE.Project project)
+        private QtProject(Project project)
         {
             if (project == null)
                 throw new QtVSException(SR.GetString("QtProject_CannotConstructWithoutValidProject"));
@@ -86,7 +86,7 @@ namespace QtProjectLib
             get { return vcPro; }
         }
 
-        public EnvDTE.Project Project
+        public Project Project
         {
             get { return envPro; }
         }
@@ -514,7 +514,7 @@ namespace QtProjectLib
                     sw.WriteLine("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"" + projectName + ".ico\"" + sw.NewLine);
                     sw.Close();
                 }
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
                 return false;
             }
@@ -926,9 +926,7 @@ namespace QtProjectLib
                             cmdLine = rex.Replace(cmdLine, string.Empty);
                         }
 
-                        var m = System.Text.RegularExpressions.Regex.Match(cmdLine,
-                            @"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
-
+                        var m = Regex.Match(cmdLine, @"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
                         if (m.Success) {
                             var start = m.Index;
                             var end = cmdLine.IndexOf("&&", start, StringComparison.Ordinal);
@@ -1017,7 +1015,8 @@ namespace QtProjectLib
         {
             if (HelperFunctions.HasHeaderFileExtension(file.Name)) {
                 return CheckForCommand(file, "moc.exe");
-            } else if (HelperFunctions.HasSourceFileExtension(file.Name)) {
+            }
+            if (HelperFunctions.HasSourceFileExtension(file.Name)) {
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                     var mocFileName = string.Empty;
                     if (mocOutDir == null) {
@@ -1103,9 +1102,9 @@ namespace QtProjectLib
         public void UpdateRccStep(VCFile qrcFile, RccOptions rccOpts)
         {
             var vcpro = (VCProject) qrcFile.project;
-            EnvDTE.DTE dteObject = ((EnvDTE.Project) vcpro.Object).DTE;
+            DTE dteObject = ((Project) vcpro.Object).DTE;
 
-            var qtPro = QtProject.Create(vcpro);
+            var qtPro = Create(vcpro);
             var parser = new QrcParser(qrcFile.FullPath);
             var filesInQrcFile = ProjectMacros.Path;
 
@@ -1120,7 +1119,7 @@ namespace QtProjectLib
                         filesInQrcFile += ";" + relativeQrcItemPath;
                         try {
                             var addedFile = qtPro.AddFileInFilter(Filters.ResourceFiles(), relativeQrcItemPath, true);
-                            QtProject.ExcludeFromAllBuilds(addedFile);
+                            ExcludeFromAllBuilds(addedFile);
                         } catch { /* it's not possible to add all kinds of files */ }
                     }
                 }
@@ -1158,7 +1157,7 @@ namespace QtProjectLib
                     cbt.CommandLine = cmdLine + " \"" + ProjectMacros.Path + "\" -o " + cbt.Outputs;
                 }
                 AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
-            } catch (System.Exception /*e*/) {
+            } catch (Exception /*e*/) {
                 Messages.PaneMessage(dteObject, "*** WARNING (RCC): Couldn't add rcc step");
             }
         }
@@ -1177,7 +1176,7 @@ namespace QtProjectLib
                     if (generatedFile != null)
                         RemoveFileFromFilter(generatedFile, Filters.GeneratedFiles());
                 }
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayWarningMessage(e);
             }
         }
@@ -1233,7 +1232,7 @@ namespace QtProjectLib
 
                         var reg = new Regex("Moc'ing .+\\.\\.\\.");
                         var addDepends = tool.AdditionalDependencies;
-                        addDepends = System.Text.RegularExpressions.Regex.Replace(addDepends,
+                        addDepends = Regex.Replace(addDepends,
                             @"(\S*moc.exe|""\S+:\\\.*moc.exe"")", string.Empty);
                         addDepends = addDepends.Replace(file.RelativePath, string.Empty);
                         tool.AdditionalDependencies = string.Empty;
@@ -1252,11 +1251,11 @@ namespace QtProjectLib
                             else if (matchList[1].Length > 1)
                                 outputMocFile = matchList[1].ToString();
                         }
-                        tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
+                        tool.Outputs = Regex.Replace(tool.Outputs,
                             pattern, string.Empty, RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                        tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
+                        tool.Outputs = Regex.Replace(tool.Outputs,
                             @"\s*;\s*;\s*", ";", RegexOptions.Multiline);
-                        tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
+                        tool.Outputs = Regex.Replace(tool.Outputs,
                             @"(^\s*;|\s*;\s*$)", string.Empty, RegexOptions.Multiline);
 
                         if (outputMocFile != null) {
@@ -1304,7 +1303,7 @@ namespace QtProjectLib
 
                 if (hFile != null)
                     RemoveFileFromFilter(hFile, Filters.GeneratedFiles());
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayWarningMessage(e);
             }
         }
@@ -1411,9 +1410,9 @@ namespace QtProjectLib
         /// </summary>
         /// <param name="fileName">file name (relative path)</param>
         /// <returns></returns>
-        public System.Collections.Generic.List<VCFile> GetFilesFromProject(string fileName)
+        public List<VCFile> GetFilesFromProject(string fileName)
         {
-            var tmpList = new System.Collections.Generic.List<VCFile>();
+            var tmpList = new List<VCFile>();
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
 
             var fi = new FileInfo(fileName);
@@ -1424,9 +1423,9 @@ namespace QtProjectLib
             return tmpList;
         }
 
-        public System.Collections.Generic.List<VCFile> GetAllFilesFromFilter(VCFilter filter)
+        public List<VCFile> GetAllFilesFromFilter(VCFilter filter)
         {
-            var tmpList = new System.Collections.Generic.List<VCFile>();
+            var tmpList = new List<VCFile>();
 
             foreach (VCFile f in (IVCCollection) filter.Files)
                 tmpList.Add(f);
@@ -1543,8 +1542,7 @@ namespace QtProjectLib
 
                 if (vfilt.CanAddFile(fileName))
                     return (VCFile) (vfilt.AddFile(fileName));
-                else
-                    throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
+                throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
             }
@@ -1619,7 +1617,7 @@ namespace QtProjectLib
                 }
 
                 srcFile.MoveTo(destName);
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayWarningMessage(e, SR.GetString("QtProject_DeletedFolderFullOrProteced"));
             }
         }
@@ -1697,12 +1695,12 @@ namespace QtProjectLib
             try {
                 var solutionExplorer = dte.Windows.Item(Constants.vsWindowKindSolutionExplorer);
                 if (solutionExplorer != null) {
-                    var hierarchy = (EnvDTE.UIHierarchy) solutionExplorer.Object;
-                    EnvDTE.UIHierarchyItems projects = hierarchy.UIHierarchyItems.Item(1).UIHierarchyItems;
+                    var hierarchy = (UIHierarchy) solutionExplorer.Object;
+                    UIHierarchyItems projects = hierarchy.UIHierarchyItems.Item(1).UIHierarchyItems;
 
-                    foreach (EnvDTE.UIHierarchyItem itm in projects) {
+                    foreach (UIHierarchyItem itm in projects) {
                         if (itm.Name == envPro.Name) {
-                            foreach (EnvDTE.UIHierarchyItem i in itm.UIHierarchyItems) {
+                            foreach (UIHierarchyItem i in itm.UIHierarchyItems) {
                                 if (i.Name == Filters.GeneratedFiles().Name)
                                     i.UIHierarchyItems.Expanded = false;
                             }
@@ -1855,7 +1853,7 @@ namespace QtProjectLib
                 var reader = new StreamReader(file);
                 text = reader.ReadToEnd();
                 reader.Close();
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(
                     SR.GetString("QtProject_CannotReplaceTokenRead", token, replacement, e.ToString()));
                 return;
@@ -1869,7 +1867,7 @@ namespace QtProjectLib
                 var writer = new StreamWriter(file);
                 writer.Write(text);
                 writer.Close();
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(
                     SR.GetString("QtProject_CannotReplaceTokenWrite", token, replacement, e.ToString()));
             }
@@ -1962,7 +1960,7 @@ namespace QtProjectLib
                     line = reader.ReadLine();
                 }
                 reader.Close();
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(SR.GetString("QtProject_CannotEnableSectionRead", sectionName, e.ToString()));
                 return;
             }
@@ -1971,7 +1969,7 @@ namespace QtProjectLib
                 var writer = new StreamWriter(file);
                 writer.Write(text);
                 writer.Close();
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(SR.GetString("QtProject_CannotEnableSectionWrite", sectionName, e.ToString()));
             }
         }
@@ -2006,7 +2004,7 @@ namespace QtProjectLib
         private void UpdateCompilerIncludePaths(string oldDir, string newDir)
         {
             var fixedOldDir = FixFilePathForComparison(oldDir);
-            var dirs = new string[] {
+            var dirs = new[] {
                 FixFilePathForComparison(QtVSIPSettings.GetUicDirectory(envPro)),
                 FixFilePathForComparison(QtVSIPSettings.GetMocDirectory(envPro)),
                 FixFilePathForComparison(QtVSIPSettings.GetRccDirectory(envPro))
@@ -2656,7 +2654,7 @@ namespace QtProjectLib
                     SolutionContext ctx = null;
                     try {
                         ctx = contexts.Item(i);
-                    } catch (System.ArgumentException) {
+                    } catch (ArgumentException) {
                         // This may happen if we encounter an unloaded project.
                         continue;
                     }
@@ -2718,7 +2716,7 @@ namespace QtProjectLib
         {
             var compiler = CompilerToolWrapper.Create(config);
             var minuend = new HashSet<string>(compiler.PreprocessorDefinitions);
-            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
+            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
             compiler.SetPreprocessorDefinitions(string.Join(",", minuend));
         }
 
@@ -2726,7 +2724,7 @@ namespace QtProjectLib
         {
             var compiler = CompilerToolWrapper.Create(config);
             var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
-            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(new char[] { ' ', '\t' }));
+            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
             compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
 
             var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
@@ -2985,7 +2983,7 @@ namespace QtProjectLib
                 var activePlatformName = string.Empty;
                 if (string.IsNullOrEmpty(solutionConfig)) {
                     // First get active configuration cause not given as parameter
-                    EnvDTE.Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
+                    Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
                     solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
                     activePlatformName = activeConf.PlatformName;
                 } else {

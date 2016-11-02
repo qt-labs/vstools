@@ -72,7 +72,7 @@ namespace QtVsTools
             QmlClassifierEnabled = store.GetBoolean(Statics.QtVsToolsQmlClassifierPath,
                 Statics.QtVsToolsQmlClassifierKey, true);
 
-            whiteSpaceChars = new char[] { ' ', '\t' };
+            whiteSpaceChars = new[] { ' ', '\t' };
             separators = new List<char>
             {
                 ' ', '\t',
@@ -264,7 +264,7 @@ namespace QtVsTools
                         token.Length = value_len;
                         return token;
                     }
-                } catch (System.IndexOutOfRangeException) {
+                } catch (IndexOutOfRangeException) {
                     // pass
                 }
 
@@ -277,7 +277,7 @@ namespace QtVsTools
                 var next_ch = '\0'; // doesn't matter which the default is until not '*' or '/'
                 try {
                     next_ch = text[i + 1];
-                } catch (System.IndexOutOfRangeException) {
+                } catch (IndexOutOfRangeException) {
                     // pass
                 }
                 // If we are in beginning of search and not inside multi-line comment parsing
@@ -290,18 +290,19 @@ namespace QtVsTools
                         return GetStringToken(text, index, length);
                     }
                     // Single line comment start found,
-                    else if (ch == '/' && next_ch == '/') {
+                    if (ch == '/' && next_ch == '/') {
                         // One line comment starting
                         var token = new CommentToken();
                         token.Length = length - index;
                         return token;
                     }
                     // Cut now ??
-                    else if (separators.Contains(ch)) {
+                    if (separators.Contains(ch)) {
                         var token = new OtherToken();
                         token.Length = 1;
                         return token;
-                    } else if (ch == '/' && next_ch == '*') {
+                    }
+                    if (ch == '/' && next_ch == '*') {
                         // Multi-line comment start found (can be one liner also)
                         var token = GetMultiLineCommentToken(text, i, length);
                         if (!token.ContinueParsing)
@@ -316,7 +317,8 @@ namespace QtVsTools
                     token = GetToken(tmp);
                     token.Length = i - index;
                     return token;
-                } else if (separators.Contains(ch)) {
+                }
+                if (separators.Contains(ch)) {
                     Token token = null;
                     if (inMultilineComment) {
                         token = new MultilineCommentToken();
@@ -328,7 +330,8 @@ namespace QtVsTools
                     }
                     token.Length = i - index;
                     return token;
-                } else if (ch == '\r' || ch == '\n') {
+                }
+                if (ch == '\r' || ch == '\n') {
                     Token token = null;
                     if (inMultilineComment) {
                         token = new MultilineCommentToken();
@@ -339,16 +342,16 @@ namespace QtVsTools
                     token.Length = i - index + 1;
                     return token;
                 }
-                  // There is a comment coming so this token ends now
-                  else if (ch == '/' && next_ch == '/') {
+                // There is a comment coming so this token ends now
+                if (ch == '/' && next_ch == '/') {
                     Token token = null;
                     token = GetToken(text.Substring(index, i - index));
                     token.Length = i - index; // +1;
                     return token;
                 }
-                  // Multi-line comment start found (or sure can be one liner also)
-                  // so this token ends now
-                  else if (ch == '/' && next_ch == '*') {
+                // Multi-line comment start found (or sure can be one liner also)
+                // so this token ends now
+                if (ch == '/' && next_ch == '*') {
                     // Multi-line comment starting, perhaps
                     inMultilineComment = true;
                     var tmp = text.Substring(index, i - index);

@@ -131,7 +131,7 @@ namespace QtProjectLib
                     return new List<string>();
                 // double quotes are escaped
                 directories = directories.Replace("\\\"", "\"");
-                var dirArray = directories.Split(new char[] { ';', ',' }, StringSplitOptions
+                var dirArray = directories.Split(new[] { ';', ',' }, StringSplitOptions
                     .RemoveEmptyEntries);
                 var lst = new List<string>(dirArray);
                 var i = 0;
@@ -165,7 +165,7 @@ namespace QtProjectLib
                     else
                         newDirectories += ";";
 
-                    if (dir.IndexOfAny(new char[] { ' ', '\t' }) > 0 || !Path.IsPathRooted(dir))
+                    if (dir.IndexOfAny(new[] { ' ', '\t' }) > 0 || !Path.IsPathRooted(dir))
                         newDirectories += "\"" + dir + "\"";
                     else
                         newDirectories += dir;
@@ -193,7 +193,7 @@ namespace QtProjectLib
                 if (string.IsNullOrEmpty(ppdefsstr))
                     return new List<string>();
 
-                var ppdefs = ppdefsstr.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                var ppdefs = ppdefsstr.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 return new List<string>(ppdefs);
             }
         }
@@ -206,7 +206,7 @@ namespace QtProjectLib
         {
             var preprocessorDefs = GetPreprocessorDefinitions();
             if (preprocessorDefs != null) {
-                var definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
+                var definesArray = preprocessorDefs.Split(new[] { ';', ',' },
                     StringSplitOptions.RemoveEmptyEntries);
                 var definesList = new List<string>(definesArray);
                 if (definesList.Contains(value))
@@ -231,7 +231,7 @@ namespace QtProjectLib
             if (preprocessorDefs == null)
                 return;
 
-            var definesArray = preprocessorDefs.Split(new char[] { ';', ',' },
+            var definesArray = preprocessorDefs.Split(new[] { ';', ',' },
                 StringSplitOptions.RemoveEmptyEntries);
             var definesList = new List<string>(definesArray);
             if (definesList == null || !definesList.Remove(value))
@@ -286,7 +286,7 @@ namespace QtProjectLib
                 return;
 
             bool directoryAdded = false;
-            var directories = value.Split(new char[] { ';', ',' }, StringSplitOptions
+            var directories = value.Split(new[] { ';', ',' }, StringSplitOptions
                 .RemoveEmptyEntries);
             List<string> lst = AdditionalIncludeDirectories;
             foreach (var directory in directories) {
@@ -303,10 +303,8 @@ namespace QtProjectLib
 
         public string[] GetAdditionalIncludeDirectoriesList()
         {
-            var includes = GetAdditionalIncludeDirectories()
-                .Split(new char[] { ',', ';' });
-            string[] fixedincludes;
-            fixedincludes = new string[includes.Length];
+            var includes = GetAdditionalIncludeDirectories().Split(',', ';');
+            string[] fixedincludes = new string[includes.Length];
             int i = 0;
             foreach (var include in includes) {
                 var incl = include;
@@ -346,7 +344,7 @@ namespace QtProjectLib
                 return compilerTool.UsePrecompiledHeader;
 
             var obj = compilerType.InvokeMember("UsePrecompiledHeader",
-                System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
+                BindingFlags.GetProperty, null, compilerObj, null);
             if (obj == null)
                 return pchOption.pchNone;
             return (pchOption) obj;
@@ -359,10 +357,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "DebugInformationFormat",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @value });
+                    new object[] { value });
             }
         }
 
@@ -384,7 +382,7 @@ namespace QtProjectLib
             {
                 if (compilerTool == null) {
                     compilerType.InvokeMember("RuntimeLibrary", BindingFlags.SetProperty,
-                        null, compilerObj, new object[] { @value });
+                        null, compilerObj, new object[] { value });
                 } else {
                     compilerTool.RuntimeLibrary = value;
                 }
@@ -398,10 +396,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "Optimization",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @value });
+                    new object[] { value });
             }
         }
 
@@ -412,10 +410,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "TreatWChar_tAsBuiltInType",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @value });
+                    new object[] { value });
             }
         }
 
@@ -426,10 +424,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "PrecompiledHeaderFile",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @file });
+                    new object[] { file });
             }
         }
 
@@ -440,10 +438,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "PrecompiledHeaderThrough",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @value });
+                    new object[] { value });
             }
         }
 
@@ -454,10 +452,10 @@ namespace QtProjectLib
             } else {
                 compilerType.InvokeMember(
                     "UsePrecompiledHeader",
-                    System.Reflection.BindingFlags.SetProperty,
+                    BindingFlags.SetProperty,
                     null,
                     compilerObj,
-                    new object[] { @value });
+                    new object[] { value });
             }
         }
 
@@ -465,17 +463,17 @@ namespace QtProjectLib
         {
             compilerType.InvokeMember(
                 name,
-                System.Reflection.BindingFlags.SetProperty,
+                BindingFlags.SetProperty,
                 null,
                 compilerObj,
-                new object[] { @value });
+                new object[] { value });
         }
 
         private string GetStringProperty(string name)
         {
             object obj;
             try {
-                obj = compilerType.InvokeMember(name, System.Reflection.BindingFlags.GetProperty,
+                obj = compilerType.InvokeMember(name, BindingFlags.GetProperty,
                     null, compilerObj, null);
             } catch {
                 obj = null;

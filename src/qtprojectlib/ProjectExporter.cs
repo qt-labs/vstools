@@ -41,7 +41,7 @@ namespace QtProjectLib
     #region Storage Classes
     internal class ProSolution
     {
-        public ProSolution(EnvDTE.Solution sln)
+        public ProSolution(Solution sln)
         {
             prosln = sln;
             proFiles = new List<ProFileContent>();
@@ -55,7 +55,7 @@ namespace QtProjectLib
             }
         }
 
-        public EnvDTE.Solution ProjectSolution
+        public Solution ProjectSolution
         {
             get
             {
@@ -64,7 +64,7 @@ namespace QtProjectLib
         }
 
         private List<ProFileContent> proFiles;
-        private EnvDTE.Solution prosln;
+        private Solution prosln;
     }
 
     internal class ProFileOption
@@ -232,9 +232,9 @@ namespace QtProjectLib
 
     public class ProjectExporter
     {
-        private EnvDTE.DTE dteObject;
+        private DTE dteObject;
 
-        public ProjectExporter(EnvDTE.DTE dte)
+        public ProjectExporter(DTE dte)
         {
             dteObject = dte;
         }
@@ -246,9 +246,9 @@ namespace QtProjectLib
                 var relPath = string.Empty;
                 if (files[i].IndexOf(':') != 1) {
                     relPath = HelperFunctions.GetRelativePath(path,
-                        vcproj.ProjectDirectory + "\\" + (string) files[i]);
+                        vcproj.ProjectDirectory + "\\" + files[i]);
                 } else {
-                    relPath = HelperFunctions.GetRelativePath(path, (string) files[i]);
+                    relPath = HelperFunctions.GetRelativePath(path, files[i]);
                 }
                 files[i] = HelperFunctions.ChangePathFormat(relPath);
             }
@@ -281,12 +281,12 @@ namespace QtProjectLib
         #endregion
 
         #region Export pri/pro Files Helper Functions
-        private ProSolution CreateProFileSolution(EnvDTE.Solution sln)
+        private ProSolution CreateProFileSolution(Solution sln)
         {
             ProFileContent content;
             var prosln = new ProSolution(sln);
 
-            foreach (EnvDTE.Project proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
+            foreach (Project proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
                 try {
                     // only add qt projects
                     if (HelperFunctions.IsQtProject(proj)) {
@@ -303,7 +303,7 @@ namespace QtProjectLib
             return prosln;
         }
 
-        private void addProjectsInFolder(EnvDTE.Project solutionFolder, ProSolution sln)
+        private void addProjectsInFolder(Project solutionFolder, ProSolution sln)
         {
             foreach (ProjectItem pi in solutionFolder.ProjectItems) {
                 var containedProject = pi.Object as Project;
@@ -316,7 +316,7 @@ namespace QtProjectLib
             }
         }
 
-        private static ProFileContent CreateProFileContent(EnvDTE.Project project)
+        private static ProFileContent CreateProFileContent(Project project)
         {
             ProFileOption option;
             var qtPro = QtProject.Create(project);
@@ -530,7 +530,7 @@ namespace QtProjectLib
             return content;
         }
 
-        private static ProFileContent CreatePriFileContent(EnvDTE.Project project, string priFileDirectory)
+        private static ProFileContent CreatePriFileContent(Project project, string priFileDirectory)
         {
             ProFileOption option;
             var qtPro = QtProject.Create(project);
@@ -598,13 +598,13 @@ namespace QtProjectLib
             var excludeList = "UNICODE WIN32 NDEBUG QDESIGNER_EXPORT_WIDGETS ";
             excludeList += "QT_THREAD_SUPPORT QT_PLUGIN QT_NO_DEBUG QT_CORE_LIB QT_GUI_LIB";
 
-            foreach (var define in preprocessorDefinitions.Split(new char[] { ';', ',' })) {
+            foreach (var define in preprocessorDefinitions.Split(';', ',')) {
                 if (excludeList.IndexOf(define, StringComparison.OrdinalIgnoreCase) == -1)
                     option.List.Add(define);
             }
         }
 
-        private static void AddIncludePaths(EnvDTE.Project project, ProFileOption option, string includePaths)
+        private static void AddIncludePaths(Project project, ProFileOption option, string includePaths)
         {
             if (includePaths == null)
                 return;
@@ -612,13 +612,13 @@ namespace QtProjectLib
             var versionManager = QtVersionManager.The();
             var qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)
-                qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
+                qtDir = Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
                 qtDir = "";
 
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
 
-            foreach (var s in includePaths.Split(new char[] { ';', ',' })) {
+            foreach (var s in includePaths.Split(';', ',')) {
                 var d = HelperFunctions.NormalizeRelativeFilePath(s);
                 if (!d.StartsWith("$(qtdir)\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.StartsWith(qtDir + "\\include", StringComparison.OrdinalIgnoreCase) &&
@@ -633,19 +633,19 @@ namespace QtProjectLib
             }
         }
 
-        private static void AddLibraries(EnvDTE.Project project, ProFileOption option, string paths, string deps)
+        private static void AddLibraries(Project project, ProFileOption option, string paths, string deps)
         {
             var versionManager = QtVersionManager.The();
             var qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)
-                qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
+                qtDir = Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
                 qtDir = "";
 
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
 
             if (paths != null) {
-                foreach (var s in paths.Split(new char[] { ';', ',' })) {
+                foreach (var s in paths.Split(';', ',')) {
                     var d = HelperFunctions.NormalizeRelativeFilePath(s);
                     if (!d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase)) {
@@ -658,7 +658,7 @@ namespace QtProjectLib
             }
 
             if (deps != null) {
-                foreach (var d in deps.Split(new char[] { ' ' })) {
+                foreach (var d in deps.Split(' ')) {
                     if (d.Length > 0 &&
                         !d.StartsWith("$(qtdir)\\lib", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase) &&
@@ -711,7 +711,7 @@ namespace QtProjectLib
 
                 try {
                     sw = new StreamWriter(File.Create(slnFileName));
-                } catch (System.Exception e) {
+                } catch (Exception e) {
                     Messages.DisplayErrorMessage(e);
                     return;
                 }
@@ -743,11 +743,11 @@ namespace QtProjectLib
                 using (sw) {
                     sw.WriteLine(Resources.exportSolutionHeader);
                     for (int i = 0; i < content.Options.Count; i++)
-                        WriteProFileOption(sw, (ProFileOption) content.Options[i]);
+                        WriteProFileOption(sw, content.Options[i]);
                 }
 
                 if (openFile)
-                    dteObject.OpenFile(EnvDTE.Constants.vsViewKindTextView, slnFileName).Activate();
+                    dteObject.OpenFile(Constants.vsViewKindTextView, slnFileName).Activate();
             }
         }
 
@@ -763,7 +763,7 @@ namespace QtProjectLib
 
             try {
                 sw = new StreamWriter(File.Create(proFile));
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
                 return;
             }
@@ -787,7 +787,7 @@ namespace QtProjectLib
 
             // open the file in vs
             if (openFile)
-                dteObject.OpenFile(EnvDTE.Constants.vsViewKindTextView, proFile).Activate();
+                dteObject.OpenFile(Constants.vsViewKindTextView, proFile).Activate();
         }
 
         private void WritePriFile(ProFileContent content, string priFile)
@@ -796,7 +796,7 @@ namespace QtProjectLib
 
             try {
                 sw = new StreamWriter(File.Create(priFile));
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
                 return;
             }
@@ -826,19 +826,22 @@ namespace QtProjectLib
 
                 switch (option.AssignSymbol) {
                 case ProFileOption.AssignType.AT_Equals:
-                    sw.Write(" = "); break;
+                    sw.Write(" = ");
+                    break;
                 case ProFileOption.AssignType.AT_MinusEquals:
-                    sw.Write(" -= "); break;
+                    sw.Write(" -= ");
+                    break;
                 case ProFileOption.AssignType.AT_PlusEquals:
-                    sw.Write(" += "); break;
+                    sw.Write(" += ");
+                    break;
                 }
 
                 for (var i = 0; i < option.List.Count - 1; i++)
-                    sw.Write((string) option.List[i] + option.NewOption);
-                sw.Write((string) option.List[option.List.Count - 1] + sw.NewLine);
+                    sw.Write(option.List[i] + option.NewOption);
+                sw.Write(option.List[option.List.Count - 1] + sw.NewLine);
             } else {
                 for (var i = 0; i < option.List.Count; i++)
-                    sw.WriteLine(option.Name + "(" + (string) option.List[i] + ")");
+                    sw.WriteLine(option.Name + "(" + option.List[i] + ")");
             }
         }
         #endregion
@@ -854,18 +857,21 @@ namespace QtProjectLib
                     return null;
 
                 sr = new StreamReader(priFileInfo.FullName);
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayWarningMessage(e);
                 return null;
             }
 
             switch (ftl) {
             case FilesToList.FL_CppFiles:
-                ParseTag(sr, "SOURCES", fileList); break;
+                ParseTag(sr, "SOURCES", fileList);
+                break;
             case FilesToList.FL_HFiles:
-                ParseTag(sr, "HEADERS", fileList); break;
+                ParseTag(sr, "HEADERS", fileList);
+                break;
             case FilesToList.FL_UiFiles:
-                ParseTag(sr, "FORMS", fileList); break;
+                ParseTag(sr, "FORMS", fileList);
+                break;
             }
 
             // the filelist should contain the entire path since we can select
@@ -873,7 +879,7 @@ namespace QtProjectLib
             var ret = new List<string>();
             try {
                 ret = ConvertFilesToFullPath(ret, priFileInfo.DirectoryName);
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayErrorMessage(SR.GetString("ExportProject_ErrorParsingPriFile", e.Message),
                     SR.GetString("ExportProject_CheckFileAndSyntax"));
                 return null;
@@ -962,13 +968,13 @@ namespace QtProjectLib
         }
 
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
-            List<string> projFiles, EnvDTE.DTE dte)
+            List<string> projFiles, DTE dte)
         {
             SyncIncludeFiles(vcproj, priFiles, projFiles, dte, false, null);
         }
 
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
-            List<string> projFiles, EnvDTE.DTE dte, bool flat, FakeFilter fakeFilter)
+            List<string> projFiles, DTE dte, bool flat, FakeFilter fakeFilter)
         {
             var cmpPriFiles = new List<string>(priFiles.Count);
             foreach (var s in priFiles)
@@ -1047,7 +1053,7 @@ namespace QtProjectLib
         {
             var expDlg = new ExportProjectDialog();
 
-            EnvDTE.Solution sln = dteObject.Solution;
+            Solution sln = dteObject.Solution;
             var prosln = CreateProFileSolution(sln);
 
             if (prosln.ProFiles.Count <= 0) {
@@ -1056,7 +1062,7 @@ namespace QtProjectLib
             }
 
             expDlg.ProFileSolution = prosln;
-            expDlg.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            expDlg.StartPosition = FormStartPosition.CenterParent;
             var ww = new MainWinWrapper(dteObject);
             if (expDlg.ShowDialog(ww) == DialogResult.OK) {
                 WriteProSolution(prosln, expDlg.OpenFiles);
@@ -1078,14 +1084,14 @@ namespace QtProjectLib
             }
         }
 
-        public void ImportPriFile(EnvDTE.Project proj)
+        public void ImportPriFile(Project proj)
         {
             VCProject vcproj;
 
             if (HelperFunctions.IsQtProject(proj)) {
                 try {
                     vcproj = (VCProject) proj.Object;
-                } catch (System.Exception e) {
+                } catch (Exception e) {
                     Messages.DisplayWarningMessage(e);
                     return;
                 }
@@ -1106,7 +1112,7 @@ namespace QtProjectLib
             }
         }
 
-        public void ImportPriFile(EnvDTE.Project proj, string fileName)
+        public void ImportPriFile(Project proj, string fileName)
         {
             VCProject vcproj;
 
@@ -1115,7 +1121,7 @@ namespace QtProjectLib
 
             try {
                 vcproj = (VCProject) proj.Object;
-            } catch (System.Exception e) {
+            } catch (Exception e) {
                 Messages.DisplayWarningMessage(e);
                 return;
             }
@@ -1127,31 +1133,31 @@ namespace QtProjectLib
                 return;
             projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_CppFiles);
             projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
+            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
 
             // header files
             if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_HFiles)) == null)
                 return;
             projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_HFiles);
             projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
+            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
 
             // form files
             if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_UiFiles)) == null)
                 return;
             projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_UiFiles);
             projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
+            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
         }
 
-        public string ExportToPriFile(EnvDTE.Project proj)
+        public string ExportToPriFile(Project proj)
         {
             VCProject vcproj;
 
             if (HelperFunctions.IsQtProject(proj)) {
                 try {
                     vcproj = (VCProject) proj.Object;
-                } catch (System.Exception e) {
+                } catch (Exception e) {
                     Messages.DisplayErrorMessage(e);
                     return null;
                 }
@@ -1174,7 +1180,7 @@ namespace QtProjectLib
             return null;
         }
 
-        public void ExportToPriFile(EnvDTE.Project proj, string fileName)
+        public void ExportToPriFile(Project proj, string fileName)
         {
             var priFile = new FileInfo(fileName);
 
