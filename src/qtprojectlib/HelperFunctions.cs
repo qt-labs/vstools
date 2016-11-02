@@ -201,7 +201,7 @@ namespace QtProjectLib
         {
             var fi = new FileInfo(fullName);
 
-            foreach (Project p in ProjectsInSolution(dteObject)) {
+            foreach (var p in ProjectsInSolution(dteObject)) {
                 if (p.FullName.ToLower() == fi.FullName.ToLower())
                     return true;
             }
@@ -322,7 +322,7 @@ namespace QtProjectLib
                 dir = dir.Remove(dir.Length - 1, 1);
             var diArray = dir.Split(separator);
 
-            int minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
+            var minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
             int i = 0, j = 0, commonParts = 0;
 
             while (i < minLen && fiArray[i].ToLower() == diArray[i].ToLower()) {
@@ -789,7 +789,7 @@ namespace QtProjectLib
         {
             var dirInfo = new DirectoryInfo(directory);
             while (dirInfo.Exists && dirInfo.GetFileSystemInfos().Length == 0) {
-                DirectoryInfo tmp = dirInfo;
+                var tmp = dirInfo;
                 dirInfo = dirInfo.Parent;
                 tmp.Delete();
             }
@@ -887,7 +887,7 @@ namespace QtProjectLib
 
         public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy)
         {
-            UIHierarchyItems subItems = item.UIHierarchyItems;
+            var subItems = item.UIHierarchyItems;
             if (subItems != null) {
                 foreach (UIHierarchyItem innerItem in subItems) {
                     if (innerItem.UIHierarchyItems.Count > 0) {
@@ -1070,7 +1070,7 @@ namespace QtProjectLib
         {
             if (dteObject == null)
                 return null;
-            Document doc = dteObject.ActiveDocument;
+            var doc = dteObject.ActiveDocument;
             if (doc == null)
                 return null;
 
@@ -1146,7 +1146,7 @@ namespace QtProjectLib
             if (dteObject.SelectedItems.Count <= 0)
                 return null;
 
-            SelectedItems items = dteObject.SelectedItems;
+            var items = dteObject.SelectedItems;
 
             var files = new VCFile[items.Count + 1];
             for (var i = 1; i <= items.Count; ++i) {
@@ -1209,7 +1209,7 @@ namespace QtProjectLib
         public static List<Project> ProjectsInSolution(DTE dteObject)
         {
             var projects = new List<Project>();
-            Solution solution = dteObject.Solution;
+            var solution = dteObject.Solution;
             if (solution != null) {
                 var c = solution.Count;
                 for (var i = 1; i <= c; ++i) {
@@ -1264,7 +1264,7 @@ namespace QtProjectLib
         public static int GetMaximumCommandLineLength()
         {
             var epsilon = 10;       // just to be sure :)
-            OperatingSystem os = Environment.OSVersion;
+            var os = Environment.OSVersion;
             if (os.Version.Major >= 6 ||
                 (os.Version.Major == 5 && os.Version.Minor >= 1))
                 return 8191 - epsilon;    // Windows XP and above

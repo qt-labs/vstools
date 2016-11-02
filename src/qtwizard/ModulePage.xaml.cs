@@ -96,7 +96,7 @@ namespace QtProjectWizard
                 if (child != null) {
                     if (child is T)
                         yield return child as T;
-                    foreach (T t in Children<T>(child))
+                    foreach (var t in Children<T>(child))
                         yield return t;
                 }
             }

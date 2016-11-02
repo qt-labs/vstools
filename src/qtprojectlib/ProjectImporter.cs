@@ -90,7 +90,7 @@ namespace QtProjectLib
                     dteObject.Solution.Open(VCInfo.FullName);
                     if (qtVersion != null) {
                         QtVersionManager.The().SaveSolutionQtVersion(dteObject.Solution, qtVersion);
-                        foreach (Project prj in HelperFunctions.ProjectsInSolution(dteObject)) {
+                        foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
                             var qtPro = QtProject.Create(prj);
                             qtPro.SetQtEnvironment();
@@ -131,7 +131,7 @@ namespace QtProjectLib
                     }
 
                     Project pro = null;
-                    foreach (Project p in HelperFunctions.ProjectsInSolution(dteObject)) {
+                    foreach (var p in HelperFunctions.ProjectsInSolution(dteObject)) {
                         if (p.FullName.ToLower() == VCInfo.FullName.ToLower()) {
                             pro = p;
                             break;

@@ -245,7 +245,7 @@ namespace QtProjectLib
                     return;
 
                 // we can only call one delegate at the time...
-                foreach (Delegate singleDelegate in invocationList) {
+                foreach (var singleDelegate in invocationList) {
                     var synchronizeTarget = singleDelegate.Target as ISynchronizeInvoke;
                     if (synchronizeTarget == null)
                         singleDelegate.DynamicInvoke(objList);

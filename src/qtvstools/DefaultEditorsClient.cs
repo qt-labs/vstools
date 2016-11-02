@@ -137,7 +137,7 @@ namespace QtVsTools
                 qtAppWrapperProcess = new Process();
                 qtAppWrapperProcess.StartInfo.FileName = Vsix.Instance.AppWrapperPath;
 
-                bool firstIteration = true;
+                var firstIteration = true;
                 while (!aboutToExit) {
                     try {
                         if (!firstIteration && qtAppWrapperProcess.HasExited)

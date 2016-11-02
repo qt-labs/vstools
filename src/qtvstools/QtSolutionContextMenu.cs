@@ -152,7 +152,7 @@ namespace QtVsTools
                     return;
 
                 var dte = Vsix.Instance.Dte;
-                foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
+                foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                     if (HelperFunctions.IsQtProject(project)) {
                         var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,
                             currentPlatform);

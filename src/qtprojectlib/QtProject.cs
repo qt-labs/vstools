@@ -308,11 +308,11 @@ namespace QtProjectLib
                         var additionalDependencies = linkerWrapper.AdditionalDependencies;
 
                         var libsDesktop = new List<string>();
-                        foreach (QtModuleInfo module in QtModules.Instance.GetAvailableModuleInformation()) {
+                        foreach (var module in QtModules.Instance.GetAvailableModuleInformation()) {
                             if (HasModule(module.ModuleId))
                                 libsDesktop.AddRange(module.AdditionalLibraries);
                         }
-                        List<string> libsToAdd = libsDesktop;
+                        var libsToAdd = libsDesktop;
 
                         var changed = false;
                         foreach (var libToAdd in libsToAdd) {
@@ -403,7 +403,7 @@ namespace QtProjectLib
 
         public void WriteProjectBasicConfigurations(uint type, bool usePrecompiledHeader, VersionInformation vi)
         {
-            ConfigurationTypes configType = ConfigurationTypes.typeApplication;
+            var configType = ConfigurationTypes.typeApplication;
             var targetExtension = ".exe";
             string qtVersion = null;
             var vm = QtVersionManager.The();
@@ -1071,13 +1071,13 @@ namespace QtProjectLib
                     if (rmFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase))
                         filesToDelete.Add(rmFile);
                 }
-                foreach (VCFile rmFile in filesToDelete) {
+                foreach (var rmFile in filesToDelete) {
                     RemoveFileFromFilter(rmFile, vcFilter);
                     HelperFunctions.DeleteEmptyParentDirs(rmFile);
                 }
             }
 
-            foreach (VCFile file in files) {
+            foreach (var file in files) {
                 Messages.PaneMessage(dte, "Update rcc step for " + file.Name + ".");
                 var options = new RccOptions(envPro, file);
                 UpdateRccStep(file, options);
@@ -1102,7 +1102,7 @@ namespace QtProjectLib
         public void UpdateRccStep(VCFile qrcFile, RccOptions rccOpts)
         {
             var vcpro = (VCProject) qrcFile.project;
-            DTE dteObject = ((Project) vcpro.Object).DTE;
+            var dteObject = ((Project) vcpro.Object).DTE;
 
             var qtPro = Create(vcpro);
             var parser = new QrcParser(qrcFile.FullPath);
@@ -1112,8 +1112,8 @@ namespace QtProjectLib
                 var fi = new FileInfo(qrcFile.FullPath);
                 var qrcDir = fi.Directory.FullName + "\\";
 
-                foreach (QrcPrefix prfx in parser.Prefixes) {
-                    foreach (QrcItem itm in prfx.Items) {
+                foreach (var prfx in parser.Prefixes) {
+                    foreach (var itm in prfx.Items) {
                         var relativeQrcItemPath = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory,
                             qrcDir + itm.Path);
                         filesInQrcFile += ";" + relativeQrcItemPath;
@@ -1130,7 +1130,7 @@ namespace QtProjectLib
 
             try {
                 foreach (VCFileConfiguration vfc in (IVCCollection) qrcFile.FileConfigurations) {
-                    RccOptions rccOptsCfg = rccOpts;
+                    var rccOptsCfg = rccOpts;
                     var cmdLine = string.Empty;
 
                     var cbt = HelperFunctions.GetCustomBuildTool(vfc);
@@ -1431,7 +1431,7 @@ namespace QtProjectLib
                 tmpList.Add(f);
 
             foreach (VCFilter subfilter in (IVCCollection) filter.Filters) {
-                foreach (VCFile file in GetAllFilesFromFilter(subfilter))
+                foreach (var file in GetAllFilesFromFilter(subfilter))
                     tmpList.Add(file);
             }
             return tmpList;
@@ -1696,7 +1696,7 @@ namespace QtProjectLib
                 var solutionExplorer = dte.Windows.Item(Constants.vsWindowKindSolutionExplorer);
                 if (solutionExplorer != null) {
                     var hierarchy = (UIHierarchy) solutionExplorer.Object;
-                    UIHierarchyItems projects = hierarchy.UIHierarchyItems.Item(1).UIHierarchyItems;
+                    var projects = hierarchy.UIHierarchyItems.Item(1).UIHierarchyItems;
 
                     foreach (UIHierarchyItem itm in projects) {
                         if (itm.Name == envPro.Name) {
@@ -1943,7 +1943,7 @@ namespace QtProjectLib
             try {
                 var reader = new StreamReader(file);
                 var line = reader.ReadLine();
-                bool skip = false;
+                var skip = false;
                 while (line != null) {
                     if (line.StartsWith("#Begin_" + sectionName, StringComparison.Ordinal)) {
                         skip = !enable;
@@ -2023,7 +2023,6 @@ namespace QtProjectLib
                 var compiler = CompilerToolWrapper.Create(config);
                 if (compiler == null)
                     continue;
-
                 var paths = compiler.AdditionalIncludeDirectories;
                 if (paths.Count == 0)
                     continue;
@@ -2079,11 +2078,11 @@ namespace QtProjectLib
             var updatedFiles = 0;
             var j = 0;
 
-            VCFile[] files = new VCFile[((IVCCollection) vcPro.Files).Count];
+            var files = new VCFile[((IVCCollection) vcPro.Files).Count];
             foreach (VCFile file in (IVCCollection) vcPro.Files)
                 files[j++] = file;
 
-            foreach (VCFile file in files) {
+            foreach (var file in files) {
                 if (file.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase) && !IsUic3File(file)) {
                     AddUic4BuildStep(file);
                     Messages.PaneMessage(dte, "Update uic step for " + file.Name + ".");
@@ -2472,7 +2471,7 @@ namespace QtProjectLib
             if (vcFilter != null) {
                 var generatedFiles = GetAllFilesFromFilter(vcFilter);
                 for (var i = generatedFiles.Count - 1; i >= 0; i--) {
-                    VCFile file = generatedFiles[i];
+                    var file = generatedFiles[i];
                     string fileName = null;
                     if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         fileName = file.Name.Substring(4, file.Name.Length - 8) + ".h";
@@ -2502,7 +2501,7 @@ namespace QtProjectLib
             }
 
             UpdateCompilerIncludePaths(oldMocDir, QtVSIPSettings.GetMocDirectory(envPro));
-            foreach (VCFile file in orgFiles) {
+            foreach (var file in orgFiles) {
                 try {
                     RemoveMocStep(file);
                     AddMocStep(file);
@@ -2525,10 +2524,10 @@ namespace QtProjectLib
 
         private void Clean()
         {
-            SolutionConfigurations solutionConfigs = envPro.DTE.Solution.SolutionBuild.SolutionConfigurations;
+            var solutionConfigs = envPro.DTE.Solution.SolutionBuild.SolutionConfigurations;
             var backup = new List<KeyValuePair<SolutionContext, bool>>();
             foreach (SolutionConfiguration config in solutionConfigs) {
-                SolutionContexts solutionContexts = config.SolutionContexts;
+                var solutionContexts = config.SolutionContexts;
                 if (solutionContexts == null)
                     continue;
 
@@ -2547,7 +2546,7 @@ namespace QtProjectLib
                 // TODO: Implement some logging mechanism for exceptions.
             }
 
-            foreach (KeyValuePair<SolutionContext, bool> item in backup)
+            foreach (var item in backup)
                 item.Key.ShouldBuild = item.Value;
         }
 
@@ -2566,7 +2565,7 @@ namespace QtProjectLib
                 CleanupFilter(subFilter);
 
                 var filterOrFileFound = false;
-                foreach (object itemObject in subFilter.Items as IVCCollection) {
+                foreach (var itemObject in subFilter.Items as IVCCollection) {
                     if (itemObject is VCFilter || itemObject is VCFile) {
                         filterOrFileFound = true;
                         break;
@@ -2605,7 +2604,7 @@ namespace QtProjectLib
                         UpdateMocSteps(QtVSIPSettings.GetMocDirectory(envPro));
                     }
                 }
-                ConfigurationManager configManager = envPro.ConfigurationManager;
+                var configManager = envPro.ConfigurationManager;
                 if (configManager.ActiveConfiguration.PlatformName != vsPlatformNameNew) {
                     var projectName = envPro.FullName;
                     envPro.Save(null);
@@ -2649,7 +2648,7 @@ namespace QtProjectLib
         public bool SelectSolutionPlatform(string platformName)
         {
             foreach (SolutionConfiguration solutionCfg in dte.Solution.SolutionBuild.SolutionConfigurations) {
-                SolutionContexts contexts = solutionCfg.SolutionContexts;
+                var contexts = solutionCfg.SolutionContexts;
                 for (var i = 1; i <= contexts.Count; ++i) {
                     SolutionContext ctx = null;
                     try {
@@ -2673,7 +2672,7 @@ namespace QtProjectLib
         public void RemovePlatform(string platformName)
         {
             try {
-                ConfigurationManager cfgMgr = envPro.ConfigurationManager;
+                var cfgMgr = envPro.ConfigurationManager;
                 cfgMgr.DeletePlatform(platformName);
             } catch { }
         }
@@ -2682,7 +2681,7 @@ namespace QtProjectLib
                                    VersionInformation viOld, VersionInformation viNew, ref bool newProjectCreated)
         {
             try {
-                ConfigurationManager cfgMgr = envPro.ConfigurationManager;
+                var cfgMgr = envPro.ConfigurationManager;
                 cfgMgr.AddPlatform(newPlatform, oldPlatform, true);
                 vcPro.AddPlatform(newPlatform);
                 newProjectCreated = false;
@@ -2742,7 +2741,7 @@ namespace QtProjectLib
             if (genVCFilter == null)
                 return;
 
-            bool error = false;
+            var error = false;
             error = DeleteFilesFromFilter(genVCFilter);
             if (error)
                 Messages.PaneMessage(dte, SR.GetString("DeleteGeneratedFilesError"));
@@ -2782,7 +2781,7 @@ namespace QtProjectLib
                 delName = "qrc_" + baseName + ".cpp";
 
             if (delName != null) {
-                foreach (VCFile delFile in GetFilesFromProject(delName))
+                foreach (var delFile in GetFilesFromProject(delName))
                     RemoveFileFromFilter(delFile, Filters.GeneratedFiles());
             }
         }
@@ -2798,7 +2797,7 @@ namespace QtProjectLib
                 if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
                     filesToRemove.Add(filtFile);
             }
-            foreach (VCFile resFile in filesToRemove)
+            foreach (var resFile in filesToRemove)
                 resFile.Remove();
         }
 
@@ -2983,7 +2982,7 @@ namespace QtProjectLib
                 var activePlatformName = string.Empty;
                 if (string.IsNullOrEmpty(solutionConfig)) {
                     // First get active configuration cause not given as parameter
-                    Configuration activeConf = envPro.ConfigurationManager.ActiveConfiguration;
+                    var activeConf = envPro.ConfigurationManager.ActiveConfiguration;
                     solutionConfig = activeConf.ConfigurationName + "|" + activeConf.PlatformName;
                     activePlatformName = activeConf.PlatformName;
                 } else {

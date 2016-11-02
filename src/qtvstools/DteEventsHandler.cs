@@ -146,7 +146,7 @@ namespace QtVsTools
 
         public void OnQRCFileSaved(string fileName)
         {
-            foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
+            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                 var vcProject = project.Object as VCProject;
                 if (vcProject == null || vcProject.Files == null)
                     continue;
@@ -204,7 +204,7 @@ namespace QtVsTools
             }
 
             Project project = null;
-            foreach (Project p in HelperFunctions.ProjectsInSolution(dte)) {
+            foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
                 if (p.UniqueName == projectName) {
                     project = p;
                     break;
@@ -283,7 +283,7 @@ namespace QtVsTools
                         if (f.Name.ToLower() == fi.Name.ToLower())
                             tmpList.Add(f);
                     }
-                    foreach (VCFile moccedFile in tmpList)
+                    foreach (var moccedFile in tmpList)
                         QtProject.ExcludeFromAllBuilds(moccedFile);
                 } else {
                     // make sure that moc_foo.cpp isn't excluded from build
@@ -544,7 +544,7 @@ namespace QtVsTools
 
         void SolutionEvents_Opened()
         {
-            foreach (Project p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
+            foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p))
                     RegisterVCProjectEngineEvents(p);
             }
@@ -560,7 +560,7 @@ namespace QtVsTools
         /// </summary>
         void RegisterVCProjectEngineEvents()
         {
-            foreach (Project project in HelperFunctions.ProjectsInSolution(dte)) {
+            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (project != null && HelperFunctions.IsQtProject(project))
                     RegisterVCProjectEngineEvents(project);
             }

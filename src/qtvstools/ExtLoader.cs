@@ -185,7 +185,7 @@ namespace QtVsTools
 
         public static void ExportPriFile()
         {
-            EnvDTE.DTE dte = Vsix.Instance.Dte;
+            var dte = Vsix.Instance.Dte;
             if (dte != null) {
                 var proFileExporter = new ProjectExporter(dte);
                 proFileExporter.ExportToPriFile(HelperFunctions.GetSelectedQtProject

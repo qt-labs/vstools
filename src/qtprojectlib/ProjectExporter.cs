@@ -286,7 +286,7 @@ namespace QtProjectLib
             ProFileContent content;
             var prosln = new ProSolution(sln);
 
-            foreach (Project proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
+            foreach (var proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
                 try {
                     // only add qt projects
                     if (HelperFunctions.IsQtProject(proj)) {
@@ -365,7 +365,7 @@ namespace QtProjectLib
 
             // add the qt option
             option = new ProFileOption("QT");
-            ProFileOption optionQT = option;
+            var optionQT = option;
             option.Comment = Resources.ec_Qt;
             option.ShortComment = "Qt Options";
             option.NewOption = " "; // just space between the options...
@@ -373,7 +373,7 @@ namespace QtProjectLib
 
             // add the config option
             option = new ProFileOption("CONFIG");
-            ProFileOption optionCONFIG = option;
+            var optionCONFIG = option;
             option.Comment = Resources.ec_Config;
             option.ShortComment = "Config Options";
             option.NewOption = " "; // just space between the options...
@@ -581,7 +581,7 @@ namespace QtProjectLib
             option.IncludeComment = false;
             content.Options.Add(option);
 
-            foreach (VCFile resFile in qtPro.GetResourceFiles())
+            foreach (var resFile in qtPro.GetResourceFiles())
                 option.List.Add(resFile.RelativePath.Replace('\\', '/'));
 
             if (hasSpaces)
@@ -671,7 +671,7 @@ namespace QtProjectLib
 
         private static void AddModules(QtProject qtPrj, ProFileOption optionQT, ProFileOption optionCONFIG)
         {
-            foreach (QtModuleInfo moduleInfo in QtModules.Instance.GetAvailableModuleInformation()) {
+            foreach (var moduleInfo in QtModules.Instance.GetAvailableModuleInformation()) {
                 if (!qtPrj.HasModule(moduleInfo.ModuleId))
                     continue;
 
@@ -730,7 +730,7 @@ namespace QtProjectLib
 
                 string proFullName, relativePath;
                 char[] trimChars = { '\\' };
-                foreach (ProFileContent profile in prosln.ProFiles) {
+                foreach (var profile in prosln.ProFiles) {
                     var fiProject = new FileInfo(profile.Project.ProjectFile);
                     var projectBaseName = HelperFunctions.RemoveFileNameExtension(fiProject);
                     proFullName = profile.Project.ProjectDirectory + projectBaseName + ".pro";
@@ -742,7 +742,7 @@ namespace QtProjectLib
 
                 using (sw) {
                     sw.WriteLine(Resources.exportSolutionHeader);
-                    for (int i = 0; i < content.Options.Count; i++)
+                    for (var i = 0; i < content.Options.Count; i++)
                         WriteProFileOption(sw, content.Options[i]);
                 }
 
@@ -769,7 +769,7 @@ namespace QtProjectLib
             }
 
             if (!string.IsNullOrEmpty(priFileToInclude)) {
-                foreach (ProFileOption option in content.Options) {
+                foreach (var option in content.Options) {
                     if (option.Name == "include" && !option.List.Contains(priFileToInclude)) {
                         var relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
                         if (relativePriPath.StartsWith(".\\", StringComparison.Ordinal))
@@ -809,7 +809,7 @@ namespace QtProjectLib
 
         private static void WriteProFileOptions(StreamWriter sw, List<ProFileOption> options)
         {
-            foreach (ProFileOption option in options)
+            foreach (var option in options)
                 WriteProFileOption(sw, option);
         }
 
@@ -1053,7 +1053,7 @@ namespace QtProjectLib
         {
             var expDlg = new ExportProjectDialog();
 
-            Solution sln = dteObject.Solution;
+            var sln = dteObject.Solution;
             var prosln = CreateProFileSolution(sln);
 
             if (prosln.ProFiles.Count <= 0) {
@@ -1068,7 +1068,7 @@ namespace QtProjectLib
                 WriteProSolution(prosln, expDlg.OpenFiles);
 
                 // create all the project .pro files
-                foreach (ProFileContent profile in prosln.ProFiles) {
+                foreach (var profile in prosln.ProFiles) {
                     if (profile.Export) {
                         var project = HelperFunctions.VCProjectToProject(profile.Project);
                         string priFile = null;

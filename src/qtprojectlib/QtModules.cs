@@ -199,7 +199,7 @@ namespace QtProjectLib
         public List<QtModuleInfo> GetAvailableModuleInformation()
         {
             var lst = new List<QtModuleInfo>(dictModuleInfos.Count);
-            foreach (KeyValuePair<QtModule, QtModuleInfo> entry in dictModuleInfos)
+            foreach (var entry in dictModuleInfos)
                 lst.Add(entry.Value);
             return lst;
         }

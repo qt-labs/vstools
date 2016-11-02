@@ -251,7 +251,7 @@ namespace QtVsTools
                                 value_len = value.Length;
                                 break;
                             }
-                            char ch = possibly_property_type[value.Length];
+                            var ch = possibly_property_type[value.Length];
                             if (ch == ' ' || ch == '\r' || ch == '\n') {
                                 // Space or line break --> match
                                 value_len = value.Length;

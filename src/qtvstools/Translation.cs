@@ -108,7 +108,7 @@ namespace QtVsTools
             if (solution == null)
                 return;
 
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(solution.DTE))
+            foreach (var project in HelperFunctions.ProjectsInSolution(solution.DTE))
                 RunlRelease(project);
         }
 
@@ -251,7 +251,7 @@ namespace QtVsTools
             if (solution == null)
                 return;
 
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(solution.DTE))
+            foreach (var project in HelperFunctions.ProjectsInSolution(solution.DTE))
                 RunlUpdate(project);
         }
 

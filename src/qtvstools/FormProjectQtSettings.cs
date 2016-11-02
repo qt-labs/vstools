@@ -195,7 +195,7 @@ namespace QtVsTools
             var install_path = versionManager.GetInstallPath(qtVersion) ?? string.Empty;
 
             for (var i = 0; i < moduleMap.Count; ++i) {
-                ModuleMapItem item = moduleMap[i];
+                var item = moduleMap[i];
                 item.initialValue = qtProject.HasModule(item.moduleId);
                 item.checkbox.Checked = item.initialValue;
                 moduleMap[i] = item;
@@ -220,7 +220,7 @@ namespace QtVsTools
         {
             qtProject = QtProject.Create(project);
             for (var i = 0; i < moduleMap.Count; ++i) {
-                ModuleMapItem item = moduleMap[i];
+                var item = moduleMap[i];
                 var isModuleChecked = item.checkbox.Checked;
                 if (isModuleChecked != item.initialValue) {
                     if (isModuleChecked)

@@ -175,7 +175,7 @@ namespace QtProjectLib
                 // find the newest valid Qt version that can be used as default version
                 if (isDefaultQtVersionInvalid && validVersions.Count > 0) {
                     QtVersion defaultQtVersion = null;
-                    foreach (QtVersion v in validVersions) {
+                    foreach (var v in validVersions) {
                         if (defaultQtVersion == null) {
                             defaultQtVersion = v;
                             continue;

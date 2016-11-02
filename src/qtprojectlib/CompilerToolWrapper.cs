@@ -237,7 +237,7 @@ namespace QtProjectLib
             if (definesList == null || !definesList.Remove(value))
                 return;
             preprocessorDefs = "";
-            bool firstIteration = true;
+            var firstIteration = true;
             foreach (var define in definesList) {
                 if (firstIteration)
                     firstIteration = false;
@@ -251,7 +251,7 @@ namespace QtProjectLib
 
         private static void NormalizePreprocessorDefinitions(ref string preprocessorDefs)
         {
-            int idx = 0;
+            var idx = 0;
             while ((idx = preprocessorDefs.IndexOf(' ', idx)) != -1)
                 preprocessorDefs = preprocessorDefs.Remove(idx, 1);
 
@@ -285,10 +285,10 @@ namespace QtProjectLib
             if (string.IsNullOrEmpty(value))
                 return;
 
-            bool directoryAdded = false;
+            var directoryAdded = false;
             var directories = value.Split(new[] { ';', ',' }, StringSplitOptions
                 .RemoveEmptyEntries);
-            List<string> lst = AdditionalIncludeDirectories;
+            var lst = AdditionalIncludeDirectories;
             foreach (var directory in directories) {
                 if (lst.Contains(directory))
                     continue;
@@ -304,8 +304,8 @@ namespace QtProjectLib
         public string[] GetAdditionalIncludeDirectoriesList()
         {
             var includes = GetAdditionalIncludeDirectories().Split(',', ';');
-            string[] fixedincludes = new string[includes.Length];
-            int i = 0;
+            var fixedincludes = new string[includes.Length];
+            var i = 0;
             foreach (var include in includes) {
                 var incl = include;
                 if (incl.StartsWith("\\\"", StringComparison.Ordinal) && incl.EndsWith("\\\"", StringComparison.Ordinal)) {
