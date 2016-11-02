@@ -66,9 +66,9 @@ namespace QtVsTools
         {
             lbQtVersions.Items.Clear();
             var vm = QtVersionManager.The();
-            foreach (var versionName in vm.GetVersions()) {
+            foreach (var versionName in vm.GetVersions())
                 lbQtVersions.Items.Add(versionName);
-            }
+
             lbQtVersions.Items.Add("$(DefaultQtVersion)");
             string qtVer = null;
             if (change == ChangeFor.Solution) {

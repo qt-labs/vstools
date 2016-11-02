@@ -244,11 +244,12 @@ namespace QtProjectLib
         {
             for (var i = 0; i < files.Count; i++) {
                 var relPath = string.Empty;
-                if (files[i].IndexOf(':') != 1)
+                if (files[i].IndexOf(':') != 1) {
                     relPath = HelperFunctions.GetRelativePath(path,
                         vcproj.ProjectDirectory + "\\" + (string) files[i]);
-                else
+                } else {
                     relPath = HelperFunctions.GetRelativePath(path, (string) files[i]);
+                }
                 files[i] = HelperFunctions.ChangePathFormat(relPath);
             }
         }
@@ -702,10 +703,11 @@ namespace QtProjectLib
                 var slnName = HelperFunctions.RemoveFileNameExtension(fi);
                 var slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
 
-                if (File.Exists(slnFileName))
+                if (File.Exists(slnFileName)) {
                     if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", slnFileName),
                         SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                         return;
+                }
 
                 try {
                     sw = new StreamWriter(File.Create(slnFileName));
@@ -740,9 +742,8 @@ namespace QtProjectLib
 
                 using (sw) {
                     sw.WriteLine(Resources.exportSolutionHeader);
-                    for (int i = 0; i < content.Options.Count; i++) {
+                    for (int i = 0; i < content.Options.Count; i++)
                         WriteProFileOption(sw, (ProFileOption) content.Options[i]);
-                    }
                 }
 
                 if (openFile)
@@ -753,10 +754,12 @@ namespace QtProjectLib
         private void WriteProFile(ProFileContent content, string proFile, string priFileToInclude, bool openFile)
         {
             StreamWriter sw;
-            if (File.Exists(proFile))
+            if (File.Exists(proFile)) {
                 if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFile),
-                    SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    SR.GetString("ExportSolution"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                     return;
+                }
+            }
 
             try {
                 sw = new StreamWriter(File.Create(proFile));
@@ -954,9 +957,8 @@ namespace QtProjectLib
                 newPath = newPath.Substring(2);
             filterPathTable.Add(filter, newPath);
             pathFilterTable.Add(newPath, filter);
-            foreach (VCFilter f in (IVCCollection) filter.Filters) {
+            foreach (VCFilter f in (IVCCollection) filter.Filters)
                 CollectFilters(f, newPath, ref filterPathTable, ref pathFilterTable);
-            }
         }
 
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,

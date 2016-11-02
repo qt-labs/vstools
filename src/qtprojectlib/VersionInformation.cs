@@ -91,12 +91,7 @@ namespace QtProjectLib
                     qtMinor = (version >> 8) & 0xFF;
                     qtPatch = version & 0xFF;
                 }
-
-                if (qtMajor == 5) {
-                    qt5Version = true;
-                } else {
-                    qt5Version = false;
-                }
+                qt5Version = (qtMajor == 5);
             } catch (Exception /*e*/) {
                 qtDir = null;
             }
@@ -217,7 +212,7 @@ namespace QtProjectLib
 
             if (binaryType == SCS_32BIT_BINARY)
                 return false;
-            else if (binaryType == SCS_64BIT_BINARY)
+            if (binaryType == SCS_64BIT_BINARY)
                 return true;
 
             throw new QtVSException("GetBinaryTypeA return unknown executable format for " + fileToCheck);

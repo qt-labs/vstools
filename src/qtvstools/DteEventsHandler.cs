@@ -223,9 +223,8 @@ namespace QtVsTools
             }
 
             if (!QtVSIPSettings.GetDisableAutoMocStepsUpdate()) {
-                if (qtpro.ConfigurationRowNamesChanged) {
+                if (qtpro.ConfigurationRowNamesChanged)
                     qtpro.UpdateMocSteps(QtVSIPSettings.GetMocDirectory(project));
-                }
             }
 
             // Solution config is given to function to get QTDIR property
@@ -392,7 +391,7 @@ namespace QtVsTools
                 if (HelperFunctions.HasSourceFileExtension(vcFile.Name)) {
                     if (vcFile.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         return;
-                    else if (vcFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase)) {
+                    if (vcFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase)) {
                         // Do not use precompiled headers with these files
                         QtProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
@@ -510,11 +509,12 @@ namespace QtVsTools
                 RegisterVCProjectEngineEvents(project);
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
-                foreach (VCFilter f in vcpro.Filters as IVCCollection)
+                foreach (VCFilter f in vcpro.Filters as IVCCollection) {
                     if (f.Name == Filters.HeaderFiles().Name) {
                         filter = f;
                         break;
                     }
+                }
                 if (filter != null) {
                     foreach (VCFile file in filter.Files as IVCCollection) {
                         foreach (VCFileConfiguration config in file.FileConfigurations as IVCCollection) {
@@ -547,9 +547,8 @@ namespace QtVsTools
         void SolutionEvents_Opened()
         {
             foreach (Project p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
-                if (HelperFunctions.IsQtProject(p)) {
+                if (HelperFunctions.IsQtProject(p))
                     RegisterVCProjectEngineEvents(p);
-                }
             }
         }
 
@@ -563,9 +562,10 @@ namespace QtVsTools
         /// </summary>
         void RegisterVCProjectEngineEvents()
         {
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte))
+            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (project != null && HelperFunctions.IsQtProject(project))
                     RegisterVCProjectEngineEvents(project);
+            }
         }
 
         /// <summary>
@@ -656,9 +656,8 @@ namespace QtVsTools
             if (pi != null) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {
                     var dispIdAttribute = attribute as DispIdAttribute;
-                    if (dispIdAttribute != null) {
+                    if (dispIdAttribute != null)
                         return dispIdAttribute.Value;
-                    }
                 }
             }
             return 0;

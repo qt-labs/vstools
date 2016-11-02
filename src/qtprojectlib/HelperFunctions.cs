@@ -44,9 +44,8 @@ namespace QtProjectLib
         {
             var versionManager = QtVersionManager.The();
             string projectQtVersion = null;
-            if (HelperFunctions.IsQtProject(project)) {
+            if (HelperFunctions.IsQtProject(project))
                 projectQtVersion = versionManager.GetProjectQtVersion(project);
-            }
             return FindQtDirWithTools(projectQtVersion);
         }
 
@@ -74,11 +73,12 @@ namespace QtProjectLib
                 qtDir = System.Environment.GetEnvironmentVariable("QTDIR");
 
             var found = false;
-            if (tool == null)
+            if (tool == null) {
                 found = File.Exists(qtDir + "\\bin\\designer.exe")
                     && File.Exists(qtDir + "\\bin\\linguist.exe");
-            else
+            } else {
                 found = File.Exists(qtDir + tool);
+            }
             if (!found) {
                 VersionInformation exactlyMatchingVersion = null;
                 VersionInformation matchingVersion = null;
@@ -86,11 +86,12 @@ namespace QtProjectLib
                 var viProjectQtVersion = versionManager.GetVersionInfo(projectQtVersion);
                 foreach (var qtVersion in versionManager.GetVersions()) {
                     var vi = versionManager.GetVersionInfo(qtVersion);
-                    if (tool == null)
+                    if (tool == null) {
                         found = File.Exists(vi.qtDir + "\\bin\\designer.exe")
                             && File.Exists(vi.qtDir + "\\bin\\linguist.exe");
-                    else
+                    } else {
                         found = File.Exists(vi.qtDir + tool);
+                    }
                     if (!found)
                         continue;
 
@@ -115,9 +116,8 @@ namespace QtProjectLib
                     qtDir = matchingVersion.qtDir;
                 else if (somehowMatchingVersion != null)
                     qtDir = somehowMatchingVersion.qtDir;
-                else {
+                else
                     qtDir = null;
-                }
             }
             return qtDir;
         }
@@ -462,9 +462,8 @@ namespace QtProjectLib
                 qtDir = vm.GetInstallPath(project);
 
                 foreach (var global in (string[]) project.Globals.VariableNames) {
-                    if (global.StartsWith("Qt5Version", StringComparison.Ordinal)) {
+                    if (global.StartsWith("Qt5Version", StringComparison.Ordinal))
                         project.Globals.set_VariablePersists(global, false);
-                    }
                 }
 
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
@@ -505,9 +504,8 @@ namespace QtProjectLib
                 if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
                     var newProject = false;
                     qtPro.CreatePlatform("Win32", platformName, null, vi, ref newProject);
-                    if (!qtPro.SelectSolutionPlatform(platformName)) {
+                    if (!qtPro.SelectSolutionPlatform(platformName))
                         Messages.PaneMessage(project.DTE, "Can't select the platform " + platformName + ".");
-                    }
                 }
 
                 var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
@@ -695,9 +693,8 @@ namespace QtProjectLib
         public static bool IsQtProject(EnvDTE.Project proj)
         {
             try {
-                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") {
+                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
                     return HelperFunctions.IsQtProject(proj.Object as VCProject);
-                }
             } catch { }
             return false;
         }
@@ -725,9 +722,8 @@ namespace QtProjectLib
         public static bool IsQMakeProject(EnvDTE.Project proj)
         {
             try {
-                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") {
+                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
                     return HelperFunctions.IsQMakeProject(proj.Object as VCProject);
-                }
             } catch { }
             return false;
         }
@@ -767,7 +763,6 @@ namespace QtProjectLib
                 var uniques = new Dictionary<string, int>();
                 foreach (var dep in newDeps)
                     uniques[dep] = 1;
-
                 var uniqueList = new List<string>(uniques.Keys);
                 linkerWrapper.AdditionalDependencies = uniqueList;
             }
@@ -812,9 +807,10 @@ namespace QtProjectLib
 
         public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive, bool suppressStrings)
         {
-            if (!caseSensitive)
+            if (!caseSensitive) {
                 for (var i = 0; i < searchStrings.Length; ++i)
                     searchStrings[i] = searchStrings[i].ToLower();
+            }
 
             CxxStreamReader sr = null;
             var found = false;
@@ -884,9 +880,8 @@ namespace QtProjectLib
             foreach (UIHierarchyItem innerItem in item.UIHierarchyItems) {
                 if (innerItem.Name == nodeToCollapseFilter)
                     CollapseFilter(innerItem, hierarchy);
-                else if (innerItem.UIHierarchyItems.Count > 0) {
+                else if (innerItem.UIHierarchyItems.Count > 0)
                     CollapseFilter(innerItem, hierarchy, nodeToCollapseFilter);
-                }
             }
         }
 
@@ -1109,10 +1104,10 @@ namespace QtProjectLib
 
             EnvDTE.Project pro;
 
-            if ((pro = GetSelectedProject(dteObject)) == null)
+            if ((pro = GetSelectedProject(dteObject)) == null) {
                 if ((pro = GetSingleProjectInSolution(dteObject)) == null)
                     pro = GetActiveDocumentProject(dteObject);
-
+            }
             return HelperFunctions.IsQtProject(pro) ? pro : null;
         }
 
@@ -1333,9 +1328,10 @@ namespace QtProjectLib
             if (array1.Length != array2.Length)
                 return false;
 
-            for (var i = 0; i < array1.Length; i++)
+            for (var i = 0; i < array1.Length; i++) {
                 if (!Object.Equals(array1.GetValue(i), array2.GetValue(i)))
                     return false;
+            }
             return true;
         }
 

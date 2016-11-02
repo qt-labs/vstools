@@ -100,9 +100,8 @@ namespace QtProjectLib
         {
             if (loader == null) {
                 lock (obj) {
-                    if (loader == null) {
+                    if (loader == null)
                         loader = new SR();
-                    }
                 }
             }
 

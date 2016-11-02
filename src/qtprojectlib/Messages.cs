@@ -37,17 +37,17 @@ namespace QtProjectLib
 
         private static OutputWindowPane GetBuildPane(OutputWindow outputWindow)
         {
-            foreach (OutputWindowPane owp in outputWindow.OutputWindowPanes)
+            foreach (OutputWindowPane owp in outputWindow.OutputWindowPanes) {
                 if (owp.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}")
                     return owp;
+            }
             return null;
         }
         public static void PaneMessage(EnvDTE.DTE dte, string str)
         {
             var wnd = (EnvDTE.OutputWindow) dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
-            if (wndp == null) {
+            if (wndp == null)
                 wndp = wnd.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
-            }
 
             wndp.OutputString(str + "\r\n");
             var buildPane = GetBuildPane(wnd);

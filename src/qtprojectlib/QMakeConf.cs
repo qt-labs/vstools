@@ -119,8 +119,9 @@ namespace QtProjectLib
                         } else if (op == "-=") {
                             foreach (var remval in lineValue.Split(new char[] { ' ', '\t' }))
                                 RemoveValue(lineKey, remval, entries);
-                        } else
+                        } else {
                             entries[lineKey] = lineValue;
+                        }
                     } else if (line.StartsWith("include", StringComparison.Ordinal)) {
                         pos = line.IndexOf('(');
                         var posEnd = line.LastIndexOf(')');
@@ -156,8 +157,7 @@ namespace QtProjectLib
                 var startPos = pos + 2;
                 var endPos = startPos;
 
-                if (value[startPos] != '[')  // at the moment no handling of qmake internal variables
-                {
+                if (value[startPos] != '[') { // at the moment no handling of qmake internal variables
                     for (; endPos < value.Length; ++endPos) {
                         if ((Char.IsPunctuation(value[endPos]) && value[endPos] != '_')
                             || Char.IsWhiteSpace(value[endPos])) {

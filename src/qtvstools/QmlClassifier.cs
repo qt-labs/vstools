@@ -282,9 +282,9 @@ namespace QtVsTools
                 }
                 // If we are in beginning of search and not inside multi-line comment parsing
                 if (i == index && !inMultilineComment) {
-                    if (ch == '\r' || ch == '\n') {
+                    if (ch == '\r' || ch == '\n')
                         continue;
-                    }
+
                     // If string start found, read rest of it
                     if (ch == '\"') {
                         return GetStringToken(text, index, length);

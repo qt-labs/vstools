@@ -149,7 +149,7 @@ namespace QtProjectLib
             var name = fi.Name;
             if (HelperFunctions.HasHeaderFileExtension(fi.Name))
                 return "moc_" + name.Substring(0, name.LastIndexOf('.')) + ".cpp";
-            else if (HelperFunctions.HasSourceFileExtension(fi.Name))
+            if (HelperFunctions.HasSourceFileExtension(fi.Name))
                 return name.Substring(0, name.LastIndexOf('.')) + ".moc";
             return null;
         }
@@ -246,11 +246,12 @@ namespace QtProjectLib
                         additionalDeps = moduleLibs;
                         dependenciesChanged = true;
                     } else {
-                        foreach (var moduleLib in moduleLibs)
+                        foreach (var moduleLib in moduleLibs) {
                             if (!additionalDeps.Contains(moduleLib)) {
                                 additionalDeps.Add(moduleLib);
                                 dependenciesChanged = true;
                             }
+                        }
                     }
                     if (dependenciesChanged)
                         linkerWrapper.AdditionalDependencies = additionalDeps;
@@ -308,9 +309,8 @@ namespace QtProjectLib
 
                         var libsDesktop = new List<string>();
                         foreach (QtModuleInfo module in QtModules.Instance.GetAvailableModuleInformation()) {
-                            if (HasModule(module.ModuleId)) {
+                            if (HasModule(module.ModuleId))
                                 libsDesktop.AddRange(module.AdditionalLibraries);
-                            }
                         }
                         List<string> libsToAdd = libsDesktop;
 
@@ -436,9 +436,8 @@ namespace QtProjectLib
                 // add some common defines
                 compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
 
-                if (!vi.IsStaticBuild()) {
+                if (!vi.IsStaticBuild())
                     compiler.AddPreprocessorDefinition("QT_DLL");
-                }
 
                 if (linker != null) {
                     if ((type & TemplateType.ConsoleSystem) != 0)
@@ -450,9 +449,8 @@ namespace QtProjectLib
                     linker.AdditionalLibraryDirectories = "$(QTDIR)\\lib";
                     if (vi.IsStaticBuild()) {
                         linker.AdditionalDependencies = vi.GetQMakeConfEntry("QMAKE_LIBS_CORE");
-                        if ((type & TemplateType.GUISystem) != 0) {
+                        if ((type & TemplateType.GUISystem) != 0)
                             linker.AdditionalDependencies += " " + vi.GetQMakeConfEntry("QMAKE_LIBS_GUI");
-                        }
                     }
                 } else {
                     librarian.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
@@ -462,9 +460,8 @@ namespace QtProjectLib
                 if ((type & TemplateType.GUISystem) != 0)
                     compiler.SetAdditionalIncludeDirectories(QtVSIPSettings.GetUicDirectory(envPro) + ";");
 
-                if ((type & TemplateType.PluginProject) != 0) {
+                if ((type & TemplateType.PluginProject) != 0)
                     compiler.AddPreprocessorDefinition("QT_PLUGIN");
-                }
 
                 var isDebugConfiguration = false;
                 if (config.Name.StartsWith("Release", StringComparison.Ordinal)) {
@@ -586,9 +583,10 @@ namespace QtProjectLib
             defineList.AddRange(CompilerToolWrapper.Create(projectConfig).PreprocessorDefinitions);
 
             var propertySheets = projectConfig.PropertySheets as IVCCollection;
-            if (propertySheets != null)
+            if (propertySheets != null) {
                 foreach (VCPropertySheet sheet in propertySheets)
                     defineList.AddRange(GetDefinesFromPropertySheet(sheet));
+            }
 
             var preprocessorDefines = string.Empty;
             var alreadyAdded = new List<string>();
@@ -615,9 +613,10 @@ namespace QtProjectLib
         {
             var defines = CompilerToolWrapper.Create(sheet).PreprocessorDefinitions;
             var propertySheets = sheet.PropertySheets as IVCCollection;
-            if (propertySheets != null)
+            if (propertySheets != null) {
                 foreach (VCPropertySheet subSheet in propertySheets)
                     defines.AddRange(GetDefinesFromPropertySheet(subSheet));
+            }
             return defines;
         }
 
@@ -629,9 +628,10 @@ namespace QtProjectLib
             includeList.AddRange(GetIncludesFromCompilerTool(CompilerToolWrapper.Create(projectConfig)));
 
             var propertySheets = projectConfig.PropertySheets as IVCCollection;
-            if (propertySheets != null)
+            if (propertySheets != null) {
                 foreach (VCPropertySheet sheet in propertySheets)
                     includeList.AddRange(GetIncludesFromPropertySheet(sheet));
+            }
 
             var includes = string.Empty;
             var alreadyAdded = new List<string>();
@@ -650,9 +650,10 @@ namespace QtProjectLib
         {
             var includeList = GetIncludesFromCompilerTool(CompilerToolWrapper.Create(sheet));
             var propertySheets = sheet.PropertySheets as IVCCollection;
-            if (propertySheets != null)
+            if (propertySheets != null) {
                 foreach (VCPropertySheet subSheet in propertySheets)
                     includeList.AddRange(GetIncludesFromPropertySheet(subSheet));
+            }
             return includeList;
         }
 
@@ -806,11 +807,11 @@ namespace QtProjectLib
                         if (moccedFileConfig != null) {
                             var cppFile = GetCppFileForMocStep(file);
                             if (cppFile != null && IsMoccedFileIncluded(cppFile)) {
-                                if (!moccedFileConfig.ExcludedFromBuild) {
+                                if (!moccedFileConfig.ExcludedFromBuild)
                                     moccedFileConfig.ExcludedFromBuild = true;
-                                }
-                            } else if (moccedFileConfig.ExcludedFromBuild != config.ExcludedFromBuild)
+                            } else if (moccedFileConfig.ExcludedFromBuild != config.ExcludedFromBuild) {
                                 moccedFileConfig.ExcludedFromBuild = config.ExcludedFromBuild;
+                            }
                         }
                     }
 
@@ -835,11 +836,11 @@ namespace QtProjectLib
                     var regExp = new Regex(pattern);
                     var matchList = regExp.Matches(tool.Outputs.Replace(ProjectMacros.Name, baseFileName));
                     if (matchList.Count > 0) {
-                        if (matchList[0].Length > 0) {
+                        if (matchList[0].Length > 0)
                             outputMocFile = matchList[0].ToString();
-                        } else if (matchList[1].Length > 1) {
+                        else if (matchList[1].Length > 1)
                             outputMocFile = matchList[1].ToString();
-                        }
+
                         if (outputMocFile.StartsWith("\"", StringComparison.Ordinal))
                             outputMocFile = outputMocFile.Substring(1);
                         if (outputMocFile.EndsWith("\"", StringComparison.Ordinal))
@@ -863,9 +864,8 @@ namespace QtProjectLib
 
                     // Tell moc to include the PCH header if we are using precompiled headers in the project
                     var compiler = CompilerToolWrapper.Create(vcConfig);
-                    if (compiler.GetUsePrecompiledHeader() != pchOption.pchNone) {
+                    if (compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
                         newCmdLine += " " + GetPCHMocOptions(file, compiler);
-                    }
 
                     var versionManager = QtVersionManager.The();
                     var versionInfo = new VersionInformation(versionManager.GetInstallPath(envPro));
@@ -908,10 +908,10 @@ namespace QtProjectLib
                                 redirectOp = " >> ";
                         }
                         strDefinesIncludes = "@" + mocIncludeFile;
-                        for (var k = 0; k < i; ++k)
+                        for (var k = 0; k < i; ++k) {
                             if (options[k].Length > 0)
                                 strDefinesIncludes += " " + options[k];
-
+                        }
                         newCmdLine = mocIncludeCommands + newCmdLine + " " + strDefinesIncludes;
                     } else {
                         newCmdLine = newCmdLine + " " + strDefinesIncludes;
@@ -1186,9 +1186,10 @@ namespace QtProjectLib
         {
             if (file == null)
                 return;
-            foreach (VCFileConfiguration conf in (IVCCollection) file.FileConfigurations)
+            foreach (VCFileConfiguration conf in (IVCCollection) file.FileConfigurations) {
                 if (!conf.ExcludedFromBuild)
                     conf.ExcludedFromBuild = true;
+            }
         }
 
         /// <summary>
@@ -1246,11 +1247,10 @@ namespace QtProjectLib
                         tool.Outputs = tool.Outputs.Replace(ProjectMacros.Name, baseFileName);
                         var matchList = regExp.Matches(tool.Outputs);
                         if (matchList.Count > 0) {
-                            if (matchList[0].Length > 0) {
+                            if (matchList[0].Length > 0)
                                 outputMocFile = matchList[0].ToString();
-                            } else if (matchList[1].Length > 1) {
+                            else if (matchList[1].Length > 1)
                                 outputMocFile = matchList[1].ToString();
-                            }
                         }
                         tool.Outputs = System.Text.RegularExpressions.Regex.Replace(tool.Outputs,
                             pattern, string.Empty, RegexOptions.Multiline | RegexOptions.IgnoreCase);
@@ -1428,13 +1428,13 @@ namespace QtProjectLib
         {
             var tmpList = new System.Collections.Generic.List<VCFile>();
 
-            foreach (VCFile f in (IVCCollection) filter.Files) {
+            foreach (VCFile f in (IVCCollection) filter.Files)
                 tmpList.Add(f);
-            }
-            foreach (VCFilter subfilter in (IVCCollection) filter.Filters)
+
+            foreach (VCFilter subfilter in (IVCCollection) filter.Filters) {
                 foreach (VCFile file in GetAllFilesFromFilter(subfilter))
                     tmpList.Add(file);
-
+            }
             return tmpList;
         }
 
@@ -1457,11 +1457,12 @@ namespace QtProjectLib
                     tmpFilter.Remove();
                     return;
                 }
-                foreach (ProjectItem tmpItem in tmpFilter.ProjectItems)
+                foreach (ProjectItem tmpItem in tmpFilter.ProjectItems) {
                     if (tmpItem.Name == item.Name) {
                         tmpItem.Remove();
                         return;
                     }
+                }
             }
         }
 
@@ -1524,12 +1525,10 @@ namespace QtProjectLib
                         }
                     }
                     if (!subfilterFound) {
-                        if (!vfilt.CanAddFilter(subfilterName)) {
+                        if (!vfilt.CanAddFilter(subfilterName))
                             throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
-                        } else {
-                            vfilt = (VCFilter) vfilt.AddFilter(subfilterName);
-                        }
 
+                        vfilt = (VCFilter) vfilt.AddFilter(subfilterName);
                         vfilt.Filter = "cpp;moc";
                         vfilt.SourceControlFiles = false;
                     }
@@ -1629,9 +1628,8 @@ namespace QtProjectLib
         {
             try {
                 foreach (VCFilter vcfilt in (IVCCollection) vcPro.Filters) {
-                    if (vcfilt.Name.ToLower() == filtername.ToLower()) {
+                    if (vcfilt.Name.ToLower() == filtername.ToLower())
                         return vcfilt;
-                    }
                 }
                 return null;
             } catch {
@@ -2011,7 +2009,8 @@ namespace QtProjectLib
             var dirs = new string[] {
                 FixFilePathForComparison(QtVSIPSettings.GetUicDirectory(envPro)),
                 FixFilePathForComparison(QtVSIPSettings.GetMocDirectory(envPro)),
-                FixFilePathForComparison(QtVSIPSettings.GetRccDirectory(envPro))};
+                FixFilePathForComparison(QtVSIPSettings.GetRccDirectory(envPro))
+            };
 
             var oldDirIsUsed = false;
             foreach (var dir in dirs) {
@@ -2083,9 +2082,8 @@ namespace QtProjectLib
             var j = 0;
 
             VCFile[] files = new VCFile[((IVCCollection) vcPro.Files).Count];
-            foreach (VCFile file in (IVCCollection) vcPro.Files) {
+            foreach (VCFile file in (IVCCollection) vcPro.Files)
                 files[j++] = file;
-            }
 
             foreach (VCFile file in files) {
                 if (file.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase) && !IsUic3File(file)) {
@@ -2094,9 +2092,8 @@ namespace QtProjectLib
                     ++updatedFiles;
                 }
             }
-            if (update_inc_path) {
+            if (update_inc_path)
                 UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
-            }
 
             Messages.PaneMessage(dte, "\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
         }
@@ -2129,8 +2126,7 @@ namespace QtProjectLib
                 compiler.SetPrecompiledHeaderThrough(pcHeaderThrough);
                 var pcHeaderFile = GetPrecompiledHeaderFile();
                 if (string.IsNullOrEmpty(pcHeaderFile))
-                    pcHeaderFile = ".\\$(ConfigurationName)/"
-                    + Project.Name + ".pch";
+                    pcHeaderFile = ".\\$(ConfigurationName)/" + Project.Name + ".pch";
                 compiler.SetPrecompiledHeaderFile(pcHeaderFile);
                 return true;
             } catch {
@@ -2251,12 +2247,15 @@ namespace QtProjectLib
                 var generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
                 if (generatedFiles == null)
                     return null;
-                foreach (VCFilter filt in (IVCCollection) generatedFiles.Filters)
+                foreach (VCFilter filt in (IVCCollection) generatedFiles.Filters) {
                     if (filt.Name == configName + "_" + platformName ||
-                        filt.Name == configName || filt.Name == platformName)
-                        foreach (VCFile filtFile in (IVCCollection) filt.Files)
+                        filt.Name == configName || filt.Name == platformName) {
+                        foreach (VCFile filtFile in (IVCCollection) filt.Files) {
                             if (filtFile.FullPath.EndsWith(fileName, StringComparison.Ordinal))
                                 return filtFile;
+                        }
+                    }
+                }
 
                 //If a project from the an AddIn prior to 1.1.0 was loaded, the generated files are located directly
                 //in the generated files filter.
@@ -2264,23 +2263,24 @@ namespace QtProjectLib
                 //Remove .\ at the beginning of the mocPath
                 if (relativeMocPath.StartsWith(".\\", StringComparison.Ordinal))
                     relativeMocPath = relativeMocPath.Remove(0, 2);
-                foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
+                foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files) {
                     if (filtFile.FullPath.EndsWith(relativeMocPath, StringComparison.OrdinalIgnoreCase))
                         return filtFile;
+                }
             } else {
                 var generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-                foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
+                foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files) {
                     if (filtFile.FullPath.EndsWith('\\' + fileName, StringComparison.Ordinal))
                         return filtFile;
+                }
             }
             return null;
         }
 
         public void RefreshMocSteps()
         {
-            foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
+            foreach (VCFile vcfile in (IVCCollection) vcPro.Files)
                 RefreshMocStep(vcfile, false);
-            }
         }
 
         public void RefreshMocStep(VCFile vcfile)
@@ -2415,11 +2415,11 @@ namespace QtProjectLib
                 var moccedFileConfig = GetVCFileConfigurationByName(moccedFile, vcFileCfg.Name);
                 if (moccedFileConfig != null) {
                     if (cppFile != null && IsMoccedFileIncluded(cppFile)) {
-                        if (!moccedFileConfig.ExcludedFromBuild) {
+                        if (!moccedFileConfig.ExcludedFromBuild)
                             moccedFileConfig.ExcludedFromBuild = true;
-                        }
-                    } else if (moccedFileConfig.ExcludedFromBuild != vcFileCfg.ExcludedFromBuild)
+                    } else if (moccedFileConfig.ExcludedFromBuild != vcFileCfg.ExcludedFromBuild) {
                         moccedFileConfig.ExcludedFromBuild = vcFileCfg.ExcludedFromBuild;
+                    }
                 }
             }
         }
@@ -2476,11 +2476,11 @@ namespace QtProjectLib
                 for (var i = generatedFiles.Count - 1; i >= 0; i--) {
                     VCFile file = generatedFiles[i];
                     string fileName = null;
-                    if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase)) {
+                    if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         fileName = file.Name.Substring(4, file.Name.Length - 8) + ".h";
-                    } else if (file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
+                    else if (file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
                         fileName = file.Name.Substring(0, file.Name.Length - 4) + ".cpp";
-                    }
+
                     if (fileName != null) {
                         var found = false;
                         foreach (VCFile f in (IVCCollection) vcPro.Files) {
@@ -2574,9 +2574,8 @@ namespace QtProjectLib
                         break;
                     }
                 }
-                if (!filterOrFileFound) {
+                if (!filterOrFileFound)
                     filter.RemoveFilter(subFilter);
-                }
             }
         }
 
@@ -2643,9 +2642,8 @@ namespace QtProjectLib
         {
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                 var platform = (VCPlatform) config.Platform;
-                if (platform.Name == platformName) {
+                if (platform.Name == platformName)
                     return true;
-                }
             }
             return false;
         }
@@ -2798,9 +2796,10 @@ namespace QtProjectLib
             if (generatedFiles == null)
                 return;
 
-            foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files)
+            foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files) {
                 if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
                     filesToRemove.Add(filtFile);
+            }
             foreach (VCFile resFile in filesToRemove)
                 resFile.Remove();
         }
@@ -2904,9 +2903,8 @@ namespace QtProjectLib
 
             dte.SuppressUI = true;
             var projectItem = FindProjectHierarchyItem(solutionExplorer);
-            if (projectItem != null) {
+            if (projectItem != null)
                 HelperFunctions.CollapseFilter(projectItem, solutionExplorer, filterName);
-            }
             dte.SuppressUI = false;
         }
 

@@ -344,26 +344,26 @@ namespace QtProjectLib
         {
             if (compilerTool != null)
                 return compilerTool.UsePrecompiledHeader;
-            else {
-                var obj = compilerType.InvokeMember("UsePrecompiledHeader",
-                    System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
-                if (obj == null)
-                    return pchOption.pchNone;
-                return (pchOption) obj;
-            }
+
+            var obj = compilerType.InvokeMember("UsePrecompiledHeader",
+                System.Reflection.BindingFlags.GetProperty, null, compilerObj, null);
+            if (obj == null)
+                return pchOption.pchNone;
+            return (pchOption) obj;
         }
 
         public void SetDebugInformationFormat(debugOption value)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.DebugInformationFormat = value;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "DebugInformationFormat",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @value });
+            }
         }
 
         public runtimeLibraryOption RuntimeLibrary
@@ -393,67 +393,72 @@ namespace QtProjectLib
 
         public void SetOptimization(optimizeOption value)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.Optimization = value;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "Optimization",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @value });
+            }
         }
 
         public void SetTreatWChar_tAsBuiltInType(bool value)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.TreatWChar_tAsBuiltInType = value;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "TreatWChar_tAsBuiltInType",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @value });
+            }
         }
 
         public void SetPrecompiledHeaderFile(string file)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.PrecompiledHeaderFile = file;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "PrecompiledHeaderFile",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @file });
+            }
         }
 
         public void SetPrecompiledHeaderThrough(string value)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.PrecompiledHeaderThrough = value;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "PrecompiledHeaderThrough",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @value });
+            }
         }
 
         public void SetUsePrecompiledHeader(pchOption value)
         {
-            if (compilerTool != null)
+            if (compilerTool != null) {
                 compilerTool.UsePrecompiledHeader = value;
-            else
+            } else {
                 compilerType.InvokeMember(
                     "UsePrecompiledHeader",
                     System.Reflection.BindingFlags.SetProperty,
                     null,
                     compilerObj,
                     new object[] { @value });
+            }
         }
 
         private void SetStringProperty(string name, string value)

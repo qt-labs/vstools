@@ -126,13 +126,12 @@ namespace QtProjectLib
         {
             get
             {
-                if (project.Globals.get_VariablePersists("RccOutput" + id)) {
+                if (project.Globals.get_VariablePersists("RccOutput" + id))
                     return (string) project.Globals["RccOutput" + id];
-                } else {
-                    var s = name.Replace('\\', '/');
-                    s = s.Substring(s.LastIndexOf('/') + 1);
-                    return "qrc_" + s + ".cpp";
-                }
+
+                var s = name.Replace('\\', '/');
+                s = s.Substring(s.LastIndexOf('/') + 1);
+                return "qrc_" + s + ".cpp";
             }
             set
             {
@@ -151,13 +150,12 @@ namespace QtProjectLib
         {
             get
             {
-                if (project.Globals.get_VariablePersists("RccInitName" + id)) {
+                if (project.Globals.get_VariablePersists("RccInitName" + id))
                     return (string) project.Globals["RccInitName" + id];
-                } else {
-                    var s = name.Replace('\\', '/');
-                    s = s.Substring(s.LastIndexOf('/') + 1);
-                    return s;
-                }
+
+                var s = name.Replace('\\', '/');
+                s = s.Substring(s.LastIndexOf('/') + 1);
+                return s;
             }
             set
             {

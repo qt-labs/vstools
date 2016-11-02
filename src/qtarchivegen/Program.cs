@@ -73,9 +73,8 @@ namespace QtArchiveGen
                             return EXIT_FAILURE;
 
                         var manifest = string.Empty;
-                        using (var reader = new StreamReader(vsixEntry.Open())) {
+                        using (var reader = new StreamReader(vsixEntry.Open()))
                             manifest = reader.ReadToEnd();
-                        }
 
                         var index = manifest.IndexOf("</Metadata>", StringComparison.Ordinal);
                         if (index < 0)
@@ -91,9 +90,8 @@ namespace QtArchiveGen
                                     + "  </Installation>\r\n",
                                 "InstallationTarget Id=\"Microsoft.VisualStudio", version));
 
-                        using (var writer = new StreamWriter(vsixEntry.Open())) {
+                        using (var writer = new StreamWriter(vsixEntry.Open()))
                             writer.Write(manifest);
-                        }
                     }
 
                     if (string.IsNullOrEmpty(source) && string.IsNullOrEmpty(version))

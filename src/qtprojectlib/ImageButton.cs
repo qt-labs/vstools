@@ -64,12 +64,13 @@ namespace QtProjectLib
             if (yoffset < 0)
                 imgHeight = Size.Height;
 
-            if ((dimg != null) && (!Enabled))
+            if ((dimg != null) && (!Enabled)) {
                 pevent.Graphics.DrawImage(dimg, xoffset, yoffset,
                     imgWidth, imgHeight);
-            else if (img != null)
+            } else if (img != null) {
                 pevent.Graphics.DrawImage(img, xoffset, yoffset,
                     imgWidth, imgHeight);
+            }
         }
     }
 }

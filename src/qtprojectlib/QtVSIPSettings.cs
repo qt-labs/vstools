@@ -160,9 +160,8 @@ namespace QtProjectLib
 
         public static void SaveMocOptions(EnvDTE.Project project, string options)
         {
-            if (options == null) {
+            if (options == null)
                 options = GetMocOptions();
-            }
             SaveOption(project, Resources.mocOptionsKeyword, options);
         }
 
@@ -183,9 +182,9 @@ namespace QtProjectLib
 
         public static void SaveLUpdateOptions(EnvDTE.Project project, string options)
         {
-            if (options == null) {
+            if (options == null)
                 options = GetLUpdateOptions();
-            }
+
             SaveOption(project, Resources.lupdateOptionsKeyword, options);
         }
 
@@ -196,9 +195,8 @@ namespace QtProjectLib
 
         public static void SaveLReleaseOptions(EnvDTE.Project project, string options)
         {
-            if (options == null) {
+            if (options == null)
                 options = GetLReleaseOptions();
-            }
             SaveOption(project, Resources.lreleaseOptionsKeyword, options);
         }
 
@@ -277,76 +275,75 @@ namespace QtProjectLib
             // - globally defined default directory
             // - fallback on hardcoded directory
             if (project != null) {
-                if (project.Globals.get_VariablePersists(type)) {
+                if (project.Globals.get_VariablePersists(type))
                     return HelperFunctions.NormalizeRelativeFilePath((string) project.Globals[type]);
-                } else {
-                    try {
-                        if (type == Resources.mocDirKeyword && mocDirCache.Contains(project.FullName))
-                            return (string) mocDirCache[project.FullName];
-                        else if (type == Resources.uicDirKeyword && uicDirCache.Contains(project.FullName))
-                            return (string) uicDirCache[project.FullName];
-                        else if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
-                            return (string) rccDirCache[project.FullName];
 
-                        VCCustomBuildTool tool = null;
-                        string configName = null;
-                        string platformName = null;
-                        var vcpro = (VCProject) project.Object;
-                        foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
-                            if ((type == Resources.mocDirKeyword &&
-                                (HelperFunctions.HasHeaderFileExtension(vcfile.Name)
-                                || vcfile.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)))
-                                || (type == Resources.uicDirKeyword && vcfile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
-                                || (type == Resources.rccDirKeyword && vcfile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))) {
-                                foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
-                                    tool = HelperFunctions.GetCustomBuildTool(config);
-                                    configName = config.Name.Remove(config.Name.IndexOf('|'));
-                                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                    var platform = vcConfig.Platform as VCPlatform;
-                                    platformName = platform.Name;
-                                    if (tool != null && (tool.CommandLine.IndexOf("moc.exe", StringComparison.OrdinalIgnoreCase) != -1
-                                        || (tool.CommandLine.IndexOf("uic.exe", StringComparison.OrdinalIgnoreCase) != -1)
-                                        || (tool.CommandLine.IndexOf("rcc.exe", StringComparison.OrdinalIgnoreCase) != -1)))
-                                        break;
-                                    tool = null;
-                                }
+                try {
+                    if (type == Resources.mocDirKeyword && mocDirCache.Contains(project.FullName))
+                        return (string) mocDirCache[project.FullName];
+                    if (type == Resources.uicDirKeyword && uicDirCache.Contains(project.FullName))
+                        return (string) uicDirCache[project.FullName];
+                    if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
+                        return (string) rccDirCache[project.FullName];
 
-                                if (tool != null)
+                    VCCustomBuildTool tool = null;
+                    string configName = null;
+                    string platformName = null;
+                    var vcpro = (VCProject) project.Object;
+                    foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
+                        if ((type == Resources.mocDirKeyword &&
+                            (HelperFunctions.HasHeaderFileExtension(vcfile.Name)
+                            || vcfile.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)))
+                            || (type == Resources.uicDirKeyword && vcfile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
+                            || (type == Resources.rccDirKeyword && vcfile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))) {
+                            foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
+                                tool = HelperFunctions.GetCustomBuildTool(config);
+                                configName = config.Name.Remove(config.Name.IndexOf('|'));
+                                var vcConfig = config.ProjectConfiguration as VCConfiguration;
+                                var platform = vcConfig.Platform as VCPlatform;
+                                platformName = platform.Name;
+                                if (tool != null && (tool.CommandLine.IndexOf("moc.exe", StringComparison.OrdinalIgnoreCase) != -1
+                                    || (tool.CommandLine.IndexOf("uic.exe", StringComparison.OrdinalIgnoreCase) != -1)
+                                    || (tool.CommandLine.IndexOf("rcc.exe", StringComparison.OrdinalIgnoreCase) != -1)))
                                     break;
+                                tool = null;
                             }
+
+                            if (tool != null)
+                                break;
                         }
+                    }
 
-                        if (tool != null) {
-                            string dir = null;
-                            var lastindex = tool.Outputs.LastIndexOf('\\');
-                            if (tool.Outputs.LastIndexOf('/') > lastindex)
-                                lastindex = tool.Outputs.LastIndexOf('/');
+                    if (tool != null) {
+                        string dir = null;
+                        var lastindex = tool.Outputs.LastIndexOf('\\');
+                        if (tool.Outputs.LastIndexOf('/') > lastindex)
+                            lastindex = tool.Outputs.LastIndexOf('/');
 
-                            if (lastindex == -1)
-                                dir = ".";
-                            else
-                                dir = tool.Outputs.Substring(0, lastindex);
-                            dir = dir.Replace("\"", "");
+                        if (lastindex == -1)
+                            dir = ".";
+                        else
+                            dir = tool.Outputs.Substring(0, lastindex);
+                        dir = dir.Replace("\"", "");
 
-                            if (type == Resources.mocDirKeyword) {
-                                int index;
-                                if ((index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase)) != -1)
-                                    dir = dir.Replace(dir.Substring(index, configName.Length), "$(ConfigurationName)");
-                                if ((index = dir.IndexOf(platformName, StringComparison.OrdinalIgnoreCase)) != -1)
-                                    dir = dir.Replace(dir.Substring(index, platformName.Length), "$(PlatformName)");
+                        if (type == Resources.mocDirKeyword) {
+                            int index;
+                            if ((index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase)) != -1)
+                                dir = dir.Replace(dir.Substring(index, configName.Length), "$(ConfigurationName)");
+                            if ((index = dir.IndexOf(platformName, StringComparison.OrdinalIgnoreCase)) != -1)
+                                dir = dir.Replace(dir.Substring(index, platformName.Length), "$(PlatformName)");
 
-                                mocDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
-                            } else if (type == Resources.uicDirKeyword)
-                                uicDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
-                            else if (type == Resources.rccDirKeyword)
-                                rccDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
+                            mocDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
+                        } else if (type == Resources.uicDirKeyword)
+                            uicDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
+                        else if (type == Resources.rccDirKeyword)
+                            rccDirCache.Add(project.FullName, HelperFunctions.NormalizeRelativeFilePath(dir));
 
-                            cleanUpCache(project);
+                        cleanUpCache(project);
 
-                            return HelperFunctions.NormalizeRelativeFilePath(dir);
-                        }
-                    } catch { }
-                }
+                        return HelperFunctions.NormalizeRelativeFilePath(dir);
+                    }
+                } catch { }
             }
 
             return GetDirectory(type);
@@ -358,9 +355,8 @@ namespace QtProjectLib
             // - stored in project
             // - globally defined default option
             // - empty options
-            if (project != null && project.Globals.get_VariablePersists(type)) {
+            if (project != null && project.Globals.get_VariablePersists(type))
                 return (string) project.Globals[type];
-            }
             return GetOption(type);
         }
 

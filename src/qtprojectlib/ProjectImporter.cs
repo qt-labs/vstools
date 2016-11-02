@@ -142,15 +142,14 @@ namespace QtProjectLib
                         qtPro.SetQtEnvironment();
                         var platformName = versionInfo.GetVSPlatformName();
 
-                        if (qtVersion != null) {
+                        if (qtVersion != null)
                             QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
-                        }
+
                         if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
                             var newProject = false;
                             qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
-                            if (!qtPro.SelectSolutionPlatform(platformName)) {
+                            if (!qtPro.SelectSolutionPlatform(platformName))
                                 Messages.PaneMessage(dteObject, "Can't select the platform " + platformName + ".");
-                            }
                         }
 
                         // try to figure out if the project is a plugin project
@@ -239,18 +238,15 @@ namespace QtProjectLib
             var mkspecQtDir = FindQtDirFromExtension(vcFileContent, mkspecs);
 
             if (!string.IsNullOrEmpty(mkspecQtDir)) {
-                if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower()) {
+                if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower())
                     return "";
-                }
-                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != mkspecQtDir.ToLower()) {
+                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != mkspecQtDir.ToLower())
                     return "";
-                }
                 return mkspecQtDir;
             }
             if (!string.IsNullOrEmpty(uicQtDir)) {
-                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != uicQtDir.ToLower()) {
+                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != uicQtDir.ToLower())
                     return "";
-                }
                 return uicQtDir;
             }
             if (!string.IsNullOrEmpty(rccQtDir))
