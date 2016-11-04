@@ -140,7 +140,7 @@ namespace QtAppWrapper
 
                         //blocks until a client has connected to the server
                         var client = tcpListener.AcceptTcpClient();
-                        if (client == null || aboutToExit)
+                        if (aboutToExit)
                             break;
 
                         var message = new byte[4096];

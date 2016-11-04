@@ -54,9 +54,6 @@ namespace QtArchiveGen
                     var source = parseArgs("source=");
                     if (!string.IsNullOrEmpty(source)) {
                         var vsixEntry = vsix.CreateEntry(Path.GetFileName(source));
-                        if (vsixEntry == null)
-                            return EXIT_FAILURE;
-
                         using (var sourceStream = new FileStream(source, FileMode.Open))
                         using (var targetWriter = new BinaryWriter(vsixEntry.Open())) {
                             var bytesRead = 0;

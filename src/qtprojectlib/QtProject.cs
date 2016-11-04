@@ -1268,9 +1268,6 @@ namespace QtProjectLib
                 else
                     fi = new FileInfo(ProjectDir + "\\" + fileName);
 
-                if (fi == null)
-                    return null;
-
                 foreach (VCFile file in (IVCCollection) vcfilter.Files) {
                     if (file.MatchName(fi.FullName, true))
                         return file;

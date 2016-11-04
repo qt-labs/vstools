@@ -234,7 +234,7 @@ namespace QtProjectLib
             var definesArray = preprocessorDefs.Split(new[] { ';', ',' },
                 StringSplitOptions.RemoveEmptyEntries);
             var definesList = new List<string>(definesArray);
-            if (definesList == null || !definesList.Remove(value))
+            if (!definesList.Remove(value))
                 return;
             preprocessorDefs = "";
             var firstIteration = true;

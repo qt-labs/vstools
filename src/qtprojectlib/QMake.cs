@@ -181,9 +181,6 @@ namespace QtProjectLib
             try {
                 // make sure there are delegates assigned...
                 var invocationList = dlg.GetInvocationList();
-                if (invocationList == null)
-                    return;
-
                 // we can only call one delegate at the time...
                 foreach (var singleDelegate in invocationList) {
                     var synchronizeTarget = singleDelegate.Target as ISynchronizeInvoke;
