@@ -31,6 +31,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -357,12 +358,8 @@ namespace QtProjectLib
 
                     var fixedIncludeDir = FixFilePathForComparison(incPath);
                     var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
-                    foreach (var dir in includeDirs) {
-                        if (FixFilePathForComparison(dir) == fixedIncludeDir) {
-                            foundInIncludes = true;
-                            break;
-                        }
-                    }
+                    if (includeDirs.Any(dir => FixFilePathForComparison(dir) == fixedIncludeDir))
+                        foundInIncludes = true;
                 }
 
                 if (foundInIncludes)
@@ -375,14 +372,8 @@ namespace QtProjectLib
                 }
 
                 if (libs != null) {
-                    foundInLibs = true;
                     var moduleLibs = info.GetLibs(IsDebugConfiguration(config), versionInfo);
-                    foreach (var moduleLib in moduleLibs) {
-                        if (!libs.Contains(moduleLib)) {
-                            foundInLibs = false;
-                            break;
-                        }
-                    }
+                    foundInLibs = moduleLibs.All(moduleLib => libs.Contains(moduleLib));
                 }
             }
             return foundInIncludes || foundInLibs;
@@ -1327,17 +1318,11 @@ namespace QtProjectLib
             }
         }
 
-        public List<VCFile> GetAllFilesFromFilter(VCFilter filter)
+        private static List<VCFile> GetAllFilesFromFilter(VCFilter filter)
         {
-            var tmpList = new List<VCFile>();
-
-            foreach (VCFile f in (IVCCollection) filter.Files)
-                tmpList.Add(f);
-
-            foreach (VCFilter subfilter in (IVCCollection) filter.Filters) {
-                foreach (var file in GetAllFilesFromFilter(subfilter))
-                    tmpList.Add(file);
-            }
+            var tmpList = ((IVCCollection) filter.Files).Cast<VCFile>().ToList();
+            foreach (VCFilter subfilter in (IVCCollection) filter.Filters)
+                tmpList.AddRange(GetAllFilesFromFilter(subfilter));
             return tmpList;
         }
 
@@ -1654,14 +1639,7 @@ namespace QtProjectLib
                     var fi = new FileInfo(file.FullPath);
                     var relativePath = HelperFunctions.GetRelativePath(ProjectDir, fi.Directory.ToString());
                     var fixedRelativePath = FixFilePathForComparison(relativePath);
-                    var pathFound = false;
-                    foreach (var p in paths) {
-                        if (FixFilePathForComparison(p) == fixedRelativePath) {
-                            pathFound = true;
-                            break;
-                        }
-                    }
-                    if (!pathFound)
+                    if (!paths.Any(p => FixFilePathForComparison(p) == fixedRelativePath))
                         compiler.AddAdditionalIncludeDirectories(relativePath);
                 }
             }
@@ -1872,13 +1850,7 @@ namespace QtProjectLib
                 FixFilePathForComparison(QtVSIPSettings.GetRccDirectory(envPro))
             };
 
-            var oldDirIsUsed = false;
-            foreach (var dir in dirs) {
-                if (dir == fixedOldDir) {
-                    oldDirIsUsed = true;
-                    break;
-                }
-            }
+            var oldDirIsUsed = dirs.Any(dir => dir == fixedOldDir);
 
             var incList = new List<string>();
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
