@@ -40,8 +40,6 @@ namespace QtVsTools
     /// </summary>
     internal sealed class QtMainMenu
     {
-        #region public
-
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
@@ -64,10 +62,6 @@ namespace QtVsTools
         {
             Instance = new QtMainMenu(package);
         }
-
-        #endregion public
-
-        #region private
 
         /// <summary>
         /// Command ID.
@@ -267,7 +261,5 @@ namespace QtVsTools
                 break;
             }
         }
-
-        #endregion private
     }
 }

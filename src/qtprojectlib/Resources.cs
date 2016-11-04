@@ -87,7 +87,6 @@ namespace QtProjectLib
         public const string lupdateCommand = "\\bin\\lupdate.exe";
         public const string lreleaseCommand = "\\bin\\lrelease.exe";
 
-        #region path
         // All defined paths have to be relative to the project directory!!!
 
         public const string resourceDir = "Resources";
@@ -96,7 +95,6 @@ namespace QtProjectLib
         // they have to be added to the include directories for
         // compiling!
         public const string generatedFilesDir = "GeneratedFiles";
-        #endregion
 
         public const string mocDirKeyword = "MocDir";
         public const string mocOptionsKeyword = "MocOptions";

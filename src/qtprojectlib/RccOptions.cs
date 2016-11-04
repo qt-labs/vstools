@@ -53,7 +53,6 @@ namespace QtProjectLib
                 name = name.Substring(0, name.Length - 4);
         }
 
-        #region Properties
         public string Prefix
         {
             get
@@ -164,6 +163,5 @@ namespace QtProjectLib
                     project.Globals.set_VariablePersists("RccInitName" + id, true);
             }
         }
-        #endregion
     }
 }

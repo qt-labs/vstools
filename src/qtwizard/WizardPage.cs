@@ -34,8 +34,6 @@ namespace QtProjectWizard
 {
     public class WizardPage : PageFunction<WizardResult>
     {
-        #region public
-
         public string Header { get; set; }
         public string Message { get; set; }
 
@@ -56,10 +54,6 @@ namespace QtProjectWizard
             if (ReturnEx != null)
                 ReturnEx.Invoke(this, e);
         }
-
-        #endregion public
-
-        #region protected
 
         protected virtual void OnPreviousButtonClick(object sender, RoutedEventArgs e)
         {
@@ -112,16 +106,10 @@ namespace QtProjectWizard
                 NavigatedBackward.Invoke(this, e);
         }
 
-        #endregion protected
-
-        #region private
-
         private void OnPageReturn(object sender, ReturnEventArgs<WizardResult> e)
         {
             OnReturnEx(e);
             OnReturn(null);
         }
-
-        #endregion private
     }
 }

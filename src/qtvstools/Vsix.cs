@@ -43,8 +43,6 @@ namespace QtVsTools
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
     public sealed class Vsix : Package
     {
-        #region public
-
         /// <summary>
         /// The package GUID string.
         /// </summary>
@@ -98,10 +96,6 @@ namespace QtVsTools
                 return qmakeFileReaderPath;
             }
         }
-
-        #endregion public
-
-        #region protected
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited,
@@ -157,10 +151,6 @@ namespace QtVsTools
             return base.QueryClose(out canClose);
         }
 
-        #endregion protected
-
-        #region private
-
         private enum Mode
         {
             Startup = 0,
@@ -195,7 +185,5 @@ namespace QtVsTools
                 vsix.WriteVsixRegistryValues();
             }
         }
-
-        #endregion private
     }
 }

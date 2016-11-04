@@ -50,7 +50,6 @@ namespace QtProjectLib
             dteObject = dte;
         }
 
-        #region Helper Functions
         private static void MakeFilesRelativePath(VCProject vcproj, List<string> files, string path)
         {
             for (var i = 0; i < files.Count; i++) {
@@ -89,9 +88,7 @@ namespace QtProjectLib
             }
             return ret;
         }
-        #endregion
 
-        #region Export pri/pro Files Helper Functions
         private ProSolution CreateProFileSolution(Solution sln)
         {
             ProFileContent content;
@@ -655,9 +652,7 @@ namespace QtProjectLib
                     sw.WriteLine(option.Name + "(" + option.List[i] + ")");
             }
         }
-        #endregion
 
-        #region Import .pri Helper Functions
         private static List<string> GetFilesInPriFile(FileInfo priFileInfo, FilesToList ftl)
         {
             StreamReader sr;
@@ -858,7 +853,6 @@ namespace QtProjectLib
                 }
             }
         }
-        #endregion
 
         public void ExportToProFile()
         {

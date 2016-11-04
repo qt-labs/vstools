@@ -39,8 +39,6 @@ namespace QtVsTools
     /// </summary>
     internal sealed class QtItemContextMenu
     {
-        #region public
-
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
@@ -63,10 +61,6 @@ namespace QtVsTools
         {
             Instance = new QtItemContextMenu(package);
         }
-
-        #endregion public
-
-        #region private
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -153,7 +147,5 @@ namespace QtVsTools
             command.Enabled = true;
             command.Visible = true;
         }
-
-        #endregion private
     }
 }
