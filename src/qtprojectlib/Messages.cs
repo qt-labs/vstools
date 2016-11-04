@@ -66,23 +66,14 @@ namespace QtProjectLib
             wndp.Activate();
         }
 
-        private static string MessageToString(string msg)
-        {
-            // doesn't do anything for now...
-            return msg;
-        }
-
         private static string ExceptionToString(System.Exception e)
         {
-            if (VerboseException)
-                return e.Message + "\r\n" + "(" + e.StackTrace.Trim() + ")";
-            return e.Message;
+            return e.Message + "\r\n" + "(" + e.StackTrace.Trim() + ")";
         }
 
         private static readonly string ErrorString = SR.GetString("Messages_ErrorOccured");
         private static readonly string WarningString = SR.GetString("Messages_Warning");
         private static readonly string SolutionString = SR.GetString("Messages_SolveProblem");
-        private static readonly bool VerboseException = true;
 
         static public void DisplayCriticalErrorMessage(System.Exception e)
         {
@@ -94,7 +85,7 @@ namespace QtProjectLib
         static public void DisplayCriticalErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
-                MessageToString(msg),
+                msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -108,7 +99,7 @@ namespace QtProjectLib
         static public void DisplayErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
-                MessageToString(msg),
+                msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -124,7 +115,7 @@ namespace QtProjectLib
         static public void DisplayWarningMessage(string msg)
         {
             MessageBox.Show(WarningString +
-                MessageToString(msg),
+                msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
