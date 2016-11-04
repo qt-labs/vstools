@@ -26,8 +26,6 @@
 **
 ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Globalization;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -212,46 +210,6 @@ namespace QtVsTools
         {
             var country = ((TranslationItem) langComboBox.SelectedItem).TwoLetterISOLanguageName;
             fileTextBox.Text = project.Name.ToLower() + "_" + country + ".ts";
-        }
-    }
-
-    public class TranslationItem : CultureInfo
-    {
-        public TranslationItem(int culture)
-            : base(culture)
-        {
-        }
-
-        public override string ToString()
-        {
-            if (NativeName != DisplayName)
-                return DisplayName;
-
-            var culture = GetCultureInfo(Vsix.Instance.Dte.LocaleID);
-            if (culture.TwoLetterISOLanguageName == TwoLetterISOLanguageName)
-                return DisplayName;
-
-            return EnglishName;
-        }
-
-        public static TranslationItem SystemLanguage()
-        {
-            return new TranslationItem(CurrentCulture.LCID);
-        }
-
-        public static TranslationItem[] GetTranslationItems()
-        {
-            var cultures = GetCultures(CultureTypes.SpecificCultures
-                & ~CultureTypes.UserCustomCulture & ~CultureTypes.ReplacementCultures);
-            var transItems = new List<TranslationItem>();
-            for (var i = 0; i < cultures.Length; i++) {
-                // Locales without a LCID are given LCID 0x1000 (http://msdn.microsoft.com/en-us/library/dn363603.aspx)
-                // Trying to create a TranslationItem for these will cause an exception to be thrown.
-                var lcid = cultures[i].LCID;
-                if (lcid != 0x1000)
-                    transItems.Add(new TranslationItem(lcid));
-            }
-            return transItems.ToArray();
         }
     }
 }

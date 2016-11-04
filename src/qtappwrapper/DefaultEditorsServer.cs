@@ -38,12 +38,6 @@ using System.Threading;
 
 namespace QtAppWrapper
 {
-    enum MessageType
-    {
-        Data,
-        Hello
-    }
-
     class DefaultEditorsServer
     {
         public static void StartListen()

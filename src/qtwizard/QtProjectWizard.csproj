@@ -55,6 +55,8 @@
       <DependentUpon>AddClassPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AddClassWizard.cs" />
+    <Compile Include="Class.cs" />
+    <Compile Include="ClassKind.cs" />
     <Compile Include="ClassNameValidationRule.cs" />
     <Compile Include="ConsoleWizard.cs" />
     <Compile Include="CoreClassPage.xaml.cs">
@@ -86,12 +88,15 @@
     <Compile Include="ModulePage.xaml.cs">
       <DependentUpon>ModulePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerPage.xaml.cs">
       <DependentUpon>ServerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ServerWizard.cs" />
+    <Compile Include="SortComboBoxItem.cs" />
     <Compile Include="UiClassInclusion.cs" />
+    <Compile Include="UnsafeNativeMethods.cs" />
     <Compile Include="VCLanguageManagerValidationRule.cs" />
     <Compile Include="WizardData.cs" />
     <Compile Include="WizardPage.cs" />

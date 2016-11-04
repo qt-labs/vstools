@@ -31,68 +31,6 @@ using System.Xml;
 
 namespace QtProjectLib
 {
-    public class QrcItem
-    {
-        private string path;
-        private string alias;
-
-        public QrcItem()
-        {
-        }
-
-        public QrcItem(string p, string a)
-        {
-            path = p;
-            alias = a;
-        }
-
-        public string Path
-        {
-            get { return path; }
-            set { path = value; }
-        }
-
-        public string Alias
-        {
-            get { return alias; }
-            set { alias = value; }
-        }
-    }
-
-    public class QrcPrefix
-    {
-        private string prefix;
-        private string lang;
-        private readonly List<QrcItem> items;
-
-        public List<QrcItem> Items
-        {
-            get { return items; }
-        }
-
-        public QrcPrefix()
-        {
-            items = new List<QrcItem>();
-        }
-
-        public string Prefix
-        {
-            get { return prefix; }
-            set { prefix = value; }
-        }
-
-        public string Language
-        {
-            get { return lang; }
-            set { lang = value; }
-        }
-
-        public void AddQrcItem(QrcItem i)
-        {
-            items.Add(i);
-        }
-    }
-
     public class QrcParser
     {
         private readonly string qrcFileName;

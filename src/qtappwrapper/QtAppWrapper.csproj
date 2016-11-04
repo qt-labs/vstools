@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DefaultEditorsHandler.cs" />
     <Compile Include="DefaultEditorsServer.cs" />
+    <Compile Include="MessageType.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

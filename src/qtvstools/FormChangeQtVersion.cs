@@ -32,8 +32,6 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    public enum ChangeFor { Solution, Project }
-
     public partial class FormChangeQtVersion : Form
     {
 

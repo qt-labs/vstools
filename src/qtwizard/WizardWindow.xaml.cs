@@ -28,26 +28,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using System.Windows.Navigation;
 
 namespace QtProjectWizard
 {
-    internal static class NativeMethods
-    {
-        [ResourceExposure(ResourceScope.None)]
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern int GetWindowLong(IntPtr hwnd, int index);
-    }
-
-    internal static class UnsafeNativeMethods
-    {
-        [ResourceExposure(ResourceScope.None)]
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern int SetWindowLong(IntPtr hwnd, int index, int value);
-    }
-
     public partial class WizardWindow : NavigationWindow
     {
 

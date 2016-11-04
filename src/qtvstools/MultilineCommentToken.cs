@@ -31,34 +31,6 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace QtVsTools
 {
-    public abstract class Token
-    {
-        protected Token(TokenType type)
-        {
-            Type = type;
-        }
-
-        public int Length { get; set; }
-        public bool ContinueParsing { get; set; }
-        public TokenType Type { get; private set; }
-    }
-
-    public class OtherToken : Token
-    {
-        public OtherToken()
-            : base(TokenType.Other)
-        {
-        }
-    }
-
-    public class CommentToken : Token
-    {
-        public CommentToken()
-            : base(TokenType.Comment)
-        {
-        }
-    }
-
     public class MultilineCommentToken : Token
     {
         //Classification used th token
@@ -92,74 +64,6 @@ namespace QtVsTools
         public ITextVersion Version()
         {
             return textVersion;
-        }
-    }
-
-    public class TypeToken : Token
-    {
-        public TypeToken()
-            : base(TokenType.Type)
-        {
-        }
-    }
-
-    public class PropertyToken : Token
-    {
-        //Classification used th token
-        protected IClassificationType classificationType;
-        //Tracked span of token
-        protected ITrackingSpan trackingSpan;
-        //Version of text when Tracking was created
-        protected ITextVersion textVersion;
-
-        public PropertyToken()
-            : base(TokenType.Property)
-        {
-        }
-
-        public PropertyToken(IClassificationType type, ITrackingSpan span, ITextVersion version)
-            : base(TokenType.Property)
-        {
-            classificationType = type;
-            trackingSpan = span;
-            textVersion = version;
-        }
-
-        public IClassificationType Classification()
-        {
-            return classificationType;
-        }
-        public ITrackingSpan Tracking()
-        {
-            return trackingSpan;
-        }
-        public ITextVersion Version()
-        {
-            return textVersion;
-        }
-    }
-
-    public class KeywordToken : Token
-    {
-        public KeywordToken()
-            : base(TokenType.Keyword)
-        {
-        }
-    }
-
-    public class JsKeywordToken : Token
-    {
-        public JsKeywordToken()
-            : base(TokenType.JsKeyword)
-        {
-        }
-    }
-
-    public class StringToken : Token
-    {
-        public StringToken()
-            : base(TokenType.String)
-        {
         }
     }
 }

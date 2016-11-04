@@ -27,82 +27,21 @@
 ****************************************************************************/
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
+using System.Threading;
 
-namespace QtVsTools
+namespace QtProjectLib
 {
-    [AttributeUsage(AttributeTargets.All)]
-    internal sealed class SRDescriptionAttribute : DescriptionAttribute
-    {
-
-        private bool replaced;
-
-        /// <summary>
-        ///     Constructs a new sys description.
-        /// </summary>
-        /// <param name='description'>
-        ///     description text.
-        /// </param>
-        public SRDescriptionAttribute(string description)
-            : base(description)
-        {
-        }
-
-        /// <summary>
-        ///     Retrieves the description text.
-        /// </summary>
-        /// <returns>
-        ///     description
-        /// </returns>
-        public override string Description
-        {
-            get
-            {
-                if (!replaced) {
-                    replaced = true;
-                    DescriptionValue = SR.GetString(base.Description);
-                }
-                return base.Description;
-            }
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.All)]
-    internal sealed class SRCategoryAttribute : CategoryAttribute
-    {
-
-        public SRCategoryAttribute(string category)
-            : base(category)
-        {
-        }
-
-        protected override string GetLocalizedString(string value)
-        {
-            return SR.GetString(value);
-        }
-    }
-
     internal sealed class SR
     {
         static SR loader;
         readonly ResourceManager resources;
         static readonly Object obj = new Object();
 
-        internal const string OK = "OK";
-        internal const string Cancel = "Cancel";
-
-        internal static CultureInfo appCultureInfo;
-        internal static CultureInfo defaultCultureInfo;
-
         internal SR()
         {
-            defaultCultureInfo = CultureInfo.GetCultureInfo("en");
-            appCultureInfo = CultureInfo.GetCultureInfo(Vsix.Instance.Dte.LocaleID);
-            if (appCultureInfo.Name.StartsWith("en", StringComparison.Ordinal))
-                appCultureInfo = null;
-            resources = new ResourceManager("QtVsTools.Resources", GetType().Assembly);
+            resources = new ResourceManager("QtProjectLib.Resources", GetType().Assembly);
         }
 
         private static SR GetLoader()
@@ -113,17 +52,29 @@ namespace QtVsTools
                         loader = new SR();
                 }
             }
+
             return loader;
         }
 
         private static CultureInfo Culture
         {
-            get { return appCultureInfo; }
+            get { return null/*use ResourceManager default, CultureInfo.CurrentUICulture*/; }
+            //get { return new CultureInfo("de-DE"); }
+        }
+
+        public static string LanguageName
+        {
+            get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName; }
+            //get { return Culture.TwoLetterISOLanguageName; }
         }
 
         public static string GetString(string name, params object[] args)
         {
-            var res = GetString(name);
+            var sys = GetLoader();
+            if (sys == null)
+                return null;
+            var res = sys.resources.GetString(name, Culture);
+
             if (args != null && args.Length > 0)
                 return string.Format(res, args);
             return res;
@@ -134,15 +85,7 @@ namespace QtVsTools
             var sys = GetLoader();
             if (sys == null)
                 return null;
-
-            string result;
-            try {
-                result = sys.resources.GetString(name, Culture);
-            } catch (Exception) {
-                result = sys.resources.GetString(name, defaultCultureInfo);
-            }
-
-            return result;
+            return sys.resources.GetString(name, Culture);
         }
     }
 }

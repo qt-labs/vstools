@@ -26,37 +26,28 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
+using System;
+using System.Windows.Forms;
 
-namespace QtVsTools
+namespace QtProjectLib
 {
-    /// <summary>
-    /// This class causes a classifier to be added to the set of classifiers.
-    /// </summary>
-    [Export(typeof(IClassifierProvider))]
-    [ContentType(QmlContentTypeDefinition.ContentType)]
-    internal class ClassifierProvider : IClassifierProvider
+    public class MainWinWrapper : IWin32Window
     {
-        [Import(typeof(SVsServiceProvider))]
-        System.IServiceProvider ServiceProvider { get; set; }
+        private readonly EnvDTE.DTE dteObject;
 
-        /// <summary>
-        /// Import the classification registry to be used for getting a reference to the custom
-        /// classification type later.
-        /// </summary>
-        [Import]
-        IClassificationTypeRegistryService classificationRegistry { get; set; }
-
-        IClassifier IClassifierProvider.GetClassifier(ITextBuffer buffer)
+        public MainWinWrapper(EnvDTE.DTE dte)
         {
-            return buffer.Properties.GetOrCreateSingletonProperty(() =>
+            dteObject = dte;
+        }
+
+        public IntPtr Handle
+        {
+            get
             {
-                return new Classifier(classificationRegistry, ServiceProvider);
-            });
+                if (dteObject != null)
+                    return new IntPtr(dteObject.MainWindow.HWnd);
+                return new IntPtr(0);
+            }
         }
     }
 }

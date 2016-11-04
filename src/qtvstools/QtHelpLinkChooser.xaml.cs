@@ -35,11 +35,6 @@ using System.Windows.Input;
 
 namespace QtVsTools
 {
-    public class VsToolsDialogWindow : Microsoft.VisualStudio.PlatformUI.DialogWindow
-    {
-        // Workaround to avoid referencing Microsoft.VisualStudio.Shell.14.0 in XAML.
-    }
-
     partial class QtHelpLinkChooser : VsToolsDialogWindow
     {
         public QtHelpLinkChooser()

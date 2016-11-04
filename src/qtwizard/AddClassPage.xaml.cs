@@ -41,53 +41,6 @@ using System.Windows.Navigation;
 
 namespace QtProjectWizard
 {
-    public enum ClassKind
-    {
-        Gui,
-        Core
-    }
-
-    public class Class
-    {
-        public string ClassName
-        {
-            get; set;
-        }
-
-        public string DefaultName
-        {
-            get; set;
-        }
-
-        public string Type
-        {
-            get; set;
-        }
-
-        public string Description
-        {
-            get; set;
-        }
-
-        public string ImageSource
-        {
-            get; set;
-        }
-
-        public ClassKind Kind
-        {
-            get; set;
-        }
-    }
-
-    public class SortComboBoxItem : ComboBoxItem
-    {
-        public ListSortDirection? SortDirection
-        {
-            get; set;
-        }
-    }
-
     public partial class AddClassPage : WizardPage
     {
         public AddClassPage()

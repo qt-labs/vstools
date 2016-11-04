@@ -145,32 +145,8 @@ namespace QtVsTools
     }
 
     // Default editor handling for Qt4 add-in
-    public class Qt4DefaultEditors : DefaultEditorsBase
-    {
-        public Qt4DefaultEditors()
-            : base(uid: @"{6A7385B4-1D62-46e0-A4E3-AED4475371F0}",
-                  wrapper: @"qtappwrapper.exe", editor: @"qrceditor.exe")
-        {
-        }
-    }
 
     // Default editor handling for Qt5 add-in
-    public class Qt5DefaultEditors : DefaultEditorsBase
-    {
-        public Qt5DefaultEditors()
-            : base(uid: @"{C80C78C8-F64B-43df-9A53-96F7C44A1EB6}",
-                  wrapper: @"qt5appwrapper.exe", editor: @"q5rceditor.exe")
-        {
-        }
-    }
 
     // Default editor handling for Qt VS Tools
-    public class QtVsToolsDefaultEditors : DefaultEditorsBase
-    {
-        public QtVsToolsDefaultEditors() // Set VSIX specific values
-            : base(uid: @"{15021976-2F08-4C44-BFF4-73CCDCB50473}",
-                  wrapper: @"QtAppWrapper.exe", editor: @"QrcEditor.exe")
-        {
-        }
-    }
 }

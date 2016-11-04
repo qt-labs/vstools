@@ -51,6 +51,16 @@
     <Compile Include="AddTranslationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ChangeFor.cs" />
+    <Compile Include="Classifier.cs" />
+    <Compile Include="ClassifierClassificationDefinition.cs" />
+    <Compile Include="ClassifierDefinitions.cs" />
+    <Compile Include="ClassifierProvider.cs" />
+    <Compile Include="ClassifierTypes.cs" />
+    <Compile Include="CommentToken.cs" />
+    <Compile Include="ContentTypeDefinition.cs" />
+    <Compile Include="DefaultEditor.cs" />
+    <Compile Include="DefaultEditorsBase.cs" />
     <Compile Include="DefaultEditorsClient.cs" />
     <Compile Include="DefaultEditorsHandler.cs" />
     <Compile Include="DteEventsHandler.cs" />
@@ -73,17 +83,16 @@
     <Compile Include="FormVSQtSettings.Designer.cs">
       <DependentUpon>FormVSQtSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="JsKeywordToken.cs" />
+    <Compile Include="KeywordToken.cs" />
+    <Compile Include="MultilineCommentToken.cs" />
+    <Compile Include="OtherToken.cs" />
+    <Compile Include="ProjectQtSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyToken.cs" />
     <Compile Include="QMakeWrapper.cs" />
-    <Compile Include="QmlClassifier.cs" />
-    <Compile Include="QmlClassifierClassificationDefinition.cs" />
-    <Compile Include="QmlClassifierFormat.cs" />
-    <Compile Include="QmlClassifierProvider.cs" />
-    <Compile Include="QmlClassifierTypes.cs" />
-    <Compile Include="QmlContentTypeDefinition.cs" />
-    <Compile Include="QmlToken.cs" />
-    <Compile Include="QmlTokenTypes.cs" />
-    <Compile Include="QtDefaultEditorsHelper.cs" />
+    <Compile Include="Qt4DefaultEditors.cs" />
+    <Compile Include="Qt5DefaultEditors.cs" />
     <Compile Include="QtHelpLinkChooser.xaml.cs">
       <DependentUpon>QtHelpLinkChooser.xaml</DependentUpon>
     </Compile>
@@ -91,15 +100,23 @@
     <Compile Include="QtItemContextMenu.cs" />
     <Compile Include="QtMainMenu.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
-    <Compile Include="QtSettings.cs" />
     <Compile Include="QtSolutionContextMenu.cs" />
     <Compile Include="QtVersionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ResClass.cs" />
+    <Compile Include="QtVsToolsDefaultEditors.cs" />
+    <Compile Include="SR.cs" />
+    <Compile Include="SRCategoryAttribute.cs" />
+    <Compile Include="SRDescriptionAttribute.cs" />
+    <Compile Include="StringToken.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="TokenType.cs" />
     <Compile Include="Translation.cs" />
+    <Compile Include="TranslationItem.cs" />
+    <Compile Include="TypeToken.cs" />
     <Compile Include="Vsix.cs" />
     <Compile Include="VSQtSettings.cs" />
+    <Compile Include="VsToolsDialogWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\Changelog">

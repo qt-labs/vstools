@@ -101,10 +101,35 @@ namespace QtVsTools
         static bool IsSuperfluousCharacter(string text)
         {
             switch (text) {
-                case " ": case ";": case ".": case "<": case ">": case "{": case "}":
-                case "(": case ")": case ":": case ",": case "/": case "\\": case "^":
-                case "%": case "+": case "-": case "*": case "\t": case "&": case "\"":
-                case "!": case "[": case "]": case "|": case "'": case "~": case "#": case "=":
+            case " ":
+            case ";":
+            case ".":
+            case "<":
+            case ">":
+            case "{":
+            case "}":
+            case "(":
+            case ")":
+            case ":":
+            case ",":
+            case "/":
+            case "\\":
+            case "^":
+            case "%":
+            case "+":
+            case "-":
+            case "*":
+            case "\t":
+            case "&":
+            case "\"":
+            case "!":
+            case "[":
+            case "]":
+            case "|":
+            case "'":
+            case "~":
+            case "#":
+            case "=":
                 return true; // nothing we are interested in
             }
             return false;

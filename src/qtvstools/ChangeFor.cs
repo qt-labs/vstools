@@ -26,29 +26,7 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
-
 namespace QtVsTools
 {
-    public sealed class QmlContentTypeDefinition
-    {
-        public const string ContentType = "Qml";
-
-        /// <summary>
-        /// Exports the Qml content type
-        /// </summary>
-        [Export(typeof(ContentTypeDefinition))]
-        [Name(QmlContentTypeDefinition.ContentType)]
-        [BaseDefinition("code")]
-        public ContentTypeDefinition QmlContentType { get; set; }
-
-        /// <summary>
-        /// Exports the Qml file extension
-        /// </summary>
-        [Export(typeof(FileExtensionToContentTypeDefinition))]
-        [ContentType(QmlContentTypeDefinition.ContentType)]
-        [FileExtension(".qml")]
-        public FileExtensionToContentTypeDefinition QmlFileExtension { get; set; }
-    }
+    public enum ChangeFor { Solution, Project }
 }

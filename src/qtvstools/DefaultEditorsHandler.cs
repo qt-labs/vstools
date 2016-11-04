@@ -39,15 +39,6 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
-    static class DefaultEditor
-    {
-        public enum Kind
-        {
-            Ts,
-            Ui
-        }
-    }
-
     class DefaultEditorsHandler
     {
         public static DefaultEditorsHandler Instance

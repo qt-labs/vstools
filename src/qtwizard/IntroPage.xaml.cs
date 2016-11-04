@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-
 namespace QtProjectWizard
 {
     public partial class IntroPage : WizardPage
