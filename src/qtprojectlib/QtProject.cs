@@ -1318,17 +1318,13 @@ namespace QtProjectLib
         /// </summary>
         /// <param name="fileName">file name (relative path)</param>
         /// <returns></returns>
-        public List<VCFile> GetFilesFromProject(string fileName)
+        public IEnumerable<VCFile> GetFilesFromProject(string fileName)
         {
-            var tmpList = new List<VCFile>();
-            fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
-
-            var fi = new FileInfo(fileName);
+            var fi = new FileInfo(HelperFunctions.NormalizeRelativeFilePath(fileName));
             foreach (VCFile f in (IVCCollection) vcPro.Files) {
-                if (f.Name.ToLower() == fi.Name.ToLower())
-                    tmpList.Add(f);
+                if (string.Equals(f.Name, fi.Name, StringComparison.OrdinalIgnoreCase))
+                    yield return f;
             }
-            return tmpList;
         }
 
         public List<VCFile> GetAllFilesFromFilter(VCFilter filter)

@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -272,32 +273,11 @@ namespace QtVsTools
                 var moccedFileName = "moc_" + file.Name;
 
                 if (qtPro.IsMoccedFileIncluded(file)) {
-                    // exclude moc_foo.cpp from build
-                    // Code copied here from 'GetFilesFromProject'
-                    // For some reason error CS1771 was generated from function call
-                    var tmpList = new System.Collections.Generic.List<VCFile>();
-                    moccedFileName = HelperFunctions.NormalizeRelativeFilePath(moccedFileName);
-
-                    var fi = new FileInfo(moccedFileName);
-                    foreach (VCFile f in (IVCCollection) qtPro.VCProject.Files) {
-                        if (f.Name.ToLower() == fi.Name.ToLower())
-                            tmpList.Add(f);
-                    }
-                    foreach (var moccedFile in tmpList)
+                    foreach (var moccedFile in qtPro.GetFilesFromProject(moccedFileName))
                         QtProject.ExcludeFromAllBuilds(moccedFile);
                 } else {
-                    // make sure that moc_foo.cpp isn't excluded from build
-                    // Code copied here from 'GetFilesFromProject'
-                    // For some reason error CS1771 was generated from function call
-                    var moccedFiles = new System.Collections.Generic.List<VCFile>();
-                    moccedFileName = HelperFunctions.NormalizeRelativeFilePath(moccedFileName);
-
-                    var fi = new FileInfo(moccedFileName);
-                    foreach (VCFile f in (IVCCollection) qtPro.VCProject.Files) {
-                        if (f.Name.ToLower() == fi.Name.ToLower())
-                            moccedFiles.Add(f);
-                    }
-                    if (moccedFiles.Count > 0) {
+                    var moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
+                    if (moccedFiles.Any()) {
                         var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
                         var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
                         var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
