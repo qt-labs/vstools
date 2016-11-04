@@ -1275,12 +1275,6 @@ namespace QtProjectLib
         /// <returns></returns>
         public VCFile GetFileFromProject(string fileName)
         {
-            return GetFileFromProject(fileName, true);
-        }
-
-        public VCFile GetFileFromProject(string fileName, bool beStrict)
-        {
-            VCFile vcfile = null;
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
 
             var nf = fileName;
@@ -1290,14 +1284,6 @@ namespace QtProjectLib
 
             foreach (VCFile f in (IVCCollection) vcPro.Files) {
                 if (f.FullPath.ToLower() == nf)
-                    return f;
-            }
-            if (beStrict || vcfile != null)
-                return vcfile;
-
-            var fi = new FileInfo(fileName);
-            foreach (VCFile f in (IVCCollection) vcPro.Files) {
-                if (f.Name.ToLower() == fi.Name.ToLower())
                     return f;
             }
             return null;
