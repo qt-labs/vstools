@@ -36,13 +36,13 @@ namespace QtProjectLib
         Sql = 3,
         OpenGL = 4,
         Network = 5,
-        Compat = 6,
+        // Compat = 6,
         Gui = 7,
         ActiveQtS = 8,
         ActiveQtC = 9,
         Main = 10,
-        Qt3Library = 11,    // ### unused
-        Qt3Main = 12,       // ### unused
+        // Qt3Library = 11,    // ### unused
+        // Qt3Main = 12,       // ### unused
         Svg = 13,
         Designer = 14,
         Test = 15,

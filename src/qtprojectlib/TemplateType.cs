@@ -38,8 +38,8 @@ namespace QtProjectLib
         // subsystem
         public const uint GUISystem = 0x004; // 0100
         public const uint ConsoleSystem = 0x008; // 1000
-        // qt3
-        public const uint Qt3Project = 0x010; //10000
+        // // qt3
+        // public const uint Qt3Project = 0x010; //10000
         // plugin
         public const uint PluginProject = 0x100;
     }
