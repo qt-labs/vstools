@@ -434,7 +434,8 @@
 
     To use the Qt version set in the \c QTDIR environment variable, create a
     version named \c {$(QTDIR)}. Because the path is not needed, the
-    \uicontrol Path field is disabled.
+    \uicontrol Path field is disabled. You must restart Visual Studio to make
+    it aware of the new environment variable.
 
     To specify the Qt version that the selected project should use, select
     \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
