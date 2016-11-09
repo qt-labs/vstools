@@ -35,11 +35,6 @@ namespace QtProjectLib
     {
         private readonly Image img;
         private readonly Image dimg;
-        public ImageButton(Image image)
-        {
-            img = image;
-            BackColor = SystemColors.Control;
-        }
 
         // support for disabled image
         public ImageButton(Image image, Image dimage)

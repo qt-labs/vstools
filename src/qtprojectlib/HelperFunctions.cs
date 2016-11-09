@@ -1111,33 +1111,6 @@ namespace QtProjectLib
             return IsQtProject(pro) ? pro : null;
         }
 
-        public static VCFile GetSelectedFile(DTE dteObject)
-        {
-            if (GetSelectedQtProject(dteObject) == null)
-                return null;
-
-            if (dteObject.SelectedItems.Count <= 0)
-                return null;
-
-            // choose the first one
-            var item = dteObject.SelectedItems.Item(1);
-
-            if (item.ProjectItem == null)
-                return null;
-
-            VCProjectItem vcitem;
-            try {
-                vcitem = (VCProjectItem) item.ProjectItem.Object;
-            } catch (Exception) {
-                return null;
-            }
-
-            if (vcitem.Kind == "VCFile")
-                return (VCFile) vcitem;
-
-            return null;
-        }
-
         public static VCFile[] GetSelectedFiles(DTE dteObject)
         {
             if (GetSelectedQtProject(dteObject) == null)

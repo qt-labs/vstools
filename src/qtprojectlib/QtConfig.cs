@@ -65,11 +65,6 @@ namespace QtProjectLib
             get { return isStaticBuild; }
         }
 
-        public string SignatureFile
-        {
-            get { return signatureFile; }
-        }
-
         /// <summary>
         /// parses a single line of the configuration file
         /// </summary>

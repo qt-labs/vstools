@@ -53,22 +53,6 @@ namespace QtProjectLib
                 name = name.Substring(0, name.Length - 4);
         }
 
-        public string Prefix
-        {
-            get
-            {
-                if (project.Globals.get_VariablePersists("RccPrefix" + id))
-                    return (string) project.Globals["RccPrefix" + id];
-                return "/" + project.Name;
-            }
-            set
-            {
-                project.Globals["RccPrefix" + id] = value;
-                if (!project.Globals.get_VariablePersists("RccPrefix" + id))
-                    project.Globals.set_VariablePersists("RccPrefix" + id, true);
-            }
-        }
-
         public bool CompressFiles
         {
             get
@@ -118,49 +102,6 @@ namespace QtProjectLib
                 project.Globals["RccCompressThreshold" + id] = value.ToString();
                 if (!project.Globals.get_VariablePersists("RccCompressThreshold" + id))
                     project.Globals.set_VariablePersists("RccCompressThreshold" + id, true);
-            }
-        }
-
-        public string OutputFileName
-        {
-            get
-            {
-                if (project.Globals.get_VariablePersists("RccOutput" + id))
-                    return (string) project.Globals["RccOutput" + id];
-
-                var s = name.Replace('\\', '/');
-                s = s.Substring(s.LastIndexOf('/') + 1);
-                return "qrc_" + s + ".cpp";
-            }
-            set
-            {
-                project.Globals["RccOutput" + id] = value;
-                if (!project.Globals.get_VariablePersists("RccOutput" + id))
-                    project.Globals.set_VariablePersists("RccOutput" + id, true);
-            }
-        }
-
-        public string QrcFileName
-        {
-            get { return qrcFileName; }
-        }
-
-        public string InitName
-        {
-            get
-            {
-                if (project.Globals.get_VariablePersists("RccInitName" + id))
-                    return (string) project.Globals["RccInitName" + id];
-
-                var s = name.Replace('\\', '/');
-                s = s.Substring(s.LastIndexOf('/') + 1);
-                return s;
-            }
-            set
-            {
-                project.Globals["RccInitName" + id] = value;
-                if (!project.Globals.get_VariablePersists("RccInitName" + id))
-                    project.Globals.set_VariablePersists("RccInitName" + id, true);
             }
         }
     }

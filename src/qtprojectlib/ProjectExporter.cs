@@ -653,89 +653,6 @@ namespace QtProjectLib
             }
         }
 
-        private static List<string> GetFilesInPriFile(FileInfo priFileInfo, FilesToList ftl)
-        {
-            StreamReader sr;
-            var fileList = new List<string>();
-
-            try {
-                if (!priFileInfo.Exists)
-                    return null;
-
-                sr = new StreamReader(priFileInfo.FullName);
-            } catch (Exception e) {
-                Messages.DisplayWarningMessage(e);
-                return null;
-            }
-
-            switch (ftl) {
-            case FilesToList.FL_CppFiles:
-                ParseTag(sr, "SOURCES", fileList);
-                break;
-            case FilesToList.FL_HFiles:
-                ParseTag(sr, "HEADERS", fileList);
-                break;
-            case FilesToList.FL_UiFiles:
-                ParseTag(sr, "FORMS", fileList);
-                break;
-            }
-
-            // the filelist should contain the entire path since we can select
-            // any .pri file..
-            var ret = new List<string>();
-            try {
-                ret = ConvertFilesToFullPath(ret, priFileInfo.DirectoryName);
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(SR.GetString("ExportProject_ErrorParsingPriFile", e.Message),
-                    SR.GetString("ExportProject_CheckFileAndSyntax"));
-                return null;
-            }
-
-            sr.Close();
-            return ret;
-        }
-
-        // a very simple and bad parser for .pri files...
-        private static void ParseTag(StreamReader sr, string tag, List<string> arList)
-        {
-            // start parsing from the beginning...
-            sr.BaseStream.Position = 0;
-
-            var line = string.Empty;
-            var parsing = false;
-            char[] trimChars = { '/', '\\', ' ', '\t', '=', '+', '-' };
-            char[] sepChars = { '\t', ' ' };
-
-            while ((line = sr.ReadLine()) != null) {
-                if (parsing && (line.IndexOf('=') != -1))
-                    break;
-
-                line = line.Trim();
-                if (line.StartsWith(tag, StringComparison.Ordinal)) {
-                    line = line.Remove(0, tag.Length);
-                    parsing = true;
-                }
-
-                if (parsing) {
-                    // remove pwd, as we build the full path ourself
-                    var pwd = "$$PWD";
-                    if (line.IndexOf(pwd, StringComparison.Ordinal) > -1)
-                        line = line.Remove(line.IndexOf(pwd, StringComparison.Ordinal), pwd.Length);
-
-                    line = line.TrimStart(trimChars);
-                    line = line.TrimEnd(trimChars);
-
-                    // remove comments
-                    var comStart = line.IndexOf('#');
-                    if (comStart != -1)
-                        line = line.Remove(comStart, line.Length - comStart);
-
-                    if (line.Length > 0)
-                        arList.AddRange(line.Split(sepChars));
-                }
-            }
-        }
-
         private static VCFilter BestMatch(string path, Hashtable pathFilterTable)
         {
             var bestMatch = ".";
@@ -771,12 +688,6 @@ namespace QtProjectLib
             pathFilterTable.Add(newPath, filter);
             foreach (VCFilter f in (IVCCollection) filter.Filters)
                 CollectFilters(f, newPath, ref filterPathTable, ref pathFilterTable);
-        }
-
-        public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
-            List<string> projFiles, DTE dte)
-        {
-            SyncIncludeFiles(vcproj, priFiles, projFiles, dte, false, null);
         }
 
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
@@ -887,72 +798,6 @@ namespace QtProjectLib
                     }
                 }
             }
-        }
-
-        public void ImportPriFile(Project proj)
-        {
-            VCProject vcproj;
-
-            if (HelperFunctions.IsQtProject(proj)) {
-                try {
-                    vcproj = (VCProject) proj.Object;
-                } catch (Exception e) {
-                    Messages.DisplayWarningMessage(e);
-                    return;
-                }
-
-                // make the user able to choose .pri file
-                var fd = new OpenFileDialog();
-                fd.Multiselect = false;
-                fd.CheckFileExists = true;
-                fd.Title = SR.GetString("ExportProject_ImportPriFile");
-                fd.Filter = "Project Include Files (*.pri)|*.pri";
-                fd.InitialDirectory = vcproj.ProjectDirectory;
-                fd.FileName = vcproj.Name + ".pri";
-
-                if (fd.ShowDialog() != DialogResult.OK)
-                    return;
-
-                ImportPriFile(proj, fd.FileName);
-            }
-        }
-
-        public void ImportPriFile(Project proj, string fileName)
-        {
-            VCProject vcproj;
-
-            List<string> priFiles;
-            List<string> projFiles;
-
-            try {
-                vcproj = (VCProject) proj.Object;
-            } catch (Exception e) {
-                Messages.DisplayWarningMessage(e);
-                return;
-            }
-
-            var priFileInfo = new FileInfo(fileName);
-
-            // source files
-            if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_CppFiles)) == null)
-                return;
-            projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_CppFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
-
-            // header files
-            if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_HFiles)) == null)
-                return;
-            projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_HFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
-
-            // form files
-            if ((priFiles = GetFilesInPriFile(priFileInfo, FilesToList.FL_UiFiles)) == null)
-                return;
-            projFiles = HelperFunctions.GetProjectFiles(proj, FilesToList.FL_UiFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-            SyncIncludeFiles(vcproj, priFiles, projFiles, dteObject);
         }
 
         public string ExportToPriFile(Project proj)

@@ -30,7 +30,6 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
 using System;
 using System.Collections;
-using System.Drawing;
 
 namespace QtProjectLib
 {
@@ -458,58 +457,11 @@ namespace QtProjectLib
             key.SetValue(type, option);
         }
 
-        public static bool Visible()
-        {
-            return GetBoolValue("visible", true);
-        }
-
-        public static void SetVisible(bool visible)
-        {
-            SetBoolValue("visible", visible);
-        }
-
-        public static bool AutoRunUic()
-        {
-            return GetBoolValue("AutoRunUic4", true);
-        }
-
-        public static void SetAutoRunUic(bool autoRun)
-        {
-            SetBoolValue("AutoRunUic4", autoRun);
-        }
-
-        public static bool AutoUpdateRccSteps()
-        {
-            return GetBoolValue("AutoUpdateRccSteps", true);
-        }
-
-        public static void SetAutoUpdateRccSteps(bool autoUpdate)
-        {
-            SetBoolValue("AutoUpdateRccSteps", autoUpdate);
-        }
-
-        public static bool AutoUpdateMocSteps()
-        {
-            if (ValueExists("AutoUpdateMocSteps"))
-                return GetBoolValue("AutoUpdateMocSteps", true);
-            return GetBoolValue("AutoUpdateBuildSteps", true);
-        }
-
-        public static void SetAutoUpdateMocSteps(bool autoUpdate)
-        {
-            SetBoolValue("AutoUpdateMocSteps", autoUpdate);
-        }
-
         public static bool AutoUpdateUicSteps()
         {
             if (ValueExists("AutoUpdateUicSteps"))
                 return GetBoolValue("AutoUpdateUicSteps", true);
             return GetBoolValue("AutoUpdateBuildSteps", true);
-        }
-
-        public static void SetAutoUpdateUicSteps(bool autoUpdate)
-        {
-            SetBoolValue("AutoUpdateUicSteps", autoUpdate);
         }
 
         private static bool GetBoolValue(string key, bool defaultValue)

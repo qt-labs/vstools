@@ -33,37 +33,9 @@ namespace QtVsTools
 {
     public class PropertyToken : Token
     {
-        //Classification used th token
-        protected IClassificationType classificationType;
-        //Tracked span of token
-        protected ITrackingSpan trackingSpan;
-        //Version of text when Tracking was created
-        protected ITextVersion textVersion;
-
         public PropertyToken()
             : base(TokenType.Property)
         {
-        }
-
-        public PropertyToken(IClassificationType type, ITrackingSpan span, ITextVersion version)
-            : base(TokenType.Property)
-        {
-            classificationType = type;
-            trackingSpan = span;
-            textVersion = version;
-        }
-
-        public IClassificationType Classification()
-        {
-            return classificationType;
-        }
-        public ITrackingSpan Tracking()
-        {
-            return trackingSpan;
-        }
-        public ITextVersion Version()
-        {
-            return textVersion;
         }
     }
 }

@@ -310,12 +310,6 @@ and select the Qt version to use.</value>
   <data name="QtModules" xml:space="preserve">
     <value>Qt Modules</value>
   </data>
-  <data name="QtVersionDialog_BoxTitle" xml:space="preserve">
-    <value>Solution wide Qt Version</value>
-  </data>
-  <data name="QtVersionDialog_Title" xml:space="preserve">
-    <value>Change Qt Version for Solution</value>
-  </data>
   <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
     <value>The file {0} is under source control and not checked out. Do you want to check out the file before opening it?
 

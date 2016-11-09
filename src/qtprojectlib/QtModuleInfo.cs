@@ -79,17 +79,6 @@ namespace QtProjectLib
             return libs;
         }
 
-        public string GetDllFileName(bool isDebugCfg)
-        {
-            var fileName = LibraryPrefix;
-            if (fileName.StartsWith("Qt", StringComparison.Ordinal))
-                fileName = "Qt5" + fileName.Substring(2);
-            if (isDebugCfg)
-                fileName += "d";
-            fileName += ".dll";
-            return fileName;
-        }
-
         private List<string> GetAdditionalLibs(bool isDebugCfg)
         {
             if (isDebugCfg && AdditionalLibrariesDebug.Count > 0)

@@ -27,7 +27,6 @@
 ****************************************************************************/
 
 using EnvDTE;
-using Microsoft.VisualStudio.VCCodeModel;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
@@ -185,13 +184,6 @@ namespace QtProjectLib
         private string GetRelativeMocFilePath(string file)
         {
             return GetRelativeMocFilePath(file, null, null);
-        }
-
-        public string QtPackageVersion()
-        {
-            if (vcPro == null)
-                return null;
-            return vcPro.keyword.Remove(0, Resources.qtProjectKeyword.Length);
         }
 
         /// <summary>
@@ -494,32 +486,6 @@ namespace QtProjectLib
             Project.Globals["IsDesignerPlugin"] = true.ToString();
             if (!Project.Globals.get_VariablePersists("IsDesignerPlugin"))
                 Project.Globals.set_VariablePersists("IsDesignerPlugin", true);
-        }
-
-        public bool AddApplicationIcon(string iconFileName)
-        {
-            var projectName = vcPro.ItemName;
-            var iconFile = vcPro.ProjectDirectory + "\\" + projectName + ".ico";
-            var rcFile = vcPro.ProjectDirectory + "\\" + projectName + ".rc";
-            try {
-                if (!File.Exists(iconFile)) {
-                    File.Copy(iconFileName, iconFile);
-                    var attribs = File.GetAttributes(iconFile);
-                    File.SetAttributes(iconFile, attribs & (~FileAttributes.ReadOnly));
-                }
-
-                StreamWriter sw = null;
-                if (!File.Exists(rcFile)) {
-                    sw = new StreamWriter(File.Create(rcFile));
-                    sw.WriteLine("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"" + projectName + ".ico\"" + sw.NewLine);
-                    sw.Close();
-                }
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(e);
-                return false;
-            }
-            vcPro.AddFile(rcFile);
-            return true;
         }
 
         /// <summary>
@@ -1092,13 +1058,6 @@ namespace QtProjectLib
             UpdateCompilerIncludePaths(oldRccDir, QtVSIPSettings.GetRccDirectory(envPro));
         }
 
-        public void UpdateRccStep(string fileName, RccOptions rccOpts)
-        {
-
-            var file = (VCFile) ((IVCCollection) vcPro.Files).Item(fileName);
-            UpdateRccStep(file, rccOpts);
-        }
-
         public void UpdateRccStep(VCFile qrcFile, RccOptions rccOpts)
         {
             var vcpro = (VCProject) qrcFile.project;
@@ -1159,25 +1118,6 @@ namespace QtProjectLib
                 AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
             } catch (Exception /*e*/) {
                 Messages.PaneMessage(dteObject, "*** WARNING (RCC): Couldn't add rcc step");
-            }
-        }
-
-        public void RemoveRccStep(VCFile file)
-        {
-            if (file == null)
-                return;
-            try {
-                var relativeQrcFilePath = file.RelativePath;
-                var qrcFileInfo = new FileInfo(ProjectDir + "\\" + relativeQrcFilePath);
-                if (qrcFileInfo.Exists) {
-                    var opts = new RccOptions(Project, file);
-                    var qrcCppFile = QtVSIPSettings.GetRccDirectory(envPro) + "\\" + opts.OutputFileName;
-                    var generatedFile = GetFileFromProject(qrcCppFile);
-                    if (generatedFile != null)
-                        RemoveFileFromFilter(generatedFile, Filters.GeneratedFiles());
-                }
-            } catch (Exception e) {
-                Messages.DisplayWarningMessage(e);
             }
         }
 
@@ -1291,35 +1231,6 @@ namespace QtProjectLib
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
             }
-        }
-
-        public void RemoveUiHeaderFile(VCFile file)
-        {
-            if (file == null)
-                return;
-            try {
-                var headerFile = GetUiGeneratedFileName(file.Name);
-                var hFile = GetFileFromProject(headerFile);
-
-                if (hFile != null)
-                    RemoveFileFromFilter(hFile, Filters.GeneratedFiles());
-            } catch (Exception e) {
-                Messages.DisplayWarningMessage(e);
-            }
-        }
-
-        public void RemoveUic4BuildStep(VCFile file)
-        {
-            if (file == null)
-                return;
-            foreach (VCFileConfiguration config in (IVCCollection) file.FileConfigurations) {
-                var tool = HelperFunctions.GetCustomBuildTool(config);
-                tool.AdditionalDependencies = string.Empty;
-                tool.Description = string.Empty;
-                tool.CommandLine = string.Empty;
-                tool.Outputs = string.Empty;
-            }
-            RemoveUiHeaderFile(file);
         }
 
         public List<VCFile> GetResourceFiles()
@@ -1816,13 +1727,9 @@ namespace QtProjectLib
         /// Copy a file to the projects folder. Does not add the file to the project.
         /// </summary>
         /// <param name="srcFile">full name of the file to add</param>
+        /// <param name="destFolder">the name of the project folder</param>
         /// <param name="destName">name of the file in the project (relative to the project directory)</param>
         /// <returns>full name of the destination file</returns>
-        public string CopyFileToProject(string srcFile, string destName)
-        {
-            return CopyFileToFolder(srcFile, vcPro.ProjectDirectory, destName);
-        }
-
         public static string CopyFileToFolder(string srcFile, string destFolder, string destName)
         {
             var fullDestName = destFolder + "\\" + destName;
@@ -1934,44 +1841,6 @@ namespace QtProjectLib
 
             var fi = new FileInfo(fullDestName);
             return fi.FullName;
-        }
-
-        public static void EnableSection(string file, string sectionName, bool enable)
-        {
-            var text = string.Empty;
-            var firstLine = true;
-            try {
-                var reader = new StreamReader(file);
-                var line = reader.ReadLine();
-                var skip = false;
-                while (line != null) {
-                    if (line.StartsWith("#Begin_" + sectionName, StringComparison.Ordinal)) {
-                        skip = !enable;
-                    } else if (line.StartsWith("#End_" + sectionName, StringComparison.Ordinal)) {
-                        skip = false;
-                    } else if (!skip) {
-                        if (firstLine) {
-                            text = line;
-                            firstLine = false;
-                        } else {
-                            text += "\r\n" + line;
-                        }
-                    }
-                    line = reader.ReadLine();
-                }
-                reader.Close();
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(SR.GetString("QtProject_CannotEnableSectionRead", sectionName, e.ToString()));
-                return;
-            }
-
-            try {
-                var writer = new StreamWriter(file);
-                writer.Write(text);
-                writer.Close();
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(SR.GetString("QtProject_CannotEnableSectionWrite", sectionName, e.ToString()));
-            }
         }
 
         public void AddActiveQtBuildStep(string version, string defFile = null)
@@ -2669,14 +2538,6 @@ namespace QtProjectLib
             return false;
         }
 
-        public void RemovePlatform(string platformName)
-        {
-            try {
-                var cfgMgr = envPro.ConfigurationManager;
-                cfgMgr.DeletePlatform(platformName);
-            } catch { }
-        }
-
         public void CreatePlatform(string oldPlatform, string newPlatform,
                                    VersionInformation viOld, VersionInformation viNew, ref bool newProjectCreated)
         {
@@ -2884,12 +2745,6 @@ namespace QtProjectLib
                 linkerOptions += subsystemOption;
             }
             linker.AdditionalOptions = linkerOptions;
-        }
-
-        public VCConfiguration GetActiveVCConfiguration()
-        {
-            var activeConfigName = Project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            return (VCConfiguration) ((IVCCollection) VCProject.Configurations).Item(activeConfigName);
         }
 
         public void CollapseFilter(string filterName)

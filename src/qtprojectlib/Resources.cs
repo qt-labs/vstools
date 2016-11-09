@@ -79,7 +79,6 @@ namespace QtProjectLib
         public const string ec_Defines = "(DEFINES) Additional project defines.";
 
         public const string qtProjectKeyword = "Qt4VS";
-        public const string qtSheetKeyword = qtProjectKeyword + "PropertySheet";
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
         public const string moc4Command = "$(QTDIR)\\bin\\moc.exe";

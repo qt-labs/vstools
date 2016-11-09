@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using QtProjectLib;

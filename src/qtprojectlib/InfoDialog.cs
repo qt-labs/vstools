@@ -35,11 +35,6 @@ namespace QtProjectLib
         private Label label1;
         private ProgressBar progressBar1;
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
-
         public InfoDialog(string name)
         {
             label1 = new Label();

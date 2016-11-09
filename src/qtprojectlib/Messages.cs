@@ -98,24 +98,6 @@ namespace QtProjectLib
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        static public void DisplayErrorMessage(System.Exception e, string solution)
-        {
-            MessageBox.Show(ErrorString +
-                ExceptionToString(e) +
-                SolutionString +
-                solution,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        static public void DisplayErrorMessage(string msg, string solution)
-        {
-            MessageBox.Show(ErrorString +
-                MessageToString(msg) +
-                SolutionString +
-                solution,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
         static public void DisplayErrorMessage(System.Exception e)
         {
             MessageBox.Show(ErrorString +
@@ -136,22 +118,6 @@ namespace QtProjectLib
                 ExceptionToString(e) +
                 SolutionString +
                 solution,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        static public void DisplayWarningMessage(string msg, string solution)
-        {
-            MessageBox.Show(WarningString +
-                MessageToString(msg) +
-                SolutionString +
-                solution,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        static public void DisplayWarningMessage(System.Exception e)
-        {
-            MessageBox.Show(WarningString +
-                ExceptionToString(e),
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 

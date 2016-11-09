@@ -81,8 +81,6 @@
     <Compile Include="RccOptions.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="SR.cs" />
-    <Compile Include="SRCategoryAttribute.cs" />
-    <Compile Include="SRDescriptionAttribute.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TemplateType.cs" />
     <Compile Include="VersionInformation.cs" />

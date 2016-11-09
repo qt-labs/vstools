@@ -119,13 +119,6 @@ namespace QtProjectLib
             return qtConfig.IsStaticBuild;
         }
 
-        public string GetSignatureFile()
-        {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
-            return qtConfig.SignatureFile;
-        }
-
         public string GetQMakeConfEntry(string entryName)
         {
             if (qmakeConf == null)

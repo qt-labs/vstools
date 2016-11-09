@@ -413,17 +413,6 @@ namespace QtProjectLib
             return true;
         }
 
-        public static bool HasProjectQtVersion(EnvDTE.Project project)
-        {
-            if (project == null)
-                return false;
-            var platform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
-            if (project.Globals.get_VariablePersists("Qt5Version " + platform)
-                || project.Globals.get_VariablePersists("Qt5Version"))
-                return true;
-            return false;
-        }
-
         private void MergeVersions()
         {
             var hkcuVersions = GetVersions();

@@ -101,13 +101,8 @@
     <Compile Include="QtMainMenu.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
     <Compile Include="QtSolutionContextMenu.cs" />
-    <Compile Include="QtVersionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="QtVsToolsDefaultEditors.cs" />
     <Compile Include="SR.cs" />
-    <Compile Include="SRCategoryAttribute.cs" />
-    <Compile Include="SRDescriptionAttribute.cs" />
     <Compile Include="StringToken.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenType.cs" />
@@ -182,9 +177,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormVSQtSettings.resx">
       <DependentUpon>FormVSQtSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="QtVersionDialog.resx">
-      <DependentUpon>QtVersionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>

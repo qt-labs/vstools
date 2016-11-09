@@ -90,11 +90,6 @@ namespace QtVsTools
             return true;
         }
 
-        public bool isValid()
-        {
-            return valid;
-        }
-
         public bool isFlat()
         {
             return flat;

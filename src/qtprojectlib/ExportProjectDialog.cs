@@ -80,14 +80,6 @@ namespace QtProjectLib
             //
         }
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
         /// <summary>
         /// Required method for Designer support - do not modify
