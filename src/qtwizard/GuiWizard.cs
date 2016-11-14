@@ -102,7 +102,7 @@ namespace QtProjectWizard
                                 + @"widget.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsModuleInstalled),
+                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
                             CancelButtonEnabled = true
                         }
                     })

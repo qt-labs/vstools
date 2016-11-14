@@ -86,7 +86,7 @@ namespace QtProjectLib
             return AdditionalLibraries;
         }
 
-        public static bool IsModuleInstalled(string moduleName)
+        public static bool IsInstalled(string moduleName)
         {
             var qtVersion = QtVersionManager.The().GetDefaultVersion();
             if (qtVersion == null) {

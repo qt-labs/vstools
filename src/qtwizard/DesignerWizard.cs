@@ -172,7 +172,7 @@ namespace QtProjectWizard
                                 + @"used in Qt Designer or Visual Studio.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsModuleInstalled),
+                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
                             CancelButtonEnabled = true
                         }
                     })

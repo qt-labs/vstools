@@ -73,7 +73,7 @@ namespace QtProjectWizard
                                 + @"recommended modules for this project are selected by default.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = QtModuleInfo.IsModuleInstalled(@"QtCore"),
+                            FinishButtonEnabled = QtModuleInfo.IsInstalled(@"QtCore"),
                             CancelButtonEnabled = true
                         }
                     })
