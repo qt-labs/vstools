@@ -61,7 +61,6 @@ namespace QtVsTools
         const int OfflineDocumentationId = 0x0103;
 
         readonly Package package;
-        const string QtVsToolsHelpPreferencePath = @"QtVsTools\Help\Preference";
         static readonly Guid HelpMenuGroupGuid = new Guid("fc6244f9-ec84-4370-a59c-b009b2eafd1b");
 
         QtHelpMenu(Package pkg)
@@ -202,7 +201,8 @@ namespace QtVsTools
 
                 var settingsManager = new ShellSettingsManager(Instance.ServiceProvider);
                 var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-                var offline = store.GetBoolean(QtVsToolsHelpPreferencePath, "Offline", true);
+                var offline =
+                    store.GetBoolean(Statics.HelpPreferencePath, Statics.HelpPreferenceKey, true);
 
                 var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
@@ -296,10 +296,10 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(ServiceProvider);
             var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-            store.CreateCollection(QtVsToolsHelpPreferencePath);
+            store.CreateCollection(Statics.HelpPreferencePath);
 
             var value = command.CommandID.ID == OfflineDocumentationId;
-            store.SetBoolean(QtVsToolsHelpPreferencePath, "Offline", value);
+            store.SetBoolean(Statics.HelpPreferencePath, Statics.HelpPreferenceKey, value);
         }
 
         void BeforeQueryStatus(object sender, EventArgs e)
@@ -313,10 +313,12 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case OnlineDocumentationId:
-                command.Checked = !store.GetBoolean(QtVsToolsHelpPreferencePath, "Offline", true);
+                command.Checked = !store.GetBoolean(Statics.HelpPreferencePath,
+                    Statics.HelpPreferenceKey, false);
                 break;
             case OfflineDocumentationId:
-                command.Checked = store.GetBoolean(QtVsToolsHelpPreferencePath, "Offline", true);
+                command.Checked = store.GetBoolean(Statics.HelpPreferencePath,
+                    Statics.HelpPreferenceKey, true);
                 break;
             }
         }

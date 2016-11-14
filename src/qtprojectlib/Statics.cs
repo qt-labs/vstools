@@ -30,7 +30,13 @@ namespace QtProjectLib
 {
     public static class Statics
     {
-        public const string QtVsToolsQmlClassifierKey = @"Enabled";
-        public const string QtVsToolsQmlClassifierPath = @"QtVsTools\Qml\Classifier";
+        public const string QmlClassifierKey = @"Enable";
+        public const string QmlClassifierPath = @"QtVsTools\Qml\Classifier";
+
+        public const string HelpPreferenceKey = @"Offline";
+        public const string HelpPreferencePath = @"QtVsTools\Help\Preference";
+
+        public const string AddQtVersionDialogKey = @"LastSelectedPath";
+        public const string AddQtVersionDialogPath = @"QtVsTools\AddQtVersionDialog";
     }
 }

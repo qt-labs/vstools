@@ -52,8 +52,8 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(Vsix.Instance);
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-            EnableQmlClassifier = store.GetBoolean(Statics.QtVsToolsQmlClassifierPath,
-                Statics.QtVsToolsQmlClassifierKey, true);
+            EnableQmlClassifier = store.GetBoolean(Statics.QmlClassifierPath,
+                Statics.QmlClassifierKey, true);
         }
 
         private string newMocDir;
@@ -82,8 +82,8 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(Vsix.Instance);
             var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-            store.CreateCollection(Statics.QtVsToolsQmlClassifierPath);
-            store.SetBoolean(Statics.QtVsToolsQmlClassifierPath, Statics.QtVsToolsQmlClassifierKey,
+            store.CreateCollection(Statics.QmlClassifierPath);
+            store.SetBoolean(Statics.QmlClassifierPath, Statics.QmlClassifierKey,
                 EnableQmlClassifier);
         }
 

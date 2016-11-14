@@ -69,8 +69,8 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(isp);
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-            QmlClassifierEnabled = store.GetBoolean(Statics.QtVsToolsQmlClassifierPath,
-                Statics.QtVsToolsQmlClassifierKey, true);
+            QmlClassifierEnabled = store.GetBoolean(Statics.QmlClassifierPath,
+                Statics.QmlClassifierKey, true);
 
             whiteSpaceChars = new[] { ' ', '\t' };
             separators = new List<char>

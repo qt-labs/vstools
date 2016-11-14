@@ -26,7 +26,8 @@
 **
 ****************************************************************************/
 
-using Microsoft.Win32;
+using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
 using System;
 using System.IO;
@@ -258,34 +259,19 @@ namespace QtVsTools
         private void browseButton_Click(object sender, EventArgs e)
         {
             using (var fd = new FolderBrowserDialog()) {
+                var settingsManager = new ShellSettingsManager(Vsix.Instance);
+                var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
                 fd.Description = SR.GetString("SelectQtPath");
-                fd.SelectedPath = RestoreLastSelectedPath();
+                fd.SelectedPath = store.GetString(Statics.AddQtVersionDialogPath,
+                    Statics.AddQtVersionDialogKey, string.Empty);
+
                 if (fd.ShowDialog() == DialogResult.OK) {
-                    pathBox.Text = fd.SelectedPath;
-                    SaveLastSelectedPath(fd.SelectedPath);
+                    store.CreateCollection(Statics.AddQtVersionDialogPath);
+                    store.SetString(Statics.AddQtVersionDialogPath, Statics.AddQtVersionDialogKey,
+                        (pathBox.Text = fd.SelectedPath));
                 }
             }
-        }
-
-        private static string RestoreLastSelectedPath()
-        {
-            try {
-                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\"
-                    + Resources.registryPackagePath, false);
-                if (key != null)
-                    return (string) key.GetValue("QtVersionLastSelectedPath");
-            } catch {
-            }
-
-            return string.Empty;
-        }
-
-        private static void SaveLastSelectedPath(string path)
-        {
-            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\"
-                + Resources.registryPackagePath);
-            if (key != null)
-                key.SetValue("QtVersionLastSelectedPath", path);
         }
     }
 }
