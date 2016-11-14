@@ -36,6 +36,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 
@@ -125,10 +126,6 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    var defaultModulesInstalled = true;
-                    foreach (var module in data.DefaultModules)
-                        defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
-
                     var className = replacements["$safeprojectname$"];
                     className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
                     className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
@@ -175,7 +172,7 @@ namespace QtProjectWizard
                                 + @"used in Qt Designer or Visual Studio.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = defaultModulesInstalled,
+                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsModuleInstalled),
                             CancelButtonEnabled = true
                         }
                     })

@@ -240,7 +240,7 @@ namespace QtVsTools
                     if (project != null) {
                         if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
-                        else if ((project != null) && HelperFunctions.IsQMakeProject(project))
+                        else if (HelperFunctions.IsQMakeProject(project))
                             status |= vsCommandStatus.vsCommandStatusInvisible;
                     }
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);

@@ -36,6 +36,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace QtProjectWizard
@@ -123,10 +124,6 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    var defaultModulesInstalled = true;
-                    foreach (var module in data.DefaultModules)
-                        defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
-
                     // midl.exe does not support spaces in project name. Fails while generating the
                     // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
                     if (replacements["$safeprojectname$"].Contains(" "))
@@ -172,7 +169,7 @@ namespace QtProjectWizard
                                 + @"creates a simple ActiveQt widget with the required files.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = defaultModulesInstalled,
+                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsModuleInstalled),
                             CancelButtonEnabled = true
                         }
                     })

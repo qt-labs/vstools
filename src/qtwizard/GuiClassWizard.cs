@@ -52,10 +52,6 @@ namespace QtProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
 
                 try {
-                    var defaultModulesInstalled = true;
-                    foreach (var module in data.DefaultModules)
-                        defaultModulesInstalled |= QtModuleInfo.IsModuleInstalled(module);
-
                     if (string.IsNullOrEmpty(name))
                         name = @"QtGuiClass";
 
@@ -86,7 +82,7 @@ namespace QtProjectWizard
                                 + @"empty form.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = defaultModulesInstalled,
+                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsModuleInstalled),
                             CancelButtonEnabled = true
                         }
                     })

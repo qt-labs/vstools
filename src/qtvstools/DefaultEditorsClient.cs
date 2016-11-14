@@ -226,8 +226,7 @@ namespace QtVsTools
 
                     if (tmp.Connected) {
                         var stream = tmp.GetStream();
-                        if (stream != null)
-                            stream.Close();
+                        stream.Close();
                         tmp.Close();
                     }
                 }

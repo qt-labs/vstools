@@ -641,7 +641,7 @@ namespace QtProjectLib
                         }
 
                         linkerPaths = linkerWrapper.AdditionalLibraryDirectories;
-                        if (linker != null && linkerPaths != null) {
+                        if (linkerPaths != null) {
                             foreach (var libDir in linkerPaths) {
                                 var dirName = libDir;
                                 if (!Path.IsPathRooted(dirName)) {
