@@ -265,6 +265,7 @@ namespace QtVsTools
                 fd.Description = SR.GetString("SelectQtPath");
                 fd.SelectedPath = store.GetString(Statics.AddQtVersionDialogPath,
                     Statics.AddQtVersionDialogKey, string.Empty);
+                SendKeys.Send("{TAB}{TAB}{RIGHT}");
 
                 if (fd.ShowDialog() == DialogResult.OK) {
                     store.CreateCollection(Statics.AddQtVersionDialogPath);
