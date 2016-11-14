@@ -34,20 +34,17 @@ namespace QtVsTools
 {
     public class QMakeWrapper
     {
-        private string qtdir;
-        private bool valid;
-        private bool flat;
-        private string[] sources;
-        private string[] headers;
-        private string[] resources;
-        private string[] forms;
+        public string QtDir { get; set; }
 
-        public void setQtDir(string path)
-        {
-            qtdir = path;
-        }
+        public bool IsFlat { get; private set; }
+        public bool IsValid { get; private set; }
 
-        public bool readFile(string filePath)
+        public string[] SourceFiles { get; private set; }
+        public string[] HeaderFiles { get; private set; }
+        public string[] ResourceFiles { get; private set; }
+        public string[] FormFiles { get; private set; }
+
+        public bool ReadFile(string filePath)
         {
             string output;
             try {
@@ -58,7 +55,7 @@ namespace QtVsTools
                 using (var process = new Process()) {
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.FileName = exeFilePath;
-                    process.StartInfo.Arguments = shellQuote(qtdir) + ' ' + shellQuote(filePath);
+                    process.StartInfo.Arguments = ShellQuote(QtDir) + ' ' + ShellQuote(filePath);
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     if (!process.Start())
@@ -73,12 +70,12 @@ namespace QtVsTools
                     using (var reader = new XmlTextReader(stringReader)) {
                         stringReader = null;
                         reader.ReadToFollowing("content");
-                        valid = stringToBool(reader.GetAttribute("valid"));
-                        flat = stringToBool(reader.GetAttribute("flat"));
-                        sources = readFileElements(reader, "SOURCES");
-                        headers = readFileElements(reader, "HEADERS");
-                        resources = readFileElements(reader, "RESOURCES");
-                        forms = readFileElements(reader, "FORMS");
+                        IsFlat = reader.GetAttribute("flat") == "true";
+                        IsValid = reader.GetAttribute("valid") == "true";
+                        SourceFiles = ReadFileElements(reader, "SOURCES");
+                        HeaderFiles = ReadFileElements(reader, "HEADERS");
+                        ResourceFiles = ReadFileElements(reader, "RESOURCES");
+                        FormFiles = ReadFileElements(reader, "FORMS");
                     }
                 } finally {
                     if (stringReader != null)
@@ -90,37 +87,14 @@ namespace QtVsTools
             return true;
         }
 
-        public bool isFlat()
+        private static string ShellQuote(string filePath)
         {
-            return flat;
+            if (filePath.Contains(" "))
+                return '"' + filePath + '"';
+            return filePath;
         }
 
-        public string[] sourceFiles()
-        {
-            return sources;
-        }
-
-        public string[] headerFiles()
-        {
-            return headers;
-        }
-
-        public string[] resourceFiles()
-        {
-            return resources;
-        }
-
-        public string[] formFiles()
-        {
-            return forms;
-        }
-
-        private static bool stringToBool(string str)
-        {
-            return str == "true";
-        }
-
-        private static string[] readFileElements(XmlReader reader, string tag)
+        private static string[] ReadFileElements(XmlReader reader, string tag)
         {
             var fileNames = new List<string>();
             if (reader.ReadToFollowing(tag)) {
@@ -132,13 +106,6 @@ namespace QtVsTools
                 }
             }
             return fileNames.ToArray();
-        }
-
-        private static string shellQuote(string filePath)
-        {
-            return filePath.Contains(" ")
-                ? ('"' + filePath + '"')
-                : filePath;
         }
     }
 }

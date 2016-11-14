@@ -123,7 +123,7 @@ namespace QtProjectLib
         {
             if (qmakeConf == null)
                 qmakeConf = new QMakeConf(this);
-            return qmakeConf.Get(entryName);
+            return qmakeConf.Entries[entryName].ToString();
         }
 
         /// <summary>

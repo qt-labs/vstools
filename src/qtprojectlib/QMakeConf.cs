@@ -34,34 +34,12 @@ namespace QtProjectLib
 {
     public class QMakeConf
     {
-        protected Hashtable mEntries = new Hashtable();
-        private FileInfo fileInfo;
+        public Hashtable Entries { get; }
+        public string QMakeSpecDirectory { get; }
 
         public QMakeConf(VersionInformation versionInfo)
         {
-            Init(versionInfo);
-        }
-
-        public enum InitType { InitQtInstallPath, InitQMakeConf }
-
-        /// <param name="str">string for initialization</param>
-        /// <param name="itype">determines the use of str</param>
-        public QMakeConf(string str, InitType itype)
-        {
-            switch (itype) {
-            case InitType.InitQtInstallPath:
-                Init(new VersionInformation(str));
-                break;
-            case InitType.InitQMakeConf:
-                Init(str);
-                break;
-            }
-        }
-
-        public string QMakeSpecDirectory { get; private set; }
-
-        protected void Init(VersionInformation versionInfo)
-        {
+            Entries = new Hashtable();
             QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", "default");
             var qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
 
@@ -81,22 +59,13 @@ namespace QtProjectLib
                     throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
             }
 
-            Init(qmakeConf);
+            ParseFile(qmakeConf);
         }
 
-        protected void Init(string filename)
-        {
-            ParseFile(filename, ref mEntries);
-        }
 
-        public string Get(string key)
+        private void ParseFile(string filename)
         {
-            return (string) mEntries[key];
-        }
-
-        private void ParseFile(string filename, ref Hashtable entries)
-        {
-            fileInfo = new FileInfo(filename);
+            var fileInfo = new FileInfo(filename);
             if (fileInfo.Exists) {
                 var streamReader = new StreamReader(filename);
                 var line = streamReader.ReadLine();
@@ -112,15 +81,15 @@ namespace QtProjectLib
                             op = line[pos - 1] + "=";
 
                         var lineKey = line.Substring(0, pos - op.Length + 1).Trim();
-                        var lineValue = ExpandVariables(line.Substring(pos + 1).Trim(), entries);
+                        var lineValue = ExpandVariables(line.Substring(pos + 1).Trim());
 
                         if (op == "+=") {
-                            entries[lineKey] += " " + lineValue;
+                            Entries[lineKey] += " " + lineValue;
                         } else if (op == "-=") {
                             foreach (var remval in lineValue.Split(' ', '\t'))
-                                RemoveValue(lineKey, remval, entries);
+                                RemoveValue(lineKey, remval);
                         } else {
-                            entries[lineKey] = lineValue;
+                            Entries[lineKey] = lineValue;
                         }
                     } else if (line.StartsWith("include", StringComparison.Ordinal)) {
                         pos = line.IndexOf('(');
@@ -131,7 +100,7 @@ namespace QtProjectLib
                             Environment.CurrentDirectory = fileInfo.Directory.FullName;
                             var fileInfoToInclude = new FileInfo(filenameToInclude);
                             if (fileInfoToInclude.Exists)
-                                ParseFile(fileInfoToInclude.FullName, ref entries);
+                                ParseFile(fileInfoToInclude.FullName);
                             Environment.CurrentDirectory = saveCurrentDir;
                         }
                     }
@@ -139,18 +108,12 @@ namespace QtProjectLib
                 }
                 streamReader.Close();
 
-                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_CONSOLE", ref entries);
-                RemoveQmakeSubsystemSuffix("QMAKE_LFLAGS_WINDOWS", ref entries);
+                RemoveValue("QMAKE_LFLAGS_CONSOLE", "@QMAKE_SUBSYSTEM_SUFFIX@");
+                RemoveValue("QMAKE_LFLAGS_WINDOWS", "@QMAKE_SUBSYSTEM_SUFFIX@");
             }
         }
 
-        static void RemoveQmakeSubsystemSuffix(string key, ref Hashtable hash)
-        {
-            if (hash.Contains(key))
-                hash[key] = hash[key].ToString().Replace("@QMAKE_SUBSYSTEM_SUFFIX@", string.Empty);
-        }
-
-        private string ExpandVariables(string value, Hashtable entries)
+        private string ExpandVariables(string value)
         {
             var pos = value.IndexOf("$$", StringComparison.Ordinal);
             while (pos != -1) {
@@ -166,7 +129,7 @@ namespace QtProjectLib
                     }
                     if (endPos > startPos) {
                         var varName = value.Substring(startPos, endPos - startPos);
-                        var varValue = (entries[varName] ?? string.Empty).ToString();
+                        var varValue = (Entries[varName] ?? string.Empty).ToString();
                         value = value.Substring(0, pos) + varValue + value.Substring(endPos);
                         endPos = pos + varValue.Length;
                     }
@@ -177,19 +140,19 @@ namespace QtProjectLib
             return value;
         }
 
-        private void RemoveValue(string key, string valueToRemove, Hashtable entries)
+        private void RemoveValue(string key, string valueToRemove)
         {
             var pos = -1;
-            if (!entries.Contains(key))
+            if (!Entries.Contains(key))
                 return;
 
-            var value = entries[key].ToString();
+            var value = Entries[key].ToString();
             do {
                 pos = value.IndexOf(valueToRemove, StringComparison.Ordinal);
                 if (pos >= 0)
                     value = value.Remove(pos, valueToRemove.Length);
             } while (pos >= 0);
-            entries[key] = value;
+            Entries[key] = value;
         }
     }
 }
