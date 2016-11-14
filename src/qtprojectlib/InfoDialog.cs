@@ -26,6 +26,8 @@
 **
 ****************************************************************************/
 
+using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace QtProjectLib
@@ -59,8 +61,7 @@ namespace QtProjectLib
             //
             // Form1
             //
-            ClientSize = new System.Drawing.Size(394, 67);
-            MinimumSize = new System.Drawing.Size(402, 94);
+            ClientSize = new Size(402, 94);
             ControlBox = false;
             Controls.Add(progressBar1);
             Controls.Add(label1);
@@ -69,16 +70,28 @@ namespace QtProjectLib
             MinimizeBox = false;
             Name = "Form1";
             ShowInTaskbar = false;
-            Text = SR.GetString("Resources_QtVsTools");
             StartPosition = FormStartPosition.CenterParent;
 
             ResumeLayout(false);
             PerformLayout();
+
+            Shown += InfoDialog_Shown;
+        }
+
+        readonly Size _minimumSize = new Size(402, 94);
+        public sealed override Size MinimumSize
+        {
+            get { return _minimumSize; }
         }
 
         public void CloseEventHandler()
         {
             Close();
+        }
+
+        private void InfoDialog_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("Resources_QtVsTools");
         }
     }
 }

@@ -42,7 +42,6 @@ namespace QtVsTools
             InitializeComponent();
             versionManager = QtVersionManager.The();
 
-            Text = SR.GetString("VSQtOptionsButtonText");
             listView.Columns.Add(SR.GetString("BuildOptionsPage_Name"), 100,
                 HorizontalAlignment.Left);
             listView.Columns.Add(SR.GetString("BuildOptionsPage_Path"), 180,
@@ -76,6 +75,7 @@ namespace QtVsTools
 
         void FormQtVersions_Shown(object sender, EventArgs args)
         {
+            Text = SR.GetString("VSQtOptionsButtonText");
             string error = null;
             if (versionManager.HasInvalidVersions(out error))
                 Messages.DisplayErrorMessage(error);

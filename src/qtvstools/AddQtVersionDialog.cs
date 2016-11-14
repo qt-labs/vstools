@@ -60,7 +60,6 @@ namespace QtVsTools
             label2.Text = SR.GetString("AddQtVersionDialog_Path");
             okButton.Text = SR.GetString(SR.OK);
             cancelButton.Text = SR.GetString(SR.Cancel);
-            Text = SR.GetString("AddQtVersionDialog_Title");
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
 
@@ -69,6 +68,12 @@ namespace QtVsTools
             errorTimer.Interval = 3000;
 
             KeyPress += AddQtVersionDialog_KeyPress;
+            Shown += AddQtVersionDialog_Shown;
+        }
+
+        private void AddQtVersionDialog_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("AddQtVersionDialog_Title");
         }
 
         void errorTimer_Tick(object sender, EventArgs e)

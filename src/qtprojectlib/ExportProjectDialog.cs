@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -67,7 +68,6 @@ namespace QtProjectLib
             optionTextBox.Text = "";
             openCheckBox.Text = SR.GetString("ExportProjectDialog_Open");
             createPriFileCheckBox.Text = SR.GetString("ExportProjectDialog_CreatePri");
-            Text = SR.GetString("ExportProjectDialog_Title");
 
             if (SR.LanguageName == "de")
                 Size = new Size(470, 300);
@@ -75,9 +75,12 @@ namespace QtProjectLib
                 Size = new Size(400, 300);
 
             ShowInTaskbar = false;
-            //
-            // TODO: Add any constructor code after InitializeComponent call
-            //
+            Shown += ExportProjectDialog_Shown;
+        }
+
+        private void ExportProjectDialog_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("ExportProjectDialog_Title");
         }
 
         #region Windows Form Designer generated code

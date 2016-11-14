@@ -40,10 +40,15 @@ namespace QtVsTools
             InitializeComponent();
             btnOK.Text = SR.GetString("OK");
             btnCancel.Text = SR.GetString("Cancel");
-            Text = SR.GetString("SolutionQtVersion");
             lQtVersions.Text = SR.GetString("InstalledQtVersions");
             lbQtVersions.DoubleClick += lbQtVersions_DoubleClick;
             KeyPress += FormChangeQtVersion_KeyPress;
+            Shown += FormChangeQtVersion_Shown;
+        }
+
+        private void FormChangeQtVersion_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("SolutionQtVersion");
         }
 
         void lbQtVersions_DoubleClick(object sender, EventArgs e)

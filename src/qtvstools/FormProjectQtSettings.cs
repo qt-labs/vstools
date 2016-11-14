@@ -61,8 +61,8 @@ namespace QtVsTools
             InitializeComponent();
             okButton.Text = SR.GetString("OK");
             cancelButton.Text = SR.GetString("Cancel");
-            tabControl1.TabPages[0].Text = Text = SR.GetString("ActionDialog_Properties");
-            tabControl1.TabPages[1].Text = Text = SR.GetString("QtModules");
+            tabControl1.TabPages[0].Text = SR.GetString("ActionDialog_Properties");
+            tabControl1.TabPages[1].Text = SR.GetString("QtModules");
             activeQtCLib.Text = SR.GetString("ActiveQtContainerLibrary");
             activeQtSLib.Text = SR.GetString("ActiveQtServerLibrary");
             testLib.Text = SR.GetString("TestLibrary");
@@ -74,7 +74,6 @@ namespace QtVsTools
             guiLib.Text = SR.GetString("GUILibrary");
             multimediaLib.Text = SR.GetString("MultimediaLibrary");
             coreLib.Text = SR.GetString("CoreLibrary");
-            Text = SR.GetString("ProjectQtSettingsButtonText");
             scriptLib.Text = SR.GetString("ScriptLibrary");
             helpLib.Text = SR.GetString("HelpLibrary");
             webKitLib.Text = SR.GetString("WebKitLibrary");
@@ -150,6 +149,13 @@ namespace QtVsTools
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             KeyPress += FormProjectQtSettings_KeyPress;
+
+            Shown += FormProjectQtSettings_Shown;
+        }
+
+        private void FormProjectQtSettings_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("ProjectQtSettingsButtonText");
         }
 
         private void AddMapping(CheckBox checkbox, QtModule moduleId)

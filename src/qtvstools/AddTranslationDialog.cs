@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using System;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -57,10 +58,15 @@ namespace QtVsTools
             cancelButton.Text = SR.GetString(SR.Cancel);
             okButton.Text = SR.GetString(SR.OK);
             label1.Text = SR.GetString("AddTranslationDialog_FileName");
-            Text = SR.GetString("AddTranslationDialog_Title");
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             KeyPress += AddTranslationDialog_KeyPress;
+            Shown += AddTranslationDialog_Shown;
+        }
+
+        private void AddTranslationDialog_Shown(object sender, EventArgs e)
+        {
+            Text = SR.GetString("AddTranslationDialog_Title");
         }
 
         void AddTranslationDialog_KeyPress(object sender, KeyPressEventArgs e)

@@ -41,7 +41,11 @@ namespace QtProjectLib
         {
             img = image;
             dimg = dimage;
-            BackColor = SystemColors.Control;
+        }
+
+        public sealed override Color BackColor
+        {
+            get { return SystemColors.Control; }
         }
 
         protected override void OnPaint(PaintEventArgs pevent)
