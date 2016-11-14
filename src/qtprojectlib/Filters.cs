@@ -89,7 +89,6 @@ namespace QtProjectLib
                 UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}",
                 Name = SR.GetString("Resources_GeneratedFiles"),
                 Filter = "moc;h;cpp",
-                SCCFiles = false
             };
         }
 
@@ -100,7 +99,6 @@ namespace QtProjectLib
                 UniqueIdentifier = "{B67473BF-9FA1-4674-831E-CB28F72D4791}",
                 Name = SR.GetString("Resources_OtherFiles"),
                 Filter = "*",
-                SCCFiles = false
             };
         }
     }

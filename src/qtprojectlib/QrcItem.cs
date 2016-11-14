@@ -30,29 +30,7 @@ namespace QtProjectLib
 {
     public class QrcItem
     {
-        private string path;
-        private string alias;
-
-        public QrcItem()
-        {
-        }
-
-        public QrcItem(string p, string a)
-        {
-            path = p;
-            alias = a;
-        }
-
-        public string Path
-        {
-            get { return path; }
-            set { path = value; }
-        }
-
-        public string Alias
-        {
-            get { return alias; }
-            set { alias = value; }
-        }
+        public string Path { get; set; }
+        public string Alias { get; set; }
     }
 }

@@ -30,40 +30,15 @@ namespace QtProjectLib
 {
     public class FakeFilter
     {
-        private string uniqueIdentifier = string.Empty;
-        private string name = string.Empty;
-        private string filter = string.Empty;
+        public string Name { get; set; }
+        public string Filter { get; set; }
+        public string UniqueIdentifier { get; set; }
+
         private bool parseFiles = true;
-        private bool sccFiles = true;
-
-        public string UniqueIdentifier
-        {
-            get { return uniqueIdentifier; }
-            set { uniqueIdentifier = value; }
-        }
-
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
-        public string Filter
-        {
-            get { return filter; }
-            set { filter = value; }
-        }
-
         public bool ParseFiles
         {
             get { return parseFiles; }
             set { parseFiles = value; }
-        }
-
-        public bool SCCFiles
-        {
-            get { return sccFiles; }
-            set { sccFiles = value; }
         }
     }
 }

@@ -32,35 +32,18 @@ namespace QtProjectLib
 {
     public class QrcPrefix
     {
-        private string prefix;
-        private string lang;
-        private readonly List<QrcItem> items;
-
-        public List<QrcItem> Items
-        {
-            get { return items; }
-        }
+        public List<QrcItem> Items { get; }
+        public string Prefix { get; set; }
+        public string Language { get; set; }
 
         public QrcPrefix()
         {
-            items = new List<QrcItem>();
+            Items = new List<QrcItem>();
         }
 
-        public string Prefix
+        public void AddQrcItem(QrcItem item)
         {
-            get { return prefix; }
-            set { prefix = value; }
-        }
-
-        public string Language
-        {
-            get { return lang; }
-            set { lang = value; }
-        }
-
-        public void AddQrcItem(QrcItem i)
-        {
-            items.Add(i);
+            Items.Add(item);
         }
     }
 }
