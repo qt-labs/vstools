@@ -245,7 +245,7 @@ namespace QtVsTools
                 switch (links.Values.Count) {
                 case 0:
                     if (!offline) {
-                        uri = new UriBuilder("http://doc.qt.io/qt-5/search-results.html")
+                        uri = new UriBuilder("https://doc.qt.io/qt-5/search-results.html")
                         {
                             Query = "q=" + keyword
                         }.ToString();
@@ -273,7 +273,17 @@ namespace QtVsTools
                         string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
                         OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 } else {
-                    VsShellUtilities.OpenSystemBrowser(HelperFunctions.ChangePathFormat(uri));
+                    if (uri.StartsWith("file:///", StringComparison.Ordinal)
+                        && !File.Exists(uri.Substring("file:///".Length))) {
+                        VsShellUtilities.ShowMessageBox(Instance.ServiceProvider,
+                            "Your search - " + keyword + " - did match a document, but it could "
+                            + "not be found on disk. To use the online help, select: "
+                            + "Help | Set Qt Help Preference | Use Online Documentation",
+                            string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                            OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                    } else {
+                        VsShellUtilities.OpenSystemBrowser(HelperFunctions.ChangePathFormat(uri));
+                    }
                 }
             } catch { }
         }
