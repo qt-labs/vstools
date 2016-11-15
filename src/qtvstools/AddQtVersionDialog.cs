@@ -52,16 +52,15 @@ namespace QtVsTools
         {
             InitializeComponent();
 
-            nameBox.TabIndex = 0;
-            pathBox.TabIndex = 1;
-            browseButton.TabIndex = 2;
-
             label1.Text = SR.GetString("AddQtVersionDialog_VersionName");
             label2.Text = SR.GetString("AddQtVersionDialog_Path");
             okButton.Text = SR.GetString(SR.OK);
             cancelButton.Text = SR.GetString(SR.Cancel);
 
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            okButton.Click += okButton_Click;
+            nameBox.TextChanged += DataChanged;
+            pathBox.TextChanged += DataChanged;
+            browseButton.Click += browseButton_Click;
 
             errorTimer = new Timer();
             errorTimer.Tick += errorTimer_Tick;
@@ -113,7 +112,7 @@ namespace QtVsTools
             label1.Location = new System.Drawing.Point(8, 16);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(88, 24);
-            label1.TabIndex = 0;
+            label1.TabIndex = 6;
             label1.Text = "Version name:";
             //
             // label2
@@ -123,19 +122,18 @@ namespace QtVsTools
             label2.Location = new System.Drawing.Point(8, 48);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(88, 23);
-            label2.TabIndex = 1;
+            label2.TabIndex = 5;
             label2.Text = "Path:";
             //
             // okButton
             //
             okButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             okButton.Enabled = false;
-            okButton.Location = new System.Drawing.Point(144, 104);
+            okButton.Location = new System.Drawing.Point(143, 104);
             okButton.Name = "okButton";
             okButton.Size = new System.Drawing.Size(75, 23);
-            okButton.TabIndex = 2;
+            okButton.TabIndex = 3;
             okButton.Text = "&OK";
-            okButton.Click += okButton_Click;
             //
             // cancelButton
             //
@@ -144,7 +142,7 @@ namespace QtVsTools
             cancelButton.Location = new System.Drawing.Point(224, 104);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(75, 23);
-            cancelButton.TabIndex = 3;
+            cancelButton.TabIndex = 4;
             cancelButton.Text = "&Cancel";
             //
             // nameBox
@@ -153,8 +151,7 @@ namespace QtVsTools
             nameBox.Location = new System.Drawing.Point(96, 16);
             nameBox.Name = "nameBox";
             nameBox.Size = new System.Drawing.Size(200, 20);
-            nameBox.TabIndex = 4;
-            nameBox.TextChanged += DataChanged;
+            nameBox.TabIndex = 0;
             //
             // pathBox
             //
@@ -162,8 +159,7 @@ namespace QtVsTools
             pathBox.Location = new System.Drawing.Point(96, 48);
             pathBox.Name = "pathBox";
             pathBox.Size = new System.Drawing.Size(176, 20);
-            pathBox.TabIndex = 5;
-            pathBox.TextChanged += DataChanged;
+            pathBox.TabIndex = 1;
             //
             // browseButton
             //
@@ -171,9 +167,8 @@ namespace QtVsTools
             browseButton.Location = new System.Drawing.Point(272, 48);
             browseButton.Name = "browseButton";
             browseButton.Size = new System.Drawing.Size(24, 20);
-            browseButton.TabIndex = 6;
+            browseButton.TabIndex = 2;
             browseButton.Text = "...";
-            browseButton.Click += browseButton_Click;
             //
             // errorLabel
             //
@@ -182,7 +177,7 @@ namespace QtVsTools
             errorLabel.Location = new System.Drawing.Point(8, 71);
             errorLabel.Name = "errorLabel";
             errorLabel.Size = new System.Drawing.Size(0, 13);
-            errorLabel.TabIndex = 7;
+            errorLabel.TabIndex = 0;
             //
             // AddQtVersionDialog
             //
@@ -198,6 +193,7 @@ namespace QtVsTools
             Controls.Add(okButton);
             Controls.Add(label2);
             Controls.Add(label1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             KeyPreview = true;
             Name = "AddQtVersionDialog";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
