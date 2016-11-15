@@ -30,6 +30,7 @@ using Microsoft.Win32;
 using QtProjectLib;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -44,9 +45,7 @@ namespace QtVsTools
         private TextBox pathBox;
         private Button browseButton;
         private bool nameBoxDirty;
-        private Timer errorTimer;
         private Label errorLabel;
-        private string lastErrorString = string.Empty;
 
         public AddQtVersionDialog()
         {
@@ -62,12 +61,8 @@ namespace QtVsTools
             pathBox.TextChanged += DataChanged;
             browseButton.Click += browseButton_Click;
 
-            errorTimer = new Timer();
-            errorTimer.Tick += errorTimer_Tick;
-            errorTimer.Interval = 3000;
-
-            KeyPress += AddQtVersionDialog_KeyPress;
             Shown += AddQtVersionDialog_Shown;
+            KeyPress += AddQtVersionDialog_KeyPress;
         }
 
         private void AddQtVersionDialog_Shown(object sender, EventArgs e)
@@ -75,17 +70,12 @@ namespace QtVsTools
             Text = SR.GetString("AddQtVersionDialog_Title");
         }
 
-        void errorTimer_Tick(object sender, EventArgs e)
-        {
-            errorLabel.Text = lastErrorString;
-        }
-
         void AddQtVersionDialog_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == 27) {
-                DialogResult = DialogResult.Cancel;
-                Close();
-            }
+            if (e.KeyChar != (char) Keys.Escape)
+                return;
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         #region Windows Form Designer generated code
@@ -206,52 +196,31 @@ namespace QtVsTools
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            var vm = QtVersionManager.The();
-            VersionInformation versionInfo = null;
             try {
-                versionInfo = new VersionInformation(pathBox.Text);
+                var versionInfo = new VersionInformation(pathBox.Text);
+                var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                if (generator != "MSVC.NET" && generator != "MSBUILD")
+                    throw new Exception(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", generator));
+                QtVersionManager.The().SaveVersion(nameBox.Text, pathBox.Text);
+                DialogResult = DialogResult.OK;
+                Close();
             } catch (Exception exception) {
-                if (nameBox.Text == "$(QTDIR)") {
-                    var defaultVersion = vm.GetDefaultVersion();
-                    versionInfo = vm.GetVersionInfo(defaultVersion);
-                } else {
-                    Messages.DisplayErrorMessage(exception.Message);
-                    return;
-                }
+                Messages.DisplayErrorMessage(exception.Message);
             }
-
-            var makefileGenerator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-            if (makefileGenerator != "MSVC.NET" && makefileGenerator != "MSBUILD") {
-                MessageBox.Show(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator",
-                    makefileGenerator), null, MessageBoxButtons.OK, MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1);
-                return;
-            }
-            vm.SaveVersion(nameBox.Text, pathBox.Text);
-            DialogResult = DialogResult.OK;
-            Close();
         }
 
         private void DataChanged(object sender, EventArgs e)
         {
-            errorLabel.Text = string.Empty;
-            errorTimer.Stop();
-            errorTimer.Start();
-            var name = nameBox.Text.Trim();
-            var path = pathBox.Text;
-
             if (sender == nameBox)
                 nameBoxDirty = true;
 
-            if (!nameBoxDirty) {
-                string str;
-                if (path.EndsWith("\\", StringComparison.Ordinal))
-                    str = path.Substring(0, path.Length - 1);
-                else
-                    str = path;
+            var path = pathBox.Text;
+            var name = nameBox.Text.Trim();
 
-                var pos = str.LastIndexOf('\\');
-                name = str.Substring(pos + 1);
+            if (!nameBoxDirty) {
+                var str = path.TrimEnd('\\');
+                name = str.Substring(str.LastIndexOf('\\') + 1);
+
                 nameBox.TextChanged -= DataChanged;
                 nameBox.Text = name;
                 nameBox.TextChanged += DataChanged;
@@ -260,53 +229,30 @@ namespace QtVsTools
             pathBox.Enabled = name != "$(QTDIR)";
             browseButton.Enabled = pathBox.Enabled;
 
-            if (name.Length < 1 || (name != "$(QTDIR)" && path.Length < 1)) {
-                okButton.Enabled = false;
-                return;
+            if (name == "$(QTDIR)") {
+                path = Environment.GetEnvironmentVariable("QTDIR");
+                pathBox.TextChanged -= DataChanged;
+                pathBox.Text = path;
+                pathBox.TextChanged += DataChanged;
             }
 
-            if (name != "$(QTDIR)") {
-                try {
-                    var di = new DirectoryInfo(pathBox.Text);
-                    if (!di.Exists) {
-                        lastErrorString = string.Empty;
-                        okButton.Enabled = false;
-                        return;
-                    }
-                } catch {
-                    lastErrorString = SR.GetString("AddQtVersionDialog_InvalidDirectory");
-                    okButton.Enabled = false;
-                    return;
-                }
-
-                var fi = new FileInfo(pathBox.Text + "\\lib\\libqtmain.a");
-                if (!fi.Exists)
-                    fi = new FileInfo(pathBox.Text + "\\lib\\libqtmaind.a");
-                if (fi.Exists) {
-                    lastErrorString = SR.GetString("AddQtVersionDialog_MingwQt");
-                    okButton.Enabled = false;
-                    return;
-                }
-
-                fi = new FileInfo(pathBox.Text + "\\bin\\qmake.exe");
-                if (!fi.Exists) {
-                    lastErrorString = SR.GetString("AddQtVersionDialog_NotFound", fi.FullName);
-                    okButton.Enabled = false;
-                    return;
-                }
+            errorLabel.Text = string.Empty;
+            if (string.IsNullOrWhiteSpace(name)) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
+            } else if (string.IsNullOrWhiteSpace(path) && name == "$(QTDIR)") {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_RestartVisualStudio");
+            } else if (!Directory.Exists(path)) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidDirectory");
+            } else if (File.Exists(Path.Combine(path, "lib", "libqtmain.a"))
+                || File.Exists(Path.Combine(path, "lib", "libqtmaind.a"))) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_MingwQt");
+            } else if (!File.Exists(Path.Combine(path, "bin", "qmake.exe"))) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_NotFound",
+                    Path.Combine(path, "bin", "qmake.exe"));
+            } else if (QtVersionManager.The().GetVersions().Any(s => name == s)) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_VersionAlreadyPresent");
             }
-
-            var found = false;
-            foreach (var s in QtVersionManager.The().GetVersions()) {
-                if (nameBox.Text == s) {
-                    lastErrorString = SR.GetString("AddQtVersionDialog_VersionAlreadyPresent");
-                    found = true;
-                    break;
-                }
-            }
-            okButton.Enabled = !found;
-            if (!found)
-                lastErrorString = string.Empty;
+            okButton.Enabled = string.IsNullOrEmpty(errorLabel.Text);
         }
 
         private void browseButton_Click(object sender, EventArgs e)

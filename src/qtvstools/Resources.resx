@@ -138,8 +138,14 @@
   <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
     <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
   </data>
+  <data name="AddQtVersionDialog_InvalidName" xml:space="preserve">
+    <value>The given name cannot be empty.</value>
+  </data>
+  <data name="AddQtVersionDialog_RestartVisualStudio" xml:space="preserve">
+    <value>You might need to restart Visual Studio to use $(QTDIR).</value>
+  </data>
   <data name="AddQtVersionDialog_InvalidDirectory" xml:space="preserve">
-    <value>The given path is not a valid directory.</value>
+    <value>The given path is not a valid directory or does not exist.</value>
   </data>
   <data name="AddQtVersionDialog_MingwQt" xml:space="preserve">
     <value>Qt in the given path was built using MinGW.</value>
