@@ -59,27 +59,31 @@ https://wiki.qt.io/Building_Qt_Documentation
 Product name or Publisher name update
 -------------------------------------
 
-Open the file 'source.extension.vsixmanifest' inside the 'src\qtvstools' directory and update the
-'DisplayName' tag's value or the 'Identity' tag's 'Publisher' attribute.
+Open the file 'source.extension.vsixmanifest' inside the 'src\config\$(VisualStudioVersion)'
+directory and update the 'DisplayName' tag's value or the 'Identity' tag's 'Publisher' attribute.
 Important: Updating the information requires also updating the MsBuild 'AfterTargets' information
-at the bottom of the 'QtVsTools.csproj' file in the same directory.
+inside the 'qtvstools.afterbuild.targets' file in the 'src\config' directory.
 
 
 
 Version number update
 ---------------------
 
-Open the file 'source.extension.vsixmanifest' inside the 'src\qtvstools' directory and update the
-'Identity' tag's 'Version' attribute.
+Open the file 'source.extension.vsixmanifest' inside the 'src\config\$(VisualStudioVersion)'
+directory and update the 'Identity' tag's 'Version' attribute.
 Important: Updating the version number there requires also updating the 'VsixVersion' tag at the
-top of the 'QtVsTools.csproj' file in the same directory.
+top of the 'qtvstools.targets' file in the same directory.
 
 
 
 Support for newer Visual Studio Versions
 ----------------------------------------
 
-Add a new file in 'src' named 'VS{NewVersion}.References.targets' by copying one of the existing.
+Add a new directory in 'src\config' matching '$(VisualStudioVersion)' by copying one of the existing
+directories.
+
+Minimum changes to the 'qtvstools.targets' file:
+
 Update the 'Project' tag's 'ToolsVersion' attribute to match the new VS tools version.
 Update the 'DefineConstants' tag's value to match the new VS version.
 Update the 'ItemGroup' tag's 'Condition' attribute to match the new VS version.
@@ -89,9 +93,6 @@ Update the 'Reference' tag's 'Include' attribute to match the new VS version, mo
     - Microsoft.VisualStudio.VCCodeModel
     - Microsoft.VisualStudio.VCProjectEngine
 
-Update the file 'QtVsTools.csproj' inside the 'src\qtvstools' directory to include the newly created
-'VS{NewVersion}.References.targets' file. Search for something along the following line:
+Minimum changes to the 'source.extension.vsixmanifest' file:
 
-<Import Project="..\VS2013.References.targets" Condition=" '$(VisualStudioVersion)' == '12.0' " />
-
-and add a new line using the Visual Studio version and 'VS{NewVersion}.References.targets' file.
+Update the 'Identity' tag's 'Id' attribute with a new GUID.

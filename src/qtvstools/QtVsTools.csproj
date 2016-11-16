@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <VsixVersion Condition="'$(VsixVersion)' == ''">2.0.0</VsixVersion>
     <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <UseCodebase>true</UseCodebase>
@@ -125,8 +124,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="packages.config" />
-    <None Include="source.extension.vsixmanifest">
-    </None>
+    <None Include="..\config\$(VisualStudioVersion)\source.extension.vsixmanifest" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\x64\SQLite.Interop.dll">
@@ -295,31 +293,9 @@
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\VS2013.References.targets" Condition=" '$(VisualStudioVersion)' == '12.0' " />
-  <Import Project="..\VS2015.References.targets" Condition=" '$(VisualStudioVersion)' == '14.0' " />
+  <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets"/>
+  <Import Project="..\config\qtvstools.afterbuild.targets"/>
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <Target Name="AfterBuild">
-    <PropertyGroup>
-      <QrcEditor>$(SolutionDir)\qrceditor\bin\QrcEditor.exe</QrcEditor>
-      <QtArchiveGen>$(SolutionDir)\qtarchivegen\$(OutDir)\QtArchiveGen.exe</QtArchiveGen>
-      <QMakeFileReader>$(SolutionDir)\qmakefilereader\bin\QMakeFileReader.exe</QMakeFileReader>
-      <DestFolder>$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\$(VsixVersion)\</DestFolder>
-    </PropertyGroup>
-    <Message Text="Running post build target for $(ProjectName)." Importance="high" />
-    <Message Text="Set $(ProjectName) installation target to [$(VisualStudioVersion)]." Importance="high" />
-    <Exec Command="$(QtArchiveGen) target=$(TargetDir)\$(TargetName).vsix version=[$(VisualStudioVersion)]" />
-    <Message Text="Copy '$(QrcEditor)' to '$(DestFolder)'." Importance="high" />
-    <Copy SourceFiles="$(QrcEditor)" DestinationFolder="$(DestFolder)" OverwriteReadOnlyFiles="true"
-          SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
-    <Message Text="Copy '$(QMakeFileReader)' to '$(DestFolder)'." Importance="high" />
-    <Copy SourceFiles="$(QMakeFileReader)" DestinationFolder="$(DestFolder)" OverwriteReadOnlyFiles="true"
-          SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
-    <Message Text="Copy '$(QrcEditor)' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
-    <Exec Command="$(QtArchiveGen) source=$(QrcEditor) target=$(TargetDir)\$(TargetName).vsix" />
-    <Message Text="Copy '$(QMakeFileReader)' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
-    <Exec Command="$(QtArchiveGen) source=$(QMakeFileReader) target=$(TargetDir)\$(TargetName).vsix" />
-    <Message Text="Completed post build target for $(ProjectName)." Importance="high" />
-  </Target>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
