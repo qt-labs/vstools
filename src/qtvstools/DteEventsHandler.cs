@@ -497,20 +497,24 @@ namespace QtVsTools
                     foreach (VCFile file in filter.Files as IVCCollection) {
                         foreach (VCFileConfiguration config in file.FileConfigurations as IVCCollection) {
                             var tool = HelperFunctions.GetCustomBuildTool(config);
-                            if (tool != null && tool.CommandLine != null && tool.CommandLine.Contains("moc.exe")) {
-                                var reg = new Regex("[^ ^\n]+moc\\.exe");
-                                var matches = reg.Matches(tool.CommandLine);
-                                string qtDir = null;
+                            if (tool == null)
+                                continue;
+
+                            var commandLine = tool.CommandLine;
+                            if (!string.IsNullOrEmpty(commandLine) && commandLine.Contains("moc.exe")) {
+                                var matches = Regex.Matches(commandLine, "[^ ^\n]+moc\\.(exe\"|exe)");
+                                string qtDir;
                                 if (matches.Count != 1) {
                                     var vm = QtVersionManager.The();
                                     qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
                                 } else {
-                                    qtDir = matches[0].ToString();
+                                    qtDir = matches[0].ToString().Trim('"');
                                     qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
                                     qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
                                 }
                                 qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
-                                HelperFunctions.SetDebuggingEnvironment(project, "PATH=" + qtDir + "\\bin;$(PATH)", false);
+                                HelperFunctions.SetDebuggingEnvironment(project, "PATH="
+                                    + Path.Combine(qtDir, "bin") + ";$(PATH)", false);
                             }
                         }
                     }

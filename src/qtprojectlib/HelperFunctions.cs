@@ -171,12 +171,27 @@ namespace QtProjectLib
             var vcprj = prj.Object as VCProject;
             foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection) {
                 // Set environment only for active (or given) platform
-                var cur_platform = conf.Platform as VCPlatform;
-                if (cur_platform.Name != activePlatformName)
+                var currentPlatform = conf.Platform as VCPlatform;
+                if (currentPlatform == null || currentPlatform.Name != activePlatformName)
                     continue;
 
                 var de = conf.DebugSettings as VCDebugSettings;
-                var withoutPath = envpath.Remove(envpath.LastIndexOf(";$(PATH)", StringComparison.Ordinal));
+                if (de == null)
+                    continue;
+
+                // See: https://connect.microsoft.com/VisualStudio/feedback/details/619702
+                // Project | Properties | Configuration Properties | Debugging | Environment
+                //
+                // Issue: Substitution of ";" to "%3b"
+                // Answer: This behavior currently is by design as ';' is a special MSBuild
+                // character and needs to be escaped. In the Project Properties we show this
+                // escaped value, but it should be the original when we use it.
+                envpath = envpath.Replace("%3b", ";");
+                de.Environment = de.Environment.Replace("%3b", ";");
+
+                var index = envpath.LastIndexOf(";$(PATH)", StringComparison.Ordinal);
+                var withoutPath = (index >= 0 ? envpath.Remove(index) : envpath);
+
                 if (overwrite || string.IsNullOrEmpty(de.Environment))
                     de.Environment = envpath;
                 else if (!de.Environment.Contains(envpath) && !de.Environment.Contains(withoutPath)) {
