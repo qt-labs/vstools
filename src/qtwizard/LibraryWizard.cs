@@ -45,11 +45,6 @@ namespace QtProjectWizard
     {
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
-            if (projectItem.FileCount >= 1) {
-                var qtProject = QtProject.Create(projectItem.ContainingProject);
-                for (short i = 0; i < projectItem.FileCount; ++i)
-                    qtProject.AdjustWhitespace(projectItem.FileNames[i]);
-            }
         }
 
         public void ProjectFinishedGenerating(Project project)
@@ -91,6 +86,9 @@ namespace QtProjectWizard
                 qtProject.AddFileToProject(@"stdafx.cpp", Filters.SourceFiles());
                 qtProject.AddFileToProject(@"stdafx.h", Filters.HeaderFiles());
             }
+
+            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
+                qtProject.AdjustWhitespace(file.FullPath);
 
             qtProject.AddDefine(projectDefine, BuildConfig.Both);
             if (data.CreateStaticLibrary)

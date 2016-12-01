@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
+using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using System.Collections.Generic;
 using System.IO;
@@ -141,6 +142,9 @@ namespace QtProjectWizard
             var type = TemplateType.Application | TemplateType.ConsoleSystem;
             qtProject.WriteProjectBasicConfigurations(type, false);
 
+            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
+                qtProject.AdjustWhitespace(file.FullPath);
+
             qtProject.AddModule(QtModule.Main);
             foreach (var module in data.Modules)
                 qtProject.AddModule(QtModules.Instance.ModuleIdByName(module));
@@ -154,11 +158,6 @@ namespace QtProjectWizard
 
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
-            if (projectItem.FileCount >= 1) {
-                var qtProject = QtProject.Create(projectItem.ContainingProject);
-                for (short i = 0; i < projectItem.FileCount; ++i)
-                    qtProject.AdjustWhitespace(projectItem.FileNames[i]);
-            }
         }
 
         public void RunFinished()

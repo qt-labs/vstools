@@ -252,6 +252,9 @@ namespace QtProjectWizard
                 } catch { }
             }
 
+            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
+                qtProject.AdjustWhitespace(file.FullPath);
+
             qtProject.SetQtEnvironment(qtVersion);
             qtProject.Finish(); // Collapses all project nodes.
         }
@@ -262,11 +265,6 @@ namespace QtProjectWizard
 
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
-            if (projectItem.FileCount >= 1) {
-                var qtProject = QtProject.Create(projectItem.ContainingProject);
-                for (short i = 0; i < projectItem.FileCount; ++i)
-                    qtProject.AdjustWhitespace(projectItem.FileNames[i]);
-            }
         }
 
         public void RunFinished()
