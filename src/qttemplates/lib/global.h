@@ -2,7 +2,7 @@
 
 #include <QtCore/qglobal.h>
 
-#ifndef QT_STATIC
+#ifndef BUILD_STATIC
 # if defined($pro_lib_define$)
 #  define $pro_lib_export$ Q_DECL_EXPORT
 # else

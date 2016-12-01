@@ -93,6 +93,9 @@ namespace QtProjectWizard
             }
 
             qtProject.AddDefine(projectDefine, BuildConfig.Both);
+            if (data.CreateStaticLibrary)
+                qtProject.AddDefine("BUILD_STATIC", BuildConfig.Both);
+
             qtProject.SetQtEnvironment(qtVersion);
             qtProject.Finish(); // Collapses all project nodes.
         }

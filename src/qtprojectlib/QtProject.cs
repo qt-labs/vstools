@@ -318,6 +318,13 @@ namespace QtProjectLib
                             linkerWrapper.AdditionalDependencies = additionalDependencies;
                     }
 
+                    if (newVersion.qtMajor >= 5) {
+                        var compiler = CompilerToolWrapper.Create(config);
+                        if (compiler != null)
+                            compiler.RemovePreprocessorDefinition("QT_DLL");
+                        continue;
+                    }
+
                     if (oldVersion == null || newVersion.IsStaticBuild() != oldVersion.IsStaticBuild()) {
                         var compiler = CompilerToolWrapper.Create(config);
                         if (newVersion.IsStaticBuild()) {
