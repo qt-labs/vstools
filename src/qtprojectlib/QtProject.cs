@@ -836,7 +836,6 @@ namespace QtProjectLib
                     var mocSupportsIncludes = (versionInfo.qtMajor == 4 && versionInfo.qtMinor >= 2)
                         || versionInfo.qtMajor >= 5;
 
-                    var strDefinesIncludes = string.Empty;
                     VCFile cppPropertyFile;
                     if (!mocableIsCPP)
                         cppPropertyFile = GetCppFileForMocStep(file);
@@ -848,9 +847,11 @@ namespace QtProjectLib
                     else
                         // No file specific defines/includes but at least the project defines/includes are added
                         defineIncludeConfig = config;
-                    strDefinesIncludes += GetDefines(defineIncludeConfig);
-                    strDefinesIncludes += GetIncludes(defineIncludeConfig);
+                    var defines = GetDefines(defineIncludeConfig);
+                    var includes = GetIncludes(defineIncludeConfig);
+                    var strDefinesIncludes = defines + includes;
                     var cmdLineLength = newCmdLine.Length + strDefinesIncludes.Length + 1;
+
                     if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength() && mocSupportsIncludes) {
                         // Command line is too long. We must use an options file.
                         var mocIncludeCommands = string.Empty;
@@ -858,9 +859,24 @@ namespace QtProjectLib
                         var redirectOp = " > ";
                         var maxCmdLineLength = HelperFunctions.GetMaximumCommandLineLength() - (mocIncludeFile.Length + 1);
 
-                        var options = strDefinesIncludes.Split(' ');
+                        var options = defines.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var matches = Regex.Matches(includes, "([\"])(?:(?=(\\\\?))\\2.)*?\\1");
+                        foreach (Match match in matches) {
+                            options.Add(match.Value);
+                            includes = includes.Replace(match.Value, string.Empty, StringComparison.Ordinal);
+                        }
+                        options.AddRange(includes.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 
-                        var i = options.Length - 1;
+                        // Since 5.2.0, MOC uses QCommandLineParser and parses the content of
+                        // the moc_*.inc file differently. For example, "-I.\foo\bar" results
+                        // in an error message, because the parser thinks it got an additional
+                        // positional argument. Change the option into a format MOC understands.
+                        if (versionInfo.qtMajor == 5 && versionInfo.qtMinor >= 2) {
+                            for (var o = 0; o < options.Count; ++o)
+                                options[o] = Regex.Replace(options[o], "\"(-I|-D)", "$1=\"");
+                        }
+
+                        var i = options.Count - 1;
                         for (; i >= 0; --i) {
                             if (options[i].Length == 0)
                                 continue;
@@ -868,7 +884,7 @@ namespace QtProjectLib
                             cmdLineLength -= options[i].Length + 1;
                             if (cmdLineLength < maxCmdLineLength)
                                 break;
-                            if (i == options.Length - 1)    // first loop
+                            if (i == options.Count - 1)    // first loop
                                 redirectOp = " >> ";
                         }
                         strDefinesIncludes = "@" + mocIncludeFile;
