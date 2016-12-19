@@ -38,7 +38,7 @@ namespace QtVsTools
     /// This class causes a classifier to be added to the set of classifiers.
     /// </summary>
     [Export(typeof(IClassifierProvider))]
-    [ContentType(ContentTypeDefinition.ContentType)]
+    [ContentType(QmlContentTypeDefinition.ContentType)]
     internal class ClassifierProvider : IClassifierProvider
     {
         [Import(typeof(SVsServiceProvider))]

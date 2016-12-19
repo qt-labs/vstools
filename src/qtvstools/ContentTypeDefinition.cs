@@ -31,7 +31,7 @@ using System.ComponentModel.Composition;
 
 namespace QtVsTools
 {
-    public sealed class ContentTypeDefinition
+    public sealed class QmlContentTypeDefinition
     {
         public const string ContentType = "Qml";
 
@@ -39,7 +39,7 @@ namespace QtVsTools
         /// Exports the Qml content type
         /// </summary>
         [Export(typeof(ContentTypeDefinition))]
-        [Name(ContentTypeDefinition.ContentType)]
+        [Name(ContentType)]
         [BaseDefinition("code")]
         public ContentTypeDefinition QmlContentType { get; set; }
 
@@ -47,8 +47,16 @@ namespace QtVsTools
         /// Exports the Qml file extension
         /// </summary>
         [Export(typeof(FileExtensionToContentTypeDefinition))]
-        [ContentType(ContentTypeDefinition.ContentType)]
+        [ContentType(ContentType)]
         [FileExtension(".qml")]
         public FileExtensionToContentTypeDefinition QmlFileExtension { get; set; }
+
+        /// <summary>
+        /// Exports the Qml project file extension
+        /// </summary>
+        [Export(typeof(FileExtensionToContentTypeDefinition))]
+        [ContentType(ContentType)]
+        [FileExtension(".qmlproject")]
+        public FileExtensionToContentTypeDefinition QmlProjectFileExtension { get; set; }
     }
 }
