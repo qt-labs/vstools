@@ -32,9 +32,9 @@ namespace QtProjectLib
 {
     public class QrcPrefix
     {
-        public List<QrcItem> Items { get; }
         public string Prefix { get; set; }
         public string Language { get; set; }
+        public List<QrcItem> Items { get; private set; }
 
         public QrcPrefix()
         {

@@ -34,8 +34,8 @@ namespace QtProjectLib
 {
     public class QMakeConf
     {
-        public Hashtable Entries { get; }
-        public string QMakeSpecDirectory { get; }
+        public Hashtable Entries { get; private set; }
+        public string QMakeSpecDirectory { get; private set; }
 
         public QMakeConf(VersionInformation versionInfo)
         {
