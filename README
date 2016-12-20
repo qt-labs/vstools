@@ -96,3 +96,23 @@ Update the 'Reference' tag's 'Include' attribute to match the new VS version, mo
 Minimum changes to the 'source.extension.vsixmanifest' file:
 
 Update the 'Identity' tag's 'Id' attribute with a new GUID.
+
+
+
+How to locally test the Qt Visual Studio Tools update
+-----------------------------------------------------
+
+Inside the src\config directory, edit the qt.io.xml file and modify the following tags:
+
+    <updated>2016-11-11T10:51:55Z</updated>   Use the current date and time, keep the 'T' and 'Z'
+    <id>{ Product ID }</id>                   Set to the Product ID that can be found in the 'source.extension.vsixmanifest' file,
+                                              for example: <id>QtVsTools.30112013-cd02-4fd0-89bd-e36f85abe16a</id>
+    <Version>{ Version }</Version>            Set to the Version that can be found in the 'source.extension.vsixmanifest' file,
+                                              for example: <Version>2.0.0</Version>
+
+Copy the XML file and the VSIX package inside a new folder side by side and open the
+'Tools | Options | Extensions and Updates' settings dialog in Visual Studio. Add a new entry in the
+Additional Extension Gallery, like this:
+
+    Name: qt.io
+    Url: file://path/to/your/atom.xml

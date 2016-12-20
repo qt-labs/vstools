@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="text">qt.io</title>
+    <id>17092002-5A17-4B0A-8A82-C92C344F1127</id>
+    <updated>2016-11-11T10:51:55Z</updated>
+    <entry>
+        <id>{ Product ID }</id>
+        <title type="text">Qt Visual Studio Tools</title>
+        <summary type="text">The Qt Visual Studio Tools allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</summary>
+        <published>2016-11-11T10:51:55Z</published>
+        <updated>2016-11-11T10:51:55Z</updated>
+        <author>
+            <name>The Qt Company Ltd.</name>
+        </author>
+        <category term="Tools" />
+        <content type="application/octet-stream"
+                 src="QtVsTools.vsix" />
+        <Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns="http://schemas.microsoft.com/developer/vsx-syndication-schema/2010">
+            <id>{ Product ID }</id>
+            <Version>{ Version }</Version>
+        </Vsix>
+    </entry>
+</feed>
