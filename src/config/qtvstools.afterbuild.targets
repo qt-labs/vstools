@@ -9,6 +9,7 @@
       <DestFolder>$(LOCALAPPDATA)\Microsoft\VisualStudio\$(VisualStudioVersion)Exp\Extensions\The Qt Company Ltd\Qt Visual Studio Tools\$(VsixVersion)\</DestFolder>
     </PropertyGroup>
     <Message Text="Running post build target for $(ProjectName)." Importance="high" />
+
     <Message Text="Set $(ProjectName) installation target to [$(VisualStudioVersion)]." Importance="high" />
     <Exec Command="$(QtArchiveGen) target=$(TargetDir)\$(TargetName).vsix version=[$(VisualStudioVersion)]" />
     <Message Text="Copy '$(QrcEditor)' to '$(DestFolder)'." Importance="high" />
@@ -19,6 +20,13 @@
     <Exec Command="$(QtArchiveGen) source=$(QrcEditor) target=$(TargetDir)\$(TargetName).vsix" />
     <Message Text="Copy '$(QMakeFileReader)' into '$(TargetDir)\$(TargetName).vsix'." Importance="high" />
     <Exec Command="$(QtArchiveGen) source=$(QMakeFileReader) target=$(TargetDir)\$(TargetName).vsix" />
+
+    <ItemGroup>
+      <QtTmLanguage Include="$(SolutionDir)\qttmlanguage\**\*.*" />
+    </ItemGroup>
+    <Message Text="Copy '@(QtTmLanguage)' to '$(DestFolder)\qttmlanguage'." Importance="high" />
+    <Copy SourceFiles="@(QtTmLanguage)" DestinationFiles="@(QtTmLanguage->'$(DestFolder)\qttmlanguage\%(RecursiveDir)%(Filename)%(Extension)')" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+
     <Message Text="Completed post build target for $(ProjectName)." Importance="high" />
   </Target>
 

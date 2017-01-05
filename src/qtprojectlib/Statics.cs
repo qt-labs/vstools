@@ -30,6 +30,9 @@ namespace QtProjectLib
 {
     public static class Statics
     {
+        public const string QmlTextMateKey = @"Enable";
+        public const string QmlTextMatePath = @"QtVsTools\Qml\TextMate";
+
         public const string QmlClassifierKey = @"Enable";
         public const string QmlClassifierPath = @"QtVsTools\Qml\Classifier";
 

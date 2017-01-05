@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
@@ -44,3 +45,4 @@ namespace QtVsTools
 #pragma warning restore 649 /// Justification: the field is assigned by MEF.
     }
 }
+#endif

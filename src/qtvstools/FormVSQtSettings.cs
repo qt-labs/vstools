@@ -29,6 +29,9 @@
 using QtProjectLib;
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.IO;
+using System.Reflection;
 
 namespace QtVsTools
 {
@@ -60,6 +63,7 @@ namespace QtVsTools
 
             vsQtSettings = new VSQtSettings();
             optionsPropertyGrid.SelectedObject = vsQtSettings;
+            vsQtSettings.PropertyChanged += OnSettingsChanged;
 
             KeyPress += FormQtVersions_KeyPress;
             Shown += FormQtVersions_Shown;
@@ -171,6 +175,24 @@ namespace QtVsTools
         private void cancelButton_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender == null)
+                return;
+
+            if (e.PropertyName == "EnableQmlTextMate") {
+                var qttmlanguage = Environment
+                    .ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
+                if (Observable.GetPropertyValue<bool>(sender, e.PropertyName)) {
+                    var assembly = Assembly.GetExecutingAssembly().Location;
+                    HelperFunctions.CopyDirectory(Path.Combine(Path.GetDirectoryName(assembly),
+                        "qttmlanguage"), qttmlanguage);
+                } else {
+                    Directory.Delete(qttmlanguage, true);
+                }
+            }
         }
     }
 }

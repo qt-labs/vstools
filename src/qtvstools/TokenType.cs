@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 namespace QtVsTools
 {
     public enum TokenType
@@ -41,3 +42,4 @@ namespace QtVsTools
         Property
     }
 }
+#endif

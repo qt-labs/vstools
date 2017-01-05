@@ -27,7 +27,9 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
 using System;
 using System.IO;
@@ -127,6 +129,7 @@ namespace QtVsTools
             QtHelpMenu.Initialize(this);
 
             try {
+                CopyTextMateLanguageFiles();
                 UpdateDefaultEditors(Mode.Startup);
             } catch (Exception e) {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
@@ -184,6 +187,23 @@ namespace QtVsTools
                 var vsix = new QtVsToolsDefaultEditors();
                 vsix.WriteVsixRegistryValues();
             }
+        }
+
+        private void CopyTextMateLanguageFiles()
+        {
+#if (!VS2013)
+            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+
+            var qttmlanguage = Environment.
+                ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
+            if (store.GetBoolean(Statics.QmlTextMatePath, Statics.QmlTextMateKey, true)) {
+                HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
+                    qttmlanguage);
+            } else {
+                Directory.Delete(qttmlanguage, true);
+            }
+#endif
         }
     }
 }

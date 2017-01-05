@@ -34,9 +34,8 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools
 {
-    public class VSQtSettings
+    public class VSQtSettings : Observable
     {
-
         public VSQtSettings()
         {
             newMocDir = QtVSIPSettings.GetMocDirectory();
@@ -52,8 +51,14 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(Vsix.Instance);
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+
+#if VS2013
             EnableQmlClassifier = store.GetBoolean(Statics.QmlClassifierPath,
                 Statics.QmlClassifierKey, true);
+#else
+            EnableQmlTextMate = store.GetBoolean(Statics.QmlTextMatePath,
+                Statics.QmlTextMateKey, true);
+#endif
         }
 
         private string newMocDir;
@@ -82,9 +87,15 @@ namespace QtVsTools
 
             var settingsManager = new ShellSettingsManager(Vsix.Instance);
             var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
+#if VS2013
             store.CreateCollection(Statics.QmlClassifierPath);
             store.SetBoolean(Statics.QmlClassifierPath, Statics.QmlClassifierKey,
                 EnableQmlClassifier);
+#else
+            store.CreateCollection(Statics.QmlTextMatePath);
+            store.SetBoolean(Statics.QmlTextMatePath, Statics.QmlTextMateKey, EnableQmlTextMate);
+#endif
         }
 
         public string MocDirectory
@@ -236,8 +247,18 @@ namespace QtVsTools
             }
         }
 
-        [DisplayName("Enable QML classifier")]
+#if VS2013
+        [DisplayName("Use QML classifier")]
         public bool EnableQmlClassifier { get; set; }
+#else
+        private bool _enableQmlTextMate = true;
+        [DisplayName("Use QML TextMate language file")]
+        public bool EnableQmlTextMate
+        {
+            get { return _enableQmlTextMate; }
+            set { SetValue(ref _enableQmlTextMate, value); }
+        }
+#endif
 
         private static bool ContainsInvalidVariable(string directory)
         {

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -57,6 +57,7 @@
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MocCmdChecker.cs" />
+    <Compile Include="Observable.cs" />
     <Compile Include="ProFileContent.cs" />
     <Compile Include="ProFileOption.cs" />
     <Compile Include="ProjectExporter.cs" />

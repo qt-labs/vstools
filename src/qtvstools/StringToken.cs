@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 namespace QtVsTools
 {
     public class StringToken : Token
@@ -36,3 +37,4 @@ namespace QtVsTools
         }
     }
 }
+#endif

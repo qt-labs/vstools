@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 namespace QtVsTools
 {
     class ClassifierTypes
@@ -39,3 +40,4 @@ namespace QtVsTools
         internal const string Property = "Property_qml";
     }
 }
+#endif

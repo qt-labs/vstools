@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 using QtProjectLib;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Settings;
@@ -514,3 +515,4 @@ namespace QtVsTools
         }
     }
 }
+#endif

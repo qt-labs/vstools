@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 namespace QtVsTools
 {
     public abstract class Token
@@ -40,3 +41,4 @@ namespace QtVsTools
         public TokenType Type { get; private set; }
     }
 }
+#endif

@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
@@ -60,3 +61,4 @@ namespace QtVsTools
         public FileExtensionToContentTypeDefinition QmlProjectFileExtension { get; set; }
     }
 }
+#endif

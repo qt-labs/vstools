@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2013
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -39,3 +40,4 @@ namespace QtVsTools
         }
     }
 }
+#endif
