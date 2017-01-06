@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -837,40 +838,59 @@ namespace QtProjectLib
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxFileContainsNotCommented(file, new[] { "Q_OBJECT", "Q_GADGET" }, true, true);
+            return CxxFileContainsNotCommented(file, new[] { "Q_OBJECT", "Q_GADGET" },
+                StringComparison.Ordinal, true);
         }
 
-        public static bool CxxFileContainsNotCommented(VCFile file, string str, bool caseSensitive, bool suppressStrings)
+        public static bool CxxFileContainsNotCommented(VCFile file, string str,
+            StringComparison comparisonType, bool suppressStrings)
         {
-            return CxxFileContainsNotCommented(file, new[] { str }, caseSensitive, suppressStrings);
+            return CxxFileContainsNotCommented(file, new[] { str }, comparisonType, suppressStrings);
         }
 
-        public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings, bool caseSensitive, bool suppressStrings)
+        public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings,
+            StringComparison comparisonType, bool suppressStrings)
         {
-            if (!caseSensitive) {
-                for (var i = 0; i < searchStrings.Length; ++i)
-                    searchStrings[i] = searchStrings[i].ToLower();
-            }
-
-            CxxStreamReader sr = null;
-            var found = false;
+            // Small optimization, we first read the whole content as a string and look for the
+            // search strings. Once we found at least one, ...
+            bool found = false;
+            var content = string.Empty;
             try {
-                var strLine = string.Empty;
-                sr = new CxxStreamReader(file.FullPath);
-                while (!found && (strLine = sr.ReadLine(suppressStrings)) != null) {
-                    if (!caseSensitive)
-                        strLine = strLine.ToLower();
+                using (StreamReader sr = new StreamReader(file.FullPath))
+                    content = sr.ReadToEnd();
+
+                foreach (var key in searchStrings) {
+                    if (content.IndexOf(key, comparisonType) >= 0) {
+                        found = true;
+                        break;
+                    }
+                }
+            } catch { }
+
+            if (!found)
+                return false;
+
+            // ... we will start parsing the file again to see if the actual string is commented
+            // or not. The combination of string.IndexOf(...) and string.Split(...) seems to be
+            // way faster then reading the file line by line.
+            found = false;
+            CxxStreamReader cxxSr = null;
+            try {
+                cxxSr = new CxxStreamReader(content.Split(new[] { "\n", "\r\n" },
+                    StringSplitOptions.RemoveEmptyEntries));
+                string strLine;
+                while (!found && (strLine = cxxSr.ReadLine(suppressStrings)) != null) {
                     foreach (var str in searchStrings) {
-                        if (strLine.IndexOf(str, StringComparison.Ordinal) != -1) {
+                        if (strLine.IndexOf(str, comparisonType) != -1) {
                             found = true;
                             break;
                         }
                     }
                 }
-                sr.Close();
+                cxxSr.Close();
             } catch (Exception) {
-                if (sr != null)
-                    sr.Close();
+                if (cxxSr != null)
+                    cxxSr.Close();
             }
             return found;
         }

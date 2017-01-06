@@ -46,6 +46,14 @@ namespace QtProjectLib
         private string partialLine;
         bool disposed;
 
+        int _lineNum;
+        string[] _lines;
+
+        public CxxStreamReader(string[] lines)
+        {
+            _lines = lines;
+        }
+
         public CxxStreamReader(string fileName)
         {
             sr = new StreamReader(fileName);
@@ -72,7 +80,7 @@ namespace QtProjectLib
             if (disposed)
                 return;
 
-            if (disposing)
+            if (disposing && sr != null)
                 sr.Dispose();
 
             disposed = true;
@@ -86,12 +94,20 @@ namespace QtProjectLib
         public string ReadLine(bool removeStrings)
         {
             var line = string.Empty;
-            do {
-                line = sr.ReadLine();
-                if (line == null)
-                    return null;
-                line = ProcessString(line, removeStrings);
-            } while (line.Length == 0);
+            if (sr != null) {
+                do {
+                    line = sr.ReadLine();
+                    if (line == null)
+                        return null;
+                    line = ProcessString(line, removeStrings);
+                } while (line.Length == 0);
+            } else {
+                do {
+                    if (_lineNum >= _lines.Length)
+                        return null;
+                    line = ProcessString(_lines[_lineNum++], removeStrings);
+                } while (line.Length == 0);
+            }
             return line;
         }
 
