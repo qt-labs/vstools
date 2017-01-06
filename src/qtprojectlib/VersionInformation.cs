@@ -130,7 +130,7 @@ namespace QtProjectLib
         {
             if (qtConfig == null)
                 qtConfig = new QtConfig(qtDir);
-            return qtConfig.IsStaticBuild;
+            return qtConfig.BuildType == BuildType.Static;
         }
 
         public string GetQMakeConfEntry(string entryName)

@@ -31,61 +31,47 @@ using System.IO;
 
 namespace QtProjectLib
 {
+        enum BuildType {
+            Unknown,
+            Static,
+            Shared
+        }
+
     /// <summary>
-    /// Very very simple reader for the qconfig.pri file.
-    /// At the moment this is only to determine whether we
-    /// have a static or shared Qt build.
-    /// Also, we extract the default signature file here for Windows CE builds.
+    /// A very simple reader for the qconfig.pri file. At the moment this is only to determine
+    /// whether we have a static or shared Qt build.
     /// </summary>
     class QtConfig
     {
-        private bool isStaticBuild;
-        private string signatureFile;
+        public BuildType BuildType { get; private set; }
 
         public QtConfig(string qtdir)
         {
-            Init(qtdir);
-        }
-
-        private void Init(string qtdir)
-        {
             var fi = new FileInfo(qtdir + "\\mkspecs\\qconfig.pri");
-            if (fi.Exists) {
-                try {
-                    var reader = new StreamReader(fi.FullName);
-                    string line = null;
-                    while ((line = reader.ReadLine()) != null)
-                        parseLine(line);
-                } catch { }
-            }
-        }
+            if (!fi.Exists)
+                return;
 
-        public bool IsStaticBuild
-        {
-            get { return isStaticBuild; }
-        }
-
-        /// <summary>
-        /// parses a single line of the configuration file
-        /// </summary>
-        /// <returns>true if we don't have to read any further</returns>
-        private void parseLine(string line)
-        {
-            line = line.Trim();
-            if (line.StartsWith("CONFIG", StringComparison.Ordinal)) {
-                var values = line.Substring(6).Split(' ', '\t');
-                foreach (var s in values) {
-                    if (s == "static")
-                        isStaticBuild = true;
-                    else if (s == "shared")
-                        isStaticBuild = false;
+            try {
+                using (var reader = new StreamReader(fi.FullName)) {
+                    string line;
+                    while ((line = reader.ReadLine()) != null) {
+                        line = line.Trim();
+                        if (!line.StartsWith("CONFIG", StringComparison.Ordinal))
+                            continue;
+                        var values = line.Substring(6).Split(' ', '\t');
+                        foreach (var value in values) {
+                            switch (value) {
+                            case "static":
+                                BuildType = BuildType.Static;
+                                return;
+                            case "shared":
+                                BuildType = BuildType.Shared;
+                                return;
+                            }
+                        }
+                    }
                 }
-            } else if (line.StartsWith("DEFAULT_SIGNATURE", StringComparison.Ordinal)) {
-                var idx = line.IndexOf('=');
-                if (idx < 0)
-                    return;
-                signatureFile = line.Remove(0, idx + 1).Trim();
-            }
+            } catch { }
         }
     }
 }
