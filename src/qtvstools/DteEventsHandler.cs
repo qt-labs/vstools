@@ -253,13 +253,13 @@ namespace QtVsTools
 
             var file = (VCFile) ((IVCCollection) qtPro.VCProject.Files).Item(document.FullName);
 
-            if (file.Extension == ".ui") {
+            if (HelperFunctions.IsUicFile(file.Name)) {
                 if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
                     qtPro.AddUic4BuildStep(file);
                 return;
             }
 
-            if (!HelperFunctions.HasSourceFileExtension(file.Name) && !HelperFunctions.HasHeaderFileExtension(file.Name))
+            if (!HelperFunctions.IsSourceFile(file.Name) && !HelperFunctions.IsHeaderFile(file.Name))
                 return;
 
             if (HelperFunctions.HasQObjectDeclaration(file)) {
@@ -269,7 +269,7 @@ namespace QtVsTools
                 qtPro.RemoveMocStep(file);
             }
 
-            if (HelperFunctions.HasSourceFileExtension(file.Name)) {
+            if (HelperFunctions.IsSourceFile(file.Name)) {
                 var moccedFileName = "moc_" + file.Name;
 
                 if (qtPro.IsMoccedFileIncluded(file)) {
@@ -368,7 +368,7 @@ namespace QtVsTools
                 var hFilter = qtPro.FindFilterFromGuid(h.UniqueIdentifier);
                 var srcFilter = qtPro.FindFilterFromGuid(src.UniqueIdentifier);
 
-                if (HelperFunctions.HasSourceFileExtension(vcFile.Name)) {
+                if (HelperFunctions.IsSourceFile(vcFile.Name)) {
                     if (vcFile.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         return;
                     if (vcFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase)) {
@@ -400,7 +400,7 @@ namespace QtVsTools
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
-                } else if (HelperFunctions.HasHeaderFileExtension(vcFile.Name)) {
+                } else if (HelperFunctions.IsHeaderFile(vcFile.Name)) {
                     if (vcFile.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase))
                         return;
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, h)) {
@@ -417,7 +417,7 @@ namespace QtVsTools
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
-                } else if (vcFile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase)) {
+                } else if (HelperFunctions.IsUicFile(vcFile.Name)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, ui)) {
                         if (null == uiFilter && qtPro.VCProject.CanAddFilter(ui.Name)) {
                             uiFilter = (VCFilter) qtPro.VCProject.AddFilter(ui.Name);
@@ -430,7 +430,7 @@ namespace QtVsTools
                     }
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                } else if (vcFile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase)) {
+                } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, qrc)) {
                         if (null == qrcFilter && qtPro.VCProject.CanAddFilter(qrc.Name)) {
                             qrcFilter = (VCFilter) qtPro.VCProject.AddFilter(qrc.Name);
@@ -443,7 +443,7 @@ namespace QtVsTools
                     }
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.UpdateRccStep(vcFile, null);
-                } else if (HelperFunctions.IsTranslationFile(vcFile)) {
+                } else if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, ts)) {
                         if (null == tsFilter && qtPro.VCProject.CanAddFilter(ts.Name)) {
                             tsFilter = (VCFilter) qtPro.VCProject.AddFilter(ts.Name);

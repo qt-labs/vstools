@@ -103,7 +103,7 @@ namespace QtVsTools
 
                 string message;
                 while (!aboutToExit && messageQueue.TryDequeue(out message)) {
-                    if (message.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))
+                    if (HelperFunctions.IsQrcFile(message))
                         handler.OnQRCFileSaved(message);
                     else if (message.StartsWith("Autotests:set", StringComparison.Ordinal)) {
 #if DEBUG

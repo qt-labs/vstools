@@ -49,7 +49,7 @@ namespace QtProjectLib
             name = id;
             if (id.StartsWith(".\\", StringComparison.Ordinal))
                 name = name.Substring(2);
-            if (name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))
+            if (HelperFunctions.IsQrcFile(name))
                 name = name.Substring(0, name.Length - 4);
         }
 

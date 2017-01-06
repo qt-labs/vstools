@@ -76,7 +76,7 @@ namespace QtVsTools
                 return;
 
             foreach (var vcFile in vcFiles) {
-                if (HelperFunctions.IsTranslationFile(vcFile)) {
+                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlRelease(vcFile))
                         return;
                 }
@@ -96,7 +96,7 @@ namespace QtVsTools
 
             var files = tsFilter.Files as IVCCollection;
             foreach (VCFile vcFile in files) {
-                if (HelperFunctions.IsTranslationFile(vcFile)) {
+                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlRelease(vcFile))
                         return;
                 }
@@ -219,7 +219,7 @@ namespace QtVsTools
                 return;
 
             foreach (var vcFile in vcFiles) {
-                if (HelperFunctions.IsTranslationFile(vcFile)) {
+                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlUpdate(vcFile, pro))
                         return;
                 }
@@ -239,7 +239,7 @@ namespace QtVsTools
 
             var files = tsFilter.Files as IVCCollection;
             foreach (VCFile vcFile in files) {
-                if (HelperFunctions.IsTranslationFile(vcFile)) {
+                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlUpdate(vcFile, project))
                         return;
                 }

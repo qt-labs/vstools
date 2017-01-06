@@ -122,18 +122,43 @@ namespace QtProjectLib
             return qtDir;
         }
 
-        static public bool HasSourceFileExtension(string fileName)
+        static readonly HashSet<string> _sources = new HashSet<string>(new [] { ".c", ".cpp", ".cxx"},
+            StringComparer.OrdinalIgnoreCase);
+        static public bool IsSourceFile(string fileName)
         {
-            return fileName.EndsWith(".c", StringComparison.OrdinalIgnoreCase)
-                || fileName.EndsWith(".cpp", StringComparison.OrdinalIgnoreCase)
-                || fileName.EndsWith(".cxx", StringComparison.OrdinalIgnoreCase);
+            return _sources.Contains(Path.GetExtension(fileName));
         }
 
-        static public bool HasHeaderFileExtension(string fileName)
+        static readonly HashSet<string> _headers = new HashSet<string>(new[] { ".h", ".hpp", ".hxx" },
+            StringComparer.OrdinalIgnoreCase);
+        static public bool IsHeaderFile(string fileName)
         {
-            return fileName.EndsWith(".h", StringComparison.OrdinalIgnoreCase)
-                || fileName.EndsWith(".hpp", StringComparison.OrdinalIgnoreCase)
-                || fileName.EndsWith(".hxx", StringComparison.OrdinalIgnoreCase);
+            return _headers.Contains(Path.GetExtension(fileName));
+        }
+
+        public static bool IsUicFile(string fileName)
+        {
+            return ".ui".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsMocFile(string fileName)
+        {
+            return ".moc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsQrcFile(string fileName)
+        {
+            return ".qrc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsWinRCFile(string fileName)
+        {
+            return ".rc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsTranslationFile(string fileName)
+        {
+            return ".ts".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
         }
 
         static public void SetDebuggingEnvironment(Project prj)
@@ -938,30 +963,6 @@ namespace QtProjectLib
             }
         }
 
-        // returns true if the file is a rc file (.rc)
-        public static bool IsWinRCFile(VCFile vcfile)
-        {
-            if (vcfile == null)
-                return false;
-
-            if (vcfile.Extension.ToLower() == ".rc")
-                return true;
-
-            return false;
-        }
-
-        // returns true if the file is a translation file (.ts)
-        public static bool IsTranslationFile(VCFile vcfile)
-        {
-            if (vcfile == null)
-                return false;
-
-            if (vcfile.Extension.ToLower() == ".ts")
-                return true;
-
-            return false;
-        }
-
         // returns false if some exception occurs
         public static bool IsResource(VCFile vcfile)
         {
@@ -1003,13 +1004,11 @@ namespace QtProjectLib
                     continue;
 
                 // can be in any filter
-                if ((IsTranslationFile(vcfile)) &&
-                    (filter == FilesToList.FL_Translation))
+                if (IsTranslationFile(vcfile.Name) && (filter == FilesToList.FL_Translation))
                     fileList.Add(ChangePathFormat(vcfile.RelativePath));
 
                 // can also be in any filter
-                if ((IsWinRCFile(vcfile)) &&
-                    (filter == FilesToList.FL_WinResource))
+                if (IsWinRCFile(vcfile.Name) && (filter == FilesToList.FL_WinResource))
                     fileList.Add(ChangePathFormat(vcfile.RelativePath));
 
                 if (IsGenerated(vcfile)) {
@@ -1026,15 +1025,15 @@ namespace QtProjectLib
 
                 switch (filter) {
                 case FilesToList.FL_UiFiles: // form files
-                    if (vcfile.Extension.ToLower() == ".ui")
+                    if (IsUicFile(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_HFiles:
-                    if (HasHeaderFileExtension(vcfile.Name))
+                    if (IsHeaderFile(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_CppFiles:
-                    if (HasSourceFileExtension(vcfile.Name))
+                    if (IsSourceFile(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 }

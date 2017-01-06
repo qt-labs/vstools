@@ -50,7 +50,7 @@ namespace QtProjectLib
             string outputFile)
         {
             var inputMocFile = ProjectMacros.Path;
-            if (outputFile.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
+            if (HelperFunctions.IsMocFile(outputFile))
                 inputMocFile = mocFile;
             var cmds = SplitIntoCommands(cmdLine);
             var mocPos = MocCommandPosition(cmds);

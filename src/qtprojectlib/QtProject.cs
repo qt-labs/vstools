@@ -130,7 +130,7 @@ namespace QtProjectLib
         {
             var fi = new FileInfo(uiFile);
             var file = fi.Name;
-            if (fi.Extension == ".ui") {
+            if (HelperFunctions.IsUicFile(file)) {
                 return QtVSIPSettings.GetUicDirectory(envPro)
                     + "\\ui_" + file.Remove(file.Length - 3, 3) + ".h";
             }
@@ -147,9 +147,9 @@ namespace QtProjectLib
             var fi = new FileInfo(file);
 
             var name = fi.Name;
-            if (HelperFunctions.HasHeaderFileExtension(fi.Name))
+            if (HelperFunctions.IsHeaderFile(fi.Name))
                 return "moc_" + name.Substring(0, name.LastIndexOf('.')) + ".cpp";
-            if (HelperFunctions.HasSourceFileExtension(fi.Name))
+            if (HelperFunctions.IsSourceFile(fi.Name))
                 return name.Substring(0, name.LastIndexOf('.')) + ".moc";
             return null;
         }
@@ -645,7 +645,7 @@ namespace QtProjectLib
         private string GetPCHMocOptions(VCFile file, CompilerToolWrapper compiler)
         {
             // As .moc files are included, we should not add anything there
-            if (!HelperFunctions.HasHeaderFileExtension(file.Name))
+            if (!HelperFunctions.IsHeaderFile(file.Name))
                 return string.Empty;
 
             var additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough().Replace('\\', '/') + "\" ";
@@ -674,7 +674,7 @@ namespace QtProjectLib
 
                 var hasDifferentMocFilePerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(envPro);
                 var hasDifferentMocFilePerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
-                var mocableIsCPP = mocFileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase);
+                var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
 
                 // Fresh C++ headers don't have a usable custom build tool. We must set the item type first.
                 if (!mocableIsCPP && file.ItemType != "CustomBuild")
@@ -701,7 +701,7 @@ namespace QtProjectLib
                             fi.Directory.Create();
                         mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
                             mocRelPath);
-                        if (mocFileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
+                        if (HelperFunctions.IsMocFile(mocFileName)) {
                             var mocFileItem = mocFile.Object as ProjectItem;
                             if (mocFileItem != null)
                                 HelperFunctions.EnsureCustomBuildToolAvailable(mocFileItem);
@@ -941,10 +941,10 @@ namespace QtProjectLib
         public bool IsMoccedFileIncluded(VCFile vcFile)
         {
             var fullPath = vcFile.FullPath;
-            if (HelperFunctions.HasHeaderFileExtension(vcFile.FullPath))
+            if (HelperFunctions.IsHeaderFile(vcFile.FullPath))
                 fullPath = Path.ChangeExtension(vcFile.FullPath, ".cpp");
 
-            if (HelperFunctions.HasSourceFileExtension(fullPath)) {
+            if (HelperFunctions.IsSourceFile(fullPath)) {
                 vcFile = GetFileFromProject(fullPath);
                 if (vcFile == null)
                     return false;
@@ -993,10 +993,10 @@ namespace QtProjectLib
 
         public bool HasMocStep(VCFile file, string mocOutDir)
         {
-            if (HelperFunctions.HasHeaderFileExtension(file.Name)) {
+            if (HelperFunctions.IsHeaderFile(file.Name))
                 return CheckForCommand(file, "moc.exe");
-            }
-            if (HelperFunctions.HasSourceFileExtension(file.Name)) {
+
+            if (HelperFunctions.IsSourceFile(file.Name)) {
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                     var mocFileName = string.Empty;
                     if (mocOutDir == null) {
@@ -1155,7 +1155,7 @@ namespace QtProjectLib
                 if (!HasMocStep(file))
                     return;
 
-                if (HelperFunctions.HasHeaderFileExtension(file.Name)) {
+                if (HelperFunctions.IsHeaderFile(file.Name)) {
                     foreach (VCFileConfiguration config in (IVCCollection) file.FileConfigurations) {
                         var tool = HelperFunctions.GetCustomBuildTool(config);
                         if (tool == null)
@@ -1252,7 +1252,7 @@ namespace QtProjectLib
             var qrcFiles = new List<VCFile>();
 
             foreach (VCFile f in (IVCCollection) VCProject.Files) {
-                if (f.Extension == ".qrc")
+                if (HelperFunctions.IsQrcFile(f.Name))
                     qrcFiles.Add(f);
             }
             return qrcFiles;
@@ -1638,7 +1638,7 @@ namespace QtProjectLib
             if (file == null)
                 return null;
 
-            if (HelperFunctions.HasHeaderFileExtension(file.Name)) {
+            if (HelperFunctions.IsHeaderFile(file.Name)) {
                 foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                     var compiler = CompilerToolWrapper.Create(config);
                     if (compiler == null)
@@ -1662,10 +1662,10 @@ namespace QtProjectLib
         public void AdjustWhitespace(string file)
         {
             // only replace whitespaces in known types
-            if (!HelperFunctions.HasSourceFileExtension(file) &&
-                !HelperFunctions.HasHeaderFileExtension(file) &&
-                !file.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
+            if (!HelperFunctions.IsSourceFile(file) && !HelperFunctions.IsHeaderFile(file)
+                && !HelperFunctions.IsUicFile(file)) {
                 return;
+            }
 
             try {
                 var prop = dte.get_Properties("TextEditor", "C/C++");
@@ -1764,9 +1764,10 @@ namespace QtProjectLib
         {
             DeleteGeneratedFiles();
             foreach (VCFile file in (IVCCollection) vcPro.Files) {
-                if (!HelperFunctions.HasHeaderFileExtension(file.Name) && !HelperFunctions.HasSourceFileExtension(file.Name))
+                if (!HelperFunctions.IsHeaderFile(file.Name)
+                    && !HelperFunctions.IsSourceFile(file.Name)) {
                     continue;
-
+                }
                 if (HelperFunctions.HasQObjectDeclaration(file)) {
                     RemoveMocStep(file);
                     AddMocStep(file);
@@ -1926,7 +1927,7 @@ namespace QtProjectLib
                 files[j++] = file;
 
             foreach (var file in files) {
-                if (file.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase) && !IsUic3File(file)) {
+                if (HelperFunctions.IsUicFile(file.Name) && !IsUic3File(file)) {
                     AddUic4BuildStep(file);
                     Messages.PaneMessage(dte, "Update uic step for " + file.Name + ".");
                     ++updatedFiles;
@@ -2138,8 +2139,8 @@ namespace QtProjectLib
         /// <param name="vcfile"></param>
         private void RefreshMocStep(VCFile vcfile, bool singleFile)
         {
-            var isHeaderFile = HelperFunctions.HasHeaderFileExtension(vcfile.FullPath);
-            if (!isHeaderFile && !HelperFunctions.HasSourceFileExtension(vcfile.FullPath))
+            var isHeaderFile = HelperFunctions.IsHeaderFile(vcfile.FullPath);
+            if (!isHeaderFile && !HelperFunctions.IsSourceFile(vcfile.FullPath))
                 return;
 
             if (mocCmdChecker == null)
@@ -2249,7 +2250,7 @@ namespace QtProjectLib
 
             if (moccedFile != null) {
                 VCFile cppFile = null;
-                if (HelperFunctions.HasHeaderFileExtension(vcFile.Name))
+                if (HelperFunctions.IsHeaderFile(vcFile.Name))
                     cppFile = GetCppFileForMocStep(vcFile);
 
                 var moccedFileConfig = GetVCFileConfigurationByName(moccedFile, vcFileCfg.Name);
@@ -2271,10 +2272,10 @@ namespace QtProjectLib
         /// <returns></returns>
         private VCFile GetSourceFileForMocStep(VCFile file)
         {
-            if (HelperFunctions.HasHeaderFileExtension(file.Name))
+            if (HelperFunctions.IsHeaderFile(file.Name))
                 return file;
             var fileName = file.Name;
-            if (fileName.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)) {
+            if (HelperFunctions.IsMocFile(fileName)) {
                 fileName = fileName.Substring(0, fileName.Length - 4) + ".cpp";
                 if (fileName.Length > 0) {
                     foreach (VCFile f in (IVCCollection) vcPro.Files) {
@@ -2294,7 +2295,7 @@ namespace QtProjectLib
         private VCFile GetCppFileForMocStep(VCFile file)
         {
             string fileName = null;
-            if (HelperFunctions.HasHeaderFileExtension(file.Name) || file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
+            if (HelperFunctions.IsHeaderFile(file.Name) || HelperFunctions.IsMocFile(file.Name))
                 fileName = file.Name.Remove(file.Name.LastIndexOf('.')) + ".cpp";
             if (!string.IsNullOrEmpty(fileName)) {
                 foreach (VCFile f in (IVCCollection) vcPro.Files) {
@@ -2318,7 +2319,7 @@ namespace QtProjectLib
                     string fileName = null;
                     if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         fileName = file.Name.Substring(4, file.Name.Length - 8) + ".h";
-                    else if (file.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase))
+                    else if (HelperFunctions.IsMocFile(file.Name))
                         fileName = file.Name.Substring(0, file.Name.Length - 4) + ".cpp";
 
                     if (fileName != null) {
@@ -2606,13 +2607,13 @@ namespace QtProjectLib
             var lastIndex = fileName.LastIndexOf(fi.Extension, StringComparison.Ordinal);
             var baseName = fi.Name.Remove(lastIndex, fi.Extension.Length);
             string delName = null;
-            if (HelperFunctions.HasHeaderFileExtension(fileName))
+            if (HelperFunctions.IsHeaderFile(fileName))
                 delName = "moc_" + baseName + ".cpp";
-            else if (HelperFunctions.HasSourceFileExtension(fileName) && !fileName.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
+            else if (HelperFunctions.IsSourceFile(fileName) && !fileName.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                 delName = baseName + ".moc";
-            else if (fileName.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
+            else if (HelperFunctions.IsUicFile(fileName))
                 delName = "ui_" + baseName + ".h";
-            else if (fileName.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))
+            else if (HelperFunctions.IsQrcFile(fileName))
                 delName = "qrc_" + baseName + ".cpp";
 
             if (delName != null) {

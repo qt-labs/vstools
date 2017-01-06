@@ -290,11 +290,11 @@ namespace QtProjectLib
                     string platformName = null;
                     var vcpro = (VCProject) project.Object;
                     foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
-                        if ((type == Resources.mocDirKeyword &&
-                            (HelperFunctions.HasHeaderFileExtension(vcfile.Name)
-                            || vcfile.Name.EndsWith(".moc", StringComparison.OrdinalIgnoreCase)))
-                            || (type == Resources.uicDirKeyword && vcfile.Name.EndsWith(".ui", StringComparison.OrdinalIgnoreCase))
-                            || (type == Resources.rccDirKeyword && vcfile.Name.EndsWith(".qrc", StringComparison.OrdinalIgnoreCase))) {
+                        var name = vcfile.Name;
+                        if ((type == Resources.mocDirKeyword && HelperFunctions.IsHeaderFile(name))
+                            || (type == Resources.mocDirKeyword && HelperFunctions.IsMocFile(name))
+                            || (type == Resources.uicDirKeyword && HelperFunctions.IsUicFile(name))
+                            || (type == Resources.rccDirKeyword && HelperFunctions.IsQrcFile(name))) {
                             foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                                 tool = HelperFunctions.GetCustomBuildTool(config);
                                 configName = config.Name.Remove(config.Name.IndexOf('|'));
