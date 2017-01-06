@@ -144,6 +144,7 @@ namespace QtVsTools
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
+            VersionInformation.Clear();
             QtVersionManager.The().ClearVersionCache();
             foreach (ListViewItem itm in listView.SelectedItems) {
                 var name = itm.Text;
@@ -155,6 +156,7 @@ namespace QtVsTools
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            VersionInformation.Clear();
             QtVersionManager.The().ClearVersionCache();
             using (var dia = new AddQtVersionDialog()) {
                 dia.StartPosition = FormStartPosition.CenterParent;

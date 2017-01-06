@@ -67,12 +67,10 @@ namespace QtProjectLib
                 versionCache = new Hashtable();
 
             var vi = versionCache[name] as VersionInformation;
-            if (vi != null)
-                return vi;
-
-            var qtdir = GetInstallPath(name);
-            vi = new VersionInformation(qtdir);
-            versionCache[name] = vi;
+            if (vi == null) {
+                var qtdir = GetInstallPath(name);
+                versionCache[name] = vi = VersionInformation.Get(qtdir);
+            }
             return vi;
         }
 
@@ -142,7 +140,7 @@ namespace QtProjectLib
                 if (v == "$(DefaultQtVersion)")
                     continue;
                 try {
-                    var vi = new VersionInformation(GetInstallPath(v));
+                    var vi = VersionInformation.Get(GetInstallPath(v));
                     var qtVersion = new QtVersion();
                     qtVersion.name = v;
                     qtVersion.vi = vi;

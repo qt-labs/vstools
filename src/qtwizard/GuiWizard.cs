@@ -121,7 +121,7 @@ namespace QtProjectWizard
                 replacements["$ToolsVersion$"] = version;
 
                 var vm = QtVersionManager.The();
-                var vi = new VersionInformation(vm.GetInstallPath(vm.GetDefaultVersion()));
+                var vi = VersionInformation.Get(vm.GetInstallPath(vm.GetDefaultVersion()));
                 replacements["$Platform$"] = vi.GetVSPlatformName();
 
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
@@ -193,7 +193,7 @@ namespace QtProjectWizard
 
             var vm = QtVersionManager.The();
             var qtVersion = vm.GetDefaultVersion();
-            var vi = new VersionInformation(vm.GetInstallPath(qtVersion));
+            var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
             if (vi.GetVSPlatformName() != "Win32")
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
             vm.SaveProjectQtVersion(project, qtVersion);

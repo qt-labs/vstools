@@ -832,7 +832,7 @@ namespace QtProjectLib
                         newCmdLine += " " + GetPCHMocOptions(file, compiler);
 
                     var versionManager = QtVersionManager.The();
-                    var versionInfo = new VersionInformation(versionManager.GetInstallPath(envPro));
+                    var versionInfo = VersionInformation.Get(versionManager.GetInstallPath(envPro));
                     var mocSupportsIncludes = (versionInfo.qtMajor == 4 && versionInfo.qtMinor >= 2)
                         || versionInfo.qtMajor >= 5;
 

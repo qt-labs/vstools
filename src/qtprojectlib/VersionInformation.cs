@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -45,20 +46,34 @@ namespace QtProjectLib
         private QtConfig qtConfig;
         private QMakeConf qmakeConf;
         private string vsPlatformName;
+        private static readonly Hashtable _cache = new Hashtable();
 
-        public VersionInformation(string qtDirIn)
+        public static VersionInformation Get(string qtDir)
         {
-            if (qtDirIn == null)
-                qtDir = Environment.GetEnvironmentVariable("QTDIR");
-            else
-                qtDir = qtDirIn;
-
+            qtDir = qtDir ?? Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
-                return;
+                return null;
 
-            // make QtDir more consistent
-            qtDir = new FileInfo(qtDir).FullName.ToLower();     // ### do we really need to convert qtDir to lower case?
+            qtDir = new FileInfo(qtDir).FullName.ToUpperInvariant();
+            var versionInfo = _cache[qtDir] as VersionInformation;
+            if (versionInfo == null) {
+                versionInfo = new VersionInformation(qtDir);
+                _cache.Add(qtDir, versionInfo);
+            } else if (versionInfo.qtDir == null) {
+                versionInfo = new VersionInformation(qtDir);
+                _cache[qtDir] = versionInfo;
+            }
+            return versionInfo;
+        }
 
+        public static void Clear()
+        {
+             _cache.Clear();
+        }
+
+        private VersionInformation(string qtDirIn)
+        {
+            qtDir = qtDirIn;
             SetupPlatformSpecificData();
 
             // Find version number
@@ -92,14 +107,13 @@ namespace QtProjectLib
                     qtPatch = version & 0xFF;
                 }
                 qt5Version = (qtMajor == 5);
-            } catch (Exception /*e*/) {
+
+                try {
+                    QtInstallDocs = qmakeQuery.query("QT_INSTALL_DOCS");
+                } catch { }
+            } catch {
                 qtDir = null;
             }
-
-            try {
-                var qmakeQuery = new QMakeQuery(this);
-                QtInstallDocs = qmakeQuery.query("QT_INSTALL_DOCS");
-            } catch { }
         }
 
         public string QtInstallDocs

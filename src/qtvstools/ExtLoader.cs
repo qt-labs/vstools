@@ -46,7 +46,7 @@ namespace QtVsTools
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
             }
-            var vi = new VersionInformation(qtDir);
+            var vi = VersionInformation.Get(qtDir);
             if (vi.qtMajor < 5) {
                 Messages.DisplayErrorMessage(SR.GetString("NoVSSupport"));
                 return;

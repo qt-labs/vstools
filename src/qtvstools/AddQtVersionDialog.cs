@@ -198,7 +198,7 @@ namespace QtVsTools
         private void okButton_Click(object sender, EventArgs e)
         {
             try {
-                var versionInfo = new VersionInformation(pathBox.Text);
+                var versionInfo = VersionInformation.Get(pathBox.Text);
                 var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
                 if (generator != "MSVC.NET" && generator != "MSBUILD")
                     throw new Exception(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", generator));
