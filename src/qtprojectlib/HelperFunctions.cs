@@ -796,7 +796,7 @@ namespace QtProjectLib
         }
 
         /// <summary>
-        /// Deletes the directory if it is emptyand every empty parent directory until the first,
+        /// Deletes the directory if it is empty and every empty parent directory until the first,
         /// non-empty directory is found.
         /// </summary>
         /// <param term='file'>Start point of the deletion</param>

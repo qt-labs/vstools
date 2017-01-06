@@ -62,7 +62,6 @@ namespace QtProjectLib
             ParseFile(qmakeConf);
         }
 
-
         private void ParseFile(string filename)
         {
             var fileInfo = new FileInfo(filename);

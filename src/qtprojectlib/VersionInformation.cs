@@ -185,7 +185,7 @@ namespace QtProjectLib
             internal static extern int GetBinaryType(string lpApplicationName, ref int lpBinaryType);
         }
 
-        public bool is64Bit()
+        private bool is64Bit()
         {
             // ### This does not work for x64 cross builds of Qt.
             // ### In that case qmake.exe is 32 bit but the DLLs are 64 bit.

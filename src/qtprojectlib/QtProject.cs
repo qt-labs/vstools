@@ -2623,11 +2623,11 @@ namespace QtProjectLib
 
         public void RemoveResFilesFromGeneratedFilesFilter()
         {
-            var filesToRemove = new List<VCFile>();
             var generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             if (generatedFiles == null)
                 return;
 
+            var filesToRemove = new List<VCFile>();
             foreach (VCFile filtFile in (IVCCollection) generatedFiles.Files) {
                 if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
                     filesToRemove.Add(filtFile);
