@@ -29,10 +29,12 @@
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -1763,15 +1765,22 @@ namespace QtProjectLib
         public void RepairGeneratedFilesStructure()
         {
             DeleteGeneratedFiles();
-            foreach (VCFile file in (IVCCollection) vcPro.Files) {
-                if (!HelperFunctions.IsHeaderFile(file.Name)
-                    && !HelperFunctions.IsSourceFile(file.Name)) {
-                    continue;
-                }
-                if (HelperFunctions.HasQObjectDeclaration(file)) {
-                    RemoveMocStep(file);
-                    AddMocStep(file);
-                }
+
+            var files = new ConcurrentBag<VCFile>();
+            Task.Factory.StartNew(() =>
+                Parallel.ForEach(((IVCCollection) vcPro.Files).Cast<VCFile>(), file =>
+                {
+                    var name = file.Name;
+                    if (!HelperFunctions.IsHeaderFile(name) && !HelperFunctions.IsSourceFile(name))
+                        return;
+                    if (HelperFunctions.HasQObjectDeclaration(file))
+                        files.Add(file);
+                })
+            );
+
+            foreach (var file in files) {
+                RemoveMocStep(file);
+                AddMocStep(file);
             }
         }
 
