@@ -943,15 +943,16 @@ namespace QtProjectLib
         public bool IsMoccedFileIncluded(VCFile vcFile)
         {
             var fullPath = vcFile.FullPath;
-            if (HelperFunctions.IsHeaderFile(vcFile.FullPath))
-                fullPath = Path.ChangeExtension(vcFile.FullPath, ".cpp");
+            if (HelperFunctions.IsHeaderFile(fullPath))
+                fullPath = Path.ChangeExtension(fullPath, ".cpp");
 
             if (HelperFunctions.IsSourceFile(fullPath)) {
                 vcFile = GetFileFromProject(fullPath);
                 if (vcFile == null)
                     return false;
 
-                var mocFile = "moc_" + Path.GetFileNameWithoutExtension(vcFile.FullPath) + ".cpp";
+                fullPath = vcFile.FullPath;
+                var mocFile = "moc_" + Path.GetFileNameWithoutExtension(fullPath) + ".cpp";
 
 #if TODO
                 // TODO: Newly created projects need a manual solution rescan if we access the
@@ -975,7 +976,7 @@ namespace QtProjectLib
                 CxxStreamReader cxxStream = null;
                 try {
                     var line = string.Empty;
-                    cxxStream = new CxxStreamReader(vcFile.FullPath);
+                    cxxStream = new CxxStreamReader(fullPath);
                     while ((line = cxxStream.ReadLine()) != null) {
                         if (Regex.IsMatch(line, "#include *(<|\")" + mocFile + "(\"|>)"))
                             return true;
