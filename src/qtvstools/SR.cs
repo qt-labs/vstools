@@ -72,7 +72,7 @@ namespace QtVsTools
         public static string GetString(string name, params object[] args)
         {
             var res = GetString(name);
-            if (args != null && args.Length > 0)
+            if (!string.IsNullOrEmpty(res) && args != null && args.Length > 0)
                 return string.Format(res, args);
             return res;
         }
