@@ -989,12 +989,7 @@ namespace QtProjectLib
             return false;
         }
 
-        public bool HasMocStep(VCFile file)
-        {
-            return HasMocStep(file, null);
-        }
-
-        public bool HasMocStep(VCFile file, string mocOutDir)
+        public bool HasMocStep(VCFile file, string mocOutDir = null)
         {
             if (HelperFunctions.IsHeaderFile(file.Name))
                 return CheckForCommand(file, "moc.exe");
