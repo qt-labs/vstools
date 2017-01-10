@@ -1763,15 +1763,17 @@ namespace QtProjectLib
             DeleteGeneratedFiles();
 
             var files = new ConcurrentBag<VCFile>();
-            Task.Factory.StartNew(() =>
-                Parallel.ForEach(((IVCCollection) vcPro.Files).Cast<VCFile>(), file =>
-                {
-                    var name = file.Name;
-                    if (!HelperFunctions.IsHeaderFile(name) && !HelperFunctions.IsSourceFile(name))
-                        return;
-                    if (HelperFunctions.HasQObjectDeclaration(file))
-                        files.Add(file);
-                })
+            Task.WaitAll(
+                Task.Run(() =>
+                    Parallel.ForEach(((IVCCollection) vcPro.Files).Cast<VCFile>(), file =>
+                    {
+                        var name = file.Name;
+                        if (!HelperFunctions.IsHeaderFile(name) && !HelperFunctions.IsSourceFile(name))
+                            return;
+                        if (HelperFunctions.HasQObjectDeclaration(file))
+                            files.Add(file);
+                    })
+                )
             );
 
             foreach (var file in files) {
