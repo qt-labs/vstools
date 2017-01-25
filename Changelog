@@ -1,3 +1,14 @@
+The Qt Visual Studio Tools version 2.1.0. contains improvements for QML syntax highlighting and
+several bug fixes.
+
+- Some speed improvements while importing large qmake based projects
+- Better handling of $(QTDIR) environment and possible related errors
+- Use TextMate language files for QML and qmake syntax highlighting (VS 2015)
+
+- QTVSADDINBUG-445: Fix wrong usage of QT_STATIC and QT_DLL
+- QTVSADDINBUG-407: Fix Environment variables are not saved/restored after VS restart
+
+
 The Qt Visual Studio Tools version 2.0.0 is an update of the existing Add-In implementation
 to the newer Visual Studio Package (VSIX extension) system.
 
