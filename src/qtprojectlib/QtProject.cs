@@ -1692,7 +1692,8 @@ namespace QtProjectLib
                     writer.WriteLine(l);
                 writer.Close();
             } catch (Exception e) {
-                Messages.DisplayErrorMessage(SR.GetString("QtProject_CannotAdjustWhitespaces", e.ToString()));
+                Messages.PaneMessage(dte, SR.GetString("QtProject_CannotAdjustWhitespaces",
+                    e.ToString()));
             }
         }
 
