@@ -1659,6 +1659,9 @@ namespace QtProjectLib
         /// <param name="file"></param>
         public void AdjustWhitespace(string file)
         {
+            if (!File.Exists(file))
+                return;
+
             // only replace whitespaces in known types
             if (!HelperFunctions.IsSourceFile(file) && !HelperFunctions.IsHeaderFile(file)
                 && !HelperFunctions.IsUicFile(file)) {
