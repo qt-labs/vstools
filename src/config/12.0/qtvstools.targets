@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);VS2013</DefineConstants>
-    <VsixVersion Condition="'$(VsixVersion)' == ''">2.1.0</VsixVersion>
+    <VsixVersion Condition="'$(VsixVersion)' == ''">2.1.1</VsixVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(VisualStudioVersion)' == '12.0' ">

@@ -1,4 +1,6 @@
-The Qt Visual Studio Tools version 2.1.0. contains improvements for QML syntax highlighting and
+The Qt Visual Studio Tools version 2.1.1 contains a bug fix for QTVSADDINBUG-453
+
+The Qt Visual Studio Tools version 2.1.0 contains improvements for QML syntax highlighting and
 several bug fixes.
 
 - Some speed improvements while importing large qmake based projects
