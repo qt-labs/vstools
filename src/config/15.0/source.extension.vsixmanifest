@@ -79,5 +79,8 @@
         <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
                       Version="[15.0.26208.0,16.0)"
                       DisplayName="Visual Studio C++ core features" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+                      Version="[15.0.26208.0,16.0)"
+                      DisplayName="VC++ 2017 v141 toolset (x86,x64)" />
     </Prerequisites>
 </PackageManifest>
