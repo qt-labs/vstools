@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -86,6 +87,21 @@ namespace QtProjectLib
                        + @"QMAKE_QMAKE=$(QTDIR)\bin\qmake.exe";
 
             qmakeProcess = CreateQmakeProcess(qmakeArgs, qtVersionInformation.qtDir + "\\bin\\qmake", fi.DirectoryName);
+
+            string clPath = GetClPath();
+            if (string.IsNullOrEmpty(clPath)) {
+                InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Unable to obtain path to cl");
+            } else {
+                string envPath = "";
+                if (!qmakeProcess.StartInfo.EnvironmentVariables.ContainsKey("PATH"))
+                    InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Warning: Empty PATH environment variable");
+                else
+                    envPath = qmakeProcess.StartInfo.EnvironmentVariables["PATH"];
+
+                qmakeProcess.StartInfo.EnvironmentVariables["PATH"] = clPath;
+                if (!string.IsNullOrEmpty(envPath))
+                    qmakeProcess.StartInfo.EnvironmentVariables["PATH"] += ";" + envPath;
+            }
 
             // We must set the QTDIR environment variable, because we're clearing QMAKE_LIBDIR_QT above.
             // If we do not set this, the Qt libraries will be QtCored.lib instead of QtCore4d.lib even
@@ -214,6 +230,73 @@ namespace QtProjectLib
                 stdOutputLines++;
                 stdOutput.Append("[" + stdOutputLines + "] - " + output.Trim() + "\n");
             }
+        }
+
+        private string GetRegistrySoftwareString(string subKeyName, string valueName)
+        {
+            var keyName = new StringBuilder();
+            keyName.Append(@"SOFTWARE\");
+            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
+                keyName.Append(@"WOW6432Node\");
+            keyName.Append(subKeyName);
+
+            try {
+                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
+                    if (key == null)
+                        return ""; //key not found
+
+                    RegistryValueKind valueKind = key.GetValueKind(valueName);
+                    if (valueKind != RegistryValueKind.String
+                        && valueKind != RegistryValueKind.ExpandString) {
+                        return ""; //wrong value kind
+                    }
+
+                    Object objValue = key.GetValue(valueName);
+                    if (objValue == null)
+                        return ""; //error getting value
+
+                    return objValue.ToString();
+                }
+            } catch {
+                return "";
+            }
+        }
+
+        private string GetClPath()
+        {
+            bool x64 = QtVersionManager.The().GetVersionInfo(
+                QtVersionManager.The().GetDefaultVersion()).is64Bit();
+#if VS2017
+            string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
+            if (string.IsNullOrEmpty(vsPath))
+                return "";
+
+            string vcVarsDefaultConfigFile = Path.Combine(vsPath,
+                @"VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt");
+            string vcVarsToolsVersion = "";
+            try {
+                using (var file = new StreamReader(vcVarsDefaultConfigFile)) {
+                    vcVarsToolsVersion = file.ReadLine();
+                    if (String.IsNullOrEmpty(vcVarsToolsVersion))
+                        return "";
+                }
+            } catch (Exception) {
+                return "";
+            }
+
+            string clPath = Path.Combine(vsPath, string.Format(@"VC\Tools\MSVC\{0}\bin\{1}",
+                vcVarsToolsVersion.Trim(), (x64 ? @"HostX64\x64" : @"HostX86\x86")));
+#elif VS2015
+            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "14.0");
+            if (string.IsNullOrEmpty(vcPath))
+                return ""; //could not get registry key
+
+            string clPath = Path.Combine(vcPath, (x64 ? @"bin\amd64" : "bin"));
+#endif
+            if (!Directory.Exists(clPath))
+                return "";
+
+            return clPath;
         }
     }
 }
