@@ -437,6 +437,10 @@ namespace QtProjectLib
         /// <returns></returns>
         static public VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
+            var file = config.File as VCFile;
+            if (file == null || file.ItemType != "CustomBuild")
+                return null;
+
             var tool = config.Tool as VCCustomBuildTool;
             if (tool == null)
                 return null;
