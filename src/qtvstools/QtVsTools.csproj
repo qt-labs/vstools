@@ -123,12 +123,30 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\qttmlanguage\**\*">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="..\config\$(VisualStudioVersion)\source.extension.vsixmanifest" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <PropertyGroup>
+    <QtTmLanguage>$(SolutionDir)\qttmlanguage</QtTmLanguage>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(QtTmLanguage)\**\*.*">
+        <Link>QtTmLanguage\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\qrceditor\bin\QrcEditor.exe">
+      <Link>QrcEditor.exe</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qmakefilereader\bin\QMakeFileReader.exe">
+      <Link>QMakeFileReader.exe</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\x64\SQLite.Interop.dll">

@@ -42,6 +42,12 @@
         <Icon>qt.ico</Icon>
         <PreviewImage>preview.png</PreviewImage>
     </Metadata>
+    <Installation InstalledByMsi="false">
+      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[14.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[14.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
+    </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
     </Dependencies>
