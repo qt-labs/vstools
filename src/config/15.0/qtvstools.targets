@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);VS2017</DefineConstants>
-    <VsixVersion Condition="'$(VsixVersion)' == ''">2.1.1</VsixVersion>
+    <VsixVersion Condition="'$(VsixVersion)' == ''">2.1.2</VsixVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(VisualStudioVersion)' == '15.0' ">
