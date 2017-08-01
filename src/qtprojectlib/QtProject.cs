@@ -2603,7 +2603,7 @@ namespace QtProjectLib
             foreach (VCFile f in filter.Files as IVCCollection) {
                 try {
                     var fi = new FileInfo(f.FullPath);
-                    if (fi.Exists)
+                    if (fi.Exists && fi.Extension != ".cbt")
                         fi.Delete();
                     HelperFunctions.DeleteEmptyParentDirs(fi.Directory.ToString());
                 } catch {
