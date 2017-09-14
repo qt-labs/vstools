@@ -1043,7 +1043,7 @@ namespace QtProjectLib
 
             var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             if (vcFilter != null) {
-                var filterFiles = (IVCCollection) vcFilter.Files;
+                var filterFiles = GetAllFilesFromFilter(vcFilter);
                 var filesToDelete = new List<VCFile>();
                 foreach (VCFile rmFile in filterFiles) {
                     if (rmFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase))
