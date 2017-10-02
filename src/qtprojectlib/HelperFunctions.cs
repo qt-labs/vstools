@@ -1387,5 +1387,208 @@ namespace QtProjectLib
             foreach (var subDir in subDirs)
                 CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
         }
+
+        /// <summary>
+        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
+        /// and project item metadata in the form %(MetadataName).<para/>
+        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
+        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
+        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
+        /// <paramref name="project"/>: Current project.<para/>
+        /// <paramref name="configName"/>: Name of selected configuration (e.g. "Debug").<para/>
+        /// <paramref name="platformName"/>: Name of selected platform (e.g. "x64").<para/>
+        /// <paramref name="filePath"/>(optional): Evaluation context.<para/>
+        /// </summary>
+        public static bool ExpandString(
+            ref string stringToExpand,
+            EnvDTE.Project project,
+            string configName,
+            string platformName,
+            string filePath = null)
+        {
+            if (project == null
+                || string.IsNullOrEmpty(configName)
+                || string.IsNullOrEmpty(platformName))
+                return false;
+
+            var vcProject = project.Object as VCProject;
+
+            if (filePath == null) {
+                var vcConfig = (from VCConfiguration _config
+                                in (IVCCollection)vcProject.Configurations
+                                where _config.Name == configName + "|" + platformName
+                                select _config).FirstOrDefault();
+                return ExpandString(ref stringToExpand, vcConfig);
+            } else {
+                var vcFile = (from VCFile _file in (IVCCollection)vcProject.Files
+                              where _file.FullPath == filePath
+                              select _file).FirstOrDefault();
+                if (vcFile == null)
+                    return false;
+
+                var vcFileConfig = (from VCFileConfiguration _config
+                                    in (IVCCollection)vcFile.FileConfigurations
+                                    where _config.Name == configName + "|" + platformName
+                                    select _config).FirstOrDefault();
+                return ExpandString(ref stringToExpand, vcFileConfig);
+            }
+        }
+
+        /// <summary>
+        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
+        /// and project item metadata in the form %(MetadataName).<para/>
+        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
+        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
+        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
+        /// <paramref name="config"/>: Either a VCConfiguration or VCFileConfiguration object to
+        /// use as provider of property expansion (through Evaluate()). Cannot be null.<para/>
+        /// </summary>
+        public static bool ExpandString(
+            ref string stringToExpand,
+            object config)
+        {
+            if (config == null)
+                return false;
+
+            /* try property expansion through VCConfiguration.Evaluate()
+             * or VCFileConfiguration.Evaluate() */
+            string expanded = stringToExpand;
+            VCProject vcProj = null;
+            VCFile vcFile = null;
+            string configName = "", platformName = "";
+            var vcConfig = config as VCConfiguration;
+            if (vcConfig != null) {
+                vcProj = vcConfig.project as VCProject;
+                configName = vcConfig.ConfigurationName;
+                var vcPlatform = vcConfig.Platform as VCPlatform;
+                if (vcPlatform != null)
+                    platformName = vcPlatform.Name;
+                try {
+                    expanded = vcConfig.Evaluate(expanded);
+                } catch { }
+            } else {
+                var vcFileConfig = config as VCFileConfiguration;
+                if (vcFileConfig == null)
+                    return false;
+                vcFile = vcFileConfig.File as VCFile;
+                if (vcFile != null)
+                    vcProj = vcFile.project as VCProject;
+                var vcProjConfig = vcFileConfig.ProjectConfiguration as VCConfiguration;
+                if (vcProjConfig != null) {
+                    configName = vcProjConfig.ConfigurationName;
+                    var vcPlatform = vcProjConfig.Platform as VCPlatform;
+                    if (vcPlatform != null)
+                        platformName = vcPlatform.Name;
+                }
+                try {
+                    expanded = vcFileConfig.Evaluate(expanded);
+                } catch { }
+            }
+
+            /* fail-safe */
+            foreach (Match propNameMatch in Regex.Matches(expanded, @"\$\(([^\)]+)\)")) {
+                string propName = propNameMatch.Groups[1].Value;
+                string propValue = "";
+                switch (propName) {
+                    case "Configuration":
+                    case "ConfigurationName":
+                        if (string.IsNullOrEmpty(configName))
+                            return false;
+                        propValue = configName;
+                        break;
+                    case "Platform":
+                    case "PlatformName":
+                        if (string.IsNullOrEmpty(platformName))
+                            return false;
+                        propValue = platformName;
+                        break;
+                    default:
+                        return false;
+                }
+                expanded = expanded.Replace(string.Format("$({0})", propName), propValue);
+            }
+
+            /* because item metadata is not expanded in Evaluate() */
+            foreach (Match metaNameMatch in Regex.Matches(expanded, @"\%\(([^\)]+)\)")) {
+                string metaName = metaNameMatch.Groups[1].Value;
+                string metaValue = "";
+                switch (metaName) {
+                    case "FullPath":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = vcFile.FullPath;
+                        break;
+                    case "RootDir":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetPathRoot(vcFile.FullPath);
+                        break;
+                    case "Filename":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetFileNameWithoutExtension(vcFile.FullPath);
+                        break;
+                    case "Extension":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetExtension(vcFile.FullPath);
+                        break;
+                    case "RelativeDir":
+                        if (vcProj == null || vcFile == null)
+                            return false;
+                        metaValue = Path.GetDirectoryName(GetRelativePath(
+                            Path.GetDirectoryName(vcProj.ProjectFile),
+                            vcFile.FullPath));
+                        if (!metaValue.EndsWith("\\"))
+                            metaValue += "\\";
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "Directory":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetDirectoryName(GetRelativePath(
+                            Path.GetPathRoot(vcFile.FullPath),
+                            vcFile.FullPath));
+                        if (!metaValue.EndsWith("\\"))
+                            metaValue += "\\";
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "Identity":
+                        if (vcProj == null || vcFile == null)
+                            return false;
+                        metaValue = GetRelativePath(
+                            Path.GetDirectoryName(vcProj.ProjectFile),
+                            vcFile.FullPath);
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "RecursiveDir":
+                    case "ModifiedTime":
+                    case "CreatedTime":
+                    case "AccessedTime":
+                        return false;
+                    default:
+                        var vcFileConfig = config as VCFileConfiguration;
+                        if (vcFileConfig == null)
+                            return false;
+                        var propStoreTool = vcFileConfig.Tool as IVCRulePropertyStorage;
+                        if (propStoreTool == null)
+                            return false;
+                        try {
+                            metaValue = propStoreTool.GetEvaluatedPropertyValue(metaName);
+                        } catch {
+                            return false;
+                        }
+                        break;
+                }
+                expanded = expanded.Replace(string.Format("%({0})", metaName), metaValue);
+            }
+
+            stringToExpand = expanded;
+            return true;
+        }
+
     }
 }

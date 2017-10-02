@@ -72,13 +72,27 @@ namespace QtProjectLib
             return GetDirectory(project, Resources.mocDirKeyword);
         }
 
-        public static string GetMocDirectory(EnvDTE.Project project, string configName, string platformName)
+        public static string GetMocDirectory(
+            EnvDTE.Project project,
+            string configName,
+            string platformName, VCFile vCFile)
+        {
+            string filePath = null;
+            if (vCFile != null)
+                filePath = vCFile.FullPath;
+            return GetMocDirectory(project, configName, platformName, filePath);
+        }
+
+        public static string GetMocDirectory(
+            EnvDTE.Project project,
+            string configName,
+            string platformName,
+            string filePath = null)
         {
             var dir = GetDirectory(project, Resources.mocDirKeyword);
-            if (!string.IsNullOrEmpty(configName))
-                dir = dir.Replace("$(ConfigurationName)", configName);
-            if (!string.IsNullOrEmpty(platformName))
-                dir = dir.Replace("$(PlatformName)", platformName);
+            if (!string.IsNullOrEmpty(configName)
+                && !string.IsNullOrEmpty(platformName))
+                HelperFunctions.ExpandString(ref dir, project, configName, platformName, filePath);
             return dir;
         }
 

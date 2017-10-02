@@ -110,8 +110,9 @@ namespace QtVsTools
                 if (tmp.ToLower() == newMocDir.ToLower())
                     return;
 
-                if (ContainsInvalidVariable(tmp))
-                    Messages.DisplayErrorMessage(SR.GetString("OnlyVariableInDir"));
+                string badMacros = ProjectQtSettings.IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
                 else
                     newMocDir = tmp;
             }

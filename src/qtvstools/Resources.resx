@@ -280,6 +280,9 @@ and select the Qt version to use.</value>
   <data name="OnlyVariableInDir" xml:space="preserve">
     <value>The path may only contain the "$(ConfigurationName)" and/or "$(PlatformName)" variable. A valid path is e.g.".$(ConfigurationName)/moc".</value>
   </data>
+  <data name="IncompatibleMacros" xml:space="preserve">
+    <value>The following macros are not compatible: {0}</value>
+  </data>
   <data name="OpenGLLibrary" xml:space="preserve">
     <value>OpenGL</value>
   </data>

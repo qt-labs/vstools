@@ -170,7 +170,7 @@ namespace QtProjectLib
             var fileName = GetMocFileName(file);
             if (fileName == null)
                 return null;
-            var mocDir = QtVSIPSettings.GetMocDirectory(envPro, configName, platformName)
+            var mocDir = QtVSIPSettings.GetMocDirectory(envPro, configName, platformName, file)
                 + "\\" + fileName;
             if (HelperFunctions.IsAbsoluteFilePath(mocDir))
                 mocDir = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory, mocDir);
@@ -2114,7 +2114,12 @@ namespace QtProjectLib
 
                 //If a project from the an AddIn prior to 1.1.0 was loaded, the generated files are located directly
                 //in the generated files filter.
-                var relativeMocPath = QtVSIPSettings.GetMocDirectory(envPro, configName, platformName) + '\\' + fileName;
+                var relativeMocPath = QtVSIPSettings.GetMocDirectory(
+                    envPro,
+                    configName,
+                    platformName,
+                    fileConfig.File as VCFile)
+                    + '\\' + fileName;
                 //Remove .\ at the beginning of the mocPath
                 if (relativeMocPath.StartsWith(".\\", StringComparison.Ordinal))
                     relativeMocPath = relativeMocPath.Remove(0, 2);
@@ -2342,13 +2347,13 @@ namespace QtProjectLib
                             if (f.FullPath.EndsWith("\\" + fileName, StringComparison.OrdinalIgnoreCase)) {
                                 if (!orgFiles.Contains(f) && HasMocStep(f, oldMocDir))
                                     orgFiles.Add(f);
-                                RemoveFileFromFilter(file, vcFilter);
-                                HelperFunctions.DeleteEmptyParentDirs(file);
                                 found = true;
-                                break;
                             }
                         }
-                        if (!found) {
+                        if (found) {
+                            RemoveFileFromFilter(file, vcFilter);
+                            HelperFunctions.DeleteEmptyParentDirs(file);
+                        } else {
                             // We can't find foo.h for moc_foo.cpp or
                             // we can't find foo.cpp for foo.moc, thus we put the
                             // filename moc_foo.cpp / foo.moc into an error list.
