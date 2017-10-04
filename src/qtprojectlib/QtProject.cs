@@ -2500,7 +2500,7 @@ namespace QtProjectLib
             }
             try {
                 envPro.DTE.Solution.SolutionBuild.Clean(true);
-            } catch (System.Runtime.InteropServices.COMException e) {
+            } catch (System.Runtime.InteropServices.COMException) {
                 // TODO: Implement some logging mechanism for exceptions.
             }
 
