@@ -28,14 +28,19 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
+using Process = System.Diagnostics.Process;
 
 namespace QtProjectLib
 {
@@ -1587,6 +1592,166 @@ namespace QtProjectLib
             }
 
             stringToExpand = expanded;
+            return true;
+        }
+
+        private static string GetRegistrySoftwareString(string subKeyName, string valueName)
+        {
+            var keyName = new StringBuilder();
+            keyName.Append(@"SOFTWARE\");
+            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
+                keyName.Append(@"WOW6432Node\");
+            keyName.Append(subKeyName);
+
+            try {
+                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
+                    if (key == null)
+                        return ""; //key not found
+
+                    RegistryValueKind valueKind = key.GetValueKind(valueName);
+                    if (valueKind != RegistryValueKind.String
+                        && valueKind != RegistryValueKind.ExpandString) {
+                        return ""; //wrong value kind
+                    }
+
+                    Object objValue = key.GetValue(valueName);
+                    if (objValue == null)
+                        return ""; //error getting value
+
+                    return objValue.ToString();
+                }
+            } catch {
+                return "";
+            }
+        }
+
+        private static string GetVCPath()
+        {
+#if VS2017
+            string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
+            if (string.IsNullOrEmpty(vsPath))
+                return "";
+            string vcPath = Path.Combine(vsPath, "VC");
+#elif VS2015
+            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "14.0");
+            if (string.IsNullOrEmpty(vcPath))
+                return ""; //could not get registry key
+#elif VS2013
+            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "12.0");
+            if (string.IsNullOrEmpty(vcPath))
+                return ""; //could not get registry key
+#endif
+            return vcPath;
+        }
+
+        public static bool SetVCVars(ProcessStartInfo startInfo)
+        {
+            bool isOS64Bit = System.Environment.Is64BitOperatingSystem;
+            bool isQt64Bit = QtVersionManager.The().GetVersionInfo(
+                QtVersionManager.The().GetDefaultVersion()).is64Bit();
+
+            string vcPath = GetVCPath();
+            if (vcPath == "")
+                return false;
+
+            string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
+#if VS2017
+            string vcVarsCmd = "";
+            string vcVarsArg = "";
+            if (isOS64Bit && isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars64.bat");
+            else if (!isOS64Bit && !isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars32.bat");
+            else if (isOS64Bit && !isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsamd64_x86.bat");
+            else if (!isOS64Bit && isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
+#elif VS2015 || VS2013
+            string vcVarsCmd = Path.Combine(vcPath, "vcvarsall.bat");
+            string vcVarsArg = "";
+            if (isOS64Bit && isQt64Bit)
+                vcVarsArg = "amd64";
+            else if (!isOS64Bit && !isQt64Bit)
+                vcVarsArg = "x86";
+            else if (isOS64Bit && !isQt64Bit)
+                vcVarsArg = "amd64_x86";
+            else if (!isOS64Bit && isQt64Bit)
+                vcVarsArg = "x86_amd64";
+#endif
+            const string markSTX = ":@:@:@";
+            const string markEOL = ":#:#:#";
+            string command =
+                string.Format("/c \"{0}\" {1} && echo {2} && set", vcVarsCmd, vcVarsArg, markSTX);
+            var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command);
+            vcVarsStartInfo.CreateNoWindow = true;
+            vcVarsStartInfo.UseShellExecute = false;
+            vcVarsStartInfo.RedirectStandardError = true;
+            vcVarsStartInfo.RedirectStandardOutput = true;
+
+            var process = Process.Start(vcVarsStartInfo);
+            StringBuilder stdOut = new StringBuilder();
+
+            process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+                stdOut.AppendFormat("{0}\n{1}\n", e.Data, markEOL);
+            process.BeginOutputReadLine();
+
+            process.WaitForExit();
+            bool ok = (process.ExitCode == 0);
+            process.Close();
+            if (!ok)
+                return false;
+
+            SortedDictionary<string, List<string>> vcVars =
+                new SortedDictionary<string, List<string>>();
+            string[] split =
+                stdOut.ToString().Split(new string[] { "\n", "=", ";" }, StringSplitOptions.None);
+            int i = 0;
+            for (; i < split.Length && split[i].Trim() != markSTX; i++) {
+                //Skip to start of data
+            }
+            i++; //Advance to next item
+            for (; i < split.Length && split[i].Trim() != markEOL; i++) {
+                //Skip to end of line
+            }
+            i++; //Advance to next item
+            for (; i < split.Length; i++) {
+                //Process first item (variable name)
+                string key = split[i].ToUpper().Trim();
+                i++; //Advance to next item
+                List<string> vcVarValue = vcVars[key] = new List<string>();
+                for (; i < split.Length && split[i].Trim() != markEOL; i++) {
+                    //Process items up to end of line (variable value(s))
+                    vcVarValue.Add(split[i].Trim());
+                }
+            }
+
+            foreach (var vcVar in vcVars) {
+                if (vcVar.Value.Count == 1) {
+                    startInfo.EnvironmentVariables[vcVar.Key] = vcVar.Value[0];
+                } else {
+                    if (!startInfo.EnvironmentVariables.ContainsKey(vcVar.Key)) {
+                        foreach (var vcVarValue in vcVar.Value) {
+                            if (!string.IsNullOrWhiteSpace(vcVarValue)) {
+                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
+                            }
+                        }
+                    } else {
+                        string[] startInfoVariableValues = startInfo.EnvironmentVariables[vcVar.Key]
+                            .Split(new string[] { ";" }, StringSplitOptions.None);
+                        foreach (var vcVarValue in vcVar.Value) {
+                            if (!string.IsNullOrWhiteSpace(vcVarValue)
+                                && !startInfoVariableValues.Any(s => s.Trim().Equals(
+                                    vcVarValue,
+                                    StringComparison.OrdinalIgnoreCase))) {
+                                if (!startInfo.EnvironmentVariables[vcVar.Key].EndsWith(";"))
+                                    startInfo.EnvironmentVariables[vcVar.Key] += ";";
+                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
+                            }
+                        }
+                    }
+                }
+            }
+
             return true;
         }
 

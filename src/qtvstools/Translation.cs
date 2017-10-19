@@ -31,6 +31,7 @@ using QtProjectLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -128,57 +129,20 @@ namespace QtVsTools
             var sources = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_CppFiles);
             var uifiles = HelperFunctions.GetProjectFiles(pro, FilesToList.FL_UiFiles);
 
+            StringBuilder fileNames = new StringBuilder();
             foreach (var file in headers)
-                cmdLine += file + " ";
+                fileNames.AppendLine(file);
 
             foreach (var file in sources)
-                cmdLine += file + " ";
+                fileNames.AppendLine(file);
 
             foreach (var file in uifiles)
-                cmdLine += file + " ";
+                fileNames.AppendLine(file);
 
+            var lstFilePath = Path.GetTempFileName();
+            File.WriteAllText(lstFilePath, fileNames.ToString());
+            cmdLine += string.Format("\"@{0}\" ", lstFilePath);
             cmdLine += "-ts " + vcFile.RelativePath.Quoute();
-
-            var cmdLineLength = cmdLine.Length + Resources.lupdateCommand.Length + 1;
-            string temporaryProFile = null;
-            if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength()) {
-                var codec = string.Empty;
-                if (!string.IsNullOrEmpty(options)) {
-                    var cc4tr_location = options.IndexOf("-codecfortr", System.StringComparison.CurrentCultureIgnoreCase);
-                    if (cc4tr_location != -1) {
-                        codec = options.Substring(cc4tr_location).Split(' ')[1];
-                        var remove_this = options.Substring(cc4tr_location, "-codecfortr".Length + 1 + codec.Length);
-                        options = options.Replace(remove_this, "");
-                    }
-                }
-                var vcPro = (VCProject) pro.Object;
-                temporaryProFile = Path.GetTempFileName();
-                temporaryProFile = Path.GetDirectoryName(temporaryProFile) + "\\"
-                    + Path.GetFileNameWithoutExtension(temporaryProFile) + ".pro";
-                if (File.Exists(temporaryProFile))
-                    File.Delete(temporaryProFile);
-
-                using (var sw = new StreamWriter(temporaryProFile)) {
-                    writeFilesToPro(sw, "HEADERS",
-                        ProjectExporter.ConvertFilesToFullPath(headers, vcPro.ProjectDirectory));
-                    writeFilesToPro(sw, "SOURCES",
-                        ProjectExporter.ConvertFilesToFullPath(sources, vcPro.ProjectDirectory));
-                    writeFilesToPro(sw, "FORMS",
-                        ProjectExporter.ConvertFilesToFullPath(uifiles, vcPro.ProjectDirectory));
-
-                    var tsFiles = new List<string>(1);
-                    tsFiles.Add(vcFile.FullPath);
-                    writeFilesToPro(sw, "TRANSLATIONS", tsFiles);
-
-                    if (!string.IsNullOrEmpty(codec))
-                        sw.WriteLine("CODECFORTR = " + codec);
-                }
-
-                cmdLine = string.Empty;
-                if (!string.IsNullOrEmpty(options))
-                    cmdLine += options + " ";
-                cmdLine += "\"" + temporaryProFile + "\"";
-            }
 
             var success = true;
             try {
@@ -190,13 +154,8 @@ namespace QtVsTools
                 Messages.DisplayErrorMessage(e.Message);
             }
 
-            if (temporaryProFile != null && File.Exists(temporaryProFile)) {
-                File.Delete(temporaryProFile);
-                temporaryProFile = temporaryProFile.Substring(0, temporaryProFile.Length - 3);
-                temporaryProFile += "TMP";
-                if (File.Exists(temporaryProFile))
-                    File.Delete(temporaryProFile);
-            }
+            if (File.Exists(lstFilePath))
+                File.Delete(lstFilePath);
 
             return success;
         }
@@ -301,6 +260,9 @@ namespace QtVsTools
                     RedirectStandardError = true,
                     RedirectStandardOutput = true
                 };
+
+                if (!HelperFunctions.SetVCVars(process.StartInfo))
+                    Messages.DisplayErrorMessage("--- (Translation): Error setting VC vars");
 
                 process.Start();
                 var thread = new Thread(ReadQtStandardError);
