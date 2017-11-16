@@ -1,0 +1,415 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="QtPrepare" AfterTargets="CustomBuild" BeforeTargets="ClCompile">
+    <PropertyGroup Condition="'$(QtDebug)' == ''">
+      <QtDebug>false</QtDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(QtWorkFilePath)' == ''">
+      <QtWorkFilePath>$(ProjectDir)$(IntDir)qt.txt</QtWorkFilePath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(QtMaxProcs)' == ''">
+      <QtMaxProcs>$([System.Environment]::ProcessorCount)</QtMaxProcs>
+    </PropertyGroup>
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="# BEGIN Qt" />
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtPrepare" />
+    <Delete Files="$(QtWorkFilePath)"/>
+    <Delete Condition="'$(SelectedFiles)' == '%(QtMoc.Identity)'" Files="%(QtMoc.OutputFile)" />
+    <Delete Condition="'$(SelectedFiles)' == '%(QtRcc.Identity)'" Files="%(QtRcc.OutputFile)" />
+    <Delete Condition="'$(SelectedFiles)' == '%(QtUic.Identity)'" Files="%(QtUic.OutputFile)" />
+  </Target>
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName)moc.xml" />
+    <AvailableItemName Include="QtMoc">
+      <Targets>QtMoc</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <UsingTask
+    TaskName="QtMoc"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)moc.xml</Task>
+  </UsingTask>
+  <Target
+    Name="QtMoc"
+    BeforeTargets="$(QtMocBeforeTargets)"
+    AfterTargets="$(QtMocAfterTargets)"
+    Condition="'@(QtMoc)' != ''"
+    Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtMoc-&gt;'%(OutputFile)')"
+    DependsOnTargets="$(QtMocDependsOn);QtPrepare">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMoc @(QtMoc)" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtMoc Remove="@(QtMoc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <QtMoc_tlog
+        Include="%(QtMoc.OutputFile)"
+        Condition="'%(QtMoc.OutputFile)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true'">
+        <Source>@(QtMoc, '|')</Source>
+      </QtMoc_tlog>
+    </ItemGroup>
+    <Message
+      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Importance="High"
+      Text="%(QtMoc.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(QtMoc_tlog)' != '' and '%(QtMoc_tlog.ExcludedFromBuild)' != 'true'"
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^%(QtMoc_tlog.Source);@(QtMoc_tlog-&gt;'%(Fullpath)')"
+      Encoding="Unicode"/>
+    <MakeDir
+      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true'"
+      Directories="$([System.IO.Path]::GetDirectoryName(%(QtMoc.OutputFile)))"/>
+    <QtMoc
+      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      CommandLineTemplate="echo %(QtMoc.ExecutionDescription);%(QtMoc.QTDIR)\bin\moc.exe;%(QtMoc.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
+      InputFile="%(QtMoc.InputFile)"
+      OutputFile="%(QtMoc.OutputFile)"
+      IncludePath="%(QtMoc.IncludePath)"
+      MacFramework="%(QtMoc.MacFramework)"
+      PreprocessOnly="%(QtMoc.PreprocessOnly)"
+      Define="%(QtMoc.Define)"
+      Undefine="%(QtMoc.Undefine)"
+      Metadata="%(QtMoc.Metadata)"
+      CompilerFlavor="%(QtMoc.CompilerFlavor)"
+      NoInclude="%(QtMoc.NoInclude)"
+      PathPrefix="%(QtMoc.PathPrefix)"
+      ForceInclude="%(QtMoc.ForceInclude)"
+      PrependInclude="%(QtMoc.PrependInclude)"
+      Include="%(QtMoc.Include)"
+      NoNotesWarnings="%(QtMoc.NoNotesWarnings)"
+      NoNotes="%(QtMoc.NoNotes)"
+      NoWarnings="%(QtMoc.NoWarnings)"
+      IgnoreConflicts="%(QtMoc.IgnoreConflicts)"
+      OptionsFile="%(QtMoc.OptionsFile)"
+      AdditionalOptions="%(QtMoc.AdditionalOptions)"
+      Inputs="@(QtMoc)" />
+    <QtMoc
+      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      CommandLineTemplate="%(QtMoc.QTDIR)\bin\moc.exe %(QtMoc.CommandLineTemplate)"
+      InputFile="%(QtMoc.InputFile)"
+      OutputFile="%(QtMoc.OutputFile)"
+      IncludePath="%(QtMoc.IncludePath)"
+      MacFramework="%(QtMoc.MacFramework)"
+      PreprocessOnly="%(QtMoc.PreprocessOnly)"
+      Define="%(QtMoc.Define)"
+      Undefine="%(QtMoc.Undefine)"
+      Metadata="%(QtMoc.Metadata)"
+      CompilerFlavor="%(QtMoc.CompilerFlavor)"
+      NoInclude="%(QtMoc.NoInclude)"
+      PathPrefix="%(QtMoc.PathPrefix)"
+      ForceInclude="%(QtMoc.ForceInclude)"
+      PrependInclude="%(QtMoc.PrependInclude)"
+      Include="%(QtMoc.Include)"
+      NoNotesWarnings="%(QtMoc.NoNotesWarnings)"
+      NoNotes="%(QtMoc.NoNotes)"
+      NoWarnings="%(QtMoc.NoWarnings)"
+      IgnoreConflicts="%(QtMoc.IgnoreConflicts)"
+      OptionsFile="%(QtMoc.OptionsFile)"
+      AdditionalOptions="%(QtMoc.AdditionalOptions)"
+      Inputs="@(QtMoc)" />
+  </Target>
+  <Target Name="QtMocPrep" BeforeTargets="QtMoc" Condition="'@(QtMoc)' != ''">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMocPrep @(QtMoc)" />
+    <ItemGroup>
+      <QtMoc
+        Remove="@(QtMoc)"
+        Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' == 'true' and '@(SelectedFiles)' == ''"/>
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName)rcc.xml" />
+    <AvailableItemName Include="QtRcc">
+      <Targets>QtRcc</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <UsingTask
+    TaskName="QtRcc"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)rcc.xml</Task>
+  </UsingTask>
+  <Target
+    Name="QtRcc"
+    BeforeTargets="$(QtRccBeforeTargets)"
+    AfterTargets="$(QtRccAfterTargets)"
+    Condition="'@(QtRcc)' != ''"
+    Inputs="%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtRcc-&gt;'%(OutputFile)')"
+    DependsOnTargets="$(QtRccDependsOn);QtMoc">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRcc @(QtRcc)" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtRcc Remove="@(QtRcc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <QtRcc_tlog
+        Include="%(QtRcc.OutputFile)"
+        Condition="'%(QtRcc.OutputFile)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true'">
+        <Source>@(QtRcc, '|')</Source>
+      </QtRcc_tlog>
+    </ItemGroup>
+    <Message
+      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Importance="High"
+      Text="%(QtRcc.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(QtRcc_tlog)' != '' and '%(QtRcc_tlog.ExcludedFromBuild)' != 'true'"
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^%(QtRcc_tlog.Source);@(QtRcc_tlog-&gt;'%(Fullpath)')"
+      Encoding="Unicode"/>
+    <MakeDir
+      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true'"
+      Directories="$([System.IO.Path]::GetDirectoryName(%(QtRcc.OutputFile)))"/>
+    <QtRcc
+      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      CommandLineTemplate="echo %(QtRcc.ExecutionDescription);%(QtRcc.QTDIR)\bin\rcc.exe;%(QtRcc.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
+      InputFile="%(QtRcc.InputFile)"
+      OutputFile="%(QtRcc.OutputFile)"
+      TempFile="%(QtRcc.TempFile)"
+      InitFuncName="%(QtRcc.InitFuncName)"
+      Root="%(QtRcc.Root)"
+      Compression="%(QtRcc.Compression)"
+      NoCompression="%(QtRcc.NoCompression)"
+      CompressThreshold="%(QtRcc.CompressThreshold)"
+      BinaryOutput="%(QtRcc.BinaryOutput)"
+      PassNumber="%(QtRcc.PassNumber)"
+      NoNamespace="%(QtRcc.NoNamespace)"
+      Verbose="%(QtRcc.Verbose)"
+      List="%(QtRcc.List)"
+      Project="%(QtRcc.Project)"
+      FormatVersion="%(QtRcc.FormatVersion)"
+      AdditionalOptions="%(QtRcc.AdditionalOptions)"
+      Inputs="@(QtRcc)" />
+    <QtRcc
+      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      CommandLineTemplate="%(QtRcc.QTDIR)\bin\rcc.exe %(QtRcc.CommandLineTemplate)"
+      InputFile="%(QtRcc.InputFile)"
+      OutputFile="%(QtRcc.OutputFile)"
+      TempFile="%(QtRcc.TempFile)"
+      InitFuncName="%(QtRcc.InitFuncName)"
+      Root="%(QtRcc.Root)"
+      Compression="%(QtRcc.Compression)"
+      NoCompression="%(QtRcc.NoCompression)"
+      CompressThreshold="%(QtRcc.CompressThreshold)"
+      BinaryOutput="%(QtRcc.BinaryOutput)"
+      PassNumber="%(QtRcc.PassNumber)"
+      NoNamespace="%(QtRcc.NoNamespace)"
+      Verbose="%(QtRcc.Verbose)"
+      List="%(QtRcc.List)"
+      Project="%(QtRcc.Project)"
+      FormatVersion="%(QtRcc.FormatVersion)"
+      AdditionalOptions="%(QtRcc.AdditionalOptions)"
+      Inputs="@(QtRcc)" />
+  </Target>
+  <Target Name="QtRccPrep" BeforeTargets="QtRcc" Condition="'@(QtRcc)' != ''">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRccPrep @(QtRcc)" />
+    <ItemGroup>
+      <QtRcc
+        Remove="@(QtRcc)"
+        Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' == 'true' and '@(SelectedFiles)' == ''"/>
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName)uic.xml" />
+    <AvailableItemName Include="QtUic">
+      <Targets>QtUic</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <UsingTask
+    TaskName="QtUic"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)uic.xml</Task>
+  </UsingTask>
+  <Target
+    Name="QtUic"
+    BeforeTargets="$(QtUicBeforeTargets)"
+    AfterTargets="$(QtUicAfterTargets)"
+    Condition="'@(QtUic)' != ''"
+    Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtUic-&gt;'%(OutputFile)')"
+    DependsOnTargets="$(QtUicDependsOn);QtRcc">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUic @(QtUic)" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtUic Remove="@(QtUic)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <QtUic_tlog
+        Include="%(QtUic.OutputFile)"
+        Condition="'%(QtUic.OutputFile)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true'">
+        <Source>@(QtUic, '|')</Source>
+      </QtUic_tlog>
+    </ItemGroup>
+    <Message
+      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Importance="High"
+      Text="%(QtUic.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(QtUic_tlog)' != '' and '%(QtUic_tlog.ExcludedFromBuild)' != 'true'"
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^%(QtUic_tlog.Source);@(QtUic_tlog-&gt;'%(Fullpath)')"
+      Encoding="Unicode"/>
+    <MakeDir
+      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true'"
+      Directories="$([System.IO.Path]::GetDirectoryName(%(QtUic.OutputFile)))"/>
+    <QtUic
+      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      CommandLineTemplate="echo %(QtUic.ExecutionDescription);%(QtUic.QTDIR)\bin\uic.exe;%(QtUic.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
+      InputFile="%(QtUic.InputFile)"
+      OutputFile="%(QtUic.OutputFile)"
+      DisplayDependencies="%(QtUic.DisplayDependencies)"
+      NoProtection="%(QtUic.NoProtection)"
+      NoImplicitIncludes="%(QtUic.NoImplicitIncludes)"
+      Postfix="%(QtUic.Postfix)"
+      Translate="%(QtUic.Translate)"
+      Include="%(QtUic.Include)"
+      Generator="%(QtUic.Generator)"
+      IdBased="%(QtUic.IdBased)"
+      AdditionalOptions="%(QtUic.AdditionalOptions)"
+      Inputs="@(QtUic)" />
+    <QtUic
+      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      CommandLineTemplate="%(QtUic.QTDIR)\bin\uic.exe %(QtUic.CommandLineTemplate)"
+      InputFile="%(QtUic.InputFile)"
+      OutputFile="%(QtUic.OutputFile)"
+      DisplayDependencies="%(QtUic.DisplayDependencies)"
+      NoProtection="%(QtUic.NoProtection)"
+      NoImplicitIncludes="%(QtUic.NoImplicitIncludes)"
+      Postfix="%(QtUic.Postfix)"
+      Translate="%(QtUic.Translate)"
+      Include="%(QtUic.Include)"
+      Generator="%(QtUic.Generator)"
+      IdBased="%(QtUic.IdBased)"
+      AdditionalOptions="%(QtUic.AdditionalOptions)"
+      Inputs="@(QtUic)" />
+  </Target>
+  <Target Name="QtUicPrep" BeforeTargets="QtUic" Condition="'@(QtUic)' != ''">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUicPrep @(QtUic)" />
+    <ItemGroup>
+      <QtUic
+        Remove="@(QtUic)"
+        Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' == 'true' and '@(SelectedFiles)' == ''"/>
+    </ItemGroup>
+  </Target>
+  <UsingTask
+    TaskName="QtFinalize"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <WorkFilePath ParameterType="System.String" Required="true" />
+      <MaxProcs ParameterType="System.Int32" Required="true" />
+      <QtDebug ParameterType="System.Boolean" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Diagnostics"/>
+      <Using Namespace="System.Collections.Generic"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+
+            if (!File.Exists(WorkFilePath))
+                return true;
+
+            Queue<Process> childRunningProcs = new Queue<Process>();
+            bool ok = true;
+            foreach (var qtCmdLin in File.ReadLines(WorkFilePath)) {
+
+                if (!ok)
+                    break;
+
+                string[] qtCmdCol = qtCmdLin.Split(new char[] { ';' });
+                if (qtCmdCol.Length < 3) {
+                    ok = false;
+                    break;
+                }
+
+                Log.LogMessage(MessageImportance.High, qtCmdCol[0]);
+
+                var procInfo = new ProcessStartInfo
+                {
+                    FileName = qtCmdCol[1],
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    Arguments = qtCmdCol[2]
+                };
+                try {
+                    var childProcess = Process.Start(procInfo);
+                    childProcess.OutputDataReceived +=
+                        (object sender, DataReceivedEventArgs e) => {
+                            if (!string.IsNullOrEmpty(e.Data))
+                                Log.LogMessage(MessageImportance.High, e.Data);
+                        };
+                    childProcess.ErrorDataReceived +=
+                        (object sender, DataReceivedEventArgs e) => {
+                            if (!string.IsNullOrEmpty(e.Data))
+                                Log.LogMessage(MessageImportance.High, e.Data);
+                        };
+                    childProcess.BeginOutputReadLine();
+                    childProcess.BeginErrorReadLine();
+                    childRunningProcs.Enqueue(childProcess);
+                } catch (Exception e) {
+                    Log.LogMessage(
+                        MessageImportance.High,
+                        string.Format("Error starting process {0}: {1}", qtCmdCol[1], e.Message));
+                    ok = false;
+                }
+
+                while (ok
+                    && (childRunningProcs.Peek().HasExited
+                    || childRunningProcs.Count >= MaxProcs)) {
+                    var childRunningProcess = childRunningProcs.Dequeue();
+                    childRunningProcess.WaitForExit();
+                    int exitCode = childRunningProcess.ExitCode;
+                    childRunningProcess.Close();
+                    if (exitCode != 0)
+                        ok = false;
+                }
+            }
+
+            foreach (var childRunningProcess in childRunningProcs) {
+                childRunningProcess.WaitForExit();
+                int exitCode = childRunningProcess.ExitCode;
+                childRunningProcess.Close();
+                if (exitCode != 0) {
+                    ok = false;
+                }
+            }
+
+            if (!ok)
+                return false;
+
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name="QtFinalize"
+    AfterTargets="CustomBuild"
+    BeforeTargets="ClCompile"
+    DependsOnTargets="QtUic">
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtFinalize" />
+    <QtFinalize WorkFilePath="$(QtWorkFilePath)" MaxProcs="$(QtMaxProcs)" QtDebug="$(QtDebug)"/>
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="# END Qt" />
+  </Target>
+  <Target Name="QtDebug">
+    <PropertyGroup>
+      <QtDebug>true</QtDebug>
+    </PropertyGroup>
+    <CallTarget Targets="QtFinalize"/>
+  </Target>
+  <PropertyGroup>
+    <CleanDependsOn>
+      $(CleanDependsOn);
+      QtClean;
+    </CleanDependsOn>
+  </PropertyGroup>
+  <Target Name="QtClean">
+    <Delete
+      Files="@(QtMoc->'%(OutputFile)');@(QtRcc->'%(OutputFile)');@(QtUic->'%(OutputFile)')" />
+  </Target>
+</Project>

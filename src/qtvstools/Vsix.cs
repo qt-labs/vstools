@@ -43,6 +43,7 @@ namespace QtVsTools
     [InstalledProductRegistration("#110", "#112", "2.1.2", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.SolutionExists)]
+    [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids.NoSolution)]
     public sealed class Vsix : Package
     {
         /// <summary>
@@ -114,6 +115,16 @@ namespace QtVsTools
             // determine the package installation directory
             var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+
+            Environment.SetEnvironmentVariable(
+                "QtVsTools",
+                PkgInstallPath,
+                EnvironmentVariableTarget.User);
+
+            Environment.SetEnvironmentVariable(
+                "QtMsBuild",
+                Path.Combine(PkgInstallPath, "QtMsBuild"),
+                EnvironmentVariableTarget.User);
 
             var vm = QtVersionManager.The();
             var error = string.Empty;

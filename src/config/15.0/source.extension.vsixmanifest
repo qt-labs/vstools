@@ -77,6 +77,11 @@
            d:Source="File"
            Path="x86\SQLite.Interop.dll"
            d:VsixSubPath="x86" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.props" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.xml" d:VsixSubPath="qtmsbuild" />
   </Assets>
     <Prerequisites>
         <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
