@@ -207,6 +207,21 @@
   <data name="ConvertTitle" xml:space="preserve">
     <value>Project Conversion</value>
   </data>
+  <data name="ConvertAllConfirmation" xml:space="preserve">
+    <value>Do you really want to convert all projects?</value>
+  </data>
+  <data name="ConvertSaveConfirmation" xml:space="preserve">
+    <value>Projects must be saved before conversion. Save projects?</value>
+  </data>
+  <data name="ErrorConvertingProject" xml:space="preserve">
+    <value>Error converting project {0}</value>
+  </data>
+  <data name="CancelConvertingProject" xml:space="preserve">
+    <value>Project conversion cancelled.</value>
+  </data>
+  <data name="NoProjectsToConvert" xml:space="preserve">
+    <value>No projects to convert.</value>
+  </data>
   <data name="CoreLibrary" xml:space="preserve">
     <value>Core</value>
   </data>

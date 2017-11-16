@@ -29,6 +29,7 @@
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
+using QtProjectLib.QtMsBuild;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -411,25 +412,39 @@ namespace QtProjectLib
             if (vcPro == null)
                 return;
 
+            var qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
+            qtMsBuild.BeginSetItemProperties();
             foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                     try {
-                        var tool = GetCustomBuildTool(config);
-                        if (tool == null)
-                            continue;
+                        if (vcfile.ItemType == "CustomBuild") {
+                            var tool = GetCustomBuildTool(config);
+                            if (tool == null)
+                                continue;
 
-                        tool.CommandLine = tool.CommandLine.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.Description = tool.Description.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.Outputs = tool.Outputs.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.AdditionalDependencies = tool.AdditionalDependencies
-                            .Replace(oldString, replaceString, StringComparison.OrdinalIgnoreCase);
+                            tool.CommandLine = tool.CommandLine
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.Description = tool.Description
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.Outputs = tool.Outputs
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.AdditionalDependencies = tool.AdditionalDependencies
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                        } else {
+                            var tool = new QtCustomBuildTool(config, qtMsBuild);
+                            tool.CommandLine = tool.CommandLine
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                        }
                     } catch (Exception) {
                     }
                 }
             }
+            qtMsBuild.EndSetItemProperties();
         }
 
         /// <summary>
@@ -1755,5 +1770,60 @@ namespace QtProjectLib
             return true;
         }
 
+        /// <summary>
+        /// Rooted canonical path is the absolute path for the specified path string
+        /// (cf. Path.GetFullPath()) without a trailing path separator.
+        /// </summary>
+        static string RootedCanonicalPath(string path)
+        {
+            try {
+                return Path
+                .GetFullPath(path)
+                .TrimEnd(new char[] {
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar
+                });
+            } catch {
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// If the given path is relative and a sub-path of the current directory, returns
+        /// a "relative canonical path", containing only the steps beyond the current directory.
+        /// Otherwise, returns the absolute ("rooted") canonical path.
+        /// </summary>
+        public static string CanonicalPath(string path)
+        {
+            string canonicalPath = RootedCanonicalPath(path);
+            if (!Path.IsPathRooted(path)) {
+                string currentCanonical = RootedCanonicalPath(".");
+                if (canonicalPath.StartsWith(currentCanonical,
+                    StringComparison.InvariantCultureIgnoreCase)) {
+                    return canonicalPath
+                    .Substring(currentCanonical.Length)
+                    .TrimStart(new char[] {
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar
+                    });
+                } else {
+                    return canonicalPath;
+                }
+            } else {
+                return canonicalPath;
+            }
+        }
+
+        public static bool PathEquals(string path1, string path2)
+        {
+            return (CanonicalPath(path1).Equals(CanonicalPath(path2),
+                StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool PathIsRelativeTo(string path, string subPath)
+        {
+            return CanonicalPath(path).EndsWith(CanonicalPath(subPath),
+                StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

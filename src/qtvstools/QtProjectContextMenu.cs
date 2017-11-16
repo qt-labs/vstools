@@ -27,7 +27,9 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtProjectWizard;
@@ -76,6 +78,7 @@ namespace QtVsTools
             CreateNewTsFileProjectId = 0x0117,
             lUpdateOnProjectId = 0x0118,
             lReleaseOnProjectId = 0x0119,
+            ProjectConvertToQtMsBuild = 0x0130,
             ConvertToQtProjectId = 0x0120,
             ConvertToQmakeProjectId = 0x0121,
             QtProjectSettingsProjectId = 0x0122,
@@ -189,6 +192,12 @@ namespace QtVsTools
                     }
                 }
                 break;
+            case CommandId.ProjectConvertToQtMsBuild:
+                {
+                    QtMsBuildConverter.ProjectToQtMsBuild(
+                        HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                }
+                break;
             case CommandId.ProjectAddNewQtClassProjectId:
                 {
                     try {
@@ -260,6 +269,23 @@ namespace QtVsTools
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+                }
+                break;
+            case CommandId.ProjectConvertToQtMsBuild:
+                {
+                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                    if (project == null
+                        || (!HelperFunctions.IsQtProject(project)
+                        && !HelperFunctions.IsQMakeProject(project))) {
+                        command.Visible = false;
+                        command.Enabled = false;
+                    } else if (QtProject.IsQtMsBuildEnabled(project)) {
+                        command.Visible = true;
+                        command.Enabled = false;
+                    } else {
+                        command.Visible = true;
+                        command.Enabled = true;
+                    }
                 }
                 break;
             }

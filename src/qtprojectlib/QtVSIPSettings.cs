@@ -28,6 +28,7 @@
 
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
+using QtProjectLib.QtMsBuild;
 using System;
 using System.Collections;
 
@@ -299,7 +300,7 @@ namespace QtProjectLib
                     if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
                         return (string) rccDirCache[project.FullName];
 
-                    VCCustomBuildTool tool = null;
+                    QtCustomBuildTool tool = null;
                     string configName = null;
                     string platformName = null;
                     var vcpro = (VCProject) project.Object;
@@ -310,7 +311,7 @@ namespace QtProjectLib
                             || (type == Resources.uicDirKeyword && HelperFunctions.IsUicFile(name))
                             || (type == Resources.rccDirKeyword && HelperFunctions.IsQrcFile(name))) {
                             foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
-                                tool = HelperFunctions.GetCustomBuildTool(config);
+                                tool = new QtCustomBuildTool(config);
                                 configName = config.Name.Remove(config.Name.IndexOf('|'));
                                 var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                 var platform = vcConfig.Platform as VCPlatform;

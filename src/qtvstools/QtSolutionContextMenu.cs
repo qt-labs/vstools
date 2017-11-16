@@ -73,6 +73,7 @@ namespace QtVsTools
         /// </summary>
         private const int lUpdateOnSolutionId = 0x0111;
         private const int lReleaseOnSolutionId = 0x0112;
+        private const int SolutionConvertToQtMsBuild = 0x0130;
         private const int ChangeSolutionQtVersionId = 0x0113;
 
         /// <summary>
@@ -108,6 +109,9 @@ namespace QtVsTools
 
             commandService.AddCommand(new OleMenuCommand(execHandler,
                 new CommandID(SolutionContextMenuGuid, ChangeSolutionQtVersionId)));
+
+            commandService.AddCommand(new OleMenuCommand(execHandler,
+                new CommandID(SolutionContextMenuGuid, SolutionConvertToQtMsBuild)));
         }
 
         private void execHandler(object sender, EventArgs e)
@@ -158,6 +162,11 @@ namespace QtVsTools
                     }
                 }
                 QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);
+                break;
+            case SolutionConvertToQtMsBuild:
+                {
+                    QtMsBuildConverter.SolutionToQtMsBuild();
+                }
                 break;
             }
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="..\config\qtvstools.version.targets" />
@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
+    <Compile Include="CommandLineParser.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
     <Compile Include="ExportProjectDialog.cs">
@@ -57,6 +58,7 @@
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MocCmdChecker.cs" />
+    <Compile Include="MsBuildProject.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ProFileContent.cs" />
     <Compile Include="ProFileOption.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="QtModule.cs" />
     <Compile Include="QtModuleInfo.cs" />
     <Compile Include="QtModules.cs" />
+    <Compile Include="QtMsBuild.cs" />
     <Compile Include="QtProject.cs" />
     <Compile Include="QtVersionManager.cs" />
     <Compile Include="QtVSException.cs" />
@@ -99,6 +102,9 @@
     <EmbeddedResource Include="Resources\delete_d.png" />
     <EmbeddedResource Include="Resources\newitem.png" />
     <EmbeddedResource Include="Resources\newitem_d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />

@@ -82,7 +82,7 @@ namespace QtProjectLib
             var VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
-            ReplaceAbsoluteQtDirInSolution(VCInfo, versionInfo);
+            ImportQMakeSolution(VCInfo, versionInfo);
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -111,7 +111,7 @@ namespace QtProjectLib
             if (null == VCInfo)
                 return;
 
-            ReplaceQtDirInProject(VCInfo, versionInfo);
+            ImportQMakeProject(VCInfo, versionInfo);
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -176,12 +176,12 @@ namespace QtProjectLib
             }
         }
 
-        private void ReplaceAbsoluteQtDirInSolution(FileInfo solutionFile, VersionInformation vi)
+        private void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
             foreach (var project in projects) {
                 var projectInfo = new FileInfo(project);
-                ReplaceQtDirInProject(projectInfo, vi);
+                ImportQMakeProject(projectInfo, vi);
             }
         }
 
@@ -203,7 +203,7 @@ namespace QtProjectLib
             return projects;
         }
 
-        private void ReplaceQtDirInProject(FileInfo projectFile, VersionInformation vi)
+        private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
             var sr = projectFile.OpenText();
             var content = sr.ReadToEnd();
@@ -222,6 +222,12 @@ namespace QtProjectLib
             } else {
                 Messages.PaneMessage(dteObject, SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
             }
+
+            var xmlProject = MsBuildProject.Load(projectFile.FullName);
+            xmlProject.AddQtMsBuildReferences();
+            xmlProject.ConvertCustomBuildToQtMsBuild();
+            xmlProject.Save();
+
         }
 
         private static string ParseQtDirFromFileContent(string vcFileContent, VersionInformation vi)

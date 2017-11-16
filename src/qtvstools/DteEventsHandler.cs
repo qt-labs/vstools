@@ -28,8 +28,11 @@
 
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
+using QtProjectLib.QtMsBuild;
 using System;
 using System.IO;
 using System.Linq;
@@ -496,10 +499,7 @@ namespace QtVsTools
                 if (filter != null) {
                     foreach (VCFile file in filter.Files as IVCCollection) {
                         foreach (VCFileConfiguration config in file.FileConfigurations as IVCCollection) {
-                            var tool = HelperFunctions.GetCustomBuildTool(config);
-                            if (tool == null)
-                                continue;
-
+                            var tool = new QtCustomBuildTool(config);
                             var commandLine = tool.CommandLine;
                             if (!string.IsNullOrEmpty(commandLine) && commandLine.Contains("moc.exe")) {
                                 var matches = Regex.Matches(commandLine, "[^ ^\n]+moc\\.(exe\"|exe)");
