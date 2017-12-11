@@ -234,12 +234,26 @@ namespace QtProjectLib.CommandLine
                 Trace.TraceWarning("CommandLineParser: Parse() before {0}", method);
         }
 
-        public bool Parse(string commandLine)
+        public bool Parse(string commandLine, string execName)
         {
             List<string> arguments = new List<string>();
             StringBuilder arg = new StringBuilder();
+            bool foundExec = false;
             foreach (Match token in Lexer.Tokenize(commandLine)) {
-                if (token.TokenType() == Token.Whitespace) {
+                if (!foundExec) {
+                    if (!token.TokenText()
+                        .EndsWith(execName,
+                        StringComparison.InvariantCultureIgnoreCase)) {
+                        continue;
+                    }
+
+                    foundExec = true;
+                }
+
+                var tokenType = token.TokenType();
+                if (tokenType == Token.Newline) {
+                    break;
+                } else if (tokenType == Token.Whitespace) {
                     if (arg.Length > 0) {
                         arguments.Add(arg.ToString());
                         arg.Clear();
@@ -506,14 +520,15 @@ namespace QtProjectLib.CommandLine
     enum Token
     {
         Unknown = 0,
-        Unquoted = 1,
-        Quoted = 2,
-        Whitespace = 3
+        Newline = 1,
+        Unquoted = 2,
+        Quoted = 3,
+        Whitespace = 4
     };
 
     static class Lexer
     {
-        static Regex lexer = new Regex(@"([^\s\""]+)|(?:\""([^\""]+)\"")|(\s+)");
+        static Regex lexer = new Regex(@"(\n)|([^\s\""]+)|(?:\""([^\""]+)\"")|(\s+)");
 
         public static Token TokenType(this Match token)
         {

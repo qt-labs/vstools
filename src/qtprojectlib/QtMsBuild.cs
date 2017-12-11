@@ -488,7 +488,7 @@ namespace QtProjectLib.QtMsBuild
             out string outputPath)
         {
             qtDir = inputPath = outputPath = "";
-            if (!parser.Parse(commandLine))
+            if (!parser.Parse(commandLine, toolExecName))
                 return false;
 
             string execPath = parser.PositionalArguments.Where(
