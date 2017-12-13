@@ -361,6 +361,7 @@
                 }
 
                 while (ok
+                    && childRunningProcs.Count > 0
                     && (childRunningProcs.Peek().HasExited
                     || childRunningProcs.Count >= MaxProcs)) {
                     var childRunningProcess = childRunningProcs.Dequeue();
