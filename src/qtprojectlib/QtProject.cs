@@ -1034,7 +1034,8 @@ namespace QtProjectLib
             }
             qtMsBuild.SetItemProperty(workConfig,
                 QtMoc.Property.ExecutionDescription, description);
-            qtMsBuild.SetQtMocCommandLine(workConfig, defines + " " + includes);
+            qtMsBuild.SetQtMocCommandLine(workConfig,
+                QtMoc.ToolExecName + " " + defines + " " + includes);
         }
 
         void AddMocStepToConfiguration(

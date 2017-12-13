@@ -496,7 +496,8 @@ namespace QtProjectLib.QtMsBuild
                 .FirstOrDefault();
             if (!string.IsNullOrEmpty(execPath)) {
                 var execDir = Path.GetDirectoryName(execPath);
-                qtDir = HelperFunctions.CanonicalPath(Path.Combine(execDir, ".."));
+                if (!string.IsNullOrEmpty(execDir))
+                    qtDir = HelperFunctions.CanonicalPath(Path.Combine(execDir, ".."));
             }
 
             string filePath = parser.PositionalArguments.Where(
