@@ -564,6 +564,7 @@ namespace QtProjectLib.QtMsBuild
             OptionsFile,
             CommandLineTemplate,
             AdditionalOptions,
+            DynamicSource,
             ParallelProcess,
             AdditionalDependencies,
         }
@@ -860,6 +861,7 @@ namespace QtProjectLib.QtMsBuild
             FormatVersion,
             CommandLineTemplate,
             AdditionalOptions,
+            DynamicSource,
             ParallelProcess,
             AdditionalDependencies,
         }

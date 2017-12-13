@@ -229,6 +229,23 @@
         <sys:String>Additional Options</sys:String>
       </StringProperty.Description>
     </StringProperty>
+    <EnumProperty
+      Name="DynamicSource"
+      DisplayName="Dynamic C++ Source"
+      Description="Add file to list of C++ sources during build.">
+      <EnumValue
+        Name="output"
+        DisplayName="Output File"
+        Description="Use output as dynamic C++ source."/>
+      <EnumValue
+        Name="input"
+        DisplayName="Input File"
+        Description="Use input as dynamic C++ source."/>
+      <EnumValue
+        Name="false"
+        DisplayName="Disable"
+        Description="Disable dynamic source."/>
+    </EnumProperty>
     <BoolProperty
       Name="ParallelProcess"
       DisplayName="Parallel Process"

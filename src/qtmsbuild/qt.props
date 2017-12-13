@@ -17,6 +17,7 @@
       <QTDIR>$(QTDIR)</QTDIR>
       <InputFile>%(FullPath)</InputFile>
       <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
+      <DynamicSource>output</DynamicSource>
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
       <Outputs>%(OutputFile)</Outputs>
@@ -41,6 +42,7 @@
       <OutputFile>$(ProjectDir)GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
       <InitFuncName>%(Filename)</InitFuncName>
       <Compression>default</Compression>
+      <DynamicSource>output</DynamicSource>
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
       <Outputs>%(OutputFile)</Outputs>

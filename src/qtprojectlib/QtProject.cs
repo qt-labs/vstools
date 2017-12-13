@@ -594,7 +594,7 @@ namespace QtProjectLib
                             compiler.AddAdditionalIncludeDirectories(uiDir);
                     }
                 }
-                if (!uiFileExists)
+                if (toolSettings == CustomTool.CustomBuildStep && !uiFileExists)
                     AddFileInFilter(Filters.GeneratedFiles(), uiFile);
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotAddUicStep", file.FullPath));
@@ -1002,7 +1002,6 @@ namespace QtProjectLib
         void AddMocStepMsBuildTarget(
             VCFile sourceFile,
             VCFileConfiguration workConfig,
-            VCFile mocFile,
             string defines,
             string includes,
             string description)
@@ -1013,24 +1012,18 @@ namespace QtProjectLib
             var stringToReplace = Path.GetFileName(outputMocFile);
             var outputMocMacro = outputMocPath + "\\"
                 + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
-            var workFile = workConfig.File as VCFile;
 
-            workFile.ItemType = QtMoc.ItemTypeName;
-            if (sourceFile.FullPath == workFile.FullPath) {
+            sourceFile.ItemType = QtMoc.ItemTypeName;
+            qtMsBuild.SetItemProperty(workConfig,
+                QtMoc.Property.InputFile, ProjectMacros.Path);
+            qtMsBuild.SetItemProperty(workConfig,
+                QtMoc.Property.OutputFile, outputMocMacro);
+            if (!HelperFunctions.IsSourceFile(sourceFile.FullPath)) {
                 qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.InputFile, ProjectMacros.Path);
+                    QtMoc.Property.DynamicSource, "output");
             } else {
                 qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.InputFile, sourceFile.ItemName);
-                qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.AdditionalDependencies, sourceFile.ItemName);
-            }
-            if (workFile.FullPath == mocFile.FullPath) {
-                qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.OutputFile, ProjectMacros.Path);
-            } else {
-                qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.OutputFile, outputMocMacro);
+                    QtMoc.Property.DynamicSource, "input");
             }
             qtMsBuild.SetItemProperty(workConfig,
                 QtMoc.Property.ExecutionDescription, description);
@@ -1062,27 +1055,28 @@ namespace QtProjectLib
                     subfilterName += '_';
                 subfilterName += platformName;
             }
-            var mocFile = GetFileFromProject(mocRelPath);
-            if (mocFile == null) {
-                var fi = new FileInfo(VCProject.ProjectDirectory + "\\" + mocRelPath);
-                if (!fi.Directory.Exists)
-                    fi.Directory.Create();
-                mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
-                    mocRelPath);
+
+            VCFile mocFile = null;
+            if (toolSettings == CustomTool.CustomBuildStep) {
+                mocFile = GetFileFromProject(mocRelPath);
+                if (mocFile == null) {
+                    var fi = new FileInfo(VCProject.ProjectDirectory + "\\" + mocRelPath);
+                    if (!fi.Directory.Exists)
+                        fi.Directory.Create();
+                    mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
+                        mocRelPath);
+                }
+                if (mocFile != null)
+                    AddMocStepSetBuildExclusions(sourceFile, workConfig, mocFile);
             }
 
-            if (mocFile == null)
-                throw new QtVSException(
-                    SR.GetString("QtProject_CannotAddMocStep", workFile.FullPath));
-
-            if (toolSettings == CustomTool.MSBuildTarget || !mocableIsCPP)
-                AddMocStepSetBuildExclusions(sourceFile, workConfig, mocFile);
-
-            VCFile cppPropertyFile;
+            VCFile cppPropertyFile = null;
             if (!mocableIsCPP)
                 cppPropertyFile = GetCppFileForMocStep(sourceFile);
-            else
+            else if (mocFile != null)
                 cppPropertyFile = GetCppFileForMocStep(mocFile);
+            else
+                cppPropertyFile = workFile;
             VCFileConfiguration defineIncludeConfig;
             if (cppPropertyFile != null) {
                 defineIncludeConfig = GetVCFileConfigurationByName(
@@ -1096,21 +1090,11 @@ namespace QtProjectLib
             var defines = GetDefines(defineIncludeConfig);
             var includes = GetIncludes(defineIncludeConfig);
             var description = "Moc'ing %(Identity)...";
-            if (mocableIsCPP) {
-                description = string.Format(
-                    "Moc'ing {0}...",
-                    Path.GetFileName(sourceFile.FullPath));
-                if (toolSettings == CustomTool.MSBuildTarget) {
-                    mocFile.ItemType = QtMoc.ItemTypeName;
-                    workConfig = GetVCFileConfigurationByName(mocFile, workConfig.Name);
-                }
-            }
 
             if (toolSettings == CustomTool.MSBuildTarget) {
                 AddMocStepMsBuildTarget(
                     sourceFile,
                     workConfig,
-                    mocFile,
                     defines,
                     includes,
                     description);
@@ -1400,7 +1384,8 @@ namespace QtProjectLib
                             break;
                     }
                 }
-                AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
+                if (toolSettings == CustomTool.CustomBuildStep)
+                    AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
             } catch (Exception /*e*/) {
                 Messages.PaneMessage(dteObject, "*** WARNING (RCC): Couldn't add rcc step");
             }
@@ -1562,16 +1547,11 @@ namespace QtProjectLib
         public void RemoveMocStepQtMsBuild(VCFile file)
         {
             if (HelperFunctions.IsHeaderFile(file.Name)) {
-                foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
-                    var outputFile = qtMsBuild.GetPropertyValue(config, QtMoc.Property.OutputFile);
-                    HelperFunctions.ExpandString(ref outputFile, config);
-                    var mocFile = GetFileFromProject(outputFile);
-                    if (mocFile != null)
-                        RemoveFileFromFilter(mocFile, Filters.GeneratedFiles());
-                }
                 file.ItemType = "ClInclude";
+            } else if (HelperFunctions.IsSourceFile(file.Name)) {
+                file.ItemType = "ClCompile";
             } else {
-                RemoveFileFromFilter(file, Filters.GeneratedFiles());
+                file.ItemType = "None";
             }
         }
 
