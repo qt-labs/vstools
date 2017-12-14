@@ -3276,8 +3276,7 @@ namespace QtProjectLib
                     var cur_platform = conf.Platform as VCPlatform;
                     if (cur_platform.Name == activePlatformName) {
                         var cur_solution = conf.ConfigurationName + "|" + cur_platform.Name;
-#if VS2013 || VS2015
-                        // In VS2013/15, if the LocalDebuggerEnvironment property is defined, it
+                        // If the LocalDebuggerEnvironment property is defined, it
                         // will be stored in the .user file before the QTDIR property, which is an
                         // error because there is a dependency. To work around this, first remove
                         // the property and then add it after QTDIR is defined.
@@ -3292,13 +3291,10 @@ namespace QtProjectLib
                             propertyAccess.RemoveProperty(
                                 "LocalDebuggerEnvironment", cur_solution, "UserFile");
                         }
-#endif
                         propertyAccess.SetPropertyValue("QTDIR", cur_solution, "UserFile", qtDir);
-#if VS2013 || VS2015
                         if (!string.IsNullOrEmpty(debuggerEnv))
                             propertyAccess.SetPropertyValue(
                                 "LocalDebuggerEnvironment", cur_solution, "UserFile", debuggerEnv);
-#endif
                     }
                 }
 

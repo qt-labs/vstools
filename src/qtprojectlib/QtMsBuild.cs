@@ -305,6 +305,69 @@ namespace QtProjectLib.QtMsBuild
             return true;
         }
 
+        string GetPropertyChangedValue(
+            string configName,
+            string itemTypeName,
+            string itemName,
+            string propertyName)
+        {
+            if (!pendingChanges)
+                return null;
+
+            var change = new ItemPropertyChange
+            {
+                ConfigName = configName,
+                ItemTypeName = itemTypeName,
+                ItemName = itemName,
+                PropertyName = propertyName
+            };
+
+            var changes = itemPropertyChanges.Values
+                .SelectMany(x => x)
+                .Where(x => x.Matches(change));
+
+            if (!changes.Any())
+                return null;
+
+            return changes.First().PropertyValue;
+        }
+
+        public string GetPropertyChangedValue(
+            QtMoc.Property property,
+            string itemName,
+            string configName)
+        {
+            return GetPropertyChangedValue(
+                configName,
+                QtMoc.ItemTypeName,
+                itemName,
+                property.ToString());
+        }
+
+        public string GetPropertyChangedValue(
+            QtRcc.Property property,
+            string itemName,
+            string configName)
+        {
+            return GetPropertyChangedValue(
+                configName,
+                QtRcc.ItemTypeName,
+                itemName,
+                property.ToString());
+        }
+
+        public string GetPropertyChangedValue(
+            QtUic.Property property,
+            string itemName,
+            string configName)
+        {
+            return GetPropertyChangedValue(
+                configName,
+                QtUic.ItemTypeName,
+                itemName,
+                property.ToString());
+        }
+
         public bool SetCommandLine(string itemType, object propertyStorage, string commandLine)
         {
             switch (itemType) {
@@ -320,7 +383,7 @@ namespace QtProjectLib.QtMsBuild
 
         #region QtMoc
         static QtMoc qtMocInstance;
-        static QtMoc QtMocInstance
+        public static QtMoc QtMocInstance
         {
             get
             {
@@ -366,7 +429,7 @@ namespace QtProjectLib.QtMsBuild
 
         #region QtRcc
         static QtRcc qtRccInstance;
-        static QtRcc QtRccInstance
+        public static QtRcc QtRccInstance
         {
             get
             {
@@ -412,7 +475,7 @@ namespace QtProjectLib.QtMsBuild
 
         #region QtUic
         static QtUic qtUicInstance;
-        static QtUic QtUicInstance
+        public static QtUic QtUicInstance
         {
             get
             {

@@ -195,7 +195,7 @@ namespace QtVsTools
             case CommandId.ProjectConvertToQtMsBuild:
                 {
                     QtMsBuildConverter.ProjectToQtMsBuild(
-                        HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                        HelperFunctions.GetSelectedProject(Vsix.Instance.Dte));
                 }
                 break;
             case CommandId.ProjectAddNewQtClassProjectId:

@@ -121,30 +121,37 @@ namespace QtVsTools
                 return ErrorMessage(
                     string.Format(SR.GetString("ErrorConvertingProject"), project.Name));
             var projectGuid = new Guid(vcProject.ProjectGUID);
+            var projectName = project.Name;
             try {
                 if (solution.UnloadProject(
                     ref projectGuid,
                     (uint)_VSProjectUnloadStatus.UNLOADSTATUS_LoadPendingIfNeeded)
                     != VSConstants.S_OK)
                     return ErrorMessage(
-                        string.Format(SR.GetString("ErrorConvertingProject"), project.Name));
+                        string.Format(SR.GetString("ErrorConvertingProject"), projectName));
             } catch (Exception e) {
                 return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"),
-                    string.Format("{0}\r\n{1}", project.Name, e.Message)));
+                    string.Format("{0}\r\n{1}", projectName, e.Message)));
             }
+
             var xmlProject = MsBuildProject.Load(pathToProject);
-            if (xmlProject == null)
-                return ErrorMessage(
-                    string.Format(SR.GetString("ErrorConvertingProject"), project.Name));
-            xmlProject.AddQtMsBuildReferences();
-            xmlProject.ConvertCustomBuildToQtMsBuild();
-            xmlProject.Save();
+            bool ok = (xmlProject != null);
+            if (ok)
+                ok = xmlProject.AddQtMsBuildReferences();
+            if (ok)
+                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
+            if (ok)
+                ok = xmlProject.Save();
             try {
                 solution.ReloadProject(ref projectGuid);
             } catch (Exception e) {
                 return ErrorMessage(
                     string.Format(SR.GetString("ErrorConvertingProject"),
-                    string.Format("{0}\r\n{1}", project.Name, e.Message)));
+                    string.Format("{0}\r\n{1}", projectName, e.Message)));
+            }
+            if (!ok) {
+                return ErrorMessage(
+                    string.Format(SR.GetString("ErrorConvertingProject"), projectName));
             }
             return true;
         }

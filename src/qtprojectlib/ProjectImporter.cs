@@ -205,29 +205,20 @@ namespace QtProjectLib
 
         private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
-            var sr = projectFile.OpenText();
-            var content = sr.ReadToEnd();
-            sr.Close();
-
-            var qtDir = ParseQtDirFromFileContent(content, vi);
+            var xmlProject = MsBuildProject.Load(projectFile.FullName);
+            var qtDir = ParseQtDirFromFileContent(xmlProject.ProjectXml, vi);
             if (!string.IsNullOrEmpty(qtDir)) {
-                content = content.Replace(qtDir, "$(QTDIR)\\", StringComparison.OrdinalIgnoreCase);
+                xmlProject.ReplacePath(qtDir, "$(QTDIR)\\");
                 // qmake tends to write relative and absolute paths into the .vcxproj file
                 if (!Path.IsPathRooted(qtDir)) // if the project is on the same drive as Qt.
-                    content = content.Replace(vi.qtDir + '\\', "$(QTDIR)\\", StringComparison.OrdinalIgnoreCase);
-                var sw = projectFile.CreateText();
-                sw.Write(content);
-                sw.Flush();
-                sw.Close();
+                    xmlProject.ReplacePath(vi.qtDir + '\\', "$(QTDIR)\\");
             } else {
                 Messages.PaneMessage(dteObject, SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
             }
-
-            var xmlProject = MsBuildProject.Load(projectFile.FullName);
+            xmlProject.ReplacePath(projectFile.DirectoryName, ".");
             xmlProject.AddQtMsBuildReferences();
             xmlProject.ConvertCustomBuildToQtMsBuild();
             xmlProject.Save();
-
         }
 
         private static string ParseQtDirFromFileContent(string vcFileContent, VersionInformation vi)
@@ -298,13 +289,10 @@ namespace QtProjectLib
             }
 
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
-            qtProject.RepairGeneratedFilesStructure();
             qtProject.TranslateFilterNames();
 
             QtVSIPSettings.SaveUicDirectory(qtProject.Project, QtVSIPSettings.GetUicDirectory());
-            qtProject.UpdateUicSteps(".", false); // false is to not remove given path from includes
             QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
-            qtProject.RefreshRccSteps();
 
             // collapse the generated files/resources filters afterwards
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);

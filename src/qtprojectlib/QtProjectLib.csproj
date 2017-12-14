@@ -104,6 +104,7 @@
     <EmbeddedResource Include="Resources\newitem_d.png" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
