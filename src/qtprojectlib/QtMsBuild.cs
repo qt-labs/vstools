@@ -124,20 +124,42 @@ namespace QtProjectLib.QtMsBuild
             public string PropertyValue;
             public object PropertyStorage;
 
-            public bool Matches(ItemPropertyChange newChange)
+            public void CopyFrom(ItemPropertyChange change)
             {
-                return
-                    ConfigName == newChange.ConfigName
-                    && ItemTypeName == newChange.ItemTypeName
-                    && PropertyName == newChange.PropertyName
-                    && ItemName == newChange.ItemName;
+                ConfigName = change.ConfigName;
+                ItemTypeName = change.ItemTypeName;
+                ItemName = change.ItemName;
+                PropertyName = change.PropertyName;
+                PropertyValue = change.PropertyValue;
+                PropertyStorage = change.PropertyStorage;
             }
+
+            public bool IsMocSource
+            {
+                get
+                {
+                    return ItemTypeName == QtMoc.ItemTypeName
+                        && !HelperFunctions.IsHeaderFile(ItemName);
+                }
+            }
+
             public string GroupKey
             {
                 get
                 {
                     return string.Join(",", new string[] {
-                        ConfigName, ItemTypeName, PropertyName, PropertyValue
+                        ConfigName, ItemTypeName, PropertyName, PropertyValue,
+                        IsMocSource.ToString()
+                    });
+                }
+            }
+
+            public string Key
+            {
+                get
+                {
+                    return string.Join(",", new string[] {
+                        ConfigName, ItemTypeName, PropertyName, ItemName
                     });
                 }
             }
@@ -148,9 +170,23 @@ namespace QtProjectLib.QtMsBuild
             return provider.GetItems(GetProject(), itemType, configName);
         }
 
-        int GetItemCount(string itemType, string configName = "")
+        int GetItemCount(string itemType, bool? isMocSource = null, string configName = "")
         {
-            return GetItems(itemType, configName).Count();
+            var items = GetItems(itemType, configName);
+            if (!isMocSource.HasValue) {
+                return items
+                .Count();
+            } else if (!isMocSource.Value) {
+                return items.Where(x =>
+                provider.GetItemType(x) != QtMoc.ItemTypeName
+                || HelperFunctions.IsHeaderFile(provider.GetItemName(x)))
+                .Count();
+            } else {
+                return items.Where(x =>
+                provider.GetItemType(x) == QtMoc.ItemTypeName
+                && !HelperFunctions.IsHeaderFile(provider.GetItemName(x)))
+                .Count();
+            }
         }
 
         object GetProjectConfiguration(string configName)
@@ -158,41 +194,59 @@ namespace QtProjectLib.QtMsBuild
             return provider.GetProjectConfiguration(GetProject(), configName);
         }
 
-        Dictionary<string, List<ItemPropertyChange>> itemPropertyChanges
+        Dictionary<string, ItemPropertyChange> itemPropertyChanges
+            = new Dictionary<string, ItemPropertyChange>();
+        Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped
             = new Dictionary<string, List<ItemPropertyChange>>();
         bool pendingChanges = false;
 
-        void AddChange(ItemPropertyChange change)
+        void AddChange(ItemPropertyChange newChange)
         {
+            ItemPropertyChange oldChange;
+            if (itemPropertyChanges.TryGetValue(newChange.Key, out oldChange)) {
+                if (oldChange.GroupKey == newChange.GroupKey) {
+                    oldChange.CopyFrom(newChange);
+                    return;
+                } else {
+                    RemoveChange(oldChange);
+                }
+            }
+
             List<ItemPropertyChange> changeGroup;
-            if (!itemPropertyChanges.TryGetValue(change.GroupKey, out changeGroup)) {
-                itemPropertyChanges.Add(
-                    change.GroupKey,
+            if (!itemPropertyChangesGrouped.TryGetValue(newChange.GroupKey, out changeGroup)) {
+                itemPropertyChangesGrouped.Add(
+                    newChange.GroupKey,
                     changeGroup = new List<ItemPropertyChange>());
             }
-            changeGroup.Add(change);
+            changeGroup.Add(newChange);
+            itemPropertyChanges.Add(newChange.Key, newChange);
+        }
+
+        void RemoveChange(ItemPropertyChange change)
+        {
+            List<ItemPropertyChange> changeGroup;
+            if (itemPropertyChangesGrouped.TryGetValue(change.GroupKey, out changeGroup)) {
+                changeGroup.Remove(change);
+                if (changeGroup.Count == 0)
+                    itemPropertyChangesGrouped.Remove(change.GroupKey);
+            }
+            itemPropertyChanges.Remove(change.Key);
         }
 
         object GetProject()
         {
-            if (itemPropertyChanges.Count == 0)
-                return null;
-            var changeGroup = itemPropertyChanges.First().Value;
-            if (changeGroup == null)
-                return null;
-            var change = changeGroup.FirstOrDefault();
+            var change = itemPropertyChanges.Values.FirstOrDefault();
             if (change == null)
                 return null;
             return provider.GetParentProject(change.PropertyStorage);
         }
-
-
 
         public bool BeginSetItemProperties()
         {
             if (pendingChanges)
                 return false;
             itemPropertyChanges.Clear();
+            itemPropertyChangesGrouped.Clear();
             pendingChanges = true;
             return true;
         }
@@ -226,17 +280,67 @@ namespace QtProjectLib.QtMsBuild
                 if (!EndSetItemProperties())
                     return false;
             } else {
-                ItemPropertyChange oldChange = null;
-                List<ItemPropertyChange> changeGroup;
-                if (itemPropertyChanges.TryGetValue(newChange.GroupKey, out changeGroup)) {
-                    oldChange = changeGroup.Where(x => x.Matches(newChange)).FirstOrDefault();
-                }
-                if (oldChange != null)
-                    oldChange.PropertyValue = newChange.PropertyValue;
-                else
-                    AddChange(newChange);
+                AddChange(newChange);
             }
 
+            return true;
+        }
+
+        bool SetGroupItemProperties(List<ItemPropertyChange> changeGroup)
+        {
+            //grouped by configName, itemTypeName, propertyName, propertyValue, isMocSource
+            var firstChange = changeGroup.FirstOrDefault();
+            if (firstChange == null)
+                return false;
+            string configName = firstChange.ConfigName;
+            string itemTypeName = firstChange.ItemTypeName;
+            string propertyName = firstChange.PropertyName;
+            string propertyValue = firstChange.PropertyValue;
+            bool isMocSource = firstChange.IsMocSource;
+            int itemCount = GetItemCount(itemTypeName, isMocSource, configName);
+            int groupCount = changeGroup.Count;
+            object projConfig = GetProjectConfiguration(configName);
+
+            if (!isMocSource && groupCount == itemCount) {
+                //all items are setting the same value for this property
+                // -> set at project level
+                if (!SetPropertyValueByName(
+                    projConfig,
+                    itemTypeName,
+                    propertyName,
+                    propertyValue)) {
+                    return false;
+                }
+
+                // -> remove old property from each item
+                foreach (var change in changeGroup) {
+                    if (!DeletePropertyByName(
+                        change.PropertyStorage,
+                        change.ItemTypeName,
+                        change.PropertyName)) {
+                        return false;
+                    }
+
+                }
+            } else {
+                //different property values per item
+                // -> set at each item
+                foreach (var change in changeGroup) {
+                    if (GetPropertyValueByName(
+                        projConfig,
+                        change.ItemTypeName,
+                        change.PropertyName) != change.PropertyValue) {
+                        if (!SetPropertyValueByName(
+                            change.PropertyStorage,
+                            change.ItemTypeName,
+                            change.PropertyName,
+                            change.PropertyValue)) {
+                            return false;
+                        }
+
+                    }
+                }
+            }
             return true;
         }
 
@@ -245,62 +349,18 @@ namespace QtProjectLib.QtMsBuild
             if (!pendingChanges)
                 return false;
 
-            foreach (var changeGroup in itemPropertyChanges.Values) {
-                //grouped by configName, itemTypeName, propertyName, propertyValue
-                var firstChange = changeGroup.FirstOrDefault();
-                if (firstChange == null)
-                    continue;
-                string configName = firstChange.ConfigName;
-                string itemTypeName = firstChange.ItemTypeName;
-                string propertyName = firstChange.PropertyName;
-                string propertyValue = firstChange.PropertyValue;
-                int itemCount = GetItemCount(itemTypeName, configName);
-                int groupCount = changeGroup.Count;
-                object projConfig = GetProjectConfiguration(configName);
+            var changeGroupsNormal = itemPropertyChangesGrouped.Values
+                .Where(x => x.Any() && !x.First().IsMocSource);
+            foreach (var changeGroup in changeGroupsNormal)
+                SetGroupItemProperties(changeGroup);
 
-                if (groupCount == itemCount) {
-                    //all items are setting the same value for this property
-                    // -> set at project level
-                    if (!SetPropertyValueByName(
-                        projConfig,
-                        itemTypeName,
-                        propertyName,
-                        propertyValue)) {
-                        return false;
-                    }
-
-                    // -> remove old property from each item
-                    foreach (var change in changeGroup) {
-                        if (!DeletePropertyByName(
-                            change.PropertyStorage,
-                            change.ItemTypeName,
-                            change.PropertyName)) {
-                            return false;
-                        }
-
-                    }
-                } else {
-                    //different property values per item
-                    // -> set at each item
-                    foreach (var change in changeGroup) {
-                        if (GetPropertyValueByName(
-                            projConfig,
-                            change.ItemTypeName,
-                            change.PropertyName) != change.PropertyValue) {
-                            if (!SetPropertyValueByName(
-                                change.PropertyStorage,
-                                change.ItemTypeName,
-                                change.PropertyName,
-                                change.PropertyValue)) {
-                                return false;
-                            }
-
-                        }
-                    }
-                }
-            }
+            var changeGroupsMocSource = itemPropertyChangesGrouped.Values
+                .Where(x => x.Any() && x.First().IsMocSource);
+            foreach (var changeGroup in changeGroupsMocSource)
+                SetGroupItemProperties(changeGroup);
 
             itemPropertyChanges.Clear();
+            itemPropertyChangesGrouped.Clear();
             pendingChanges = false;
             return true;
         }
@@ -321,15 +381,10 @@ namespace QtProjectLib.QtMsBuild
                 ItemName = itemName,
                 PropertyName = propertyName
             };
-
-            var changes = itemPropertyChanges.Values
-                .SelectMany(x => x)
-                .Where(x => x.Matches(change));
-
-            if (!changes.Any())
+            if (!itemPropertyChanges.TryGetValue(change.Key, out change))
                 return null;
 
-            return changes.First().PropertyValue;
+            return change.PropertyValue;
         }
 
         public string GetPropertyChangedValue(

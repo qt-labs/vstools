@@ -2575,7 +2575,7 @@ namespace QtProjectLib
                     VCCustomBuildTool tool = null;
                     VCFile mocable = null;
                     var customBuildConfig = config;
-                    if (isHeaderFile) {
+                    if (isHeaderFile || vcfile.ItemType == QtMoc.ItemTypeName) {
                         mocable = vcfile;
                         if (vcfile.ItemType == "CustomBuild")
                             tool = HelperFunctions.GetCustomBuildTool(config);
@@ -2619,11 +2619,21 @@ namespace QtProjectLib
                             StringComparison.OrdinalIgnoreCase) == -1)
                         continue;
 
-                    var srcMocFile = GetSourceFileForMocStep(mocable);
-                    var cppFile = GetCppFileForMocStep(mocable);
+                    VCFile srcMocFile, cppFile;
+                    if (vcfile.ItemType == QtMoc.ItemTypeName
+                        && HelperFunctions.IsSourceFile(vcfile.ItemName)) {
+                        srcMocFile = cppFile = vcfile;
+                    } else {
+                        srcMocFile = GetSourceFileForMocStep(mocable);
+                        cppFile = GetCppFileForMocStep(mocable);
+                    }
                     if (srcMocFile == null)
                         continue;
                     var mocableIsCPP = (srcMocFile == cppFile);
+
+                    var cppItemType = (cppFile != null) ? cppFile.ItemType : "";
+                    if (cppFile != null && cppItemType != "ClCompile")
+                        cppFile.ItemType = "ClCompile";
 
                     string pchParameters = null;
                     VCFileConfiguration defineIncludeConfig = null;
@@ -2657,6 +2667,9 @@ namespace QtProjectLib
                         QtVSIPSettings.GetMocOptions(envPro), srcMocFile.RelativePath,
                         pchParameters,
                         outputFileName);
+
+                    if (cppFile != null && cppItemType != "ClCompile")
+                        cppFile.ItemType = cppItemType;
 
                     // The tool's command line automatically gets a trailing "\r\n".
                     // We have to remove it to make the check below work.
