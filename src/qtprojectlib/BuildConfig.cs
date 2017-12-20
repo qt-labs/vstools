@@ -33,5 +33,17 @@ namespace QtProjectLib
         public const uint Both = 0x03;
         public const uint Release = 0x01;
         public const uint Debug = 0x02;
+
+        public static string PlatformToolset(string version)
+        {
+            // TODO: Find a proper way to return the PlatformToolset version.
+#if (VS2013 || VS2015)
+            return version.Replace(".", string.Empty);
+#elif VS2017
+            return "141";
+#else
+#error Unknown Visual Studio version!
+#endif
+        }
     }
 }

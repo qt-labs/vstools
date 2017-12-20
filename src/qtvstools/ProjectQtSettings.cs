@@ -126,8 +126,9 @@ namespace QtVsTools
                 if (tmp.ToLower() == oldMocDir.ToLower())
                     return;
 
-                if (ContainsInvalidVariable(tmp))
-                    Messages.DisplayErrorMessage(SR.GetString("OnlyVariableInDir"));
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
                 else
                     newMocDir = tmp;
             }
@@ -275,6 +276,27 @@ namespace QtVsTools
                     return true;
             }
             return false;
+        }
+
+        public static string IncompatibleMacros(string stringToExpand)
+        {
+            string incompatibleMacros = "";
+            foreach (Match metaNameMatch in Regex.Matches(stringToExpand, @"\%\(([^\)]+)\)")) {
+                string metaName = metaNameMatch.Groups[1].Value;
+                if (!incompatibleMacros.Contains(string.Format("%({0})", metaName))) {
+                    switch (metaName) {
+                        case "RecursiveDir":
+                        case "ModifiedTime":
+                        case "CreatedTime":
+                        case "AccessedTime":
+                            if (!string.IsNullOrEmpty(incompatibleMacros))
+                                incompatibleMacros += ", ";
+                            incompatibleMacros += string.Format("%({0})", metaName);
+                            break;
+                    }
+                }
+            }
+            return incompatibleMacros;
         }
     }
 }

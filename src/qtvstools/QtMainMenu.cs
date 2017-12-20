@@ -75,6 +75,7 @@ namespace QtVsTools
             ExportPriFileId = 0x0104,
             ExportProFileId = 0x0105,
             CreateNewTsFileId = 0x0107,
+            ConvertToQtMsBuild = 0x0130,
             ConvertToQtId = 0x0124,
             ConvertToQmakeId = 0x0108,
             QtProjectSettingsId = 0x0109,
@@ -158,6 +159,11 @@ namespace QtVsTools
                         HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Vsix
                             .Instance.Dte));
                     }
+                }
+                break;
+            case CommandId.ConvertToQtMsBuild:
+                {
+                    QtMsBuildConverter.SolutionToQtMsBuild();
                 }
                 break;
             case CommandId.QtProjectSettingsId:
@@ -257,6 +263,14 @@ namespace QtVsTools
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+                }
+                break;
+            case CommandId.ConvertToQtMsBuild:
+                {
+                    command.Visible = true;
+                    command.Enabled = (Vsix.Instance.Dte.Solution != null
+                        && Vsix.Instance.Dte.Solution.Projects != null
+                        && Vsix.Instance.Dte.Solution.Projects.Count > 0);
                 }
                 break;
             }

@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Qt Company Ltd.")]
 [assembly: AssemblyProduct("Qt Visual Studio Tools")]
-[assembly: AssemblyCopyright("Copyright (C) 2016 The Qt Company Ltd.")]
+[assembly: AssemblyCopyright("Copyright (C) 2016-2017 The Qt Company Ltd.")]
 [assembly: AssemblyTrademark("The Qt Company Ltd. Qt and their respective logos are trademarks of The Qt Company Ltd. in Finland and/or other countries worldwide. All other trademarks are property of their respective owners.")]
 [assembly: AssemblyCulture("")]
 
@@ -59,5 +59,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.2.0")]
+[assembly: AssemblyFileVersion("2.1.2.0")]

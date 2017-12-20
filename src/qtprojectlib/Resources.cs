@@ -112,6 +112,8 @@ namespace QtProjectLib
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2013";
 #elif VS2015
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2015";
+#elif VS2017
+        public const string registryPackagePath = registryRootPath + "\\Qt5VS2017";
 #else
 #error Unknown Visual Studio version!
 #endif

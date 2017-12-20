@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition="'$(QtMocBeforeTargets)' == '' and '$(QtMocAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <QtMocBeforeTargets>ClCompile</QtMocBeforeTargets>
+    <QtMocAfterTargets>CustomBuild</QtMocAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <QtMocDependsOn
+      Condition="'$(ConfigurationType)' != 'Makefile'">
+      _SelectedFiles;$(QtMocDependsOn)
+    </QtMocDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <QtMoc>
+      <ExecutionDescription>Moc%27ing %(Identity)...</ExecutionDescription>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <InputFile>%(FullPath)</InputFile>
+      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
+      <ParallelProcess>true</ParallelProcess>
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <Outputs>%(OutputFile)</Outputs>
+    </QtMoc>
+  </ItemDefinitionGroup>
+  <PropertyGroup
+    Condition="'$(QtRccBeforeTargets)' == '' and '$(QtRccAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <QtRccBeforeTargets>ClCompile</QtRccBeforeTargets>
+    <QtRccAfterTargets>CustomBuild</QtRccAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <QtRccDependsOn
+      Condition="'$(ConfigurationType)' != 'Makefile'">
+      _SelectedFiles;$(QtRccDependsOn)
+    </QtRccDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <QtRcc>
+      <ExecutionDescription>Rcc%27ing %(Identity)...</ExecutionDescription>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <InputFile>%(FullPath)</InputFile>
+      <OutputFile>$(ProjectDir)GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+      <InitFuncName>%(Filename)</InitFuncName>
+      <Compression>default</Compression>
+      <ParallelProcess>true</ParallelProcess>
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <Outputs>%(OutputFile)</Outputs>
+    </QtRcc>
+  </ItemDefinitionGroup>
+  <PropertyGroup
+    Condition="'$(QtUicBeforeTargets)' == '' and '$(QtUicAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <QtUicBeforeTargets>ClCompile</QtUicBeforeTargets>
+    <QtUicAfterTargets>CustomBuild</QtUicAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <QtUicDependsOn
+      Condition="'$(ConfigurationType)' != 'Makefile'">
+      _SelectedFiles;$(QtUicDependsOn)
+    </QtUicDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <QtUic>
+      <ExecutionDescription>Uic%27ing %(Identity)...</ExecutionDescription>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <InputFile>%(FullPath)</InputFile>
+      <OutputFile>$(ProjectDir)GeneratedFiles\ui_%(Filename).h</OutputFile>
+      <ParallelProcess>true</ParallelProcess>
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <Outputs>%(OutputFile)</Outputs>
+    </QtUic>
+  </ItemDefinitionGroup>
+</Project>

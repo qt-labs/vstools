@@ -87,23 +87,13 @@ namespace QtProjectLib
 
             qmakeProcess = CreateQmakeProcess(qmakeArgs, qtVersionInformation.qtDir + "\\bin\\qmake", fi.DirectoryName);
 
+            if (!HelperFunctions.SetVCVars(qmakeProcess.StartInfo))
+                InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Error setting VC vars");
+
             // We must set the QTDIR environment variable, because we're clearing QMAKE_LIBDIR_QT above.
             // If we do not set this, the Qt libraries will be QtCored.lib instead of QtCore4d.lib even
             // for shared builds.
             qmakeProcess.StartInfo.EnvironmentVariables["QTDIR"] = qtVersionInformation.qtDir;
-
-            // determine which vs version we are currently using and inform qmake about it
-            var regPath = dteObject.Application.RegistryRoot + "\\Setup\\VC";
-            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
-            if (key != null) {
-                var keyValue = key.GetValue("ProductDir", "").ToString();
-                var envVar = qmakeProcess.StartInfo.EnvironmentVariables["path"];
-                if (envVar != null) {
-                    var value = envVar + ";" + keyValue;
-                    qmakeProcess.StartInfo.EnvironmentVariables["path"] = value;
-                } else
-                    qmakeProcess.StartInfo.EnvironmentVariables.Add("path", keyValue);
-            }
 
             try {
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (qmake) : Using: " + qmakeProcess.StartInfo.FileName);
@@ -215,5 +205,6 @@ namespace QtProjectLib
                 stdOutput.Append("[" + stdOutputLines + "] - " + output.Trim() + "\n");
             }
         }
+
     }
 }

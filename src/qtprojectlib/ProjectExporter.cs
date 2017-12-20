@@ -431,8 +431,11 @@ namespace QtProjectLib
                 if (!d.StartsWith("$(qtdir)\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.StartsWith(qtDir + "\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.EndsWith("win32-msvc2005", StringComparison.OrdinalIgnoreCase)) {
-                    d = d.Replace("$(ConfigurationName)", project.ConfigurationManager.ActiveConfiguration.ConfigurationName);
-                    d = d.Replace("$(PlatformName)", project.ConfigurationManager.ActiveConfiguration.PlatformName);
+
+                    var vcConfig = project.ConfigurationManager.ActiveConfiguration.Object
+                        as VCConfiguration;
+                    if (vcConfig != null)
+                        HelperFunctions.ExpandString(ref d, vcConfig);
                     if (HelperFunctions.IsAbsoluteFilePath(d))
                         d = HelperFunctions.GetRelativePath(project.FullName, d);
                     if (!HelperFunctions.IsAbsoluteFilePath(d))

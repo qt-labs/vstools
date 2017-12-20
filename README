@@ -73,6 +73,21 @@ Open the file 'source.extension.vsixmanifest' inside the 'src\config\$(VisualStu
 directory and update the 'Identity' tag's 'Version' attribute.
 Important: Updating the version number there requires also updating the 'VsixVersion' tag at the
 top of the 'qtvstools.targets' file in the same directory.
+There are some other parts that need to be updated:
+
+    - 'vstools.pri'
+        adapt QTVSTOOLS_VERSION and QTVSTOOLS_VERSION_TAG
+    - 'src\qtvstools\Vsix.cs'
+        search for the line containing "InstalledProductRegistration", adapt the third argument)
+    - 'src\qtvstools\Properties\AssemblyInfo.cs'
+        adapt [assembly: AssemblyVersion(...)] and [assembly: AssemblyFileVersion(...)]
+
+Depending on the amount of changes done to other libraries of the projects, adjust their respective
+assembly infos as well.
+
+Note: Some extra caution is required while changing the qtwizard assembly info, because most of
+      the templates (e.g. console, gui, etc.) depend on that version number and need to be adjusted
+      as well (see gui.vstemplate 'Assembly' tag for example).
 
 
 

@@ -31,6 +31,9 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace QtArchiveGen
 {
@@ -89,6 +92,27 @@ namespace QtArchiveGen
 
                         using (var writer = new StreamWriter(vsixEntry.Open()))
                             writer.Write(manifest);
+
+                        var manifestJson = vsix.GetEntry("manifest.json");
+                        if (manifestJson != null) {
+                            string json;
+                            using (var reader = new StreamReader(manifestJson.Open()))
+                                json = reader.ReadToEnd();
+
+                            using (var hasher = SHA256.Create()) {
+                                var sha256 = hasher.ComputeHash(vsixEntry.Open());
+                                var stringBuilder = new StringBuilder();
+                                foreach (var b in sha256)
+                                    stringBuilder.Append(b.ToString("X2"));
+
+                                json = Regex.Replace(json, @"(.*{""fileName"":""\/extension\."
+                                    + @"vsixmanifest"",""sha256"":"")([a-fA-F0-9]{64})(""}.*)",
+                                    m => m.Groups[1] + stringBuilder.ToString() + m.Groups[3]);
+
+                                using (var writer = new StreamWriter(manifestJson.Open()))
+                                    writer.Write(json);
+                            }
+                        }
                     }
 
                     if (string.IsNullOrEmpty(source) && string.IsNullOrEmpty(version))

@@ -235,6 +235,15 @@
                     <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
                 </Strings>
             </Button>
+            <Button guid="MainMenuGuid" id="ConvertToQtMsBuild" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
+                </Strings>
+            </Button>
             <Button guid="MainMenuGuid" id="ConvertToQtId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -315,8 +324,17 @@
                     <ToolTipText>Change the Qt version for this solution and all contained projects</ToolTipText>
                 </Strings>
             </Button>
+            <Button guid="SolutionContextMenuGuid" id="SolutionConvertToQtMsBuild" priority="0x0100" type="Button">
+              <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
+              <CommandFlag>DefaultDisabled</CommandFlag>
+              <CommandFlag>DefaultInvisible</CommandFlag>
+              <CommandFlag>DynamicVisibility</CommandFlag>
+              <Strings>
+                <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
+              </Strings>
+            </Button>
 
-            <!-- Endregion Solution context menu button -->
+          <!-- Endregion Solution context menu button -->
 
             <!-- Region Project context menu button -->
 
@@ -373,6 +391,15 @@
                 </Strings>
             </Button>
 
+            <Button guid="ProjectContextMenuGuid" id="ProjectConvertToQtMsBuild" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <Strings>
+                    <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
+                </Strings>
+            </Button>
             <Button guid="ProjectContextMenuGuid" id="ConvertToQtProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -519,6 +546,7 @@
 
             <IDSymbol name="OthersMenuGroup" value="0x1023" />
             <IDSymbol name="CreateNewTsFileId" value="0x0107" />
+            <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="ConvertToQtId" value="0x0124" />
             <IDSymbol name="ConvertToQmakeId" value="0x0108" />
             <IDSymbol name="QtProjectSettingsId" value="0x0109" />
@@ -541,6 +569,7 @@
 
             <IDSymbol name="SolutionContextQtMenuGroup" value="0x1026" />
             <IDSymbol name="ChangeSolutionQtVersionId" value="0x0113" />
+            <IDSymbol name="SolutionConvertToQtMsBuild" value="0x0130" />
 
             <!-- Endregion Solution context menu button Ids -->
 
@@ -561,6 +590,7 @@
             <IDSymbol name="lReleaseOnProjectId" value="0x0119" />
 
             <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1029" />
+            <IDSymbol name="ProjectConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="ConvertToQtProjectId" value="0x0120" />
             <IDSymbol name="ConvertToQmakeProjectId" value="0x0121" />
             <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />

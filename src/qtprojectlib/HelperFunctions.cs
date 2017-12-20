@@ -28,14 +28,20 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
+using Microsoft.Win32;
+using QtProjectLib.QtMsBuild;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
+using Process = System.Diagnostics.Process;
 
 namespace QtProjectLib
 {
@@ -406,25 +412,39 @@ namespace QtProjectLib
             if (vcPro == null)
                 return;
 
+            var qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
+            qtMsBuild.BeginSetItemProperties();
             foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
                 foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
                     try {
-                        var tool = GetCustomBuildTool(config);
-                        if (tool == null)
-                            continue;
+                        if (vcfile.ItemType == "CustomBuild") {
+                            var tool = GetCustomBuildTool(config);
+                            if (tool == null)
+                                continue;
 
-                        tool.CommandLine = tool.CommandLine.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.Description = tool.Description.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.Outputs = tool.Outputs.Replace(oldString, replaceString,
-                            StringComparison.OrdinalIgnoreCase);
-                        tool.AdditionalDependencies = tool.AdditionalDependencies
-                            .Replace(oldString, replaceString, StringComparison.OrdinalIgnoreCase);
+                            tool.CommandLine = tool.CommandLine
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.Description = tool.Description
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.Outputs = tool.Outputs
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                            tool.AdditionalDependencies = tool.AdditionalDependencies
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                        } else {
+                            var tool = new QtCustomBuildTool(config, qtMsBuild);
+                            tool.CommandLine = tool.CommandLine
+                                .Replace(oldString, replaceString,
+                                StringComparison.OrdinalIgnoreCase);
+                        }
                     } catch (Exception) {
                     }
                 }
             }
+            qtMsBuild.EndSetItemProperties();
         }
 
         /// <summary>
@@ -437,6 +457,10 @@ namespace QtProjectLib
         /// <returns></returns>
         static public VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
+            var file = config.File as VCFile;
+            if (file == null || file.ItemType != "CustomBuild")
+                return null;
+
             var tool = config.Tool as VCCustomBuildTool;
             if (tool == null)
                 return null;
@@ -1382,6 +1406,424 @@ namespace QtProjectLib
             var subDirs = sourceDir.GetDirectories();
             foreach (var subDir in subDirs)
                 CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
+        }
+
+        /// <summary>
+        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
+        /// and project item metadata in the form %(MetadataName).<para/>
+        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
+        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
+        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
+        /// <paramref name="project"/>: Current project.<para/>
+        /// <paramref name="configName"/>: Name of selected configuration (e.g. "Debug").<para/>
+        /// <paramref name="platformName"/>: Name of selected platform (e.g. "x64").<para/>
+        /// <paramref name="filePath"/>(optional): Evaluation context.<para/>
+        /// </summary>
+        public static bool ExpandString(
+            ref string stringToExpand,
+            EnvDTE.Project project,
+            string configName,
+            string platformName,
+            string filePath = null)
+        {
+            if (project == null
+                || string.IsNullOrEmpty(configName)
+                || string.IsNullOrEmpty(platformName))
+                return false;
+
+            var vcProject = project.Object as VCProject;
+
+            if (filePath == null) {
+                var vcConfig = (from VCConfiguration _config
+                                in (IVCCollection)vcProject.Configurations
+                                where _config.Name == configName + "|" + platformName
+                                select _config).FirstOrDefault();
+                return ExpandString(ref stringToExpand, vcConfig);
+            } else {
+                var vcFile = (from VCFile _file in (IVCCollection)vcProject.Files
+                              where _file.FullPath == filePath
+                              select _file).FirstOrDefault();
+                if (vcFile == null)
+                    return false;
+
+                var vcFileConfig = (from VCFileConfiguration _config
+                                    in (IVCCollection)vcFile.FileConfigurations
+                                    where _config.Name == configName + "|" + platformName
+                                    select _config).FirstOrDefault();
+                return ExpandString(ref stringToExpand, vcFileConfig);
+            }
+        }
+
+        /// <summary>
+        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
+        /// and project item metadata in the form %(MetadataName).<para/>
+        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
+        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
+        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
+        /// <paramref name="config"/>: Either a VCConfiguration or VCFileConfiguration object to
+        /// use as provider of property expansion (through Evaluate()). Cannot be null.<para/>
+        /// </summary>
+        public static bool ExpandString(
+            ref string stringToExpand,
+            object config)
+        {
+            if (config == null)
+                return false;
+
+            /* try property expansion through VCConfiguration.Evaluate()
+             * or VCFileConfiguration.Evaluate() */
+            string expanded = stringToExpand;
+            VCProject vcProj = null;
+            VCFile vcFile = null;
+            string configName = "", platformName = "";
+            var vcConfig = config as VCConfiguration;
+            if (vcConfig != null) {
+                vcProj = vcConfig.project as VCProject;
+                configName = vcConfig.ConfigurationName;
+                var vcPlatform = vcConfig.Platform as VCPlatform;
+                if (vcPlatform != null)
+                    platformName = vcPlatform.Name;
+                try {
+                    expanded = vcConfig.Evaluate(expanded);
+                } catch { }
+            } else {
+                var vcFileConfig = config as VCFileConfiguration;
+                if (vcFileConfig == null)
+                    return false;
+                vcFile = vcFileConfig.File as VCFile;
+                if (vcFile != null)
+                    vcProj = vcFile.project as VCProject;
+                var vcProjConfig = vcFileConfig.ProjectConfiguration as VCConfiguration;
+                if (vcProjConfig != null) {
+                    configName = vcProjConfig.ConfigurationName;
+                    var vcPlatform = vcProjConfig.Platform as VCPlatform;
+                    if (vcPlatform != null)
+                        platformName = vcPlatform.Name;
+                }
+                try {
+                    expanded = vcFileConfig.Evaluate(expanded);
+                } catch { }
+            }
+
+            /* fail-safe */
+            foreach (Match propNameMatch in Regex.Matches(expanded, @"\$\(([^\)]+)\)")) {
+                string propName = propNameMatch.Groups[1].Value;
+                string propValue = "";
+                switch (propName) {
+                    case "Configuration":
+                    case "ConfigurationName":
+                        if (string.IsNullOrEmpty(configName))
+                            return false;
+                        propValue = configName;
+                        break;
+                    case "Platform":
+                    case "PlatformName":
+                        if (string.IsNullOrEmpty(platformName))
+                            return false;
+                        propValue = platformName;
+                        break;
+                    default:
+                        return false;
+                }
+                expanded = expanded.Replace(string.Format("$({0})", propName), propValue);
+            }
+
+            /* because item metadata is not expanded in Evaluate() */
+            foreach (Match metaNameMatch in Regex.Matches(expanded, @"\%\(([^\)]+)\)")) {
+                string metaName = metaNameMatch.Groups[1].Value;
+                string metaValue = "";
+                switch (metaName) {
+                    case "FullPath":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = vcFile.FullPath;
+                        break;
+                    case "RootDir":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetPathRoot(vcFile.FullPath);
+                        break;
+                    case "Filename":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetFileNameWithoutExtension(vcFile.FullPath);
+                        break;
+                    case "Extension":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetExtension(vcFile.FullPath);
+                        break;
+                    case "RelativeDir":
+                        if (vcProj == null || vcFile == null)
+                            return false;
+                        metaValue = Path.GetDirectoryName(GetRelativePath(
+                            Path.GetDirectoryName(vcProj.ProjectFile),
+                            vcFile.FullPath));
+                        if (!metaValue.EndsWith("\\"))
+                            metaValue += "\\";
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "Directory":
+                        if (vcFile == null)
+                            return false;
+                        metaValue = Path.GetDirectoryName(GetRelativePath(
+                            Path.GetPathRoot(vcFile.FullPath),
+                            vcFile.FullPath));
+                        if (!metaValue.EndsWith("\\"))
+                            metaValue += "\\";
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "Identity":
+                        if (vcProj == null || vcFile == null)
+                            return false;
+                        metaValue = GetRelativePath(
+                            Path.GetDirectoryName(vcProj.ProjectFile),
+                            vcFile.FullPath);
+                        if (metaValue.StartsWith(".\\"))
+                            metaValue = metaValue.Substring(2);
+                        break;
+                    case "RecursiveDir":
+                    case "ModifiedTime":
+                    case "CreatedTime":
+                    case "AccessedTime":
+                        return false;
+                    default:
+                        var vcFileConfig = config as VCFileConfiguration;
+                        if (vcFileConfig == null)
+                            return false;
+                        var propStoreTool = vcFileConfig.Tool as IVCRulePropertyStorage;
+                        if (propStoreTool == null)
+                            return false;
+                        try {
+                            metaValue = propStoreTool.GetEvaluatedPropertyValue(metaName);
+                        } catch {
+                            return false;
+                        }
+                        break;
+                }
+                expanded = expanded.Replace(string.Format("%({0})", metaName), metaValue);
+            }
+
+            stringToExpand = expanded;
+            return true;
+        }
+
+        private static string GetRegistrySoftwareString(string subKeyName, string valueName)
+        {
+            var keyName = new StringBuilder();
+            keyName.Append(@"SOFTWARE\");
+            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
+                keyName.Append(@"WOW6432Node\");
+            keyName.Append(subKeyName);
+
+            try {
+                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
+                    if (key == null)
+                        return ""; //key not found
+
+                    RegistryValueKind valueKind = key.GetValueKind(valueName);
+                    if (valueKind != RegistryValueKind.String
+                        && valueKind != RegistryValueKind.ExpandString) {
+                        return ""; //wrong value kind
+                    }
+
+                    Object objValue = key.GetValue(valueName);
+                    if (objValue == null)
+                        return ""; //error getting value
+
+                    return objValue.ToString();
+                }
+            } catch {
+                return "";
+            }
+        }
+
+        private static string GetVCPath()
+        {
+#if VS2017
+            string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
+            if (string.IsNullOrEmpty(vsPath))
+                return "";
+            string vcPath = Path.Combine(vsPath, "VC");
+#elif VS2015
+            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "14.0");
+            if (string.IsNullOrEmpty(vcPath))
+                return ""; //could not get registry key
+#elif VS2013
+            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "12.0");
+            if (string.IsNullOrEmpty(vcPath))
+                return ""; //could not get registry key
+#endif
+            return vcPath;
+        }
+
+        public static bool SetVCVars(ProcessStartInfo startInfo)
+        {
+            bool isOS64Bit = System.Environment.Is64BitOperatingSystem;
+            bool isQt64Bit = QtVersionManager.The().GetVersionInfo(
+                QtVersionManager.The().GetDefaultVersion()).is64Bit();
+
+            string vcPath = GetVCPath();
+            if (vcPath == "")
+                return false;
+
+            string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
+#if VS2017
+            string vcVarsCmd = "";
+            string vcVarsArg = "";
+            if (isOS64Bit && isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars64.bat");
+            else if (!isOS64Bit && !isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars32.bat");
+            else if (isOS64Bit && !isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsamd64_x86.bat");
+            else if (!isOS64Bit && isQt64Bit)
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
+#elif VS2015 || VS2013
+            string vcVarsCmd = Path.Combine(vcPath, "vcvarsall.bat");
+            string vcVarsArg = "";
+            if (isOS64Bit && isQt64Bit)
+                vcVarsArg = "amd64";
+            else if (!isOS64Bit && !isQt64Bit)
+                vcVarsArg = "x86";
+            else if (isOS64Bit && !isQt64Bit)
+                vcVarsArg = "amd64_x86";
+            else if (!isOS64Bit && isQt64Bit)
+                vcVarsArg = "x86_amd64";
+#endif
+            const string markSTX = ":@:@:@";
+            const string markEOL = ":#:#:#";
+            string command =
+                string.Format("/c \"{0}\" {1} && echo {2} && set", vcVarsCmd, vcVarsArg, markSTX);
+            var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command);
+            vcVarsStartInfo.CreateNoWindow = true;
+            vcVarsStartInfo.UseShellExecute = false;
+            vcVarsStartInfo.RedirectStandardError = true;
+            vcVarsStartInfo.RedirectStandardOutput = true;
+
+            var process = Process.Start(vcVarsStartInfo);
+            StringBuilder stdOut = new StringBuilder();
+
+            process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+                stdOut.AppendFormat("{0}\n{1}\n", e.Data, markEOL);
+            process.BeginOutputReadLine();
+
+            process.WaitForExit();
+            bool ok = (process.ExitCode == 0);
+            process.Close();
+            if (!ok)
+                return false;
+
+            SortedDictionary<string, List<string>> vcVars =
+                new SortedDictionary<string, List<string>>();
+            string[] split =
+                stdOut.ToString().Split(new string[] { "\n", "=", ";" }, StringSplitOptions.None);
+            int i = 0;
+            for (; i < split.Length && split[i].Trim() != markSTX; i++) {
+                //Skip to start of data
+            }
+            i++; //Advance to next item
+            for (; i < split.Length && split[i].Trim() != markEOL; i++) {
+                //Skip to end of line
+            }
+            i++; //Advance to next item
+            for (; i < split.Length; i++) {
+                //Process first item (variable name)
+                string key = split[i].ToUpper().Trim();
+                i++; //Advance to next item
+                List<string> vcVarValue = vcVars[key] = new List<string>();
+                for (; i < split.Length && split[i].Trim() != markEOL; i++) {
+                    //Process items up to end of line (variable value(s))
+                    vcVarValue.Add(split[i].Trim());
+                }
+            }
+
+            foreach (var vcVar in vcVars) {
+                if (vcVar.Value.Count == 1) {
+                    startInfo.EnvironmentVariables[vcVar.Key] = vcVar.Value[0];
+                } else {
+                    if (!startInfo.EnvironmentVariables.ContainsKey(vcVar.Key)) {
+                        foreach (var vcVarValue in vcVar.Value) {
+                            if (!string.IsNullOrWhiteSpace(vcVarValue)) {
+                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
+                            }
+                        }
+                    } else {
+                        string[] startInfoVariableValues = startInfo.EnvironmentVariables[vcVar.Key]
+                            .Split(new string[] { ";" }, StringSplitOptions.None);
+                        foreach (var vcVarValue in vcVar.Value) {
+                            if (!string.IsNullOrWhiteSpace(vcVarValue)
+                                && !startInfoVariableValues.Any(s => s.Trim().Equals(
+                                    vcVarValue,
+                                    StringComparison.OrdinalIgnoreCase))) {
+                                if (!startInfo.EnvironmentVariables[vcVar.Key].EndsWith(";"))
+                                    startInfo.EnvironmentVariables[vcVar.Key] += ";";
+                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Rooted canonical path is the absolute path for the specified path string
+        /// (cf. Path.GetFullPath()) without a trailing path separator.
+        /// </summary>
+        static string RootedCanonicalPath(string path)
+        {
+            try {
+                return Path
+                .GetFullPath(path)
+                .TrimEnd(new char[] {
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar
+                });
+            } catch {
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// If the given path is relative and a sub-path of the current directory, returns
+        /// a "relative canonical path", containing only the steps beyond the current directory.
+        /// Otherwise, returns the absolute ("rooted") canonical path.
+        /// </summary>
+        public static string CanonicalPath(string path)
+        {
+            string canonicalPath = RootedCanonicalPath(path);
+            if (!Path.IsPathRooted(path)) {
+                string currentCanonical = RootedCanonicalPath(".");
+                if (canonicalPath.StartsWith(currentCanonical,
+                    StringComparison.InvariantCultureIgnoreCase)) {
+                    return canonicalPath
+                    .Substring(currentCanonical.Length)
+                    .TrimStart(new char[] {
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar
+                    });
+                } else {
+                    return canonicalPath;
+                }
+            } else {
+                return canonicalPath;
+            }
+        }
+
+        public static bool PathEquals(string path1, string path2)
+        {
+            return (CanonicalPath(path1).Equals(CanonicalPath(path2),
+                StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool PathIsRelativeTo(string path, string subPath)
+        {
+            return CanonicalPath(path).EndsWith(CanonicalPath(subPath),
+                StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

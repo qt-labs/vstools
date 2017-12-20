@@ -28,6 +28,7 @@
 
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
+using QtProjectLib.QtMsBuild;
 using System;
 using System.Collections;
 
@@ -72,13 +73,27 @@ namespace QtProjectLib
             return GetDirectory(project, Resources.mocDirKeyword);
         }
 
-        public static string GetMocDirectory(EnvDTE.Project project, string configName, string platformName)
+        public static string GetMocDirectory(
+            EnvDTE.Project project,
+            string configName,
+            string platformName, VCFile vCFile)
+        {
+            string filePath = null;
+            if (vCFile != null)
+                filePath = vCFile.FullPath;
+            return GetMocDirectory(project, configName, platformName, filePath);
+        }
+
+        public static string GetMocDirectory(
+            EnvDTE.Project project,
+            string configName,
+            string platformName,
+            string filePath = null)
         {
             var dir = GetDirectory(project, Resources.mocDirKeyword);
-            if (!string.IsNullOrEmpty(configName))
-                dir = dir.Replace("$(ConfigurationName)", configName);
-            if (!string.IsNullOrEmpty(platformName))
-                dir = dir.Replace("$(PlatformName)", platformName);
+            if (!string.IsNullOrEmpty(configName)
+                && !string.IsNullOrEmpty(platformName))
+                HelperFunctions.ExpandString(ref dir, project, configName, platformName, filePath);
             return dir;
         }
 
@@ -285,7 +300,7 @@ namespace QtProjectLib
                     if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
                         return (string) rccDirCache[project.FullName];
 
-                    VCCustomBuildTool tool = null;
+                    QtCustomBuildTool tool = null;
                     string configName = null;
                     string platformName = null;
                     var vcpro = (VCProject) project.Object;
@@ -296,7 +311,7 @@ namespace QtProjectLib
                             || (type == Resources.uicDirKeyword && HelperFunctions.IsUicFile(name))
                             || (type == Resources.rccDirKeyword && HelperFunctions.IsQrcFile(name))) {
                             foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
-                                tool = HelperFunctions.GetCustomBuildTool(config);
+                                tool = new QtCustomBuildTool(config);
                                 configName = config.Name.Remove(config.Name.IndexOf('|'));
                                 var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                 var platform = vcConfig.Platform as VCPlatform;
