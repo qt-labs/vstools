@@ -30,6 +30,7 @@ using EnvDTE;
 using QtProjectLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -63,91 +64,22 @@ namespace QtVsTools
             cancelButton.Text = SR.GetString("Cancel");
             tabControl1.TabPages[0].Text = SR.GetString("ActionDialog_Properties");
             tabControl1.TabPages[1].Text = SR.GetString("QtModules");
-            activeQtCLib.Text = SR.GetString("ActiveQtContainerLibrary");
-            activeQtSLib.Text = SR.GetString("ActiveQtServerLibrary");
-            testLib.Text = SR.GetString("TestLibrary");
-            svgLib.Text = SR.GetString("SVGLibrary");
-            xmlLib.Text = SR.GetString("XMLLibrary");
-            networkLib.Text = SR.GetString("NetworkLibrary");
-            openGLLib.Text = SR.GetString("OpenGLLibrary");
-            sqlLib.Text = SR.GetString("SQLLibrary");
-            guiLib.Text = SR.GetString("GUILibrary");
-            multimediaLib.Text = SR.GetString("MultimediaLibrary");
-            coreLib.Text = SR.GetString("CoreLibrary");
-            scriptLib.Text = SR.GetString("ScriptLibrary");
-            helpLib.Text = SR.GetString("HelpLibrary");
-            webKitLib.Text = SR.GetString("WebKitLibrary");
-            xmlPatternsLib.Text = SR.GetString("XmlPatternsLibrary");
-            scriptToolsLib.Text = SR.GetString("ScriptToolsLibrary");
-            uiToolsLib.Text = SR.GetString("UiToolsLibrary");
 
-            threeDLib.Text = SR.GetString("ThreeDLibrary");
-            locationLib.Text = SR.GetString("LocationLibrary");
-            qmlLib.Text = SR.GetString("QmlLibrary");
-            quickLib.Text = SR.GetString("QuickLibrary");
-            bluetoothLib.Text = SR.GetString("BluetoothLibrary");
-            printSupportLib.Text = SR.GetString("PrintSupportLibrary");
-            declarativeLib.Text = SR.GetString("DeclarativeLibrary");
-            sensorsLib.Text = SR.GetString("SensorsLibrary");
-            webkitWidgetsLib.Text = SR.GetString("WebkitWidgetsLibrary");
-            widgetsLib.Text = SR.GetString("WidgetsLibrary");
+            var modules = QtModules.Instance.GetAvailableModuleInformation()
+                .Where(x => x.Selectable)
+                .OrderBy(x => x.Name);
+            foreach (var module in modules) {
+                var checkBox = new CheckBox();
+                checkBox.Location = new System.Drawing.Point(844, 152);
+                checkBox.Margin = new Padding(3, 2, 6, 2);
+                checkBox.Name = module.LibraryPrefix;
+                checkBox.Size = new System.Drawing.Size(256, 46);
+                checkBox.UseVisualStyleBackColor = true;
+                flowLayoutPanel1.Controls.Add(checkBox);
+                checkBox.Text = module.Name;
+                AddMapping(checkBox, module.ModuleId);
+            }
 
-            concurrentLib.Text = SR.GetString("ConcurrentLibrary");
-            multimediaWidgetsLib.Text = SR.GetString("MultimediaWidgetsLibrary");
-
-            enginioLib.Text = SR.GetString("EnginioLibrary");
-            nfcLib.Text = SR.GetString("NfcLibrary");
-            positioningLib.Text = SR.GetString("PositioningLibrary");
-            serialPortLib.Text = SR.GetString("SerialPortLibrary");
-            webChannelLib.Text = SR.GetString("WebChannelLibrary");
-            webSocketsLib.Text = SR.GetString("WebSocketsLibrary");
-            windowsExtrasLib.Text = SR.GetString("WindowsExtrasLibrary");
-            quickWidgetsLib.Text = SR.GetString("QuickWidgetsLibrary");
-
-            // essentials
-            AddMapping(threeDLib, QtModule.ThreeD);
-            AddMapping(coreLib, QtModule.Core);
-            AddMapping(guiLib, QtModule.Gui);
-            AddMapping(locationLib, QtModule.Location);
-            AddMapping(multimediaLib, QtModule.Multimedia);
-            AddMapping(networkLib, QtModule.Network);
-            AddMapping(qmlLib, QtModule.Qml);
-            AddMapping(quickLib, QtModule.Quick);
-            AddMapping(sqlLib, QtModule.Sql);
-            AddMapping(testLib, QtModule.Test);
-            AddMapping(webKitLib, QtModule.WebKit);
-
-            // add-ons
-            AddMapping(activeQtCLib, QtModule.ActiveQtC);
-            AddMapping(activeQtSLib, QtModule.ActiveQtS);
-            AddMapping(bluetoothLib, QtModule.Bluetooth);
-            AddMapping(helpLib, QtModule.Help);
-            AddMapping(openGLLib, QtModule.OpenGL);
-            AddMapping(scriptToolsLib, QtModule.ScriptTools);
-            AddMapping(uiToolsLib, QtModule.UiTools);
-            AddMapping(printSupportLib, QtModule.PrintSupport);
-            AddMapping(declarativeLib, QtModule.Declarative);
-            AddMapping(scriptLib, QtModule.Script);
-            AddMapping(sensorsLib, QtModule.Sensors);
-            AddMapping(svgLib, QtModule.Svg);
-            AddMapping(webkitWidgetsLib, QtModule.WebkitWidgets);
-            AddMapping(widgetsLib, QtModule.Widgets);
-            AddMapping(xmlLib, QtModule.Xml);
-            AddMapping(xmlPatternsLib, QtModule.XmlPatterns);
-
-            AddMapping(concurrentLib, QtModule.Concurrent);
-            AddMapping(multimediaWidgetsLib, QtModule.MultimediaWidgets);
-
-            AddMapping(enginioLib, QtModule.Enginio);
-            AddMapping(nfcLib, QtModule.Nfc);
-            AddMapping(positioningLib, QtModule.Positioning);
-            AddMapping(serialPortLib, QtModule.SerialPort);
-            AddMapping(webChannelLib, QtModule.WebChannel);
-            AddMapping(webSocketsLib, QtModule.WebSockets);
-            AddMapping(windowsExtrasLib, QtModule.WindowsExtras);
-            AddMapping(quickWidgetsLib, QtModule.QuickWidgets);
-
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             KeyPress += FormProjectQtSettings_KeyPress;
 
             Shown += FormProjectQtSettings_Shown;
@@ -208,16 +140,20 @@ namespace QtVsTools
 
                 // Disable if module not installed
                 var info = QtModules.Instance.ModuleInformation(item.moduleId);
-                var libraryPrefix = info.LibraryPrefix;
-                if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))
-                    libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
-                var full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
-                var fi = new System.IO.FileInfo(full_path);
-                item.checkbox.Enabled = fi.Exists;
-                if (fi.Exists == false) {
-                    // Don't disable item if qtVersion not available
-                    if (qtVersion != null)
-                        item.checkbox.Checked = false;
+                if (info != null) {
+                    var libraryPrefix = info.LibraryPrefix;
+                    if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))
+                        libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
+                    var full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
+                    var fi = new System.IO.FileInfo(full_path);
+                    item.checkbox.Enabled = fi.Exists;
+                    if (fi.Exists == false) {
+                        // Don't disable item if qtVersion not available
+                        if (qtVersion != null)
+                            item.checkbox.Checked = false;
+                    }
+                } else {
+                    item.checkbox.Checked = false;
                 }
             }
         }

@@ -198,6 +198,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="qtmodules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="QtVsTools.ico" />
     <Content Include="Resources\menuimages.png" />
     <Content Include="Resources\qt.ico">

@@ -76,169 +76,37 @@
                   Name="ModuleGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
-                    <Style TargetType="{x:Type CheckBox}">
-                        <Setter Property="Margin"
-                                Value="0,0,0,5" />
+                    <Style TargetType="{x:Type ListBox}">
+                        <Setter Property="Background" Value="Transparent" />
                     </Style>
                 </Grid.Resources>
-                <StackPanel Grid.Column="0">
-                    <CheckBox Content="3D"
-                              Name="Qt3D"
-                              ToolTip="Select this if you want to include the 3D library"
-                              IsEnabled="False" />
-                    <CheckBox Content="ActiveQt container"
-                              Name="QtAxContainer"
-                              ToolTip="Select this if you want to include the ActiveQt container library"
-                              IsEnabled="False" />
-                    <CheckBox Content="ActiveQt server"
-                              Name="QtAxServer"
-                              ToolTip="Select this if you want to include the ActiveQt server library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Bluetooth"
-                              Name="QtBluetooth"
-                              ToolTip="Select this if you want to include the Bluetooth library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Concurrent"
-                              Name="QtConcurrent"
-                              ToolTip="Select this if you want to include the Concurrent library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Core"
-                              Name="QtCore"
-                              IsEnabled="False"
-                              ToolTip="Select this if you want to include the Core library" />
-                    <CheckBox Content="Enginio"
-                              Name="Enginio"
-                              ToolTip="Select this if you want to include the Enginio library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Declarative"
-                              Name="QtDeclarative"
-                              ToolTip="Select this if you want to include the Declarative library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Gui"
-                              Name="QtGui"
-                              ToolTip="Select this if you want to include the GUI library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Help"
-                              Name="QtHelp"
-                              ToolTip="Select this if you want to include the Help library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Location"
-                              Name="QtLocation"
-                              ToolTip="Select this if you want to include the Location library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Multimedia"
-                              Name="QtMultimedia"
-                              ToolTip="Select this if you want to include the Multimedia library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Multimedia Widgets"
-                              Name="QtMultimediaWidgets"
-                              ToolTip="Select this if you want to include the Multimedia Widgets library"
-                              IsEnabled="False" />
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <CheckBox Content="Network"
-                              Name="QtNetwork"
-                              ToolTip="Select this if you want to include the Network library"
-                              IsEnabled="False" />
-                    <CheckBox Content="NFC"
-                              Name="QtNfc"
-                              ToolTip="Select this if you want to include the NFC library"
-                              IsEnabled="False" />
-                    <CheckBox Content="OpenGL"
-                              Name="QtOpenGL"
-                              ToolTip="Select this if you want to include the OpenGL library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Positioning"
-                              Name="QtPositioning"
-                              ToolTip="Select this if you want to include the Positioning library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Print Support"
-                              Name="QtPrintSupport"
-                              ToolTip="Select this if you want to include the Print Support library"
-                              IsEnabled="False" />
-                    <CheckBox Content="QML"
-                              Name="QtQml"
-                              ToolTip="Select this if you want to include the QML library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Quick"
-                              Name="QtQuick"
-                              ToolTip="Select this if you want to include the Quick library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Quick Widgets"
-                              Name="QtQuickWidgets"
-                              ToolTip="Select this if you want to include the Quick Widgets library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Script"
-                              Name="QtScript"
-                              ToolTip="Select this if you want to include the Script library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Script Tools"
-                              Name="QtScriptTools"
-                              ToolTip="Select this if you want to include the Script Tools"
-                              IsEnabled="False" />
-                    <CheckBox Content="Sensors"
-                              Name="QtSensors"
-                              ToolTip="Select this if you want to include the Sensors library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Serial Port"
-                              Name="QtSerialPort"
-                              ToolTip="Select this if you want to include the Serial Port library"
-                              IsEnabled="False" />
-                    <CheckBox Content="SQL"
-                              Name="QtSql"
-                              ToolTip="Select this if you want to include the SQL library"
-                              IsEnabled="False" />
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <CheckBox Content="SVG"
-                              Name="QtSvg"
-                              ToolTip="Select this if you want to include the SVG library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Test"
-                              Name="QtTest"
-                              ToolTip="Select this if you want to include the Test library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Ui Tools"
-                              Name="QtUiTools"
-                              ToolTip="Select this if you want to include the UI Tools"
-                              IsEnabled="False" />
-                    <CheckBox Content="Web Channel"
-                              Name="QtWebChannel"
-                              ToolTip="Select this if you want to include the Web Channel library"
-                              IsEnabled="False" />
-                    <CheckBox Content="WebKit"
-                              Name="QtWebKit"
-                              ToolTip="Select this if you want to include the WebKit library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Webkit Widgets"
-                              Name="QtWebkitWidgets"
-                              ToolTip="Select this if you want to include the Webkit Widgets library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Web Sockets"
-                              Name="QtWebSockets"
-                              ToolTip="Select this if you want to include the Web Sockets library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Widgets"
-                              Name="QtWidgets"
-                              ToolTip="Select this if you want to include the Widgets library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Windows Extras"
-                              Name="QtWinExtras"
-                              ToolTip="Select this if you want to include the Windows Extras library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Xml"
-                              Name="QtXml"
-                              ToolTip="Select this if you want to include the XML library"
-                              IsEnabled="False" />
-                    <CheckBox Content="Xml Patterns"
-                              Name="QtXmlPatterns"
-                              ToolTip="Select this if you want to include the XML Patterns library"
-                              IsEnabled="False" />
-                </StackPanel>
+                <ListBox
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    Margin="10,10,10,10" ItemsSource="{Binding ModuleCheckBoxes}">
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type CheckBox}">
+                            <Setter Property="Margin"
+                                Value="0,3,15,3" />
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Content}"
+                                  Tag="{Binding Tag}"
+                                  ToolTip="{Binding ToolTip}"
+                                  IsChecked="{Binding IsChecked}"
+                                  IsEnabled="{Binding IsEnabled}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal"

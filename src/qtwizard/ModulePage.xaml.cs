@@ -28,16 +28,100 @@
 
 using QtProjectLib;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace QtProjectWizard
 {
     public partial class ModulePage : WizardPage
     {
+
+        public class ModuleCheckBox : INotifyPropertyChanged
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private bool isChecked;
+            private bool isEnabled;
+            private QtModuleInfo module;
+
+            public ModuleCheckBox()
+            {
+            }
+
+            public ModuleCheckBox(QtModuleInfo module)
+            {
+                this.module = module;
+                isChecked = isEnabled = false;
+            }
+
+            public QtModuleInfo Module
+            {
+                get { return module; }
+                set
+                {
+                    module = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("Module"));
+                }
+            }
+
+            public bool IsChecked
+            {
+                get { return isChecked; }
+                set
+                {
+                    isChecked = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsChecked"));
+                }
+            }
+
+            public bool IsEnabled
+            {
+                get { return isEnabled; }
+                set
+                {
+                    isEnabled = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsEnabled"));
+                }
+            }
+
+            public string Content
+            {
+                get { return module.Name; }
+            }
+
+            public string Tag
+            {
+                get { return module.LibraryPrefix; }
+            }
+
+            public string ToolTip
+            {
+                get {
+                    return string.Format(
+                        "Select this if you want to include the {0} library",
+                        module.Name);
+                }
+            }
+        }
+
+        public ObservableCollection<ModuleCheckBox> ModuleCheckBoxes { get; set; }
+
         public ModulePage()
         {
             InitializeComponent();
+
+            ModuleCheckBoxes = new ObservableCollection<ModuleCheckBox>();
+            var modules = QtModules.Instance.GetAvailableModuleInformation()
+                .Where(x => x.Selectable)
+                .OrderBy(x => x.Name);
+            foreach (var module in modules)
+                ModuleCheckBoxes.Add(new ModuleCheckBox(module));
 
             DataContext = this;
             Loaded += OnLoaded;
@@ -59,15 +143,14 @@ namespace QtProjectWizard
         {
             Loaded -= OnLoaded;
             try {
-                foreach (var checkBox in Children<CheckBox>(ModuleGrid))
-                    checkBox.IsEnabled = QtModuleInfo.IsInstalled(checkBox.Name);
 
-                foreach (var module in Data.DefaultModules) {
-                    var checkbox = ModuleGrid.FindName(module) as CheckBox;
-                    if (checkbox == null)
-                        continue;
-                    checkbox.IsChecked = QtModuleInfo.IsInstalled(module);
-                    checkbox.IsEnabled = false; // Required module, always disabled.
+                foreach (var checkBox in ModuleCheckBoxes) {
+                    if (QtModuleInfo.IsInstalled(checkBox.Tag))
+                        checkBox.IsEnabled = true;
+                    if (Data.DefaultModules.Contains(checkBox.Tag)) {
+                        checkBox.IsEnabled = false;
+                        checkBox.IsChecked = QtModuleInfo.IsInstalled(checkBox.Tag);
+                    }
                 }
             } catch {
                 // Ignore if we can't find out if the library is installed.
@@ -79,25 +162,9 @@ namespace QtProjectWizard
         {
             if (Data != null) {
                 Data.Modules.Clear();
-                foreach (var checkBox in Children<CheckBox>(ModuleGrid)) {
-                    if (checkBox.IsChecked.GetValueOrDefault())
-                        Data.Modules.Add(checkBox.Name);
-                }
-            }
-        }
-
-        private IEnumerable<T> Children<T>(DependencyObject obj) where T : DependencyObject
-        {
-            if (obj == null)
-                yield break;
-
-            foreach (var tmp in LogicalTreeHelper.GetChildren(obj)) {
-                var child = tmp as DependencyObject;
-                if (child != null) {
-                    if (child is T)
-                        yield return child as T;
-                    foreach (var t in Children<T>(child))
-                        yield return t;
+                foreach (var checkBox in ModuleCheckBoxes) {
+                    if (checkBox.IsChecked)
+                        Data.Modules.Add(checkBox.Module.LibraryPrefix);
                 }
             }
         }

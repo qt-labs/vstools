@@ -1,0 +1,550 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<QtVsTools>
+  <Module Id="1">
+    <Name>Core</Name>
+    <ResourceName>CoreLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtCore</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>core</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtCore</IncludePath>
+    <Defines>QT_CORE_LIB</Defines>
+  </Module>
+  <Module Id="2">
+    <Name>Xml</Name>
+    <ResourceName>XMLLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtXml</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>xml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtXml</IncludePath>
+    <Defines>QT_XML_LIB</Defines>
+  </Module>
+  <Module Id="3">
+    <Name>Sql</Name>
+    <ResourceName>SQLLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSql</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>sql</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSql</IncludePath>
+    <Defines>QT_SQL_LIB</Defines>
+  </Module>
+  <Module Id="4">
+    <Name>OpenGL</Name>
+    <ResourceName>OpenGLLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtOpenGL</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>opengl</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtOpenGL</IncludePath>
+    <Defines>QT_OPENGL_LIB</Defines>
+    <AdditionalLibraries>opengl32.lib</AdditionalLibraries>
+    <AdditionalLibraries>glu32.lib</AdditionalLibraries>
+  </Module>
+  <Module Id="5">
+    <Name>Network</Name>
+    <ResourceName>NetworkLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtNetwork</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>network</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtNetwork</IncludePath>
+    <Defines>QT_NETWORK_LIB</Defines>
+  </Module>
+  <Module Id="7">
+    <Name>Gui</Name>
+    <ResourceName>GUILibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGui</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>gui</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGui</IncludePath>
+    <Defines>QT_GUI_LIB</Defines>
+  </Module>
+  <Module Id="8">
+    <Name>ActiveQtS</Name>
+    <ResourceName>ActiveQtServerLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtAxServer</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+    <proVarQT>axserver</proVarQT>
+    <IncludePath>$(QTDIR)\include\ActiveQt</IncludePath>
+    <Defines>QAXSERVER</Defines>
+    <AdditionalLibraries>Qt5AxBase.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt5AxBased.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="9">
+    <Name>ActiveQtC</Name>
+    <ResourceName>ActiveQtContainerLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtAxContainer</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+    <proVarQT>axcontainer</proVarQT>
+    <IncludePath>$(QTDIR)\include\ActiveQt</IncludePath>
+    <AdditionalLibraries>Qt5AxBase.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt5AxBased.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="10">
+    <Name>Main</Name>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>qtmain</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+  </Module>
+  <Module Id="13">
+    <Name>Svg</Name>
+    <ResourceName>SVGLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSvg</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>svg</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSvg</IncludePath>
+    <Defines>QT_SVG_LIB</Defines>
+  </Module>
+  <Module Id="14">
+    <Name>Designer</Name>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtDesigner</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>designer</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtDesigner</IncludePath>
+    <Defines>QDESIGNER_EXPORT_WIDGETS</Defines>
+    <Defines>QT_DESIGNER_LIB</Defines>
+  </Module>
+  <Module Id="15">
+    <Name>Test</Name>
+    <ResourceName>TestLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtTest</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarCONFIG>qtestlib</proVarCONFIG>
+    <IncludePath>$(QTDIR)\include\QtTest</IncludePath>
+    <Defines>QT_TESTLIB_LIB</Defines>
+  </Module>
+  <Module Id="16">
+    <Name>Script</Name>
+    <ResourceName>ScriptLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtScript</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>script</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtScript</IncludePath>
+    <Defines>QT_SCRIPT_LIB</Defines>
+  </Module>
+  <Module Id="17">
+    <Name>Help</Name>
+    <ResourceName>HelpLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtHelp</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarCONFIG>help</proVarCONFIG>
+    <IncludePath>$(QTDIR)\include\QtHelp</IncludePath>
+    <Defines>QT_HELP_LIB</Defines>
+  </Module>
+  <Module Id="18">
+    <Name>WebKit</Name>
+    <ResourceName>WebKitLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtWebKit</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webkit</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebKit</IncludePath>
+  </Module>
+  <Module Id="19">
+    <Name>XmlPatterns</Name>
+    <ResourceName>XmlPatternsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtXmlPatterns</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>xmlpatterns</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtXmlPatterns</IncludePath>
+    <Defines>QT_XMLPATTERNS_LIB</Defines>
+  </Module>
+  <Module Id="20">
+    <Name>Enginio</Name>
+    <ResourceName>EnginioLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>Enginio</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>enginio</proVarQT>
+    <IncludePath>$(QTDIR)\include\Enginio</IncludePath>
+    <Defines>QT_ENGINIO_LIB</Defines>
+  </Module>
+  <Module Id="21">
+    <Name>Multimedia</Name>
+    <ResourceName>MultimediaLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtMultimedia</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>multimedia</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtMultimedia</IncludePath>
+    <Defines>QT_MULTIMEDIA_LIB</Defines>
+  </Module>
+  <Module Id="23">
+    <Name>ScriptTools</Name>
+    <ResourceName>ScriptToolsLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtScriptTools</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>scripttools</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtScriptTools</IncludePath>
+    <Defines>QT_SCRIPTTOOLS_LIB</Defines>
+  </Module>
+  <Module Id="24">
+    <Name>UiTools</Name>
+    <ResourceName>UiToolsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtUiTools</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+    <proVarQT>uitools</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtUiTools</IncludePath>
+    <Defines>QT_UITOOLS_LIB</Defines>
+  </Module>
+  <Module Id="25">
+    <Name>Widgets</Name>
+    <ResourceName>WidgetsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>widgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWidgets</IncludePath>
+    <Defines>QT_WIDGETS_LIB</Defines>
+  </Module>
+  <Module Id="27">
+    <Name>Location</Name>
+    <ResourceName>LocationLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtLocation</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>location</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtLocation</IncludePath>
+    <Defines>QT_LOCATION_LIB</Defines>
+  </Module>
+  <Module Id="28">
+    <Name>Nfc</Name>
+    <ResourceName>NfcLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtNfc</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>nfc</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtNfc</IncludePath>
+    <Defines>QT_NFC_LIB</Defines>
+  </Module>
+  <Module Id="29">
+    <Name>Qml</Name>
+    <ResourceName>QmlLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQml</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>qml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQml</IncludePath>
+    <Defines>QT_QML_LIB</Defines>
+  </Module>
+  <Module Id="30">
+    <Name>Bluetooth</Name>
+    <ResourceName>BluetoothLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtBluetooth</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>bluetooth</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtBluetooth</IncludePath>
+    <Defines>QT_BLUETOOTH_LIB</Defines>
+  </Module>
+  <Module Id="31">
+    <Name>Positioning</Name>
+    <ResourceName>PositioningLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPositioning</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>positioning</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPositioning</IncludePath>
+    <Defines>QT_POSITIONING_LIB</Defines>
+  </Module>
+  <Module Id="32">
+    <Name>SerialPort</Name>
+    <ResourceName>SerialPortLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSerialPort</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>serialport</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSerialPort</IncludePath>
+    <Defines>QT_SERIALPORT_LIB</Defines>
+  </Module>
+  <Module Id="33">
+    <Name>PrintSupport</Name>
+    <ResourceName>PrintSupportLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPrintSupport</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>printsupport</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPrintSupport</IncludePath>
+    <Defines>QT_PRINTSUPPORT_LIB</Defines>
+  </Module>
+  <Module Id="34">
+    <Name>WebChannel</Name>
+    <ResourceName>WebChannelLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebChannel</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webchannel</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebChannel</IncludePath>
+    <Defines>QT_WEBCHANNEL_LIB</Defines>
+  </Module>
+  <Module Id="35">
+    <Name>WebSockets</Name>
+    <ResourceName>WebSocketsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebSockets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>websockets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebSockets</IncludePath>
+    <Defines>QT_WEBSOCKETS_LIB</Defines>
+  </Module>
+  <Module Id="36">
+    <Name>Sensors</Name>
+    <ResourceName>SensorsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSensors</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>sensors</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSensors</IncludePath>
+    <Defines>QT_SENSORS_LIB</Defines>
+  </Module>
+  <Module Id="37">
+    <Name>WindowsExtras</Name>
+    <ResourceName>WindowsExtrasLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWinExtras</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>winextras</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWinExtras</IncludePath>
+    <Defines>QT_WINEXTRAS_LIB</Defines>
+  </Module>
+  <Module Id="38">
+    <Name>QuickWidgets</Name>
+    <ResourceName>QuickWidgetsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQuickWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>quickwidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQuickWidgets</IncludePath>
+    <Defines>QT_QUICKWIDGETS_LIB</Defines>
+  </Module>
+  <Module Id="40">
+    <Name>Quick</Name>
+    <ResourceName>QuickLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQuick</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>quick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQuick</IncludePath>
+    <Defines>QT_QUICK_LIB</Defines>
+  </Module>
+  <Module Id="50">
+    <Name>WebkitWidgets</Name>
+    <ResourceName>WebkitWidgetsLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtWebkitWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webkitwidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebkitWidgets</IncludePath>
+    <Defines>QT_WEBKITWIDGETS_LIB</Defines>
+  </Module>
+  <Module Id="51">
+    <Name>Concurrent</Name>
+    <ResourceName>ConcurrentLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtConcurrent</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>concurrent</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtConcurrent</IncludePath>
+    <Defines>QT_CONCURRENT_LIB</Defines>
+  </Module>
+  <Module Id="52">
+    <Name>MultimediaWidgets</Name>
+    <ResourceName>MultimediaWidgetsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtMultimediaWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>multimediawidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtMultimediaWidgets</IncludePath>
+    <Defines>QT_MULTIMEDIAWIDGETS_LIB</Defines>
+  </Module>
+  <Module Id="101">
+    <Name>3D</Name>
+    <ResourceName>Qt3DLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>Qt3DCore</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>3dcore</proVarQT>
+    <IncludePath>$(QTDIR)\include\Qt3DCore</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DAnimation</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DExtras</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DInput</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DLogic</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DRender</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtANGLE</IncludePath>
+    <Defines>QT_3DCORE_LIB</Defines>
+    <Defines>QT_3DANIMATION_LIB</Defines>
+    <Defines>QT_3DEXTRAS_LIB</Defines>
+    <Defines>QT_3DINPUT_LIB</Defines>
+    <Defines>QT_3DLOGIC_LIB</Defines>
+    <Defines>QT_3DRENDER_LIB</Defines>
+    <AdditionalLibraries>Qt53DCore.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DAnimation.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DExtras.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DInput.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DLogic.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DRender.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt53DCored.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DAnimationd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DExtrasd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DInputd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DLogicd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DRenderd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="102">
+    <Name>3D Quick</Name>
+    <ResourceName>Qt3DQuickLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>Qt3DQuick</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>3dquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\Qt3DQuick</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DQuickAnimation</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DQuickExtras</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DQuickInput</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DQuickRender</IncludePath>
+    <IncludePath>$(QTDIR)\include\Qt3DQuickScene2D</IncludePath>
+    <Defines>QT_3DQUICK_LIB</Defines>
+    <Defines>QT_3DQUICKANIMATION_LIB</Defines>
+    <Defines>QT_3DQUICKEXTRAS_LIB</Defines>
+    <Defines>QT_3DQUICKINPUT_LIB</Defines>
+    <Defines>QT_3DQUICKRENDER_LIB</Defines>
+    <Defines>QT_3DQUICKSCENE2D_LIB</Defines>
+    <AdditionalLibraries>Qt53DQuick.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DQuickAnimation.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DQuickExtras.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DQuickInput.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DQuickRender.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt53DQuickScene2D.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt53DQuickd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DQuickAnimationd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DQuickExtrasd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DQuickInputd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DQuickRenderd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt53DQuickScene2Dd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="103">
+    <Name>DBus</Name>
+    <ResourceName>DBusLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtDBus</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>dbus</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtDBus</IncludePath>
+    <Defines>QT_DBUS_LIB</Defines>
+  </Module>
+  <Module Id="104">
+    <Name>Gamepad</Name>
+    <ResourceName>GamepadLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGamepad</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>gamepad</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGamepad</IncludePath>
+    <Defines>QT_GAMEPAD_LIB</Defines>
+  </Module>
+  <Module Id="105">
+    <Name>OpenGL Extensions</Name>
+    <ResourceName>OpenGLExtensionsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtOpenGLExtensions</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+    <proVarQT>openglextensions</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtOpenGLExtensions</IncludePath>
+    <Defines>QT_OPENGLEXTENSIONS_LIB</Defines>
+  </Module>
+  <Module Id="106">
+    <Name>QuickTest</Name>
+    <ResourceName>QuickTestLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQuickTest</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>qmltest</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQuickTest</IncludePath>
+    <Defines>QT_QMLTEST_LIB</Defines>
+  </Module>
+  <Module Id="107">
+    <Name>Quick Controls2</Name>
+    <ResourceName>QuickControls2Library</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQuickControls2</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>quickcontrols2</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQuickControls2</IncludePath>
+    <Defines>QT_QUICKCONTROLS2_LIB</Defines>
+  </Module>
+  <Module Id="108">
+    <Name>Scxml</Name>
+    <ResourceName>ScxmlLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtScxml</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>scxml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtScxml</IncludePath>
+    <Defines>QT_SCXML_LIB</Defines>
+  </Module>
+  <Module Id="109">
+    <Name>Serial Bus</Name>
+    <ResourceName>SerialBusLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSerialBus</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>serialbus</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSerialBus</IncludePath>
+    <Defines>QT_SERIALBUS_LIB</Defines>
+  </Module>
+  <Module Id="110">
+    <Name>UI Plugin</Name>
+    <ResourceName>UiPluginLibrary</ResourceName>
+    <Selectable>false</Selectable>
+    <LibraryPrefix>QtUiPlugin</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>uiplugin</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtUiPlugin</IncludePath>
+    <Defines>QT_UIPLUGIN_LIB</Defines>
+  </Module>
+  <Module Id="111">
+    <Name>WebEngine</Name>
+    <ResourceName>WebEngineLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebEngine</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webengine</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebEngine</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
+    <Defines>QT_WEBENGINE_LIB</Defines>
+    <Defines>QT_WEBENGINECORE_LIB</Defines>
+    <AdditionalLibraries>Qt5WebEngine.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5WebEngineCore.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt5WebEngined.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt5WebEngineCored.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="113">
+    <Name>WebEngine Widgets</Name>
+    <ResourceName>WebEngineWidgetsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebEngineWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webenginewidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebEngineWidgets</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
+    <Defines>QT_WEBENGINEWIDGETS_LIB</Defines>
+    <Defines>QT_WEBENGINECORE_LIB</Defines>
+    <AdditionalLibraries>Qt5WebEngineWidgets.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5WebEngineCore.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt5WebEngineWidgetsd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibrariesDebug>Qt5WebEngineCored.lib</AdditionalLibrariesDebug>
+  </Module>
+</QtVsTools>

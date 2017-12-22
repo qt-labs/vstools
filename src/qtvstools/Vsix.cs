@@ -145,6 +145,15 @@ namespace QtVsTools
             } catch (Exception e) {
                 MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
+
+            var modules = QtModules.Instance.GetAvailableModuleInformation();
+            foreach (var module in modules) {
+                if (!string.IsNullOrEmpty(module.ResourceName)) {
+                    var translatedName = SR.GetString(module.ResourceName);
+                    if (!string.IsNullOrEmpty(translatedName))
+                        module.Name = translatedName;
+                }
+            }
         }
 
         /// <summary>

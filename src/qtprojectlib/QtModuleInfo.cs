@@ -35,12 +35,15 @@ namespace QtProjectLib
     public class QtModuleInfo
     {
         private QtModule moduleId = QtModule.Invalid;
+        public string Name;
+        public string ResourceName;
+        public bool Selectable;
         public List<string> Defines = new List<string>();
         public string LibraryPrefix = string.Empty;
         public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
-        public string IncludePath;
+        public List<string> IncludePath = new List<string>();
         public string proVarQT;
         public string proVarCONFIG;
 
@@ -54,7 +57,7 @@ namespace QtProjectLib
             get { return moduleId; }
         }
 
-        public string GetIncludePath()
+        public List<string> GetIncludePath()
         {
             return IncludePath;
         }

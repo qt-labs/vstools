@@ -271,8 +271,8 @@ namespace QtProjectLib
                     foreach (var define in info.Defines)
                         compiler.AddPreprocessorDefinition(define);
 
-                    var incPath = info.GetIncludePath();
-                    if (!string.IsNullOrEmpty(incPath))
+                    var incPathList = info.GetIncludePath();
+                    foreach (var incPath in incPathList)
                         compiler.AddAdditionalIncludeDirectories(incPath);
                 }
                 if (linker != null) {
@@ -310,9 +310,9 @@ namespace QtProjectLib
                     var additionalIncludeDirs = compiler.AdditionalIncludeDirectories;
                     if (additionalIncludeDirs != null) {
                         var lst = new List<string>(additionalIncludeDirs);
-                        if (!string.IsNullOrEmpty(info.IncludePath)) {
-                            lst.Remove(info.IncludePath);
-                            lst.Remove('\"' + info.IncludePath + '\"');
+                        foreach (var includePath in info.IncludePath) {
+                            lst.Remove(includePath);
+                            lst.Remove('\"' + includePath + '\"');
                         }
                         compiler.AdditionalIncludeDirectories = lst;
                     }
@@ -395,23 +395,27 @@ namespace QtProjectLib
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)
                 return false; // neither a default or project Qt version
+            var info = QtModules.Instance.ModuleInformation(module);
+            if (info == null)
+                return false;
 
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null) {
-                    var incPath = info.GetIncludePath();
-                    if (string.IsNullOrEmpty(incPath))
-                        break;
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
-
-                    var fixedIncludeDir = FixFilePathForComparison(incPath);
-                    var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
-                    if (includeDirs.Any(dir => FixFilePathForComparison(dir) == fixedIncludeDir))
-                        foundInIncludes = true;
+                    var incPathList = info.GetIncludePath();
+                    foreach (var incPath in incPathList) {
+                        var fixedIncludeDir = FixFilePathForComparison(incPath);
+                        var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
+                        if (includeDirs.Any(dir =>
+                            FixFilePathForComparison(dir) == fixedIncludeDir)) {
+                            foundInIncludes = true;
+                            break;
+                        }
+                    }
                 }
 
                 if (foundInIncludes)

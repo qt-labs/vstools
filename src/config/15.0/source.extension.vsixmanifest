@@ -82,6 +82,7 @@
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.xml" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.xml" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmodules.xml" />
   </Assets>
     <Prerequisites>
         <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
