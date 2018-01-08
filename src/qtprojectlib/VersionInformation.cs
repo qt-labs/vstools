@@ -201,28 +201,63 @@ namespace QtProjectLib
 
         public bool is64Bit()
         {
-            // ### This does not work for x64 cross builds of Qt.
-            // ### In that case qmake.exe is 32 bit but the DLLs are 64 bit.
-            // ### So actually we should check QtCore4.dll / QtCored4.dll instead.
-            // ### Unfortunately there's no Win API for checking the architecture of DLLs.
-            // ### We must read the PE header instead.
-            var fileToCheck = qtDir + "\\bin\\qmake.exe";
+            var fileToCheck = qtDir + "\\bin\\Qt5Core.dll";
             if (!File.Exists(fileToCheck))
                 throw new QtVSException("Can't find " + fileToCheck);
 
-            var SCS_32BIT_BINARY = 0;
-            var SCS_64BIT_BINARY = 6;
-            var binaryType = 0;
-            var success = NativeMethods.GetBinaryType(fileToCheck, ref binaryType) != 0;
-            if (!success)
-                throw new QtVSException("GetBinaryTypeA failed");
+            const ushort MAGIC_NUMBER_MZ = 0x5A4D;
+            const uint FILE_HEADER_OFFSET = 0x3C;
+            const uint PE_SIGNATURE = 0x4550;
+            const ushort IMAGE_FILE_MACHINE_I386 = 0x014c;
+            const ushort IMAGE_FILE_MACHINE_IA64 = 0x0200;
+            const ushort IMAGE_FILE_MACHINE_AMD64 = 0x8664;
 
-            if (binaryType == SCS_32BIT_BINARY)
-                return false;
-            if (binaryType == SCS_64BIT_BINARY)
-                return true;
+            using (var b = new BinaryReader(File.Open(fileToCheck,
+                FileMode.Open, FileAccess.Read, FileShare.Read))) {
 
-            throw new QtVSException("GetBinaryTypeA return unknown executable format for " + fileToCheck);
+                ushort magicNumber;
+                try {
+                    magicNumber = b.ReadUInt16();
+                } catch {
+                    throw new QtVSException("Error reading PE header: magic number");
+                }
+                if (magicNumber != MAGIC_NUMBER_MZ)
+                    throw new QtVSException("Incorrect PE header format: magic number");
+
+                uint fileHeaderOffset;
+                try {
+                    b.BaseStream.Seek(FILE_HEADER_OFFSET, SeekOrigin.Begin);
+                    fileHeaderOffset = b.ReadUInt32();
+                } catch {
+                    throw new QtVSException("Error reading PE header: file header offset");
+                }
+
+                uint signature;
+                try {
+                    b.BaseStream.Seek(fileHeaderOffset, SeekOrigin.Begin);
+                    signature = b.ReadUInt32();
+                } catch {
+                    throw new QtVSException("Error reading PE header: signature");
+                }
+                if (signature != PE_SIGNATURE)
+                    throw new QtVSException("Incorrect PE header format: signature");
+
+                ushort machine;
+                try {
+                    machine = b.ReadUInt16();
+                } catch {
+                    throw new QtVSException("Error reading PE header: machine");
+                }
+                switch (machine) {
+                    case IMAGE_FILE_MACHINE_I386:
+                        return false;
+                    case IMAGE_FILE_MACHINE_IA64:
+                    case IMAGE_FILE_MACHINE_AMD64:
+                        return true;
+                    default:
+                        throw new QtVSException("Unknown executable format for " + fileToCheck);
+                }
+            }
         }
     }
 }
