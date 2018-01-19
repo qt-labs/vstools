@@ -161,6 +161,48 @@ namespace QtProjectWizard
 
                 if (data.AddDefaultAppIcon)
                     replacements["$DefaultApplicationIcon$"] = "<None Include=\"gui.ico\" />";
+
+                if (vi.isWinRT()) {
+                    replacements["$QtWinRT$"] = "true";
+
+                    var projDir = replacements["$destinationdirectory$"];
+
+                    var qmakeTmpDir = Path.Combine(projDir, "qmake_tmp");
+                    Directory.CreateDirectory(qmakeTmpDir);
+
+                    var dummyPro = Path.Combine(qmakeTmpDir,
+                        string.Format("{0}.pro", replacements["$projectname$"]));
+                    File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
+
+                    var qmake = new QMake(null, dummyPro, false, vi);
+                    qmake.RunQMake();
+
+                    var assetsDir = Path.Combine(qmakeTmpDir, "assets");
+                    if (Directory.Exists(assetsDir))
+                        Directory.Move(assetsDir, Path.Combine(projDir, "assets"));
+
+                    var manifestFile = Path.Combine(qmakeTmpDir, "Package.appxmanifest");
+                    if (File.Exists(manifestFile))
+                        File.Move(manifestFile, Path.Combine(projDir, "Package.appxmanifest"));
+
+                    var projFile = Path.Combine(qmakeTmpDir,
+                        string.Format("{0}.vcxproj", replacements["$projectname$"]));
+
+                    var proj = MsBuildProject.Load(projFile);
+                    replacements["$MinimumVisualStudioVersion$"] =
+                        proj.GetProperty("MinimumVisualStudioVersion");
+                    replacements["$ApplicationTypeRevision$"] =
+                        proj.GetProperty("ApplicationTypeRevision");
+                    replacements["$WindowsTargetPlatformVersion$"] =
+                        proj.GetProperty("WindowsTargetPlatformVersion");
+                    replacements["$WindowsTargetPlatformMinVersion$"] =
+                        proj.GetProperty("WindowsTargetPlatformMinVersion");
+                    replacements["$Link_TargetMachine$"] =
+                        proj.GetProperty("Link", "TargetMachine");
+
+                    Directory.Delete(qmakeTmpDir, true);
+                }
+
             } catch {
                 try {
                     Directory.Delete(replacements["$destinationdirectory$"]);

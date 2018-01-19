@@ -35,7 +35,7 @@ using System.Threading;
 
 namespace QtProjectLib
 {
-    class QMake
+    public class QMake
     {
         public delegate void ProcessEventHandler();
         public event ProcessEventHandler CloseEvent;

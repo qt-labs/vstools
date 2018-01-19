@@ -13,17 +13,49 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>$ProjectGuid$</ProjectGuid>
     <Keyword>$Keyword$</Keyword>
+    $if$ ($QtWinRT$ == true)
+    <MinimumVisualStudioVersion>$MinimumVisualStudioVersion$</MinimumVisualStudioVersion>
+    <DefaultLanguage>en</DefaultLanguage>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>$ApplicationTypeRevision$</ApplicationTypeRevision>
+    <WindowsTargetPlatformVersion>$WindowsTargetPlatformVersion$</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>$WindowsTargetPlatformMinVersion$</WindowsTargetPlatformMinVersion>
+    $endif$
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v$PlatformToolset$</PlatformToolset>
+    $if$ ($QtWinRT$ == true)
+    <GenerateManifest>false</GenerateManifest>
+    <EmbedManifest>false</EmbedManifest>
+    $endif$
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v$PlatformToolset$</PlatformToolset>
+    $if$ ($QtWinRT$ == true)
+    <GenerateManifest>false</GenerateManifest>
+    <EmbedManifest>false</EmbedManifest>
+    $endif$
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  $if$ ($QtWinRT$ == true)
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
+      <GenerateManifest>false</GenerateManifest>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <TargetMachine>$Link_TargetMachine$</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  $endif$
   <PropertyGroup Condition="'$(QtMsBuild)'==''">
     <QtMsBuild>$(Registry:HKEY_CURRENT_USER\Environment@QtMsBuild)</QtMsBuild>
   </PropertyGroup>
@@ -40,6 +72,23 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  $if$ ($QtWinRT$ == true)
+  <Target Name="WinDeployQt"
+          Inputs="$(OutDir)\$(TargetName).exe" Outputs="$(TargetName).windeployqt.$(Platform).$(Configuration)">
+    <Message Text="$(QTDIR)\bin\windeployqt.exe -qmldir $(ProjectDir) -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
+    <Exec Command="$(QTDIR)\bin\windeployqt.exe -qmldir $(ProjectDir) -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
+  </Target>
+  <Target Name="PopulateWinDeployQtItems" AfterTargets="Link" DependsOnTargets="WinDeployQt">
+    <ReadLinesFromFile File="$(TargetName).windeployqt.$(Platform).$(Configuration)">
+      <Output TaskParameter="Lines" ItemName="DeploymentItems" />
+    </ReadLinesFromFile>
+    <ItemGroup>
+      <None Include="@(DeploymentItems)">
+        <DeploymentContent>true</DeploymentContent>
+      </None>
+    </ItemGroup>
+  </Target>
+  $endif$
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -53,6 +102,15 @@
     <None Include="$headerfilename$" />
     <None Include="$sourcefilename$" />
   </ItemGroup>
+  $if$ ($QtWinRT$ == true)
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+    <Image Include="assets/logo_150x150.png" />
+    <Image Include="assets/logo_44x44.png" />
+    <Image Include="assets/logo_store.png" />
+    <Image Include="assets/logo_620x300.png" />
+  </ItemGroup>
+  $endif$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

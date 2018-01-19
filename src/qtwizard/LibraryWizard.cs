@@ -206,6 +206,10 @@ namespace QtProjectWizard
                 projectDefine = safeprojectname.ToUpper() + @"_LIB";
                 replacements["$pro_lib_define$"] = projectDefine;
                 replacements["$pro_lib_export$"] = safeprojectname.ToUpper() + @"_EXPORT";
+
+                if (vi.isWinRT())
+                    replacements["$QtWinRT$"] = "true";
+
             } catch {
                 try {
                     Directory.Delete(replacements["$destinationdirectory$"]);

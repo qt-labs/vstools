@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace QtProjectWizard
 {
@@ -118,6 +119,19 @@ namespace QtProjectWizard
 
             iVsUIShell.EnableModeless(0);
 
+            var versionMgr = QtVersionManager.The();
+            var versionName = versionMgr.GetDefaultVersion();
+            var versionInfo = VersionInformation.Get(versionMgr.GetInstallPath(versionName));
+            if (versionInfo.isWinRT()) {
+                MessageBox.Show(
+                    string.Format(
+                        "The Qt ActiveQt Server project type is not available\r\n" +
+                        "for the currently selected Qt version ({0}).", versionName),
+                    "Project Type Not Available", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                iVsUIShell.EnableModeless(1);
+                throw new WizardBackoutException();
+            }
+
             try {
                 System.IntPtr hwnd;
                 iVsUIShell.GetDialogOwnerHwnd(out hwnd);
@@ -187,9 +201,7 @@ namespace QtProjectWizard
                 var version = (automation as DTE).Version;
                 replacements["$ToolsVersion$"] = version;
 
-                var vm = QtVersionManager.The();
-                var vi = VersionInformation.Get(vm.GetInstallPath(vm.GetDefaultVersion()));
-                replacements["$Platform$"] = vi.GetVSPlatformName();
+                replacements["$Platform$"] = versionInfo.GetVSPlatformName();
 
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";

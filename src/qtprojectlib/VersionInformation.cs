@@ -259,5 +259,22 @@ namespace QtProjectLib
                 }
             }
         }
+
+        public bool isWinRT()
+        {
+            var qmakeQuery = new QMakeQuery(this);
+            string qmakeXSpec;
+            try {
+                qmakeXSpec = qmakeQuery.query("QMAKE_XSPEC");
+            }
+            catch {
+                throw new QtVSException("Error starting qmake process");
+            }
+
+            if (qmakeQuery.ErrorValue != 0 && string.IsNullOrEmpty(qmakeXSpec))
+                throw new QtVSException("Error: unexpected result of qmake query");
+
+            return qmakeXSpec.StartsWith("winrt");
+        }
     }
 }

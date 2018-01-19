@@ -134,6 +134,33 @@ namespace QtProjectLib
             return true;
         }
 
+        public string GetProperty(string property_name)
+        {
+            var xProperty = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Elements()
+                .Where(x => x.Name.LocalName == property_name)
+                .FirstOrDefault();
+            if (xProperty == null)
+                return string.Empty;
+            return xProperty.Value;
+        }
+
+        public string GetProperty(string item_type, string property_name)
+        {
+            var xProperty = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Elements(ns + item_type)
+                .Elements()
+                .Where(x => x.Name.LocalName == property_name)
+                .FirstOrDefault();
+            if (xProperty == null)
+                return string.Empty;
+            return xProperty.Value;
+        }
+
         public bool AddQtMsBuildReferences()
         {
             var isQtMsBuildEnabled = this[Files.Project].xml
