@@ -619,16 +619,22 @@ namespace QtProjectLib
 
         public string GetDefines(VCFileConfiguration conf)
         {
-            var defineList = CompilerToolWrapper.Create(conf).PreprocessorDefinitions;
-
+            var defines = string.Empty;
+            var propsFile = conf.Tool as IVCRulePropertyStorage;
             var projectConfig = conf.ProjectConfiguration as VCConfiguration;
-            defineList.AddRange(CompilerToolWrapper.Create(projectConfig).PreprocessorDefinitions);
+            var propsProject = projectConfig.Rules.Item("CL") as IVCRulePropertyStorage;
+            if (propsFile != null)
+                defines = propsFile.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+            else if (propsProject != null)
+                defines = propsProject.GetEvaluatedPropertyValue("PreprocessorDefinitions");
 
-            var propertySheets = projectConfig.PropertySheets as IVCCollection;
-            if (propertySheets != null) {
-                foreach (VCPropertySheet sheet in propertySheets)
-                    defineList.AddRange(GetDefinesFromPropertySheet(sheet));
-            }
+            if (string.IsNullOrEmpty(defines))
+                return string.Empty;
+
+            var defineList = defines.Split(
+                new char[] { ';' },
+                StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
 
             var preprocessorDefines = string.Empty;
             var alreadyAdded = new List<string>();
