@@ -614,7 +614,13 @@ namespace QtProjectLib
                     "{%(Command)}')")));
             this[Files.Project].xml.Root.Add(evaluateTarget);
 
-            var projRoot = ProjectRootElement.Create(this[Files.Project].xml.CreateReader());
+            var tempProjFile = Path.Combine(
+                Path.GetDirectoryName(this[Files.Project].filePath),
+                Path.GetRandomFileName());
+            if (File.Exists(tempProjFile))
+                File.Delete(tempProjFile);
+            this[Files.Project].xml.Save(tempProjFile);
+            var projRoot = ProjectRootElement.Open(tempProjFile);
 
             var pattern = new Regex(@"{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}");
 
@@ -649,6 +655,7 @@ namespace QtProjectLib
             }
 
             evaluateTarget.Remove();
+            File.Delete(tempProjFile);
             return eval;
         }
 
