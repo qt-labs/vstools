@@ -193,9 +193,11 @@ namespace QtProjectLib
 
             xImportCppProps.AddAfterSelf(
                 new XElement(ns + "PropertyGroup",
-                    new XAttribute("Condition", "'$(QtMsBuild)'==''"),
+                    new XAttribute("Condition",
+                        @"'$(QtMsBuild)'=='' " +
+                        @"or !Exists('$(QtMsBuild)\qt.targets')"),
                     new XElement(ns + "QtMsBuild",
-                        @"$(Registry:HKEY_CURRENT_USER\Environment@QtMsBuild)")),
+                        @"$(MSBuildProjectDirectory)\QtMsBuild")),
 
                 new XElement(ns + "Target",
                     new XAttribute("Name", "QtMsBuildNotFound"),

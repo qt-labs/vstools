@@ -117,14 +117,14 @@ namespace QtVsTools
             PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
             Environment.SetEnvironmentVariable(
-                "QtVsTools",
-                PkgInstallPath,
+                "QtMsBuild",
+                Path.Combine(PkgInstallPath, "QtMsBuild"),
                 EnvironmentVariableTarget.User);
 
             Environment.SetEnvironmentVariable(
                 "QtMsBuild",
                 Path.Combine(PkgInstallPath, "QtMsBuild"),
-                EnvironmentVariableTarget.User);
+                EnvironmentVariableTarget.Process);
 
             var vm = QtVersionManager.The();
             var error = string.Empty;

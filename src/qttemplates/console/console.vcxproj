@@ -24,8 +24,8 @@
     <PlatformToolset>v$PlatformToolset$</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <PropertyGroup Condition="'$(QtMsBuild)'==''">
-    <QtMsBuild>$(Registry:HKEY_CURRENT_USER\Environment@QtMsBuild)</QtMsBuild>
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound"
     BeforeTargets="CustomBuild;ClCompile"
