@@ -514,7 +514,7 @@ namespace QtVsTools
                                 }
                                 qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
                                 HelperFunctions.SetDebuggingEnvironment(project, "PATH="
-                                    + Path.Combine(qtDir, "bin") + ";$(PATH)", false);
+                                    + Path.Combine(qtDir, "bin") + ";$(PATH)", false, config.Name);
                             }
                         }
                     }
