@@ -141,6 +141,8 @@ namespace QtVsTools
             if (ok)
                 ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
+                ok = xmlProject.EnableMultiProcessorCompilation();
+            if (ok)
                 ok = xmlProject.Save();
             try {
                 solution.ReloadProject(ref projectGuid);

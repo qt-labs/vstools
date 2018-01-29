@@ -218,6 +218,7 @@ namespace QtProjectLib
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
             xmlProject.AddQtMsBuildReferences();
             xmlProject.ConvertCustomBuildToQtMsBuild();
+            xmlProject.EnableMultiProcessorCompilation();
             xmlProject.Save();
         }
 

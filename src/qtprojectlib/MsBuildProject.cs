@@ -161,6 +161,24 @@ namespace QtProjectLib
             return xProperty.Value;
         }
 
+        public bool EnableMultiProcessorCompilation()
+        {
+            var xImportCppProps = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "Import")
+                .Where(x =>
+                    x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.props")
+                .FirstOrDefault();
+            if (xImportCppProps == null)
+                return false;
+
+            xImportCppProps.AddAfterSelf(
+                new XElement(ns + "ItemDefinitionGroup",
+                    new XElement(ns + "ClCompile",
+                        new XElement(ns + "MultiProcessorCompilation", "true"))));
+            return true;
+        }
+
         public bool AddQtMsBuildReferences()
         {
             var isQtMsBuildEnabled = this[Files.Project].xml
