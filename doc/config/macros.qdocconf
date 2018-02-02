@@ -1,0 +1,4 @@
+macro.gui               = "\\b"
+macro.key               = "\\b"
+macro.QD                = "\\e{Qt Designer}"
+macro.QL                = "\\e{Qt Linguist}"
