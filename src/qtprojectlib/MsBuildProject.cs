@@ -179,6 +179,22 @@ namespace QtProjectLib
             return true;
         }
 
+        public bool SetDefaultWindowsSDKVersion(string winSDKVersion)
+        {
+            var xGlobals = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(x => (string)x.Attribute("Label") == "Globals")
+                .FirstOrDefault();
+            if (xGlobals == null)
+                return false;
+            if (xGlobals.Element(ns + "WindowsTargetPlatformVersion") != null)
+                return true;
+            xGlobals.Add(
+                new XElement(ns + "WindowsTargetPlatformVersion", winSDKVersion));
+            return true;
+        }
+
         public bool AddQtMsBuildReferences()
         {
             var isQtMsBuildEnabled = this[Files.Project].xml

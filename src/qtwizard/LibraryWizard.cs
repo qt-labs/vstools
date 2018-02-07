@@ -210,6 +210,13 @@ namespace QtProjectWizard
                 if (vi.isWinRT())
                     replacements["$QtWinRT$"] = "true";
 
+#if (VS2017 || VS2015)
+                string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
+                if (!string.IsNullOrEmpty(versionWin10SDK)) {
+                    replacements["$WindowsTargetPlatformVersion$"] = versionWin10SDK;
+                    replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
+                }
+#endif
             } catch {
                 try {
                     Directory.Delete(replacements["$destinationdirectory$"]);

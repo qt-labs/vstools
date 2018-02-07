@@ -219,6 +219,11 @@ namespace QtProjectLib
             xmlProject.AddQtMsBuildReferences();
             xmlProject.ConvertCustomBuildToQtMsBuild();
             xmlProject.EnableMultiProcessorCompilation();
+#if (VS2017 || VS2015)
+            string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
+            if (!string.IsNullOrEmpty(versionWin10SDK))
+                xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
+#endif
             xmlProject.Save();
         }
 

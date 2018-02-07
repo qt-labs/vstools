@@ -1640,6 +1640,17 @@ namespace QtProjectLib
             }
         }
 
+        public static string GetWindows10SDKVersion()
+        {
+            string versionWin10SDK = HelperFunctions.GetRegistrySoftwareString(
+                @"Microsoft\Microsoft SDKs\Windows\v10.0", "ProductVersion");
+            if (string.IsNullOrEmpty(versionWin10SDK))
+                return versionWin10SDK;
+            while (versionWin10SDK.Split(new char[] { '.' }).Length < 4)
+                versionWin10SDK = versionWin10SDK + ".0";
+            return versionWin10SDK;
+        }
+
         private static string GetVCPath()
         {
 #if VS2017
