@@ -77,7 +77,7 @@ namespace QtVsTools
                 return;
 
             foreach (var vcFile in vcFiles) {
-                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
+                if (vcFile != null && HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlRelease(vcFile))
                         return;
                 }
@@ -178,7 +178,7 @@ namespace QtVsTools
                 return;
 
             foreach (var vcFile in vcFiles) {
-                if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
+                if (vcFile != null && HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     if (!RunlUpdate(vcFile, pro))
                         return;
                 }
