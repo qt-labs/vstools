@@ -87,8 +87,8 @@
   $if$ ($QtWinRT$ == true)
   <Target Name="WinDeployQt"
           Inputs="$(OutDir)\$(TargetName).exe" Outputs="$(TargetName).windeployqt.$(Platform).$(Configuration)">
-    <Message Text="$(QTDIR)\bin\windeployqt.exe -qmldir $(ProjectDir) -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
-    <Exec Command="$(QTDIR)\bin\windeployqt.exe -qmldir $(ProjectDir) -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
+    <Message Text="$(QTDIR)\bin\windeployqt.exe -qmldir &quot;$(MSBuildProjectDirectory)&quot; -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
+    <Exec Command="$(QTDIR)\bin\windeployqt.exe -qmldir &quot;$(MSBuildProjectDirectory)&quot; -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
   </Target>
   <Target Name="PopulateWinDeployQtItems" AfterTargets="Link" DependsOnTargets="WinDeployQt">
     <ReadLinesFromFile File="$(TargetName).windeployqt.$(Platform).$(Configuration)">
