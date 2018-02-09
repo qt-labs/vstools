@@ -627,10 +627,16 @@ namespace QtProjectLib
             var propsFile = conf.Tool as IVCRulePropertyStorage;
             var projectConfig = conf.ProjectConfiguration as VCConfiguration;
             var propsProject = projectConfig.Rules.Item("CL") as IVCRulePropertyStorage;
-            if (propsFile != null)
-                defines = propsFile.GetEvaluatedPropertyValue("PreprocessorDefinitions");
-            else if (propsProject != null)
-                defines = propsProject.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+            if (propsFile != null) {
+                try {
+                    defines = propsFile.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+                } catch { }
+            }
+            if (string.IsNullOrEmpty(defines) && propsProject != null) {
+                try {
+                    defines = propsProject.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+                } catch { }
+            }
 
             if (string.IsNullOrEmpty(defines))
                 return string.Empty;

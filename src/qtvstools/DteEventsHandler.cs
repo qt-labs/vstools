@@ -417,7 +417,8 @@ namespace QtVsTools
                         qtPro.AddFileToProject(vcFile.FullPath, h);
                     }
                     if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
-                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
+                        if (!qtPro.IsQtMsBuildEnabled())
+                            HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
                 } else if (HelperFunctions.IsUicFile(vcFile.Name)) {
