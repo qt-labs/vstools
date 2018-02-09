@@ -744,7 +744,10 @@ namespace QtProjectLib
 
             //Get the absolute path
             mocDir = vcPro.ProjectDirectory + mocDir;
-            var relPathToFile = HelperFunctions.GetRelativePath(mocDir, file.FullPath).Replace('\\', '/');
+            var fullPathGeneric = Path.Combine(
+                Path.GetDirectoryName(file.FullPath), "%(Filename)%(Extension)");
+            var relPathToFile = HelperFunctions.GetRelativePath(
+                mocDir, fullPathGeneric).Replace('\\', '/');
             additionalMocOptions += "\"-f" + relPathToFile + "\"";
             return additionalMocOptions;
         }
