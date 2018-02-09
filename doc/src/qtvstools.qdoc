@@ -47,6 +47,8 @@
         \li Automated conversion of a Qt VS Tools project to a \l {qmake Manual}
             {qmake} project, or the other way around.
         \li Integrated Qt resource management.
+        \li Creating a Qt translation source (TS) file and starting Qt Linguist
+            to translate the strings.
         \li Integrated Qt documentation.
         \li Debugging extensions for Qt data types.
     \endlist
@@ -71,15 +73,15 @@
     \title Getting Started
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt GUI}
-    application. You will create a project using a project wizard and design an
+    application. You will create a project using a project wizard and design a
     UI using \QD. In addition, you will learn how to convert a Visual Studio
     project file into a qmake compatible \c .pro file.
 
     To create a Qt VS Tools project, you must add at least one
     \l{Managing Qt Versions}{Qt version}.
 
-    You must also download Qt VS Tools from \l {Qt Downloads} or by
-    using your \l {Qt Account} and install them.
+    Select \uicontrol Tools > \uicontrol {Extensions and Updates} >
+    \uicontrol Online to install or update Qt VS Tools.
 
     \section1 Creating Qt GUI Application Projects
 
@@ -100,8 +102,12 @@
             are selected by default.
         \li In the \uicontrol {Base class} field, enter \uicontrol QWidget as
             the base class type.
-        \li Select the \uicontrol {Use lower case filenames} check box to
+        \li Select the \uicontrol {Lower case filenames} check box to
             only use lower case characters in the names of the generated files.
+        \li Select the \uicontrol {Precompiled header} check box to use a
+            precompiled header file.
+        \li Select the \uicontrol {Add default application icon} check box to
+            use a default application icon for the application.
         \li Select \uicontrol Finish to create the project.
     \endlist
 
@@ -205,7 +211,7 @@
         \li In the \uicontrol {Base class} field, enter \uicontrol QDialog as
             the base class type.
         \li Select the \uicontrol {Multiple inheritance} radio button.
-        \li Select the \uicontrol {Use lower case filenames} check box to
+        \li Select the \uicontrol {Lower case filenames} check box to
             only use lower case characters in the names of the generated files.
         \li Select \uicontrol Finish to create source, header, and UI files for
             the dialog.
@@ -238,6 +244,7 @@
         \li Add a horizontal spacer to the left of the button.
         \li Add a horizontal layout for the spacer and the button.
         \li Add a vertical spacer between the labels and the button.
+        \li Add a vertical layout for the labels and the spacer.
         \li Add a grid layout for both layouts.
         \li Select \uicontrol Form > \uicontrol Preview to preview your form
             without compiling it.
@@ -389,9 +396,9 @@
     \uicontrol Qt:
 
     \list
-        \li \uicontrol {Qt GUI Application} creates a simple Qt GUI Application
-            with one form.
-        \li \uicontrol {Qt Custom Designer Widget} creates a \QD custom widget
+        \li \uicontrol {Qt GUI Application} creates a simple Qt widgets
+            application with one form.
+        \li \uicontrol {Qt Designer Custom Widget} creates a \QD custom widget
             plugin.
         \li \uicontrol {Qt Console Application} creates a basic Qt console
             application.
@@ -410,7 +417,7 @@
     \section1 Managing Qt Versions
 
     Qt VS Tools provide you with basic Qt version management that enables you to
-    use multiple versions of Qt 5 in parallel. For example, Qt 5.6.1 and 5.7.0.
+    use multiple versions of Qt 5 in parallel. For example, Qt 5.10.1 and 5.11.0.
     When you install Qt VS Tools, the information about Qt versions is added to
     the user registry hive. So, other users will have to add a new Qt version,
     because no default version will be set.
@@ -425,7 +432,7 @@
         \li In the \uicontrol {Version name} field, enter a name for the Qt
             version.
         \li In the \uicontrol Path field, enter the path to the Qt root
-            directory. For example: \c {C:\Qt5\5.7\msvc2013_64}.
+            directory. For example: \c {C:\Qt5\5.10.1\msvc2013_64}.
         \li Select \uicontrol OK.
         \li In the \uicontrol {Default Qt/Win version} field, select the Qt
             version to be used by default when creating new projects or
