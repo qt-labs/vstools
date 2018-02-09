@@ -65,7 +65,7 @@
         </Project>
     </TemplateContent>
     <WizardExtension>
-        <Assembly>QtProjectWizard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+        <Assembly>QtProjectWizard, Version=2.2.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
         <FullClassName>QtProjectWizard.GuiWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>

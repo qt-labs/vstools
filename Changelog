@@ -1,3 +1,35 @@
+The Qt Visual Studio Tools version 2.2.0 is the first official release of the Visual Studio add-in
+for Visual Studio 2017, 2015 and 2013.
+
+Changes
+-------
+- New approach to moc, rcc and uic integration using MSBuild rules and targets
+- No longer adds generated files to projects
+- Creates Universal Windows projects when using a WinRT version of Qt
+- Allows import of .pro files using a WinRT version of Qt
+- Optimized the performance of adding header files (QTVSADDINBUG-64)
+- Optimized the performance of the .pro import procedure (QTVSADDINBUG-442)
+- Parallel execution of moc, rcc and uic processes (QTVSADDINBUG-124)
+- Uses multi-processor compilation of C++ by default (QTVSADDINBUG-443)
+- Updated list of Qt modules (QTVSADDINBUG-411)
+- Fixed QTVSADDINBUG-105: moced source files are output to the same directory, prone to filename
+  clashes
+- Fixed QTVSADDINBUG-140: VS2012 Doesn't start-up anymore correctly after VSAddin usage.
+- Fixed QTVSADDINBUG-363: When the QTDIR variable is set after the LocalDebuggerEnvironment
+  variable in the users file for a project then it will not find the debugger
+- Fixed QTVSADDINBUG-439: Visual Studio Addin creates bad project file if "flat" flag is removed
+  from config before converting to Visual Studio project
+- Fixed QTVSADDINBUG-479: Error building Qt projects in VS 2017: SDK not found
+- Fixed QTVSADDINBUG-485: Microsoft.Cpp.$(Platform).user.props absent
+- Fixed QTVSADDINBUG-489: When a qrc file is added to the project it is defaulting to being
+  processed with -no-compress which is not the default on the command line
+- Fixed QTVSADDINBUG-491: lupdate no longer works via Visual Studio Add-in
+- Fixed QTVSADDINBUG-493: The application exited with an error (ExitCode 1)
+- Fixed QTVSADDINBUG-504: Changing the project's Qt from Desktop to UWP causes linker errors
+- Fixed QTVSADDINBUG-505: Opening a .pro file that does not contain Qt3D causes "3D module" to be
+  checked in project's Qt settings
+
+
 The Qt Visual Studio Tools version 2.1.2 contains support for VS 2017 and several bug fixes.
 
 QTVSADDINBUG-459: Fix reported issues against the VS2017 beta release
