@@ -2902,6 +2902,44 @@ namespace QtProjectLib
             }
         }
 
+        public bool isWinRT()
+        {
+            try {
+                var vcProject = Project.Object as VCProject;
+                var vcConfigs = vcProject.Configurations as IVCCollection;
+                var vcConfig = vcConfigs.Item(1) as VCConfiguration;
+                var appType = vcConfig.GetEvaluatedPropertyValue("ApplicationType");
+                if (appType == "Windows Store")
+                    return true;
+            } catch { }
+            return false;
+        }
+
+        public bool PromptChangeQtVersion(string oldVersion, string newVersion)
+        {
+            var versionManager = QtVersionManager.The();
+            var viOld = versionManager.GetVersionInfo(oldVersion);
+            var viNew = versionManager.GetVersionInfo(newVersion);
+
+            var oldIsWinRt = viOld.isWinRT();
+            var newIsWinRt = viNew.isWinRT();
+
+            if (newIsWinRt == oldIsWinRt || newIsWinRt == isWinRT())
+                return true;
+
+            var promptCaption = string.Format("Change Qt Version ({0})", Project.Name);
+            var promptText = string.Format(
+                "Changing Qt version from {0} to {1}.\r\n" +
+                "Project might not build. Are you sure?",
+                newIsWinRt ? "Win32" : "WinRT",
+                newIsWinRt ? "WinRT" : "Win32"
+                );
+
+            return (MessageBox.Show(
+                promptText, promptCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                == DialogResult.Yes);
+        }
+
         /// <summary>
         /// Changes the Qt version of this project.
         /// </summary>

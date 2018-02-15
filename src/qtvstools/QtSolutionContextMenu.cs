@@ -158,7 +158,8 @@ namespace QtVsTools
 
                         var created = false;
                         var qtProject = QtProject.Create(project);
-                        qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
+                        if (qtProject.PromptChangeQtVersion(OldQtVersion, newQtVersion))
+                            qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
                     }
                 }
                 QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);

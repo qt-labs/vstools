@@ -107,10 +107,13 @@ namespace QtVsTools
                 QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
 
             if (oldQtVersion != newQtVersion) {
-                var newProjectCreated = false;
-                var versionChanged = qtPro.ChangeQtVersion(oldQtVersion, newQtVersion, ref newProjectCreated);
-                if (versionChanged && newProjectCreated)
-                    project = qtPro.Project;
+                if (qtPro.PromptChangeQtVersion(oldQtVersion, newQtVersion)) {
+                    var newProjectCreated = false;
+                    var versionChanged = qtPro.ChangeQtVersion(
+                        oldQtVersion, newQtVersion, ref newProjectCreated);
+                    if (versionChanged && newProjectCreated)
+                        project = qtPro.Project;
+                }
             }
         }
 
