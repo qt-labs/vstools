@@ -407,12 +407,13 @@ namespace QtProjectLib
                     if (compiler.GetAdditionalIncludeDirectories() == null)
                         continue;
                     var incPathList = info.GetIncludePath();
+                    var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
+                    foundInIncludes = (incPathList.Count > 0);
                     foreach (var incPath in incPathList) {
                         var fixedIncludeDir = FixFilePathForComparison(incPath);
-                        var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
-                        if (includeDirs.Any(dir =>
+                        if (!includeDirs.Any(dir =>
                             FixFilePathForComparison(dir) == fixedIncludeDir)) {
-                            foundInIncludes = true;
+                            foundInIncludes = false;
                             break;
                         }
                     }
