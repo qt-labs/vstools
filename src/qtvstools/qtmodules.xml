@@ -60,6 +60,7 @@
     <HasDLL>true</HasDLL>
     <proVarQT>gui</proVarQT>
     <IncludePath>$(QTDIR)\include\QtGui</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtANGLE</IncludePath>
     <Defines>QT_GUI_LIB</Defines>
   </Module>
   <Module Id="8">
@@ -383,7 +384,6 @@
     <IncludePath>$(QTDIR)\include\Qt3DInput</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DLogic</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DRender</IncludePath>
-    <IncludePath>$(QTDIR)\include\QtANGLE</IncludePath>
     <Defines>QT_3DCORE_LIB</Defines>
     <Defines>QT_3DANIMATION_LIB</Defines>
     <Defines>QT_3DEXTRAS_LIB</Defines>
