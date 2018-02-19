@@ -57,6 +57,27 @@ namespace QtProjectLib
         }
 
         /// <summary>
+        /// Show a message on the output pane.
+        /// Will wait <paramref name="timeout"/> msecs until the output pane is available.
+        /// </summary>
+        public static void PaneMessageSafe(DTE dte, string str, uint timeout)
+        {
+            new System.Threading.Thread(() =>
+            {
+                System.Diagnostics.Stopwatch t = new System.Diagnostics.Stopwatch();
+                t.Start();
+                while (t.ElapsedMilliseconds < timeout) {
+                    try {
+                        PaneMessage(dte, str);
+                        break;
+                    } catch {
+                        System.Threading.Thread.Yield();
+                    }
+                }
+            }).Start();
+        }
+
+        /// <summary>
         /// Activates the message pane of the Qt VS Tools extension.
         /// </summary>
         public static void ActivateMessagePane()

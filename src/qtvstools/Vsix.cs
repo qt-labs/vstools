@@ -142,7 +142,7 @@ namespace QtVsTools
             var vm = QtVersionManager.The();
             var error = string.Empty;
             if (vm.HasInvalidVersions(out error))
-                Messages.DisplayErrorMessage(error);
+                Messages.PaneMessageSafe(Dte, error, 5000);
             eventHandler = new DteEventsHandler(Dte);
 
             QtMainMenu.Initialize(this);
@@ -156,7 +156,8 @@ namespace QtVsTools
                 CopyTextMateLanguageFiles();
                 UpdateDefaultEditors(Mode.Startup);
             } catch (Exception e) {
-                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                Messages.PaneMessageSafe(Dte,
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
             }
 
             var modules = QtModules.Instance.GetAvailableModuleInformation();
