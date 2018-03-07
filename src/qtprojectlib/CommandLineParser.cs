@@ -528,7 +528,11 @@ namespace QtProjectLib.CommandLine
 
     static class Lexer
     {
-        static Regex lexer = new Regex(@"(\n)|([^\s\""]+)|(?:\""([^\""]+)\"")|(\s+)");
+        static Regex lexer = new Regex(
+            /* Newline    */ @"(\n)" +
+            /* Unquoted   */ @"|((?:(?:[^\s\""])|(?:(?<=\\)\""))+)" +
+            /* Quoted     */ @"|(?:\""((?:(?:[^\""])|(?:(?<=\\)\""))+)\"")" +
+            /* Whitespace */ @"|(\s+)");
 
         public static Token TokenType(this Match token)
         {
@@ -543,7 +547,7 @@ namespace QtProjectLib.CommandLine
         {
             Token t = TokenType(token);
             if (t != Token.Unknown)
-                return token.Groups[(int)t].Value;
+                return token.Groups[(int)t].Value.Replace("\\\"", "\"");
             return "";
         }
 

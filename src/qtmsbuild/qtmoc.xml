@@ -78,7 +78,7 @@
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Macro Definitions"
       Description="Define macro, with optional definition; separate with semicolons if more than one. (-D&lt;macro&gt;[=&lt;def&gt;])"
-      Switch="-D[value]" />
+      Switch="-D " />
     <StringListProperty
       Name="Undefine"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
