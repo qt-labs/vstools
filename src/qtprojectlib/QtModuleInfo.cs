@@ -64,16 +64,17 @@ namespace QtProjectLib
 
         public List<string> GetLibs(bool isDebugCfg, VersionInformation vi)
         {
-            return GetLibs(isDebugCfg, vi.IsStaticBuild());
+            return GetLibs(isDebugCfg, vi.IsStaticBuild(), vi.LibInfix());
         }
 
-        public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild)
+        public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild, string libInfix)
         {
             // TODO: isStaticBuild is never used.
             var libs = new List<string>();
             var libName = LibraryPrefix;
             if (libName.StartsWith("Qt", StringComparison.Ordinal))
                 libName = "Qt5" + libName.Substring(2);
+            libName += libInfix;
             if (isDebugCfg)
                 libName += "d";
             libName += ".lib";
@@ -101,7 +102,11 @@ namespace QtProjectLib
             if (moduleName.StartsWith("Qt", StringComparison.Ordinal))
                 moduleName = "Qt5" + moduleName.Substring(2);
 
-            return new FileInfo(Path.Combine(installPath, "lib", moduleName + ".lib")).Exists;
+            var qtVersionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            var libPath = Path.Combine(installPath, "lib",
+                string.Format("{0}{1}.lib", moduleName, qtVersionInfo.LibInfix()));
+
+            return File.Exists(libPath);
         }
     }
 }

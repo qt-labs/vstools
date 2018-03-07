@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace QtProjectLib
 {
@@ -38,36 +39,48 @@ namespace QtProjectLib
         }
 
     /// <summary>
-    /// A very simple reader for the qconfig.pri file. At the moment this is only to determine
-    /// whether we have a static or shared Qt build.
+    /// A very simple reader for the qconfig.pri file.
     /// </summary>
     class QtConfig
     {
         public BuildType BuildType { get; private set; }
 
+        public string LibInfix { get; private set; }
+
         public QtConfig(string qtdir)
         {
+            LibInfix = string.Empty;
+
             var fi = new FileInfo(qtdir + "\\mkspecs\\qconfig.pri");
             if (!fi.Exists)
                 return;
 
+            var variableDef = new Regex(@"^\s*(\w+)\s*([\+\-]?\=)(.*)");
             try {
                 using (var reader = new StreamReader(fi.FullName)) {
                     string line;
                     while ((line = reader.ReadLine()) != null) {
-                        line = line.Trim();
-                        if (!line.StartsWith("CONFIG", StringComparison.Ordinal))
+                        var match = variableDef.Match(line);
+                        if (!match.Success || match.Groups.Count < 4)
                             continue;
-                        var values = line.Substring(6).Split(' ', '\t');
-                        foreach (var value in values) {
-                            switch (value) {
-                            case "static":
-                                BuildType = BuildType.Static;
-                                return;
-                            case "shared":
-                                BuildType = BuildType.Shared;
-                                return;
+
+                        var name = match.Groups[1].Value;
+                        var oper = match.Groups[2].Value;
+                        var data = match.Groups[3].Value;
+                        if (name == "CONFIG") {
+                            var values = data.Split(new char[] { ' ', '\t' },
+                                StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var value in values) {
+                                if (value == "static") {
+                                    BuildType = BuildType.Static;
+                                    break;
+                                } else if (value == "shared") {
+                                    BuildType = BuildType.Shared;
+                                    break;
+                                }
                             }
+                        } else if (name == "QT_LIBINFIX") {
+                            LibInfix = data.Trim();
                         }
                     }
                 }

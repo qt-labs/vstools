@@ -133,6 +133,13 @@ namespace QtProjectLib
             return qtConfig.BuildType == BuildType.Static;
         }
 
+        public string LibInfix()
+        {
+            if (qtConfig == null)
+                qtConfig = new QtConfig(qtDir);
+            return qtConfig.LibInfix;
+        }
+
         public string GetQMakeConfEntry(string entryName)
         {
             if (qmakeConf == null)
@@ -201,7 +208,8 @@ namespace QtProjectLib
 
         public bool is64Bit()
         {
-            var fileToCheck = qtDir + "\\bin\\Qt5Core.dll";
+            var fileToCheck = Path.Combine(qtDir,
+                "bin", string.Format("Qt5Core{0}.dll", LibInfix()));
             if (!File.Exists(fileToCheck))
                 throw new QtVSException("Can't find " + fileToCheck);
 

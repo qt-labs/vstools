@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 
 namespace QtVsTools
 {
@@ -140,11 +141,13 @@ namespace QtVsTools
 
                 // Disable if module not installed
                 var info = QtModules.Instance.ModuleInformation(item.moduleId);
-                if (info != null) {
+                var versionInfo = versionManager.GetVersionInfo(qtVersion);
+                if (info != null && versionInfo != null) {
                     var libraryPrefix = info.LibraryPrefix;
                     if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))
                         libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
-                    var full_path = install_path + "\\lib\\" + libraryPrefix + ".lib";
+                    var full_path = Path.Combine(install_path, "lib",
+                        string.Format("{0}{1}.lib", libraryPrefix, versionInfo.LibInfix()));
                     var fi = new System.IO.FileInfo(full_path);
                     item.checkbox.Enabled = fi.Exists;
                     if (fi.Exists == false) {
