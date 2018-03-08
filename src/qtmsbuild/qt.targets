@@ -5,7 +5,7 @@
       <QtDebug>false</QtDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(QtWorkFilePath)' == ''">
-      <QtWorkFilePath>$(ProjectDir)$(IntDir)qt.txt</QtWorkFilePath>
+      <QtWorkFilePath>$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt.txt))</QtWorkFilePath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(QtMaxProcs)' == ''">
       <QtMaxProcs>$([System.Environment]::ProcessorCount)</QtMaxProcs>
