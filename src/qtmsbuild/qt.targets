@@ -24,12 +24,6 @@
       <Targets>QtMoc</Targets>
     </AvailableItemName>
   </ItemGroup>
-  <UsingTask
-    TaskName="QtMoc"
-    TaskFactory="XamlTaskFactory"
-    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)moc.xml</Task>
-  </UsingTask>
   <Target
     Name="QtMoc"
     BeforeTargets="$(QtMocBeforeTargets)"
@@ -49,10 +43,6 @@
         <Source>@(QtMoc, '|')</Source>
       </QtMoc_tlog>
     </ItemGroup>
-    <Message
-      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      Importance="High"
-      Text="%(QtMoc.ExecutionDescription)" />
     <WriteLinesToFile
       Condition="'@(QtMoc_tlog)' != '' and '%(QtMoc_tlog.ExcludedFromBuild)' != 'true'"
       File="$(TLogLocation)$(ProjectName).write.1u.tlog"
@@ -61,54 +51,70 @@
     <MakeDir
       Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true'"
       Directories="$([System.IO.Path]::GetDirectoryName(%(QtMoc.OutputFile)))"/>
-    <QtMoc
+    <ItemGroup>
+      <QtMoc_InputFile Condition="'%(QtMoc.InputFile)' != ''" Include="%(QtMoc.InputFile)"/>
+      <QtMoc_OutputFile Condition="'%(QtMoc.OutputFile)' != ''" Include="%(QtMoc.OutputFile)"/>
+      <QtMoc_IncludePath Condition="'%(QtMoc.IncludePath)' != ''" Include="%(QtMoc.IncludePath)"/>
+      <QtMoc_MacFramework Condition="'%(QtMoc.MacFramework)' != ''" Include="%(QtMoc.MacFramework)"/>
+      <QtMoc_PreprocessOnly Condition="'%(QtMoc.PreprocessOnly)' != ''" Include="%(QtMoc.PreprocessOnly)"/>
+      <QtMoc_Define Condition="'%(QtMoc.Define)' != ''" Include="%(QtMoc.Define)"/>
+      <QtMoc_Undefine Condition="'%(QtMoc.Undefine)' != ''" Include="%(QtMoc.Undefine)"/>
+      <QtMoc_Metadata Condition="'%(QtMoc.Metadata)' != ''" Include="%(QtMoc.Metadata)"/>
+      <QtMoc_CompilerFlavor Condition="'%(QtMoc.CompilerFlavor)' != ''" Include="%(QtMoc.CompilerFlavor)"/>
+      <QtMoc_NoInclude Condition="'%(QtMoc.NoInclude)' != ''" Include="%(QtMoc.NoInclude)"/>
+      <QtMoc_PathPrefix Condition="'%(QtMoc.PathPrefix)' != ''" Include="%(QtMoc.PathPrefix)"/>
+      <QtMoc_ForceInclude Condition="'%(QtMoc.ForceInclude)' != ''" Include="%(QtMoc.ForceInclude)"/>
+      <QtMoc_PrependInclude Condition="'%(QtMoc.PrependInclude)' != ''" Include="%(QtMoc.PrependInclude)"/>
+      <QtMoc_Include Condition="'%(QtMoc.Include)' != ''" Include="%(QtMoc.Include)"/>
+      <QtMoc_NoNotesWarnings Condition="'%(QtMoc.NoNotesWarnings)' != ''" Include="%(QtMoc.NoNotesWarnings)"/>
+      <QtMoc_NoNotes Condition="'%(QtMoc.NoNotes)' != ''" Include="%(QtMoc.NoNotes)"/>
+      <QtMoc_NoWarnings Condition="'%(QtMoc.NoWarnings)' != ''" Include="%(QtMoc.NoWarnings)"/>
+      <QtMoc_IgnoreConflicts Condition="'%(QtMoc.IgnoreConflicts)' != ''" Include="%(QtMoc.IgnoreConflicts)"/>
+      <QtMoc_OptionsFile Condition="'%(QtMoc.OptionsFile)' != ''" Include="%(QtMoc.OptionsFile)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <QtMoc_Define>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').Contains(' ')) OR $([System.String]::Copy('%(Identity)').Contains('&quot;'))"> &quot;$([System.String]::Copy('%(Identity)').Replace('&quot;','\&quot;'))&quot;</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').Contains(' ')) AND !$([System.String]::Copy('%(Identity)').Contains('&quot;'))">%(Identity)</Escaped>
+      </QtMoc_Define>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtMocOptions Condition="'@(QtMoc_InputFile)' != ''">$(QtMocOptions);@(QtMoc_InputFile->'&quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_OutputFile)' != ''">$(QtMocOptions);@(QtMoc_OutputFile->'-o &quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_IncludePath)' != ''">$(QtMocOptions);@(QtMoc_IncludePath->'&quot;-I%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_MacFramework)' != ''">$(QtMocOptions);@(QtMoc_MacFramework->'-F &quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_PreprocessOnly)' == 'true'">$(QtMocOptions);-E</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_Define)' != ''">$(QtMocOptions);@(QtMoc_Define->'-D%(Escaped)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_Undefine)' != ''">$(QtMocOptions);@(QtMoc_Undefine->'-U%(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_Metadata)' != ''">$(QtMocOptions);@(QtMoc_Metadata->'-M%(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_CompilerFlavor)' != ''">$(QtMocOptions);@(QtMoc_CompilerFlavor->'--compiler-flavor %(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_NoInclude)' == 'true'">$(QtMocOptions);-i</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_PathPrefix)' != ''">$(QtMocOptions);@(QtMoc_PathPrefix->'-p %(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_ForceInclude)' != ''">$(QtMocOptions);@(QtMoc_ForceInclude->'-f &quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_PrependInclude)' != ''">$(QtMocOptions);@(QtMoc_PrependInclude->'-b &quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_Include)' != ''">$(QtMocOptions);@(QtMoc_Include->'--include &quot;%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_NoNotesWarnings)' != ''">$(QtMocOptions);@(QtMoc_NoNotesWarnings->'-n%(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_NoNotes)' == 'true'">$(QtMocOptions);--no-notes</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_NoWarnings)' == 'true'">$(QtMocOptions);--no-warnings</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_IgnoreConflicts)' == 'true'">$(QtMocOptions);--ignore-option-clashes</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_OptionsFile)' != ''">$(QtMocOptions);@(QtMoc_OptionsFile->'&quot;@%(Identity)&quot;')</QtMocOptions>
+    </PropertyGroup>
+    <QtWork
       Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
-      CommandLineTemplate="echo %(QtMoc.ExecutionDescription);%(QtMoc.QTDIR)\bin\moc.exe;%(QtMoc.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
-      InputFile="%(QtMoc.InputFile)"
-      OutputFile="%(QtMoc.OutputFile)"
-      IncludePath="%(QtMoc.IncludePath)"
-      MacFramework="%(QtMoc.MacFramework)"
-      PreprocessOnly="%(QtMoc.PreprocessOnly)"
-      Define="%(QtMoc.Define)"
-      Undefine="%(QtMoc.Undefine)"
-      Metadata="%(QtMoc.Metadata)"
-      CompilerFlavor="%(QtMoc.CompilerFlavor)"
-      NoInclude="%(QtMoc.NoInclude)"
-      PathPrefix="%(QtMoc.PathPrefix)"
-      ForceInclude="%(QtMoc.ForceInclude)"
-      PrependInclude="%(QtMoc.PrependInclude)"
-      Include="%(QtMoc.Include)"
-      NoNotesWarnings="%(QtMoc.NoNotesWarnings)"
-      NoNotes="%(QtMoc.NoNotes)"
-      NoWarnings="%(QtMoc.NoWarnings)"
-      IgnoreConflicts="%(QtMoc.IgnoreConflicts)"
-      OptionsFile="%(QtMoc.OptionsFile)"
-      AdditionalOptions="%(QtMoc.AdditionalOptions)"
-      Inputs="@(QtMoc)" />
-    <QtMoc
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtMoc.ExecutionDescription)"
+      ExecPath="%(QtMoc.QTDIR)\bin\moc.exe"
+      ExecArguments="$(QtMocOptions.Replace(';',' ').Trim())"
+      ParallelProcess="true"
+      QtDebug="$(QtDebug)"/>
+    <QtWork
       Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      CommandLineTemplate="%(QtMoc.QTDIR)\bin\moc.exe %(QtMoc.CommandLineTemplate)"
-      InputFile="%(QtMoc.InputFile)"
-      OutputFile="%(QtMoc.OutputFile)"
-      IncludePath="%(QtMoc.IncludePath)"
-      MacFramework="%(QtMoc.MacFramework)"
-      PreprocessOnly="%(QtMoc.PreprocessOnly)"
-      Define="%(QtMoc.Define)"
-      Undefine="%(QtMoc.Undefine)"
-      Metadata="%(QtMoc.Metadata)"
-      CompilerFlavor="%(QtMoc.CompilerFlavor)"
-      NoInclude="%(QtMoc.NoInclude)"
-      PathPrefix="%(QtMoc.PathPrefix)"
-      ForceInclude="%(QtMoc.ForceInclude)"
-      PrependInclude="%(QtMoc.PrependInclude)"
-      Include="%(QtMoc.Include)"
-      NoNotesWarnings="%(QtMoc.NoNotesWarnings)"
-      NoNotes="%(QtMoc.NoNotes)"
-      NoWarnings="%(QtMoc.NoWarnings)"
-      IgnoreConflicts="%(QtMoc.IgnoreConflicts)"
-      OptionsFile="%(QtMoc.OptionsFile)"
-      AdditionalOptions="%(QtMoc.AdditionalOptions)"
-      Inputs="@(QtMoc)" />
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtMoc.ExecutionDescription)"
+      ExecPath="%(QtMoc.QTDIR)\bin\moc.exe"
+      ExecArguments="$(QtMocOptions.Replace(';',' ').Trim())"
+      ParallelProcess="false"
+      QtDebug="$(QtDebug)"/>
   </Target>
   <Target Name="QtMocPrep" BeforeTargets="QtMoc" Condition="'@(QtMoc)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMocPrep @(QtMoc)" />
@@ -125,12 +131,6 @@
       <Targets>QtRcc</Targets>
     </AvailableItemName>
   </ItemGroup>
-  <UsingTask
-    TaskName="QtRcc"
-    TaskFactory="XamlTaskFactory"
-    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)rcc.xml</Task>
-  </UsingTask>
   <Target
     Name="QtRcc"
     BeforeTargets="$(QtRccBeforeTargets)"
@@ -150,10 +150,6 @@
         <Source>@(QtRcc, '|')</Source>
       </QtRcc_tlog>
     </ItemGroup>
-    <Message
-      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      Importance="High"
-      Text="%(QtRcc.ExecutionDescription)" />
     <WriteLinesToFile
       Condition="'@(QtRcc_tlog)' != '' and '%(QtRcc_tlog.ExcludedFromBuild)' != 'true'"
       File="$(TLogLocation)$(ProjectName).write.1u.tlog"
@@ -162,46 +158,64 @@
     <MakeDir
       Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true'"
       Directories="$([System.IO.Path]::GetDirectoryName(%(QtRcc.OutputFile)))"/>
-    <QtRcc
+    <ItemGroup>
+      <QtRcc_InputFile Condition="'%(QtRcc.InputFile)' != ''" Include="%(QtRcc.InputFile)"/>
+      <QtRcc_OutputFile Condition="'%(QtRcc.OutputFile)' != ''" Include="%(QtRcc.OutputFile)"/>
+      <QtRcc_TempFile Condition="'%(QtRcc.TempFile)' != ''" Include="%(QtRcc.TempFile)"/>
+      <QtRcc_InitFuncName Condition="'%(QtRcc.InitFuncName)' != ''" Include="%(QtRcc.InitFuncName)"/>
+      <QtRcc_Root Condition="'%(QtRcc.Root)' != ''" Include="%(QtRcc.Root)"/>
+      <QtRcc_Compression Condition="'%(QtRcc.Compression)' != ''" Include="%(QtRcc.Compression)"/>
+      <QtRcc_NoCompression Condition="'%(QtRcc.NoCompression)' != ''" Include="%(QtRcc.NoCompression)"/>
+      <QtRcc_CompressThreshold Condition="'%(QtRcc.CompressThreshold)' != ''" Include="%(QtRcc.CompressThreshold)"/>
+      <QtRcc_BinaryOutput Condition="'%(QtRcc.BinaryOutput)' != ''" Include="%(QtRcc.BinaryOutput)"/>
+      <QtRcc_PassNumber Condition="'%(QtRcc.PassNumber)' != ''" Include="%(QtRcc.PassNumber)"/>
+      <QtRcc_NoNamespace Condition="'%(QtRcc.NoNamespace)' != ''" Include="%(QtRcc.NoNamespace)"/>
+      <QtRcc_Verbose Condition="'%(QtRcc.Verbose)' != ''" Include="%(QtRcc.Verbose)"/>
+      <QtRcc_List Condition="'%(QtRcc.List)' != ''" Include="%(QtRcc.List)"/>
+      <QtRcc_Project Condition="'%(QtRcc.Project)' != ''" Include="%(QtRcc.Project)"/>
+      <QtRcc_FormatVersion Condition="'%(QtRcc.FormatVersion)' != ''" Include="%(QtRcc.FormatVersion)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtRccOptions Condition="'@(QtRcc_InputFile)' != ''">$(QtRccOptions);@(QtRcc_InputFile->'&quot;%(Identity)&quot;')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_OutputFile)' != ''">$(QtRccOptions);@(QtRcc_OutputFile->'-o &quot;%(Identity)&quot;')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_TempFile)' != ''">$(QtRccOptions);@(QtRcc_TempFile->'--temp &quot;%(Identity)&quot;')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_InitFuncName)' != ''">$(QtRccOptions);@(QtRcc_InitFuncName->'--name %(Identity)')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Root)' != ''">$(QtRccOptions);@(QtRcc_Root->'--root &quot;%(Identity)&quot;')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level1'">$(QtRccOptions);--compress 1</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level2'">$(QtRccOptions);--compress 2</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level3'">$(QtRccOptions);--compress 3</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level4'">$(QtRccOptions);--compress 4</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level5'">$(QtRccOptions);--compress 5</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level6'">$(QtRccOptions);--compress 6</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level7'">$(QtRccOptions);--compress 7</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level8'">$(QtRccOptions);--compress 8</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level9'">$(QtRccOptions);--compress 9</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_NoCompression)' == 'true'">$(QtRccOptions);--no-compress</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_CompressThreshold)' != ''">$(QtRccOptions);@(QtRcc_CompressThreshold->'--threshold %(Identity)')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_BinaryOutput)' == 'true'">$(QtRccOptions);--binary</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_PassNumber)' != ''">$(QtRccOptions);@(QtRcc_PassNumber->'--pass %(Identity)')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_NoNamespace)' == 'true'">$(QtRccOptions);--namespace</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Verbose)' == 'true'">$(QtRccOptions);--verbose</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_List)' == 'true'">$(QtRccOptions);--list</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Project)' == 'true'">$(QtRccOptions);--project</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_FormatVersion)' != ''">$(QtRccOptions);@(QtRcc_FormatVersion->'--format-version %(Identity)')</QtRccOptions>
+    </PropertyGroup>
+    <QtWork
       Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
-      CommandLineTemplate="echo %(QtRcc.ExecutionDescription);%(QtRcc.QTDIR)\bin\rcc.exe;%(QtRcc.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
-      InputFile="%(QtRcc.InputFile)"
-      OutputFile="%(QtRcc.OutputFile)"
-      TempFile="%(QtRcc.TempFile)"
-      InitFuncName="%(QtRcc.InitFuncName)"
-      Root="%(QtRcc.Root)"
-      Compression="%(QtRcc.Compression)"
-      NoCompression="%(QtRcc.NoCompression)"
-      CompressThreshold="%(QtRcc.CompressThreshold)"
-      BinaryOutput="%(QtRcc.BinaryOutput)"
-      PassNumber="%(QtRcc.PassNumber)"
-      NoNamespace="%(QtRcc.NoNamespace)"
-      Verbose="%(QtRcc.Verbose)"
-      List="%(QtRcc.List)"
-      Project="%(QtRcc.Project)"
-      FormatVersion="%(QtRcc.FormatVersion)"
-      AdditionalOptions="%(QtRcc.AdditionalOptions)"
-      Inputs="@(QtRcc)" />
-    <QtRcc
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtRcc.ExecutionDescription)"
+      ExecPath="%(QtRcc.QTDIR)\bin\rcc.exe"
+      ExecArguments="$(QtRccOptions.Replace(';',' ').Trim())"
+      ParallelProcess="true"
+      QtDebug="$(QtDebug)"/>
+    <QtWork
       Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      CommandLineTemplate="%(QtRcc.QTDIR)\bin\rcc.exe %(QtRcc.CommandLineTemplate)"
-      InputFile="%(QtRcc.InputFile)"
-      OutputFile="%(QtRcc.OutputFile)"
-      TempFile="%(QtRcc.TempFile)"
-      InitFuncName="%(QtRcc.InitFuncName)"
-      Root="%(QtRcc.Root)"
-      Compression="%(QtRcc.Compression)"
-      NoCompression="%(QtRcc.NoCompression)"
-      CompressThreshold="%(QtRcc.CompressThreshold)"
-      BinaryOutput="%(QtRcc.BinaryOutput)"
-      PassNumber="%(QtRcc.PassNumber)"
-      NoNamespace="%(QtRcc.NoNamespace)"
-      Verbose="%(QtRcc.Verbose)"
-      List="%(QtRcc.List)"
-      Project="%(QtRcc.Project)"
-      FormatVersion="%(QtRcc.FormatVersion)"
-      AdditionalOptions="%(QtRcc.AdditionalOptions)"
-      Inputs="@(QtRcc)" />
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtRcc.ExecutionDescription)"
+      ExecPath="%(QtRcc.QTDIR)\bin\rcc.exe"
+      ExecArguments="$(QtRccOptions.Replace(';',' ').Trim())"
+      ParallelProcess="false"
+      QtDebug="$(QtDebug)"/>
   </Target>
   <Target Name="QtRccPrep" BeforeTargets="QtRcc" Condition="'@(QtRcc)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRccPrep @(QtRcc)" />
@@ -218,12 +232,6 @@
       <Targets>QtUic</Targets>
     </AvailableItemName>
   </ItemGroup>
-  <UsingTask
-    TaskName="QtUic"
-    TaskFactory="XamlTaskFactory"
-    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName)uic.xml</Task>
-  </UsingTask>
   <Target
     Name="QtUic"
     BeforeTargets="$(QtUicBeforeTargets)"
@@ -243,10 +251,6 @@
         <Source>@(QtUic, '|')</Source>
       </QtUic_tlog>
     </ItemGroup>
-    <Message
-      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      Importance="High"
-      Text="%(QtUic.ExecutionDescription)" />
     <WriteLinesToFile
       Condition="'@(QtUic_tlog)' != '' and '%(QtUic_tlog.ExcludedFromBuild)' != 'true'"
       File="$(TLogLocation)$(ProjectName).write.1u.tlog"
@@ -255,36 +259,46 @@
     <MakeDir
       Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true'"
       Directories="$([System.IO.Path]::GetDirectoryName(%(QtUic.OutputFile)))"/>
-    <QtUic
+    <ItemGroup>
+      <QtUic_InputFile Condition="'%(QtUic.InputFile)' != ''" Include="%(QtUic.InputFile)"/>
+      <QtUic_OutputFile Condition="'%(QtUic.OutputFile)' != ''" Include="%(QtUic.OutputFile)"/>
+      <QtUic_DisplayDependencies Condition="'%(QtUic.DisplayDependencies)' != ''" Include="%(QtUic.DisplayDependencies)"/>
+      <QtUic_NoProtection Condition="'%(QtUic.NoProtection)' != ''" Include="%(QtUic.NoProtection)"/>
+      <QtUic_NoImplicitIncludes Condition="'%(QtUic.NoImplicitIncludes)' != ''" Include="%(QtUic.NoImplicitIncludes)"/>
+      <QtUic_Postfix Condition="'%(QtUic.Postfix)' != ''" Include="%(QtUic.Postfix)"/>
+      <QtUic_Translate Condition="'%(QtUic.Translate)' != ''" Include="%(QtUic.Translate)"/>
+      <QtUic_Include Condition="'%(QtUic.Include)' != ''" Include="%(QtUic.Include)"/>
+      <QtUic_Generator Condition="'%(QtUic.Generator)' != ''" Include="%(QtUic.Generator)"/>
+      <QtUic_IdBased Condition="'%(QtUic.IdBased)' != ''" Include="%(QtUic.IdBased)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtUicOptions Condition="'@(QtUic_InputFile)' != ''">$(QtUicOptions);@(QtUic_InputFile->'&quot;%(Identity)&quot;')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_OutputFile)' != ''">$(QtUicOptions);@(QtUic_OutputFile->'-o &quot;%(Identity)&quot;')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_DisplayDependencies)' == 'true'">$(QtUicOptions);--dependencies</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_NoProtection)' == 'true'">$(QtUicOptions);--no-protection</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_NoImplicitIncludes)' == 'true'">$(QtUicOptions);--no-implicit-includes</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_Postfix)' != ''">$(QtUicOptions);@(QtUic_Postfix->'--postfix %(Identity)')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_Translate)' != ''">$(QtUicOptions);@(QtUic_Translate->'--tr %(Identity)')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_Include)' != ''">$(QtUicOptions);@(QtUic_Include->'--include &quot;%(Identity)&quot;')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_Generator)' != ''">$(QtUicOptions);@(QtUic_Generator->'-g %(Identity)')</QtUicOptions>
+      <QtUicOptions Condition="'@(QtUic_IdBased)' == 'true'">$(QtUicOptions);--idbased</QtUicOptions>
+    </PropertyGroup>
+    <QtWork
       Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
-      CommandLineTemplate="echo %(QtUic.ExecutionDescription);%(QtUic.QTDIR)\bin\uic.exe;%(QtUic.CommandLineTemplate) &gt;&gt; &quot;$(QtWorkFilePath)&quot;"
-      InputFile="%(QtUic.InputFile)"
-      OutputFile="%(QtUic.OutputFile)"
-      DisplayDependencies="%(QtUic.DisplayDependencies)"
-      NoProtection="%(QtUic.NoProtection)"
-      NoImplicitIncludes="%(QtUic.NoImplicitIncludes)"
-      Postfix="%(QtUic.Postfix)"
-      Translate="%(QtUic.Translate)"
-      Include="%(QtUic.Include)"
-      Generator="%(QtUic.Generator)"
-      IdBased="%(QtUic.IdBased)"
-      AdditionalOptions="%(QtUic.AdditionalOptions)"
-      Inputs="@(QtUic)" />
-    <QtUic
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtUic.ExecutionDescription)"
+      ExecPath="%(QtUic.QTDIR)\bin\uic.exe"
+      ExecArguments="$(QtUicOptions.Replace(';',' ').Trim())"
+      ParallelProcess="true"
+      QtDebug="$(QtDebug)"/>
+    <QtWork
       Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
-      CommandLineTemplate="%(QtUic.QTDIR)\bin\uic.exe %(QtUic.CommandLineTemplate)"
-      InputFile="%(QtUic.InputFile)"
-      OutputFile="%(QtUic.OutputFile)"
-      DisplayDependencies="%(QtUic.DisplayDependencies)"
-      NoProtection="%(QtUic.NoProtection)"
-      NoImplicitIncludes="%(QtUic.NoImplicitIncludes)"
-      Postfix="%(QtUic.Postfix)"
-      Translate="%(QtUic.Translate)"
-      Include="%(QtUic.Include)"
-      Generator="%(QtUic.Generator)"
-      IdBased="%(QtUic.IdBased)"
-      AdditionalOptions="%(QtUic.AdditionalOptions)"
-      Inputs="@(QtUic)" />
+      WorkFilePath="$(QtWorkFilePath)"
+      ExecDescription="%(QtUic.ExecutionDescription)"
+      ExecPath="%(QtUic.QTDIR)\bin\uic.exe"
+      ExecArguments="$(QtUicOptions.Replace(';',' ').Trim())"
+      ParallelProcess="false"
+      QtDebug="$(QtDebug)"/>
   </Target>
   <Target Name="QtUicPrep" BeforeTargets="QtUic" Condition="'@(QtUic)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUicPrep @(QtUic)" />
@@ -294,6 +308,74 @@
         Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' == 'true' and '@(SelectedFiles)' == ''"/>
     </ItemGroup>
   </Target>
+  <UsingTask
+    TaskName="QtWork"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <WorkFilePath ParameterType="System.String" Required="true" />
+      <ExecDescription ParameterType="System.String" Required="true" />
+      <ExecPath ParameterType="System.String" Required="true" />
+      <ExecArguments ParameterType="System.String" Required="true" />
+      <ParallelProcess ParameterType="System.Boolean" Required="true" />
+      <QtDebug ParameterType="System.Boolean" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Diagnostics"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            bool ok = true;
+            if (ParallelProcess) {
+                File.AppendAllText(WorkFilePath,
+                    string.Format("{0};{1};{2}\r\n", ExecDescription, ExecPath, ExecArguments));
+            } else {
+                Log.LogMessage(MessageImportance.High, ExecDescription);
+                var procInfo = new ProcessStartInfo
+                {
+                    FileName = ExecPath,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    Arguments = ExecArguments
+                };
+                Process childProcess = null;
+                try {
+                    childProcess = Process.Start(procInfo);
+                    childProcess.OutputDataReceived +=
+                        (object sender, DataReceivedEventArgs e) => {
+                            if (!string.IsNullOrEmpty(e.Data))
+                                Log.LogMessage(MessageImportance.High, e.Data);
+                        };
+                    childProcess.ErrorDataReceived +=
+                        (object sender, DataReceivedEventArgs e) => {
+                            if (!string.IsNullOrEmpty(e.Data))
+                                Log.LogMessage(MessageImportance.High, e.Data);
+                        };
+                    childProcess.BeginOutputReadLine();
+                    childProcess.BeginErrorReadLine();
+                } catch (Exception e) {
+                    Log.LogMessage(
+                        MessageImportance.High,
+                        string.Format("Error starting process {0}: {1}", ExecPath, e.Message));
+                    ok = false;
+                }
+                if (ok) {
+                    childProcess.WaitForExit();
+                    int exitCode = childProcess.ExitCode;
+                    childProcess.Close();
+                    if (exitCode != 0)
+                        ok = false;
+                }
+            }
+            if (!ok)
+                return false;
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
   <UsingTask
     TaskName="QtFinalize"
     TaskFactory="CodeTaskFactory"
