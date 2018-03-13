@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace QtProjectLib.CommandLine
 {
@@ -234,12 +235,14 @@ namespace QtProjectLib.CommandLine
                 Trace.TraceWarning("CommandLineParser: Parse() before {0}", method);
         }
 
-        public bool Parse(string commandLine, string execName)
+        List<string> TokenizeArgs(string commandLine, string workingDir, string execName = "")
         {
             List<string> arguments = new List<string>();
             StringBuilder arg = new StringBuilder();
-            bool foundExec = false;
-            foreach (Match token in Lexer.Tokenize(commandLine)) {
+            bool foundExec = string.IsNullOrEmpty(execName);
+            foreach (Match token in Lexer.Tokenize(commandLine + " ")) {
+                // Additional " " ensures loop will always end with whitespace processing
+
                 if (!foundExec) {
                     if (!token.TokenText()
                         .EndsWith(execName,
@@ -254,17 +257,39 @@ namespace QtProjectLib.CommandLine
                 if (tokenType == Token.Newline) {
                     break;
                 } else if (tokenType == Token.Whitespace) {
+                    // This will always run at the end of the loop
+
                     if (arg.Length > 0) {
-                        arguments.Add(arg.ToString());
+                        var argData = arg.ToString();
                         arg.Clear();
+                        if (argData.StartsWith("@")) {
+                            string[] additionalArgs = File.ReadAllLines(
+                                Path.Combine(workingDir, argData.Substring(1)));
+                            if (additionalArgs != null) {
+                                var additionalArgsString = string.Join(" ", additionalArgs
+                                    .Select(x => "\"" + x.Replace("\"", "\\\"") + "\""));
+                                arguments.AddRange(TokenizeArgs(additionalArgsString, workingDir));
+                            }
+                        } else {
+                            arguments.Add(argData);
+                        }
                     }
                 } else {
                     arg.Append(token.TokenText());
                 }
             }
-            if (arg.Length > 0)
-                arguments.Add(arg.ToString());
-            return Parse(arguments);
+            return arguments;
+        }
+
+        public bool Parse(string commandLine, string workingDir, string execName)
+        {
+            List<string> args = null;
+            try {
+                args = TokenizeArgs(commandLine, workingDir, execName);
+            } catch {
+                return false;
+            }
+            return Parse(args);
         }
 
         public bool Parse(IEnumerable<string> args)
@@ -283,7 +308,7 @@ namespace QtProjectLib.CommandLine
             unknownOptionNames.Clear();
             optionValuesHash.Clear();
 
-            if (!args.Any()) {
+            if (args == null || !args.Any()) {
                 return false;
             }
 

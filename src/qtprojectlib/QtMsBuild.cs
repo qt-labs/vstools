@@ -423,15 +423,19 @@ namespace QtProjectLib.QtMsBuild
                 property.ToString());
         }
 
-        public bool SetCommandLine(string itemType, object propertyStorage, string commandLine)
+        public bool SetCommandLine(
+            string itemType,
+            object propertyStorage,
+            string commandLine,
+            string workingDir)
         {
             switch (itemType) {
                 case QtMoc.ItemTypeName:
-                    return SetQtMocCommandLine(propertyStorage, commandLine);
+                    return SetQtMocCommandLine(propertyStorage, commandLine, workingDir);
                 case QtRcc.ItemTypeName:
-                    return SetQtRccCommandLine(propertyStorage, commandLine);
+                    return SetQtRccCommandLine(propertyStorage, commandLine, workingDir);
                 case QtUic.ItemTypeName:
-                    return SetQtUicCommandLine(propertyStorage, commandLine);
+                    return SetQtUicCommandLine(propertyStorage, commandLine, workingDir);
             }
             return false;
         }
@@ -464,10 +468,13 @@ namespace QtProjectLib.QtMsBuild
             return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
         }
 
-        public bool SetQtMocCommandLine(object propertyStorage, string commandLine)
+        public bool SetQtMocCommandLine(
+            object propertyStorage,
+            string commandLine,
+            string workingDir)
         {
             Dictionary<QtMoc.Property, string> properties;
-            if (!QtMocInstance.ParseCommandLine(commandLine, out properties))
+            if (!QtMocInstance.ParseCommandLine(commandLine, workingDir, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -510,10 +517,13 @@ namespace QtProjectLib.QtMsBuild
             return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
         }
 
-        public bool SetQtRccCommandLine(object propertyStorage, string commandLine)
+        public bool SetQtRccCommandLine(
+            object propertyStorage,
+            string commandLine,
+            string workingDir)
         {
             Dictionary<QtRcc.Property, string> properties;
-            if (!QtRccInstance.ParseCommandLine(commandLine, out properties))
+            if (!QtRccInstance.ParseCommandLine(commandLine, workingDir, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -556,10 +566,13 @@ namespace QtProjectLib.QtMsBuild
             return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
         }
 
-        public bool SetQtUicCommandLine(object propertyStorage, string commandLine)
+        public bool SetQtUicCommandLine(
+            object propertyStorage,
+            string commandLine,
+            string workingDir)
         {
             Dictionary<QtUic.Property, string> properties;
-            if (!QtUicInstance.ParseCommandLine(commandLine, out properties))
+            if (!QtUicInstance.ParseCommandLine(commandLine, workingDir, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -600,13 +613,14 @@ namespace QtProjectLib.QtMsBuild
 
         protected bool ParseCommandLine(
             string commandLine,
+            string workingDir,
             string toolExecName,
             out string qtDir,
             out string inputPath,
             out string outputPath)
         {
             qtDir = inputPath = outputPath = "";
-            if (!parser.Parse(commandLine, toolExecName))
+            if (!parser.Parse(commandLine, workingDir, toolExecName))
                 return false;
 
             string execPath = parser.PositionalArguments.Where(
@@ -784,6 +798,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
+            string workingDir,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -791,6 +806,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
+                workingDir,
                 ToolExecName,
                 out qtDir,
                 out inputPath,
@@ -1031,6 +1047,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
+            string workingDir,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -1038,6 +1055,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
+                workingDir,
                 ToolExecName,
                 out qtDir,
                 out inputPath,
@@ -1215,6 +1233,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
+            string workingDir,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -1222,6 +1241,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
+                workingDir,
                 ToolExecName,
                 out qtDir,
                 out inputPath,

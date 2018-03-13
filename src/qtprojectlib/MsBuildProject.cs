@@ -264,7 +264,8 @@ namespace QtProjectLib
             QtMsBuildContainer qtMsBuild,
             IEnumerable<string> configurations,
             IEnumerable<XElement> customBuilds,
-            string itemType)
+            string itemType,
+            string workingDir)
         {
             var query = from customBuild in customBuilds
                         let itemName = customBuild.Attribute("Include").Value
@@ -282,7 +283,7 @@ namespace QtProjectLib
                     new XElement(ns + itemType,
                         new XAttribute("Include", row.itemName),
                         new XAttribute("ConfigName", row.configName)));
-                if (!qtMsBuild.SetCommandLine(itemType, item, row.commandLine))
+                if (!qtMsBuild.SetCommandLine(itemType, item, row.commandLine, workingDir))
                     return false;
             }
             return true;
@@ -354,8 +355,10 @@ namespace QtProjectLib
         {
             var commandLine = (string)cbt.Element(ns + "Command");
             Dictionary<QtMoc.Property, string> properties;
-            if (!QtMsBuildContainer.QtMocInstance.ParseCommandLine(commandLine, out properties))
+            if (!QtMsBuildContainer.QtMocInstance.ParseCommandLine(commandLine,
+                Path.GetDirectoryName(this[Files.Project].filePath), out properties)) {
                 return (string)cbt.Attribute("Include");
+            }
             string ouputFile;
             if (!properties.TryGetValue(QtMoc.Property.InputFile, out ouputFile))
                 return (string)cbt.Attribute("Include");
@@ -493,8 +496,10 @@ namespace QtProjectLib
 
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, mocCustomBuilds, QtMoc.ItemTypeName))
+            if (!SetCommandLines(qtMsBuild, configNames, mocCustomBuilds, QtMoc.ItemTypeName,
+                Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
+            }
             foreach (var qtMoc in mocCustomBuilds.Elements(ns + QtMoc.ItemTypeName)) {
                 var itemName = (string)qtMoc.Attribute("Include");
                 var configName = (string)qtMoc.Attribute("ConfigName");
@@ -530,8 +535,10 @@ namespace QtProjectLib
 
             //convert rcc custom build steps
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, rccCustomBuilds, QtRcc.ItemTypeName))
+            if (!SetCommandLines(qtMsBuild, configNames, rccCustomBuilds, QtRcc.ItemTypeName,
+                Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
+            }
             foreach (var qtRcc in rccCustomBuilds.Elements(ns + QtRcc.ItemTypeName)) {
                 var itemName = (string)qtRcc.Attribute("Include");
                 var configName = (string)qtRcc.Attribute("ConfigName");
@@ -551,8 +558,10 @@ namespace QtProjectLib
 
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, uicCustomBuilds, QtUic.ItemTypeName))
+            if (!SetCommandLines(qtMsBuild, configNames, uicCustomBuilds, QtUic.ItemTypeName,
+                Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
+            }
             foreach (var qtUic in uicCustomBuilds.Elements(ns + QtUic.ItemTypeName)) {
                 var itemName = (string)qtUic.Attribute("Include");
                 var configName = (string)qtUic.Attribute("ConfigName");

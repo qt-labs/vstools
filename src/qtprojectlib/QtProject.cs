@@ -1048,7 +1048,7 @@ namespace QtProjectLib
             qtMsBuild.SetItemProperty(workConfig,
                 QtMoc.Property.ExecutionDescription, description);
             qtMsBuild.SetQtMocCommandLine(workConfig,
-                QtMoc.ToolExecName + " " + defines + " " + includes);
+                QtMoc.ToolExecName + " " + defines + " " + includes, ProjectDir);
         }
 
         void AddMocStepToConfiguration(
@@ -2709,7 +2709,8 @@ namespace QtProjectLib
                         if (mocable.ItemType == "CustomBuild") {
                             tool.CommandLine = newCmdLine;
                         } else {
-                            qtMsBuild.SetQtMocCommandLine(customBuildConfig, newCmdLine);
+                            qtMsBuild.SetQtMocCommandLine(
+                                customBuildConfig, newCmdLine, ProjectDir);
                         }
                     }
                 } catch {
@@ -3590,6 +3591,7 @@ namespace QtProjectLib
         VCFileConfiguration vcConfig;
         VCFile vcFile;
         VCCustomBuildTool tool;
+        string workingDir = "";
 
         enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtUic };
         FileItemType itemType = FileItemType.Other;
@@ -3614,6 +3616,16 @@ namespace QtProjectLib
             }
             if (itemType == FileItemType.CustomBuild)
                 tool = HelperFunctions.GetCustomBuildTool(vcConfig);
+            if (vcConfig != null) {
+                var vcProjConfig = vcConfig.ProjectConfiguration as VCConfiguration;
+                if (vcProjConfig != null) {
+                    var vcProject = vcProjConfig.project as VCProject;
+                    if (vcProject != null)
+                        workingDir = vcProject.ProjectDirectory;
+                }
+            }
+            if (string.IsNullOrEmpty(workingDir))
+                throw new QtVSException("Error accessing project directory");
         }
 
         public string CommandLine
@@ -3640,13 +3652,13 @@ namespace QtProjectLib
                             tool.CommandLine = value;
                         break;
                     case FileItemType.QtMoc:
-                        qtMsBuild.SetQtMocCommandLine(vcConfig, value);
+                        qtMsBuild.SetQtMocCommandLine(vcConfig, value, workingDir);
                         break;
                     case FileItemType.QtRcc:
-                        qtMsBuild.SetQtRccCommandLine(vcConfig, value);
+                        qtMsBuild.SetQtRccCommandLine(vcConfig, value, workingDir);
                         break;
                     case FileItemType.QtUic:
-                        qtMsBuild.SetQtUicCommandLine(vcConfig, value);
+                        qtMsBuild.SetQtUicCommandLine(vcConfig, value, workingDir);
                         break;
                 }
             }
