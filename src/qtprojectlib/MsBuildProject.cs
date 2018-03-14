@@ -262,28 +262,37 @@ namespace QtProjectLib
 
         bool SetCommandLines(
             QtMsBuildContainer qtMsBuild,
-            IEnumerable<string> configurations,
+            IEnumerable<XElement> configurations,
             IEnumerable<XElement> customBuilds,
             string itemType,
             string workingDir)
         {
             var query = from customBuild in customBuilds
                         let itemName = customBuild.Attribute("Include").Value
-                        from configName in configurations
+                        from config in configurations
                         from command in customBuild.Elements(ns + "Command")
                         let commandLine = command.Value
                         where command.Attribute("Condition").Value
                             == string.Format(
                                 "'$(Configuration)|$(Platform)'=='{0}'",
-                                configName)
-                        select new { customBuild, itemName, configName, commandLine };
+                                (string)config.Attribute("Include"))
+                        select new { customBuild, itemName, config, commandLine };
             foreach (var row in query) {
                 XElement item;
                 row.customBuild.Add(item =
                     new XElement(ns + itemType,
                         new XAttribute("Include", row.itemName),
-                        new XAttribute("ConfigName", row.configName)));
-                if (!qtMsBuild.SetCommandLine(itemType, item, row.commandLine, workingDir))
+                        new XAttribute("ConfigName", (string)row.config.Attribute("Include"))));
+                var configName = (string)row.config.Element(ns + "Configuration");
+                var platformName = (string)row.config.Element(ns + "Platform");
+                var commandLine = row.commandLine
+                    .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
+                        StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(configName, "$(Configuration)",
+                        StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(platformName, "$(Platform)",
+                        StringComparison.InvariantCultureIgnoreCase);
+                if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, workingDir))
                     return false;
             }
             return true;
@@ -401,11 +410,10 @@ namespace QtProjectLib
             var qtMsBuild = new QtMsBuildContainer(new MsBuildConverterProvider());
             qtMsBuild.BeginSetItemProperties();
 
-            var configNames = this[Files.Project].xml
+            var configurations = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + "ProjectConfiguration")
-                .Select(x => (string)x.Attribute("Include"));
+                .Elements(ns + "ProjectConfiguration");
 
             var projectItems = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -496,7 +504,7 @@ namespace QtProjectLib
 
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, mocCustomBuilds, QtMoc.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds, QtMoc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
             }
@@ -535,7 +543,7 @@ namespace QtProjectLib
 
             //convert rcc custom build steps
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, rccCustomBuilds, QtRcc.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds, QtRcc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
             }
@@ -558,7 +566,7 @@ namespace QtProjectLib
 
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configNames, uicCustomBuilds, QtUic.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds, QtUic.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
             }
