@@ -374,7 +374,7 @@ namespace QtProjectLib
             return ouputFile;
         }
 
-        void RemoveGeneratedFiles(
+        bool RemoveGeneratedFiles(
             List<CustomBuildEval> cbEvals,
             string configName,
             string itemName,
@@ -382,6 +382,7 @@ namespace QtProjectLib
             IEnumerable<XElement> filterItems)
         {
             //remove items with generated files
+            bool hasGeneratedFiles = false;
             var cbEval = cbEvals
                 .Where(x => x.ProjectConfig == configName && x.Identity == itemName)
                 .FirstOrDefault();
@@ -396,11 +397,13 @@ namespace QtProjectLib
                         outputItems.AddRange(filterItems
                             .Where(x => HelperFunctions.PathEquals(
                                 outputFile, (string)x.Attribute("Include"))));
+                        hasGeneratedFiles |= outputItems.Any();
                         foreach (var item in outputItems)
                             item.Remove();
                     }
                 }
             }
+            return hasGeneratedFiles;
         }
 
         public bool ConvertCustomBuildToQtMsBuild()
@@ -508,12 +511,14 @@ namespace QtProjectLib
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
                 return false;
             }
+            List<XElement> mocDisableDynamicSource = new List<XElement>();
             foreach (var qtMoc in mocCustomBuilds.Elements(ns + QtMoc.ItemTypeName)) {
                 var itemName = (string)qtMoc.Attribute("Include");
                 var configName = (string)qtMoc.Attribute("ConfigName");
 
                 //remove items with generated files
-                RemoveGeneratedFiles(cbEvals, configName, itemName, projectItems, filterItems);
+                var hasGeneratedFiles = RemoveGeneratedFiles(
+                    cbEvals, configName, itemName, projectItems, filterItems);
 
                 //set properties
                 qtMsBuild.SetItemProperty(qtMoc,
@@ -526,6 +531,8 @@ namespace QtProjectLib
                         QtVSIPSettings.GetMocDirectory()));
                     qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.DynamicSource, "output");
+                    if (!hasGeneratedFiles)
+                        mocDisableDynamicSource.Add(qtMoc);
                 } else {
                     qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.OutputFile, string.Format(@"{0}\%(Filename).moc",
@@ -588,6 +595,13 @@ namespace QtProjectLib
             }
 
             qtMsBuild.EndSetItemProperties();
+
+            //disable dynamic C++ source for moc headers without generated files
+            //(needed for the case of #include "moc_foo.cpp" in source file)
+            foreach (var qtMoc in mocDisableDynamicSource) {
+                qtMsBuild.SetItemProperty(qtMoc,
+                    QtMoc.Property.DynamicSource, "false");
+            }
 
             FinalizeProjectChanges(mocCustomBuilds.ToList(), QtMoc.ItemTypeName);
             FinalizeProjectChanges(rccCustomBuilds.ToList(), QtRcc.ItemTypeName);
