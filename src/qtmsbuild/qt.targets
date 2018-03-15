@@ -503,18 +503,10 @@
     <ItemGroup>
       <ClCompile
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.DynamicSource)' == 'output'"
-        Include="@(QtMoc->'%(OutputFile)')">
-        <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);%(QtMoc.IncludePath)</AdditionalIncludeDirectories>
-        <PreprocessorDefinitions>$(PreprocessorDefinitions);%(QtMoc.Define)</PreprocessorDefinitions>
-        <UndefinePreprocessorDefinitions>$(UndefinePreprocessorDefinitions);%(QtMoc.Undefine)</UndefinePreprocessorDefinitions>
-      </ClCompile>
+        Include="@(QtMoc->'%(OutputFile)')" />
       <ClCompile
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.DynamicSource)' == 'input'"
-        Include="@(QtMoc->'%(InputFile)')">
-        <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);%(QtMoc.IncludePath)</AdditionalIncludeDirectories>
-        <PreprocessorDefinitions>$(PreprocessorDefinitions);%(QtMoc.Define)</PreprocessorDefinitions>
-        <UndefinePreprocessorDefinitions>$(UndefinePreprocessorDefinitions);%(QtMoc.Undefine)</UndefinePreprocessorDefinitions>
-      </ClCompile>
+        Include="@(QtMoc->'%(InputFile)')" />
     </ItemGroup>
     <ItemGroup>
       <ClCompile
