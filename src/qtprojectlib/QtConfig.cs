@@ -47,6 +47,8 @@ namespace QtProjectLib
 
         public string LibInfix { get; private set; }
 
+        public bool Is64Bit { get; private set; }
+
         public QtConfig(string qtdir)
         {
             LibInfix = string.Empty;
@@ -55,36 +57,51 @@ namespace QtProjectLib
             if (!fi.Exists)
                 return;
 
-            var variableDef = new Regex(@"^\s*(\w+)\s*([\+\-]?\=)(.*)");
-            try {
-                using (var reader = new StreamReader(fi.FullName)) {
-                    string line;
-                    while ((line = reader.ReadLine()) != null) {
-                        var match = variableDef.Match(line);
-                        if (!match.Success || match.Groups.Count < 4)
-                            continue;
+            var qConfig = File.ReadAllText(fi.FullName);
 
-                        var name = match.Groups[1].Value;
-                        var oper = match.Groups[2].Value;
-                        var data = match.Groups[3].Value;
-                        if (name == "CONFIG") {
-                            var values = data.Split(new char[] { ' ', '\t' },
-                                StringSplitOptions.RemoveEmptyEntries);
-                            foreach (var value in values) {
-                                if (value == "static") {
-                                    BuildType = BuildType.Static;
-                                    break;
-                                } else if (value == "shared") {
-                                    BuildType = BuildType.Shared;
-                                    break;
-                                }
+            var variableDef = new Regex(@"(\w+)\s*\{|(\})|([\w\.]+)\s*([\+\-]?\=)(.*)\n");
+            var lastBlock = string.Empty;
+            bool inBlock = false;
+            foreach (Match match in variableDef.Matches(qConfig)) {
+                var block = match.Groups[1].Value;
+                var blockEnd = match.Groups[2].Value;
+                var name = match.Groups[3].Value;
+                var oper = match.Groups[4].Value;
+                var data = match.Groups[5].Value;
+
+                if (!string.IsNullOrEmpty(block)) {
+                    inBlock = true;
+                    if (block == "else" && !string.IsNullOrEmpty(lastBlock))
+                        lastBlock = "!" + lastBlock;
+                    else
+                        lastBlock = block;
+                } else if (!string.IsNullOrEmpty(blockEnd)) {
+                    inBlock = false;
+                    if (lastBlock.StartsWith("!"))
+                        lastBlock = "";
+                } else if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(data)
+                    && (!inBlock || lastBlock == "!host_build")) {
+
+                    data = data.Replace("\r", "").Trim();
+                    if (name == "CONFIG") {
+                        var values = data.Split(new char[] { ' ', '\t' },
+                            StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var value in values) {
+                            if (value == "static") {
+                                BuildType = BuildType.Static;
+                                break;
+                            } else if (value == "shared") {
+                                BuildType = BuildType.Shared;
+                                break;
                             }
-                        } else if (name == "QT_LIBINFIX") {
-                            LibInfix = data.Trim();
                         }
+                    } else if (name == "QT_LIBINFIX") {
+                        LibInfix = data;
+                    } else if (name == "QT_ARCH") {
+                        Is64Bit = (data == "x86_64");
                     }
                 }
-            } catch { }
+            }
         }
     }
 }

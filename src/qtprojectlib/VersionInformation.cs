@@ -208,64 +208,9 @@ namespace QtProjectLib
 
         public bool is64Bit()
         {
-            var fileToCheck = Path.Combine(qtDir,
-                "bin", string.Format("Qt5Core{0}.dll", LibInfix()));
-            if (!File.Exists(fileToCheck))
-                throw new QtVSException("Can't find " + fileToCheck);
-
-            const ushort MAGIC_NUMBER_MZ = 0x5A4D;
-            const uint FILE_HEADER_OFFSET = 0x3C;
-            const uint PE_SIGNATURE = 0x4550;
-            const ushort IMAGE_FILE_MACHINE_I386 = 0x014c;
-            const ushort IMAGE_FILE_MACHINE_IA64 = 0x0200;
-            const ushort IMAGE_FILE_MACHINE_AMD64 = 0x8664;
-
-            using (var b = new BinaryReader(File.Open(fileToCheck,
-                FileMode.Open, FileAccess.Read, FileShare.Read))) {
-
-                ushort magicNumber;
-                try {
-                    magicNumber = b.ReadUInt16();
-                } catch {
-                    throw new QtVSException("Error reading PE header: magic number");
-                }
-                if (magicNumber != MAGIC_NUMBER_MZ)
-                    throw new QtVSException("Incorrect PE header format: magic number");
-
-                uint fileHeaderOffset;
-                try {
-                    b.BaseStream.Seek(FILE_HEADER_OFFSET, SeekOrigin.Begin);
-                    fileHeaderOffset = b.ReadUInt32();
-                } catch {
-                    throw new QtVSException("Error reading PE header: file header offset");
-                }
-
-                uint signature;
-                try {
-                    b.BaseStream.Seek(fileHeaderOffset, SeekOrigin.Begin);
-                    signature = b.ReadUInt32();
-                } catch {
-                    throw new QtVSException("Error reading PE header: signature");
-                }
-                if (signature != PE_SIGNATURE)
-                    throw new QtVSException("Incorrect PE header format: signature");
-
-                ushort machine;
-                try {
-                    machine = b.ReadUInt16();
-                } catch {
-                    throw new QtVSException("Error reading PE header: machine");
-                }
-                switch (machine) {
-                    case IMAGE_FILE_MACHINE_I386:
-                        return false;
-                    case IMAGE_FILE_MACHINE_IA64:
-                    case IMAGE_FILE_MACHINE_AMD64:
-                        return true;
-                    default:
-                        throw new QtVSException("Unknown executable format for " + fileToCheck);
-                }
-            }
+            if (qtConfig == null)
+                qtConfig = new QtConfig(qtDir);
+            return qtConfig.Is64Bit;
         }
 
         public bool isWinRT()
