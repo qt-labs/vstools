@@ -1423,48 +1423,24 @@ namespace QtProjectLib
 
         bool IsCppMocFileCustomBuild(VCProject vcProj, VCFile vcFile, VCFile cppFile)
         {
-            foreach (VCFileConfiguration fileConfig in (IVCCollection)vcFile.FileConfigurations) {
-                VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(fileConfig);
-                if (tool != null && !string.IsNullOrEmpty(tool.CommandLine)) {
-                    foreach (string cmdLine in tool.CommandLine.Split(
-                        new char[] { '\r', '\n' },
-                        StringSplitOptions.RemoveEmptyEntries)) {
-
-                        var matches = Regex.Matches(cmdLine,
-                            @"\s*([^\s\""]*\""[^\""]*\""[^\s\""]*|[^\s\""]*)\s*");
-                        if (matches == null || matches.Count == 0 || matches[0].Groups .Count == 1)
-                            continue;
-                        var cmd = matches[0].Groups[1].Value;
-                        if (cmd.StartsWith("\"") && cmd.EndsWith("\""))
-                            cmd = cmd.Substring(1, cmd.Length - 2);
-                        if (!HelperFunctions.ExpandString(ref cmd, fileConfig))
-                            continue;
-                        try {
-                            if (Path.GetFileName(cmd) != "moc.exe")
-                                continue;
-                        } catch {
-                            continue;
-                        }
-                        for (int i = 1; i < matches.Count; i++) {
-                            var arg = matches[i].Groups[1].Value;
-                            if (arg.StartsWith("\"") && arg.EndsWith("\""))
-                                arg = arg.Substring(1, arg.Length - 2);
-                            if (!HelperFunctions.ExpandString(ref arg, fileConfig))
-                                continue;
-                            try {
-                                if (!Path.IsPathRooted(arg))
-                                    arg = Path.Combine(vcProj.ProjectDirectory, arg);
-                                arg = Path.GetFullPath(arg);
-                            } catch {
-                                continue;
-                            }
-                            if (arg == cppFile.FullPath)
-                                return true;
-                        }
-                    }
-                }
+            var mocFilePath = vcFile.FullPath;
+            var cppFilePath = cppFile.FullPath;
+            if (Path.GetDirectoryName(mocFilePath)
+                != Path.GetDirectoryName(cppFilePath)) {
+                return false;
             }
-            return false;
+
+            if (Path.GetFileNameWithoutExtension(mocFilePath)
+                != Path.GetFileNameWithoutExtension(cppFilePath)) {
+                return false;
+            }
+
+            if (!string.Equals(Path.GetExtension(mocFilePath), ".cbt",
+                StringComparison.InvariantCultureIgnoreCase)) {
+                return false;
+            }
+
+            return true;
         }
 
         List<VCFile> GetCppMocOutputs(List<VCFile> mocFiles)
@@ -1526,19 +1502,23 @@ namespace QtProjectLib
 
         bool HasCppMocFiles(VCFile cppFile)
         {
-            var vcProj = cppFile.project as VCProject;
-            if (vcProj != null) {
-                foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
-                    if (vcFile.ItemType == "CustomBuild") {
-                        if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
-                            return true;
-                    } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                        if (IsCppMocFileQtMsBuild(vcProj, vcFile, cppFile))
-                            return true;
+            if (!IsQtMsBuildEnabled()) {
+                return File.Exists(Path.ChangeExtension(cppFile.FullPath, ".cbt"));
+            } else {
+                var vcProj = cppFile.project as VCProject;
+                if (vcProj != null) {
+                    foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
+                        if (vcFile.ItemType == "CustomBuild") {
+                            if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
+                                return true;
+                        } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
+                            if (IsCppMocFileQtMsBuild(vcProj, vcFile, cppFile))
+                                return true;
+                        }
                     }
                 }
+                return false;
             }
-            return false;
         }
 
         public void RemoveMocStep(VCFile file)

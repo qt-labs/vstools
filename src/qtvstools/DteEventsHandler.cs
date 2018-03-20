@@ -269,7 +269,8 @@ namespace QtVsTools
                 if (!qtPro.HasMocStep(file))
                     qtPro.AddMocStep(file);
             } else {
-                qtPro.RemoveMocStep(file);
+                if (qtPro.HasMocStep(file))
+                    qtPro.RemoveMocStep(file);
             }
 
             if (HelperFunctions.IsSourceFile(file.Name)) {
