@@ -3298,7 +3298,7 @@ namespace QtProjectLib
         /// <summary>
         /// Sets the Qt environment for the given Qt version.
         /// </summary>
-        public void SetQtEnvironment(string qtVersion, string solutionConfig)
+        public void SetQtEnvironment(string qtVersion, string solutionConfig, bool build = false)
         {
             if (string.IsNullOrEmpty(qtVersion))
                 return;
@@ -3334,16 +3334,19 @@ namespace QtProjectLib
                         // will be stored in the .user file before the QTDIR property, which is an
                         // error because there is a dependency. To work around this, first remove
                         // the property and then add it after QTDIR is defined.
-                        string debuggerEnv = propertyAccess.GetPropertyValue(
-                            "LocalDebuggerEnvironment", cur_solution, "UserFile");
-                        if (!string.IsNullOrEmpty(debuggerEnv)) {
-                            var debugSettings = conf.DebugSettings as VCDebugSettings;
-                            if (debugSettings != null) {
-                                //Get original value without expanded properties
-                                debuggerEnv = debugSettings.Environment;
-                            }
-                            propertyAccess.RemoveProperty(
+                        var debuggerEnv = string.Empty;
+                        if (!build) {
+                            debuggerEnv = propertyAccess.GetPropertyValue(
                                 "LocalDebuggerEnvironment", cur_solution, "UserFile");
+                            if (!string.IsNullOrEmpty(debuggerEnv)) {
+                                var debugSettings = conf.DebugSettings as VCDebugSettings;
+                                if (debugSettings != null) {
+                                    //Get original value without expanded properties
+                                    debuggerEnv = debugSettings.Environment;
+                                }
+                                propertyAccess.RemoveProperty(
+                                    "LocalDebuggerEnvironment", cur_solution, "UserFile");
+                            }
                         }
                         propertyAccess.SetPropertyValue("QTDIR", cur_solution, "UserFile", qtDir);
                         if (!string.IsNullOrEmpty(debuggerEnv))

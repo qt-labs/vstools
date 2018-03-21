@@ -233,7 +233,7 @@ namespace QtVsTools
 
             // Solution config is given to function to get QTDIR property
             // set correctly also during batch build
-            qtpro.SetQtEnvironment(qtVersion, solutionConfig);
+            qtpro.SetQtEnvironment(qtVersion, solutionConfig, true);
             if (QtVSIPSettings.GetLUpdateOnBuild(project))
                 Translation.RunlUpdate(project);
         }
