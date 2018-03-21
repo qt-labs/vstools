@@ -771,7 +771,7 @@ namespace QtProjectLib
                 QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
 
             var workFile = workFileConfig.File as VCFile;
-            var mocFileName = GetMocFileName(workFile.FullPath);
+            var mocFileName = GetMocFileName(sourceFile.FullPath);
             var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
             var vcConfig = workFileConfig.ProjectConfiguration as VCConfiguration;
             var platform = vcConfig.Platform as VCPlatform;
@@ -850,7 +850,7 @@ namespace QtProjectLib
             string description)
         {
             var workFile = workFileConfig.File as VCFile;
-            var mocFileName = GetMocFileName(workFile.FullPath);
+            var mocFileName = GetMocFileName(sourceFile.FullPath);
             var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
             var vcConfig = workFileConfig.ProjectConfiguration as VCConfiguration;
 
@@ -1057,7 +1057,7 @@ namespace QtProjectLib
             CustomTool toolSettings)
         {
             var workFile = workConfig.File as VCFile;
-            var mocFileName = GetMocFileName(workFile.FullPath);
+            var mocFileName = GetMocFileName(sourceFile.FullPath);
             var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
             var vcConfig = workConfig.ProjectConfiguration as VCConfiguration;
             var platform = vcConfig.Platform as VCPlatform;
@@ -1086,17 +1086,19 @@ namespace QtProjectLib
                     mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
                         mocRelPath);
                 }
-                if (mocFile != null)
-                    AddMocStepSetBuildExclusions(sourceFile, workConfig, mocFile);
+                if (mocFile != null) {
+                    if (mocableIsCPP)
+                        mocFile.ItemType = "None";
+                    else
+                        AddMocStepSetBuildExclusions(sourceFile, workConfig, mocFile);
+                }
             }
 
             VCFile cppPropertyFile = null;
-            if (!mocableIsCPP)
-                cppPropertyFile = GetCppFileForMocStep(sourceFile);
+            if (mocableIsCPP)
+                cppPropertyFile = sourceFile;
             else if (mocFile != null)
-                cppPropertyFile = GetCppFileForMocStep(mocFile);
-            else
-                cppPropertyFile = workFile;
+                cppPropertyFile = GetCppFileForMocStep(sourceFile);
             VCFileConfiguration defineIncludeConfig;
             if (cppPropertyFile != null) {
                 defineIncludeConfig = GetVCFileConfigurationByName(
