@@ -75,12 +75,62 @@ namespace QtVsTools
                     return WarningMessage(SR.GetString("CancelConvertingProject"));
             }
 
-            foreach (var project in projects) {
-                if (!ProjectToQtMsBuild(project, false))
+            var projectPaths = projects.Select(x => x.FullName).ToList();
+
+            string solutionPath = solution.FileName;
+            solution.Close(true);
+
+            IVsThreadedWaitDialog2 waitDialog = null;
+            var waitDialogFactory = (IVsThreadedWaitDialogFactory)Vsix
+                .GetGlobalService(typeof(SVsThreadedWaitDialogFactory));
+            if (waitDialogFactory != null)
+                waitDialogFactory.CreateInstance(out waitDialog);
+            int projCount = 0;
+            if (waitDialog != null)
+                waitDialog.StartWaitDialogWithPercentageProgress(
+                    SR.GetString("Resources_QtVsTools"),
+                    SR.GetString("ConvertWait"),
+                    null, null, null, true, 0, projectPaths.Count, 0);
+            bool canceled = false;
+            foreach (var projectPath in projectPaths) {
+                if (waitDialog != null)
+                    waitDialog.UpdateProgress(string.Format(SR.GetString("ConvertProgress"),
+                        projCount + 1, projectPaths.Count,
+                        Path.GetFileNameWithoutExtension(projectPath)),
+                        null, null, projCount, projectPaths.Count, false, out canceled);
+                if (canceled)
+                    break;
+                if (!ConvertProject(projectPath))
                     return false;
+                ++projCount;
+            }
+            if (waitDialog != null) {
+                int dummy;
+                waitDialog.EndWaitDialog(out dummy);
+            }
+            Vsix.Instance.Dte.Solution.Open(solutionPath);
+            if (canceled && projCount < projectPaths.Count) {
+                MessageBox.Show(string.Format(SR.GetString("ConvertCanceled"),
+                    projectPaths.Count - projCount), SR.GetString("Resources_QtVsTools"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             return true;
+        }
+
+        static bool ConvertProject(string pathToProject)
+        {
+            var xmlProject = MsBuildProject.Load(pathToProject);
+            bool ok = (xmlProject != null);
+            if (ok)
+                ok = xmlProject.AddQtMsBuildReferences();
+            if (ok)
+                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
+            if (ok)
+                ok = xmlProject.EnableMultiProcessorCompilation();
+            if (ok)
+                ok = xmlProject.Save();
+            return ok;
         }
 
         public static bool ProjectToQtMsBuild(EnvDTE.Project project, bool askConfirmation = true)
@@ -134,16 +184,7 @@ namespace QtVsTools
                     string.Format("{0}\r\n{1}", projectName, e.Message)));
             }
 
-            var xmlProject = MsBuildProject.Load(pathToProject);
-            bool ok = (xmlProject != null);
-            if (ok)
-                ok = xmlProject.AddQtMsBuildReferences();
-            if (ok)
-                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
-            if (ok)
-                ok = xmlProject.EnableMultiProcessorCompilation();
-            if (ok)
-                ok = xmlProject.Save();
+            bool ok = ConvertProject(pathToProject);
             try {
                 solution.ReloadProject(ref projectGuid);
             } catch (Exception e) {

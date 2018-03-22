@@ -213,6 +213,16 @@
   <data name="ConvertSaveConfirmation" xml:space="preserve">
     <value>Projects must be saved before conversion. Save projects?</value>
   </data>
+  <data name="ConvertWait" xml:space="preserve">
+    <value>Converting solution to Qt/MSBuild...</value>
+  </data>
+  <data name="ConvertProgress" xml:space="preserve">
+    <value>Converting solution to Qt/MSBuild...
+Converting project {0}/{1}: {2}...</value>
+  </data>
+  <data name="ConvertCanceled" xml:space="preserve">
+    <value>Conversion canceled. {0} projects were not converted.</value>
+  </data>
   <data name="ErrorConvertingProject" xml:space="preserve">
     <value>Error converting project {0}</value>
   </data>

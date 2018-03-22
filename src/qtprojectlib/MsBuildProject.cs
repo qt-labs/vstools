@@ -375,11 +375,12 @@ namespace QtProjectLib
         }
 
         bool RemoveGeneratedFiles(
+            string projDir,
             List<CustomBuildEval> cbEvals,
             string configName,
             string itemName,
-            IEnumerable<XElement> projectItems,
-            IEnumerable<XElement> filterItems)
+            Dictionary<string, XElement> projItemsByPath,
+            Dictionary<string, XElement> filterItemsByPath)
         {
             //remove items with generated files
             bool hasGeneratedFiles = false;
@@ -387,21 +388,21 @@ namespace QtProjectLib
                 .Where(x => x.ProjectConfig == configName && x.Identity == itemName)
                 .FirstOrDefault();
             if (cbEval != null) {
-                var outputFiles = cbEval.Outputs.Split(new char[] { ';' });
+                var outputFiles = cbEval.Outputs
+                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => HelperFunctions.CanonicalPath(
+                        Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
+                var outputItems = new List<XElement>();
                 foreach (var outputFile in outputFiles) {
-                    if (!string.IsNullOrEmpty(outputFile)) {
-                        var outputItems = new List<XElement>();
-                        outputItems.AddRange(projectItems
-                            .Where(x => HelperFunctions.PathEquals(
-                                outputFile, (string)x.Attribute("Include"))));
-                        outputItems.AddRange(filterItems
-                            .Where(x => HelperFunctions.PathEquals(
-                                outputFile, (string)x.Attribute("Include"))));
-                        hasGeneratedFiles |= outputItems.Any();
-                        foreach (var item in outputItems)
-                            item.Remove();
-                    }
+                    XElement mocOutput = null;
+                    if (projItemsByPath.TryGetValue(outputFile, out mocOutput))
+                        outputItems.Add(mocOutput);
+                    if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
+                        outputItems.Add(mocOutput);
                 }
+                hasGeneratedFiles = outputItems.Any();
+                foreach (var item in outputItems)
+                    item.Remove();
             }
             return hasGeneratedFiles;
         }
@@ -413,26 +414,32 @@ namespace QtProjectLib
             var qtMsBuild = new QtMsBuildContainer(new MsBuildConverterProvider());
             qtMsBuild.BeginSetItemProperties();
 
+            var projDir = Path.GetDirectoryName(this[Files.Project].filePath);
+
             var configurations = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
 
-            var projectItems = this[Files.Project].xml
+            var projItemsByPath = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements()
+                .Elements(ns + "ClCompile")
                 .Where(x => ((string)x.Attribute("Include"))
-                .IndexOfAny(Path.GetInvalidPathChars()) == -1);
+                .IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                .ToDictionary(x => HelperFunctions.CanonicalPath(
+                    Path.Combine(projDir, (string)x.Attribute("Include"))),
+                    StringComparer.InvariantCultureIgnoreCase);
 
-
-            var filterItems = this[Files.Filters].xml
+            var filterItemsByPath = this[Files.Filters].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements()
-                .Where(x => projectItems.Where(y =>
-                    ((string)x.Attribute("Include")).Equals((string)y.Attribute("Include"),
-                    StringComparison.InvariantCultureIgnoreCase)).Any());
+                .Elements(ns + "ClCompile")
+                .Where(x => ((string)x.Attribute("Include"))
+                .IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                .ToDictionary(x => HelperFunctions.CanonicalPath(
+                    Path.Combine(projDir, (string)x.Attribute("Include"))),
+                    StringComparer.InvariantCultureIgnoreCase);
 
             var cppIncludePaths = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -518,7 +525,8 @@ namespace QtProjectLib
 
                 //remove items with generated files
                 var hasGeneratedFiles = RemoveGeneratedFiles(
-                    cbEvals, configName, itemName, projectItems, filterItems);
+                    projDir, cbEvals, configName, itemName,
+                    projItemsByPath, filterItemsByPath);
 
                 //set properties
                 qtMsBuild.SetItemProperty(qtMoc,
@@ -559,7 +567,8 @@ namespace QtProjectLib
                 var configName = (string)qtRcc.Attribute("ConfigName");
 
                 //remove items with generated files
-                RemoveGeneratedFiles(cbEvals, configName, itemName, projectItems, filterItems);
+                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
+                    projItemsByPath, filterItemsByPath);
 
                 //set properties
                 qtMsBuild.SetItemProperty(qtRcc,
@@ -582,7 +591,8 @@ namespace QtProjectLib
                 var configName = (string)qtUic.Attribute("ConfigName");
 
                 //remove items with generated files
-                RemoveGeneratedFiles(cbEvals, configName, itemName, projectItems, filterItems);
+                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
+                    projItemsByPath, filterItemsByPath);
 
                 //set properties
                 qtMsBuild.SetItemProperty(qtUic,
