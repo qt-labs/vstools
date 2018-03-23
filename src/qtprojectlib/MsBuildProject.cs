@@ -455,7 +455,9 @@ namespace QtProjectLib
             // with a single .cpp custom build step
             var mocCbtCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName)
                 .Where(x =>
-                ((string)x.Attribute("Include")).EndsWith(".moc.cbt",
+                ((string)x.Attribute("Include")).EndsWith(".cbt",
+                StringComparison.InvariantCultureIgnoreCase)
+                || ((string)x.Attribute("Include")).EndsWith(".moc",
                 StringComparison.InvariantCultureIgnoreCase))
                 .GroupBy(cbt => CustomBuildMocInput(cbt));
 
