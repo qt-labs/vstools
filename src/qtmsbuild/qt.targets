@@ -516,4 +516,7 @@
       </ClCompile>
     </ItemGroup>
   </Target>
+  <PropertyGroup Condition="$(QtDisableFastUpToDateCheck) != 'false'">
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
 </Project>
