@@ -2,8 +2,8 @@
     error("vstools.pri already included")
 }
 QTVSTOOLS_PRI = 1
-QTVSTOOLS_VERSION = 2.2.0
-QTVSTOOLS_VERSION_TAG = 220
+QTVSTOOLS_VERSION = 2.2.1
+QTVSTOOLS_VERSION_TAG = 221
 
 defineTest(minQtVersion) {
     maj = $$1

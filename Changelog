@@ -1,3 +1,29 @@
+The Qt Visual Studio Tools version 2.2.1 contains several bug fixes.
+
+Changes
+-------
+- Fixed QTVSADDINBUG-509: Noticeable delays when saving any .cpp file in larger projects created
+  with previous versions of the Qt VS Tools
+- Fixed QTVSADDINBUG-510: Errors converting .pro files with long INCLUDEPATH definitions
+- Fixed QTVSADDINBUG-511: Incorrect usage of $(IntDir) in the definition of QtWorkFilePath
+- Fixed QTVSADDINBUG-512: PrecompiledHeaders.h include missing in moc after adding new class
+- Fixed QTVSADDINBUG-514: Quotes removed from preprocessor definition
+- Fixed QTVSADDINBUG-515: Visual Studio unresponsive while Converting custom build to Qt/MSBuild
+- Fixed QTVSADDINBUG-520: Delay when starting build in solutions with many projects/configurations
+- Fixed QTVSADDINBUG-521: Unable to use Qt version if it was built with -qtlibinfix
+- Fixed QTVSADDINBUG-522: Duplicating defines and include paths from moc in the C++ dynamic source
+- Fixed QTVSADDINBUG-523: Qt VS Tools stopped working with static builds
+- Fixed QTVSADDINBUG-530: When a file includes the generated moc output for a header file as well
+  as its own generated moc output then it will fail to build
+- Fixed QTVSADDINBUG-531: Project not being built when a .uic or .qrc file is changed
+- Fixed QTVSADDINBUG-532: Delay when continuing execution after hitting breakpoint
+- Fixed QTVSADDINBUG-533: Errors in conversion to Qt/MSBuild when using MOC_DIR or the '@' option
+- Fixed QTVSADDINBUG-534: Problems with inheritance of properties defined in property sheets.
+- Fixed QTVSADDINBUG-535: Problems with incremental build
+- Fixed QTVSADDINBUG-537: Delay after changing C++ properties in large project
+- Fixed QTVSADDINBUG-538: Incorrect escaping of paths in command line strings
+
+
 The Qt Visual Studio Tools version 2.2.0 is the first official release of the Visual Studio add-in
 for Visual Studio 2017, 2015 and 2013.
 
