@@ -102,6 +102,9 @@ namespace QtVsTools
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
+            var debugger = dte.Debugger;
+            if (debugger != null && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
+                return;
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
                 var qtProject = QtProject.Create(selectedProject);
