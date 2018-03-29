@@ -43,26 +43,6 @@
     $endif$
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  $if$ ($QtWinRT$ == true)
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-    </ClCompile>
-    <Link>
-      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
-      <GenerateManifest>false</GenerateManifest>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <TargetMachine>$Link_TargetMachine$</TargetMachine>
-    </Link>
-  </ItemDefinitionGroup>
-  $endif$
   <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
     <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
@@ -101,7 +81,41 @@
     </ItemGroup>
   </Target>
   $endif$
-  <ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      $if$ ($QtWinRT$ == true)
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      $endif$
+    </ClCompile>
+    $if$ ($QtWinRT$ == true)
+    <Link>
+      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
+      <GenerateManifest>false</GenerateManifest>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <TargetMachine>$Link_TargetMachine$</TargetMachine>
+    </Link>
+    $endif$
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      $if$ ($QtWinRT$ == true)
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      $endif$
+    </ClCompile>
+    $if$ ($QtWinRT$ == true)
+    <Link>
+      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
+      <GenerateManifest>false</GenerateManifest>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <TargetMachine>$Link_TargetMachine$</TargetMachine>
+    </Link>
+    $endif$
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
