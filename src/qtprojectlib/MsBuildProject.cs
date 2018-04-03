@@ -395,7 +395,7 @@ namespace QtProjectLib
                         outputItems.Add(mocOutput);
                 }
                 hasGeneratedFiles = outputItems.Any();
-                foreach (var item in outputItems)
+                foreach (var item in outputItems.Where(x => x.Parent != null))
                     item.Remove();
             }
             return hasGeneratedFiles;
