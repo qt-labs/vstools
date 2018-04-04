@@ -318,6 +318,9 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
     <value>Could not parse QTDIR from project file {0}.</value>
   </data>
+  <data name="ImportProject_CannotConvertProject" xml:space="preserve">
+    <value>Could not convert project file {0} to Qt/MSBuild.</value>
+  </data>
   <data name="Resources_OtherFiles" xml:space="preserve">
     <value>Other Files</value>
   </data>

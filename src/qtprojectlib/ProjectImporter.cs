@@ -216,14 +216,23 @@ namespace QtProjectLib
                 Messages.PaneMessage(dteObject, SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
             }
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
-            xmlProject.AddQtMsBuildReferences();
-            xmlProject.ConvertCustomBuildToQtMsBuild();
-            xmlProject.EnableMultiProcessorCompilation();
+
+            bool ok = xmlProject.AddQtMsBuildReferences();
+            if (ok)
+                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
+            if (ok)
+                ok = xmlProject.EnableMultiProcessorCompilation();
 #if (VS2017 || VS2015)
-            string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
-            if (!string.IsNullOrEmpty(versionWin10SDK))
-                xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
+            if (ok) {
+                string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
+                if (!string.IsNullOrEmpty(versionWin10SDK))
+                    ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
+            }
 #endif
+            if (!ok) {
+                Messages.PaneMessage(dteObject,
+                    SR.GetString("ImportProject_CannotConvertProject", projectFile.Name));
+            }
             xmlProject.Save();
         }
 
