@@ -37,6 +37,10 @@ using CommandLineOption = QtProjectLib.CommandLine.Option;
 
 namespace QtProjectLib.QtMsBuild
 {
+    public interface IVSMacroExpander
+    {
+        string ExpandString(string stringToExpand);
+    }
 
     public interface IPropertyStorageProvider
     {
@@ -427,15 +431,15 @@ namespace QtProjectLib.QtMsBuild
             string itemType,
             object propertyStorage,
             string commandLine,
-            string workingDir)
+            IVSMacroExpander macros)
         {
             switch (itemType) {
                 case QtMoc.ItemTypeName:
-                    return SetQtMocCommandLine(propertyStorage, commandLine, workingDir);
+                    return SetQtMocCommandLine(propertyStorage, commandLine, macros);
                 case QtRcc.ItemTypeName:
-                    return SetQtRccCommandLine(propertyStorage, commandLine, workingDir);
+                    return SetQtRccCommandLine(propertyStorage, commandLine, macros);
                 case QtUic.ItemTypeName:
-                    return SetQtUicCommandLine(propertyStorage, commandLine, workingDir);
+                    return SetQtUicCommandLine(propertyStorage, commandLine, macros);
             }
             return false;
         }
@@ -471,10 +475,10 @@ namespace QtProjectLib.QtMsBuild
         public bool SetQtMocCommandLine(
             object propertyStorage,
             string commandLine,
-            string workingDir)
+            IVSMacroExpander macros)
         {
             Dictionary<QtMoc.Property, string> properties;
-            if (!QtMocInstance.ParseCommandLine(commandLine, workingDir, out properties))
+            if (!QtMocInstance.ParseCommandLine(commandLine, macros, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -520,10 +524,10 @@ namespace QtProjectLib.QtMsBuild
         public bool SetQtRccCommandLine(
             object propertyStorage,
             string commandLine,
-            string workingDir)
+            IVSMacroExpander macros)
         {
             Dictionary<QtRcc.Property, string> properties;
-            if (!QtRccInstance.ParseCommandLine(commandLine, workingDir, out properties))
+            if (!QtRccInstance.ParseCommandLine(commandLine, macros, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -569,10 +573,10 @@ namespace QtProjectLib.QtMsBuild
         public bool SetQtUicCommandLine(
             object propertyStorage,
             string commandLine,
-            string workingDir)
+            IVSMacroExpander macros)
         {
             Dictionary<QtUic.Property, string> properties;
-            if (!QtUicInstance.ParseCommandLine(commandLine, workingDir, out properties))
+            if (!QtUicInstance.ParseCommandLine(commandLine, macros, out properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -613,14 +617,14 @@ namespace QtProjectLib.QtMsBuild
 
         protected bool ParseCommandLine(
             string commandLine,
-            string workingDir,
+            IVSMacroExpander macros,
             string toolExecName,
             out string qtDir,
             out string inputPath,
             out string outputPath)
         {
             qtDir = inputPath = outputPath = "";
-            if (!parser.Parse(commandLine, workingDir, toolExecName))
+            if (!parser.Parse(commandLine, macros, toolExecName))
                 return false;
 
             string execPath = parser.PositionalArguments.Where(
@@ -798,7 +802,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
-            string workingDir,
+            IVSMacroExpander macros,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -806,7 +810,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
-                workingDir,
+                macros,
                 ToolExecName,
                 out qtDir,
                 out inputPath,
@@ -1047,7 +1051,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
-            string workingDir,
+            IVSMacroExpander macros,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -1055,7 +1059,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
-                workingDir,
+                macros,
                 ToolExecName,
                 out qtDir,
                 out inputPath,
@@ -1233,7 +1237,7 @@ namespace QtProjectLib.QtMsBuild
 
         public bool ParseCommandLine(
             string commandLine,
-            string workingDir,
+            IVSMacroExpander macros,
             out Dictionary<Property, string> properties)
         {
             properties = new Dictionary<Property, string>();
@@ -1241,7 +1245,7 @@ namespace QtProjectLib.QtMsBuild
             string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
-                workingDir,
+                macros,
                 ToolExecName,
                 out qtDir,
                 out inputPath,

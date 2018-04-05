@@ -303,23 +303,31 @@ namespace QtProjectLib
                                 "'$(Configuration)|$(Platform)'=='{0}'",
                                 (string)config.Attribute("Include"))
                         select new { customBuild, itemName, config, commandLine };
-            foreach (var row in query) {
-                XElement item;
-                row.customBuild.Add(item =
-                    new XElement(ns + itemType,
-                        new XAttribute("Include", row.itemName),
-                        new XAttribute("ConfigName", (string)row.config.Attribute("Include"))));
-                var configName = (string)row.config.Element(ns + "Configuration");
-                var platformName = (string)row.config.Element(ns + "Platform");
-                var commandLine = row.commandLine
-                    .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
-                        StringComparison.InvariantCultureIgnoreCase)
-                    .Replace(configName, "$(Configuration)",
-                        StringComparison.InvariantCultureIgnoreCase)
-                    .Replace(platformName, "$(Platform)",
-                        StringComparison.InvariantCultureIgnoreCase);
-                if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, workingDir))
-                    return false;
+
+            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
+                foreach (var row in query) {
+                    XElement item;
+                    row.customBuild.Add(item =
+                        new XElement(ns + itemType,
+                            new XAttribute("Include", row.itemName),
+                            new XAttribute("ConfigName", (string)row.config.Attribute("Include"))));
+                    var configName = (string)row.config.Element(ns + "Configuration");
+                    var platformName = (string)row.config.Element(ns + "Platform");
+                    var commandLine = row.commandLine
+                        .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
+                            StringComparison.InvariantCultureIgnoreCase)
+                        .Replace(configName, "$(Configuration)",
+                            StringComparison.InvariantCultureIgnoreCase)
+                        .Replace(platformName, "$(Platform)",
+                            StringComparison.InvariantCultureIgnoreCase);
+
+                    evaluator.Properties.Clear();
+                    foreach (var configProp in row.config.Elements())
+                        evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
+
+                    if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator))
+                        return false;
+                }
             }
             return true;
         }
@@ -390,9 +398,11 @@ namespace QtProjectLib
         {
             var commandLine = (string)cbt.Element(ns + "Command");
             Dictionary<QtMoc.Property, string> properties;
-            if (!QtMsBuildContainer.QtMocInstance.ParseCommandLine(commandLine,
-                Path.GetDirectoryName(this[Files.Project].filePath), out properties)) {
-                return (string)cbt.Attribute("Include");
+            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
+                if (!QtMsBuildContainer.QtMocInstance.ParseCommandLine(
+                    commandLine, evaluator, out properties)) {
+                    return (string)cbt.Attribute("Include");
+                }
             }
             string ouputFile;
             if (!properties.TryGetValue(QtMoc.Property.InputFile, out ouputFile))
@@ -702,6 +712,98 @@ namespace QtProjectLib
             Commit();
         }
 
+        class MSBuildEvaluator : IVSMacroExpander, IDisposable
+        {
+            MsBuildXmlFile projFile;
+            string tempProjFilePath;
+            XElement evaluateTarget;
+            XElement evaluateProperty;
+            ProjectRootElement projRoot;
+            public Dictionary<string, string> expansionCache;
+
+            public Dictionary<string, string> Properties
+            {
+                get;
+                private set;
+            }
+
+            public MSBuildEvaluator(MsBuildXmlFile projFile)
+            {
+                this.projFile = projFile;
+                tempProjFilePath = string.Empty;
+                evaluateTarget = evaluateProperty = null;
+                expansionCache = new Dictionary<string, string>();
+                Properties = new Dictionary<string, string>();
+            }
+
+            public void Dispose()
+            {
+                if (evaluateTarget != null) {
+                    evaluateTarget.Remove();
+                    if (File.Exists(tempProjFilePath))
+                        File.Delete(tempProjFilePath);
+                }
+            }
+
+            string ExpansionCacheKey(string stringToExpand)
+            {
+                var key = new StringBuilder();
+                foreach (var property in Properties)
+                    key.AppendFormat("{0};{1};", property.Key, property.Value);
+                key.Append(stringToExpand);
+                return key.ToString();
+            }
+
+            bool TryExpansionCache(string stringToExpand, out string expandedString)
+            {
+                return expansionCache.TryGetValue(
+                    ExpansionCacheKey(stringToExpand), out expandedString);
+            }
+
+            void AddToExpansionCache(string stringToExpand, string expandedString)
+            {
+                expansionCache[ExpansionCacheKey(stringToExpand)] = expandedString;
+            }
+
+            public string ExpandString(string stringToExpand)
+            {
+                string expandedString;
+                if (TryExpansionCache(stringToExpand, out expandedString))
+                    return expandedString;
+
+                if (evaluateTarget == null) {
+                    projFile.xmlCommitted.Root.Add(evaluateTarget = new XElement(ns + "Target",
+                        new XAttribute("Name", "MSBuildEvaluatorTarget"),
+                        new XElement(ns + "PropertyGroup",
+                            evaluateProperty = new XElement(ns + "MSBuildEvaluatorProperty"))));
+                }
+                if (stringToExpand != (string)evaluateProperty) {
+                    evaluateProperty.SetValue(stringToExpand);
+                    if (!string.IsNullOrEmpty(tempProjFilePath) && File.Exists(tempProjFilePath))
+                        File.Delete(tempProjFilePath);
+                    tempProjFilePath = Path.Combine(
+                        Path.GetDirectoryName(projFile.filePath),
+                        Path.GetRandomFileName());
+                    if (File.Exists(tempProjFilePath))
+                        File.Delete(tempProjFilePath);
+                    projFile.xmlCommitted.Save(tempProjFilePath);
+                    projRoot = ProjectRootElement.Open(tempProjFilePath);
+                }
+                var projInst = new ProjectInstance(projRoot, Properties,
+                    null, new ProjectCollection());
+                var buildRequest = new BuildRequestData(
+                    projInst, new string[] { "MSBuildEvaluatorTarget" },
+                    null, BuildRequestDataFlags.ProvideProjectStateAfterBuild);
+                var buildResult = BuildManager.DefaultBuildManager.Build(
+                    new BuildParameters(), buildRequest);
+                expandedString = buildResult.ProjectStateAfterBuild
+                    .GetPropertyValue("MSBuildEvaluatorProperty");
+
+                AddToExpansionCache(stringToExpand, expandedString);
+                return expandedString;
+            }
+        }
+
         class CustomBuildEval
         {
             public string ProjectConfig { get; set; }
@@ -715,24 +817,6 @@ namespace QtProjectLib
         List<CustomBuildEval> EvaluateCustomBuild()
         {
             var eval = new List<CustomBuildEval>();
-            var evaluateTarget = new XElement(ns + "Target",
-                new XAttribute("Name", "EvaluateCustomBuild"),
-                new XElement(ns + "PropertyGroup",
-                    new XElement(ns + "CustomBuildEval", "@(CustomBuild->'" +
-                    "{%(Identity)}" +
-                    "{%(AdditionalInputs)}" +
-                    "{%(Outputs)}" +
-                    "{%(Message)}" +
-                    "{%(Command)}')")));
-            this[Files.Project].xml.Root.Add(evaluateTarget);
-
-            var tempProjFile = Path.Combine(
-                Path.GetDirectoryName(this[Files.Project].filePath),
-                Path.GetRandomFileName());
-            if (File.Exists(tempProjFile))
-                File.Delete(tempProjFile);
-            this[Files.Project].xml.Save(tempProjFile);
-            var projRoot = ProjectRootElement.Open(tempProjFile);
 
             var pattern = new Regex(@"{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}");
 
@@ -740,34 +824,37 @@ namespace QtProjectLib
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
-            foreach (var projConfig in projConfigs) {
-                string configName = (string)projConfig.Attribute("Include");
-                var properties = new Dictionary<string, string>();
-                foreach (var configProp in projConfig.Elements())
-                    properties.Add(configProp.Name.LocalName, (string)configProp);
-                var projInst = new ProjectInstance(projRoot, properties,
-                    null, new ProjectCollection());
-                var buildRequest = new BuildRequestData(
-                    projInst, new string[] { "EvaluateCustomBuild" },
-                    null, BuildRequestDataFlags.ProvideProjectStateAfterBuild);
-                var buildResult = BuildManager.DefaultBuildManager.Build(
-                    new BuildParameters(), buildRequest);
-                string customBuildEval = buildResult.ProjectStateAfterBuild
-                    .GetPropertyValue("CustomBuildEval");
-                foreach (Match cbEval in pattern.Matches(customBuildEval)) {
-                    eval.Add(new CustomBuildEval {
-                        ProjectConfig = configName,
-                        Identity = cbEval.Groups[1].Value,
-                        AdditionalInputs = cbEval.Groups[2].Value,
-                        Outputs = cbEval.Groups[3].Value,
-                        Message = cbEval.Groups[4].Value,
-                        Command = cbEval.Groups[5].Value,
-                    });
+
+            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
+
+                foreach (var projConfig in projConfigs) {
+
+                    evaluator.Properties.Clear();
+                    foreach (var configProp in projConfig.Elements())
+                        evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
+
+                    var expandedValue = evaluator.ExpandString(
+                        "@(CustomBuild->'" +
+                            "{%(Identity)}" +
+                            "{%(AdditionalInputs)}" +
+                            "{%(Outputs)}" +
+                            "{%(Message)}" +
+                            "{%(Command)}')");
+
+                    foreach (Match cbEval in pattern.Matches(expandedValue)) {
+                        eval.Add(new CustomBuildEval
+                        {
+                            ProjectConfig = (string)projConfig.Attribute("Include"),
+                            Identity = cbEval.Groups[1].Value,
+                            AdditionalInputs = cbEval.Groups[2].Value,
+                            Outputs = cbEval.Groups[3].Value,
+                            Message = cbEval.Groups[4].Value,
+                            Command = cbEval.Groups[5].Value,
+                        });
+                    }
                 }
             }
 
-            evaluateTarget.Remove();
-            File.Delete(tempProjFile);
             return eval;
         }
 

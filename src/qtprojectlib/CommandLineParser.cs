@@ -36,6 +36,8 @@ using System.IO;
 
 namespace QtProjectLib.CommandLine
 {
+    using IVSMacroExpander = QtMsBuild.IVSMacroExpander;
+
     public class Parser
     {
 
@@ -235,7 +237,7 @@ namespace QtProjectLib.CommandLine
                 Trace.TraceWarning("CommandLineParser: Parse() before {0}", method);
         }
 
-        List<string> TokenizeArgs(string commandLine, string workingDir, string execName = "")
+        List<string> TokenizeArgs(string commandLine, IVSMacroExpander macros, string execName = "")
         {
             List<string> arguments = new List<string>();
             StringBuilder arg = new StringBuilder();
@@ -263,12 +265,14 @@ namespace QtProjectLib.CommandLine
                         var argData = arg.ToString();
                         arg.Clear();
                         if (argData.StartsWith("@")) {
+                            var workingDir = macros.ExpandString("$(MSBuildProjectDirectory)");
+                            var optFilePath = macros.ExpandString(argData.Substring(1));
                             string[] additionalArgs = File.ReadAllLines(
-                                Path.Combine(workingDir, argData.Substring(1)));
+                                Path.Combine(workingDir, optFilePath));
                             if (additionalArgs != null) {
                                 var additionalArgsString = string.Join(" ", additionalArgs
                                     .Select(x => "\"" + x.Replace("\"", "\\\"") + "\""));
-                                arguments.AddRange(TokenizeArgs(additionalArgsString, workingDir));
+                                arguments.AddRange(TokenizeArgs(additionalArgsString, macros));
                             }
                         } else {
                             arguments.Add(argData);
@@ -281,11 +285,11 @@ namespace QtProjectLib.CommandLine
             return arguments;
         }
 
-        public bool Parse(string commandLine, string workingDir, string execName)
+        public bool Parse(string commandLine, IVSMacroExpander macros, string execName)
         {
             List<string> args = null;
             try {
-                args = TokenizeArgs(commandLine, workingDir, execName);
+                args = TokenizeArgs(commandLine, macros, execName);
             } catch {
                 return false;
             }

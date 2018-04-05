@@ -1048,7 +1048,8 @@ namespace QtProjectLib
             qtMsBuild.SetItemProperty(workConfig,
                 QtMoc.Property.ExecutionDescription, description);
             qtMsBuild.SetQtMocCommandLine(workConfig,
-                QtMoc.ToolExecName + " " + defines + " " + includes, ProjectDir);
+                QtMoc.ToolExecName + " " + defines + " " + includes,
+                new VCMacroExpander(workConfig));
         }
 
         void AddMocStepToConfiguration(
@@ -2692,7 +2693,7 @@ namespace QtProjectLib
                             tool.CommandLine = newCmdLine;
                         } else {
                             qtMsBuild.SetQtMocCommandLine(
-                                customBuildConfig, newCmdLine, ProjectDir);
+                                customBuildConfig, newCmdLine, new VCMacroExpander(config));
                         }
                     }
                 } catch {
@@ -3570,13 +3571,29 @@ namespace QtProjectLib
 
     }
 
+    public class VCMacroExpander : IVSMacroExpander
+    {
+        object config;
+
+        public VCMacroExpander(object config)
+        {
+            this.config = config;
+        }
+
+        public string ExpandString(string stringToExpand)
+        {
+            HelperFunctions.ExpandString(ref stringToExpand, config);
+            return stringToExpand;
+        }
+    }
+
     public class QtCustomBuildTool
     {
         QtMsBuildContainer qtMsBuild;
         VCFileConfiguration vcConfig;
         VCFile vcFile;
         VCCustomBuildTool tool;
-        string workingDir = "";
+        VCMacroExpander macros;
 
         enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtUic };
         FileItemType itemType = FileItemType.Other;
@@ -3601,16 +3618,7 @@ namespace QtProjectLib
             }
             if (itemType == FileItemType.CustomBuild)
                 tool = HelperFunctions.GetCustomBuildTool(vcConfig);
-            if (vcConfig != null) {
-                var vcProjConfig = vcConfig.ProjectConfiguration as VCConfiguration;
-                if (vcProjConfig != null) {
-                    var vcProject = vcProjConfig.project as VCProject;
-                    if (vcProject != null)
-                        workingDir = vcProject.ProjectDirectory;
-                }
-            }
-            if (string.IsNullOrEmpty(workingDir))
-                throw new QtVSException("Error accessing project directory");
+            macros = new VCMacroExpander(vcConfig);
         }
 
         public string CommandLine
@@ -3637,13 +3645,13 @@ namespace QtProjectLib
                             tool.CommandLine = value;
                         break;
                     case FileItemType.QtMoc:
-                        qtMsBuild.SetQtMocCommandLine(vcConfig, value, workingDir);
+                        qtMsBuild.SetQtMocCommandLine(vcConfig, value, macros);
                         break;
                     case FileItemType.QtRcc:
-                        qtMsBuild.SetQtRccCommandLine(vcConfig, value, workingDir);
+                        qtMsBuild.SetQtRccCommandLine(vcConfig, value, macros);
                         break;
                     case FileItemType.QtUic:
-                        qtMsBuild.SetQtUicCommandLine(vcConfig, value, workingDir);
+                        qtMsBuild.SetQtUicCommandLine(vcConfig, value, macros);
                         break;
                 }
             }
