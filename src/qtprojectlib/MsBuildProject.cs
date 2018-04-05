@@ -48,6 +48,8 @@ namespace QtProjectLib
             public string filePath = "";
             public XDocument xml = null;
             public bool isDirty = false;
+            public XDocument xmlCommitted = null;
+            public bool isCommittedDirty = false;
         }
 
         enum Files
@@ -120,6 +122,7 @@ namespace QtProjectLib
             } catch (Exception) {
                 return false;
             }
+            xmlFile.xmlCommitted = new XDocument(xmlFile.xml);
             return true;
         }
 
@@ -128,10 +131,33 @@ namespace QtProjectLib
             foreach (var file in files) {
                 if (file.isDirty) {
                     file.xml.Save(file.filePath, SaveOptions.None);
-                    file.isDirty = false;
+                    file.isCommittedDirty = file.isDirty = false;
                 }
             }
             return true;
+        }
+
+        void Commit()
+        {
+            foreach (var file in files.Where(x => x.xml != null)) {
+                if (file.isDirty) {
+                    //file was modified: sync committed copy
+                    file.xmlCommitted = new XDocument(file.xml);
+                    file.isCommittedDirty = true;
+                } else {
+                    //fail-safe: ensure non-dirty files are in sync with committed copy
+                    file.xml = new XDocument(file.xmlCommitted);
+                    file.isDirty = file.isCommittedDirty;
+                }
+            }
+        }
+
+        void Rollback()
+        {
+            foreach (var file in files.Where(x => x.xml != null)) {
+                file.xml = new XDocument(file.xmlCommitted);
+                file.isDirty = file.isCommittedDirty;
+            }
         }
 
         public string GetProperty(string property_name)
@@ -170,6 +196,8 @@ namespace QtProjectLib
             foreach (var xClCompileDef in xClCompileDefs)
                 xClCompileDef.Add(new XElement(ns + "MultiProcessorCompilation", "true"));
 
+            this[Files.Project].isDirty = true;
+            Commit();
             return true;
         }
 
@@ -186,6 +214,9 @@ namespace QtProjectLib
                 return true;
             xGlobals.Add(
                 new XElement(ns + "WindowsTargetPlatformVersion", winSDKVersion));
+
+            this[Files.Project].isDirty = true;
+            Commit();
             return true;
         }
 
@@ -251,6 +282,7 @@ namespace QtProjectLib
                         new XAttribute("Project", @"$(QtMsBuild)\qt.targets"))));
 
             this[Files.Project].isDirty = true;
+            Commit();
             return true;
         }
 
@@ -512,6 +544,7 @@ namespace QtProjectLib
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds, QtMoc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Rollback();
                 return false;
             }
             List<XElement> mocDisableDynamicSource = new List<XElement>();
@@ -556,6 +589,7 @@ namespace QtProjectLib
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds, QtRcc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Rollback();
                 return false;
             }
             foreach (var qtRcc in rccCustomBuilds.Elements(ns + QtRcc.ItemTypeName)) {
@@ -580,6 +614,7 @@ namespace QtProjectLib
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds, QtUic.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Rollback();
                 return false;
             }
             foreach (var qtUic in uicCustomBuilds.Elements(ns + QtUic.ItemTypeName)) {
@@ -613,6 +648,8 @@ namespace QtProjectLib
             FinalizeProjectChanges(rccCustomBuilds.ToList(), QtRcc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds.ToList(), QtUic.ItemTypeName);
 
+            this[Files.Project].isDirty = this[Files.Filters].isDirty = true;
+            Commit();
             return true;
         }
 
@@ -661,6 +698,8 @@ namespace QtProjectLib
                 foreach (var xAttr in xElem.Attributes())
                     ReplaceText(xAttr, findWhat, newPath);
             }
+            this[Files.Project].isDirty = true;
+            Commit();
         }
 
         class CustomBuildEval
