@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <QtWorkFilePath Condition="'$(QtWorkFilePath)' == ''">$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt.txt))</QtWorkFilePath>
+    <QtLogFilePath Condition="'$(QtLogFilePath)' == ''">$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt.log))</QtLogFilePath>
     <QtMaxProcs Condition="'$(QtMaxProcs)' == ''">$([System.Environment]::ProcessorCount)</QtMaxProcs>
     <QtDebug Condition="'$(QtDebug)' == ''">false</QtDebug>
   </PropertyGroup>
@@ -12,6 +13,15 @@
     <Delete Condition="'$(SelectedFiles)' == '%(QtMoc.Identity)'" Files="%(QtMoc.OutputFile)" />
     <Delete Condition="'$(SelectedFiles)' == '%(QtRcc.Identity)'" Files="%(QtRcc.OutputFile)" />
     <Delete Condition="'$(SelectedFiles)' == '%(QtUic.Identity)'" Files="%(QtUic.OutputFile)" />
+    <ReadLinesFromFile File="$(QtLogFilePath)">
+      <Output TaskParameter="Lines" ItemName="QtLogData"/>
+    </ReadLinesFromFile>
+    <ItemGroup Condition="'@(QtLogData)' != ''">
+      <QtLog
+        Include="@(QtLogData->'$([System.String]::Copy('%(QtLogData.Identity)').Split('|')[0])')">
+        <Options>$([System.String]::Copy('%(QtLogData.Identity)').Split('|')[1])</Options>
+      </QtLog>
+    </ItemGroup>
   </Target>
   <ItemGroup>
     <PropertyPageSchema
@@ -21,13 +31,31 @@
     </AvailableItemName>
   </ItemGroup>
   <Target
+    Name="QtMocCheckInput"
+    Condition="'@(QtMoc)' != ''"
+    Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies)"
+    Outputs="@(QtMoc-&gt;'%(OutputFile)')"
+    DependsOnTargets="QtPrepare">
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtMocInputOutdated" />
+    </CreateProperty>
+    <PropertyGroup>
+      <QtMocIdentity>%(QtMoc.Identity)</QtMocIdentity>
+    </PropertyGroup>
+    <ItemGroup Condition="'@(QtMoc)' != ''">
+      <QtMoc Condition="'%(QtMoc.Identity)'=='$(QtMocIdentity)'">
+        <InputOutdated>$(QtMocInputOutdated)</InputOutdated>
+      </QtMoc>
+    </ItemGroup>
+  </Target>
+  <Target
     Name="QtMoc"
     BeforeTargets="$(QtMocBeforeTargets)"
     AfterTargets="$(QtMocAfterTargets)"
     Condition="'@(QtMoc)' != ''"
     Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtMoc-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtMocDependsOn);QtPrepare">
+    DependsOnTargets="$(QtMocDependsOn);QtMocCheckInput">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMoc @(QtMoc)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtMoc Remove="@(QtMoc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -94,23 +122,51 @@
       <QtMocOptions Condition="'@(QtMoc_NoWarnings)' == 'true'">$(QtMocOptions);--no-warnings</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_IgnoreConflicts)' == 'true'">$(QtMocOptions);--ignore-option-clashes</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_OptionsFile)' != ''">$(QtMocOptions);@(QtMoc_OptionsFile->'&quot;@%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions>$(QtMocOptions.Replace(';',' ').Trim())</QtMocOptions>
+      <QtMocInputOutdated Condition="'@(SelectedFiles)' == ''">%(QtMoc.InputOutdated)</QtMocInputOutdated>
+      <QtMocInputOutdated Condition="'@(SelectedFiles)' != ''">true</QtMocInputOutdated>
+    </PropertyGroup>
+    <FindInList Condition="'$(QtMocInputOutdated)' != 'true'"
+      CaseSensitive="false" List="@(QtLog)" ItemSpecToFind="%(QtMoc.Identity)">
+      <Output TaskParameter="ItemFound" ItemName="QtMocLogEntry"/>
+    </FindInList>
+    <PropertyGroup Condition="'@(QtMocLogEntry)' != ''">
+      <QtMocLogOptions>%(QtMocLogEntry.Options)</QtMocLogOptions>
+    </PropertyGroup>
+    <PropertyGroup>
+      <QtMocOutdated Condition="'$(QtMocInputOutdated)' == 'true' or ('$(QtMocLogOptions)' != '' and '$(QtMocOptions)' != '$(QtMocLogOptions)')">true</QtMocOutdated>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(QtMocOutdated)' == 'true'">
+      <QtLog Remove="%(QtMoc.Identity)"/>
+      <QtLog Include="%(QtMoc.Identity)">
+        <Options>$(QtMocOptions)</Options>
+      </QtLog>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtMocRunParallel Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == '' and '$(QtMocOutdated)' == 'true'">true</QtMocRunParallel>
+      <QtMocRunSingle Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '') and '$(QtMocOutdated)' == 'true'">true</QtMocRunSingle>
     </PropertyGroup>
     <QtWork
-      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      Condition="'$(QtMocRunParallel)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtMoc.ExecutionDescription)"
       ExecPath="%(QtMoc.QTDIR)\bin\moc.exe"
-      ExecArguments="$(QtMocOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtMocOptions)"
       ParallelProcess="true"
       QtDebug="$(QtDebug)"/>
     <QtWork
-      Condition="'@(QtMoc)' != '' and '%(QtMoc.ExcludedFromBuild)' != 'true' and ('%(QtMoc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Condition="'$(QtMocRunSingle)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtMoc.ExecutionDescription)"
       ExecPath="%(QtMoc.QTDIR)\bin\moc.exe"
-      ExecArguments="$(QtMocOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtMocOptions)"
       ParallelProcess="false"
       QtDebug="$(QtDebug)"/>
+    <WriteLinesToFile
+      Condition="'$(QtMocRunSingle)' == 'true'"
+      File="$(QtLogFilePath)"
+      Lines="@(QtLog->'%(Identity)|%(Options)')"
+      Overwrite="true"/>
   </Target>
   <Target Name="QtMocPrep" BeforeTargets="QtMoc" Condition="'@(QtMoc)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMocPrep @(QtMoc)" />
@@ -128,13 +184,31 @@
     </AvailableItemName>
   </ItemGroup>
   <Target
+    Name="QtRccCheckInput"
+    Condition="'@(QtRcc)' != ''"
+    Inputs="%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies)"
+    Outputs="@(QtRcc-&gt;'%(OutputFile)')"
+    DependsOnTargets="QtMoc">
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtRccInputOutdated" />
+    </CreateProperty>
+    <PropertyGroup>
+      <QtRccIdentity>%(QtRcc.Identity)</QtRccIdentity>
+    </PropertyGroup>
+    <ItemGroup Condition="'@(QtRcc)' != ''">
+      <QtRcc Condition="'%(QtRcc.Identity)'=='$(QtRccIdentity)'">
+        <InputOutdated>$(QtRccInputOutdated)</InputOutdated>
+      </QtRcc>
+    </ItemGroup>
+  </Target>
+  <Target
     Name="QtRcc"
     BeforeTargets="$(QtRccBeforeTargets)"
     AfterTargets="$(QtRccAfterTargets)"
     Condition="'@(QtRcc)' != ''"
     Inputs="%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtRcc-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtRccDependsOn);QtMoc">
+    DependsOnTargets="$(QtRccDependsOn);QtRccCheckInput">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRcc @(QtRcc)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtRcc Remove="@(QtRcc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -195,23 +269,52 @@
       <QtRccOptions Condition="'@(QtRcc_List)' == 'true'">$(QtRccOptions);--list</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_Project)' == 'true'">$(QtRccOptions);--project</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_FormatVersion)' != ''">$(QtRccOptions);@(QtRcc_FormatVersion->'--format-version %(Identity)')</QtRccOptions>
+      <QtRccOptions>$(QtRccOptions.Replace(';',' ').Trim())</QtRccOptions>
+      <QtRccInputOutdated>%(QtRcc.InputOutdated)</QtRccInputOutdated>
+      <QtRccInputOutdated Condition="'@(SelectedFiles)' == ''">%(QtRcc.InputOutdated)</QtRccInputOutdated>
+      <QtRccInputOutdated Condition="'@(SelectedFiles)' != ''">true</QtRccInputOutdated>
+    </PropertyGroup>
+    <FindInList Condition="'$(QtRccInputOutdated)' != 'true'"
+      CaseSensitive="false" List="@(QtLog)" ItemSpecToFind="%(QtRcc.Identity)">
+      <Output TaskParameter="ItemFound" ItemName="QtRccLogEntry"/>
+    </FindInList>
+    <PropertyGroup Condition="'@(QtRccLogEntry)' != ''">
+      <QtRccLogOptions>%(QtRccLogEntry.Options)</QtRccLogOptions>
+    </PropertyGroup>
+    <PropertyGroup>
+      <QtRccOutdated Condition="'$(QtRccInputOutdated)' == 'true' OR ('$(QtRccLogOptions)' != '' AND '$(QtRccOptions)' != '$(QtRccLogOptions)')">true</QtRccOutdated>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(QtRccOutdated)' == 'true'">
+      <QtLog Remove="%(QtRcc.Identity)"/>
+      <QtLog Include="%(QtRcc.Identity)">
+        <Options>$(QtRccOptions)</Options>
+      </QtLog>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtRccRunParallel Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == '' and '$(QtRccOutdated)' == 'true'">true</QtRccRunParallel>
+      <QtRccRunSingle Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '') and '$(QtRccOutdated)' == 'true'">true</QtRccRunSingle>
     </PropertyGroup>
     <QtWork
-      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      Condition="'$(QtRccRunParallel)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtRcc.ExecutionDescription)"
       ExecPath="%(QtRcc.QTDIR)\bin\rcc.exe"
-      ExecArguments="$(QtRccOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtRccOptions)"
       ParallelProcess="true"
       QtDebug="$(QtDebug)"/>
     <QtWork
-      Condition="'@(QtRcc)' != '' and '%(QtRcc.ExcludedFromBuild)' != 'true' and ('%(QtRcc.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Condition="'$(QtRccRunSingle)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtRcc.ExecutionDescription)"
       ExecPath="%(QtRcc.QTDIR)\bin\rcc.exe"
-      ExecArguments="$(QtRccOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtRccOptions)"
       ParallelProcess="false"
       QtDebug="$(QtDebug)"/>
+    <WriteLinesToFile
+      Condition="'$(QtRccRunSingle)' == 'true'"
+      File="$(QtLogFilePath)"
+      Lines="@(QtLog->'%(Identity)|%(Options)')"
+      Overwrite="true"/>
   </Target>
   <Target Name="QtRccPrep" BeforeTargets="QtRcc" Condition="'@(QtRcc)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRccPrep @(QtRcc)" />
@@ -229,13 +332,31 @@
     </AvailableItemName>
   </ItemGroup>
   <Target
+    Name="QtUicCheckInput"
+    Condition="'@(QtUic)' != ''"
+    Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies)"
+    Outputs="@(QtUic-&gt;'%(OutputFile)')"
+    DependsOnTargets="QtRcc">
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtUicInputOutdated" />
+    </CreateProperty>
+    <PropertyGroup>
+      <QtUicIdentity>%(QtUic.Identity)</QtUicIdentity>
+    </PropertyGroup>
+    <ItemGroup Condition="'@(QtUic)' != ''">
+      <QtUic Condition="'%(QtUic.Identity)'=='$(QtUicIdentity)'">
+        <InputOutdated>$(QtUicInputOutdated)</InputOutdated>
+      </QtUic>
+    </ItemGroup>
+  </Target>
+  <Target
     Name="QtUic"
     BeforeTargets="$(QtUicBeforeTargets)"
     AfterTargets="$(QtUicAfterTargets)"
     Condition="'@(QtUic)' != ''"
     Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtUic-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtUicDependsOn);QtRcc">
+    DependsOnTargets="$(QtUicDependsOn);QtUicCheckInput">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUic @(QtUic)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtUic Remove="@(QtUic)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -278,23 +399,52 @@
       <QtUicOptions Condition="'@(QtUic_Include)' != ''">$(QtUicOptions);@(QtUic_Include->'--include &quot;%(Identity)&quot;')</QtUicOptions>
       <QtUicOptions Condition="'@(QtUic_Generator)' != ''">$(QtUicOptions);@(QtUic_Generator->'-g %(Identity)')</QtUicOptions>
       <QtUicOptions Condition="'@(QtUic_IdBased)' == 'true'">$(QtUicOptions);--idbased</QtUicOptions>
+      <QtUicOptions>$(QtUicOptions.Replace(';',' ').Trim())</QtUicOptions>
+      <QtUicInputOutdated>%(QtUic.InputOutdated)</QtUicInputOutdated>
+      <QtUicInputOutdated Condition="'@(SelectedFiles)' == ''">%(QtUic.InputOutdated)</QtUicInputOutdated>
+      <QtUicInputOutdated Condition="'@(SelectedFiles)' != ''">true</QtUicInputOutdated>
+    </PropertyGroup>
+    <FindInList Condition="'$(QtUicInputOutdated)' != 'true'"
+      CaseSensitive="false" List="@(QtLog)" ItemSpecToFind="%(QtUic.Identity)">
+      <Output TaskParameter="ItemFound" ItemName="QtUicLogEntry"/>
+    </FindInList>
+    <PropertyGroup Condition="'@(QtUicLogEntry)' != ''">
+      <QtUicLogOptions>%(QtUicLogEntry.Options)</QtUicLogOptions>
+    </PropertyGroup>
+    <PropertyGroup>
+      <QtUicOutdated Condition="'$(QtUicInputOutdated)' == 'true' OR ('$(QtUicLogOptions)' != '' AND '$(QtUicOptions)' != '$(QtUicLogOptions)')">true</QtUicOutdated>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(QtUicOutdated)' == 'true'">
+      <QtLog Remove="%(QtUic.Identity)"/>
+      <QtLog Include="%(QtUic.Identity)">
+        <Options>$(QtUicOptions)</Options>
+      </QtLog>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtUicRunParallel Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.ParallelProcess)' == 'true' and '@(SelectedFiles)' == '' and '$(QtUicOutdated)' == 'true'">true</QtUicRunParallel>
+      <QtUicRunSingle Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '') and '$(QtUicOutdated)' == 'true'">true</QtUicRunSingle>
     </PropertyGroup>
     <QtWork
-      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.ParallelProcess)' == 'true' and '@(SelectedFiles)' == ''"
+      Condition="'$(QtUicRunParallel)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtUic.ExecutionDescription)"
       ExecPath="%(QtUic.QTDIR)\bin\uic.exe"
-      ExecArguments="$(QtUicOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtUicOptions)"
       ParallelProcess="true"
       QtDebug="$(QtDebug)"/>
     <QtWork
-      Condition="'@(QtUic)' != '' and '%(QtUic.ExcludedFromBuild)' != 'true' and ('%(QtUic.ParallelProcess)' != 'true' or '@(SelectedFiles)' != '')"
+      Condition="'$(QtUicRunSingle)' == 'true'"
       WorkFilePath="$(QtWorkFilePath)"
       ExecDescription="%(QtUic.ExecutionDescription)"
       ExecPath="%(QtUic.QTDIR)\bin\uic.exe"
-      ExecArguments="$(QtUicOptions.Replace(';',' ').Trim())"
+      ExecArguments="$(QtUicOptions)"
       ParallelProcess="false"
       QtDebug="$(QtDebug)"/>
+    <WriteLinesToFile
+      Condition="'$(QtUicRunSingle)' == 'true'"
+      File="$(QtLogFilePath)"
+      Lines="@(QtLog->'%(Identity)|%(Options)')"
+      Overwrite="true"/>
   </Target>
   <Target Name="QtUicPrep" BeforeTargets="QtUic" Condition="'@(QtUic)' != ''">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUicPrep @(QtUic)" />
@@ -474,6 +624,10 @@
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtFinalize" />
     <QtFinalize WorkFilePath="$(QtWorkFilePath)" MaxProcs="$(QtMaxProcs)" QtDebug="$(QtDebug)"/>
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="# END Qt" />
+    <WriteLinesToFile
+      File="$(QtLogFilePath)"
+      Lines="@(QtLog->'%(Identity)|%(Options)')"
+      Overwrite="true"/>
   </Target>
   <Target Name="QtDebug">
     <PropertyGroup>
@@ -494,6 +648,8 @@
   <Target Name="QtClean">
     <Delete
       Files="@(QtMoc->'%(OutputFile)');@(QtRcc->'%(OutputFile)');@(QtUic->'%(OutputFile)')" />
+    <Delete
+      Files="$(QtWorkFilePath);$(QtLogFilePath)"/>
   </Target>
   <Target Name="QtDynamicSources">
     <ItemGroup>
