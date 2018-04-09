@@ -1,15 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <QtWorkFilePath Condition="'$(QtWorkFilePath)' == ''">$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt.txt))</QtWorkFilePath>
+    <QtMaxProcs Condition="'$(QtMaxProcs)' == ''">$([System.Environment]::ProcessorCount)</QtMaxProcs>
+    <QtDebug Condition="'$(QtDebug)' == ''">false</QtDebug>
+  </PropertyGroup>
   <Target Name="QtPrepare" AfterTargets="CustomBuild" BeforeTargets="ClCompile">
-    <PropertyGroup Condition="'$(QtDebug)' == ''">
-      <QtDebug>false</QtDebug>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(QtWorkFilePath)' == ''">
-      <QtWorkFilePath>$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt.txt))</QtWorkFilePath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(QtMaxProcs)' == ''">
-      <QtMaxProcs>$([System.Environment]::ProcessorCount)</QtMaxProcs>
-    </PropertyGroup>
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="# BEGIN Qt" />
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtPrepare" />
     <Delete Files="$(QtWorkFilePath)"/>
