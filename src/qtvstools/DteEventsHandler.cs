@@ -598,7 +598,17 @@ namespace QtVsTools
                     || dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories
                     || dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
                     var qtPrj = QtProject.Create(vcPrj);
-                    qtPrj.RefreshMocSteps();
+                    if (qtPrj.IsQtMsBuildEnabled()
+                        && dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories) {
+                        qtPrj.RefreshQtMocIncludePath();
+
+                    } else if (qtPrj.IsQtMsBuildEnabled()
+                        && dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
+                        qtPrj.RefreshQtMocDefine();
+
+                    } else {
+                        qtPrj.RefreshMocSteps();
+                    }
                 }
             } else {
                 // A file specific property has changed.

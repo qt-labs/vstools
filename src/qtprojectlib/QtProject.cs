@@ -2542,6 +2542,30 @@ namespace QtProjectLib
             return null;
         }
 
+        public void RefreshQtMocIncludePath()
+        {
+            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
+                var propsClCompile = config.Rules.Item("CL") as IVCRulePropertyStorage;
+                var propsQtMoc = config.Rules.Item(QtMoc.ItemTypeName) as IVCRulePropertyStorage;
+                if (propsClCompile == null || propsQtMoc == null)
+                    continue;
+                propsQtMoc.SetPropertyValue(QtMoc.Property.IncludePath.ToString(),
+                    propsClCompile.GetUnevaluatedPropertyValue("AdditionalIncludeDirectories"));
+            }
+        }
+
+        public void RefreshQtMocDefine()
+        {
+            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
+                var propsClCompile = config.Rules.Item("CL") as IVCRulePropertyStorage;
+                var propsQtMoc = config.Rules.Item(QtMoc.ItemTypeName) as IVCRulePropertyStorage;
+                if (propsClCompile == null || propsQtMoc == null)
+                    continue;
+                propsQtMoc.SetPropertyValue(QtMoc.Property.Define.ToString(),
+                    propsClCompile.GetUnevaluatedPropertyValue("PreprocessorDefinitions"));
+            }
+        }
+
         public void RefreshMocSteps()
         {
             qtMsBuild.BeginSetItemProperties();
