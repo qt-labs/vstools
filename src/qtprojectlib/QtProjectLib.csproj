@@ -88,6 +88,7 @@
     <Compile Include="Statics.cs" />
     <Compile Include="TemplateType.cs" />
     <Compile Include="VersionInformation.cs" />
+    <Compile Include="WaitDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExportProjectDialog.resx">

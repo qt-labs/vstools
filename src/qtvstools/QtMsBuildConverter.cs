@@ -80,34 +80,30 @@ namespace QtVsTools
             string solutionPath = solution.FileName;
             solution.Close(true);
 
-            IVsThreadedWaitDialog2 waitDialog = null;
-            var waitDialogFactory = (IVsThreadedWaitDialogFactory)Vsix
-                .GetGlobalService(typeof(SVsThreadedWaitDialogFactory));
-            if (waitDialogFactory != null)
-                waitDialogFactory.CreateInstance(out waitDialog);
-            int projCount = 0;
-            if (waitDialog != null)
-                waitDialog.StartWaitDialogWithPercentageProgress(
+            var waitDialog = WaitDialog.StartWithProgress(
                     SR.GetString("Resources_QtVsTools"),
                     SR.GetString("ConvertWait"),
-                    null, null, null, true, 0, projectPaths.Count, 0);
+                    null, null, 0, true, projectPaths.Count, 0);
+
+            int projCount = 0;
             bool canceled = false;
             foreach (var projectPath in projectPaths) {
-                if (waitDialog != null)
-                    waitDialog.UpdateProgress(string.Format(SR.GetString("ConvertProgress"),
+                if (waitDialog != null) {
+                    waitDialog.Update(string.Format(SR.GetString("ConvertProgress"),
                         projCount + 1, projectPaths.Count,
                         Path.GetFileNameWithoutExtension(projectPath)),
-                        null, null, projCount, projectPaths.Count, false, out canceled);
-                if (canceled)
-                    break;
+                        null, null, projCount, projectPaths.Count, false);
+                    if (waitDialog.Canceled)
+                        break;
+                }
                 if (!ConvertProject(projectPath))
                     return false;
                 ++projCount;
             }
-            if (waitDialog != null) {
-                int dummy;
-                waitDialog.EndWaitDialog(out dummy);
-            }
+
+            if (waitDialog != null)
+                waitDialog.Stop();
+
             Vsix.Instance.Dte.Solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show(string.Format(SR.GetString("ConvertCanceled"),
