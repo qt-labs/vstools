@@ -119,7 +119,7 @@
       Name="PrependInclude"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Prepend Include"
-      Description="Prepend #include &lt;file&gt; (overwrite default); separate with semicolons if more than one. (-b &lt;file&gt;)"
+      Description="Prepend #include &lt;file&gt; (preserve default); separate with semicolons if more than one. (-b &lt;file&gt;)"
       Switch="-b &quot;[value]&quot;"/>
     <StringListProperty
       Name="Include"
