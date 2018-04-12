@@ -101,11 +101,19 @@
         <Escaped Condition="$([System.String]::Copy('%(Identity)').Contains(' ')) OR $([System.String]::Copy('%(Identity)').Contains('&quot;'))"> &quot;$([System.String]::Copy('%(Identity)').Replace('&quot;','\&quot;'))&quot;</Escaped>
         <Escaped Condition="!$([System.String]::Copy('%(Identity)').Contains(' ')) AND !$([System.String]::Copy('%(Identity)').Contains('&quot;'))">%(Identity)</Escaped>
       </QtMoc_Define>
+      <QtMoc_IncludePath>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)</Escaped>
+      </QtMoc_IncludePath>
+      <QtMoc_PathPrefix>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)</Escaped>
+      </QtMoc_PathPrefix>
     </ItemGroup>
     <PropertyGroup>
       <QtMocOptions Condition="'@(QtMoc_InputFile)' != ''">$(QtMocOptions);@(QtMoc_InputFile->'&quot;%(Identity)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_OutputFile)' != ''">$(QtMocOptions);@(QtMoc_OutputFile->'-o &quot;%(Identity)&quot;')</QtMocOptions>
-      <QtMocOptions Condition="'@(QtMoc_IncludePath)' != ''">$(QtMocOptions);@(QtMoc_IncludePath->'&quot;-I%(Identity)&quot;')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_IncludePath)' != ''">$(QtMocOptions);@(QtMoc_IncludePath->'&quot;-I%(Escaped)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_MacFramework)' != ''">$(QtMocOptions);@(QtMoc_MacFramework->'-F &quot;%(Identity)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_PreprocessOnly)' == 'true'">$(QtMocOptions);-E</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_Define)' != ''">$(QtMocOptions);@(QtMoc_Define->'-D%(Escaped)')</QtMocOptions>
@@ -113,7 +121,7 @@
       <QtMocOptions Condition="'@(QtMoc_Metadata)' != ''">$(QtMocOptions);@(QtMoc_Metadata->'-M%(Identity)')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_CompilerFlavor)' != ''">$(QtMocOptions);@(QtMoc_CompilerFlavor->'--compiler-flavor %(Identity)')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_NoInclude)' == 'true'">$(QtMocOptions);-i</QtMocOptions>
-      <QtMocOptions Condition="'@(QtMoc_PathPrefix)' != ''">$(QtMocOptions);@(QtMoc_PathPrefix->'-p %(Identity)')</QtMocOptions>
+      <QtMocOptions Condition="'@(QtMoc_PathPrefix)' != ''">$(QtMocOptions);@(QtMoc_PathPrefix->'&quot;-p%(Escaped)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_ForceInclude)' != ''">$(QtMocOptions);@(QtMoc_ForceInclude->'-f &quot;%(Identity)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_PrependInclude)' != ''">$(QtMocOptions);@(QtMoc_PrependInclude->'-b &quot;%(Identity)&quot;')</QtMocOptions>
       <QtMocOptions Condition="'@(QtMoc_Include)' != ''">$(QtMocOptions);@(QtMoc_Include->'--include &quot;%(Identity)&quot;')</QtMocOptions>
@@ -245,12 +253,18 @@
       <QtRcc_Project Condition="'%(QtRcc.Project)' != ''" Include="%(QtRcc.Project)"/>
       <QtRcc_FormatVersion Condition="'%(QtRcc.FormatVersion)' != ''" Include="%(QtRcc.FormatVersion)"/>
     </ItemGroup>
+    <ItemGroup>
+      <QtRcc_Root>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))">%(Identity)</Escaped>
+      </QtRcc_Root>
+    </ItemGroup>
     <PropertyGroup>
       <QtRccOptions Condition="'@(QtRcc_InputFile)' != ''">$(QtRccOptions);@(QtRcc_InputFile->'&quot;%(Identity)&quot;')</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_OutputFile)' != ''">$(QtRccOptions);@(QtRcc_OutputFile->'-o &quot;%(Identity)&quot;')</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_TempFile)' != ''">$(QtRccOptions);@(QtRcc_TempFile->'--temp &quot;%(Identity)&quot;')</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_InitFuncName)' != ''">$(QtRccOptions);@(QtRcc_InitFuncName->'--name %(Identity)')</QtRccOptions>
-      <QtRccOptions Condition="'@(QtRcc_Root)' != ''">$(QtRccOptions);@(QtRcc_Root->'--root &quot;%(Identity)&quot;')</QtRccOptions>
+      <QtRccOptions Condition="'@(QtRcc_Root)' != ''">$(QtRccOptions);@(QtRcc_Root->'--root &quot;%(Escaped)&quot;')</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level1'">$(QtRccOptions);--compress 1</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level2'">$(QtRccOptions);--compress 2</QtRccOptions>
       <QtRccOptions Condition="'@(QtRcc_Compression)' == 'level3'">$(QtRccOptions);--compress 3</QtRccOptions>
