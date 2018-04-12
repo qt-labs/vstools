@@ -2930,6 +2930,9 @@ namespace QtProjectLib
             var viOld = versionManager.GetVersionInfo(oldVersion);
             var viNew = versionManager.GetVersionInfo(newVersion);
 
+            if (viOld == null || viNew == null)
+                return true;
+
             var oldIsWinRt = viOld.isWinRT();
             var newIsWinRt = viNew.isWinRT();
 
