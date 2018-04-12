@@ -2568,10 +2568,27 @@ namespace QtProjectLib
 
         public void RefreshMocSteps()
         {
+            var filesCollection = vcPro.Files as IVCCollection;
+            if (filesCollection == null)
+                return;
+
+            int progress = 0;
+            int progressTotal = filesCollection.Count;
+            var waitDialog = WaitDialog.StartWithProgress(SR.GetString("Resources_QtVsTools"),
+                SR.GetString("WaitDialogRefreshMoc"), null, null, 5, false,
+                progressTotal, progress++);
             qtMsBuild.BeginSetItemProperties();
-            foreach (VCFile vcfile in (IVCCollection) vcPro.Files)
+            foreach (VCFile vcfile in filesCollection) {
                 RefreshMocStep(vcfile, false);
+                waitDialog.Update(SR.GetString("WaitDialogRefreshMoc"), null, null,
+                    progress++, progressTotal, true);
+            }
+            waitDialog.Stop();
+
+            waitDialog = WaitDialog.Start(SR.GetString("Resources_QtVsTools"),
+                SR.GetString("WaitDialogRefreshMoc"), null, null, 2, false, true);
             qtMsBuild.EndSetItemProperties();
+            waitDialog.Stop();
         }
 
         public void RefreshMocStep(VCFile vcfile)

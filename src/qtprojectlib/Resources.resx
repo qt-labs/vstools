@@ -324,4 +324,7 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="Resources_OtherFiles" xml:space="preserve">
     <value>Other Files</value>
   </data>
+  <data name="WaitDialogRefreshMoc" xml:space="preserve">
+    <value>Updating moc steps...</value>
+  </data>
 </root>
