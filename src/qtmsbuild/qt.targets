@@ -49,13 +49,35 @@
     </ItemGroup>
   </Target>
   <Target
+    Name="QtMocWriteTlogs"
+    Condition="'@(QtMoc)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <QtMocReadTlog Include="^%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies)"
+        Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
+      <QtMocWriteTlog Include="^%(QtMoc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtMoc.OutputFile)'))"
+        Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      Condition="'@(QtMocReadTlog)' != ''"
+      File="$(TLogLocation)QtMoc.read.1u.tlog"
+      Lines="@(QtMocReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(QtMocWriteTlog)' != ''"
+      File="$(TLogLocation)QtMoc.write.1u.tlog"
+      Lines="@(QtMocWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+  </Target>
+  <Target
     Name="QtMoc"
     BeforeTargets="$(QtMocBeforeTargets)"
     AfterTargets="$(QtMocAfterTargets)"
     Condition="'@(QtMoc)' != ''"
     Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtMoc-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtMocDependsOn);QtMocCheckInput">
+    DependsOnTargets="$(QtMocDependsOn);QtMocCheckInput;QtMocWriteTlogs">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMoc @(QtMoc)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtMoc Remove="@(QtMoc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -210,13 +232,35 @@
     </ItemGroup>
   </Target>
   <Target
+    Name="QtRccWriteTlogs"
+    Condition="'@(QtRcc)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <QtRccReadTlog Include="^%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies)"
+        Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
+      <QtRccWriteTlog Include="^%(QtRcc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtRcc.OutputFile)'))"
+        Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      Condition="'@(QtRccReadTlog)' != ''"
+      File="$(TLogLocation)QtRcc.read.1u.tlog"
+      Lines="@(QtRccReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(QtRccWriteTlog)' != ''"
+      File="$(TLogLocation)QtRcc.write.1u.tlog"
+      Lines="@(QtRccWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+  </Target>
+  <Target
     Name="QtRcc"
     BeforeTargets="$(QtRccBeforeTargets)"
     AfterTargets="$(QtRccAfterTargets)"
     Condition="'@(QtRcc)' != ''"
     Inputs="%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtRcc-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtRccDependsOn);QtRccCheckInput">
+    DependsOnTargets="$(QtRccDependsOn);QtRccCheckInput;QtRccWriteTlogs">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRcc @(QtRcc)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtRcc Remove="@(QtRcc)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -364,13 +408,35 @@
     </ItemGroup>
   </Target>
   <Target
+    Name="QtUicWriteTlogs"
+    Condition="'@(QtUic)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <QtUicReadTlog Include="^%(QtUic.FullPath);%(QtUic.AdditionalDependencies)"
+        Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
+      <QtUicWriteTlog Include="^%(QtUic.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtUic.OutputFile)'))"
+        Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      Condition="'@(QtUicReadTlog)' != ''"
+      File="$(TLogLocation)QtUic.read.1u.tlog"
+      Lines="@(QtUicReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(QtUicWriteTlog)' != ''"
+      File="$(TLogLocation)QtUic.write.1u.tlog"
+      Lines="@(QtUicWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+  </Target>
+  <Target
     Name="QtUic"
     BeforeTargets="$(QtUicBeforeTargets)"
     AfterTargets="$(QtUicAfterTargets)"
     Condition="'@(QtUic)' != ''"
     Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies);$(MSBuildProjectFile)"
     Outputs="@(QtUic-&gt;'%(OutputFile)')"
-    DependsOnTargets="$(QtUicDependsOn);QtUicCheckInput">
+    DependsOnTargets="$(QtUicDependsOn);QtUicCheckInput;QtUicWriteTlogs">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUic @(QtUic)" />
     <ItemGroup Condition="'@(SelectedFiles)' != ''">
       <QtUic Remove="@(QtUic)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
@@ -682,7 +748,4 @@
       </ClCompile>
     </ItemGroup>
   </Target>
-  <PropertyGroup Condition="$(QtDisableFastUpToDateCheck) != 'false'">
-    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-  </PropertyGroup>
 </Project>
