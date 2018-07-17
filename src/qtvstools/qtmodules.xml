@@ -547,4 +547,44 @@
     <AdditionalLibrariesDebug>Qt5WebEngineWidgetsd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt5WebEngineCored.lib</AdditionalLibrariesDebug>
   </Module>
+  <Module Id="114">
+    <Name>Charts</Name>
+    <ResourceName>ChartsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtCharts</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>charts</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtCharts</IncludePath>
+    <Defines>QT_CHARTS_LIB</Defines>
+  </Module>
+  <Module Id="115">
+    <Name>Data Visualization</Name>
+    <ResourceName>DataVisualizationLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtDataVisualization</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>datavisualization</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtDataVisualization</IncludePath>
+    <Defines>QT_DATAVISUALIZATION_LIB</Defines>
+  </Module>
+  <Module Id="116">
+    <Name>Network Authorization</Name>
+    <ResourceName>NetworkAuthLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtNetworkAuth</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>networkauth</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtNetworkAuth</IncludePath>
+    <Defines>QT_NETWORKAUTH_LIB</Defines>
+  </Module>
+  <Module Id="117">
+    <Name>Speech</Name>
+    <ResourceName>TextToSpeechLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtTextToSpeech</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>texttospeech</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtTextToSpeech</IncludePath>
+    <Defines>QT_TEXTTOSPEECH_LIB</Defines>
+  </Module>
 </QtVsTools>

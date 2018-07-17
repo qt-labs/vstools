@@ -421,4 +421,16 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   <data name="Resources_QtVsTools" xml:space="preserve">
     <value>Qt VS Tools</value>
   </data>
+  <data name="ChartsLibrary" xml:space="preserve">
+    <value>Charts</value>
+  </data>
+  <data name="DataVisualizationLibrary" xml:space="preserve">
+    <value>Data Visualization</value>
+  </data>
+  <data name="NetworkAuthLibrary" xml:space="preserve">
+    <value>Network Authorization</value>
+  </data>
+  <data name="TextToSpeechLibrary" xml:space="preserve">
+    <value>Speech</value>
+  </data>
 </root>
