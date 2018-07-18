@@ -37,8 +37,8 @@ using Microsoft.VisualStudio.Utilities;
 namespace QtVsTools.Qml.Classification
 {
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = QmlTag.Keyword)]
-    [Name(QmlTag.Keyword)]
+    [ClassificationType(ClassificationTypeNames = QmlSyntaxTag.Keyword)]
+    [Name(QmlSyntaxTag.Keyword)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class QmlKeywordFormat : ClassificationFormatDefinition
@@ -51,8 +51,8 @@ namespace QtVsTools.Qml.Classification
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = QmlTag.Numeric)]
-    [Name(QmlTag.Numeric)]
+    [ClassificationType(ClassificationTypeNames = QmlSyntaxTag.Numeric)]
+    [Name(QmlSyntaxTag.Numeric)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class QmlNumberFormat : ClassificationFormatDefinition
@@ -65,8 +65,8 @@ namespace QtVsTools.Qml.Classification
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = QmlTag.String)]
-    [Name(QmlTag.String)]
+    [ClassificationType(ClassificationTypeNames = QmlSyntaxTag.String)]
+    [Name(QmlSyntaxTag.String)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class QmlStringFormat : ClassificationFormatDefinition
@@ -79,10 +79,10 @@ namespace QtVsTools.Qml.Classification
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = QmlTag.TypeName)]
-    [Name(QmlTag.TypeName)]
+    [ClassificationType(ClassificationTypeNames = QmlSyntaxTag.TypeName)]
+    [Name(QmlSyntaxTag.TypeName)]
     [UserVisible(true)]
-    [Order(Before = Priority.Default, After = QmlTag.Keyword)]
+    [Order(Before = Priority.Default, After = QmlSyntaxTag.Keyword)]
     internal sealed class QmlTypeNameFormat : ClassificationFormatDefinition
     {
         public QmlTypeNameFormat()
@@ -93,10 +93,10 @@ namespace QtVsTools.Qml.Classification
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = QmlTag.Binding)]
-    [Name(QmlTag.Binding)]
+    [ClassificationType(ClassificationTypeNames = QmlSyntaxTag.Binding)]
+    [Name(QmlSyntaxTag.Binding)]
     [UserVisible(true)]
-    [Order(Before = Priority.Default, After = QmlTag.Keyword)]
+    [Order(Before = Priority.Default, After = QmlSyntaxTag.Keyword)]
     internal sealed class QmlBindingFormat : ClassificationFormatDefinition
     {
         public QmlBindingFormat()

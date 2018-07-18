@@ -78,6 +78,7 @@
     <Compile Include="ProjectQtSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QMakeWrapper.cs" />
+    <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
     <Compile Include="QML\Classification\QmlSyntaxClassifier.cs" />
     <Compile Include="QML\Classification\QmlErrorClassifier.cs" />

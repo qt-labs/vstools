@@ -43,9 +43,31 @@ namespace QtVsTools.Qml.Classification
     using VisualStudio.Text.Extensions;
 
     /// <summary>
+    /// Represents a classification tag that can be mapped onto future versions of the source code
+    /// </summary>
+    public class TrackingTag : ITag
+    {
+        public ITextSnapshot Snapshot { get; private set; }
+        public int Start { get; private set; }
+        public int Length { get; private set; }
+        public ITrackingSpan Span { get; private set; }
+        public TrackingTag(ITextSnapshot snapshot, int start, int length)
+        {
+            Snapshot = snapshot;
+            Start = start;
+            Length = length;
+            Span = snapshot.CreateTrackingSpan(start, length, SpanTrackingMode.EdgeExclusive);
+        }
+        public ITagSpan<TrackingTag> MapToSnapshot(ITextSnapshot snapshot)
+        {
+            return new TagSpan<TrackingTag>(Span.GetSpan(snapshot), this);
+        }
+    }
+
+    /// <summary>
     /// Represents the classification of a QML syntax element
     /// </summary>
-    public class QmlTag : ITag
+    public class QmlSyntaxTag : TrackingTag
     {
         public const string Keyword = "keyword.qml";
         public const string Numeric = "numeric.qml";
@@ -56,17 +78,15 @@ namespace QtVsTools.Qml.Classification
 
         public SyntaxElement SyntaxElement { get; private set; }
         public SourceLocation SourceLocation { get; private set; }
-        public ITrackingSpan Span { get; private set; }
         public IClassificationType ClassificationType { get; private set; }
 
-        private QmlTag(ITextSnapshot snapshot, SourceLocation location)
+        private QmlSyntaxTag(ITextSnapshot snapshot, SourceLocation location)
+            : base(snapshot, location.Offset, location.Length)
         {
             SourceLocation = location;
-            Span = snapshot.CreateTrackingSpan(
-                location.Offset, location.Length, SpanTrackingMode.EdgeExclusive);
         }
 
-        public QmlTag(
+        public QmlSyntaxTag(
             ITextSnapshot snapshot,
             SyntaxElement element,
             string classificationType,
@@ -77,12 +97,7 @@ namespace QtVsTools.Qml.Classification
             ClassificationType = QmlClassificationType.Get(classificationType);
         }
 
-        public ITagSpan<QmlTag> ToTagSpan(ITextSnapshot snapshot)
-        {
-            return new TagSpan<QmlTag>(Span.GetSpan(snapshot), this);
-        }
-
-        static QmlTag GetClassificationTag(
+        static QmlSyntaxTag GetClassificationTag(
             ITextSnapshot snapshot,
             AstNode parentNode,
             string classificationType,
@@ -100,7 +115,7 @@ namespace QtVsTools.Qml.Classification
                 Length = lastName.Offset + lastName.Length - firstName.Offset
             };
 
-            return new QmlTag(snapshot, parentNode, classificationType, fullNameLocation);
+            return new QmlSyntaxTag(snapshot, parentNode, classificationType, fullNameLocation);
         }
 
         public static readonly HashSet<string> QmlBasicTypes = new HashSet<string> {
@@ -109,23 +124,23 @@ namespace QtVsTools.Qml.Classification
             "date", "point", "rect", "size", "alias"
         };
 
-        public static IEnumerable<QmlTag> GetClassification(
+        public static IEnumerable<QmlSyntaxTag> GetClassification(
             ITextSnapshot snapshot,
             SyntaxElement element)
         {
-            var tags = new List<QmlTag>();
+            var tags = new List<QmlSyntaxTag>();
 
             if (element is KeywordToken) {
                 var token = element as KeywordToken;
-                tags.Add(new QmlTag(snapshot, token, Keyword, token.Location));
+                tags.Add(new QmlSyntaxTag(snapshot, token, Keyword, token.Location));
 
             } else if (element is NumberToken) {
                 var token = element as NumberToken;
-                tags.Add(new QmlTag(snapshot, token, Numeric, token.Location));
+                tags.Add(new QmlSyntaxTag(snapshot, token, Numeric, token.Location));
 
             } else if (element is StringToken) {
                 var token = element as StringToken;
-                tags.Add(new QmlTag(snapshot, token, String, token.Location));
+                tags.Add(new QmlSyntaxTag(snapshot, token, String, token.Location));
 
             } else if (element is CommentToken) {
                 var token = element as CommentToken;
@@ -139,12 +154,12 @@ namespace QtVsTools.Qml.Classification
                     commentLocation.Offset -= 2;
                     commentLocation.Length += 4;
                 }
-                tags.Add(new QmlTag(snapshot, token, Comment, commentLocation));
+                tags.Add(new QmlSyntaxTag(snapshot, token, Comment, commentLocation));
 
             } else if (element is UiImport) {
                 var node = element as UiImport;
                 if (node.ImportIdToken.Length > 0)
-                    tags.Add(new QmlTag(snapshot, node, TypeName, node.ImportIdToken));
+                    tags.Add(new QmlSyntaxTag(snapshot, node, TypeName, node.ImportIdToken));
 
             } else if (element is UiObjectDefinition) {
                 var node = element as UiObjectDefinition;
@@ -194,59 +209,52 @@ namespace QtVsTools.Qml.Classification
                 if (node.Type == UiPublicMemberType.Property && node.TypeToken.Length > 0) {
                     var typeName = snapshot.GetText(node.TypeToken);
                     if (QmlBasicTypes.Contains(typeName))
-                        tags.Add(new QmlTag(snapshot, node, Keyword, node.TypeToken));
+                        tags.Add(new QmlSyntaxTag(snapshot, node, Keyword, node.TypeToken));
                     else
-                        tags.Add(new QmlTag(snapshot, node, TypeName, node.TypeToken));
+                        tags.Add(new QmlSyntaxTag(snapshot, node, TypeName, node.TypeToken));
                 }
                 if (node.IdentifierToken.Length > 0)
-                    tags.Add(new QmlTag(snapshot, node, Binding, node.IdentifierToken));
+                    tags.Add(new QmlSyntaxTag(snapshot, node, Binding, node.IdentifierToken));
 
             }
             return tags;
         }
     }
 
-    public class QmlDiagnosticsTag : ITag
+    public class QmlDiagnosticsTag : TrackingTag
     {
         public DiagnosticMessage DiagnosticMessage { get; private set; }
-        public ITrackingSpan Span { get; private set; }
         public QmlDiagnosticsTag(ITextSnapshot snapshot, DiagnosticMessage diagnosticMessage)
+            : base(snapshot, diagnosticMessage.Location.Offset, diagnosticMessage.Location.Length)
         {
             DiagnosticMessage = diagnosticMessage;
-            Span = snapshot.CreateTrackingSpan(
-                diagnosticMessage.Location.Offset, diagnosticMessage.Location.Length,
-                SpanTrackingMode.EdgeExclusive);
-        }
-        public ITagSpan<QmlDiagnosticsTag> ToTagSpan(ITextSnapshot snapshot)
-        {
-            return new TagSpan<QmlDiagnosticsTag>(Span.GetSpan(snapshot), this);
         }
     }
 
     internal static class QmlClassificationType
     {
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.Keyword)]
+        [Name(QmlSyntaxTag.Keyword)]
         internal static ClassificationTypeDefinition qmlKeyword = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.Numeric)]
+        [Name(QmlSyntaxTag.Numeric)]
         internal static ClassificationTypeDefinition qmlNumber = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.String)]
+        [Name(QmlSyntaxTag.String)]
         internal static ClassificationTypeDefinition qmlString = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.Comment)]
+        [Name(QmlSyntaxTag.Comment)]
         internal static ClassificationTypeDefinition qmlComment = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.TypeName)]
+        [Name(QmlSyntaxTag.TypeName)]
         internal static ClassificationTypeDefinition qmlTypeName = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(QmlTag.Binding)]
+        [Name(QmlSyntaxTag.Binding)]
         internal static ClassificationTypeDefinition qmlBinding = null;
 
         public static IDictionary<string, IClassificationType> ClassificationTypes
@@ -260,14 +268,19 @@ namespace QtVsTools.Qml.Classification
                 return;
             ClassificationTypes = new Dictionary<string, IClassificationType>
             {
-                { QmlTag.Keyword, typeService.GetClassificationType(QmlTag.Keyword) },
-                { QmlTag.Numeric, typeService.GetClassificationType(QmlTag.Numeric) },
-                { QmlTag.String, typeService.GetClassificationType(QmlTag.String) },
-                { QmlTag.TypeName, typeService.GetClassificationType(QmlTag.TypeName) },
-                { QmlTag.Binding, typeService.GetClassificationType(QmlTag.Binding) },
+                { QmlSyntaxTag.Keyword,
+                    typeService.GetClassificationType(QmlSyntaxTag.Keyword) },
+                { QmlSyntaxTag.Numeric,
+                    typeService.GetClassificationType(QmlSyntaxTag.Numeric) },
+                { QmlSyntaxTag.String,
+                    typeService.GetClassificationType(QmlSyntaxTag.String) },
+                { QmlSyntaxTag.TypeName,
+                    typeService.GetClassificationType(QmlSyntaxTag.TypeName) },
+                { QmlSyntaxTag.Binding,
+                    typeService.GetClassificationType(QmlSyntaxTag.Binding) },
 
                 // QML comments are mapped to the Visual Studio pre-defined comment classification
-                { QmlTag.Comment,
+                { QmlSyntaxTag.Comment,
                     typeService.GetClassificationType(PredefinedClassificationTypeNames.Comment) }
             };
         }

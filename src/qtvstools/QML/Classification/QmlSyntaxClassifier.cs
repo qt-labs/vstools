@@ -67,134 +67,50 @@ namespace QtVsTools.Qml.Classification
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            return new QmlSyntaxClassifier(buffer, classificationTypeRegistry) as ITagger<T>;
+            QmlClassificationType.InitClassificationTypes(classificationTypeRegistry);
+            return new QmlSyntaxClassifier(textView, buffer) as ITagger<T>;
         }
     }
 
-    internal sealed class QmlSyntaxClassifier : ITagger<ClassificationTag>
+    internal sealed class QmlSyntaxClassifier : QmlAsyncClassifier<ClassificationTag>
     {
-        ITextBuffer buffer;
-        Dispatcher dispatcher;
-        DispatcherTimer timer;
-
-        internal QmlSyntaxClassifier(ITextBuffer buffer,
-                               IClassificationTypeRegistryService typeService)
+        internal QmlSyntaxClassifier(
+            ITextView textView,
+            ITextBuffer buffer)
+            : base("Syntax", textView, buffer)
         {
-            this.buffer = buffer;
-            QmlClassificationType.InitClassificationTypes(typeService);
-            ParseQML(buffer.CurrentSnapshot);
-            buffer.Changed += Buffer_Changed;
-
-            dispatcher = Dispatcher.CurrentDispatcher;
-            timer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, dispatcher)
-            {
-                Interval = TimeSpan.FromMilliseconds(500)
-            };
-            timer.Tick += Timer_Tick;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        protected override ClassificationRefresh ProcessText(
+            ITextSnapshot snapshot,
+            Parser parseResult,
+            SharedTagList tagList,
+            bool writeAccess)
         {
-            timer.Stop();
-            var snapshot = buffer.CurrentSnapshot;
-            AsyncParseQML(snapshot);
-        }
+            bool parsedCorrectly = parseResult.ParsedCorrectly;
 
-        private void Buffer_Changed(object sender, TextContentChangedEventArgs e)
-        {
-            AsyncParseQML(e.After);
-            timer.Stop();
-            timer.Start();
-        }
-
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
-
-        bool flag = false;
-        List<QmlTag> tags = new List<QmlTag>();
-        object syncChanged = new object();
-
-        async void AsyncParseQML(ITextSnapshot snapshot)
-        {
-            if (flag)
-                return;
-            flag = true;
-            await Task.Run(() =>
-            {
-                ParseQML(snapshot);
-                flag = false;
-                var currentVersion = buffer.CurrentSnapshot.Version;
-                if (snapshot.Version.VersionNumber == currentVersion.VersionNumber) {
-                    timer.Stop();
-                } else {
-                    timer.Start();
+            if (writeAccess) {
+                foreach (var token in parseResult.Tokens) {
+                    tagList.AddRange(this, QmlSyntaxTag.GetClassification(snapshot, token));
                 }
-            });
-        }
-
-        void ParseQML(ITextSnapshot snapshot)
-        {
-            bool parsedCorrectly = true;
-            lock (syncChanged) {
-                tags.Clear();
-                var text = snapshot.GetText();
-                using (var parser = Parser.Parse(text)) {
-                    parsedCorrectly = parser.ParsedCorrectly;
-                    foreach (var token in parser.Tokens) {
-                        if (parsedCorrectly
-                            || token.Location.Offset < parser.FirstErrorOffset) {
-                            tags.AddRange(QmlTag.GetClassification(snapshot, token));
-                        }
-                    }
-                    foreach (var node in parser.AstNodes) {
-                        if (parsedCorrectly
-                            || node.FirstSourceLocation.Offset < parser.FirstErrorOffset) {
-                            tags.AddRange(QmlTag.GetClassification(snapshot, node));
-                        }
-                    }
+                foreach (var node in parseResult.AstNodes) {
+                    tagList.AddRange(this, QmlSyntaxTag.GetClassification(snapshot, node));
                 }
             }
-            var tagsChangedHandler = TagsChanged;
-            if (parsedCorrectly) {
-                var span = new SnapshotSpan(buffer.CurrentSnapshot,
-                    0, buffer.CurrentSnapshot.Length);
-                if (tagsChangedHandler != null)
-                    tagsChangedHandler.Invoke(this, new SnapshotSpanEventArgs(span));
-            } else {
-                List<QmlTag> tagsCopy;
-                lock (syncChanged) {
-                    tagsCopy = new List<QmlTag>(tags);
-                }
-                foreach (var tag in tagsCopy) {
-                    var tagSpan = tag.ToTagSpan(snapshot);
-                    if (tagsChangedHandler != null)
-                        tagsChangedHandler.Invoke(this, new SnapshotSpanEventArgs(tagSpan.Span));
-                }
-            }
+
+            if (parsedCorrectly)
+                return ClassificationRefresh.FullText;
+            else
+                return ClassificationRefresh.TagsOnly;
         }
 
-        public IEnumerable<ITagSpan<ClassificationTag>> GetTags(
-            NormalizedSnapshotSpanCollection spans)
+        protected override ClassificationTag GetClassification(TrackingTag tag)
         {
-            List<QmlTag> tagsCopy;
-            var snapshot = spans[0].Snapshot;
-            lock (syncChanged) {
-                tagsCopy = new List<QmlTag>(tags);
-            }
-            foreach (var tag in tagsCopy) {
-                var tagSpan = tag.ToTagSpan(snapshot);
-                if (tagSpan.Span.Length == 0)
-                    continue;
+            var syntaxTag = tag as QmlSyntaxTag;
+            if (syntaxTag == null || syntaxTag.ClassificationType == null)
+                return null;
 
-                if (!spans.IntersectsWith(new NormalizedSnapshotSpanCollection(tagSpan.Span)))
-                    continue;
-
-                if (tag.ClassificationType == null)
-                    continue;
-
-                yield return
-                        new TagSpan<ClassificationTag>(tagSpan.Tag.Span.GetSpan(snapshot),
-                        new ClassificationTag(tag.ClassificationType));
-            }
+            return new ClassificationTag(syntaxTag.ClassificationType);
         }
     }
 }
