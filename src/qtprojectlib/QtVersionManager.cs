@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace QtProjectLib
 {
@@ -50,8 +51,20 @@ namespace QtProjectLib
             regVersionPath = Resources.registryVersionPath;
         }
 
-        static public QtVersionManager The()
+        static EventWaitHandle
+            packageInit = new EventWaitHandle(false, EventResetMode.ManualReset),
+            packageInitDone = null;
+
+        static public QtVersionManager The(EventWaitHandle initDone = null)
         {
+            if (initDone == null) {
+                packageInit.WaitOne();
+                packageInitDone.WaitOne();
+            } else {
+                packageInitDone = initDone;
+                packageInit.Set();
+            }
+
             if (instance == null)
                 instance = new QtVersionManager();
             return instance;

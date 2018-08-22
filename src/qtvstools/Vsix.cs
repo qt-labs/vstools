@@ -34,6 +34,7 @@ using QtProjectLib;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -69,13 +70,19 @@ namespace QtVsTools
             private set;
         }
 
+        static EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
+        static Vsix instance = null;
+
         /// <summary>
         /// Gets the instance of the package.
         /// </summary>
         public static Vsix Instance
         {
-            get;
-            private set;
+            get
+            {
+                initDone.WaitOne();
+                return instance;
+            }
         }
 
         private string appWrapperPath;
@@ -107,67 +114,73 @@ namespace QtVsTools
         /// </summary>
         protected override void Initialize()
         {
-            Instance = this;
             base.Initialize();
 
-            Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                instance = this;
 
-            // determine the package installation directory
-            var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-            PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+                Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
 
-            var QtMsBuildPath = Path.Combine(
-                Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
-            try {
-                if (!Directory.Exists(QtMsBuildPath))
-                    Directory.CreateDirectory(QtMsBuildPath);
-                var qtMsBuildFiles = Directory.GetFiles(
-                    Path.Combine(PkgInstallPath, "QtMsBuild"));
-                foreach (var qtMsBuildFile in qtMsBuildFiles) {
-                    File.Copy(qtMsBuildFile,
-                        Path.Combine(QtMsBuildPath, Path.GetFileName(qtMsBuildFile)), true);
+                // determine the package installation directory
+                var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
+                PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+
+                var QtMsBuildPath = Path.Combine(
+                    Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
+                try {
+                    if (!Directory.Exists(QtMsBuildPath))
+                        Directory.CreateDirectory(QtMsBuildPath);
+                    var qtMsBuildFiles = Directory.GetFiles(
+                        Path.Combine(PkgInstallPath, "QtMsBuild"));
+                    foreach (var qtMsBuildFile in qtMsBuildFiles) {
+                        File.Copy(qtMsBuildFile,
+                            Path.Combine(QtMsBuildPath, Path.GetFileName(qtMsBuildFile)), true);
+                    }
+                } catch {
+                    QtMsBuildPath = Path.Combine(PkgInstallPath, "QtMsBuild");
                 }
-            } catch {
-                QtMsBuildPath = Path.Combine(PkgInstallPath, "QtMsBuild");
-            }
 
-            Environment.SetEnvironmentVariable(
-                "QtMsBuild", QtMsBuildPath,
-                EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable(
+                    "QtMsBuild", QtMsBuildPath,
+                    EnvironmentVariableTarget.User);
 
-            Environment.SetEnvironmentVariable(
-                "QtMsBuild", QtMsBuildPath,
-                EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable(
+                    "QtMsBuild", QtMsBuildPath,
+                    EnvironmentVariableTarget.Process);
 
-            var vm = QtVersionManager.The();
-            var error = string.Empty;
-            if (vm.HasInvalidVersions(out error))
-                Messages.PaneMessageSafe(Dte, error, 5000);
-            eventHandler = new DteEventsHandler(Dte);
+                var vm = QtVersionManager.The(initDone);
+                var error = string.Empty;
+                if (vm.HasInvalidVersions(out error))
+                    Messages.PaneMessageSafe(Dte, error, 5000);
+                eventHandler = new DteEventsHandler(Dte);
 
-            QtMainMenu.Initialize(this);
-            QtSolutionContextMenu.Initialize(this);
-            QtProjectContextMenu.Initialize(this);
-            QtItemContextMenu.Initialize(this);
-            DefaultEditorsHandler.Initialize(Dte);
-            QtHelpMenu.Initialize(this);
+                QtMainMenu.Initialize(this);
+                QtSolutionContextMenu.Initialize(this);
+                QtProjectContextMenu.Initialize(this);
+                QtItemContextMenu.Initialize(this);
+                DefaultEditorsHandler.Initialize(Dte);
+                QtHelpMenu.Initialize(this);
 
-            try {
-                CopyTextMateLanguageFiles();
-                UpdateDefaultEditors(Mode.Startup);
-            } catch (Exception e) {
-                Messages.PaneMessageSafe(Dte,
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
-            }
-
-            var modules = QtModules.Instance.GetAvailableModuleInformation();
-            foreach (var module in modules) {
-                if (!string.IsNullOrEmpty(module.ResourceName)) {
-                    var translatedName = SR.GetString(module.ResourceName);
-                    if (!string.IsNullOrEmpty(translatedName))
-                        module.Name = translatedName;
+                try {
+                    CopyTextMateLanguageFiles();
+                    UpdateDefaultEditors(Mode.Startup);
+                } catch (Exception e) {
+                    Messages.PaneMessageSafe(Dte,
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
                 }
-            }
+
+                var modules = QtModules.Instance.GetAvailableModuleInformation();
+                foreach (var module in modules) {
+                    if (!string.IsNullOrEmpty(module.ResourceName)) {
+                        var translatedName = SR.GetString(module.ResourceName, this);
+                        if (!string.IsNullOrEmpty(translatedName))
+                            module.Name = translatedName;
+                    }
+                }
+
+                initDone.Set();
+            });
         }
 
         /// <summary>
@@ -179,7 +192,9 @@ namespace QtVsTools
         /// </returns>
         protected override int QueryClose(out bool canClose)
         {
-            eventHandler.Disconnect();
+            if (eventHandler != null)
+                eventHandler.Disconnect();
+
             try {
                 UpdateDefaultEditors(Mode.Shutdown);
             } catch (Exception e) {
@@ -198,7 +213,7 @@ namespace QtVsTools
 
         private string locateHelperExecutable(string exeName)
         {
-            if (File.Exists(PkgInstallPath + exeName))
+            if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
                 return PkgInstallPath + exeName;
             return null;
         }
@@ -210,7 +225,7 @@ namespace QtVsTools
         /// values for *.qrc, *.ts and *.ui extensions are written, while on shutdown possible
         /// existing Add-in values are written back.
         /// </summary>
-        private static void UpdateDefaultEditors(Mode mode)
+        private void UpdateDefaultEditors(Mode mode)
         {
             if (mode == Mode.Shutdown) {
                 var qt5 = new Qt5DefaultEditors();
@@ -219,14 +234,14 @@ namespace QtVsTools
                 qt4.WriteAddinRegistryValues();
             } else {
                 var vsix = new QtVsToolsDefaultEditors();
-                vsix.WriteVsixRegistryValues();
+                vsix.WriteVsixRegistryValues(this);
             }
         }
 
         private void CopyTextMateLanguageFiles()
         {
 #if (!VS2013)
-            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var settingsManager = new ShellSettingsManager(instance);
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
 
             var qttmlanguage = Environment.

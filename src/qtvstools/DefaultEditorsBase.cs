@@ -63,15 +63,15 @@ namespace QtVsTools
         /// Write default editor values to registry for Visual Studio 2013 and above. Uses the VSIX
         /// install path.
         /// </summary>
-        public void WriteVsixRegistryValues()
+        public void WriteVsixRegistryValues(Vsix vsixInstance)
         {
-            if (Vsix.Instance.Dte != null) {
-                var basePath = string.Format(registryBasePath, Vsix.Instance.Dte.Version)
+            if (vsixInstance.Dte != null) {
+                var basePath = string.Format(registryBasePath, vsixInstance.Dte.Version)
 #if DEBUG
                     + @"Exp"
 #endif
                 ;
-                WriteRegistryValues(basePath, Vsix.Instance.PkgInstallPath);
+                WriteRegistryValues(basePath, vsixInstance.PkgInstallPath);
             }
         }
 

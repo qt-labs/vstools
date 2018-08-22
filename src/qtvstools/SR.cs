@@ -44,21 +44,21 @@ namespace QtVsTools
         internal static CultureInfo appCultureInfo;
         internal static CultureInfo defaultCultureInfo;
 
-        internal SR()
+        internal SR(int localeId)
         {
             defaultCultureInfo = CultureInfo.GetCultureInfo("en");
-            appCultureInfo = CultureInfo.GetCultureInfo(Vsix.Instance.Dte.LocaleID);
+            appCultureInfo = CultureInfo.GetCultureInfo(localeId);
             if (appCultureInfo.Name.StartsWith("en", StringComparison.Ordinal))
                 appCultureInfo = null;
             resources = new ResourceManager("QtVsTools.Resources", GetType().Assembly);
         }
 
-        private static SR GetLoader()
+        private static SR GetLoader(int localeId)
         {
             if (loader == null) {
                 lock (obj) {
                     if (loader == null)
-                        loader = new SR();
+                        loader = new SR(localeId);
                 }
             }
             return loader;
@@ -79,7 +79,12 @@ namespace QtVsTools
 
         public static string GetString(string name)
         {
-            var sys = GetLoader();
+            return GetString(name, Vsix.Instance);
+        }
+
+        public static string GetString(string name, Vsix vsixInstance)
+        {
+            var sys = GetLoader(vsixInstance.Dte.LocaleID);
             if (sys == null)
                 return null;
 
