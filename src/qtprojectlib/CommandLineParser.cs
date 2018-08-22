@@ -256,9 +256,7 @@ namespace QtProjectLib.CommandLine
                 }
 
                 var tokenType = token.TokenType();
-                if (tokenType == Token.Newline) {
-                    break;
-                } else if (tokenType == Token.Whitespace) {
+                if (tokenType == Token.Whitespace || tokenType == Token.Newline) {
                     // This will always run at the end of the loop
 
                     if (arg.Length > 0) {
@@ -278,6 +276,9 @@ namespace QtProjectLib.CommandLine
                             arguments.Add(argData);
                         }
                     }
+                    if (tokenType == Token.Newline)
+                        break;
+
                 } else {
                     arg.Append(token.TokenText());
                 }
