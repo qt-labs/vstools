@@ -415,8 +415,8 @@ namespace QtProjectLib
             List<CustomBuildEval> cbEvals,
             string configName,
             string itemName,
-            Dictionary<string, XElement> projItemsByPath,
-            Dictionary<string, XElement> filterItemsByPath)
+            Dictionary<string, List<XElement>> projItemsByPath,
+            Dictionary<string, List<XElement>> filterItemsByPath)
         {
             //remove items with generated files
             bool hasGeneratedFiles = false;
@@ -430,11 +430,11 @@ namespace QtProjectLib
                         Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
                 var outputItems = new List<XElement>();
                 foreach (var outputFile in outputFiles) {
-                    XElement mocOutput = null;
+                    List<XElement> mocOutput = null;
                     if (projItemsByPath.TryGetValue(outputFile, out mocOutput))
-                        outputItems.Add(mocOutput);
+                        outputItems.AddRange(mocOutput);
                     if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
-                        outputItems.Add(mocOutput);
+                        outputItems.AddRange(mocOutput);
                 }
                 hasGeneratedFiles = outputItems.Any();
                 foreach (var item in outputItems.Where(x => x.Parent != null))
@@ -462,20 +462,22 @@ namespace QtProjectLib
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ClCompile")
                 .Where(x => ((string)x.Attribute("Include"))
-                .IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                .ToDictionary(x => HelperFunctions.CanonicalPath(
+                    .IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                .GroupBy(x => HelperFunctions.CanonicalPath(
                     Path.Combine(projDir, (string)x.Attribute("Include"))),
-                    StringComparer.InvariantCultureIgnoreCase);
+                    StringComparer.InvariantCultureIgnoreCase)
+                .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
             var filterItemsByPath = this[Files.Filters].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ClCompile")
                 .Where(x => ((string)x.Attribute("Include"))
-                .IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                .ToDictionary(x => HelperFunctions.CanonicalPath(
+                    .IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                .GroupBy(x => HelperFunctions.CanonicalPath(
                     Path.Combine(projDir, (string)x.Attribute("Include"))),
-                    StringComparer.InvariantCultureIgnoreCase);
+                    StringComparer.InvariantCultureIgnoreCase)
+                .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
             var cppIncludePaths = this[Files.Project].xml
                 .Elements(ns + "Project")
