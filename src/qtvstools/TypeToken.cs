@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -25,14 +25,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 
-#ifndef BUILD_STATIC
-# if defined(VSQML_LIB)
-#  define VSQML_EXPORT __declspec(dllexport)
-# else
-#  define VSQML_EXPORT __declspec(dllimport)
-# endif
-#else
-# define VSQML_EXPORT
+#if VS2013
+namespace QtVsTools
+{
+    public class TypeToken : Token
+    {
+        public TypeToken()
+            : base(TokenType.Type)
+        {
+        }
+    }
+}
 #endif

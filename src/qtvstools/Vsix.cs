@@ -252,14 +252,6 @@ namespace QtVsTools
             } else {
                 Directory.Delete(qttmlanguage, true);
             }
-
-            //Remove textmate-based QML syntax highlighting
-            var qmlTextmate = Path.Combine(qttmlanguage, "qml");
-            if (Directory.Exists(qmlTextmate)) {
-                try {
-                    Directory.Delete(qmlTextmate, true);
-                } catch { }
-            }
 #endif
         }
     }

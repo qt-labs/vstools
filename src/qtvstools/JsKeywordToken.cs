@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -25,23 +25,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 
-#include "vsqml.h"
-
-#include <QtQml/private/qqmljslexer_p.h>
-#include <QtQml/private/qqmljsparser_p.h>
-
-class AstVisitorPrivate;
-
-class AstVisitor {
-public:
-    AstVisitor();
-    ~AstVisitor();
-    void setCallback(Callback visitCallback);
-    void setCallback(int nodeKindFilter, Callback visitCallback);
-    QQmlJS::AST::Visitor *GetVisitor();
-
-private:
-    AstVisitorPrivate *d_ptr;
-};
+#if VS2013
+namespace QtVsTools
+{
+    public class JsKeywordToken : Token
+    {
+        public JsKeywordToken()
+            : base(TokenType.JsKeyword)
+        {
+        }
+    }
+}
+#endif

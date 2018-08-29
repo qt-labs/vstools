@@ -1,6 +1,6 @@
-﻿/****************************************************************************
+/****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,27 +26,15 @@
 **
 ****************************************************************************/
 
-namespace QtVsTools.Qml
+#if VS2013
+namespace QtVsTools
 {
-    using Syntax;
-
-    public enum DiagnosticMessageKind { Warning, Error }
-
-    /// <summary>
-    /// Represents a syntax error issued by the QML parser
-    /// </summary>
-    public class DiagnosticMessage
+    public class OtherToken : Token
     {
-        public DiagnosticMessageKind Kind { get; set; }
-        public SourceLocation Location { get; set; }
-        public DiagnosticMessage(DiagnosticMessageKind kind, int offset, int length)
+        public OtherToken()
+            : base(TokenType.Other)
         {
-            Kind = kind;
-            Location = new SourceLocation
-            {
-                Offset = offset,
-                Length = length
-            };
         }
     }
 }
+#endif
