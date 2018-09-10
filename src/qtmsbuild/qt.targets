@@ -52,7 +52,7 @@
     Name="QtMocWriteTlogs"
     Condition="'@(QtMoc)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtMocReadTlog Include="^%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies)"
+      <QtMocReadTlog Include="^%(QtMoc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtMoc.AdditionalDependencies)'))"
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
       <QtMocWriteTlog Include="^%(QtMoc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtMoc.OutputFile)'))"
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
@@ -235,7 +235,7 @@
     Name="QtRccWriteTlogs"
     Condition="'@(QtRcc)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtRccReadTlog Include="^%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies)"
+      <QtRccReadTlog Include="^%(QtRcc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtRcc.AdditionalDependencies)'))"
         Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
       <QtRccWriteTlog Include="^%(QtRcc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtRcc.OutputFile)'))"
         Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
@@ -411,7 +411,7 @@
     Name="QtUicWriteTlogs"
     Condition="'@(QtUic)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtUicReadTlog Include="^%(QtUic.FullPath);%(QtUic.AdditionalDependencies)"
+      <QtUicReadTlog Include="^%(QtUic.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtUic.AdditionalDependencies)'))"
         Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
       <QtUicWriteTlog Include="^%(QtUic.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtUic.OutputFile)'))"
         Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
