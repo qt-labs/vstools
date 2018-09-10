@@ -1,3 +1,16 @@
+The Qt Visual Studio Tools version 2.2.2 contains several bug fixes.
+
+Changes
+-------
+- Fixed QTVSADDINBUG-544: Build is never up-to-date, even if no files have been changed.
+- Fixed QTVSADDINBUG-551: Qt VS Tools adds a delay to Visual Studio startup.
+- Fixed QTVSADDINBUG-558: Missing Qt module: Data Visualization
+- Fixed QTVSADDINBUG-559: Missing Qt module: Charts
+- Fixed QTVSADDINBUG-563: Error "same key already added" when converting project to Qt/MSBuild
+- Fixed QTVSADDINBUG-566: Error converting to Qt/MSBuild if custom build command has a newline
+- Fixed QTVSADDINBUG-569: %QTMSBUILD% environment variable always overwritten at start-up
+
+
 The Qt Visual Studio Tools version 2.2.1 contains several bug fixes.
 
 Changes

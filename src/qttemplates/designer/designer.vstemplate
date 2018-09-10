@@ -67,7 +67,7 @@
         </Project>
     </TemplateContent>
     <WizardExtension>
-        <Assembly>QtProjectWizard, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null</Assembly>
+        <Assembly>QtProjectWizard, Version=2.2.2.0, Culture=neutral, PublicKeyToken=null</Assembly>
         <FullClassName>QtProjectWizard.DesignerWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>
