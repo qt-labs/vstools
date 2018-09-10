@@ -126,28 +126,31 @@ namespace QtVsTools
                 var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
                 PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
-                var QtMsBuildPath = Path.Combine(
-                    Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
-                try {
-                    if (!Directory.Exists(QtMsBuildPath))
-                        Directory.CreateDirectory(QtMsBuildPath);
-                    var qtMsBuildFiles = Directory.GetFiles(
-                        Path.Combine(PkgInstallPath, "QtMsBuild"));
-                    foreach (var qtMsBuildFile in qtMsBuildFiles) {
-                        File.Copy(qtMsBuildFile,
-                            Path.Combine(QtMsBuildPath, Path.GetFileName(qtMsBuildFile)), true);
+                var QtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
+                if (string.IsNullOrEmpty(QtMsBuildPath)) {
+                    QtMsBuildPath = Path.Combine(
+                        Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
+                    try {
+                        if (!Directory.Exists(QtMsBuildPath))
+                            Directory.CreateDirectory(QtMsBuildPath);
+                        var qtMsBuildFiles = Directory.GetFiles(
+                            Path.Combine(PkgInstallPath, "QtMsBuild"));
+                        foreach (var qtMsBuildFile in qtMsBuildFiles) {
+                            File.Copy(qtMsBuildFile,
+                                Path.Combine(QtMsBuildPath, Path.GetFileName(qtMsBuildFile)), true);
+                        }
+                    } catch {
+                        QtMsBuildPath = Path.Combine(PkgInstallPath, "QtMsBuild");
                     }
-                } catch {
-                    QtMsBuildPath = Path.Combine(PkgInstallPath, "QtMsBuild");
+
+                    Environment.SetEnvironmentVariable(
+                        "QtMsBuild", QtMsBuildPath,
+                        EnvironmentVariableTarget.User);
+
+                    Environment.SetEnvironmentVariable(
+                        "QtMsBuild", QtMsBuildPath,
+                        EnvironmentVariableTarget.Process);
                 }
-
-                Environment.SetEnvironmentVariable(
-                    "QtMsBuild", QtMsBuildPath,
-                    EnvironmentVariableTarget.User);
-
-                Environment.SetEnvironmentVariable(
-                    "QtMsBuild", QtMsBuildPath,
-                    EnvironmentVariableTarget.Process);
 
                 var vm = QtVersionManager.The(initDone);
                 var error = string.Empty;
