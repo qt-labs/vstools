@@ -328,6 +328,10 @@
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
+    <ProjectReference Include="..\vsqml\vsqml.vcxproj">
+      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+      <Name>vsqml</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data" />
