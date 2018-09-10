@@ -16,6 +16,18 @@ variables:
     QTBUILD_STATIC_VS2015 = <path to x86 static build of Qt for Visual Studio 2015>
     QTBUILD_STATIC_VS2013 = <path to x86 static build of Qt for Visual Studio 2013>
 
+The following configure options can be used to obtain an optimized build configuration:
+
+    -opensource -static -nomake examples -nomake tests -opengl desktop -skip qt3d -skip qtactiveqt
+    -skip qtcanvas3d -skip qtwebchannel -skip qtwebglplugin -skip qtwebsockets -skip qtwebview
+    -skip qtpurchasing -skip qtandroidextras -skip qtconnectivity -skip qtdatavis3d -skip qtfeedback
+    -skip qtgamepad -skip qtgraphicaleffects -skip qtimageformats -skip qtmultimedia
+    -skip qtnetworkauth -skip qtpim -skip qtremoteobjects -skip qtrepotools -skip qtsensors
+    -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qttranslations
+    -skip qtvirtualkeyboard -skip qtwayland -skip qtcharts -skip qtlocation -skip qtmacextras
+    -skip qtqa -skip qtquickcontrols -skip qtscript -skip qtscxml -skip qttools -skip qtwinextras
+    -skip qtx11extras -skip qtxmlpatterns
+
 
 == Project output
 

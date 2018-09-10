@@ -225,7 +225,6 @@ public:
 
     // Copied from qqmljsastvisitor_p.h
 
-    // Ui
     virtual bool visit(UiProgram *node) { return visitCallback(node, true); }
     virtual bool visit(UiHeaderItemList *node) { return visitCallback(node, true); }
     virtual bool visit(UiPragma *node) { return visitCallback(node, true); }
@@ -241,7 +240,6 @@ public:
     virtual bool visit(UiObjectMemberList *node) { return visitCallback(node, true); }
     virtual bool visit(UiArrayMemberList *node) { return visitCallback(node, true); }
     virtual bool visit(UiQualifiedId *node) { return visitCallback(node, true); }
-    virtual bool visit(UiQualifiedPragmaId *node) { return visitCallback(node, true); }
     virtual bool visit(UiEnumDeclaration *node) { return visitCallback(node, true); }
     virtual bool visit(UiEnumMemberList *node) { return visitCallback(node, true); }
 
@@ -260,7 +258,6 @@ public:
     virtual void endVisit(UiObjectMemberList *node) { visitCallback(node, false); }
     virtual void endVisit(UiArrayMemberList *node) { visitCallback(node, false); }
     virtual void endVisit(UiQualifiedId *node) { visitCallback(node, false); }
-    virtual void endVisit(UiQualifiedPragmaId *node) { visitCallback(node, false); }
     virtual void endVisit(UiEnumDeclaration *node) { visitCallback(node, false); }
     virtual void endVisit(UiEnumMemberList *node) { visitCallback(node, false); }
 
@@ -280,8 +277,14 @@ public:
     virtual bool visit(FalseLiteral *node) { return visitCallback(node, true); }
     virtual void endVisit(FalseLiteral *node) { visitCallback(node, false); }
 
+    virtual bool visit(SuperLiteral *node) { return visitCallback(node, true); }
+    virtual void endVisit(SuperLiteral *node) { visitCallback(node, false); }
+
     virtual bool visit(StringLiteral *node) { return visitCallback(node, true); }
     virtual void endVisit(StringLiteral *node) { visitCallback(node, false); }
+
+    virtual bool visit(TemplateLiteral *node) { return visitCallback(node, true); }
+    virtual void endVisit(TemplateLiteral *node) { visitCallback(node, false); }
 
     virtual bool visit(NumericLiteral *node) { return visitCallback(node, true); }
     virtual void endVisit(NumericLiteral *node) { visitCallback(node, false); }
@@ -289,26 +292,26 @@ public:
     virtual bool visit(RegExpLiteral *node) { return visitCallback(node, true); }
     virtual void endVisit(RegExpLiteral *node) { visitCallback(node, false); }
 
-    virtual bool visit(ArrayLiteral *node) { return visitCallback(node, true); }
-    virtual void endVisit(ArrayLiteral *node) { visitCallback(node, false); }
+    virtual bool visit(ArrayPattern *node) { return visitCallback(node, true); }
+    virtual void endVisit(ArrayPattern *node) { visitCallback(node, false); }
 
-    virtual bool visit(ObjectLiteral *node) { return visitCallback(node, true); }
-    virtual void endVisit(ObjectLiteral *node) { visitCallback(node, false); }
+    virtual bool visit(ObjectPattern *node) { return visitCallback(node, true); }
+    virtual void endVisit(ObjectPattern *node) { visitCallback(node, false); }
 
-    virtual bool visit(ElementList *node) { return visitCallback(node, true); }
-    virtual void endVisit(ElementList *node) { visitCallback(node, false); }
+    virtual bool visit(PatternElementList *node) { return visitCallback(node, true); }
+    virtual void endVisit(PatternElementList *node) { visitCallback(node, false); }
+
+    virtual bool visit(PatternPropertyList *node) { return visitCallback(node, true); }
+    virtual void endVisit(PatternPropertyList *node) { visitCallback(node, false); }
+
+    virtual bool visit(PatternElement *node) { return visitCallback(node, true); }
+    virtual void endVisit(PatternElement *node) { visitCallback(node, false); }
+
+    virtual bool visit(PatternProperty *node) { return visitCallback(node, true); }
+    virtual void endVisit(PatternProperty *node) { visitCallback(node, false); }
 
     virtual bool visit(Elision *node) { return visitCallback(node, true); }
     virtual void endVisit(Elision *node) { visitCallback(node, false); }
-
-    virtual bool visit(PropertyAssignmentList *node) { return visitCallback(node, true); }
-    virtual void endVisit(PropertyAssignmentList *node) { visitCallback(node, false); }
-
-    virtual bool visit(PropertyNameAndValue *node) { return visitCallback(node, true); }
-    virtual void endVisit(PropertyNameAndValue *node) { visitCallback(node, false); }
-
-    virtual bool visit(PropertyGetterSetter *node) { return visitCallback(node, true); }
-    virtual void endVisit(PropertyGetterSetter *node) { visitCallback(node, false); }
 
     virtual bool visit(NestedExpression *node) { return visitCallback(node, true); }
     virtual void endVisit(NestedExpression *node) { visitCallback(node, false); }
@@ -322,11 +325,17 @@ public:
     virtual bool visit(NumericLiteralPropertyName *node) { return visitCallback(node, true); }
     virtual void endVisit(NumericLiteralPropertyName *node) { visitCallback(node, false); }
 
+    virtual bool visit(ComputedPropertyName *node) { return visitCallback(node, true); }
+    virtual void endVisit(ComputedPropertyName *node) { visitCallback(node, false); }
+
     virtual bool visit(ArrayMemberExpression *node) { return visitCallback(node, true); }
     virtual void endVisit(ArrayMemberExpression *node) { visitCallback(node, false); }
 
     virtual bool visit(FieldMemberExpression *node) { return visitCallback(node, true); }
     virtual void endVisit(FieldMemberExpression *node) { visitCallback(node, false); }
+
+    virtual bool visit(TaggedTemplate *node) { return visitCallback(node, true); }
+    virtual void endVisit(TaggedTemplate *node) { visitCallback(node, false); }
 
     virtual bool visit(NewMemberExpression *node) { return visitCallback(node, true); }
     virtual void endVisit(NewMemberExpression *node) { visitCallback(node, false); }
@@ -394,9 +403,6 @@ public:
     virtual bool visit(VariableDeclarationList *node) { return visitCallback(node, true); }
     virtual void endVisit(VariableDeclarationList *node) { visitCallback(node, false); }
 
-    virtual bool visit(VariableDeclaration *node) { return visitCallback(node, true); }
-    virtual void endVisit(VariableDeclaration *node) { visitCallback(node, false); }
-
     virtual bool visit(EmptyStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(EmptyStatement *node) { visitCallback(node, false); }
 
@@ -415,14 +421,8 @@ public:
     virtual bool visit(ForStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(ForStatement *node) { visitCallback(node, false); }
 
-    virtual bool visit(LocalForStatement *node) { return visitCallback(node, true); }
-    virtual void endVisit(LocalForStatement *node) { visitCallback(node, false); }
-
     virtual bool visit(ForEachStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(ForEachStatement *node) { visitCallback(node, false); }
-
-    virtual bool visit(LocalForEachStatement *node) { return visitCallback(node, true); }
-    virtual void endVisit(LocalForEachStatement *node) { visitCallback(node, false); }
 
     virtual bool visit(ContinueStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(ContinueStatement *node) { visitCallback(node, false); }
@@ -432,6 +432,9 @@ public:
 
     virtual bool visit(ReturnStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(ReturnStatement *node) { visitCallback(node, false); }
+
+    virtual bool visit(YieldExpression *node) { return visitCallback(node, true); }
+    virtual void endVisit(YieldExpression *node) { visitCallback(node, false); }
 
     virtual bool visit(WithStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(WithStatement *node) { visitCallback(node, false); }
@@ -475,23 +478,57 @@ public:
     virtual bool visit(FormalParameterList *node) { return visitCallback(node, true); }
     virtual void endVisit(FormalParameterList *node) { visitCallback(node, false); }
 
-    virtual bool visit(FunctionBody *node) { return visitCallback(node, true); }
-    virtual void endVisit(FunctionBody *node) { visitCallback(node, false); }
+    virtual bool visit(ClassExpression *node) { return visitCallback(node, true); }
+    virtual void endVisit(ClassExpression *node) { visitCallback(node, false); }
+
+    virtual bool visit(ClassDeclaration *node) { return visitCallback(node, true); }
+    virtual void endVisit(ClassDeclaration *node) { visitCallback(node, false); }
+
+    virtual bool visit(ClassElementList *node) { return visitCallback(node, true); }
+    virtual void endVisit(ClassElementList *node) { visitCallback(node, false); }
 
     virtual bool visit(Program *node) { return visitCallback(node, true); }
     virtual void endVisit(Program *node) { visitCallback(node, false); }
 
-    virtual bool visit(SourceElements *node) { return visitCallback(node, true); }
-    virtual void endVisit(SourceElements *node) { visitCallback(node, false); }
+    virtual bool visit(NameSpaceImport *node) { return visitCallback(node, true); }
+    virtual void endVisit(NameSpaceImport *node) { visitCallback(node, false); }
 
-    virtual bool visit(FunctionSourceElement *node) { return visitCallback(node, true); }
-    virtual void endVisit(FunctionSourceElement *node) { visitCallback(node, false); }
+    virtual bool visit(ImportSpecifier *node) { return visitCallback(node, true); }
+    virtual void endVisit(ImportSpecifier *node) { visitCallback(node, false); }
 
-    virtual bool visit(StatementSourceElement *node) { return visitCallback(node, true); }
-    virtual void endVisit(StatementSourceElement *node) { visitCallback(node, false); }
+    virtual bool visit(ImportsList *node) { return visitCallback(node, true); }
+    virtual void endVisit(ImportsList *node) { visitCallback(node, false); }
+
+    virtual bool visit(NamedImports *node) { return visitCallback(node, true); }
+    virtual void endVisit(NamedImports *node) { visitCallback(node, false); }
+
+    virtual bool visit(FromClause *node) { return visitCallback(node, true); }
+    virtual void endVisit(FromClause *node) { visitCallback(node, false); }
+
+    virtual bool visit(ImportClause *node) { return visitCallback(node, true); }
+    virtual void endVisit(ImportClause *node) { visitCallback(node, false); }
+
+    virtual bool visit(ImportDeclaration *node) { return visitCallback(node, true); }
+    virtual void endVisit(ImportDeclaration *node) { visitCallback(node, false); }
+
+    virtual bool visit(ExportSpecifier *node) { return visitCallback(node, true); }
+    virtual void endVisit(ExportSpecifier *node) { visitCallback(node, false); }
+
+    virtual bool visit(ExportsList *node) { return visitCallback(node, true); }
+    virtual void endVisit(ExportsList *node) { visitCallback(node, false); }
+
+    virtual bool visit(ExportClause *node) { return visitCallback(node, true); }
+    virtual void endVisit(ExportClause *node) { visitCallback(node, false); }
+
+    virtual bool visit(ExportDeclaration *node) { return visitCallback(node, true); }
+    virtual void endVisit(ExportDeclaration *node) { visitCallback(node, false); }
+
+    virtual bool visit(ESModule *node) { return visitCallback(node, true); }
+    virtual void endVisit(ESModule *node) { visitCallback(node, false); }
 
     virtual bool visit(DebuggerStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(DebuggerStatement *node) { visitCallback(node, false); }
+
 };
 
 AstVisitor::AstVisitor() : d_ptr(new AstVisitorPrivate)

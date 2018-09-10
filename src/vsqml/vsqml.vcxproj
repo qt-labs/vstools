@@ -95,11 +95,20 @@
     <QtVersion>$(QtVersion.Substring($([MSBuild]::Add($(QtVersion.IndexOf(`=`)),1))))</QtVersion>
     <QtVersion>$([System.Text.RegularExpressions.Regex]::Split($(QtVersion),`\r\n|\r|\n`)[0].Trim())</QtVersion>
   </PropertyGroup>
+  <Target Name="VsQmlInfoQtVersion" BeforeTargets="CustomBuild;ClCompile"
+    Condition="Exists('$(QtBuild)\qtbase\mkspecs\qconfig.pri')">
+    <Message Importance="High" Text="Using Qt build at $(QtBuild)"/>
+    <Message Importance="High" Text="Qt version is $(QtVersion)"/>
+  </Target>
+  <Target Name="VsQmlErrorQtNotFound" BeforeTargets="CustomBuild;ClCompile"
+    Condition="!Exists('$(QtBuild)\qtbase\mkspecs\qconfig.pri')">
+    <Message Importance="High" Text="ERROR: Unable to find Qt build at $(QtBuild)"/>
+  </Target>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>QT_STATIC;UNICODE;_UNICODE;WIN32;QT_DLL;QT_CORE_LIB;VSQML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -120,7 +129,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>QT_STATIC;UNICODE;_UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;VSQML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -146,6 +155,9 @@
     <ClInclude Include="astvisitor.h" />
     <ClInclude Include="vsqml.h" />
     <ClInclude Include="vsqml_global.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
