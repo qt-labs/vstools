@@ -52,15 +52,19 @@
     Name="QtMocWriteTlogs"
     Condition="'@(QtMoc)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtMocReadTlog Include="^%(QtMoc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtMoc.AdditionalDependencies)'))"
+      <QtMocReadTlog Include="^%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies)"
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
+      <QtMocReadTlog>
+        <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
+        <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))">$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Identity)'))</Path>
+      </QtMocReadTlog>
       <QtMocWriteTlog Include="^%(QtMoc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtMoc.OutputFile)'))"
         Condition="'%(QtMoc.ExcludedFromBuild)' != 'true' and '%(QtMoc.OutputFile)' != ''"/>
     </ItemGroup>
     <WriteLinesToFile
       Condition="'@(QtMocReadTlog)' != ''"
       File="$(TLogLocation)QtMoc.read.1u.tlog"
-      Lines="@(QtMocReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Lines="@(QtMocReadTlog->MetaData('Path')->ToUpperInvariant());"
       Overwrite="true"
       Encoding="Unicode"/>
     <WriteLinesToFile
@@ -235,15 +239,19 @@
     Name="QtRccWriteTlogs"
     Condition="'@(QtRcc)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtRccReadTlog Include="^%(QtRcc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtRcc.AdditionalDependencies)'))"
+      <QtRccReadTlog Include="^%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies)"
         Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
+      <QtRccReadTlog>
+        <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
+        <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))">$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Identity)'))</Path>
+      </QtRccReadTlog>
       <QtRccWriteTlog Include="^%(QtRcc.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtRcc.OutputFile)'))"
         Condition="'%(QtRcc.ExcludedFromBuild)' != 'true' and '%(QtRcc.OutputFile)' != ''"/>
     </ItemGroup>
     <WriteLinesToFile
       Condition="'@(QtRccReadTlog)' != ''"
       File="$(TLogLocation)QtRcc.read.1u.tlog"
-      Lines="@(QtRccReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Lines="@(QtRccReadTlog->MetaData('Path')->ToUpperInvariant());"
       Overwrite="true"
       Encoding="Unicode"/>
     <WriteLinesToFile
@@ -411,15 +419,19 @@
     Name="QtUicWriteTlogs"
     Condition="'@(QtUic)' != '' and '@(SelectedFiles)' == ''">
     <ItemGroup>
-      <QtUicReadTlog Include="^%(QtUic.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtUic.AdditionalDependencies)'))"
+      <QtUicReadTlog Include="^%(QtUic.FullPath);%(QtUic.AdditionalDependencies)"
         Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
+      <QtUicReadTlog>
+        <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
+        <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))">$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Identity)'))</Path>
+      </QtUicReadTlog>
       <QtUicWriteTlog Include="^%(QtUic.FullPath);$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(QtUic.OutputFile)'))"
         Condition="'%(QtUic.ExcludedFromBuild)' != 'true' and '%(QtUic.OutputFile)' != ''"/>
     </ItemGroup>
     <WriteLinesToFile
       Condition="'@(QtUicReadTlog)' != ''"
       File="$(TLogLocation)QtUic.read.1u.tlog"
-      Lines="@(QtUicReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Lines="@(QtUicReadTlog->MetaData('Path')->ToUpperInvariant());"
       Overwrite="true"
       Encoding="Unicode"/>
     <WriteLinesToFile
