@@ -118,72 +118,82 @@ namespace QtVsTools
 
             System.Threading.Tasks.Task.Run(() =>
             {
-                instance = this;
-
-                Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
-
-                // determine the package installation directory
-                var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-                PkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
-
-                var QtMsBuildDefault = Path.Combine(
-                    Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
                 try {
-                    if (!Directory.Exists(QtMsBuildDefault))
-                        Directory.CreateDirectory(QtMsBuildDefault);
-                    var qtMsBuildFiles = Directory.GetFiles(
-                        Path.Combine(PkgInstallPath, "QtMsBuild"));
-                    foreach (var qtMsBuildFile in qtMsBuildFiles) {
-                        File.Copy(qtMsBuildFile,
-                            Path.Combine(QtMsBuildDefault, Path.GetFileName(qtMsBuildFile)), true);
+                    instance = this;
+
+                    Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
+
+                    // determine the package installation directory
+                    var uri = new Uri(System.Reflection.Assembly
+                        .GetExecutingAssembly().EscapedCodeBase);
+                    PkgInstallPath = Path.GetDirectoryName(
+                        Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+
+                    var QtMsBuildDefault = Path.Combine(
+                        Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
+                    try {
+                        if (!Directory.Exists(QtMsBuildDefault))
+                            Directory.CreateDirectory(QtMsBuildDefault);
+                        var qtMsBuildFiles = Directory.GetFiles(
+                            Path.Combine(PkgInstallPath, "QtMsBuild"));
+                        foreach (var qtMsBuildFile in qtMsBuildFiles) {
+                            File.Copy(qtMsBuildFile, Path.Combine(
+                                QtMsBuildDefault, Path.GetFileName(qtMsBuildFile)), true);
+                        }
+                    } catch {
+                        QtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
                     }
-                } catch {
-                    QtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
-                }
 
-                var QtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
-                if (string.IsNullOrEmpty(QtMsBuildPath)) {
+                    var QtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
+                    if (string.IsNullOrEmpty(QtMsBuildPath)) {
 
-                    Environment.SetEnvironmentVariable(
-                        "QtMsBuild", QtMsBuildDefault,
-                        EnvironmentVariableTarget.User);
+                        Environment.SetEnvironmentVariable(
+                            "QtMsBuild", QtMsBuildDefault,
+                            EnvironmentVariableTarget.User);
 
-                    Environment.SetEnvironmentVariable(
-                        "QtMsBuild", QtMsBuildDefault,
-                        EnvironmentVariableTarget.Process);
-                }
+                        Environment.SetEnvironmentVariable(
+                            "QtMsBuild", QtMsBuildDefault,
+                            EnvironmentVariableTarget.Process);
+                    }
 
-                var vm = QtVersionManager.The(initDone);
-                var error = string.Empty;
-                if (vm.HasInvalidVersions(out error))
-                    Messages.PaneMessageSafe(Dte, error, 5000);
-                eventHandler = new DteEventsHandler(Dte);
+                    var vm = QtVersionManager.The(initDone);
+                    var error = string.Empty;
+                    if (vm.HasInvalidVersions(out error))
+                        Messages.PaneMessageSafe(Dte, error, 5000);
+                    eventHandler = new DteEventsHandler(Dte);
 
-                QtMainMenu.Initialize(this);
-                QtSolutionContextMenu.Initialize(this);
-                QtProjectContextMenu.Initialize(this);
-                QtItemContextMenu.Initialize(this);
-                DefaultEditorsHandler.Initialize(Dte);
-                QtHelpMenu.Initialize(this);
+                    QtMainMenu.Initialize(this);
+                    QtSolutionContextMenu.Initialize(this);
+                    QtProjectContextMenu.Initialize(this);
+                    QtItemContextMenu.Initialize(this);
+                    DefaultEditorsHandler.Initialize(Dte);
+                    QtHelpMenu.Initialize(this);
 
-                try {
-                    CopyTextMateLanguageFiles();
-                    UpdateDefaultEditors(Mode.Startup);
+                    try {
+                        CopyTextMateLanguageFiles();
+                        UpdateDefaultEditors(Mode.Startup);
+                    } catch (Exception e) {
+                        Messages.PaneMessageSafe(Dte,
+                            e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                    }
+
+                    var modules = QtModules.Instance.GetAvailableModuleInformation();
+                    foreach (var module in modules) {
+                        if (!string.IsNullOrEmpty(module.ResourceName)) {
+                            var translatedName = SR.GetString(module.ResourceName, this);
+                            if (!string.IsNullOrEmpty(translatedName))
+                                module.Name = translatedName;
+                        }
+                    }
+
                 } catch (Exception e) {
                     Messages.PaneMessageSafe(Dte,
                         e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
-                }
 
-                var modules = QtModules.Instance.GetAvailableModuleInformation();
-                foreach (var module in modules) {
-                    if (!string.IsNullOrEmpty(module.ResourceName)) {
-                        var translatedName = SR.GetString(module.ResourceName, this);
-                        if (!string.IsNullOrEmpty(translatedName))
-                            module.Name = translatedName;
-                    }
-                }
+                } finally {
+                    initDone.Set();
 
-                initDone.Set();
+                }
             });
         }
 
