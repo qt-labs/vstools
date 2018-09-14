@@ -116,7 +116,7 @@ namespace QtVsTools
         {
             base.Initialize();
 
-            System.Threading.Tasks.Task.Run(() =>
+            Action init = () =>
             {
                 try {
                     instance = this;
@@ -194,7 +194,13 @@ namespace QtVsTools
                     initDone.Set();
 
                 }
-            });
+            };
+
+            var QtVs_Init = Environment.GetEnvironmentVariable("QtVs_Init");
+            if (string.Equals(QtVs_Init, "fast", StringComparison.InvariantCultureIgnoreCase))
+                System.Threading.Tasks.Task.Run(init);
+            else
+                init();
         }
 
         /// <summary>
