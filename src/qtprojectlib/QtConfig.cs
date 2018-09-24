@@ -49,6 +49,8 @@ namespace QtProjectLib
 
         public bool Is64Bit { get; private set; }
 
+        public string Namespace { get; private set; }
+
         public QtConfig(string qtdir)
         {
             LibInfix = string.Empty;
@@ -99,6 +101,8 @@ namespace QtProjectLib
                         LibInfix = data;
                     } else if (name == "QT_ARCH") {
                         Is64Bit = (data == "x86_64");
+                    } else if (name == "QT_NAMESPACE") {
+                        Namespace = data;
                     }
                 }
             }

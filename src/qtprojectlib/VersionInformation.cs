@@ -140,6 +140,13 @@ namespace QtProjectLib
             return qtConfig.LibInfix;
         }
 
+        public string Namespace()
+        {
+            if (qtConfig == null)
+                qtConfig = new QtConfig(qtDir);
+            return qtConfig.Namespace;
+        }
+
         public string GetQMakeConfEntry(string entryName)
         {
             if (qmakeConf == null)

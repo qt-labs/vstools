@@ -179,6 +179,8 @@ namespace QtVsTools
                     }
                 }
 
+                CopyNatvisFile();
+
                 initDone.Set();
             });
         }
@@ -261,6 +263,37 @@ namespace QtVsTools
                 } catch { }
             }
 #endif
+        }
+
+        public void CopyNatvisFile(string qtNamespace = null)
+        {
+            try {
+                string natvis = File.ReadAllText(
+                    Path.Combine(PkgInstallPath, "qt5.natvis.xml"));
+
+                string natvisFile;
+                if (string.IsNullOrEmpty(qtNamespace)) {
+                    natvis = natvis.Replace("##NAMESPACE##::", string.Empty);
+                    natvisFile = "qt5.natvis";
+                } else {
+                    natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
+                    natvisFile = string.Format("qt5_{0}.natvis", qtNamespace.Replace("::", "_"));
+                }
+
+                File.WriteAllText(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+#if VS2017
+                @"Visual Studio 2017\Visualizers\",
+#elif VS2015
+                @"Visual Studio 2015\Visualizers\",
+#elif VS2013
+                @"Visual Studio 2013\Visualizers\",
+#endif
+                natvisFile), natvis, System.Text.Encoding.UTF8);
+            } catch (Exception e) {
+                Messages.PaneMessageSafe(Dte,
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+            }
         }
     }
 }

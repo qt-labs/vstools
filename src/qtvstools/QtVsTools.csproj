@@ -153,11 +153,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\qtvisualizer\qt5.natvis">
-      <Link>Visualizer\qt5.natvis</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="..\qtmsbuild\qt.props">
       <Link>QtMsBuild\qt.props</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -193,6 +188,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="qt.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="qt5.natvis.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

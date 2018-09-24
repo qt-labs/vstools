@@ -108,8 +108,14 @@ namespace QtVsTools
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
                 var qtProject = QtProject.Create(selectedProject);
-                if (qtProject != null)
+                if (qtProject != null) {
                     qtProject.SetQtEnvironment();
+
+                    var qtVersion = qtProject.GetQtVersion();
+                    var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+                    if (!string.IsNullOrEmpty(versionInfo.Namespace()))
+                        Vsix.Instance.CopyNatvisFile(versionInfo.Namespace());
+                }
             }
         }
 

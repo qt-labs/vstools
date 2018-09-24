@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 12.0.40629.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizer", "Visualizer", "{56BEEACF-C297-483D-9E64-C0A7C3B7680E}"
-	ProjectSection(SolutionItems) = preProject
-		qtvisualizer\qt5.natvis = qtvisualizer\qt5.natvis
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{D73514C8-019E-44FB-8D42-F1FD52C1FD72}"
 EndProject
