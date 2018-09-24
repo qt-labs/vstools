@@ -162,8 +162,9 @@ namespace QtVsTools
                 if (tmp.ToLower() == oldUicDir.ToLower())
                     return;
 
-                if (ContainsInvalidVariable(tmp))
-                    Messages.DisplayErrorMessage(SR.GetString("OnlyVariableInDir"));
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
                 else
                     newUicDir = tmp;
             }
@@ -181,8 +182,9 @@ namespace QtVsTools
                 if (tmp.ToLower() == oldRccDir.ToLower())
                     return;
 
-                if (ContainsInvalidVariable(tmp))
-                    Messages.DisplayErrorMessage(SR.GetString("OnlyVariableInDir"));
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
                 else
                     newRccDir = tmp;
             }
