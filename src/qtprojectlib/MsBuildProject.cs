@@ -286,12 +286,15 @@ namespace QtProjectLib
             return true;
         }
 
+        delegate string ItemCommandLineReplacement(string itemName, string cmdLine);
+
         bool SetCommandLines(
             QtMsBuildContainer qtMsBuild,
             IEnumerable<XElement> configurations,
             IEnumerable<XElement> customBuilds,
             string itemType,
-            string workingDir)
+            string workingDir,
+            IEnumerable<ItemCommandLineReplacement> extraReplacements)
         {
             var query = from customBuild in customBuilds
                         let itemName = customBuild.Attribute("Include").Value
@@ -320,6 +323,8 @@ namespace QtProjectLib
                             StringComparison.InvariantCultureIgnoreCase)
                         .Replace(platformName, "$(Platform)",
                             StringComparison.InvariantCultureIgnoreCase);
+                    foreach (var replace in extraReplacements)
+                        commandLine = replace(row.itemName, commandLine);
 
                     evaluator.Properties.Clear();
                     foreach (var configProp in row.config.Elements())
@@ -555,7 +560,17 @@ namespace QtProjectLib
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds, QtMoc.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Path.GetDirectoryName(this[Files.Project].filePath),
+                new ItemCommandLineReplacement[]
+                {
+                    (item, cmdLine) => cmdLine.Replace(
+                        string.Format(@"\moc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        @"\moc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase),
+
+                    (item, cmdLine) => cmdLine.Replace(
+                        string.Format(@"\{0}.moc", Path.GetFileNameWithoutExtension(item)),
+                        @"\%(Filename).moc", StringComparison.InvariantCultureIgnoreCase)
+                })) {
                 Rollback();
                 return false;
             }
@@ -576,16 +591,10 @@ namespace QtProjectLib
                     QtMoc.Property.InputFile, "%(FullPath)");
                 if (!HelperFunctions.IsSourceFile(itemName)) {
                     qtMsBuild.SetItemProperty(qtMoc,
-                        QtMoc.Property.OutputFile, string.Format(@"{0}\moc_%(Filename).cpp",
-                        QtVSIPSettings.GetMocDirectory()));
-                    qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.DynamicSource, "output");
                     if (!hasGeneratedFiles)
                         mocDisableDynamicSource.Add(qtMoc);
                 } else {
-                    qtMsBuild.SetItemProperty(qtMoc,
-                        QtMoc.Property.OutputFile, string.Format(@"{0}\%(Filename).moc",
-                        QtVSIPSettings.GetMocDirectory()));
                     qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.DynamicSource, "input");
                 }
@@ -600,7 +609,13 @@ namespace QtProjectLib
             //convert rcc custom build steps
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds, QtRcc.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Path.GetDirectoryName(this[Files.Project].filePath),
+                new ItemCommandLineReplacement[]
+                {
+                    (item, cmdLine) => cmdLine.Replace(
+                        string.Format(@"\qrc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        @"\qrc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
+                })) {
                 Rollback();
                 return false;
             }
@@ -617,15 +632,18 @@ namespace QtProjectLib
                     QtRcc.Property.ExecutionDescription, "Rcc'ing %(Identity)...");
                 qtMsBuild.SetItemProperty(qtRcc,
                     QtRcc.Property.InputFile, "%(FullPath)");
-                qtMsBuild.SetItemProperty(qtRcc,
-                    QtRcc.Property.OutputFile, string.Format(@"{0}\qrc_%(Filename).cpp",
-                    QtVSIPSettings.GetRccDirectory()));
             }
 
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds, QtUic.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath))) {
+                Path.GetDirectoryName(this[Files.Project].filePath),
+                new ItemCommandLineReplacement[]
+                {
+                    (item, cmdLine) => cmdLine.Replace(
+                        string.Format(@"\ui_{0}.h", Path.GetFileNameWithoutExtension(item)),
+                        @"\ui_%(Filename).h", StringComparison.InvariantCultureIgnoreCase)
+                })) {
                 Rollback();
                 return false;
             }
@@ -642,9 +660,6 @@ namespace QtProjectLib
                     QtUic.Property.ExecutionDescription, "Uic'ing %(Identity)...");
                 qtMsBuild.SetItemProperty(qtUic,
                     QtUic.Property.InputFile, "%(FullPath)");
-                qtMsBuild.SetItemProperty(qtUic,
-                    QtUic.Property.OutputFile, string.Format(@"{0}\ui_%(Filename).h",
-                    QtVSIPSettings.GetRccDirectory()));
             }
 
             qtMsBuild.EndSetItemProperties();

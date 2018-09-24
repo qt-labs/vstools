@@ -306,9 +306,6 @@ namespace QtProjectLib
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
             qtProject.TranslateFilterNames();
 
-            QtVSIPSettings.SaveUicDirectory(qtProject.Project, QtVSIPSettings.GetUicDirectory());
-            QtVSIPSettings.SaveRccDirectory(qtProject.Project, QtVSIPSettings.GetRccDirectory());
-
             // collapse the generated files/resources filters afterwards
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);
             qtProject.CollapseFilter(Filters.GeneratedFiles().Name);
