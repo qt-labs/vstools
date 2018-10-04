@@ -141,7 +141,9 @@ namespace QtVsTools.Qml
                 AstNodeKind.UiObjectInitializer,
                 AstNodeKind.UiScriptBinding,
                 AstNodeKind.UiArrayBinding,
-                AstNodeKind.UiPublicMember
+                AstNodeKind.UiPublicMember,
+                AstNodeKind.FieldMemberExpression,
+                AstNodeKind.IdentifierExpression
             };
 
         IntPtr qmlTextPtr = IntPtr.Zero;

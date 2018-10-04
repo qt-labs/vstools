@@ -87,6 +87,7 @@
     <Compile Include="QMakeWrapper.cs" />
     <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
+    <Compile Include="QML\Classification\QmlExpressionEvalClassifier.cs" />
     <Compile Include="QML\Classification\QmlSyntaxClassifier.cs" />
     <Compile Include="QML\Classification\QmlErrorClassifier.cs" />
     <Compile Include="QML\Classification\QmlTag.cs" />
