@@ -54,6 +54,10 @@
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\Prototyped.cs" />
+    <Compile Include="Common\Json\DeferredObject.cs" />
+    <Compile Include="Common\Json\Serializable.cs" />
+    <Compile Include="Common\Json\SerializableEnum.cs" />
+    <Compile Include="Common\Json\Serializer.cs" />
     <Compile Include="DefaultEditor.cs" />
     <Compile Include="DefaultEditorsBase.cs" />
     <Compile Include="DefaultEditorsClient.cs" />
