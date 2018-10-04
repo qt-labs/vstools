@@ -116,6 +116,8 @@ namespace QtVsTools
         {
             base.Initialize();
 
+            Qml.Debug.Launcher.Initialize();
+
             System.Threading.Tasks.Task.Run(() =>
             {
                 instance = this;

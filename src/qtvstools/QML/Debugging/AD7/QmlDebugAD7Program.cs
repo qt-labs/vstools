@@ -1,0 +1,596 @@
+﻿/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Windows.Threading;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Debugger.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+
+namespace QtVsTools.Qml.Debug.AD7
+{
+    sealed partial class Program : Disposable, IDebuggerEventSink,
+
+        IDebugProgramNode2,  // "This interface represents a program that can be debugged."
+
+        IDebugProgram3,      // "This interface represents a program that is running in a process."
+
+        IDebugProcess2,      // "This interface represents a process running on a port. If the
+                             //  port is the local port, then IDebugProcess2 usually represents
+                             //  a physical process on the local machine."
+
+        IDebugThread2,       // "This interface represents a thread running in a program."
+        IDebugThread100,
+
+        IDebugModule3,       // "This interface represents a module -- that is, an executable unit
+                             //  of a program -- such as a DLL."
+
+        IDebugEventCallback2 // "This interface is used by the debug engine (DE) to send debug
+                             //  events to the session debug manager (SDM)."
+    {
+        public QmlDebugger Debugger { get; private set; }
+
+        public QmlEngine Engine { get; private set; }
+
+        public List<StackFrame> CurrentFrames { get; private set; }
+
+        public const string Name = "QML Debugger";
+        public Guid ProcessId { get; private set; }
+        public Guid ProgramId { get; set; }
+        public IDebugProcess2 NativeProc { get; private set; }
+        public uint NativeProcId { get; private set; }
+        public string ExecPath { get; private set; }
+        public string ExecArgs { get; private set; }
+        public IVsDebugger VsDebugger { get; private set; }
+        Dispatcher vsDebuggerThreadDispatcher;
+
+        private readonly static object criticalSectionGlobal = new object();
+        static bool originalBreakAllProcesses = BreakAllProcesses;
+        static int runningPrograms = 0;
+
+        public static Program Create(
+            QmlEngine engine,
+            IDebugProcess2 nativeProc,
+            string execPath,
+            string execArgs)
+        {
+            var _this = new Program();
+            return _this.Initialize(engine, nativeProc, execPath, execArgs) ? _this : null;
+        }
+
+        private Program()
+        { }
+
+        private bool Initialize(
+            QmlEngine engine,
+            IDebugProcess2 nativeProc,
+            string execPath,
+            string execArgs)
+        {
+            Engine = engine;
+            NativeProc = nativeProc;
+
+            var nativeProcId = new AD_PROCESS_ID[1];
+            nativeProc.GetPhysicalProcessId(nativeProcId);
+            NativeProcId = nativeProcId[0].dwProcessId;
+
+            ExecPath = execPath;
+            ExecArgs = execArgs;
+
+            Debugger = QmlDebugger.Create(this, execPath, execArgs);
+            if (Debugger == null)
+                return false;
+
+            VsDebugger = Package.GetGlobalService(typeof(IVsDebugger)) as IVsDebugger;
+            if (VsDebugger != null)
+                VsDebugger.AdviseDebugEventCallback(this as IDebugEventCallback2);
+            vsDebuggerThreadDispatcher = Dispatcher.CurrentDispatcher;
+
+            ProcessId = Guid.NewGuid();
+            CurrentFrames = new List<StackFrame>();
+
+            lock (criticalSectionGlobal) {
+                if (runningPrograms == 0)
+                    originalBreakAllProcesses = BreakAllProcesses;
+                runningPrograms++;
+            }
+
+            return true;
+        }
+
+        public override bool CanDispose
+        {
+            get
+            {
+                return !Engine.ProgramIsRunning(this);
+            }
+        }
+
+        protected override void DisposeManaged()
+        {
+            Debugger.Dispose();
+            if (VsDebugger != null)
+                VsDebugger.UnadviseDebugEventCallback(this as IDebugEventCallback2);
+
+            lock (criticalSectionGlobal) {
+                runningPrograms--;
+                if (runningPrograms == 0)
+                    BreakAllProcesses = originalBreakAllProcesses;
+            }
+        }
+
+        bool IDebuggerEventSink.QueryRuntimeFrozen()
+        {
+            var debugMode = new DBGMODE[1];
+            int res = VSConstants.S_FALSE;
+            vsDebuggerThreadDispatcher
+                .BeginInvoke(new Action(() => res = VsDebugger.GetMode(debugMode)), new object[0])
+                .Wait();
+
+            if (res != VSConstants.S_OK)
+                return false;
+            return (debugMode[0] != DBGMODE.DBGMODE_Run);
+        }
+
+        void IDebuggerEventSink.NotifyError(string errorMessage)
+        {
+            QtProjectLib.Messages.PaneMessage(Vsix.Instance.Dte,
+                string.Format("QML Debug: {0}", errorMessage));
+        }
+
+        int IDebugEventCallback2.Event(
+            IDebugEngine2 pEngine,
+            IDebugProcess2 pProcess,
+            IDebugProgram2 pProgram,
+            IDebugThread2 pThread,
+            IDebugEvent2 pEvent,
+            ref Guid riidEvent,
+            uint dwAttrib)
+        {
+            if (pEngine == Engine)
+                return VSConstants.S_OK;
+
+            if (pProcess == null && pProgram == null)
+                return VSConstants.S_OK;
+
+            if (pProcess == null) {
+                if (pProgram.GetProcess(out pProcess) != VSConstants.S_OK || pProcess == null)
+                    return VSConstants.S_OK;
+            }
+
+            var pProcessId = new AD_PROCESS_ID[1];
+            if (pProcess.GetPhysicalProcessId(pProcessId) != VSConstants.S_OK)
+                return VSConstants.S_OK;
+
+            if (pProcessId[0].dwProcessId != NativeProcId)
+                return VSConstants.S_OK;
+
+            if (riidEvent == typeof(IDebugProgramDestroyEvent2).GUID)
+                TerminateProcess();
+
+            return VSConstants.S_OK;
+        }
+
+        void IDebuggerEventSink.NotifyClientDisconnected()
+        {
+            TerminateProcess();
+        }
+
+        bool terminated = false;
+        void TerminateProcess()
+        {
+            if (!terminated) {
+                terminated = true;
+                var engineLaunch = Engine as IDebugEngineLaunch2;
+                engineLaunch.TerminateProcess(this as IDebugProcess2);
+            }
+        }
+
+
+        #region //////////////////// Execution Control ////////////////////////////////////////////
+
+        public int /*IDebugProgram3*/ Continue(IDebugThread2 pThread)
+        {
+            Debugger.Run();
+            return VSConstants.S_OK;
+        }
+
+        public int /*IDebugProgram3*/ ExecuteOnThread(IDebugThread2 pThread)
+        {
+            Debugger.Run();
+            return VSConstants.S_OK;
+        }
+
+        public int /*IDebugProgram3*/ Step(
+            IDebugThread2 pThread,
+            enum_STEPKIND sk,
+            enum_STEPUNIT Step)
+        {
+            if (sk == enum_STEPKIND.STEP_OVER)
+                Debugger.StepOver();
+            else if (sk == enum_STEPKIND.STEP_INTO)
+                Debugger.StepInto();
+            else if (sk == enum_STEPKIND.STEP_OUT)
+                Debugger.StepOut();
+            else
+                return VSConstants.E_FAIL;
+            return VSConstants.S_OK;
+        }
+
+        void IDebuggerEventSink.NotifyBreak()
+        {
+            BreakAllProcesses = false;
+            DebugEvent.Send(new StepCompleteEvent(this));
+        }
+
+        #endregion //////////////////// Execution Control /////////////////////////////////////////
+
+
+        #region //////////////////// Breakpoints //////////////////////////////////////////////////
+
+        public void SetBreakpoint(Breakpoint breakpoint)
+        {
+            Debugger.SetBreakpoint(breakpoint);
+        }
+
+        public void NotifyBreakpointSet(Breakpoint breakpoint)
+        {
+            DebugEvent.Send(new BreakpointBoundEvent(breakpoint));
+        }
+
+        public void ClearBreakpoint(Breakpoint breakpoint)
+        {
+            Debugger.ClearBreakpoint(breakpoint);
+        }
+
+        public void NotifyBreakpointCleared(Breakpoint breakpoint)
+        {
+            breakpoint.Parent.DisposeBreakpoint(breakpoint);
+        }
+
+        public void NotifyBreakpointHit(Breakpoint breakpoint)
+        {
+            BreakAllProcesses = false;
+            DebugEvent.Send(new BreakpointEvent(this, BoundBreakpointsEnum.Create(breakpoint)));
+        }
+
+        static bool BreakAllProcesses
+        {
+            get
+            {
+                return ((bool)Vsix.Instance.Dte
+                    .Properties["Debugging", "General"]
+                    .Item("BreakAllProcesses")
+                    .Value);
+            }
+            set
+            {
+                Vsix.Instance.Dte
+                    .Properties["Debugging", "General"]
+                    .Item("BreakAllProcesses")
+                    .let_Value(value ? "True" : "False");
+            }
+        }
+
+        #endregion //////////////////// Breakpoints ///////////////////////////////////////////////
+
+
+        #region //////////////////// Call Stack ///////////////////////////////////////////////////
+
+        void IDebuggerEventSink.NotifyStackContext(IList<FrameInfo> frames)
+        {
+            CurrentFrames.Clear();
+            foreach (var frame in frames) {
+                CurrentFrames.Add(StackFrame.Create(frame.Name, frame.Number, frame.Scopes,
+                    CodeContext.Create(Engine, this,
+                    Engine.FileSystem[frame.QrcPath].FilePath, (uint)frame.Line)));
+            }
+        }
+
+        public void Refresh()
+        {
+            CurrentFrames.ForEach(x => x.Refresh());
+        }
+
+        int IDebugThread2.EnumFrameInfo(
+            enum_FRAMEINFO_FLAGS dwFieldSpec,
+            uint nRadix,
+            out IEnumDebugFrameInfo2 ppEnum)
+        {
+            ppEnum = null;
+
+            if (CurrentFrames == null || CurrentFrames.Count == 0) {
+                ppEnum = FrameInfoEnum.Create();
+                return VSConstants.S_OK;
+            }
+
+            var frameInfos = new List<FRAMEINFO>();
+            foreach (var frame in CurrentFrames) {
+                var frameInfo = new FRAMEINFO[1];
+                (frame as IDebugStackFrame2).GetInfo(dwFieldSpec, nRadix, frameInfo);
+                frameInfos.Add(frameInfo[0]);
+            }
+
+            ppEnum = FrameInfoEnum.Create(frameInfos);
+            return VSConstants.S_OK;
+        }
+
+        #endregion //////////////////// Call Stack ////////////////////////////////////////////////
+
+
+        #region //////////////////// Info /////////////////////////////////////////////////////////
+
+        class ProgramInfo : InfoHelper<ProgramInfo>
+        {
+            public uint? ThreadId { get; set; }
+            public uint? SuspendCount { get; set; }
+            public uint? ThreadState { get; set; }
+            public string Priority { get; set; }
+            public string Name { get; set; }
+            public string Location { get; set; }
+            public string DisplayName { get; set; }
+            public uint? DisplayNamePriority { get; set; }
+            public uint? ThreadCategory { get; set; }
+            public uint? AffinityMask { get; set; }
+            public int? PriorityId { get; set; }
+            public string ModuleName { get; set; }
+            public string ModuleUrl { get; set; }
+        }
+
+        ProgramInfo Info
+        {
+            get
+            {
+                return new ProgramInfo
+                {
+                    ThreadId = Debugger.ThreadId,
+                    SuspendCount = 0,
+                    ThreadCategory = 0,
+                    AffinityMask = 0,
+                    PriorityId = 0,
+                    ThreadState = (uint)enum_THREADSTATE.THREADSTATE_RUNNING,
+                    Priority = "Normal",
+                    Location = "",
+                    Name = Name,
+                    DisplayName = Name,
+                    DisplayNamePriority = 10, // Give this display name a higher priority
+                                              // than the default (0) so that it will
+                                              // actually be displayed
+                    ModuleName = Path.GetFileName(ExecPath),
+                    ModuleUrl = ExecPath
+
+                };
+            }
+        }
+
+        static readonly ProgramInfo.Mapping MappingToTHREADPROPERTIES =
+
+        #region //////////////////// THREADPROPERTIES <-- ProgramInfo /////////////////////////////
+            // r: Ref<THREADPROPERTIES>
+            // f: enum_THREADPROPERTY_FIELDS
+            // i: ProgramInfo
+            // v: value of i.<<property>>
+
+            new ProgramInfo.Mapping<THREADPROPERTIES, enum_THREADPROPERTY_FIELDS>
+                ((r, f) => r.s.dwFields |= f)
+            {
+                { enum_THREADPROPERTY_FIELDS.TPF_ID,
+                    (r, v) => r.s.dwThreadId = v, i => i.ThreadId },
+
+                { enum_THREADPROPERTY_FIELDS.TPF_SUSPENDCOUNT,
+                    (r, v) => r.s.dwSuspendCount = v, i => i.SuspendCount },
+
+                { enum_THREADPROPERTY_FIELDS.TPF_STATE,
+                    (r, v) => r.s.dwThreadState = v, i => i.ThreadState },
+
+                { enum_THREADPROPERTY_FIELDS.TPF_PRIORITY,
+                    (r, v) => r.s.bstrPriority = v, i => i.Priority },
+
+                { enum_THREADPROPERTY_FIELDS.TPF_NAME,
+                    (r, v) => r.s.bstrName = v, i => i.Name },
+
+                { enum_THREADPROPERTY_FIELDS.TPF_LOCATION,
+                    (r, v) => r.s.bstrLocation = v, i => i.Location },
+            };
+
+        #endregion //////////////////// THREADPROPERTIES <-- ProgramInfo //////////////////////////
+
+
+        static readonly ProgramInfo.Mapping MappingToTHREADPROPERTIES100 =
+
+        #region //////////////////// THREADPROPERTIES100 <-- ProgramInfo //////////////////
+            // r: Ref<THREADPROPERTIES100>
+            // f: enum_THREADPROPERTY_FIELDS100
+            // i: ProgramInfo
+            // v: value of i.<<property>>
+
+            new ProgramInfo.Mapping<THREADPROPERTIES100, enum_THREADPROPERTY_FIELDS100>
+                ((r, f) => r.s.dwFields |= (uint)f)
+            {
+                { enum_THREADPROPERTY_FIELDS100.TPF100_ID,
+                    (r, v) => r.s.dwThreadId = v, i => i.ThreadId },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_SUSPENDCOUNT,
+                    (r, v) => r.s.dwSuspendCount = v, i => i.SuspendCount },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_STATE,
+                    (r, v) => r.s.dwThreadState = v, i => i.ThreadState },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_PRIORITY,
+                    (r, v) => r.s.bstrPriority = v, i => i.Priority },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_NAME,
+                    (r, v) => r.s.bstrName = v, i => i.Name },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_LOCATION,
+                    (r, v) => r.s.bstrLocation = v, i => i.Location },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_DISPLAY_NAME,
+                    (r, v) => r.s.bstrDisplayName = v, i => i.DisplayName },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_DISPLAY_NAME,
+                  enum_THREADPROPERTY_FIELDS100.TPF100_DISPLAY_NAME_PRIORITY,
+                    (r, v) => r.s.DisplayNamePriority = v, i => i.DisplayNamePriority },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_CATEGORY,
+                    (r, v) => r.s.dwThreadCategory = v, i => i.ThreadCategory },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_AFFINITY,
+                    (r, v) => r.s.AffinityMask = v, i => i.AffinityMask },
+
+                { enum_THREADPROPERTY_FIELDS100.TPF100_PRIORITY_ID,
+                    (r, v) => r.s.priorityId = v, i => i.PriorityId },
+            };
+
+        #endregion //////////////////// THREADPROPERTIES100 <-- ProgramInfo ///////////////////////
+
+
+        static readonly ProgramInfo.Mapping MappingToMODULE_INFO =
+
+        #region //////////////////// MODULE_INFO <-- ProgramInfo //////////////////////////////////
+            // r: Ref<MODULE_INFO>
+            // f: enum_MODULE_INFO_FIELDS
+            // i: ProgramInfo
+            // v: value of i.<<property>>
+
+            new ProgramInfo.Mapping<MODULE_INFO, enum_MODULE_INFO_FIELDS>
+                ((r, bit) => r.s.dwValidFields |= bit)
+            {
+                { enum_MODULE_INFO_FIELDS.MIF_NAME,
+                    (r, v) => r.s.m_bstrName = v, i => i.ModuleName },
+
+                { enum_MODULE_INFO_FIELDS.MIF_URL,
+                    (r, v) => r.s.m_bstrUrl = v, i => i.ModuleUrl },
+            };
+
+        #endregion //////////////////// MODULE_INFO <-- ProgramInfo ///////////////////////////////
+
+
+        public int /*IDebugProgram3*/ GetName(out string pbstrName)
+        {
+            pbstrName = Program.Name;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugProgramNode2.GetProgramName(out string pbstrProgramName)
+        {
+            return GetName(out pbstrProgramName);
+        }
+
+        int IDebugProgramNode2.GetEngineInfo(out string pbstrEngine, out Guid pguidEngine)
+        {
+            pbstrEngine = "QML";
+            pguidEngine = QmlEngine.Id;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugProgramNode2.GetHostPid(AD_PROCESS_ID[] pHostProcessId)
+        {
+            pHostProcessId[0].ProcessIdType = (uint)enum_AD_PROCESS_ID.AD_PROCESS_ID_GUID;
+            pHostProcessId[0].guidProcessId = ProcessId;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugProcess2.GetPhysicalProcessId(AD_PROCESS_ID[] pProcessId)
+        {
+            pProcessId[0].ProcessIdType = (uint)enum_AD_PROCESS_ID.AD_PROCESS_ID_GUID;
+            pProcessId[0].guidProcessId = ProcessId;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugProcess2.GetProcessId(out Guid pguidProcessId)
+        {
+            pguidProcessId = ProcessId;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugProcess2.GetPort(out IDebugPort2 ppPort)
+        {
+            return NativeProc.GetPort(out ppPort);
+        }
+
+        public int /*IDebugProgram3*/ GetProgramId(out Guid pguidProgramId)
+        {
+            pguidProgramId = ProgramId;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugThread2.GetThreadProperties(
+            enum_THREADPROPERTY_FIELDS dwFields,
+            THREADPROPERTIES[] ptp)
+        {
+            Info.Map(MappingToTHREADPROPERTIES, dwFields, out ptp[0]);
+            return VSConstants.S_OK;
+        }
+
+        int IDebugThread100.GetThreadProperties100(uint dwFields, THREADPROPERTIES100[] ptp)
+        {
+            Info.Map(MappingToTHREADPROPERTIES100, dwFields, out ptp[0]);
+            return VSConstants.S_OK;
+        }
+
+        int IDebugThread2.GetName(out string pbstrName)
+        {
+            pbstrName = Name;
+            return VSConstants.S_OK;
+        }
+
+        int IDebugThread2.GetThreadId(out uint pdwThreadId)
+        {
+            pdwThreadId = (uint)Debugger.ThreadId;
+            return VSConstants.S_OK;
+        }
+
+        public int /*IDebugModule3*/ GetInfo(enum_MODULE_INFO_FIELDS dwFields, MODULE_INFO[] pinfo)
+        {
+            Info.Map(MappingToMODULE_INFO, dwFields, out pinfo[0]);
+            return VSConstants.S_OK;
+        }
+
+        public int /*IDebugProgram3*/ EnumThreads(out IEnumDebugThreads2 ppEnum)
+        {
+            ppEnum = ThreadEnum.Create(this);
+            return VSConstants.S_OK;
+        }
+
+        public int /*IDebugProgram3*/ EnumModules(out IEnumDebugModules2 ppEnum)
+        {
+            ppEnum = ModuleEnum.Create(this);
+            return VSConstants.S_OK;
+        }
+
+        #endregion //////////////////// Info //////////////////////////////////////////////////////
+
+    }
+}
