@@ -74,3 +74,42 @@ extern "C" VSQML_EXPORT bool qmlFreeDiagnosticMessages(int *diagnosticMessages);
 extern "C" VSQML_EXPORT bool qmlFreeComments(int *commentData);
 
 extern "C" VSQML_EXPORT bool qmlFreeAstVisitor(void *astVisitor);
+
+typedef void(__stdcall *QmlDebugClientCreated)(void *qmlDebugClient);
+
+typedef void(__stdcall *QmlDebugClientDestroyed)(void *qmlDebugClient);
+
+typedef void(__stdcall *QmlDebugClientConnected)(void *qmlDebugClient);
+
+typedef void(__stdcall *QmlDebugClientDisconnected)(void *qmlDebugClient);
+
+typedef void(__stdcall *QmlDebugClientMessageReceived)(
+    void *qmlDebugClient,
+    const char *messageTypeData,
+    int messageTypeLength,
+    const char *messageParamsData,
+    int messageParamsLength);
+
+extern "C" VSQML_EXPORT bool qmlDebugClientThread(
+    QmlDebugClientCreated clientCreated,
+    QmlDebugClientDestroyed clientDestroyed,
+    QmlDebugClientConnected clientConnected,
+    QmlDebugClientDisconnected clientDisconnected,
+    QmlDebugClientMessageReceived clientMessageReceived);
+
+extern "C" VSQML_EXPORT bool qmlDebugClientConnect(
+    void *qmlDebugClient,
+    const char *hostNameData,
+    int hostNameLength,
+    unsigned short hostPort);
+
+extern "C" VSQML_EXPORT bool qmlDebugClientDisconnect(void *qmlDebugClient);
+
+extern "C" VSQML_EXPORT bool qmlDebugClientSendMessage(
+    void *qmlDebugClient,
+    const char *messageTypeData,
+    int messageTypeLength,
+    const char *messageParamsData,
+    int messageParamsLength);
+
+extern "C" VSQML_EXPORT bool qmlDebugClientShutdown(void *qmlDebugClient);

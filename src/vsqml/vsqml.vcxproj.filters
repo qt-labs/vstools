@@ -34,6 +34,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="vsqmldebugclient.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="vsqmldebugclient.cpp">
+      <Filter>Source Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="README" />
   </ItemGroup>
 </Project>

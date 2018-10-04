@@ -53,6 +53,7 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="..\QtMsBuild\qt.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>bin\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</IntDir>
@@ -94,6 +95,7 @@
     <QtVersion>$(QtVersion.Substring($(QtVersion.IndexOf(`QT_VERSION`))))</QtVersion>
     <QtVersion>$(QtVersion.Substring($([MSBuild]::Add($(QtVersion.IndexOf(`=`)),1))))</QtVersion>
     <QtVersion>$([System.Text.RegularExpressions.Regex]::Split($(QtVersion),`\r\n|\r|\n`)[0].Trim())</QtVersion>
+    <QTDIR>$([System.IO.Path]::Combine($(QtBuild),`qtbase`))</QTDIR>
   </PropertyGroup>
   <Target Name="VsQmlInfoQtVersion" BeforeTargets="CustomBuild;ClCompile"
     Condition="Exists('$(QtBuild)\qtbase\mkspecs\qconfig.pri')">
@@ -108,7 +110,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>QT_STATIC;UNICODE;_UNICODE;WIN32;QT_DLL;QT_CORE_LIB;VSQML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;$(QtBuild)\qtdeclarative\include\QtQmlDebug\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtPacketProtocol\$(QtVersion);$(IntDir)moc\%(RecursiveDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -119,17 +121,20 @@
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>$(QtBuild)\qtbase\lib;$(QtBuild)\qtdeclarative\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>mpr.lib;netapi32.lib;userenv.lib;version.lib;ws2_32.lib;winmm.lib;qtpcre2d.lib;qtmaind.lib;Qt5Cored.lib;Qt5Qmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mpr.lib;netapi32.lib;userenv.lib;version.lib;ws2_32.lib;iphlpapi.lib;winmm.lib;qtpcre2d.lib;qtmaind.lib;Qt5Cored.lib;Qt5Networkd.lib;Qt5Qmld.lib;Qt5QmlDebugd.lib;Qt5PacketProtocold.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) bin</Command>
     </PostBuildEvent>
+    <QtMoc>
+      <OutputFile>$(IntDir)moc\%(RecursiveDir)moc_%(Filename).cpp</OutputFile>
+    </QtMoc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>QT_STATIC;UNICODE;_UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;VSQML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(QtBuild)\qtbase\include;$(QtBuild)\qtbase\include\QtCore;$(QtBuild)\qtbase\include\QtCore\$(QtVersion);$(QtBuild)\qtbase\include\QtCore\$(QtVersion)\QtCore;$(QtBuild)\qtdeclarative\include;$(QtBuild)\qtdeclarative\include\QtQml;$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtQml\$(QtVersion)\QtQml;$(QtBuild)\qtdeclarative\include\QtQmlDebug\$(QtVersion);$(QtBuild)\qtdeclarative\include\QtPacketProtocol\$(QtVersion);$(IntDir)moc\%(RecursiveDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -141,28 +146,36 @@
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>$(QtBuild)\qtbase\lib;$(QtBuild)\qtdeclarative\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>mpr.lib;netapi32.lib;userenv.lib;version.lib;ws2_32.lib;winmm.lib;qtpcre2.lib;qtmain.lib;Qt5Core.lib;Qt5Qml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mpr.lib;netapi32.lib;userenv.lib;version.lib;ws2_32.lib;iphlpapi.lib;winmm.lib;qtpcre2.lib;qtmain.lib;Qt5Core.lib;Qt5Network.lib;Qt5Qml.lib;Qt5QmlDebug.lib;Qt5PacketProtocol.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) bin</Command>
     </PostBuildEvent>
+    <QtMoc>
+      <OutputFile>$(IntDir)moc\%(RecursiveDir)moc_%(Filename).cpp</OutputFile>
+    </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="astvisitor.cpp" />
     <ClCompile Include="vsqml.cpp" />
+    <QtMoc Include="vsqmldebugclient.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">input</DynamicSource>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">input</DynamicSource>
+      <OutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\%(RecursiveDir)%(Filename).moc</OutputFile>
+      <OutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\%(RecursiveDir)%(Filename).moc</OutputFile>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="astvisitor.h" />
     <ClInclude Include="vsqml.h" />
+    <QtMoc Include="vsqmldebugclient.h" />
     <ClInclude Include="vsqml_global.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
-    <Import Project="$(QtMsBuild)\qt.targets" />
-  </ImportGroup>
+  <Import Project="..\QtMsBuild\qt.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
