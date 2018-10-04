@@ -29,6 +29,7 @@
 using QtProjectLib;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace QtVsTools
@@ -48,6 +49,8 @@ namespace QtVsTools
             newLUpdateOptions = oldLUpdateOptions = QtVSIPSettings.GetLUpdateOptions(project);
             newLReleaseOptions = oldLReleaseOptions = QtVSIPSettings.GetLReleaseOptions(project);
             newQtVersion = oldQtVersion = versionManager.GetProjectQtVersion(project);
+            QmlDebug = oldQmlDebug = QtVSIPSettings.GetQmlDebug(project);
+            QmlDebugPort = oldQmlDebugPort = QtVSIPSettings.GetQmlDebugPort(project);
         }
 
         private QtVersionManager versionManager;
@@ -61,6 +64,8 @@ namespace QtVsTools
         private bool oldLUpdateOnBuild;
         private string oldLUpdateOptions;
         private string oldLReleaseOptions;
+        private bool oldQmlDebug;
+        private ushort oldQmlDebugPort;
 
         private string newMocDir;
         private string newMocOptions;
@@ -105,6 +110,12 @@ namespace QtVsTools
 
             if (oldLReleaseOptions != newLReleaseOptions)
                 QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
+
+            if (oldQmlDebug != QmlDebug)
+                QtVSIPSettings.SaveQmlDebug(project, QmlDebug);
+
+            if (oldQmlDebugPort != QmlDebugPort)
+                QtVSIPSettings.SaveQmlDebugPort(project, QmlDebugPort);
 
             if (oldQtVersion != newQtVersion) {
                 if (qtPro.PromptChangeQtVersion(oldQtVersion, newQtVersion)) {
@@ -226,6 +237,72 @@ namespace QtVsTools
             set
             {
                 newLReleaseOptions = value;
+            }
+        }
+
+        [DisplayName("QML Debug")]
+        [TypeConverter(typeof(QmlDebugConverter))]
+        public bool QmlDebug { get; set; }
+
+        internal class QmlDebugConverter : BooleanConverter
+        {
+            public override object ConvertTo(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value,
+                Type destinationType)
+            {
+                return (bool)value ? "Enabled" : "Disabled";
+            }
+
+            public override object ConvertFrom(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value)
+            {
+                return (string)value == "Enabled";
+            }
+        }
+
+        [DisplayName("QML Debug Port")]
+        [TypeConverter(typeof(QmlDebugPortConverter))]
+        public ushort QmlDebugPort { get; set; }
+
+        internal class QmlDebugPortConverter : UInt16Converter
+        {
+            public override object ConvertTo(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value,
+                Type destinationType)
+            {
+                var obj = context.Instance as ProjectQtSettings;
+                if (obj == null)
+                    return QtProject.DefaultQmlDebugPort.ToString();
+
+                if (obj.QmlDebug)
+                    return value.ToString();
+
+                return "Disabled";
+            }
+
+            public override object ConvertFrom(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value)
+            {
+                ushort port;
+                if (!ushort.TryParse((string)value, out port) || port == 0)
+                    return QtProject.DefaultQmlDebugPort;
+
+                var obj = context.Instance as ProjectQtSettings;
+                if (obj == null)
+                    return QtProject.DefaultQmlDebugPort;
+
+                if (obj.QmlDebug)
+                    return port;
+
+                return QtProject.DefaultQmlDebugPort;
             }
         }
 

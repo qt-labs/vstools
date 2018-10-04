@@ -506,5 +506,25 @@ namespace QtProjectLib
                 return;
             regKey.SetValue(key, val ? 1 : 0);
         }
+
+        public static bool GetQmlDebug(EnvDTE.Project project)
+        {
+            return QtProject.Create(project).QmlDebug;
+        }
+
+        public static void SaveQmlDebug(EnvDTE.Project project, bool enabled)
+        {
+            QtProject.Create(project).QmlDebug = enabled;
+        }
+
+        public static ushort GetQmlDebugPort(EnvDTE.Project project)
+        {
+            return QtProject.Create(project).QmlDebugPort;
+        }
+
+        public static void SaveQmlDebugPort(EnvDTE.Project project, ushort port)
+        {
+            QtProject.Create(project).QmlDebugPort = port;
+        }
     }
 }

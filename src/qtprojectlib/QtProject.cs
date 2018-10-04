@@ -85,6 +85,7 @@ namespace QtProjectLib
             dte = envPro.DTE;
             vcPro = envPro.Object as VCProject;
             qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
+            InitializeQmlJsDebugger(vcPro);
         }
 
         public VCProject VCProject
@@ -3405,6 +3406,253 @@ namespace QtProjectLib
             }
 
             HelperFunctions.SetDebuggingEnvironment(envPro);
+            InitializeQmlJsDebugger(envPro.Object as VCProject);
+        }
+
+        public class CppConfig
+        {
+            public VCConfiguration Config;
+            public IVCRulePropertyStorage Cpp;
+
+            public string GetUserPropertyValue(string pszPropName)
+            {
+                var vcProj = Config.project as VCProject;
+                var projProps = vcProj as IVCBuildPropertyStorage;
+                try {
+                    return projProps.GetPropertyValue(pszPropName, Config.Name, "UserFile");
+                } catch (Exception e) {
+                    System.Diagnostics.Debug.WriteLine(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                    return string.Empty;
+                }
+            }
+
+            public void SetUserPropertyValue(string pszPropName, string pszPropValue)
+            {
+                var vcProj = Config.project as VCProject;
+                var projProps = vcProj as IVCBuildPropertyStorage;
+                try {
+                    projProps.SetPropertyValue(pszPropName, Config.Name, "UserFile", pszPropValue);
+                } catch (Exception e) {
+                    System.Diagnostics.Debug.WriteLine(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                }
+            }
+
+            public void RemoveUserProperty(string pszPropName)
+            {
+                var vcProj = Config.project as VCProject;
+                var projProps = vcProj as IVCBuildPropertyStorage;
+                try {
+                    projProps.RemoveProperty(pszPropName, Config.Name, "UserFile");
+                } catch (Exception e) {
+                    System.Diagnostics.Debug.WriteLine(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                }
+            }
+        }
+
+        public static IEnumerable<CppConfig> GetCppConfigs(VCProject vcPro)
+        {
+            return ((IVCCollection)vcPro.Configurations).Cast<VCConfiguration>()
+                .Select(x => new CppConfig
+                {
+                    Config = x,
+                    Cpp = x.Rules.Item("CL") as IVCRulePropertyStorage,
+                })
+                .Where(x => x.Cpp != null);
+        }
+
+        public static IEnumerable<CppConfig> GetCppDebugConfigs(VCProject vcPro)
+        {
+            return GetCppConfigs(vcPro).Where(x => x.Cpp
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .Contains("QT_NO_DEBUG") == false);
+        }
+
+        public static bool IsQtQmlDebugDefined(VCProject vcPro)
+        {
+            return (GetCppDebugConfigs(vcPro).Where(x => x.Cpp
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .Contains("QT_QML_DEBUG") == false)
+                .Any() == false);
+        }
+
+        public static void DefineQtQmlDebug(VCProject vcPro)
+        {
+            var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .Contains("QT_QML_DEBUG") == false)
+                .Select(x => new
+                {
+                    x.Cpp,
+                    Macros = x.Cpp.GetUnevaluatedPropertyValue("PreprocessorDefinitions")
+                });
+
+            foreach (var config in configs) {
+                config.Cpp.SetPropertyValue("PreprocessorDefinitions",
+                    string.Format("QT_QML_DEBUG;{0}", config.Macros));
+            }
+        }
+
+        public static void UndefineQtQmlDebug(VCProject vcPro)
+        {
+            var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .Contains("QT_QML_DEBUG") == true)
+                .Select(x => new
+                {
+                    x.Cpp,
+                    Macros = x.Cpp.GetUnevaluatedPropertyValue("PreprocessorDefinitions")
+                        .Split(new char[] { ';' }).ToList()
+                });
+
+            foreach (var config in configs) {
+                config.Macros.Remove("QT_QML_DEBUG");
+                config.Cpp.SetPropertyValue("PreprocessorDefinitions",
+                    string.Join(";", config.Macros));
+            }
+        }
+
+        public static bool IsQmlJsDebuggerInitialized(VCProject vcPro)
+        {
+            foreach (var config in GetCppDebugConfigs(vcPro)) {
+                var qmlDebugPort = config.GetUserPropertyValue("QmlDebugPort");
+                if (string.IsNullOrEmpty(qmlDebugPort))
+                    return false;
+
+                if (qmlDebugPort != "false" && !IsQtQmlDebugDefined(vcPro))
+                    return false;
+            }
+            return true;
+        }
+
+        public static void InitializeQmlJsDebugger(VCProject vcPro)
+        {
+            if (vcPro == null || !IsQtMsBuildEnabled(vcPro))
+                return;
+
+            if (!IsQmlJsDebuggerInitialized(vcPro)) {
+                DefineQtQmlDebug(vcPro);
+                DefineQmlJsDebugger(vcPro);
+            }
+        }
+
+        public static bool IsQmlJsDebuggerDefined(VCProject vcPro)
+        {
+            foreach (var config in GetCppDebugConfigs(vcPro)) {
+                var qmlDebug = config.GetUserPropertyValue("QmlDebug");
+                if (string.IsNullOrEmpty(qmlDebug))
+                    return false;
+                var debugArgs = config.GetUserPropertyValue("LocalDebuggerCommandArguments");
+                if (string.IsNullOrEmpty(debugArgs))
+                    return false;
+                if (!debugArgs.Contains(qmlDebug))
+                    return false;
+            }
+            return true;
+        }
+
+        public static readonly ushort DefaultQmlDebugPort // 0x7451 = 29777
+            = BitConverter.ToUInt16(Encoding.ASCII.GetBytes("Qt"), 0);
+
+        public static void DefineQmlJsDebugger(VCProject vcPro)
+        {
+            var configs = GetCppDebugConfigs(vcPro)
+                .Select(x => new
+                {
+                    Self = x,
+                    QmlDebug = x.GetUserPropertyValue("QmlDebug"),
+                    Args = x.GetUserPropertyValue("LocalDebuggerCommandArguments")
+                })
+                .Where(x => string.IsNullOrEmpty(x.QmlDebug) || !x.Args.Contains(x.QmlDebug));
+
+            foreach (var config in configs) {
+
+                config.Self.RemoveUserProperty("LocalDebuggerCommandArguments");
+                config.Self.RemoveUserProperty("QmlDebug");
+                config.Self.RemoveUserProperty("QmlDebugPort");
+
+                config.Self.SetUserPropertyValue("QmlDebugPort",
+                    DefaultQmlDebugPort.ToString());
+
+                config.Self.SetUserPropertyValue("QmlDebug",
+                    "-qmljsdebugger=port:$(QmlDebugPort),block");
+
+                config.Self.SetUserPropertyValue("LocalDebuggerCommandArguments",
+                    string.Join(" ", new[] { config.Args, "$(QmlDebug)" }).Trim());
+            }
+        }
+
+        public static void UndefineQmlJsDebugger(VCProject vcPro)
+        {
+            var configs = GetCppDebugConfigs(vcPro)
+                .Select(x => new
+                {
+                    Self = x,
+                    QmlDebug = x.GetUserPropertyValue("QmlDebug"),
+                    Args = x.GetUserPropertyValue("LocalDebuggerCommandArguments")
+                })
+                .Where(x => !string.IsNullOrEmpty(x.QmlDebug) && x.Args.Contains(x.QmlDebug));
+
+            foreach (var config in configs) {
+
+                config.Self.SetUserPropertyValue("QmlDebug", "##QMLDEBUG##");
+                var args = config.Self.GetUserPropertyValue("LocalDebuggerCommandArguments");
+
+                var newArgs = args.Replace("##QMLDEBUG##", "").Trim();
+                if (string.IsNullOrEmpty(newArgs))
+                    config.Self.RemoveUserProperty("LocalDebuggerCommandArguments");
+                else
+                    config.Self.SetUserPropertyValue("LocalDebuggerCommandArguments", newArgs);
+
+                config.Self.RemoveUserProperty("QmlDebug");
+                config.Self.SetUserPropertyValue("QmlDebugPort", "false");
+            }
+        }
+
+        public bool QmlDebug
+        {
+            get
+            {
+                return IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
+            }
+            set
+            {
+                bool enabled = (IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro));
+                if (value == enabled)
+                    return;
+
+                if (value) {
+                    DefineQtQmlDebug(vcPro);
+                    DefineQmlJsDebugger(vcPro);
+                } else {
+                    UndefineQtQmlDebug(vcPro);
+                    UndefineQmlJsDebugger(vcPro);
+                }
+            }
+        }
+
+        public ushort QmlDebugPort
+        {
+            get
+            {
+                if (!QmlDebug)
+                    return DefaultQmlDebugPort;
+                var portString = GetCppDebugConfigs(vcPro).First()
+                    .GetUserPropertyValue("QmlDebugPort");
+                ushort port;
+                if (!ushort.TryParse(portString, out port))
+                    return DefaultQmlDebugPort;
+                return port;
+            }
+            set
+            {
+                if (QmlDebug) {
+                    foreach (var config in GetCppDebugConfigs(vcPro))
+                        config.SetUserPropertyValue("QmlDebugPort", value.ToString());
+                }
+            }
         }
     }
 

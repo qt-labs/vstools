@@ -94,7 +94,7 @@ namespace QtVsTools
             dispId_VCCLCompilerTool_PrecompiledHeaderThrough = GetPropertyDispId(typeof(VCCLCompilerTool), "PrecompiledHeaderThrough");
             dispId_VCCLCompilerTool_PreprocessorDefinitions = GetPropertyDispId(typeof(VCCLCompilerTool), "PreprocessorDefinitions");
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
-            RegisterVCProjectEngineEvents();
+            InitializeVCProjects();
 
             DefaultEditorsClient.Initialize(this);
             DefaultEditorsClient.Instance.Listen();
@@ -498,7 +498,7 @@ namespace QtVsTools
         void SolutionEvents_ProjectAdded(Project project)
         {
             if (HelperFunctions.IsQMakeProject(project)) {
-                RegisterVCProjectEngineEvents(project);
+                InitializeVCProject(project);
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection) {
@@ -541,7 +541,7 @@ namespace QtVsTools
         {
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p))
-                    RegisterVCProjectEngineEvents(p);
+                    InitializeVCProject(p);
             }
         }
 
@@ -550,26 +550,24 @@ namespace QtVsTools
             QtProject.ClearInstances();
         }
 
-        /// <summary>
-        /// Tries to get a VCProjectEngine from the loaded projects and registers the handlers for VCProjectEngineEvents.
-        /// </summary>
-        void RegisterVCProjectEngineEvents()
+        void InitializeVCProjects()
         {
             foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (project != null && HelperFunctions.IsQtProject(project))
-                    RegisterVCProjectEngineEvents(project);
+                    InitializeVCProject(project);
             }
         }
 
-        /// <summary>
-        /// Retrieves the VCProjectEngine from the given project and registers the handlers for VCProjectEngineEvents.
-        /// </summary>
-        void RegisterVCProjectEngineEvents(Project p)
+        void InitializeVCProject(Project p)
         {
             if (vcProjectEngineEvents != null)
                 return;
 
             var vcPrj = p.Object as VCProject;
+            if (vcPrj == null)
+                return;
+
+            // Retrieves the VCProjectEngine from the given project and registers the handlers for VCProjectEngineEvents.
             var prjEngine = vcPrj.VCProjectEngine as VCProjectEngine;
             if (prjEngine != null) {
                 vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
@@ -581,6 +579,9 @@ namespace QtVsTools
                     }
                 }
             }
+
+            // Initialize QML debugger settings
+            QtProject.InitializeQmlJsDebugger(vcPrj);
         }
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
