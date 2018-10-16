@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Definitions specific to uic
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt/MSBuild global properties
+  // -->
+  <PropertyGroup>
+    <QtBuildTargets>QtUic;$(QtBuildTargets)</QtBuildTargets>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setup item type and property page
+  // -->
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="QtUic">
+      <Targets>QtUic</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUicPrepare
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Prepare to process sources
+  // -->
+  <Target Name="QtUicPrepare">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+        Text="## QtUicPrepare @(QtUic)"/>
+
+    <!--// Delete output file to force build of source if it was manually selected to build
+        //  (e.g. by the 'Compile' option in the context menu for the file) -->
+    <Delete Files="%(QtUic.OutputFile)"
+      Condition="'$(SelectedFiles)' == '%(QtUic.Identity)'" />
+
+    <!--// If a source was manually selected to build, remove all other sources -->
+    <ItemGroup>
+      <QtUic Remove="@(QtUic)" Condition="'@(QtUic)' != ''
+        AND '$(SelectedFiles)' != ''
+        AND '%(QtUic.Identity)' != '$(SelectedFiles)'" />
+    </ItemGroup>
+
+    <!--// Remove sources excluded from build -->
+    <ItemGroup>
+      <QtUic Remove="@(QtUic)" Condition="'@(QtUic)' != ''
+        AND '$(SelectedFiles)' == ''
+        AND '%(QtUic.ExcludedFromBuild)' == 'true'"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUicSetModified
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Set InputChanged flag if source file or dependencies have been modified
+  // -->
+  <Target Name="QtUicSetModified" DependsOnTargets="QtUicPrepare"
+    Condition="'@(QtUic)' != ''"
+    Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies)" Outputs="@(QtUic->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+      Text="## QtUicSetModified @(QtUic)" />
+
+    <CreateProperty Value="true">
+      <!-- // Using ValueSetByTask ensures $(input_changed) is only set to 'true' when the target
+           // is actually executed and not when MSBuild is figuring out which targets to run -->
+      <Output TaskParameter="ValueSetByTask" PropertyName="input_changed" />
+    </CreateProperty>
+    <ItemGroup>
+      <QtUic>
+        <InputChanged>$(input_changed)</InputChanged>
+      </QtUic>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUic
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Process each source file and produce the corresponding QtWork items
+  // -->
+  <Target Name="QtUic"
+    DependsOnTargets="QtPrepare;$(QtUicDependsOn);QtUicPrepare;QtUicSetModified"
+    BeforeTargets="$(QtUicBeforeTargets)" AfterTargets="$(QtUicAfterTargets)"
+    Condition="'@(QtUic)' != ''"
+    Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtUic->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtUic @(QtUic)" />
+
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="dependencies_changed" />
+    </CreateProperty>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Convert string lists in source item properties to lists of items
+    // -->
+    <ItemGroup>
+      <uic_InputFile            Include="%(QtUic.InputFile)"/>
+      <uic_OutputFile           Include="%(QtUic.OutputFile)"/>
+      <uic_DisplayDependencies  Include="%(QtUic.DisplayDependencies)"/>
+      <uic_NoProtection         Include="%(QtUic.NoProtection)"/>
+      <uic_NoImplicitIncludes   Include="%(QtUic.NoImplicitIncludes)"/>
+      <uic_Postfix              Include="%(QtUic.Postfix)"/>
+      <uic_Translate            Include="%(QtUic.Translate)"/>
+      <uic_Include              Include="%(QtUic.Include)"/>
+      <uic_Generator            Include="%(QtUic.Generator)"/>
+      <uic_IdBased              Include="%(QtUic.IdBased)"/>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Generate tool command line arguments
+    // -->
+    <PropertyGroup>
+
+      <!--//  [uifile]                      Input file (*.ui) -->
+      <options Condition="'@(uic_InputFile)' != ''"
+        >$(options);@(uic_InputFile->'&quot;%(Identity)&quot;')</options>
+
+      <!--//  -o,  -output <file>           Place the output into <file> -->
+      <options Condition="'@(uic_OutputFile)' != ''"
+        >$(options);@(uic_OutputFile->'-o &quot;%(Identity)&quot;')</options>
+
+      <!--//  -d,  -dependencies            Display the dependencies -->
+      <options Condition="'@(uic_DisplayDependencies)' == 'true'"
+        >$(options);--dependencies</options>
+
+      <!--//  -p,  -no-protection           Disable header protection -->
+      <options Condition="'@(uic_NoProtection)' == 'true'"
+        >$(options);--no-protection</options>
+
+      <!--//  -n,  -no-implicit-includes    Disable generation of #include-directives -->
+      <options Condition="'@(uic_NoImplicitIncludes)' == 'true'"
+        >$(options);--no-implicit-includes</options>
+
+      <!--//   -postfix <postfix>           Postfix to add to all generated classnames -->
+      <options Condition="'@(uic_Postfix)' != ''"
+        >$(options);@(uic_Postfix->'--postfix %(Identity)')</options>
+
+      <!--//   -tr,  -translate <function>  Use <function> for i18n -->
+      <options Condition="'@(uic_Translate)' != ''"
+        >$(options);@(uic_Translate->'--tr %(Identity)')</options>
+
+      <!--//   -include <include-file>      Add #include <include-file> to <file> -->
+      <options Condition="'@(uic_Include)' != ''"
+        >$(options);@(uic_Include->'--include &quot;%(Identity)&quot;')</options>
+
+      <!--//  -g,  -generator <java|cpp>    Select generator -->
+      <options Condition="'@(uic_Generator)' != ''"
+        >$(options);@(uic_Generator->'-g %(Identity)')</options>
+
+      <!--//   -idbased                     Use id based function for i18n -->
+      <options Condition="'@(uic_IdBased)' == 'true'"
+        >$(options);--idbased</options>
+
+      <options>$(options.Replace(';',' ').Trim())</options>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Aux properties
+    // -->
+    <PropertyGroup>
+      <!--// Force modified flag if source was manually selected to build -->
+      <input_changed Condition="'$(SelectedFiles)' != ''"
+        >true</input_changed>
+      <input_changed Condition="'$(SelectedFiles)' == ''"
+        >%(QtUic.InputChanged)</input_changed>
+
+      <!--// Run work in parallel processes -->
+      <run_parallel Condition="'@(QtUic)' != ''
+        AND '%(QtUic.ExcludedFromBuild)' != 'true'
+        AND '%(QtUic.ParallelProcess)' == 'true'
+        AND '$(SelectedFiles)' == ''"
+        >true</run_parallel>
+
+      <!--// Run work in single process -->
+      <run_single Condition="'@(QtUic)' != ''
+        AND '%(QtUic.ExcludedFromBuild)' != 'true'
+        AND ('%(QtUic.ParallelProcess)' != 'true'
+         OR '$(SelectedFiles)' != '')"
+        >true</run_single>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Create work item
+    // -->
+    <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
+      <QtWork Include="@(QtUic)">
+        <WorkType>uic</WorkType>
+        <ToolPath>%(QtUic.QTDIR)\bin\uic.exe</ToolPath>
+        <Options>$(options)</Options>
+        <Message>%(QtUic.ExecutionDescription)</Message>
+        <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
+        <InputChanged>$(input_changed)</InputChanged>
+        <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
+        <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
+      </QtWork>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Clean-up
+    // -->
+    <PropertyGroup>
+      <options/>
+      <dependencies_changed/>
+      <input_changed/>
+      <run_parallel/>
+      <run_single/>
+    </PropertyGroup>
+    <ItemGroup>
+      <uic_InputFile            Remove="@(uic_InputFile)"/>
+      <uic_OutputFile           Remove="@(uic_OutputFile)"/>
+      <uic_DisplayDependencies  Remove="@(uic_DisplayDependencies)"/>
+      <uic_NoProtection         Remove="@(uic_NoProtection)"/>
+      <uic_NoImplicitIncludes   Remove="@(uic_NoImplicitIncludes)"/>
+      <uic_Postfix              Remove="@(uic_Postfix)"/>
+      <uic_Translate            Remove="@(uic_Translate)"/>
+      <uic_Include              Remove="@(uic_Include)"/>
+      <uic_Generator            Remove="@(uic_Generator)"/>
+      <uic_IdBased              Remove="@(uic_IdBased)"/>
+    </ItemGroup>
+  </Target>
+</Project>

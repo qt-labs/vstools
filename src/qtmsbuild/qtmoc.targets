@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Definitions specific to moc
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt/MSBuild global properties
+  // -->
+  <PropertyGroup>
+    <QtBuildTargets>QtMoc;$(QtBuildTargets)</QtBuildTargets>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setup item type and property page
+  // -->
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="QtMoc">
+      <Targets>QtMoc</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtMocPrepare
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Prepare to process sources
+  // -->
+  <Target Name="QtMocPrepare">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+        Text="## QtMocPrepare @(QtMoc)"/>
+
+    <!--// Delete output file to force build of source if it was manually selected to build
+        //  (e.g. by the 'Compile' option in the context menu for the file) -->
+    <Delete Files="%(QtMoc.OutputFile)"
+      Condition="'$(SelectedFiles)' == '%(QtMoc.Identity)'" />
+
+    <!--// If a source was manually selected to build, remove all other sources -->
+    <ItemGroup>
+      <QtMoc Remove="@(QtMoc)" Condition="'@(QtMoc)' != ''
+        AND '$(SelectedFiles)' != ''
+        AND '%(QtMoc.Identity)' != '$(SelectedFiles)'" />
+    </ItemGroup>
+
+    <!--// Remove sources excluded from build -->
+    <ItemGroup>
+      <QtMoc Remove="@(QtMoc)" Condition="'@(QtMoc)' != ''
+        AND '$(SelectedFiles)' == ''
+        AND '%(QtMoc.ExcludedFromBuild)' == 'true'"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtMocSetModified
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Set InputChanged flag if source file or dependencies have been modified
+  // -->
+  <Target Name="QtMocSetModified" DependsOnTargets="QtMocPrepare"
+    Condition="'@(QtMoc)' != ''"
+    Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies)" Outputs="@(QtMoc->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+      Text="## QtMocSetModified @(QtMoc)" />
+
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="input_changed" />
+    </CreateProperty>
+    <ItemGroup>
+      <QtMoc>
+        <InputChanged>$(input_changed)</InputChanged>
+      </QtMoc>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtMoc
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Process each source file and produce the corresponding QtWork items
+  // -->
+  <Target Name="QtMoc"
+    DependsOnTargets="QtPrepare;$(QtMocDependsOn);QtMocPrepare;QtMocSetModified"
+    BeforeTargets="$(QtMocBeforeTargets)" AfterTargets="$(QtMocAfterTargets)"
+    Condition="'@(QtMoc)' != ''"
+    Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtMoc->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtMoc @(QtMoc)" />
+
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="dependencies_changed" />
+    </CreateProperty>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Convert string lists in source item properties to lists of items
+    // -->
+    <ItemGroup>
+      <moc_InputFile        Include="%(QtMoc.InputFile)"/>
+      <moc_OutputFile       Include="%(QtMoc.OutputFile)"/>
+      <moc_IncludePath      Include="%(QtMoc.IncludePath)"/>
+      <moc_MacFramework     Include="%(QtMoc.MacFramework)"/>
+      <moc_PreprocessOnly   Include="%(QtMoc.PreprocessOnly)"/>
+      <moc_Define           Include="%(QtMoc.Define)"/>
+      <moc_Undefine         Include="%(QtMoc.Undefine)"/>
+      <moc_Metadata         Include="%(QtMoc.Metadata)"/>
+      <moc_CompilerFlavor   Include="%(QtMoc.CompilerFlavor)"/>
+      <moc_NoInclude        Include="%(QtMoc.NoInclude)"/>
+      <moc_PathPrefix       Include="%(QtMoc.PathPrefix)"/>
+      <moc_ForceInclude     Include="%(QtMoc.ForceInclude)"/>
+      <moc_PrependInclude   Include="%(QtMoc.PrependInclude)"/>
+      <moc_Include          Include="%(QtMoc.Include)"/>
+      <moc_NoNotesWarnings  Include="%(QtMoc.NoNotesWarnings)"/>
+      <moc_NoNotes          Include="%(QtMoc.NoNotes)"/>
+      <moc_NoWarnings       Include="%(QtMoc.NoWarnings)"/>
+      <moc_IgnoreConflicts  Include="%(QtMoc.IgnoreConflicts)"/>
+      <moc_OptionsFile      Include="%(QtMoc.OptionsFile)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      // Escape double-quotes in macro definitions
+      // -->
+      <moc_Define>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').Contains(' '))
+            OR $([System.String]::Copy('%(Identity)').Contains('&quot;'))"
+        > &quot;$([System.String]::Copy('%(Identity)').Replace('&quot;','\&quot;'))&quot;</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').Contains(' '))
+            AND !$([System.String]::Copy('%(Identity)').Contains('&quot;'))"
+        >%(Identity)</Escaped>
+      </moc_Define>
+
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      // Escape trailing back-slash in paths
+      // -->
+      <moc_IncludePath>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)</Escaped>
+      </moc_IncludePath>
+
+      <moc_PathPrefix>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)</Escaped>
+      </moc_PathPrefix>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Generate tool command line arguments
+    // -->
+    <PropertyGroup>
+
+      <!--//  [header-file]               Header file to read from -->
+      <options Condition="'@(moc_InputFile)' != ''"
+        >$(options);@(moc_InputFile->'&quot;%(Identity)&quot;')</options>
+
+      <!--//  -o <file>                   Write output to file -->
+      <options Condition="'@(moc_OutputFile)' != ''"
+        >$(options);@(moc_OutputFile->'-o &quot;%(Identity)&quot;')</options>
+
+      <!--//  -I <dir>                    Add dir to the include path for header files -->
+      <options Condition="'@(moc_IncludePath)' != ''"
+        >$(options);@(moc_IncludePath->'&quot;-I%(Escaped)&quot;')</options>
+
+      <!--//  -F <framework>              Add macOS framework to the include path for headers -->
+      <options Condition="'@(moc_MacFramework)' != ''"
+        >$(options);@(moc_MacFramework->'-F &quot;%(Identity)&quot;')</options>
+
+      <!--//  -E                          Preprocess only; do not generate meta object code -->
+      <options Condition="'@(moc_PreprocessOnly)' == 'true'"
+        >$(options);-E</options>
+
+      <!--//  -D <macro[=def]>            Define macro, with optional definition -->
+      <options Condition="'@(moc_Define)' != ''"
+        >$(options);@(moc_Define->'-D%(Escaped)')</options>
+
+      <!--//  -U <macro>                  Undefine macro-->
+      <options Condition="'@(moc_Undefine)' != ''"
+        >$(options);@(moc_Undefine->'-U%(Identity)')</options>
+
+      <!--//  -M <key=value>              Add key/value pair to plugin meta data -->
+      <options Condition="'@(moc_Metadata)' != ''"
+        >$(options);@(moc_Metadata->'-M%(Identity)')</options>
+
+      <!--//   -compiler-flavor <flavor>  Set the compiler flavor: either "msvc" or "unix" -->
+      <options Condition="'@(moc_CompilerFlavor)' != ''"
+        >$(options);@(moc_CompilerFlavor->'--compiler-flavor %(Identity)')</options>
+
+      <!--//  -i                          Do not generate an #include statement -->
+      <options Condition="'@(moc_NoInclude)' == 'true'"
+        >$(options);-i</options>
+
+      <!--//  -p <path>                   Path prefix for included file -->
+      <options Condition="'@(moc_PathPrefix)' != ''"
+        >$(options);@(moc_PathPrefix->'&quot;-p%(Escaped)&quot;')</options>
+
+      <!--//  -f <file>                   Force #include <file> (overwrite default) -->
+      <options Condition="'@(moc_ForceInclude)' != ''"
+        >$(options);@(moc_ForceInclude->'-f &quot;%(Identity)&quot;')</options>
+
+      <!--//  -b <file>                   Prepend #include <file> (preserve default include) -->
+      <options Condition="'@(moc_PrependInclude)' != ''"
+        >$(options);@(moc_PrependInclude->'-b &quot;%(Identity)&quot;')</options>
+
+      <!--//   -include <file>            Parse <file> as an #include before the main source(s) -->
+      <options Condition="'@(moc_Include)' != ''"
+        >$(options);@(moc_Include->'--include &quot;%(Identity)&quot;')</options>
+
+      <!--//  -n <which>                  Do not display notes (-nn) or warnings (-nw) -->
+      <options Condition="'@(moc_NoNotesWarnings)' != ''"
+        >$(options);@(moc_NoNotesWarnings->'-n%(Identity)')</options>
+
+      <!--//   -no-notes                  Do not display notes -->
+      <options Condition="'@(moc_NoNotes)' == 'true'"
+        >$(options);--no-notes</options>
+
+      <!--//   -no-warnings               Do not display warnings (implies  -no-notes) -->
+      <options Condition="'@(moc_NoWarnings)' == 'true'"
+        >$(options);--no-warnings</options>
+
+      <!--//   -ignore-option-clashes     Ignore all options that conflict with compilers -->
+      <options Condition="'@(moc_IgnoreConflicts)' == 'true'"
+        >$(options);--ignore-option-clashes</options>
+
+      <!--//  [@option-file]              Read additional options from option-file-->
+      <options Condition="'@(moc_OptionsFile)' != ''"
+        >$(options);@(moc_OptionsFile->'&quot;@%(Identity)&quot;')</options>
+
+      <options>$(options.Replace(';',' ').Trim())</options>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Aux properties
+    // -->
+    <PropertyGroup>
+      <!--// Force modified flag if source was manually selected to build -->
+      <input_changed Condition="'$(SelectedFiles)' != ''"
+        >true</input_changed>
+      <input_changed Condition="'$(SelectedFiles)' == ''"
+        >%(QtMoc.InputChanged)</input_changed>
+
+      <!--// Run work in parallel processes -->
+      <run_parallel Condition="'@(QtMoc)' != ''
+        AND '%(QtMoc.ExcludedFromBuild)' != 'true'
+        AND '%(QtMoc.ParallelProcess)' == 'true'
+        AND '$(SelectedFiles)' == ''"
+        >true</run_parallel>
+
+      <!--// Run work in single process -->
+      <run_single Condition="'@(QtMoc)' != ''
+        AND '%(QtMoc.ExcludedFromBuild)' != 'true'
+        AND ('%(QtMoc.ParallelProcess)' != 'true'
+         OR '$(SelectedFiles)' != '')"
+        >true</run_single>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Create work item
+    // -->
+    <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
+      <QtWork Include="@(QtMoc)">
+        <WorkType>moc</WorkType>
+        <ToolPath>%(QtMoc.QTDIR)\bin\moc.exe</ToolPath>
+        <Options>$(options)</Options>
+        <Message>%(QtMoc.ExecutionDescription)</Message>
+        <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
+        <InputChanged>$(input_changed)</InputChanged>
+        <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
+        <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
+        <!--
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // C++ dynamic source -->
+        <ClCompile Condition="'%(QtMoc.DynamicSource)' == 'output'">%(QtMoc.OutputFile)</ClCompile>
+        <ClCompile Condition="'%(QtMoc.DynamicSource)' ==  'input'">%(QtMoc.InputFile)</ClCompile>
+      </QtWork>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Clean-up
+    // -->
+    <PropertyGroup>
+      <options/>
+      <dependencies_changed/>
+      <input_changed/>
+      <run_parallel/>
+      <run_single/>
+    </PropertyGroup>
+    <ItemGroup>
+      <moc_InputFile        Remove="@(moc_InputFile)"/>
+      <moc_OutputFile       Remove="@(moc_OutputFile)"/>
+      <moc_IncludePath      Remove="@(moc_IncludePath)"/>
+      <moc_MacFramework     Remove="@(moc_MacFramework)"/>
+      <moc_PreprocessOnly   Remove="@(moc_PreprocessOnly)"/>
+      <moc_Define           Remove="@(moc_Define)"/>
+      <moc_Undefine         Remove="@(moc_Undefine)"/>
+      <moc_Metadata         Remove="@(moc_Metadata)"/>
+      <moc_CompilerFlavor   Remove="@(moc_CompilerFlavor)"/>
+      <moc_NoInclude        Remove="@(moc_NoInclude)"/>
+      <moc_PathPrefix       Remove="@(moc_PathPrefix)"/>
+      <moc_ForceInclude     Remove="@(moc_ForceInclude)"/>
+      <moc_PrependInclude   Remove="@(moc_PrependInclude)"/>
+      <moc_Include          Remove="@(moc_Include)"/>
+      <moc_NoNotesWarnings  Remove="@(moc_NoNotesWarnings)"/>
+      <moc_NoNotes          Remove="@(moc_NoNotes)"/>
+      <moc_NoWarnings       Remove="@(moc_NoWarnings)"/>
+      <moc_IgnoreConflicts  Remove="@(moc_IgnoreConflicts)"/>
+      <moc_OptionsFile      Remove="@(moc_OptionsFile)"/>
+    </ItemGroup>
+  </Target>
+</Project>

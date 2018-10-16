@@ -159,6 +159,35 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="..\config\$(VisualStudioVersion)\source.extension.vsixmanifest" />
+    <Content Include="..\qtmsbuild\qtmoc.targets">
+      <Link>QtMsBuild\qtmoc.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qtrcc.targets">
+      <Link>QtMsBuild\qtrcc.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qtuic.targets">
+      <Link>QtMsBuild\qtuic.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_tasks.targets">
+      <Link>QtMsBuild\qt_tasks.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_globals.targets">
+      <Link>QtMsBuild\qt_globals.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
@@ -198,6 +227,7 @@
       <Link>QtMsBuild\qt.props</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="..\qtmsbuild\qt.targets">
       <Link>QtMsBuild\qt.targets</Link>

@@ -1,4 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Defines the fields included in the moc property page, as well as any
+// other metadata associated to QtMoc items
+// -->
 <ProjectSchemaDefinitions
   xmlns="http://schemas.microsoft.com/build/2009/properties"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -25,13 +60,13 @@
       Name="Inputs"
       Category="General"
       IsRequired="true"
-    Visible="False">
-     <StringListProperty.DataSource>
-       <DataSource
-          Persistence="ProjectFile"
-          ItemType="QtMoc"
-          SourceType="Item" />
-     </StringListProperty.DataSource>
+      Visible="False">
+      <StringListProperty.DataSource>
+        <DataSource
+           Persistence="ProjectFile"
+           ItemType="QtMoc"
+           SourceType="Item" />
+      </StringListProperty.DataSource>
     </StringListProperty>
     <StringProperty
       Name="ExecutionDescription"
@@ -57,13 +92,16 @@
       Name="IncludePath"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Include Path"
-      Description="Add &lt;dir&gt; to the include path for header files; separate with semicolons if more than one. (-I&lt;dir&gt;)"
+      Description=
+"Add &lt;dir&gt; to the include path for header files; separate with semicolons if more than one.
+(-I&lt;dir&gt;)"
       Switch="&quot;-I[value]&quot;" />
     <StringProperty
       Name="MacFramework"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="macOS Framework"
-      Description="Add macOS &lt;framework&gt; to the include path for header files. (-F &lt;framework&gt;)"
+      Description=
+"Add macOS &lt;framework&gt; to the include path for header files. (-F &lt;framework&gt;)"
       Switch="-F &quot;[value]&quot;"
       Visible="False"/>
     <BoolProperty
@@ -77,7 +115,9 @@
       Name="Define"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Macro Definitions"
-      Description="Define macro, with optional definition; separate with semicolons if more than one. (-D&lt;macro&gt;[=&lt;def&gt;])"
+      Description=
+"Define macro, with optional definition; separate with semicolons if more than one.
+(-D&lt;macro&gt;[=&lt;def&gt;])"
       Switch="-D " />
     <StringListProperty
       Name="Undefine"
@@ -89,13 +129,17 @@
       Name="Metadata"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Plugin Meta Data"
-      Description="Add key/value pair to plugin meta data; separate with semicolons if more than one. (-M&lt;key=value&gt;)"
+      Description=
+"Add key/value pair to plugin meta data; separate with semicolons if more than one.
+(-M&lt;key=value&gt;)"
       Switch="-M[value]" />
     <StringProperty
       Name="CompilerFlavor"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Compiler Flavor"
-      Description="Set the compiler &lt;flavor&gt;: either &quot;msvc&quot; or &quot;unix&quot;. (--compiler-flavor &lt;flavor&gt;)"
+      Description=
+"Set the compiler &lt;flavor&gt;: either &quot;msvc&quot; or &quot;unix&quot;.
+(--compiler-flavor &lt;flavor&gt;)"
       Switch="--compiler-flavor [value]"/>
     <BoolProperty
       Name="NoInclude"
@@ -113,25 +157,33 @@
       Name="ForceInclude"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Force Include"
-      Description="Force #include &lt;file&gt; (overwrite default); separate with semicolons if more than one. (-f &lt;file&gt;)"
+      Description=
+"Force #include &lt;file&gt; (overwrite default); separate with semicolons if more than one.
+(-f &lt;file&gt;)"
       Switch="-f &quot;[value]&quot;"/>
     <StringListProperty
       Name="PrependInclude"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Prepend Include"
-      Description="Prepend #include &lt;file&gt; (preserve default); separate with semicolons if more than one. (-b &lt;file&gt;)"
+      Description=
+"Prepend #include &lt;file&gt; (preserve default); separate with semicolons if more than one.
+(-b &lt;file&gt;)"
       Switch="-b &quot;[value]&quot;"/>
     <StringListProperty
       Name="Include"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Include"
-      Description="Parse &lt;file&gt; as an #include before the main source(s); separate with semicolons if more than one. (--include &lt;file&gt;)"
+      Description=
+"Parse &lt;file&gt; as an #include before the main source(s); separate with semicolons if more
+than one. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;"/>
     <StringListProperty
       Name="NoNotesWarnings"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="No Notes Or Warnings"
-      Description="Do not display notes (-nn) or warnings (-nw); Compatibility option; separate with semicolons if more than one. (-n&lt;n|w&gt;)"
+      Description=
+"Do not display notes (-nn) or warnings (-nw); Compatibility option; separate with semicolons if
+more than one. (-n&lt;n|w&gt;)"
       Switch="-n[value]"
       Visible="False"/>
     <BoolProperty
@@ -150,7 +202,9 @@
       Name="IgnoreConflicts"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Ignore Conflicts"
-      Description="Ignore all options that conflict with compilers, like -pthread conflicting with moc's -p option. (--ignore-option-clashes)"
+      Description=
+"Ignore all options that conflict with compilers, like -pthread conflicting with moc's -p option.
+(--ignore-option-clashes)"
       Switch="--ignore-option-clashes"/>
     <StringProperty
       Name="OptionsFile"
@@ -164,10 +218,10 @@
       Visible="False"
       IncludeInCommandLine="False" />
     <DynamicEnumProperty
-    Name="QtMocBeforeTargets"
-    Category="General"
-    EnumProvider="Targets"
-    IncludeInCommandLine="False" Visible="False">
+      Name="QtMocBeforeTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False" Visible="False">
       <DynamicEnumProperty.DisplayName>
         <sys:String>Execute Before</sys:String>
       </DynamicEnumProperty.DisplayName>

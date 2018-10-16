@@ -79,6 +79,13 @@
            d:VsixSubPath="x86" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.props" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" d:VsixSubPath="qtmsbuild"
+           Path="qtmsbuild\qt_tasks.targets" />
+    <Asset Type="File" d:Source="File" d:VsixSubPath="qtmsbuild"
+           Path="qtmsbuild\qt_globals.targets" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.targets" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.xml" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.xml" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.xml" d:VsixSubPath="qtmsbuild" />

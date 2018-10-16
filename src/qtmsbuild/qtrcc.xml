@@ -1,4 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Defines the fields included in the rcc property page, as well as any
+// other metadata associated to QtRcc items
+// -->
 <ProjectSchemaDefinitions
   xmlns="http://schemas.microsoft.com/build/2009/properties"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -25,13 +60,13 @@
       Name="Inputs"
       Category="General"
       IsRequired="true"
-    Visible="False">
-     <StringListProperty.DataSource>
-       <DataSource
-          Persistence="ProjectFile"
-          ItemType="QtRcc"
-          SourceType="Item" />
-     </StringListProperty.DataSource>
+      Visible="False">
+      <StringListProperty.DataSource>
+        <DataSource
+           Persistence="ProjectFile"
+           ItemType="QtRcc"
+           SourceType="Item" />
+      </StringListProperty.DataSource>
     </StringListProperty>
     <StringProperty
       Name="ExecutionDescription"
@@ -63,7 +98,8 @@
       Name="InitFuncName"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="Initialization Function Name"
-      Description="Create an external initialization function with &lt;name&gt;. (--name &lt;name&gt;)"
+      Description=
+"Create an external initialization function with &lt;name&gt;. (--name &lt;name&gt;)"
       Switch="--name [value]" />
     <StringProperty
       Name="Root"
@@ -80,7 +116,8 @@
         Name="default"
         Switch=""
         DisplayName="Default (use zlib's default compression level)"
-        Description="The default value for level is -1, which means use zlib's default compression level."/>
+        Description=
+"The default value for level is -1, which means use zlib's default compression level."/>
       <EnumValue
         Name="level1"
         Switch="--compress 1"
@@ -137,7 +174,8 @@
       Name="CompressThreshold"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="Compression Threshold"
-      Description="Threshold &lt;level&gt; to consider compressing files. (--threshold &lt;level&gt;)"
+      Description=
+"Threshold &lt;level&gt; to consider compressing files. (--threshold &lt;level&gt;)"
       Switch="--threshold [value]" />
     <BoolProperty
       Name="BinaryOutput"
@@ -173,7 +211,8 @@
       Name="Project"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="Project"
-      Description="Output a resource file containing all files from the current directory. (--project)"
+      Description=
+"Output a resource file containing all files from the current directory. (--project)"
       Switch="--project"/>
     <StringProperty
       Name="FormatVersion"
@@ -187,10 +226,10 @@
       Visible="False"
       IncludeInCommandLine="False" />
     <DynamicEnumProperty
-    Name="QtRccBeforeTargets"
-    Category="General"
-    EnumProvider="Targets"
-    IncludeInCommandLine="False" Visible="False">
+      Name="QtRccBeforeTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False" Visible="False">
       <DynamicEnumProperty.DisplayName>
         <sys:String>Execute Before</sys:String>
       </DynamicEnumProperty.DisplayName>
