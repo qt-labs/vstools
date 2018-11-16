@@ -165,6 +165,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="..\qtmsbuild\qtqml.targets">
+      <Link>QtMsBuild\qtqml.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="..\qtmsbuild\qtrcc.targets">
       <Link>QtMsBuild\qtrcc.targets</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

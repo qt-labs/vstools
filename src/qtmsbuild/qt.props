@@ -68,6 +68,34 @@
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
       <Outputs>%(OutputFile)</Outputs>
+
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      // QML Cache Generation
+      // -->
+      <QmlCacheGenerate>false</QmlCacheGenerate>
+      <!--
+      // QML cache generation -->
+      <QmlCacheGenMessage
+        ><![CDATA[QML cache: generating cache for %<Identity>...]]></QmlCacheGenMessage>
+      <QmlCacheOutputFile
+        ><![CDATA[$(ProjectDir)GeneratedFiles\%<Filename>_%<Suffix>.cpp]]></QmlCacheOutputFile>
+      <!--
+      // QRC filtering -->
+      <QmlCacheFilterMessage
+        >QML cache: filtering %(Identity)...</QmlCacheFilterMessage>
+      <QmlCacheFilteredFile
+        >$(ProjectDir)GeneratedFiles\%(Filename)_qmlcache.qrc</QmlCacheFilteredFile>
+      <QmlCacheFilteredOutputFile
+        >$(ProjectDir)GeneratedFiles\qrc_%(Filename)_qmlcache.cpp</QmlCacheFilteredOutputFile>
+      <QmlCacheFilteredInitFuncName
+        >%(Filename)_qmlcache</QmlCacheFilteredInitFuncName>
+      <!--
+      // QML cache loader generation -->
+      <QmlCacheLoaderMessage
+        >QML cache: generating cache loader...</QmlCacheLoaderMessage>
+      <QmlCacheLoaderFile
+        >$(ProjectDir)GeneratedFiles\qmlcache_loader.cpp</QmlCacheLoaderFile>
     </QtRcc>
   </ItemDefinitionGroup>
 

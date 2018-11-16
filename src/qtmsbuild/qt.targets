@@ -41,6 +41,7 @@
   <Import Project="qt_tasks.targets"/>
   <Import Project="qt_globals.targets"/>
   <Import Project="qtmoc.targets"/>
+  <Import Project="qtqml.targets"/>
   <Import Project="qtrcc.targets"/>
   <Import Project="qtuic.targets"/>
 </Project>

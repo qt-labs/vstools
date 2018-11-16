@@ -84,6 +84,7 @@
     <Asset Type="File" d:Source="File" d:VsixSubPath="qtmsbuild"
            Path="qtmsbuild\qt_globals.targets" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtqml.targets" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.targets" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.targets" d:VsixSubPath="qtmsbuild" />
     <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.xml" d:VsixSubPath="qtmsbuild" />
