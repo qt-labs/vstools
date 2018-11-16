@@ -39,19 +39,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // QtMoc
   // -->
-  <PropertyGroup
-    Condition="'$(QtMocBeforeTargets)' == ''
-      AND '$(QtMocAfterTargets)' == ''
-      AND '$(ConfigurationType)' != 'Makefile'">
-    <QtMocBeforeTargets>ClCompile</QtMocBeforeTargets>
-    <QtMocAfterTargets>CustomBuild</QtMocAfterTargets>
-  </PropertyGroup>
-  <PropertyGroup>
-    <QtMocDependsOn
-      Condition="'$(ConfigurationType)' != 'Makefile'">
-      _SelectedFiles;$(QtMocDependsOn)
-    </QtMocDependsOn>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <QtMoc>
       <ExecutionDescription>Moc%27ing %(Identity)...</ExecutionDescription>
@@ -69,19 +56,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // QtRcc
   // -->
-  <PropertyGroup
-    Condition="'$(QtRccBeforeTargets)' == ''
-      AND '$(QtRccAfterTargets)' == ''
-      AND '$(ConfigurationType)' != 'Makefile'">
-    <QtRccBeforeTargets>ClCompile</QtRccBeforeTargets>
-    <QtRccAfterTargets>CustomBuild</QtRccAfterTargets>
-  </PropertyGroup>
-  <PropertyGroup>
-    <QtRccDependsOn
-      Condition="'$(ConfigurationType)' != 'Makefile'">
-      _SelectedFiles;$(QtRccDependsOn)
-    </QtRccDependsOn>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <QtRcc>
       <ExecutionDescription>Rcc%27ing %(Identity)...</ExecutionDescription>
@@ -101,19 +75,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // QtUic
   // -->
-  <PropertyGroup
-    Condition="'$(QtUicBeforeTargets)' == ''
-      AND '$(QtUicAfterTargets)' == ''
-      AND '$(ConfigurationType)' != 'Makefile'">
-    <QtUicBeforeTargets>ClCompile</QtUicBeforeTargets>
-    <QtUicAfterTargets>CustomBuild</QtUicAfterTargets>
-  </PropertyGroup>
-  <PropertyGroup>
-    <QtUicDependsOn
-      Condition="'$(ConfigurationType)' != 'Makefile'">
-      _SelectedFiles;$(QtUicDependsOn)
-    </QtUicDependsOn>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <QtUic>
       <ExecutionDescription>Uic%27ing %(Identity)...</ExecutionDescription>

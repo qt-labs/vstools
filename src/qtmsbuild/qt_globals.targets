@@ -86,7 +86,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare Qt build: read and parse work log file
   // -->
-  <Target Name="QtPrepare" DependsOnTargets="CustomBuild">
+  <Target Name="QtPrepare" AfterTargets="CustomBuild">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
 
@@ -109,16 +109,18 @@
   // previous call is still valid.
   // -->
   <Target Name="QtWorkPrepare" DependsOnTargets="$(QtBuildTargets)"
-    Inputs="%(QtWork.Identity)" Outputs="@(QtWork->'####### Don't skip this target #######')">
+    Inputs="%(QtWork.WorkType)(%(QtWork.Identity))"
+    Outputs="@(QtWork->'####### Don't skip this target #######')">
 
-    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
-      Text="## QtWorkPrepare @(QtWork)" />
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true' AND '@(QtWork)' != ''"
+      Text="## QtWorkPrepare %(QtWork.Identity)" />
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Calculate hash (SHA1) for the requested work item, based on its associated tool and options
     // -->
-    <GetItemHash Item="@(QtWork)" Keys="Identity;WorkType;ToolPath;Options">
+    <GetItemHash Condition="'@(QtWork)' != ''"
+      Item="%(QtWork.Identity)" Keys="Identity;WorkType;ToolPath;Options">
       <Output TaskParameter="Hash" PropertyName="work_hash" />
     </GetItemHash>
 
@@ -126,18 +128,18 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Try to find entry in Qt work log for the requested work item; get logged hash
     // -->
-    <PropertyGroup>
-      <log_key>@(QtWork->'%(WorkType)(%(Identity))')</log_key>
+    <PropertyGroup Condition="'@(QtWork)' != ''">
+      <work_key>@(QtWork->'%(WorkType)(%(Identity))')</work_key>
       <dependencies_changed>@(QtWork->'%(DependenciesChanged)')</dependencies_changed>
       <input_changed>@(QtWork->'%(InputChanged)')</input_changed>
     </PropertyGroup>
 
-    <FindInList Condition="'$(input_changed)' != 'true'"
-      CaseSensitive="false" List="@(QtWorkLog)" ItemSpecToFind="$(log_key)">
+    <FindInList Condition="'@(QtWork)' != '' AND '$(input_changed)' != 'true'"
+      CaseSensitive="false" List="@(QtWorkLog)" ItemSpecToFind="$(work_key)">
       <Output TaskParameter="ItemFound" ItemName="log_entry"/>
     </FindInList>
 
-    <PropertyGroup>
+    <PropertyGroup Condition="'@(QtWork)' != ''">
       <log_hash Condition="'@(log_entry)' != ''">@(log_entry->'%(Hash)')</log_hash>
     </PropertyGroup>
 
@@ -145,34 +147,35 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // If the hash of the requested work matches the logged hash, skip work item
     // -->
-    <ItemGroup
-      Condition="'$(dependencies_changed)' != 'true'
-         OR ('$(input_changed)' != 'true'
-        AND '$(log_hash)' == '$(work_hash)')">
+    <ItemGroup Condition="'@(QtWork)' != ''
+      AND ('$(dependencies_changed)' != 'true'
+       OR ('$(input_changed)' != 'true'
+      AND  '$(log_hash)' == '$(work_hash)'))">
       <QtWorkResult Include="@(QtWork)">
         <ExitCode>0</ExitCode>
+        <Skipped>true</Skipped>
       </QtWorkResult>
-      <QtWork Remove="@(QtWork)"/>
+      <QtWork Remove="@(QtWork)" />
     </ItemGroup>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // If the hashes do not match, generate new work log entry and ensure path to output exists
     // -->
-    <ItemGroup
-      Condition="'$(dependencies_changed)' == 'true'
-        AND ('$(input_changed)' == 'true'
-         OR '$(log_hash)' != '$(work_hash)')">
-      <QtWorkLog Remove="$(log_key)"/>
-      <QtWorkLog Include="$(log_key)">
+    <ItemGroup Condition="'@(QtWork)' != ''
+      AND '$(dependencies_changed)' == 'true'
+      AND ('$(input_changed)' == 'true'
+       OR '$(log_hash)' != '$(work_hash)')">
+      <QtWorkLog Remove="$(work_key)"/>
+      <QtWorkLog Include="$(work_key)">
         <Hash>$(work_hash)</Hash>
       </QtWorkLog>
     </ItemGroup>
 
-    <MakeDir
-      Condition="'$(dependencies_changed)' == 'true'
-        AND ('$(input_changed)' == 'true'
-         OR '$(log_hash)' != '$(work_hash)')"
+    <MakeDir Condition="'@(QtWork)' != ''
+      AND '$(dependencies_changed)' == 'true'
+      AND ('$(input_changed)' == 'true'
+       OR '$(log_hash)' != '$(work_hash)')"
       Directories="$([System.IO.Path]::GetDirectoryName(%(QtWork.OutputFile)))"/>
 
     <!--
@@ -180,7 +183,7 @@
     // Clean-up
     // -->
     <PropertyGroup>
-      <log_key/>
+      <work_key/>
       <log_hash/>
       <dependencies_changed/>
       <input_changed/>
@@ -192,11 +195,11 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  /// TARGET Qt
+  /// TARGET QtWork
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Run Qt tools and add dynamic C++ sources to build
   // -->
-  <Target Name="Qt"
+  <Target Name="QtWork"
     DependsOnTargets="QtVersion;QtPrepare;$(QtBuildTargets);QtWorkPrepare"
     BeforeTargets="ClCompile">
 
@@ -228,7 +231,7 @@
     <ItemGroup>
       <read_log Include="^%(QtWorkResult.FullPath);
         %(QtWorkResult.AdditionalDependencies)"
-        Condition="'%(QtWorkResult.ExitCode)' == '0'">
+        Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
       </read_log>
     </ItemGroup>
@@ -247,7 +250,7 @@
     <ItemGroup>
       <write_log Include="^%(QtWorkResult.FullPath);
         $([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '%(QtWorkResult.OutputFile)'))"
-        Condition="'%(QtWorkResult.ExitCode)' == '0'">
+        Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
       </write_log>
     </ItemGroup>
@@ -271,7 +274,7 @@
     <WriteLinesToFile Condition="'@(clean_log)' != ''"
       File="$(TLogLocation)$(ProjectName).write.1u.tlog"
       Lines="^%(clean_log.Source);@(clean_log->'%(Fullpath)')"
-      Overwrite="true" Encoding="Unicode"/>
+      Encoding="Unicode"/>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -299,6 +302,18 @@
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"/>
     </ItemGroup>
 
+    <!--// If sources were manually selected (e.g. by the 'Compile' option in the context menu for
+        // project items), add generated C++ sources to the list of selected files -->
+    <PropertyGroup Condition="'$(SelectedFiles)' != ''">
+      <SelectedClCompile>@(QtWorkResult->'%(ClCompile)')</SelectedClCompile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SelectedClCompile)' != ''">
+      <SelectedFiles>$(SelectedFiles);$(SelectedClCompile)</SelectedFiles>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(SelectedClCompile)' != ''">
+      <SelectedFiles Include="$(SelectedClCompile)"/>
+    </ItemGroup>
+
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Clean-up
@@ -312,4 +327,13 @@
       <clean_log    Remove="@(clean_log)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET Qt
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Root Qt target
+  // -->
+  <Target Name="Qt" DependsOnTargets="QtWork;ClCompile"/>
+
 </Project>

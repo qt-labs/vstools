@@ -52,7 +52,7 @@
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
     <AvailableItemName Include="QtRcc">
-      <Targets>QtRcc</Targets>
+      <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
 
@@ -62,29 +62,43 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare items for processing
   // -->
-  <Target Name="QtRccPrepare">
+  <Target Name="QtRccPrepare" DependsOnTargets="_SelectedFiles"
+    Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
-      Text="## QtRccPrepare @(QtRcc)"/>
+        Text="## QtRccPrepare @(QtRcc)"/>
+
+    <PropertyGroup>
+      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <file>[@(QtRcc->'%(Identity)')]</file>
+      <output_file>@(QtRcc->'%(OutputFile)')</output_file>
+      <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+    </PropertyGroup>
 
     <!--// Delete output file to force build of source if it was manually selected to build
         //  (e.g. by the 'Compile' option in the context menu for the file) -->
-    <Delete Files="%(QtRcc.OutputFile)"
-      Condition="'$(SelectedFiles)' == '%(QtRcc.Identity)'" />
+    <Delete Files="$(output_file)"
+      Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
 
     <!--// If a source was manually selected to build, remove all other sources -->
-    <ItemGroup>
-      <QtRcc Remove="@(QtRcc)" Condition="'@(QtRcc)' != ''
-        AND '$(SelectedFiles)' != ''
-        AND '%(QtRcc.Identity)' != '$(SelectedFiles)'" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtRcc Remove="@(QtRcc)"
+        Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
     </ItemGroup>
 
     <!--// Remove sources excluded from build -->
     <ItemGroup>
-      <QtRcc Remove="@(QtRcc)" Condition="'@(QtRcc)' != ''
-        AND '$(SelectedFiles)' == ''
-        AND '%(QtRcc.ExcludedFromBuild)' == 'true'"/>
+      <QtRcc Remove="@(QtRcc)"
+        Condition="'$(SelectedFiles)' == '' AND '%(QtRcc.ExcludedFromBuild)' == 'true'"/>
     </ItemGroup>
+
+    <!--// Clean-up -->
+    <PropertyGroup>
+      <selected_files/>
+      <file/>
+      <output_file/>
+      <is_selected/>
+    </PropertyGroup>
   </Target>
 
   <!--
@@ -249,23 +263,21 @@
     // -->
     <PropertyGroup>
       <!--// Force modified flag if source was manually selected to build -->
-      <input_changed Condition="'@(SelectedFiles)' == ''"
+      <input_changed Condition="'$(SelectedFiles)' == ''"
         >%(QtRcc.InputChanged)</input_changed>
-      <input_changed Condition="'@(SelectedFiles)' != ''"
+      <input_changed Condition="'$(SelectedFiles)' != ''"
         >true</input_changed>
 
       <!--// Run work in parallel processes -->
       <run_parallel Condition="'@(QtRcc)' != ''
-        AND '%(QtRcc.ExcludedFromBuild)' != 'true'
         AND '%(QtRcc.ParallelProcess)' == 'true'
-        AND '@(SelectedFiles)' == ''"
+        AND '$(SelectedFiles)' == ''"
         >true</run_parallel>
 
       <!--// Run work in single process -->
       <run_single Condition="'@(QtRcc)' != ''
-        AND '%(QtRcc.ExcludedFromBuild)' != 'true'
         AND ('%(QtRcc.ParallelProcess)' != 'true'
-         OR '@(SelectedFiles)' != '')"
+         OR '$(SelectedFiles)' != '')"
         >true</run_single>
     </PropertyGroup>
 
@@ -276,7 +288,6 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtRcc)">
         <WorkType>rcc</WorkType>
-        <DependsOnWork>qmlcachegen_filter</DependsOnWork>
         <ToolPath>%(QtRcc.QTDIR)\bin\rcc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtRcc.ExecutionDescription)</Message>

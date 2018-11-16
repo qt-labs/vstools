@@ -52,7 +52,7 @@
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
     <AvailableItemName Include="QtUic">
-      <Targets>QtUic</Targets>
+      <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
 
@@ -62,29 +62,42 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare to process sources
   // -->
-  <Target Name="QtUicPrepare">
+  <Target Name="QtUicPrepare" DependsOnTargets="_SelectedFiles"
+    Inputs="%(QtUic.Identity)" Outputs="@(QtUic->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
         Text="## QtUicPrepare @(QtUic)"/>
 
+    <PropertyGroup>
+      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <file>[@(QtUic->'%(Identity)')]</file>
+      <output_file>@(QtUic->'%(OutputFile)')</output_file>
+      <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+    </PropertyGroup>
+
     <!--// Delete output file to force build of source if it was manually selected to build
         //  (e.g. by the 'Compile' option in the context menu for the file) -->
-    <Delete Files="%(QtUic.OutputFile)"
-      Condition="'$(SelectedFiles)' == '%(QtUic.Identity)'" />
+    <Delete Files="$(output_file)"
+      Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
 
     <!--// If a source was manually selected to build, remove all other sources -->
-    <ItemGroup>
-      <QtUic Remove="@(QtUic)" Condition="'@(QtUic)' != ''
-        AND '$(SelectedFiles)' != ''
-        AND '%(QtUic.Identity)' != '$(SelectedFiles)'" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtUic Remove="@(QtUic)"
+        Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
     </ItemGroup>
 
     <!--// Remove sources excluded from build -->
     <ItemGroup>
-      <QtUic Remove="@(QtUic)" Condition="'@(QtUic)' != ''
-        AND '$(SelectedFiles)' == ''
-        AND '%(QtUic.ExcludedFromBuild)' == 'true'"/>
+      <QtUic Remove="@(QtUic)"
+        Condition="'$(SelectedFiles)' == '' AND '%(QtUic.ExcludedFromBuild)' == 'true'"/>
     </ItemGroup>
+
+    <PropertyGroup>
+      <selected_files/>
+      <file/>
+      <output_file/>
+      <is_selected/>
+    </PropertyGroup>
   </Target>
 
   <!--
@@ -210,14 +223,12 @@
 
       <!--// Run work in parallel processes -->
       <run_parallel Condition="'@(QtUic)' != ''
-        AND '%(QtUic.ExcludedFromBuild)' != 'true'
         AND '%(QtUic.ParallelProcess)' == 'true'
         AND '$(SelectedFiles)' == ''"
         >true</run_parallel>
 
       <!--// Run work in single process -->
       <run_single Condition="'@(QtUic)' != ''
-        AND '%(QtUic.ExcludedFromBuild)' != 'true'
         AND ('%(QtUic.ParallelProcess)' != 'true'
          OR '$(SelectedFiles)' != '')"
         >true</run_single>

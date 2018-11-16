@@ -52,7 +52,7 @@
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
     <AvailableItemName Include="QtMoc">
-      <Targets>QtMoc</Targets>
+      <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
 
@@ -62,29 +62,42 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare to process sources
   // -->
-  <Target Name="QtMocPrepare">
+  <Target Name="QtMocPrepare" DependsOnTargets="_SelectedFiles"
+    Inputs="%(QtMoc.Identity)" Outputs="@(QtMoc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
         Text="## QtMocPrepare @(QtMoc)"/>
 
+    <PropertyGroup>
+      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <file>[@(QtMoc->'%(Identity)')]</file>
+      <output_file>@(QtMoc->'%(OutputFile)')</output_file>
+      <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+    </PropertyGroup>
+
     <!--// Delete output file to force build of source if it was manually selected to build
         //  (e.g. by the 'Compile' option in the context menu for the file) -->
-    <Delete Files="%(QtMoc.OutputFile)"
-      Condition="'$(SelectedFiles)' == '%(QtMoc.Identity)'" />
+    <Delete Files="$(output_file)"
+      Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
 
     <!--// If a source was manually selected to build, remove all other sources -->
-    <ItemGroup>
-      <QtMoc Remove="@(QtMoc)" Condition="'@(QtMoc)' != ''
-        AND '$(SelectedFiles)' != ''
-        AND '%(QtMoc.Identity)' != '$(SelectedFiles)'" />
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtMoc Remove="@(QtMoc)"
+        Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
     </ItemGroup>
 
     <!--// Remove sources excluded from build -->
     <ItemGroup>
-      <QtMoc Remove="@(QtMoc)" Condition="'@(QtMoc)' != ''
-        AND '$(SelectedFiles)' == ''
-        AND '%(QtMoc.ExcludedFromBuild)' == 'true'"/>
+      <QtMoc Remove="@(QtMoc)"
+        Condition="'$(SelectedFiles)' == '' AND '%(QtMoc.ExcludedFromBuild)' == 'true'"/>
     </ItemGroup>
+
+    <PropertyGroup>
+      <selected_files/>
+      <file/>
+      <output_file/>
+      <is_selected/>
+    </PropertyGroup>
   </Target>
 
   <!--
@@ -286,14 +299,12 @@
 
       <!--// Run work in parallel processes -->
       <run_parallel Condition="'@(QtMoc)' != ''
-        AND '%(QtMoc.ExcludedFromBuild)' != 'true'
         AND '%(QtMoc.ParallelProcess)' == 'true'
         AND '$(SelectedFiles)' == ''"
         >true</run_parallel>
 
       <!--// Run work in single process -->
       <run_single Condition="'@(QtMoc)' != ''
-        AND '%(QtMoc.ExcludedFromBuild)' != 'true'
         AND ('%(QtMoc.ParallelProcess)' != 'true'
          OR '$(SelectedFiles)' != '')"
         >true</run_single>
