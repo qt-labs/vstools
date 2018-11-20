@@ -516,15 +516,5 @@ namespace QtProjectLib
         {
             QtProject.Create(project).QmlDebug = enabled;
         }
-
-        public static ushort GetQmlDebugPort(EnvDTE.Project project)
-        {
-            return QtProject.Create(project).QmlDebugPort;
-        }
-
-        public static void SaveQmlDebugPort(EnvDTE.Project project, ushort port)
-        {
-            QtProject.Create(project).QmlDebugPort = port;
-        }
     }
 }

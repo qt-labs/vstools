@@ -83,6 +83,12 @@ void VsQmlDebugClient::connectToHost(const QString &hostName, quint16 port)
     }
 }
 
+void VsQmlDebugClient::startLocalServer(const QString &fileName)
+{
+    if (!d->connection()->isConnected())
+        d->connection()->startLocalServer(fileName);
+}
+
 void VsQmlDebugClient::disconnectFromHost()
 {
     d->connection()->close();

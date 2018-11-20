@@ -180,8 +180,7 @@ namespace QtVsTools.Qml.Debug
 
                 var cmd = execPath + " " + execArgs;
 
-                ushort hostPort;
-                if (!QmlDebugger.ParseCommandLine(execPath, cmd, out hostPort))
+                if (!QmlDebugger.CheckCommandLine(execPath, cmd))
                     continue;
 
                 execCmd = cmd;

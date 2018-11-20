@@ -71,7 +71,12 @@ namespace QtVsTools.Qml.Debug
     {
         IDebuggerEventSink sink;
         ProtocolDriver driver;
-        ushort hostPort;
+        string connectionHostName;
+        ushort connectionHostPortFrom;
+        ushort connectionHostPortTo;
+        string connectionFileName;
+        bool connectionBlock;
+
         List<Request> outbox;
         Dictionary<int, IBreakpoint> breakpoints;
 
@@ -98,8 +103,11 @@ namespace QtVsTools.Qml.Debug
             if (sink == null)
                 return false;
 
-            if (!ParseCommandLine(execPath, args, out hostPort))
+            if (!ParseCommandLine(execPath, args,
+                out connectionHostPortFrom, out connectionHostPortTo,
+                out connectionHostName, out connectionFileName, out connectionBlock)) {
                 return false;
+            }
 
             driver = ProtocolDriver.Create(this);
             if (driver == null)
@@ -117,7 +125,11 @@ namespace QtVsTools.Qml.Debug
 
         void ConnectToDebugger()
         {
-            driver.Connect("localhost", hostPort).WaitOne();
+            if (!string.IsNullOrEmpty(connectionFileName))
+                driver.StartLocalServer(connectionFileName).WaitOne();
+            else
+                driver.Connect(connectionHostName, connectionHostPortFrom).WaitOne();
+
             if (driver.ConnectionState != DebugClientState.Connected) {
                 sink.NotifyClientDisconnected();
                 return;
@@ -416,10 +428,36 @@ namespace QtVsTools.Qml.Debug
                 .Assert(msg is ConnectMessage, "Unexpected message");
         }
 
-
-        public static bool ParseCommandLine(string execPath, string args, out ushort hostPort)
+        public static bool CheckCommandLine(string execPath,string args)
         {
-            hostPort = 0;
+            ushort portFrom;
+            ushort portTo;
+            string hostName;
+            string fileName;
+            bool block;
+            return ParseCommandLine(
+                execPath, args, out portFrom, out portTo, out hostName, out fileName, out block);
+        }
+
+        static Regex regexDebuggerParams = new Regex(
+            @"^(?:(?:port\:(\d+)(?:\,(\d+))?)(?:,(?!$)|$)"
+            + @"|(?:host\:([^\,\r\n]+))(?:,(?!$)|$)"
+            + @"|(?:file\:([^\,\r\n]+))(?:,(?!$)|$)"
+            + @"|(block(?:,(?!$)|$)))+$");
+
+        public static bool ParseCommandLine(
+            string execPath,
+            string args,
+            out ushort portFrom,
+            out ushort portTo,
+            out string hostName,
+            out string fileName,
+            out bool block)
+        {
+            portFrom = portTo = 0;
+            hostName = fileName = "";
+            block = false;
+
             var parser = new CommandLineParser();
             parser.SetSingleDashWordOptionMode(
                 CommandLineParser.SingleDashWordOptionMode.ParseAsLongOptions);
@@ -435,39 +473,29 @@ namespace QtVsTools.Qml.Debug
                 return false;
             }
             var debuggerParams = parser.Value(qmlJsDebugger);
-
-            var match = Regex.Match(debuggerParams,
-                @"port\:(\d+)(?:\,(\d+))?(?:\,host\:([^\,\r\n]+))?(?:\,(block))?");
-            if (!match.Success || match.Groups.Count < 2)
+            var match = regexDebuggerParams.Match(debuggerParams);
+            if (!match.Success)
                 return false;
 
-            ushort portFrom;
-            if (!ushort.TryParse(match.Groups[1].Value, out portFrom))
-                return false;
-
-            ushort portTo = 0;
-            if (match.Groups.Count > 2 && match.Groups[2].Success
-                && !ushort.TryParse(match.Groups[2].Value, out portTo)) {
-                return false;
+            if (match.Groups.Count > 1 && match.Groups[1].Success) {
+                if (!ushort.TryParse(match.Groups[1].Value, out portFrom))
+                    return false;
             }
 
-            string host = string.Empty; ;
+            if (match.Groups.Count > 2 && match.Groups[2].Success) {
+                if (!ushort.TryParse(match.Groups[2].Value, out portTo))
+                    return false;
+            }
+
             if (match.Groups.Count > 3 && match.Groups[3].Success)
-                host = match.Groups[3].Value;
+                hostName = match.Groups[3].Value;
 
-            bool block = false;
-            if (match.Groups.Count > 4 && match.Groups[4].Success
-                && (block = (match.Groups[4].Value == "block")) == false) {
-                return false;
-            }
+            if (match.Groups.Count > 4 && match.Groups[4].Success)
+                fileName = match.Groups[4].Value;
 
-            if (portTo != 0)
-                return false; // Range of host ports not supported
+            if (match.Groups.Count > 5 && match.Groups[5].Success)
+                block = true;
 
-            if (!string.IsNullOrEmpty(host))
-                return false; // Remote host not supported
-
-            hostPort = portFrom;
             return true;
         }
     }

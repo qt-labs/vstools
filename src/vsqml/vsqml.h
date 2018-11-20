@@ -103,6 +103,11 @@ extern "C" VSQML_EXPORT bool qmlDebugClientConnect(
     int hostNameLength,
     unsigned short hostPort);
 
+extern "C" VSQML_EXPORT bool qmlDebugClientStartLocalServer(
+    void *qmlDebugClient,
+    const char *fileNameData,
+    int fileNameLength);
+
 extern "C" VSQML_EXPORT bool qmlDebugClientDisconnect(void *qmlDebugClient);
 
 extern "C" VSQML_EXPORT bool qmlDebugClientSendMessage(

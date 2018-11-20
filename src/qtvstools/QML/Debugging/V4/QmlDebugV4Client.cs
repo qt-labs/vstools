@@ -173,6 +173,8 @@ namespace QtVsTools.Qml.Debug.V4
 
             clientConnected = new EventWaitHandle(false, EventResetMode.ManualReset);
             State = DebugClientState.Connecting;
+            if (string.IsNullOrEmpty(hostName))
+                hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
             if (!NativeMethods.DebugClientConnect(client,
                 hostNameData, hostNameData.Length, hostPort)) {
@@ -202,6 +204,46 @@ namespace QtVsTools.Qml.Debug.V4
                         } else {
                             NativeMethods.DebugClientConnect(client,
                                 hostNameData, hostNameData.Length, hostPort);
+                        }
+                    }
+                }
+            });
+
+            return clientConnected;
+        }
+
+        public EventWaitHandle StartLocalServer(string fileName)
+        {
+            if (State != DebugClientState.Disconnected)
+                return null;
+
+            clientConnected = new EventWaitHandle(false, EventResetMode.ManualReset);
+            State = DebugClientState.Connecting;
+            var fileNameData = Encoding.UTF8.GetBytes(fileName);
+            if (!NativeMethods.DebugClientStartLocalServer(client,
+                fileNameData, fileNameData.Length)) {
+                return null;
+            }
+
+            Task.Run(() =>
+            {
+                var connectTimer = new System.Diagnostics.Stopwatch();
+                connectTimer.Start();
+
+                while (!clientConnected.WaitOne(100)) {
+
+                    if (sink.QueryRuntimeFrozen()) {
+                        connectTimer.Restart();
+
+                    } else {
+                        if (connectTimer.ElapsedMilliseconds > 5000) {
+                            if (!Disposing)
+                                clientConnected.Set();
+
+                            if (Atomic(() => State == DebugClientState.Connected,
+                                       () => State = DebugClientState.Disconnecting)) {
+                                NativeMethods.DebugClientDisconnect(client);
+                            }
                         }
                     }
                 }
@@ -323,6 +365,14 @@ namespace QtVsTools.Qml.Debug.V4
                 [MarshalAs(UnmanagedType.LPArray)] byte[] hostNameData,
                 int hostNameLength,
                 ushort hostPort);
+
+            [DllImport("vsqml",
+                CallingConvention = CallingConvention.Cdecl,
+                EntryPoint = "qmlDebugClientStartLocalServer")]
+            public static extern bool DebugClientStartLocalServer(
+                IntPtr qmlDebugClient,
+                [MarshalAs(UnmanagedType.LPArray)] byte[] fileNameData,
+                int fileNameLength);
 
             [DllImport("vsqml",
                 CallingConvention = CallingConvention.Cdecl,

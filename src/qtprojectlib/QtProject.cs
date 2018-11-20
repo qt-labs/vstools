@@ -3517,11 +3517,11 @@ namespace QtProjectLib
         public static bool IsQmlJsDebuggerInitialized(VCProject vcPro)
         {
             foreach (var config in GetCppDebugConfigs(vcPro)) {
-                var qmlDebugPort = config.GetUserPropertyValue("QmlDebugPort");
-                if (string.IsNullOrEmpty(qmlDebugPort))
+                var qmlDebugSettings = config.GetUserPropertyValue("QmlDebugSettings");
+                if (string.IsNullOrEmpty(qmlDebugSettings))
                     return false;
 
-                if (qmlDebugPort != "false" && !IsQtQmlDebugDefined(vcPro))
+                if (qmlDebugSettings != "false" && !IsQtQmlDebugDefined(vcPro))
                     return false;
             }
             return true;
@@ -3553,9 +3553,6 @@ namespace QtProjectLib
             return true;
         }
 
-        public static readonly ushort DefaultQmlDebugPort // 0x7451 = 29777
-            = BitConverter.ToUInt16(Encoding.ASCII.GetBytes("Qt"), 0);
-
         public static void DefineQmlJsDebugger(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro)
@@ -3571,13 +3568,10 @@ namespace QtProjectLib
 
                 config.Self.RemoveUserProperty("LocalDebuggerCommandArguments");
                 config.Self.RemoveUserProperty("QmlDebug");
-                config.Self.RemoveUserProperty("QmlDebugPort");
+                config.Self.RemoveUserProperty("QmlDebugSettings");
 
-                config.Self.SetUserPropertyValue("QmlDebugPort",
-                    DefaultQmlDebugPort.ToString());
-
-                config.Self.SetUserPropertyValue("QmlDebug",
-                    "-qmljsdebugger=port:$(QmlDebugPort),block");
+                config.Self.SetUserPropertyValue("QmlDebugSettings", "file:$(ProjectGuid),block");
+                config.Self.SetUserPropertyValue("QmlDebug", "-qmljsdebugger=$(QmlDebugSettings)");
 
                 config.Self.SetUserPropertyValue("LocalDebuggerCommandArguments",
                     string.Join(" ", new[] { config.Args, "$(QmlDebug)" }).Trim());
@@ -3607,7 +3601,7 @@ namespace QtProjectLib
                     config.Self.SetUserPropertyValue("LocalDebuggerCommandArguments", newArgs);
 
                 config.Self.RemoveUserProperty("QmlDebug");
-                config.Self.SetUserPropertyValue("QmlDebugPort", "false");
+                config.Self.SetUserPropertyValue("QmlDebugSettings", "false");
             }
         }
 
@@ -3629,28 +3623,6 @@ namespace QtProjectLib
                 } else {
                     UndefineQtQmlDebug(vcPro);
                     UndefineQmlJsDebugger(vcPro);
-                }
-            }
-        }
-
-        public ushort QmlDebugPort
-        {
-            get
-            {
-                if (!QmlDebug)
-                    return DefaultQmlDebugPort;
-                var portString = GetCppDebugConfigs(vcPro).First()
-                    .GetUserPropertyValue("QmlDebugPort");
-                ushort port;
-                if (!ushort.TryParse(portString, out port))
-                    return DefaultQmlDebugPort;
-                return port;
-            }
-            set
-            {
-                if (QmlDebug) {
-                    foreach (var config in GetCppDebugConfigs(vcPro))
-                        config.SetUserPropertyValue("QmlDebugPort", value.ToString());
                 }
             }
         }

@@ -41,6 +41,7 @@ public:
 
 public slots:
     void connectToHost(const QString &hostName, quint16 port);
+    void startLocalServer(const QString &fileName);
     void disconnectFromHost();
     void sendMessage(const QByteArray &messageType, const QByteArray &messageParams);
 

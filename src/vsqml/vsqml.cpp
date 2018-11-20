@@ -316,6 +316,21 @@ bool qmlDebugClientConnect(
         Q_ARG(QString, hostName), Q_ARG(quint16, hostPort));
 }
 
+bool qmlDebugClientStartLocalServer(
+    void *qmlDebugClient,
+    const char *fileNameData,
+    int fileNameLength)
+{
+    if (!qmlDebugClient)
+        return false;
+
+    auto client = reinterpret_cast<VsQmlDebugClient *>(qmlDebugClient);
+    QString fileName = QString::fromUtf8(fileNameData, fileNameLength);
+
+    return QMetaObject::invokeMethod(client, "startLocalServer", Qt::QueuedConnection,
+        Q_ARG(QString, fileName));
+}
+
 bool qmlDebugClientDisconnect(void *qmlDebugClient)
 {
     if (!qmlDebugClient)

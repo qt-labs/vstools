@@ -121,6 +121,11 @@ namespace QtVsTools.Qml.Debug.V4
             return client.Connect(hostName, hostPort);
         }
 
+        public EventWaitHandle StartLocalServer(string fileName)
+        {
+            return client.StartLocalServer(fileName);
+        }
+
         public bool Disconnect()
         {
             return client.Disconnect();
