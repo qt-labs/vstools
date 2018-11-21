@@ -109,6 +109,7 @@
         <Outputs>%(OutputFile)</Outputs>
         <ResourceFile>@(QtRcc->'%(FullPath)')</ResourceFile>
         <IsSelected>$(is_selected)</IsSelected>
+        <AdditionalDependencies/>
       </template>
     </ItemGroup>
     <!--
