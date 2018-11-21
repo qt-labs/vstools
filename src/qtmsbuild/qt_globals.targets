@@ -229,17 +229,21 @@
     // Save tracking log of files read during build; used by VS to check the up-to-date status
     // -->
     <ItemGroup>
-      <read_log Include="^%(QtWorkResult.FullPath);
-        %(QtWorkResult.AdditionalDependencies)"
+      <read_log Include="^%(QtWorkResult.FullPath);%(QtWorkResult.AdditionalDependencies)"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
+      </read_log>
+      <read_log>
+        <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
+        <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))"
+          >$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
       </read_log>
     </ItemGroup>
 
     <WriteLinesToFile
       Condition="'@(read_log)' != ''"
       File="$(TLogLocation)%(read_log.WorkType).read.1u.tlog"
-      Lines="@(read_log->MetaData('Identity')->ToUpperInvariant());"
+      Lines="@(read_log->MetaData('Path')->ToUpperInvariant());"
       Overwrite="true"
       Encoding="Unicode"/>
 
@@ -248,16 +252,20 @@
     // Save tracking log of files written during build; used by VS to check the up-to-date status
     // -->
     <ItemGroup>
-      <write_log Include="^%(QtWorkResult.FullPath);
-        $([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '%(QtWorkResult.OutputFile)'))"
+      <write_log Include="^%(QtWorkResult.FullPath);%(QtWorkResult.OutputFile)"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
+      </write_log>
+      <write_log>
+        <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
+        <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))"
+          >$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
       </write_log>
     </ItemGroup>
 
     <WriteLinesToFile Condition="'@(write_log)' != ''"
      File="$(TLogLocation)%(write_log.WorkType).write.1u.tlog"
-     Lines="@(write_log->MetaData('Identity')->ToUpperInvariant());"
+     Lines="@(write_log->MetaData('Path')->ToUpperInvariant());"
      Overwrite="true" Encoding="Unicode"/>
 
     <!--
