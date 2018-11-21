@@ -120,7 +120,7 @@
     // Calculate hash (SHA1) for the requested work item, based on its associated tool and options
     // -->
     <GetItemHash Condition="'@(QtWork)' != ''"
-      Item="%(QtWork.Identity)" Keys="Identity;WorkType;ToolPath;Options">
+      Item="@(QtWork)" Keys="Identity;WorkType;ToolPath;Options">
       <Output TaskParameter="Hash" PropertyName="work_hash" />
     </GetItemHash>
 
