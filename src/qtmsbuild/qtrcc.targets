@@ -58,11 +58,40 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRccSetDependencies
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Add resource files as dependencies of the QRC file
+  // -->
+  <Target Name="QtRccSetDependencies"
+    Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
+
+    <!--// Parse QRC -->
+    <XmlPeek Condition="'@(QtRcc)' != ''"
+      XmlInputPath="%(Identity)" Query="/RCC/qresource/file/text()">
+      <Output TaskParameter="Result" ItemName="res_file" />
+    </XmlPeek>
+
+    <!--// Add dependencies -->
+    <ItemGroup Condition="'@(QtRcc)' != '' AND '@(res_file)' != ''">
+      <QtRcc>
+        <AdditionalDependencies
+          >%(QtRcc.AdditionalDependencies);@(res_file->'%(FullPath)')</AdditionalDependencies>
+      </QtRcc>
+    </ItemGroup>
+
+    <!--// Clean-up -->
+    <ItemGroup>
+      <res_file Remove="@(res_file)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtRccPrepare
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare items for processing
   // -->
-  <Target Name="QtRccPrepare" DependsOnTargets="_SelectedFiles"
+  <Target Name="QtRccPrepare" DependsOnTargets="_SelectedFiles;QtRccSetDependencies"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"

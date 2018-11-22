@@ -51,7 +51,7 @@
   // Pre-process rcc source files marked for QML cache generation
   // -->
   <Target Name="QtQmlCachePrepare"
-    DependsOnTargets="_SelectedFiles"
+    DependsOnTargets="_SelectedFiles;QtRccSetDependencies"
     BeforeTargets="QtRccPrepare" Condition="'@(QtRcc)' != ''"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
