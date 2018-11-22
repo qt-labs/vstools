@@ -36,7 +36,6 @@ using System.Runtime.Serialization;
 namespace QtVsTools.Qml.Debug.V4
 {
     using Json;
-    using static Json.SerializableEnum;
 
     [DataContract]
     class JsValue : Serializable<JsValue>
@@ -68,8 +67,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public DataType Type
         {
-            get { return Deserialize<DataType>(TypeString); }
-            set { TypeString = Serialize<DataType>(value); }
+            get { return SerializableEnum.Deserialize<DataType>(TypeString); }
+            set { TypeString = SerializableEnum.Serialize<DataType>(value); }
         }
 
         [DataMember(Name = "name")]

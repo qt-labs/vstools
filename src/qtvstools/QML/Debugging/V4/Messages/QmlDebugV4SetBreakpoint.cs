@@ -31,7 +31,6 @@ using System.Runtime.Serialization;
 namespace QtVsTools.Qml.Debug.V4
 {
     using Json;
-    using static Json.SerializableEnum;
 
     [DataContract]
     sealed class SetBreakpointRequest
@@ -75,8 +74,8 @@ namespace QtVsTools.Qml.Debug.V4
 
             public TargetType TargetType
             {
-                get { return Deserialize<TargetType>(TargetTypeString); }
-                set { TargetTypeString = Serialize<TargetType>(value); }
+                get { return SerializableEnum.Deserialize<TargetType>(TargetTypeString); }
+                set { TargetTypeString = SerializableEnum.Serialize<TargetType>(value); }
             }
 
             [DataMember(Name = "target")]

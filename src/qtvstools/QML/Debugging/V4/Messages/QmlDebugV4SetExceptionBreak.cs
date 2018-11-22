@@ -31,7 +31,6 @@ using System.Runtime.Serialization;
 namespace QtVsTools.Qml.Debug.V4
 {
     using Json;
-    using static Json.SerializableEnum;
 
     public enum ExceptionBreakType
     {
@@ -64,8 +63,8 @@ namespace QtVsTools.Qml.Debug.V4
 
             public ExceptionBreakType ExceptionBreakType
             {
-                get { return Deserialize<ExceptionBreakType>(TypeString); }
-                set { TypeString = Serialize<ExceptionBreakType>(value); }
+                get { return SerializableEnum.Deserialize<ExceptionBreakType>(TypeString); }
+                set { TypeString = SerializableEnum.Serialize<ExceptionBreakType>(value); }
             }
 
             [DataMember(Name = "enabled")]

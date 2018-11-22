@@ -34,7 +34,6 @@ using System.Threading;
 namespace QtVsTools.Qml.Debug.V4
 {
     using Json;
-    using static Json.SerializableEnum;
 
     [DataContract]
     sealed class ContinueRequest : Request<ContinueResponse, ContinueRequest.ArgumentsStruct>
@@ -69,8 +68,8 @@ namespace QtVsTools.Qml.Debug.V4
 
             public StepAction StepAction
             {
-                get { return Deserialize<StepAction>(StepActionString); }
-                set { StepActionString = Serialize<StepAction>(value); }
+                get { return SerializableEnum.Deserialize<StepAction>(StepActionString); }
+                set { StepActionString = SerializableEnum.Serialize<StepAction>(value); }
             }
 
             [DataMember(Name = "stepcount", EmitDefaultValue = false)]

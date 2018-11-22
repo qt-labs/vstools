@@ -135,28 +135,23 @@ namespace QtVsTools.Qml.Debug
             execCmd = "";
             rccItems = null;
 
-            IEnumHierarchies vsProjects;
-            debugger4.EnumCurrentlyDebuggingProjects(out vsProjects);
-            if (vsProjects == null)
-                return false;
-
-            var vsProject = new IVsHierarchy[1];
-            uint fetched = 0;
-            while (vsProjects.Next(1, vsProject, out fetched) == VSConstants.S_OK) {
-
-                object objProj;
-                vsProject[0].GetProperty(VSConstants.VSITEMID_ROOT,
-                    (int)__VSHPROPID.VSHPROPID_ExtObject, out objProj);
-
-                var project = objProj as EnvDTE.Project;
-                if (project == null)
-                    continue;
+            foreach (var project in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
 
                 var vcProject = project.Object as VCProject;
                 if (vcProject == null)
                     continue;
 
-                var vcConfig = vcProject.ActiveConfiguration;
+                var vcConfigs = vcProject.Configurations as IVCCollection;
+                if (vcConfigs == null)
+                    continue;
+                var activeConfig = project.ConfigurationManager.ActiveConfiguration;
+                if (activeConfig == null)
+                    continue;
+                var activeConfigId = string.Format("{0}|{1}",
+                    activeConfig.ConfigurationName, activeConfig.PlatformName);
+                var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
+                if (vcConfig == null)
+                    continue;
 
                 var props = vcProject as IVCBuildPropertyStorage;
 
