@@ -62,18 +62,21 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Add resource files as dependencies of the QRC file
   // -->
-  <Target Name="QtRccSetDependencies"
+  <Target Name="QtRccSetDependencies" DependsOnTargets="_SelectedFiles"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <!--// Parse QRC -->
-    <XmlPeek Condition="'@(QtRcc)' != ''"
-      XmlInputPath="%(Identity)" Query="/RCC/qresource/file/text()">
-      <Output TaskParameter="Result" ItemName="res_file" />
-    </XmlPeek>
+    <Exec Condition="'@(QtRcc)' != ''"
+      Command="%(QtRcc.QTDIR)\bin\rcc.exe --list %(QtRcc.Identity) > $(IntDir)rcc_list.txt"/>
+    <ReadLinesFromFile Condition="'@(QtRcc)' != '' AND Exists('$(IntDir)rcc_list.txt')"
+      File="$(IntDir)rcc_list.txt">
+      <Output TaskParameter="Lines" ItemName="res_file"/>
+    </ReadLinesFromFile>
 
     <!--// Add dependencies -->
     <ItemGroup Condition="'@(QtRcc)' != '' AND '@(res_file)' != ''">
       <QtRcc>
+        <ResourceFiles>@(res_file)</ResourceFiles>
         <AdditionalDependencies
           >%(QtRcc.AdditionalDependencies);@(res_file->'%(FullPath)')</AdditionalDependencies>
       </QtRcc>
@@ -83,6 +86,7 @@
     <ItemGroup>
       <res_file Remove="@(res_file)"/>
     </ItemGroup>
+    <Delete Files="$(IntDir)rcc_list.txt"/>
   </Target>
 
   <!--
@@ -102,6 +106,7 @@
       <file>[@(QtRcc->'%(Identity)')]</file>
       <output_file>@(QtRcc->'%(OutputFile)')</output_file>
       <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+      <is_selected Condition="!$(selected_files.Contains('$(file)'))">false</is_selected>
     </PropertyGroup>
 
     <!--// Delete output file to force build of source if it was manually selected to build

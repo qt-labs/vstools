@@ -73,6 +73,7 @@
       <file>[@(QtMoc->'%(Identity)')]</file>
       <output_file>@(QtMoc->'%(OutputFile)')</output_file>
       <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+      <is_selected Condition="!$(selected_files.Contains('$(file)'))">false</is_selected>
     </PropertyGroup>
 
     <!--// Delete output file to force build of source if it was manually selected to build

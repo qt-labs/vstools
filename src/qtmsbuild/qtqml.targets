@@ -75,21 +75,23 @@
       <is_selected
         Condition="'@(SelectedFiles)' == '' OR $(selected_files.Contains('$(file)'))"
         >true</is_selected>
+      <is_selected
+        Condition="'@(SelectedFiles)' != '' AND !$(selected_files.Contains('$(file)'))"
+        >false</is_selected>
     </PropertyGroup>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Parse QRC file
-    // -->
-    <!--
-    // @(res_file) ::= names of resource files -->
-    <XmlPeek Condition="'@(QtRcc)' != '' AND '%(QtRcc.QmlCacheGenerate)' == 'true'"
-      XmlInputPath="%(Identity)" Query="/RCC/qresource/file/text()">
-      <Output TaskParameter="Result" ItemName="res_file" />
-    </XmlPeek>
-    <!--
+    // @(res_file)    ::= names of resource files
     // @(res_qml_js)  ::= names of QML and JS resource files
-    // @(res_other)   ::= names of other resource files -->
+    // @(res_other)   ::= names of other resource files
+    // -->
+    <ItemGroup>
+      <res_file
+        Condition="'@(QtRcc)' != '' AND '%(QtRcc.QmlCacheGenerate)' == 'true'"
+        Include="%(QtRcc.ResourceFiles)"/>
+    </ItemGroup>
     <ItemGroup Condition="'@(res_file)' != ''">
       <res_qml_js Include="%(res_file.Identity)"
         Condition="'%(res_file.Extension)' == '.qml' OR '%(res_file.Extension)' == '.js'"/>

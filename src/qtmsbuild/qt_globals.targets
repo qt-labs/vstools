@@ -236,7 +236,7 @@
       <read_log>
         <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
         <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))"
-          >$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
+          >$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
       </read_log>
     </ItemGroup>
 
@@ -259,7 +259,7 @@
       <write_log>
         <Path Condition="$([System.String]::Copy('%(Identity)').StartsWith('^'))">%(Identity)</Path>
         <Path Condition="!$([System.String]::Copy('%(Identity)').StartsWith('^'))"
-          >$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
+          >$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','%(Identity)'))</Path>
       </write_log>
     </ItemGroup>
 
