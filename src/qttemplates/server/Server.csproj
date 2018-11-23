@@ -50,7 +50,17 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="server.ico" />
@@ -60,9 +70,18 @@
     <None Include="server.vcxproj.filters">
       <SubType>Designer</SubType>
     </None>
+    <T4Template Include="server.vstemplate_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>server.vstemplate</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>server.vstemplate</LastGenOutput>
+    </T4Template>
     <VSTemplate Include="server.vstemplate">
       <SubType>Designer</SubType>
       <OutputSubPath>Qt</OutputSubPath>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>server.vstemplate_TT</DependentUpon>
     </VSTemplate>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +92,9 @@
     <Content Include="stdafx.cpp" />
     <Content Include="stdafx.h" />
     <Content Include="widget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

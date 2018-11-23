@@ -267,3 +267,29 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# Generated Files
+vstools.pri
+src/config/12.0/source.extension.vsixmanifest
+src/config/14.0/source.extension.vsixmanifest
+src/config/15.0/source.extension.vsixmanifest
+src/qtappwrapper/Properties/AssemblyInfo.tt.cs
+src/qtprojectlib/Properties/AssemblyInfo.tt.cs
+src/qttemplates/console/Properties/AssemblyInfo.tt.cs
+src/qttemplates/designer/Properties/AssemblyInfo.tt.cs
+src/qttemplates/dialogbuttonbottom/Properties/AssemblyInfo.tt.cs
+src/qttemplates/dialogbuttonright/Properties/AssemblyInfo.tt.cs
+src/qttemplates/gui/Properties/AssemblyInfo.tt.cs
+src/qttemplates/lib/Properties/AssemblyInfo.tt.cs
+src/qttemplates/mainwindow/Properties/AssemblyInfo.tt.cs
+src/qttemplates/resource/Properties/AssemblyInfo.tt.cs
+src/qttemplates/server/Properties/AssemblyInfo.tt.cs
+src/qttemplates/widget/Properties/AssemblyInfo.tt.cs
+src/qtvstools/Version.tt.cs
+src/qtvstools/Properties/AssemblyInfo.tt.cs
+src/qtwizard/Properties/AssemblyInfo.tt.cs
+src/qttemplates/console/console.vstemplate
+src/qttemplates/designer/designer.vstemplate
+src/qttemplates/gui/gui.vstemplate
+src/qttemplates/lib/lib.vstemplate
+src/qttemplates/server/server.vstemplate

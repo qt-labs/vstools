@@ -27,6 +27,10 @@
     ** $QT_END_LICENSE$
     **
     *****************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
 -->
 
 <VSTemplate Version="3.0.0"
@@ -34,40 +38,38 @@
             xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
             Type="Project" >
     <TemplateData>
-        <Name>Qt Designer Custom Widget</Name>
-        <Description>This wizard generates a Qt Designer Custom widget.</Description>
+        <Name>Qt Class Library</Name>
+        <Description>This wizard generates a Qt class library project.</Description>
         <ProjectType>VC</ProjectType>
         <SortOrder>1000</SortOrder>
         <CreateNewFolder>true</CreateNewFolder>
-        <DefaultName>QtDesignerWidget</DefaultName>
+        <DefaultName>QtClassLibrary</DefaultName>
         <ProvideDefaultName>true</ProvideDefaultName>
         <LocationField>Enabled</LocationField>
         <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
-        <Icon>designer.ico</Icon>
+        <Icon>lib.ico</Icon>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$safeprojectname$.vcxproj"
-                 File="designer.vcxproj"
+                 File="lib.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
                          OpenInEditor="true"
-                         TargetFileName="$pluginsourcefilename$">plugin.cpp</ProjectItem>
+                         TargetFileName="$sourcefilename$">source.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$pluginheaderfilename$">plugin.h</ProjectItem>
-            <ProjectItem ReplaceParameters="false"
-                         TargetFileName="$plugin_json$">plugin.json</ProjectItem>
+                         TargetFileName="$headerfilename$">header.h</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$saveglobal$_global.h">global.h</ProjectItem>
             <ProjectItem ReplaceParameters="false">stdafx.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$sourcefilename$">widget.cpp</ProjectItem>
-            <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$headerfilename$">widget.h</ProjectItem>
-            <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">designer.vcxproj.filters</ProjectItem>
+                         TargetFileName="$safeprojectname$.vcxproj.filters">lib.vcxproj.filters</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
-        <Assembly>QtProjectWizard, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null</Assembly>
-        <FullClassName>QtProjectWizard.DesignerWizard</FullClassName>
+      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+      <Assembly>QtProjectWizard, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+      <#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <FullClassName>QtProjectWizard.LibraryWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>

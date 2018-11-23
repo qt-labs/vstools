@@ -1,9 +1,14 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# <#@output   extension="pri" #>
+# <#@include  file="$(SolutionDir)\version.tt" #>
+#           <#=WARNING_GENERATED_FILE#>
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 !isEmpty(QTVSOOLS_PRI) {
     error("vstools.pri already included")
 }
 QTVSTOOLS_PRI = 1
-QTVSTOOLS_VERSION = 2.2.1
-QTVSTOOLS_VERSION_TAG = 221
+QTVSTOOLS_VERSION = <#=QT_VS_TOOLS_VERSION#>
+QTVSTOOLS_VERSION_TAG = <#=QT_VS_TOOLS_VERSION_TAG#>
 
 defineTest(minQtVersion) {
     maj = $$1

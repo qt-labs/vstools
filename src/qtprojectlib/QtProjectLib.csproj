@@ -65,7 +65,17 @@
     <Compile Include="ProjectExporter.cs" />
     <Compile Include="ProjectImporter.cs" />
     <Compile Include="ProjectMacros.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProSolution.cs" />
     <Compile Include="QMake.cs" />
     <Compile Include="QMakeConf.cs" />
@@ -107,6 +117,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.Build" />
     <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />

@@ -80,6 +80,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "qt", "qt", "{62102FDD-016A-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vsqml", "vsqml\vsqml.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "T4 Templates", "T4 Templates", "{24A01B54-CE41-4559-8418-0723F8DF723F}"
+	ProjectSection(SolutionItems) = preProject
+		common.tt = common.tt
+		version.tt = version.tt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QtVSTools Version", "QtVSTools Version", "{8307D2C5-3736-4AED-9E65-330DA4C67EA3}"
+	ProjectSection(SolutionItems) = preProject
+		version.targets = version.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

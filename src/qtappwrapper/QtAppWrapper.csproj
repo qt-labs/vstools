@@ -45,10 +45,23 @@
     <Compile Include="MessageType.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="QtAppWrapper.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

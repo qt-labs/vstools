@@ -27,6 +27,10 @@
     ** $QT_END_LICENSE$
     **
     *****************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
 -->
 
 <VSTemplate Version="3.0.0"
@@ -56,7 +60,9 @@
         </Project>
     </TemplateContent>
     <WizardExtension>
-        <Assembly>QtProjectWizard, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null</Assembly>
+        <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Assembly>QtProjectWizard, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
         <FullClassName>QtProjectWizard.ConsoleWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
     *****************************************************************************
     **
@@ -27,6 +27,10 @@
     ** $QT_END_LICENSE$
     **
     *****************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
 -->
 
 <VSTemplate Version="3.0.0"
@@ -34,36 +38,40 @@
             xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
             Type="Project" >
     <TemplateData>
-        <Name>Qt Class Library</Name>
-        <Description>This wizard generates a Qt class library project.</Description>
+        <Name>Qt GUI Application</Name>
+        <Description>This wizard generates a Qt GUI application project.</Description>
         <ProjectType>VC</ProjectType>
         <SortOrder>1000</SortOrder>
         <CreateNewFolder>true</CreateNewFolder>
-        <DefaultName>QtClassLibrary</DefaultName>
+        <DefaultName>QtGuiApplication</DefaultName>
         <ProvideDefaultName>true</ProvideDefaultName>
         <LocationField>Enabled</LocationField>
         <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
-        <Icon>lib.ico</Icon>
+        <Icon>gui.ico</Icon>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$safeprojectname$.vcxproj"
-                 File="lib.vcxproj"
+                 File="gui.vcxproj"
                  ReplaceParameters="true">
-            <ProjectItem ReplaceParameters="true"
-                         OpenInEditor="true"
-                         TargetFileName="$sourcefilename$">source.cpp</ProjectItem>
-            <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$headerfilename$">header.h</ProjectItem>
-            <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$saveglobal$_global.h">global.h</ProjectItem>
+            <ProjectItem ReplaceParameters="true">main.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false">stdafx.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">lib.vcxproj.filters</ProjectItem>
+                         OpenInEditor="true"
+                         TargetFileName="$sourcefilename$">widget.cpp</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$headerfilename$">widget.h</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$uifilename$">widget.ui</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$safeprojectname$.vcxproj.filters">gui.vcxproj.filters</ProjectItem>
+            <ProjectItem ReplaceParameters="false">gui.ico</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
-        <Assembly>QtProjectWizard, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null</Assembly>
-        <FullClassName>QtProjectWizard.LibraryWizard</FullClassName>
+      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Assembly>QtProjectWizard, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <FullClassName>QtProjectWizard.GuiWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>

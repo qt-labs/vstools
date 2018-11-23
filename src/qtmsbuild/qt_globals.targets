@@ -49,8 +49,9 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Qt/MSBuild global properties
   // -->
+  <Import Project="..\version.targets" Condition="Exists('..\version.targets')"/>
   <PropertyGroup>
-    <QtMsBuildVersion>2.2.1</QtMsBuildVersion>
+    <QtMsBuildVersion>$(QtVSToolsVersion)</QtMsBuildVersion>
     <QtDebug Condition="'$(QtDebug)' == ''">false</QtDebug>
     <QtLogFilePath Condition="'$(QtLogFilePath)' == ''"
       >$([System.IO.Path]::Combine($(ProjectDir),$(IntDir)qt_work.log))</QtLogFilePath>

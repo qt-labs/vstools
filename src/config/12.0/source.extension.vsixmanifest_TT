@@ -27,13 +27,22 @@
     ** $QT_END_LICENSE$
     **
     *****************************************************************************
+<#@output extension="vsixmanifest" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
 -->
 
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
     xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="QtVsTools.30112013-cd02-4fd0-89bd-e36f85abe16a" Version="2.2.1" Language="en-US"
+        <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Identity
+            Id="QtVsTools.15021976-cd02-4fd0-89bd-e36f85abe16a"
+            Version="<#=QT_VS_TOOLS_VERSION#>"
+            Language="en-US"
             Publisher="The Qt Company Ltd." />
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
         <DisplayName>Qt Visual Studio Tools</DisplayName>
         <Description xml:space="preserve">The Qt Visual Studio Tools allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</Description>
         <MoreInfo>http://www.qt.io</MoreInfo>
@@ -43,10 +52,10 @@
         <PreviewImage>preview.png</PreviewImage>
     </Metadata>
     <Installation InstalledByMsi="false">
-      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[14.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[14.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[12.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[12.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0]" />
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
