@@ -1,3 +1,31 @@
+The Qt Visual Studio Tools version 2.3.0 introduces QML debugging in Visual Studio, as well as the
+ahead-of-time compilation of QML files using the Qt Quick Compiler. This release also includes a
+number of bug fixes.
+
+Changes
+-------
+- Debug QML programs in the Visual Studio IDE
+- Ahead-of-time compilation of QML files using the Qt Quick Compiler
+- Fixed QTVSADDINBUG-120: Output directories (MOC_DIR, UI_DIR, RCC_DIR) in imported .pro ignored
+- Fixed QTVSADDINBUG-378: Debug data visualization not working with Qt built with namespace
+- Fixed QTVSADDINBUG-526: QRC not rebuilt if resources are updated
+- Fixed QTVSADDINBUG-550: Standard Visual Studio macros not allowed in rcc and uic path setting
+- Fixed QTVSADDINBUG-584: Compilation of selected files (i.e. 'right-click' > 'Compile') not working
+
+
+The Qt Visual Studio Tools version 2.2.2 contains several bug fixes.
+
+Changes
+-------
+- Fixed QTVSADDINBUG-544: Build is never up-to-date, even if no files have been changed.
+- Fixed QTVSADDINBUG-551: Qt VS Tools adds a delay to Visual Studio startup.
+- Fixed QTVSADDINBUG-558: Missing Qt module: Data Visualization
+- Fixed QTVSADDINBUG-559: Missing Qt module: Charts
+- Fixed QTVSADDINBUG-563: Error "same key already added" when converting project to Qt/MSBuild
+- Fixed QTVSADDINBUG-566: Error converting to Qt/MSBuild if custom build command has a newline
+- Fixed QTVSADDINBUG-569: %QTMSBUILD% environment variable always overwritten at start-up
+
+
 The Qt Visual Studio Tools version 2.2.1 contains several bug fixes.
 
 Changes
