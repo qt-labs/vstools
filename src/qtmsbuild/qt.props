@@ -77,13 +77,13 @@
       <!--
       // QML cache generation -->
       <QmlCacheGenMessage
-        ><![CDATA[QML cache: generating cache for %<Identity>...]]></QmlCacheGenMessage>
+        ><![CDATA[Qt Quick Compiler: compiling %<Identity> ahead of time]]></QmlCacheGenMessage>
       <QmlCacheOutputFile
         ><![CDATA[$(ProjectDir)GeneratedFiles\%<Filename>_%<Suffix>.cpp]]></QmlCacheOutputFile>
       <!--
       // QRC filtering -->
       <QmlCacheFilterMessage
-        >QML cache: filtering %(Identity)...</QmlCacheFilterMessage>
+        >Qt Quick Compiler: filtering %(Identity)...</QmlCacheFilterMessage>
       <QmlCacheFilteredFile
         >$(ProjectDir)GeneratedFiles\%(Filename)_qmlcache.qrc</QmlCacheFilteredFile>
       <QmlCacheFilteredOutputFile
@@ -93,7 +93,7 @@
       <!--
       // QML cache loader generation -->
       <QmlCacheLoaderMessage
-        >QML cache: generating cache loader...</QmlCacheLoaderMessage>
+        >Qt Quick Compiler: generating cache loader...</QmlCacheLoaderMessage>
       <QmlCacheLoaderFile
         >$(ProjectDir)GeneratedFiles\qmlcache_loader.cpp</QmlCacheLoaderFile>
     </QtRcc>

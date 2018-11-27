@@ -63,7 +63,7 @@
       <Category
         Name="QMLCache">
         <Category.DisplayName>
-          <sys:String>QML Cache</sys:String>
+          <sys:String>Qt Quick Compiler</sys:String>
         </Category.DisplayName>
       </Category>
     </Rule.Categories>
@@ -327,8 +327,8 @@
     <BoolProperty
       Name="QmlCacheGenerate"
       Category="QMLCache"
-      DisplayName="Generate QML Cache"
-      Description="Enable or disable the generation of QML cache." />
+      DisplayName="Enable Qt Quick Compiler"
+      Description="Enable or disable ahead-of-time compilation using the Qt Quick Compiler." />
     <!--
     // QML cache generation -->
     <StringProperty
