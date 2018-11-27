@@ -44,6 +44,16 @@ build targets will only work reliable if you use the 'Exp' hive of Visual Studio
 
 
 
+Build the qtdeclarative integration (vsqml.dll)
+-----------------------------------------------
+
+The QtVSTools solution contains one C++ project that implements the integration with qtdeclarative.
+This exposes QML services, like parsing and debugging, to C# code via platform invoke calls to
+vsqml.dll. Building this library also requires a static build of Qt. For details, please refer to
+the README file in 'src/vsqml'.
+
+
+
 Build the Qt Visual Studio Tools documentation
 ----------------------------------------------
 
@@ -59,7 +69,7 @@ https://wiki.qt.io/Building_Qt_Documentation
 Product name or Publisher name update
 -------------------------------------
 
-Open the file 'source.extension.vsixmanifest' inside the 'src\config\$(VisualStudioVersion)'
+Open the file 'source.extension.vsixmanifest_TT' inside the 'src\config\$(VisualStudioVersion)'
 directory and update the 'DisplayName' tag's value or the 'Identity' tag's 'Publisher' attribute.
 Important: Updating the information requires also updating the MsBuild 'AfterTargets' information
 inside the 'qtvstools.afterbuild.targets' file in the 'src\config' directory.
@@ -69,25 +79,12 @@ inside the 'qtvstools.afterbuild.targets' file in the 'src\config' directory.
 Version number update
 ---------------------
 
-Open the file 'source.extension.vsixmanifest' inside the 'src\config\$(VisualStudioVersion)'
-directory and update the 'Identity' tag's 'Version' attribute.
-Important: Updating the version number there requires also updating the 'VsixVersion' tag at the
-top of the 'qtvstools.targets' file in the same directory.
-There are some other parts that need to be updated:
+1. In the QtVSTools solution, open the 'version.targets' file and update the version.
 
-    - 'vstools.pri'
-        adapt QTVSTOOLS_VERSION and QTVSTOOLS_VERSION_TAG
-    - 'src\qtvstools\Vsix.cs'
-        search for the line containing "InstalledProductRegistration", adapt the third argument)
-    - 'src\qtvstools\Properties\AssemblyInfo.cs'
-        adapt [assembly: AssemblyVersion(...)] and [assembly: AssemblyFileVersion(...)]
+2. Select the menu option 'Build' > 'Transform All T4 Templates'.
+   --> The updated version number is propagated into the remaining source files.
 
-Depending on the amount of changes done to other libraries of the projects, adjust their respective
-assembly infos as well.
-
-Note: Some extra caution is required while changing the qtwizard assembly info, because most of
-      the templates (e.g. console, gui, etc.) depend on that version number and need to be adjusted
-      as well (see gui.vstemplate 'Assembly' tag for example).
+3. Rebuild the solution.
 
 
 
