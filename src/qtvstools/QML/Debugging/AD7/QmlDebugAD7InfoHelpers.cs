@@ -142,8 +142,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
             public IEnumerator<MapField<TStruct, TFieldMask>> GetEnumerator()
             {
-                foreach (var item in fieldMaps)
-                    yield return item;
+                return fieldMaps.GetEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
