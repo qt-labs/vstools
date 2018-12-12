@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2017 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="vsixmanifest" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
+    xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Identity
+            Id="QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5"
+            Version="<#=QT_VS_TOOLS_VERSION#>"
+            Language="en-US"
+            Publisher="The Qt Company Ltd." />
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
+        <DisplayName>Qt Visual Studio Tools</DisplayName>
+        <Description xml:space="preserve">The Qt Visual Studio Tools allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</Description>
+        <MoreInfo>http://www.qt.io</MoreInfo>
+        <License>LICENSE.GPL3-EXCEPT</License>
+        <ReleaseNotes>Changelog</ReleaseNotes>
+        <Icon>qt.ico</Icon>
+        <PreviewImage>preview.png</PreviewImage>
+    </Metadata>
+    <Installation InstalledByMsi="false">
+      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[16.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[16.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[16.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0]" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.6,)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%"
+            Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%"
+            Path="|%CurrentProject%|" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtAppWrapper" Path="|QtAppWrapper|" AssemblyName="|QtAppWrapper;AssemblyName|" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtProjectWizard" Path="|QtProjectWizard|" AssemblyName="|QtProjectWizard;AssemblyName|" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Console" d:TargetPath="|Console;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Gui" d:TargetPath="|Gui;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Lib" d:TargetPath="|Lib;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Server" d:TargetPath="|Server;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Designer" d:TargetPath="|Designer;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Resource" d:TargetPath="|Resource;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="DialogButtonBottom" d:TargetPath="|DialogButtonBottom;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="DialogButtonRight" d:TargetPath="|DialogButtonRight;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="MainWindow" d:TargetPath="|MainWindow;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Widget" d:TargetPath="|Widget;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="File" d:Source="File" Path="qt5.natvis.xml" />
+    <Asset Type="File"
+           d:Source="File"
+           Path="x64\SQLite.Interop.dll"
+           d:VsixSubPath="x64" />
+    <Asset Type="file"
+           d:Source="File"
+           Path="x86\SQLite.Interop.dll"
+           d:VsixSubPath="x86" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.props" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qt.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" d:VsixSubPath="qtmsbuild"
+           Path="qtmsbuild\qt_tasks.targets" />
+    <Asset Type="File" d:Source="File" d:VsixSubPath="qtmsbuild"
+           Path="qtmsbuild\qt_globals.targets" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtqml.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.targets" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtmoc.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtrcc.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmsbuild\qtuic.xml" d:VsixSubPath="qtmsbuild" />
+    <Asset Type="File" d:Source="File" Path="qtmodules.xml" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Qml.Debug.pkgdef" />
+  </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
+                      Version="[16.0,17.0)"
+                      DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
+                      Version="[16.0,17.0)"
+                      DisplayName="Visual Studio C++ core features" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+                      Version="[16.0,17.0)"
+                      DisplayName="VC++ 2017 v141 toolset (x86,x64)" />
+    </Prerequisites>
+</PackageManifest>

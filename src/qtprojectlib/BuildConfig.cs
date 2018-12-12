@@ -39,7 +39,7 @@ namespace QtProjectLib
             // TODO: Find a proper way to return the PlatformToolset version.
 #if (VS2013 || VS2015)
             return version.Replace(".", string.Empty);
-#elif VS2017
+#elif (VS2017 || VS2019)
             return "141";
 #else
 #error Unknown Visual Studio version!

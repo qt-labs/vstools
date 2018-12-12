@@ -222,7 +222,7 @@ namespace QtProjectLib
                 ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
-#if (VS2017 || VS2015)
+#if (VS2019 || VS2017 || VS2015)
             if (ok) {
                 string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
                 if (!string.IsNullOrEmpty(versionWin10SDK))

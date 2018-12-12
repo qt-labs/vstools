@@ -1666,7 +1666,10 @@ namespace QtProjectLib
 
         private static string GetVCPathFromRegistry()
         {
-#if VS2017
+#if VS2019
+            Debug.Assert(false, "VCPath for VS2019 is not available through the registry");
+            string vcPath = string.Empty;
+#elif VS2017
             string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
             if (string.IsNullOrEmpty(vsPath))
                 return "";
@@ -1694,7 +1697,7 @@ namespace QtProjectLib
                 return false;
 
             string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
-#if VS2017
+#if (VS2017 || VS2019)
             string vcVarsCmd = "";
             string vcVarsArg = "";
             if (isOS64Bit && isQt64Bit)

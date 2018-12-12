@@ -228,7 +228,7 @@ namespace QtProjectWizard
                 safeprojectname = data.LowerCaseFileNames ? safeprojectname.ToLower() : safeprojectname;
                 replacements["$pro_name$"] = safeprojectname;
 
-#if (VS2017 || VS2015)
+#if (VS2019 || VS2017 || VS2015)
                 string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
                 if (!string.IsNullOrEmpty(versionWin10SDK)) {
                     replacements["$WindowsTargetPlatformVersion$"] = versionWin10SDK;

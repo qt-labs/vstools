@@ -308,7 +308,9 @@ namespace QtVsTools
 
                 File.WriteAllText(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-#if VS2017
+#if VS2019
+                @"Visual Studio 2019\Visualizers\",
+#elif VS2017
                 @"Visual Studio 2017\Visualizers\",
 #elif VS2015
                 @"Visual Studio 2015\Visualizers\",

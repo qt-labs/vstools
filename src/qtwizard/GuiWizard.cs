@@ -203,7 +203,7 @@ namespace QtProjectWizard
 
                     Directory.Delete(qmakeTmpDir, true);
                 }
-#if (VS2017 || VS2015)
+#if (VS2019 || VS2017 || VS2015)
                 else {
                     string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
                     if (!string.IsNullOrEmpty(versionWin10SDK)) {

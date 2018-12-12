@@ -175,6 +175,23 @@
     </Content>
   </ItemGroup>
   <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '16.0'">
+      <ItemGroup>
+        <T4Template Include="..\config\16.0\source.extension.vsixmanifest_TT">
+          <Link>source.extension.vsixmanifest_TT</Link>
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <OutputFile>..\config\16.0\source.extension.vsixmanifest</OutputFile>
+          <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+          <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
+        </T4Template>
+        <None Include="..\config\16.0\source.extension.vsixmanifest">
+          <Link>source.extension.vsixmanifest</Link>
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
+        </None>
+      </ItemGroup>
+    </When>
     <When Condition="'$(VisualStudioVersion)' == '15.0'">
       <ItemGroup>
         <T4Template Include="..\config\15.0\source.extension.vsixmanifest_TT">
