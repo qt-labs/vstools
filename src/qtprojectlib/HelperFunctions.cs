@@ -1651,7 +1651,20 @@ namespace QtProjectLib
             return versionWin10SDK;
         }
 
-        private static string GetVCPath()
+        static string _VCPath;
+        public static string VCPath
+        {
+            set { _VCPath = value; }
+            get
+            {
+                if (!string.IsNullOrEmpty(_VCPath))
+                    return _VCPath;
+                else
+                    return GetVCPathFromRegistry();
+            }
+        }
+
+        private static string GetVCPathFromRegistry()
         {
 #if VS2017
             string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
@@ -1676,7 +1689,7 @@ namespace QtProjectLib
             bool isQt64Bit = QtVersionManager.The().GetVersionInfo(
                 QtVersionManager.The().GetDefaultVersion()).is64Bit();
 
-            string vcPath = GetVCPath();
+            string vcPath = VCPath;
             if (vcPath == "")
                 return false;
 

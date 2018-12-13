@@ -157,6 +157,7 @@
     <Compile Include="SR.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="TranslationItem.cs" />
+    <Compile Include="VisualStudio\VsShell.cs" />
     <Compile Include="Vsix.cs" />
     <Compile Include="VSQtSettings.cs" />
     <Compile Include="VsToolsDialogWindow.cs" />

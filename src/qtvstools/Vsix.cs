@@ -39,6 +39,8 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
+    using VisualStudio;
+
     [Guid(PackageGuid)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]
@@ -123,6 +125,9 @@ namespace QtVsTools
                     instance = this;
 
                     Dte = (this as IServiceProvider).GetService(typeof(DTE)) as DTE;
+
+                    if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
+                        HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
                     // determine the package installation directory
                     var uri = new Uri(System.Reflection.Assembly
