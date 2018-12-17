@@ -27,8 +27,10 @@
 ****************************************************************************/
 
 using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
@@ -49,7 +51,7 @@ namespace QtVsTools
             newDisableCheckoutFiles = QtVSIPSettings.GetDisableCheckoutFiles();
             newDisableAutoMOCStepsUpdate = QtVSIPSettings.GetDisableAutoMocStepsUpdate();
 
-            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var settingsManager = VsShellSettings.Manager;
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
 
 #if VS2013
@@ -85,7 +87,7 @@ namespace QtVsTools
             QtVSIPSettings.SaveDisableCheckoutFiles(newDisableCheckoutFiles);
             QtVSIPSettings.SaveDisableAutoMocStepsUpdate(newDisableAutoMOCStepsUpdate);
 
-            var settingsManager = new ShellSettingsManager(Vsix.Instance);
+            var settingsManager = VsShellSettings.Manager;
             var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
 #if VS2013

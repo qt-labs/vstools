@@ -29,6 +29,7 @@
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;
 
@@ -93,8 +94,8 @@ namespace QtVsTools
 
             m_package = package;
 
-            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
-                as OleMenuCommandService;
+            var commandService = VsServiceProvider
+                .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)
                 return;
 

@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace QtProjectWizard
         public WizardResult Run(EnvDTE.DTE dte, string name, string location)
         {
             var serviceProvider = new ServiceProvider(dte as IServiceProvider);
-            var iVsUIShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
+            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
 
             iVsUIShell.EnableModeless(0);
 

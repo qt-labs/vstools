@@ -33,6 +33,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtProjectWizard;
+using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;
 using System.Windows.Forms;
@@ -111,8 +112,8 @@ namespace QtVsTools
 
             m_package = package;
 
-            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
-                as OleMenuCommandService;
+            var commandService = VsServiceProvider
+                .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)
                 return;
 

@@ -37,6 +37,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
@@ -112,7 +113,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (Debugger == null)
                 return false;
 
-            VsDebugger = Package.GetGlobalService(typeof(IVsDebugger)) as IVsDebugger;
+            VsDebugger = VsServiceProvider.GetService<IVsDebugger>();
             if (VsDebugger != null)
                 VsDebugger.AdviseDebugEventCallback(this as IDebugEventCallback2);
             vsDebuggerThreadDispatcher = Dispatcher.CurrentDispatcher;

@@ -30,6 +30,7 @@ using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
@@ -41,7 +42,7 @@ namespace QtProjectWizard
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             if (value is string) {
-                var dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+                var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 if (dte == null)
                     return ValidationResult.ValidResult;
 

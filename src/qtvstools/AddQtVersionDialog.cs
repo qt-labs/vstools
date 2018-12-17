@@ -27,8 +27,10 @@
 ****************************************************************************/
 
 using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System;
 using System.IO;
 using System.Linq;
@@ -259,7 +261,7 @@ namespace QtVsTools
         private void browseButton_Click(object sender, EventArgs e)
         {
             using (var fd = new FolderBrowserDialog()) {
-                var settingsManager = new ShellSettingsManager(Vsix.Instance);
+                var settingsManager = VsShellSettings.Manager;
                 var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
                 fd.Description = SR.GetString("SelectQtPath");

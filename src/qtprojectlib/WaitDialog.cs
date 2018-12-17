@@ -35,6 +35,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
+using QtVsTools.VisualStudio;
 
 namespace QtProjectLib
 {
@@ -76,8 +77,8 @@ namespace QtProjectLib
         static WaitDialog Create()
         {
             if (factory == null) {
-                factory = (IVsThreadedWaitDialogFactory)Package
-                    .GetGlobalService(typeof(SVsThreadedWaitDialogFactory));
+                factory = VsServiceProvider
+                    .GetService<SVsThreadedWaitDialogFactory, IVsThreadedWaitDialogFactory>();
                 if (factory == null)
                     return null;
             }

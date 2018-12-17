@@ -34,6 +34,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -110,7 +111,7 @@ namespace QtProjectWizard
             WizardRunKind runKind, object[] customParams)
         {
             var serviceProvider = new ServiceProvider(automation as IServiceProvider);
-            var iVsUIShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
+            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
 
             iVsUIShell.EnableModeless(0);
 

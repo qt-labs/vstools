@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -69,9 +70,8 @@ namespace QtVsTools
                 throw new ArgumentNullException("package");
             package = pkg;
 
-            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService))
-                as OleMenuCommandService;
-
+            var commandService = VsServiceProvider
+                .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)
                 return;
 
@@ -149,7 +149,7 @@ namespace QtVsTools
         async void F1QtHelpCallback(object sender, EventArgs args)
         {
             try {
-                var dte = ServiceProvider.GetService(typeof(SDTE)) as DTE;
+                var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 var objTextDocument = dte.ActiveDocument.Object() as TextDocument;
 
                 var keyword = string.Empty;
@@ -199,7 +199,7 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return;
 
-                var settingsManager = new ShellSettingsManager(Instance.ServiceProvider);
+                var settingsManager = VsShellSettings.Manager;
                 var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
                 var offline =
                     store.GetBoolean(Statics.HelpPreferencePath, Statics.HelpPreferenceKey, true);
@@ -294,7 +294,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var settingsManager = new ShellSettingsManager(ServiceProvider);
+            var settingsManager = VsShellSettings.Manager;
             var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
             store.CreateCollection(Statics.HelpPreferencePath);
 
@@ -308,7 +308,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var settingsManager = new ShellSettingsManager(ServiceProvider);
+            var settingsManager = VsShellSettings.Manager;
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
 
             switch (command.CommandID.ID) {

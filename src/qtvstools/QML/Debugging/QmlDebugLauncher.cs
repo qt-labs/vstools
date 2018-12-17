@@ -41,6 +41,7 @@ using QtProjectLib.QtMsBuild;
 namespace QtVsTools.Qml.Debug
 {
     using AD7;
+    using VisualStudio;
 
     class Launcher : Disposable, IDebugEventCallback2
     {
@@ -51,8 +52,8 @@ namespace QtVsTools.Qml.Debug
         public static void Initialize()
         {
             Instance = new Launcher();
-            Instance.debugger = Package.GetGlobalService(typeof(IVsDebugger)) as IVsDebugger;
-            Instance.debugger4 = Package.GetGlobalService(typeof(IVsDebugger)) as IVsDebugger4;
+            Instance.debugger = VsServiceProvider.GetService<IVsDebugger>();
+            Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
             if (Instance.debugger != null && Instance.debugger4 != null)
                 Instance.debugger.AdviseDebugEventCallback(Instance);
         }

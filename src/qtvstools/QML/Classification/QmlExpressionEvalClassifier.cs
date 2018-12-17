@@ -42,6 +42,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
 using QtVsTools.Qml.Syntax;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Qml.Classification
 {
@@ -100,12 +101,12 @@ namespace QtVsTools.Qml.Classification
             this.textView = textView;
             this.buffer = buffer;
 
-            debugger = Package.GetGlobalService(typeof(IVsDebugger)) as IVsDebugger;
+            debugger = VsServiceProvider.GetService<IVsDebugger>();
             if (debugger == null)
                 return false;
 
-            var componentModel = Package
-                .GetGlobalService(typeof(SComponentModel)) as IComponentModel;
+            var componentModel = VsServiceProvider
+                .GetService<SComponentModel, IComponentModel>();
             if (componentModel == null)
                 return false;
 

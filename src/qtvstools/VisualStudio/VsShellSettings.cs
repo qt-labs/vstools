@@ -26,36 +26,12 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.Settings;
 
 namespace QtVsTools.VisualStudio
 {
-    static class VsShell
+    static class VsShellSettings
     {
-        public static string InstallRootDir
-        {
-            get
-            {
-                Initialize();
-                return _InstallRootDir;
-            }
-        }
-
-        private static IVsShell vsShell;
-        private static string _InstallRootDir;
-
-        private static void Initialize()
-        {
-            if (vsShell != null)
-                return;
-            vsShell = VsServiceProvider.GetService<IVsShell>();
-
-            object objProp;
-            int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out objProp);
-            if (res == VSConstants.S_OK && objProp is string)
-                _InstallRootDir = objProp as string;
-        }
+        public static ShellSettingsManager Manager { get; set; }
     }
 }

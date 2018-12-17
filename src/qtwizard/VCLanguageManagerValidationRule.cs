@@ -29,6 +29,7 @@
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCCodeModel;
+using QtVsTools.VisualStudio;
 using System.Windows.Controls;
 
 namespace QtProjectWizard
@@ -39,7 +40,7 @@ namespace QtProjectWizard
         {
             ValidatesOnTargetUpdated = true;
 
-            var dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+            var dte = VsServiceProvider.GetService<DTE>();
             Vclm = dte.GetObject("VCLanguageManager") as VCLanguageManager;
         }
 

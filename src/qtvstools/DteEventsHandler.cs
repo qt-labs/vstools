@@ -95,9 +95,6 @@ namespace QtVsTools
             dispId_VCCLCompilerTool_PreprocessorDefinitions = GetPropertyDispId(typeof(VCCLCompilerTool), "PreprocessorDefinitions");
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             InitializeVCProjects();
-
-            DefaultEditorsClient.Initialize(this);
-            DefaultEditorsClient.Instance.Listen();
         }
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
@@ -205,8 +202,6 @@ namespace QtVsTools
 
             if (vcProjectEngineEvents != null)
                 vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
-
-            DefaultEditorsClient.Instance.Shutdown();
         }
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)

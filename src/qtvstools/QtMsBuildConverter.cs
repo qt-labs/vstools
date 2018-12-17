@@ -35,6 +35,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools
 {
@@ -154,15 +155,11 @@ namespace QtVsTools
                 }
             }
 
-            var serviceProvider = Vsix.Instance as IServiceProvider;
-            if (serviceProvider == null)
-                return ErrorMessage(
-                    string.Format(SR.GetString("ErrorConvertingProject"), project.Name));
             var vcProject = project.Object as VCProject;
             if (vcProject == null)
                 return ErrorMessage(
                     string.Format(SR.GetString("ErrorConvertingProject"), project.Name));
-            var solution = serviceProvider.GetService(typeof(SVsSolution)) as IVsSolution4;
+            var solution = VsServiceProvider.GetService<SVsSolution, IVsSolution4>();
             if (solution == null)
                 return ErrorMessage(
                     string.Format(SR.GetString("ErrorConvertingProject"), project.Name));

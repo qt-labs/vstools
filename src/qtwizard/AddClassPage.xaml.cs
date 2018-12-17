@@ -30,6 +30,7 @@ using EnvDTE;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -151,9 +152,9 @@ namespace QtProjectWizard
         {
             var block = System.IntPtr.Zero;
             try {
-                var dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+                var dte = VsServiceProvider.GetService<DTE>();
                 var serviceProvider = new ServiceProvider(dte as IServiceProvider);
-                var iVsUIShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
+                var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
 
                 System.IntPtr owner;
                 iVsUIShell.GetDialogOwnerHwnd(out owner);

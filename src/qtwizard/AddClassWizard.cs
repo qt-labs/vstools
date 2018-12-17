@@ -30,6 +30,7 @@ using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
@@ -44,7 +45,7 @@ namespace QtProjectWizard
             ServiceProvider serviceProvider = null;
             try {
                 serviceProvider = new ServiceProvider(dte as IServiceProvider);
-                iVsUIShell = serviceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
+                iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
             } catch {
                 return WizardResult.Exception;
             }
