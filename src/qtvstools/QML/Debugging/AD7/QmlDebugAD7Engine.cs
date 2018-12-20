@@ -120,9 +120,6 @@ namespace QtVsTools.Qml.Debug.AD7
                     FileSystem.RegisterRccFile(rccFile);
             }
 
-            if (!FileSystem.QrcPaths.Any())
-                return VSConstants.E_FAIL;
-
             IDebugProcess2 nativeProc;
             var nativeProcId = new AD_PROCESS_ID
             {
