@@ -574,9 +574,6 @@ namespace QtVsTools
                     }
                 }
             }
-
-            // Initialize QML debugger settings
-            QtProject.InitializeQmlJsDebugger(vcPrj);
         }
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)

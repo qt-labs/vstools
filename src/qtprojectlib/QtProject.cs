@@ -85,7 +85,6 @@ namespace QtProjectLib
             dte = envPro.DTE;
             vcPro = envPro.Object as VCProject;
             qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
-            InitializeQmlJsDebugger(vcPro);
         }
 
         public VCProject VCProject
@@ -3406,7 +3405,6 @@ namespace QtProjectLib
             }
 
             HelperFunctions.SetDebuggingEnvironment(envPro);
-            InitializeQmlJsDebugger(envPro.Object as VCProject);
         }
 
         public class CppConfig
@@ -3511,30 +3509,6 @@ namespace QtProjectLib
                 config.Macros.Remove("QT_QML_DEBUG");
                 config.Cpp.SetPropertyValue("PreprocessorDefinitions",
                     string.Join(";", config.Macros));
-            }
-        }
-
-        public static bool IsQmlJsDebuggerInitialized(VCProject vcPro)
-        {
-            foreach (var config in GetCppDebugConfigs(vcPro)) {
-                var qmlDebugSettings = config.GetUserPropertyValue("QmlDebugSettings");
-                if (string.IsNullOrEmpty(qmlDebugSettings))
-                    return false;
-
-                if (qmlDebugSettings != "false" && !IsQtQmlDebugDefined(vcPro))
-                    return false;
-            }
-            return true;
-        }
-
-        public static void InitializeQmlJsDebugger(VCProject vcPro)
-        {
-            if (vcPro == null || !IsQtMsBuildEnabled(vcPro))
-                return;
-
-            if (!IsQmlJsDebuggerInitialized(vcPro)) {
-                DefineQtQmlDebug(vcPro);
-                DefineQmlJsDebugger(vcPro);
             }
         }
 
