@@ -254,4 +254,21 @@ namespace QtVsTools.Qml.Debug.AD7
             return VSConstants.S_OK;
         }
     }
+
+    class OutputStringEvent : DebugEvent, IDebugOutputStringEvent2
+    {
+        string outputString;
+
+        public OutputStringEvent(QmlEngine engine, string outputString)
+        : base(engine, typeof(IDebugOutputStringEvent2).GUID, ASYNCHRONOUS)
+        {
+            this.outputString = outputString;
+        }
+
+        int IDebugOutputStringEvent2.GetString(out string pbstrString)
+        {
+            pbstrString = outputString;
+            return VSConstants.S_OK;
+        }
+    }
 }

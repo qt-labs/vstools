@@ -276,8 +276,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         void IBreakpoint.NotifyError(string errorMessage)
         {
-            QtProjectLib.Messages.PaneMessage(Vsix.Instance.Dte,
-                string.Format("QML Debug: {0}", errorMessage));
+            Program.OutputWriteLine(errorMessage);
         }
 
         int IDebugBoundBreakpoint2.GetPendingBreakpoint(

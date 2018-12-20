@@ -151,6 +151,12 @@ namespace QtVsTools.Qml.Debug.AD7
             }
         }
 
+        public void OutputWriteLine(string msg)
+        {
+            var execFileName = Path.GetFileName(ExecPath);
+            Engine.OutputWriteLine(string.Format("'{0}' (QML): {1}", execFileName, msg));
+        }
+
         bool IDebuggerEventSink.QueryRuntimeFrozen()
         {
             var debugMode = new DBGMODE[1];
@@ -166,8 +172,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         void IDebuggerEventSink.NotifyError(string errorMessage)
         {
-            QtProjectLib.Messages.PaneMessage(Vsix.Instance.Dte,
-                string.Format("QML Debug: {0}", errorMessage));
+            OutputWriteLine(errorMessage);
         }
 
         int IDebugEventCallback2.Event(

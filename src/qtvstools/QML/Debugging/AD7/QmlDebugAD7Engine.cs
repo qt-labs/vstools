@@ -192,6 +192,8 @@ namespace QtVsTools.Qml.Debug.AD7
             DebugEvent.Send(new LoadCompleteEvent(program));
             DebugEvent.Send(new EntryPointEvent(program));
 
+            program.OutputWriteLine("Connecting to the QML runtime...");
+
             return VSConstants.S_OK;
         }
 
@@ -262,6 +264,10 @@ namespace QtVsTools.Qml.Debug.AD7
             pendingBreakpoint.Dispose();
         }
 
+        public void OutputWriteLine(string msg)
+        {
+            DebugEvent.Send(new OutputStringEvent(this, msg + "\r\n"));
+        }
 
         #region //////////////////// Concurrent ///////////////////////////////////////////////////
 

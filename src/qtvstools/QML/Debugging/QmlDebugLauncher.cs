@@ -48,6 +48,7 @@ namespace QtVsTools.Qml.Debug
         public static Launcher Instance { get; private set; }
         IVsDebugger debugger;
         IVsDebugger4 debugger4;
+        IVsOutputWindowPane debugOutput;
 
         public static void Initialize()
         {
@@ -56,6 +57,19 @@ namespace QtVsTools.Qml.Debug
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
             if (Instance.debugger != null && Instance.debugger4 != null)
                 Instance.debugger.AdviseDebugEventCallback(Instance);
+
+            var outputWindow = VsServiceProvider.GetService<SVsOutputWindow, IVsOutputWindow>();
+            if (outputWindow != null) {
+                var debugOutputGuid = VSConstants.OutputWindowPaneGuid.DebugPane_guid;
+                var result = outputWindow.GetPane(ref debugOutputGuid, out Instance.debugOutput);
+                if (result != VSConstants.S_OK || Instance.debugOutput == null) {
+                    Messages.PaneMessageSafe(Vsix.Instance.Dte,
+                        "Unable to get reference to output window debug pane.", 5000);
+                }
+            } else {
+                Messages.PaneMessageSafe(Vsix.Instance.Dte,
+                    "Unable to get reference to output window.", 5000);
+            }
         }
 
         private Launcher()
@@ -169,6 +183,8 @@ namespace QtVsTools.Qml.Debug
                 if (qtProject == null || !qtProject.IsQtMsBuildEnabled())
                     continue;
 
+                OutputWriteLine(string.Format("Debugging project '{0}'", vcProject.Name));
+
                 var execArgs = props.GetPropertyValue("LocalDebuggerCommandArguments",
                     vcConfig.Name, "UserFile");
                 if (string.IsNullOrEmpty(execArgs))
@@ -179,6 +195,8 @@ namespace QtVsTools.Qml.Debug
                 if (!QmlDebugger.CheckCommandLine(execPath, cmd))
                     continue;
 
+                OutputWriteLine("QML debugging enabled");
+
                 execCmd = cmd;
                 rccItems = ((IVCCollection)vcProject.Files).Cast<VCFile>()
                     .Where(x => x.ItemType == QtRcc.ItemTypeName)
@@ -187,7 +205,15 @@ namespace QtVsTools.Qml.Debug
                 return true;
             }
 
+            OutputWriteLine("QML debugging disabled");
+
             return false;
+        }
+
+        void OutputWriteLine(string msg)
+        {
+            if (debugOutput != null)
+                debugOutput.OutputString(string.Format("Qt VS Tools: {0}\r\n", msg));
         }
 
         void LaunchDebug(
@@ -207,13 +233,14 @@ namespace QtVsTools.Qml.Debug
                 LaunchFlags = (uint)__VSDBGLAUNCHFLAGS5.DBGLAUNCH_BreakOneProcess,
             }};
 
+            OutputWriteLine("Starting QML debug engine...");
+
             var processInfo = new VsDebugTargetProcessInfo[targets.Length];
             try {
                 debugger4.LaunchDebugTargets4((uint)targets.Length, targets, processInfo);
 
             } catch (Exception e) {
-                Messages.PaneMessageSafe(Vsix.Instance.Dte,
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                OutputWriteLine(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
     }
