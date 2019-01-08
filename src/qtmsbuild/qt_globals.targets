@@ -307,7 +307,7 @@
     // Add dynamic C++ sources to build
     // -->
     <ItemGroup>
-      <ClCompile Include="%(QtWorkResult.ClCompile)"
+      <ClCompile Include="@(QtWorkResult->'%(ClCompile)')"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"/>
     </ItemGroup>
 
