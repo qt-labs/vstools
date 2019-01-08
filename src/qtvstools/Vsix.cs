@@ -362,18 +362,22 @@ namespace QtVsTools
                     natvisFile = string.Format("qt5_{0}.natvis", qtNamespace.Replace("::", "_"));
                 }
 
-                File.WriteAllText(Path.Combine(
+                string visualizersPath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 #if VS2019
-                @"Visual Studio 2019\Visualizers\",
+                @"Visual Studio 2019\Visualizers\");
 #elif VS2017
-                @"Visual Studio 2017\Visualizers\",
+                @"Visual Studio 2017\Visualizers\");
 #elif VS2015
-                @"Visual Studio 2015\Visualizers\",
+                @"Visual Studio 2015\Visualizers\");
 #elif VS2013
-                @"Visual Studio 2013\Visualizers\",
+                @"Visual Studio 2013\Visualizers\");
 #endif
-                natvisFile), natvis, System.Text.Encoding.UTF8);
+                if (!Directory.Exists(visualizersPath))
+                    Directory.CreateDirectory(visualizersPath);
+
+                File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
+                    natvis, System.Text.Encoding.UTF8);
             } catch (Exception e) {
                 Messages.PaneMessageSafe(Dte,
                     e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
