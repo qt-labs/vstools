@@ -87,7 +87,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare Qt build: read and parse work log file
   // -->
-  <Target Name="QtPrepare" AfterTargets="CustomBuild">
+  <Target Name="QtPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
 
@@ -202,6 +202,7 @@
   // -->
   <Target Name="QtWork"
     DependsOnTargets="QtVersion;QtPrepare;$(QtBuildTargets);QtWorkPrepare"
+    AfterTargets="CustomBuild"
     BeforeTargets="ClCompile">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
@@ -343,6 +344,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Root Qt target
   // -->
-  <Target Name="Qt" DependsOnTargets="QtWork;ClCompile"/>
+  <Target Name="Qt" DependsOnTargets="CustomBuild;QtWork;ClCompile"/>
 
 </Project>
