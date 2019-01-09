@@ -44,4 +44,5 @@
   <Import Project="qtqml.targets"/>
   <Import Project="qtrcc.targets"/>
   <Import Project="qtuic.targets"/>
+  <Import Project="qtrepc.targets"/>
 </Project>

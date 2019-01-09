@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2019 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Definitions specific to repc
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt/MSBuild global properties
+  // -->
+  <PropertyGroup>
+    <QtBuildTargets>QtRepc;$(QtBuildTargets)</QtBuildTargets>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setup item type and property page
+  // -->
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="QtRepc">
+      <Targets>Qt</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRepcPrepare
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Prepare to process sources
+  // -->
+  <Target Name="QtRepcPrepare" DependsOnTargets="_SelectedFiles"
+    Inputs="%(QtRepc.Identity)" Outputs="@(QtRepc->'####### Don't skip this target #######')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+        Text="## QtRepcPrepare @(QtRepc)"/>
+
+    <!--// Expand build-time metadata ( %<Foo> ) -->
+    <Expand Condition="'@(QtRepc)' != ''"
+      Items="@(QtRepc)" BaseItem="@(QtRepc)" Template="@(QtRepc)">
+      <Output TaskParameter="Result" ItemName="QtRepcExp"/>
+    </Expand>
+    <ItemGroup>
+      <QtRepc Remove="@(QtRepc)"/>
+      <QtRepc Include="@(QtRepcExp->'%(Identity)')"/>
+      <QtRepcExp Remove="@(QtRepcExp)"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <file>[@(QtRepc->'%(Identity)')]</file>
+      <output_file>@(QtRepc->'%(OutputFile)')</output_file>
+      <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+      <is_selected Condition="!$(selected_files.Contains('$(file)'))">false</is_selected>
+    </PropertyGroup>
+
+    <!--// Delete output file to force build of source if it was manually selected to build
+        //  (e.g. by the 'Compile' option in the context menu for the file) -->
+    <Delete Files="$(output_file)"
+      Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
+
+    <!--// If a source was manually selected to build, remove all other sources -->
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <QtRepc Remove="@(QtRepc)"
+        Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
+    </ItemGroup>
+
+    <!--// Remove sources excluded from build -->
+    <ItemGroup>
+      <QtRepc Remove="@(QtRepc)"
+        Condition="'$(SelectedFiles)' == '' AND '%(QtRepc.ExcludedFromBuild)' == 'true'"/>
+    </ItemGroup>
+
+    <!--// Clean-up -->
+    <PropertyGroup>
+      <selected_files/>
+      <file/>
+      <output_file/>
+      <is_selected/>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRepcSetModified
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Set InputChanged flag if source file or dependencies have been modified
+  // -->
+  <Target Name="QtRepcSetModified" DependsOnTargets="QtRepcPrepare"
+    Condition="'@(QtRepc)' != ''"
+    Inputs="%(QtRepc.FullPath);%(QtRepc.AdditionalDependencies)" Outputs="@(QtRepc->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+      Text="## QtRepcSetModified @(QtRepc)" />
+
+    <CreateProperty Value="true">
+      <!-- // Using ValueSetByTask ensures $(input_changed) is only set to 'true' when the target
+           // is actually executed and not when MSBuild is figuring out which targets to run -->
+      <Output TaskParameter="ValueSetByTask" PropertyName="input_changed" />
+    </CreateProperty>
+    <ItemGroup>
+      <QtRepc>
+        <InputChanged>$(input_changed)</InputChanged>
+      </QtRepc>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRepc
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Process each source file and produce the corresponding QtWork items
+  // -->
+  <Target Name="QtRepc"
+    DependsOnTargets="QtPrepare;$(QtRepcDependsOn);QtRepcPrepare;QtRepcSetModified"
+    BeforeTargets="$(QtRepcBeforeTargets)" AfterTargets="$(QtRepcAfterTargets)"
+    Condition="'@(QtRepc)' != ''"
+    Inputs="%(QtRepc.FullPath);%(QtRepc.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtRepc->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtRepc @(QtRepc)" />
+
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="dependencies_changed" />
+    </CreateProperty>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Convert string lists in source item properties to lists of items
+    // -->
+    <ItemGroup>
+      <repc_InputFile       Include="%(QtRepc.InputFile)"/>
+      <repc_OutputFile      Include="%(QtRepc.OutputFile)"/>
+      <repc_InputFileType   Include="%(QtRepc.InputFileType)"/>
+      <repc_OutputFileType  Include="%(QtRepc.OutputFileType)"/>
+      <repc_IncludePath     Include="%(QtRepc.IncludePath)"/>
+      <repc_AlwaysClass     Include="%(QtRepc.AlwaysClass)"/>
+      <repc_PrintDebug      Include="%(QtRepc.PrintDebug)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      // Escape trailing back-slash in paths
+      // -->
+      <repc_IncludePath>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)\</Escaped>
+        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
+        >%(Identity)</Escaped>
+      </repc_IncludePath>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Generate tool command line arguments
+    // -->
+    <PropertyGroup>
+
+      <!--//  -i <rep|src>                    Input file type -->
+      <options Condition="'@(repc_InputFileType)' != ''"
+        >$(options);@(repc_InputFileType->'-i %(Identity)')</options>
+
+      <!--//  -o <source|replica|merged|rep>  Output file type -->
+      <options Condition="'@(repc_OutputFileType)' != ''"
+        >$(options);@(repc_OutputFileType->'-o %(Identity)')</options>
+
+      <!--//  -I <dir>                        Add dir to the include path for header files -->
+      <options Condition="'@(repc_IncludePath)' != ''"
+        >$(options);@(repc_IncludePath->'&quot;-I%(Escaped)&quot;')</options>
+
+      <!--//  -c                              Always output 'class' type for .rep files -->
+      <options Condition="'@(repc_AlwaysClass)' == 'true'"
+        >$(options);-c</options>
+
+      <!--//  -d                              Print out parsing debug information -->
+      <options Condition="'@(repc_PrintDebug)' == 'true'"
+        >$(options);-c</options>
+
+      <!--//  [header-file/rep-file]          Input header/rep file to read from -->
+      <options Condition="'@(repc_InputFile)' != ''"
+        >$(options);@(repc_InputFile->'&quot;%(Identity)&quot;')</options>
+
+      <!--//  [rep-file/header-file]          Output header/rep file to write to -->
+      <options Condition="'@(repc_OutputFile)' != ''"
+        >$(options);@(repc_OutputFile->'&quot;%(Identity)&quot;')</options>
+
+      <options>$(options.Replace(';',' ').Trim())</options>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Aux properties
+    // -->
+    <PropertyGroup>
+      <!--// Force modified flag if source was manually selected to build -->
+      <input_changed Condition="'$(SelectedFiles)' != ''"
+        >true</input_changed>
+      <input_changed Condition="'$(SelectedFiles)' == ''"
+        >%(QtRepc.InputChanged)</input_changed>
+
+      <!--// Run work in parallel processes -->
+      <run_parallel Condition="'@(QtRepc)' != ''
+        AND '%(QtRepc.ParallelProcess)' == 'true'
+        AND '$(SelectedFiles)' == ''"
+        >true</run_parallel>
+
+      <!--// Run work in single process -->
+      <run_single Condition="'@(QtRepc)' != ''
+        AND ('%(QtRepc.ParallelProcess)' != 'true'
+         OR '$(SelectedFiles)' != '')"
+        >true</run_single>
+    </PropertyGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Create work item
+    // -->
+    <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
+      <QtWork Include="@(QtRepc)">
+        <WorkType>repc</WorkType>
+        <ToolPath>%(QtRepc.QTDIR)\bin\repc.exe</ToolPath>
+        <Options>$(options)</Options>
+        <Message>%(QtRepc.ExecutionDescription)</Message>
+        <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
+        <InputChanged>$(input_changed)</InputChanged>
+        <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
+        <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
+      </QtWork>
+    </ItemGroup>
+
+    <ItemGroup Condition="'@(QtRepc)' != '' AND '@(QtRepc->'%(DynamicSource)')' != 'false'">
+      <QtMoc Include="%(QtRepc.OutputFile)">
+        <DependsOn>@(QtRepc)</DependsOn>
+        <DynamicSource Condition="'%(QtRepc.DynamicSource)' == 'moc_cpp'">output</DynamicSource>
+        <DynamicSource Condition="'%(QtRepc.DynamicSource)' == 'moc'">false</DynamicSource>
+      </QtMoc>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Clean-up
+    // -->
+    <PropertyGroup>
+      <options/>
+      <dependencies_changed/>
+      <input_changed/>
+      <run_parallel/>
+      <run_single/>
+    </PropertyGroup>
+    <ItemGroup>
+      <repc_InputFile       Remove="%(QtRepc.InputFile)"/>
+      <repc_OutputFile      Remove="%(QtRepc.OutputFile)"/>
+      <repc_InputFileType   Remove="%(QtRepc.InputFileType)"/>
+      <repc_OutputFileType  Remove="%(QtRepc.OutputFileType)"/>
+      <repc_IncludePath     Remove="%(QtRepc.IncludePath)"/>
+      <repc_AlwaysClass     Remove="%(QtRepc.AlwaysClass)"/>
+      <repc_PrintDebug      Remove="%(QtRepc.PrintDebug)"/>
+    </ItemGroup>
+  </Target>
+</Project>

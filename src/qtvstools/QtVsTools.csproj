@@ -281,6 +281,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\qtmsbuild\qtrepc.targets">
+      <Link>QtMsBuild\qtrepc.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
@@ -341,6 +347,12 @@
       <Link>QtMsBuild\qtuic.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\qtrepc.xml">
+      <Link>QtMsBuild\qtrepc.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="..\vsqml\bin\vsqml.dll">
       <Link>vsqml.dll</Link>

@@ -114,4 +114,23 @@
       <Outputs>%(OutputFile)</Outputs>
     </QtUic>
   </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // QtRepc
+  // -->
+  <ItemDefinitionGroup>
+    <QtRepc>
+      <ExecutionDescription>repc: %(Identity)...</ExecutionDescription>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <InputFile>%(FullPath)</InputFile>
+      <OutputFileType>replica</OutputFileType>
+      <OutputFile><![CDATA[$(IntDir)\repc\rep_%(Filename)_%<OutputFileType>.h]]></OutputFile>
+      <InputFileType>rep</InputFileType>
+      <DynamicSource>moc_cpp</DynamicSource>
+      <ParallelProcess>true</ParallelProcess>
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <Outputs>%(OutputFile)</Outputs>
+    </QtRepc>
+  </ItemDefinitionGroup>
 </Project>
