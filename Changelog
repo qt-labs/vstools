@@ -1,3 +1,19 @@
+The Qt Visual Studio Tools version 2.3.1 adds support for Visual Studio 2019. This version also
+includes fixes to bugs reported in the previous version.
+
+Changes
+-------
+- Added support for Visual Studio 2019
+- Extension initialization will now run in the background
+- Fixed QTVSADDINBUG-583: Incorrect conversion of custom build to Qt/MSBuild
+- Fixed QTVSADDINBUG-592: Custom build steps running after Qt tools and C++ compilation
+- Fixed QTVSADDINBUG-593: .natvis files not installed if visualizers directory does not yet exist
+- Fixed QTVSADDINBUG-594: Failed to build project with QRC files and precompiled headers
+- Fixed QTVSADDINBUG-599: Debug session frozen if QML debugging is enabled
+- Fixed QTVSADDINBUG-601: Pressing Alt+F1 for help on a Qt class member crashes Visual Studio
+- Fixed QTVSADDINBUG-604: Conversion to Qt/MSBuild seems to freeze when errors occur
+
+
 The Qt Visual Studio Tools version 2.3.0 introduces QML debugging in Visual Studio, as well as the
 ahead-of-time compilation of QML files using the Qt Quick Compiler. This release also includes a
 number of bug fixes.
