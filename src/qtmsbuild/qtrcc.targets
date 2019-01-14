@@ -67,7 +67,7 @@
 
     <!--// Parse QRC -->
     <Exec Condition="'@(QtRcc)' != ''"
-      Command="%(QtRcc.QTDIR)\bin\rcc.exe --list %(QtRcc.Identity) > $(IntDir)rcc_list.txt"/>
+      Command="%(QtRcc.QTDIR)\bin\rcc.exe --list %(QtRcc.Identity) > $(IntDir)rcc_list.txt 2> nul"/>
     <ReadLinesFromFile Condition="'@(QtRcc)' != '' AND Exists('$(IntDir)rcc_list.txt')"
       File="$(IntDir)rcc_list.txt">
       <Output TaskParameter="Lines" ItemName="res_file"/>
