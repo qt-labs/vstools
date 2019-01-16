@@ -263,7 +263,8 @@ namespace QtVsTools
                     };
                     if (!dialog.ShowModal().GetValueOrDefault())
                         return;
-                    uri = dialog.Link;
+                    uri = dialog.Link
+                        .Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     break;
                 }
 

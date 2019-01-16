@@ -45,7 +45,7 @@ namespace QtVsTools
             Loaded += OnLoaded;
         }
 
-        public string Link { get; private set; }
+        public string Link { get; set; }
         public string Keyword { private get; set; }
         public Dictionary<string, string> Links { private get; set; }
 
