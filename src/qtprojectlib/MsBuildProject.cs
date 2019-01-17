@@ -38,6 +38,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
+using QtVsTools.VisualStudio;
+using EnvDTE;
 
 namespace QtProjectLib
 {
@@ -117,7 +119,7 @@ namespace QtProjectLib
             try {
                 var xmlText = File.ReadAllText(xmlFile.filePath, Encoding.UTF8);
                 using (var reader = XmlReader.Create(new StringReader(xmlText))) {
-                    xmlFile.xml = XDocument.Load(reader);
+                    xmlFile.xml = XDocument.Load(reader, LoadOptions.SetLineInfo);
                 }
             } catch (Exception) {
                 return false;
@@ -292,6 +294,7 @@ namespace QtProjectLib
             QtMsBuildContainer qtMsBuild,
             IEnumerable<XElement> configurations,
             IEnumerable<XElement> customBuilds,
+            string toolExec,
             string itemType,
             string workingDir,
             IEnumerable<ItemCommandLineReplacement> extraReplacements)
@@ -300,23 +303,34 @@ namespace QtProjectLib
                         let itemName = customBuild.Attribute("Include").Value
                         from config in configurations
                         from command in customBuild.Elements(ns + "Command")
-                        let commandLine = command.Value
                         where command.Attribute("Condition").Value
                             == string.Format(
                                 "'$(Configuration)|$(Platform)'=='{0}'",
                                 (string)config.Attribute("Include"))
-                        select new { customBuild, itemName, config, commandLine };
+                        select new { customBuild, itemName, config, command };
 
+            var projPath = this[Files.Project].filePath;
+            bool error = false;
             using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
                 foreach (var row in query) {
+
+                    var configId = (string)row.config.Attribute("Include");
+                    if (!row.command.Value.Contains(toolExec)) {
+                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(), string.Format(
+                            "{0}: warning: [{1}] converting \"{2}\", configuration \"{3}\": " +
+                            "tool not found: \"{4}\"; applying default options",
+                            projPath, itemType, row.itemName, configId, toolExec), 5000);
+                        continue;
+                    }
+
                     XElement item;
                     row.customBuild.Add(item =
                         new XElement(ns + itemType,
                             new XAttribute("Include", row.itemName),
-                            new XAttribute("ConfigName", (string)row.config.Attribute("Include"))));
+                            new XAttribute("ConfigName", configId)));
                     var configName = (string)row.config.Element(ns + "Configuration");
                     var platformName = (string)row.config.Element(ns + "Platform");
-                    var commandLine = row.commandLine
+                    var commandLine = row.command.Value
                         .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
                             StringComparison.InvariantCultureIgnoreCase)
                         .Replace(configName, "$(Configuration)",
@@ -329,12 +343,24 @@ namespace QtProjectLib
                     evaluator.Properties.Clear();
                     foreach (var configProp in row.config.Elements())
                         evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
+                    if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator)) {
+                        int lineNumber = 1;
+                        var errorLine = row.command as IXmlLineInfo;
+                        if (errorLine != null && errorLine.HasLineInfo())
+                            lineNumber = errorLine.LineNumber;
 
-                    if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator))
-                        return false;
+                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(), string.Format(
+                            "{0}({1}): error: [{2}] converting \"{3}\", configuration \"{4}\": " +
+                            "failed to convert custom build command",
+                            projPath, lineNumber, itemType, row.itemName, configId), 5000);
+
+                        item.Remove();
+                        error = true;
+                    }
                 }
             }
-            return true;
+
+            return !error;
         }
 
         IEnumerable<XElement> GetCustomBuilds(string toolExecName)
@@ -559,7 +585,8 @@ namespace QtProjectLib
 
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds, QtMoc.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds,
+                QtMoc.ToolExecName, QtMoc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {
@@ -608,7 +635,8 @@ namespace QtProjectLib
 
             //convert rcc custom build steps
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds, QtRcc.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds,
+                QtRcc.ToolExecName, QtRcc.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {
@@ -636,7 +664,8 @@ namespace QtProjectLib
 
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds, QtUic.ItemTypeName,
+            if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds,
+                QtUic.ToolExecName, QtUic.ItemTypeName,
                 Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {

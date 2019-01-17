@@ -97,8 +97,13 @@ namespace QtVsTools
                     if (waitDialog.Canceled)
                         break;
                 }
-                if (!ConvertProject(projectPath))
-                    return false;
+                if (!ConvertProject(projectPath)) {
+                    if (waitDialog != null)
+                        waitDialog.Stop();
+                    Vsix.Instance.Dte.Solution.Open(solutionPath);
+                    return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"),
+                        Path.GetFileName(projectPath)));
+                }
                 ++projCount;
             }
 
