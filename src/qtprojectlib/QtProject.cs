@@ -609,17 +609,52 @@ namespace QtProjectLib
         /// <summary>
         /// Surrounds the argument by double quotes.
         /// Makes sure, that the trailing double quote is not escaped by a backslash.
-        /// Such an escaping backslash may also appear as a macro value.
+        /// Escapes all quotation mark characters in the argument
+        ///
+        /// This must follow the format recognized by CommandLineToArgvW:
+        /// (https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-commandlinetoargvw)
+        ///
+        /// CommandLineToArgvW has a special interpretation of backslash characters when they are
+        /// followed by a quotation mark character ("). This interpretation assumes that any
+        /// preceding argument is a valid file system path, or else it may behave unpredictably.
+        ///
+        /// This special interpretation controls the "in quotes" mode tracked by the parser. When
+        /// this mode is off, whitespace terminates the current argument. When on, whitespace is
+        /// added to the argument like all other characters.
+        ///
+        ///   * 2n backslashes followed by a quotation mark produce n backslashes followed by
+        ///     begin/end quote. This does not become part of the parsed argument, but toggles the
+        ///     "in quotes" mode.
+        ///
+        ///   * (2n) + 1 backslashes followed by a quotation mark again produce n backslashes
+        ///     followed by a quotation mark literal ("). This does not toggle the "in quotes" mode.
+        ///
+        ///   * n backslashes not followed by a quotation mark simply produce n backslashes.
+        ///
         /// </summary>
         private static string SafelyQuoteCommandLineArgument(string arg)
         {
-            arg = "\"" + arg;
-            if (arg.EndsWith("\\", StringComparison.Ordinal))
-                arg += ".";     // make sure, that we don't escape the trailing double quote
-            else if (arg.EndsWith(")", StringComparison.Ordinal))
-                arg += "\\.";   // macro value could end with backslash. That would escape the trailing double quote.
-            arg += "\"";
-            return arg;
+            var quotedArg = new StringBuilder();
+            quotedArg.Append("\"");
+
+            // Split argument by quotation mark characters
+            // All argument parts except the last are followed by a quotation mark character
+            var argParts = arg.Split(new char[] { '\"' });
+            for (int i = 0; i < argParts.Length; ++i) {
+                var part = argParts[i];
+                quotedArg.Append(part);
+
+                // Duplicate backslashes immediately preceding quotation mark character
+                if (part.EndsWith("\\"))
+                    quotedArg.Append(part.Reverse().TakeWhile(c => c == '\\').ToArray());
+
+                // Escape all quotation mark characters in argument
+                if (i < argParts.Length - 1)
+                    quotedArg.Append("\\\"");
+            }
+
+            quotedArg.Append("\"");
+            return quotedArg.ToString();
         }
 
         public string GetDefines(VCFileConfiguration conf)
@@ -630,12 +665,12 @@ namespace QtProjectLib
             var propsProject = projectConfig.Rules.Item("CL") as IVCRulePropertyStorage;
             if (propsFile != null) {
                 try {
-                    defines = propsFile.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+                    defines = propsFile.GetUnevaluatedPropertyValue("PreprocessorDefinitions");
                 } catch { }
             }
             if (string.IsNullOrEmpty(defines) && propsProject != null) {
                 try {
-                    defines = propsProject.GetEvaluatedPropertyValue("PreprocessorDefinitions");
+                    defines = propsProject.GetUnevaluatedPropertyValue("PreprocessorDefinitions");
                 } catch { }
             }
 
