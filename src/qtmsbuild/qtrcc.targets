@@ -66,8 +66,12 @@
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <!--// Parse QRC -->
+    <PropertyGroup>
+      <QtRccQuoted>&quot;%(QtRcc.Identity)&quot;</QtRccQuoted>
+      <RccListQuoted>&quot;$(IntDir)rcc_list.txt&quot;</RccListQuoted>
+    </PropertyGroup>
     <Exec Condition="'@(QtRcc)' != ''"
-      Command="%(QtRcc.QTDIR)\bin\rcc.exe --list %(QtRcc.Identity) > $(IntDir)rcc_list.txt 2> nul"/>
+      Command="%(QtRcc.QTDIR)\bin\rcc.exe --list $(QtRccQuoted) > $(RccListQuoted) 2> nul"/>
     <ReadLinesFromFile Condition="'@(QtRcc)' != '' AND Exists('$(IntDir)rcc_list.txt')"
       File="$(IntDir)rcc_list.txt">
       <Output TaskParameter="Lines" ItemName="res_file"/>
@@ -83,6 +87,10 @@
     </ItemGroup>
 
     <!--// Clean-up -->
+    <PropertyGroup>
+      <QtRccQuoted/>
+      <RccListQuoted/>
+    </PropertyGroup>
     <ItemGroup>
       <res_file Remove="@(res_file)"/>
     </ItemGroup>
