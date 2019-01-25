@@ -190,7 +190,7 @@ namespace QtVsTools.Qml.Debug
                 if (string.IsNullOrEmpty(execArgs))
                     continue;
 
-                var cmd = execPath + " " + execArgs;
+                var cmd = "\"" + execPath + "\" " + execArgs;
 
                 if (!QmlDebugger.CheckCommandLine(execPath, cmd))
                     continue;
