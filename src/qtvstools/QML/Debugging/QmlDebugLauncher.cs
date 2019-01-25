@@ -179,23 +179,39 @@ namespace QtVsTools.Qml.Debug
                 if (!sameFile)
                     continue;
 
-                var qtProject = QtProject.Create(vcProject);
-                if (qtProject == null || !qtProject.IsQtMsBuildEnabled())
-                    continue;
+                OutputWriteLine(string.Format("Debugging project '{0}'...", vcProject.Name));
 
-                OutputWriteLine(string.Format("Debugging project '{0}'", vcProject.Name));
+                var qtProject = QtProject.Create(vcProject);
+                if (qtProject == null) {
+                    OutputWriteLine("DISABLED: Non-Qt project");
+                    return false;
+                }
+
+                if (!qtProject.IsQtMsBuildEnabled()) {
+                    OutputWriteLine("DISABLED: Non-Qt/MSBuild project");
+                    return false;
+                }
+
+                if (!qtProject.QmlDebug) {
+                    OutputWriteLine("DISABLED: QML debugging disabled in Qt project settings");
+                    return false;
+                }
 
                 var execArgs = props.GetPropertyValue("LocalDebuggerCommandArguments",
                     vcConfig.Name, "UserFile");
-                if (string.IsNullOrEmpty(execArgs))
-                    continue;
+                if (string.IsNullOrEmpty(execArgs)) {
+                    OutputWriteLine("DISABLED: Error reading command line arguments");
+                    return false;
+                }
 
                 var cmd = "\"" + execPath + "\" " + execArgs;
 
-                if (!QmlDebugger.CheckCommandLine(execPath, cmd))
-                    continue;
+                if (!QmlDebugger.CheckCommandLine(execPath, cmd)) {
+                    OutputWriteLine("DISABLED: Error parsing command line arguments");
+                    return false;
+                }
 
-                OutputWriteLine("QML debugging enabled");
+                OutputWriteLine("Starting QML debug session...");
 
                 execCmd = cmd;
                 rccItems = ((IVCCollection)vcProject.Files).Cast<VCFile>()
@@ -205,7 +221,7 @@ namespace QtVsTools.Qml.Debug
                 return true;
             }
 
-            OutputWriteLine("QML debugging disabled");
+            OutputWriteLine("DISABLED: Could not identify project being debugged");
 
             return false;
         }
@@ -213,7 +229,7 @@ namespace QtVsTools.Qml.Debug
         void OutputWriteLine(string msg)
         {
             if (debugOutput != null)
-                debugOutput.OutputString(string.Format("Qt VS Tools: {0}\r\n", msg));
+                debugOutput.OutputString(string.Format("Qt VS Tools: QML debug: {0}\r\n", msg));
         }
 
         void LaunchDebug(
@@ -232,8 +248,6 @@ namespace QtVsTools.Qml.Debug
                 guidLaunchDebugEngine = QmlEngine.Id,
                 LaunchFlags = (uint)__VSDBGLAUNCHFLAGS5.DBGLAUNCH_BreakOneProcess,
             }};
-
-            OutputWriteLine("Starting QML debug engine...");
 
             var processInfo = new VsDebugTargetProcessInfo[targets.Length];
             try {
