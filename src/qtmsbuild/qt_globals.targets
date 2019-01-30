@@ -118,7 +118,7 @@
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Calculate hash (SHA1) for the requested work item, based on its associated tool and options
+    // Calculate hash for the requested work item, based on its associated tool and options
     // -->
     <GetItemHash Condition="'@(QtWork)' != ''"
       Item="@(QtWork)" Keys="Identity;WorkType;ToolPath;Options">

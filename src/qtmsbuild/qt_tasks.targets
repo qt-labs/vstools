@@ -39,11 +39,11 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TASK GetItemHash
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Calculate an hash code (SHA1) for an item, given a list of metadata to use as key
+  // Calculate an hash code (Deflate + Base64) for an item, given a list of metadata to use as key
   // Parameters:
   //      in ITaskItem Item: item for which the hash will be calculated
   //      in string[]  Keys: list of names of the metadata to use as item key
-  //     out string    Hash: hash code (SHA1 in hexadecimal format)
+  //     out string    Hash: hash code (Base64 representation of Deflate'd UTF-8 item key)
   // -->
   <UsingTask TaskName="GetItemHash"
     TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
@@ -55,14 +55,17 @@
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.Text"/>
-      <Using Namespace="System.Security.Cryptography"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.IO.Compression"/>
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-            var data = string.Concat(Keys.OrderBy(x => x)
-                .Select(x => string.Format("[{0}={1}]", x, Item.GetMetadata(x))));
-            using (var sha1 = new SHA1Managed()) {
-                Hash = string.Concat(sha1.ComputeHash(Encoding.UTF8.GetBytes(data))
-                    .Select(x => x.ToString("x2")));
+            var data = Encoding.UTF8.GetBytes(string.Concat(Keys.OrderBy(x => x)
+                .Select(x => string.Format("[{0}={1}]", x, Item.GetMetadata(x))))
+                .ToUpper());
+            using (var dataZipped = new MemoryStream()) {
+                using (var zip = new DeflateStream(dataZipped, CompressionLevel.Fastest))
+                    zip.Write(data, 0, data.Length);
+                Hash = Convert.ToBase64String(dataZipped.ToArray());
             }
         ]]>
       </Code>
