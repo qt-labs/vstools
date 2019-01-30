@@ -54,6 +54,8 @@ namespace QtVsTools.Qml.Debug
             };
         }
 
+        static readonly string[] KNOWN_EXTENSIONS = new string[] { ".qml", ".js" };
+
         private FileSystem()
         { }
 
@@ -107,14 +109,10 @@ namespace QtVsTools.Qml.Debug
                         Path = ((string)y)
                             .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
                     })
-                );
+                    .Where(z => KNOWN_EXTENSIONS.Contains(
+                        Path.GetExtension(z.Path), StringComparer.InvariantCultureIgnoreCase)));
 
             foreach (var file in files) {
-                if (!Path.GetExtension(file.Path)
-                    .Equals(".qml", StringComparison.InvariantCultureIgnoreCase)) {
-                    continue;
-                }
-
                 string qrcPath;
                 if (file.Alias != null)
                     qrcPath = (string)file.Alias;
