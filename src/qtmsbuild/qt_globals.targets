@@ -41,7 +41,7 @@
   // Build dependencies
   // -->
   <PropertyGroup>
-    <BuildDependsOn>Qt;$(BuildDependsOn)</BuildDependsOn>
+    <BuildDependsOn>QtVersion;$(BuildDependsOn);Qt</BuildDependsOn>
     <CleanDependsOn>$(CleanDependsOn);QtClean</CleanDependsOn>
   </PropertyGroup>
 
@@ -76,7 +76,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Print debug message with Qt/MSBuild version
   // -->
-  <Target Name="QtVersion" BeforeTargets="$(BuildDependsOn);Build">
+  <Target Name="QtVersion">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
       Text="Qt/MSBuild v$(QtMsBuildVersion) ($(MSBuildThisFileDirectory))"/>
   </Target>
@@ -201,8 +201,8 @@
   // Run Qt tools and add dynamic C++ sources to build
   // -->
   <Target Name="QtWork"
-    DependsOnTargets="QtVersion;QtPrepare;$(QtBuildTargets);QtWorkPrepare"
-    AfterTargets="CustomBuild"
+    DependsOnTargets="QtVersion;QtPrepare;QtWorkPrepare"
+    AfterTargets="ResolveReferences;CustomBuild"
     BeforeTargets="BuildCompile">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
@@ -344,6 +344,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Root Qt target
   // -->
-  <Target Name="Qt" DependsOnTargets="CustomBuild;QtWork;BuildCompile"/>
+  <Target Name="Qt" DependsOnTargets="QtWork"/>
 
 </Project>
