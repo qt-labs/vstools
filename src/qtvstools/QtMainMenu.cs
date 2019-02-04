@@ -69,6 +69,7 @@ namespace QtVsTools
         /// </summary>
         private enum CommandId
         {
+            QtVersionId = 0x0500,
             LaunchDesignerId = 0x0100,
             LaunchLinguistId = 0x0101,
             OpenProFileId = 0x0102,
@@ -219,6 +220,11 @@ namespace QtVsTools
                 return;
 
             switch ((CommandId) command.CommandID.ID) {
+            case CommandId.QtVersionId:
+                command.Text = "Qt Visual Studio Tools version " + Version.PRODUCT_VERSION;
+                command.Visible = true;
+                command.Enabled = false;
+                break;
             case CommandId.LaunchDesignerId:
             case CommandId.LaunchLinguistId:
             case CommandId.OpenProFileId:

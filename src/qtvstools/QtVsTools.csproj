@@ -374,8 +374,17 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <T4Template Include="QtMenus.vsct_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>QtMenus.vsct</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>QtMenus.vsct</LastGenOutput>
+    </T4Template>
     <VSCTCompile Include="QtMenus.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QtMenus.vsct_TT</DependentUpon>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>

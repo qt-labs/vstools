@@ -27,6 +27,10 @@
     ** $QT_END_LICENSE$
     **
     *****************************************************************************
+<#@output extension="vsct" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
 -->
 
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
@@ -95,6 +99,9 @@
 
             <!-- Region Main menu groups -->
 
+            <Group guid="MainMenuGuid" id="VersionMenuGroup" priority="0x0500">
+                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            </Group>
             <Group guid="MainMenuGuid" id="LaunchMenuGroup" priority="0x0600">
                 <Parent guid="MainMenuGuid" id="QtMainMenu"/>
             </Group>
@@ -172,10 +179,28 @@
 
             <!-- Region Main menu buttons -->
 
+            <Button guid="MainMenuGuid" id="QtVersionId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
+                <Icon guid="MenuImages" id="QtLogoBitmap" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>NoCustomize</CommandFlag>
+                <CommandFlag>NoButtonCustomize</CommandFlag>
+                <CommandFlag>NoKeyCustomize</CommandFlag>
+                <CommandFlag>TextChanges</CommandFlag>
+                <Strings>
+                      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+                      <ButtonText
+            >Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION#>: Initializing...</ButtonText>
+                      <#=XML_COMMENT_BEGIN#> END Generated Text -->
+                 </Strings>
+            </Button>
+
             <Button guid="MainMenuGuid" id="LaunchDesignerId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchDesignerBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Launch Qt Designer</ButtonText>
                     <ToolTipText>Start Qt Designer</ToolTipText>
@@ -185,6 +210,8 @@
                 <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Launch Qt Linguist</ButtonText>
                     <ToolTipText>Start Qt Linguist</ToolTipText>
@@ -194,6 +221,8 @@
             <Button guid="MainMenuGuid" id="OpenProFileId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="OpenProFileBitmap" />
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Open Qt Project File (.pro)...</ButtonText>
                     <ToolTipText>Open a Qt Project File (.pro), create a new solution, and add a new project to it</ToolTipText>
@@ -203,6 +232,8 @@
                 <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ImportPriFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Import .pri File to Project...</ButtonText>
                     <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
@@ -212,6 +243,8 @@
                 <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ExportProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Export Project to .pri File...</ButtonText>
                     <ToolTipText>Export the current project to a .pri file</ToolTipText>
@@ -221,6 +254,8 @@
                 <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="CreateProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Create Basic .pro File...</ButtonText>
                     <ToolTipText>Export the current project to a Qt project file (.pro)</ToolTipText>
@@ -230,6 +265,8 @@
             <Button guid="MainMenuGuid" id="CreateNewTsFileId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Create New Translation File</ButtonText>
                     <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
@@ -257,6 +294,7 @@
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Convert Project to QMake Generated Project</ButtonText>
                 </Strings>
@@ -265,6 +303,7 @@
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Qt Project Settings</ButtonText>
                     <ToolTipText>Edit Qt settings of the current project</ToolTipText>
@@ -283,6 +322,8 @@
             <Button guid="MainMenuGuid" id="QtOptionsId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
                 <Icon guid="MenuImages" id="QtLogoBitmap" />
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Qt Options</ButtonText>
                     <ToolTipText>Configure the default Qt settings</ToolTipText>
@@ -533,6 +574,9 @@
             <!-- Region Main menu buttons Ids-->
 
             <IDSymbol name="QtMainMenu" value="0x1020"/>
+
+            <IDSymbol name="VersionMenuGroup" value="0x5021" />
+            <IDSymbol name="QtVersionId" value="0x0500" />
 
             <IDSymbol name="LaunchMenuGroup" value="0x1021" />
             <IDSymbol name="LaunchDesignerId" value="0x0100" />

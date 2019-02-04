@@ -294,3 +294,4 @@ src/qttemplates/designer/designer.vstemplate
 src/qttemplates/gui/gui.vstemplate
 src/qttemplates/lib/lib.vstemplate
 src/qttemplates/server/server.vstemplate
+src/qtvstools/QtMenus.vsct
