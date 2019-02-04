@@ -332,6 +332,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Update timestamp of generated QRC file to force rcc target to run
     // -->
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName(%(QtRccFilter.OutputFile)))"/>
     <Touch Condition="'%(QtRccFilter.InputChanged)' == 'true'"
       AlwaysCreate="true" Files="%(QtRccFilter.OutputFile)"/>
 
