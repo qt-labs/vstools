@@ -309,6 +309,14 @@
         AND ('%(QtMoc.ParallelProcess)' != 'true'
          OR '$(SelectedFiles)' != '')"
         >true</run_single>
+
+      <!--// Get relative path to output -->
+      <output_relative
+>$([MSBuild]::MakeRelative($(ProjectDir), %(QtMoc.OutputFile)).TrimStart('\'))</output_relative>
+
+      <!--// Get relative path to input -->
+      <input_relative
+>$([MSBuild]::MakeRelative($(ProjectDir), %(QtMoc.InputFile)).TrimStart('\'))</input_relative>
     </PropertyGroup>
 
     <!--
@@ -328,8 +336,8 @@
         <!--
         ///////////////////////////////////////////////////////////////////////////////////////////
         // C++ dynamic source -->
-        <ClCompile Condition="'%(QtMoc.DynamicSource)' == 'output'">%(QtMoc.OutputFile)</ClCompile>
-        <ClCompile Condition="'%(QtMoc.DynamicSource)' ==  'input'">%(QtMoc.InputFile)</ClCompile>
+        <ClCompile Condition="'%(QtMoc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
+        <ClCompile Condition="'%(QtMoc.DynamicSource)' ==  'input'">$(input_relative)</ClCompile>
       </QtWork>
     </ItemGroup>
 
@@ -343,6 +351,8 @@
       <input_changed/>
       <run_parallel/>
       <run_single/>
+      <output_relative/>
+      <input_relative/>
     </PropertyGroup>
     <ItemGroup>
       <moc_InputFile        Remove="@(moc_InputFile)"/>

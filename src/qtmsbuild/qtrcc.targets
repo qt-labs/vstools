@@ -323,6 +323,10 @@
         AND ('%(QtRcc.ParallelProcess)' != 'true'
          OR '$(SelectedFiles)' != '')"
         >true</run_single>
+
+      <!--// Get relative path to output -->
+      <output_relative
+>$([MSBuild]::MakeRelative($(ProjectDir), %(QtRcc.OutputFile)).TrimStart('\'))</output_relative>
     </PropertyGroup>
 
     <!--
@@ -342,7 +346,7 @@
         <!--
         ///////////////////////////////////////////////////////////////////////////////////////////
         // C++ dynamic source -->
-        <ClCompile Condition="'%(QtRcc.DynamicSource)' == 'output'">%(QtRcc.OutputFile)</ClCompile>
+        <ClCompile Condition="'%(QtRcc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
         <PrecompiledHeader>NotUsing</PrecompiledHeader>
       </QtWork>
     </ItemGroup>
@@ -357,6 +361,7 @@
       <input_changed/>
       <run_parallel/>
       <run_single/>
+      <output_relative/>
     </PropertyGroup>
     <ItemGroup>
       <rcc_InputFile          Remove="@(rcc_InputFile)"/>

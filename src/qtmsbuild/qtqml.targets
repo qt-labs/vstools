@@ -263,7 +263,7 @@
       <!--
       // $(relative_path) ::= path of filtered file, relative to project directory -->
       <relative_path Condition="'%(QtRccFilter.QtQml)' != ''"
->$([MSBuild]::MakeRelative($(MSBuildProjectDirectory),$(full_path)))</relative_path>
+>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory),$(full_path)).TrimStart('\'))</relative_path>
       <!--
       // $(run_parallel) ::= run qmlcachegen in a parallel process
       // $(run_single)   ::= run qmlcachegen in single process mode -->
@@ -414,6 +414,11 @@
       <dependencies_changed>@(loader_input->'%(DependenciesChanged)')</dependencies_changed>
       <input_changed>@(loader_input->'%(InputChanged)')</input_changed>
       <is_selected>@(loader_input->'%(IsSelected)')</is_selected>
+
+      <!--// Get relative path to output -->
+      <cache_loader_path>@(loader->'%(QmlCacheLoaderFile)')</cache_loader_path>
+      <output_relative
+>$([MSBuild]::MakeRelative($(ProjectDir), $(cache_loader_path)).TrimStart('\'))</output_relative>
     </PropertyGroup>
     <ItemGroup>
       <!--
@@ -432,8 +437,7 @@
         <DisableLog>true</DisableLog>
         <DependenciesChanged>$(dependencies_changed.Contains('true'))</DependenciesChanged>
         <InputChanged>$(input_changed.Contains('true'))</InputChanged>
-        <ClCompile Condition="'%(loader.DynamicSource)' != 'false'"
-          >@(loader->'%(QmlCacheLoaderFile)')</ClCompile>
+        <ClCompile Condition="'%(loader.DynamicSource)' != 'false'">$(output_relative)</ClCompile>
         <DependsOn>@(loader_input->'%(Inputs)')</DependsOn>
       </QtWork>
     </ItemGroup>
@@ -454,6 +458,8 @@
       <run_single/>
       <dependencies_changed/>
       <input_changed/>
+      <cache_loader_path/>
+      <output_relative/>
     </PropertyGroup>
   </Target>
 
@@ -535,6 +541,10 @@
       <run_single Condition="'@(QtQml)' != ''
         AND ('%(QtQml.ParallelProcess)' != 'true' OR '$(SelectedFiles)' != '')"
       >true</run_single>
+
+      <!--// Get relative path to output -->
+      <output_relative
+>$([MSBuild]::MakeRelative($(ProjectDir), %(QtQml.OutputFile)).TrimStart('\'))</output_relative>
     </PropertyGroup>
     <ItemGroup>
       <!--
@@ -550,7 +560,7 @@
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
         <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
         <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
-        <ClCompile Condition="'%(QtQml.DynamicSource)' != 'false'">%(QtQml.OutputFile)</ClCompile>
+        <ClCompile Condition="'%(QtQml.DynamicSource)' != 'false'">$(output_relative)</ClCompile>
       </QtWork>
     </ItemGroup>
 
@@ -563,6 +573,7 @@
       <options/>
       <run_parallel/>
       <run_single/>
+      <output_relative/>
     </PropertyGroup>
   </Target>
 
