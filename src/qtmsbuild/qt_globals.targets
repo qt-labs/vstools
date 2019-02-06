@@ -203,7 +203,7 @@
   <Target Name="QtWork"
     DependsOnTargets="QtVersion;QtPrepare;QtWorkPrepare"
     AfterTargets="CustomBuild"
-    BeforeTargets="ClCompile">
+    BeforeTargets="_ClCompile">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
       Text="## Qt Build $(QtBuildTargets.Replace(';',' ').Trim())" />

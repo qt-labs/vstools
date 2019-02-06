@@ -52,7 +52,7 @@
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
     <AvailableItemName Include="QtMoc">
-      <Targets>Qt</Targets>
+      <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
 
