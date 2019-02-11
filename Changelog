@@ -1,3 +1,18 @@
+The Qt Visual Studio Tools version 2.3.2 contains several bug fixes.
+
+Changes
+-------
+- Fixed QTVSADDINBUG-601: Pressing Alt-F1 crashes VS or fails to find selected documentation
+- Fixed QTVSADDINBUG-608: Error in QRC compilation when paths contain spaces
+- Fixed QTVSADDINBUG-609: C++ compiler output directories are not created
+- Fixed QTVSADDINBUG-610: QML debug blocked when path to executable contains spaces
+- Fixed QTVSADDINBUG-611: Build errors when combining RelativeDir with absolute paths in Qt tools
+- Fixed QTVSADDINBUG-613: Project dependencies ignored
+- Fixed QTVSADDINBUG-615: Unable to set breakpoints in .js files
+- Fixed QTVSADDINBUG-618: Error when building with FIPS group policy enabled
+- Will now display the version of the Qt Visual Studio Tools in the main menu (QTVSADDINBUG-607).
+
+
 The Qt Visual Studio Tools version 2.3.1 adds support for Visual Studio 2019. This version also
 includes fixes to bugs reported in the previous version.
 
