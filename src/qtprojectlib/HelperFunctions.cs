@@ -1642,6 +1642,12 @@ namespace QtProjectLib
 
         public static string GetWindows10SDKVersion()
         {
+#if VS2019
+            // In Visual Studio 2019: WindowsTargetPlatformVersion=10.0
+            // will be treated as "use latest installed Windows 10 SDK".
+            // https://developercommunity.visualstudio.com/comments/407752/view.html
+            return "10.0";
+#else
             string versionWin10SDK = HelperFunctions.GetRegistrySoftwareString(
                 @"Microsoft\Microsoft SDKs\Windows\v10.0", "ProductVersion");
             if (string.IsNullOrEmpty(versionWin10SDK))
@@ -1649,6 +1655,7 @@ namespace QtProjectLib
             while (versionWin10SDK.Split(new char[] { '.' }).Length < 4)
                 versionWin10SDK = versionWin10SDK + ".0";
             return versionWin10SDK;
+#endif
         }
 
         static string _VCPath;
