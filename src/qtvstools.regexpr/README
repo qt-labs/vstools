@@ -1,0 +1,317 @@
+﻿
+==== RegExpr: (not just) a C# wrapper for System.Text.RegularExpressions.Regex
+
+The purpose of this module is to allow:
+
+    1.  Defining regular expressions as C# code instead of plain-old-strings;
+
+    2.  Marking elements of regular expressions as tokens, allowing captured text to be accessed
+        and manipulated through token IDs;
+
+    3.  Creating token production rules that specify how to process the captured tokens.
+
+
+== 0. "TL;DR"
+
+  * Regular expressions can be written as C# statements without any additional pre-processing.
+
+  * A token definition within a regular expression allows matched text to be captured.
+
+  * Tokens can include production rules that calculate an output object when matching the token.
+
+  * Only one rule from the list of available rules in a token will be selected during parsing.
+
+  * A rule can define a list of actions to be executed in sequence when that rule is selected.
+
+  * Parser output will include all objects created by production rule actions.
+
+
+== 1. Regular expressions as C# statements
+
+The classes in this module can be instantiated using C# statements to specify regular expressions
+that are checked at compile-time, unlike plain-old-strings. Specifying reg-ex'es directly in C#
+will potentially also make them more readable and maintainable.
+
+The following class hierarchy provides abstract representations of regular expressions:
+
+    abstract RegExpr . . . . . . . . Base class of the regular expression abstraction
+    ^
+    |
+    +--+ abstract CharClass  . . . . Match one character of a class of characters
+    |    ^
+    |    |
+    |    +--+ CharClassLiteral . . . Match one character of a list of characters
+    |    |
+    |    +--+ CharClassRange . . . . Match one character of a range of characters
+    |    |
+    |    +--+ CharClassSet . . . . . Match one character of a set of character classes
+    |
+    +--+ RegExprLiteral  . . . . . . Match a sequence of characters
+    |
+    +--+ RegExprRepeat . . . . . . . Match the same pattern repeatedly
+    |
+    +--+ RegExprSequence . . . . . . Match several patterns in sequence
+    |
+    +--+ RegExprChoice . . . . . . . Match one of several alternative patterns
+    |
+    +--+ RegExprAssert . . . . . . . Assert a pattern but do not consume any characters
+    |
+    +--+ Token . . . . . . . . . . . Capture and process text matched by a pattern
+
+The following syntax can be used to specify regular expressions in C# using RegExpr classes
+(the notation _T_ represents an instance of type T):
+
+    Expression                               Type                Description
+----------------------------------------------------------------------------------------------------
+    CharWord                                 CharClassLiteral    Word character (\w)
+
+    CharCr                                   CharClassLiteral    Carriage return character (\r)
+
+    CharLf                                   CharClassLiteral    Line feed character (\n)
+
+    CharSpace                                CharClassLiteral    Space character (\s)
+
+    CharNonSpace                             CharClassLiteral    Non-space character (\S = [^\s])
+
+    CharVertSpace                            CharClassSet        Vertical space ([\r\n])
+
+    CharHorizSpace                           CharClassSet        Horizontal space ([^\S\r\n])
+
+    Char [ _char_ ]                          CharClassLiteral    Literal character class
+
+    Char [ _string_ ]                        CharClassLiteral    Literal character class
+
+    Char [ _char_ , _char_ ]                 CharClassRange      Range character class
+
+    ~ _CharClass_                            CharClassSet        Negated character class
+
+    CharSet [ _CharClass_ + _CharClass_ ]    CharClassSet        Combined character class
+
+    CharSet [ _CharClass_ - _CharClass_ ]    CharClassSet        Character class subtraction
+
+    CharSetRaw [ _string_ ]                  CharClassLiteral    Raw (unescaped) character class
+
+    AnyChar                                  RegExprLiteral      Match any character (.)
+
+    StartOfLine                              RegExprLiteral      Anchor for start of line (^)
+
+    EndOfFile                                RegExprLiteral      Anchor for end of input string ($)
+
+    LineBreak                                RegExprSequence     Match a line break (\r?\n)
+
+    RegX ( _string_ )                        RegExprLiteral      Literal character sequence
+
+    _RegExpr_ .Optional()                    RegExprRepeat       Optional match
+
+    _RegExpr_ .Repeat()                      RegExprRepeat       Match zero or more times
+
+    _RegExpr_ .Repeat ( atLeast: _int_ )     RegExprRepeat       Match at least N times
+
+    _RegExpr_ .Repeat ( atMost: _int_ )      RegExprRepeat       Match at most N times
+
+    _RegExpr_ .Repeat ( _int_ )              RegExprRepeat       Match exactly N times
+
+    _RegExpr_ .Repeat ( _int_ , _int_ )      RegExprRepeat       Match between N and M times
+
+    _RegExpr_ & _RegExpr_                    RegExprSequence     Sequential composition
+
+    _RegExpr_ | _RegExpr_                    RegExprChoice       Alternating composition
+
+    Assert [ _RegExpr_ ]                     RegExprAssert       Positive assertion (look ahead)
+
+    !Assert [ _RegExpr_ ]                    RegExprAssert       Negative assertion (look ahead)
+
+    Assert [ _RegExpr_ ] > _RegExpr_         RegExprSequence     Assert look ahead before match
+
+    _RegExpr_ > Assert [ _RegExpr_ ]         RegExprSequence     Assert look ahead after match
+
+    Assert [ _RegExpr_ ] < _RegExpr_         RegExprSequence     Assert look behind before match
+
+    _RegExpr_ < Assert [ _RegExpr_ ]         RegExprSequence     Assert look behind after match
+
+    !Assert [ _RegExpr_ ] > _RegExpr_        RegExprSequence     Negative look ahead before match
+
+    _RegExpr_ > !Assert [ _RegExpr_ ]        RegExprSequence     Negative look ahead after match
+
+    !Assert [ _RegExpr_ ] < _RegExpr_        RegExprSequence     Negative look behind before match
+
+    _RegExpr_ < !Assert [ _RegExpr_ ]        RegExprSequence     Negative look behind after match
+
+    RegXRaw ( _string_ )                     RegExprLiteral      Raw (unescaped) Regex string
+
+Examples of regular expressions as C# statements:
+
+    RegExpr (C#)                                Regular Expression
+----------------------------------------------------------------------
+    Char["abc"]                                 [abc]
+
+    Char['a', 'z']                              [a-z]
+
+    ~Char["abc"]                                [^abc]
+
+    CharSet[Char["abc"] + Char['x', 'z']]       [abcx-z]
+
+    CharSet[Char['a', 'z'] - Char["aeiou"]]     [a-z-[aeiou]]
+
+    CharSetRaw["az-[aeiou]"]                    [a-z-[aeiou]]
+
+    RegX("abc")                                 abc
+
+    RegX(@"\a\b\c")                             \\a\\b\\c
+
+    RegXRaw(@"\S\r\n")                          \S\r\n
+
+    RegX("a").Optional()                        a?
+
+    RegX("a").Repeat()                          a*
+
+    RegX("a").Repeat(atLeast: 1)                a+
+
+    RegX("a").Repeat(atLeast: 2)                a{2,}
+
+    RegX("a").Repeat(atMost: 3)                 a{,3}
+
+    RegX("a").Repeat(4)                         a{4}
+
+    RegX("a").Repeat(5, 6)                      a{5,6}
+
+    RegX("a") & "xyz"                           axyz
+
+    RegX("a") | "xyz"                           (?:a)|(?:xyz)
+
+    Assert["abc"]                               (?=abc)
+
+    Assert[RegX("abc")] > CharWord.Repeat()     (?=abc)\w*
+
+    !Assert[RegX("abc") > CharWord.Repeat()     (?!abc)\w*
+
+    RegX("abc") > Assert[RegX("xyz")]           abc(?=xyz)
+
+    Assert[RegX("abc")] < RegX("xyz")           (?<=abc)xyz
+
+    CharWord.Repeat() < Assert[RegX("xyz")]     \w*(?<=xyz)
+
+    CharWord.Repeat() < !Assert[RegX("xyz")]    \w*(?<!xyz)
+
+
+== 2. Tokens
+
+The following statement creates a token based on a RegExpr:
+
+    new Token ( _string_ , _RegExpr_ )
+
+The string param will be used as an ID to reference the text captured by the RegExpr.
+The whitespace immediately before a token can be automatically skipped. A RegExpr to match the
+whitespace can be provided as a default for all tokens, or given specifically to each token:
+
+    new Token ( _string_ , _RegExpr_ , _RegExpr_ )
+
+The first RegExpr param specifies the pattern of leading whitespace to be skipped for this token.
+Whitespace skipping can be disabled for specific tokens:
+
+    new Token ( _string_ , SkipWs_Disable , _RegExpr_ )
+
+The following are examples of token definitions:
+
+    new Token("NUM", Char['0', '9'].Repeat())
+
+    new Token("WORD", Space.Repeat(), CharWord.Repeat())
+
+    new Token("STRING", SkipWs_Disable, ~Char['\"'].Repeat())
+
+
+== 3. Production rules
+
+By default, a token will output the string that was captured by the specified RegExpr. It is
+possible to define production rules for a token, indicating how to instantiate an arbitrary output
+object based on content captured by that token or other tokens. This uses the following syntax:
+(the notation (_T1_, _T2_, ...) => _T_ represents a callback delegate with param types T1, T2, etc.,
+and return type T; in case of void callback, return type is given as _void_ )
+
+    new Token ( _string_ , _RegExpr_)
+    {
+        new Rule < T > (
+            priority: _int_ ,
+            select: (_Token_) => _bool_ ,
+            pre: (_Token_) => _bool_ )
+        {
+            _RuleAction_,
+            ...
+        },
+        ...
+    }
+
+'T' stands for the output type when the token is matched. In this case, use of the Rule<T> class
+means that the token will produce an object of type T based only on the captured string. More
+complex rules can be specified, which will allow the analysis of syntaxes with recursively delimited
+expressions (e.g. expressions with nested parentheses), and infix, prefix or postfix operators:
+
+    PrefixRule < T , TOperand > . . . . . . . . . . . . Prefix operator
+
+    PostfixRule < TOperand , T >  . . . . . . . . . . . Postfix operator
+
+    InfixRule < TLeftOperand , T , TRightOperand >  . . Infix operator
+
+    LeftDelimiterRule < T > . . . . . . . . . . . . . . Left delimiter (e.g. open parenthesis)
+
+    RightDelimiterRule< TLeftDelim , TExpr , T >  . . . Left delimiter (e.g. close parenthesis)
+
+When capturing text, only one of the rules in the token definition will be applied. The conditions
+for token rule selection are specified by rule selector predicates given in the "select:" param.
+If a selector predicate fails, the parser will try to select another rule for the token.
+
+A rule pre-condition can also be specified. This will be tested after the rule was selected and
+just before it is executed. If the pre-condition fails, this will generate a parse error.
+
+To obtain the actual production, i.e. instantiation of an output object, a production rule needs
+to provide one or more actions that describe how to create or manipulate the production object.
+There are 4 types of possible actions that can be specified inside a production rule:
+
+    Capture   < T >       ( _(string)_ => _T_    )    New production from token capture
+
+    Create    < T , ... > ( _(...)_    => _T_    )    New production from operand productions
+
+    Transform < T , ... > ( _(T,...)_  => _T_    )    New production from current value and operands
+
+    Update    < T , ... > ( _(T,...)_  => _void_ )    Update current production value
+
+Actions may also specify a condition predicate for its params; if the predicate fails, the action
+will not be taken and rule execution will continue with the next action in the list.
+
+A non producing action 'Error' can also be specified within a rule to provide additional syntax
+verification. When an Error predicate is verified, this action will produce a string corresponding
+to a parse error message; parsing stops at this point.
+
+
+== 4. Examples
+
+The following token will match a decimal constant and output its int value:
+
+    new Token("NUM", Char['0', '9'].Repeat())
+    {
+        new Rule<int>
+        {
+            Capture(value => int.Parse(value))
+        }
+    }
+
+The following token will match the operator '+' in the context of an int expression:
+
+    new Token("PLUS", "+")
+    {
+        new PrefixRule<int, int>(
+            priority: PRIORITY_PREFIX,
+            select: t => (t.IsFirst || t.LookBehind().First().Is("LEFT_PAR"))
+                    && t.LookAhead().First().Is("NUM", "LEFT_PAR"))
+        {
+            Create((int x) => +x)
+        },
+
+        new InfixRule<int, int, int>(priority: PRIORITY_INFIX)
+        {
+            Create((int x, int y) => x + y)
+        }
+    };
+
+More detailed examples of the use of the RegExpr module can be found in the provided auto-tests
+(project Test_QtVsTools.RegExpr).
