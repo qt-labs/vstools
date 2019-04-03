@@ -359,6 +359,17 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <T4Template Include="Marketplace\Overview.html_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Marketplace\Overview.html</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>Overview.html</LastGenOutput>
+    </T4Template>
+    <Content Include="Marketplace\Overview.html">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Overview.html_TT</DependentUpon>
+    </Content>
     <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

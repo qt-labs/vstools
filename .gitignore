@@ -296,3 +296,4 @@ src/qttemplates/lib/lib.vstemplate
 src/qttemplates/server/server.vstemplate
 src/qtvstools/QtMenus.vsct
 MSBuild.MetaInfo.cs
+src/qtvstools/Marketplace/Overview.html

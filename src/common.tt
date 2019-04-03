@@ -34,6 +34,11 @@
 ****************************************************************************/
     var Dte = ((IServiceProvider)Host).GetService(typeof(DTE)) as DTE;
     string SolutionDir = Path.GetDirectoryName(Dte.Solution.FullName);
+    string VS_VERSION = Dte.Version;
+    string VS_NAME = VS_VERSION.StartsWith("16.") ? "2019" :
+                     VS_VERSION.StartsWith("15.") ? "2017" :
+                     VS_VERSION.StartsWith("14.") ? "2015" :
+                     VS_VERSION.StartsWith("12.") ? "2013" : "????";
 /***************************************************************************/
     string WARNING_GENERATED_FILE = "This file was generated automatically.";
     string XML_COMMENT_BEGIN      = "<!--";

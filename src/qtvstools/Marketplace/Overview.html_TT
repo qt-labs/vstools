@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2017 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="html" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+<!-- BEGIN Visual Studio Marketplace Extension Page: Overview -->
+<!-- CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv -->
+<p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #></h1></p>
+
+<p>
+    Qt Visual Studio Tools integrate the Qt development tools into Microsoft Visual Studio
+    <#=VS_NAME #>. This enables developers to use the standard Windows development environment
+    without having to worry about Qt-related build steps or tools.
+</p>
+<p>
+    See also:
+    <ul>
+        <#if (VS_NAME !="2019" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2019"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019">
+                    Qt VS Tools for Visual Studio 2019
+                </a>
+            </li>
+        <#}#>
+        <#if (VS_NAME !="2017" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2017"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools-19123">
+                Qt VS Tools for Visual Studio 2017
+                </a>
+            </li>
+        <#}#>
+        <#if (VS_NAME !="2015" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2015"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2015">
+                Qt VS Tools for Visual Studio 2015
+                </a>
+            </li>
+        <#}#>
+        <#if (VS_NAME !="2013" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2013"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools">
+                Qt VS Tools for Visual Studio 2013
+                </a>
+            </li>
+        <#}#>
+    </ul>
+</p>
+<p><h3>Documentation</h3></p>
+<ul>
+    <li>
+        <a title="Qt VS Tools Manual"
+            href="http://doc.qt.io/qtvstools/qtvstools-getting-started.html">
+            Qt VS Tools Manual
+        </a>
+    </li>
+    <li>
+        <a title="Changelog"
+            href="https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog?h=v<#=QT_VS_TOOLS_VERSION#>">
+            Changelog
+        </a>
+    </li>
+</ul>
+<p><h3><span>The main features of Qt VS Tools are:</span></h3></p>
+<ul>
+    <li>
+        Wizards for creating new Qt projects and classes.
+    </li>
+    <li>
+        Automated build setup for the <a href="http://doc.qt.io/qt-5/moc.html">
+            Meta-Object Compiler (moc)
+        </a>, <a href="http://doc.qt.io/qt-5/uic.html">
+            User Interface Compiler (uic)
+        </a>, and
+        <a href="http://doc.qt.io/qt-5/rcc.html">Resource Compiler (rcc)</a>.
+    </li>
+    <li>
+        Import and export of Qt project files (<code>.pro</code>) and project include files
+        (<code>.pri</code>).
+    </li>
+    <li>
+        Automated conversion of a Qt VS Tools project to a
+        <a href="http://doc.qt.io/qt-5/qmake-manual.html">qmake</a> project, or the other way
+        around.
+    </li>
+    <li>
+        Integrated Qt resource management.
+    </li>
+    <li>
+        Integrated Qt documentation.
+    </li>
+    <li>
+        Debugging extensions for Qt data types.
+    </li>
+</ul>
+<p><h3>How to set up F1 help</h3></p>
+<ol class="1" type="1">
+    <li>
+        Select <strong>Tools</strong> &gt; <strong>Options</strong> &gt;
+        <strong>Environment</strong> &gt; <strong>Keyboard</strong>
+    </li>
+    <li>
+        In the <strong>Show commands containing</strong> field, enter <code>Help.F1QtHelp</code>
+    </li>
+    <li>
+        Select the <strong>Press shortcut keys</strong> field and press your preferred keys to
+        add them to the field. The default shortcut is set to <strong>Alt&#43;F1</strong>
+    </li>
+    <li>
+        Select <strong>Assign</strong>, and then select <strong>OK</strong>.
+    </li>
+</ol>
+<p><h3>How to report bugs and contribute code?</h3></p>
+<ul>
+    <li>
+        <a title="Bug reports" href="https://bugreports.qt.io/browse/QTVSADDINBUG">Bug reports</a>
+    </li>
+    <li>
+        <a title="Source code" href="https://code.qt.io/cgit/qt-labs/vstools.git">Source code</a>
+    </li>
+</ul>
+<p>
+    You are welcome to join the discussions in
+    <a href="http://lists.qt-project.org/mailman/listinfo"> the Qt Project mailing lists</a>,
+    <a href="https://forum.qt.io/"> development forums</a> and to
+    <a href="https://wiki.qt.io/Qt_Contribution_Guidelines"> contribute to Qt</a>.
+</p>
+<!-- CUT HERE ^^^ CUT HERE ^^^ CUT HERE ^^^ CUT HERE ^^^ CUT HERE ^^^ CUT HERE ^^^ CUT HERE ^^^ -->
+<!-- END Visual Studio Marketplace Extension Page: Overview -->
+
+</body>
+</html>
