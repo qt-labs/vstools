@@ -416,6 +416,18 @@ namespace QtProjectLib.QtMsBuild
         }
 
         public string GetPropertyChangedValue(
+            QtRepc.Property property,
+            string itemName,
+            string configName)
+        {
+            return GetPropertyChangedValue(
+                configName,
+                QtRepc.ItemTypeName,
+                itemName,
+                property.ToString());
+        }
+
+        public string GetPropertyChangedValue(
             QtUic.Property property,
             string itemName,
             string configName)
@@ -438,6 +450,8 @@ namespace QtProjectLib.QtMsBuild
                     return SetQtMocCommandLine(propertyStorage, commandLine, macros);
                 case QtRcc.ItemTypeName:
                     return SetQtRccCommandLine(propertyStorage, commandLine, macros);
+                case QtRepc.ItemTypeName:
+                    return SetQtRepcCommandLine(propertyStorage, commandLine, macros);
                 case QtUic.ItemTypeName:
                     return SetQtUicCommandLine(propertyStorage, commandLine, macros);
             }
@@ -542,6 +556,55 @@ namespace QtProjectLib.QtMsBuild
         }
         #endregion
 
+        #region QtRepc
+        static QtRepc qtRepcInstance;
+        public static QtRepc QtRepcInstance
+        {
+            get
+            {
+                if (qtRepcInstance == null)
+                    qtRepcInstance = new QtRepc();
+                return qtRepcInstance;
+            }
+        }
+
+        public string GetPropertyValue(object propertyStorage, QtRepc.Property property)
+        {
+            return GetPropertyValueByName(
+                propertyStorage,
+                QtRepc.ItemTypeName,
+                property.ToString());
+        }
+
+        public bool SetItemProperty(
+            object propertyStorage,
+            QtRepc.Property property,
+            string propertyValue)
+        {
+            return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
+        }
+
+        public bool SetQtRepcCommandLine(
+            object propertyStorage,
+            string commandLine,
+            IVSMacroExpander macros)
+        {
+            Dictionary<QtRepc.Property, string> properties;
+            if (!QtRepcInstance.ParseCommandLine(commandLine, macros, out properties))
+                return false;
+            foreach (var property in properties) {
+                if (!SetItemProperty(propertyStorage, property.Key, property.Value))
+                    return false;
+            }
+            return true;
+        }
+
+        public string GenerateQtRepcCommandLine(object propertyStorage)
+        {
+            return QtRepcInstance.GenerateCommandLine(this, propertyStorage);
+        }
+        #endregion
+
         #region QtUic
         static QtUic qtUicInstance;
         public static QtUic QtUicInstance
@@ -600,7 +663,7 @@ namespace QtProjectLib.QtMsBuild
         protected CommandLineOption helpOption;
         protected CommandLineOption versionOption;
 
-        protected QtTool()
+        protected QtTool(bool defaultInputOutput = true)
         {
             parser = new CommandLineParser();
             parser.SetSingleDashWordOptionMode(
@@ -609,10 +672,29 @@ namespace QtProjectLib.QtMsBuild
             helpOption = parser.AddHelpOption();
             versionOption = parser.AddVersionOption();
 
-            outputOption = new CommandLineOption("o");
-            outputOption.ValueName = "file";
-            outputOption.Flags = CommandLineOption.Flag.ShortOptionStyle;
-            parser.AddOption(outputOption);
+            if (defaultInputOutput) {
+                outputOption = new CommandLineOption("o");
+                outputOption.ValueName = "file";
+                outputOption.Flags = CommandLineOption.Flag.ShortOptionStyle;
+                parser.AddOption(outputOption);
+            }
+        }
+
+        protected virtual void ExtractInputOutput(
+            string toolExecName,
+            out string inputPath,
+            out string outputPath)
+        {
+            inputPath = outputPath = "";
+
+            string filePath = parser.PositionalArguments.Where(
+                arg => !arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault();
+            if (!string.IsNullOrEmpty(filePath))
+                inputPath = filePath;
+
+            if (outputOption != null && parser.IsSet(outputOption))
+                outputPath = parser.Value(outputOption);
         }
 
         protected bool ParseCommandLine(
@@ -636,15 +718,7 @@ namespace QtProjectLib.QtMsBuild
                     qtDir = HelperFunctions.CanonicalPath(Path.Combine(execDir, ".."));
             }
 
-            string filePath = parser.PositionalArguments.Where(
-                arg => !arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase))
-                .FirstOrDefault();
-            if (!string.IsNullOrEmpty(filePath))
-                inputPath = filePath;
-
-            if (parser.IsSet(outputOption))
-                outputPath = parser.Value(outputOption);
-
+            ExtractInputOutput(toolExecName, out inputPath, out outputPath);
             return true;
         }
 
@@ -1178,6 +1252,163 @@ namespace QtProjectLib.QtMsBuild
 
             return cmd.ToString();
         }
+    }
+
+    public sealed class QtRepc : QtTool
+    {
+        public const string ItemTypeName = "QtRepc";
+        public const string ToolExecName = "repc.exe";
+
+        public enum Property
+        {
+            ExecutionDescription,
+            QTDIR,
+            InputFileType,
+            InputFile,
+            OutputFileType,
+            OutputFile,
+            IncludePath,
+            AlwaysClass,
+            PrintDebug,
+        }
+
+        Dictionary<Property, CommandLineOption> options
+            = new Dictionary<Property, CommandLineOption>();
+
+        public QtRepc() : base(defaultInputOutput: false)
+        {
+            parser.AddOption(options[Property.InputFileType] =
+                new CommandLineOption("i")
+                {
+                    ValueName = "<rep|src>",
+                    Flags = CommandLineOption.Flag.ShortOptionStyle
+                });
+
+            parser.AddOption(options[Property.OutputFileType] =
+                new CommandLineOption("o")
+                {
+                    ValueName = "<source|replica|merged|rep>",
+                    Flags = CommandLineOption.Flag.ShortOptionStyle
+                });
+
+            parser.AddOption(options[Property.IncludePath] =
+                new CommandLineOption("I")
+                {
+                    ValueName = "dir",
+                    Flags = CommandLineOption.Flag.ShortOptionStyle
+                });
+
+            parser.AddOption(options[Property.AlwaysClass] =
+                new CommandLineOption("c"));
+
+            parser.AddOption(options[Property.PrintDebug] =
+                new CommandLineOption("d"));
+        }
+
+        protected override void ExtractInputOutput(
+            string toolExecName,
+            out string inputPath,
+            out string outputPath)
+        {
+            inputPath = outputPath = "";
+
+            var args = new Queue<string>(parser.PositionalArguments
+                .Where(arg => !arg.EndsWith(toolExecName,
+                    StringComparison.InvariantCultureIgnoreCase)));
+
+            if (args.Any())
+                inputPath = args.Dequeue();
+
+            if (args.Any())
+                outputPath = args.Dequeue();
+        }
+
+        public bool ParseCommandLine(
+            string commandLine,
+            IVSMacroExpander macros,
+            out Dictionary<Property, string> properties)
+        {
+            properties = new Dictionary<Property, string>();
+
+            string qtDir, inputPath, outputPath;
+            if (!ParseCommandLine(
+                commandLine,
+                macros,
+                ToolExecName,
+                out qtDir,
+                out inputPath,
+                out outputPath)) {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(qtDir))
+                properties[Property.QTDIR] = qtDir;
+
+            if (parser.IsSet(options[Property.InputFileType])) {
+                properties[Property.InputFileType] =
+                    string.Join(";", parser.Values(options[Property.InputFileType]));
+            }
+
+            if (!string.IsNullOrEmpty(inputPath))
+                properties[Property.InputFile] = inputPath;
+
+            if (parser.IsSet(options[Property.OutputFileType])) {
+                properties[Property.OutputFileType] =
+                    string.Join(";", parser.Values(options[Property.OutputFileType]));
+            }
+
+            if (!string.IsNullOrEmpty(outputPath))
+                properties[Property.OutputFile] = outputPath;
+
+            if (parser.IsSet(options[Property.IncludePath])) {
+                properties[Property.IncludePath] =
+                    string.Join(";", parser.Values(options[Property.IncludePath]));
+            }
+
+            if (parser.IsSet(options[Property.AlwaysClass]))
+                properties[Property.AlwaysClass] = "true";
+
+            if (parser.IsSet(options[Property.PrintDebug]))
+                properties[Property.PrintDebug] = "true";
+
+            return true;
+        }
+
+        public string GenerateCommandLine(QtMsBuildContainer container, object propertyStorage)
+        {
+            var cmd = new StringBuilder();
+            cmd.AppendFormat(@"""{0}\bin\{1}""",
+                container.GetPropertyValue(propertyStorage, Property.QTDIR), ToolExecName);
+
+            var inputType = container.GetPropertyValue(propertyStorage, Property.InputFileType);
+            if (!string.IsNullOrEmpty(inputType))
+                GenerateCommandLineOption(cmd, options[Property.InputFileType], inputType);
+
+            var outputType = container.GetPropertyValue(propertyStorage, Property.OutputFileType);
+            if (!string.IsNullOrEmpty(inputType))
+                GenerateCommandLineOption(cmd, options[Property.InputFileType], inputType);
+
+            string value = container.GetPropertyValue(propertyStorage, Property.IncludePath);
+            if (!string.IsNullOrEmpty(value))
+                GenerateCommandLineOption(cmd, options[Property.IncludePath], value, true);
+
+            if (container.GetPropertyValue(propertyStorage, Property.AlwaysClass) == "true")
+                GenerateCommandLineOption(cmd, options[Property.AlwaysClass]);
+
+            if (container.GetPropertyValue(propertyStorage, Property.PrintDebug) == "true")
+                GenerateCommandLineOption(cmd, options[Property.PrintDebug]);
+
+            value = container.GetPropertyValue(propertyStorage, Property.InputFile);
+            if (!string.IsNullOrEmpty(value))
+                cmd.AppendFormat(" \"{0}\"", value);
+
+            value = container.GetPropertyValue(propertyStorage, Property.OutputFile);
+            if (!string.IsNullOrEmpty(value))
+                cmd.AppendFormat(" \"{0}\"", value);
+
+            return cmd.ToString();
+        }
+
     }
 
     public sealed class QtUic : QtTool

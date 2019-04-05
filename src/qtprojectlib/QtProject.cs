@@ -3868,7 +3868,7 @@ namespace QtProjectLib
         VCCustomBuildTool tool;
         VCMacroExpander macros;
 
-        enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtUic };
+        enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic };
         FileItemType itemType = FileItemType.Other;
         public QtCustomBuildTool(VCFileConfiguration vcConfig, QtMsBuildContainer container = null)
         {
@@ -3886,6 +3886,8 @@ namespace QtProjectLib
                     itemType = FileItemType.QtMoc;
                 else if (vcFile.ItemType == QtRcc.ItemTypeName)
                     itemType = FileItemType.QtRcc;
+                else if (vcFile.ItemType == QtRepc.ItemTypeName)
+                    itemType = FileItemType.QtRepc;
                 else if (vcFile.ItemType == QtUic.ItemTypeName)
                     itemType = FileItemType.QtUic;
             }
@@ -3905,6 +3907,8 @@ namespace QtProjectLib
                         return qtMsBuild.GenerateQtMocCommandLine(vcConfig);
                     case FileItemType.QtRcc:
                         return qtMsBuild.GenerateQtRccCommandLine(vcConfig);
+                    case FileItemType.QtRepc:
+                        return qtMsBuild.GenerateQtRepcCommandLine(vcConfig);
                     case FileItemType.QtUic:
                         return qtMsBuild.GenerateQtUicCommandLine(vcConfig);
                 }
@@ -3922,6 +3926,9 @@ namespace QtProjectLib
                         break;
                     case FileItemType.QtRcc:
                         qtMsBuild.SetQtRccCommandLine(vcConfig, value, macros);
+                        break;
+                    case FileItemType.QtRepc:
+                        qtMsBuild.SetQtRepcCommandLine(vcConfig, value, macros);
                         break;
                     case FileItemType.QtUic:
                         qtMsBuild.SetQtUicCommandLine(vcConfig, value, macros);
@@ -3941,6 +3948,8 @@ namespace QtProjectLib
                         return qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile);
                     case FileItemType.QtRcc:
                         return qtMsBuild.GetPropertyValue(vcConfig, QtRcc.Property.OutputFile);
+                    case FileItemType.QtRepc:
+                        return qtMsBuild.GetPropertyValue(vcConfig, QtRepc.Property.OutputFile);
                     case FileItemType.QtUic:
                         return qtMsBuild.GetPropertyValue(vcConfig, QtUic.Property.OutputFile);
                 }

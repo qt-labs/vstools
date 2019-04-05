@@ -491,7 +491,7 @@ namespace QtProjectLib
             var projItemsByPath = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + "ClCompile")
+                .Elements()
                 .Where(x => ((string)x.Attribute("Include"))
                     .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                 .GroupBy(x => HelperFunctions.CanonicalPath(
@@ -502,7 +502,7 @@ namespace QtProjectLib
             var filterItemsByPath = this[Files.Filters].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + "ClCompile")
+                .Elements()
                 .Where(x => ((string)x.Attribute("Include"))
                     .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                 .GroupBy(x => HelperFunctions.CanonicalPath(
@@ -662,6 +662,31 @@ namespace QtProjectLib
                     QtRcc.Property.InputFile, "%(FullPath)");
             }
 
+            //convert repc custom build steps
+            var repcCustomBuilds = GetCustomBuilds(QtRepc.ToolExecName);
+            if (!SetCommandLines(qtMsBuild, configurations, repcCustomBuilds,
+                QtRepc.ToolExecName, QtRepc.ItemTypeName,
+                Path.GetDirectoryName(this[Files.Project].filePath),
+                new ItemCommandLineReplacement[] { })) {
+                Rollback();
+                return false;
+            }
+            foreach (var qtRepc in repcCustomBuilds.Elements(ns + QtRepc.ItemTypeName)) {
+                var itemName = (string)qtRepc.Attribute("Include");
+                var configName = (string)qtRepc.Attribute("ConfigName");
+
+                //remove items with generated files
+                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
+                    projItemsByPath, filterItemsByPath);
+
+                //set properties
+                qtMsBuild.SetItemProperty(qtRepc,
+                    QtRepc.Property.ExecutionDescription, "Repc'ing %(Identity)...");
+                qtMsBuild.SetItemProperty(qtRepc,
+                    QtRepc.Property.InputFile, "%(FullPath)");
+            }
+
+
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds,
@@ -702,6 +727,7 @@ namespace QtProjectLib
 
             FinalizeProjectChanges(mocCustomBuilds.ToList(), QtMoc.ItemTypeName);
             FinalizeProjectChanges(rccCustomBuilds.ToList(), QtRcc.ItemTypeName);
+            FinalizeProjectChanges(repcCustomBuilds.ToList(), QtRepc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds.ToList(), QtUic.ItemTypeName);
 
             this[Files.Project].isDirty = this[Files.Filters].isDirty = true;
