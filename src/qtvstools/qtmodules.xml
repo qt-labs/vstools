@@ -587,4 +587,14 @@
     <IncludePath>$(QTDIR)\include\QtTextToSpeech</IncludePath>
     <Defines>QT_TEXTTOSPEECH_LIB</Defines>
   </Module>
+  <Module Id="118">
+    <Name>Remote Objects</Name>
+    <ResourceName>RemoteObjectsLibrary</ResourceName>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtRemoteObjects</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>remoteobjects</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtRemoteObjects</IncludePath>
+    <Defines>QT_REMOTEOBJECTS_LIB</Defines>
+  </Module>
 </QtVsTools>
