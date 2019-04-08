@@ -192,7 +192,10 @@ namespace QtProjectLib
             if (config.ConfigurationType == ConfigurationTypes.typeStaticLibrary)
                 option.List.Add("staticlib");
             if (linker != null) {
-                if (linker.GenerateDebugInformation)
+                var linkerRule = linker as IVCRulePropertyStorage;
+                var generateDebugInformation = (linkerRule != null) ?
+                    linkerRule.GetUnevaluatedPropertyValue("GenerateDebugInformation") : null;
+                if (generateDebugInformation != "false")
                     option.List.Add("debug");
                 else
                     option.List.Add("release");
