@@ -29,9 +29,26 @@
 #ifndef MACROCLIENT_H
 #define MACROCLIENT_H
 
+#include <QString>
 #include <QElapsedTimer>
 #include <QtNetwork>
 #include <QProcess>
+
+#define MACRO_OK                    QStringLiteral("(ok)")
+#define MACRO_ERROR                 QStringLiteral("(error)")
+#define MACRO_ERROR_MSG(msg)        QStringLiteral("(error)\r\n" msg)
+
+#define MACRO_ASSERT_OK(result)     QCOMPARE(result, MACRO_OK)
+
+inline bool macroResultOk(QString result)
+{
+    return result == MACRO_OK;
+}
+
+inline bool macroResultError(QString result)
+{
+    return result.startsWith(MACRO_ERROR);
+}
 
 class MacroClient
 {
@@ -108,7 +125,7 @@ public:
     QString runMacro(QString macroCode)
     {
         if (socket.state() != QLocalSocket::ConnectedState && !connectToServer())
-            return QStringLiteral("(error)\r\nDisconnected");
+            return MACRO_ERROR_MSG("Disconnected");
 
         QByteArray data = macroCode.toUtf8();
         int size = data.size();
@@ -118,24 +135,24 @@ public:
         socket.flush();
 
         if (socket.state() != QLocalSocket::ConnectedState)
-            return QStringLiteral("(error)\r\nDisconnected");
+            return MACRO_ERROR_MSG("Disconnected");
 
         while (socket.state() == QLocalSocket::ConnectedState && socket.bytesToWrite())
             socket.waitForBytesWritten(15000);
         if (socket.state() != QLocalSocket::ConnectedState)
-            return QStringLiteral("(error)\r\nDisconnected");
+            return MACRO_ERROR_MSG("Disconnected");
 
         while (socket.state() == QLocalSocket::ConnectedState && socket.bytesAvailable() < 4)
             socket.waitForReadyRead(15000);
         if (socket.state() != QLocalSocket::ConnectedState)
-            return QStringLiteral("(error)\r\nDisconnected");
+            return MACRO_ERROR_MSG("Disconnected");
 
         size = *reinterpret_cast<int *>(socket.read(4).data());
 
         while (socket.state() == QLocalSocket::ConnectedState && socket.bytesAvailable() < size)
             socket.waitForReadyRead(15000);
         if (socket.state() != QLocalSocket::ConnectedState)
-            return QStringLiteral("(error)\r\nDisconnected");
+            return MACRO_ERROR_MSG("Disconnected");
 
         data = socket.read(size);
         return QString::fromUtf8(data);

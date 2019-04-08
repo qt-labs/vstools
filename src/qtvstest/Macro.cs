@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CSharp;
@@ -112,26 +111,63 @@ namespace QtVsTest.Macros
         static MacroParser Parser { get; set; }
         MacroLines MacroLines { get; set; }
 
+        List<string> SelectedAssemblies { get { return _SelectedAssemblies; } }
+        List<string> _SelectedAssemblies =
+            new List<string>(MSBuild.MetaInfo.QtVsTest.Reference)
+            {
+                "QtVsTest",
+                "System.Core",
+            };
+
         IEnumerable<string> RefAssemblies { get; set; }
-        IEnumerable<string> RefNamespaces { get; set; }
+
+        List<string> Namespaces { get { return _Namespaces; } }
+        List<string> _Namespaces =
+            new List<string>
+            {
+                "System",
+                "System.Linq",
+                "System.Reflection",
+                "Task = System.Threading.Tasks.Task",
+                "System.Windows.Automation",
+                "EnvDTE",
+                "EnvDTE80",
+            };
+
+        Dictionary<string, VSServiceRef> ServiceRefs { get { return _ServiceRefs; } }
+        Dictionary<string, VSServiceRef> _ServiceRefs =
+            new Dictionary<string, VSServiceRef>
+            {
+                {
+                    "Dte", new VSServiceRef
+                    { Name = "Dte", Interface = "DTE2", Type = "DTE" }
+                },
+            };
+
+        Dictionary<string, GlobalVar> GlobalVars { get { return _GlobalVars; } }
+        Dictionary<string, GlobalVar> _GlobalVars =
+            new Dictionary<string, GlobalVar>
+            {
+                {
+                    "Result", new GlobalVar
+                    { Type = "string", Name = "Result", InitialValueExpr = "string.Empty" }
+                },
+            };
+
         string CSharpMethodCode { get; set; }
         string CSharpClassCode { get; set; }
 
-        IEnumerable<GlobalVar> GlobalVars { get; set; }
-        IEnumerable<VSServiceRef> VSServiceRefs { get; set; }
-
         CompilerResults CompilerResults { get; set; }
-        Type Type { get; set; }
+        Assembly MacroAssembly { get; set; }
+        Type MacroClass { get; set; }
         FieldInfo ResultField { get; set; }
         Func<Task> Run { get; set; }
 
-        readonly Assembly ExecutingAssembly = Assembly.GetExecutingAssembly();
         const BindingFlags PUBLIC_STATIC = BindingFlags.Public | BindingFlags.Static;
-        const string BR = "\r\n";
+        const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
         static ConcurrentDictionary<string, Macro> Macros
             = new ConcurrentDictionary<string, Macro>();
-
 
         /// <summary>
         /// Macro constructor
@@ -147,7 +183,7 @@ namespace QtVsTest.Macros
             Package = package;
             JoinableTaskFactory = joinableTaskFactory;
             ServerLoop = serverLoop;
-            Error("Uninitialized");
+            ErrorMsg("Uninitialized");
         }
 
         /// <summary>
@@ -178,7 +214,7 @@ namespace QtVsTest.Macros
 
                 return true;
             } catch (Exception e) {
-                return Error(e);
+                return ErrorException(e);
             }
         }
 
@@ -190,13 +226,16 @@ namespace QtVsTest.Macros
             if (!Ok)
                 return;
 
+            if (string.IsNullOrEmpty(CSharpMethodCode))
+                return;
+
             try {
                 InitGlobalVars();
                 await Run();
                 await SwitchToWorkerThreadAsync();
                 Result = ResultField.GetValue(null) as string;
             } catch (Exception e) {
-                Error(e);
+                ErrorException(e);
             }
         }
 
@@ -209,13 +248,13 @@ namespace QtVsTest.Macros
             if (Parser == null) {
                 var parser = MacroParser.Get();
                 if (parser == null)
-                    return Error("Parser error");
+                    return ErrorMsg("Parser error");
                 Parser = parser;
             }
 
             var macroLines = Parser.Parse(Message);
             if (macroLines == null)
-                return Error("Parse error");
+                return ErrorMsg("Parse error");
 
             MacroLines = macroLines;
 
@@ -228,189 +267,36 @@ namespace QtVsTest.Macros
         /// <returns></returns>
         bool CompileMacro()
         {
-            const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
-            var selectedAssemblies = new List<string>(MSBuild.MetaInfo.QtVsTest.Reference)
-            {
-                ExecutingAssembly.FullName,
-                "System.Core",
-                "EnvDTE",
-                "EnvDTE80",
-            };
-
-            var selectedNamespaces = new List<string>
-            {
-                "System",
-                "Task = System.Threading.Tasks.Task",
-                "System.Linq",
-                "System.Reflection",
-                "EnvDTE",
-                "EnvDTE80",
-            };
-
-            string macroName = string.Empty;
-            var serviceRefs = new Dictionary<string, VSServiceRef> {
-                    { "DTE", new VSServiceRef {
-                        Name = "DTE",
-                        Interface = "DTE2",
-                        Type = "DTE",
-                    }},
-                };
-            var globalVars = new Dictionary<string, GlobalVar>
-                {
-                    { "Result", new GlobalVar {
-                        Type = "string",
-                        Name = "Result",
-                        InitialValueExpr = "string.Empty"
-                    }},
-                };
-            var csharpCode = new StringBuilder();
-            bool quitWhenDone = false;
+            var csharp = new StringBuilder();
 
             foreach (var line in MacroLines) {
-                if (quitWhenDone)
-                    return Error("No code allowed after #quit");
+                if (QuitWhenDone)
+                    return ErrorMsg("No code allowed after #quit");
 
                 if (line is CodeLine) {
                     var codeLine = line as CodeLine;
-                    csharpCode.Append(codeLine.Code);
+                    csharp.Append(codeLine.Code + "\r\n");
                     continue;
                 }
 
-                var s = line as Statement;
-                switch (s.Type) {
-
-                    case StatementType.Quit:
-                        quitWhenDone = true;
-                        break;
-
-                    case StatementType.Macro:
-                        if (csharpCode.Length > 0)
-                            return Error("#macro must be first statement");
-                        if (!string.IsNullOrEmpty(macroName))
-                            return Error("Only one #macro statement allowed");
-                        if (s.Args.Count < 1)
-                            return Error("Missing macro name");
-                        macroName = s.Args[0];
-                        break;
-
-                    case StatementType.Thread:
-                        if (s.Args.Count < 1)
-                            return Error("Missing thread id");
-                        if (s.Args[0].Equals("ui", IGNORE_CASE))
-                            csharpCode.Append("await SwitchToUIThread();");
-                        else if (s.Args[0].Equals("default", IGNORE_CASE))
-                            csharpCode.Append("await SwitchToWorkerThread();");
-                        else
-                            return Error("Unknown thread id");
-                        break;
-
-                    case StatementType.Reference:
-                        if (!s.Args.Any())
-                            return Error("Missing args for #reference");
-                        selectedAssemblies.Add(s.Args.First());
-                        foreach (var ns in s.Args.Skip(1))
-                            selectedNamespaces.Add(ns);
-                        break;
-
-                    case StatementType.Using:
-                        if (!s.Args.Any())
-                            return Error("Missing args for #using");
-                        foreach (var ns in s.Args)
-                            selectedNamespaces.Add(ns);
-                        break;
-
-                    case StatementType.Var:
-                        if (s.Args.Count < 2)
-                            return Error("Missing args for #var");
-                        var typeName = s.Args[0];
-                        var varName = s.Args[1];
-                        var initValue = s.Code;
-                        if (varName.Where(c => char.IsWhiteSpace(c)).Any())
-                            return Error("Wrong var name");
-                        globalVars[varName] = new GlobalVar
-                        {
-                            Type = typeName,
-                            Name = varName,
-                            InitialValueExpr = initValue
-                        };
-                        break;
-
-                    case StatementType.Service:
-                        if (s.Args.Count <= 1)
-                            return Error("Missing args for #service");
-                        var serviceVarName = s.Args[0];
-                        if (serviceVarName.Where(c => char.IsWhiteSpace(c)).Any())
-                            return Error("Wrong service var name");
-                        if (serviceRefs.ContainsKey(serviceVarName))
-                            return Error("Duplicate service var name");
-                        serviceRefs.Add(serviceVarName, new VSServiceRef
-                        {
-                            Name = serviceVarName,
-                            Interface = s.Args[1],
-                            Type = s.Args.Count > 2 ? s.Args[2] : s.Args[1]
-                        });
-                        break;
-
-                    case StatementType.Call:
-                        if (s.Args.Count < 1)
-                            return Error("Missing args for #call");
-                        var calleeName = s.Args[0];
-                        var callee = GetMacro(calleeName);
-                        if (callee == null)
-                            return Error("Undefined macro");
-                        csharpCode.AppendFormat("await CallMacro(\"{0}\");", calleeName);
-                        foreach (var globalVar in callee.GlobalVars) {
-                            if (globalVars.ContainsKey(globalVar.Name))
-                                continue;
-                            globalVars[globalVar.Name] = new GlobalVar
-                            {
-                                Type = globalVar.Type,
-                                Name = globalVar.Name
-                            };
-                        }
-                        break;
-
-                    case StatementType.Wait:
-                        if (string.IsNullOrEmpty(s.Code))
-                            return Error("Missing args for #wait");
-                        var expr = s.Code;
-                        uint timeout = uint.MaxValue;
-                        if (s.Args.Count > 0 && !uint.TryParse(s.Args[0], out timeout))
-                            return Error("Timeout format error in #wait");
-                        if (s.Args.Count > 2) {
-                            var evalVarType = s.Args[1];
-                            var evalVarName = s.Args[2];
-                            csharpCode.AppendFormat(
-                                "{0} {1} = default({0});" +
-                                "await WaitExpr({2}, () => {1} = {3});",
-                                evalVarType, evalVarName, timeout, expr);
-                        } else {
-                            csharpCode.AppendFormat(
-                                "await WaitExpr({0}, () => {1});",
-                                timeout, expr);
-                        }
-                        break;
-                }
+                if (!GenerateStatement(line as Statement, csharp))
+                    return false;
             }
 
-            if (csharpCode.Length > 0)
-                CSharpMethodCode = csharpCode.ToString();
+            if (csharp.Length > 0)
+                CSharpMethodCode = csharp.ToString();
 
-            if (string.IsNullOrEmpty(macroName))
+            AutoRun = string.IsNullOrEmpty(Name);
+            if (AutoRun)
                 Name = "Macro_" + Path.GetRandomFileName().Replace(".", "");
-            else if (!SaveMacro(macroName))
-                return Error("Macro already defined");
+            else if (!SaveMacro(Name))
+                return ErrorMsg("Macro already defined");
 
-            GlobalVars = globalVars.Values;
-            VSServiceRefs = serviceRefs.Values;
-            foreach (var sv in VSServiceRefs.Where(x => string.IsNullOrEmpty(x.Type)))
+            foreach (var sv in ServiceRefs.Values.Where(x => string.IsNullOrEmpty(x.Type)))
                 sv.Type = sv.Interface;
 
-            AutoRun = string.IsNullOrEmpty(macroName);
-            QuitWhenDone = quitWhenDone;
-
-            var selectedAssemblyNames = selectedAssemblies
+            var selectedAssemblyNames = SelectedAssemblies
                 .Select(x => new AssemblyName(x))
                 .GroupBy(x => x.FullName)
                 .Select(x => x.First());
@@ -437,9 +323,237 @@ namespace QtVsTest.Macros
                 .Where(x => x != null)
                 .Select(x => x.Location);
 
-            RefNamespaces = selectedNamespaces;
-
             return NoError();
+        }
+
+        bool GenerateStatement(Statement s, StringBuilder csharp)
+        {
+            switch (s.Type) {
+
+                case StatementType.Quit:
+                    QuitWhenDone = true;
+                    break;
+
+                case StatementType.Macro:
+                    if (csharp.Length > 0)
+                        return ErrorMsg("#macro must be first statement");
+                    if (!string.IsNullOrEmpty(Name))
+                        return ErrorMsg("Only one #macro statement allowed");
+                    if (s.Args.Count < 1)
+                        return ErrorMsg("Missing macro name");
+                    Name = s.Args[0];
+                    break;
+
+                case StatementType.Thread:
+                    if (s.Args.Count < 1)
+                        return ErrorMsg("Missing thread id");
+                    if (s.Args[0].Equals("ui", IGNORE_CASE)) {
+
+                        csharp.Append(
+/** BEGIN generate code **/
+@"
+            await SwitchToUIThread();"
+/** END generate code **/ );
+
+                    } else if (s.Args[0].Equals("default", IGNORE_CASE)) {
+
+                        csharp.Append(
+/** BEGIN generate code **/
+@"
+            await SwitchToWorkerThread();"
+/** END generate code **/ );
+
+                    } else {
+                        return ErrorMsg("Unknown thread id");
+                    }
+                    break;
+
+                case StatementType.Reference:
+                    if (!s.Args.Any())
+                        return ErrorMsg("Missing args for #reference");
+                    SelectedAssemblies.Add(s.Args.First());
+                    foreach (var ns in s.Args.Skip(1))
+                        Namespaces.Add(ns);
+                    break;
+
+                case StatementType.Using:
+                    if (!s.Args.Any())
+                        return ErrorMsg("Missing args for #using");
+                    foreach (var ns in s.Args)
+                        Namespaces.Add(ns);
+                    break;
+
+                case StatementType.Var:
+                    if (s.Args.Count < 2)
+                        return ErrorMsg("Missing args for #var");
+                    var typeName = s.Args[0];
+                    var varName = s.Args[1];
+                    var initValue = s.Code;
+                    if (varName.Where(c => char.IsWhiteSpace(c)).Any())
+                        return ErrorMsg("Wrong var name");
+                    GlobalVars[varName] = new GlobalVar
+                    {
+                        Type = typeName,
+                        Name = varName,
+                        InitialValueExpr = initValue
+                    };
+                    break;
+
+                case StatementType.Service:
+                    if (s.Args.Count <= 1)
+                        return ErrorMsg("Missing args for #service");
+                    var serviceVarName = s.Args[0];
+                    if (serviceVarName.Where(c => char.IsWhiteSpace(c)).Any())
+                        return ErrorMsg("Invalid service var name");
+                    if (ServiceRefs.ContainsKey(serviceVarName))
+                        return ErrorMsg("Duplicate service var name");
+                    ServiceRefs.Add(serviceVarName, new VSServiceRef
+                    {
+                        Name = serviceVarName,
+                        Interface = s.Args[1],
+                        Type = s.Args.Count > 2 ? s.Args[2] : s.Args[1]
+                    });
+                    break;
+
+                case StatementType.Call:
+                    if (s.Args.Count < 1)
+                        return ErrorMsg("Missing args for #call");
+                    var calleeName = s.Args[0];
+                    var callee = GetMacro(calleeName);
+                    if (callee == null)
+                        return ErrorMsg("Undefined macro");
+
+                    csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+            await CallMacro(""{0}"");"
+/** END generate code **/ , calleeName);
+
+                    foreach (var globalVar in callee.GlobalVars.Values) {
+                        if (GlobalVars.ContainsKey(globalVar.Name))
+                            continue;
+                        GlobalVars[globalVar.Name] = new GlobalVar
+                        {
+                            Type = globalVar.Type,
+                            Name = globalVar.Name
+                        };
+                    }
+                    break;
+
+                case StatementType.Wait:
+                    if (string.IsNullOrEmpty(s.Code))
+                        return ErrorMsg("Missing args for #wait");
+                    var expr = s.Code;
+                    uint timeout = uint.MaxValue;
+                    if (s.Args.Count > 0 && !uint.TryParse(s.Args[0], out timeout))
+                        return ErrorMsg("Timeout format error in #wait");
+                    if (s.Args.Count > 2) {
+                        var evalVarType = s.Args[1];
+                        var evalVarName = s.Args[2];
+
+                        csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+            {0} {1} = default({0});
+            await WaitExpr({2}, () => {1} = {3});"
+/** END generate code **/ , evalVarType,
+                            evalVarName,
+                            timeout,
+                            expr);
+
+                    } else {
+
+                        csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+            await WaitExpr({0}, () => {1});"
+/** END generate code **/ , timeout,
+                            expr);
+
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        const string SERVICETYPE_PREFIX = "_ServiceType_";
+        const string INIT_PREFIX = "_Init_";
+        string MethodName { get { return string.Format("_Run_{0}_Async", Name); } }
+
+        bool GenerateClass()
+        {
+            var csharp = new StringBuilder();
+            foreach (var ns in Namespaces) {
+                csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+using {0};"
+/** END generate code **/ , ns);
+            }
+
+            csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+namespace QtVsTest.Macros
+{{
+    public class {0}
+    {{"
+/** END generate code **/ , Name);
+
+            foreach (var serviceRef in ServiceRefs.Values) {
+                csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+        public static {2} {1};
+        public static readonly Type {0}{1} = typeof({3});"
+/** END generate code **/ , SERVICETYPE_PREFIX,
+                            serviceRef.Name,
+                            serviceRef.Interface,
+                            serviceRef.Type);
+            }
+
+            foreach (var globalVar in GlobalVars.Values) {
+                csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+        public static {1} {2};
+        public static {1} {0}{2} {{ get {{ return ({3}); }} }}"
+/** END generate code **/ , INIT_PREFIX,
+                            globalVar.Type,
+                            globalVar.Name,
+                            globalVar.InitialValueExpr);
+            }
+
+            csharp.Append(
+/** BEGIN generate code **/
+@"
+        public static Func<string, Assembly> GetAssembly;
+        public static Func<Task> SwitchToUIThread;
+        public static Func<Task> SwitchToWorkerThread;
+        public static Func<string, Task> CallMacro;
+        public static Func<int, Func<object>, Task> WaitExpr;"
+/** END generate code **/ );
+
+            if (!GenerateResultFuncs(csharp))
+                return false;
+
+            csharp.AppendFormat(
+/** BEGIN generate code **/
+@"
+        public static async Task {0}()
+        {{
+{1}
+        }}
+
+    }} /*class*/
+
+}} /*namespace*/"
+/** END generate code **/ , MethodName,
+                            CSharpMethodCode);
+
+            CSharpClassCode = csharp.ToString();
+
+            return true;
         }
 
         /// <summary>
@@ -448,41 +562,10 @@ namespace QtVsTest.Macros
         /// <returns></returns>
         bool CompileClass()
         {
-            var methodName = string.Format("_Run_{0}_Async", Name);
-            const string serviceTypePrefix = "_ServiceType_";
-            const string initPrefix = "_Init_";
+            if (!GenerateClass())
+                return false;
 
-            var csharpClass = new StringBuilder();
-            foreach (var ns in RefNamespaces)
-                csharpClass.AppendFormat("using {0};", ns);
-            csharpClass.Append("namespace QtVsTest.Macros");
-            csharpClass.Append("{");
-            csharpClass.AppendFormat("public class {0}", Name);
-            csharpClass.Append("{");
-            foreach (var serviceRef in VSServiceRefs) {
-                csharpClass.AppendFormat("public static {0} {1};",
-                    serviceRef.Interface, serviceRef.Name);
-                csharpClass.AppendFormat("public static readonly Type {0}{1} = typeof({2});",
-                    serviceTypePrefix, serviceRef.Name, serviceRef.Type);
-            }
-            foreach (var globalVar in GlobalVars) {
-                csharpClass.AppendFormat("public static {0} {1};", globalVar.Type, globalVar.Name);
-                csharpClass.AppendFormat(
-                    "public static {0} {1}{2} {{ get {{ return ({3}); }} }}",
-                    globalVar.Type, initPrefix, globalVar.Name, globalVar.InitialValueExpr);
-            }
-            csharpClass.Append("public static Func<string, Assembly> GetAssembly;");
-            csharpClass.Append("public static Func<Task> SwitchToUIThread;");
-            csharpClass.Append("public static Func<Task> SwitchToWorkerThread;");
-            csharpClass.Append("public static Func<string, Task> CallMacro;");
-            csharpClass.Append("public static Func<int, Func<object>, Task> WaitExpr;");
-            csharpClass.AppendFormat("public static async Task {0}()", methodName);
-            csharpClass.Append("{" + CSharpMethodCode + "}");
-            csharpClass.Append("} /*class*/ } /*namespace*/");
-
-            CSharpClassCode = csharpClass.ToString();
-
-            var dllUri = new Uri(ExecutingAssembly.EscapedCodeBase);
+            var dllUri = new Uri(Assembly.GetExecutingAssembly().EscapedCodeBase);
             var dllPath = Uri.UnescapeDataString(dllUri.AbsolutePath);
             var macroDllPath = Path.Combine(Path.GetDirectoryName(dllPath), Name + ".dll");
 
@@ -502,48 +585,64 @@ namespace QtVsTest.Macros
             if (CompilerResults.Errors.Count > 0) {
                 if (File.Exists(macroDllPath))
                     File.Delete(macroDllPath);
-                return Error(string.Join(BR,
+                return ErrorMsg(string.Join("\r\n",
                     CompilerResults.Errors.Cast<CompilerError>()
                         .Select(x => x.ErrorText)));
             }
 
-            var assembly = AppDomain.CurrentDomain.Load(File.ReadAllBytes(macroDllPath));
-            var type = assembly.GetType(string.Format("QtVsTest.Macros.{0}", Name));
+            MacroAssembly = AppDomain.CurrentDomain.Load(File.ReadAllBytes(macroDllPath));
+            MacroClass = MacroAssembly.GetType(string.Format("QtVsTest.Macros.{0}", Name));
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             if (File.Exists(macroDllPath))
                 File.Delete(macroDllPath);
 
-            foreach (var serviceVar in VSServiceRefs) {
-                serviceVar.RefVar = type.GetField(serviceVar.Name, PUBLIC_STATIC);
-                var serviceType = type.GetField(serviceTypePrefix + serviceVar.Name, PUBLIC_STATIC);
+            foreach (var serviceVar in ServiceRefs.Values) {
+                serviceVar.RefVar = MacroClass.GetField(serviceVar.Name, PUBLIC_STATIC);
+                var serviceType = MacroClass.GetField(SERVICETYPE_PREFIX + serviceVar.Name, PUBLIC_STATIC);
                 serviceVar.ServiceType = (Type)serviceType.GetValue(null);
             }
 
-            ResultField = type.GetField("Result", PUBLIC_STATIC);
-            foreach (var globalVar in GlobalVars) {
-                globalVar.FieldInfo = type.GetField(globalVar.Name, PUBLIC_STATIC);
-                globalVar.InitInfo = type.GetProperty(initPrefix + globalVar.Name, PUBLIC_STATIC);
+            ResultField = MacroClass.GetField("Result", PUBLIC_STATIC);
+            foreach (var globalVar in GlobalVars.Values) {
+                globalVar.FieldInfo = MacroClass.GetField(globalVar.Name, PUBLIC_STATIC);
+                globalVar.InitInfo = MacroClass.GetProperty(INIT_PREFIX + globalVar.Name, PUBLIC_STATIC);
             }
 
             Run = (Func<Task>)Delegate.CreateDelegate(typeof(Func<Task>),
-                type.GetMethod(methodName, PUBLIC_STATIC));
+                MacroClass.GetMethod(MethodName, PUBLIC_STATIC));
 
-            type.GetField("GetAssembly", PUBLIC_STATIC)
+            MacroClass.GetField("GetAssembly", PUBLIC_STATIC)
                 .SetValue(null, new Func<string, Assembly>(GetAssembly));
 
-            type.GetField("SwitchToUIThread", PUBLIC_STATIC)
+            MacroClass.GetField("SwitchToUIThread", PUBLIC_STATIC)
                 .SetValue(null, new Func<Task>(SwitchToUIThreadAsync));
 
-            type.GetField("SwitchToWorkerThread", PUBLIC_STATIC)
+            MacroClass.GetField("SwitchToWorkerThread", PUBLIC_STATIC)
                 .SetValue(null, new Func<Task>(SwitchToWorkerThreadAsync));
 
-            type.GetField("CallMacro", PUBLIC_STATIC)
+            MacroClass.GetField("CallMacro", PUBLIC_STATIC)
                 .SetValue(null, new Func<string, Task>(CallMacroAsync));
 
-            type.GetField("WaitExpr", PUBLIC_STATIC)
+            MacroClass.GetField("WaitExpr", PUBLIC_STATIC)
                 .SetValue(null, new Func<int, Func<object>, Task>(WaitExprAsync));
 
             return NoError();
+        }
+
+        Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            if (args.RequestingAssembly == null || args.RequestingAssembly != MacroAssembly)
+                return null;
+            var fullName = new AssemblyName(args.Name);
+            var assemblyPath = RefAssemblies
+                .Where(x => Path.GetFileNameWithoutExtension(x).Equals(fullName.Name, IGNORE_CASE))
+                .FirstOrDefault();
+            if (string.IsNullOrEmpty(assemblyPath))
+                return null;
+            if (!File.Exists(assemblyPath))
+                return null;
+            return Assembly.LoadFrom(assemblyPath);
         }
 
         public static Assembly GetAssembly(string name)
@@ -580,12 +679,21 @@ namespace QtVsTest.Macros
             var tMax = TimeSpan.FromMilliseconds(timeout);
             var tRemaining = tMax;
             var t = Stopwatch.StartNew();
-            object value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+            object value;
+            try {
+                value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+            } catch {
+                value = null;
+            }
             bool ok = !IsDefaultValue(value);
 
             while (!ok && (tRemaining = (tMax - t.Elapsed)) > TimeSpan.Zero) {
                 await Task.Delay(10);
-                value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+                try {
+                    value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+                } catch {
+                    value = null;
+                }
                 ok = !IsDefaultValue(value);
             }
 
@@ -598,14 +706,14 @@ namespace QtVsTest.Macros
             if (obj == null)
                 return true;
             else if (obj.GetType().IsValueType)
-                return obj == Activator.CreateInstance(obj.GetType());
+                return obj.Equals(Activator.CreateInstance(obj.GetType()));
             else
                 return false;
         }
 
         void InitGlobalVars()
         {
-            var globalVarsInit = GlobalVars
+            var globalVarsInit = GlobalVars.Values
                 .Where(x => x.FieldInfo != null && !string.IsNullOrEmpty(x.InitialValueExpr));
             foreach (var globalVar in globalVarsInit)
                 globalVar.FieldInfo.SetValue(null, globalVar.InitInfo.GetValue(null));
@@ -613,8 +721,8 @@ namespace QtVsTest.Macros
 
         void CopyGlobalVarsFrom(Macro src)
         {
-            var globalVars = GlobalVars
-                .Join(src.GlobalVars,
+            var globalVars = GlobalVars.Values
+                .Join(src.GlobalVars.Values,
                     DstVar => DstVar.Name, SrcVar => SrcVar.Name,
                     (DstVar, SrcVar) => new { DstVar, SrcVar })
                 .Where(x => x.SrcVar.FieldInfo != null && x.DstVar.FieldInfo != null
@@ -629,7 +737,7 @@ namespace QtVsTest.Macros
 
         async Task<bool> GetServicesAsync()
         {
-            foreach (var serviceRef in VSServiceRefs.Where(x => x.RefVar != null)) {
+            foreach (var serviceRef in ServiceRefs.Values.Where(x => x.RefVar != null)) {
                 serviceRef.RefVar.SetValue(null,
                     await Package.GetServiceAsync(serviceRef.ServiceType));
             }
@@ -651,35 +759,69 @@ namespace QtVsTest.Macros
             return macro;
         }
 
+        bool GenerateResultFuncs(StringBuilder csharp)
+        {
+            csharp.Append(
+/** BEGIN generate code **/
+@"
+        public static string Ok;
+        public static string Error;
+        public static Func<string, string> ErrorMsg;"
+/** END generate code **/ );
+            return true;
+        }
+
+        bool InitializeResultFuncs()
+        {
+            if (MacroClass == null)
+                return false;
+
+            MacroClass.GetField("Ok", PUBLIC_STATIC)
+                .SetValue(null, MACRO_OK);
+
+            MacroClass.GetField("Error", PUBLIC_STATIC)
+                .SetValue(null, MACRO_ERROR);
+
+            MacroClass.GetField("ErrorMsg", PUBLIC_STATIC)
+                .SetValue(null, new Func<string, string>(MACRO_ERROR_MSG));
+
+            return true;
+        }
+
+        string MACRO_OK { get { return "(ok)"; } }
+        string MACRO_ERROR { get { return "(error)"; } }
+        string MACRO_WARN { get { return "(warn)"; } }
+        string MACRO_ERROR_MSG(string msg) { return string.Format("{0}\r\n{1}", MACRO_ERROR, msg); }
+        string MACRO_WARN_MSG(string msg) { return string.Format("{0}\r\n{1}", MACRO_WARN, msg); }
+
         bool NoError()
         {
-            Result = "(ok)";
+            Result = MACRO_OK;
             return (Ok = true);
         }
 
         bool Error()
         {
-            Result = "(error)";
+            Result = MACRO_ERROR;
             return (Ok = false);
         }
 
-        bool Error(string errorMsg)
+        bool ErrorMsg(string errorMsg)
         {
-            Result = "(error)" + BR + errorMsg;
+            Result = MACRO_ERROR_MSG(errorMsg);
             return (Ok = false);
         }
 
-        bool Error(Exception e)
+        bool ErrorException(Exception e)
         {
-            Result = string.Format("(error)" + BR +
-                "{0}" + BR + "\"{1}\"" + BR + "{2}",
-                e.GetType().Name, e.Message, e.StackTrace);
+            Result = MACRO_ERROR_MSG(string.Format("{0}\r\n\"{1}\"\r\n{2}",
+                e.GetType().Name, e.Message, e.StackTrace));
             return (Ok = false);
         }
 
         bool Warning(string warnMsg)
         {
-            Result = "(warn)" + BR + warnMsg;
+            Result = MACRO_WARN_MSG(warnMsg);
             return (Ok = true);
         }
     }
