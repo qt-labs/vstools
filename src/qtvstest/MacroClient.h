@@ -34,8 +34,9 @@
 #include <QString>
 
 #include <QElapsedTimer>
-#include <QtNetwork>
+#include <QLocalSocket>
 #include <QProcess>
+#include <QThread>
 
 #define MACRO_OK                    QStringLiteral("(ok)")
 #define MACRO_ERROR                 QStringLiteral("(error)")
@@ -56,10 +57,6 @@ inline bool macroResultError(QString result)
 class MacroClient
 {
 
-private:
-    QProcess vsProcess;
-    QLocalSocket socket;
-
 public:
     MacroClient()
     {
@@ -70,6 +67,7 @@ public:
 
     ~MacroClient()
     {
+        disconnectFromServer(false);
     }
 
     bool connectToServer()
@@ -106,6 +104,8 @@ public:
 
         if (closeVs)
             return terminateServerProcess();
+        else
+            vsProcess.detach();
 
         return true;
     }
@@ -186,6 +186,22 @@ public:
         else
             return runMacro(macroCode);
     }
+
+private:
+    class QDetachableProcess : public QProcess
+    {
+    public:
+        QDetachableProcess(QObject *parent = 0) : QProcess(parent)
+        { }
+        void detach()
+        {
+            waitForStarted();
+            setProcessState(QProcess::NotRunning);
+        }
+    };
+
+    QDetachableProcess vsProcess;
+    QLocalSocket socket;
 
 }; // class MacroClient
 
