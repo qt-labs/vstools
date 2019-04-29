@@ -35,4 +35,23 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\macros\Test_QtVsToolsLoaded.csmacro">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\macros\Test_CreateGuiApp.csmacro">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\macros\Test_RebuildSolution.csmacro">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\macros\Test_DebugGuiApp.csmacro">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Macros.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
 </Project>

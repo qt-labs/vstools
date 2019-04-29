@@ -26,39 +26,17 @@
 **
 ****************************************************************************/
 
-#include <QtTest>
+//# using "Process = System.Diagnostics.Process"
 
-#include <MacroClient.h>
+var solution = Dte.Solution as Solution2;
+var solutionBuild = solution.SolutionBuild as SolutionBuild2;
+var project = solution.Projects.Cast<Project>().First();
 
-class TestCoreFeatures : public QObject
-{
-    Q_OBJECT
-
-private:
-    MacroClient client;
-
-private slots:
-    void initTestCase()
-    {
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
-    }
-
-    void guiAppCreateRebuildDebug()
-    {
-        client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
-        client.runMacro(
-            "Dte.Solution.Close(false);"                "\r\n"
-            "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
-    }
-
-    void cleanupTestCase()
-    {
-        client.runMacro("//#quit");
-    }
-};
-
-QTEST_MAIN(TestCoreFeatures)
-#include "main.moc"
+solutionBuild.Debug();
+//# wait 15000 => Dte.Debugger.CurrentMode == dbgDebugMode.dbgRunMode
+//# wait 15000 IntPtr hWnd => Process.GetProcesses().Where(p => p.ProcessName.Equals(project.Name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().MainWindowHandle
+//# ui context HWND => hWnd
+//# ui pattern Window mainWindow
+mainWindow.Close();
+//# wait 15000 => Dte.Debugger.CurrentMode == dbgDebugMode.dbgDesignMode
+Result = "(ok)";

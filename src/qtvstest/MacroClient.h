@@ -29,7 +29,10 @@
 #ifndef MACROCLIENT_H
 #define MACROCLIENT_H
 
+#include <QDir>
+#include <QFile>
 #include <QString>
+
 #include <QElapsedTimer>
 #include <QtNetwork>
 #include <QProcess>
@@ -156,6 +159,32 @@ public:
 
         data = socket.read(size);
         return QString::fromUtf8(data);
+    }
+
+    QString runMacro(QFile &macroFile)
+    {
+        return loadAndRunMacro(macroFile);
+    }
+
+    QString loadMacro(QFile &macroFile, QString macroName)
+    {
+        if (macroName.isNull() || macroName.isEmpty())
+            return QStringLiteral(MACRO_ERROR_MSG("Invalid macro name"));
+        return loadAndRunMacro(macroFile, QString("//#macro %1").arg(macroName));
+    }
+
+    QString loadAndRunMacro(QFile &macroFile, QString macroHeader = QString())
+    {
+        if (!macroFile.open(QIODevice::ReadOnly | QIODevice::Text))
+            return QStringLiteral(MACRO_ERROR_MSG("Macro load failed"));
+        QString macroCode = QString::fromUtf8(macroFile.readAll());
+        macroFile.close();
+        if (macroCode.isEmpty())
+            return QStringLiteral(MACRO_ERROR_MSG("Macro load failed"));
+        if (!macroHeader.isNull())
+            return runMacro(macroHeader + "\r\n" + macroCode);
+        else
+            return runMacro(macroCode);
     }
 
 }; // class MacroClient

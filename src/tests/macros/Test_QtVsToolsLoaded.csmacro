@@ -25,40 +25,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include <QtTest>
-
-#include <MacroClient.h>
-
-class TestCoreFeatures : public QObject
-{
-    Q_OBJECT
-
-private:
-    MacroClient client;
-
-private slots:
-    void initTestCase()
-    {
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
-    }
-
-    void guiAppCreateRebuildDebug()
-    {
-        client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
-        client.runMacro(
-            "Dte.Solution.Close(false);"                "\r\n"
-            "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
-    }
-
-    void cleanupTestCase()
-    {
-        client.runMacro("//#quit");
-    }
-};
-
-QTEST_MAIN(TestCoreFeatures)
-#include "main.moc"
+/*
+ *  - Ensure Qt VS Tools extension is loaded
+ *  - Wait for Qt VS Tools to finish initialization
+ */
+//# wait 15000 Assembly QtVsTools => GetAssembly("QtVsTools")
+var VsixType = QtVsTools.GetType("QtVsTools.Vsix");
+var VsixInstance = VsixType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+//# wait 15000 => VsixInstance.GetValue(null)
+Result = "(ok)";

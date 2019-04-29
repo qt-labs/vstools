@@ -72,6 +72,10 @@
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_CORE_LIB;QT_TESTLIB_LIB;QT_NETWORK_LIB;%(PreprocessorDefinitions)</Define>
       <IncludePath>$(SolutionDir)qtvstest;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtNetwork;%(AdditionalIncludeDirectories)</IncludePath>
     </QtMoc>
+    <QtRcc>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -93,6 +97,10 @@
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_TESTLIB_LIB;QT_NETWORK_LIB;%(PreprocessorDefinitions)</Define>
       <IncludePath>$(SolutionDir)qtvstest;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;$(QTDIR)\include\QtNetwork;%(AdditionalIncludeDirectories)</IncludePath>
     </QtMoc>
+    <QtRcc>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtMoc Include="main.cpp">
@@ -108,6 +116,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\qtvstest\MacroClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Macros.qrc">
+      <SubType>Designer</SubType>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\macros\Test_CreateGuiApp.csmacro"/>
+    <None Include="..\macros\Test_DebugGuiApp.csmacro"/>
+    <None Include="..\macros\Test_QtVsToolsLoaded.csmacro"/>
+    <None Include="..\macros\Test_RebuildSolution.csmacro"/>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

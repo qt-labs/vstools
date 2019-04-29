@@ -26,39 +26,16 @@
 **
 ****************************************************************************/
 
-#include <QtTest>
+//# using System.Threading.Tasks
 
-#include <MacroClient.h>
+var solution = Dte.Solution as Solution2;
+var solutionBuild = solution.SolutionBuild as SolutionBuild2;
 
-class TestCoreFeatures : public QObject
+var taskRebuild = Task.Run(() =>
 {
-    Q_OBJECT
+    solutionBuild.Clean(WaitForCleanToFinish: true);
+    solutionBuild.Build(WaitForBuildToFinish: true);
+});
 
-private:
-    MacroClient client;
-
-private slots:
-    void initTestCase()
-    {
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
-    }
-
-    void guiAppCreateRebuildDebug()
-    {
-        client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
-        client.runMacro(
-            "Dte.Solution.Close(false);"                "\r\n"
-            "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
-    }
-
-    void cleanupTestCase()
-    {
-        client.runMacro("//#quit");
-    }
-};
-
-QTEST_MAIN(TestCoreFeatures)
-#include "main.moc"
+bool buildOk = (taskRebuild.Wait(15000) && solutionBuild.LastBuildInfo == 0);
+Result = buildOk ? "(ok)" : "(error)\r\nBuild failed.";

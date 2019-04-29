@@ -25,40 +25,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include <QtTest>
-
-#include <MacroClient.h>
-
-class TestCoreFeatures : public QObject
-{
-    Q_OBJECT
-
-private:
-    MacroClient client;
-
-private slots:
-    void initTestCase()
-    {
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
-    }
-
-    void guiAppCreateRebuildDebug()
-    {
-        client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
-        client.runMacro(
-            "Dte.Solution.Close(false);"                "\r\n"
-            "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
-    }
-
-    void cleanupTestCase()
-    {
-        client.runMacro("//#quit");
-    }
-};
-
-QTEST_MAIN(TestCoreFeatures)
-#include "main.moc"
+//# using System.IO
+//# using System.Threading.Tasks
+var solutionName = "QtVsTest";
+var projectName = "MyGuiApp";
+var tempDir = Environment.GetEnvironmentVariable("TEMP");
+var solutionFileName = solutionName + ".sln";
+var solutionDir = Path.Combine(tempDir, solutionName);
+var projectDir = Path.Combine(solutionDir, projectName);
+if (Directory.Exists(solutionDir))
+    Directory.Delete(solutionDir, recursive: true);
+Directory.CreateDirectory(projectDir);
+var solution = Dte.Solution as Solution2;
+solution.Create(tempDir, solutionName);
+solution.SaveAs(Path.Combine(solutionDir, solutionFileName));
+var templateGuiApp = solution.GetProjectTemplate("Qt GUI Application", "VC");
+var taskAddProj = Task.Run(() => solution.AddFromTemplate(templateGuiApp, projectDir, "MyGuiApp"));
+//# ui context VS => "Qt GUI Application Wizard"
+//# ui pattern Invoke => "Next >"
+//# ui pattern Invoke => "Next >"
+//# ui pattern Invoke => "Finish"
+if (!taskAddProj.Wait(15000))
+    throw new Exception("Timeout: Solution2.AddFromTemplate");
+Result = "(ok)";
