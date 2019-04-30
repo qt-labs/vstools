@@ -67,6 +67,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -116,5 +117,46 @@ namespace MSBuild.MetaInfo {
       <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
       <Name>QtVsTools.RegExpr</Name>
     </ProjectReference>
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17763.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17763.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17134.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17134.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.16299.15')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.16299.15</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.15063.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.15063.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <PropertyGroup Condition="'$(Win10SDKPath)' != ''">
+    <UIAVerifyPath>$(Win10SDKPath)\x86\UIAVerify</UIAVerifyPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UIAVerifyPath)' != ''">
+    <Reference Include="Interop.UIAutomationClient">
+      <HintPath>$(UIAVerifyPath)\Interop.UIAutomationClient.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="UIAComWrapper">
+      <HintPath>$(UIAVerifyPath)\UIAComWrapper.dll</HintPath>
+      <Private>True</Private>
+      <Aliases>global</Aliases>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using Microsoft.CSharp;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
@@ -103,6 +104,19 @@ namespace QtVsTest.Macros
         public bool QuitWhenDone { get; private set; }
 
         AsyncPackage Package { get; set; }
+        EnvDTE80.DTE2 Dte { get; set; }
+
+        AutomationElement _UiVsRoot;
+        AutomationElement UiVsRoot
+        {
+            get
+            {
+                if (_UiVsRoot == null)
+                    _UiVsRoot = AutomationElement.FromHandle(new IntPtr(Dte.MainWindow.HWnd));
+                return _UiVsRoot;
+            }
+        }
+
         JoinableTaskFactory JoinableTaskFactory { get; set; }
         CancellationToken ServerLoop { get; set; }
 
@@ -177,12 +191,14 @@ namespace QtVsTest.Macros
         /// <param name="serverLoop">Server loop cancellation token</param>
         public Macro(
             AsyncPackage package,
+            EnvDTE80.DTE2 dte,
             JoinableTaskFactory joinableTaskFactory,
             CancellationToken serverLoop)
         {
             Package = package;
             JoinableTaskFactory = joinableTaskFactory;
             ServerLoop = serverLoop;
+            Dte = dte;
             ErrorMsg("Uninitialized");
         }
 
@@ -267,6 +283,8 @@ namespace QtVsTest.Macros
         /// <returns></returns>
         bool CompileMacro()
         {
+            if (UiVsRoot == null)
+                return ErrorMsg("UI Automation not available");
 
             var csharp = new StringBuilder();
 
@@ -472,7 +490,142 @@ namespace QtVsTest.Macros
 
                     }
                     break;
+
+                case StatementType.Ui:
+                    if (!GenerateUiStatement(s, csharp))
+                        return false;
+                    break;
             }
+            return true;
+        }
+
+        public AutomationElement UiFind(AutomationElement uiContext, string[] path)
+        {
+            var uiIterator = uiContext;
+            foreach (var name in path) {
+                uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
+                    new PropertyCondition(AutomationElement.NameProperty, name));
+                if (uiIterator == null)
+                    throw new Exception(
+                        string.Format("Could not find UI element \"{0}\"", name));
+            }
+            return uiIterator;
+        }
+
+        static readonly IEnumerable<string> UI_TYPES = new[]
+        {
+            "Dock", "ExpandCollapse", "GridItem", "Grid", "Invoke", "MultipleView", "RangeValue",
+            "Scroll", "ScrollItem", "Selection", "SelectionItem", "SynchronizedInput", "Text",
+            "Transform", "Toggle", "Value", "Window", "VirtualizedItem", "ItemContainer"
+        };
+
+        bool GenerateUiGlobals(StringBuilder csharp)
+        {
+            csharp.Append(@"
+        public static Func<AutomationElement, string[], AutomationElement> UiFind;
+        public static Stack<AutomationElement> UiStack;
+        public static Dictionary<string, AutomationElement> UiStash;
+        public static AutomationElement UiVsRoot;
+        public static AutomationElement UiContext;");
+            return false;
+        }
+
+        bool InitializeUiGlobals()
+        {
+            if (MacroClass == null)
+                return false;
+
+            MacroClass.GetField("UiFind", PUBLIC_STATIC)
+                .SetValue(null, new Func<AutomationElement, string[], AutomationElement>(UiFind));
+
+            MacroClass.GetField("UiStack", PUBLIC_STATIC)
+                .SetValue(null, new Stack<AutomationElement>());
+
+            MacroClass.GetField("UiStash", PUBLIC_STATIC)
+                .SetValue(null, new Dictionary<string, AutomationElement>());
+
+            MacroClass.GetField("UiVsRoot", PUBLIC_STATIC)
+                .SetValue(null, UiVsRoot);
+
+            MacroClass.GetField("UiContext", PUBLIC_STATIC)
+                .SetValue(null, UiVsRoot);
+
+            return true;
+        }
+
+        bool GenerateUiStatement(Statement s, StringBuilder csharp)
+        {
+            if (s.Args.Count == 0)
+                return ErrorMsg("Invalid #ui statement");
+
+            if (s.Args[0].Equals("context", IGNORE_CASE)) {
+                //# ui context [ VS ] => _string_ [, _string_, ... ]
+                //# ui context HWND => _int_
+
+                if (s.Args.Count > 2 || string.IsNullOrEmpty(s.Code))
+                    return ErrorMsg("Invalid #ui statement");
+
+                string context;
+                if (s.Args.Count == 1)
+                    context = string.Format("UiFind(UiContext, new[] {{ {0} }})", s.Code);
+                else if (s.Args.Count > 1 && s.Args[1] == "VS")
+                    context = string.Format("UiFind(UiVsRoot, new[] {{ {0} }})", s.Code);
+                else if (s.Args.Count > 1 && s.Args[1] == "HWND")
+                    context = string.Format("AutomationElement.FromHandle((IntPtr)({0}))", s.Code);
+                else
+                    return ErrorMsg("Invalid #ui statement");
+
+                csharp.AppendFormat(@"
+                    UiContext = {0};", context);
+
+            } else if (s.Args[0].Equals("pattern", IGNORE_CASE)) {
+                //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
+                //# ui pattern Invoke [ => _string_ [, _string_, ... ] ]
+                //# ui pattern Toggle [ => _string_ [, _string_, ... ] ]
+
+                if (s.Args.Count < 2)
+                    return ErrorMsg("Invalid #ui statement");
+
+                string typeName = s.Args[1];
+                string varName = (s.Args.Count > 2) ? s.Args[2] : string.Empty;
+                if (!UI_TYPES.Contains(typeName))
+                    return ErrorMsg("Invalid #ui statement");
+
+                string uiElement;
+                if (!string.IsNullOrEmpty(s.Code))
+                    uiElement = string.Format("UiFind(UiContext, new[] {{ {0} }})", s.Code);
+                else
+                    uiElement = "UiContext";
+
+                string patternTypeId = string.Format("{0}PatternIdentifiers.Pattern", typeName);
+                string patternType = string.Format("{0}Pattern", typeName);
+
+                if (!string.IsNullOrEmpty(varName)) {
+
+                    csharp.AppendFormat(@"
+                            var {0} = {1}.GetCurrentPattern({2}) as {3};",
+                        varName,
+                        uiElement,
+                        patternTypeId,
+                        patternType);
+
+                } else if (typeName == "Invoke" || typeName == "Toggle") {
+
+                    csharp.AppendFormat(@"
+                            ({0}.GetCurrentPattern({1}) as {2}).{3}();",
+                        uiElement,
+                        patternTypeId,
+                        patternType,
+                        typeName);
+
+                } else {
+                    return ErrorMsg("Invalid #ui statement");
+                }
+
+            } else {
+                return ErrorMsg("Invalid #ui statement");
+            }
+
             return true;
         }
 
@@ -535,6 +688,9 @@ namespace QtVsTest.Macros
 /** END generate code **/ );
 
             if (!GenerateResultFuncs(csharp))
+                return false;
+
+            if (!GenerateUiGlobals(csharp))
                 return false;
 
             csharp.AppendFormat(
@@ -626,6 +782,9 @@ namespace QtVsTest.Macros
 
             MacroClass.GetField("WaitExpr", PUBLIC_STATIC)
                 .SetValue(null, new Func<int, Func<object>, Task>(WaitExprAsync));
+
+            if (!InitializeUiGlobals())
+                return false;
 
             return NoError();
         }

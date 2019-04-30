@@ -94,7 +94,7 @@ namespace QtVsTest.Macros
                             if (Loop.Token.IsCancellationRequested)
                                 break;
 
-                            var macro = new Macro(Package, JoinableTaskFactory, Loop.Token);
+                            var macro = new Macro(Package, DTE, JoinableTaskFactory, Loop.Token);
                             await macro.CompileAsync(Encoding.UTF8.GetString(data));
                             if (macro.AutoRun)
                                 await macro.RunAsync();

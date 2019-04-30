@@ -87,6 +87,25 @@ namespace QtVsTest.Macros
         //# wait [timeout] [ <var type> <var name> ] => <expr>
         Wait,
 
+        // UI automation command
+        //
+        // Set context based on UI element name path
+        //# ui context [ VS ] => _string_ [, _string_, ... ]
+        //
+        // Set context based on window handle
+        //# ui context HWND => _int_
+        //
+        // Get reference to UI element pattern. By default, the current context is used as source.
+        // A name path relative to the current context allows using a child element as source.
+        //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
+        //
+        // Get reference to UI element Invoke pattern and immediately call the Invoke() method.
+        //# ui pattern Invoke [ => _string_ [, _string_, ... ] ]
+        //
+        // Get reference to UI element Toggle pattern and immediately call the Toggle() method.
+        //# ui pattern Toggle [ => _string_ [, _string_, ... ] ]
+        Ui,
+
         // Close Visual Studio
         //# quit
         Quit
