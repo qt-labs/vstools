@@ -80,14 +80,20 @@
   <PropertyGroup Condition="'$(QtBuild_Static_Vs2017)'==''">
     <QtBuild_Static_Vs2017>..\..\..\build\qt5-x86-vs2017-static</QtBuild_Static_Vs2017>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(QtBuild_Static_Vs2019)'==''">
+    <QtBuild_Static_Vs2019>..\..\..\build\qt5-x86-vs2019-static</QtBuild_Static_Vs2019>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0'">
     <QtBuild>$(QtBuild_Static_Vs2013)</QtBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='14.0'">
     <QtBuild>$(QtBuild_Static_Vs2015)</QtBuild>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0' OR '$(VisualStudioVersion)'=='16.0'">
+  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
     <QtBuild>$(QtBuild_Static_Vs2017)</QtBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <QtBuild>$(QtBuild_Static_Vs2019)</QtBuild>
   </PropertyGroup>
   <PropertyGroup>
     <QtBuild>$([System.IO.Path]::Combine($(ProjectDir),$(QtBuild)))</QtBuild>
