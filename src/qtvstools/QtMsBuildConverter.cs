@@ -131,6 +131,8 @@ namespace QtVsTools
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok)
+                ok = xmlProject.UpdateProjectFormatVersion();
+            if (ok)
                 ok = xmlProject.Save();
             return ok;
         }

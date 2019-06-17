@@ -231,6 +231,9 @@ namespace QtVsTools
                 return;
 
             var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+            var isQtProject = HelperFunctions.IsQtProject(project);
+            var isQMakeProject = HelperFunctions.IsQMakeProject(project);
+            var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
 
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
@@ -249,9 +252,9 @@ namespace QtVsTools
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if (project != null) {
-                        if (HelperFunctions.IsQtProject(project))
+                        if (isQtProject)
                             status |= vsCommandStatus.vsCommandStatusEnabled;
-                        else if (HelperFunctions.IsQMakeProject(project))
+                        else if (isQMakeProject)
                             status |= vsCommandStatus.vsCommandStatusInvisible;
                     }
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
@@ -262,9 +265,9 @@ namespace QtVsTools
             case CommandId.ChangeProjectQtVersionProjectId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    if ((project == null) || HelperFunctions.IsQtProject(project))
+                    if ((project == null) || isQtProject)
                         status |= vsCommandStatus.vsCommandStatusInvisible;
-                    else if (HelperFunctions.IsQMakeProject(project))
+                    else if (isQMakeProject)
                         status |= vsCommandStatus.vsCommandStatusEnabled;
                     else
                         status |= vsCommandStatus.vsCommandStatusInvisible;
@@ -274,12 +277,10 @@ namespace QtVsTools
                 break;
             case CommandId.ProjectConvertToQtMsBuild:
                 {
-                    if (project == null
-                        || (!HelperFunctions.IsQtProject(project)
-                        && !HelperFunctions.IsQMakeProject(project))) {
+                    if (project == null || (!isQtProject && !isQMakeProject)) {
                         command.Visible = false;
                         command.Enabled = false;
-                    } else if (QtProject.IsQtMsBuildEnabled(project)) {
+                    } else if (isQtMsBuildEnabled) {
                         command.Visible = true;
                         command.Enabled = false;
                     } else {
@@ -290,15 +291,23 @@ namespace QtVsTools
                 break;
             }
 
-            if (project != null) {
+            if (project != null && isQtProject) {
                 int projectVersion = QtProject.GetFormatVersion(project);
                 int minProjectVersion = Resources.qtMinFormatVersion_Settings;
                 switch ((CommandId)command.CommandID.ID) {
                     case CommandId.QtProjectSettingsProjectId:
                     case CommandId.ChangeProjectQtVersionProjectId:
-                    case CommandId.ProjectConvertToQtMsBuild:
                         if (projectVersion >= minProjectVersion)
                             command.Visible = command.Enabled = false;
+                        break;
+                    case CommandId.ProjectConvertToQtMsBuild:
+                        if (projectVersion >= minProjectVersion) {
+                            command.Visible = command.Enabled = false;
+                        } else {
+                            command.Visible = command.Enabled = true;
+                            if (isQtMsBuildEnabled)
+                                command.Text = "Upgrade to latest Qt project format version";
+                        }
                         break;
                 }
             }

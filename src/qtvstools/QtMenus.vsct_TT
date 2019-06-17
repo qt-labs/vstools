@@ -437,6 +437,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>TextChanges</CommandFlag>
                 <Strings>
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>

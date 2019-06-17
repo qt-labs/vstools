@@ -229,6 +229,9 @@ namespace QtProjectLib
                     ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
             }
 #endif
+            if (ok)
+                ok = xmlProject.UpdateProjectFormatVersion();
+
             if (!ok) {
                 Messages.PaneMessage(dteObject,
                     SR.GetString("ImportProject_CannotConvertProject", projectFile.Name));

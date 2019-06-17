@@ -43,6 +43,8 @@ using EnvDTE;
 
 namespace QtProjectLib
 {
+    using static QtVsTools.SyntaxAnalysis.RegExpr;
+
     public class MsBuildProject
     {
         class MsBuildXmlFile
@@ -200,6 +202,291 @@ namespace QtProjectLib
 
             this[Files.Project].isDirty = true;
             Commit();
+            return true;
+        }
+
+        /// <summary>
+        /// Parser for project configuration conditional expressions of the type:
+        ///
+        ///     '$(Configuration)|$(Platform)'=='_TOKEN_|_TOKEN_'
+        ///
+        /// </summary>
+        Parser _ConfigCondition;
+        Parser ConfigCondition
+        {
+            get
+            {
+                if (_ConfigCondition == null) {
+                    var config = new Token("Configuration", CharWord.Repeat());
+                    var platform = new Token("Platform", CharWord.Repeat());
+                    var expr = "'$(Configuration)|$(Platform)'=='" & config & "|" & platform & "'";
+                    try {
+                        _ConfigCondition = expr.Render();
+                    } catch { }
+                }
+                return _ConfigCondition;
+            }
+        }
+
+        const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
+        readonly StringComparer IGNORE_CASE_ = StringComparer.InvariantCultureIgnoreCase;
+
+        /// <summary>
+        /// Converts project format version to the latest version:
+        ///  * Set latest project version;
+        ///  * Add QtSettings property group;
+        ///  * Set QtInstall property;
+        ///  * Remove hard-coded macros, include paths and libs related to Qt modules.
+        ///  * Set QtModules property;
+        /// </summary>
+        /// <returns>true if successful</returns>
+        public bool UpdateProjectFormatVersion()
+        {
+            if (ConfigCondition == null)
+                return false;
+            var conditionPrefix = "'$(Configuration)|$(Platform)'==";
+
+            // Get default Qt dir
+            string defaultQtDir = null;
+            var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
+            var defaultVersion = QtVersionManager.The().GetVersionInfo(defaultVersionName);
+            if (defaultVersion != null)
+                defaultQtDir = defaultVersion.qtDir;
+
+            // Get project global properties
+            var globals = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(x => (string)x.Attribute("Label") == "Globals")
+                .FirstOrDefault();
+            if (globals == null)
+                return false;
+
+            // Set Qt project format version
+            var projKeyword = globals.Element(ns + "Keyword");
+            if (projKeyword == null)
+                return false;
+            projKeyword.SetValue(string.Format("QtVS_v{0}", Resources.qtProjectFormatVersion));
+
+            // Find import of qt.props
+            var qtPropsImport = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ImportGroup")
+                .Elements(ns + "Import")
+                .Where(x => (string)x.Attribute("Project") == @"$(QtMsBuild)\qt.props")
+                .FirstOrDefault();
+            if (qtPropsImport == null)
+                return false;
+
+            // Get project configurations
+            var configs = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemGroup")
+                .Elements(ns + "ProjectConfiguration");
+
+            // Create QtSettings property group immediately after import of qt.props
+            foreach (var config in configs) {
+                qtPropsImport.Parent.AddAfterSelf(
+                    new XElement(ns + "PropertyGroup",
+                        new XAttribute("Label", "QtSettings"),
+                        new XAttribute("Condition",
+                            string.Format("'$(Configuration)|$(Platform)'=='{0}'",
+                            (string)config.Attribute("Include")))));
+            }
+
+            // Get project user properties (old format)
+            var userProps = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ProjectExtensions")
+                .Elements(ns + "VisualStudio")
+                .Elements(ns + "UserProperties")
+                .FirstOrDefault();
+            if (userProps == null)
+                return false;
+
+            // Copy Qt build reference to QtInstall project property
+            this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelConfiguration)
+                .ToList()
+                .ForEach(config =>
+                {
+                    string platform = null;
+                    try {
+                        platform = ConfigCondition
+                            .Parse((string)config.Attribute("Condition"))
+                            .GetValues<string>("Platform")
+                            .FirstOrDefault();
+                    } catch { }
+
+                    if (!string.IsNullOrEmpty(platform)) {
+                        var qtInstallName = string.Format("Qt5Version_x0020_{0}", platform);
+                        var qtInstallValue = (string)userProps.Attribute(qtInstallName);
+                        if (!string.IsNullOrEmpty(qtInstallValue))
+                            config.Add(new XElement(ns + "QtInstall", qtInstallValue));
+                    }
+                });
+
+            // Get C++ compiler properties
+            var propsCl = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Where(x => ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
+                .Elements(ns + "ClCompile")
+                .Select(x => new
+                {
+                    Self = x,
+                    Config = ((string)x.Parent.Attribute("Condition"))
+                        .Substring(conditionPrefix.Length),
+                });
+
+            // Get C++ compiler include directory properties
+            var propsClIncludePaths = propsCl
+                .Select(x => new
+                {
+                    Self = x.Self.Element(ns + "AdditionalIncludeDirectories"),
+                    x.Config
+                })
+                .SelectMany(x => ((string)x.Self).Split(';')
+                    .Select(y => new { x.Config, x.Self, Value = y }));
+
+            // Get C++ compiler macro properties
+            var propsClDefines = propsCl
+                .Select(x => new
+                {
+                    x.Config,
+                    Self = x.Self.Element(ns + "PreprocessorDefinitions")
+                })
+                .SelectMany(x => ((string)x.Self).Split(';')
+                    .Select(y => new { x.Config, x.Self, Value = y }));
+
+            // Get linker properties
+            var propsLink = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Where(x => ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
+                .Elements(ns + "Link")
+                .Select(x => new
+                {
+                    Self = x,
+                    Config = ((string)x.Parent.Attribute("Condition"))
+                        .Substring(conditionPrefix.Length),
+                });
+
+            // Get linker library properties
+            var propsLinkLibs = propsLink
+                .Select(x => new
+                {
+                    x.Config,
+                    Self = x.Self.Element(ns + "AdditionalDependencies")
+                })
+                .SelectMany(x => ((string)x.Self).Split(';')
+                    .Select(y => new { x.Config, x.Self, Value = y }));
+
+            // Extract references to link libraries, Release configuration only
+            var propsLinkLibsRelease = propsLinkLibs
+                .Where(x => x.Config.StartsWith("'Release|"));
+            if (!propsLinkLibsRelease.Any())
+                return false;
+
+            // Qt module names, to copy to QtModules property
+            var moduleNames = new HashSet<string>();
+
+            // Qt module macros, to remove from compiler macros property
+            var moduleDefines = new HashSet<string>();
+
+            // Qt module includes, to remove from compiler include directories property
+            var moduleIncludePaths = new HashSet<string>();
+
+            // Qt module link libraries, to remove from liker dependencies property
+            var moduleLibs = new HashSet<string>();
+
+            // Go through all known Qt modules and check which ones are currently being used
+            foreach (var module in QtModules.Instance.GetAvailableModuleInformation()) {
+                var libPrefix = module.LibraryPrefix;
+                if (libPrefix.StartsWith("Qt", StringComparison.Ordinal))
+                    libPrefix = "Qt5" + libPrefix.Substring(2);
+                var libRelease = libPrefix + ".lib";
+                var libDebug = libPrefix + "d.lib";
+
+                // Check if module is used ::= module lib is present in release link dependencies
+                var isModuleUsed = propsLinkLibsRelease.Where(x => x.Value
+                    .EndsWith(libRelease, IGNORE_CASE))
+                    .Any();
+
+                if (isModuleUsed) {
+
+                    // Qt module names, to copy to QtModules property
+                    if (!string.IsNullOrEmpty(module.proVarQT))
+                        moduleNames.UnionWith(module.proVarQT.Split(' '));
+
+                    // Qt module macros, to remove from compiler macros property
+                    moduleDefines.UnionWith(module.Defines);
+
+                    // Qt module includes, to remove from compiler include directories property
+                    moduleIncludePaths.UnionWith(
+                        module.IncludePath.Select(x => Path.GetFileName(x)));
+
+                    // Qt module link libraries, to remove from liker dependencies property
+                    moduleLibs.UnionWith(
+                        module.AdditionalLibraries.Select(x => Path.GetFileName(x)));
+                    moduleLibs.UnionWith(
+                        module.AdditionalLibrariesDebug.Select(x => Path.GetFileName(x)));
+                    moduleLibs.Add(libRelease);
+                    moduleLibs.Add(libDebug);
+                }
+            }
+
+            // Remove Qt module macros from compiler properties
+            propsClDefines.GroupBy(x => x.Self).Select(x => new
+                {
+                    Tag = x.Key,
+                    Value = string.Join(";", x.Select(y => y.Value)
+                        .Where(y => !moduleDefines.Contains(y)))
+                })
+                .ToList()
+                .ForEach(x => x.Tag.SetValue(x.Value));
+
+            // Remove Qt module include paths from compiler properties
+            propsClIncludePaths.GroupBy(x => x.Self).Select(x => new
+                {
+                    Tag = x.Key,
+                    Value = string.Join(";", x.Select(y => y.Value).Where(y =>
+                        // Exclude include paths of Qt modules
+                        !moduleIncludePaths.Contains(Path.GetFileName(y), IGNORE_CASE_)
+                        || (
+                            // Exclude paths rooted on $(QTDIR)
+                            !y.StartsWith("$(QTDIR)", IGNORE_CASE)
+                            && (
+                                // Exclude paths rooted on the default Qt dir
+                                string.IsNullOrEmpty(defaultQtDir)
+                                || !y.StartsWith(defaultQtDir, IGNORE_CASE)
+                            )
+                        )
+                        ))
+                })
+                .ToList()
+                .ForEach(x => x.Tag.SetValue(x.Value));
+
+            // Remove Qt module libraries from linker properties
+            propsLinkLibs.GroupBy(x => x.Self).Select(x => new
+                {
+                    Tag = x.Key,
+                    Value = string.Join(";", x.Select(y => y.Value)
+                        .Where(y => !moduleLibs.Contains(Path.GetFileName(y), IGNORE_CASE_)))
+                })
+                .ToList()
+                .ForEach(x => x.Tag.SetValue(x.Value));
+
+            // Add Qt module names to QtModules project property
+            this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelQtSettings)
+                .ToList()
+                .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
+
             return true;
         }
 
