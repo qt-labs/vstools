@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2018 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Defines the fields included in the rcc property page, as well as any
+// other metadata associated to QtRcc items
+// -->
+<ProjectSchemaDefinitions
+  xmlns="http://schemas.microsoft.com/build/2009/properties"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="QtRule40_Rcc"
+    OverrideMode="Extend"
+    PageTemplate="tool"
+    DisplayName="Qt Resource Compiler"
+    Order="9">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        ItemType="QtRcc" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category
+        Name="QMLCache">
+        <Category.DisplayName>
+          <sys:String>Qt Quick Compiler</sys:String>
+        </Category.DisplayName>
+      </Category>
+    </Rule.Categories>
+    <BoolProperty
+      Name="QmlCacheGenerate"
+      Category="QMLCache"
+      DisplayName="Enable Qt Quick Compiler"
+      Description="Enable or disable ahead-of-time compilation using the Qt Quick Compiler." />
+    <!--
+    // QML cache generation -->
+    <StringProperty Name="QMLCacheHeader_Generation" Category="QMLCache" ReadOnly="true"
+      DisplayName="########## QML Cache Generation ##############################"/>
+    <StringProperty
+      Name="QmlCacheGenMessage"
+      Category="QMLCache"
+      DisplayName="Execution Description of QML cache generation"
+      IncludeInCommandLine="False"/>
+    <StringProperty
+      Name="QmlCacheOutputFile"
+      Category="QMLCache"
+      DisplayName="Cache File"
+      Description=
+"Specifies the full path of the output cache files. Use %&lt;metadata&gt; to reference QML file
+metadata (e.g. %&lt;Filename&gt;)." />
+    <!--
+    // QRC filtering -->
+    <StringProperty Name="QMLCacheHeader_Filtering" Category="QMLCache" ReadOnly="true"
+      DisplayName="########## QRC Filtering ##############################"/>
+    <StringProperty
+      Name="QmlCacheFilterMessage"
+      Category="QMLCache"
+      DisplayName="Execution Description of QRC filtering"
+      IncludeInCommandLine="False"/>
+    <StringProperty
+      Name="QmlCacheFilteredFile"
+      Category="QMLCache"
+      DisplayName="Filtered Resource File"
+      Description=
+"Specifies the full path of the resource file copy with QML files filtered out." />
+    <StringProperty
+      Name="QmlCacheFilteredOutputFile"
+      Category="QMLCache"
+      DisplayName="Filtered Resource File Output"
+      Description=
+"Specifies the full path of the output file for the processing of the filtered resource file." />
+    <StringProperty
+      Name="QmlCacheFilteredInitFuncName"
+      Category="QMLCache"
+      DisplayName="Filtered Resource File Initialization Function"
+      Description=
+"Create an external initialization function with &lt;name&gt;. (--name &lt;name&gt;)" />
+    <!--
+    // QML cache loader generation -->
+    <StringProperty Name="QMLCacheHeader_Loader" Category="QMLCache" ReadOnly="true"
+      DisplayName="########## QML Cache Loader ##############################"/>
+    <StringProperty
+      Name="QmlCacheLoaderMessage"
+      Category="QMLCache"
+      DisplayName="Execution Description of QML cache loader generation"
+      IncludeInCommandLine="False"/>
+    <StringProperty
+      Name="QmlCacheLoaderFile"
+      Category="QMLCache"
+      DisplayName="Cache Loader Source File"
+      Description="Specifies the full path of the QML cache loader source file." />
+  </Rule>
+</ProjectSchemaDefinitions>

@@ -37,100 +37,24 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // QtMoc
+  // Read subfolder dependencies (qt_import.props)
   // -->
-  <ItemDefinitionGroup>
-    <QtMoc>
-      <ExecutionDescription>Moc%27ing %(Identity)...</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
-      <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
-      <DynamicSource>output</DynamicSource>
-      <ParallelProcess>true</ParallelProcess>
-      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
-      <Outputs>%(OutputFile)</Outputs>
-    </QtMoc>
-  </ItemDefinitionGroup>
+  <PropertyGroup>
+    <SubFolder>$([System.IO.Directory]::GetDirectories('$(MSBuildThisFileDirectory)'))</SubFolder>
+    <SubFolderImports Condition="'$(SubFolder)' != ''"
+      >$([System.String]::Join(
+        '\qt_import.props;',
+        $(SubFolder.Split(';'))))\qt_import.props</SubFolderImports>
+    <QtImports>$(SubFolderImports.Split(';'))</QtImports>
+    <SubFolder/>
+    <SubFolderImports/>
+  </PropertyGroup>
+  <Import Project="$(QtImports)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // QtRcc
+  // Import subfolder props
   // -->
-  <ItemDefinitionGroup>
-    <QtRcc>
-      <ExecutionDescription>Rcc%27ing %(Identity)...</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
-      <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
-      <InitFuncName>%(Filename)</InitFuncName>
-      <Compression>default</Compression>
-      <DynamicSource>output</DynamicSource>
-      <ParallelProcess>true</ParallelProcess>
-      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
-      <Outputs>%(OutputFile)</Outputs>
+  <Import Project="$(QtMsBuildProps)"/>
 
-      <!--
-      /////////////////////////////////////////////////////////////////////////////////////////////
-      // QML Cache Generation
-      // -->
-      <QmlCacheGenerate>false</QmlCacheGenerate>
-      <!--
-      // QML cache generation -->
-      <QmlCacheGenMessage
-        ><![CDATA[Qt Quick Compiler: compiling %<Identity> ahead of time]]></QmlCacheGenMessage>
-      <QmlCacheOutputFile
-        ><![CDATA[$(ProjectDir)GeneratedFiles\%<Filename>_%<Suffix>.cpp]]></QmlCacheOutputFile>
-      <!--
-      // QRC filtering -->
-      <QmlCacheFilterMessage
-        >Qt Quick Compiler: filtering %(Identity)...</QmlCacheFilterMessage>
-      <QmlCacheFilteredFile
-        >$(ProjectDir)GeneratedFiles\%(Filename)_qmlcache.qrc</QmlCacheFilteredFile>
-      <QmlCacheFilteredOutputFile
-        >$(ProjectDir)GeneratedFiles\qrc_%(Filename)_qmlcache.cpp</QmlCacheFilteredOutputFile>
-      <QmlCacheFilteredInitFuncName
-        >%(Filename)_qmlcache</QmlCacheFilteredInitFuncName>
-      <!--
-      // QML cache loader generation -->
-      <QmlCacheLoaderMessage
-        >Qt Quick Compiler: generating cache loader...</QmlCacheLoaderMessage>
-      <QmlCacheLoaderFile
-        >$(ProjectDir)GeneratedFiles\qmlcache_loader.cpp</QmlCacheLoaderFile>
-    </QtRcc>
-  </ItemDefinitionGroup>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // QtUic
-  // -->
-  <ItemDefinitionGroup>
-    <QtUic>
-      <ExecutionDescription>Uic%27ing %(Identity)...</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
-      <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\ui_%(Filename).h</OutputFile>
-      <ParallelProcess>true</ParallelProcess>
-      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
-      <Outputs>%(OutputFile)</Outputs>
-    </QtUic>
-  </ItemDefinitionGroup>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // QtRepc
-  // -->
-  <ItemDefinitionGroup>
-    <QtRepc>
-      <ExecutionDescription>repc: %(Identity)...</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
-      <InputFile>%(FullPath)</InputFile>
-      <OutputFileType>replica</OutputFileType>
-      <OutputFile><![CDATA[$(IntDir)\repc\rep_%(Filename)_%<OutputFileType>.h]]></OutputFile>
-      <InputFileType>rep</InputFileType>
-      <DynamicSource>moc_cpp</DynamicSource>
-      <ParallelProcess>true</ParallelProcess>
-      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
-      <Outputs>%(OutputFile)</Outputs>
-    </QtRepc>
-  </ItemDefinitionGroup>
 </Project>

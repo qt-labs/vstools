@@ -39,7 +39,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Rule
-    Name="QtRcc"
+    Name="QtRule40_Rcc"
     PageTemplate="tool"
     DisplayName="Qt Resource Compiler"
     Order="9">
@@ -53,17 +53,6 @@
         Name="General">
         <Category.DisplayName>
           <sys:String>rcc.exe</sys:String>
-        </Category.DisplayName>
-      </Category>
-
-      <!--
-      /////////////////////////////////////////////////////////////////////////////////////////////
-      // QML Cache Generation
-      // -->
-      <Category
-        Name="QMLCache">
-        <Category.DisplayName>
-          <sys:String>Qt Quick Compiler</sys:String>
         </Category.DisplayName>
       </Category>
     </Rule.Categories>
@@ -319,67 +308,6 @@
       Name="ParallelProcess"
       DisplayName="Parallel Process"
       Description="Run tool in parallel process."/>
-
-    <!--
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // QML Cache Generation
-    // -->
-    <BoolProperty
-      Name="QmlCacheGenerate"
-      Category="QMLCache"
-      DisplayName="Enable Qt Quick Compiler"
-      Description="Enable or disable ahead-of-time compilation using the Qt Quick Compiler." />
-    <!--
-    // QML cache generation -->
-    <StringProperty
-      Name="QmlCacheGenMessage"
-      Category="QMLCache"
-      DisplayName="Execution Description of QML cache generation"
-      IncludeInCommandLine="False"/>
-    <StringProperty
-      Name="QmlCacheOutputFile"
-      Category="QMLCache"
-      DisplayName="Cache File"
-      Description=
-"Specifies the full path of the output cache files. Use %&lt;metadata&gt; to reference QML file
-metadata (e.g. %&lt;Filename&gt;)." />
-    <!--
-    // QRC filtering -->
-    <StringProperty
-      Name="QmlCacheFilterMessage"
-      Category="QMLCache"
-      DisplayName="Execution Description of QRC filtering"
-      IncludeInCommandLine="False"/>
-    <StringProperty
-      Name="QmlCacheFilteredFile"
-      Category="QMLCache"
-      DisplayName="Filtered Resource File"
-      Description=
-"Specifies the full path of the resource file copy with QML files filtered out." />
-    <StringProperty
-      Name="QmlCacheFilteredOutputFile"
-      Category="QMLCache"
-      DisplayName="Filtered Resource File Output"
-      Description=
-"Specifies the full path of the output file for the processing of the filtered resource file." />
-    <StringProperty
-      Name="QmlCacheFilteredInitFuncName"
-      Category="QMLCache"
-      DisplayName="Filtered Resource File Initialization Function"
-      Description=
-"Create an external initialization function with &lt;name&gt;. (--name &lt;name&gt;)" />
-    <!--
-    // QML cache loader generation -->
-    <StringProperty
-      Name="QmlCacheLoaderMessage"
-      Category="QMLCache"
-      DisplayName="Execution Description of QML cache loader generation"
-      IncludeInCommandLine="False"/>
-    <StringProperty
-      Name="QmlCacheLoaderFile"
-      Category="QMLCache"
-      DisplayName="Cache Loader Source File"
-      Description="Specifies the full path of the QML cache loader source file." />
   </Rule>
   <ItemType
     Name="QtRcc"

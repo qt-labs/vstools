@@ -2,7 +2,7 @@
 <!--
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -31,28 +31,28 @@
 
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Defines the fields included in the uic property page, as well as any
-// other metadata associated to QtUic items
+// Defines the fields included in the repc property page, as well as any
+// other metadata associated to QtRepc items
 // -->
 <ProjectSchemaDefinitions
   xmlns="http://schemas.microsoft.com/build/2009/properties"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Rule
-    Name="QtUic"
+    Name="QtRule60_Repc"
     PageTemplate="tool"
-    DisplayName="Qt User Interface Compiler"
+    DisplayName="Qt Remote Objects Compiler"
     Order="9">
     <Rule.DataSource>
       <DataSource
         Persistence="ProjectFile"
-        ItemType="QtUic" />
+        ItemType="QtRepc" />
     </Rule.DataSource>
     <Rule.Categories>
       <Category
         Name="General">
         <Category.DisplayName>
-          <sys:String>uic.exe</sys:String>
+          <sys:String>repc.exe</sys:String>
         </Category.DisplayName>
       </Category>
     </Rule.Categories>
@@ -64,7 +64,7 @@
       <StringListProperty.DataSource>
         <DataSource
            Persistence="ProjectFile"
-           ItemType="QtUic"
+           ItemType="QtRepc"
            SourceType="Item" />
       </StringListProperty.DataSource>
     </StringListProperty>
@@ -76,73 +76,68 @@
       Name="QTDIR"
       DisplayName="Qt Directory"
       Description="Path to installation of Qt."/>
+    <EnumProperty
+      Name="InputFileType"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      DisplayName="Input File Type">
+      <EnumValue
+        Name="rep"
+        DisplayName="Replicant template"/>
+      <EnumValue
+        Name="src"
+        DisplayName="C++ QObject derived classes"/>
+    </EnumProperty>
     <StringProperty
       Name="InputFile"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
       DisplayName="Input File"
-      Description="Specifies the full path of the input file. (&lt;file&gt;)"
-      Switch="&quot;[value]&quot;" />
+      Description="Input header/rep file to read from. ([header-file/rep-file])" />
+    <EnumProperty
+      Name="OutputFileType"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      DisplayName="Output File Type">
+      <EnumValue
+        Name="source"
+        DisplayName="source (Source header)"/>
+      <EnumValue
+        Name="replica"
+        DisplayName="replica (Replica header)"/>
+      <EnumValue
+        Name="merged"
+        DisplayName="merged (Combined replica/source)"/>
+      <EnumValue
+        Name="rep"
+        DisplayName="rep (Replicant template)"/>
+    </EnumProperty>
     <StringProperty
       Name="OutputFile"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
       DisplayName="Output File"
-      Description="Specifies the full path of the output file. (-o &lt;file&gt;)"
-      Switch="-o &quot;[value]&quot;" />
+      Description="Output header/rep file to write to. ([rep-file/header-file])" />
+    <StringListProperty
+      Name="IncludePath"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      DisplayName="Include Path"
+      Description=
+"Add &lt;dir&gt; to the include path for header files. This parameter is needed only if the input
+file type is src (.h file). Separate with semicolons if more than one. (-I&lt;dir&gt;)"/>
     <BoolProperty
-      Name="DisplayDependencies"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="Display Dependencies"
-      Description="Display the dependencies. (--dependencies)"
-      Switch="--dependencies"/>
+      Name="AlwaysClass"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      DisplayName="Always Output Class Type"
+      Description="Always output 'class' type for .rep files and never 'POD'. (-c)"/>
     <BoolProperty
-      Name="NoProtection"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="No Protection"
-      Description="Disable header protection. (--no-protection)"
-      Switch="--no-protection"/>
-    <BoolProperty
-      Name="NoImplicitIncludes"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="No Implicit Includes"
-      Description="Disable generation of #include-directives. (--no-implicit-includes)"
-      Switch="--no-implicit-includes"/>
-    <StringProperty
-      Name="Postfix"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="Postfix"
-      Description="&lt;postfix&gt; to add to all generated classnames. (--postfix &lt;postfix&gt;)"
-      Switch="--postfix [value]"/>
-    <StringProperty
-      Name="Translate"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="Translate"
-      Description="Use &lt;function&gt; for i18n. (--tr &lt;function&gt;)"
-      Switch="--tr [value]" />
-    <StringProperty
-      Name="Include"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="Include"
-      Description="Add #include &lt;file&gt; to the output. (--include &lt;file&gt;)"
-      Switch="--include &quot;[value]&quot;" />
-    <StringProperty
-      Name="Generator"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="Generator"
-      Description="Select generator. (-g &lt;java|cpp&gt;)"
-      Switch="-g [value]" />
-    <BoolProperty
-      Name="IdBased"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
-      DisplayName="ID Based"
-      Description="Use id based function for i18n. (--idbased)"
-      Switch="--idbased"/>
+      Name="PrintDebug"
+      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      DisplayName="Print Debug Information"
+      Description="Print out parsing debug information (for troubleshooting). (-d)"/>
     <StringProperty
       Name="CommandLineTemplate"
       DisplayName="Command Line"
       Visible="False"
       IncludeInCommandLine="False" />
     <DynamicEnumProperty
-      Name="QtUicBeforeTargets"
+      Name="QtRepcBeforeTargets"
       Category="General"
       EnumProvider="Targets"
       IncludeInCommandLine="False" Visible="False">
@@ -155,7 +150,7 @@
       <DynamicEnumProperty.ProviderSettings>
         <NameValuePair
           Name="Exclude"
-          Value="^QtUicBeforeTargets|^Compute" />
+          Value="^QtRepcBeforeTargets|^Compute" />
       </DynamicEnumProperty.ProviderSettings>
       <DynamicEnumProperty.DataSource>
         <DataSource
@@ -165,7 +160,7 @@
       </DynamicEnumProperty.DataSource>
     </DynamicEnumProperty>
     <DynamicEnumProperty
-      Name="QtUicAfterTargets"
+      Name="QtRepcAfterTargets"
       Category="General"
       EnumProvider="Targets"
       IncludeInCommandLine="False" Visible="False">
@@ -178,7 +173,7 @@
       <DynamicEnumProperty.ProviderSettings>
         <NameValuePair
           Name="Exclude"
-          Value="^QtUicAfterTargets|^Compute" />
+          Value="^QtRepcAfterTargets|^Compute" />
       </DynamicEnumProperty.ProviderSettings>
       <DynamicEnumProperty.DataSource>
         <DataSource
@@ -207,19 +202,36 @@
         <sys:String>Additional Options</sys:String>
       </StringProperty.Description>
     </StringProperty>
+    <EnumProperty
+      Name="DynamicSource"
+      DisplayName="Dynamic moc Source"
+      Description="Add output file to list of moc sources during build.">
+      <EnumValue
+        Name="moc_cpp"
+        DisplayName="Output moc header and moc-generated C++"
+        Description="Use output as dynamic moc source, and output of moc as dynamic C++ source."/>
+      <EnumValue
+        Name="moc"
+        DisplayName="Output moc header"
+        Description="Use output as dynamic moc source."/>
+      <EnumValue
+        Name="false"
+        DisplayName="Disable"
+        Description="Disable dynamic source."/>
+    </EnumProperty>
     <BoolProperty
       Name="ParallelProcess"
       DisplayName="Parallel Process"
       Description="Run tool in parallel process."/>
   </Rule>
   <ItemType
-    Name="QtUic"
-    DisplayName="Qt User Interface Compiler (uic)" />
+    Name="QtRepc"
+    DisplayName="Qt Remote Objects Compiler (repc)" />
   <FileExtension
-    Name="*.ui"
-    ContentType="QtUic" />
+    Name="*.rep"
+    ContentType="QtRepc" />
   <ContentType
-    Name="QtUic"
-    DisplayName="Qt User Interface Compiler (uic)"
-    ItemType="QtUic" />
+    Name="QtRepc"
+    DisplayName="Qt Remote Objects Compiler (repc)"
+    ItemType="QtRepc" />
 </ProjectSchemaDefinitions>

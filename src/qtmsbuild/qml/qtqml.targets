@@ -34,6 +34,13 @@
 // Targets required to build the QML cache (aka. qtquickcompiler)
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeQml)' != ''"
+    Project="$(QtMsBuildTargets_BeforeQml)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +50,15 @@
     <QtBuildTargets>$(QtBuildTargets);QtQmlCache</QtBuildTargets>
     <QtRccDependsOn>$(QtRccDependsOn);QtQmlCache</QtRccDependsOn>
   </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setup item type and property page
+  // -->
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)qtqml.xml" />
+  </ItemGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -588,4 +604,13 @@
     BeforeTargets="QtRcc">
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="## QtQmlCache" />
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterQml)' != ''"
+    Project="$(QtMsBuildTargets_AfterQml)"/>
+
 </Project>

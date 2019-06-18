@@ -35,6 +35,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeRcc)' != ''"
+    Project="$(QtMsBuildTargets_BeforeRcc)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +57,7 @@
   // -->
   <ItemGroup>
     <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+      Include="$(MSBuildThisFileDirectory)qtrcc.xml" />
     <AvailableItemName Include="QtRcc">
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
@@ -174,10 +181,18 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtRcc
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Main item processing
+  // Process each QRC file and produce the corresponding QtWork items
   // -->
+  <PropertyGroup>
+    <QtRccDependsOn>
+      QtPrepare;
+      QtRccPrepare;
+      QtRccSetModified;
+      $(QtRccDependsOn)
+    </QtRccDependsOn>
+  </PropertyGroup>
   <Target Name="QtRcc"
-    DependsOnTargets="QtPrepare;$(QtRccDependsOn);QtRccPrepare;QtRccSetModified"
+    DependsOnTargets="$(QtRccDependsOn)"
     BeforeTargets="$(QtRccBeforeTargets)" AfterTargets="$(QtRccAfterTargets)"
     Condition="'@(QtRcc)' != ''"
     Inputs="%(QtRcc.FullPath);%(QtRcc.AdditionalDependencies);$(MSBuildProjectFile)"
@@ -381,4 +396,13 @@
       <rcc_FormatVersion      Remove="@(rcc_FormatVersion)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterRcc)' != ''"
+    Project="$(QtMsBuildTargets_AfterRcc)"/>
+
 </Project>

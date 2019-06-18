@@ -35,6 +35,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeMoc)' != ''"
+    Project="$(QtMsBuildTargets_BeforeMoc)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +57,7 @@
   // -->
   <ItemGroup>
     <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+      Include="$(MSBuildThisFileDirectory)qtmoc.xml" />
     <AvailableItemName Include="QtMoc">
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
@@ -130,8 +137,16 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Process each source file and produce the corresponding QtWork items
   // -->
+  <PropertyGroup>
+    <QtMocDependsOn>
+      QtPrepare;
+      QtMocPrepare;
+      QtMocSetModified;
+      $(QtMocDependsOn)
+    </QtMocDependsOn>
+  </PropertyGroup>
   <Target Name="QtMoc"
-    DependsOnTargets="QtPrepare;$(QtMocDependsOn);QtMocPrepare;QtMocSetModified"
+    DependsOnTargets="$(QtMocDependsOn)"
     BeforeTargets="$(QtMocBeforeTargets)" AfterTargets="$(QtMocAfterTargets)"
     Condition="'@(QtMoc)' != ''"
     Inputs="%(QtMoc.FullPath);%(QtMoc.AdditionalDependencies);$(MSBuildProjectFile)"
@@ -376,4 +391,13 @@
       <moc_OptionsFile      Remove="@(moc_OptionsFile)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterMoc)' != ''"
+    Project="$(QtMsBuildTargets_AfterMoc)"/>
+
 </Project>

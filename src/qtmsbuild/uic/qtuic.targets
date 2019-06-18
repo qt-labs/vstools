@@ -35,6 +35,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeUic)' != ''"
+    Project="$(QtMsBuildTargets_BeforeUic)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +57,7 @@
   // -->
   <ItemGroup>
     <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+      Include="$(MSBuildThisFileDirectory)qtuic.xml" />
     <AvailableItemName Include="QtUic">
       <Targets>Qt</Targets>
     </AvailableItemName>
@@ -132,8 +139,16 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Process each source file and produce the corresponding QtWork items
   // -->
+  <PropertyGroup>
+    <QtUicDependsOn>
+      QtPrepare;
+      QtUicPrepare;
+      QtUicSetModified;
+      $(QtUicDependsOn)
+    </QtUicDependsOn>
+  </PropertyGroup>
   <Target Name="QtUic"
-    DependsOnTargets="QtPrepare;$(QtUicDependsOn);QtUicPrepare;QtUicSetModified"
+    DependsOnTargets="$(QtUicDependsOn)"
     BeforeTargets="$(QtUicBeforeTargets)" AfterTargets="$(QtUicAfterTargets)"
     Condition="'@(QtUic)' != ''"
     Inputs="%(QtUic.FullPath);%(QtUic.AdditionalDependencies);$(MSBuildProjectFile)"
@@ -276,4 +291,13 @@
       <uic_IdBased              Remove="@(uic_IdBased)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterUic)' != ''"
+    Project="$(QtMsBuildTargets_AfterUic)"/>
+
 </Project>

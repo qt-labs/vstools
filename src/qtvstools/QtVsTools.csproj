@@ -246,47 +246,6 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Content Include="..\qtmsbuild\qtmoc.targets">
-      <Link>QtMsBuild\qtmoc.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\qtmsbuild\qtqml.targets">
-      <Link>QtMsBuild\qtqml.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\qtmsbuild\qtrcc.targets">
-      <Link>QtMsBuild\qtrcc.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\qtmsbuild\qtuic.targets">
-      <Link>QtMsBuild\qtuic.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qt_tasks.targets">
-      <Link>QtMsBuild\qt_tasks.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\qtmsbuild\qt_globals.targets">
-      <Link>QtMsBuild\qt_globals.targets</Link>
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qtrepc.targets">
-      <Link>QtMsBuild\qtrepc.targets</Link>
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
@@ -321,38 +280,6 @@
       <Link>x86\SQLite.Interop.dll</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\qtmsbuild\qt.props">
-      <Link>QtMsBuild\qt.props</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\qtmsbuild\qt.targets">
-      <Link>QtMsBuild\qt.targets</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qtmoc.xml">
-      <Link>QtMsBuild\qtmoc.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qtrcc.xml">
-      <Link>QtMsBuild\qtrcc.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qtuic.xml">
-      <Link>QtMsBuild\qtuic.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qtmsbuild\qtrepc.xml">
-      <Link>QtMsBuild\qtrepc.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
     </Content>
     <Content Include="..\vsqml\bin\vsqml.dll">
       <Link>vsqml.dll</Link>
@@ -587,6 +514,172 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Version.cs</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild common property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\qt.props">
+      <Link>QtMsBuild\qt.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qt.targets">
+      <Link>QtMsBuild\qt.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_tasks.targets">
+      <Link>QtMsBuild\qt_tasks.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_globals.targets">
+      <Link>QtMsBuild\qt_globals.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild moc property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\moc\qt_import.props">
+      <Link>QtMsBuild\moc\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\moc\qtmoc.props">
+      <Link>QtMsBuild\moc\qtmoc.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\moc\qtmoc.targets">
+      <Link>QtMsBuild\moc\qtmoc.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\moc\qtmoc.xml">
+      <Link>QtMsBuild\moc\qtmoc.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild qml property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\qml\qt_import.props">
+      <Link>QtMsBuild\qml\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qml\qtqml.props">
+      <Link>QtMsBuild\qml\qtqml.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qml\qtqml.targets">
+      <Link>QtMsBuild\qml\qtqml.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qml\qtqml.xml">
+      <Link>QtMsBuild\qml\qtqml.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild rcc property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\rcc\qt_import.props">
+      <Link>QtMsBuild\rcc\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\rcc\qtrcc.props">
+      <Link>QtMsBuild\rcc\qtrcc.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\rcc\qtrcc.targets">
+      <Link>QtMsBuild\rcc\qtrcc.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\rcc\qtrcc.xml">
+      <Link>QtMsBuild\rcc\qtrcc.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild repc property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\repc\qt_import.props">
+      <Link>QtMsBuild\repc\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\repc\qtrepc.props">
+      <Link>QtMsBuild\repc\qtrepc.props</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\repc\qtrepc.targets">
+      <Link>QtMsBuild\repc\qtrepc.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\repc\qtrepc.xml">
+      <Link>QtMsBuild\repc\qtrepc.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild uic property pages and targets
+    // -->
+    <Content Include="..\qtmsbuild\uic\qt_import.props">
+      <Link>QtMsBuild\uic\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\uic\qtuic.props">
+      <Link>QtMsBuild\uic\qtuic.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\uic\qtuic.targets">
+      <Link>QtMsBuild\uic\qtuic.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\uic\qtuic.xml">
+      <Link>QtMsBuild\uic\qtuic.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <Target Name="CheckT4Templates" BeforeTargets="Build" Inputs="%(T4Template.FullPath);%(T4Template.DependsOn)" Outputs="@(T4Template->'%(OutputFile)')">
     <Error Text="T4 templates out-of-date; update by selecting &quot;Build&quot; &gt; &quot;Transform All T4 Templates&quot;" />

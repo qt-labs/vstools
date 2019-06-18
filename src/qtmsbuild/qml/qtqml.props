@@ -2,7 +2,7 @@
 <!--
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -28,23 +28,57 @@
 **
 ****************************************************************************/
 -->
-
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Qt/MSBuild
+// Qt/MSBuild QML property definitions
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Qt Common Targets
+  // Import pre-requisites
   // -->
-  <Import Project="qt_globals.targets"/>
-  <Import Project="qt_tasks.targets"/>
+  <Import
+    Condition="'$(QtMsBuildProps_BeforeQml)' != ''"
+    Project="$(QtMsBuildProps_BeforeQml)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Import subfolder targets
+  // QtRcc item template, QML cache generation properties
   // -->
-  <Import Project="$(QtMsBuildTargets)"/>
+  <ItemDefinitionGroup>
+    <QtRcc>
+      <QmlCacheGenerate>false</QmlCacheGenerate>
+      <!--
+      // QML cache generation -->
+      <QmlCacheGenMessage
+        ><![CDATA[Qt Quick Compiler: compiling %<Identity> ahead of time]]></QmlCacheGenMessage>
+      <QmlCacheOutputFile
+        ><![CDATA[$(ProjectDir)GeneratedFiles\%<Filename>_%<Suffix>.cpp]]></QmlCacheOutputFile>
+      <!--
+      // QRC filtering -->
+      <QmlCacheFilterMessage
+        >Qt Quick Compiler: filtering %(Identity)</QmlCacheFilterMessage>
+      <QmlCacheFilteredFile
+        >$(ProjectDir)GeneratedFiles\%(Filename)_qmlcache.qrc</QmlCacheFilteredFile>
+      <QmlCacheFilteredOutputFile
+        >$(ProjectDir)GeneratedFiles\qrc_%(Filename)_qmlcache.cpp</QmlCacheFilteredOutputFile>
+      <QmlCacheFilteredInitFuncName
+        >%(Filename)_qmlcache</QmlCacheFilteredInitFuncName>
+      <!--
+      // QML cache loader generation -->
+      <QmlCacheLoaderMessage
+        >Qt Quick Compiler: generating cache loader</QmlCacheLoaderMessage>
+      <QmlCacheLoaderFile
+        >$(ProjectDir)GeneratedFiles\qmlcache_loader.cpp</QmlCacheLoaderFile>
+    </QtRcc>
+  </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildProps_AfterQml)' != ''"
+    Project="$(QtMsBuildProps_AfterQml)"/>
 
 </Project>

@@ -36,6 +36,7 @@ using QtProjectLib;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -192,20 +193,24 @@ namespace QtVsTools
 
                 var QtMsBuildDefault = Path.Combine(
                     Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
-                try
-                {
-                    if (!Directory.Exists(QtMsBuildDefault))
-                        Directory.CreateDirectory(QtMsBuildDefault);
-                    var qtMsBuildFiles = Directory.GetFiles(
-                        Path.Combine(PkgInstallPath, "QtMsBuild"));
-                    foreach (var qtMsBuildFile in qtMsBuildFiles)
-                    {
-                        File.Copy(qtMsBuildFile, Path.Combine(
-                            QtMsBuildDefault, Path.GetFileName(qtMsBuildFile)), true);
+                try {
+                    if (Directory.Exists(QtMsBuildDefault))
+                        Directory.Delete(QtMsBuildDefault, recursive: true);
+
+                    var qtMsBuildDefaultUri = new Uri(QtMsBuildDefault + "\\");
+                    var qtMsBuildVsixPath = Path.Combine(PkgInstallPath, "QtMsBuild");
+                    var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + "\\");
+                    var qtMsBuildVsixFiles = Directory
+                        .GetFiles(qtMsBuildVsixPath, "*", SearchOption.AllDirectories)
+                        .Select(x => qtMsBuildVsixUri.MakeRelativeUri(new Uri(x)));
+
+                    foreach (var qtMsBuildFile in qtMsBuildVsixFiles) {
+                        var sourcePath = new Uri(qtMsBuildVsixUri, qtMsBuildFile).LocalPath;
+                        var targetPath = new Uri(qtMsBuildDefaultUri, qtMsBuildFile).LocalPath;
+                        Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                        File.Copy(sourcePath, targetPath);
                     }
-                }
-                catch
-                {
+                } catch {
                     QtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
                 }
 

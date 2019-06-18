@@ -35,6 +35,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeRepc)' != ''"
+    Project="$(QtMsBuildTargets_BeforeRepc)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +57,7 @@
   // -->
   <ItemGroup>
     <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+      Include="$(MSBuildThisFileDirectory)qtrepc.xml" />
     <AvailableItemName Include="QtRepc">
       <Targets>Qt</Targets>
     </AvailableItemName>
@@ -144,8 +151,16 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Process each source file and produce the corresponding QtWork items
   // -->
+  <PropertyGroup>
+    <QtRepcDependsOn>
+      QtPrepare;
+      QtRepcPrepare;
+      QtRepcSetModified;
+      $(QtRepcDependsOn)
+    </QtRepcDependsOn>
+  </PropertyGroup>
   <Target Name="QtRepc"
-    DependsOnTargets="QtPrepare;$(QtRepcDependsOn);QtRepcPrepare;QtRepcSetModified"
+    DependsOnTargets="$(QtRepcDependsOn)"
     BeforeTargets="$(QtRepcBeforeTargets)" AfterTargets="$(QtRepcAfterTargets)"
     Condition="'@(QtRepc)' != ''"
     Inputs="%(QtRepc.FullPath);%(QtRepc.AdditionalDependencies);$(MSBuildProjectFile)"
@@ -291,4 +306,13 @@
       <repc_PrintDebug      Remove="%(QtRepc.PrintDebug)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterRepc)' != ''"
+    Project="$(QtMsBuildTargets_AfterRepc)"/>
+
 </Project>

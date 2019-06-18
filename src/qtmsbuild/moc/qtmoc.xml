@@ -39,7 +39,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Rule
-    Name="QtMoc"
+    Name="QtRule30_Moc"
     PageTemplate="tool"
     DisplayName="Qt Meta-Object Compiler"
     Order="9">

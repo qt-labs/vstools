@@ -2,7 +2,7 @@
 <!--
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -28,23 +28,43 @@
 **
 ****************************************************************************/
 -->
-
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Qt/MSBuild
+// Qt/MSBuild moc property definitions
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Qt Common Targets
+  // Import pre-requisites
   // -->
-  <Import Project="qt_globals.targets"/>
-  <Import Project="qt_tasks.targets"/>
+  <Import
+    Condition="'$(QtMsBuildProps_BeforeMoc)' != ''"
+    Project="$(QtMsBuildProps_BeforeMoc)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Import subfolder targets
+  // QtMoc item template
   // -->
-  <Import Project="$(QtMsBuildTargets)"/>
+  <ItemDefinitionGroup>
+    <QtMoc>
+      <ExecutionDescription>moc %(Identity)</ExecutionDescription>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <InputFile>%(FullPath)</InputFile>
+      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
+      <DynamicSource>output</DynamicSource>
+      <ParallelProcess>true</ParallelProcess>
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <Outputs>%(OutputFile)</Outputs>
+      <OverrideClCompile>false</OverrideClCompile>
+    </QtMoc>
+  </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants
+  // -->
+  <Import
+    Condition="'$(QtMsBuildProps_AfterMoc)' != ''"
+    Project="$(QtMsBuildProps_AfterMoc)"/>
 
 </Project>
