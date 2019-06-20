@@ -326,6 +326,23 @@
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Update C++ sources with generated information
+    // -->
+    <PropertyGroup>
+      <QtIncludePath>@(QtIncludePath->Distinct())</QtIncludePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <ClCompile_Updated Include="@(ClCompile)">
+        <AdditionalIncludeDirectories
+>$(QtIncludePath);%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      </ClCompile_Updated>
+      <ClCompile Remove="@(ClCompile)"/>
+      <ClCompile Include="@(ClCompile_Updated)"/>
+      <ClCompile_Updated Remove="@(ClCompile_Updated)"/>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Clean-up
     // -->
     <ItemGroup>

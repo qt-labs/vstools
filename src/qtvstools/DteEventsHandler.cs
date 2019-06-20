@@ -104,6 +104,8 @@ namespace QtVsTools
                 return;
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
+                if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
+                    return;
                 var qtProject = QtProject.Create(selectedProject);
                 if (qtProject != null) {
                     qtProject.SetQtEnvironment();
@@ -120,6 +122,8 @@ namespace QtVsTools
         {
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
+                if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
+                    return;
                 var qtProject = QtProject.Create(selectedProject);
                 if (qtProject != null)
                     qtProject.SetQtEnvironment();
@@ -219,6 +223,9 @@ namespace QtVsTools
                 }
             }
             if (project == null || !HelperFunctions.IsQtProject(project))
+                return;
+
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return;
 
             var qtpro = QtProject.Create(project);

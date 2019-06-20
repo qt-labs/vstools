@@ -185,6 +185,9 @@ namespace QtProjectLib
 
         static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
         {
+            if (QtProject.GetFormatVersion(prj) >= Resources.qtMinFormatVersion_Settings)
+                return;
+
             // Get platform name from given solution configuration
             // or if not available take the active configuration
             var activePlatformName = string.Empty;
@@ -516,6 +519,9 @@ namespace QtProjectLib
         /// <returns></returns>
         public static void ToggleProjectKind(Project project)
         {
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+                return;
+
             string qtDir = null;
             var vcPro = (VCProject) project.Object;
             if (!IsQMakeProject(project))
@@ -740,6 +746,9 @@ namespace QtProjectLib
             if (!IsQMakeProject(proj))
                 return false;
 
+            if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
+                return true;
+
             var envPro = proj.Object as Project;
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
                 return false;
@@ -774,8 +783,11 @@ namespace QtProjectLib
             if (proj == null)
                 return false;
             var keyword = proj.keyword;
-            if (keyword == null || !keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
+            if (keyword == null ||
+                (!keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal)
+                && !keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))) {
                 return false;
+            }
 
             return true;
         }

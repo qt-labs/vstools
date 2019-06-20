@@ -151,6 +151,8 @@
     <Compile Include="QtItemContextMenu.cs" />
     <Compile Include="QtMainMenu.cs" />
     <Compile Include="QtMsBuildConverter.cs" />
+    <Compile Include="QtMsBuild\Components\QtModulesEditor.cs" />
+    <Compile Include="QtMsBuild\Components\QtVersionProvider.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
     <Compile Include="QtSolutionContextMenu.cs" />
     <Compile Include="QtVsToolsDefaultEditors.cs" />
@@ -460,6 +462,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.Composition">
+      <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem">
+      <HintPath>$(VsInstallRoot)\Common7\IDE\CommonExtensions\Microsoft\Project\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.102.0\lib\net45\System.Data.SQLite.dll</HintPath>
@@ -531,6 +539,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_settings.xml">
+      <Link>QtMsBuild\qt_settings.xml</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\qt_settings.targets">
+      <Link>QtMsBuild\qt_settings.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\qtmsbuild\qt_tasks.targets">
       <Link>QtMsBuild\qt_tasks.targets</Link>
@@ -682,6 +702,6 @@
     </Content>
   </ItemGroup>
   <Target Name="CheckT4Templates" BeforeTargets="Build" Inputs="%(T4Template.FullPath);%(T4Template.DependsOn)" Outputs="@(T4Template->'%(OutputFile)')">
-    <Error Text="T4 templates out-of-date; update by selecting &quot;Build&quot; &gt; &quot;Transform All T4 Templates&quot;" />
+    <Error Text="T4 template '%(T4Template.FullPath)' out-of-date; update by selecting &quot;Build&quot; &gt; &quot;Transform All T4 Templates&quot;" />
   </Target>
 </Project>

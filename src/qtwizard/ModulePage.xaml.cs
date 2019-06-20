@@ -145,12 +145,12 @@ namespace QtProjectWizard
             try {
 
                 foreach (var checkBox in ModuleCheckBoxes) {
-                    if (QtModuleInfo.IsInstalled(checkBox.Tag))
-                        checkBox.IsEnabled = true;
-                    if (Data.DefaultModules.Contains(checkBox.Tag)) {
-                        checkBox.IsEnabled = false;
-                        checkBox.IsChecked = QtModuleInfo.IsInstalled(checkBox.Tag);
-                    }
+                    checkBox.IsChecked =
+                        Data.DefaultModules.Contains(checkBox.Tag)
+                        || Data.Modules.Contains(checkBox.Tag);
+
+                    checkBox.IsEnabled =
+                        !Data.DefaultModules.Contains(checkBox.Tag);
                 }
             } catch {
                 // Ignore if we can't find out if the library is installed.

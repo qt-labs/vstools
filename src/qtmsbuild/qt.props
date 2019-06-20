@@ -37,6 +37,56 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt VS Project Format Version
+  // -->
+  <PropertyGroup>
+    <QtVsProjectVersion>0</QtVsProjectVersion>
+    <QtVsProjectMinVersion_Settings>300</QtVsProjectMinVersion_Settings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Keyword)' != ''">
+    <QtVsProjectVersion Condition="'$(Keyword)' == 'Qt4VSv1.0'">200</QtVsProjectVersion>
+    <QtVsProjectVersion Condition="$(Keyword.StartsWith('QtVS_v'))"
+      >$([System.Convert]::ToInt32($(Keyword.Substring(6))))</QtVsProjectVersion>
+
+    <QtVsProjectSettings Condition="$(QtVsProjectVersion) &gt;= $(QtVsProjectMinVersion_Settings)"
+      >true</QtVsProjectSettings>
+    <QtVsProjectSettings Condition="$(QtVsProjectVersion) &lt; $(QtVsProjectMinVersion_Settings)"
+      >false</QtVsProjectSettings>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Setup Qt installation path
+  // -->
+  <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <QtInstallDir Condition="Exists('$(QtInstall)')">$(QtInstall)</QtInstallDir>
+    <QtInstallRegKey Condition="'$(QtInstall)' != ''"
+      >HKEY_CURRENT_USER\Software\Digia\Versions\$(QtInstall)</QtInstallRegKey>
+    <QtInstallRegDir Condition="'$(QtInstallDir)' == '' AND '$(QtInstallRegKey)' != ''"
+      >$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))</QtInstallRegDir>
+    <QtInstallDir Condition="Exists('$(QtInstallRegDir)')">$(QtInstallRegDir)</QtInstallDir>
+    <QtInstallDir Condition="!Exists('$(QtInstallRegDir)')"
+      >ERROR: Qt install dir not found</QtInstallDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(QtInstallDir)' != ''">
+    <QtToolsPath Condition="'$(QtToolsPath)' == ''">$(QtInstallDir)\bin</QtToolsPath>
+    <QtDllPath Condition="'$(QtDllPath)' == ''">$(QtInstallDir)\bin</QtDllPath>
+    <QTDIR>$(QtInstallDir)</QTDIR>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Add Qt DLL path to debugger definitions
+  // -->
+  <PropertyGroup>
+    <LocalDebuggerEnvironment  Condition="'$(QtDllPath)' != ''"
+      >PATH=%PATH%;$(QtDllPath)&#xD;&#xA;$(LocalDebuggerEnvironment)
+    </LocalDebuggerEnvironment>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Read subfolder dependencies (qt_import.props)
   // -->
   <PropertyGroup>

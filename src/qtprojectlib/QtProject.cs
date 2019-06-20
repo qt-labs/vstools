@@ -235,10 +235,35 @@ namespace QtProjectLib
         /// <summary>
         /// Marks the specified project as a Qt project.
         /// </summary>
-        public void MarkAsQtProject(string version)
+        public void MarkAsQtProject()
         {
-            vcPro.keyword = Resources.qtProjectKeyword + version;
+            vcPro.keyword = string.Format("{0}_v{1}",
+                Resources.qtProjectKeyword, Resources.qtProjectFormatVersion);
         }
+
+        public static int GetFormatVersion(VCProject vcPro)
+        {
+            if (vcPro == null)
+                return 0;
+            if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword,
+                StringComparison.InvariantCultureIgnoreCase)) {
+                return Convert.ToInt32(vcPro.keyword.Substring(6));
+            } else if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword,
+                StringComparison.InvariantCultureIgnoreCase)) {
+                return 200;
+            } else {
+                return 0;
+            }
+        }
+
+        public static int GetFormatVersion(Project pro)
+        {
+            if (pro == null)
+                return 0;
+            return GetFormatVersion(pro.Object as VCProject);
+        }
+
+        public int FormatVersion { get { return GetFormatVersion(Project); } }
 
         public void AddDefine(string define, uint bldConf)
         {
@@ -262,11 +287,28 @@ namespace QtProjectLib
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
 
-            foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
+            foreach (VCConfiguration3 config in (IVCCollection) vcPro.Configurations) {
+
+                var info = QtModules.Instance.ModuleInformation(module);
+                if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
+                    if (!string.IsNullOrEmpty(info.proVarQT)) {
+                        var qtModulesValue = config.GetUnevaluatedPropertyValue("QtModules");
+                        var qtModules = new HashSet<string>(
+                            !string.IsNullOrEmpty(qtModulesValue)
+                                ? qtModulesValue.Split(';')
+                                : new string[] { });
+                        qtModules.UnionWith(info.proVarQT.Split(' '));
+                        config.SetPropertyValue(Resources.projLabelQtSettings, true,
+                            "QtModules", string.Join(";", qtModules));
+                    }
+                    // In V3 project format, compiler and linker options
+                    // required by modules are set by Qt/MSBuild.
+                    continue;
+                }
+
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.ModuleInformation(module);
                 if (compiler != null) {
                     foreach (var define in info.Defines)
                         compiler.AddPreprocessorDefinition(define);
@@ -473,12 +515,6 @@ namespace QtProjectLib
                 // the default value is the same... +platform now
                 config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
 
-                // add some common defines
-                compiler.SetPreprocessorDefinitions(vi.GetQMakeConfEntry("DEFINES").Replace(" ", ","));
-
-                if (!vi.IsStaticBuild())
-                    compiler.AddPreprocessorDefinition("QT_DLL");
-
                 if (linker != null) {
                     if ((type & TemplateType.ConsoleSystem) != 0)
                         linker.SubSystem = subSystemOption.subSystemConsole;
@@ -486,26 +522,15 @@ namespace QtProjectLib
                         linker.SubSystem = subSystemOption.subSystemWindows;
 
                     linker.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
-                    linker.AdditionalLibraryDirectories = "$(QTDIR)\\lib";
-                    if (vi.IsStaticBuild()) {
-                        linker.AdditionalDependencies = vi.GetQMakeConfEntry("QMAKE_LIBS_CORE");
-                        if ((type & TemplateType.GUISystem) != 0)
-                            linker.AdditionalDependencies += " " + vi.GetQMakeConfEntry("QMAKE_LIBS_GUI");
-                    }
                 } else {
                     librarian.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
-                    librarian.AdditionalLibraryDirectories = "$(QTDIR)\\lib";
                 }
-
-                if ((type & TemplateType.GUISystem) != 0)
-                    compiler.SetAdditionalIncludeDirectories(QtVSIPSettings.GetUicDirectory(envPro) + ";");
 
                 if ((type & TemplateType.PluginProject) != 0)
                     compiler.AddPreprocessorDefinition("QT_PLUGIN");
 
                 var isDebugConfiguration = false;
                 if (config.Name.StartsWith("Release", StringComparison.Ordinal)) {
-                    compiler.AddPreprocessorDefinition("QT_NO_DEBUG,NDEBUG");
                     compiler.SetDebugInformationFormat(debugOption.debugDisabled);
                     compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDLL;
                 } else if (config.Name.StartsWith("Debug", StringComparison.Ordinal)) {
@@ -514,8 +539,6 @@ namespace QtProjectLib
                     compiler.SetDebugInformationFormat(debugOption.debugEnabled);
                     compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDebugDLL;
                 }
-                compiler.AddAdditionalIncludeDirectories(
-                    ".;" + "$(QTDIR)\\include;" + QtVSIPSettings.GetMocDirectory(envPro));
 
                 compiler.SetTreatWChar_tAsBuiltInType(true);
 
@@ -570,6 +593,11 @@ namespace QtProjectLib
         /// <param name="file">file</param>
         public void AddUic4BuildStep(VCFile file)
         {
+            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+                file.ItemType = QtUic.ItemTypeName;
+                return;
+            }
+
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
 
@@ -1175,6 +1203,11 @@ namespace QtProjectLib
         /// <param name="file">file</param>
         public void AddMocStep(VCFile file)
         {
+            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+                file.ItemType = QtMoc.ItemTypeName;
+                return;
+            }
+
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
 
@@ -1387,6 +1420,11 @@ namespace QtProjectLib
 
         public void UpdateRccStep(VCFile qrcFile, RccOptions rccOpts)
         {
+            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+                qrcFile.ItemType = QtRcc.ItemTypeName;
+                return;
+            }
+
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
 
@@ -2014,10 +2052,6 @@ namespace QtProjectLib
                 // resource directory
                 var fi = new FileInfo(envPro.FullName);
                 var dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.resourceDir);
-                dfi.Create();
-
-                // generated files directory
-                dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.generatedFilesDir);
                 dfi.Create();
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotCreateResourceDir"));
@@ -3381,6 +3415,9 @@ namespace QtProjectLib
         public void SetQtEnvironment(string qtVersion, string solutionConfig, bool build = false)
         {
             if (string.IsNullOrEmpty(qtVersion))
+                return;
+
+            if (FormatVersion >= Resources.qtMinFormatVersion_Settings)
                 return;
 
             string qtDir = null;

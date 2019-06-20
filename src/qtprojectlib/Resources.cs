@@ -78,7 +78,20 @@ namespace QtProjectLib
         public const string ec_RccDir = "(RCC_DIR) Location where qrc files are compiled to.";
         public const string ec_Defines = "(DEFINES) Additional project defines.";
 
-        public const string qtProjectKeyword = "Qt4VS";
+        // Old Qt VS project tag
+        public const string qtProjectV2Keyword = "Qt4VS";
+
+        // Qt VS project tag and format version
+        public const string qtProjectKeyword = "QtVS";
+        public const int qtProjectFormatVersion = 300;
+
+        // Min. format version for Qt settings as project properties
+        public const int qtMinFormatVersion_Settings = 300;
+
+        // Project properties labels
+        public const string projLabelGlobals = "Globals";
+        public const string projLabelConfiguration = "Configuration";
+        public const string projLabelQtSettings = "QtSettings";
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
         public const string moc4Command = "$(QTDIR)\\bin\\moc.exe";

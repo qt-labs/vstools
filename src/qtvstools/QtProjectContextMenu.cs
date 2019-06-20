@@ -230,6 +230,8 @@ namespace QtVsTools
             if (command == null)
                 return;
 
+            var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:
@@ -246,7 +248,6 @@ namespace QtVsTools
             case CommandId.ProjectAddNewQtClassProjectId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                     if (project != null) {
                         if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
@@ -261,7 +262,6 @@ namespace QtVsTools
             case CommandId.ChangeProjectQtVersionProjectId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                     if ((project == null) || HelperFunctions.IsQtProject(project))
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     else if (HelperFunctions.IsQMakeProject(project))
@@ -274,7 +274,6 @@ namespace QtVsTools
                 break;
             case CommandId.ProjectConvertToQtMsBuild:
                 {
-                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
                     if (project == null
                         || (!HelperFunctions.IsQtProject(project)
                         && !HelperFunctions.IsQMakeProject(project))) {
@@ -289,6 +288,19 @@ namespace QtVsTools
                     }
                 }
                 break;
+            }
+
+            if (project != null) {
+                int projectVersion = QtProject.GetFormatVersion(project);
+                int minProjectVersion = Resources.qtMinFormatVersion_Settings;
+                switch ((CommandId)command.CommandID.ID) {
+                    case CommandId.QtProjectSettingsProjectId:
+                    case CommandId.ChangeProjectQtVersionProjectId:
+                    case CommandId.ProjectConvertToQtMsBuild:
+                        if (projectVersion >= minProjectVersion)
+                            command.Visible = command.Enabled = false;
+                        break;
+                }
             }
         }
     }

@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -293,6 +294,16 @@ namespace QtProjectLib
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings) {
+                var vcPro = project.Object as VCProject;
+                if (vcPro == null)
+                    return false;
+                foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
+                    config.SetPropertyValue(Resources.projLabelConfiguration, true,
+                        "QtInstall", version);
+                }
+                return true;
+            }
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
                 project.Globals[key] = version;
