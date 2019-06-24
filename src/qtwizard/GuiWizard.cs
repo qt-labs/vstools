@@ -235,23 +235,14 @@ namespace QtProjectWizard
         {
             var qtProject = QtProject.Create(project);
 
-            QtVSIPSettings.SaveUicDirectory(project, null);
-            QtVSIPSettings.SaveMocDirectory(project, null);
-            QtVSIPSettings.SaveMocOptions(project, null);
-            QtVSIPSettings.SaveRccDirectory(project, null);
-            QtVSIPSettings.SaveLUpdateOnBuild(project);
-            QtVSIPSettings.SaveLUpdateOptions(project, null);
-            QtVSIPSettings.SaveLReleaseOptions(project, null);
-
             var vm = QtVersionManager.The();
             var qtVersion = vm.GetDefaultVersion();
             var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
             if (vi.GetVSPlatformName() != "Win32")
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-            vm.SaveProjectQtVersion(project, qtVersion);
-
-            qtProject.MarkAsQtProject("v1.0");
+            qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
+            vm.SaveProjectQtVersion(project, qtVersion);
 
             var type = TemplateType.Application | TemplateType.GUISystem;
             qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);

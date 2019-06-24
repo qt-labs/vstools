@@ -157,7 +157,7 @@ namespace QtProjectWizard
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
             vm.SaveProjectQtVersion(project, qtVersion);
 
-            qtProject.MarkAsQtProject("v1.0");
+            qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
 
             var type = TemplateType.Application | TemplateType.ConsoleSystem;
