@@ -33,6 +33,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtProjectLib.QtMsBuild;
+using QtVsTools.QtMsBuild;
 using System;
 using System.IO;
 using System.Linq;
@@ -542,8 +543,10 @@ namespace QtVsTools
         void SolutionEvents_Opened()
         {
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
-                if (HelperFunctions.IsQtProject(p))
+                if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
+                    QtVarsDesignTime.AddProject(p);
+                }
             }
         }
 

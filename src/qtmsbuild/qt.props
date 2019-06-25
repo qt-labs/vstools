@@ -105,11 +105,21 @@
         >$(QtVarsWorkDir)$(QtVarsFileName)</QtVarsWorkPath>
     <QtVarsFilePath
         >$(QtVarsOutputDir)$(QtVarsFileName)</QtVarsFilePath>
+    <QtVarsIndexPathDesignTime
+        >$(QtVarsOutputDir)$(QtVarsFileNameWithoutExt).designtime.idx</QtVarsIndexPathDesignTime>
+    <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
+          >$([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))</QtVarsDesignTime>
   </PropertyGroup>
 
   <!--// Import Qt variables (full build) -->
   <Import
+    Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(QtVarsFilePath)')"
     Project="$(QtVarsFilePath)"/>
+
+  <!--// Import Qt variables (design-time build) -->
+  <Import
+    Condition="'$(DesignTimeBuild)' == 'true' AND Exists('$(QtVarsDesignTime)')"
+    Project="$(QtVarsDesignTime)"/>
 
   <!--// Add Qt variables to compiler and linker options -->
   <ItemDefinitionGroup Condition="'$(QtVsProjectSettings)' == 'true'">

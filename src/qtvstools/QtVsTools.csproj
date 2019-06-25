@@ -153,6 +153,7 @@
     <Compile Include="QtMsBuildConverter.cs" />
     <Compile Include="QtMsBuild\Components\QtModulesEditor.cs" />
     <Compile Include="QtMsBuild\Components\QtVersionProvider.cs" />
+    <Compile Include="QtMsBuild\Components\QtVarsDesignTime.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
     <Compile Include="QtSolutionContextMenu.cs" />
     <Compile Include="QtVsToolsDefaultEditors.cs" />
@@ -462,17 +463,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.VisualStudio.Composition">
       <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Composition.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.ProjectSystem">
       <HintPath>$(VsInstallRoot)\Common7\IDE\CommonExtensions\Microsoft\Project\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
     </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.102.0\lib\net45\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="QtHelpLinkChooser.xaml">

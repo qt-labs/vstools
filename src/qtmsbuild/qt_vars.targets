@@ -35,7 +35,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <QtDependsOn>QtVars;$(QtDependsOn)</QtDependsOn>
+    <QtDependsOn Condition="'$(DesignTimeBuild)' != 'true'">QtVars;$(QtDependsOn)</QtDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <QtModuleList Include="$(QtModules)"/>
@@ -245,7 +245,7 @@ for (varName, $$list($$sorted(varNames))) {
       Condition="'$(QtVarsDebug)' == 'true'"
       Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
     <Error
-      Condition="'$(ErrorLevel)' != '0'"
+      Condition="'$(ErrorLevel)' != '0' AND '$(DesignTimeBuild)' != 'true'"
       File="$(MSBuildProjectFile)"
       Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
 
@@ -284,6 +284,24 @@ for (varName, $$list($$sorted(varNames))) {
       Condition="'$(QtVarsDebug)' != 'true'"
       Directories="$(QtVarsWorkDir)"/>
 
+    <!--// In design-time, copy generated .props to randomly named file -->
+    <PropertyGroup>
+      <QtVarsDesignTimeNew
+        Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+        >$([System.IO.Path]::Combine('$(QtVarsOutputDir)',
+          'qtvars_$([System.IO.Path]::GetRandomFileName()).designtime.props'))</QtVarsDesignTimeNew>
+    </PropertyGroup>
+    <Delete
+      Condition="'$(ErrorLevel)' == '0'
+             AND '$(DesignTimeBuild)' == 'true'"
+      Files="$([System.IO.Directory]::GetFiles('$(QtVarsOutputDir)', '*.designtime.props'))"/>
+    <Copy
+      Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+      SourceFiles="$(QtVarsFilePath)" DestinationFiles="$(QtVarsDesignTimeNew)"/>
+    <WriteLinesToFile
+      Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+      File="$(QtVarsIndexPathDesignTime)" Overwrite="true" Lines="$(QtVarsDesignTimeNew)"/>
+
     <!--// Skip remaining build -->
     <CreateProperty Value="true">
       <Output TaskParameter="ValueSetByTask" PropertyName="QtSkipWork" />
@@ -294,6 +312,7 @@ for (varName, $$list($$sorted(varNames))) {
 
     <!--// Restart build in second MSBuild instance with updated Qt variables -->
     <MSBuild
+      Condition="'$(DesignTimeBuild)' != 'true'"
       Projects="$(MSBuildProjectFullPath)"
       Targets="Build"
       Properties="RandomFileName=$([System.IO.Path]::GetRandomFileName())">
