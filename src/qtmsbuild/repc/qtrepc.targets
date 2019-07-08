@@ -58,6 +58,9 @@
   <ItemGroup>
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)qtrepc.xml" />
+    <PropertyPageSchema
+      Condition="'$(QtVsProjectClProperties)' == 'true'"
+      Include="$(MSBuildThisFileDirectory)qtrepc_cl.xml" />
     <AvailableItemName Include="QtRepc">
       <Targets>Qt</Targets>
     </AvailableItemName>
@@ -147,6 +150,14 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRepcOverrideCpp
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // -->
+  <Import Project="qtrepc_cl.targets"/>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtRepc
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Process each source file and produce the corresponding QtWork items
@@ -156,6 +167,7 @@
       QtPrepare;
       QtRepcPrepare;
       QtRepcSetModified;
+      QtRepcOverrideCpp;
       $(QtRepcDependsOn)
     </QtRepcDependsOn>
   </PropertyGroup>

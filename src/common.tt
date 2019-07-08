@@ -1,7 +1,14 @@
 <#@template hostspecific="true" language="C#" #>
 <#@assembly Name="System.Core" #>
+<#@assembly Name="System.Xml" #>
+<#@assembly Name="System.Xml.Linq" #>
 <#@import namespace="System" #>
+<#@import namespace="System.Collections.Generic" #>
 <#@import namespace="System.IO" #>
+<#@import namespace="System.Linq" #>
+<#@import namespace="System.Text" #>
+<#@import namespace="System.Xml" #>
+<#@import namespace="System.Xml.Linq" #>
 <#@assembly name="EnvDTE" #>
 <#@import namespace="EnvDTE" #>
 <#
@@ -39,8 +46,46 @@
                      VS_VERSION.StartsWith("15.") ? "2017" :
                      VS_VERSION.StartsWith("14.") ? "2015" :
                      VS_VERSION.StartsWith("12.") ? "2013" : "????";
+    string VS_EDITION = Dte.Edition;
+    string VC_TARGETS_PATH = Path.Combine(
+        Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
+        VS_VERSION.StartsWith("16.") ?
+            @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
+        VS_VERSION.StartsWith("15.") ?
+            @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
+        VS_VERSION.StartsWith("14.") ?
+            @"MSBuild\Microsoft.Cpp\v4.0\V140" :
+        VS_VERSION.StartsWith("12.") ?
+            @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
 /***************************************************************************/
     string WARNING_GENERATED_FILE = "This file was generated automatically.";
     string XML_COMMENT_BEGIN      = "<!--";
     string XML_COMMENT_END        = "-->";
+
+    var XmlLoad = new Func<string, XElement>(xmlText =>
+    {
+        XDocument xmlDoc = null;
+        using (var reader = XmlReader.Create(new StringReader(xmlText)))
+            xmlDoc = XDocument.Load(reader);
+        var xmlRoot = xmlDoc.Root;
+        xmlRoot.Descendants().ToList().ForEach(x => x.Name = x.Name.LocalName);
+        return xmlRoot;
+    });
+
+    var XmlPrint = new Func<IEnumerable<XElement>, string>(x =>
+    {
+        var xmlOut = new StringBuilder();
+        var xmlOutSettings = new XmlWriterSettings()
+        {
+            ConformanceLevel = ConformanceLevel.Fragment,
+            OmitXmlDeclaration = true,
+            Indent = true,
+        };
+        using (var xmlOutWriter = XmlWriter.Create(xmlOut, xmlOutSettings)) {
+            foreach (var y in x)
+                y.WriteTo(xmlOutWriter);
+        }
+        return xmlOut.ToString();
+    });
+
 #>

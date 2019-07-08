@@ -88,6 +88,9 @@ namespace QtProjectLib
         // Min. format version for Qt settings as project properties
         public const int qtMinFormatVersion_Settings = 300;
 
+        // Min. format version for shared compiler properties
+        public const int qtMinFormatVersion_ClProperties = 300;
+
         // Project properties labels
         public const string projLabelGlobals = "Globals";
         public const string projLabelConfiguration = "Configuration";

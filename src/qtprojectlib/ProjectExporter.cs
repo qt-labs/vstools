@@ -417,6 +417,9 @@ namespace QtProjectLib
 
         private static void AddIncludePaths(Project project, ProFileOption option, string includePaths)
         {
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_ClProperties)
+                return;
+
             if (includePaths == null)
                 return;
 
@@ -449,6 +452,9 @@ namespace QtProjectLib
 
         private static void AddLibraries(Project project, ProFileOption option, string paths, string deps)
         {
+            if (QtProject.GetFormatVersion(project) < Resources.qtMinFormatVersion_ClProperties)
+                return;
+
             var versionManager = QtVersionManager.The();
             var qtDir = versionManager.GetInstallPath(project);
             if (qtDir == null)

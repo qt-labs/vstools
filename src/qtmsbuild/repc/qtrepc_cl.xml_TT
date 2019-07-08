@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2019 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="xml" #>
+<#@include file="$(SolutionDir)\common.tt" #>
+<#@assembly Name="System.Xml" #>
+<#@assembly Name="System.Xml.Linq" #>
+<#@import namespace="System.Collections.Generic" #>
+<#@import namespace="System.Linq" #>
+<#@import namespace="System.Text" #>
+<#@import namespace="System.Xml" #>
+<#@import namespace="System.Xml.Linq" #>
+<#
+          var pathRuleCl = Path.Combine(VC_TARGETS_PATH, "1033", "cl.xml");
+          var xmlRule = XmlLoad(File.ReadAllText(pathRuleCl, Encoding.UTF8));
+          var categoryNames = xmlRule
+              .Elements("Rule.Categories")
+              .Elements("Category")
+              .Where(x => x.Attribute("Subtype") == null)
+              .ToDictionary(
+                  x => (string)x.Attribute("Name"),
+                  x => (string)x.Attribute("DisplayName"));
+#>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+
+<ProjectSchemaDefinitions
+  xmlns="http://schemas.microsoft.com/build/2009/properties"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="QtRule60_Repc"
+    OverrideMode="Extend"
+    PageTemplate="tool"
+    DisplayName="Qt Remote Objects Compiler"
+    Order="9">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        ItemType="QtRepc" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category Name="RepcCpp" DisplayName="Override C/C++"/>
+    </Rule.Categories>
+    <EnumProperty
+      Name="OverrideClCompile"
+      Category="RepcCpp"
+      DisplayName="Override C/C++ Properties"
+      Description="Define how C/C++ properties are redefined for Repc">
+      <EnumValue Name="extend" DisplayName=
+"Extend (append override definitions to C/C++ list properties; replace other properties)"/>
+      <EnumValue Name="replace" DisplayName=
+"Replace (use override definitions instead of C/C++ properties)"/>
+      <EnumValue Name="false" DisplayName=
+"Disabled (use C/C++ properties; ignore override definitions)"/>
+    </EnumProperty>
+    <StringListProperty Name="IncludePath" Switch="&quot;-I[value]&quot;" Visible="false"/>
+    <StringListProperty Name="Define" Switch="-D " Visible="false"/>
+    <StringListProperty Name="Undefine" Switch="-U[value]" Visible="false"/>
+    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+<#=
+XmlPrint(xmlRule.Elements()
+    .Where(x => x.Name.ToString().EndsWith("Property"))
+    .Where(x => (string)x.Attribute("Visible") != "false")
+    .Where(x => (string)x.Attribute("Category") != "Command Line")
+    .Where(x => !x.Descendants("DataSource").Any())
+    .GroupBy(x => (string)x.Attribute("Category"))
+    .SelectMany(y => y.Select(x =>
+    {
+        x = new XElement(x);
+        x.SetAttributeValue("Category", "RepcCpp");
+        x.SetAttributeValue("Description", "(overrides C/C++ property) "
+            + (string)x.Attribute("Description"));
+        return x;
+    })
+    .Prepend(new XElement("StringProperty",
+        new XAttribute("Name", "QtCppHeader_" + y.Key.Replace(' ', '_')),
+        new XAttribute("Category", "RepcCpp"),
+        new XAttribute("ReadOnly", "true"),
+        new XAttribute("DisplayName", string.Format("{0} {1} {2}",
+            new string('#', 10), categoryNames[y.Key], new string('#', 30)))))))
+#>
+      <#=XML_COMMENT_BEGIN#> END Generated Text -->
+  </Rule>
+</ProjectSchemaDefinitions>

@@ -42,6 +42,7 @@
   <PropertyGroup>
     <QtVsProjectVersion>0</QtVsProjectVersion>
     <QtVsProjectMinVersion_Settings>300</QtVsProjectMinVersion_Settings>
+    <QtVsProjectMinVersion_ClProperties>300</QtVsProjectMinVersion_ClProperties>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Keyword)' != ''">
@@ -53,6 +54,13 @@
       >true</QtVsProjectSettings>
     <QtVsProjectSettings Condition="$(QtVsProjectVersion) &lt; $(QtVsProjectMinVersion_Settings)"
       >false</QtVsProjectSettings>
+
+    <QtVsProjectClProperties
+      Condition="$(QtVsProjectVersion) &gt;= $(QtVsProjectMinVersion_ClProperties)"
+      >true</QtVsProjectClProperties>
+    <QtVsProjectClProperties
+      Condition="$(QtVsProjectVersion) &lt; $(QtVsProjectMinVersion_ClProperties)"
+      >false</QtVsProjectClProperties>
   </PropertyGroup>
 
   <!--

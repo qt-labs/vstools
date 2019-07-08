@@ -598,6 +598,9 @@ namespace QtVsTools
                     return;
                 if (!HelperFunctions.IsQtProject(vcPrj))
                     return;
+                // Ignore property events when using shared compiler properties
+                if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
+                    return;
 
                 if (dispid == dispId_VCCLCompilerTool_UsePrecompiledHeader
                     || dispid == dispId_VCCLCompilerTool_PrecompiledHeaderThrough
@@ -626,6 +629,9 @@ namespace QtVsTools
                 if (vcPrj == null)
                     return;
                 if (!HelperFunctions.IsQtProject(vcPrj))
+                    return;
+                // Ignore property events when using shared compiler properties
+                if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
                     return;
 
                 if (dispid == dispId_VCFileConfiguration_ExcludedFromBuild) {

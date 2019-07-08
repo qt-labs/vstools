@@ -2312,6 +2312,9 @@ namespace QtProjectLib
 
         public void AddActiveQtBuildStep(string version, string defFile = null)
         {
+            if (FormatVersion < Resources.qtMinFormatVersion_ClProperties)
+                return;
+
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
                 var idlFile = "\"$(IntDir)/" + envPro.Name + ".idl\"";
                 var tblFile = "\"$(IntDir)/" + envPro.Name + ".tlb\"";
@@ -2637,6 +2640,10 @@ namespace QtProjectLib
 
         public void RefreshMocSteps()
         {
+            // Ignore when using shared compiler properties
+            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_ClProperties)
+                return;
+
             var filesCollection = vcPro.Files as IVCCollection;
             if (filesCollection == null)
                 return;

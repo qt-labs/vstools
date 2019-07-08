@@ -91,6 +91,10 @@
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
 
+    <ItemGroup>
+      <ClCompile Include="DefaultClCompile" />
+    </ItemGroup>
+
     <ReadLinesFromFile File="$(QtLogFilePath)">
       <Output TaskParameter="Lines" ItemName="QtLogData"/>
     </ReadLinesFromFile>
@@ -352,6 +356,7 @@
       <read_log     Remove="@(read_log)"/>
       <write_log    Remove="@(write_log)"/>
       <clean_log    Remove="@(clean_log)"/>
+      <ClCompile    Remove="DefaultClCompile" />
     </ItemGroup>
   </Target>
 

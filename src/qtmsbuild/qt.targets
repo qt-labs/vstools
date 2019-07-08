@@ -45,6 +45,9 @@
     <QtVsProjectMinVersion_Settings
       Condition="'$(QtVsProjectMinVersion_Settings)' == ''"
       >0</QtVsProjectMinVersion_Settings>
+    <QtVsProjectMinVersion_ClProperties
+      Condition="'$(QtVsProjectMinVersion_ClProperties)' == ''"
+      >0</QtVsProjectMinVersion_ClProperties>
   </PropertyGroup>
 
   <!--
