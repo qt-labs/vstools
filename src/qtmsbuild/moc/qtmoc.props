@@ -48,9 +48,22 @@
   <ItemDefinitionGroup>
     <QtMoc>
       <ExecutionDescription>moc %(Identity)</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
+
+      <QTDIR Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(QTDIR)</QTDIR>
+      <QTDIR Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(QtInstallDir)</QTDIR>
+
       <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
+
+      <OutputFile Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
+
+      <QtMocDir Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(IntDir)\moc\%(RelativeDir)</QtMocDir>
+      <QtMocFileName Condition="'$(QtVsProjectSettings)' == 'true'"
+        >moc_%(Filename).cpp</QtMocFileName>
+
       <DynamicSource>output</DynamicSource>
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>

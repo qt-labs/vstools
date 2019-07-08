@@ -58,6 +58,9 @@
   <ItemGroup>
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)qtuic.xml" />
+    <PropertyPageSchema
+      Condition="'$(QtVsProjectSettings)' == 'true'"
+      Include="$(MSBuildThisFileDirectory)qtuic_settings.xml" />
     <AvailableItemName Include="QtUic">
       <Targets>Qt</Targets>
     </AvailableItemName>
@@ -65,11 +68,29 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUicInit
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Initialize default metadata
+  // -->
+  <Target Name="QtUicInit">
+    <!--// Initialize %(OutputFile) -->
+    <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+      <QtUicAux Include="@(QtUic)">
+        <OutputFile>%(QtUic.QtUicDir)\%(QtUic.QtUicFileName)</OutputFile>
+      </QtUicAux>
+      <QtUic Remove="@(QtUic)"/>
+      <QtUic Include="@(QtUicAux)"/>
+      <QtUicAux Remove="@(QtUicAux)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtUicPrepare
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare to process sources
   // -->
-  <Target Name="QtUicPrepare" DependsOnTargets="_SelectedFiles"
+  <Target Name="QtUicPrepare" DependsOnTargets="_SelectedFiles;QtUicInit"
     Inputs="%(QtUic.Identity)" Outputs="@(QtUic->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
@@ -257,7 +278,8 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtUic)">
         <WorkType>uic</WorkType>
-        <ToolPath>%(QtUic.QTDIR)\bin\uic.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\uic.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtUic.QTDIR)\bin\uic.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtUic.ExecutionDescription)</Message>
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
@@ -265,6 +287,14 @@
         <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
         <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
       </QtWork>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add uic output dir to C++ include path
+    // -->
+    <ItemGroup>
+      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtUic.OutputFile)'))"/>
     </ItemGroup>
 
     <!--

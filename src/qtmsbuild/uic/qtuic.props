@@ -49,9 +49,22 @@
   <ItemDefinitionGroup>
     <QtUic>
       <ExecutionDescription>uic %(Identity)</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
+
+      <QTDIR Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(QTDIR)</QTDIR>
+      <QTDIR Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(QtInstallDir)</QTDIR>
+
       <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\ui_%(Filename).h</OutputFile>
+
+      <OutputFile Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(ProjectDir)GeneratedFiles\$(Configuration)\ui_%(Filename).h</OutputFile>
+
+      <QtUicDir Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(IntDir)\uic\%(RelativeDir)</QtUicDir>
+      <QtUicFileName Condition="'$(QtVsProjectSettings)' == 'true'"
+        >ui_%(Filename).h</QtUicFileName>
+
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
       <Outputs>%(OutputFile)</Outputs>

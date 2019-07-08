@@ -77,6 +77,16 @@
       DisplayName="Qt Directory"
       Description="Path to installation of Qt."/>
     <StringProperty
+      Name="QtUicDir"
+      DisplayName="Output Directory"
+      Description="Specifies the path of the generated uic output directory."
+      Visible="false"/>
+    <StringProperty
+      Name="QtUicFileName"
+      DisplayName="Output File Name"
+      Description="Specifies the name of the generated uic output file."
+      Visible="false"/>
+    <StringProperty
       Name="InputFile"
       HelpUrl="http://doc.qt.io/qt-5/uic.html"
       DisplayName="Input File"

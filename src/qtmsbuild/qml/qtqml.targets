@@ -302,7 +302,10 @@
           AND '%(QtRccFilter.OtherResources)' != ''
           AND '%(QtRccFilter.IsSelected)' == 'true'">
         <WorkType>qmlcachegen_filter</WorkType>
-        <ToolPath>%(QtRccFilter.QTDIR)\bin\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'"
+          >$(QtToolsPath)\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'"
+          >%(QtRccFilter.QTDIR)\bin\qmlcachegen.exe</ToolPath>
         <Options>$(options)</Options>
         <OutputFile>$(full_path)</OutputFile>
         <Message>%(QtRccFilter.QmlCacheFilterMessage)</Message>
@@ -444,7 +447,10 @@
         Condition="'@(loader_input)' != ''
           AND $(is_selected.Contains('true'))">
         <WorkType>qmlcachengen_loader</WorkType>
-        <ToolPath>@(loader->'%(QTDIR)')\bin\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'"
+          >$(QtToolsPath)\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'"
+          >@(loader->'%(QTDIR)')\bin\qmlcachegen.exe</ToolPath>
         <Options>$(options)</Options>
         <OutputFile>@(loader->'%(QmlCacheLoaderFile)')</OutputFile>
         <Message>@(loader->'%(QmlCacheLoaderMessage)')</Message>
@@ -570,7 +576,10 @@
         Condition="'@(QtQml)' != ''
           AND '%(QtQml.IsSelected)' == 'true'">
         <WorkType>qmlcachegen</WorkType>
-        <ToolPath>%(QtQml.QTDIR)\bin\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'"
+          >$(QtToolsPath)\qmlcachegen.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'"
+          >%(QtQml.QTDIR)\bin\qmlcachegen.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtQml.Message)</Message>
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>

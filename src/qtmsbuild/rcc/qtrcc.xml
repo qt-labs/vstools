@@ -77,6 +77,16 @@
       DisplayName="Qt Directory"
       Description="Path to installation of Qt."/>
     <StringProperty
+      Name="QtRccDir"
+      DisplayName="Output Directory"
+      Description="Specifies the path of the generated rcc output directory."
+      Visible="false"/>
+    <StringProperty
+      Name="QtRccFileName"
+      DisplayName="Output File Name"
+      Description="Specifies the name of the generated rcc output file."
+      Visible="false"/>
+    <StringProperty
       Name="InputFile"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="Input File"

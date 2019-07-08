@@ -48,9 +48,22 @@
   <ItemDefinitionGroup>
     <QtRcc>
       <ExecutionDescription>rcc %(Identity)</ExecutionDescription>
-      <QTDIR>$(QTDIR)</QTDIR>
+
+      <QTDIR Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(QTDIR)</QTDIR>
+      <QTDIR Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(QtInstallDir)</QTDIR>
+
       <InputFile>%(FullPath)</InputFile>
-      <OutputFile>$(ProjectDir)GeneratedFiles\$(Configuration)\qrc_%(Filename).cpp</OutputFile>
+
+      <OutputFile Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(ProjectDir)GeneratedFiles\$(Configuration)\qrc_%(Filename).cpp</OutputFile>
+
+      <QtRccDir Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(IntDir)\rcc\%(RelativeDir)</QtRccDir>
+      <QtRccFileName Condition="'$(QtVsProjectSettings)' == 'true'"
+        >qrc_%(Filename).cpp</QtRccFileName>
+
       <InitFuncName>%(Filename)</InitFuncName>
       <Compression>default</Compression>
       <DynamicSource>output</DynamicSource>

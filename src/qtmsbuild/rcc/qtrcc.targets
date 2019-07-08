@@ -58,6 +58,9 @@
   <ItemGroup>
     <PropertyPageSchema
       Include="$(MSBuildThisFileDirectory)qtrcc.xml" />
+    <PropertyPageSchema
+      Condition="'$(QtVsProjectSettings)' == 'true'"
+      Include="$(MSBuildThisFileDirectory)qtrcc_settings.xml" />
     <AvailableItemName Include="QtRcc">
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
@@ -65,16 +68,35 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRccInit
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Initialize default metadata
+  // -->
+  <Target Name="QtRccInit">
+    <!--// Initialize %(OutputFile) -->
+    <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+      <QtRccAux Include="@(QtRcc)">
+        <OutputFile>%(QtRcc.QtRccDir)\%(QtRcc.QtRccFileName)</OutputFile>
+      </QtRccAux>
+      <QtRcc Remove="@(QtRcc)"/>
+      <QtRcc Include="@(QtRccAux)"/>
+      <QtRccAux Remove="@(QtRccAux)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtRccSetDependencies
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Add resource files as dependencies of the QRC file
   // -->
-  <Target Name="QtRccSetDependencies" DependsOnTargets="_SelectedFiles"
+  <Target Name="QtRccSetDependencies" DependsOnTargets="_SelectedFiles;QtRccInit"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <!--// Parse QRC -->
     <PropertyGroup>
-      <QtRccExeQuoted>&quot;%(QtRcc.QTDIR)\bin\rcc.exe&quot;</QtRccExeQuoted>
+      <QtRccExeQuoted Condition="'$(QtVsProjectSettings)' == 'true'">&quot;$(QtToolsPath)\rcc.exe&quot;</QtRccExeQuoted>
+      <QtRccExeQuoted Condition="'$(QtVsProjectSettings)' != 'true'">&quot;%(QtRcc.QTDIR)\bin\rcc.exe&quot;</QtRccExeQuoted>
       <QtRccQuoted>&quot;%(QtRcc.Identity)&quot;</QtRccQuoted>
       <RccListQuoted>&quot;$(IntDir)rcc_list.txt&quot;</RccListQuoted>
     </PropertyGroup>
@@ -351,7 +373,8 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtRcc)">
         <WorkType>rcc</WorkType>
-        <ToolPath>%(QtRcc.QTDIR)\bin\rcc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\rcc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtRcc.QTDIR)\bin\rcc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtRcc.ExecutionDescription)</Message>
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>

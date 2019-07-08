@@ -592,6 +592,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="..\qtmsbuild\moc\qtmoc_settings.xml">
+      <Link>QtMsBuild\moc\qtmoc_settings.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild qml property pages and targets
@@ -647,6 +653,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\qtmsbuild\rcc\qtrcc_settings.xml">
+      <Link>QtMsBuild\rcc\qtrcc_settings.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild repc property pages and targets
@@ -699,6 +711,12 @@
       <Link>QtMsBuild\uic\qtuic.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\uic\qtuic_settings.xml">
+      <Link>QtMsBuild\uic\qtuic_settings.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Target Name="CheckT4Templates" BeforeTargets="Build" Inputs="%(T4Template.FullPath);%(T4Template.DependsOn)" Outputs="@(T4Template->'%(OutputFile)')">

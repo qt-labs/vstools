@@ -267,7 +267,8 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtRepc)">
         <WorkType>repc</WorkType>
-        <ToolPath>%(QtRepc.QTDIR)\bin\repc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\repc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtRepc.QTDIR)\bin\repc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtRepc.ExecutionDescription)</Message>
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>

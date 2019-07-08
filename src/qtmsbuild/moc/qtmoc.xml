@@ -77,6 +77,16 @@
       DisplayName="Qt Directory"
       Description="Path to installation of Qt."/>
     <StringProperty
+      Name="QtMocDir"
+      DisplayName="Output Directory"
+      Description="Specifies the path of the generated moc output directory."
+      Visible="false"/>
+    <StringProperty
+      Name="QtMocFileName"
+      DisplayName="Output File Name"
+      Description="Specifies the name of the generated moc output file."
+      Visible="false"/>
+    <StringProperty
       Name="InputFile"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Input File"
