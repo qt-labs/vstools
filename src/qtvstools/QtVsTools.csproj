@@ -564,6 +564,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\qtmsbuild\qt_vars.targets">
+      <Link>QtMsBuild\qt_vars.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild moc property pages and targets

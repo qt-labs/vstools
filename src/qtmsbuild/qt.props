@@ -85,6 +85,48 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt Variables Expansion
+  // -->
+  <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <!--// List of Qt variables to import -->
+    <QtVariables Condition="'$(QtVariables)' == ''">DEFINES;INCLUDEPATH;LIBS</QtVariables>
+
+    <!--// Path to Qt variables property file -->
+    <QtVarsWorkDir
+        >$([System.IO.Path]::Combine(
+            '$(TEMP)', '$([System.IO.Path]::GetRandomFileName())'))\</QtVarsWorkDir>
+    <QtVarsOutputDir
+        >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)'))</QtVarsOutputDir>
+    <QtVarsFileNameWithoutExt
+        >qtvars_$(Platform)_$(Configuration)</QtVarsFileNameWithoutExt>
+    <QtVarsFileName
+        >$(QtVarsFileNameWithoutExt).props</QtVarsFileName>
+    <QtVarsWorkPath
+        >$(QtVarsWorkDir)$(QtVarsFileName)</QtVarsWorkPath>
+    <QtVarsFilePath
+        >$(QtVarsOutputDir)$(QtVarsFileName)</QtVarsFilePath>
+  </PropertyGroup>
+
+  <!--// Import Qt variables (full build) -->
+  <Import
+    Project="$(QtVarsFilePath)"/>
+
+  <!--// Add Qt variables to compiler and linker options -->
+  <ItemDefinitionGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions
+        >$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories
+        >$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies
+        >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Add Qt DLL path to debugger definitions
   // -->
   <PropertyGroup>

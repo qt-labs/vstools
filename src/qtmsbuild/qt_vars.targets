@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2019 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Read Qt Build Variables
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <QtDependsOn>QtVars;$(QtDependsOn)</QtDependsOn>
+  </PropertyGroup>
+  <ItemGroup>
+    <QtModuleList Include="$(QtModules)"/>
+    <QtVariableList Include="$(QtVariables)"/>
+    <QMakeCodeLine Include="$(QMakeCodeLines)"/>
+    <QtVarProp Include="@(QtVariableList->'Qt_%(Identity)_')"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <QtSkipBuildTargets>QtSkipBuild;$(QtSkipBuildTargets)</QtSkipBuildTargets>
+    <QtModuleNames>@(QtModuleList->'%(Identity)', ' ')</QtModuleNames>
+    <QtVarNames>@(QtVariableList->'%(Identity)', ' ')</QtVarNames>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtVars
+    Condition="'$(QtToolsPath)'   != ''
+           AND '$(QtConfigStamp)' != '$(QtInstall)|$(QtModuleNames)'">
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Call qmake with generated .pro file to export Qt variables into MSBuild .props file
+  // -->
+  <Target Name="QtVars"
+    Condition="'$(QtVsProjectSettings)' == 'true'
+           AND '$(QtConfigStamp)' != '$(QtInstall)|$(QtModuleNames)'">
+
+    <CreateProperty
+      Condition="Exists('$(QtInstall)')"
+      Value="$(QtInstall)">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
+    </CreateProperty>
+    <CreateProperty
+      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
+      Value="HKEY_CURRENT_USER\Software\Digia\Versions\$(QtInstall)">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallRegKey" />
+    </CreateProperty>
+    <CreateProperty
+      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
+      Value="$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallRegDir" />
+    </CreateProperty>
+    <CreateProperty
+      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
+      Value="$(QtInstallRegDir)">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
+    </CreateProperty>
+    <CreateProperty
+      Value="$(QtInstallDir)\bin">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
+    </CreateProperty>
+
+    <Message
+      Importance="high"
+      Text="Reading Qt configuration ($(QtInstallDir))"/>
+
+    <PropertyGroup>
+
+      <!--// .pro file configuration -->
+      <QtVarsProFileConfig
+        Condition="'$(Configuration)' == 'Debug'">
+        CONFIG -= debug release debug_and_release
+        CONFIG += debug
+      </QtVarsProFileConfig>
+      <QtVarsProFileConfig
+        Condition="'$(Configuration)' != 'Debug'">
+        CONFIG -= debug release debug_and_release
+        CONFIG += release
+      </QtVarsProFileConfig>
+
+      <!--// .pro file input parameters -->
+      <QtVarsProFileInput>
+        <!--
+# Qt vars data file name -->
+        fileName = "qtvars_$(Platform)_$(Configuration).props"
+        <!--
+# Selected Qt modules -->
+        modules = $(QtModuleNames)
+        <!--
+# Selected Qt variables -->
+        varNames = $(QtVarNames)
+        <!--
+# Custom additional .pro file code (from property page) -->
+        @(QMakeCodeLine->'%(Identity)','%0D%0A')
+      </QtVarsProFileInput>
+
+      <!--// Generate .pro file -->
+      <!--
+######## BEGIN generated qmake project #############################################################
+##    -->
+      <QtVarsProFileText>
+        <![CDATA[
+## Escape string for use by MSBuild
+#
+defineReplace(formatMsBuildString) {
+    exprValue = $$1
+    exprText = ""
+    sep = ""
+    for (value, exprValue) {
+        value = $$replace(value, "%",    "%2525")
+        value = $$replace(value, "%3B",  "%253B")
+        value = $$replace(value, "\x24", "%2524")
+        value = $$replace(value, "@",    "%2540")
+        exprText = "$$exprText$$sep$$value"
+        sep = "%3B"
+    }
+    return($$exprText)
+}
+
+## Fetch information from required modules through dependency relation
+#
+defined(modules, var) {
+    INCLUDEPATH = $$[INCLUDEPATH]
+    QT = $$resolve_depends(modules, "QT.")
+    for (module, $$list($${QT})) {
+        INCLUDEPATH *= $$eval($$"QT.$${module}.includes")
+        DEFINES *= $$eval($$"QT.$${module}.DEFINES")
+    }
+}
+
+## Add "qtvars" make target: append "late-bound" variables (e.g. LIBS) to .props (XML) file.
+#
+contains(varNames, LIBS) {
+    varNames -= LIBS
+    nop = "(ECHO>NUL)"
+    qtvars.target = qtvars
+    qtvars.commands = CMD /V:ON /C \
+        \"@ECHO OFF &\
+        SET VALUE= &\
+        (FOR %%x IN (%24(LIBS)) DO (\
+            SET y=%%x&\
+            IF NOT \"!y:~0,9!\"==\"/LIBPATH:\"\
+                SET VALUE=!y!%3B!VALUE!& $$nop \
+        ))&\
+        SET PROP=^<Qt_LIBS_^>!VALUE:~0,-2!^</Qt_LIBS_^>&\
+        ECHO !PROP!>>$$fileName&\"
+    QMAKE_EXTRA_TARGETS += qtvars
+}
+
+## Append Qt variables to .props (XML) file
+#
+for (varName, $$list($$sorted(varNames))) {
+    propName = "Qt_$${varName}_"
+    text = "<$${propName}>"$$formatMsBuildString($$eval($$varName))"</$${propName}>"
+    write_file($$fileName, text, append)
+}
+        ]]>
+      </QtVarsProFileText>
+      <!--
+##
+######## END generated qmake project ###############################################################
+      -->
+    </PropertyGroup>
+
+    <!--// Write .pro file to temp path -->
+    <RemoveDir
+      Directories="$(QtVarsWorkDir)"/>
+    <MakeDir
+      Directories="$(QtVarsWorkDir)"/>
+    <WriteLinesToFile
+      File="$(QtVarsWorkDir)\qtvars.pro"
+      Lines="$(QtVarsProFileConfig)
+            ;$(QtVarsProFileInput)
+            ;$(QtVarsProFileText)"/>
+
+    <!--// Write start of Qt vars data file:
+        //  * Add QtConfigStamp property ::= Qt version + selected modules
+        //     - used to determine if .props is up-to-date -->
+    <PropertyGroup>
+      <!--
+######## BEGIN generated XML (.props) ##############################################################
+##    -->
+      <QtVarsDataFileText>
+        <![CDATA[
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <QtConfigStamp>$(QtInstall)|$(QtModuleNames)</QtConfigStamp>
+        ]]>
+      </QtVarsDataFileText>
+      <!--
+##
+######## END generated XML (.props) ################################################################
+      -->
+    </PropertyGroup>
+    <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)" Overwrite="true"/>
+
+    <!--// Run qmake && nmake: append output to .props (XML) file -->
+    <SetEnv Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
+    <PropertyGroup>
+      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" && nmake qtvars) 1> qtvars.log 2>&1]]></Cmd>
+    </PropertyGroup>
+    <Exec WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true" Command="$(Cmd)">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
+    </Exec>
+
+    <!--// If error, show qmake/nmake console output and stop build -->
+    <ReadLinesFromFile
+        File="$(QtVarsWorkDir)\qtvars.log">
+      <Output TaskParameter="Lines" ItemName="QMakeError"/>
+    </ReadLinesFromFile>
+    <ItemGroup Condition="'$(ErrorLevel)' != '0'">
+      <QMakeError
+        Condition="$([System.String]::Copy('%(Identity)').StartsWith('Info: creating stash file'))"
+        Remove="@(QMakeError)"/>
+    </ItemGroup>
+    <Message
+      Importance="high"
+      Condition="'$(QtVarsDebug)' == 'true'"
+      Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
+    <Error
+      Condition="'$(ErrorLevel)' != '0'"
+      File="$(MSBuildProjectFile)"
+      Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
+
+    <!--// Write end of .props (XML) file
+        //  * Close property group tag
+        //  * Create QtVar items to export Qt variables to the calling instance of MSBuild
+        //  * Close project tag -->
+    <PropertyGroup>
+      <!--
+######## BEGIN generated XML (.props) ##############################################################
+##    -->
+      <QtVarsDataFileText>
+        <![CDATA[
+  </PropertyGroup>
+  <ItemGroup>
+    @(QtVarProp->'<QtVar Include="%(Identity)"><Value>%24(%(Identity))</Value></QtVar>', '%0D%0A')
+  </ItemGroup>
+</Project>
+        ]]>
+      </QtVarsDataFileText>
+      <!--
+##
+######## END generated XML (.props) ################################################################
+      -->
+    </PropertyGroup>
+    <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)"/>
+
+    <!--// Copy generated .props to $(IntDir) -->
+    <Delete
+      Condition="'$(ErrorLevel)' == '0'"
+      Files="$(IntDir)qtvars_$(Platform)_$(Configuration).props"/>
+    <Copy
+      Condition="'$(ErrorLevel)' == '0'"
+      SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFilePath)"/>
+    <RemoveDir
+      Condition="'$(QtVarsDebug)' != 'true'"
+      Directories="$(QtVarsWorkDir)"/>
+
+    <!--// Skip remaining build -->
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtSkipWork" />
+    </CreateProperty>
+    <CallTarget
+      Condition="'$(QtSkipBuildTargets)' != ''"
+      Targets="$(QtSkipBuildTargets)"/>
+
+    <!--// Restart build in second MSBuild instance with updated Qt variables -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="Build"
+      Properties="RandomFileName=$([System.IO.Path]::GetRandomFileName())">
+    </MSBuild>
+
+    <!--// Clean-up -->
+    <ItemGroup>
+      <ProjectItem Remove="@(ProjectItem)"/>
+      <QtModuleList Remove="@(QtModuleList)"/>
+      <QtVariableList Remove="@(QtVariableList)"/>
+      <QMakeCodeLine Remove="@(QMakeCodeLine)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <QMakeProjTempDir/>
+      <QtVarsTempPath/>
+      <QtModuleNames/>
+      <QMakeVarNames/>
+      <QMakeAdditionalCode/>
+      <QtVarsProFileText/>
+      <Cmd/>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtSkipBuild
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Remove source file items in order to skip remaining build process
+  // -->
+  <Target Name="QtSkipBuild">
+    <ItemGroup>
+      <QtMoc Remove="@(QtMoc)"/>
+      <QtRcc Remove="@(QtRcc)"/>
+      <QtRepc Remove="@(QtRepc)"/>
+      <QtUic Remove="@(QtUic)"/>
+      <ClCompile Remove="@(ClCompile)"/>
+      <Link Remove="@(Link)"/>
+    </ItemGroup>
+  </Target>
+
+</Project>
