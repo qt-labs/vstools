@@ -377,7 +377,7 @@
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DCore</LibraryPrefix>
     <HasDLL>true</HasDLL>
-    <proVarQT>3dcore</proVarQT>
+    <proVarQT>3dcore 3danimation 3dextras 3dinput 3dlogic 3drender</proVarQT>
     <IncludePath>$(QTDIR)\include\Qt3DCore</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DAnimation</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DExtras</IncludePath>
