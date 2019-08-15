@@ -65,6 +65,9 @@
       <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
+  <PropertyGroup>
+    <QtUicRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtuic.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtUicRuleName>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

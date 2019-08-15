@@ -65,6 +65,9 @@
       <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
+  <PropertyGroup>
+    <QtRepcRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtrepc.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtRepcRuleName>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

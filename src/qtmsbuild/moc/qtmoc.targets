@@ -68,6 +68,9 @@
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
+  <PropertyGroup>
+    <QtMocRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtmoc.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtMocRuleName>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -97,6 +97,43 @@ namespace QtProjectLib
             get { return envPro; }
         }
 
+        public static string GetRuleName(VCConfiguration config, string itemType)
+        {
+            if (config == null)
+                return string.Empty;
+            try {
+                return config.GetEvaluatedPropertyValue(itemType + "RuleName");
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                return string.Empty;
+            }
+        }
+
+        public static string GetRuleName(VCProject project, string itemType)
+        {
+            if (project == null)
+                return string.Empty;
+            var configs = project.Configurations as IVCCollection;
+            if (configs.Count == 0)
+                return string.Empty;
+            try {
+                var firstConfig = configs.Item(1) as VCConfiguration;
+                if (firstConfig == null)
+                    return string.Empty;
+                return GetRuleName(firstConfig, itemType);
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                return string.Empty;
+            }
+        }
+
+        public string GetRuleName(string itemType)
+        {
+            return GetRuleName(vcPro, itemType);
+        }
+
         public static bool IsQtMsBuildEnabled(VCProject project)
         {
             if (project == null)
@@ -106,7 +143,8 @@ namespace QtProjectLib
                 if (configs.Count == 0)
                     return false;
                 var firstConfig = configs.Item(1) as VCConfiguration;
-                var qtMoc = firstConfig.Rules.Item(QtMoc.ItemTypeName) as IVCRulePropertyStorage;
+                var ruleName = GetRuleName(firstConfig, QtMoc.ItemTypeName);
+                var qtMoc = firstConfig.Rules.Item(ruleName) as IVCRulePropertyStorage;
                 if (qtMoc == null)
                     return false;
             } catch (Exception) {
@@ -2618,7 +2656,8 @@ namespace QtProjectLib
         {
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var propsClCompile = config.Rules.Item("CL") as IVCRulePropertyStorage;
-                var propsQtMoc = config.Rules.Item(QtMoc.ItemTypeName) as IVCRulePropertyStorage;
+                var ruleName = GetRuleName(config, QtMoc.ItemTypeName);
+                var propsQtMoc = config.Rules.Item(ruleName) as IVCRulePropertyStorage;
                 if (propsClCompile == null || propsQtMoc == null)
                     continue;
                 propsQtMoc.SetPropertyValue(QtMoc.Property.IncludePath.ToString(),
@@ -2630,7 +2669,8 @@ namespace QtProjectLib
         {
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var propsClCompile = config.Rules.Item("CL") as IVCRulePropertyStorage;
-                var propsQtMoc = config.Rules.Item(QtMoc.ItemTypeName) as IVCRulePropertyStorage;
+                var ruleName = GetRuleName(config, QtMoc.ItemTypeName);
+                var propsQtMoc = config.Rules.Item(ruleName) as IVCRulePropertyStorage;
                 if (propsClCompile == null || propsQtMoc == null)
                     continue;
                 propsQtMoc.SetPropertyValue(QtMoc.Property.Define.ToString(),
@@ -3694,16 +3734,18 @@ namespace QtProjectLib
         {
             if (propertyStorage == null)
                 return "";
-            if (propertyStorage is VCFileConfiguration)
+            if (propertyStorage is VCFileConfiguration) {
                 return GetProperty(
                     (propertyStorage as VCFileConfiguration).Tool
                     as IVCRulePropertyStorage,
                     propertyName);
-            else if (propertyStorage is VCConfiguration)
-                return GetProperty(
-                    (propertyStorage as VCConfiguration).Rules.Item(itemType)
+            } else if (propertyStorage is VCConfiguration) {
+                var config = propertyStorage as VCConfiguration;
+                var ruleName = QtProject.GetRuleName(config, itemType);
+                return GetProperty(config.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName);
+            }
             return "";
         }
 
@@ -3727,18 +3769,21 @@ namespace QtProjectLib
         {
             if (propertyStorage == null)
                 return false;
-            if (propertyStorage is VCFileConfiguration)
+            if (propertyStorage is VCFileConfiguration) {
                 return SetProperty(
                     (propertyStorage as VCFileConfiguration).Tool
                     as IVCRulePropertyStorage,
                     propertyName,
                     propertyValue);
-            else if (propertyStorage is VCConfiguration)
+            } else if (propertyStorage is VCConfiguration) {
+                var config = propertyStorage as VCConfiguration;
+                var ruleName = QtProject.GetRuleName(config, itemType);
                 return SetProperty(
-                    (propertyStorage as VCConfiguration).Rules.Item(itemType)
+                    config.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName,
                     propertyValue);
+            }
             return false;
         }
 
@@ -3754,16 +3799,19 @@ namespace QtProjectLib
         {
             if (propertyStorage == null)
                 return false;
-            if (propertyStorage is VCFileConfiguration)
+            if (propertyStorage is VCFileConfiguration) {
                 return DeleteProperty(
                     (propertyStorage as VCFileConfiguration).Tool
                     as IVCRulePropertyStorage,
                     propertyName);
-            else if (propertyStorage is VCConfiguration)
+            } else if (propertyStorage is VCConfiguration) {
+                var config = propertyStorage as VCConfiguration;
+                var ruleName = QtProject.GetRuleName(config, itemType);
                 return DeleteProperty(
-                    (propertyStorage as VCConfiguration).Rules.Item(itemType)
+                    config.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName);
+            }
             return false;
         }
 

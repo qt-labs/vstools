@@ -68,6 +68,9 @@
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
+  <PropertyGroup>
+    <QtRccRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtrcc.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtRccRuleName>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
