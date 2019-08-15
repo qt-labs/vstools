@@ -122,6 +122,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
