@@ -301,8 +301,6 @@ namespace QtProjectLib
                 .Elements(ns + "VisualStudio")
                 .Elements(ns + "UserProperties")
                 .FirstOrDefault();
-            if (userProps == null)
-                return false;
 
             // Copy Qt build reference to QtInstall project property
             this[Files.Project].xml
@@ -312,20 +310,23 @@ namespace QtProjectLib
                 .ToList()
                 .ForEach(config =>
                 {
-                    string platform = null;
-                    try {
-                        platform = ConfigCondition
-                            .Parse((string)config.Attribute("Condition"))
-                            .GetValues<string>("Platform")
-                            .FirstOrDefault();
-                    } catch { }
+                    string qtInstallValue = defaultVersionName;
+                    if (userProps != null) {
+                        string platform = null;
+                        try {
+                            platform = ConfigCondition
+                                .Parse((string)config.Attribute("Condition"))
+                                .GetValues<string>("Platform")
+                                .FirstOrDefault();
+                        } catch { }
 
-                    if (!string.IsNullOrEmpty(platform)) {
-                        var qtInstallName = string.Format("Qt5Version_x0020_{0}", platform);
-                        var qtInstallValue = (string)userProps.Attribute(qtInstallName);
-                        if (!string.IsNullOrEmpty(qtInstallValue))
-                            config.Add(new XElement(ns + "QtInstall", qtInstallValue));
+                        if (!string.IsNullOrEmpty(platform)) {
+                            var qtInstallName = string.Format("Qt5Version_x0020_{0}", platform);
+                            qtInstallValue = (string)userProps.Attribute(qtInstallName);
+                        }
                     }
+                    if (!string.IsNullOrEmpty(qtInstallValue))
+                        config.Add(new XElement(ns + "QtInstall", qtInstallValue));
                 });
 
             // Get C++ compiler properties
@@ -487,6 +488,77 @@ namespace QtProjectLib
                 .ToList()
                 .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
 
+            // Remove project user properties (old format)
+            if (userProps != null) {
+                userProps.Attributes().ToList().ForEach(userProp =>
+                {
+                    if (userProp.Name.LocalName == "lupdateOptions"
+                        || userProp.Name.LocalName == "lupdateOnBuild"
+                        || userProp.Name.LocalName == "lreleaseOptions"
+                        || userProp.Name.LocalName == "MocDir"
+                        || userProp.Name.LocalName == "MocOptions"
+                        || userProp.Name.LocalName == "RccDir"
+                        || userProp.Name.LocalName == "UicDir"
+                        || userProp.Name.LocalName.StartsWith("Qt5Version_x0020_"))
+                    {
+                        userProp.Remove();
+                    }
+                });
+            }
+
+            // Remove old properties from .user file
+            if (this[Files.User].xml != null) {
+                this[Files.User].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "PropertyGroup")
+                    .Elements()
+                    .ToList()
+                    .ForEach(userProp =>
+                    {
+                        if (userProp.Name.LocalName == "QTDIR"
+                            || userProp.Name.LocalName == "QmlDebug"
+                            || userProp.Name.LocalName == "QmlDebugSettings"
+                            || (userProp.Name.LocalName == "LocalDebuggerCommandArguments"
+                                && (string)userProp == "$(QmlDebug)"
+                            )
+                            || (userProp.Name.LocalName == "LocalDebuggerEnvironment"
+                                && (string)userProp == "PATH=$(QTDIR)\\bin%3b$(PATH)"
+                            )
+                        ) {
+                            userProp.Remove();
+                        }
+                    });
+                this[Files.User].isDirty = true;
+            }
+
+            // Remove old properties from project items
+            var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile", "ExecutionDescription" };
+            var oldCppProps = new[] { "IncludePath", "Define", "Undefine" };
+            var oldPropsAny = oldQtProps.Union(oldCppProps);
+            this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Union(this[Files.Project].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "ItemGroup"))
+                .Elements().ToList().ForEach(item =>
+                {
+                    var itemName = item.Name.LocalName;
+                    item.Elements().ToList().ForEach(itemProp =>
+                    {
+                        var propName = itemProp.Name.LocalName;
+                        if ((itemName == "QtMoc" && oldPropsAny.Contains(propName))
+                            || (itemName == "QtRcc" && oldQtProps.Contains(propName))
+                            || (itemName == "QtUic" && oldQtProps.Contains(propName))
+                            || (itemName == "QtRepc" && oldPropsAny.Contains(propName))
+                        ) {
+                            itemProp.Remove();
+                        }
+                    });
+                });
+
+            this[Files.Project].isDirty = true;
+            Commit();
             return true;
         }
 

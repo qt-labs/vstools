@@ -147,6 +147,23 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // QML debugging
+  // -->
+  <PropertyGroup>
+    <QmlDebug Condition="'$(QtQMLDebugEnable)' == 'true'"
+      >-qmljsdebugger=file:$(ProjectGuid),block</QmlDebug>
+    <LocalDebuggerCommandArguments
+      >$(QmlDebug)</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <ClCompile Condition="'$(QtQMLDebugEnable)' == 'true'">
+      <PreprocessorDefinitions
+        >QT_QML_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Read subfolder dependencies (qt_import.props)
   // -->
   <PropertyGroup>

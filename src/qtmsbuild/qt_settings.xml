@@ -41,6 +41,7 @@
   <Rule.Categories>
     <Category Name="QtSettings_General" DisplayName="General"/>
     <Category Name="QtSettings_LUpdateLRelease" DisplayName="lupdate/lrelease"/>
+    <Category Name="QtSettings_QML" DisplayName="QML"/>
     <Category Name="QtSettings_QMake" DisplayName="qmake"/>
   </Rule.Categories>
   <EnumProperty
@@ -97,4 +98,13 @@
     Name="QMakeCodeLines"
     Category="QtSettings_QMake"
     DisplayName="Additional Project Settings" />
+  <BoolProperty
+    Name="QtQMLDebugEnable"
+    Category="QtSettings_QML"
+    DisplayName="Enable QML Debugging"
+    Description="Select whether to launch a QML session when debugging.">
+    <BoolProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="true"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
 </Rule>
