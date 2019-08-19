@@ -1,3 +1,14 @@
+The Qt Visual Studio Tools version 2.4.0 implements Qt project settings as MSBuild properties, and
+also adds support for Qt Remote Objects.
+
+Changes
+-------
+ - Qt settings are now stored as fully fledged MSBuild properties (QTVSADDINBUG-575)
+ - Added support for Qt Remote Objects (QTVSADDINBUG-585)
+ - Fixed QTVSADDINBUG-598: Cannot export library projects to .pro files
+ - Fixed QTVSADDINBUG-632: Include path out-of-sync between moc and C++ compiler
+
+
 The Qt Visual Studio Tools version 2.3.2 contains several bug fixes.
 
 Changes
