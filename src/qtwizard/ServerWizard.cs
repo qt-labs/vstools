@@ -66,17 +66,12 @@ namespace QtProjectWizard
             var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
             if (vi.GetVSPlatformName() != "Win32")
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-            vm.SaveProjectQtVersion(project, qtVersion);
 
             qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
 
             var type = TemplateType.DynamicLibrary | TemplateType.GUISystem;
             qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
-
-            qtProject.AddModule(QtModule.Main);
-            foreach (var module in data.Modules)
-                qtProject.AddModule(QtModules.Instance.ModuleIdByName(module));
 
             var vcProject = qtProject.VCProject;
             var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;
@@ -207,6 +202,12 @@ namespace QtProjectWizard
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
                 replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
+                replacements["$DefaultQtVersion$"] = versionName;
+                replacements["$QtModules$"] = string.Join(";", data.Modules
+                    .Select(moduleName => QtModules.Instance
+                        .ModuleInformation(QtModules.Instance
+                        .ModuleIdByName(moduleName))
+                        .proVarQT));
 
                 replacements["$classname$"] = data.ClassName;
                 replacements["$sourcefilename$"] = data.ClassSourceFile;

@@ -32,7 +32,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
+using QtVsTools.VisualStudio;
+using EnvDTE;
 
 namespace QtProjectLib
 {
@@ -50,6 +53,22 @@ namespace QtProjectLib
         {
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
+            RefreshVersionNames();
+        }
+
+        void RefreshVersionNames()
+        {
+            var rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
+            try {
+                using (var rootKey = Registry.CurrentUser.OpenSubKey(rootKeyPath, true))
+                using (var versionsKey = rootKey.OpenSubKey(strVersionKey, true)) {
+                    versionsKey.SetValue("VersionNames", string.Join(";", GetVersions()));
+                }
+
+            } catch (Exception e) {
+                Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+            }
         }
 
         static EventWaitHandle
@@ -261,6 +280,8 @@ namespace QtProjectLib
             if (versionKey == null)
                 return false;
             versionKey.SetValue("InstallDir", dir);
+            versionKey.Close();
+            RefreshVersionNames();
             return true;
         }
 
@@ -270,6 +291,8 @@ namespace QtProjectLib
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);
+            key.Close();
+            RefreshVersionNames();
         }
 
         private bool IsVersionAvailable(string version)
@@ -298,10 +321,12 @@ namespace QtProjectLib
                 var vcPro = project.Object as VCProject;
                 if (vcPro == null)
                     return false;
+#if VS2017 || VS2019
                 foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
                     config.SetPropertyValue(Resources.projLabelConfiguration, true,
                         "QtInstall", version);
                 }
+#endif
                 return true;
             }
             var key = "Qt5Version " + platform;

@@ -37,6 +37,7 @@ using QtProjectLib;
 using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace QtProjectWizard
@@ -112,6 +113,12 @@ namespace QtProjectWizard
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
                 replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
+                replacements["$DefaultQtVersion$"] = versionName;
+                replacements["$QtModules$"] = string.Join(";", data.Modules
+                    .Select(moduleName => QtModules.Instance
+                        .ModuleInformation(QtModules.Instance
+                        .ModuleIdByName(moduleName))
+                        .proVarQT));
 
 #if (VS2019 || VS2017 || VS2015)
                 string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
@@ -155,7 +162,6 @@ namespace QtProjectWizard
             var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
             if (vi.GetVSPlatformName() != "Win32")
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-            vm.SaveProjectQtVersion(project, qtVersion);
 
             qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
@@ -166,9 +172,6 @@ namespace QtProjectWizard
             foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
                 qtProject.AdjustWhitespace(file.FullPath);
 
-            qtProject.AddModule(QtModule.Main);
-            foreach (var module in data.Modules)
-                qtProject.AddModule(QtModules.Instance.ModuleIdByName(module));
             qtProject.SetQtEnvironment(qtVersion);
             qtProject.Finish(); // Collapses all project nodes.
         }

@@ -128,6 +128,12 @@ namespace QtProjectWizard
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
                 replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
+                replacements["$DefaultQtVersion$"] = vm.GetDefaultVersion();
+                replacements["$QtModules$"] = string.Join(";", data.Modules
+                    .Select(moduleName => QtModules.Instance
+                        .ModuleInformation(QtModules.Instance
+                        .ModuleIdByName(moduleName))
+                        .proVarQT));
 
                 replacements["$classname$"] = data.ClassName;
                 replacements["$baseclass$"] = data.BaseClass;
@@ -242,14 +248,9 @@ namespace QtProjectWizard
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
             qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
-            vm.SaveProjectQtVersion(project, qtVersion);
 
             var type = TemplateType.Application | TemplateType.GUISystem;
             qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
-
-            qtProject.AddModule(QtModule.Main);
-            foreach (var module in data.Modules)
-                qtProject.AddModule(QtModules.Instance.ModuleIdByName(module));
 
             var vcProject = qtProject.VCProject;
             var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;

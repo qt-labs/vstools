@@ -33,9 +33,26 @@
 // Add property page for Qt settings
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'">
+    <QtVersionsRegKey
+      >HKEY_CURRENT_USER\Software\Digia\Versions</QtVersionsRegKey>
+    <QtVersionNames
+      >$([MSBuild]::GetRegistryValue('$(QtVersionsRegKey)','VersionNames'))</QtVersionNames>
+  </PropertyGroup>
   <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true'">
     <PropertyPageSchema
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
       Include="$(MSBuildThisFileDirectory)qt_settings.xml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+    <PropertyPageSchema
+      Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'"
+      Include="$(MSBuildThisFileDirectory)qt_settings_vs2015.xml">
+      <!--
+        // WORKAROUND: In VS 2013 and VS 2015 property value providers are not supported
+        // REMOVE when support for VS 2015 is dropped
+    -->
       <Context>Project</Context>
     </PropertyPageSchema>
   </ItemGroup>

@@ -325,10 +325,14 @@ namespace QtProjectLib
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
 
-            foreach (VCConfiguration3 config in (IVCCollection) vcPro.Configurations) {
+            foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
 
                 var info = QtModules.Instance.ModuleInformation(module);
+#if VS2017 || VS2019
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
+                    var config3 = config as VCConfiguration3;
+                    if (config3 == null)
+                        continue;
                     if (!string.IsNullOrEmpty(info.proVarQT)) {
                         var qtModulesValue = config.GetUnevaluatedPropertyValue("QtModules");
                         var qtModules = new HashSet<string>(
@@ -336,13 +340,14 @@ namespace QtProjectLib
                                 ? qtModulesValue.Split(';')
                                 : new string[] { });
                         qtModules.UnionWith(info.proVarQT.Split(' '));
-                        config.SetPropertyValue(Resources.projLabelQtSettings, true,
+                        config3.SetPropertyValue(Resources.projLabelQtSettings, true,
                             "QtModules", string.Join(";", qtModules));
                     }
                     // In V3 project format, compiler and linker options
                     // required by modules are set by Qt/MSBuild.
                     continue;
                 }
+#endif
 
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");

@@ -139,6 +139,9 @@
       Type="File" d:Source="File" Path="qtmsbuild\qt_settings.xml"
       d:VsixSubPath="qtmsbuild" />
     <Asset
+      Type="File" d:Source="File" Path="qtmsbuild\qt_settings_vs2015.xml"
+      d:VsixSubPath="qtmsbuild" />
+    <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qt_tasks.targets"
       d:VsixSubPath="qtmsbuild"/>
     <Asset

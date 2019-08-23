@@ -121,6 +121,12 @@
     Condition="'$(DesignTimeBuild)' == 'true' AND Exists('$(QtVarsDesignTime)')"
     Project="$(QtVarsDesignTime)"/>
 
+  <!--// Import Qt variables (fall-back) -->
+  <Import
+    Condition=
+"'$(DesignTimeBuild)' == 'true' AND !Exists('$(QtVarsDesignTime)') AND Exists('$(QtVarsFilePath)')"
+    Project="$(QtVarsFilePath)"/>
+
   <!--// Add Qt variables to compiler and linker options -->
   <ItemDefinitionGroup Condition="'$(QtVsProjectSettings)' == 'true'">
     <ClCompile>
@@ -166,7 +172,8 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Read subfolder dependencies (qt_import.props)
   // -->
-  <PropertyGroup>
+  <PropertyGroup
+    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'">
     <SubFolder>$([System.IO.Directory]::GetDirectories('$(MSBuildThisFileDirectory)'))</SubFolder>
     <SubFolderImports Condition="'$(SubFolder)' != ''"
       >$([System.String]::Join(
@@ -176,12 +183,28 @@
     <SubFolder/>
     <SubFolderImports/>
   </PropertyGroup>
-  <Import Project="$(QtImports)"/>
+  <Import
+    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+    Project="$(QtImports)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Import subfolder props
   // -->
-  <Import Project="$(QtMsBuildProps)"/>
+  <Import
+    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+    Project="$(QtMsBuildProps)"/>
+  <ImportGroup
+    Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'">
+    <!--
+        // WORKAROUND: In VS 2013 and VS 2015 importing a list of files does not work
+        // REMOVE when support for VS 2015 is dropped
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)\moc\qtmoc.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)\rcc\qtrcc.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)\qml\qtqml.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)\repc\qtrepc.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)\uic\qtuic.props"/>
+  </ImportGroup>
 
 </Project>

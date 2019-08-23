@@ -551,6 +551,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\qtmsbuild\qt_settings_vs2015.xml">
+      <Link>QtMsBuild\qt_settings_vs2015.xml</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="..\qtmsbuild\qt_settings.targets">
       <Link>QtMsBuild\qt_settings.targets</Link>
       <SubType>Designer</SubType>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2019 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+<Rule
+    Name="QtRule10_Settings"
+    DisplayName="Qt Project Settings"
+    PageTemplate="generic"
+    Description="Qt Project Settings"
+    Order="8"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" Label="QtSettings" HasConfigurationCondition="true"/>
+  </Rule.DataSource>
+  <Rule.Categories>
+    <Category Name="QtSettings_General" DisplayName="General"/>
+    <Category Name="QtSettings_LUpdateLRelease" DisplayName="lupdate/lrelease"/>
+    <Category Name="QtSettings_QML" DisplayName="QML"/>
+    <Category Name="QtSettings_QMake" DisplayName="qmake"/>
+  </Rule.Categories>
+  <EnumProperty
+    Name="Keyword"
+    DisplayName="Qt VS Project Format Version"
+    Category="QtSettings_General"
+    ReadOnly="true"
+    Description="Version of the format of this Qt Visual Studio project.">
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Globals" />
+    </EnumProperty.DataSource>
+    <EnumValue Name="Qt4VSv1.0" DisplayName="Version 2.0"/>
+    <EnumValue Name="QtVS_v300" DisplayName="Version 3.0"/>
+  </EnumProperty>
+  <DynamicEnumProperty
+    Name="QtInstall"
+    DisplayName="Qt Installation"
+    Category="QtSettings_General"
+    EnumProvider="ProjectExpression"
+    Description=
+"Select Qt installation; can be either a path to an installation directory or a version name registered through the Qt Visual Studio Tools (v2.4 or above).">
+    <DynamicEnumProperty.ProviderSettings>
+      <NameValuePair Name="Include" Value="$(QtVersionNames)" />
+    </DynamicEnumProperty.ProviderSettings>
+    <DynamicEnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="true"/>
+    </DynamicEnumProperty.DataSource>
+  </DynamicEnumProperty>
+  <StringListProperty
+    Name="QtModules"
+    Category="QtSettings_General"
+    DisplayName="Qt Modules">
+    <StringListProperty.ValueEditors>
+      <ValueEditor EditorType="QtModulesEditor" DisplayName="&lt;Select Modules...&gt;" />
+    </StringListProperty.ValueEditors>
+  </StringListProperty>
+  <BoolProperty
+    Name="QtRunLUpdateOnBuild"
+    Category="QtSettings_LUpdateLRelease"
+    DisplayName="Run lupdate On Build"
+    Description="Select whether lupdate should be called during build."/>
+  <StringProperty
+    Name="QtLUpdateOptions"
+    Category="QtSettings_LUpdateLRelease"
+    DisplayName="Additional lupdate Options"
+    Description="Additional options passed to lupdate"/>
+  <StringProperty
+    Name="QtLReleaseOptions"
+    Category="QtSettings_LUpdateLRelease"
+    DisplayName="Additional lrelease Options"
+    Description="Additional options passed to lrelease"/>
+  <StringListProperty
+    Name="QtVariables"
+    Category="QtSettings_QMake"
+    DisplayName="Extract Variables" />
+  <StringListProperty
+    Name="QMakeCodeLines"
+    Category="QtSettings_QMake"
+    DisplayName="Additional Project Settings" />
+  <BoolProperty
+    Name="QtQMLDebugEnable"
+    Category="QtSettings_QML"
+    DisplayName="Enable QML Debugging"
+    Description="Select whether to launch a QML session when debugging.">
+    <BoolProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="true"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
+</Rule>

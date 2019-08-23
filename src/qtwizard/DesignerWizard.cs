@@ -28,13 +28,14 @@
 
 using EnvDTE;
 using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.OLE.Interop;
+using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtVsTools.VisualStudio;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,18 +68,12 @@ namespace QtProjectWizard
             var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
             if (vi.GetVSPlatformName() != "Win32")
                 qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-            vm.SaveProjectQtVersion(project, qtVersion);
 
             qtProject.MarkAsQtProject();
             qtProject.AddDirectories();
 
             var type = TemplateType.PluginProject | TemplateType.DynamicLibrary | TemplateType.GUISystem;
             qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
-
-            qtProject.AddModule(QtModule.Main);
-            qtProject.AddModule(QtModule.Designer);
-            foreach (var module in data.Modules)
-                qtProject.AddModule(QtModules.Instance.ModuleIdByName(module));
 
             var vcProject = qtProject.VCProject;
             var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;
@@ -208,6 +203,14 @@ namespace QtProjectWizard
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
                 replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
                 replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
+                replacements["$DefaultQtVersion$"] = versionName;
+                replacements["$QtModules$"] = string.Join(";", data.Modules
+                    .Select(moduleName => QtModules.Instance
+                        .ModuleInformation(QtModules.Instance
+                        .ModuleIdByName(moduleName))
+                        .proVarQT)
+                    .Union(new[] { "designer " })
+                    .ToDictionary(x => x, StringComparer.InvariantCultureIgnoreCase).Keys);
 
                 replacements["$classname$"] = data.ClassName;
                 replacements["$baseclass$"] = data.BaseClass;

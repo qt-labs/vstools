@@ -33,7 +33,9 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtProjectLib.QtMsBuild;
+#if VS2017 || VS2019
 using QtVsTools.QtMsBuild;
+#endif
 using System;
 using System.IO;
 using System.Linq;
@@ -545,7 +547,9 @@ namespace QtVsTools
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
+#if VS2017 || VS2019
                     QtVarsDesignTime.AddProject(p);
+#endif
                 }
             }
         }

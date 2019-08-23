@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2017 || VS2019
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -182,3 +183,4 @@ namespace QtVsTools.QtMsBuild
         }
     }
 }
+#endif

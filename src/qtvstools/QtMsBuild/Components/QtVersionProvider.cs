@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+#if VS2017 || VS2019
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -82,3 +83,4 @@ namespace QtVsTools.QtMsBuild
         }
     }
 }
+#endif
