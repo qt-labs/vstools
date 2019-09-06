@@ -41,12 +41,25 @@ private slots:
     void initTestCase()
     {
         MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
+        MACRO_ASSERT_OK(client.runMacro(
+            MACRO_GLOBALS(
+                MACRO_GLOBAL_VAR("QtConfPath", "@\"" QT_CONF_PATH "\""))));
     }
 
-    void guiAppCreateRebuildDebug()
+    void guiAppCreate_Rebuild_Debug()
     {
         client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
         MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
+        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
+        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
+        client.runMacro(
+            "Dte.Solution.Close(false);"                "\r\n"
+            "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
+    }
+
+    void importProFile_Rebuild_Debug()
+    {
+        MACRO_ASSERT_OK(client.runMacro(QFile(":/ImportProFile")));
         MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
         MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
         client.runMacro(

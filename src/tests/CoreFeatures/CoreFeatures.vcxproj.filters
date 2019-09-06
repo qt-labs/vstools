@@ -48,6 +48,9 @@
     <None Include="..\macros\Test_DebugGuiApp.csmacro">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\macros\Test_ImportProFile.csmacro">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Macros.qrc">
