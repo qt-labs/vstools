@@ -64,6 +64,7 @@ namespace QtVsTest.Macros
             public string InitialValueExpr { get; set; }
             public FieldInfo FieldInfo { get; set; }
             public PropertyInfo InitInfo { get; set; }
+            public bool IsCallOutput { get; set; }
         }
 
         /// <summary>
@@ -219,9 +220,6 @@ namespace QtVsTest.Macros
 
                 if (!CompileMacro())
                     return false;
-
-                if (string.IsNullOrEmpty(CSharpMethodCode))
-                    return true;
 
                 if (!CompileClass())
                     return false;
@@ -453,7 +451,8 @@ namespace QtVsTest.Macros
                         GlobalVars[globalVar.Name] = new GlobalVar
                         {
                             Type = globalVar.Type,
-                            Name = globalVar.Name
+                            Name = globalVar.Name,
+                            IsCallOutput = true
                         };
                     }
                     break;
@@ -499,15 +498,32 @@ namespace QtVsTest.Macros
             return true;
         }
 
-        public AutomationElement UiFind(AutomationElement uiContext, string[] path)
+        public AutomationElement UiFind(AutomationElement uiContext, object[] path)
         {
             var uiIterator = uiContext;
-            foreach (var name in path) {
-                uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
-                    new PropertyCondition(AutomationElement.NameProperty, name));
+            foreach (var item in path) {
+                var itemType = item.GetType();
+                if (itemType.IsAssignableFrom(typeof(string))) {
+                    // Find element by name
+                    var name = (string)item;
+                    uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
+                        new PropertyCondition(AutomationElement.NameProperty, name));
+                } else if (itemType.IsAssignableFrom(typeof(string[]))) {
+                    // Find element by name and type
+                    var itemParams = (string[])item;
+                    uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
+                        new AndCondition(itemParams.Select((x, i) =>
+                        (i == 0) ? new PropertyCondition(
+                            AutomationElement.NameProperty, x) :
+                        (i == 1) ? new PropertyCondition(
+                            AutomationElement.LocalizedControlTypeProperty, x) :
+                        (i == 2) ? new PropertyCondition(
+                            AutomationElement.AutomationIdProperty, x) :
+                        Condition.FalseCondition).ToArray()));
+                }
                 if (uiIterator == null)
                     throw new Exception(
-                        string.Format("Could not find UI element \"{0}\"", name));
+                        string.Format("Could not find UI element \"{0}\"", item));
             }
             return uiIterator;
         }
@@ -522,12 +538,10 @@ namespace QtVsTest.Macros
         bool GenerateUiGlobals(StringBuilder csharp)
         {
             csharp.Append(@"
-        public static Func<AutomationElement, string[], AutomationElement> UiFind;
-        public static Stack<AutomationElement> UiStack;
-        public static Dictionary<string, AutomationElement> UiStash;
+        public static Func<AutomationElement, object[], AutomationElement> UiFind;
         public static AutomationElement UiVsRoot;
         public static AutomationElement UiContext;");
-            return false;
+            return true;
         }
 
         bool InitializeUiGlobals()
@@ -536,13 +550,7 @@ namespace QtVsTest.Macros
                 return false;
 
             MacroClass.GetField("UiFind", PUBLIC_STATIC)
-                .SetValue(null, new Func<AutomationElement, string[], AutomationElement>(UiFind));
-
-            MacroClass.GetField("UiStack", PUBLIC_STATIC)
-                .SetValue(null, new Stack<AutomationElement>());
-
-            MacroClass.GetField("UiStash", PUBLIC_STATIC)
-                .SetValue(null, new Dictionary<string, AutomationElement>());
+                .SetValue(null, new Func<AutomationElement, object[], AutomationElement>(UiFind));
 
             MacroClass.GetField("UiVsRoot", PUBLIC_STATIC)
                 .SetValue(null, UiVsRoot);
@@ -559,24 +567,36 @@ namespace QtVsTest.Macros
                 return ErrorMsg("Invalid #ui statement");
 
             if (s.Args[0].Equals("context", IGNORE_CASE)) {
-                //# ui context [ VS ] => _string_ [, _string_, ... ]
-                //# ui context HWND => _int_
+                //# ui context [ VS ] [_int_] => _string_ [, _string_, ... ]
+                //# ui context HWND [_int_] => _int_
 
-                if (s.Args.Count > 2 || string.IsNullOrEmpty(s.Code))
+                if (s.Args.Count > 3 || string.IsNullOrEmpty(s.Code))
                     return ErrorMsg("Invalid #ui statement");
+
+                bool uiVsRoot = (s.Args.Count > 1 && s.Args[1] == "VS");
+                bool uiHwnd = (s.Args.Count > 1 && s.Args[1] == "HWND");
 
                 string context;
-                if (s.Args.Count == 1)
-                    context = string.Format("UiFind(UiContext, new[] {{ {0} }})", s.Code);
-                else if (s.Args.Count > 1 && s.Args[1] == "VS")
-                    context = string.Format("UiFind(UiVsRoot, new[] {{ {0} }})", s.Code);
-                else if (s.Args.Count > 1 && s.Args[1] == "HWND")
+                if (uiVsRoot)
+                    context = string.Format("UiFind(UiVsRoot, new object[] {{ {0} }})", s.Code);
+                else if (uiHwnd)
                     context = string.Format("AutomationElement.FromHandle((IntPtr)({0}))", s.Code);
                 else
-                    return ErrorMsg("Invalid #ui statement");
+                    context = string.Format("UiFind(UiContext, new object[] {{ {0} }})", s.Code);
 
-                csharp.AppendFormat(@"
+                int timeout = 0;
+                if (s.Args.Count > 1 && !uiVsRoot && !uiHwnd)
+                    timeout = int.Parse(s.Args[1]);
+                else if (s.Args.Count > 2)
+                    timeout = int.Parse(s.Args[2]);
+
+                if (timeout > 0) {
+                    csharp.AppendFormat(@"
+                    await WaitExpr({0}, () => UiContext = {1});", timeout, context);
+                } else {
+                    csharp.AppendFormat(@"
                     UiContext = {0};", context);
+                }
 
             } else if (s.Args[0].Equals("pattern", IGNORE_CASE)) {
                 //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
@@ -593,7 +613,7 @@ namespace QtVsTest.Macros
 
                 string uiElement;
                 if (!string.IsNullOrEmpty(s.Code))
-                    uiElement = string.Format("UiFind(UiContext, new[] {{ {0} }})", s.Code);
+                    uiElement = string.Format("UiFind(UiContext, new object[] {{ {0} }})", s.Code);
                 else
                     uiElement = "UiContext";
 
@@ -674,7 +694,9 @@ namespace QtVsTest.Macros
 /** END generate code **/ , INIT_PREFIX,
                             globalVar.Type,
                             globalVar.Name,
-                            globalVar.InitialValueExpr);
+                            !string.IsNullOrEmpty(globalVar.InitialValueExpr)
+                                ? globalVar.InitialValueExpr
+                                : string.Format("default({0})", globalVar.Type));
             }
 
             csharp.Append(
@@ -762,7 +784,10 @@ namespace QtVsTest.Macros
             ResultField = MacroClass.GetField("Result", PUBLIC_STATIC);
             foreach (var globalVar in GlobalVars.Values) {
                 globalVar.FieldInfo = MacroClass.GetField(globalVar.Name, PUBLIC_STATIC);
-                globalVar.InitInfo = MacroClass.GetProperty(INIT_PREFIX + globalVar.Name, PUBLIC_STATIC);
+                if (!globalVar.IsCallOutput) {
+                    globalVar.InitInfo = MacroClass
+                        .GetProperty(INIT_PREFIX + globalVar.Name, PUBLIC_STATIC);
+                }
             }
 
             Run = (Func<Task>)Delegate.CreateDelegate(typeof(Func<Task>),
@@ -828,9 +853,16 @@ namespace QtVsTest.Macros
                 throw new FileNotFoundException("Unknown macro");
 
             callee.InitGlobalVars();
-            callee.CopyGlobalVarsFrom(this);
+
+            CopyGlobalVars(
+                from: GlobalVars.Values.Where(x => !x.IsCallOutput),
+                to: callee.GlobalVars.Values);
+
             await callee.Run();
-            CopyGlobalVarsFrom(callee);
+
+            CopyGlobalVars(
+                from: callee.GlobalVars.Values,
+                to: GlobalVars.Values);
         }
 
         public async Task WaitExprAsync(int timeout, Func<object> expr)
@@ -878,10 +910,9 @@ namespace QtVsTest.Macros
                 globalVar.FieldInfo.SetValue(null, globalVar.InitInfo.GetValue(null));
         }
 
-        void CopyGlobalVarsFrom(Macro src)
+        static void CopyGlobalVars(IEnumerable<GlobalVar> from, IEnumerable<GlobalVar> to)
         {
-            var globalVars = GlobalVars.Values
-                .Join(src.GlobalVars.Values,
+            var globalVars = to.Join(from,
                     DstVar => DstVar.Name, SrcVar => SrcVar.Name,
                     (DstVar, SrcVar) => new { DstVar, SrcVar })
                 .Where(x => x.SrcVar.FieldInfo != null && x.DstVar.FieldInfo != null

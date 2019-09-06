@@ -44,6 +44,10 @@
 
 #define MACRO_ASSERT_OK(result)     QCOMPARE(result, MACRO_OK)
 
+#define MACRO_GLOBALS(globalVars)           "//# macro Globals\r\n" globalVars
+#define MACRO_GLOBAL_VAR(varName, varValue) "//# var string " varName " => " varValue "\r\n"
+
+
 inline bool macroResultOk(QString result)
 {
     return result == MACRO_OK;
@@ -169,18 +173,18 @@ public:
     QString loadMacro(QFile &macroFile, QString macroName)
     {
         if (macroName.isNull() || macroName.isEmpty())
-            return QStringLiteral(MACRO_ERROR_MSG("Invalid macro name"));
+            return MACRO_ERROR_MSG("Invalid macro name");
         return loadAndRunMacro(macroFile, QString("//#macro %1").arg(macroName));
     }
 
     QString loadAndRunMacro(QFile &macroFile, QString macroHeader = QString())
     {
         if (!macroFile.open(QIODevice::ReadOnly | QIODevice::Text))
-            return QStringLiteral(MACRO_ERROR_MSG("Macro load failed"));
+            return MACRO_ERROR_MSG("Macro load failed");
         QString macroCode = QString::fromUtf8(macroFile.readAll());
         macroFile.close();
         if (macroCode.isEmpty())
-            return QStringLiteral(MACRO_ERROR_MSG("Macro load failed"));
+            return MACRO_ERROR_MSG("Macro load failed");
         if (!macroHeader.isNull())
             return runMacro(macroHeader + "\r\n" + macroCode);
         else
