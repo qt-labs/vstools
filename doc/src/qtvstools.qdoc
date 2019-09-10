@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -31,7 +31,7 @@
     \title Qt VS Tools Manual
 
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
-    2013, and later. This enables developers to use the standard Windows
+    2015, and later. This enables developers to use the standard Windows
     development environment without having to worry about Qt-related build steps
     or tools.
 
@@ -49,6 +49,7 @@
         \li Integrated Qt resource management.
         \li Creating a Qt translation source (TS) file and starting Qt Linguist
             to translate the strings.
+        \li Starting Qt Designer to design widget-based UIs for applications.
         \li Integrated Qt documentation.
         \li Debugging extensions for Qt data types.
     \endlist
@@ -417,10 +418,8 @@
     \section1 Managing Qt Versions
 
     Qt VS Tools provide you with basic Qt version management that enables you to
-    use multiple versions of Qt 5 in parallel. For example, Qt 5.10.1 and 5.11.0.
-    When you install Qt VS Tools, the information about Qt versions is added to
-    the user registry hive. So, other users will have to add a new Qt version,
-    because no default version will be set.
+    use multiple versions of Qt 5 in parallel. For example, Qt 5.12.5 and 5.13.1.
+    You have to add at least one Qt version to be able to create Qt projects.
 
     \image qtvstools-qt-versions.png Qt Versions
 
@@ -432,106 +431,16 @@
         \li In the \uicontrol {Version name} field, enter a name for the Qt
             version.
         \li In the \uicontrol Path field, enter the path to the Qt root
-            directory. For example: \c {C:\Qt5\5.10.1\msvc2013_64}.
+            directory. For example: \c {C:\Qt5\5.13.1\msvc2017_64}.
         \li Select \uicontrol OK.
         \li In the \uicontrol {Default Qt/Win version} field, select the Qt
             version to be used by default when creating new projects or
             importing a project from a \c {.pro} file.
     \endlist
 
-    To use the Qt version set in the \c QTDIR environment variable, create a
-    version named \c {$(QTDIR)}. Because the path is not needed, the
-    \uicontrol Path field is disabled. You must restart Visual Studio to make
-    it aware of the new environment variable.
-
-    To specify the Qt version that the selected project should use, select
+    To specify the Qt version that a project or solution should use, select
     \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
     \uicontrol Properties > \uicontrol Version.
-
-    To change the Qt version for all projects in a solution, select
-    \uicontrol {Change Solutions' Qt Version} in the context menu, and then
-    select a Qt version in the \uicontrol {Installed Qt Versions} field.
-
-    \note When you set a Qt version for the solution, it becomes the default
-    version for the new projects that you add to the solution.
-
-    Using Qt VS Tools does not require a globally set Qt environment variable.
-    In fact, Qt VS Tools will always overwrite the existing global Qt
-    environment variable.
-
-    \note If building Qt projects fails with the error message
-    \tt{The following environment variables were not found: $(QTDIR)},
-    the project might have an invalid Qt build specified. For example, the
-    specified Qt version has been uninstalled. To fix this error, specify a
-    valid Qt version for the project.
-
-    Qt VS Tools handle everything you need in order to create applications for
-    Windows, so you do not need to add a platform manually using the Visual
-    Studio Configuration Manager. Qt VS Tools create the platform required for
-    the selected Qt version, if necessary.
-
-    To switch between platforms, choose the appropriate Qt version in the
-    \uicontrol Version field.
-
-    \section1 Modifying Project Properties
-
-    The properties of new Qt projects are initialized to the values specified in
-    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings}.
-
-    To modify properties for a particular Qt project, select it in the solution
-    explorer, and then select \uicontrol {Qt VS Tools} >
-    \uicontrol {Qt Project Settings}.
-
-    \image qtvstools-qt-project-settings.png Qt Project Settings dialog
-
-    You can change the following Qt project settings in the
-    \uicontrol Properties tab:
-
-    \table
-        \header
-            \li Property
-            \li Description
-        \row
-            \li LReleaseOptions
-            \li Additional command-line options for the \l {Using lrelease}
-                {lrelease} tool.
-        \row
-            \li lupdateOnBuild
-            \li A flag that determines whether to create the translation files
-                while building the project.
-        \row
-            \li LUpdateOptions
-            \li Additional command-line options for the \l {Using lupdate}
-                {lupdate} tool.
-        \row
-            \li MocDirectory
-            \li The directory (relative to the project) where the generated
-                \l {Using the Meta-Object Compiler (moc)}{moc} files are put.
-                This directory must include the \c $(ConfigurationName) variable
-                to ensure that the \c moc files for different configurations
-                (such as \c debug or \c release) do not collide. You can use the
-                \c $(PlatformName) variable to place the files generated for
-                different platforms into separate directories.
-        \row
-            \li MocOptions
-            \li Additional command-line options for the \c moc build step.
-        \row
-            \li RccDirectory
-            \li The directory (relative to the project) where the
-            \l {Resource Compiler (rcc)}{rcc} generated source files are put.
-        \row
-            \li UicDirectory
-            \li The directory (relative to the project) where the
-            \l {User Interface Compiler (uic)}{uic} generated header files are
-                put.
-        \row
-            \li Version
-            \li The \l {Managing Qt Versions}{Qt version} to use for this
-                project.
-    \endtable
-
-    Select \uicontrol {Qt Modules} to add and delete dependencies for the
-    project.
 
     \section1 Importing and Exporting Projects
 
@@ -717,7 +626,7 @@
 
     If code completion does not work, try to rebuild the project. You might have
     to wait some time before code completion fully works after updating a \c .ui
-    file. For more information, see \l{Modifying Project Properties}.
+    file.
 
     If rebuilding does not help, refresh the code model by selecting
     \uicontrol {Rescan Solution} in the context menu of the project.
