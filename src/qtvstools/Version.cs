@@ -35,6 +35,6 @@ namespace QtVsTools
 {
     internal static class Version
     {
-        public const string PRODUCT_VERSION = "<#=QT_VS_TOOLS_VERSION#>";
+        public const string PRODUCT_VERSION = "<#=QT_VS_TOOLS_VERSION_MANIFEST#>";
     }
 }

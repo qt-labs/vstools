@@ -4,6 +4,8 @@
 <#@ assembly name="System.Xml.Linq" #>
 <#@ assembly name="System.Linq" #>
 <#@ assembly name="System.Data.Linq" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Xml" #>
 <#@ import namespace="System.Xml.Linq" #>
@@ -35,12 +37,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+    Func<string> GetRevisionData = new Func<string>(() =>
+    {
+        var proc = System.Diagnostics.Process.Start(new ProcessStartInfo
+        {
+            FileName = "git",
+            Arguments = "describe --tags",
+            WorkingDirectory = Directory.GetParent(SolutionDir).FullName,
+            CreateNoWindow = true, UseShellExecute = false,
+            RedirectStandardOutput = true, RedirectStandardError = true,
+        });
+        return proc.WaitForExit(3000) && proc.ExitCode == 0 ? proc.StandardOutput.ReadLine() : "";
+    });
+    string REVISION_TAG = GetRevisionData();
+    int REVISION_NUMBER = Convert.ToInt32(REVISION_TAG.Split('-').Skip(1).FirstOrDefault());
+
+/***************************************************************************/
+
     string QT_VS_TOOLS_VERSION = (string)XDocument.Load(SolutionDir + @"\version.targets")
         .Descendants()
         .Where(x => x.Name.LocalName == "QtVSToolsVersion")
         .FirstOrDefault();
+
 /***************************************************************************/
-    string QT_VS_TOOLS_VERSION_TAG           = QT_VS_TOOLS_VERSION.Replace(".", "");
-    string QT_VS_TOOLS_VERSION_ASSEMBLY      = QT_VS_TOOLS_VERSION + ".0";
-    string QT_VS_TOOLS_VERSION_ASSEMBLY_FILE = QT_VS_TOOLS_VERSION + ".0";
+
+    string QT_VS_TOOLS_VERSION_TAG
+        = QT_VS_TOOLS_VERSION.Replace(".", "");
+
+    string QT_VS_TOOLS_VERSION_ASSEMBLY
+        = string.Format("{0}.{1}", QT_VS_TOOLS_VERSION, REVISION_NUMBER);
+
+    string QT_VS_TOOLS_VERSION_ASSEMBLY_FILE
+        = string.Format("{0}.{1}", QT_VS_TOOLS_VERSION, REVISION_NUMBER);
+
+    string QT_VS_TOOLS_VERSION_MANIFEST
+        = REVISION_NUMBER > 0 ? QT_VS_TOOLS_VERSION_ASSEMBLY : QT_VS_TOOLS_VERSION;
 #>

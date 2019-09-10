@@ -39,7 +39,7 @@
     <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
     <Identity
       Id="QtVsTools.30112013-cd02-4fd0-89bd-e36f85abe16a"
-      Version="<#=QT_VS_TOOLS_VERSION#>"
+      Version="<#=QT_VS_TOOLS_VERSION_MANIFEST#>"
       Language="en-US"
       Publisher="The Qt Company Ltd." />
     <#=XML_COMMENT_BEGIN#> END Generated Text -->

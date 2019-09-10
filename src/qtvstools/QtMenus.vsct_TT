@@ -190,7 +190,7 @@
                 <Strings>
                       <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
                       <ButtonText
-            >Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION#>: Initializing...</ButtonText>
+>Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION_MANIFEST#>: Initializing...</ButtonText>
                       <#=XML_COMMENT_BEGIN#> END Generated Text -->
                  </Strings>
             </Button>
