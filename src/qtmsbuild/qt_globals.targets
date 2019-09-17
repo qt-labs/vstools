@@ -359,6 +359,9 @@
     <ItemGroup>
       <ClCompile Include="@(QtWorkResult->'%(ClCompile)')"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"/>
+      <ClCompile
+        Condition="Exists('$(IntDir)qmake\qtvars_plugin_import.cpp')"
+        Include="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
     </ItemGroup>
 
     <!--// If sources were manually selected (e.g. by the 'Compile' option in the context menu for

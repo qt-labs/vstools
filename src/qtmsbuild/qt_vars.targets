@@ -280,6 +280,17 @@ for (varName, $$list($$sorted(varNames))) {
     <Copy
       Condition="'$(ErrorLevel)' == '0'"
       SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFilePath)"/>
+
+    <!--// Copy generated qtvars_plugin_import.cpp to $(IntDir)\qmake -->
+    <Delete
+      Condition="'$(ErrorLevel)' == '0'"
+      Files="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+    <Copy
+      Condition="'$(ErrorLevel)' == '0' AND Exists('$(QtVarsWorkDir)\qtvars_plugin_import.cpp')"
+      SourceFiles="$(QtVarsWorkDir)\qtvars_plugin_import.cpp"
+      DestinationFiles="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+
+    <!--// Remove work dir -->
     <RemoveDir
       Condition="'$(QtVarsDebug)' != 'true'"
       Directories="$(QtVarsWorkDir)"/>
