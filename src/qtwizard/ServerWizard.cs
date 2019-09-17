@@ -38,6 +38,7 @@ using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 
@@ -110,6 +111,7 @@ namespace QtProjectWizard
         public void RunStarted(object automation, Dictionary<string, string> replacements,
             WizardRunKind runKind, object[] customParams)
         {
+            var qtMoc = new StringBuilder();
             var serviceProvider = new ServiceProvider(automation as IServiceProvider);
             var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
 
@@ -221,6 +223,7 @@ namespace QtProjectWizard
                     strHeaderInclude = "stdafx.h\"\r\n#include \"" + data.ClassHeaderFile;
                     replacements["$precompiledheader$"] = "<None Include=\"stdafx.h\" />";
                     replacements["$precompiledsource$"] = "<None Include=\"stdafx.cpp\" />";
+                    qtMoc.Append("<PrependInclude>stdafx.h</PrependInclude>");
                 }
 
                 replacements["$include$"] = strHeaderInclude;
@@ -237,6 +240,11 @@ namespace QtProjectWizard
                     replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
                 }
 #endif
+
+                if (qtMoc.Length > 0)
+                    replacements["$QtMoc$"] = string.Format("<QtMoc>{0}</QtMoc>", qtMoc);
+                else
+                    replacements["$QtMoc$"] = string.Empty;
             } catch {
                 try {
                     Directory.Delete(replacements["$destinationdirectory$"]);
