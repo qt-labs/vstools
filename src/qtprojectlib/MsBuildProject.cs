@@ -821,12 +821,20 @@ namespace QtProjectLib
                 var outputItems = new List<XElement>();
                 foreach (var outputFile in outputFiles) {
                     List<XElement> mocOutput = null;
-                    if (projItemsByPath.TryGetValue(outputFile, out mocOutput))
+                    if (projItemsByPath.TryGetValue(outputFile, out mocOutput)) {
                         outputItems.AddRange(mocOutput);
+                        hasGeneratedFiles |= hasGeneratedFiles ? true : mocOutput
+                            .Where(x => !x.Elements(ns + "ExcludedFromBuild")
+                                .Where(y =>
+                                    (string)y.Attribute("Condition") == string.Format(
+                                        "'$(Configuration)|$(Platform)'=='{0}'", configName)
+                                    && y.Value == "true")
+                                .Any())
+                            .Any();
+                    }
                     if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
                         outputItems.AddRange(mocOutput);
                 }
-                hasGeneratedFiles = outputItems.Any();
                 foreach (var item in outputItems.Where(x => x.Parent != null))
                     item.Remove();
             }
