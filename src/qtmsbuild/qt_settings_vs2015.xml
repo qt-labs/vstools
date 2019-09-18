@@ -55,6 +55,7 @@
     </EnumProperty.DataSource>
     <EnumValue Name="Qt4VSv1.0" DisplayName="Version 2.0"/>
     <EnumValue Name="QtVS_v300" DisplayName="Version 3.0"/>
+    <EnumValue Name="QtVS_v301" DisplayName="Version 3.1"/>
   </EnumProperty>
   <DynamicEnumProperty
     Name="QtInstall"
@@ -66,9 +67,6 @@
     <DynamicEnumProperty.ProviderSettings>
       <NameValuePair Name="Include" Value="$(QtVersionNames)" />
     </DynamicEnumProperty.ProviderSettings>
-    <DynamicEnumProperty.DataSource>
-      <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="true"/>
-    </DynamicEnumProperty.DataSource>
   </DynamicEnumProperty>
   <StringListProperty
     Name="QtModules"
@@ -106,8 +104,5 @@
     Category="QtSettings_QML"
     DisplayName="Enable QML Debugging"
     Description="Select whether to launch a QML session when debugging.">
-    <BoolProperty.DataSource>
-      <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="true"/>
-    </BoolProperty.DataSource>
   </BoolProperty>
 </Rule>

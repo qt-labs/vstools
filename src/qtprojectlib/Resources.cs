@@ -83,7 +83,7 @@ namespace QtProjectLib
 
         // Qt VS project tag and format version
         public const string qtProjectKeyword = "QtVS";
-        public const int qtProjectFormatVersion = 300;
+        public const int qtProjectFormatVersion = 301;
 
         // Min. format version for Qt settings as project properties
         public const int qtMinFormatVersion_Settings = 300;
@@ -93,7 +93,6 @@ namespace QtProjectLib
 
         // Project properties labels
         public const string projLabelGlobals = "Globals";
-        public const string projLabelConfiguration = "Configuration";
         public const string projLabelQtSettings = "QtSettings";
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";

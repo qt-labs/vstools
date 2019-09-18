@@ -306,7 +306,7 @@ namespace QtProjectLib
             this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelConfiguration)
+                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelQtSettings)
                 .ToList()
                 .ForEach(config =>
                 {

@@ -293,15 +293,14 @@ namespace QtVsTools
 
             if (project != null && isQtProject) {
                 int projectVersion = QtProject.GetFormatVersion(project);
-                int minProjectVersion = Resources.qtMinFormatVersion_Settings;
                 switch ((CommandId)command.CommandID.ID) {
                     case CommandId.QtProjectSettingsProjectId:
                     case CommandId.ChangeProjectQtVersionProjectId:
-                        if (projectVersion >= minProjectVersion)
+                        if (projectVersion >= Resources.qtMinFormatVersion_Settings)
                             command.Visible = command.Enabled = false;
                         break;
                     case CommandId.ProjectConvertToQtMsBuild:
-                        if (projectVersion >= minProjectVersion) {
+                        if (projectVersion >= Resources.qtProjectFormatVersion) {
                             command.Visible = command.Enabled = false;
                         } else {
                             command.Visible = command.Enabled = true;

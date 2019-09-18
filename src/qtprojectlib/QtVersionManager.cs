@@ -323,7 +323,7 @@ namespace QtProjectLib
                     return false;
 #if VS2017 || VS2019
                 foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
-                    config.SetPropertyValue(Resources.projLabelConfiguration, true,
+                    config.SetPropertyValue(Resources.projLabelQtSettings, true,
                         "QtInstall", version);
                 }
 #endif
