@@ -73,8 +73,9 @@
       >HKEY_CURRENT_USER\Software\Digia\Versions\$(QtInstall)</QtInstallRegKey>
     <QtInstallRegDir Condition="'$(QtInstallDir)' == '' AND '$(QtInstallRegKey)' != ''"
       >$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))</QtInstallRegDir>
-    <QtInstallDir Condition="Exists('$(QtInstallRegDir)')">$(QtInstallRegDir)</QtInstallDir>
-    <QtInstallDir Condition="!Exists('$(QtInstallRegDir)')"
+    <QtInstallDir Condition="'$(QtInstallDir)' == '' AND Exists('$(QtInstallRegDir)')"
+      >$(QtInstallRegDir)</QtInstallDir>
+    <QtInstallDir Condition="'$(QtInstallDir)' == '' AND !Exists('$(QtInstallRegDir)')"
       >ERROR: Qt install dir not found</QtInstallDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtInstallDir)' != ''">
