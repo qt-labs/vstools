@@ -228,6 +228,43 @@ namespace QtProjectLib
             }
         }
 
+        /// <summary>
+        /// Parser for project format version string:
+        ///
+        ///     QtVS_vNNN
+        ///
+        /// </summary>
+        Parser _ProjectFormatVersion;
+        Parser ProjectFormatVersion
+        {
+            get
+            {
+                if (_ProjectFormatVersion == null) {
+                    var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
+                    {
+                        new Rule<int> { Capture(value => int.Parse(value)) }
+                    };
+                    try {
+                        _ProjectFormatVersion = expr.Render();
+                    } catch { }
+                }
+                return _ProjectFormatVersion;
+            }
+        }
+
+        int? ParseProjectFormatVersion(string text)
+        {
+            if (ProjectFormatVersion == null)
+                return null;
+            try {
+                return ProjectFormatVersion.Parse(text)
+                    .GetValues<int>("VERSION")
+                    .First();
+            } catch {
+                return null;
+            }
+        }
+
         const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
         readonly StringComparer IGNORE_CASE_ = StringComparer.InvariantCultureIgnoreCase;
 
@@ -266,6 +303,10 @@ namespace QtProjectLib
             var projKeyword = globals.Element(ns + "Keyword");
             if (projKeyword == null)
                 return false;
+            var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
+            if (oldVersion.HasValue && oldVersion.Value == Resources.qtProjectFormatVersion)
+                return true; // nothing to do!
+
             projKeyword.SetValue(string.Format("QtVS_v{0}", Resources.qtProjectFormatVersion));
 
             // Find import of qt.props
@@ -278,21 +319,128 @@ namespace QtProjectLib
             if (qtPropsImport == null)
                 return false;
 
+            // Upgrading from v3.0?
+            Dictionary<string, XElement> oldQtInstall = null;
+            Dictionary<string, XElement> oldQtSettings = null;
+            if (oldVersion.HasValue && oldVersion.Value == Resources.qtMinFormatVersion_Settings) {
+                oldQtInstall = this[Files.Project].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "PropertyGroup")
+                    .Elements(ns + "QtInstall")
+                    .ToDictionary(x => (string)x.Parent.Attribute("Condition"));
+                oldQtInstall.Values.ToList()
+                    .ForEach(x => x.Remove());
+
+                oldQtSettings = this[Files.Project].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "PropertyGroup")
+                    .Where(x => (string)x.Attribute("Label") == "QtSettings")
+                    .ToDictionary(x => (string)x.Attribute("Condition"));
+                oldQtSettings.Values.ToList()
+                    .ForEach(x => x.Remove());
+            }
+
             // Get project configurations
             var configs = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
 
-            // Create QtSettings property group immediately after import of qt.props
+            // Find location for import of qt.props and for the QtSettings property group:
+            // (cf. ".vcxproj file elements" https://docs.microsoft.com/en-us/cpp/build/reference/vcxproj-file-structure?view=vs-2019#vcxproj-file-elements)
+            XElement insertionPoint = null;
+
+            // * After the last UserMacros property group
+            insertionPoint = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(x => (string)x.Attribute("Label") == "UserMacros")
+                .LastOrDefault();
+
+            // * After the last PropertySheets import group
+            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ImportGroup")
+                .Where(x => (string)x.Attribute("Label") == "PropertySheets")
+                .LastOrDefault();
+
+            // * Before the first ItemDefinitionGroup
+            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Select(x => x.ElementsBeforeSelf().Last())
+                .FirstOrDefault();
+
+            // * Before the first ItemGroup
+            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemGroup")
+                .Select(x => x.ElementsBeforeSelf().Last())
+                .FirstOrDefault();
+
+            // * Before the import of Microsoft.Cpp.targets
+            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "Import")
+                .Where(x =>
+                    (string)x.Attribute("Project") == @"$(VCTargetsPath)\Microsoft.Cpp.targets")
+                .Select(x => x.ElementsBeforeSelf().Last())
+                .FirstOrDefault();
+
+            // * At the end of the file
+            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements()
+                .LastOrDefault();
+
+            if (insertionPoint == null)
+                return false;
+
+            // Move import of qt.props to insertion point
+            if (qtPropsImport.Parent.Elements().SingleOrDefault() == qtPropsImport)
+                qtPropsImport.Parent.Remove(); // Remove import group
+            else
+                qtPropsImport.Remove(); // Remove import (group contains other imports)
+            insertionPoint.AddAfterSelf(
+                new XElement(ns + "ImportGroup",
+                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt.props')"),
+                    new XElement(ns + "Import",
+                        new XAttribute("Project", @"$(QtMsBuild)\qt.props"))));
+
+            // Create QtSettings property group above import of qt.props
+            var qtSettings = new List<XElement>();
             foreach (var config in configs) {
-                qtPropsImport.Parent.AddAfterSelf(
-                    new XElement(ns + "PropertyGroup",
+                var configQtSettings = new XElement(ns + "PropertyGroup",
                         new XAttribute("Label", "QtSettings"),
                         new XAttribute("Condition",
                             string.Format("'$(Configuration)|$(Platform)'=='{0}'",
-                            (string)config.Attribute("Include")))));
+                            (string)config.Attribute("Include"))));
+                insertionPoint.AddAfterSelf(configQtSettings);
+                qtSettings.Add(configQtSettings);
             }
+
+            //// Upgrading from v3.0: move Qt settings to newly created import groups
+            if (oldVersion.HasValue && oldVersion.Value == Resources.qtMinFormatVersion_Settings) {
+                foreach (var configQtSettings in qtSettings) {
+                    var configCondition = (string)configQtSettings.Attribute("Condition");
+
+                    XElement oldConfigQtInstall;
+                    if (oldQtInstall.TryGetValue(configCondition, out oldConfigQtInstall))
+                        configQtSettings.Add(oldConfigQtInstall);
+
+                    XElement oldConfigQtSettings;
+                    if (oldQtSettings.TryGetValue(configCondition, out oldConfigQtSettings)) {
+                        foreach (var qtSetting in oldConfigQtSettings.Elements())
+                            configQtSettings.Add(qtSetting);
+                    }
+                }
+
+                this[Files.Project].isDirty = true;
+                Commit();
+                return true;
+            }
+
+            //// Upgrading from v2.0
 
             // Get project user properties (old format)
             var userProps = this[Files.Project].xml
