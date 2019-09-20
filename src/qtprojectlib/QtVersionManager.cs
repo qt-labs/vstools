@@ -92,10 +92,10 @@ namespace QtProjectLib
 
         public VersionInformation GetVersionInfo(string name)
         {
-            if (name == null)
-                return null;
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
+            if (name == null)
+                return null;
             if (versionCache == null)
                 versionCache = new Hashtable();
 
