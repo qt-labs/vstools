@@ -109,7 +109,7 @@
       <QtVarsProFileInput>
         <!--
 # Qt vars data file name -->
-        fileName = "qtvars_$(Platform)_$(Configuration).props"
+        fileName = "qtvars_$(PlatformEscaped)_$(ConfigurationEscaped).props"
         <!--
 # Selected Qt modules -->
         modules = $(QtModuleNames)
@@ -276,7 +276,7 @@ for (varName, $$list($$sorted(varNames))) {
     <!--// Copy generated .props to $(IntDir) -->
     <Delete
       Condition="'$(ErrorLevel)' == '0'"
-      Files="$(IntDir)qtvars_$(Platform)_$(Configuration).props"/>
+      Files="$(IntDir)qtvars_$(PlatformEscaped)_$(ConfigurationEscaped).props"/>
     <Copy
       Condition="'$(ErrorLevel)' == '0'"
       SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFilePath)"/>

@@ -92,6 +92,9 @@
     <!--// List of Qt variables to import -->
     <QtVariables Condition="'$(QtVariables)' == ''">DEFINES;INCLUDEPATH;LIBS</QtVariables>
 
+    <ConfigurationEscaped>$(Configuration.Replace(' ','_'))</ConfigurationEscaped>
+    <PlatformEscaped>$(Platform.Replace(' ','_'))</PlatformEscaped>
+
     <!--// Path to Qt variables property file -->
     <QtVarsWorkDir
         >$([System.IO.Path]::Combine(
@@ -99,7 +102,7 @@
     <QtVarsOutputDir
         >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)'))</QtVarsOutputDir>
     <QtVarsFileNameWithoutExt
-        >qtvars_$(Platform)_$(Configuration)</QtVarsFileNameWithoutExt>
+        >qtvars_$(PlatformEscaped)_$(ConfigurationEscaped)</QtVarsFileNameWithoutExt>
     <QtVarsFileName
         >$(QtVarsFileNameWithoutExt).props</QtVarsFileName>
     <QtVarsWorkPath
