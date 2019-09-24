@@ -416,6 +416,14 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\empty\Empty.csproj">
+      <Project>{73C3DFB8-BD8A-4634-AAD5-DC71EDC37B98}</Project>
+      <Name>Empty</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\qttemplates\lib\Lib.csproj">
       <Project>{191B1B91-D9FD-4138-A72A-AB0B149958C6}</Project>
       <Name>Lib</Name>

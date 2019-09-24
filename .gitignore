@@ -280,6 +280,7 @@ src/qttemplates/console/Properties/AssemblyInfo.tt.cs
 src/qttemplates/designer/Properties/AssemblyInfo.tt.cs
 src/qttemplates/dialogbuttonbottom/Properties/AssemblyInfo.tt.cs
 src/qttemplates/dialogbuttonright/Properties/AssemblyInfo.tt.cs
+src/qttemplates/empty/Properties/AssemblyInfo.tt.cs
 src/qttemplates/gui/Properties/AssemblyInfo.tt.cs
 src/qttemplates/lib/Properties/AssemblyInfo.tt.cs
 src/qttemplates/mainwindow/Properties/AssemblyInfo.tt.cs
@@ -291,6 +292,7 @@ src/qtvstools/Properties/AssemblyInfo.tt.cs
 src/qtwizard/Properties/AssemblyInfo.tt.cs
 src/qttemplates/console/console.vstemplate
 src/qttemplates/designer/designer.vstemplate
+src/qttemplates/empty/empty.vstemplate
 src/qttemplates/gui/gui.vstemplate
 src/qttemplates/lib/lib.vstemplate
 src/qttemplates/server/server.vstemplate

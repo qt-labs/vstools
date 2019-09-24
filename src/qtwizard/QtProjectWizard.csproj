@@ -77,6 +77,7 @@
       <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="GuiWizard.cs" />
+    <Compile Include="EmptyWizard.cs" />
     <Compile Include="IClassWizard.cs" />
     <Compile Include="IntroPage.xaml.cs">
       <DependentUpon>IntroPage.xaml</DependentUpon>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2019 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+
+<VSTemplate Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005"
+            xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
+            Type="Project" >
+    <TemplateData>
+        <Name>Qt Empty Application</Name>
+        <Description>This wizard generates an empty Qt application project.</Description>
+        <ProjectType>VC</ProjectType>
+        <SortOrder>1000</SortOrder>
+        <CreateNewFolder>true</CreateNewFolder>
+        <DefaultName>QtApplication</DefaultName>
+        <ProvideDefaultName>true</ProvideDefaultName>
+        <LocationField>Enabled</LocationField>
+        <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+        <Icon>empty.ico</Icon>
+    </TemplateData>
+    <TemplateContent>
+        <Project TargetFileName="$safeprojectname$.vcxproj"
+                 File="empty.vcxproj"
+                 ReplaceParameters="true">
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$safeprojectname$.vcxproj.filters">empty.vcxproj.filters</ProjectItem>
+            <ProjectItem ReplaceParameters="false">empty.ico</ProjectItem>
+        </Project>
+    </TemplateContent>
+    <WizardExtension>
+      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Assembly>QtProjectWizard, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <FullClassName>QtProjectWizard.EmptyWizard</FullClassName>
+    </WizardExtension>
+</VSTemplate>
