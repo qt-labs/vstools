@@ -118,7 +118,7 @@
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTest</LibraryPrefix>
     <HasDLL>true</HasDLL>
-    <proVarCONFIG>qtestlib</proVarCONFIG>
+    <proVarQT>testlib</proVarQT>
     <IncludePath>$(QTDIR)\include\QtTest</IncludePath>
     <Defines>QT_TESTLIB_LIB</Defines>
   </Module>
@@ -138,7 +138,7 @@
     <Selectable>true</Selectable>
     <LibraryPrefix>QtHelp</LibraryPrefix>
     <HasDLL>true</HasDLL>
-    <proVarCONFIG>help</proVarCONFIG>
+    <proVarQT>help</proVarQT>
     <IncludePath>$(QTDIR)\include\QtHelp</IncludePath>
     <Defines>QT_HELP_LIB</Defines>
   </Module>
