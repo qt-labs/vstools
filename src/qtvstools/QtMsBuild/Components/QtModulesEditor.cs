@@ -72,9 +72,12 @@ namespace QtVsTools.QtMsBuild
                     });
             }
 
-            var currentModuleVars = currentValue.ToString().Split(';');
-            var currentModules = modules.Values
-                .Where(x => x.Vars.All(y => currentModuleVars.Contains(y)));
+            var currentModules = Enumerable.Empty<Module>();
+            if (currentValue != null) {
+                var currentModuleVars = currentValue.ToString().Split(';');
+                currentModules = modules.Values
+                    .Where(x => x.Vars.All(y => currentModuleVars.Contains(y)));
+            }
 
             await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
 
