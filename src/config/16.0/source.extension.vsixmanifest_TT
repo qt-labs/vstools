@@ -125,6 +125,9 @@
     <Asset
       Type="file" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
     <Asset
+      Type="File" d:Source="File" Path="qtmsbuild\qt_defaults.props"
+      d:VsixSubPath="qtmsbuild" />
+    <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qt.props" d:VsixSubPath="qtmsbuild" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qt.targets" d:VsixSubPath="qtmsbuild" />

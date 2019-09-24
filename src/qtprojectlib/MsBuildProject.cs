@@ -419,6 +419,13 @@ namespace QtProjectLib
                 qtSettings.Add(configQtSettings);
             }
 
+            // Add import of default property values
+            insertionPoint.AddAfterSelf(
+                new XElement(ns + "ImportGroup",
+                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt_defaults.props')"),
+                    new XElement(ns + "Import",
+                        new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
+
             //// Upgrading from v3.0: move Qt settings to newly created import groups
             if (oldVersion.HasValue && oldVersion.Value == Resources.qtMinFormatVersion_Settings) {
                 foreach (var configQtSettings in qtSettings) {

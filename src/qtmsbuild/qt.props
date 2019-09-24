@@ -37,6 +37,14 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Fail-safe import of default values
+  // -->
+  <Import
+    Condition="'$(QtDefaultsLoaded)' != 'true'"
+    Project="$(MSBuildThisFileDirectory)\qt_defaults.props"/>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Qt VS Project Format Version
   // -->
   <PropertyGroup>
@@ -91,9 +99,6 @@
   // Qt Variables Expansion
   // -->
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
-    <!--// List of Qt variables to import -->
-    <QtVariables Condition="'$(QtVariables)' == ''">DEFINES;INCLUDEPATH;LIBS</QtVariables>
-
     <ConfigurationEscaped>$(Configuration.Replace(' ','_'))</ConfigurationEscaped>
     <PlatformEscaped>$(Platform.Replace(' ','_'))</PlatformEscaped>
 
