@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 
@@ -66,7 +67,17 @@ namespace QtProjectLib
             var propertyString = property.ToString();
             var result = string.Empty;
 
-            qmakeProcess = CreateQmakeProcess("-query " + propertyString.Trim(), qtVersionInformation.qtDir + "\\bin\\qmake", qtVersionInformation.qtDir);
+            var qmakePath = Path.Combine(qtVersionInformation.qtDir, "bin", "qmake.exe");
+            if (!File.Exists(qmakePath))
+                qmakePath = Path.Combine(qtVersionInformation.qtDir, "qmake.exe");
+            if (!File.Exists(qmakePath)) {
+                qmakeProcess = null;
+                errorValue = -1;
+                InvokeExternalTarget(ReadyEvent, result);
+                return;
+            }
+
+            qmakeProcess = CreateQmakeProcess("-query " + propertyString.Trim(), qmakePath, qtVersionInformation.qtDir);
             try {
                 if (qmakeProcess.Start()) {
                     errOutput = new StringBuilder();

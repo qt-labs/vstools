@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools
 {
@@ -257,6 +258,11 @@ namespace QtVsTools
             }
 
             qtDir = HelperFunctions.FindQtDirWithTools(tool, qtVersion);
+
+            if (string.IsNullOrEmpty(qtDir)) {
+                var vcProject = project.Object as VCProject;
+                qtDir = vcProject?.ActiveConfiguration.GetEvaluatedPropertyValue("QtInstallDir");
+            }
             if (string.IsNullOrEmpty(qtDir))
                 MessageBox.Show(SR.GetString("NoDefaultQtVersionError"), SR.GetString("Resources_QtVsTools"));
             return !string.IsNullOrEmpty(qtDir);

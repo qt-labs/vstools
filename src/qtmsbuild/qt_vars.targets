@@ -42,6 +42,7 @@
     <QtVariableList Include="$(QtVariables)"/>
     <QMakeCodeLine Include="$(QMakeCodeLines)"/>
     <QtVarProp Include="@(QtVariableList->'Qt_%(Identity)_')"/>
+    <QtLibsList Include="$(QtLibrarySearchPath)"></QtLibsList>
   </ItemGroup>
 
   <PropertyGroup>
@@ -82,13 +83,27 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
     </CreateProperty>
     <CreateProperty
-      Value="$(QtInstallDir)\bin">
+      Condition="!$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
+      Value="$(QtInstallDir)\$(QtPathBinaries)">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
+    </CreateProperty>
+    <CreateProperty
+      Condition="$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
+      Value="$(QtPathBinaries)">
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
+    <ItemGroup>
+      <QtLinkInput Include=
+"$([System.IO.Path]::Combine($(QtInstallDir),$([System.String]::Copy('%(QtLibsList.Identity)'))))"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtLibs>@(QtLinkInput->'-L%(Identity)', ' ')</QtLibs>
+    </PropertyGroup>
+
     <Message
       Importance="high"
-      Text="Reading Qt configuration ($(QtInstallDir))"/>
+      Text="Reading Qt configuration ($(QtToolsPath)\qmake.exe)"/>
 
     <PropertyGroup>
 
@@ -118,6 +133,11 @@
         <!--
 # Custom additional .pro file code (from property page) -->
         @(QMakeCodeLine->'%(Identity)','%0D%0A')
+      </QtVarsProFileInput>
+
+      <QtVarsProFileInput Condition="'$(QtLibrarySearchPath)'!=''">
+        $(QtVarsProFileInput)
+        LIBS = $(QtLibs)
       </QtVarsProFileInput>
 
       <!--// Generate .pro file -->

@@ -83,7 +83,7 @@ namespace QtProjectWizard
                                 + @"empty form.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
+                            FinishButtonEnabled = true,
                             CancelButtonEnabled = true
                         }
                     })

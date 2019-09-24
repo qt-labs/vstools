@@ -79,8 +79,10 @@
       >ERROR: Qt install dir not found</QtInstallDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtInstallDir)' != ''">
-    <QtToolsPath Condition="'$(QtToolsPath)' == ''">$(QtInstallDir)\bin</QtToolsPath>
-    <QtDllPath Condition="'$(QtDllPath)' == ''">$(QtInstallDir)\bin</QtDllPath>
+    <QtToolsPath Condition="'$(QtToolsPath)' == ''"
+      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathBinaries)'))</QtToolsPath>
+    <QtDllPath Condition="'$(QtDllPath)' == ''"
+      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathLibraryExecutables)'))</QtDllPath>
     <QTDIR>$(QtInstallDir)</QTDIR>
   </PropertyGroup>
 
