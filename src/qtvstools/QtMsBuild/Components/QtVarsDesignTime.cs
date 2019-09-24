@@ -145,7 +145,7 @@ namespace QtVsTools.QtMsBuild
                         null, new ProjectCollection());
 
                     var buildRequest = new BuildRequestData(projectInstance,
-                        targetsToBuild: new[] { "QtVars" },
+                        targetsToBuild: new[] { "QtVarsDesignTime" },
                         hostServices: null,
                         flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
@@ -158,7 +158,7 @@ namespace QtVsTools.QtMsBuild
                             str: string.Format("{0}: design-time pre-build FAILED!",
                                 Path.GetFileName(UnconfiguredProject.FullPath)));
                     } else {
-                        var resultQtVars = result.ResultsByTarget["QtVars"];
+                        var resultQtVars = result.ResultsByTarget["QtVarsDesignTime"];
                         if (resultQtVars.ResultCode == TargetResultCode.Success) {
                             msBuildProject.MarkDirty();
                         }

@@ -35,7 +35,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <QtDependsOn Condition="'$(DesignTimeBuild)' != 'true'">QtVars;$(QtDependsOn)</QtDependsOn>
+    <QtDependsOn>QtVars;$(QtDependsOn)</QtDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <QtModuleList Include="$(QtModules)"/>
@@ -53,14 +53,13 @@
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtVars
-    Condition="'$(QtToolsPath)'   != ''
-           AND '$(QtConfigStamp)' != '$(QtInstall)|$(QtModuleNames)'">
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Call qmake with generated .pro file to export Qt variables into MSBuild .props file
   // -->
-  <Target Name="QtVars"
-    Condition="'$(QtVsProjectSettings)' == 'true'
-           AND '$(QtConfigStamp)' != '$(QtInstall)|$(QtModuleNames)'">
+  <Target
+    Name="QtVars"
+    Condition="'$(QtVsProjectSettings)' == 'true'"
+    Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath);$(QtVarsDesignTime)">
 
     <CreateProperty
       Condition="Exists('$(QtInstall)')"
@@ -201,8 +200,7 @@ for (varName, $$list($$sorted(varNames))) {
             ;$(QtVarsProFileText)"/>
 
     <!--// Write start of Qt vars data file:
-        //  * Add QtConfigStamp property ::= Qt version + selected modules
-        //     - used to determine if .props is up-to-date -->
+        //  * Open property group tag -->
     <PropertyGroup>
       <!--
 ######## BEGIN generated XML (.props) ##############################################################
@@ -211,7 +209,6 @@ for (varName, $$list($$sorted(varNames))) {
         <![CDATA[
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <QtConfigStamp>$(QtInstall)|$(QtModuleNames)</QtConfigStamp>
         ]]>
       </QtVarsDataFileText>
       <!--
@@ -298,19 +295,18 @@ for (varName, $$list($$sorted(varNames))) {
     <!--// In design-time, copy generated .props to randomly named file -->
     <PropertyGroup>
       <QtVarsDesignTimeNew
-        Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+        Condition="'$(ErrorLevel)' == '0'"
         >$([System.IO.Path]::Combine('$(QtVarsOutputDir)',
           'qtvars_$([System.IO.Path]::GetRandomFileName()).designtime.props'))</QtVarsDesignTimeNew>
     </PropertyGroup>
     <Delete
-      Condition="'$(ErrorLevel)' == '0'
-             AND '$(DesignTimeBuild)' == 'true'"
+      Condition="'$(ErrorLevel)' == '0'"
       Files="$([System.IO.Directory]::GetFiles('$(QtVarsOutputDir)', '*.designtime.props'))"/>
     <Copy
-      Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+      Condition="'$(ErrorLevel)' == '0'"
       SourceFiles="$(QtVarsFilePath)" DestinationFiles="$(QtVarsDesignTimeNew)"/>
     <WriteLinesToFile
-      Condition="'$(ErrorLevel)' == '0' AND '$(DesignTimeBuild)' == 'true'"
+      Condition="'$(ErrorLevel)' == '0'"
       File="$(QtVarsIndexPathDesignTime)" Overwrite="true" Lines="$(QtVarsDesignTimeNew)"/>
 
     <!--// Skip remaining build -->
@@ -345,6 +341,17 @@ for (varName, $$list($$sorted(varNames))) {
       <QtVarsProFileText/>
       <Cmd/>
     </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtVarsDesignTime
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Force QtVars target to run (called when project properties change)
+  // -->
+  <Target Name="QtVarsDesignTime">
+    <Delete Files="$(QtVarsFilePath)"/>
+    <CallTarget Targets="QtVars"/>
   </Target>
 
   <!--
