@@ -55,18 +55,27 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Setup item type and property page
   // -->
+  <Choose>
+    <When Condition="'$(QtVsProjectSettings)' == 'true' AND '$(QtVsProjectClProperties)' == 'true'">
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtrepc_v3.xml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtrepc.xml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
-    <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)qtrepc.xml" />
-    <PropertyPageSchema
-      Condition="'$(QtVsProjectClProperties)' == 'true'"
-      Include="$(MSBuildThisFileDirectory)qtrepc_cl.xml" />
     <AvailableItemName Include="QtRepc">
       <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
-    <QtRepcRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtrepc.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtRepcRuleName>
+    <QtRepcRuleName>QtRule60_Repc</QtRepcRuleName>
   </PropertyGroup>
 
   <!--

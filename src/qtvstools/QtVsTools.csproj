@@ -623,25 +623,19 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="..\qtmsbuild\moc\qtmoc_settings.xml">
-      <Link>QtMsBuild\moc\qtmoc_settings.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <T4Template Include="..\qtmsbuild\moc\qtmoc_cl.xml_TT">
-      <Link>QtMsBuild\moc\qtmoc_cl.xml_TT</Link>
+    <T4Template Include="..\qtmsbuild\moc\qtmoc_v3.xml_TT">
+      <Link>QtMsBuild\moc\qtmoc_v3.xml_TT</Link>
       <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>..\qtmsbuild\moc\qtmoc_cl.xml</OutputFile>
+      <OutputFile>..\qtmsbuild\moc\qtmoc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>qtmoc_cl.xml</LastGenOutput>
+      <LastGenOutput>qtmoc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="..\qtmsbuild\moc\qtmoc_cl.xml">
-      <Link>QtMsBuild\moc\qtmoc_cl.xml</Link>
+    <Content Include="..\qtmsbuild\moc\qtmoc_v3.xml">
+      <Link>QtMsBuild\moc\qtmoc_v3.xml</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>qtmoc_cl.xml_TT</DependentUpon>
+      <DependentUpon>qtmoc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -684,12 +678,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="..\qtmsbuild\qml\qtqml.xml">
-      <Link>QtMsBuild\qml\qtqml.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild rcc property pages and targets
@@ -717,25 +705,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\qtmsbuild\rcc\qtrcc_settings.xml">
-      <Link>QtMsBuild\rcc\qtrcc_settings.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <T4Template Include="..\qtmsbuild\rcc\qtrcc_cl.xml_TT">
-      <Link>QtMsBuild\rcc\qtrcc_cl.xml_TT</Link>
+    <T4Template Include="..\qtmsbuild\rcc\qtrcc_v3.xml_TT">
+      <Link>QtMsBuild\rcc\qtrcc_v3.xml_TT</Link>
       <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>..\qtmsbuild\rcc\qtrcc_cl.xml</OutputFile>
+      <OutputFile>..\qtmsbuild\rcc\qtrcc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>qtrcc_cl.xml</LastGenOutput>
+      <LastGenOutput>qtrcc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="..\qtmsbuild\rcc\qtrcc_cl.xml">
-      <Link>QtMsBuild\rcc\qtrcc_cl.xml</Link>
+    <Content Include="..\qtmsbuild\rcc\qtrcc_v3.xml">
+      <Link>QtMsBuild\rcc\qtrcc_v3.xml</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>qtrcc_cl.xml_TT</DependentUpon>
+      <DependentUpon>qtrcc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -784,19 +766,19 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
-    <T4Template Include="..\qtmsbuild\repc\qtrepc_cl.xml_TT">
-      <Link>QtMsBuild\repc\qtrepc_cl.xml_TT</Link>
+    <T4Template Include="..\qtmsbuild\repc\qtrepc_v3.xml_TT">
+      <Link>QtMsBuild\repc\qtrepc_v3.xml_TT</Link>
       <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>..\qtmsbuild\repc\qtrepc_cl.xml</OutputFile>
+      <OutputFile>..\qtmsbuild\repc\qtrepc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>qtrepc_cl.xml</LastGenOutput>
+      <LastGenOutput>qtrepc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="..\qtmsbuild\repc\qtrepc_cl.xml">
-      <Link>QtMsBuild\repc\qtrepc_cl.xml</Link>
+    <Content Include="..\qtmsbuild\repc\qtrepc_v3.xml">
+      <Link>QtMsBuild\repc\qtrepc_v3.xml</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>qtrepc_cl.xml_TT</DependentUpon>
+      <DependentUpon>qtrepc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -842,8 +824,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\qtmsbuild\uic\qtuic_settings.xml">
-      <Link>QtMsBuild\uic\qtuic_settings.xml</Link>
+    <Content Include="..\qtmsbuild\uic\qtuic_v3.xml">
+      <Link>QtMsBuild\uic\qtuic_v3.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>

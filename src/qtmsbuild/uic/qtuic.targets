@@ -55,18 +55,27 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Setup item type and property page
   // -->
+  <Choose>
+    <When Condition="'$(QtVsProjectSettings)' == 'true' AND '$(QtVsProjectClProperties)' == 'true'">
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtuic_v3.xml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup Condition="'$(QtVsProjectSettings)' == 'false'">
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtuic.xml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
-    <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)qtuic.xml" />
-    <PropertyPageSchema
-      Condition="'$(QtVsProjectSettings)' == 'true'"
-      Include="$(MSBuildThisFileDirectory)qtuic_settings.xml" />
     <AvailableItemName Include="QtUic">
       <Targets>Qt</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
-    <QtUicRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtuic.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtUicRuleName>
+    <QtUicRuleName>QtRule50_Uic</QtUicRuleName>
   </PropertyGroup>
 
   <!--

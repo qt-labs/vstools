@@ -55,21 +55,27 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Setup item type and property page
   // -->
+  <Choose>
+    <When Condition="'$(QtVsProjectSettings)' == 'true' AND '$(QtVsProjectClProperties)' == 'true'">
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtrcc_v3.xml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtrcc.xml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
-    <PropertyPageSchema
-      Include="$(MSBuildThisFileDirectory)qtrcc.xml" />
-    <PropertyPageSchema
-      Condition="'$(QtVsProjectSettings)' == 'true'"
-      Include="$(MSBuildThisFileDirectory)qtrcc_settings.xml" />
-    <PropertyPageSchema
-      Condition="'$(QtVsProjectClProperties)' == 'true'"
-      Include="$(MSBuildThisFileDirectory)qtrcc_cl.xml" />
     <AvailableItemName Include="QtRcc">
       <Targets>Qt;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
-    <QtRccRuleName>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)qtrcc.xml')),'Name=\"([^\"]+)\"').Groups[1].Value)</QtRccRuleName>
+    <QtRccRuleName>QtRule40_Rcc</QtRccRuleName>
   </PropertyGroup>
 
   <!--

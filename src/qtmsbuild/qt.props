@@ -119,7 +119,7 @@
     <QtVarsIndexPathDesignTime
         >$(QtVarsOutputDir)$(QtVarsFileNameWithoutExt).designtime.idx</QtVarsIndexPathDesignTime>
     <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
-          >$([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))</QtVarsDesignTime>
+        >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
   </PropertyGroup>
 
   <!--// Import Qt variables (full build) -->

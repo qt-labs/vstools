@@ -170,10 +170,7 @@
       Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_cl.targets"
       d:VsixSubPath="qtmsbuild\moc" />
     <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_cl.xml"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_settings.xml"
+      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_v3.xml"
       d:VsixSubPath="qtmsbuild\moc" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qml\qt_import.props"
@@ -183,9 +180,6 @@
       d:VsixSubPath="qtmsbuild\qml" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qml\qtqml.targets"
-      d:VsixSubPath="qtmsbuild\qml" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qml\qtqml.xml"
       d:VsixSubPath="qtmsbuild\qml" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\rcc\qt_import.props"
@@ -203,10 +197,7 @@
       Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_cl.targets"
       d:VsixSubPath="qtmsbuild\rcc" />
     <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_cl.xml"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_settings.xml"
+      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_v3.xml"
       d:VsixSubPath="qtmsbuild\rcc" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\repc\qt_import.props"
@@ -221,7 +212,7 @@
       Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc_cl.targets"
       d:VsixSubPath="qtmsbuild\repc" />
     <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc_cl.xml"
+      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc_v3.xml"
       d:VsixSubPath="qtmsbuild\repc" />
     <Asset
       Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc.targets"
@@ -239,7 +230,7 @@
       Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic.xml"
       d:VsixSubPath="qtmsbuild\uic" />
     <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic_settings.xml"
+      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic_v3.xml"
       d:VsixSubPath="qtmsbuild\uic" />
     <Asset
       Type="File" d:Source="File" Path="qtmodules.xml" />
