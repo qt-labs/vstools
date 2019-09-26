@@ -42,7 +42,8 @@
     <QtVariableList Include="$(QtVariables)"/>
     <QMakeCodeLine Include="$(QMakeCodeLines)"/>
     <QtVarProp Include="@(QtVariableList->'Qt_%(Identity)_')"/>
-    <QtLibsList Include="$(QtLibrarySearchPath)"></QtLibsList>
+    <QtIncludesList Include="$(QtHeaderSearchPath)"/>
+    <QtLibsList Include="$(QtLibrarySearchPath)"/>
   </ItemGroup>
 
   <PropertyGroup>
@@ -93,12 +94,22 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
+    <!--// Generate INCLUDEPATH value -->
     <ItemGroup>
-      <QtLinkInput Include=
+      <QtIncludes Include=
+"$([System.IO.Path]::Combine($(QtInstallDir),$([System.String]::Copy('%(QtIncludesList.Identity)'))))"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <QtIncludes>@(QtIncludes->'&quot;%(Identity)&quot;', ' ')</QtIncludes>
+    </PropertyGroup>
+
+    <!--// Generate LIBS value -->
+    <ItemGroup>
+      <QtLibs Include=
 "$([System.IO.Path]::Combine($(QtInstallDir),$([System.String]::Copy('%(QtLibsList.Identity)'))))"/>
     </ItemGroup>
     <PropertyGroup>
-      <QtLibs>@(QtLinkInput->'-L%(Identity)', ' ')</QtLibs>
+      <QtLibs>@(QtLibs->'&quot;-L%(Identity)&quot;', ' ')</QtLibs>
     </PropertyGroup>
 
     <Message
@@ -134,10 +145,17 @@
 # Custom additional .pro file code (from property page) -->
         @(QMakeCodeLine->'%(Identity)','%0D%0A')
       </QtVarsProFileInput>
-
-      <QtVarsProFileInput Condition="'$(QtLibrarySearchPath)'!=''">
+      <!--
+# Custom additional header search paths (from property page) -->
+      <QtVarsProFileInput Condition="'$(QtHeaderSearchPath)' != ''">
         $(QtVarsProFileInput)
-        LIBS = $(QtLibs)
+        INCLUDEPATH += $(QtIncludes)
+      </QtVarsProFileInput>
+      <!--
+# Custom additional library search paths (from property page) -->
+      <QtVarsProFileInput Condition="'$(QtLibrarySearchPath)' != ''">
+        $(QtVarsProFileInput)
+        LIBS += $(QtLibs)
       </QtVarsProFileInput>
 
       <!--// Generate .pro file -->
@@ -166,7 +184,7 @@ defineReplace(formatMsBuildString) {
 ## Fetch information from required modules through dependency relation
 #
 defined(modules, var) {
-    INCLUDEPATH = $$[INCLUDEPATH]
+    INCLUDEPATH += $$[INCLUDEPATH]
     QT = $$resolve_depends(modules, "QT.")
     for (module, $$list($${QT})) {
         INCLUDEPATH *= $$eval($$"QT.$${module}.includes")

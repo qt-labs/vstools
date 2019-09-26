@@ -90,6 +90,10 @@
     Description=
 "Path to folder containing executable files of Qt modules. When a non-rooted path is specified, it will be considered relative to the Qt installation directory."/>
   <StringListProperty
+    Name="QtHeaderSearchPath"
+    Category="QtSettings_02_Paths"
+    DisplayName="Additional Qt header search paths" />
+  <StringListProperty
     Name="QtLibrarySearchPath"
     Category="QtSettings_02_Paths"
     DisplayName="Additional Qt library search paths" />
