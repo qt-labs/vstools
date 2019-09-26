@@ -94,6 +94,13 @@
       <QtUic Include="@(QtUicAux)"/>
       <QtUicAux Remove="@(QtUicAux)"/>
     </ItemGroup>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add uic output dir to C++ include path
+    // -->
+    <ItemGroup>
+      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtUic.OutputFile)'))"/>
+    </ItemGroup>
   </Target>
 
   <!--
@@ -299,14 +306,6 @@
         <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
         <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
       </QtWork>
-    </ItemGroup>
-
-    <!--
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Add uic output dir to C++ include path
-    // -->
-    <ItemGroup>
-      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtUic.OutputFile)'))"/>
     </ItemGroup>
 
     <!--

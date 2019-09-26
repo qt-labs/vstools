@@ -94,6 +94,13 @@
       <QtMoc Include="@(QtMocAux)"/>
       <QtMocAux Remove="@(QtMocAux)"/>
     </ItemGroup>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add moc output dir to C++ include path
+    // -->
+    <ItemGroup>
+      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtMoc.OutputFile)'))"/>
+    </ItemGroup>
   </Target>
 
   <!--
@@ -399,14 +406,6 @@
         <ClCompile Condition="'%(QtMoc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
         <ClCompile Condition="'%(QtMoc.DynamicSource)' ==  'input'">$(input_relative)</ClCompile>
       </QtWork>
-    </ItemGroup>
-
-    <!--
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Add moc output dir to C++ include path
-    // -->
-    <ItemGroup>
-      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtMoc.OutputFile)'))"/>
     </ItemGroup>
 
     <!--
