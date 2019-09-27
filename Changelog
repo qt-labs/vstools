@@ -1,3 +1,20 @@
+The Qt Visual Studio Tools version 2.4.1 includes several bug fixes.
+
+Changes
+-------
+ - Fixed QTVSADDINBUG-391: Qt VS Tools no longer works with static builds
+ - Fixed QTVSADDINBUG-496: VS crashes if no Qt version is installed
+ - Fixed QTVSADDINBUG-545: No support for third-party library managers (e.g. vcpkg)
+ - Fixed QTVSADDINBUG-597: Converted projects lose excluded-from-build settings
+ - Fixed QTVSADDINBUG-640: Qt tools not invoked if project includes a "custom build step"
+ - Fixed QTVSADDINBUG-650: Setting the QtInstall property to a path does not work
+ - Fixed QTVSADDINBUG-651: The QtInstall property does not expand macros
+ - Fixed QTVSADDINBUG-653: Build errors when using configuration names containing spaces
+ - Fixed QTVSADDINBUG-657: Projects imported from .pro files lose reference to QtHelp module
+ - Fixed QTVSADDINBUG-658: Build errors in Qt project with pre-compiled headers
+ - Fixed QTVSADDINBUG-661: Selected files build: missing path to uic-generated headers
+
+
 The Qt Visual Studio Tools version 2.4.0 implements Qt project settings as MSBuild properties, and
 also adds support for Qt Remote Objects.
 
