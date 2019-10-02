@@ -78,7 +78,7 @@
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
     <QtInstallDir Condition="Exists('$(QtInstall)')">$(QtInstall)</QtInstallDir>
     <QtInstallRegKey Condition="'$(QtInstall)' != ''"
-      >HKEY_CURRENT_USER\Software\Digia\Versions\$(QtInstall)</QtInstallRegKey>
+      >$(QtVersionsRegKey)\$(QtInstall)</QtInstallRegKey>
     <QtInstallRegDir Condition="'$(QtInstallDir)' == '' AND '$(QtInstallRegKey)' != ''"
       >$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))</QtInstallRegDir>
     <QtInstallDir Condition="'$(QtInstallDir)' == '' AND Exists('$(QtInstallRegDir)')"

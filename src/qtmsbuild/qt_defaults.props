@@ -47,5 +47,11 @@
     <QtVariables Condition="'$(QtVariables)' == ''"
       >DEFINES;INCLUDEPATH;LIBS</QtVariables>
 
+    <!--// Default Qt version -->
+    <QtVersionsRegKey Condition="'$(QtVersionsRegKey)' == ''"
+      >HKEY_CURRENT_USER\Software\Digia\Versions</QtVersionsRegKey>
+    <DefaultQtVersion Condition="'$(DefaultQtVersion)' == ''"
+      >$([MSBuild]::GetRegistryValue('$(QtVersionsRegKey)','DefaultQtVersion'))</DefaultQtVersion>
+
   </PropertyGroup>
 </Project>

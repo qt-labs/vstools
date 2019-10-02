@@ -35,7 +35,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <QtDependsOn>QtVars;$(QtDependsOn)</QtDependsOn>
+    <QtDependsOn>QtVarsPrepare;QtVars;$(QtDependsOn)</QtDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <QtModuleList Include="$(QtModules)"/>
@@ -284,6 +284,18 @@ for (varName, $$list($$sorted(varNames))) {
       File="$(MSBuildProjectFile)"
       Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
 
+    <!--// Qt settings list for backup -->
+    <ItemGroup>
+      <QtInstall Include="$(QtInstall)"/>
+      <QtModules Include="$(QtModules)"/>
+      <QtPathBinaries Include="$(QtPathBinaries)"/>
+      <QtPathLibraryExecutables Include="$(QtPathLibraryExecutables)"/>
+      <QtHeaderSearchPath Include="$(QtHeaderSearchPath)"/>
+      <QtLibrarySearchPath Include="$(QtLibrarySearchPath)"/>
+      <QtVariables Include="$(QtVariables)"/>
+      <QMakeCodeLines Include="$(QMakeCodeLines)"/>
+    </ItemGroup>
+
     <!--// Write end of .props (XML) file
         //  * Close property group tag
         //  * Create QtVar items to export Qt variables to the calling instance of MSBuild
@@ -294,6 +306,22 @@ for (varName, $$list($$sorted(varNames))) {
 ##    -->
       <QtVarsDataFileText>
         <![CDATA[
+    <QtBkup_QtInstall
+      >@(QtInstall,'%3B')</QtBkup_QtInstall>
+    <QtBkup_QtModules
+      >@(QtModules,'%3B')</QtBkup_QtModules>
+    <QtBkup_QtPathBinaries
+      >@(QtPathBinaries,'%3B')</QtBkup_QtPathBinaries>
+    <QtBkup_QtPathLibraryExecutables
+      >@(QtPathLibraryExecutables,'%3B')</QtBkup_QtPathLibraryExecutables>
+    <QtBkup_QtHeaderSearchPath
+      >@(QtHeaderSearchPath,'%3B')</QtBkup_QtHeaderSearchPath>
+    <QtBkup_QtLibrarySearchPath
+      >@(QtLibrarySearchPath,'%3B')</QtBkup_QtLibrarySearchPath>
+    <QtBkup_QtVariables
+      >@(QtVariables,'%3B')</QtBkup_QtVariables>
+    <QtBkup_QMakeCodeLines
+      >@(QMakeCodeLines,'%3B')</QtBkup_QMakeCodeLines>
   </PropertyGroup>
   <ItemGroup>
     @(QtVarProp->'<QtVar Include="%(Identity)"><Value>%24(%(Identity))</Value></QtVar>', '%0D%0A')
@@ -379,6 +407,31 @@ for (varName, $$list($$sorted(varNames))) {
       <QtVarsProFileText/>
       <Cmd/>
     </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtVarsPrepare
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Force QtVars target to run when Qt settings have changed
+  // -->
+  <Target Name="QtVarsPrepare" BeforeTargets="QtVars" Condition="Exists('$(QtVarsFilePath)')">
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtInstall)' != '$(QtInstall)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtModules)' != '$(QtModules)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtPathBinaries)' != '$(QtPathBinaries)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtPathLibraryExecutables)' != '$(QtPathLibraryExecutables)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtHeaderSearchPath)' != '$(QtHeaderSearchPath)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtLibrarySearchPath)' != '$(QtLibrarySearchPath)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtVariables)' != '$(QtVariables)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QMakeCodeLines)' != '$(QMakeCodeLines)'" />
   </Target>
 
   <!--
