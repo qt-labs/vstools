@@ -134,7 +134,7 @@ namespace QtProjectLib
         {
             foreach (var file in files) {
                 if (file.isDirty) {
-                    file.xml.Save(file.filePath, SaveOptions.None);
+                    file.xml?.Save(file.filePath, SaveOptions.None);
                     file.isCommittedDirty = file.isDirty = false;
                 }
             }
@@ -488,7 +488,8 @@ namespace QtProjectLib
             var propsCl = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Where(x => ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
+                .Where(x => x.Attribute("Condition") != null
+                    && ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
                 .Elements(ns + "ClCompile")
                 .Select(x => new
                 {
@@ -521,7 +522,8 @@ namespace QtProjectLib
             var propsLink = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Where(x => ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
+                .Where(x => x.Attribute("Condition") != null
+                    && ((string)x.Attribute("Condition")).StartsWith(conditionPrefix))
                 .Elements(ns + "Link")
                 .Select(x => new
                 {
@@ -909,7 +911,7 @@ namespace QtProjectLib
 
             customBuilds.ForEach(customBuild =>
             {
-                var filterCustomBuild = this[Files.Filters].xml
+                var filterCustomBuild = this[Files.Filters]?.xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "CustomBuild")
@@ -1021,16 +1023,18 @@ namespace QtProjectLib
                     StringComparer.InvariantCultureIgnoreCase)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
-            var filterItemsByPath = this[Files.Filters].xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemGroup")
-                .Elements()
-                .Where(x => ((string)x.Attribute("Include"))
-                    .IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                .GroupBy(x => HelperFunctions.CanonicalPath(
-                    Path.Combine(projDir, (string)x.Attribute("Include"))),
-                    StringComparer.InvariantCultureIgnoreCase)
-                .ToDictionary(x => x.Key, x => new List<XElement>(x));
+            var filterItemsByPath = (this[Files.Filters].xml != null)
+                ? this[Files.Filters].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "ItemGroup")
+                    .Elements()
+                    .Where(x => ((string)x.Attribute("Include"))
+                        .IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                    .GroupBy(x => HelperFunctions.CanonicalPath(
+                        Path.Combine(projDir, (string)x.Attribute("Include"))),
+                        StringComparer.InvariantCultureIgnoreCase)
+                    .ToDictionary(x => x.Key, x => new List<XElement>(x))
+                : new Dictionary<string, List<XElement>>();
 
             var cppIncludePaths = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -1091,7 +1095,7 @@ namespace QtProjectLib
                     cppMocItem.Remove();
 
                 //change type of item in filter
-                cppMocItems = this[Files.Filters].xml
+                cppMocItems = this[Files.Filters]?.xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
