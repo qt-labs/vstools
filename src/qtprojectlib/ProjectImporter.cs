@@ -237,6 +237,9 @@ namespace QtProjectLib
                     SR.GetString("ImportProject_CannotConvertProject", projectFile.Name));
             }
             xmlProject.Save();
+
+            // Initialize Qt variables
+            xmlProject.BuildTarget("QtVarsDesignTime");
         }
 
         private static string ParseQtDirFromFileContent(string vcFileContent, VersionInformation vi)

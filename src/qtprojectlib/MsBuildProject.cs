@@ -1475,6 +1475,42 @@ namespace QtProjectLib
             return eval;
         }
 
+        public bool BuildTarget(string target)
+        {
+            if (this[Files.Project].isDirty)
+                return false;
+
+            var configurations = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemGroup")
+                .Elements(ns + "ProjectConfiguration");
+
+            using (var buildManager = new BuildManager()) {
+
+                foreach (var config in configurations) {
+
+                    var configProps = config.Elements()
+                        .ToDictionary(x => x.Name.LocalName, x => x.Value);
+
+                    var projectInstance = new ProjectInstance(this[Files.Project].filePath,
+                        new Dictionary<string, string>(configProps)
+                        { { "DesignTimeBuild", "true" } },
+                        null, new ProjectCollection());
+
+                    var buildRequest = new BuildRequestData(projectInstance,
+                        targetsToBuild: new[] { target },
+                        hostServices: null,
+                        flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
+
+                    var result = buildManager.Build(new BuildParameters(), buildRequest);
+                    if (result.OverallResult != BuildResultCode.Success)
+                        return false;
+
+                }
+            }
+            return true;
+        }
+
         static Regex ConditionParser =
             new Regex(@"\'\$\(Configuration[^\)]*\)\|\$\(Platform[^\)]*\)\'\=\=\'([^\']+)\'");
 

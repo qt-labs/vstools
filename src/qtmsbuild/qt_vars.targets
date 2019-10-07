@@ -61,6 +61,7 @@
   <Target
     Name="QtVars"
     Condition="'$(QtVsProjectSettings)' == 'true'"
+    DependsOnTargets="QtMocInit;QtUicInit"
     Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath);$(QtVarsDesignTime)">
 
     <CreateProperty
@@ -312,6 +313,8 @@ for (varName, $$list($$sorted(varNames))) {
 ##    -->
       <QtVarsDataFileText>
         <![CDATA[
+    <Qt_INCLUDEPATH_
+      >%24(Qt_INCLUDEPATH_)%3B@(QtIncludePath->Distinct(),'%3B')</Qt_INCLUDEPATH_>
     <QtBkup_QtInstall
       >@(QtInstall,'%3B')</QtBkup_QtInstall>
     <QtBkup_QtModules

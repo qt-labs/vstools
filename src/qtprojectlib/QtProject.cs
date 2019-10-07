@@ -57,6 +57,8 @@ namespace QtProjectLib
         private static Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
         private QtMsBuildContainer qtMsBuild;
 
+        public static QtVsTools.VisualStudio.IProjectTracker ProjectTracker { get; set; }
+
         public static QtProject Create(VCProject vcProject)
         {
             return Create((Project) vcProject.Object);
@@ -2121,6 +2123,8 @@ namespace QtProjectLib
                     }
                 }
             } catch { }
+
+            ProjectTracker?.AddProject(envPro);
         }
 
         public bool IsDesignerPluginProject()

@@ -37,6 +37,7 @@ using QtProjectLib.QtMsBuild;
 using QtVsTools.QtMsBuild;
 #endif
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -69,6 +70,7 @@ namespace QtVsTools
             buildEvents = events.BuildEvents;
             buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
             buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
+            buildEvents.OnBuildProjConfigDone += OnBuildProjConfigDone;
             buildEvents.OnBuildDone += buildEvents_OnBuildDone;
 
             documentEvents = events.get_DocumentEvents(null);
@@ -182,6 +184,7 @@ namespace QtVsTools
             if (buildEvents != null) {
                 buildEvents.OnBuildBegin -= buildEvents_OnBuildBegin;
                 buildEvents.OnBuildProjConfigBegin -= OnBuildProjConfigBegin;
+                buildEvents.OnBuildProjConfigDone -= OnBuildProjConfigDone;
                 buildEvents.OnBuildDone -= buildEvents_OnBuildDone;
             }
 
@@ -252,6 +255,26 @@ namespace QtVsTools
                 Translation.RunlUpdate(project);
         }
 
+        List<string[]> buildDoneEvents = new List<string[]>();
+
+        public void OnBuildProjConfigDone(
+            string projectName,
+            string configName,
+            string platformName,
+            string configId,
+            bool success)
+        {
+            if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
+                currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
+                return;     // Don't do anything, if we're not building.
+            }
+
+            if (!success)
+                return;
+
+            buildDoneEvents.Add(new[] { projectName, configId });
+        }
+
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
             currentBuildAction = Action;
@@ -259,6 +282,25 @@ namespace QtVsTools
 
         public void buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
         {
+            foreach (var buildDoneEvent in buildDoneEvents) {
+                string projectName = buildDoneEvent[0];
+                string configId = buildDoneEvent[1];
+
+                Project project = null;
+                foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
+                    if (p.UniqueName == projectName) {
+                        project = p;
+                        break;
+                    }
+                }
+                if (project == null || !HelperFunctions.IsQtProject(project))
+                    continue;
+
+#if VS2017 || VS2019
+                QtProjectTracker.RefreshIntelliSense(project, configId);
+#endif
+            }
+            buildDoneEvents.Clear();
         }
 
         public void DocumentSaved(Document document)
@@ -548,7 +590,7 @@ namespace QtVsTools
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
 #if VS2017 || VS2019
-                    QtVarsDesignTime.AddProject(p);
+                    QtProjectTracker.AddProject(p);
 #endif
                 }
             }

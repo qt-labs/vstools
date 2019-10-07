@@ -134,6 +134,10 @@ namespace QtVsTools
                 ok = xmlProject.UpdateProjectFormatVersion();
             if (ok)
                 ok = xmlProject.Save();
+
+            // Initialize Qt variables
+            if (ok)
+                xmlProject.BuildTarget("QtVarsDesignTime");
             return ok;
         }
 

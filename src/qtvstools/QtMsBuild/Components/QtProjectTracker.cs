@@ -32,6 +32,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
@@ -43,9 +44,9 @@ using System.Diagnostics;
 
 namespace QtVsTools.QtMsBuild
 {
-    class QtVarsDesignTime
+    class QtProjectTracker
     {
-        static ConcurrentDictionary<EnvDTE.Project, QtVarsDesignTime> Instances { get; set; }
+        static ConcurrentDictionary<string, QtProjectTracker> Instances { get; set; }
 
         EnvDTE.Project Project { get; set; }
 
@@ -58,15 +59,17 @@ namespace QtVsTools.QtMsBuild
         {
             lock (criticalSection) {
                 if (Instances == null)
-                    Instances = new ConcurrentDictionary<EnvDTE.Project, QtVarsDesignTime>();
+                    Instances = new ConcurrentDictionary<string, QtProjectTracker>();
             }
-            Instances[project] = new QtVarsDesignTime(project);
+            QtProjectTracker instance = null;
+            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
+                Instances[project.FullName] = new QtProjectTracker(project);
         }
 
-        private QtVarsDesignTime(EnvDTE.Project project)
+        private QtProjectTracker(EnvDTE.Project project)
         {
             Project = project;
-            Task.Run(Initialize).Wait(5000);
+            Task.Run(Initialize);
         }
 
         bool initialized = false;
@@ -100,6 +103,30 @@ namespace QtVsTools.QtMsBuild
             }
         }
 
+        public static void RefreshIntelliSense(EnvDTE.Project project, string configId = null)
+        {
+            lock (criticalSection) {
+                if (Instances == null)
+                    return;
+            }
+            QtProjectTracker instance = null;
+            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
+                return;
+            Task.Run(async () => await instance.RefreshIntelliSenseAsync(configId));
+        }
+
+        private async Task RefreshIntelliSenseAsync(string configId = null)
+        {
+            var configs = await UnconfiguredProject.Services
+                .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
+            foreach (var config in configs) {
+                if (!string.IsNullOrEmpty(configId) && config.Name != configId)
+                    continue;
+                var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
+                configProject.NotifyProjectChange();
+            }
+        }
+
         private void OnProjectChanged(object sender, EventArgs e)
         {
             if (!initialized)
@@ -112,7 +139,33 @@ namespace QtVsTools.QtMsBuild
             Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project));
         }
 
+        private static KeyValuePair<TKey, TValue> KVP<TKey, TValue>(TKey key, TValue value)
+        {
+            return new KeyValuePair<TKey, TValue>(key, value);
+        }
+
         private async Task DesignTimeUpdateQtVarsAsync(ConfiguredProject project)
+        {
+            await BuildAsync(
+                project,
+                new[] { KVP("DesignTimeBuild", "true") },
+                new[] { "Qt" });
+        }
+
+        private async Task BuildAsync(
+            ConfiguredProject project,
+            KeyValuePair<string, string>[] properties,
+            string[] targets,
+            bool checkTargets)
+        {
+            await BuildAsync(project, properties, targets, checkTargets ? targets : null);
+        }
+
+        private async Task BuildAsync(
+            ConfiguredProject project,
+            KeyValuePair<string, string>[] properties,
+            string[] targets,
+            string[] checkTargets = null)
         {
             if (project == null)
                 return;
@@ -136,16 +189,17 @@ namespace QtVsTools.QtMsBuild
                 using (var buildManager = new BuildManager()) {
                     var msBuildProject = await writeAccess.GetProjectAsync(project);
 
-                    var configProps = project.ProjectConfiguration
-                        .Dimensions.ToImmutableDictionary();
+                    var configProps = new Dictionary<string, string>(
+                        project.ProjectConfiguration.Dimensions.ToImmutableDictionary());
+
+                    foreach (var property in properties)
+                        configProps[property.Key] = property.Value;
 
                     var projectInstance = new ProjectInstance(msBuildProject.Xml,
-                        new Dictionary<string, string>(configProps)
-                        { { "DesignTimeBuild", "true" } },
-                        null, new ProjectCollection());
+                        configProps, null, new ProjectCollection());
 
                     var buildRequest = new BuildRequestData(projectInstance,
-                        targetsToBuild: new[] { "QtVarsDesignTime" },
+                        targets,
                         hostServices: null,
                         flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
@@ -155,18 +209,25 @@ namespace QtVsTools.QtMsBuild
                         || result.ResultsByTarget == null
                         || result.OverallResult != BuildResultCode.Success) {
                         Messages.PaneMessageSafe(Vsix.Instance.Dte, timeout: 5000,
-                            str: string.Format("{0}: design-time pre-build FAILED!",
+                            str: string.Format("{0}: background build FAILED!",
                                 Path.GetFileName(UnconfiguredProject.FullPath)));
                     } else {
-                        var resultQtVars = result.ResultsByTarget["QtVarsDesignTime"];
-                        if (resultQtVars.ResultCode == TargetResultCode.Success) {
-                            msBuildProject.MarkDirty();
+                        bool buildSuccess = true;
+                        if (checkTargets != null) {
+                            var checkResults = result.ResultsByTarget
+                                .Where(x => checkTargets.Contains(x.Key))
+                                .Select(x => x.Value);
+                            buildSuccess = checkResults.Any()
+                                && checkResults.All(x => x.ResultCode == TargetResultCode.Success);
                         }
+                        if (buildSuccess)
+                            msBuildProject.MarkDirty();
                     }
+                    await writeAccess.ReleaseAsync();
                 }
             } catch (Exception e) {
                 Messages.PaneMessageSafe(Vsix.Instance.Dte, timeout: 5000,
-                    str: string.Format("{0}: design-time pre-build ERROR: {1}",
+                    str: string.Format("{0}: background build ERROR: {1}",
                         Path.GetFileName(UnconfiguredProject.FullPath), e.Message));
             }
         }
@@ -178,7 +239,7 @@ namespace QtVsTools.QtMsBuild
                 return;
             project.ProjectChanged -= OnProjectChanged;
             project.ProjectUnloading -= OnProjectUnloading;
-            Instances[Project] = null;
+            Instances[Project.FullName] = null;
             await Task.Yield();
         }
     }

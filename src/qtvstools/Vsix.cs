@@ -47,6 +47,9 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools
 {
     using VisualStudio;
+#if VS2017 || VS2019
+    using QtMsBuild;
+#endif
 
 #if VS2013
     using AsyncPackage = Package;
@@ -64,7 +67,7 @@ namespace QtVsTools
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
 #endif
-    public sealed class Vsix : AsyncPackage, IVsServiceProvider
+    public sealed class Vsix : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
         /// <summary>
         /// The package GUID string.
@@ -145,6 +148,7 @@ namespace QtVsTools
             {
                 var timeInitBegin = initTimer.Elapsed;
                 VsServiceProvider.Instance = instance = this;
+                QtProject.ProjectTracker = this;
 
 #if !VS2013
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -404,5 +408,12 @@ namespace QtVsTools
             return await GetServiceAsync(typeof(T)) as I;
         }
 #endif
+
+        void IProjectTracker.AddProject(Project project)
+        {
+#if VS2017 || VS2019
+            QtProjectTracker.AddProject(project);
+#endif
+        }
     }
 }

@@ -86,7 +86,7 @@
   // -->
   <Target Name="QtRccInit">
     <!--// Initialize %(OutputFile) -->
-    <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true' AND '@(QtRcc)' != ''">
       <QtRccAux Include="@(QtRcc)">
         <OutputFile>%(QtRcc.QtRccDir)\%(QtRcc.QtRccFileName)</OutputFile>
       </QtRccAux>
