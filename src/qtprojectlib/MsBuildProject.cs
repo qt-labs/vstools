@@ -688,8 +688,27 @@ namespace QtProjectLib
                 this[Files.User].isDirty = true;
             }
 
+            // Convert OutputFile --> <tool>Dir + <tool>FileName
+            var qtItems = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .SelectMany(x => x.Elements(ns + "ItemDefinitionGroup")
+                    .Union(x.Elements(ns + "ItemGroup")))
+                .SelectMany(x => x.Elements(ns + "QtMoc")
+                    .Union(x.Elements(ns + "QtRcc"))
+                    .Union(x.Elements(ns + "QtUic")));
+            foreach (var qtItem in qtItems) {
+                var outputFile = qtItem.Element(ns + "OutputFile");
+                if (outputFile != null) {
+                    var qtTool = qtItem.Name.LocalName;
+                    var outDir = Path.GetDirectoryName(outputFile.Value);
+                    var outFileName = Path.GetFileName(outputFile.Value);
+                    qtItem.Add(new XElement(ns + qtTool + "Dir", outDir));
+                    qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
+                }
+            }
+
             // Remove old properties from project items
-            var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile", "ExecutionDescription" };
+            var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile" };
             var oldCppProps = new[] { "IncludePath", "Define", "Undefine" };
             var oldPropsAny = oldQtProps.Union(oldCppProps);
             this[Files.Project].xml
