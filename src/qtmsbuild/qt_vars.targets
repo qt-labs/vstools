@@ -157,6 +157,12 @@
         $(QtVarsProFileInput)
         LIBS += $(QtLibs)
       </QtVarsProFileInput>
+      <!--
+# Undef UNICODE macro if project is configured with multi-byte char set -->
+      <QtVarsProFileInput Condition="'$(CharacterSet)' == 'MultiByte'">
+        $(QtVarsProFileInput)
+        DEFINES -= UNICODE _UNICODE
+      </QtVarsProFileInput>
 
       <!--// Generate .pro file -->
       <!--
