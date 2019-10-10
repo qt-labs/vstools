@@ -253,7 +253,7 @@ namespace QtVsTools
 #if !VS2013
                     + "   Main (UI) thread: {2:0.##} msecs\r\n"
 #endif
-                    , Version.PRODUCT_VERSION
+                    , Version.USER_VERSION
                     , (initTimer.Elapsed - timeInitBegin).TotalMilliseconds
 #if !VS2013
                     , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds

@@ -221,7 +221,7 @@ namespace QtVsTools
 
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.QtVersionId:
-                command.Text = "Qt Visual Studio Tools version " + Version.PRODUCT_VERSION;
+                command.Text = "Qt Visual Studio Tools version " + Version.USER_VERSION;
                 command.Visible = true;
                 command.Enabled = false;
                 break;

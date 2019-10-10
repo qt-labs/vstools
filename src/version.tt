@@ -71,6 +71,11 @@
     string QT_VS_TOOLS_VERSION_ASSEMBLY_FILE
         = string.Format("{0}.{1}", QT_VS_TOOLS_VERSION, REVISION_NUMBER);
 
+    string QT_VS_TOOLS_VERSION_USER
+        = REVISION_NUMBER > 0
+            ? string.Format("{0} (rev.{1})", QT_VS_TOOLS_VERSION, REVISION_NUMBER)
+            : QT_VS_TOOLS_VERSION;
+
     string QT_VS_TOOLS_VERSION_MANIFEST
         = REVISION_NUMBER > 0 ? QT_VS_TOOLS_VERSION_ASSEMBLY : QT_VS_TOOLS_VERSION;
 #>
