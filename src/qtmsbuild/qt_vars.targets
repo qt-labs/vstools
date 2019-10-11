@@ -220,7 +220,7 @@ contains(varNames, LIBS) {
 
 ## Append Qt variables to .props (XML) file
 #
-for (varName, $$list($$sorted(varNames))) {
+for (varName, varNames) {
     propName = "Qt_$${varName}_"
     text = "<$${propName}>"$$formatMsBuildString($$eval($$varName))"</$${propName}>"
     write_file($$fileName, text, append)
