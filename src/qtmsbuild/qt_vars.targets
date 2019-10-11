@@ -384,14 +384,6 @@ for (varName, varNames) {
       Condition="'$(ErrorLevel)' == '0'"
       File="$(QtVarsIndexPathDesignTime)" Overwrite="true" Lines="$(QtVarsDesignTimeNew)"/>
 
-    <!--// Skip remaining build -->
-    <CreateProperty Value="true">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtSkipWork" />
-    </CreateProperty>
-    <CallTarget
-      Condition="'$(QtSkipBuildTargets)' != ''"
-      Targets="$(QtSkipBuildTargets)"/>
-
     <!--// Restart build in second MSBuild instance with updated Qt variables -->
     <MSBuild
       Condition="'$(DesignTimeBuild)' != 'true'"
@@ -399,6 +391,14 @@ for (varName, varNames) {
       Targets="Build"
       Properties="RandomFileName=$([System.IO.Path]::GetRandomFileName())">
     </MSBuild>
+
+    <!--// Skip remaining build -->
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtSkipWork" />
+    </CreateProperty>
+    <CallTarget
+      Condition="'$(QtSkipBuildTargets)' != ''"
+      Targets="$(QtSkipBuildTargets)"/>
 
     <!--// Clean-up -->
     <ItemGroup>

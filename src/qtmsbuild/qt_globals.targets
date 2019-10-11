@@ -56,11 +56,11 @@
     </DesignTimeBuildInitTargets>
     <ComputeCompileInputsTargets>
       $(ComputeCompileInputsTargets);
-      QtWork
+      Qt
     </ComputeCompileInputsTargets>
     <ComputeLinkInputsTargets>
       $(ComputeLinkInputsTargets);
-      QtWork
+      Qt
     </ComputeLinkInputsTargets>
   </PropertyGroup>
 
@@ -108,7 +108,8 @@
   // -->
   <Target Name="QtPrepare"
     Condition="'$(QtSkipWork)' != 'true'"
-    DependsOnTargets="$(QtDependsOn)">
+    DependsOnTargets="$(QtDependsOn)"
+    BeforeTargets="QtWorkPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
 
@@ -243,7 +244,7 @@
   // -->
   <Target Name="QtWork"
     Condition="'$(QtSkipWork)' != 'true'"
-    DependsOnTargets="QtPrepare;QtWorkPrepare">
+    DependsOnTargets="QtWorkPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
       Text="## Qt Build $(QtBuildTargets.Replace(';',' ').Trim())" />
@@ -404,7 +405,6 @@
       <read_log     Remove="@(read_log)"/>
       <write_log    Remove="@(write_log)"/>
       <clean_log    Remove="@(clean_log)"/>
-      <ClCompile    Remove="DefaultClCompile" />
     </ItemGroup>
   </Target>
 
@@ -414,6 +414,10 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Root Qt target
   // -->
-  <Target Name="Qt" DependsOnTargets="QtWork"/>
+  <Target Name="Qt" DependsOnTargets="QtPrepare;QtWork">
+    <ItemGroup>
+      <ClCompile Remove="DefaultClCompile" />
+    </ItemGroup>
+  </Target>
 
 </Project>
