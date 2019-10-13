@@ -203,19 +203,22 @@ defined(modules, var) {
 #
 contains(varNames, LIBS) {
     varNames -= LIBS
-    nop = "(ECHO>NUL)"
-    qtvars.target = qtvars
-    qtvars.commands = CMD /V:ON /C \
-        \"@ECHO OFF &\
-        SET VALUE= &\
-        (FOR %%x IN (%24(LIBS)) DO (\
-            SET y=%%x&\
-            IF NOT \"!y:~0,9!\"==\"/LIBPATH:\"\
-                SET VALUE=!y!%3B!VALUE!& $$nop \
-        ))&\
-        SET PROP=^<Qt_LIBS_^>!VALUE:~0,-2!^</Qt_LIBS_^>&\
-        ECHO !PROP!>>$$fileName&\"
+    NL = $$escape_expand("\n")
+    TAB = $$escape_expand("\t")
     QMAKE_EXTRA_TARGETS += qtvars
+    qtvars.target = qtvars
+    qtvars.depends = %24(LIBS)
+    qtvars.commands = \
+$$NL%24(LIBS): FORCE\
+$$NL$$TAB@CMD /V:ON /C \"\
+    @ECHO OFF &\
+    SET x=$@&\
+    IF NOT \"!x:~0,9!\"==\"/LIBPATH:\" (\
+        ECHO ^<Qt_LIBS_^>\%24\%24^(Qt_LIBS_^)%3B!x!^</Qt_LIBS_^>>>$$fileName\
+    )\
+    ELSE (\
+        ECHO ^<Qt_LIBPATH_^>\%24\%24^(Qt_LIBPATH_^)%3B!x:~9!^</Qt_LIBPATH_^>>>$$fileName\
+    )\"
 }
 
 ## Append Qt variables to .props (XML) file
