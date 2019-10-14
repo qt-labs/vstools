@@ -171,7 +171,10 @@ namespace QtVsTools
             case CommandId.QtProjectSettingsId:
                 {
                     var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
-                    if (pro != null) {
+                    int projectVersion = QtProject.GetFormatVersion(pro);
+                    if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
+                        Vsix.Instance.Dte.ExecuteCommand("Project.Properties");
+                    } else if (pro != null) {
                         using (var formProjectQtSettings = new FormProjectQtSettings()) {
                             formProjectQtSettings.SetProject(pro);
                             formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
