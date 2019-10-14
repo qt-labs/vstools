@@ -1,5 +1,16 @@
 The Qt Visual Studio Tools version 2.4.1 includes several bug fixes.
 
+Rev. 12
+-------
+ - Fixed QTVSADDINBUG-663: Project format conversion fails due to unexpected elements in .vcxproj
+ - Fixed QTVSADDINBUG-665: $(DefaultVersion) no longer works
+ - Fixed QTVSADDINBUG-670: Unicode WinAPI functions called despite using multi-byte char set
+ - Fixed QTVSADDINBUG-671: Error "command too long" when using static build of Qt
+ - Fixed QTVSADDINBUG-672: Extension does not load in VS2019 v16.2 or earlier
+ - Fixed QTVSADDINBUG-673: Intellisense is unable to locate Qt headers
+ - Fixed QTVSADDINBUG-680: Build errors when using an earlier version of Qt (<= 5.7)
+ - Fixed QTVSADDINBUG-682: Menu open "Qt Project Settings" opens empty dialog
+
 Changes
 -------
  - Fixed QTVSADDINBUG-391: Qt VS Tools no longer works with static builds
