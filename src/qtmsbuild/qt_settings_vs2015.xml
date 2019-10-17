@@ -98,9 +98,12 @@
     Category="QtSettings_02_Paths"
     DisplayName="Additional Qt library search paths" />
   <StringListProperty
-    Name="QtVariables"
+    Name="QtVars"
     Category="QtSettings_03_QMake"
-    DisplayName="Extract Variables" />
+    DisplayName="Extract Variables"
+    Description=
+"Extract Qt variables from qmake-generated Makefile.
+    Syntax: &lt; var_name &gt; [ = [ makefile_name ] / &lt; pattern &gt; / &lt; replace &gt; / ]"/>
   <StringListProperty
     Name="QMakeCodeLines"
     Category="QtSettings_03_QMake"

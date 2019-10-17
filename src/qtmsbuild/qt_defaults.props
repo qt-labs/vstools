@@ -43,9 +43,19 @@
     <QtPathLibraryExecutables Condition="'$(QtPathLibraryExecutables)' == ''"
       >bin</QtPathLibraryExecutables>
 
-    <!--// List of Qt variables to import -->
-    <QtVariables Condition="'$(QtVariables)' == ''"
-      >DEFINES;INCLUDEPATH;LIBS</QtVariables>
+    <!--// Extract Qt variables from qmake-generated Makefile
+        //     Syntax: < var_name > [ = [ makefile_name ] / < pattern > / < replace > / ] -->
+    <QMake_DEFINES_
+>DEFINES=/-D(\w+)/$1/</QMake_DEFINES_>
+    <QMake_INCLUDEPATH_
+>INCLUDEPATH=INCPATH/-I(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_INCLUDEPATH_>
+    <QMake_LIBS_
+>LIBS=/(?:\/LIBPATH:(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBS_>
+    <QMake_LIBPATH_
+>LIBPATH=LIBS/\/LIBPATH:(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBPATH_>
+    <QtVars
+      Condition="'$(QtVars)' == ''"
+      >$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
 
     <!--// Default Qt version -->
     <QtVersionsRegKey Condition="'$(QtVersionsRegKey)' == ''"

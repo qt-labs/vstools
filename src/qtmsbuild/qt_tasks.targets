@@ -476,5 +476,93 @@
     </Task>
   </UsingTask>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TASK ParseVarDefs
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // -->
+  <UsingTask TaskName="ParseVarDefs"
+    TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <QtVars Required="true"
+        ParameterType="System.String"/>
+      <OutVarDefs Output="true"
+        ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.Text"/>
+      <Using Namespace="System.Text.RegularExpressions"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            OutVarDefs = Regex.Matches(QtVars,
+                @"\s*(\w+)\s*(?:;|=\s*(\w*)\s*(?:\/((?:\\.|[^;\/])*)\/((?:\\.|[^;\/])*)\/)?)?")
+                .Cast<Match>()
+                .Where((Match x) => x.Groups.Count > 4 && !string.IsNullOrEmpty(x.Groups[1].Value))
+                .Select((Match x) => x.Groups
+                      .Cast<Group>()
+                      .Select((Group y) => !string.IsNullOrEmpty(y.Value) ? y.Value : null)
+                      .ToArray())
+                .Select((string[] x) => new TaskItem(x[1],
+                    new Dictionary<string,string>
+                    {
+                        { "Name" ,    x[2] ?? x[1] },
+                        { "Pattern" , x[3] ?? ".*" },
+                        { "Value" ,   x[4] ?? "$0" },
+                    }))
+                .ToArray();
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TASK GetVarsFromMakefile
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // -->
+  <UsingTask TaskName="GetVarsFromMakefile"
+    TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Makefile Required="true"
+        ParameterType="System.String"/>
+      <VarDefs Required="false"
+        ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+      <OutVars Output="true"
+        ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.Text"/>
+      <Using Namespace="System.Text.RegularExpressions"/>
+      <Using Namespace="System.IO"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            var makefileVars = Regex.Matches(
+                File.ReadAllText(Makefile),
+                @"^(\w+)[^\=\r\n\S]*\=[^\r\n\S]*([^\r\n]+)[\r\n]",
+                RegexOptions.Multiline).Cast<Match>()
+                .Where(x => x.Groups.Count > 2 && x.Groups[1].Success && x.Groups[2].Success)
+                .ToDictionary(x => x.Groups[1].Value, x => x.Groups[2].Value);
+            OutVars = VarDefs
+                .Where(x => makefileVars.ContainsKey(x.GetMetadata("Name")))
+                .Select(x => new TaskItem(x.ItemSpec, new Dictionary<string,string>
+                { {
+                    "Value",
+                    string.Join(";", Regex
+                        .Matches(makefileVars[x.GetMetadata("Name")], x.GetMetadata("Pattern"))
+                        .Cast<Match>()
+                        .Select(y => Regex
+                            .Replace(y.Value, x.GetMetadata("Pattern"), x.GetMetadata("Value")))
+                        .Where(y => !string.IsNullOrEmpty(y))
+                        .ToHashSet())
+                } }))
+                .Where(x => !string.IsNullOrEmpty(x.GetMetadata("Value")))
+                .ToArray();
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
 </Project>
