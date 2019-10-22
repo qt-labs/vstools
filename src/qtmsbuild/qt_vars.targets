@@ -186,8 +186,15 @@
     </PropertyGroup>
     <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)" Overwrite="true"/>
 
+    <!--// Ensure C++ compiler in PATH -->
+    <Exec Command="WHERE /Q cl.exe"
+      WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
+    </Exec>
+    <SetEnv Condition="'$(ErrorLevel)' != '0'"
+      Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
+
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
-    <SetEnv Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
     <PropertyGroup>
       <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe") 1> qtvars.log 2>&1]]></Cmd>
     </PropertyGroup>
