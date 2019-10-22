@@ -202,24 +202,38 @@
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
     </Exec>
 
-    <!--// If error, show qmake/nmake console output and stop build -->
+    <!--// Check qmake result -->
+    <PropertyGroup Condition="'$(ErrorLevel)' != '0' OR !Exists('$(QtVarsWorkDir)\Makefile')">
+      <QMakeError>true</QMakeError>
+    </PropertyGroup>
+
+    <!--// Get qmake console output -->
+    <ItemGroup>
+      <QMakeError Include="($(QtToolsPath)\qmake.exe)"/>
+      <QMakeError Include="%24PWD=$(QtVarsWorkDir)"/>
+    </ItemGroup>
     <ReadLinesFromFile
         File="$(QtVarsWorkDir)\qtvars.log">
       <Output TaskParameter="Lines" ItemName="QMakeError"/>
     </ReadLinesFromFile>
-    <ItemGroup Condition="'$(ErrorLevel)' != '0'">
+    <ItemGroup>
       <QMakeError
         Condition="$([System.String]::Copy('%(Identity)').StartsWith('Info: creating stash file'))"
         Remove="@(QMakeError)"/>
+      <QMakeError
+        Condition="!Exists('$(QtVarsWorkDir)\Makefile')"
+        Include="Error creating Makefile"/>
     </ItemGroup>
+
+    <!--// If error, show qmake console output and stop build -->
+    <Error
+      Condition="'$(QMakeError)' == 'true'"
+      File="$(MSBuildProjectFile)"
+      Text="ERROR running qmake%0D%0Aqmake: @(QMakeError->'%(Identity)','%0D%0Aqmake: ')%0D%0A"/>
     <Message
       Importance="high"
-      Condition="'$(QtVarsDebug)' == 'true'"
-      Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
-    <Error
-      Condition="'$(ErrorLevel)' != '0' AND '$(DesignTimeBuild)' != 'true'"
-      File="$(MSBuildProjectFile)"
-      Text="@(QMakeError->'%(Identity)','%0D%0A')"/>
+      Condition="'$(QMakeError)' != 'true' AND '$(QtVarsDebug)' == 'true'"
+      Text="qmake: @(QMakeError->'%(Identity)','%0D%0Aqmake: ')"/>
 
     <!--// Parse variable definition expressions -->
     <ParseVarDefs
