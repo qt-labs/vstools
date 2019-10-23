@@ -443,6 +443,7 @@
       <QtUic Remove="@(QtUic)"/>
       <ClCompile Remove="@(ClCompile)"/>
       <Link Remove="@(Link)"/>
+      <ProjectReference Remove="@(ProjectReference)"/>
     </ItemGroup>
   </Target>
 
