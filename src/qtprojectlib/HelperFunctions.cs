@@ -1871,5 +1871,16 @@ namespace QtProjectLib
             return CanonicalPath(path).EndsWith(CanonicalPath(subPath),
                 StringComparison.InvariantCultureIgnoreCase);
         }
+
+        public static string Unquote(string text)
+        {
+            if (string.IsNullOrEmpty(text)
+                || text.Length < 3
+                || !text.StartsWith("\"")
+                || !text.EndsWith("\"")) {
+                return text;
+            }
+            return text.Substring(1, text.Length - 2);
+        }
     }
 }

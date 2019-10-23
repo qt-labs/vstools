@@ -44,6 +44,7 @@ using EnvDTE;
 namespace QtProjectLib
 {
     using static QtVsTools.SyntaxAnalysis.RegExpr;
+    using static HelperFunctions;
 
     public class MsBuildProject
     {
@@ -610,7 +611,7 @@ namespace QtProjectLib
             propsClIncludePaths.GroupBy(x => x.Self).Select(x => new
                 {
                     Tag = x.Key,
-                    Value = string.Join(";", x.Select(y => y.Value).Where(y =>
+                    Value = string.Join(";", x.Select(y => Unquote(y.Value)).Where(y =>
                         // Exclude include paths of Qt modules
                         !moduleIncludePaths.Contains(Path.GetFileName(y), IGNORE_CASE_)
                         || (
@@ -631,7 +632,7 @@ namespace QtProjectLib
             propsLinkLibs.GroupBy(x => x.Self).Select(x => new
                 {
                     Tag = x.Key,
-                    Value = string.Join(";", x.Select(y => y.Value)
+                    Value = string.Join(";", x.Select(y => Unquote(y.Value))
                         .Where(y => !moduleLibs.Contains(Path.GetFileName(y), IGNORE_CASE_)))
                 })
                 .ToList()
