@@ -88,7 +88,8 @@
     <!--// Initialize %(OutputFile) -->
     <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true' AND '@(QtMoc)' != ''">
       <QtMocAux Include="@(QtMoc)">
-        <OutputFile>%(QtMoc.QtMocDir)\%(QtMoc.QtMocFileName)</OutputFile>
+        <OutputFile
+          >$([System.IO.Path]::Combine('%(QtMoc.QtMocDir)','%(QtMoc.QtMocFileName)'))</OutputFile>
       </QtMocAux>
       <QtMoc Remove="@(QtMoc)"/>
       <QtMoc Include="@(QtMocAux)"/>

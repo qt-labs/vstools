@@ -88,7 +88,8 @@
     <!--// Initialize %(OutputFile) -->
     <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true' AND '@(QtUic)' != ''">
       <QtUicAux Include="@(QtUic)">
-        <OutputFile>%(QtUic.QtUicDir)\%(QtUic.QtUicFileName)</OutputFile>
+        <OutputFile
+          >$([System.IO.Path]::Combine('%(QtUic.QtUicDir)','%(QtUic.QtUicFileName)'))</OutputFile>
       </QtUicAux>
       <QtUic Remove="@(QtUic)"/>
       <QtUic Include="@(QtUicAux)"/>

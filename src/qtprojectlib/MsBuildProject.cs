@@ -703,7 +703,10 @@ namespace QtProjectLib
                     var qtTool = qtItem.Name.LocalName;
                     var outDir = Path.GetDirectoryName(outputFile.Value);
                     var outFileName = Path.GetFileName(outputFile.Value);
-                    qtItem.Add(new XElement(ns + qtTool + "Dir", outDir));
+                    if (!string.IsNullOrEmpty(outDir))
+                        qtItem.Add(new XElement(ns + qtTool + "Dir", outDir));
+                    else
+                        qtItem.Add(new XElement(ns + qtTool + "Dir", "$(ProjectDir)"));
                     qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
                 }
             }
@@ -1138,11 +1141,19 @@ namespace QtProjectLib
                 {
                     (item, cmdLine) => cmdLine.Replace(
                         string.Format(@"\moc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
-                        @"\moc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase),
+                        @"\moc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(
+                        string.Format(" -o moc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        @" -o $(ProjectDir)\moc_%(Filename).cpp",
+                            StringComparison.InvariantCultureIgnoreCase),
 
                     (item, cmdLine) => cmdLine.Replace(
                         string.Format(@"\{0}.moc", Path.GetFileNameWithoutExtension(item)),
                         @"\%(Filename).moc", StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(
+                        string.Format(" -o {0}.moc", Path.GetFileNameWithoutExtension(item)),
+                        @" -o $(ProjectDir)\%(Filename).moc",
+                            StringComparison.InvariantCultureIgnoreCase),
                 })) {
                 Rollback();
                 return false;
@@ -1189,6 +1200,10 @@ namespace QtProjectLib
                     (item, cmdLine) => cmdLine.Replace(
                         string.Format(@"\qrc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
                         @"\qrc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(
+                        string.Format(" -o qrc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        @" -o $(ProjectDir)\qrc_%(Filename).cpp",
+                            StringComparison.InvariantCultureIgnoreCase),
                 })) {
                 Rollback();
                 return false;
@@ -1243,6 +1258,10 @@ namespace QtProjectLib
                     (item, cmdLine) => cmdLine.Replace(
                         string.Format(@"\ui_{0}.h", Path.GetFileNameWithoutExtension(item)),
                         @"\ui_%(Filename).h", StringComparison.InvariantCultureIgnoreCase)
+                    .Replace(
+                        string.Format(" -o ui_{0}.h", Path.GetFileNameWithoutExtension(item)),
+                        @" -o $(ProjectDir)\ui_%(Filename).h",
+                            StringComparison.InvariantCultureIgnoreCase),
                 })) {
                 Rollback();
                 return false;
