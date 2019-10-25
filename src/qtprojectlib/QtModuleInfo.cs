@@ -47,6 +47,28 @@ namespace QtProjectLib
         public string proVarQT;
         public string proVarCONFIG;
 
+        public string LibRelease
+        {
+            get
+            {
+                return
+                    LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
+                        ? "Qt5" + LibraryPrefix.Substring(2) + ".lib"
+                        : LibraryPrefix + ".lib";
+            }
+        }
+
+        public string LibDebug
+        {
+            get
+            {
+                return
+                    LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
+                        ? "Qt5" + LibraryPrefix.Substring(2) + "d.lib"
+                        : LibraryPrefix + "d.lib";
+            }
+        }
+
         public QtModuleInfo(QtModule id)
         {
             moduleId = id;
