@@ -80,7 +80,7 @@
   // Parameters:
   //      in ITaskItem[] Items:    items to expand
   //      in ITaskItem   BaseItem: base item from which the expanded items derive
-  //      in ITaskItem   Template: template item containing metadata to add / update
+  //      in ITaskItem   Template = null: (optional) template containing metadata to add / update
   //     out ITaskItem[] Result:   list of new items
   // -->
   <UsingTask TaskName="Expand"
@@ -88,7 +88,7 @@
     <ParameterGroup>
       <Items                ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <BaseItem             ParameterType="Microsoft.Build.Framework.ITaskItem"   Required="true" />
-      <Template             ParameterType="Microsoft.Build.Framework.ITaskItem"   Required="true" />
+      <Template             ParameterType="Microsoft.Build.Framework.ITaskItem"   Required="false"/>
       <Result Output="true" ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
     </ParameterGroup>
     <Task>
@@ -106,18 +106,22 @@
             };
             var newItems = new List<ITaskItem>();
             foreach (var item in Items) {
-                var newItem = new TaskItem(item);
+                var newItem = new TaskItem(item.ItemSpec);
                 if (BaseItem != null)
                     BaseItem.CopyMetadataTo(newItem);
+                item.CopyMetadataTo(newItem);
                 var itemExt = newItem.GetMetadata("Extension");
                 if (!string.IsNullOrEmpty(itemExt))
                     newItem.SetMetadata("Suffix", itemExt.Substring(1));
-                var metadataNames = Template.MetadataNames
-                    .Cast<string>().Where(x => !reserved.Contains(x));
-                foreach (var metadataName in metadataNames) {
-                    var metadataValue = Template.GetMetadata(metadataName);
-                    newItem.SetMetadata(metadataName, Regex.Replace(metadataValue, @"(%<)(\w+)(>)",
-                        match => newItem.GetMetadata(match.Groups[2].Value)));
+                if (Template != null) {
+                    var metadataNames = Template.MetadataNames
+                        .Cast<string>().Where(x => !reserved.Contains(x));
+                    foreach (var metadataName in metadataNames) {
+                        var metadataValue = Template.GetMetadata(metadataName);
+                        newItem.SetMetadata(metadataName,
+                            Regex.Replace(metadataValue, @"(%<)(\w+)(>)",
+                            match => newItem.GetMetadata(match.Groups[2].Value)));
+                    }
                 }
                 newItems.Add(newItem);
             }
