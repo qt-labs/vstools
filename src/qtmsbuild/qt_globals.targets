@@ -80,6 +80,14 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Default C++ properties
+  // -->
+  <ItemGroup>
+    <ClCompile Include="DefaultClCompile"/>
+  </ItemGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtClean
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Clean-up from previous build
@@ -112,10 +120,6 @@
     BeforeTargets="QtWorkPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
-
-    <ItemGroup>
-      <ClCompile Include="DefaultClCompile" />
-    </ItemGroup>
 
     <ReadLinesFromFile File="$(QtLogFilePath)">
       <Output TaskParameter="Lines" ItemName="QtLogData"/>
@@ -358,11 +362,20 @@
     // Add dynamic C++ sources to build
     // -->
     <ItemGroup>
-      <ClCompile Include="@(QtWorkResult->'%(ClCompile)')"
-        Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"/>
-      <ClCompile
+      <QtWork_ClCompile
+        Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"
+        Include="@(QtWorkResult->'%(ClCompile)')"/>
+      <QtWork_ClCompile
         Condition="Exists('$(IntDir)qmake\qtvars_plugin_import.cpp')"
         Include="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+    </ItemGroup>
+    <Expand Condition="'@(QtWork_ClCompile)' != ''"
+      Items="@(QtWork_ClCompile)"
+      BaseItem="@(ClCompile->WithMetadataValue('Identity', 'DefaultClCompile'))">
+      <Output TaskParameter="Result" ItemName="ClCompile"/>
+    </Expand>
+    <ItemGroup>
+      <QtWork_ClCompile Remove="@(QtWork_ClCompile)"/>
     </ItemGroup>
 
     <!--// If sources were manually selected (e.g. by the 'Compile' option in the context menu for
