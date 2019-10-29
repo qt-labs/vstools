@@ -80,11 +80,15 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Default C++ properties
+  /// TARGET QtGetDefaultClCompile
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Get default C++ properties
   // -->
-  <ItemGroup>
-    <ClCompile Include="DefaultClCompile"/>
-  </ItemGroup>
+  <Target Name="QtGetDefaultClCompile" BeforeTargets="FixupCLCompileOptions">
+    <ItemGroup>
+      <ClCompile Include="DefaultClCompile"/>
+    </ItemGroup>
+  </Target>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,7 +252,7 @@
   // -->
   <Target Name="QtWork"
     Condition="'$(QtSkipWork)' != 'true'"
-    DependsOnTargets="QtWorkPrepare">
+    DependsOnTargets="QtWorkPrepare;QtGetDefaultClCompile">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
       Text="## Qt Build $(QtBuildTargets.Replace(';',' ').Trim())" />
