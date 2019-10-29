@@ -49,7 +49,7 @@
     Name="QtVars"
     Condition="'$(QtVsProjectSettings)' == 'true'"
     DependsOnTargets="QtMocInit;QtUicInit"
-    Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath);$(QtVarsDesignTime)">
+    Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath)">
 
     <CreateProperty
       Condition="Exists('$(QtInstall)')"
