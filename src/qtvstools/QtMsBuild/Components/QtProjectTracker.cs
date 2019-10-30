@@ -123,7 +123,7 @@ namespace QtVsTools.QtMsBuild
                 if (!string.IsNullOrEmpty(configId) && config.Name != configId)
                     continue;
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
-                configProject.NotifyProjectChange();
+                await DesignTimeUpdateQtVarsAsync(configProject);
             }
         }
 
