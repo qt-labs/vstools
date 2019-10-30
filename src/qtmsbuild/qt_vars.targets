@@ -309,22 +309,25 @@
     </PropertyGroup>
     <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)"/>
 
-    <!--// Copy generated .props to $(IntDir) -->
+    <!--// Create $(QtVarsOutputDir) -->
+    <MakeDir Directories="$(QtVarsOutputDir)"/>
+
+    <!--// Copy generated .props to $(QtVarsOutputDir) -->
     <Delete
       Condition="'$(ErrorLevel)' == '0'"
-      Files="$(IntDir)qtvars_$(PlatformEscaped)_$(ConfigurationEscaped).props"/>
+      Files="$(QtVarsFilePath)"/>
     <Copy
       Condition="'$(ErrorLevel)' == '0'"
       SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFilePath)"/>
 
-    <!--// Copy generated qtvars_plugin_import.cpp to $(IntDir)\qmake -->
+    <!--// Copy generated qtvars_plugin_import.cpp to $(QtVarsOutputDir) -->
     <Delete
       Condition="'$(ErrorLevel)' == '0'"
-      Files="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+      Files="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
     <Copy
       Condition="'$(ErrorLevel)' == '0' AND Exists('$(QtVarsWorkDir)\qtvars_plugin_import.cpp')"
       SourceFiles="$(QtVarsWorkDir)\qtvars_plugin_import.cpp"
-      DestinationFiles="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+      DestinationFiles="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
 
     <!--// Remove work dir -->
     <RemoveDir

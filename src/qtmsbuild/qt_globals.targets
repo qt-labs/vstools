@@ -370,8 +370,8 @@
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"
         Include="@(QtWorkResult->'%(ClCompile)')"/>
       <QtWork_ClCompile
-        Condition="Exists('$(IntDir)qmake\qtvars_plugin_import.cpp')"
-        Include="$(IntDir)qmake\qtvars_plugin_import.cpp"/>
+        Condition="Exists('$(QtVarsOutputDir)\qtvars_plugin_import.cpp')"
+        Include="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
     </ItemGroup>
     <Expand Condition="'@(QtWork_ClCompile)' != ''"
       Items="@(QtWork_ClCompile)"

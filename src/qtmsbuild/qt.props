@@ -107,7 +107,7 @@
         >$([System.IO.Path]::Combine(
             '$(TEMP)', '$([System.IO.Path]::GetRandomFileName())'))\</QtVarsWorkDir>
     <QtVarsOutputDir
-        >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)'))</QtVarsOutputDir>
+        >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
     <QtVarsFileNameWithoutExt
         >qtvars_$(PlatformEscaped)_$(ConfigurationEscaped)</QtVarsFileNameWithoutExt>
     <QtVarsFileName
@@ -115,9 +115,9 @@
     <QtVarsWorkPath
         >$(QtVarsWorkDir)$(QtVarsFileName)</QtVarsWorkPath>
     <QtVarsFilePath
-        >$(QtVarsOutputDir)$(QtVarsFileName)</QtVarsFilePath>
+        >$(QtVarsOutputDir)\$(QtVarsFileName)</QtVarsFilePath>
     <QtVarsIndexPathDesignTime
-        >$(QtVarsOutputDir)$(QtVarsFileNameWithoutExt).designtime.idx</QtVarsIndexPathDesignTime>
+        >$(QtVarsOutputDir)\$(QtVarsFileNameWithoutExt).designtime.idx</QtVarsIndexPathDesignTime>
     <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
         >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
   </PropertyGroup>
