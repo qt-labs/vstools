@@ -106,10 +106,9 @@
             };
             var newItems = new List<ITaskItem>();
             foreach (var item in Items) {
-                var newItem = new TaskItem(item.ItemSpec);
+                var newItem = new TaskItem(item);
                 if (BaseItem != null)
                     BaseItem.CopyMetadataTo(newItem);
-                item.CopyMetadataTo(newItem);
                 var itemExt = newItem.GetMetadata("Extension");
                 if (!string.IsNullOrEmpty(itemExt))
                     newItem.SetMetadata("Suffix", itemExt.Substring(1));
