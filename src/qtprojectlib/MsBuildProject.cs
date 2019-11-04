@@ -560,6 +560,12 @@ namespace QtProjectLib
                     .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x)), IGNORE_CASE_))));
             }
 
+            // Remove Qt lib path from linker properties
+            foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
+                libs.SetValue(string.Join(";", libs.Value.Split(';')
+                    .Where(x => !x.Equals(@"$(QTDIR)\lib", IGNORE_CASE))));
+            }
+
             // Add Qt module names to QtModules project property
             this[Files.Project].xml
                 .Elements(ns + "Project")
