@@ -557,7 +557,7 @@ namespace QtProjectLib
             // Remove Qt module libraries from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Where(x => !moduleLibs.Contains(Path.GetFileName(x), IGNORE_CASE_))));
+                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x)), IGNORE_CASE_))));
             }
 
             // Add Qt module names to QtModules project property
@@ -672,8 +672,8 @@ namespace QtProjectLib
             // Module .lib is present in linker additional dependencies
             if (linker.Elements(ns + "AdditionalDependencies")
                 .SelectMany(x => x.Value.Split(';'))
-                .Any(x => Path.GetFileName(x).Equals(module.LibRelease, IGNORE_CASE)
-                    || Path.GetFileName(x).Equals(module.LibDebug, IGNORE_CASE))) {
+                .Any(x => Path.GetFileName(Unquote(x)).Equals(module.LibRelease, IGNORE_CASE)
+                    || Path.GetFileName(Unquote(x)).Equals(module.LibDebug, IGNORE_CASE))) {
                 return true;
             }
 
