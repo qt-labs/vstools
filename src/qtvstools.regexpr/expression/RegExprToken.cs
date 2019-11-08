@@ -63,6 +63,10 @@ namespace QtVsTools.SyntaxAnalysis
 
             public RegExpr Expr { get; set; }
 
+            public Token Parent { get; set; }
+
+            public List<Token> Children { get; set; }
+
             public Token(string id, RegExpr skipWs, RegExpr expr)
             {
                 Id = id;
@@ -71,6 +75,7 @@ namespace QtVsTools.SyntaxAnalysis
                 Expr = expr;
                 Rules = new TokenRules();
                 CaptureId = GenerateCaptureId(Id);
+                Children = new List<Token>();
             }
 
             public Token(string id, SkipWhitespace skipWs, RegExpr expr)
@@ -80,6 +85,7 @@ namespace QtVsTools.SyntaxAnalysis
                 Expr = expr;
                 Rules = new TokenRules();
                 CaptureId = GenerateCaptureId(Id);
+                Children = new List<Token>();
             }
 
             public Token(Enum id, RegExpr expr)
@@ -105,6 +111,11 @@ namespace QtVsTools.SyntaxAnalysis
             public Token()
                 : this(string.Empty, SkipWhitespace.Enable, null)
             { }
+
+            public static Token CreateRoot()
+            {
+                return new Token { CaptureId = ParseTree.KeyRoot };
+            }
 
             protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
                 StringBuilder pattern, ref RenderMode mode)

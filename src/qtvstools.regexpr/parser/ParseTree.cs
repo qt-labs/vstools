@@ -51,7 +51,7 @@ namespace QtVsTools.SyntaxAnalysis
         public class ParseTree
         {
             public Node Root { get; set; }
-            public const string KeyRoot = "ROOT";
+            public const string KeyRoot = "0";
 
             public class Node : IOperatorCapture, IOperandCapture
             {
@@ -61,7 +61,18 @@ namespace QtVsTools.SyntaxAnalysis
                 public int End { get; set; }
                 public int GroupIdx { get; set; }
                 public int CaptureIdx { get; set; }
-                public int OrderKey { get; set; }
+                public ulong OrderKey { get; set; }
+
+                class NodeComparer : IComparer<Node>
+                {
+                    public int Compare(Node x, Node y)
+                    {
+                        return Comparer<int>.Default.Compare(x.Begin, y.Begin);
+                    }
+                }
+
+                static NodeComparer _Comparer = new NodeComparer();
+                public static IComparer<Node> Comparer { get { return _Comparer; } }
 
                 public Token Token { get; set; }
                 public string TokenId { get { return Token.Id; } }
@@ -70,8 +81,8 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public Node Parent { get; set; }
 
-                SortedList<int, Node> _ChildNodes = new SortedList<int, Node>();
-                public SortedList<int, Node> ChildNodes { get { return _ChildNodes; } }
+                SortedList<ulong, Node> _ChildNodes = new SortedList<ulong, Node>();
+                public SortedList<ulong, Node> ChildNodes { get { return _ChildNodes; } }
 
                 ProductionObjects _ChildProductions = new ProductionObjects();
                 public ProductionObjects ChildProductions { get { return _ChildProductions; } }
@@ -95,7 +106,7 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     get
                     {
-                        if (CaptureId == "0")
+                        if (CaptureId == KeyRoot)
                             return KeyRoot;
                         return string.Format("{0}:{1}:{2}", CaptureId, Begin, End);
                     }

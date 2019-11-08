@@ -94,53 +94,60 @@ namespace QtVsTools.SyntaxAnalysis
                 if (!match.Success || match.Length == 0)
                     throw new ParseErrorException();
 
-                // Flat list of captures (parse-tree nodes)
-                var captures = match.Groups.Cast<Group>()
-                    .SelectMany((g, gIdx) => g.Captures.Cast<Capture>()
-                        .Where(c => !string.IsNullOrEmpty(c.Value))
-                        .Select((c, cIdx) => new ParseTree.Node
+                // Flat list of parse-tree nodes, from Regex captures
+                var nodes = match.Groups.Cast<Group>()
+                    .SelectMany((group, groupIdx) => group.Captures.Cast<Capture>()
+                        .Where(capture => !string.IsNullOrEmpty(capture.Value))
+                        .Select((capture, captureIdx) => new ParseTree.Node
                         {
-                            CaptureId = Regex.GroupNameFromNumber(gIdx),
-                            Token = Pattern.Tokens[ Regex.GroupNameFromNumber(gIdx)],
-                            Value = c.Value,
-                            Begin = c.Index,
-                            End = c.Index + c.Length,
-                            GroupIdx = gIdx,
-                            CaptureIdx = cIdx,
+                            CaptureId = Regex.GroupNameFromNumber(groupIdx),
+                            Token = Pattern.Tokens[Regex.GroupNameFromNumber(groupIdx)],
+                            Value = capture.Value,
+                            Begin = capture.Index,
+                            End = capture.Index + capture.Length,
+                            GroupIdx = groupIdx,
+                            CaptureIdx = captureIdx,
+                            OrderKey = (((ulong)groupIdx) << 32) | ((uint)captureIdx)
                         }))
-                    .OrderByDescending(c => c.Begin)
-                    .ThenBy(c => c.End)
-                    .ThenByDescending(c => c.GroupIdx)
-                    .ThenByDescending(c => c.CaptureIdx);
+                    .OrderBy(c => c.Begin);
 
-                // Capture index
-                var capture = captures
-                    .GroupBy(x => x.Key)
-                    .ToDictionary(x => x.Key, x => x.First());
+                // Node list partitioned by token ID
+                var nodesByToken = nodes
+                    .GroupBy(c => c.CaptureId)
+                    .ToDictionary(g => g.Key, g => g.ToArray());
 
-                // Parent(x) ::= smallest capture y, such that x is contained in y
-                var subCaptures = captures
-                    .Select((x, xIdx) => new
-                    {
-                        IdxSelf = xIdx,
-                        KeySelf = x.Key,
-                        KeyParent = captures.Skip(xIdx + 1)
-                            .SkipWhile(y => y.End < x.End)
-                            .Select(y => y.Key)
-                            .FirstOrDefault()
-                    })
-                    .Where(x => !string.IsNullOrEmpty(x.KeyParent));
+                // Traverse token hierarchy
+                var stack = new Stack<Token>(Pattern.Root.Children);
+                while (stack.Any()) {
+                    var token = stack.Pop();
 
-                // Link x <--> Parent(x)
-                foreach (var subCapture in subCaptures) {
-                    var self = capture[subCapture.KeySelf];
-                    var parent = capture[subCapture.KeyParent];
-                    self.OrderKey = -subCapture.IdxSelf;
-                    (self.Parent = parent).ChildNodes.Add(self.OrderKey, self);
+                    // Get nodes captured by current token (if any)
+                    ParseTree.Node[] tokenNodes;
+                    if (!nodesByToken.TryGetValue(token.CaptureId, out tokenNodes))
+                        continue;
+
+                    // Get nodes captured by parent token
+                    var parentNodes = nodesByToken[token.Parent.CaptureId];
+
+                    // Set parent <-> child relation for nodes of current token
+                    foreach (var node in tokenNodes) {
+                        // Find parent node
+                        int idx = Array.BinarySearch(parentNodes, node, ParseTree.Node.Comparer);
+                        if (idx < 0) {
+                            idx = (~idx) - 1;
+                            if (idx < 0)
+                                throw new ParseErrorException();
+                        }
+                        // Attach to parent node
+                        (node.Parent = parentNodes[idx]).ChildNodes.Add(node.OrderKey, node);
+                    }
+
+                    // Move down token hierarchy
+                    token.Children.ForEach(x => stack.Push(x));
                 }
 
                 // Return parse tree root
-                return capture[ParseTree.KeyRoot];
+                return nodesByToken[ParseTree.KeyRoot].FirstOrDefault();
             }
         }
 

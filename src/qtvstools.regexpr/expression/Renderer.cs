@@ -40,6 +40,7 @@ namespace QtVsTools.SyntaxAnalysis
             public RegExpr Expr { get; set; }
             public string ExprRender { get; set; }
             public Dictionary<string, Token> Tokens { get; set; }
+            public Token Root { get; set; }
         }
 
         class Renderer
@@ -59,11 +60,13 @@ namespace QtVsTools.SyntaxAnalysis
             public Pattern RenderPattern(RegExpr rootExpr, RegExpr wsExpr)
             {
                 var pattern = new StringBuilder();
+                var rootToken = Token.CreateRoot();
                 var tokens = new Dictionary<string, Token>
                 {
                     // Default root token
-                    {"0", new Token("_ROOT", null) }
+                    {rootToken.CaptureId, rootToken }
                 };
+                var parentToken = rootToken;
                 var stack = new Stack<StackFrame>();
                 var mode = RenderMode.Default;
 
@@ -78,7 +81,14 @@ namespace QtVsTools.SyntaxAnalysis
                     IEnumerable<RegExpr> children = context.Children;
                     RegExpr parent = stack.Any() ? stack.Peek() : null;
 
+                    var token = expr as Token;
                     if (children == null) {
+                        if (expr is Token) {
+                            tokens[token.CaptureId] = token;
+                            (token.Parent = parentToken).Children.Add(token);
+                            parentToken = token;
+                        }
+
                         children = expr.OnRender(wsExpr, parent, pattern, ref mode);
                         if (children != null && children.Any()) {
                             stack.Push(new StackFrame { Expr = expr, Children = children.Skip(1) });
@@ -91,7 +101,7 @@ namespace QtVsTools.SyntaxAnalysis
                     } else {
                         expr.OnRenderEnd(wsExpr, parent, pattern, ref mode);
                         if (expr is Token)
-                            tokens[expr.As<Token>().CaptureId] = expr.As<Token>();
+                            parentToken = token.Parent;
                     }
                 }
 
@@ -99,7 +109,8 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     Expr = rootExpr,
                     ExprRender = pattern.ToString(),
-                    Tokens = tokens
+                    Tokens = tokens,
+                    Root = rootToken
                 };
             }
 
