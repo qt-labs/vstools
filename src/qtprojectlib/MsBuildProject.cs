@@ -1466,7 +1466,7 @@ namespace QtProjectLib
 
                     var projectInstance = new ProjectInstance(this[Files.Project].filePath,
                         new Dictionary<string, string>(configProps)
-                        { { "DesignTimeBuild", "true" } },
+                        { { "QtVSToolsBuild", "true" } },
                         null, new ProjectCollection());
 
                     var buildRequest = new BuildRequestData(projectInstance,

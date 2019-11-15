@@ -437,4 +437,23 @@
     </ItemGroup>
   </Target>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtOuterBuild
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Root Qt target
+  // -->
+  <PropertyGroup Condition="'$(QtInnerBuild)' != 'true' AND '$(DesignTimeBuild)' != 'true'">
+    <BuildDependsOn>QtOuterBuild</BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="QtOuterBuild" DependsOnTargets="$(QtOuterBuildDependsOn)">
+    <!--// Restart build in second MSBuild instance -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="Build"
+      Properties="QtInnerBuild=true;RandomFileName=$([System.IO.Path]::GetRandomFileName())">
+    </MSBuild>
+  </Target>
+
 </Project>

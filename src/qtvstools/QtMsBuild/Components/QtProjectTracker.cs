@@ -148,8 +148,8 @@ namespace QtVsTools.QtMsBuild
         {
             await BuildAsync(
                 project,
-                new[] { KVP("DesignTimeBuild", "true") },
-                new[] { "Qt" });
+                new[] { KVP("QtVSToolsBuild", "true") },
+                new[] { "QtVars" });
         }
 
         private async Task BuildAsync(
