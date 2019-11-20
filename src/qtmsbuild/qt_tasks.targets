@@ -533,6 +533,8 @@
         ParameterType="System.String"/>
       <VarDefs Required="false"
         ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+      <ExcludeValues Required="true"
+        ParameterType="System.String[]"/>
       <OutVars Output="true"
         ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
     </ParameterGroup>
@@ -559,7 +561,9 @@
                         .Cast<Match>()
                         .Select(y => Regex
                             .Replace(y.Value, x.GetMetadata("Pattern"), x.GetMetadata("Value")))
-                        .Where(y => !string.IsNullOrEmpty(y))
+                        .Where(y => !string.IsNullOrEmpty(y)
+                            && !ExcludeValues.Contains(y,
+                                StringComparer.InvariantCultureIgnoreCase))
                         .ToHashSet())
                 } }))
                 .Where(x => !string.IsNullOrEmpty(x.GetMetadata("Value")))

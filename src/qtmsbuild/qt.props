@@ -105,7 +105,7 @@
     <!--// Path to Qt variables property file -->
     <QtVarsWorkDir
         >$([System.IO.Path]::Combine(
-            '$(TEMP)', '$([System.IO.Path]::GetRandomFileName())'))\</QtVarsWorkDir>
+            '$(TEMP)', '$([System.IO.Path]::GetRandomFileName())'))</QtVarsWorkDir>
     <QtVarsOutputDir
         >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
     <QtVarsFileNameWithoutExt
@@ -113,7 +113,7 @@
     <QtVarsFileName
         >$(QtVarsFileNameWithoutExt).props</QtVarsFileName>
     <QtVarsWorkPath
-        >$(QtVarsWorkDir)$(QtVarsFileName)</QtVarsWorkPath>
+        >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
     <QtVarsFilePath
         >$(QtVarsOutputDir)\$(QtVarsFileName)</QtVarsFilePath>
     <QtVarsIndexPathDesignTime

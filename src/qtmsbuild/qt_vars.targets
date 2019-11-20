@@ -120,12 +120,12 @@
       <QtVarsProFileConfig
         Condition="'$(Configuration)' == 'Debug'">
         CONFIG -= debug release debug_and_release
-        CONFIG += debug
+        CONFIG += debug no_fixpath
       </QtVarsProFileConfig>
       <QtVarsProFileConfig
         Condition="'$(Configuration)' != 'Debug'">
         CONFIG -= debug release debug_and_release
-        CONFIG += release
+        CONFIG += release no_fixpath
       </QtVarsProFileConfig>
 
       <!--// .pro file input parameters -->
@@ -243,7 +243,7 @@
 
     <!--// Read variables from Makefile -->
     <GetVarsFromMakefile
-      Makefile="$(QtVarsWorkDir)\Makefile" VarDefs="@(QtVarDef)">
+      Makefile="$(QtVarsWorkDir)\Makefile" VarDefs="@(QtVarDef)" ExcludeValues="$(QtVarsWorkDir)">
       <Output TaskParameter="OutVars" ItemName="QtVar"/>
     </GetVarsFromMakefile>
 
