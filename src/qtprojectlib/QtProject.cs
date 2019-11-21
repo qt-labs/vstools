@@ -556,10 +556,6 @@ namespace QtProjectLib
                 var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
                 var librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
 
-                // for some stupid reason you have to set this for it to be updated...
-                // the default value is the same... +platform now
-                config.OutputDirectory = "$(SolutionDir)$(Platform)\\$(Configuration)\\";
-
                 if (linker != null) {
                     if ((type & TemplateType.ConsoleSystem) != 0)
                         linker.SubSystem = subSystemOption.subSystemConsole;

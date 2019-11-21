@@ -299,6 +299,15 @@ namespace QtProjectLib
             if (globals == null)
                 return false;
 
+            // Get project configuration properties
+            var configProps = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(pg =>
+                    (string)pg.Attribute("Label") == "Configuration"
+                    && pg.Attribute("Condition") != null)
+                .ToDictionary(pg => (string)pg.Attribute("Condition"));
+
             // Set Qt project format version
             var projKeyword = globals.Element(ns + "Keyword");
             if (projKeyword == null)
@@ -318,6 +327,51 @@ namespace QtProjectLib
                 .FirstOrDefault();
             if (qtPropsImport == null)
                 return false;
+
+            // Upgrading from <= v3.1?
+            if (oldVersion.HasValue
+                && oldVersion.Value < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
+
+                // Move Qt/MSBuild path to global property
+                var qtMsBuildProperty = globals
+                    .ElementsAfterSelf(ns + "PropertyGroup")
+                    .Elements(ns + "QtMsBuild")
+                    .FirstOrDefault();
+                if (qtMsBuildProperty != null) {
+                    var qtMsBuildPropertyGroup = qtMsBuildProperty.Parent;
+                    qtMsBuildProperty.Remove();
+                    qtMsBuildProperty.SetAttributeValue("Condition",
+                        (string)qtMsBuildPropertyGroup.Attribute("Condition"));
+                    globals.Add(qtMsBuildProperty);
+                    qtMsBuildPropertyGroup.Remove();
+                }
+
+                // Move remaining uncategorized properties to "Configuration"-labelled groups
+                var uncategorizedPropertyGroups = this[Files.Project].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "PropertyGroup")
+                    .Where(pg => pg.Attribute("Label") == null);
+                foreach (var pg in uncategorizedPropertyGroups.ToList()) {
+                    foreach (var p in pg.Elements().ToList()) {
+                        p.Remove();
+                        var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
+                        XElement configPropertyGroup = null;
+                        if (condition != null)
+                            configProps.TryGetValue((string)condition, out configPropertyGroup);
+                        if (configPropertyGroup != null) {
+                            p.SetAttributeValue("Condition", null);
+                            configPropertyGroup.Add(p);
+                        }
+                    }
+                    pg.Remove();
+                }
+            }
+            if (oldVersion.HasValue
+                && oldVersion.Value > Resources.qtMinFormatVersion_Settings) {
+                this[Files.Project].isDirty = true;
+                Commit();
+                return true;
+            }
 
             // Upgrading from v3.0?
             Dictionary<string, XElement> oldQtInstall = null;

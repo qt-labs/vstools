@@ -57,6 +57,7 @@
     <EnumValue Name="Qt4VSv1.0" DisplayName="Version 2.0"/>
     <EnumValue Name="QtVS_v300" DisplayName="Version 3.0"/>
     <EnumValue Name="QtVS_v301" DisplayName="Version 3.1"/>
+    <EnumValue Name="QtVS_v302" DisplayName="Version 3.2"/>
   </EnumProperty>
   <DynamicEnumProperty
     Name="QtInstall"
