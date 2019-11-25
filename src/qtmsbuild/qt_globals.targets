@@ -441,19 +441,29 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtOuterBuild
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Root Qt target
+  // Run targets in $(QtOuterBuildDependsOn) and then recursively invoke build
   // -->
-  <PropertyGroup Condition="'$(QtInnerBuild)' != 'true' AND '$(DesignTimeBuild)' != 'true'">
-    <BuildDependsOn>QtOuterBuild</BuildDependsOn>
-  </PropertyGroup>
-
   <Target Name="QtOuterBuild" DependsOnTargets="$(QtOuterBuildDependsOn)">
-    <!--// Restart build in second MSBuild instance -->
+    <!--// Invoke inner build: recursive build in second MSBuild instance -->
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="Build"
-      Properties="QtInnerBuild=true;RandomFileName=$([System.IO.Path]::GetRandomFileName())">
+      Properties="QtInnerBuild=$(MSBuildProjectFullPath);RandomFileName=$(RandomFileName)">
     </MSBuild>
   </Target>
+
+  <PropertyGroup
+    Condition="'$(QtInnerBuild)' == '' AND '$(DesignTimeBuild)' != 'true'">
+    <!--// Outer build: invoke inner build -->
+    <BuildDependsOn>$(QtOuterBuildPrepare);QtOuterBuild;$(QtOuterBuildFinalize)</BuildDependsOn>
+    <QtInnerBuild>$(MSBuildProjectFullPath)</QtInnerBuild>
+    <RandomFileName>$([System.IO.Path]::GetRandomFileName())</RandomFileName>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition="'$(QtInnerBuild)' != '$(MSBuildProjectFullPath)' AND '$(DesignTimeBuild)' != 'true'">
+    <!--// Dependent project inner build: skip build -->
+    <BuildDependsOn>$(QtOuterBuildPrepare);$(QtOuterBuildFinalize)</BuildDependsOn>
+  </PropertyGroup>
 
 </Project>
