@@ -549,8 +549,10 @@
                 File.ReadAllText(Makefile),
                 @"^(\w+)[^\=\r\n\S]*\=[^\r\n\S]*([^\r\n]+)[\r\n]",
                 RegexOptions.Multiline).Cast<Match>()
-                .Where(x => x.Groups.Count > 2 && x.Groups[1].Success && x.Groups[2].Success)
-                .ToDictionary(x => x.Groups[1].Value, x => x.Groups[2].Value);
+                .Where(x => x.Groups.Count > 2 && x.Groups[1].Success && x.Groups[2].Success
+                    && !string.IsNullOrEmpty(x.Groups[1].Value))
+                .GroupBy(x => x.Groups[1].Value)
+                .ToDictionary(g => g.Key, g => g.Last().Groups[2].Value);
             OutVars = VarDefs
                 .Where(x => makefileVars.ContainsKey(x.GetMetadata("Name")))
                 .Select(x => new TaskItem(x.ItemSpec, new Dictionary<string,string>
