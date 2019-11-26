@@ -309,7 +309,11 @@ namespace QtProjectLib
                 .ToDictionary(pg => (string)pg.Attribute("Condition"));
 
             // Set Qt project format version
-            var projKeyword = globals.Element(ns + "Keyword");
+            var projKeyword = globals
+                .Elements(ns + "Keyword")
+                .Where(x => x.Value.StartsWith(Resources.qtProjectKeyword)
+                    || x.Value.StartsWith(Resources.qtProjectV2Keyword))
+                .FirstOrDefault();
             if (projKeyword == null)
                 return false;
             var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
