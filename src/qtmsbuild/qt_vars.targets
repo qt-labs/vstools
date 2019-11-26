@@ -117,15 +117,9 @@
     <PropertyGroup>
 
       <!--// .pro file configuration -->
-      <QtVarsProFileConfig
-        Condition="'$(Configuration)' == 'Debug'">
+      <QtVarsProFileConfig>
         CONFIG -= debug release debug_and_release
-        CONFIG += debug no_fixpath
-      </QtVarsProFileConfig>
-      <QtVarsProFileConfig
-        Condition="'$(Configuration)' != 'Debug'">
-        CONFIG -= debug release debug_and_release
-        CONFIG += release no_fixpath
+        CONFIG += $(QtBuildConfig) no_fixpath
       </QtVarsProFileConfig>
 
       <!--// .pro file input parameters -->
@@ -298,6 +292,8 @@
       >@(QtVariables,'%3B')</QtBkup_QtVars>
     <QtBkup_QMakeCodeLines
       >@(QMakeCodeLines,'%3B')</QtBkup_QMakeCodeLines>
+    <QtBkup_QtBuildConfig
+      >@(QtBuildConfig,'%3B')</QtBkup_QtBuildConfig>
   </PropertyGroup>
 </Project>
         ]]>
@@ -400,6 +396,8 @@
         AND '$(QtBkup_QtVars)' != '$(QtVars)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
         AND '$(QtBkup_QMakeCodeLines)' != '$(QMakeCodeLines)'" />
+    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
+        AND '$(QtBkup_QtBuildConfig)' != '$(QtBuildConfig)'" />
   </Target>
 
   <!--

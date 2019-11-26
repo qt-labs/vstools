@@ -75,6 +75,14 @@
       <ValueEditor EditorType="QtModulesEditor" DisplayName="&lt;Select Modules...&gt;" />
     </StringListProperty.ValueEditors>
   </StringListProperty>
+  <EnumProperty
+    Name="QtBuildConfig"
+    Category="QtSettings_01_General"
+    DisplayName="Build Config"
+    Description="Select whether to use debug or release.">
+    <EnumValue Name="debug" DisplayName="Debug"/>
+    <EnumValue Name="release" DisplayName="Release"/>
+  </EnumProperty>
   <StringProperty
     Name="QtPathBinaries"
     Category="QtSettings_02_Paths"

@@ -63,5 +63,9 @@
     <DefaultQtVersion Condition="'$(DefaultQtVersion)' == ''"
       >$([MSBuild]::GetRegistryValue('$(QtVersionsRegKey)','DefaultQtVersion'))</DefaultQtVersion>
 
+    <!--// Qt build config -->
+    <QtBuildConfig Condition="'$(Configuration)' == 'Debug'">debug</QtBuildConfig>
+    <QtBuildConfig Condition="'$(Configuration)' != 'Debug'">release</QtBuildConfig>
+
   </PropertyGroup>
 </Project>
