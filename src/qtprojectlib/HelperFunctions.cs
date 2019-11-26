@@ -1874,6 +1874,7 @@ namespace QtProjectLib
 
         public static string Unquote(string text)
         {
+            text = text.Trim();
             if (string.IsNullOrEmpty(text)
                 || text.Length < 3
                 || !text.StartsWith("\"")
