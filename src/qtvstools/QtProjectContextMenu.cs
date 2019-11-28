@@ -235,6 +235,11 @@ namespace QtVsTools
             var isQMakeProject = HelperFunctions.IsQMakeProject(project);
             var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
 
+            if (!isQtProject && !isQMakeProject) {
+                command.Enabled = command.Visible = false;
+                return;
+            }
+
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:

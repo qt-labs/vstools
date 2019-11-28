@@ -87,6 +87,13 @@
                     <ButtonText>Set Qt Help Preference</ButtonText>
                 </Strings>
             </Menu>
+
+            <Menu guid="ProjectContextMenuGuid" id="QtSubMenu" priority="0x0100" type="Menu">
+                <Parent guid="ProjectContextMenuGuid" id="QtSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Qt</ButtonText>
+                </Strings>
+            </Menu>
         </Menus>
 
         <!--
@@ -130,14 +137,17 @@
 
             <!-- Region Project context menu groups -->
 
-            <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
+            <Group guid="ProjectContextMenuGuid" id="QtSubMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+            </Group>
+            <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
+                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextAddNewQtClassMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="cmdidShellWindowNavigate7"/>
@@ -383,6 +393,7 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ImportPriFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Import .pri File to Project...</ButtonText>
                     <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
@@ -392,6 +403,7 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ExportProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Export Project to .pri File...</ButtonText>
                     <ToolTipText>Export the current project to a .pri file</ToolTipText>
@@ -401,6 +413,7 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="CreateProFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Create Basic .pro File...</ButtonText>
                     <ToolTipText>Export the current project to a Qt Project file (.pro)</ToolTipText>
@@ -410,6 +423,7 @@
             <Button guid="ProjectContextMenuGuid" id="CreateNewTsFileProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Create New Translation File</ButtonText>
                     <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
@@ -419,6 +433,7 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>lupdate All .ts Files in Project</ButtonText>
                 </Strings>
@@ -427,6 +442,7 @@
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>lrelease All .ts Files in Project</ButtonText>
                 </Strings>
@@ -623,6 +639,9 @@
         <GuidSymbol name="ProjectContextMenuGuid" value="{5732faa9-6074-4e07-b035-2816e809f50e}" >
 
             <!-- Region Project context menu button Ids -->
+
+            <IDSymbol name="QtSubMenuGroup" value="0x1150"/>
+            <IDSymbol name="QtSubMenu" value="0x1100"/>
 
             <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
             <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
