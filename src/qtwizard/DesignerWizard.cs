@@ -203,7 +203,7 @@ namespace QtProjectWizard
                 replacements["$Platform$"] = versionInfo.GetVSPlatformName();
 
                 replacements["$Keyword$"] = Resources.qtProjectKeyword;
-                replacements["$ProjectGuid$"] = @"{B12702AD-ABFB-343A-A199-8E24837244A3}";
+                replacements["$ProjectGuid$"] = HelperFunctions.NewProjectGuid();
                 replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
                 replacements["$DefaultQtVersion$"] = versionName;
                 replacements["$QtModules$"] = string.Join(";", data.Modules

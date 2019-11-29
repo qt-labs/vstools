@@ -1883,5 +1883,10 @@ namespace QtProjectLib
             }
             return text.Substring(1, text.Length - 2);
         }
+
+        public static string NewProjectGuid()
+        {
+            return string.Format("{{{0}}}", Guid.NewGuid().ToString().ToUpper());
+        }
     }
 }
