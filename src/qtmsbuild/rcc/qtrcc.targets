@@ -407,7 +407,6 @@
         ///////////////////////////////////////////////////////////////////////////////////////////
         // C++ dynamic source -->
         <ClCompile Condition="'%(QtRcc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
       </QtWork>
     </ItemGroup>
 

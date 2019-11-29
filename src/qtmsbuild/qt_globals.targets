@@ -373,12 +373,28 @@
         Condition="Exists('$(QtVarsOutputDir)\qtvars_plugin_import.cpp')"
         Include="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
     </ItemGroup>
+
+    <!-- // Copy default C++ compiler properties -->
     <Expand Condition="'@(QtWork_ClCompile)' != ''"
       Items="@(QtWork_ClCompile)"
       BaseItem="@(ClCompile->WithMetadataValue('Identity', 'DefaultClCompile'))">
-      <Output TaskParameter="Result" ItemName="ClCompile"/>
+      <Output TaskParameter="Result" ItemName="QtWork_ClCompile_Expanded"/>
     </Expand>
+
+    <!-- // Force pre-compiled header include -->
     <ItemGroup>
+      <QtWork_ClCompile_Expanded>
+        <AdditionalIncludeDirectories
+          >$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
+          >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
+      </QtWork_ClCompile_Expanded>
+    </ItemGroup>
+
+    <!-- // Add C++ source items and clean-up temp items -->
+    <ItemGroup>
+      <ClCompile Include="@(QtWork_ClCompile_Expanded)"/>
+      <QtWork_ClCompile_Expanded Remove="@(QtWork_ClCompile_Expanded)"/>
       <QtWork_ClCompile Remove="@(QtWork_ClCompile)"/>
     </ItemGroup>
 
