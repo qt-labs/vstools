@@ -198,21 +198,24 @@ namespace QtVsTools
                 var QtMsBuildDefault = Path.Combine(
                     Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
                 try {
-                    if (Directory.Exists(QtMsBuildDefault))
-                        Directory.Delete(QtMsBuildDefault, recursive: true);
-
                     var qtMsBuildDefaultUri = new Uri(QtMsBuildDefault + "\\");
                     var qtMsBuildVsixPath = Path.Combine(PkgInstallPath, "QtMsBuild");
                     var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + "\\");
-                    var qtMsBuildVsixFiles = Directory
-                        .GetFiles(qtMsBuildVsixPath, "*", SearchOption.AllDirectories)
-                        .Select(x => qtMsBuildVsixUri.MakeRelativeUri(new Uri(x)));
-
-                    foreach (var qtMsBuildFile in qtMsBuildVsixFiles) {
-                        var sourcePath = new Uri(qtMsBuildVsixUri, qtMsBuildFile).LocalPath;
-                        var targetPath = new Uri(qtMsBuildDefaultUri, qtMsBuildFile).LocalPath;
-                        Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
-                        File.Copy(sourcePath, targetPath);
+                    if (qtMsBuildVsixUri != qtMsBuildDefaultUri) {
+                        var qtMsBuildVsixFiles = Directory
+                            .GetFiles(qtMsBuildVsixPath, "*", SearchOption.AllDirectories)
+                            .Select(x => qtMsBuildVsixUri.MakeRelativeUri(new Uri(x)));
+                        foreach (var qtMsBuildFile in qtMsBuildVsixFiles) {
+                            var sourcePath = new Uri(qtMsBuildVsixUri, qtMsBuildFile).LocalPath;
+                            var targetPath = new Uri(qtMsBuildDefaultUri, qtMsBuildFile).LocalPath;
+                            var targetPathTemp = targetPath + ".tmp";
+                            Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                            File.Copy(sourcePath, targetPathTemp, overwrite: true);
+                            if (File.Exists(targetPath))
+                                File.Replace(targetPathTemp, targetPath, null);
+                            else
+                                File.Move(targetPathTemp, targetPath);
+                        }
                     }
                 } catch {
                     QtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
