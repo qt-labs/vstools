@@ -260,6 +260,7 @@
       <QtLibrarySearchPath Include="$(QtLibrarySearchPath)"/>
       <QtVariables Include="$(QtVars)"/>
       <QMakeCodeLines Include="$(QMakeCodeLines)"/>
+      <QtBuildConfig Include="$(QtBuildConfig)"/>
     </ItemGroup>
 
     <!--// Write end of .props (XML) file
@@ -359,6 +360,7 @@
       <QtLibrarySearchPath Remove="@(QtLibrarySearchPath)"/>
       <QtVariables Remove="@(QtVariables)"/>
       <QMakeCodeLines Remove="@(QMakeCodeLines)"/>
+      <QtBuildConfig Remove="@(QtBuildConfig)"/>
       <QtVarDef Remove="@(QtVarDef)"/>
       <QtVar Remove="@(QtVar)"/>
     </ItemGroup>
