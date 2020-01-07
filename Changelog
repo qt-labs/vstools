@@ -1,3 +1,20 @@
+The Qt Visual Studio Tools version 2.4.3 includes several bug fixes.
+
+Changes
+-------
+ - Fixed QTVSADDINBUG-560: New Qt projects with duplicate GUID
+ - Fixed QTVSADDINBUG-685: Property sheets not working with Qt projects
+ - Fixed QTVSADDINBUG-690: All configs not named 'Debug' use release build settings
+ - Fixed QTVSADDINBUG-702: Conversion errors when project has empty property values
+ - Fixed QTVSADDINBUG-703: Pre-compiled header disabled for generated sources
+ - Fixed QTVSADDINBUG-708: Link errors with projects including Windows resources (.rc file)
+ - Fixed QTVSADDINBUG-709: Qt-related menu items show in non-Qt project context menu
+ - Fixed QTVSADDINBUG-712: Qt INCLUDEPATH property has incorrect values
+ - Fixed QTVSADDINBUG-717: Qt project build fails when multiple VS instances are launched
+ - Fixed QTVSADDINBUG-722: Error getting Qt property values from generated Makefile
+ - Fixed QTVSADDINBUG-723: Projects built multiple times when dependencies are defined
+
+
 The Qt Visual Studio Tools version 2.4.2 includes several bug fixes.
 
 Changes
