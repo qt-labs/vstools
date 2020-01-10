@@ -58,6 +58,10 @@
       $(ComputeCompileInputsTargets);
       Qt
     </ComputeCompileInputsTargets>
+    <BeforeClCompileTargets>
+      $(BeforeClCompileTargets);
+      Qt
+    </BeforeClCompileTargets>
     <ComputeLinkInputsTargets>
       $(ComputeLinkInputsTargets);
       Qt
@@ -84,7 +88,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Get default C++ properties
   // -->
-  <Target Name="QtGetDefaultClCompile" BeforeTargets="FixupCLCompileOptions">
+  <Target Name="QtGetDefaultClCompile">
     <ItemGroup>
       <ClCompile Include="DefaultClCompile"/>
     </ItemGroup>
@@ -447,7 +451,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Root Qt target
   // -->
-  <Target Name="Qt" DependsOnTargets="QtPrepare;QtWork">
+  <Target Name="Qt" DependsOnTargets="QtPrepare;QtWork" BeforeTargets="FixupCLCompileOptions">
     <ItemGroup>
       <ClCompile Remove="DefaultClCompile" />
     </ItemGroup>
