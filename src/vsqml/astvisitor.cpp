@@ -529,6 +529,7 @@ public:
     virtual bool visit(DebuggerStatement *node) { return visitCallback(node, true); }
     virtual void endVisit(DebuggerStatement *node) { visitCallback(node, false); }
 
+    virtual void throwRecursionDepthError() { /* TODO: Anything we should do here? */ }
 };
 
 AstVisitor::AstVisitor() : d_ptr(new AstVisitorPrivate)
