@@ -4,5 +4,6 @@
 QTVSTOOLS_SRC_PRI = 1
 
 !static {
-    error("Please use a static Qt to build the tools.")
+    !build_pass: message("Using dynamic build. Remember to call \"nmake windeployqt\" after building")
+    CONFIG += windeployqt
 }
