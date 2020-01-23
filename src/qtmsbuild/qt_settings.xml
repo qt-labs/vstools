@@ -111,6 +111,10 @@
 "Extract Qt variables from qmake-generated Makefile.
 Syntax: &lt; var_name &gt; [ = [ makefile_var_name ] / &lt; pattern &gt; / &lt; replace &gt; / ]"/>
   <StringListProperty
+    Name="QMakeExtraArgs"
+    Category="QtSettings_03_QMake"
+    DisplayName="Additional Command Arguments" />
+  <StringListProperty
     Name="QMakeCodeLines"
     Category="QtSettings_03_QMake"
     DisplayName="Additional Project Settings" />

@@ -82,6 +82,22 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
+    <!--// qmake command line arguments -->
+    <ItemGroup>
+      <QMakeArgsList Include="$(QMakeExtraArgs)"/>
+    </ItemGroup>
+    <ItemGroup>
+      <QMakeArgsList>
+        <Escaped>%(Identity)</Escaped>
+        <Escaped Condition="$([System.String]::Copy('%(Identity)').Contains(' '))
+            OR $([System.String]::Copy('%(Identity)').Contains('&quot;'))"
+        >&quot;$([System.String]::Copy('%(Identity)').Replace('&quot;','\&quot;'))&quot;</Escaped>
+      </QMakeArgsList>
+    </ItemGroup>
+    <PropertyGroup>
+      <QMakeArgs>@(QMakeArgsList->'%(Escaped)', ' ')</QMakeArgs>
+    </PropertyGroup>
+
     <!--// Modules and additional .pro file lines -->
     <ItemGroup>
       <QtModuleList Include="$(QtModules)"/>
@@ -190,7 +206,7 @@
 
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
     <PropertyGroup>
-      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe") 1> qtvars.log 2>&1]]></Cmd>
+      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" $(QMakeArgs)) 1> qtvars.log 2>&1]]></Cmd>
     </PropertyGroup>
     <Exec WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true" Command="$(Cmd)">
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
