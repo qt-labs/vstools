@@ -82,6 +82,64 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
+    <!--// Check if qmake is in the tools path -->
+    <Error Condition="!Exists('$(QtToolsPath)\qmake.exe')" Text="qmake not found"/>
+
+    <!--// Ensure C++ compiler in PATH -->
+    <Exec Command="WHERE /Q cl.exe" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
+    </Exec>
+    <SetEnv Condition="'$(ErrorLevel)' != '0'"
+      Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
+
+    <!--// Set-up temp directory -->
+    <RemoveDir
+      Directories="$(QtVarsWorkDir)"/>
+    <MakeDir
+      Directories="$(QtVarsWorkDir)"/>
+
+    <!--// Run qmake: query properties -->
+    <PropertyGroup>
+      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" -query) 1> props.txt 2> NUL]]></Cmd>
+    </PropertyGroup>
+    <Exec WorkingDirectory="$(QtVarsWorkDir)" Command="$(Cmd)"/>
+    <ReadLinesFromFile
+        File="$(QtVarsWorkDir)\props.txt">
+      <Output TaskParameter="Lines" ItemName="QMakeQueryResult"/>
+    </ReadLinesFromFile>
+
+    <!--// Parse qmake query result -->
+    <ItemGroup>
+      <QMakeQueryResult>
+        <SepIdx>$([System.String]::Copy('%(Identity)').IndexOf(':'))</SepIdx>
+      </QMakeQueryResult>
+      <QMakeQueryResult>
+        <ValueIdx>$([MSBuild]::Add(%(SepIdx), 1))</ValueIdx>
+      </QMakeQueryResult>
+      <QMakeQueryResult>
+        <Name>$([System.String]::Copy('%(Identity)').Substring(0, %(SepIdx)))</Name>
+        <Value>$([System.String]::Copy('%(Identity)').Substring(%(ValueIdx)))</Value>
+      </QMakeQueryResult>
+      <QMakeProperty
+        Include="@(QMakeQueryResult->'%(Name)')"
+        RemoveMetadata="Name;SepIdx;ValueIdx"/>
+    </ItemGroup>
+
+    <!--// Parse Qt version -->
+    <PropertyGroup Condition="'@(QMakeProperty)' != ''">
+      <QtVersionMajor>0</QtVersionMajor>
+      <QtVersionMinor>0</QtVersionMinor>
+      <QtVersionPatch>0</QtVersionPatch>
+      <QtVersionParts>0</QtVersionParts>
+      <QtVersion
+        >@(QMakeProperty->WithMetadataValue('Identity', 'QT_VERSION')->'%(Value)')</QtVersion>
+      <QtVersionParts
+        Condition="'$(QtVersion)' != ''">$(QtVersion.Split('.').Length)</QtVersionParts>
+      <QtVersionMajor Condition="$(QtVersionParts) >= 1">$(QtVersion.Split('.')[0])</QtVersionMajor>
+      <QtVersionMinor Condition="$(QtVersionParts) >= 2">$(QtVersion.Split('.')[1])</QtVersionMinor>
+      <QtVersionPatch Condition="$(QtVersionParts) >= 3">$(QtVersion.Split('.')[2])</QtVersionPatch>
+    </PropertyGroup>
+
     <!--// qmake command line arguments -->
     <ItemGroup>
       <QMakeArgsList Include="$(QMakeExtraArgs)"/>
@@ -168,10 +226,6 @@
     </PropertyGroup>
 
     <!--// Write .pro file to temp path -->
-    <RemoveDir
-      Directories="$(QtVarsWorkDir)"/>
-    <MakeDir
-      Directories="$(QtVarsWorkDir)"/>
     <WriteLinesToFile
       File="$(QtVarsWorkDir)\qtvars.pro"
       Lines="$(QtVarsProFileConfig)
@@ -195,14 +249,6 @@
       -->
     </PropertyGroup>
     <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)" Overwrite="true"/>
-
-    <!--// Ensure C++ compiler in PATH -->
-    <Exec Command="WHERE /Q cl.exe"
-      WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
-    </Exec>
-    <SetEnv Condition="'$(ErrorLevel)' != '0'"
-      Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
 
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
     <PropertyGroup>
@@ -266,6 +312,15 @@
     <WriteLinesToFile Condition="'$(QtMakefileVars)' != ''"
       File="$(QtVarsWorkPath)" Lines="$([System.String]::Copy($(QtMakefileVars)))"/>
 
+    <!--// Write qmake properties as MSBuild properties to .props file -->
+    <PropertyGroup>
+      <QMakeProps Condition="'@(QtVar)' != ''">
+        <![CDATA[@(QMakeProperty->'<QMake_%(Identity)_>%(Value)</QMake_%(Identity)_>','%0D%0A')]]>
+      </QMakeProps>
+    </PropertyGroup>
+    <WriteLinesToFile Condition="'$(QMakeProps)' != ''"
+      File="$(QtVarsWorkPath)" Lines="$([System.String]::Copy($(QMakeProps)))"/>
+
     <!--// Qt settings list for backup -->
     <ItemGroup>
       <QtInstall Include="$(QtInstall)"/>
@@ -311,6 +366,10 @@
       >@(QMakeCodeLines,'%3B')</QtBkup_QMakeCodeLines>
     <QtBkup_QtBuildConfig
       >@(QtBuildConfig,'%3B')</QtBkup_QtBuildConfig>
+    <QtVersion>$(QtVersion)</QtVersion>
+    <QtVersionMajor>$(QtVersionMajor)</QtVersionMajor>
+    <QtVersionMinor>$(QtVersionMinor)</QtVersionMinor>
+    <QtVersionPatch>$(QtVersionPatch)</QtVersionPatch>
   </PropertyGroup>
 </Project>
         ]]>
