@@ -140,8 +140,19 @@
       <QtVersionPatch Condition="$(QtVersionParts) >= 3">$(QtVersion.Split('.')[2])</QtVersionPatch>
     </PropertyGroup>
 
+    <!--// Workaround for 5.13.2 NDEBUG obsession -->
+    <PropertyGroup
+      Condition="$(QtVersionMajor) > 5
+                  OR ($(QtVersionMajor) == 5 AND ($(QtVersionMinor) > 13
+                    OR ($(QtVersionMinor) == 13 AND ($(QtVersionPatch) >= 2))))">
+      <QMakeOptionEarly>true</QMakeOptionEarly>
+    </PropertyGroup>
+
     <!--// qmake command line arguments -->
     <ItemGroup>
+      <QMakeArgsList Condition="'$(QMakeOptionEarly)' == 'true'" Include="-early"/>
+      <QMakeArgsList Include="CONFIG -= debug release debug_and_release"/>
+      <QMakeArgsList Include="CONFIG += $(QtBuildConfig)"/>
       <QMakeArgsList Include="$(QMakeExtraArgs)"/>
     </ItemGroup>
     <ItemGroup>
@@ -192,8 +203,7 @@
 
       <!--// .pro file configuration -->
       <QtVarsProFileConfig>
-        CONFIG -= debug release debug_and_release
-        CONFIG += $(QtBuildConfig) no_fixpath
+        CONFIG += no_fixpath
       </QtVarsProFileConfig>
 
       <!--// .pro file input parameters -->
