@@ -879,15 +879,25 @@ namespace QtProjectLib
                             new XAttribute("ConfigName", configId)));
                     var configName = (string)row.config.Element(ns + "Configuration");
                     var platformName = (string)row.config.Element(ns + "Platform");
+
+                    ///////////////////////////////////////////////////////////////////////////////
+                    // Replace fixed values with VS macros
+                    //
+                    //   * Filename, e.g. foo.ui --> %(Filename)%(Extension)
                     var commandLine = row.command.Value
                         .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
-                            StringComparison.InvariantCultureIgnoreCase)
+                            StringComparison.InvariantCultureIgnoreCase);
+                    //
+                    //   * Context specific, e.g. ui_foo.h --> ui_%(FileName).h
+                    foreach (var replace in extraReplacements)
+                        commandLine = replace(row.itemName, commandLine);
+                    //
+                    //   * Configuration/platform, e.g. x64\Debug --> $(Platform)\$(Configuration)
+                    commandLine = commandLine
                         .Replace(configName, "$(Configuration)",
                             StringComparison.InvariantCultureIgnoreCase)
                         .Replace(platformName, "$(Platform)",
                             StringComparison.InvariantCultureIgnoreCase);
-                    foreach (var replace in extraReplacements)
-                        commandLine = replace(row.itemName, commandLine);
 
                     evaluator.Properties.Clear();
                     foreach (var configProp in row.config.Elements())
