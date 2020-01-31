@@ -589,6 +589,12 @@ namespace QtProjectLib
                         module.AdditionalLibrariesDebug.Select(x => Path.GetFileName(x)));
                     moduleLibs.Add(module.LibRelease);
                     moduleLibs.Add(module.LibDebug);
+
+                    if (IsPrivateIncludePathUsed(module, compiler)) {
+                        // Qt private module names, to copy to QtModules property
+                        moduleNames.UnionWith(module.proVarQT.Split(' ')
+                            .Select(x => string.Format("{0}-private", x)));
+                    }
                 }
             }
 
@@ -749,6 +755,24 @@ namespace QtProjectLib
             }
 
             // Module is not present
+            return false;
+        }
+
+        bool IsPrivateIncludePathUsed(
+            QtModuleInfo module,
+            IEnumerable<XElement> compiler)
+        {
+            // Module private header path is present in compiler include dirs
+            var privateIncludePattern = new Regex(string.Format(
+                @"^\$\(QTDIR\)[\\\/]include[\\\/]{0}[\\\/]\d+\.\d+\.\d+",
+                module.LibraryPrefix));
+            if (compiler.Elements(ns + "AdditionalIncludeDirectories")
+                .SelectMany(x => x.Value.Split(';'))
+                .Any(x => privateIncludePattern.IsMatch(x))) {
+                return true;
+            }
+
+            // Private header path is not present
             return false;
         }
 
