@@ -608,14 +608,8 @@ namespace QtProjectLib
             foreach (var inclPath in compiler.Elements(ns + "AdditionalIncludeDirectories")) {
                 inclPath.SetValue(string.Join(";", inclPath.Value.Split(';')
                     .Select(x => Unquote(x))
-                    .Where(x =>
-                        // Exclude include paths of Qt modules
-                        !moduleIncludePaths.Contains(Path.GetFileName(x), IGNORE_CASE_)
-                        // Exclude paths rooted on $(QTDIR)
-                        || (!x.StartsWith("$(QTDIR)", IGNORE_CASE)
-                            // Exclude paths rooted on the default Qt dir
-                            && (string.IsNullOrEmpty(defaultQtDir)
-                                || !x.StartsWith(defaultQtDir, IGNORE_CASE))))));
+                    // Exclude paths rooted on $(QTDIR)
+                    .Where(x => !x.StartsWith("$(QTDIR)", IGNORE_CASE))));
             }
 
             // Remove Qt module libraries from linker properties
@@ -627,7 +621,9 @@ namespace QtProjectLib
             // Remove Qt lib path from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Where(x => !x.Equals(@"$(QTDIR)\lib", IGNORE_CASE))));
+                    .Select(x => Unquote(x))
+                    // Exclude paths rooted on $(QTDIR)
+                    .Where(x => !x.StartsWith("$(QTDIR)", IGNORE_CASE))));
             }
 
             // Add Qt module names to QtModules project property
