@@ -459,9 +459,9 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\qtwizard\QtProjectWizard.csproj">
+    <ProjectReference Include="..\qtwizard\QtVsTools.Wizards.csproj">
       <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
-      <Name>QtProjectWizard</Name>
+      <Name>QtVsTools.Wizards</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>

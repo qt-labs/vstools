@@ -41,7 +41,6 @@ using System.Threading.Tasks;
 namespace QtVsTools.QtMsBuild
 {
     using QtProjectLib;
-    using QtProjectWizard;
 
     [Export(typeof(IPropertyPageUIValueEditor))]
     [ExportMetadata("Name", "QtModulesEditor")]
@@ -81,14 +80,14 @@ namespace QtVsTools.QtMsBuild
 
             await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            var data = new WizardData
+            var data = new Wizards.WizardData
             {
                 Modules = currentModules.Select(x => x.LibraryPrefix).ToList()
             };
 
-            var pages = new List<WizardPage>
+            var pages = new List<Wizards.WizardPage>
             {
-                new ModulePage
+                new Wizards.ProjectWizard.ModulePage
                 {
                     Data = data,
                     Header = @"Select Qt Modules",
@@ -100,7 +99,7 @@ namespace QtVsTools.QtMsBuild
                 }
             };
 
-            var wizard = new WizardWindow(pages) { Title = @"Qt Modules" };
+            var wizard = new Wizards.WizardWindow(pages) { Title = @"Qt Modules" };
             WindowHelper.ShowModal(wizard);
             if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
                 return currentValue;

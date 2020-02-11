@@ -74,8 +74,8 @@
       Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtAppWrapper"
       Path="|QtAppWrapper|" AssemblyName="|QtAppWrapper;AssemblyName|" />
     <Asset
-      Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtProjectWizard"
-      Path="|QtProjectWizard|" AssemblyName="|QtProjectWizard;AssemblyName|" />
+      Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtVsTools.Wizards"
+      Path="|QtVsTools.Wizards|" AssemblyName="|QtVsTools.Wizards;AssemblyName|" />
     <Asset
       Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Console"
       d:TargetPath="|Console;TemplateProjectOutputGroup|" Path="ProjectTemplates"

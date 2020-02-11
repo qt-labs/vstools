@@ -68,8 +68,8 @@
     </TemplateContent>
     <WizardExtension>
       <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
-      <Assembly>QtProjectWizard, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+      <Assembly>QtVsTools.Wizards, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
       <#=XML_COMMENT_BEGIN#> END Generated Text -->
-      <FullClassName>QtProjectWizard.LibraryWizard</FullClassName>
+      <FullClassName>QtVsTools.Wizards.ProjectWizard.LibraryWizard</FullClassName>
     </WizardExtension>
 </VSTemplate>

@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
-using QtProjectWizard;
 using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;
@@ -212,9 +211,9 @@ namespace QtVsTools
 
                         var loop = true;
                         do {
-                            var classWizard = new AddClassWizard();
+                            var classWizard = new Wizards.ClassWizard.AddClassWizard();
                             loop = classWizard.Run(Vsix.Instance.Dte, vcProject.Name,
-                                vcProject.ProjectDirectory) == WizardResult.Exception;
+                                vcProject.ProjectDirectory) == Wizards.WizardResult.Exception;
                         } while (loop);
                     } catch {
                         // Deliberately ignore any kind of exception but close the dialog.
