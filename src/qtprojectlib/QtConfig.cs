@@ -51,11 +51,17 @@ namespace QtProjectLib
 
         public string Namespace { get; private set; }
 
+        public uint VersionMajor { get; private set; }
+        public uint VersionMinor { get; private set; }
+        public uint VersionPatch { get; private set; }
+
         public QtConfig(string qtdir)
         {
             LibInfix = string.Empty;
 
             var fi = new FileInfo(qtdir + "\\mkspecs\\qconfig.pri");
+            if (!fi.Exists)
+                fi = new FileInfo(qtdir + "\\..\\mkspecs\\qconfig.pri");
             if (!fi.Exists)
                 return;
 
@@ -103,6 +109,15 @@ namespace QtProjectLib
                         Is64Bit = (data == "x86_64");
                     } else if (name == "QT_NAMESPACE") {
                         Namespace = data;
+                    } else if (name == "QT_MAJOR_VERSION") {
+                        if (uint.TryParse(data, out uint versionMajor))
+                            VersionMajor = versionMajor;
+                    } else if (name == "QT_MINOR_VERSION") {
+                        if (uint.TryParse(data, out uint versionMinor))
+                            VersionMinor = versionMinor;
+                    } else if (name == "QT_PATCH_VERSION") {
+                        if (uint.TryParse(data, out uint versionPatch))
+                            VersionPatch = versionPatch;
                     }
                 }
             }

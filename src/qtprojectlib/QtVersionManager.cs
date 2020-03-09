@@ -166,21 +166,28 @@ namespace QtProjectLib
         /// <returns>true, if we found an invalid version</returns>
         public bool HasInvalidVersions(out string errorMessage)
         {
-            var validVersions = new List<QtVersion>();
+            var validVersions = new Dictionary<string, QtConfig>();
             var invalidVersions = new List<string>();
 
             foreach (var v in GetVersions()) {
                 if (v == "$(DefaultQtVersion)")
                     continue;
-                try {
-                    var vi = VersionInformation.Get(GetInstallPath(v));
-                    var qtVersion = new QtVersion();
-                    qtVersion.name = v;
-                    qtVersion.vi = vi;
-                    validVersions.Add(qtVersion);
-                } catch (Exception) {
+
+                var vPath = GetInstallPath(v);
+                if (string.IsNullOrEmpty(vPath)) {
                     invalidVersions.Add(v);
+                    continue;
                 }
+
+                var qmakePath = Path.Combine(vPath, "bin", "qmake.exe");
+                if (!File.Exists(qmakePath))
+                    qmakePath = Path.Combine(vPath, "qmake.exe");
+                if (!File.Exists(qmakePath)) {
+                    invalidVersions.Add(v);
+                    continue;
+                }
+
+                validVersions[v] = new QtConfig(vPath);
             }
 
             if (invalidVersions.Count > 0) {
@@ -205,20 +212,24 @@ namespace QtProjectLib
 
                 // find the newest valid Qt version that can be used as default version
                 if (isDefaultQtVersionInvalid && validVersions.Count > 0) {
-                    QtVersion defaultQtVersion = null;
-                    foreach (var v in validVersions) {
-                        if (defaultQtVersion == null) {
-                            defaultQtVersion = v;
+                    QtConfig defaultQtVersionConfig = null;
+                    foreach (var vNameConfig in validVersions) {
+                        var vName = vNameConfig.Key;
+                        var v = vNameConfig.Value;
+                        if (defaultQtVersionConfig == null) {
+                            defaultQtVersionConfig = v;
+                            defaultQtVersionName = vName;
                             continue;
                         }
-                        if (defaultQtVersion.vi.qtMajor < v.vi.qtMajor ||
-                               (defaultQtVersion.vi.qtMajor == v.vi.qtMajor && (defaultQtVersion.vi.qtMinor < v.vi.qtMinor ||
-                                   (defaultQtVersion.vi.qtMinor == v.vi.qtMinor && defaultQtVersion.vi.qtPatch < v.vi.qtPatch)))) {
-                            defaultQtVersion = v;
+                        if (defaultQtVersionConfig.VersionMajor < v.VersionMajor ||
+                               (defaultQtVersionConfig.VersionMajor == v.VersionMajor && (defaultQtVersionConfig.VersionMinor < v.VersionMinor ||
+                                   (defaultQtVersionConfig.VersionMinor == v.VersionMinor && defaultQtVersionConfig.VersionPatch < v.VersionPatch)))) {
+                            defaultQtVersionConfig = v;
+                            defaultQtVersionName = vName;
                         }
                     }
-                    if (defaultQtVersion != null)
-                        SaveDefaultVersion(defaultQtVersion.name);
+                    if (defaultQtVersionConfig != null)
+                        SaveDefaultVersion(defaultQtVersionName);
                 }
 
                 return true;
