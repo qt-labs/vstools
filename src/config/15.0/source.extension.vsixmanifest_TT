@@ -127,111 +127,30 @@
       Type="File" d:Source="File" Path="x64\SQLite.Interop.dll" d:VsixSubPath="x64" />
     <Asset
       Type="file" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_defaults.props"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt.props"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt.targets"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_globals.targets"
-      d:VsixSubPath="qtmsbuild"/>
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_settings.targets"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_settings.xml"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_settings_vs2015.xml"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_tasks.targets"
-      d:VsixSubPath="qtmsbuild"/>
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qt_vars.targets"
-      d:VsixSubPath="qtmsbuild" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qt_import.props"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc.props"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc.targets"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc.xml"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_cl.targets"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\moc\qtmoc_v3.xml"
-      d:VsixSubPath="qtmsbuild\moc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qml\qt_import.props"
-      d:VsixSubPath="qtmsbuild\qml" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qml\qtqml.props"
-      d:VsixSubPath="qtmsbuild\qml" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\qml\qtqml.targets"
-      d:VsixSubPath="qtmsbuild\qml" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_cl.targets"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc_v3.xml"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qt_import.props"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc.props"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc.targets"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\rcc\qtrcc.xml"
-      d:VsixSubPath="qtmsbuild\rcc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qt_import.props"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc.props"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc.xml"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc_cl.targets"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc_v3.xml"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\repc\qtrepc.targets"
-      d:VsixSubPath="qtmsbuild\repc" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qt_import.props"
-      d:VsixSubPath="qtmsbuild\uic" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic.props"
-      d:VsixSubPath="qtmsbuild\uic" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic.targets"
-      d:VsixSubPath="qtmsbuild\uic" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic.xml"
-      d:VsixSubPath="qtmsbuild\uic" />
-    <Asset
-      Type="File" d:Source="File" Path="qtmsbuild\uic\qtuic_v3.xml"
-      d:VsixSubPath="qtmsbuild\uic" />
+    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+<#
+    var uriQtMsBuild = new Uri(Path.Combine(SolutionDir, "qtmsbuild"));
+    var extensions = new[] { ".props", ".targets", ".xml" };
+    var files = Directory
+        .EnumerateFiles(uriQtMsBuild.OriginalString, "*.*", SearchOption.AllDirectories)
+            .Where(file => extensions.Contains(Path.GetExtension(file)))
+            .Select(file => uriQtMsBuild.MakeRelativeUri(new Uri(file)).OriginalString
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+    foreach (var file in files) {
+#>
+    <#=XmlPrint(new[]
+        {
+            new XElement("Asset",
+                new XAttribute("Type", "File"),
+                new XAttribute("d_NS_Source", "File"),
+                new XAttribute("Path", file),
+                new XAttribute("d_NS_VsixSubPath", Path.GetDirectoryName(file)))
+        })
+        .Replace("_NS_", ":")#>
+<#
+    }
+#>
+    <#=XML_COMMENT_BEGIN#> END Generated Text -->
     <Asset
       Type="File" d:Source="File" Path="qtmodules.xml" />
     <Asset
