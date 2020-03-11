@@ -830,6 +830,26 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild deploy properties and targets
+    // -->
+    <Content Include="..\qtmsbuild\deploy\qt_import.props">
+      <Link>QtMsBuild\deploy\qt_import.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\qtmsbuild\deploy\qtdeploy.props">
+      <Link>QtMsBuild\deploy\qtdeploy.props</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\qtmsbuild\deploy\qtdeploy.targets">
+      <Link>QtMsBuild\deploy\qtdeploy.targets</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <Target Name="CheckT4Templates" BeforeTargets="Build" Inputs="%(T4Template.FullPath);%(T4Template.DependsOn)" Outputs="@(T4Template->'%(OutputFile)')">
     <Error Text="T4 template '%(T4Template.FullPath)' out-of-date; update by selecting &quot;Build&quot; &gt; &quot;Transform All T4 Templates&quot;" />
