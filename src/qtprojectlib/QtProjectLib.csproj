@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
     <Compile Include="CommandLineParser.cs" />
+    <Compile Include="Common\EnumExt.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
     <Compile Include="ExportProjectDialog.cs">
