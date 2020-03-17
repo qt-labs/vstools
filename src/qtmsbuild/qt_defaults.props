@@ -46,7 +46,7 @@
     <!--// Extract Qt variables from qmake-generated Makefile
         //     Syntax: < var_name > [ = [ makefile_name ] / < pattern > / < replace > / ] -->
     <QMake_DEFINES_
->DEFINES=/-D(\w+)/$1/</QMake_DEFINES_>
+>DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/</QMake_DEFINES_>
     <QMake_INCLUDEPATH_
 >INCLUDEPATH=INCPATH/-I(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_INCLUDEPATH_>
     <QMake_LIBS_
