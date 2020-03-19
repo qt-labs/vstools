@@ -49,6 +49,7 @@
     <ItemGroup>
       <None Include="@(DeploymentItems)">
         <DeploymentContent>true</DeploymentContent>
+        <RootFolder>$(ProjectDir)</RootFolder>
       </None>
     </ItemGroup>
   </Target>
