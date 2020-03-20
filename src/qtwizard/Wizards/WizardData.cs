@@ -30,6 +30,7 @@ using System.Collections.Generic;
 
 namespace QtVsTools.Wizards
 {
+    using ProjectWizard;
     using ClassWizard;
 
     public class WizardData
@@ -62,5 +63,7 @@ namespace QtVsTools.Wizards
         public bool InsertQObjectMacro { get; set; }
         public bool LowerCaseFileNames { get; set; }
         public UiClassInclusion UiClassInclusion { get; set; }
+
+        public IEnumerable<IWizardConfiguration> Configs { get; set; }
     }
 }

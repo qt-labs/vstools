@@ -57,6 +57,7 @@
     <Compile Include="Wizards\ClassWizard\AddClassWizard.cs" />
     <Compile Include="Wizards\ClassWizard\Class.cs" />
     <Compile Include="Wizards\ClassWizard\ClassKind.cs" />
+    <Compile Include="Wizards\ProjectWizard\ProjectTemplateWizard.cs" />
     <Compile Include="Wizards\Util\ClassNameValidationRule.cs" />
     <Compile Include="Wizards\ProjectWizard\Console\ConsoleWizard.cs" />
     <Compile Include="Wizards\ClassWizard\Core\CoreClassPage.xaml.cs">

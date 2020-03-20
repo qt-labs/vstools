@@ -84,6 +84,8 @@ namespace QtProjectLib
         // Qt VS project tag and format version
         public const string qtProjectKeyword = "QtVS";
         public const int qtProjectFormatVersion = 302;
+        public static string QtVSVersionTag
+            => string.Format("{0}_v{1}", qtProjectKeyword, qtProjectFormatVersion);
 
         // Min. format version for Qt settings as project properties
         public const int qtMinFormatVersion_Settings = 300;

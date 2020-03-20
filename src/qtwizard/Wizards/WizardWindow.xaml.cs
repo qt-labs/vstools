@@ -32,24 +32,37 @@ using System.Windows.Navigation;
 
 namespace QtVsTools.Wizards
 {
+    using System.Collections;
     using Util;
 
-    public partial class WizardWindow : NavigationWindow
+    public partial class WizardWindow : NavigationWindow, IEnumerable<WizardPage>
     {
 
-        public WizardWindow(List<WizardPage> pages)
+        public WizardWindow(IEnumerable<WizardPage> pages = null, string title = null)
         {
             InitializeComponent();
             SourceInitialized += onSourceInitialized;
 
-            Pages = pages ?? new List<WizardPage>();
-            foreach (var page in Pages) {
-                page.Wizard = this;
-                page.NavigateForward += OnNavigateForward;
-                page.NavigatedBackward += OnNavigatedBackwards;
-            }
+            if (title != null)
+                Title = title;
 
-            if (Pages.Count > 0) {
+            Pages = new List<WizardPage>();
+
+            if (pages != null) {
+                foreach (var page in pages)
+                    Add(page);
+            }
+        }
+
+        public void Add(WizardPage page)
+        {
+            bool isFirstPage = (Pages.Count == 0);
+            page.Wizard = this;
+            page.NavigateForward += OnNavigateForward;
+            page.NavigatedBackward += OnNavigatedBackwards;
+            Pages.Add(page);
+
+            if (isFirstPage) {
                 NextPage.ReturnEx += OnPageReturn;
                 Navigate(NextPage); // put on navigation stack
             }
@@ -67,6 +80,16 @@ namespace QtVsTools.Wizards
         {
             get;
             private set;
+        }
+
+        public IEnumerator<WizardPage> GetEnumerator()
+        {
+            return ((IEnumerable<WizardPage>)Pages).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<WizardPage>)Pages).GetEnumerator();
         }
 
         private int currentPage;
