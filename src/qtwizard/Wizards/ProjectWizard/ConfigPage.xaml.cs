@@ -1,0 +1,419 @@
+/****************************************************************************
+**
+** Copyright (C) 2020 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using QtVsTools.Common;
+
+namespace QtVsTools.Wizards.ProjectWizard
+{
+    using QtProjectLib;
+
+    public partial class ConfigPage : WizardPage
+    {
+        interface ICloneable<T> where T : ICloneable<T>
+        {
+            T Clone();
+        }
+
+        class Module : ICloneable<Module>
+        {
+            public string Name { get; set; }
+            public string Id { get; set; }
+            public bool IsSelected { get; set; }
+            public bool IsReadOnly { get; set; }
+            public bool IsEnabled => !IsReadOnly;
+
+            public Module Clone()
+            {
+                return new Module
+                {
+                    Name = Name,
+                    Id = Id,
+                    IsSelected = IsSelected,
+                    IsReadOnly = IsReadOnly
+                };
+            }
+        }
+
+        class Config : ICloneable<Config>, IWizardConfiguration
+        {
+            public string Name { get; set; }
+            public string QtVersion { get; set; }
+            public string Target { get; set; }
+            public string Platform { get; set; }
+            public bool IsDebug { get; set; }
+
+            public Dictionary<string, Module> Modules { get; set; }
+
+            public IEnumerable<Module> AllModules
+                => Modules.Values;
+            public IEnumerable<Module> SelectedModules
+                => Modules.Values.Where((Module m) => m.IsSelected);
+
+            IEnumerable<string> IWizardConfiguration.Modules
+                => SelectedModules.Select((Module m) => m.Id);
+
+            public Config Clone()
+            {
+                return new Config
+                {
+                    Name = Name,
+                    QtVersion = QtVersion,
+                    Target = Target,
+                    Platform = Platform,
+                    IsDebug = IsDebug,
+                    Modules = AllModules
+                        .Select((Module m) => m.Clone())
+                        .ToDictionary((Module m) => m.Name)
+                };
+            }
+        }
+
+        class CloneableList<T> : List<T> where T : ICloneable<T>
+        {
+            public CloneableList() : base()
+            { }
+
+            public CloneableList(IEnumerable<T> collection) : base(collection)
+            { }
+
+            public CloneableList<T> Clone()
+            {
+                return new CloneableList<T>(this.Select(x => x.Clone()));
+            }
+        }
+
+        const string QT_VERSION_DEFAULT = "<Default>";
+        const string QT_VERSION_BROWSE = "<Browse...>";
+
+        IEnumerable<string> qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
+            .Union(QtVersionManager.The().GetVersions());
+
+        QtVersionManager qtVersionManager = QtVersionManager.The();
+        CloneableList<Config> defaultConfigs;
+        List<Config> currentConfigs;
+        bool initialNextButtonIsEnabled;
+        bool initialFinishButtonIsEnabled;
+
+        public ConfigPage()
+        {
+            InitializeComponent();
+
+            ErrorIcon.Source = Imaging.CreateBitmapSourceFromHIcon(
+                SystemIcons.Exclamation.Handle, Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+
+            DataContext = this;
+            Loaded += OnLoaded;
+        }
+
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnLoaded;
+
+            var qtModules = QtModules.Instance.GetAvailableModuleInformation()
+                .Where((QtModuleInfo mi) => mi.Selectable)
+                .Select((QtModuleInfo mi) => new Module()
+                {
+                    Name = mi.Name,
+                    Id = mi.proVarQT,
+                    IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                });
+
+            qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
+                .Union(QtVersionManager.The().GetVersions());
+
+            var defaultQtVersionName = qtVersionManager.GetDefaultVersion();
+            var defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
+
+            defaultConfigs = new CloneableList<Config> {
+                new Config {
+                    Name = "Debug",
+                    IsDebug = true,
+                    QtVersion = defaultQtVersionName,
+                    Target = defaultQtVersionInfo.isWinRT()
+                        ? ProjectTargets.WindowsStore.Cast<string>()
+                        : ProjectTargets.Windows.Cast<string>(),
+                    Platform = defaultQtVersionInfo.is64Bit()
+                        ? ProjectPlatforms.X64.Cast<string>()
+                        : ProjectPlatforms.Win32.Cast<string>(),
+                    Modules = qtModules.ToDictionary((Module m) => m.Name),
+                },
+                new Config {
+                    Name = "Release",
+                    IsDebug = false,
+                    QtVersion = defaultQtVersionName,
+                    Target = defaultQtVersionInfo.isWinRT()
+                        ? ProjectTargets.WindowsStore.Cast<string>()
+                        : ProjectTargets.Windows.Cast<string>(),
+                    Platform = defaultQtVersionInfo.is64Bit()
+                        ? ProjectPlatforms.X64.Cast<string>()
+                        : ProjectPlatforms.Win32.Cast<string>(),
+                    Modules = qtModules.ToDictionary((Module m) => m.Name),
+                }
+            };
+            currentConfigs = defaultConfigs.Clone();
+            ConfigTable.ItemsSource = currentConfigs;
+
+            initialNextButtonIsEnabled = NextButton.IsEnabled;
+            initialFinishButtonIsEnabled = FinishButton.IsEnabled;
+
+            Validate();
+        }
+
+        void Validate()
+        {
+            if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
+                .GroupBy((Config c) => string.Format("{0}|{1}", c.Name, c.Platform))
+                .Where((IGrouping<string, Config> g) => g.Count() > 1)
+                .Any()) {
+                ErrorMsg.Content = "(Configuration, Platform) must be unique";
+                ErrorPanel.Visibility = Visibility.Visible;
+                NextButton.IsEnabled = false;
+                FinishButton.IsEnabled = false;
+            } else {
+                ErrorMsg.Content = "";
+                ErrorPanel.Visibility = Visibility.Hidden;
+                NextButton.IsEnabled = initialNextButtonIsEnabled;
+                FinishButton.IsEnabled = initialFinishButtonIsEnabled;
+            }
+        }
+
+        void RemoveConfig_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button buttonRemove
+                && GetBinding(buttonRemove) is Config config) {
+                currentConfigs.Remove(config);
+                if (!currentConfigs.Any()) {
+                    currentConfigs = defaultConfigs.Clone();
+                    ConfigTable.ItemsSource = currentConfigs;
+                }
+                ConfigTable.Items.Refresh();
+                Validate();
+            }
+        }
+
+        void DuplicateConfig_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button buttonDuplicate
+                && GetBinding(buttonDuplicate) is Config config) {
+                currentConfigs.Add(config.Clone());
+                ConfigTable.Items.Refresh();
+                Validate();
+            }
+        }
+
+        void Name_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox txt && GetBinding(txt) is Config cfg)
+                cfg.Name = txt.Text;
+            Validate();
+        }
+
+        void QtVersion_ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxQtVersion
+                && GetBinding(comboBoxQtVersion) is Config config) {
+                comboBoxQtVersion.IsEnabled = false;
+                comboBoxQtVersion.ItemsSource = qtVersionList;
+                comboBoxQtVersion.Text = config.QtVersion;
+                comboBoxQtVersion.IsEnabled = true;
+            }
+        }
+
+        void QtVersion_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxQtVersion
+                && comboBoxQtVersion.IsEnabled
+                && GetBinding(comboBoxQtVersion) is Config config
+                && config.QtVersion != comboBoxQtVersion.Text) {
+                var oldQtVersion = config.QtVersion;
+                if (comboBoxQtVersion.Text == QT_VERSION_DEFAULT) {
+                    config.QtVersion = QtVersionManager.The().GetDefaultVersion();
+                    comboBoxQtVersion.Text = QtVersionManager.The().GetDefaultVersion();
+                } else if (comboBoxQtVersion.Text == QT_VERSION_BROWSE) {
+                    var openFileDialog = new OpenFileDialog
+                    {
+                        Filter = "qmake (qmake.exe)|qmake.exe"
+                    };
+                    if (openFileDialog.ShowDialog() == true)
+                        config.QtVersion = openFileDialog.FileName;
+                    comboBoxQtVersion.Text = config.QtVersion;
+                } else {
+                    config.QtVersion = comboBoxQtVersion.Text;
+                }
+                if (oldQtVersion != config.QtVersion) {
+                    var qtVersionInfo = qtVersionManager.GetVersionInfo(config.QtVersion);
+                    if (qtVersionInfo != null) {
+                        config.Target = qtVersionInfo.isWinRT()
+                            ? ProjectTargets.WindowsStore.Cast<string>()
+                            : ProjectTargets.Windows.Cast<string>();
+                        config.Platform = qtVersionInfo.is64Bit()
+                            ? ProjectPlatforms.X64.Cast<string>()
+                            : ProjectPlatforms.Win32.Cast<string>();
+                    }
+                    ConfigTable.Items.Refresh();
+                }
+                Validate();
+            }
+        }
+
+        void Target_ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxTarget
+                && GetBinding(comboBoxTarget) is Config config) {
+                comboBoxTarget.IsEnabled = false;
+                comboBoxTarget.ItemsSource = EnumExt.GetValues<string>(typeof(ProjectTargets));
+                comboBoxTarget.Text = config.Target;
+                comboBoxTarget.IsEnabled = true;
+            }
+        }
+
+        void Target_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxTarget
+                && comboBoxTarget.IsEnabled
+                && GetBinding(comboBoxTarget) is Config config
+                && config.Target != comboBoxTarget.Text) {
+                config.Target = comboBoxTarget.Text;
+                ConfigTable.Items.Refresh();
+                Validate();
+            }
+        }
+
+        void Platform_ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxPlatform
+                && GetBinding(comboBoxPlatform) is Config config) {
+                comboBoxPlatform.IsEnabled = false;
+                comboBoxPlatform.ItemsSource = EnumExt.GetValues<string>(typeof(ProjectPlatforms));
+                comboBoxPlatform.Text = config.Platform;
+                comboBoxPlatform.IsEnabled = true;
+            }
+        }
+
+        void Platform_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBoxPlatform
+                && comboBoxPlatform.IsEnabled
+                && GetBinding(comboBoxPlatform) is Config config
+                && config.Platform != comboBoxPlatform.Text) {
+                config.Platform = comboBoxPlatform.Text;
+                ConfigTable.Items.Refresh();
+                Validate();
+            }
+        }
+
+        void Debug_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBox && GetBinding(checkBox) is Config config) {
+                config.IsDebug = checkBox.IsChecked ?? false;
+                if (config.IsDebug && config.Name.EndsWith("Release")) {
+                    config.Name = string.Format("{0}Debug",
+                        config.Name.Substring(0, config.Name.Length - "Release".Length));
+                    ConfigTable.Items.Refresh();
+                } else if (!config.IsDebug && config.Name.EndsWith("Debug")) {
+                    config.Name = string.Format("{0}Release",
+                        config.Name.Substring(0, config.Name.Length - "Debug".Length));
+                    ConfigTable.Items.Refresh();
+                }
+                Validate();
+            }
+        }
+
+        void Module_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBoxModule
+                && (checkBoxModule.TemplatedParent as ContentPresenter)?.Content is Module module
+                && GetBinding(checkBoxModule) is Config config
+                && FindAncestor(checkBoxModule, "Modules") is ComboBox comboBoxModules
+                && FindDescendant(comboBoxModules, "SelectedModules") is ListView selectedModules) {
+                selectedModules.ItemsSource = config.SelectedModules;
+                Validate();
+            }
+        }
+
+        protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
+        {
+            Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
+            base.OnNextButtonClick(sender, e);
+        }
+
+        protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
+        {
+            Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
+            base.OnFinishButtonClick(sender, e);
+        }
+
+        static object GetBinding(FrameworkElement control)
+        {
+            if (control.BindingGroup == null
+                || control.BindingGroup.Items == null
+                || control.BindingGroup.Items.Count == 0) {
+                return null;
+            }
+            return control.BindingGroup.Items[0];
+        }
+
+        static FrameworkElement FindAncestor(FrameworkElement control, string name)
+        {
+            while (control != null && control.Name != name) {
+                object parent = control.Parent
+                    ?? control.TemplatedParent
+                    ?? VisualTreeHelper.GetParent(control);
+                control = parent as FrameworkElement;
+            }
+            return control;
+        }
+
+        static FrameworkElement FindDescendant(FrameworkElement control, string name)
+        {
+            var stack = new Stack<FrameworkElement>(new[] { control });
+            while (stack.Any()) {
+                control = stack.Pop();
+                if (control?.Name == name && control is FrameworkElement result)
+                    return result;
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(control); ++i) {
+                    if (VisualTreeHelper.GetChild(control, i) is FrameworkElement child)
+                        stack.Push(child);
+                }
+            }
+            return null;
+        }
+    }
+}

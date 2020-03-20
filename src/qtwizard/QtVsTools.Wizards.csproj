@@ -57,6 +57,9 @@
     <Compile Include="Wizards\ClassWizard\AddClassWizard.cs" />
     <Compile Include="Wizards\ClassWizard\Class.cs" />
     <Compile Include="Wizards\ClassWizard\ClassKind.cs" />
+    <Compile Include="Wizards\ProjectWizard\ConfigPage.xaml.cs">
+      <DependentUpon>ConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\ProjectWizard\ProjectTemplateWizard.cs" />
     <Compile Include="Wizards\Util\ClassNameValidationRule.cs" />
     <Compile Include="Wizards\ProjectWizard\Console\ConsoleWizard.cs" />
@@ -137,6 +140,10 @@
     <Page Include="Wizards\ProjectWizard\Gui\GuiPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\ProjectWizard\ConfigPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\WizardIntroPage.xaml">
       <SubType>Designer</SubType>
