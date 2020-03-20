@@ -110,6 +110,15 @@ namespace QtVsTools.Common
         }
 
         /// <summary>
+        /// Get list of values of enum type converted to type T
+        /// </summary>
+        public static IEnumerable<T> GetValues<T>(Type enumType)
+        {
+            return Enum.GetValues(enumType).OfType<Enum>()
+                .Select((Enum value) => value.Cast<T>());
+        }
+
+        /// <summary>
         /// Default cast of enum value to type T.
         /// </summary>
         /// <typeparam name="T">Cast output type.</typeparam>
