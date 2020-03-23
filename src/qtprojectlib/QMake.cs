@@ -70,6 +70,11 @@ namespace QtProjectLib
 
         public void RunQMake()
         {
+            RunQMake(null);
+        }
+
+        public void RunQMake(VersionInformation VersionInfo)
+        {
             var fi = new FileInfo(file);
             var vcproj = HelperFunctions.RemoveFileNameExtension(fi) + ".vcxproj";
 
@@ -87,7 +92,7 @@ namespace QtProjectLib
 
             qmakeProcess = CreateQmakeProcess(qmakeArgs, qtVersionInformation.qtDir + "\\bin\\qmake", fi.DirectoryName);
 
-            if (!HelperFunctions.SetVCVars(qmakeProcess.StartInfo))
+            if (!HelperFunctions.SetVCVars(VersionInfo, qmakeProcess.StartInfo))
                 InvokeExternalTarget(PaneMessageDataEvent, "--- (Import): Error setting VC vars");
 
             // We must set the QTDIR environment variable, because we're clearing QMAKE_LIBDIR_QT above.

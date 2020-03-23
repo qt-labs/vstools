@@ -192,6 +192,15 @@ namespace QtProjectLib
             return xProperty.Value;
         }
 
+        public IEnumerable<string> GetItems(string item_type)
+        {
+            return this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemGroup")
+                .Elements(ns + item_type)
+                .Select((XElement x) => (string)x.Attribute("Include"));
+        }
+
         public bool EnableMultiProcessorCompilation()
         {
             var xClCompileDefs = this[Files.Project].xml

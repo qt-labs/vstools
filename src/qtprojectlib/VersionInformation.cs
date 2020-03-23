@@ -28,9 +28,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace QtProjectLib
@@ -70,6 +73,19 @@ namespace QtProjectLib
         {
              _cache.Clear();
         }
+
+        Dictionary<string, bool> _IsModuleAvailable;
+        public bool IsModuleAvailable(string module)
+        {
+            return _IsModuleAvailable?[module] ?? false;
+        }
+
+        public string VC_MinimumVisualStudioVersion { get; private set; }
+        public string VC_ApplicationTypeRevision { get; private set; }
+        public string VC_WindowsTargetPlatformMinVersion { get; private set; }
+        public string VC_WindowsTargetPlatformVersion { get; private set; }
+        public string VC_Link_TargetMachine { get; private set; }
+        public string VC_PlatformToolset { get; private set; }
 
         private VersionInformation(string qtDirIn)
         {
@@ -113,6 +129,59 @@ namespace QtProjectLib
                 } catch { }
             } catch {
                 qtDir = null;
+                return;
+            }
+
+            // Get VS project settings
+            try {
+                var tempProData = new StringBuilder();
+                tempProData.AppendLine("SOURCES = main.cpp");
+
+                var modules = QtModules.Instance.GetAvailableModuleInformation()
+                    .Where((QtModuleInfo mi) => mi.Selectable);
+
+                foreach (QtModuleInfo mi in modules) {
+                    tempProData.AppendLine(string.Format(
+                        "qtHaveModule({0}): HEADERS += {0}.h", mi.proVarQT));
+                }
+
+                var randomName = Path.GetRandomFileName();
+                var tempDir = Path.Combine(Path.GetTempPath(), randomName);
+                Directory.CreateDirectory(tempDir);
+
+                var tempPro = Path.Combine(tempDir, string.Format("{0}.pro", randomName));
+                File.WriteAllText(tempPro, tempProData.ToString());
+
+                var qmake = new QMake(null, tempPro, false, this);
+                qmake.RunQMake(this);
+
+                var tempVcxproj = Path.Combine(tempDir, string.Format("{0}.vcxproj", randomName));
+                var msbuildProj = MsBuildProject.Load(tempVcxproj);
+
+                Directory.Delete(tempDir, recursive: true);
+
+                var availableModules = msbuildProj.GetItems("ClInclude")
+                    .Select((string s) => Path.GetFileNameWithoutExtension(s));
+
+                _IsModuleAvailable = modules.ToDictionary(
+                    (QtModuleInfo mi) => mi.proVarQT,
+                    (QtModuleInfo mi) => availableModules.Contains(mi.proVarQT));
+
+                VC_MinimumVisualStudioVersion =
+                    msbuildProj.GetProperty("MinimumVisualStudioVersion");
+                VC_ApplicationTypeRevision =
+                    msbuildProj.GetProperty("ApplicationTypeRevision");
+                VC_WindowsTargetPlatformVersion =
+                    msbuildProj.GetProperty("WindowsTargetPlatformVersion");
+                VC_WindowsTargetPlatformMinVersion =
+                    msbuildProj.GetProperty("WindowsTargetPlatformMinVersion");
+                VC_PlatformToolset =
+                    msbuildProj.GetProperty("PlatformToolset");
+                VC_Link_TargetMachine =
+                    msbuildProj.GetProperty("Link", "TargetMachine");
+
+            } catch (Exception e) {
+                throw new QtVSException("Error reading VS project settings", e);
             }
         }
 

@@ -1707,9 +1707,17 @@ namespace QtProjectLib
 
         public static bool SetVCVars(ProcessStartInfo startInfo)
         {
+            return SetVCVars(null, startInfo);
+        }
+
+        public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
+        {
+            if (VersionInfo == null) {
+                VersionInfo = QtVersionManager.The().GetVersionInfo(
+                    QtVersionManager.The().GetDefaultVersion());
+            }
             bool isOS64Bit = System.Environment.Is64BitOperatingSystem;
-            bool isQt64Bit = QtVersionManager.The().GetVersionInfo(
-                QtVersionManager.The().GetDefaultVersion()).is64Bit();
+            bool isQt64Bit = VersionInfo.is64Bit();
 
             string vcPath = VCPath;
             if (vcPath == "")
