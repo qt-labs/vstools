@@ -26,109 +26,48 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TemplateWizard;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtVsTools.VisualStudio;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    public class EmptyWizard : IWizard
+    public class EmptyWizard : ProjectTemplateWizard
     {
-        public void RunStarted(object automation, Dictionary<string, string> replacements,
-            WizardRunKind runKind, object[] customParams)
-        {
-            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
-            iVsUIShell.EnableModeless(0);
+        protected override Options TemplateType => Options.Application | Options.GUISystem;
 
-            try {
-                System.IntPtr hwnd;
-                iVsUIShell.GetDialogOwnerHwnd(out hwnd);
+        WizardData _WizardData;
+        protected override WizardData WizardData => _WizardData
+            ?? (_WizardData = new WizardData
+            {
+                DefaultModules = new List<string> { }
+            });
 
-                try {
-                    var wizard = new WizardWindow(new List<WizardPage> {
-                        new WizardIntroPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt Empty Application Wizard",
-                            Message = @"This wizard generates an empty Qt application project."
-                                + System.Environment.NewLine
-                                + "Click Finish to create the project.",
-                            PreviousButtonEnabled = false,
-                            NextButtonEnabled = false,
-                            FinishButtonEnabled = true,
-                            CancelButtonEnabled = true
-                        },
-                    })
-                    {
-                        Title = @"Qt Empty Application Wizard"
-                    };
-                    WindowHelper.ShowModal(wizard, hwnd);
-                    if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
-                        throw new System.Exception("Unexpected wizard return value.");
-                } catch (QtVSException exception) {
-                    Messages.DisplayErrorMessage(exception.Message);
-                    throw; // re-throw, but keep the original exception stack intact
+        WizardWindow _WizardWindow;
+        protected override WizardWindow WizardWindow => _WizardWindow
+            ?? (_WizardWindow = new WizardWindow(title: "Qt Empty Application Wizard")
+            {
+                new WizardIntroPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt Empty Application Wizard",
+                    Message = @"This wizard generates an empty Qt application project."
+                        + System.Environment.NewLine
+                        + "Click Finish to create the project.",
+                    PreviousButtonEnabled = false,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true
+                },
+                new ConfigPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt Empty Application Wizard",
+                    Message =
+                            @"Setup the configurations you want to include in your project. "
+                            + @"The recommended settings for this project are selected by default.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = false,
+                    FinishButtonEnabled = true,
+                    CancelButtonEnabled = true,
                 }
-
-                var version = (automation as DTE).Version;
-                replacements["$ToolsVersion$"] = version;
-                replacements["$Keyword$"] = Resources.qtProjectKeyword;
-                replacements["$ProjectGuid$"] = HelperFunctions.NewProjectGuid();
-                replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
-            } catch {
-                try {
-                    Directory.Delete(replacements["$destinationdirectory$"]);
-                    Directory.Delete(replacements["$solutiondirectory$"]);
-                } catch { }
-
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
-            }
-
-            iVsUIShell.EnableModeless(1);
-        }
-
-        public bool ShouldAddProjectItem(string filePath)
-        {
-            return true;
-        }
-
-        public void ProjectFinishedGenerating(Project project)
-        {
-            var qtProject = QtProject.Create(project);
-            qtProject.MarkAsQtProject();
-            qtProject.AddDirectories();
-            qtProject.WriteProjectBasicConfigurations(
-                TemplateType.Application | TemplateType.GUISystem, false);
-            qtProject.Finish(); // Collapses all project nodes.
-        }
-
-        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
-        {
-        }
-
-        public void BeforeOpeningFile(ProjectItem projectItem)
-        {
-        }
-
-        public void RunFinished()
-        {
-        }
-
-        private readonly WizardData data = new WizardData
-        {
-            DefaultModules = new List<string> { }
-        };
+            });
     }
 }

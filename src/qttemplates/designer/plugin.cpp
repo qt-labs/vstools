@@ -1,4 +1,4 @@
-#include "$include$"
+$include$
 #include "$pluginheaderfilename$"
 
 #include <QtCore/QtPlugin>

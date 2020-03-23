@@ -1,49 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="$ToolsVersion$" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|$Platform$">
-      <Configuration>Debug</Configuration>
-      <Platform>$Platform$</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|$Platform$">
-      <Configuration>Release</Configuration>
-      <Platform>$Platform$</Platform>
-    </ProjectConfiguration>
+$ProjectConfigurations$
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>$ProjectGuid$</ProjectGuid>
     <Keyword>$Keyword$</Keyword>
-    $if$ ($QtWinRT$ == true)
-    <MinimumVisualStudioVersion>$MinimumVisualStudioVersion$</MinimumVisualStudioVersion>
-    <DefaultLanguage>en</DefaultLanguage>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>$ApplicationTypeRevision$</ApplicationTypeRevision>
-    <WindowsTargetPlatformMinVersion>$WindowsTargetPlatformMinVersion$</WindowsTargetPlatformMinVersion>
-    $endif$
-    $if$ ($isSet_WindowsTargetPlatformVersion$ == true)
-    <WindowsTargetPlatformVersion>$WindowsTargetPlatformVersion$</WindowsTargetPlatformVersion>
-    $endif$
+$Globals$
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')"
       >$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v$PlatformToolset$</PlatformToolset>
-    $if$ ($QtWinRT$ == true)
-    <GenerateManifest>false</GenerateManifest>
-    <EmbedManifest>false</EmbedManifest>
-    $endif$
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v$PlatformToolset$</PlatformToolset>
-    $if$ ($QtWinRT$ == true)
-    <GenerateManifest>false</GenerateManifest>
-    <EmbedManifest>false</EmbedManifest>
-    $endif$
-  </PropertyGroup>
+$Configurations$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Target Name="QtMsBuildNotFound"
     BeforeTargets="CustomBuild;ClCompile"
@@ -53,102 +21,24 @@
   </Target>
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
+$PropertySheets$
   <PropertyGroup Label="UserMacros" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
-  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    <QtInstall>$DefaultQtVersion$</QtInstall>
-    <QtModules>$QtModules$</QtModules>
-  </PropertyGroup>
-  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    <QtInstall>$DefaultQtVersion$</QtInstall>
-    <QtModules>$QtModules$</QtModules>
-  </PropertyGroup>
+$QtSettings$
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />
   </ImportGroup>
-  $if$ ($QtWinRT$ == true)
-  <Target Name="WinDeployQt"
-          Inputs="$(OutDir)\$(TargetName).exe" Outputs="$(TargetName).windeployqt.$(Platform).$(Configuration)">
-    <Message Text="$(QTDIR)\bin\windeployqt.exe -qmldir &quot;$(MSBuildProjectDirectory)&quot; -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
-    <Exec Command="$(QTDIR)\bin\windeployqt.exe -qmldir &quot;$(MSBuildProjectDirectory)&quot; -list relative -dir &quot;$(MSBuildProjectDirectory)&quot; &quot;$(OutDir)\$(TargetName).exe&quot; > &quot;$(TargetName).windeployqt.$(Platform).$(Configuration)&quot;" />
-  </Target>
-  <Target Name="PopulateWinDeployQtItems" AfterTargets="Link" DependsOnTargets="WinDeployQt">
-    <ReadLinesFromFile File="$(TargetName).windeployqt.$(Platform).$(Configuration)">
-      <Output TaskParameter="Lines" ItemName="DeploymentItems" />
-    </ReadLinesFromFile>
-    <ItemGroup>
-      <None Include="@(DeploymentItems)">
-        <DeploymentContent>true</DeploymentContent>
-      </None>
-    </ItemGroup>
-  </Target>
-  $endif$
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    $QtMoc$
-    <ClCompile>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      $if$ ($QtWinRT$ == true)
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      $endif$
-    </ClCompile>
-    $if$ ($QtWinRT$ == true)
-    <Link>
-      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
-      <GenerateManifest>false</GenerateManifest>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <TargetMachine>$Link_TargetMachine$</TargetMachine>
-    </Link>
-    $endif$
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    $QtMoc$
-    <ClCompile>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      $if$ ($QtWinRT$ == true)
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      $endif$
-    </ClCompile>
-    $if$ ($QtWinRT$ == true)
-    <Link>
-      <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
-      <GenerateManifest>false</GenerateManifest>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <TargetMachine>$Link_TargetMachine$</TargetMachine>
-    </Link>
-    $endif$
-  </ItemDefinitionGroup>
+$BuildSettings$
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <QtRcc Include="$qrcfilename$"/>
+    <QtUic Include="$uifilename$"/>
+    <QtMoc Include="$headerfilename$"/>
+    <ClCompile Include="$sourcefilename$"/>
+    <ClCompile Include="main.cpp"/>
+$ProjectItems$
   </ItemGroup>
-  <ItemGroup>
-    $precompiledheader$
-    $precompiledsource$
-    $DefaultApplicationIcon$
-    <None Include="$uifilename$" />
-    <None Include="$headerfilename$" />
-    <None Include="$sourcefilename$" />
-  </ItemGroup>
-  $if$ ($QtWinRT$ == true)
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
-    <Image Include="assets/logo_150x150.png" />
-    <Image Include="assets/logo_44x44.png" />
-    <Image Include="assets/logo_store.png" />
-    <Image Include="assets/logo_620x300.png" />
-  </ItemGroup>
-  $endif$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

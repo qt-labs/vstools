@@ -19,4 +19,22 @@
       <ParseFiles>false</ParseFiles>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="$headerfilename$">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClCompile Include="$sourcefilename$">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <QtMoc Include="$pluginheaderfilename$">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClCompile Include="$pluginsourcefilename$">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <None Include="$plugin_json$">
+      <Filter>Resource Files</Filter>
+    </None>
+$FilterItems$
+  </ItemGroup>
 </Project>

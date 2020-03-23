@@ -1,4 +1,4 @@
-#include "$include$"
+$include$
 
 #include <ActiveQt/QAxFactory>
 

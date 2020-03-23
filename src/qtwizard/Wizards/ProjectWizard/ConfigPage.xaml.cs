@@ -196,6 +196,13 @@ namespace QtVsTools.Wizards.ProjectWizard
             Validate();
         }
 
+        /// <summary>
+        /// Callback to validate selected configurations.
+        /// Must return an error message in case of failed validation.
+        /// Otherwise, return empty string or null.
+        /// </summary>
+        public Func<IEnumerable<IWizardConfiguration>, string> ValidateConfigs { get; set; }
+
         void Validate()
         {
             if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
@@ -206,8 +213,15 @@ namespace QtVsTools.Wizards.ProjectWizard
                 ErrorPanel.Visibility = Visibility.Visible;
                 NextButton.IsEnabled = false;
                 FinishButton.IsEnabled = false;
+            } else if (ValidateConfigs != null
+                && ValidateConfigs(currentConfigs) is string errorMsg
+                && !string.IsNullOrEmpty(errorMsg)) {
+                ErrorMsg.Content = errorMsg;
+                ErrorPanel.Visibility = Visibility.Visible;
+                NextButton.IsEnabled = false;
+                FinishButton.IsEnabled = false;
             } else {
-                ErrorMsg.Content = "";
+                ErrorMsg.Content = string.Empty;
                 ErrorPanel.Visibility = Visibility.Hidden;
                 NextButton.IsEnabled = initialNextButtonIsEnabled;
                 FinishButton.IsEnabled = initialFinishButtonIsEnabled;

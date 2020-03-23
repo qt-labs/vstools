@@ -20,18 +20,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$sourcefilename$">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="$headerfilename$">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="$saveglobal$_global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <QtMoc Include="$headerfilename$">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClCompile Include="$sourcefilename$">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+$FilterItems$
   </ItemGroup>
 </Project>

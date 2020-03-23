@@ -1,33 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="$ToolsVersion$" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|$Platform$">
-      <Configuration>Debug</Configuration>
-      <Platform>$Platform$</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|$Platform$">
-      <Configuration>Release</Configuration>
-      <Platform>$Platform$</Platform>
-    </ProjectConfiguration>
+$ProjectConfigurations$
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>$ProjectGuid$</ProjectGuid>
     <Keyword>$Keyword$</Keyword>
-    $if$ ($isSet_WindowsTargetPlatformVersion$ == true)
-    <WindowsTargetPlatformVersion>$WindowsTargetPlatformVersion$</WindowsTargetPlatformVersion>
-    $endif$
+$Globals$
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')"
       >$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v$PlatformToolset$</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v$PlatformToolset$</PlatformToolset>
-  </PropertyGroup>
+$Configurations$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Target Name="QtMsBuildNotFound"
     BeforeTargets="CustomBuild;ClCompile"
@@ -37,48 +21,24 @@
   </Target>
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
+$PropertySheets$
   <PropertyGroup Label="UserMacros" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
-  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    <QtInstall>$DefaultQtVersion$</QtInstall>
-    <QtModules>$QtModules$</QtModules>
-  </PropertyGroup>
-  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    <QtInstall>$DefaultQtVersion$</QtInstall>
-    <QtModules>$QtModules$</QtModules>
-  </PropertyGroup>
+$QtSettings$
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />
   </ImportGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|$Platform$'">
-    $QtMoc$
-    <ClCompile>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|$Platform$'">
-    $QtMoc$
-    <ClCompile>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-  </ItemDefinitionGroup>
+$BuildSettings$
   <ItemGroup>
-    $precompiledheader$
-    $precompiledsource$
-    <None Include="$uifilename$" />
-    <None Include="$pro_name$.rc" />
+    <QtUic Include="$uifilename$" />
+    <QtMoc Include="$headerfilename$" />
+    <ClCompile Include="$sourcefilename$" />
+    <ResourceCompile Include="$pro_name$.rc" />
     <None Include="$pro_name$.ico" />
     <None Include="$pro_name$.def" />
-    <None Include="$headerfilename$" />
-    <None Include="$sourcefilename$" />
+$ProjectItems$
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

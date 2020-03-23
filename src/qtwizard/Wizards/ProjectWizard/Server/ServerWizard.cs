@@ -26,249 +26,142 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TemplateWizard;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using System.Windows.Forms;
+using EnvDTE;
+using QtProjectLib;
+using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    public class ServerWizard : IWizard
+    using static EnumExt;
+
+    public class ServerWizard : ProjectTemplateWizard
     {
-        public void BeforeOpeningFile(ProjectItem projectItem)
+        protected override Options TemplateType => Options.DynamicLibrary | Options.GUISystem;
+
+        enum NewClass
         {
+            [String("classname")] ClassName,
+            [String("sourcefilename")] SourceFileName,
+            [String("headerfilename")] HeaderFileName,
+            [String("include")] Include,
         }
 
-        public void ProjectFinishedGenerating(Project project)
+        enum NewActiveQtProject
+        {
+            [String("pro_name")] Name,
+            [String("uifilename")] UiFileName,
+            [String("ui_hdr")] UiHeaderName,
+        }
+
+        WizardData _WizardData;
+        protected override WizardData WizardData => _WizardData
+            ?? (_WizardData = new WizardData
+            {
+                DefaultModules = new List<string> { "QtCore", "QtGui", "QtWidgets", "QtAxServer" }
+            });
+
+        WizardWindow _WizardWindow;
+        protected override WizardWindow WizardWindow => _WizardWindow
+            ?? (_WizardWindow = new WizardWindow(title: "Qt ActiveQt Server Wizard")
+            {
+                new WizardIntroPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt ActiveQt Server Wizard",
+                    Message = @"This wizard generates a Qt ActiveQt server project. It "
+                        + @"creates a simple ActiveQt widget with the required files."
+                        + System.Environment.NewLine + System.Environment.NewLine
+                        + "To continue, click Next.",
+                    PreviousButtonEnabled = false,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true
+                },
+                new ConfigPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Message =
+                            @"Setup the configurations you want to include in your project. "
+                            + @"The recommended settings for this project are selected by default.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true,
+                    ValidateConfigs = ValidateConfigsForActiveQtServer
+                },
+                new ServerPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt ActiveQt Server Wizard",
+                    Message = @"This wizard generates a Qt ActiveQt server project. It "
+                        + @"creates a simple ActiveQt widget with the required files.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = false,
+                    FinishButtonEnabled = true,
+                    CancelButtonEnabled = true
+                }
+            });
+
+        string ValidateConfigsForActiveQtServer(IEnumerable<IWizardConfiguration> configs)
+        {
+            foreach (var config in configs) {
+                if (config.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                    return string.Format(
+                        "ActiveQt Server project not available for the '{0}' target.",
+                        config.Target);
+                }
+            }
+            return string.Empty;
+        }
+
+        protected override void BeforeWizardRun()
+        {
+            // midl.exe does not support spaces in project name. Fails while generating the
+            // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
+            if (Parameter[NewProject.SafeName].Contains(" "))
+                throw new QtVSException("Project name shall not contain spaces.");
+
+            var className = Parameter[NewProject.SafeName];
+            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
+            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
+            var result = new Util.ClassNameValidationRule().Validate(className, null);
+            if (result != ValidationResult.ValidResult)
+                className = @"ActiveQtServer";
+
+            WizardData.ClassName = className;
+            WizardData.ClassHeaderFile = className + @".h";
+            WizardData.ClassSourceFile = className + @".cpp";
+            WizardData.UiFile = WizardData.ClassName + @".ui";
+        }
+
+        protected override void BeforeTemplateExpansion()
+        {
+            Parameter[NewClass.ClassName] = WizardData.ClassName;
+            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
+            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
+            Parameter[NewActiveQtProject.UiFileName] = WizardData.UiFile;
+
+            var include = new StringBuilder();
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            if (UsePrecompiledHeaders)
+                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
+            Parameter[NewClass.Include] = FormatParam(include);
+
+            Parameter[NewActiveQtProject.UiHeaderName] = string.Format("ui_{0}.h",
+                Path.GetFileNameWithoutExtension(WizardData.UiFile));
+
+            Parameter[NewActiveQtProject.Name] = WizardData.LowerCaseFileNames
+                ? Parameter[NewProject.SafeName].ToLower()
+                : Parameter[NewProject.SafeName];
+        }
+
+        protected override void OnProjectGenerated(Project project)
         {
             var qtProject = QtProject.Create(project);
-
-            QtVSIPSettings.SaveUicDirectory(project, null);
-            QtVSIPSettings.SaveMocDirectory(project, null);
-            QtVSIPSettings.SaveMocOptions(project, null);
-            QtVSIPSettings.SaveRccDirectory(project, null);
-            QtVSIPSettings.SaveLUpdateOnBuild(project);
-            QtVSIPSettings.SaveLUpdateOptions(project, null);
-            QtVSIPSettings.SaveLReleaseOptions(project, null);
-
-            var vm = QtVersionManager.The();
-            var qtVersion = vm.GetDefaultVersion();
-            var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
-            if (vi.GetVSPlatformName() != "Win32")
-                qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-
-            qtProject.MarkAsQtProject();
-            qtProject.AddDirectories();
-
-            var type = TemplateType.DynamicLibrary | TemplateType.GUISystem;
-            qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
-
-            var vcProject = qtProject.VCProject;
-            var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;
-            foreach (var vcFile in files)
-                vcProject.RemoveFile(vcFile);
-
-            if (data.UsePrecompiledHeader) {
-                qtProject.AddFileToProject(@"stdafx.cpp", Filters.SourceFiles());
-                qtProject.AddFileToProject(@"stdafx.h", Filters.HeaderFiles());
-            }
-
-            qtProject.AddFileToProject(data.ClassSourceFile, Filters.SourceFiles());
-            qtProject.AddFileToProject(data.ClassHeaderFile, Filters.HeaderFiles());
-            qtProject.AddFileToProject(data.UiFile, Filters.FormFiles());
-            qtProject.AddFileToProject(safeprojectname + @".rc", null);
-            qtProject.AddFileToProject(safeprojectname + @".ico", null);
-            qtProject.AddFileToProject(safeprojectname + @".def", Filters.SourceFiles());
-
-            qtProject.AddActiveQtBuildStep(@"1.0", safeprojectname + @".def");
-
-            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
-                qtProject.AdjustWhitespace(file.FullPath);
-
-            qtProject.SetQtEnvironment(qtVersion);
-            qtProject.Finish(); // Collapses all project nodes.
+            qtProject.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
         }
-
-        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
-        {
-        }
-
-        public void RunFinished()
-        {
-        }
-
-        public void RunStarted(object automation, Dictionary<string, string> replacements,
-            WizardRunKind runKind, object[] customParams)
-        {
-            var qtMoc = new StringBuilder();
-            var serviceProvider = new ServiceProvider(automation as IServiceProvider);
-            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
-
-            iVsUIShell.EnableModeless(0);
-
-            var versionMgr = QtVersionManager.The();
-            var versionName = versionMgr.GetDefaultVersion();
-            var versionInfo = VersionInformation.Get(versionMgr.GetInstallPath(versionName));
-            if (versionInfo.isWinRT()) {
-                MessageBox.Show(
-                    string.Format(
-                        "The Qt ActiveQt Server project type is not available\r\n" +
-                        "for the currently selected Qt version ({0}).", versionName),
-                    "Project Type Not Available", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
-            }
-
-            try {
-                System.IntPtr hwnd;
-                iVsUIShell.GetDialogOwnerHwnd(out hwnd);
-
-                try {
-                    // midl.exe does not support spaces in project name. Fails while generating the
-                    // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
-                    if (replacements["$safeprojectname$"].Contains(" "))
-                        throw new QtVSException("Project name shall not contain spaces.");
-
-                    safeprojectname = replacements["$safeprojectname$"];
-                    var result = new Util.ClassNameValidationRule().Validate(safeprojectname, null);
-                    if (result != ValidationResult.ValidResult)
-                        safeprojectname = @"ActiveQtServer";
-
-                    data.ClassName = safeprojectname;
-                    data.ClassHeaderFile = safeprojectname + @".h";
-                    data.ClassSourceFile = safeprojectname + @".cpp";
-                    data.UiFile = data.ClassName + @".ui";
-
-                    var wizard = new WizardWindow(new List<WizardPage> {
-                        new WizardIntroPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt ActiveQt Server Wizard",
-                            Message = @"This wizard generates a Qt ActiveQt server project. It "
-                                + @"creates a simple ActiveQt widget with the required files."
-                                + System.Environment.NewLine + System.Environment.NewLine
-                                + "To continue, click Next.",
-                            PreviousButtonEnabled = false,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new ModulePage {
-                            Data = data,
-                            Header = @"Welcome to the Qt ActiveQt Server Wizard",
-                            Message = @"Select the modules you want to include in your project. The "
-                                + @"recommended modules for this project are selected by default.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new ServerPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt ActiveQt Server Wizard",
-                            Message = @"This wizard generates a Qt ActiveQt server project. It "
-                                + @"creates a simple ActiveQt widget with the required files.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
-                            CancelButtonEnabled = true
-                        }
-                    })
-                    {
-                        Title = @"Qt ActiveQt Server Wizard"
-                    };
-
-                    WindowHelper.ShowModal(wizard, hwnd);
-                    if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
-                        throw new System.Exception("Unexpected wizard return value.");
-                } catch (QtVSException exception) {
-                    Messages.DisplayErrorMessage(exception.Message);
-                    throw; // re-throw, but keep the original exception stack intact
-                }
-
-                var version = (automation as DTE).Version;
-                replacements["$ToolsVersion$"] = version;
-
-                replacements["$Platform$"] = versionInfo.GetVSPlatformName();
-
-                replacements["$Keyword$"] = Resources.qtProjectKeyword;
-                replacements["$ProjectGuid$"] = HelperFunctions.NewProjectGuid();
-                replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
-                replacements["$DefaultQtVersion$"] = versionName;
-                replacements["$QtModules$"] = string.Join(";", data.Modules
-                    .Select(moduleName => QtModules.Instance
-                        .ModuleInformation(QtModules.Instance
-                        .ModuleIdByName(moduleName))
-                        .proVarQT));
-
-                replacements["$classname$"] = data.ClassName;
-                replacements["$sourcefilename$"] = data.ClassSourceFile;
-                replacements["$headerfilename$"] = data.ClassHeaderFile;
-                replacements["$uifilename$"] = data.UiFile;
-
-                replacements["$precompiledheader$"] = string.Empty;
-                replacements["$precompiledsource$"] = string.Empty;
-                var strHeaderInclude = data.ClassHeaderFile;
-                if (data.UsePrecompiledHeader) {
-                    strHeaderInclude = "stdafx.h\"\r\n#include \"" + data.ClassHeaderFile;
-                    replacements["$precompiledheader$"] = "<None Include=\"stdafx.h\" />";
-                    replacements["$precompiledsource$"] = "<None Include=\"stdafx.cpp\" />";
-                    qtMoc.Append("<PrependInclude>stdafx.h</PrependInclude>");
-                }
-
-                replacements["$include$"] = strHeaderInclude;
-                replacements["$ui_hdr$"] = "ui_" + Path.GetFileNameWithoutExtension(data.UiFile)
-                    + ".h";
-
-                safeprojectname = data.LowerCaseFileNames ? safeprojectname.ToLower() : safeprojectname;
-                replacements["$pro_name$"] = safeprojectname;
-
-#if (VS2019 || VS2017 || VS2015)
-                string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
-                if (!string.IsNullOrEmpty(versionWin10SDK)) {
-                    replacements["$WindowsTargetPlatformVersion$"] = versionWin10SDK;
-                    replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
-                }
-#endif
-
-                if (qtMoc.Length > 0)
-                    replacements["$QtMoc$"] = string.Format("<QtMoc>{0}</QtMoc>", qtMoc);
-                else
-                    replacements["$QtMoc$"] = string.Empty;
-            } catch {
-                try {
-                    Directory.Delete(replacements["$destinationdirectory$"]);
-                    Directory.Delete(replacements["$solutiondirectory$"]);
-                } catch { }
-
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
-            }
-
-            iVsUIShell.EnableModeless(1);
-        }
-
-        public bool ShouldAddProjectItem(string filePath)
-        {
-            return true;
-        }
-
-        private string safeprojectname;
-        private readonly WizardData data = new WizardData
-        {
-            DefaultModules = new List<string> {
-                @"QtCore", @"QtGui", @"QtWidgets", @"QtAxServer"
-            }
-        };
     }
 }

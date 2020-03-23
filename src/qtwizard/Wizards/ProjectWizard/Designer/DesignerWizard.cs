@@ -26,254 +26,157 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TemplateWizard;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtVsTools.VisualStudio;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using System.Windows.Forms;
+using EnvDTE;
+using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    public class DesignerWizard : IWizard
+    using static EnumExt;
+
+    public class DesignerWizard : ProjectTemplateWizard
     {
-        public void BeforeOpeningFile(ProjectItem projectItem)
+        protected override Options TemplateType =>
+            Options.PluginProject | Options.DynamicLibrary | Options.GUISystem;
+
+        enum NewClass
         {
+            [String("classname")] ClassName,
+            [String("baseclass")] BaseClass,
+            [String("sourcefilename")] SourceFileName,
+            [String("headerfilename")] HeaderFileName,
+            [String("include")] Include,
         }
 
-        public void ProjectFinishedGenerating(Project project)
+        enum NewDesignerPlugin
         {
-            var qtProject = QtProject.Create(project);
-
-            QtVSIPSettings.SaveUicDirectory(project, null);
-            QtVSIPSettings.SaveMocDirectory(project, null);
-            QtVSIPSettings.SaveMocOptions(project, null);
-            QtVSIPSettings.SaveRccDirectory(project, null);
-            QtVSIPSettings.SaveLUpdateOnBuild(project);
-            QtVSIPSettings.SaveLUpdateOptions(project, null);
-            QtVSIPSettings.SaveLReleaseOptions(project, null);
-
-            var vm = QtVersionManager.The();
-            var qtVersion = vm.GetDefaultVersion();
-            var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
-            if (vi.GetVSPlatformName() != "Win32")
-                qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-
-            qtProject.MarkAsQtProject();
-            qtProject.AddDirectories();
-
-            var type = TemplateType.PluginProject | TemplateType.DynamicLibrary | TemplateType.GUISystem;
-            qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
-
-            var vcProject = qtProject.VCProject;
-            var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;
-            foreach (var vcFile in files)
-                vcProject.RemoveFile(vcFile);
-
-            if (data.UsePrecompiledHeader) {
-                qtProject.AddFileToProject(@"stdafx.cpp", Filters.SourceFiles());
-                qtProject.AddFileToProject(@"stdafx.h", Filters.HeaderFiles());
-            }
-
-            qtProject.AddFileToProject(data.ClassSourceFile, Filters.SourceFiles());
-            qtProject.AddFileToProject(data.ClassHeaderFile, Filters.HeaderFiles());
-
-            qtProject.AddFileToProject(data.PluginSourceFile, Filters.SourceFiles());
-            qtProject.AddFileToProject(data.PluginHeaderFile, Filters.HeaderFiles());
-
-            qtProject.AddFileToProject(data.PluginClass.ToLower() + @".json", Filters.OtherFiles());
-
-            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
-                qtProject.AdjustWhitespace(file.FullPath);
-
-            qtProject.SetQtEnvironment(qtVersion);
-            qtProject.Finish(); // Collapses all project nodes.
+            [String("plugin_class")] ClassName,
+            [String("objname")] ObjectName,
+            [String("pluginsourcefilename")] SourceFileName,
+            [String("pluginheaderfilename")] HeaderFileName,
+            [String("plugin_json")] JsonFileName,
         }
 
-        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
-        {
-        }
-
-        public void RunFinished()
-        {
-        }
-
-        public void RunStarted(object automation, Dictionary<string, string> replacements,
-            WizardRunKind runKind, object[] customParams)
-        {
-            var qtMoc = new StringBuilder();
-            var serviceProvider = new ServiceProvider(automation as IServiceProvider);
-            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
-
-            iVsUIShell.EnableModeless(0);
-
-            var versionMgr = QtVersionManager.The();
-            var versionName = versionMgr.GetDefaultVersion();
-            var versionInfo = VersionInformation.Get(versionMgr.GetInstallPath(versionName));
-            if (versionInfo.isWinRT()) {
-                MessageBox.Show(
-                    string.Format(
-                        "The Qt Custom Designer Widget project type is not available\r\n" +
-                        "for the currently selected Qt version ({0}).", versionName),
-                    "Project Type Not Available", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
-            }
-
-            try {
-                System.IntPtr hwnd;
-                iVsUIShell.GetDialogOwnerHwnd(out hwnd);
-
-                try {
-                    var className = replacements["$safeprojectname$"];
-                    className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
-                    className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-                    className = Regex.Replace(className, @"[pP][lL][uU][gG][iI][nN]$", string.Empty);
-                    var result = new Util.ClassNameValidationRule().Validate(className, null);
-                    if (result != ValidationResult.ValidResult)
-                        className = @"MyDesignerWidget";
-
-                    data.ClassName = className;
-                    data.BaseClass = @"QWidget";
-                    data.ClassHeaderFile = className + @".h";
-                    data.ClassSourceFile = className + @".cpp";
-                    data.PluginClass = className + @"Plugin";
-                    data.PluginHeaderFile = data.PluginClass + @".h";
-                    data.PluginSourceFile = data.PluginClass + @".cpp";
-
-                    var wizard = new WizardWindow(new List<WizardPage> {
-                        new WizardIntroPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt Custom Designer Widget",
-                            Message = @"This wizard generates a custom designer widget which can be "
-                                + @"used in Qt Designer or Visual Studio."
-                                + System.Environment.NewLine + System.Environment.NewLine
-                                + "To continue, click Next.",
-                            PreviousButtonEnabled = false,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new ModulePage {
-                            Data = data,
-                            Header = @"Welcome to the Qt Custom Designer Widget",
-                            Message = @"Select the modules you want to include in your project. The "
-                                + @"recommended modules for this project are selected by default.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new DesignerPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt Custom Designer Widget",
-                            Message = @"This wizard generates a custom designer widget which can be "
-                                + @"used in Qt Designer or Visual Studio.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
-                            CancelButtonEnabled = true
-                        }
-                    })
-                    {
-                        Title = @"Qt Custom Designer Widget"
-                    };
-                    WindowHelper.ShowModal(wizard, hwnd);
-                    if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
-                        throw new System.Exception("Unexpected wizard return value.");
-                } catch (QtVSException exception) {
-                    Messages.DisplayErrorMessage(exception.Message);
-                    throw; // re-throw, but keep the original exception stack intact
+        WizardData _WizardData;
+        protected override WizardData WizardData => _WizardData
+            ?? (_WizardData = new WizardData
+            {
+                DefaultModules = new List<string> {
+                    "QtCore", "QtGui", "QtWidgets", "QtXml"
                 }
+            });
 
-                var version = (automation as DTE).Version;
-                replacements["$ToolsVersion$"] = version;
+        string[] _ExtraModules;
+        protected override IEnumerable<string> ExtraModules => _ExtraModules
+            ?? (_ExtraModules = new[] { "designer" });
 
-                replacements["$Platform$"] = versionInfo.GetVSPlatformName();
+        string[] _ExtraDefines;
+        protected override IEnumerable<string> ExtraDefines => _ExtraDefines
+            ?? (_ExtraDefines = new[] { "QT_PLUGIN" });
 
-                replacements["$Keyword$"] = Resources.qtProjectKeyword;
-                replacements["$ProjectGuid$"] = HelperFunctions.NewProjectGuid();
-                replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
-                replacements["$DefaultQtVersion$"] = versionName;
-                replacements["$QtModules$"] = string.Join(";", data.Modules
-                    .Select(moduleName => QtModules.Instance
-                        .ModuleInformation(QtModules.Instance
-                        .ModuleIdByName(moduleName))
-                        .proVarQT)
-                    .Union(new[] { "designer " })
-                    .ToDictionary(x => x, StringComparer.InvariantCultureIgnoreCase).Keys);
-
-                replacements["$classname$"] = data.ClassName;
-                replacements["$baseclass$"] = data.BaseClass;
-                replacements["$sourcefilename$"] = data.ClassSourceFile;
-                replacements["$headerfilename$"] = data.ClassHeaderFile;
-
-                replacements["$plugin_class$"] = data.PluginClass;
-                replacements["$pluginsourcefilename$"] = data.PluginSourceFile;
-                replacements["$pluginheaderfilename$"] = data.PluginHeaderFile;
-
-                replacements["$plugin_json$"] = data.PluginClass.ToLower() + @".json";
-                replacements["$objname$"] = char.ToLower(data.ClassName[0]) + data.ClassName
-                    .Substring(1);
-
-                replacements["$precompiledheader$"] = string.Empty;
-                replacements["$precompiledsource$"] = string.Empty;
-
-                var strHeaderInclude = data.ClassHeaderFile;
-                if (data.UsePrecompiledHeader) {
-                    strHeaderInclude = "stdafx.h\"\r\n#include \"" + data.ClassHeaderFile;
-                    replacements["$precompiledheader$"] = "<None Include=\"stdafx.h\" />";
-                    replacements["$precompiledsource$"] = "<None Include=\"stdafx.cpp\" />";
-                    qtMoc.Append("<PrependInclude>stdafx.h</PrependInclude>");
+        WizardWindow _WizardWindow;
+        protected override WizardWindow WizardWindow => _WizardWindow
+            ?? (_WizardWindow = new WizardWindow(title: "Qt Custom Designer Widget")
+            {
+                new WizardIntroPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt Custom Designer Widget",
+                    Message = @"This wizard generates a custom designer widget which can be "
+                        + @"used in Qt Designer or Visual Studio."
+                        + System.Environment.NewLine + System.Environment.NewLine
+                        + "To continue, click Next.",
+                    PreviousButtonEnabled = false,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true
+                },
+                new ConfigPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Message =
+                            @"Setup the configurations you want to include in your project. "
+                            + @"The recommended settings for this project are selected by default.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true,
+                    ValidateConfigs = ValidateConfigsForDesignerWidget
+                },
+                new DesignerPage {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt Custom Designer Widget",
+                    Message = @"This wizard generates a custom designer widget which can be "
+                        + @"used in Qt Designer or Visual Studio.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = false,
+                    FinishButtonEnabled = true,
+                    CancelButtonEnabled = true
                 }
-                replacements["$include$"] = strHeaderInclude;
-
-#if (VS2019 || VS2017 || VS2015)
-                string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
-                if (!string.IsNullOrEmpty(versionWin10SDK)) {
-                    replacements["$WindowsTargetPlatformVersion$"] = versionWin10SDK;
-                    replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
-                }
-
-                if (qtMoc.Length > 0)
-                    replacements["$QtMoc$"] = string.Format("<QtMoc>{0}</QtMoc>", qtMoc);
-                else
-                    replacements["$QtMoc$"] = string.Empty;
-#endif
-            } catch {
-                try {
-                    Directory.Delete(replacements["$destinationdirectory$"]);
-                    Directory.Delete(replacements["$solutiondirectory$"]);
-                } catch { }
-
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
             }
+        );
 
-            iVsUIShell.EnableModeless(1);
+        string ValidateConfigsForDesignerWidget(IEnumerable<IWizardConfiguration> configs)
+        {
+            foreach (var config in configs) {
+                if (config.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                    return string.Format(
+                        "Custom Designer Widget project not available for the '{0}' target.",
+                        config.Target);
+                }
+            }
+            return string.Empty;
         }
 
-        public bool ShouldAddProjectItem(string filePath)
+        protected override void BeforeWizardRun()
         {
-            return true;
+            var className = Parameter[NewProject.SafeName];
+            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
+            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
+            var result = new Util.ClassNameValidationRule().Validate(className, null);
+            if (result != ValidationResult.ValidResult)
+                className = @"MyDesignerWidget";
+
+            WizardData.ClassName = className;
+            WizardData.BaseClass = @"QWidget";
+            WizardData.ClassHeaderFile = className + @".h";
+            WizardData.ClassSourceFile = className + @".cpp";
+
+            WizardData.PluginClass = className + @"Plugin";
+            WizardData.PluginHeaderFile = WizardData.PluginClass + @".h";
+            WizardData.PluginSourceFile = WizardData.PluginClass + @".cpp";
         }
 
-        private readonly WizardData data = new WizardData
+        protected override void BeforeTemplateExpansion()
         {
-            DefaultModules = new List<string> {
-                @"QtCore", @"QtGui", @"QtWidgets", @"QtXml"
-            }
-        };
+            Parameter[NewClass.ClassName] = WizardData.ClassName;
+            Parameter[NewClass.BaseClass] = WizardData.BaseClass;
+            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
+            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
+
+            var include = new StringBuilder();
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            if (UsePrecompiledHeaders)
+                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
+            Parameter[NewClass.Include] = FormatParam(include);
+
+            Parameter[NewDesignerPlugin.ClassName] = WizardData.PluginClass;
+            Parameter[NewDesignerPlugin.HeaderFileName] = WizardData.PluginHeaderFile;
+            Parameter[NewDesignerPlugin.SourceFileName] = WizardData.PluginSourceFile;
+            Parameter[NewDesignerPlugin.JsonFileName] = WizardData.PluginClass.ToLower() + ".json";
+            Parameter[NewDesignerPlugin.ObjectName] = string.Format("{0}{1}",
+                WizardData.ClassName[0],
+                WizardData.ClassName.Substring(1));
+        }
+
+        protected override void OnProjectGenerated(Project project)
+        {
+            project.Globals["IsDesignerPlugin"] = true.ToString();
+            if (!project.Globals.get_VariablePersists("IsDesignerPlugin"))
+                project.Globals.set_VariablePersists("IsDesignerPlugin", true);
+        }
     }
 }

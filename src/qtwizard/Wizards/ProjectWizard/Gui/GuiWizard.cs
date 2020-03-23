@@ -26,308 +26,261 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TemplateWizard;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtVsTools.VisualStudio;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
+using EnvDTE;
+using QtProjectLib;
+using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    public class GuiWizard : IWizard
+    using static EnumExt;
+
+    public class GuiWizard : ProjectTemplateWizard
     {
-        public void RunStarted(object automation, Dictionary<string, string> replacements,
-            WizardRunKind runKind, object[] customParams)
+        protected override Options TemplateType => Options.Application | Options.GUISystem;
+
+        readonly Func<IWizardConfiguration, bool> whereConfigTargetIsWindowsStore
+            = (IWizardConfiguration config) => config.Target.EqualTo(ProjectTargets.WindowsStore);
+
+        enum NewClass
         {
-            var qtMoc = new StringBuilder();
-            var serviceProvider = new ServiceProvider(automation as IServiceProvider);
-            var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
+            [String("classname")] ClassName,
+            [String("baseclass")] BaseClass,
+            [String("sourcefilename")] SourceFileName,
+            [String("headerfilename")] HeaderFileName,
+            [String("include")] Include,
+        }
 
-            iVsUIShell.EnableModeless(0);
+        enum NewGuiProject
+        {
+            [String("centralwidget")] CentralWidget,
+            [String("qrcfilename")] QrcFileName,
+            [String("uifilename")] UiFileName,
+            [String("ui_hdr")] UiHeaderName,
+        }
 
-            try {
-                System.IntPtr hwnd;
-                iVsUIShell.GetDialogOwnerHwnd(out hwnd);
+        WizardData _WizardData;
+        protected override WizardData WizardData => _WizardData
+            ?? (_WizardData = new WizardData
+            {
+                DefaultModules = new List<string> { "QtCore", "QtGui", "QtWidgets" }
+            });
 
-                try {
-                    var className = replacements["$safeprojectname$"];
-                    className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
-                    className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-                    var result = new Util.ClassNameValidationRule().Validate(className, null);
-                    if (result != ValidationResult.ValidResult)
-                        className = @"QtGuiApplication";
-
-                    data.ClassName = className;
-                    data.BaseClass = @"QMainWindow";
-                    data.ClassHeaderFile = className + @".h";
-                    data.ClassSourceFile = className + @".cpp";
-                    data.UiFile = data.ClassName + @".ui";
-                    data.QrcFile = data.ClassName + @".qrc";
-
-                    var wizard = new WizardWindow(new List<WizardPage> {
-                        new WizardIntroPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt GUI Application Wizard",
-                            Message = @"This wizard generates a Qt GUI application project. The "
-                                + @"application derives from QApplication and includes an empty "
-                                + @"widget." + System.Environment.NewLine
-                                + System.Environment.NewLine + "To continue, click Next.",
-                            PreviousButtonEnabled = false,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new ModulePage {
-                            Data = data,
-                            Header = @"Welcome to the Qt GUI Application Wizard",
-                            Message = @"Select the modules you want to include in your project. The "
-                                + @"recommended modules for this project are selected by default.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = true,
-                            FinishButtonEnabled = false,
-                            CancelButtonEnabled = true
-                        },
-                        new GuiPage {
-                            Data = data,
-                            Header = @"Welcome to the Qt GUI Application Wizard",
-                            Message = @"This wizard generates a Qt GUI application project. The "
-                                + @"application derives from QApplication and includes an empty "
-                                + @"widget.",
-                            PreviousButtonEnabled = true,
-                            NextButtonEnabled = false,
-                            FinishButtonEnabled = data.DefaultModules.All(QtModuleInfo.IsInstalled),
-                            CancelButtonEnabled = true
-                        }
-                    })
-                    {
-                        Title = @"Qt GUI Application Wizard"
-                    };
-                    WindowHelper.ShowModal(wizard, hwnd);
-                    if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
-                        throw new System.Exception("Unexpected wizard return value.");
-                } catch (QtVSException exception) {
-                    Messages.DisplayErrorMessage(exception.Message);
-                    throw; // re-throw, but keep the original exception stack intact
+        WizardWindow _WizardWindow;
+        protected override WizardWindow WizardWindow => _WizardWindow
+            ?? (_WizardWindow = new WizardWindow(title: "Qt GUI Application Wizard")
+            {
+                new WizardIntroPage
+                {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Message = @"This wizard generates a Qt GUI application project. The "
+                        + @"application derives from QApplication and includes an empty "
+                        + @"widget." + System.Environment.NewLine
+                        + System.Environment.NewLine + "To continue, click Next.",
+                    PreviousButtonEnabled = false,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true
+                },
+                new ConfigPage
+                {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Message =
+                            @"Setup the configurations you want to include in your project. "
+                            + @"The recommended settings for this project are selected by default.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = true,
+                    FinishButtonEnabled = false,
+                    CancelButtonEnabled = true
+                },
+                new GuiPage
+                {
+                    Data = WizardData,
+                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Message = @"This wizard generates a Qt GUI application project. The "
+                        + @"application derives from QApplication and includes an empty "
+                        + @"widget.",
+                    PreviousButtonEnabled = true,
+                    NextButtonEnabled = false,
+                    FinishButtonEnabled = true,
+                    CancelButtonEnabled = true
                 }
+            });
 
-                var version = (automation as DTE).Version;
-                replacements["$ToolsVersion$"] = version;
+        List<ItemDef> _ExtraItems;
+        protected override IEnumerable<ItemDef> ExtraItems => _ExtraItems;
 
-                var vm = QtVersionManager.The();
-                var vi = VersionInformation.Get(vm.GetInstallPath(vm.GetDefaultVersion()));
-                replacements["$Platform$"] = vi.GetVSPlatformName();
+        public GuiWizard()
+        {
+            _ExtraItems = new List<ItemDef>
+            {
+                new ItemDef
+                {
+                    ItemType = "AppxManifest",
+                    Include = "Package.appxmanifest",
+                    Filter = "Resource Files",
+                    WhereConfig = whereConfigTargetIsWindowsStore
+                },
+                new ItemDef
+                {
+                    ItemType = "Image",
+                    Include = "assets/logo_store.png",
+                    Filter = "Resource Files",
+                    WhereConfig = whereConfigTargetIsWindowsStore
+                },
+                new ItemDef
+                {
+                    ItemType = "Image",
+                    Include = "assets/logo_620x300.png",
+                    Filter = "Resource Files",
+                    WhereConfig = whereConfigTargetIsWindowsStore
+                },
+                new ItemDef
+                {
+                    ItemType = "Image",
+                    Include = "assets/logo_150x150.png",
+                    Filter = "Resource Files",
+                    WhereConfig = whereConfigTargetIsWindowsStore
+                },
+                new ItemDef
+                {
+                    ItemType = "Image",
+                    Include = "assets/logo_44x44.png",
+                    Filter = "Resource Files",
+                    WhereConfig = whereConfigTargetIsWindowsStore
+                },
+            };
+        }
 
-                replacements["$Keyword$"] = Resources.qtProjectKeyword;
-                replacements["$ProjectGuid$"] = HelperFunctions.NewProjectGuid();
-                replacements["$PlatformToolset$"] = BuildConfig.PlatformToolset(version);
-                replacements["$DefaultQtVersion$"] = vm.GetDefaultVersion();
-                replacements["$QtModules$"] = string.Join(";", data.Modules
-                    .Select(moduleName => QtModules.Instance
-                        .ModuleInformation(QtModules.Instance
-                        .ModuleIdByName(moduleName))
-                        .proVarQT));
+        protected override void BeforeWizardRun()
+        {
+            var className = Parameter[NewProject.SafeName];
+            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
+            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
+            var result = new Util.ClassNameValidationRule().Validate(className, null);
+            if (result != ValidationResult.ValidResult)
+                className = @"QtGuiApplication";
 
-                replacements["$classname$"] = data.ClassName;
-                replacements["$baseclass$"] = data.BaseClass;
-                replacements["$sourcefilename$"] = data.ClassSourceFile;
-                replacements["$headerfilename$"] = data.ClassHeaderFile;
-                replacements["$uifilename$"] = data.UiFile;
+            WizardData.ClassName = className;
+            WizardData.BaseClass = @"QMainWindow";
+            WizardData.ClassHeaderFile = className + @".h";
+            WizardData.ClassSourceFile = className + @".cpp";
+            WizardData.UiFile = WizardData.ClassName + @".ui";
+            WizardData.QrcFile = WizardData.ClassName + @".qrc";
+        }
 
-                replacements["$precompiledheader$"] = string.Empty;
-                replacements["$precompiledsource$"] = string.Empty;
-                replacements["$DefaultApplicationIcon$"] = string.Empty;
-                replacements["$centralwidget$"] = string.Empty;
+        protected override void BeforeTemplateExpansion()
+        {
+            Parameter[NewClass.ClassName] = WizardData.ClassName;
+            Parameter[NewClass.BaseClass] = WizardData.BaseClass;
+            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
+            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
+            Parameter[NewGuiProject.UiFileName] = WizardData.UiFile;
 
-                var strHeaderInclude = data.ClassHeaderFile;
-                if (data.UsePrecompiledHeader) {
-                    strHeaderInclude = "stdafx.h\"\r\n#include \"" + data.ClassHeaderFile;
-                    replacements["$precompiledheader$"] = "<None Include=\"stdafx.h\" />";
-                    replacements["$precompiledsource$"] = "<None Include=\"stdafx.cpp\" />";
-                    qtMoc.Append("<PrependInclude>stdafx.h</PrependInclude>");
-                }
+            var include = new StringBuilder();
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            if (UsePrecompiledHeaders)
+                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
+            Parameter[NewClass.Include] = FormatParam(include);
 
-                replacements["$include$"] = strHeaderInclude;
-                replacements["$ui_hdr$"] = "ui_" + Path.GetFileNameWithoutExtension(data.UiFile)
-                    + ".h";
-                replacements["$qrcfilename$"] = data.QrcFile;
+            Parameter[NewGuiProject.UiHeaderName] = string.Format("ui_{0}.h",
+                Path.GetFileNameWithoutExtension(WizardData.UiFile));
 
-                if (data.BaseClass == "QMainWindow") {
-                    replacements["$centralwidget$"] =
-                        "\r\n  <widget class=\"QMenuBar\" name=\"menuBar\" />"
-                        + "\r\n  <widget class=\"QToolBar\" name=\"mainToolBar\" />"
-                        + "\r\n  <widget class=\"QWidget\" name=\"centralWidget\" />"
-                        + "\r\n  <widget class=\"QStatusBar\" name=\"statusBar\" />";
-                }
+            Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
 
-                if (data.AddDefaultAppIcon)
-                    replacements["$DefaultApplicationIcon$"] = "<None Include=\"gui.ico\" />";
-
-                if (vi.isWinRT()) {
-                    replacements["$QtWinRT$"] = "true";
-
-                    var projDir = replacements["$destinationdirectory$"];
-
-                    var qmakeTmpDir = Path.Combine(projDir, "qmake_tmp");
-                    Directory.CreateDirectory(qmakeTmpDir);
-
-                    var dummyPro = Path.Combine(qmakeTmpDir,
-                        string.Format("{0}.pro", replacements["$projectname$"]));
-                    File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
-
-                    var qmake = new QMake(null, dummyPro, false, vi);
-                    qmake.RunQMake();
-
-                    var assetsDir = Path.Combine(qmakeTmpDir, "assets");
-                    if (Directory.Exists(assetsDir))
-                        Directory.Move(assetsDir, Path.Combine(projDir, "assets"));
-
-                    var manifestFile = Path.Combine(qmakeTmpDir, "Package.appxmanifest");
-                    if (File.Exists(manifestFile))
-                        File.Move(manifestFile, Path.Combine(projDir, "Package.appxmanifest"));
-
-                    var projFile = Path.Combine(qmakeTmpDir,
-                        string.Format("{0}.vcxproj", replacements["$projectname$"]));
-
-                    var proj = MsBuildProject.Load(projFile);
-                    replacements["$MinimumVisualStudioVersion$"] =
-                        proj.GetProperty("MinimumVisualStudioVersion");
-                    replacements["$ApplicationTypeRevision$"] =
-                        proj.GetProperty("ApplicationTypeRevision");
-                    replacements["$WindowsTargetPlatformVersion$"] =
-                        proj.GetProperty("WindowsTargetPlatformVersion");
-                    replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
-                    replacements["$WindowsTargetPlatformMinVersion$"] =
-                        proj.GetProperty("WindowsTargetPlatformMinVersion");
-                    replacements["$Link_TargetMachine$"] =
-                        proj.GetProperty("Link", "TargetMachine");
-
-                    Directory.Delete(qmakeTmpDir, true);
-                }
-#if (VS2019 || VS2017 || VS2015)
-                else {
-                    string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
-                    if (!string.IsNullOrEmpty(versionWin10SDK)) {
-                        replacements["$WindowsTargetPlatformVersion$"] = versionWin10SDK;
-                        replacements["$isSet_WindowsTargetPlatformVersion$"] = "true";
-                    }
-                }
-
-                if (qtMoc.Length > 0)
-                    replacements["$QtMoc$"] = string.Format("<QtMoc>{0}</QtMoc>", qtMoc);
-                else
-                    replacements["$QtMoc$"] = string.Empty;
-#endif
-            } catch {
-                try {
-                    Directory.Delete(replacements["$destinationdirectory$"]);
-                    Directory.Delete(replacements["$solutiondirectory$"]);
-                } catch { }
-
-                iVsUIShell.EnableModeless(1);
-                throw new WizardBackoutException();
+            if (WizardData.BaseClass == "QMainWindow") {
+                Parameter[NewGuiProject.CentralWidget] = FormatParam(@"
+  <widget class=""QMenuBar"" name=""menuBar"" />
+  <widget class=""QToolBar"" name=""mainToolBar"" />
+  <widget class=""QWidget"" name=""centralWidget"" />
+  <widget class=""QStatusBar"" name=""statusBar"" />");
             }
 
-            iVsUIShell.EnableModeless(1);
+            StringBuilder winRcFile = new StringBuilder();
+
+            if (WizardData.AddDefaultAppIcon) {
+                _ExtraItems.Add(new ItemDef
+                {
+                    ItemType = "None",
+                    Include = Parameter[NewProject.SafeName] + ".ico",
+                    Filter = "Resource Files"
+                });
+                var projectIcon = Path.Combine(
+                    Parameter[NewProject.DestinationDirectory],
+                    Parameter[NewProject.SafeName] + ".ico");
+                var templateIcon = Path.Combine(
+                    Parameter[NewProject.DestinationDirectory],
+                    "gui.ico");
+                if (!File.Exists(projectIcon)) {
+                    File.Move(templateIcon, projectIcon);
+                    File.SetAttributes(projectIcon,
+                        File.GetAttributes(projectIcon) & (~FileAttributes.ReadOnly));
+                }
+                winRcFile.AppendLine(
+                    string.Format("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"{0}.ico",
+                        /*{0}*/ Parameter[NewProject.SafeName]));
+            }
+
+            if (winRcFile.Length > 0) {
+                _ExtraItems.Add(new ItemDef
+                {
+                    ItemType = "ResourceCompile",
+                    Include = Parameter[NewProject.SafeName] + ".rc",
+                    Filter = "Resource Files"
+                });
+                File.WriteAllText(
+                    Path.Combine(
+                        Parameter[NewProject.DestinationDirectory],
+                        Parameter[NewProject.SafeName] + ".rc"),
+                    winRcFile.ToString());
+            }
         }
 
-        public bool ShouldAddProjectItem(string filePath)
-        {
-            return true;
-        }
-
-        public void ProjectFinishedGenerating(Project project)
+        protected override void OnProjectGenerated(Project project)
         {
             var qtProject = QtProject.Create(project);
+            qtProject.CreateQrcFile(WizardData.ClassName, WizardData.QrcFile);
 
-            var vm = QtVersionManager.The();
-            var qtVersion = vm.GetDefaultVersion();
-            var vi = VersionInformation.Get(vm.GetInstallPath(qtVersion));
-            if (vi.GetVSPlatformName() != "Win32")
-                qtProject.SelectSolutionPlatform(vi.GetVSPlatformName());
-            qtProject.MarkAsQtProject();
-            qtProject.AddDirectories();
+            IWizardConfiguration configWinRT = Configurations
+                .Where(whereConfigTargetIsWindowsStore)
+                .FirstOrDefault();
 
-            var type = TemplateType.Application | TemplateType.GUISystem;
-            qtProject.WriteProjectBasicConfigurations(type, data.UsePrecompiledHeader);
+            if (configWinRT != null) {
+                var versionInfo = VersionManager.GetVersionInfo(configWinRT.QtVersion);
+                var projDir = Parameter[NewProject.DestinationDirectory];
+                var qmakeTmpDir = Path.Combine(projDir, "qmake_tmp");
+                Directory.CreateDirectory(qmakeTmpDir);
 
-            var vcProject = qtProject.VCProject;
-            var files = vcProject.GetFilesWithItemType(@"None") as IVCCollection;
-            foreach (var vcFile in files)
-                vcProject.RemoveFile(vcFile);
+                var dummyPro = Path.Combine(qmakeTmpDir,
+                    string.Format("{0}.pro", Parameter[NewProject.SafeName]));
+                File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
 
-            if (data.UsePrecompiledHeader) {
-                qtProject.AddFileToProject(@"stdafx.cpp", Filters.SourceFiles());
-                qtProject.AddFileToProject(@"stdafx.h", Filters.HeaderFiles());
+                var qmake = new QMake(null, dummyPro, false, versionInfo);
+                qmake.RunQMake();
+
+                var qmakeAssetsDir = Path.Combine(qmakeTmpDir, "assets");
+                var projAssetsDir = Path.Combine(projDir, "assets");
+                if (Directory.Exists(qmakeAssetsDir)) {
+                    if (Directory.Exists(projAssetsDir))
+                        Directory.Delete(projAssetsDir, recursive: true);
+                    Directory.Move(qmakeAssetsDir, projAssetsDir);
+                }
+
+                var manifestFile = Path.Combine(qmakeTmpDir, "Package.appxmanifest");
+                if (File.Exists(manifestFile)) {
+                    File.Move(manifestFile, Path.Combine(projDir, "Package.appxmanifest"));
+                }
+
+                Directory.Delete(qmakeTmpDir, recursive: true);
             }
-
-            qtProject.AddFileToProject(data.ClassSourceFile, Filters.SourceFiles());
-            qtProject.AddFileToProject(data.ClassHeaderFile, Filters.HeaderFiles());
-            qtProject.AddFileToProject(data.UiFile, Filters.FormFiles());
-            var qrc = qtProject.CreateQrcFile(data.ClassName, data.QrcFile);
-            qtProject.AddFileToProject(qrc, Filters.ResourceFiles());
-
-            if (data.AddDefaultAppIcon) {
-                try {
-                    var icon = vcProject.ProjectDirectory + "\\" + vcProject.ItemName + ".ico";
-                    if (!File.Exists(icon)) {
-                        File.Move(vcProject.ProjectDirectory + "\\gui.ico", icon);
-                        var attribs = File.GetAttributes(icon);
-                        File.SetAttributes(icon, attribs & (~FileAttributes.ReadOnly));
-                    }
-
-                    var rcFile = vcProject.ProjectDirectory + "\\" + vcProject.ItemName + ".rc";
-                    if (!File.Exists(rcFile)) {
-                        FileStream fs = null;
-                        try {
-                            fs = File.Create(rcFile);
-                            using (var sw = new StreamWriter(fs)) {
-                                fs = null;
-                                sw.WriteLine("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\""
-                                    + vcProject.ItemName + ".ico\"" + sw.NewLine);
-                            }
-                        } finally {
-                            if (fs != null)
-                                fs.Dispose();
-                        }
-                        vcProject.AddFile(rcFile);
-                    }
-                } catch { }
-            }
-
-            foreach (VCFile file in (IVCCollection) qtProject.VCProject.Files)
-                qtProject.AdjustWhitespace(file.FullPath);
-
-            qtProject.SetQtEnvironment(qtVersion);
-            qtProject.Finish(); // Collapses all project nodes.
         }
-
-        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
-        {
-        }
-
-        public void BeforeOpeningFile(ProjectItem projectItem)
-        {
-        }
-
-        public void RunFinished()
-        {
-        }
-
-        private readonly WizardData data = new WizardData
-        {
-            DefaultModules = new List<string> {
-                @"QtCore", @"QtGui", @"QtWidgets"
-            }
-        };
     }
 }
