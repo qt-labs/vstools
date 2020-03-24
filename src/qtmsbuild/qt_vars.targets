@@ -117,7 +117,7 @@
         <ValueIdx>$([MSBuild]::Add(%(SepIdx), 1))</ValueIdx>
       </QMakeQueryResult>
       <QMakeQueryResult>
-        <Name>$([System.String]::Copy('%(Identity)').Substring(0, %(SepIdx)))</Name>
+        <Name>$([System.String]::Copy('%(Identity)').Substring(0, %(SepIdx)).Replace('/', "SLASH"))</Name>
         <Value>$([System.String]::Copy('%(Identity)').Substring(%(ValueIdx)))</Value>
       </QMakeQueryResult>
       <QMakeProperty
