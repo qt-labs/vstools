@@ -35,7 +35,8 @@ Build the Qt Visual Studio Tools
 
 Change the directory into 'src' and run 'qmake && make' (or 'mingw32-make', 'nmake' ...) to build
 the Qt Visual Studio Tools command line applications. Once finished, open the solution QtVsTools.sln
-in Visual Studio and build the solution.
+in Visual Studio. Choose "Build"->"Transform All T4 Templates", Accept the following dialog and
+build the solution.
 
 To debug the resulting VSIX, select the 'QtVsTools' node, right click and choose 'Properties|Debug'.
 Update 'Start Action|Start external program:' to point to your Visual Studio 'devenv.exe' application.
