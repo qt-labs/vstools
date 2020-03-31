@@ -37,5 +37,10 @@ namespace QtProjectLib
             : base(message)
         {
         }
+
+        public QtVSException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }
