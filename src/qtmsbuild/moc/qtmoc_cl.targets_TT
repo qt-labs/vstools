@@ -44,7 +44,7 @@
     *****************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="QtMocOverrideCpp" DependsOnTargets="QtMocPrepare"
+  <Target Name="QtMocOverrideCpp" DependsOnTargets="QtMocPrepare;QtGetDefaultClCompile"
     Inputs="%(QtMoc.Identity)" Outputs="@(QtMoc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
