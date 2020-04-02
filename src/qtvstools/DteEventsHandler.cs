@@ -238,7 +238,7 @@ namespace QtVsTools
             var versionManager = QtVersionManager.The();
             var qtVersion = versionManager.GetProjectQtVersion(project, platform);
             if (qtVersion == null) {
-                Messages.DisplayCriticalErrorMessage(SR.GetString("ProjectQtVersionNotFoundError", platform));
+                Messages.DisplayCriticalErrorMessage(SR.GetString("ProjectQtVersionNotFoundError", projectName, projectConfig, platform));
                 dte.ExecuteCommand("Build.Cancel", "");
                 return;
             }

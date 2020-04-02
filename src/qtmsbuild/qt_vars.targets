@@ -72,18 +72,19 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
     </CreateProperty>
     <CreateProperty
-      Condition="!$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
+      Condition="'$(QtInstallDir)' != '' AND !$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
       Value="$(QtInstallDir)\$(QtPathBinaries)">
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
     <CreateProperty
-      Condition="$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
+      Condition="'$(QtInstallDir)' != '' AND $([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
       Value="$(QtPathBinaries)">
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
     <!--// Check if qmake is in the tools path -->
-    <Error Condition="!Exists('$(QtToolsPath)\qmake.exe')" Text="qmake not found"/>
+    <Error Condition="'$(QtToolsPath)' == ''" Text="There's no Qt version assigned to project $(MSBuildProjectFile) for configuration $(Configuration)/$(Platform). Please assign a Qt installation in 'Qt Project Settings'."/>
+    <Error Condition="!Exists('$(QtToolsPath)\qmake.exe')" Text="qmake not found in $(QtToolsPath) when building project $(MSBuildProjectFile)"/>
 
     <!--// Ensure C++ compiler in PATH -->
     <Exec Command="WHERE /Q cl.exe" IgnoreExitCode="true">
