@@ -160,6 +160,10 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             var defaultQtVersionName = qtVersionManager.GetDefaultVersion();
             var defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
+            if (string.IsNullOrEmpty(defaultQtVersionName) || defaultQtVersionInfo == null) {
+                Validate();
+                return;
+            }
 
             defaultConfigs = new CloneableList<Config> {
                 new Config {
@@ -205,7 +209,13 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Validate()
         {
-            if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
+            if (currentConfigs == null) {
+                ErrorMsg.Content = "Register at least one Qt version using \"Qt VS Tools\"" +
+                    " -> \"Qt Options\".";
+                ErrorPanel.Visibility = Visibility.Visible;
+                NextButton.IsEnabled = false;
+                FinishButton.IsEnabled = false;
+            } else if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
                 .GroupBy((Config c) => string.Format("{0}|{1}", c.Name, c.Platform))
                 .Where((IGrouping<string, Config> g) => g.Count() > 1)
                 .Any()) {
