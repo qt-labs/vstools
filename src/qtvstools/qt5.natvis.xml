@@ -446,6 +446,7 @@
         <Expand>
             <Item Name="[key]" Condition="next != 0">key</Item>
             <Item Name="[value]" Condition="next != 0">value</Item>
+            <Item Name="[next]" Condition="next != 0">next</Item>
         </Expand>
     </Type>
 
@@ -453,11 +454,28 @@
         <AlternativeType Name="##NAMESPACE##::QMultiHash&lt;*,*&gt;"/>
         <DisplayString>{{ size = {d-&gt;size} }}</DisplayString>
         <Expand>
-            <Item Name="[referenced]">d-&gt;ref.atomic._q_value</Item>
-            <IndexListItems>
+            <ArrayItems IncludeView="buckets">
                 <Size>d-&gt;numBuckets</Size>
-                <ValueNode>*((##NAMESPACE##::QHashNode&lt;$T1,$T2&gt;*)d-&gt;buckets[$i])</ValueNode>
-            </IndexListItems>
+                <ValuePointer>reinterpret_cast&lt;Node **&gt;(d-&gt;buckets)</ValuePointer>
+            </ArrayItems>
+            <CustomListItems ExcludeView="buckets">
+                <Variable Name="n" InitialValue="d-&gt;numBuckets"/>
+                <Variable Name="bucket" InitialValue="d-&gt;buckets"/>
+                <Variable Name="node" InitialValue="d-&gt;buckets[0]"/>
+                <Variable Name="keyValuePair" InitialValue="reinterpret_cast&lt;Node *&gt;(0)"/>
+                <Size>d-&gt;size</Size>
+                <Loop>
+                    <Break Condition="n == 0"/>
+                    <Exec>node = *(bucket++)</Exec>
+                    <Exec>--n</Exec>
+                    <Loop>
+                        <Break Condition="!node || !node->next"/>
+                        <Exec>keyValuePair = reinterpret_cast&lt;Node *&gt;(node)</Exec>
+                        <Item Name="[{keyValuePair-&gt;key}]">keyValuePair-&gt;value</Item>
+                        <Exec>node = node-&gt;next</Exec>
+                    </Loop>
+                </Loop>
+            </CustomListItems>
         </Expand>
     </Type>
 
