@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.Win32;
 using QtProjectLib;
 using System;
 using System.Diagnostics;
@@ -374,17 +375,28 @@ namespace QtVsTools
                     natvisFile = string.Format("qt5_{0}.natvis", qtNamespace.Replace("::", "_"));
                 }
 
-                string visualizersPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                string visualizersPath = string.Empty;
+                try {
+                    using (var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot)) {
+                        if (vsRootKey.GetValue("VisualStudioLocation") is string vsLocation)
+                            visualizersPath = Path.Combine(vsLocation, "Visualizers");
+                    }
+                } catch {
+                }
+                if (string.IsNullOrEmpty(visualizersPath)) {
+                    visualizersPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 #if VS2019
-                @"Visual Studio 2019\Visualizers\");
+                    @"Visual Studio 2019\Visualizers\");
 #elif VS2017
-                @"Visual Studio 2017\Visualizers\");
+                    @"Visual Studio 2017\Visualizers\");
 #elif VS2015
-                @"Visual Studio 2015\Visualizers\");
+                    @"Visual Studio 2015\Visualizers\");
 #elif VS2013
-                @"Visual Studio 2013\Visualizers\");
+                    @"Visual Studio 2013\Visualizers\");
 #endif
+                }
+
                 if (!Directory.Exists(visualizersPath))
                     Directory.CreateDirectory(visualizersPath);
 
