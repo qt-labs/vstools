@@ -254,7 +254,7 @@
     // -->
     <ItemGroup>
       <rcc_InputFile          Include="%(QtRcc.InputFile)"/>
-      <rcc_OutputFile         Include="%(QtRcc.OutputFile)"/>
+      <rcc_OutputFile         Include="%(QtRcc.OutputFile)" Condition="'%(QtRcc.TwoPass)' != 'true'"/>
       <rcc_TempFile           Include="%(QtRcc.TempFile)"/>
       <rcc_InitFuncName       Include="%(QtRcc.InitFuncName)"/>
       <rcc_Root               Include="%(QtRcc.Root)"/>
@@ -405,6 +405,15 @@
         <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
         <!--
         ///////////////////////////////////////////////////////////////////////////////////////////
+        // Two-pass ("resources_big"): pass 1 -->
+        <Message Condition="'%(QtRcc.TwoPass)' == 'true'">%(ExecutionDescription) [pass 1]</Message>
+        <RccPass Condition="'%(QtRcc.TwoPass)' == 'true'">1</RccPass>
+        <RccOptions Condition="'%(QtRcc.TwoPass)' == 'true'">$(options)</RccOptions>
+        <Options Condition="'%(QtRcc.TwoPass)' == 'true'"
+          >$(options) -pass 1 -o &quot;%(OutputFile)&quot;</Options>
+        <Optimization Condition="'%(QtRcc.TwoPass)' == 'true'">Disabled</Optimization>
+        <!--
+        ///////////////////////////////////////////////////////////////////////////////////////////
         // C++ dynamic source -->
         <ClCompile Condition="'%(QtRcc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
       </QtWork>
@@ -440,6 +449,57 @@
       <rcc_FormatVersion      Remove="@(rcc_FormatVersion)"/>
     </ItemGroup>
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtRccPass2
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Two-pass ("resources_big"): pass 2
+  // -->
+  <Target Name="QtRccPass2"
+    DependsOnTargets="QtRccPass2_GetObjs;QtRccPass2_Exec"/>
+
+  <Target Name="QtRccPass2_GetObjs"
+    DependsOnTargets="ComputeCLOutputs">
+    <ItemGroup>
+      <QtRccObj Include="@(Obj->WithMetadataValue('RccPass', '1'))">
+        <RccPass>2</RccPass>
+      </QtRccObj>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="QtRccPass2_Exec"
+    DependsOnTargets="QtRccPass2_GetObjs"
+    Condition="'@(QtRccObj)' != ''">
+    <Move
+      SourceFiles="%(QtRccObj.Identity)"
+      DestinationFiles="%(QtRccObj.Identity)_TMP"/>
+    <Exec
+      Command="@(QtRccObj->'ECHO %(ExecutionDescription) [pass 2] &amp; %(ToolPath) %(RccOptions) -pass 2 -temp &quot;%(Identity)_TMP&quot; -o &quot;%(Identity)&quot;')"
+      IgnoreExitCode="true"/>
+    <ItemGroup>
+      <Obj Remove="@(QtRccObj->'%(Identity)')"/>
+      <Obj Include="@(QtRccObj)"/>
+      <QtRccObj Remove="@(QtRccObj)"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="QtRccPass2_Link"
+    DependsOnTargets="QtRccPass2"/>
+
+  <Target Name="QtRccPass2_Lib"
+    DependsOnTargets="QtRccPass2"/>
+
+  <PropertyGroup>
+    <ComputeLinkInputsTargets>
+      $(ComputeLinkInputsTargets);
+      ;QtRccPass2_Link;
+    </ComputeLinkInputsTargets>
+    <ComputeLibInputsTargets>
+      $(ComputeLibInputsTargets);
+      ;QtRccPass2_Lib;
+    </ComputeLibInputsTargets>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

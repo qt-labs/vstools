@@ -66,6 +66,7 @@
 
       <InitFuncName>%(Filename)</InitFuncName>
       <Compression>default</Compression>
+      <TwoPass>false</TwoPass>
       <DynamicSource>output</DynamicSource>
       <ParallelProcess>true</ParallelProcess>
       <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>

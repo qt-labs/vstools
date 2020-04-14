@@ -216,6 +216,10 @@
       DisplayName="Format Version"
       Description="The RCC format version to write. (--format-version &lt;number&gt;)"
       Switch="--format-version [value]" />
+    <BoolProperty
+      Name="TwoPass"
+      DisplayName="Two-Pass Mode"
+      Description="1st pass: generate source file; 2nd pass: overwrite resouce data in object file"/>
     <StringProperty
       Name="CommandLineTemplate"
       DisplayName="Command Line"
