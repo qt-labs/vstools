@@ -97,27 +97,26 @@
   // Qt Variables Expansion
   // -->
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
-    <ConfigurationEscaped>$(Configuration.Replace(' ','_'))</ConfigurationEscaped>
-    <PlatformEscaped>$(Platform.Replace(' ','_'))</PlatformEscaped>
 
     <!--// Path to Qt variables property file -->
+    <QtVarsOutputDir Condition="'$(QtVarsOutputDir)' == ''"
+      >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
+    <QtVarsFileName Condition="'$(QtVarsFileName)' == ''"
+      >qtvars_$(Platform.Replace(' ','_'))_$(Configuration.Replace(' ','_')).props</QtVarsFileName>
+    <QtVarsFilePath Condition="'$(QtVarsFilePath)' == ''"
+      >$(QtVarsOutputDir)\$(QtVarsFileName)</QtVarsFilePath>
+
+    <!--// Path to temp work folder -->
+    <QtVarsWorkDirName
+      >$([System.IO.Path]::GetRandomFileName())</QtVarsWorkDirName>
     <QtVarsWorkDir
-        >$([System.IO.Path]::Combine(
-            '$(TEMP)', '$([System.IO.Path]::GetRandomFileName())'))</QtVarsWorkDir>
-    <QtVarsOutputDir
-        >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
-    <QtVarsFileNameWithoutExt
-        >qtvars_$(PlatformEscaped)_$(ConfigurationEscaped)</QtVarsFileNameWithoutExt>
-    <QtVarsFileName
-        >$(QtVarsFileNameWithoutExt).props</QtVarsFileName>
+      >$([System.IO.Path]::Combine('$(TEMP)','$(QtVarsWorkDirName)'))</QtVarsWorkDir>
     <QtVarsWorkPath
-        >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
-    <QtVarsFilePath
-        >$(QtVarsOutputDir)\$(QtVarsFileName)</QtVarsFilePath>
+      >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
     <QtVarsIndexPathDesignTime
-        >$(TEMP)\$(ProjectGuid.Replace('{','').Replace('}','')).$(ProjectName).designtime.idx</QtVarsIndexPathDesignTime>
+      >$(TEMP)\$(ProjectGuid.Replace('{','').Replace('}','')).$(ProjectName).designtime.idx</QtVarsIndexPathDesignTime>
     <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
-        >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
+      >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
   </PropertyGroup>
 
   <!--// Import Qt variables (full build) -->
