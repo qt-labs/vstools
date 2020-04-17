@@ -30,14 +30,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using QtVsTools.SyntaxAnalysis;
+using static QtVsTools.SyntaxAnalysis.RegExpr;
+using RegExprParser = QtVsTools.SyntaxAnalysis.RegExpr.Parser;
 
 namespace QtVsTools.Qml.Debug
 {
     using V4;
-    using CommandLineParser = QtProjectLib.CommandLine.Parser;
-    using CommandLineOption = QtProjectLib.CommandLine.Option;
 
     struct FrameInfo
     {
@@ -428,7 +428,7 @@ namespace QtVsTools.Qml.Debug
                 .Assert(msg is ConnectMessage, "Unexpected message");
         }
 
-        public static bool CheckCommandLine(string execPath,string args)
+        public static bool CheckCommandLine(string execPath, string args)
         {
             ushort portFrom;
             ushort portTo;
@@ -439,12 +439,78 @@ namespace QtVsTools.Qml.Debug
                 execPath, args, out portFrom, out portTo, out hostName, out fileName, out block);
         }
 
-        static Regex regexDebuggerParams = new Regex(
-            @"^(?:(?:port\:(\d+)(?:\,(\d+))?)(?:,(?!$)|$)"
-            + @"|(?:host\:([^\,\r\n]+))(?:,(?!$)|$)"
-            + @"|(?:file\:([^\,\r\n]+))(?:,(?!$)|$)"
-            + @"|(block(?:,(?!$)|$)))+$");
+        /// <summary>
+        /// Connection parameters for QML debug session
+        /// </summary>
+        class ConnectParams
+        {
+            public ushort Port { get; set; }
+            public ushort? MaxPort { get; set; }
+            public string Host { get; set; }
+            public string File { get; set; }
+            public bool Block { get; set; }
+        }
 
+        enum TokenId { ConnectParams, Port, MaxPort, Host, File, Block }
+
+        /// <summary>
+        /// Regex-based parser for QML debug connection parameters
+        /// </summary>
+        static RegExprParser ConnectParamsParser => _ConnectParamsParser ?? (
+            _ConnectParamsParser = new Token(TokenId.ConnectParams, RxConnectParams)
+            {
+                new Rule<ConnectParams>
+                {
+                    Update(TokenId.Port, (ConnectParams conn, ushort n) => conn.Port = n),
+                    Update(TokenId.MaxPort, (ConnectParams conn, ushort n) => conn.MaxPort = n),
+                    Update(TokenId.Host, (ConnectParams conn, string s) => conn.Host = s),
+                    Update(TokenId.File, (ConnectParams conn, string s) => conn.File = s),
+                    Update(TokenId.Block, (ConnectParams conn, bool b) => conn.Block = b)
+                }
+            }
+            .Render());
+        static RegExprParser _ConnectParamsParser;
+
+        /// <summary>
+        /// Regular expression for parsing connection parameters string in the form:
+        ///
+        ///   -qmljsdebugger=port:<port_num>[,port_max][,host:<address>][,file:<name>][,block]
+        ///
+        /// </summary>
+        static RegExpr RxConnectParams =>
+            "-qmljsdebugger="
+            & ((RxPort | RxHost | RxFile) & RxDelim).Repeat(atLeast: 1) & RxBlock.Optional();
+
+        static RegExpr RxPort =>
+            "port:" & new Token(TokenId.Port, CharDigit.Repeat(atLeast: 1))
+            {
+                new Rule<ushort> { Capture(token => ushort.Parse(token)) }
+            }
+            & (
+                "," & new Token(TokenId.MaxPort, CharDigit.Repeat(atLeast: 1))
+                {
+                    new Rule<ushort> { Capture(token => ushort.Parse(token)) }
+                }
+            ).Optional();
+
+        static RegExpr RxHost =>
+            "host:" & new Token(TokenId.Host, (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
+
+        static RegExpr RxFile =>
+            "file:" & new Token(TokenId.File, (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
+
+        static RegExpr RxBlock =>
+            new Token(TokenId.Block, "block")
+            {
+                new Rule<bool> { Capture(token => true) }
+            };
+
+        static RegExpr RxDelim =>
+            ("," & !LookAhead[CharSpace | EndOfLine]) | LookAhead[CharSpace | EndOfLine];
+
+        /// <summary>
+        /// Extract QML debug connection parameters from command line args
+        /// </summary>
         public static bool ParseCommandLine(
             string execPath,
             string args,
@@ -458,43 +524,20 @@ namespace QtVsTools.Qml.Debug
             hostName = fileName = "";
             block = false;
 
-            var parser = new CommandLineParser();
-            parser.SetSingleDashWordOptionMode(
-                CommandLineParser.SingleDashWordOptionMode.ParseAsLongOptions);
-            var qmlJsDebugger = new CommandLineOption("qmljsdebugger")
-            {
-                ValueName = "port:<port_from>[,port_to][,host:<ip address>][,block]"
-            };
-            parser.AddOption(qmlJsDebugger);
-            try {
-                if (!parser.Parse(args, null, Path.GetFileName(execPath)))
-                    return false;
-            } catch {
-                return false;
-            }
-            var debuggerParams = parser.Value(qmlJsDebugger);
-            var match = regexDebuggerParams.Match(debuggerParams);
-            if (!match.Success)
+            ConnectParams connParams = ConnectParamsParser
+                .Parse(args)
+                .GetValues<ConnectParams>(TokenId.ConnectParams)
+                .FirstOrDefault();
+
+            if (connParams == null)
                 return false;
 
-            if (match.Groups.Count > 1 && match.Groups[1].Success) {
-                if (!ushort.TryParse(match.Groups[1].Value, out portFrom))
-                    return false;
-            }
-
-            if (match.Groups.Count > 2 && match.Groups[2].Success) {
-                if (!ushort.TryParse(match.Groups[2].Value, out portTo))
-                    return false;
-            }
-
-            if (match.Groups.Count > 3 && match.Groups[3].Success)
-                hostName = match.Groups[3].Value;
-
-            if (match.Groups.Count > 4 && match.Groups[4].Success)
-                fileName = match.Groups[4].Value;
-
-            if (match.Groups.Count > 5 && match.Groups[5].Success)
-                block = true;
+            portFrom = connParams.Port;
+            if (connParams.MaxPort.HasValue)
+                portTo = connParams.MaxPort.Value;
+            hostName = connParams.Host;
+            fileName = connParams.File;
+            block = connParams.Block;
 
             return true;
         }

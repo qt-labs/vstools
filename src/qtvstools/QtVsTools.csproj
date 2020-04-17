@@ -459,6 +459,10 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
     <ProjectReference Include="..\qtwizard\QtVsTools.Wizards.csproj">
       <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
       <Name>QtVsTools.Wizards</Name>
