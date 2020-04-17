@@ -219,6 +219,7 @@ namespace QtVsTools.SyntaxAnalysis
                 public CharClass Term { get; private set; }
                 public Expr(CharClass c) { Operator = Op.Term; Term = c; }
                 public static implicit operator Expr(CharClass c) { return new Expr(c); }
+                public static implicit operator Expr(string s) { return Char[s]; }
                 public static Expr operator ~(Expr x)
                 { return new Expr(Op.Tilde, x); }
             }
@@ -232,6 +233,14 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public static Expr operator -(PositiveSet x, PositiveSet y)
                 { return new Expr(Op.Minus, x, y); }
+            }
+
+            public CharClassSet this[params Expr[] exprs]
+            {
+                get
+                {
+                    return this[new PositiveSet(Op.Plus, exprs)];
+                }
             }
 
             public CharClassSet this[Expr expr]

@@ -44,6 +44,12 @@ namespace QtVsTools.SyntaxAnalysis
         { get { return new CharClassLiteral { LiteralChars = @"\w" }; } }
 
         /// <summary><![CDATA[
+        /// Equivalent to: [\d]
+        /// ]]></summary>
+        public static CharClassLiteral CharDigit
+        { get { return new CharClassLiteral { LiteralChars = @"\d" }; } }
+
+        /// <summary><![CDATA[
         /// Equivalent to: [\r]
         /// ]]></summary>
         public static CharClassLiteral CharCr
@@ -123,6 +129,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         static CharExprBuilder _Char = new CharExprBuilder();
         public static CharExprBuilder Char { get { return _Char; } }
+        public static CharExprBuilder Chars { get { return _Char; } }
 
         static CharSetExprBuilder _CharSet = new CharSetExprBuilder();
         public static CharSetExprBuilder CharSet { get { return _CharSet; } }

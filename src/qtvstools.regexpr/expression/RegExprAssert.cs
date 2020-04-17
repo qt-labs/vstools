@@ -156,6 +156,16 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     return e.Assert;
                 }
+
+                public static RegExpr operator &(RegExpr rx1, Expr rx2)
+                {
+                    return Concat(rx1, rx2);
+                }
+
+                public static RegExpr operator |(RegExpr rx1, Expr rx2)
+                {
+                    return Choice(rx1, rx2);
+                }
             }
 
             public class NegateableExpr : Expr
