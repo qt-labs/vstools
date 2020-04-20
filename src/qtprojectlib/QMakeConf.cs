@@ -48,14 +48,14 @@ namespace QtProjectLib
             // This is what happens below.
             if (!File.Exists(qmakeConf)) {
                 var qmakeQuery = new QMakeQuery(versionInfo);
-                var qmakespecDir = qmakeQuery.query("QMAKE_XSPEC");
+                var qmakespecDir = qmakeQuery.QueryValue("QMAKE_XSPEC");
 
-                if (qmakeQuery.ErrorValue == 0 && !string.IsNullOrEmpty(qmakespecDir)) {
+                if (!string.IsNullOrEmpty(qmakespecDir)) {
                     QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", qmakespecDir);
                     qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
                 }
 
-                if (qmakeQuery.ErrorValue != 0 || !File.Exists(qmakeConf))
+                if (string.IsNullOrEmpty(qmakespecDir) || !File.Exists(qmakeConf))
                     throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
             }
 

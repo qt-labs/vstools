@@ -95,8 +95,8 @@ namespace QtProjectLib
             // Find version number
             try {
                 var qmakeQuery = new QMakeQuery(this);
-                var strVersion = qmakeQuery.query("QT_VERSION");
-                if (qmakeQuery.ErrorValue == 0 && strVersion.Length > 0) {
+                var strVersion = qmakeQuery.QueryValue("QT_VERSION");
+                if (!string.IsNullOrEmpty(strVersion)) {
                     var versionParts = strVersion.Split('.');
                     if (versionParts.Length != 3) {
                         qtDir = null;
@@ -125,7 +125,7 @@ namespace QtProjectLib
                 qt5Version = (qtMajor == 5);
 
                 try {
-                    QtInstallDocs = qmakeQuery.query("QT_INSTALL_DOCS");
+                    QtInstallDocs = qmakeQuery.QueryValue("QT_INSTALL_DOCS");
                 } catch { }
             } catch {
                 qtDir = null;
@@ -152,8 +152,8 @@ namespace QtProjectLib
                 var tempPro = Path.Combine(tempDir, string.Format("{0}.pro", randomName));
                 File.WriteAllText(tempPro, tempProData.ToString());
 
-                var qmake = new QMake(null, tempPro, false, this);
-                qmake.RunQMake(this);
+                var qmake = new QMakeImport(this, tempPro);
+                qmake.Run(setVCVars: true);
 
                 var tempVcxproj = Path.Combine(tempDir, string.Format("{0}.vcxproj", randomName));
                 var msbuildProj = MsBuildProject.Load(tempVcxproj);
@@ -294,13 +294,13 @@ namespace QtProjectLib
             var qmakeQuery = new QMakeQuery(this);
             string qmakeXSpec;
             try {
-                qmakeXSpec = qmakeQuery.query("QMAKE_XSPEC");
+                qmakeXSpec = qmakeQuery.QueryValue("QMAKE_XSPEC");
             }
             catch {
                 throw new QtVSException("Error starting qmake process");
             }
 
-            if (qmakeQuery.ErrorValue != 0 && string.IsNullOrEmpty(qmakeXSpec))
+            if (string.IsNullOrEmpty(qmakeXSpec))
                 throw new QtVSException("Error: unexpected result of qmake query");
 
             return qmakeXSpec.StartsWith("winrt");

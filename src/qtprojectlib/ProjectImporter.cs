@@ -332,27 +332,20 @@ namespace QtProjectLib
                 SR.GetString("ProjectExists"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
                 Messages.PaneMessage(dteObject, "--- (Import): Generating new project of " + mainInfo.Name + " file");
 
-                var dialog = new InfoDialog(mainInfo.Name);
-                var qmake = new QMake(dteObject, mainInfo.FullName, recursive, vi);
+                var waitDialog = WaitDialog.Start(
+                    "Open Qt Project File",
+                    "Generating Visual Studio project...",
+                    null, null, 2, false, true);
 
-                qmake.CloseEvent += dialog.CloseEventHandler;
-                qmake.PaneMessageDataEvent += PaneMessageDataReceived;
+                var qmake = new QMakeImport(vi, mainInfo.FullName, recursive, dteObject);
+                int exitCode = qmake.Run(setVCVars: true);
+                waitDialog.Stop();
 
-                var qmakeThread = new System.Threading.Thread(qmake.RunQMake);
-                qmakeThread.Start();
-                dialog.ShowDialog();
-                qmakeThread.Join();
-
-                if (qmake.ErrorValue == 0)
+                if (exitCode == 0)
                     return VCInfo;
             }
 
             return null;
-        }
-
-        private void PaneMessageDataReceived(string data)
-        {
-            Messages.PaneMessage(dteObject, data);
         }
 
         private static bool CheckQtVersion(VersionInformation vi)
