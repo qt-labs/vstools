@@ -62,8 +62,8 @@ namespace QtVsTools.Wizards.ClassWizard
                     Kind = ClassKind.Core
                 },
                 new Class {
-                    ClassName = @"Qt GUI Class",
-                    DefaultName = @"QtGuiClass",
+                    ClassName = @"Qt Widgets Class",
+                    DefaultName = @"QtWidgetsClass",
                     Type = @"Visual C++",
                     Description = @"Creates a new empty Qt Designer form along with a matching "
                         + @"C++ header and source file for implementation purposes. You can add "

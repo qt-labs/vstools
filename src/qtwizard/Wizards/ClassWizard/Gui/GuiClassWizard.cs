@@ -54,7 +54,7 @@ namespace QtVsTools.Wizards.ClassWizard
 
                 try {
                     if (string.IsNullOrEmpty(name))
-                        name = @"QtGuiClass";
+                        name = @"QtWidgetsClass";
 
                     data.ClassName = name;
                     data.BaseClass = @"QWidget";
@@ -65,8 +65,8 @@ namespace QtVsTools.Wizards.ClassWizard
                     var wizard = new WizardWindow(new List<WizardPage> {
                         new WizardIntroPage {
                             Data = data,
-                            Header = @"Welcome to the Qt GUI Class Wizard",
-                            Message = @"This wizard will add a new Qt GUI class to your project. "
+                            Header = @"Welcome to the Qt Widgets Class Wizard",
+                            Message = @"This wizard will add a new Qt Widgets class to your project. "
                                 + @"The wizard creates a .h and .cpp file. It also creates a new "
                                 + @"empty form." + System.Environment.NewLine
                                 + System.Environment.NewLine + "To continue, click Next.",
@@ -77,8 +77,8 @@ namespace QtVsTools.Wizards.ClassWizard
                         },
                         new GuiClassPage {
                             Data = data,
-                            Header = @"Welcome to the Qt GUI Class Wizard",
-                            Message = @"This wizard will add a new Qt GUI class to your project. "
+                            Header = @"Welcome to the Qt Widgets Class Wizard",
+                            Message = @"This wizard will add a new Qt Widgets class to your project. "
                                 + @"The wizard creates a .h and .cpp file. It also creates a new "
                                 + @"empty form.",
                             PreviousButtonEnabled = true,
@@ -88,7 +88,7 @@ namespace QtVsTools.Wizards.ClassWizard
                         }
                     })
                     {
-                        Title = @"Qt GUI Class Wizard"
+                        Title = @"Qt Widgets Class Wizard"
                     };
                     WindowHelper.ShowModal(wizard, hwnd);
                     if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)

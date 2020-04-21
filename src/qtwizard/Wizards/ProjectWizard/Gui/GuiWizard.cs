@@ -74,13 +74,13 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         WizardWindow _WizardWindow;
         protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt GUI Application Wizard")
+            ?? (_WizardWindow = new WizardWindow(title: "Qt Widgets Application Wizard")
             {
                 new WizardIntroPage
                 {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt GUI Application Wizard",
-                    Message = @"This wizard generates a Qt GUI application project. The "
+                    Header = @"Welcome to the Qt Widgets Application Wizard",
+                    Message = @"This wizard generates a Qt Widgets application project. The "
                         + @"application derives from QApplication and includes an empty "
                         + @"widget." + System.Environment.NewLine
                         + System.Environment.NewLine + "To continue, click Next.",
@@ -92,7 +92,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 new ConfigPage
                 {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Header = @"Welcome to the Qt Widgets Application Wizard",
                     Message =
                             @"Setup the configurations you want to include in your project. "
                             + @"The recommended settings for this project are selected by default.",
@@ -104,8 +104,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 new GuiPage
                 {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt GUI Application Wizard",
-                    Message = @"This wizard generates a Qt GUI application project. The "
+                    Header = @"Welcome to the Qt Widgets Application Wizard",
+                    Message = @"This wizard generates a Qt Widgets application project. The "
                         + @"application derives from QApplication and includes an empty "
                         + @"widget.",
                     PreviousButtonEnabled = true,
@@ -167,7 +167,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
             var result = new Util.ClassNameValidationRule().Validate(className, null);
             if (result != ValidationResult.ValidResult)
-                className = @"QtGuiApplication";
+                className = @"QtWidgetsApplication";
 
             WizardData.ClassName = className;
             WizardData.BaseClass = @"QMainWindow";

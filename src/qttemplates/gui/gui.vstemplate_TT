@@ -38,12 +38,12 @@
             xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
             Type="Project" >
     <TemplateData>
-        <Name>Qt GUI Application</Name>
-        <Description>This wizard generates a Qt GUI application project.</Description>
+        <Name>Qt Widgets Application</Name>
+        <Description>This wizard generates a Qt Widgets application project.</Description>
         <ProjectType>VC</ProjectType>
         <SortOrder>1000</SortOrder>
         <CreateNewFolder>true</CreateNewFolder>
-        <DefaultName>QtGuiApplication</DefaultName>
+        <DefaultName>QtWidgetsApplication</DefaultName>
         <ProvideDefaultName>true</ProvideDefaultName>
         <LocationField>Enabled</LocationField>
         <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
