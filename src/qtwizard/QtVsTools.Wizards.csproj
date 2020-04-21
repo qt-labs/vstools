@@ -61,6 +61,7 @@
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\ProjectWizard\ProjectTemplateWizard.cs" />
+    <Compile Include="Wizards\ProjectWizard\Quick\QuickWizard.cs" />
     <Compile Include="Wizards\Util\ClassNameValidationRule.cs" />
     <Compile Include="Wizards\ProjectWizard\Console\ConsoleWizard.cs" />
     <Compile Include="Wizards\ClassWizard\Core\CoreClassPage.xaml.cs">

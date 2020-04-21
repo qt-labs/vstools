@@ -89,6 +89,10 @@
       d:TargetPath="|Empty;TemplateProjectOutputGroup|" Path="ProjectTemplates"
       d:VsixSubPath="ProjectTemplates" />
     <Asset
+      Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Quick"
+      d:TargetPath="|Quick;TemplateProjectOutputGroup|" Path="ProjectTemplates"
+      d:VsixSubPath="ProjectTemplates" />
+    <Asset
       Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Lib"
       d:TargetPath="|Lib;TemplateProjectOutputGroup|" Path="ProjectTemplates"
       d:VsixSubPath="ProjectTemplates" />

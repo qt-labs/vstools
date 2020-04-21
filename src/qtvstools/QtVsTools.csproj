@@ -438,6 +438,14 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\qttemplates\quick\Quick.csproj">
+      <Project>{4833e4c7-ffff-4da5-a7a5-36c6c3840f16}</Project>
+      <Name>Quick</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\qttemplates\resource\Resource.csproj">
       <Project>{BDA1CD69-624B-4D9D-9B88-ACBEB14AC471}</Project>
       <Name>Resource</Name>
