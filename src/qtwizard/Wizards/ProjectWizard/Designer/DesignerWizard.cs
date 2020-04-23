@@ -96,7 +96,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 },
                 new ConfigPage {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt GUI Application Wizard",
+                    Header = @"Welcome to the Qt Custom Designer Widget",
                     Message =
                             @"Setup the configurations you want to include in your project. "
                             + @"The recommended settings for this project are selected by default.",
