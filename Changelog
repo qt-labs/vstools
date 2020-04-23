@@ -1,3 +1,24 @@
+Qt Visual Studio Tools version 2.5.0:
+
+Changes
+-------
+ - New-project wizards will now allow choice of Qt version per configuration (QTVSADDINBUG-737)
+ - Added the Qt Quick Application project wizard (QTVSADDINBUG-589)
+ - Renamed Qt GUI Application wizard to Qt Widgets Application (QTVSADDINBUG-589)
+ - Added support for rcc two-pass mode (QTVSADDINBUG-564)
+ - Fixed QTVSADDINBUG-642: Ignoring changes to VS document folder path when deploying .natvis
+ - Fixed QTVSADDINBUG-643: Debug visualizer for QHash does not work with const key type
+ - Fixed QTVSADDINBUG-644: Error message "Qt not configured" does not identify the project
+ - Fixed QTVSADDINBUG-646: QML debugging will not work if command-line arguments are added
+ - Fixed QTVSADDINBUG-647: If no Qt version is configured in VS, a generic error message is shown
+ - Fixed QTVSADDINBUG-648: Importing .pro shows qmake status and error messages out-of-sync
+ - Fixed QTVSADDINBUG-704: Importing .pro ignores private Qt modules
+ - Fixed QTVSADDINBUG-711: Incompatibility with VS unity builds
+ - Fixed QTVSADDINBUG-721: Target path for Qt properties file cannot be changed
+ - Fixed QTVSADDINBUG-732: Importing .pro blindly substitutes the string 'release' in file names
+ - Fixed QTVSADDINBUG-733: NDEBUG defined in Release configurations
+
+
 The Qt Visual Studio Tools version 2.4.3 includes several bug fixes.
 
 Changes

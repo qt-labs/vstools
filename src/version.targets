@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(QtVSToolsVersion)' == ''">
-    <QtVSToolsVersion>2.4.3</QtVSToolsVersion>
+    <QtVSToolsVersion>2.5.0</QtVSToolsVersion>
   </PropertyGroup>
 </Project>
