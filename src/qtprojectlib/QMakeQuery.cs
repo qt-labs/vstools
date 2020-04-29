@@ -27,12 +27,17 @@
 ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using QtVsTools.SyntaxAnalysis;
 
 namespace QtProjectLib
 {
+    using static RegExpr;
+
     class QMakeQuery : QMake
     {
         public QMakeQuery(VersionInformation vi) : base(vi)
@@ -41,8 +46,7 @@ namespace QtProjectLib
         StringBuilder stdOutput;
         protected override void OutMsg(string msg)
         {
-            if (stdOutput != null && !string.IsNullOrEmpty(msg))
-                stdOutput.Append(msg);
+            stdOutput.AppendLine(msg);
         }
 
         public string QueryValue(string property)
@@ -51,9 +55,70 @@ namespace QtProjectLib
             stdOutput = new StringBuilder();
             Query = property;
             if (Run() == 0 && stdOutput.Length > 0)
-                return stdOutput.ToString();
+                return stdOutput.ToString().Replace("\r", "").Replace("\n", "");
             else
                 return string.Empty;
+        }
+
+        public Dictionary<string, string> QueryAllValues()
+        {
+            string result = string.Empty;
+            stdOutput = new StringBuilder();
+            Query = " ";
+
+            if (Run() == 0 && stdOutput.Length > 0) {
+                return PropertyParser
+                    .Parse(stdOutput.ToString())
+                    .GetValues<KeyValuePair<string, string>>("PROP")
+                    .ToDictionary(property => property.Key, property => property.Value);
+            } else {
+                return new Dictionary<string, string>();
+            }
+        }
+
+        public string this[string name]
+        {
+            get
+            {
+                string value = string.Empty;
+                if (Properties.TryGetValue(name, out value))
+                    return value;
+                else
+                    return null;
+            }
+        }
+
+        Dictionary<string, string> _Properties;
+        Dictionary<string, string> Properties => _Properties ?? (_Properties = QueryAllValues());
+
+        Parser _PropertyParser;
+        Parser PropertyParser
+        {
+            get
+            {
+                if (_PropertyParser != null)
+                    return _PropertyParser;
+
+                var charSeparator = Char[':'];
+                var charsName = CharSet[~(charSeparator + CharVertSpace)];
+                var charsValue = CharSet[~CharVertSpace];
+
+                var propertyName = new Token("NAME", charsName.Repeat(atLeast: 1));
+                var propertyValue = new Token("VALUE", charsValue.Repeat());
+                var property = new Token("PROP", propertyName & charSeparator & propertyValue)
+                {
+                    new Rule<KeyValuePair<string, string>>
+                    {
+                        Create("NAME", (string name)
+                            => new KeyValuePair<string, string>(name, string.Empty)),
+
+                        Transform("VALUE", (KeyValuePair<string, string> prop, string value)
+                            => new KeyValuePair<string, string>(prop.Key, value))
+                    }
+                };
+                var propertyLine = StartOfLine & property & CharVertSpace.Repeat();
+                return _PropertyParser = propertyLine.Repeat().Render();
+            }
         }
     }
 }
