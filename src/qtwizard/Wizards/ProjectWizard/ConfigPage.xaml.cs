@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,7 +73,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         class Config : ICloneable<Config>, IWizardConfiguration
         {
             public string Name { get; set; }
-            public string QtVersion { get; set; }
+            public VersionInformation QtVersion { get; set; }
             public string Target { get; set; }
             public string Platform { get; set; }
             public bool IsDebug { get; set; }
@@ -124,6 +125,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             .Union(QtVersionManager.The().GetVersions());
 
         QtVersionManager qtVersionManager = QtVersionManager.The();
+        VersionInformation defaultQtVersionInfo;
+
         CloneableList<Config> defaultConfigs;
         List<Config> currentConfigs;
         bool initialNextButtonIsEnabled;
@@ -132,6 +135,9 @@ namespace QtVsTools.Wizards.ProjectWizard
         public ConfigPage()
         {
             InitializeComponent();
+
+            string defaultQtVersionName = qtVersionManager.GetDefaultVersion();
+            defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
 
             ErrorIcon.Source = Imaging.CreateBitmapSourceFromHIcon(
                 SystemIcons.Exclamation.Handle, Int32Rect.Empty,
@@ -158,9 +164,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
                 .Union(QtVersionManager.The().GetVersions());
 
-            var defaultQtVersionName = qtVersionManager.GetDefaultVersion();
-            var defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
-            if (string.IsNullOrEmpty(defaultQtVersionName) || defaultQtVersionInfo == null) {
+            if (defaultQtVersionInfo == null) {
                 Validate();
                 return;
             }
@@ -169,7 +173,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 new Config {
                     Name = "Debug",
                     IsDebug = true,
-                    QtVersion = defaultQtVersionName,
+                    QtVersion = defaultQtVersionInfo,
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
@@ -181,7 +185,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 new Config {
                     Name = "Release",
                     IsDebug = false,
-                    QtVersion = defaultQtVersionName,
+                    QtVersion = defaultQtVersionInfo,
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
@@ -275,7 +279,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 && GetBinding(comboBoxQtVersion) is Config config) {
                 comboBoxQtVersion.IsEnabled = false;
                 comboBoxQtVersion.ItemsSource = qtVersionList;
-                comboBoxQtVersion.Text = config.QtVersion;
+                comboBoxQtVersion.Text = config.QtVersion.name;
                 comboBoxQtVersion.IsEnabled = true;
             }
         }
@@ -285,29 +289,41 @@ namespace QtVsTools.Wizards.ProjectWizard
             if (sender is ComboBox comboBoxQtVersion
                 && comboBoxQtVersion.IsEnabled
                 && GetBinding(comboBoxQtVersion) is Config config
-                && config.QtVersion != comboBoxQtVersion.Text) {
+                && config.QtVersion.name != comboBoxQtVersion.Text) {
                 var oldQtVersion = config.QtVersion;
                 if (comboBoxQtVersion.Text == QT_VERSION_DEFAULT) {
-                    config.QtVersion = QtVersionManager.The().GetDefaultVersion();
-                    comboBoxQtVersion.Text = QtVersionManager.The().GetDefaultVersion();
+                    config.QtVersion = defaultQtVersionInfo;
+                    comboBoxQtVersion.Text = defaultQtVersionInfo.name;
                 } else if (comboBoxQtVersion.Text == QT_VERSION_BROWSE) {
                     var openFileDialog = new OpenFileDialog
                     {
                         Filter = "qmake (qmake.exe)|qmake.exe"
                     };
-                    if (openFileDialog.ShowDialog() == true)
-                        config.QtVersion = openFileDialog.FileName;
-                    comboBoxQtVersion.Text = config.QtVersion;
+                    if (openFileDialog.ShowDialog() == true) {
+                        IEnumerable<string> binPath = Path.GetDirectoryName(openFileDialog.FileName)
+                            .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        string lastDirName = binPath.LastOrDefault();
+                        if ("bin".Equals(lastDirName, StringComparison.InvariantCultureIgnoreCase))
+                            binPath = binPath.Take(binPath.Count() - 1);
+
+                        var qtVersion = string.Join(
+                            Path.DirectorySeparatorChar.ToString(), binPath);
+                        var versionInfo = VersionInformation.Get(qtVersion);
+                        if (versionInfo != null) {
+                            versionInfo.name = qtVersion;
+                            config.QtVersion = versionInfo;
+                        }
+                    }
+                    comboBoxQtVersion.Text = config.QtVersion.name;
                 } else {
-                    config.QtVersion = comboBoxQtVersion.Text;
+                    config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                 }
                 if (oldQtVersion != config.QtVersion) {
-                    var qtVersionInfo = qtVersionManager.GetVersionInfo(config.QtVersion);
-                    if (qtVersionInfo != null) {
-                        config.Target = qtVersionInfo.isWinRT()
+                    if (config.QtVersion != null) {
+                        config.Target = config.QtVersion.isWinRT()
                             ? ProjectTargets.WindowsStore.Cast<string>()
                             : ProjectTargets.Windows.Cast<string>();
-                        config.Platform = qtVersionInfo.is64Bit()
+                        config.Platform = config.QtVersion.is64Bit()
                             ? ProjectPlatforms.X64.Cast<string>()
                             : ProjectPlatforms.Win32.Cast<string>();
                     }

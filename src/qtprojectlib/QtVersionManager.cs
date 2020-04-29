@@ -103,6 +103,7 @@ namespace QtProjectLib
             if (vi == null) {
                 var qtdir = GetInstallPath(name);
                 versionCache[name] = vi = VersionInformation.Get(qtdir);
+                vi.name = name;
             }
             return vi;
         }

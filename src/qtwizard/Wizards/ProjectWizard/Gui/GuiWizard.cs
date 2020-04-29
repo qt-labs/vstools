@@ -254,7 +254,6 @@ namespace QtVsTools.Wizards.ProjectWizard
                 .FirstOrDefault();
 
             if (configWinRT != null) {
-                var versionInfo = VersionManager.GetVersionInfo(configWinRT.QtVersion);
                 var projDir = Parameter[NewProject.DestinationDirectory];
                 var qmakeTmpDir = Path.Combine(projDir, "qmake_tmp");
                 Directory.CreateDirectory(qmakeTmpDir);
@@ -263,7 +262,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     string.Format("{0}.pro", Parameter[NewProject.SafeName]));
                 File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
 
-                var qmake = new QMakeImport(versionInfo, dummyPro);
+                var qmake = new QMakeImport(configWinRT.QtVersion, dummyPro);
                 qmake.Run();
 
                 var qmakeAssetsDir = Path.Combine(qmakeTmpDir, "assets");

@@ -53,7 +53,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     public interface IWizardConfiguration
     {
         string Name { get; }
-        string QtVersion { get; }
+        VersionInformation QtVersion { get; }
         string Target { get; }
         string Platform { get; }
         bool IsDebug { get; }
@@ -297,13 +297,12 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             foreach (IWizardConfiguration c in Configurations
                 .Where(c => c.Target.EqualTo(ProjectTargets.Windows))) {
-                VersionInformation qtVersionInfo = VersionManager.GetVersionInfo(c.QtVersion);
-                if (!string.IsNullOrEmpty(qtVersionInfo.VC_WindowsTargetPlatformVersion)) {
+                if (!string.IsNullOrEmpty(c.QtVersion.VC_WindowsTargetPlatformVersion)) {
                     xml.AppendLine(string.Format(@"
     <WindowsTargetPlatformVersion Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">{2}</WindowsTargetPlatformVersion>",
                         /*{0}*/ c.Name,
                         /*{1}*/ c.Platform,
-                        /*{2}*/ qtVersionInfo.VC_WindowsTargetPlatformVersion));
+                        /*{2}*/ c.QtVersion.VC_WindowsTargetPlatformVersion));
                 }
             }
 
@@ -312,7 +311,6 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             foreach (IWizardConfiguration c in Configurations
                 .Where(c => c.Target.EqualTo(ProjectTargets.WindowsStore))) {
-                VersionInformation qtVersionInfo = VersionManager.GetVersionInfo(c.QtVersion);
                 xml.AppendLine(string.Format(@"
     <ApplicationType Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">{2}</WindowsTargetPlatformVersion>
@@ -323,10 +321,10 @@ namespace QtVsTools.Wizards.ProjectWizard
     <AppContainerApplication Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">true</AppContainerApplication>",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform,
-                    /*{2}*/ qtVersionInfo.VC_WindowsTargetPlatformVersion,
-                    /*{3}*/ qtVersionInfo.VC_WindowsTargetPlatformMinVersion,
-                    /*{4}*/ qtVersionInfo.VC_MinimumVisualStudioVersion,
-                    /*{5}*/ qtVersionInfo.VC_ApplicationTypeRevision));
+                    /*{2}*/ c.QtVersion.VC_WindowsTargetPlatformVersion,
+                    /*{3}*/ c.QtVersion.VC_WindowsTargetPlatformMinVersion,
+                    /*{4}*/ c.QtVersion.VC_MinimumVisualStudioVersion,
+                    /*{5}*/ c.QtVersion.VC_ApplicationTypeRevision));
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////
@@ -342,7 +340,6 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
-                VersionInformation qtVersionInfo = VersionManager.GetVersionInfo(c.QtVersion);
                 xml.AppendLine(string.Format(@"
   <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"" Label=""Configuration"">",
                     /*{0}*/ c.Name,
@@ -359,7 +356,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 }
                 xml.AppendLine(string.Format(@"
     <PlatformToolset>{0}</PlatformToolset>",
-                    /*{0}*/ qtVersionInfo.VC_PlatformToolset));
+                    /*{0}*/ c.QtVersion.VC_PlatformToolset));
                 if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
                     xml.AppendLine(@"
     <GenerateManifest>false</GenerateManifest>
@@ -396,7 +393,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     <QtBuildConfig>{4}</QtBuildConfig>",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform,
-                    /*{2}*/ c.QtVersion,
+                    /*{2}*/ c.QtVersion.name,
                     /*{3}*/ string.Join(";", c.Modules.Union(ExtraModules)),
                     /*{4}*/ c.IsDebug ? "debug" : "release"));
                 if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
@@ -420,7 +417,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
-                VersionInformation qtVersionInfo = VersionManager.GetVersionInfo(c.QtVersion);
                 xml.AppendLine(string.Format(@"
   <ItemDefinitionGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"" Label=""Configuration"">",
                     /*{0}*/ c.Name,
@@ -485,7 +481,7 @@ namespace QtVsTools.Wizards.ProjectWizard
       <GenerateManifest>false</GenerateManifest>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <TargetMachine>{0}</TargetMachine>",
-                        /*{0}*/ qtVersionInfo.VC_Link_TargetMachine));
+                        /*{0}*/ c.QtVersion.VC_Link_TargetMachine));
                 }
                 foreach (ItemProperty p in linkProperties) {
                     xml.AppendLine(string.Format(@"

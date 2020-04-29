@@ -41,6 +41,7 @@ namespace QtProjectLib
     public class VersionInformation
     {
         //fields
+        public string name;
         public string qtDir;
         public uint qtMajor; // X in version x.y.z
         public uint qtMinor; // Y in version x.y.z
