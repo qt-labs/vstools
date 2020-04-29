@@ -48,14 +48,22 @@ namespace QtProjectLib
             // This is what happens below.
             if (!File.Exists(qmakeConf)) {
                 var qmakeQuery = new QMakeQuery(versionInfo);
-                var qmakespecDir = qmakeQuery.QueryValue("QMAKE_XSPEC");
 
-                if (!string.IsNullOrEmpty(qmakespecDir)) {
-                    QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", qmakespecDir);
-                    qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
-                }
+                string qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
+                if (string.IsNullOrEmpty(qtPrefix))
+                    throw new QtVSException("qmake error: no value for QT_INSTALL_PREFIX");
 
-                if (string.IsNullOrEmpty(qmakespecDir) || !File.Exists(qmakeConf))
+                string qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA"];
+                if (string.IsNullOrEmpty(qtArchData))
+                    throw new QtVSException("qmake error: no value for QT_INSTALL_ARCHDATA");
+
+                string qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
+                if (string.IsNullOrEmpty(qtArchData))
+                    throw new QtVSException("qmake error: no value for QMAKE_XSPEC");
+
+                qmakeConf = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec, "qmake.conf");
+
+                if (!File.Exists(qmakeConf))
                     throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
             }
 
