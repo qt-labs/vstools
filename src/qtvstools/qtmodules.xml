@@ -39,8 +39,6 @@
     <proVarQT>opengl</proVarQT>
     <IncludePath>$(QTDIR)\include\QtOpenGL</IncludePath>
     <Defines>QT_OPENGL_LIB</Defines>
-    <AdditionalLibraries>opengl32.lib</AdditionalLibraries>
-    <AdditionalLibraries>glu32.lib</AdditionalLibraries>
   </Module>
   <Module Id="5">
     <Name>Network</Name>
