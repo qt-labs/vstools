@@ -206,15 +206,7 @@ namespace QtProjectLib
         private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
             var xmlProject = MsBuildProject.Load(projectFile.FullName);
-            var qtDir = ParseQtDirFromFileContent(xmlProject.ProjectXml, vi);
-            if (!string.IsNullOrEmpty(qtDir)) {
-                xmlProject.ReplacePath(qtDir, "$(QTDIR)\\");
-                // qmake tends to write relative and absolute paths into the .vcxproj file
-                if (!Path.IsPathRooted(qtDir)) // if the project is on the same drive as Qt.
-                    xmlProject.ReplacePath(vi.qtDir + '\\', "$(QTDIR)\\");
-            } else {
-                Messages.PaneMessage(dteObject, SR.GetString("ImportProject_CannotFindQtDirectory", projectFile.Name));
-            }
+            xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
 
             bool ok = xmlProject.AddQtMsBuildReferences();

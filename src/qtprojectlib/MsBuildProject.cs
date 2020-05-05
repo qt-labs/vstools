@@ -39,12 +39,13 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
 using QtVsTools.VisualStudio;
+using QtVsTools.SyntaxAnalysis;
 using EnvDTE;
 
 namespace QtProjectLib
 {
-    using static QtVsTools.SyntaxAnalysis.RegExpr;
     using static HelperFunctions;
+    using static RegExpr;
 
     public class MsBuildProject
     {
@@ -1380,13 +1381,46 @@ namespace QtProjectLib
             }
         }
 
+        /// <summary>
+        /// All path separators
+        /// </summary>
+        static readonly char[] slashChars = new[]
+        {
+            Path.DirectorySeparatorChar,
+            Path.AltDirectorySeparatorChar
+        };
+
+        /// <summary>
+        /// Pattern that matches one path separator char
+        /// </summary>
+        static readonly RegExpr slash = CharSet[slashChars];
+
+        /// <summary>
+        /// Gets a RegExpr that matches a given path, regardless
+        /// of case and varying directory separators
+        /// </summary>
+        static RegExpr GetPathPattern(string findWhatPath)
+        {
+            return
+                // Make pattern case-insensitive
+                IgnoreCase &
+                // Split path string by directory separators
+                findWhatPath.Split(slashChars, StringSplitOptions.RemoveEmptyEntries)
+                // Convert path parts to RegExpr (escapes regex special chars)
+                .Select(dirName => (RegExpr)dirName)
+                // Join all parts, separated by path separator pattern
+                .Aggregate((path, dirName) => path & slash & dirName);
+        }
+
         public void ReplacePath(string oldPath, string newPath)
         {
-            var findWhat = new Regex(oldPath
-                .Replace("\\", "[\\\\\\/]")
-                .Replace(".", "\\.")
-                .Replace("$", "\\$"),
-                RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+            Uri srcUri = new Uri(Path.GetFullPath(oldPath));
+            Uri projUri = new Uri(this[Files.Project].filePath);
+
+            RegExpr absolutePath = GetPathPattern(srcUri.AbsolutePath);
+            RegExpr relativePath = GetPathPattern(projUri.MakeRelativeUri(srcUri).OriginalString);
+
+            Regex findWhat = (absolutePath | relativePath).Render().Regex;
 
             foreach (var xElem in this[Files.Project].xml.Descendants()) {
                 if (!xElem.HasElements)
