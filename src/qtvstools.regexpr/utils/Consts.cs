@@ -121,6 +121,18 @@ namespace QtVsTools.SyntaxAnalysis
         public static RegExprSequence LineBreak
         { get { return CharCr.Optional() & CharLf; } }
 
+        /// <summary><![CDATA[
+        /// Equivalent to: (?i)
+        /// ]]></summary>
+        public static RegExprLiteral IgnoreCase
+        { get { return new RegExprLiteral { LiteralExpr = @"(?i)" }; } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: (?-i)
+        /// ]]></summary>
+        public static RegExprLiteral SenseCase
+        { get { return new RegExprLiteral { LiteralExpr = @"(?-i)" }; } }
+
         /// <summary>
         /// Applies the same whitespace skipping rules as tokens, but does not any capture text.
         /// </summary>

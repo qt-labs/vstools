@@ -220,6 +220,7 @@ namespace QtVsTools.SyntaxAnalysis
                 public Expr(CharClass c) { Operator = Op.Term; Term = c; }
                 public static implicit operator Expr(CharClass c) { return new Expr(c); }
                 public static implicit operator Expr(string s) { return Char[s]; }
+                public static implicit operator Expr(char c) { return Char[c]; }
                 public static Expr operator ~(Expr x)
                 { return new Expr(Op.Tilde, x); }
             }
@@ -309,6 +310,14 @@ namespace QtVsTools.SyntaxAnalysis
                         throw new CharClassEvalException();
 
                     return classSet;
+                }
+            }
+
+            public CharClassSet this[IEnumerable<char> chars]
+            {
+                get
+                {
+                    return this[chars.Select(c => (Expr)c).ToArray()];
                 }
             }
 
