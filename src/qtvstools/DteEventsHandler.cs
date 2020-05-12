@@ -546,6 +546,9 @@ namespace QtVsTools
         {
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
+#if VS2017 || VS2019
+                QtProjectTracker.AddProject(project);
+#endif
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection) {
