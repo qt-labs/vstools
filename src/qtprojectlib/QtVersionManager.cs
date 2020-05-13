@@ -153,12 +153,6 @@ namespace QtProjectLib
             return versionKey.GetSubKeyNames();
         }
 
-        private class QtVersion
-        {
-            public string name;
-            public VersionInformation vi;
-        }
-
         /// <summary>
         /// Check if all Qt versions are valid and readable.
         /// </summary>
