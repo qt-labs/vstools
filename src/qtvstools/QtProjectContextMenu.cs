@@ -240,6 +240,13 @@ namespace QtVsTools
             }
 
             switch ((CommandId) command.CommandID.ID) {
+            // TODO: Fix these functionality and re-enable the menu items
+            case CommandId.ConvertToQtProjectId:
+            case CommandId.ConvertToQmakeProjectId:
+                {
+                    command.Visible = false;
+                }
+                break;
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:
             case CommandId.ExportProFileProjectId:
@@ -250,7 +257,7 @@ namespace QtVsTools
                 command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
                     .GetSelectedProject(Vsix.Instance.Dte));
                 break;
-            case CommandId.ConvertToQmakeProjectId:
+            //case CommandId.ConvertToQmakeProjectId:
             case CommandId.QtProjectSettingsProjectId:
             case CommandId.ProjectAddNewQtClassProjectId:
                 {
@@ -265,7 +272,7 @@ namespace QtVsTools
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }
                 break;
-            case CommandId.ConvertToQtProjectId:
+            //case CommandId.ConvertToQtProjectId:
             case CommandId.ChangeProjectQtVersionProjectId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
