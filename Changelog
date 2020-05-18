@@ -1,3 +1,14 @@
+Qt Visual Studio Tools version 2.5.1:
+
+Changes
+-------
+  - Minimum supported version of VS2017 (15.8.28010.0) enforced by installer
+  - Improved IntelliSense synchronization
+  - Fixed QTVSADDINBUG-545: Missing support for custom installations of Qt
+  - Fixed QTVSADDINBUG-771: .pro import does not replace Qt path with $(QTDIR)
+  - Fixed QTVSADDINBUG-771: .pro import removes explicit reference to opengl32.lib
+
+
 Qt Visual Studio Tools version 2.5.0:
 
 Changes
