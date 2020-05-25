@@ -484,8 +484,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.VisualStudio.Composition">
       <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Composition.dll</HintPath>
     </Reference>
