@@ -66,6 +66,26 @@ namespace QtProjectLib
             }
         }
 
+        protected virtual string WorkingDirectory
+        {
+            get
+            {
+                return Path.GetDirectoryName(ProFile);
+            }
+        }
+
+        string MakeRelative(string absolutePath)
+        {
+            var workDir = new Uri(Path.GetDirectoryName(ProFile) + Path.DirectorySeparatorChar);
+            var path = new Uri(absolutePath);
+            if (workDir.IsBaseOf(path)) {
+                return workDir.MakeRelativeUri(path).OriginalString
+                    .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            } else {
+                return absolutePath;
+            }
+        }
+
         protected virtual string QMakeArgs
         {
             get
@@ -78,7 +98,7 @@ namespace QtProjectLib
                 }
 
                 if (!string.IsNullOrEmpty(OutputFile))
-                    args.AppendFormat(" -o \"{0}\"", OutputFile);
+                    args.AppendFormat(" -o \"{0}\"", MakeRelative(OutputFile));
 
                 for (int i = 0; i < DebugLevel; ++i)
                     args.Append(" -d");
@@ -90,7 +110,7 @@ namespace QtProjectLib
                     args.Append(" -recursive");
 
                 if (!string.IsNullOrEmpty(ProFile))
-                    args.AppendFormat(" \"{0}\"", ProFile);
+                    args.AppendFormat(" \"{0}\"", MakeRelative(ProFile));
 
                 if (!string.IsNullOrEmpty(Query))
                     args.AppendFormat(" -query {0}", Query);
@@ -109,7 +129,7 @@ namespace QtProjectLib
                 RedirectStandardOutput = true,
                 FileName = QMakeExe,
                 Arguments = QMakeArgs,
-                WorkingDirectory = Path.GetDirectoryName(ProFile),
+                WorkingDirectory = WorkingDirectory,
             };
             qmakeStartInfo.EnvironmentVariables["QTDIR"] = QtVersion.qtDir;
 
