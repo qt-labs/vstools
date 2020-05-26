@@ -423,6 +423,7 @@
       // $(input_changed)         ::= source QRC files input changed status -->
       <dependencies_changed>@(loader_input->'%(DependenciesChanged)')</dependencies_changed>
       <input_changed>@(loader_input->'%(InputChanged)')</input_changed>
+      <input_changed Condition="!Exists('@(loader->'%(QmlCacheLoaderFile)')')">true</input_changed>
       <is_selected>@(loader_input->'%(IsSelected)')</is_selected>
 
       <!--// Get relative path to output -->
