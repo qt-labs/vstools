@@ -406,7 +406,7 @@
         <!--
         ///////////////////////////////////////////////////////////////////////////////////////////
         // Two-pass ("resources_big"): pass 1 -->
-        <Message Condition="'%(QtRcc.TwoPass)' == 'true'">%(ExecutionDescription) [pass 1]</Message>
+        <Message Condition="'%(QtRcc.TwoPass)' == 'true'">%(QtRcc.ExecutionDescription) [pass 1]</Message>
         <RccPass Condition="'%(QtRcc.TwoPass)' == 'true'">1</RccPass>
         <RccOptions Condition="'%(QtRcc.TwoPass)' == 'true'">$(options)</RccOptions>
         <Options Condition="'%(QtRcc.TwoPass)' == 'true'"
