@@ -200,64 +200,71 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Convert string lists in source item properties to lists of items
     // -->
-    <ItemGroup>
-      <repc_InputFile       Include="%(QtRepc.InputFile)"/>
-      <repc_OutputFile      Include="%(QtRepc.OutputFile)"/>
-      <repc_InputFileType   Include="%(QtRepc.InputFileType)"/>
-      <repc_OutputFileType  Include="%(QtRepc.OutputFileType)"/>
-      <repc_IncludePath     Include="%(QtRepc.IncludePath)"/>
-      <repc_AlwaysClass     Include="%(QtRepc.AlwaysClass)"/>
-      <repc_PrintDebug      Include="%(QtRepc.PrintDebug)"/>
-    </ItemGroup>
+    <Flatten Items="@(QtRepc)"
+      Metadata="InputFile;
+                OutputFile;
+                InputFileType;
+                OutputFileType;
+                IncludePath;
+                AlwaysClass;
+                PrintDebug">
+      <Output
+        TaskParameter="Result" ItemName="options" />
+    </Flatten>
 
     <ItemGroup>
+      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
+      // Remove quotes from all paths
       // Escape trailing back-slash in paths
+      // Add quotes to paths containing spaces
       // -->
-      <repc_IncludePath>
-        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)\</Escaped>
-        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)</Escaped>
-      </repc_IncludePath>
-    </ItemGroup>
+        <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'IncludePath'"
+          >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'IncludePath')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))
+          AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
+          >%(Value)\</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'IncludePath')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))"
+          >&quot;%(Value)&quot;</Value>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
-    <PropertyGroup>
-
       <!--//  -i <rep|src>                    Input file type -->
-      <options Condition="'@(repc_InputFileType)' != ''"
-        >$(options);@(repc_InputFileType->'-i %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'InputFileType'">-i %(Value)</Value>
 
       <!--//  -o <source|replica|merged|rep>  Output file type -->
-      <options Condition="'@(repc_OutputFileType)' != ''"
-        >$(options);@(repc_OutputFileType->'-o %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'OutputFileType'">-o %(Value)</Value>
 
       <!--//  -I <dir>                        Add dir to the include path for header files -->
-      <options Condition="'@(repc_IncludePath)' != ''"
-        >$(options);@(repc_IncludePath->'&quot;-I%(Escaped)&quot;')</options>
+        <Value Condition="'%(Name)' == 'OutputFileType'">-I%(Value)</Value>
 
       <!--//  -c                              Always output 'class' type for .rep files -->
-      <options Condition="'@(repc_AlwaysClass)' == 'true'"
-        >$(options);-c</options>
+        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' == 'true'">-c</Value>
+        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' != 'true'"></Value>
 
       <!--//  -d                              Print out parsing debug information -->
-      <options Condition="'@(repc_PrintDebug)' == 'true'"
-        >$(options);-c</options>
+        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' == 'true'">-d</Value>
+        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' != 'true'"></Value>
 
       <!--//  [header-file/rep-file]          Input header/rep file to read from -->
-      <options Condition="'@(repc_InputFile)' != ''"
-        >$(options);@(repc_InputFile->'&quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
 
       <!--//  [rep-file/header-file]          Output header/rep file to write to -->
-      <options Condition="'@(repc_OutputFile)' != ''"
-        >$(options);@(repc_OutputFile->'&quot;%(Identity)&quot;')</options>
-
-      <options>$(options.Replace(';',' ').Trim())</options>
+        <Value Condition="'%(Name)' == 'OutputFile'">%(Value)</Value>
+      </options>
+    </ItemGroup>
+    <PropertyGroup>
+      <options>@(options->'%(Value)', ' ')</options>
     </PropertyGroup>
 
     <!--
@@ -322,13 +329,7 @@
       <run_single/>
     </PropertyGroup>
     <ItemGroup>
-      <repc_InputFile       Remove="%(QtRepc.InputFile)"/>
-      <repc_OutputFile      Remove="%(QtRepc.OutputFile)"/>
-      <repc_InputFileType   Remove="%(QtRepc.InputFileType)"/>
-      <repc_OutputFileType  Remove="%(QtRepc.OutputFileType)"/>
-      <repc_IncludePath     Remove="%(QtRepc.IncludePath)"/>
-      <repc_AlwaysClass     Remove="%(QtRepc.AlwaysClass)"/>
-      <repc_PrintDebug      Remove="%(QtRepc.PrintDebug)"/>
+      <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
 

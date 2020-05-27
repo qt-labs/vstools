@@ -205,66 +205,88 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Convert string lists in source item properties to lists of items
     // -->
+    <Flatten Items="@(QtUic)"
+      Metadata="InputFile;
+                OutputFile;
+                DisplayDependencies;
+                NoProtection;
+                NoImplicitIncludes;
+                Postfix;
+                Translate;
+                Include;
+                Generator;
+                IdBased">
+      <Output
+        TaskParameter="Result" ItemName="options" />
+    </Flatten>
+
     <ItemGroup>
-      <uic_InputFile            Include="%(QtUic.InputFile)"/>
-      <uic_OutputFile           Include="%(QtUic.OutputFile)"/>
-      <uic_DisplayDependencies  Include="%(QtUic.DisplayDependencies)"/>
-      <uic_NoProtection         Include="%(QtUic.NoProtection)"/>
-      <uic_NoImplicitIncludes   Include="%(QtUic.NoImplicitIncludes)"/>
-      <uic_Postfix              Include="%(QtUic.Postfix)"/>
-      <uic_Translate            Include="%(QtUic.Translate)"/>
-      <uic_Include              Include="%(QtUic.Include)"/>
-      <uic_Generator            Include="%(QtUic.Generator)"/>
-      <uic_IdBased              Include="%(QtUic.IdBased)"/>
-    </ItemGroup>
+      <options>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      // Remove quotes from all paths
+      // Escape trailing back-slash in paths
+      // Add quotes to paths containing spaces
+      // -->
+        <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'Include'"
+          >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'Include')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))
+          AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
+          >%(Value)\</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'Include')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))"
+          >&quot;%(Value)&quot;</Value>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
-    <PropertyGroup>
-
       <!--//  [uifile]                      Input file (*.ui) -->
-      <options Condition="'@(uic_InputFile)' != ''"
-        >$(options);@(uic_InputFile->'&quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
 
       <!--//  -o,  -output <file>           Place the output into <file> -->
-      <options Condition="'@(uic_OutputFile)' != ''"
-        >$(options);@(uic_OutputFile->'-o &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
 
       <!--//  -d,  -dependencies            Display the dependencies -->
-      <options Condition="'@(uic_DisplayDependencies)' == 'true'"
-        >$(options);--dependencies</options>
+        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' == 'true'"
+          >--dependencies</Value>
+        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' != 'true'"></Value>
 
       <!--//  -p,  -no-protection           Disable header protection -->
-      <options Condition="'@(uic_NoProtection)' == 'true'"
-        >$(options);--no-protection</options>
+        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' == 'true'"
+          >--no-protection</Value>
+        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' != 'true'"></Value>
 
       <!--//  -n,  -no-implicit-includes    Disable generation of #include-directives -->
-      <options Condition="'@(uic_NoImplicitIncludes)' == 'true'"
-        >$(options);--no-implicit-includes</options>
+        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' == 'true'"
+          >--no-implicit-includes</Value>
+        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -postfix <postfix>           Postfix to add to all generated classnames -->
-      <options Condition="'@(uic_Postfix)' != ''"
-        >$(options);@(uic_Postfix->'--postfix %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'Postfix'">--postfix %(Value)</Value>
 
       <!--//   -tr,  -translate <function>  Use <function> for i18n -->
-      <options Condition="'@(uic_Translate)' != ''"
-        >$(options);@(uic_Translate->'--tr %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'Translate'">--tr %(Value)</Value>
 
       <!--//   -include <include-file>      Add #include <include-file> to <file> -->
-      <options Condition="'@(uic_Include)' != ''"
-        >$(options);@(uic_Include->'--include &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'Include'">--include %(Value)</Value>
 
       <!--//  -g,  -generator <java|cpp>    Select generator -->
-      <options Condition="'@(uic_Generator)' != ''"
-        >$(options);@(uic_Generator->'-g %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'Generator'">-g %(Value)</Value>
 
       <!--//   -idbased                     Use id based function for i18n -->
-      <options Condition="'@(uic_IdBased)' == 'true'"
-        >$(options);--idbased</options>
-
-      <options>$(options.Replace(';',' ').Trim())</options>
+        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' == 'true'">--idbased</Value>
+        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' != 'true'"></Value>
+      </options>
+    </ItemGroup>
+    <PropertyGroup>
+      <options>@(options->'%(Value)', ' ')</options>
     </PropertyGroup>
 
     <!--
@@ -321,16 +343,7 @@
       <run_single/>
     </PropertyGroup>
     <ItemGroup>
-      <uic_InputFile            Remove="@(uic_InputFile)"/>
-      <uic_OutputFile           Remove="@(uic_OutputFile)"/>
-      <uic_DisplayDependencies  Remove="@(uic_DisplayDependencies)"/>
-      <uic_NoProtection         Remove="@(uic_NoProtection)"/>
-      <uic_NoImplicitIncludes   Remove="@(uic_NoImplicitIncludes)"/>
-      <uic_Postfix              Remove="@(uic_Postfix)"/>
-      <uic_Translate            Remove="@(uic_Translate)"/>
-      <uic_Include              Remove="@(uic_Include)"/>
-      <uic_Generator            Remove="@(uic_Generator)"/>
-      <uic_IdBased              Remove="@(uic_IdBased)"/>
+      <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
 

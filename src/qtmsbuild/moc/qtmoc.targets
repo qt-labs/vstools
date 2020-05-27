@@ -212,144 +212,138 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Convert string lists in source item properties to lists of items
     // -->
-    <ItemGroup>
-      <moc_InputFile        Include="%(QtMoc.InputFile)"/>
-      <moc_OutputFile       Include="%(QtMoc.OutputFile)"/>
-      <moc_IncludePath      Include="%(QtMoc.IncludePath)"/>
-      <moc_MacFramework     Include="%(QtMoc.MacFramework)"/>
-      <moc_PreprocessOnly   Include="%(QtMoc.PreprocessOnly)"/>
-      <moc_Define           Include="%(QtMoc.Define)"/>
-      <moc_Undefine         Include="%(QtMoc.Undefine)"/>
-      <moc_Metadata         Include="%(QtMoc.Metadata)"/>
-      <moc_CompilerFlavor   Include="%(QtMoc.CompilerFlavor)"/>
-      <moc_NoInclude        Include="%(QtMoc.NoInclude)"/>
-      <moc_PathPrefix       Include="%(QtMoc.PathPrefix)"/>
-      <moc_ForceInclude     Include="%(QtMoc.ForceInclude)"/>
-      <moc_PrependInclude   Include="%(QtMoc.PrependInclude)"/>
-      <moc_Include          Include="%(QtMoc.Include)"/>
-      <moc_NoNotesWarnings  Include="%(QtMoc.NoNotesWarnings)"/>
-      <moc_NoNotes          Include="%(QtMoc.NoNotes)"/>
-      <moc_NoWarnings       Include="%(QtMoc.NoWarnings)"/>
-      <moc_IgnoreConflicts  Include="%(QtMoc.IgnoreConflicts)"/>
-      <moc_OptionsFile      Include="%(QtMoc.OptionsFile)"/>
-    </ItemGroup>
+    <Flatten Items="@(QtMoc)"
+      Metadata="InputFile;
+                OutputFile;
+                IncludePath;
+                MacFramework;
+                PreprocessOnly;
+                Define;
+                Undefine;
+                Metadata;
+                CompilerFlavor;
+                NoInclude;
+                PathPrefix;
+                ForceInclude;
+                PrependInclude;
+                Include;
+                NoNotesWarnings;
+                NoNotes;
+                NoWarnings;
+                IgnoreConflicts;
+                OptionsFile">
+      <Output
+        TaskParameter="Result" ItemName="options" />
+    </Flatten>
 
     <ItemGroup>
+      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
       // Escape double-quotes in macro definitions
       // -->
-      <moc_Define>
-        <Escaped Condition="$([System.String]::Copy('%(Identity)').Contains(' '))
-            OR $([System.String]::Copy('%(Identity)').Contains('&quot;'))"
-        > &quot;$([System.String]::Copy('%(Identity)').Replace('&quot;','\&quot;'))&quot;</Escaped>
-        <Escaped Condition="!$([System.String]::Copy('%(Identity)').Contains(' '))
-            AND !$([System.String]::Copy('%(Identity)').Contains('&quot;'))"
-        >%(Identity)</Escaped>
-      </moc_Define>
+        <Value Condition="('%(Name)' == 'Define' OR '%(Name)' == 'Undefine')
+          AND ($([System.String]::Copy('%(Value)').Contains(' '))
+            OR $([System.String]::Copy('%(Value)').Contains('&quot;')))"
+          > &quot;$([System.String]::Copy('%(Value)').Replace('&quot;', '\&quot;'))&quot;</Value>
 
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
+      // Remove quotes from all paths
       // Escape trailing back-slash in paths
+      // Add quotes to paths containing spaces
       // -->
-      <moc_IncludePath>
-        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)\</Escaped>
-        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)</Escaped>
-      </moc_IncludePath>
+        <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
+          OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
+          OR '%(Name)' == 'OptionsFile'"
+          >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
 
-      <moc_PathPrefix>
-        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)\</Escaped>
-        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-        >%(Identity)</Escaped>
-      </moc_PathPrefix>
-    </ItemGroup>
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
+          OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
+          OR '%(Name)' == 'OptionsFile')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))
+          AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
+          >%(Value)\</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
+          OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
+          OR '%(Name)' == 'OptionsFile')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))"
+          >&quot;%(Value)&quot;</Value>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
-    <PropertyGroup>
-
       <!--//  [header-file]               Header file to read from -->
-      <options Condition="'@(moc_InputFile)' != ''"
-        >$(options);@(moc_InputFile->'&quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
 
       <!--//  -o <file>                   Write output to file -->
-      <options Condition="'@(moc_OutputFile)' != ''"
-        >$(options);@(moc_OutputFile->'-o &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
 
       <!--//  -I <dir>                    Add dir to the include path for header files -->
-      <options Condition="'@(moc_IncludePath)' != ''"
-        >$(options);@(moc_IncludePath->'&quot;-I%(Escaped)&quot;')</options>
+        <Value Condition="'%(Name)' == 'IncludePath'">-I%(Value)</Value>
 
       <!--//  -F <framework>              Add macOS framework to the include path for headers -->
-      <options Condition="'@(moc_MacFramework)' != ''"
-        >$(options);@(moc_MacFramework->'-F &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'MacFramework'">-F %(Value)</Value>
 
       <!--//  -E                          Preprocess only; do not generate meta object code -->
-      <options Condition="'@(moc_PreprocessOnly)' == 'true'"
-        >$(options);-E</options>
+        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' == 'true'">-E</Value>
+        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' != 'true'"></Value>
 
       <!--//  -D <macro[=def]>            Define macro, with optional definition -->
-      <options Condition="'@(moc_Define)' != ''"
-        >$(options);@(moc_Define->'-D%(Escaped)')</options>
+        <Value Condition="'%(Name)' == 'Define'">-D%(Value)</Value>
 
       <!--//  -U <macro>                  Undefine macro-->
-      <options Condition="'@(moc_Undefine)' != ''"
-        >$(options);@(moc_Undefine->'-U%(Identity)')</options>
+        <Value Condition="'%(Name)' == 'Undefine'">-U%(Value)</Value>
 
       <!--//  -M <key=value>              Add key/value pair to plugin meta data -->
-      <options Condition="'@(moc_Metadata)' != ''"
-        >$(options);@(moc_Metadata->'-M%(Identity)')</options>
+        <Value Condition="'%(Name)' == 'Metadata'">-M%(Value)</Value>
 
       <!--//   -compiler-flavor <flavor>  Set the compiler flavor: either "msvc" or "unix" -->
-      <options Condition="'@(moc_CompilerFlavor)' != ''"
-        >$(options);@(moc_CompilerFlavor->'--compiler-flavor %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'CompilerFlavor'">--compiler-flavor %(Value)</Value>
 
       <!--//  -i                          Do not generate an #include statement -->
-      <options Condition="'@(moc_NoInclude)' == 'true'"
-        >$(options);-i</options>
+        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' == 'true'">-i</Value>
+        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' != 'true'"></Value>
 
       <!--//  -p <path>                   Path prefix for included file -->
-      <options Condition="'@(moc_PathPrefix)' != ''"
-        >$(options);@(moc_PathPrefix->'&quot;-p%(Escaped)&quot;')</options>
+        <Value Condition="'%(Name)' == 'PathPrefix'">-p%(Value)</Value>
 
       <!--//  -f <file>                   Force #include <file> (overwrite default) -->
-      <options Condition="'@(moc_ForceInclude)' != ''"
-        >$(options);@(moc_ForceInclude->'-f &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'ForceInclude'">-f %(Value)</Value>
 
       <!--//  -b <file>                   Prepend #include <file> (preserve default include) -->
-      <options Condition="'@(moc_PrependInclude)' != ''"
-        >$(options);@(moc_PrependInclude->'-b &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'PrependInclude'">-b %(Value)</Value>
 
       <!--//   -include <file>            Parse <file> as an #include before the main source(s) -->
-      <options Condition="'@(moc_Include)' != ''"
-        >$(options);@(moc_Include->'--include &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'Include'">--include %(Value)</Value>
 
       <!--//  -n <which>                  Do not display notes (-nn) or warnings (-nw) -->
-      <options Condition="'@(moc_NoNotesWarnings)' != ''"
-        >$(options);@(moc_NoNotesWarnings->'-n%(Identity)')</options>
+        <Value Condition="'%(Name)' == 'NoNotesWarnings'">-n%(Value)</Value>
 
       <!--//   -no-notes                  Do not display notes -->
-      <options Condition="'@(moc_NoNotes)' == 'true'"
-        >$(options);--no-notes</options>
+        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' == 'true'">--no-notes</Value>
+        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -no-warnings               Do not display warnings (implies  -no-notes) -->
-      <options Condition="'@(moc_NoWarnings)' == 'true'"
-        >$(options);--no-warnings</options>
+        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' == 'true'">--no-warnings</Value>
+        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -ignore-option-clashes     Ignore all options that conflict with compilers -->
-      <options Condition="'@(moc_IgnoreConflicts)' == 'true'"
-        >$(options);--ignore-option-clashes</options>
+        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' == 'true'"
+          >--ignore-option-clashes</Value>
+        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' != 'true'"></Value>
 
       <!--//  [@option-file]              Read additional options from option-file-->
-      <options Condition="'@(moc_OptionsFile)' != ''"
-        >$(options);@(moc_OptionsFile->'&quot;@%(Identity)&quot;')</options>
-
-      <options>$(options.Replace(';',' ').Trim())</options>
+        <Value Condition="'%(Name)' == 'OptionsFile'">@%(Value)</Value>
+      </options>
+    </ItemGroup>
+    <PropertyGroup>
+      <options>@(options->'%(Value)', ' ')</options>
     </PropertyGroup>
 
     <!--
@@ -423,25 +417,7 @@
       <input_relative/>
     </PropertyGroup>
     <ItemGroup>
-      <moc_InputFile        Remove="@(moc_InputFile)"/>
-      <moc_OutputFile       Remove="@(moc_OutputFile)"/>
-      <moc_IncludePath      Remove="@(moc_IncludePath)"/>
-      <moc_MacFramework     Remove="@(moc_MacFramework)"/>
-      <moc_PreprocessOnly   Remove="@(moc_PreprocessOnly)"/>
-      <moc_Define           Remove="@(moc_Define)"/>
-      <moc_Undefine         Remove="@(moc_Undefine)"/>
-      <moc_Metadata         Remove="@(moc_Metadata)"/>
-      <moc_CompilerFlavor   Remove="@(moc_CompilerFlavor)"/>
-      <moc_NoInclude        Remove="@(moc_NoInclude)"/>
-      <moc_PathPrefix       Remove="@(moc_PathPrefix)"/>
-      <moc_ForceInclude     Remove="@(moc_ForceInclude)"/>
-      <moc_PrependInclude   Remove="@(moc_PrependInclude)"/>
-      <moc_Include          Remove="@(moc_Include)"/>
-      <moc_NoNotesWarnings  Remove="@(moc_NoNotesWarnings)"/>
-      <moc_NoNotes          Remove="@(moc_NoNotes)"/>
-      <moc_NoWarnings       Remove="@(moc_NoWarnings)"/>
-      <moc_IgnoreConflicts  Remove="@(moc_IgnoreConflicts)"/>
-      <moc_OptionsFile      Remove="@(moc_OptionsFile)"/>
+      <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
 

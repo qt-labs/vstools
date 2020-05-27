@@ -248,116 +248,140 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="dependencies_changed" />
     </CreateProperty>
 
+    <PropertyGroup>
+      <two_pass Condition="'%(QtRcc.TwoPass)' == 'true'">true</two_pass>
+    </PropertyGroup>
+
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Convert string lists in source item properties to lists of items
     // -->
-    <ItemGroup>
-      <rcc_InputFile          Include="%(QtRcc.InputFile)"/>
-      <rcc_OutputFile         Include="%(QtRcc.OutputFile)" Condition="'%(QtRcc.TwoPass)' != 'true'"/>
-      <rcc_TempFile           Include="%(QtRcc.TempFile)"/>
-      <rcc_InitFuncName       Include="%(QtRcc.InitFuncName)"/>
-      <rcc_Root               Include="%(QtRcc.Root)"/>
-      <rcc_Compression        Include="%(QtRcc.Compression)"/>
-      <rcc_NoCompression      Include="%(QtRcc.NoCompression)"/>
-      <rcc_CompressThreshold  Include="%(QtRcc.CompressThreshold)"/>
-      <rcc_BinaryOutput       Include="%(QtRcc.BinaryOutput)"/>
-      <rcc_PassNumber         Include="%(QtRcc.PassNumber)"/>
-      <rcc_NoNamespace        Include="%(QtRcc.NoNamespace)"/>
-      <rcc_Verbose            Include="%(QtRcc.Verbose)"/>
-      <rcc_List               Include="%(QtRcc.List)"/>
-      <rcc_Project            Include="%(QtRcc.Project)"/>
-      <rcc_FormatVersion      Include="%(QtRcc.FormatVersion)"/>
-    </ItemGroup>
+    <Flatten Items="@(QtRcc)"
+      Metadata="InputFile;
+                OutputFile;
+                TempFile;
+                InitFuncName;
+                Root;
+                Compression;
+                NoCompression;
+                CompressThreshold;
+                BinaryOutput;
+                PassNumber;
+                NoNamespace;
+                Verbose;
+                List;
+                Project;
+                FormatVersion">
+      <Output
+        TaskParameter="Result" ItemName="options" />
+    </Flatten>
 
     <ItemGroup>
+      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
+      // Remove quotes from all paths
       // Escape trailing back-slash in paths
+      // Add quotes to paths containing spaces
       // -->
-      <rcc_Root>
-        <Escaped Condition="$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-          >%(Identity)\</Escaped>
-        <Escaped Condition="!$([System.String]::Copy('%(Identity)').EndsWith('\'))"
-          >%(Identity)</Escaped>
-      </rcc_Root>
-    </ItemGroup>
+        <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root'"
+          >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))
+          AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
+          >%(Value)\</Value>
+
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))"
+          >&quot;%(Value)&quot;</Value>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
-    <PropertyGroup>
-
       <!--//  inputs                     Input files (*.qrc) -->
-      <options Condition="'@(rcc_InputFile)' != ''"
-        >$(options);@(rcc_InputFile->'&quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
 
       <!--//  -o,  -output <file>        Write output to <file> -->
-      <options Condition="'@(rcc_OutputFile)' != ''"
-        >$(options);@(rcc_OutputFile->'-o &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'OutputFile' AND '$(two_pass)' != 'true'">-o %(Value)</Value>
+        <Value Condition="'%(Name)' == 'OutputFile' AND '$(two_pass)' == 'true'"></Value>
 
       <!--//  -t,  -temp <file>          Use temporary <file> for big resources -->
-      <options Condition="'@(rcc_TempFile)' != ''"
-        >$(options);@(rcc_TempFile->'--temp &quot;%(Identity)&quot;')</options>
+        <Value Condition="'%(Name)' == 'TempFile'">--temp %(Value)</Value>
 
       <!--//   -name <name>              Create an external initialization function with <name> -->
-      <options Condition="'@(rcc_InitFuncName)' != ''"
-        >$(options);@(rcc_InitFuncName->'--name %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'InitFuncName'">--name %(Value)</Value>
 
       <!--//   -root <path>              Prefix resource access path with root path -->
-      <options Condition="'@(rcc_Root)' != ''"
-        >$(options);@(rcc_Root->'--root &quot;%(Escaped)&quot;')</options>
+        <Value Condition="'%(Name)' == 'Root'">--root %(Value)</Value>
 
       <!--//   -compress <level>         Compress input files by <level> -->
-      <options Condition="'@(rcc_Compression)' == 'level1'">$(options);--compress 1</options>
-      <options Condition="'@(rcc_Compression)' == 'level2'">$(options);--compress 2</options>
-      <options Condition="'@(rcc_Compression)' == 'level3'">$(options);--compress 3</options>
-      <options Condition="'@(rcc_Compression)' == 'level4'">$(options);--compress 4</options>
-      <options Condition="'@(rcc_Compression)' == 'level5'">$(options);--compress 5</options>
-      <options Condition="'@(rcc_Compression)' == 'level6'">$(options);--compress 6</options>
-      <options Condition="'@(rcc_Compression)' == 'level7'">$(options);--compress 7</options>
-      <options Condition="'@(rcc_Compression)' == 'level8'">$(options);--compress 8</options>
-      <options Condition="'@(rcc_Compression)' == 'level9'">$(options);--compress 9</options>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level1'">--compress 1</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level2'">--compress 2</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level3'">--compress 3</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level4'">--compress 4</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level5'">--compress 5</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level6'">--compress 6</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level7'">--compress 7</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level8'">--compress 8</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level9'">--compress 9</Value>
+        <Value
+          Condition="'%(Name)' == 'Compression'
+          AND !$([System.String]::Copy('%(Value)').StartsWith('--compress'))"></Value>
 
       <!--//   -no-compress              Disable all compression -->
-      <options Condition="'@(rcc_NoCompression)' == 'true'"
-        >$(options);--no-compress</options>
+        <Value
+          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
+        <Value
+          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -threshold <level>        Threshold to consider compressing files -->
-      <options Condition="'@(rcc_CompressThreshold)' != ''"
-        >$(options);@(rcc_CompressThreshold->'--threshold %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'CompressThreshold'">--threshold %(Value)</Value>
 
       <!--//   -binary                   Output a binary file for use as a dynamic source -->
-      <options Condition="'@(rcc_BinaryOutput)' == 'true'"
-        >$(options);--binary</options>
+        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--no-binary</Value>
+        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -pass <number>            Pass number for big resources -->
-      <options Condition="'@(rcc_PassNumber)' != ''"
-        >$(options);@(rcc_PassNumber->'--pass %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'PassNumber'">--pass %(Value)</Value>
 
       <!--//   -namespace                Turn off namespace macros -->
-      <options Condition="'@(rcc_NoNamespace)' == 'true'"
-        >$(options);--namespace</options>
+        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' == 'true'">--namespace</Value>
+        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -verbose                  Enable verbose mode -->
-      <options Condition="'@(rcc_Verbose)' == 'true'"
-        >$(options);--verbose</options>
+        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' == 'true'">--verbose</Value>
+        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -list                     Only list .qrc file entries, do not generate code -->
-      <options Condition="'@(rcc_List)' == 'true'"
-        >$(options);--list</options>
+        <Value Condition="'%(Name)' == 'List' AND '%(Value)' == 'true'">--list</Value>
+        <Value Condition="'%(Name)' == 'List' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -project                  Output a resource file containing all files from the
           //                             current directory -->
-      <options Condition="'@(rcc_Project)' == 'true'"
-        >$(options);--project</options>
+        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' == 'true'">--project</Value>
+        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' != 'true'"></Value>
 
       <!--//   -format-version <number>  The RCC format version to write -->
-      <options Condition="'@(rcc_FormatVersion)' != ''"
-        >$(options);@(rcc_FormatVersion->'--format-version %(Identity)')</options>
+        <Value Condition="'%(Name)' == 'FormatVersion'">--format-version %(Value)</Value>
 
-      <options>$(options.Replace(';',' ').Trim())</options>
+      </options>
+    </ItemGroup>
+    <PropertyGroup>
+      <options>@(options->'%(Value)', ' ')</options>
     </PropertyGroup>
 
     <!--
@@ -430,23 +454,10 @@
       <run_parallel/>
       <run_single/>
       <output_relative/>
+      <two_pass/>
     </PropertyGroup>
     <ItemGroup>
-      <rcc_InputFile          Remove="@(rcc_InputFile)"/>
-      <rcc_OutputFile         Remove="@(rcc_OutputFile)"/>
-      <rcc_TempFile           Remove="@(rcc_TempFile)"/>
-      <rcc_InitFuncName       Remove="@(rcc_InitFuncName)"/>
-      <rcc_Root               Remove="@(rcc_Root)"/>
-      <rcc_Compression        Remove="@(rcc_Compression)"/>
-      <rcc_NoCompression      Remove="@(rcc_NoCompression)"/>
-      <rcc_CompressThreshold  Remove="@(rcc_CompressThreshold)"/>
-      <rcc_BinaryOutput       Remove="@(rcc_BinaryOutput)"/>
-      <rcc_PassNumber         Remove="@(rcc_PassNumber)"/>
-      <rcc_NoNamespace        Remove="@(rcc_NoNamespace)"/>
-      <rcc_Verbose            Remove="@(rcc_Verbose)"/>
-      <rcc_List               Remove="@(rcc_List)"/>
-      <rcc_Project            Remove="@(rcc_Project)"/>
-      <rcc_FormatVersion      Remove="@(rcc_FormatVersion)"/>
+      <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
 
