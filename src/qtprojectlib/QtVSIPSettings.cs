@@ -121,6 +121,8 @@ namespace QtProjectLib
 
         public static bool GetLUpdateOnBuild(EnvDTE.Project project)
         {
+            if (GetProjectQtSetting(project, "QtRunLUpdateOnBuild") == "true")
+                return true;
             return GetBoolValue(project, Resources.lupdateKeyword);
         }
 
@@ -129,8 +131,39 @@ namespace QtProjectLib
             return GetOption(Resources.lupdateOptionsKeyword);
         }
 
+        static string GetProjectQtSetting(EnvDTE.Project project, string propertyName)
+        {
+            var vcProject = project.Object as VCProject;
+            if (vcProject == null)
+                return null;
+
+            var vcConfigs = vcProject.Configurations as IVCCollection;
+            if (vcConfigs == null)
+                return null;
+
+            var activeConfig = project.ConfigurationManager.ActiveConfiguration;
+            if (activeConfig == null)
+                return null;
+
+            var activeConfigId = string.Format("{0}|{1}",
+                activeConfig.ConfigurationName, activeConfig.PlatformName);
+
+            var props = vcProject as IVCBuildPropertyStorage;
+            if (props == null)
+                return null;
+
+            try {
+                return props.GetPropertyValue(propertyName, activeConfigId, "ProjectFile");
+            } catch {
+                return null;
+            }
+        }
+
         public static string GetLUpdateOptions(EnvDTE.Project project)
         {
+            string qtLUpdateOptions = GetProjectQtSetting(project, "QtLUpdateOptions");
+            if (!string.IsNullOrEmpty(qtLUpdateOptions))
+                return qtLUpdateOptions;
             return GetOption(project, Resources.lupdateOptionsKeyword);
         }
 
@@ -141,6 +174,9 @@ namespace QtProjectLib
 
         public static string GetLReleaseOptions(EnvDTE.Project project)
         {
+            string qtLReleaseOptions = GetProjectQtSetting(project, "QtLReleaseOptions");
+            if (!string.IsNullOrEmpty(qtLReleaseOptions))
+                return qtLReleaseOptions;
             return GetOption(project, Resources.lreleaseOptionsKeyword);
         }
 
