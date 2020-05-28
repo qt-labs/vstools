@@ -24,6 +24,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <QtRcc Include="$qrcfilename$">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
     <QtUic Include="$uifilename$">
       <Filter>Resource Files</Filter>
     </QtUic>
