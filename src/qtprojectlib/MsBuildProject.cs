@@ -300,6 +300,12 @@ namespace QtProjectLib
             if (defaultVersion != null)
                 defaultQtDir = defaultVersion.qtDir;
 
+            // Get project configurations
+            var configs = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemGroup")
+                .Elements(ns + "ProjectConfiguration");
+
             // Get project global properties
             var globals = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -342,9 +348,61 @@ namespace QtProjectLib
             if (qtPropsImport == null)
                 return false;
 
+            var uncategorizedPropertyGroups = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .Where(pg => pg.Attribute("Label") == null)
+                .ToList();
+
+            var propertyGroups = new Dictionary<string, XElement>();
+
+            // Upgrading from <= v3.2?
+            if (!oldVersion.HasValue
+                || oldVersion.Value < Resources.qtMinFormatVersion_PropertyEval) {
+
+                // Find import of default Qt properties
+                var qtDefaultProps = this[Files.Project].xml
+                    .Elements(ns + "Project")
+                    .Elements(ns + "ImportGroup")
+                    .Elements(ns + "Import")
+                    .Where(pg => Path.GetFileName((string)pg.Attribute("Project"))
+                        .Equals("qt_defaults.props", StringComparison.InvariantCultureIgnoreCase))
+                    .Select(pg => pg.Parent)
+                    .FirstOrDefault();
+
+                // Create uncategorized property groups
+                foreach (var config in configs) {
+                    string condition = string.Format("'$(Configuration)|$(Platform)'=='{0}'",
+                        (string)config.Attribute("Include"));
+                    var group = new XElement(ns + "PropertyGroup",
+                                    new XAttribute("Condition", condition));
+                    propertyGroups[condition] = group;
+                    // Insert uncategorized groups after Qt defaults, if found
+                    if (qtDefaultProps != null)
+                        qtDefaultProps.AddAfterSelf(group);
+                }
+
+                // Move uncategorized properties to newly created groups
+                foreach (var pg in uncategorizedPropertyGroups) {
+                    foreach (var p in pg.Elements().ToList()) {
+                        var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
+                        XElement configPropertyGroup = null;
+                        if (condition != null)
+                            propertyGroups.TryGetValue((string)condition, out configPropertyGroup);
+                        if (configPropertyGroup != null) {
+                            p.Remove();
+                            p.SetAttributeValue("Condition", null);
+                            configPropertyGroup.Add(p);
+                        }
+                    }
+                    if (!pg.Elements().Any())
+                        pg.Remove();
+                }
+            }
+
             // Upgrading from <= v3.1?
-            if (oldVersion.HasValue
-                && oldVersion.Value < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
+            if (!oldVersion.HasValue
+                || oldVersion.Value < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
 
                 // Move Qt/MSBuild path to global property
                 var qtMsBuildProperty = globals
@@ -358,26 +416,6 @@ namespace QtProjectLib
                         (string)qtMsBuildPropertyGroup.Attribute("Condition"));
                     globals.Add(qtMsBuildProperty);
                     qtMsBuildPropertyGroup.Remove();
-                }
-
-                // Move remaining uncategorized properties to "Configuration"-labelled groups
-                var uncategorizedPropertyGroups = this[Files.Project].xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "PropertyGroup")
-                    .Where(pg => pg.Attribute("Label") == null);
-                foreach (var pg in uncategorizedPropertyGroups.ToList()) {
-                    foreach (var p in pg.Elements().ToList()) {
-                        p.Remove();
-                        var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
-                        XElement configPropertyGroup = null;
-                        if (condition != null)
-                            configProps.TryGetValue((string)condition, out configPropertyGroup);
-                        if (configPropertyGroup != null) {
-                            p.SetAttributeValue("Condition", null);
-                            configPropertyGroup.Add(p);
-                        }
-                    }
-                    pg.Remove();
                 }
             }
             if (oldVersion.HasValue
@@ -407,12 +445,6 @@ namespace QtProjectLib
                 oldQtSettings.Values.ToList()
                     .ForEach(x => x.Remove());
             }
-
-            // Get project configurations
-            var configs = this[Files.Project].xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemGroup")
-                .Elements(ns + "ProjectConfiguration");
 
             // Find location for import of qt.props and for the QtSettings property group:
             // (cf. ".vcxproj file elements" https://docs.microsoft.com/en-us/cpp/build/reference/vcxproj-file-structure?view=vs-2019#vcxproj-file-elements)
@@ -486,6 +518,10 @@ namespace QtProjectLib
                 insertionPoint.AddAfterSelf(configQtSettings);
                 qtSettings.Add(configQtSettings);
             }
+
+            // Add uncategorized property groups
+            foreach (XElement propertyGroup in propertyGroups.Values)
+                insertionPoint.AddAfterSelf(propertyGroup);
 
             // Add import of default property values
             insertionPoint.AddAfterSelf(

@@ -83,7 +83,7 @@ namespace QtProjectLib
 
         // Qt VS project tag and format version
         public const string qtProjectKeyword = "QtVS";
-        public const int qtProjectFormatVersion = 302;
+        public const int qtProjectFormatVersion = 303;
         public static string QtVSVersionTag
             => string.Format("{0}_v{1}", qtProjectKeyword, qtProjectFormatVersion);
 
@@ -95,6 +95,9 @@ namespace QtProjectLib
 
         // Min. format version for global QtMsBuild property
         public const int qtMinFormatVersion_GlobalQtMsBuildProperty = 302;
+
+        // Min. format version for correct ordering of property evaluation (QTVSADDINBUG-787)
+        public const int qtMinFormatVersion_PropertyEval = 303;
 
         // Project properties labels
         public const string projLabelGlobals = "Globals";

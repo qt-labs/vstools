@@ -185,6 +185,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             // Custom parameters
             ToolsVersion,
             ProjectConfigurations,
+            Properties,
             ProjectGuid,
             Keyword,
             Globals,
@@ -284,6 +285,19 @@ namespace QtVsTools.Wizards.ProjectWizard
                     /*{1}*/ c.Platform));
             }
             Parameter[NewProject.ProjectConfigurations] = FormatParam(xml);
+
+            ///////////////////////////////////////////////////////////////////////////////////////
+            // Properties
+            //
+            xml = new StringBuilder();
+            foreach (IWizardConfiguration c in Configurations) {
+                xml.AppendLine(string.Format(@"
+  <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">
+  </PropertyGroup>",
+                    /*{0}*/ c.Name,
+                    /*{1}*/ c.Platform));
+            }
+            Parameter[NewProject.Properties] = FormatParam(xml);
 
             ///////////////////////////////////////////////////////////////////////////////////////
             // Globals
