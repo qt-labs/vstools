@@ -292,15 +292,6 @@ namespace QtProjectLib
 
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
-            foreach (VCConfiguration cfg in (IVCCollection) qtProject.VCProject.Configurations) {
-                cfg.IntermediateDirectory = @"$(Platform)\$(Configuration)\";
-                var compilerTool = CompilerToolWrapper.Create(cfg);
-                if (compilerTool != null) {
-                    compilerTool.ObjectFile = @"$(IntDir)";
-                    compilerTool.ProgramDataBaseFileName = @"$(IntDir)vc$(PlatformToolsetVersion).pdb";
-                }
-            }
-
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
             qtProject.TranslateFilterNames();
 
