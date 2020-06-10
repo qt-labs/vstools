@@ -61,7 +61,7 @@
         >$(ProjectDir)GeneratedFiles\$(Configuration)\ui_%(Filename).h</OutputFile>
 
       <QtUicDir Condition="'$(QtVsProjectSettings)' == 'true'"
-        >$(IntDir)\uic\%(RelativeDir)</QtUicDir>
+        >$(IntDir)uic\</QtUicDir>
       <QtUicFileName Condition="'$(QtVsProjectSettings)' == 'true'"
         >ui_%(Filename).h</QtUicFileName>
 

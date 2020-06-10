@@ -60,7 +60,7 @@
         >$(ProjectDir)GeneratedFiles\$(Configuration)\moc_%(Filename).cpp</OutputFile>
 
       <QtMocDir Condition="'$(QtVsProjectSettings)' == 'true'"
-        >$(IntDir)\moc\%(RelativeDir)</QtMocDir>
+        >$(IntDir)moc\</QtMocDir>
       <QtMocFileName Condition="'$(QtVsProjectSettings)' == 'true'"
         >moc_%(Filename).cpp</QtMocFileName>
 
