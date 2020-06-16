@@ -263,7 +263,7 @@
 
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
     <PropertyGroup>
-      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" $(QMakeArgs)) 1> qtvars.log 2>&1]]></Cmd>
+      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" $(QMakeArgs) qtvars.pro) 1> qtvars.log 2>&1]]></Cmd>
     </PropertyGroup>
     <Exec WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true" Command="$(Cmd)">
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
