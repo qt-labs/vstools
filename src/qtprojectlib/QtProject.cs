@@ -1246,6 +1246,12 @@ namespace QtProjectLib
         {
             if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
                 file.ItemType = QtMoc.ItemTypeName;
+                if (HelperFunctions.IsSourceFile(file.FullPath)) {
+                    foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
+                        qtMsBuild.SetItemProperty(config, QtMoc.Property.DynamicSource, "input");
+                        qtMsBuild.SetItemPropertyByName(config, "QtMocFileName", "%(Filename).moc");
+                    }
+                }
                 return;
             }
 
