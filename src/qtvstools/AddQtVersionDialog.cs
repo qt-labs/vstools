@@ -30,6 +30,7 @@ using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using QtProjectLib;
+using QtVsTools.SyntaxAnalysis;
 using QtVsTools.VisualStudio;
 using System;
 using System.IO;
@@ -38,6 +39,8 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
+    using static RegExpr;
+
     public class AddQtVersionDialog : Form
     {
         private Label label1;
@@ -212,6 +215,10 @@ namespace QtVsTools
             }
         }
 
+        Parser _InvalidName;
+        Parser InvalidName => _InvalidName
+            ?? (_InvalidName = Char[Path.DirectorySeparatorChar].Render());
+
         private void DataChanged(object sender, EventArgs e)
         {
             if (sender == nameBox)
@@ -241,6 +248,8 @@ namespace QtVsTools
 
             errorLabel.Text = string.Empty;
             if (string.IsNullOrWhiteSpace(name)) {
+                errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
+            } else if (InvalidName.Regex.IsMatch(name)) {
                 errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
             } else if (string.IsNullOrWhiteSpace(path) && name == "$(QTDIR)") {
                 errorLabel.Text = SR.GetString("AddQtVersionDialog_RestartVisualStudio");

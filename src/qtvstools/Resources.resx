@@ -139,7 +139,7 @@
     <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
   </data>
   <data name="AddQtVersionDialog_InvalidName" xml:space="preserve">
-    <value>The given name cannot be empty.</value>
+    <value>Name is not valid.</value>
   </data>
   <data name="AddQtVersionDialog_RestartVisualStudio" xml:space="preserve">
     <value>You might need to restart Visual Studio to use $(QTDIR).</value>
