@@ -246,7 +246,7 @@
         <Value Condition="'%(Name)' == 'OutputFileType'">-o %(Value)</Value>
 
       <!--//  -I <dir>                        Add dir to the include path for header files -->
-        <Value Condition="'%(Name)' == 'OutputFileType'">-I%(Value)</Value>
+        <Value Condition="'%(Name)' == 'IncludePath'">-I%(Value)</Value>
 
       <!--//  -c                              Always output 'class' type for .rep files -->
         <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' == 'true'">-c</Value>
