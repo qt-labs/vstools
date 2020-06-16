@@ -126,6 +126,11 @@
         Condition="'$(SelectedFiles)' == '' AND '%(QtRepc.ExcludedFromBuild)' == 'true'"/>
     </ItemGroup>
 
+    <!--// Add repc output dir to C++ include path -->
+    <ItemGroup Condition="'@(QtRepc)' != ''">
+      <QtIncludePath Include="$([System.IO.Path]::GetDirectoryName('%(QtRepc.OutputFile)'))"/>
+    </ItemGroup>
+
     <!--// Clean-up -->
     <PropertyGroup>
       <selected_files/>
