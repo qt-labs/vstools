@@ -237,15 +237,16 @@
     </Flatten>
 
     <ItemGroup>
-      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
       // Escape double-quotes in macro definitions
       // -->
+      <options>
         <Value Condition="('%(Name)' == 'Define' OR '%(Name)' == 'Undefine')
           AND ($([System.String]::Copy('%(Value)').Contains(' '))
             OR $([System.String]::Copy('%(Value)').Contains('&quot;')))"
           > &quot;$([System.String]::Copy('%(Value)').Replace('&quot;', '\&quot;'))&quot;</Value>
+      </options>
 
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,12 +254,15 @@
       // Escape trailing back-slash in paths
       // Add quotes to paths containing spaces
       // -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
           OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
           OR '%(Name)' == 'OptionsFile'"
           >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
+      </options>
 
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
           OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
@@ -266,79 +270,129 @@
           AND $([System.String]::Copy('%(Value)').Contains(' '))
           AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
           >%(Value)\</Value>
+      </options>
 
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'IncludePath' OR '%(Name)' == 'MacFramework' OR '%(Name)' == 'PathPrefix'
           OR '%(Name)' == 'ForceInclude' OR '%(Name)' == 'PrependInclude' OR '%(Name)' == 'Include'
           OR '%(Name)' == 'OptionsFile')
           AND $([System.String]::Copy('%(Value)').Contains(' '))"
           >&quot;%(Value)&quot;</Value>
+      </options>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
       <!--//  [header-file]               Header file to read from -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
+      </options>
 
       <!--//  -o <file>                   Write output to file -->
+      <options>
         <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
+      </options>
 
       <!--//  -I <dir>                    Add dir to the include path for header files -->
+      <options>
         <Value Condition="'%(Name)' == 'IncludePath'">-I%(Value)</Value>
+      </options>
 
       <!--//  -F <framework>              Add macOS framework to the include path for headers -->
+      <options>
         <Value Condition="'%(Name)' == 'MacFramework'">-F %(Value)</Value>
+      </options>
 
       <!--//  -E                          Preprocess only; do not generate meta object code -->
+      <options>
         <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' == 'true'">-E</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  -D <macro[=def]>            Define macro, with optional definition -->
+      <options>
         <Value Condition="'%(Name)' == 'Define'">-D%(Value)</Value>
+      </options>
 
       <!--//  -U <macro>                  Undefine macro-->
+      <options>
         <Value Condition="'%(Name)' == 'Undefine'">-U%(Value)</Value>
+      </options>
 
       <!--//  -M <key=value>              Add key/value pair to plugin meta data -->
+      <options>
         <Value Condition="'%(Name)' == 'Metadata'">-M%(Value)</Value>
+      </options>
 
       <!--//   -compiler-flavor <flavor>  Set the compiler flavor: either "msvc" or "unix" -->
+      <options>
         <Value Condition="'%(Name)' == 'CompilerFlavor'">--compiler-flavor %(Value)</Value>
+      </options>
 
       <!--//  -i                          Do not generate an #include statement -->
+      <options>
         <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' == 'true'">-i</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  -p <path>                   Path prefix for included file -->
+      <options>
         <Value Condition="'%(Name)' == 'PathPrefix'">-p%(Value)</Value>
+      </options>
 
       <!--//  -f <file>                   Force #include <file> (overwrite default) -->
+      <options>
         <Value Condition="'%(Name)' == 'ForceInclude'">-f %(Value)</Value>
+      </options>
 
       <!--//  -b <file>                   Prepend #include <file> (preserve default include) -->
+      <options>
         <Value Condition="'%(Name)' == 'PrependInclude'">-b %(Value)</Value>
+      </options>
 
       <!--//   -include <file>            Parse <file> as an #include before the main source(s) -->
+      <options>
         <Value Condition="'%(Name)' == 'Include'">--include %(Value)</Value>
+      </options>
 
       <!--//  -n <which>                  Do not display notes (-nn) or warnings (-nw) -->
+      <options>
         <Value Condition="'%(Name)' == 'NoNotesWarnings'">-n%(Value)</Value>
+      </options>
 
       <!--//   -no-notes                  Do not display notes -->
+      <options>
         <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' == 'true'">--no-notes</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -no-warnings               Do not display warnings (implies  -no-notes) -->
+      <options>
         <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' == 'true'">--no-warnings</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -ignore-option-clashes     Ignore all options that conflict with compilers -->
+      <options>
         <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' == 'true'"
           >--ignore-option-clashes</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  [@option-file]              Read additional options from option-file-->
+      <options>
         <Value Condition="'%(Name)' == 'OptionsFile'">@%(Value)</Value>
       </options>
     </ItemGroup>

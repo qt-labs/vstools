@@ -218,53 +218,73 @@
     </Flatten>
 
     <ItemGroup>
-      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
       // Remove quotes from all paths
       // Escape trailing back-slash in paths
       // Add quotes to paths containing spaces
       // -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'IncludePath'"
           >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'IncludePath')
           AND $([System.String]::Copy('%(Value)').Contains(' '))
           AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
           >%(Value)\</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'IncludePath')
           AND $([System.String]::Copy('%(Value)').Contains(' '))"
           >&quot;%(Value)&quot;</Value>
+      </options>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
       <!--//  -i <rep|src>                    Input file type -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFileType'">-i %(Value)</Value>
+      </options>
 
       <!--//  -o <source|replica|merged|rep>  Output file type -->
+      <options>
         <Value Condition="'%(Name)' == 'OutputFileType'">-o %(Value)</Value>
+      </options>
 
       <!--//  -I <dir>                        Add dir to the include path for header files -->
+      <options>
         <Value Condition="'%(Name)' == 'IncludePath'">-I%(Value)</Value>
+      </options>
 
       <!--//  -c                              Always output 'class' type for .rep files -->
+      <options>
         <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' == 'true'">-c</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  -d                              Print out parsing debug information -->
+      <options>
         <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' == 'true'">-d</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  [header-file/rep-file]          Input header/rep file to read from -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
+      </options>
 
       <!--//  [rep-file/header-file]          Output header/rep file to write to -->
+      <options>
         <Value Condition="'%(Name)' == 'OutputFile'">%(Value)</Value>
       </options>
     </ItemGroup>

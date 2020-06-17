@@ -221,67 +221,97 @@
     </Flatten>
 
     <ItemGroup>
-      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
       // Remove quotes from all paths
       // Escape trailing back-slash in paths
       // Add quotes to paths containing spaces
       // -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'Include'"
           >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'Include')
           AND $([System.String]::Copy('%(Value)').Contains(' '))
           AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
           >%(Value)\</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'Include')
           AND $([System.String]::Copy('%(Value)').Contains(' '))"
           >&quot;%(Value)&quot;</Value>
+      </options>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
       <!--//  [uifile]                      Input file (*.ui) -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
+      </options>
 
       <!--//  -o,  -output <file>           Place the output into <file> -->
+      <options>
         <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
+      </options>
 
       <!--//  -d,  -dependencies            Display the dependencies -->
+      <options>
         <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' == 'true'"
           >--dependencies</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  -p,  -no-protection           Disable header protection -->
+      <options>
         <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' == 'true'"
           >--no-protection</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//  -n,  -no-implicit-includes    Disable generation of #include-directives -->
+      <options>
         <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' == 'true'"
           >--no-implicit-includes</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -postfix <postfix>           Postfix to add to all generated classnames -->
+      <options>
         <Value Condition="'%(Name)' == 'Postfix'">--postfix %(Value)</Value>
+      </options>
 
       <!--//   -tr,  -translate <function>  Use <function> for i18n -->
+      <options>
         <Value Condition="'%(Name)' == 'Translate'">--tr %(Value)</Value>
+      </options>
 
       <!--//   -include <include-file>      Add #include <include-file> to <file> -->
+      <options>
         <Value Condition="'%(Name)' == 'Include'">--include %(Value)</Value>
+      </options>
 
       <!--//  -g,  -generator <java|cpp>    Select generator -->
+      <options>
         <Value Condition="'%(Name)' == 'Generator'">-g %(Value)</Value>
+      </options>
 
       <!--//   -idbased                     Use id based function for i18n -->
+      <options>
         <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' == 'true'">--idbased</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' != 'true'"></Value>
       </options>
     </ItemGroup>

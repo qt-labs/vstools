@@ -277,107 +277,170 @@
     </Flatten>
 
     <ItemGroup>
-      <options>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
       // Remove quotes from all paths
       // Escape trailing back-slash in paths
       // Add quotes to paths containing spaces
       // -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
           OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root'"
           >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root')
           AND $([System.String]::Copy('%(Value)').Contains(' '))
           AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
           >%(Value)\</Value>
-
+      </options>
+      <options>
         <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
             OR '%(Name)' == 'TempFile' OR '%(Name)' == 'Root')
           AND $([System.String]::Copy('%(Value)').Contains(' '))"
           >&quot;%(Value)&quot;</Value>
+      </options>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
       <!--//  inputs                     Input files (*.qrc) -->
+      <options>
         <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
+      </options>
 
       <!--//  -o,  -output <file>        Write output to <file> -->
+      <options>
         <Value Condition="'%(Name)' == 'OutputFile' AND '$(two_pass)' != 'true'">-o %(Value)</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'OutputFile' AND '$(two_pass)' == 'true'"></Value>
+      </options>
 
       <!--//  -t,  -temp <file>          Use temporary <file> for big resources -->
+      <options>
         <Value Condition="'%(Name)' == 'TempFile'">--temp %(Value)</Value>
+      </options>
 
       <!--//   -name <name>              Create an external initialization function with <name> -->
+      <options>
         <Value Condition="'%(Name)' == 'InitFuncName'">--name %(Value)</Value>
+      </options>
 
       <!--//   -root <path>              Prefix resource access path with root path -->
+      <options>
         <Value Condition="'%(Name)' == 'Root'">--root %(Value)</Value>
+      </options>
 
       <!--//   -compress <level>         Compress input files by <level> -->
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level1'">--compress 1</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level2'">--compress 2</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level3'">--compress 3</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level4'">--compress 4</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level5'">--compress 5</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level6'">--compress 6</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level7'">--compress 7</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level8'">--compress 8</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level9'">--compress 9</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'Compression'
           AND !$([System.String]::Copy('%(Value)').StartsWith('--compress'))"></Value>
+      </options>
 
       <!--//   -no-compress              Disable all compression -->
+      <options>
         <Value
           Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
+      </options>
+      <options>
         <Value
           Condition="'%(Name)' == 'NoCompression' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -threshold <level>        Threshold to consider compressing files -->
+      <options>
         <Value Condition="'%(Name)' == 'CompressThreshold'">--threshold %(Value)</Value>
+      </options>
 
       <!--//   -binary                   Output a binary file for use as a dynamic source -->
+      <options>
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--no-binary</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -pass <number>            Pass number for big resources -->
+      <options>
         <Value Condition="'%(Name)' == 'PassNumber'">--pass %(Value)</Value>
+      </options>
 
       <!--//   -namespace                Turn off namespace macros -->
+      <options>
         <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' == 'true'">--namespace</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -verbose                  Enable verbose mode -->
+      <options>
         <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' == 'true'">--verbose</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -list                     Only list .qrc file entries, do not generate code -->
+      <options>
         <Value Condition="'%(Name)' == 'List' AND '%(Value)' == 'true'">--list</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'List' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -project                  Output a resource file containing all files from the
           //                             current directory -->
+      <options>
         <Value Condition="'%(Name)' == 'Project' AND '%(Value)' == 'true'">--project</Value>
+      </options>
+      <options>
         <Value Condition="'%(Name)' == 'Project' AND '%(Value)' != 'true'"></Value>
+      </options>
 
       <!--//   -format-version <number>  The RCC format version to write -->
+      <options>
         <Value Condition="'%(Name)' == 'FormatVersion'">--format-version %(Value)</Value>
-
       </options>
     </ItemGroup>
     <PropertyGroup>
