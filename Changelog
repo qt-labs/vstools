@@ -1,3 +1,21 @@
+Qt Visual Studio Tools version 2.5.2:
+
+Changes
+-------
+  - Fixed QTVSADDINBUG-749: lupdate/lrelease options ignored
+  - Fixed QTVSADDINBUG-756, QTVSADDINBUG-783: Qt tools generate files outside of project directory
+  - Fixed QTVSADDINBUG-760: repc output directory not added to include path
+  - Fixed QTVSADDINBUG-772, QTVSADDINBUG-777: Qt tools fail to run if path contains spaces
+  - Fixed QTVSADDINBUG-780: Regression in Qt Quick compiler integration
+  - Fixed QTVSADDINBUG-781: Error accessing Qt version when using non-ASCII characters in paths
+  - Fixed QTVSADDINBUG-782: Incorrect build settings in the debug configuration of Qt Console apps
+  - Fixed QTVSADDINBUG-785: OBJECTS_DIR ignored when importing .pro
+  - Fixed QTVSADDINBUG-786: repc command line generated incorrectly
+  - Fixed QTVSADDINBUG-790: Build errors when temp directory ends with .lnk
+  - Fixed QTVSADDINBUG-792: Files with Q_OBJECT macro not handled correctly
+  - Fixed QTVSADDINBUG-793: Backslashes in Qt version name causes error
+
+
 Qt Visual Studio Tools version 2.5.1:
 
 Changes
