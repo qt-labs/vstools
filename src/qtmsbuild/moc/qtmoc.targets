@@ -307,10 +307,10 @@
 
       <!--//  -E                          Preprocess only; do not generate meta object code -->
       <options>
-        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' == 'true'">-E</Value>
+        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'PreprocessOnly' AND '%(Value)' == 'true'">-E</Value>
       </options>
 
       <!--//  -D <macro[=def]>            Define macro, with optional definition -->
@@ -335,10 +335,10 @@
 
       <!--//  -i                          Do not generate an #include statement -->
       <options>
-        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' == 'true'">-i</Value>
+        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoInclude' AND '%(Value)' == 'true'">-i</Value>
       </options>
 
       <!--//  -p <path>                   Path prefix for included file -->
@@ -368,27 +368,27 @@
 
       <!--//   -no-notes                  Do not display notes -->
       <options>
-        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' == 'true'">--no-notes</Value>
+        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoNotes' AND '%(Value)' == 'true'">--no-notes</Value>
       </options>
 
       <!--//   -no-warnings               Do not display warnings (implies  -no-notes) -->
       <options>
-        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' == 'true'">--no-warnings</Value>
+        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoWarnings' AND '%(Value)' == 'true'">--no-warnings</Value>
       </options>
 
       <!--//   -ignore-option-clashes     Ignore all options that conflict with compilers -->
       <options>
-        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' == 'true'"
-          >--ignore-option-clashes</Value>
+        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' == 'true'"
+          >--ignore-option-clashes</Value>
       </options>
 
       <!--//  [@option-file]              Read additional options from option-file-->

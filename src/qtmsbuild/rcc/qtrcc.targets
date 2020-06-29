@@ -380,11 +380,11 @@
       <!--//   -no-compress              Disable all compression -->
       <options>
         <Value
-          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
+          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
         <Value
-          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' != 'true'"></Value>
+          Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
       </options>
 
       <!--//   -threshold <level>        Threshold to consider compressing files -->
@@ -394,10 +394,10 @@
 
       <!--//   -binary                   Output a binary file for use as a dynamic source -->
       <options>
-        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--no-binary</Value>
+        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--binary</Value>
       </options>
 
       <!--//   -pass <number>            Pass number for big resources -->
@@ -407,35 +407,35 @@
 
       <!--//   -namespace                Turn off namespace macros -->
       <options>
-        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' == 'true'">--namespace</Value>
+        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' == 'true'">--namespace</Value>
       </options>
 
       <!--//   -verbose                  Enable verbose mode -->
       <options>
-        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' == 'true'">--verbose</Value>
+        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' == 'true'">--verbose</Value>
       </options>
 
       <!--//   -list                     Only list .qrc file entries, do not generate code -->
       <options>
-        <Value Condition="'%(Name)' == 'List' AND '%(Value)' == 'true'">--list</Value>
+        <Value Condition="'%(Name)' == 'List' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'List' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'List' AND '%(Value)' == 'true'">--list</Value>
       </options>
 
       <!--//   -project                  Output a resource file containing all files from the
           //                             current directory -->
       <options>
-        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' == 'true'">--project</Value>
+        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'Project' AND '%(Value)' == 'true'">--project</Value>
       </options>
 
       <!--//   -format-version <number>  The RCC format version to write -->

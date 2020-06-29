@@ -262,29 +262,29 @@
 
       <!--//  -d,  -dependencies            Display the dependencies -->
       <options>
-        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' == 'true'"
-          >--dependencies</Value>
+        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' == 'true'"
+          >--dependencies</Value>
       </options>
 
       <!--//  -p,  -no-protection           Disable header protection -->
       <options>
-        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' == 'true'"
-          >--no-protection</Value>
+        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' == 'true'"
+          >--no-protection</Value>
       </options>
 
       <!--//  -n,  -no-implicit-includes    Disable generation of #include-directives -->
       <options>
-        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' == 'true'"
-          >--no-implicit-includes</Value>
+        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' == 'true'"
+          >--no-implicit-includes</Value>
       </options>
 
       <!--//   -postfix <postfix>           Postfix to add to all generated classnames -->
@@ -309,10 +309,10 @@
 
       <!--//   -idbased                     Use id based function for i18n -->
       <options>
-        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' == 'true'">--idbased</Value>
+        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' == 'true'">--idbased</Value>
       </options>
     </ItemGroup>
     <PropertyGroup>

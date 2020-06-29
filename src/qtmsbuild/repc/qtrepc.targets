@@ -264,18 +264,18 @@
 
       <!--//  -c                              Always output 'class' type for .rep files -->
       <options>
-        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' == 'true'">-c</Value>
+        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'AlwaysClass' AND '%(Value)' == 'true'">-c</Value>
       </options>
 
       <!--//  -d                              Print out parsing debug information -->
       <options>
-        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' == 'true'">-d</Value>
+        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
-        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' != 'true'"></Value>
+        <Value Condition="'%(Name)' == 'PrintDebug' AND '%(Value)' == 'true'">-d</Value>
       </options>
 
       <!--//  [header-file/rep-file]          Input header/rep file to read from -->
