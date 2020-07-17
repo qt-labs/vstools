@@ -217,6 +217,24 @@
         TaskParameter="Result" ItemName="options" />
     </Flatten>
 
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Translate local paths to build host paths
+    // -->
+    <HostTranslatePaths
+      Items="@(options)"
+      Names="InputFile;
+            OutputFile;
+            IncludePath">
+      <Output
+        TaskParameter="Result" ItemName="HostPath" />
+    </HostTranslatePaths>
+    <ItemGroup>
+      <options Condition="'%(Identity)' != ''">
+        <Value>@(HostPath->'%(Value)')</Value>
+      </options>
+    </ItemGroup>
+
     <ItemGroup>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
@@ -323,7 +341,7 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtRepc)">
         <WorkType>repc</WorkType>
-        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\repc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)/repc</ToolPath>
         <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtRepc.QTDIR)\bin\repc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtRepc.ExecutionDescription)</Message>

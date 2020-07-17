@@ -220,6 +220,24 @@
         TaskParameter="Result" ItemName="options" />
     </Flatten>
 
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Translate local paths to build host paths
+    // -->
+    <HostTranslatePaths
+      Items="@(options)"
+      Names="InputFile;
+            OutputFile;
+            Include">
+      <Output
+        TaskParameter="Result" ItemName="HostPath" />
+    </HostTranslatePaths>
+    <ItemGroup>
+      <options Condition="'%(Identity)' != ''">
+        <Value>@(HostPath->'%(Value)')</Value>
+      </options>
+    </ItemGroup>
+
     <ItemGroup>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +368,7 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtUic)">
         <WorkType>uic</WorkType>
-        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\uic.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)/uic</ToolPath>
         <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtUic.QTDIR)\bin\uic.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtUic.ExecutionDescription)</Message>

@@ -83,12 +83,13 @@
       >$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))</QtInstallRegDir>
     <QtInstallDir Condition="'$(QtInstallDir)' == '' AND Exists('$(QtInstallRegDir)')"
       >$(QtInstallRegDir)</QtInstallDir>
+    <QtInstallDir Condition="'$(ApplicationType)' == 'Linux'">$(QtInstall)</QtInstallDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtInstallDir)' != ''">
     <QtToolsPath Condition="'$(QtToolsPath)' == ''"
-      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathBinaries)'))</QtToolsPath>
+      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathBinaries)').Replace('\', '/'))</QtToolsPath>
     <QtDllPath Condition="'$(QtDllPath)' == ''"
-      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathLibraryExecutables)'))</QtDllPath>
+      >$([System.IO.Path]::Combine('$(QtInstallDir)','$(QtPathLibraryExecutables)').Replace('\', '/'))</QtDllPath>
     <QTDIR>$(QtInstallDir)</QTDIR>
   </PropertyGroup>
 

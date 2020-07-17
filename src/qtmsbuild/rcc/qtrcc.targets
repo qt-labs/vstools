@@ -266,6 +266,25 @@
         TaskParameter="Result" ItemName="options" />
     </Flatten>
 
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Translate local paths to build host paths
+    // -->
+    <HostTranslatePaths
+      Items="@(options)"
+      Names="InputFile;
+            OutputFile;
+            TempFile;
+            Root">
+      <Output
+        TaskParameter="Result" ItemName="HostPath" />
+    </HostTranslatePaths>
+    <ItemGroup>
+      <options Condition="'%(Identity)' != ''">
+        <Value>@(HostPath->'%(Value)')</Value>
+      </options>
+    </ItemGroup>
+
     <ItemGroup>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
@@ -472,7 +491,7 @@
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
       <QtWork Include="@(QtRcc)">
         <WorkType>rcc</WorkType>
-        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)\rcc.exe</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)/rcc</ToolPath>
         <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtRcc.QTDIR)\bin\rcc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtRcc.ExecutionDescription)</Message>

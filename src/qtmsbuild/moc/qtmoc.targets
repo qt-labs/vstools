@@ -236,6 +236,30 @@
         TaskParameter="Result" ItemName="options" />
     </Flatten>
 
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Translate local paths to build host paths
+    // -->
+    <HostTranslatePaths
+      Items="@(options)"
+      Names="InputFile;
+            OutputFile;
+            IncludePath;
+            MacFramework;
+            PathPrefix;
+            ForceInclude;
+            PrependInclude;
+            Include;
+            OptionsFile">
+      <Output
+        TaskParameter="Result" ItemName="HostPath" />
+    </HostTranslatePaths>
+    <ItemGroup>
+      <options Condition="'%(Identity)' != ''">
+        <Value>@(HostPath->'%(Value)')</Value>
+      </options>
+    </ItemGroup>
+
     <ItemGroup>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
@@ -440,7 +464,7 @@
       <QtWork Include="@(QtMoc)">
         <WorkType>moc</WorkType>
         <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'"
-          >$(QtToolsPath)\moc.exe</ToolPath>
+          >$(QtToolsPath)/moc</ToolPath>
         <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'"
           >%(QtMoc.QTDIR)\bin\moc.exe</ToolPath>
         <Options>$(options)</Options>

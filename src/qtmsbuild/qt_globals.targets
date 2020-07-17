@@ -263,10 +263,10 @@
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Run work in parallel processes
+    // Run work locally in parallel processes
     // -->
     <QtRunWork
-      Condition="'@(QtWork)' != ''
+      Condition="'$(ApplicationType)' != 'Linux' AND '@(QtWork)' != ''
         AND '%(QtWork.ParallelBuild)' == 'true'
         AND '$(DesignTimeBuild)' != 'true'"
       QtWork="@(QtWork)" QtMaxProcs="$(QtMaxProcs)" QtDebug="$(QtDebug)">
@@ -275,15 +275,79 @@
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Run work in a single process
+    // Run work locally in a single process
     // -->
     <QtRunWork
-      Condition="'@(QtWork)' != ''
+      Condition="'$(ApplicationType)' != 'Linux' AND '@(QtWork)' != ''
         AND '%(QtWork.ParallelBuild)' != 'true'
         AND '$(DesignTimeBuild)' != 'true'"
       QtWork="@(QtWork)" QtMaxProcs="1" QtDebug="$(QtDebug)">
       <Output TaskParameter="Result" ItemName="QtWorkResult" />
     </QtRunWork>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Run work in build host
+    // -->
+    <!-- // Translate local paths to host paths -->
+    <Flatten
+      Condition="'$(ApplicationType)' == 'Linux'
+        AND '@(QtWork)' != '' AND '$(DesignTimeBuild)' != 'true'"
+      Items="@(QtWork)" Metadata="ResourceFiles">
+      <Output TaskParameter="Result" ItemName="ResourceFiles"/>
+    </Flatten>
+    <ItemGroup
+      Condition="'$(ApplicationType)' == 'Linux'
+        AND '@(QtWork)' != '' AND '$(DesignTimeBuild)' != 'true'">
+      <LocalPath Include="%(QtWork.Identity)">
+        <Name>InputPath</Name>
+        <Item>%(QtWork.Identity)</Item>
+        <Value>%(QtWork.Identity)</Value>
+      </LocalPath>
+      <LocalPath
+        Condition="'%(ResourceFiles.Identity)' != ''"
+        Include="@(ResourceFiles->'%(Item)')">
+        <Name>InputPath</Name>
+        <Item>@(ResourceFiles->'%(Value)')</Item>
+        <Value>@(ResourceFiles->'%(Value)')</Value>
+      </LocalPath>
+      <LocalPath Include="%(QtWork.Identity)">
+        <Name>OutputPath</Name>
+        <Item>%(QtWork.OutputFile)</Item>
+        <Value>%(QtWork.OutputFile)</Value>
+      </LocalPath>
+    </ItemGroup>
+    <HostTranslatePaths
+      Condition="'$(ApplicationType)' == 'Linux'
+        AND '@(QtWork)' != '' AND '$(DesignTimeBuild)' != 'true'"
+      Items="@(LocalPath)" Names="InputPath;OutputPath">
+      <Output TaskParameter="Result" ItemName="HostPath"/>
+    </HostTranslatePaths>
+    <ItemGroup>
+      <InputPath Include="@(HostPath->WithMetadataValue('Name', 'InputPath'))" />
+      <OutputPath Include="@(HostPath->WithMetadataValue('Name', 'OutputPath'))" />
+    </ItemGroup>
+
+    <!-- // Run command -->
+    <HostExec
+      Condition="'$(ApplicationType)' == 'Linux'
+        AND '%(Identity)' != '' AND '$(DesignTimeBuild)' != 'true'"
+      Message="@(QtWork->'%(WorkType) %(Identity)')"
+      Command="@(QtWork->'%(ToolPath) %(Options)')"
+      Inputs="@(InputPath)"
+      Outputs="@(OutputPath)"
+      RemoteTarget="$(ResolvedRemoteTarget)"
+      RemoteProjectDir="$(_ResolvedRemoteProjectDir)">
+    </HostExec>
+
+    <!-- // Generate result item -->
+    <ItemGroup
+      Condition="'$(ApplicationType)' == 'Linux'
+        AND '@(QtWork)' != '' AND '$(DesignTimeBuild)' != 'true'">
+      <QtWorkResult Include="@(QtWork)">
+        <ExitCode>0</ExitCode>
+      </QtWorkResult>
+    </ItemGroup>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -377,6 +441,11 @@
         Condition="Exists('$(QtVarsOutputDir)\qtvars_plugin_import.cpp')"
         Include="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
     </ItemGroup>
+    <ItemGroup Condition="'$(ApplicationType)' == 'Linux'">
+      <QtWork_ClCompile Condition="'%(QtWork_ClCompile.ObjectFileName)' == ''">
+        <ObjectFileName>$(IntDir)%(Filename).o</ObjectFileName>
+      </QtWork_ClCompile>
+    </ItemGroup>
 
     <!-- // Copy default C++ compiler properties -->
     <Expand Condition="'@(QtWork_ClCompile)' != ''"
@@ -386,7 +455,7 @@
     </Expand>
 
     <!-- // Force pre-compiled header include -->
-    <ItemGroup>
+    <ItemGroup Condition="'$(ApplicationType)' != 'Linux'">
       <QtWork_ClCompile_Expanded>
         <AdditionalIncludeDirectories
           >$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -429,6 +498,36 @@
       <ClCompile Remove="@(ClCompile)"/>
       <ClCompile Include="@(ClCompile_Updated)"/>
       <ClCompile_Updated Remove="@(ClCompile_Updated)"/>
+    </ItemGroup>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Fixup WSL include paths
+    // -->
+    <Flatten
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
+      Items="@(ClCompile)" Metadata="AdditionalIncludeDirectories">
+      <Output
+        TaskParameter="Result" ItemName="IncludePath" />
+    </Flatten>
+    <ItemGroup
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
+      <IncludePath>
+        <Value Condition="$([System.String]::Copy('%(Value)').StartsWith('/'))">..%(Value)</Value>
+      </IncludePath>
+    </ItemGroup>
+    <ItemGroup
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
+      <ClCompile>
+        <Item>%(Identity)</Item>
+      </ClCompile>
+    </ItemGroup>
+    <ItemGroup
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
+      <ClCompile Condition="'%(Item)' != ''">
+        <AdditionalIncludeDirectories>@(IncludePath->'%(Value)')</AdditionalIncludeDirectories>
+        <Item/>
+      </ClCompile>
     </ItemGroup>
 
     <!--

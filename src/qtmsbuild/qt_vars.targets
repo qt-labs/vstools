@@ -39,6 +39,19 @@
     <CleanDependsOn>$(CleanDependsOn);QtVarsClean</CleanDependsOn>
   </PropertyGroup>
 
+  <Target Name="ResolveHost" DependsOnTargets="ResolveRemoteDir"
+    Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' != 'WSL_1_0'">
+    <ResolveRemoteDir
+      Condition="'$(_ResolvedRemoteProjectDir)' == ''"
+      RemoteProjectDir="$(RemoteProjectDir)"
+      RemoteTarget="$(ResolvedRemoteTarget)"
+      ProjectDir="$(ProjectDir)"
+      IntermediateDir="$(IntDir)"
+      RemoteProjectDirFile="$(RemoteProjectDirFile)">
+      <Output TaskParameter="ResolvedRemoteProjectDir" PropertyName="_ResolvedRemoteProjectDir"/>
+    </ResolveRemoteDir>
+  </Target>
+
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtVars
@@ -48,7 +61,7 @@
   <Target
     Name="QtVars"
     Condition="'$(QtVsProjectSettings)' == 'true'"
-    DependsOnTargets="QtMocInit;QtUicInit"
+    DependsOnTargets="QtMocInit;QtUicInit;ResolveHost"
     Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath)">
 
     <CreateProperty
@@ -72,25 +85,29 @@
       <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
     </CreateProperty>
     <CreateProperty
-      Condition="'$(QtInstallDir)' != '' AND !$([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
-      Value="$(QtInstallDir)\$(QtPathBinaries)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
+      Condition="'$(ApplicationType)' == 'Linux'" Value="$(QtInstall)">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
     </CreateProperty>
     <CreateProperty
-      Condition="'$(QtInstallDir)' != '' AND $([System.IO.Path]::IsPathRooted('$(QtPathBinaries)'))"
-      Value="$(QtPathBinaries)">
+      Condition="'$(QtInstallDir)' != ''"
+      Value="$([System.IO.Path]::Combine('$(QtInstallDir)', '$(QtPathBinaries)').Replace('\', '/'))">
       <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
     </CreateProperty>
 
     <!--// Check if qmake is in the tools path -->
     <Error Condition="'$(QtToolsPath)' == ''" Text="There's no Qt version assigned to project $(MSBuildProjectFile) for configuration $(Configuration)/$(Platform). Please assign a Qt installation in 'Qt Project Settings'."/>
-    <Error Condition="!Exists('$(QtToolsPath)\qmake.exe')" Text="qmake not found in $(QtToolsPath) when building project $(MSBuildProjectFile)"/>
+    <Error
+      Condition="'$(ApplicationType)' != 'Linux' AND !Exists('$(QtToolsPath)\qmake.exe')"
+      Text="qmake not found in $(QtToolsPath) when building project $(MSBuildProjectFile)"/>
 
     <!--// Ensure C++ compiler in PATH -->
-    <Exec Command="WHERE /Q cl.exe" IgnoreExitCode="true">
+    <Exec
+      Condition="'$(ApplicationType)' != 'Linux'"
+      Command="WHERE /Q cl.exe" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
     </Exec>
-    <SetEnv Condition="'$(ErrorLevel)' != '0'"
+    <SetEnv
+      Condition="'$(ApplicationType)' != 'Linux' AND '$(ErrorLevel)' != '0'"
       Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
 
     <!--// Set-up temp directory -->
@@ -99,13 +116,72 @@
     <MakeDir
       Directories="$(QtVarsWorkDir)"/>
 
+    <!--// Translate local paths to build host paths -->
+    <ItemGroup>
+      <LocalPath Include="WorkDir">
+        <Name>Path</Name>
+        <Item>$(QtVarsWorkDir)</Item>
+        <Value>$(QtVarsWorkDir)</Value>
+      </LocalPath>
+      <LocalPath Include="QMakeProps">
+        <Name>Path</Name>
+        <Item>$(QtVarsWorkDir)\props.txt</Item>
+        <Value>$(QtVarsWorkDir)\props.txt</Value>
+      </LocalPath>
+      <LocalPath Include="QMakeLog">
+        <Name>Path</Name>
+        <Item>$(QtVarsWorkDir)\qtvars.log</Item>
+        <Value>$(QtVarsWorkDir)\qtvars.log</Value>
+      </LocalPath>
+      <LocalPath Include="QMakeProj">
+        <Name>Path</Name>
+        <Item>$(QtVarsWorkDir)\qtvars.pro</Item>
+        <Value>$(QtVarsWorkDir)\qtvars.pro</Value>
+      </LocalPath>
+      <LocalPath Include="QtMakefile">
+        <Name>Path</Name>
+        <Item>$(QtVarsWorkDir)\Makefile</Item>
+        <Value>$(QtVarsWorkDir)\Makefile</Value>
+      </LocalPath>
+    </ItemGroup>
+    <HostTranslatePaths Items="@(LocalPath)" Names="Path">
+      <Output TaskParameter="Result" ItemName="HostPath"/>
+    </HostTranslatePaths>
+    <ItemGroup>
+      <WorkDir Include="@(HostPath->WithMetadataValue('Identity', 'WorkDir'))">
+        <LocalPath>%(Item)</LocalPath>
+        <HostPath>%(Value)</HostPath>
+      </WorkDir>
+      <QMakeProps Include="@(HostPath->WithMetadataValue('Identity', 'QMakeProps'))">
+        <LocalPath>%(Item)</LocalPath>
+        <HostPath>%(Value)</HostPath>
+      </QMakeProps>
+      <QMakeLog Include="@(HostPath->WithMetadataValue('Identity', 'QMakeLog'))">
+        <LocalPath>%(Item)</LocalPath>
+        <HostPath>%(Value)</HostPath>
+      </QMakeLog>
+      <QMakeProj Include="@(HostPath->WithMetadataValue('Identity', 'QMakeProj'))">
+        <LocalPath>%(Item)</LocalPath>
+        <HostPath>%(Value)</HostPath>
+      </QMakeProj>
+      <QtMakefile Include="@(HostPath->WithMetadataValue('Identity', 'QtMakefile'))">
+        <LocalPath>%(Item)</LocalPath>
+        <HostPath>%(Value)</HostPath>
+      </QtMakefile>
+    </ItemGroup>
+
     <!--// Run qmake: query properties -->
     <PropertyGroup>
-      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" -query) 1> props.txt 2> NUL]]></Cmd>
+      <Cmd><![CDATA["$(QtToolsPath)/qmake" -query]]></Cmd>
     </PropertyGroup>
-    <Exec WorkingDirectory="$(QtVarsWorkDir)" Command="$(Cmd)"/>
+    <HostExec
+      Command="$(Cmd)" RedirectStdOut="props.txt"
+      WorkingDirectory="@(WorkDir->'%(HostPath)')"
+      Outputs="@(QMakeProps)"
+      RemoteTarget="$(ResolvedRemoteTarget)"
+      RemoteProjectDir="$(_ResolvedRemoteProjectDir)" />
     <ReadLinesFromFile
-        File="$(QtVarsWorkDir)\props.txt">
+        File="@(QMakeProps->'%(LocalPath)')">
       <Output TaskParameter="Lines" ItemName="QMakeQueryResult"/>
     </ReadLinesFromFile>
 
@@ -198,7 +274,7 @@
 
     <Message
       Importance="high"
-      Text="Reading Qt configuration ($(QtToolsPath)\qmake.exe)"/>
+      Text="Reading Qt configuration ($(QtToolsPath)/qmake)"/>
 
     <PropertyGroup>
 
@@ -263,11 +339,18 @@
 
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
     <PropertyGroup>
-      <Cmd><![CDATA[("$(QtToolsPath)\qmake.exe" $(QMakeArgs) qtvars.pro) 1> qtvars.log 2>&1]]></Cmd>
+      <Cmd><![CDATA["$(QtToolsPath)/qmake" $(QMakeArgs) qtvars.pro]]></Cmd>
     </PropertyGroup>
-    <Exec WorkingDirectory="$(QtVarsWorkDir)" IgnoreExitCode="true" Command="$(Cmd)">
+    <HostExec
+      Command="$(Cmd)" RedirectStdOut="qtvars.log" RedirectStdErr="STDOUT"
+      WorkingDirectory="@(WorkDir->'%(HostPath)')"
+      Inputs="@(QMakeProj)"
+      Outputs="@(QtMakefile);@(QMakeLog)"
+      RemoteTarget="$(ResolvedRemoteTarget)"
+      RemoteProjectDir="$(_ResolvedRemoteProjectDir)"
+      IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
-    </Exec>
+    </HostExec>
 
     <!--// Check qmake result -->
     <PropertyGroup Condition="'$(ErrorLevel)' != '0' OR !Exists('$(QtVarsWorkDir)\Makefile')">
@@ -276,7 +359,7 @@
 
     <!--// Get qmake console output -->
     <ItemGroup>
-      <QMakeError Include="($(QtToolsPath)\qmake.exe)"/>
+      <QMakeError Include="($(QtToolsPath)/qmake)"/>
       <QMakeError Include="%24PWD=$(QtVarsWorkDir)"/>
     </ItemGroup>
     <ReadLinesFromFile
