@@ -109,13 +109,13 @@
 
     <!--// Path to temp work folder -->
     <QtVarsWorkDirName
-      >$([System.IO.Path]::GetRandomFileName())</QtVarsWorkDirName>
+      >temp</QtVarsWorkDirName>
     <QtVarsWorkDir
-      >$([System.IO.Path]::Combine('$(TEMP)','$(QtVarsWorkDirName)'))</QtVarsWorkDir>
+      >$([System.IO.Path]::Combine('$(QtVarsOutputDir)','$(QtVarsWorkDirName)'))</QtVarsWorkDir>
     <QtVarsWorkPath
       >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
     <QtVarsIndexPathDesignTime
-      >$(TEMP)\$(ProjectGuid.Replace('{','').Replace('}','')).$(ProjectName).designtime.idx</QtVarsIndexPathDesignTime>
+      >$(QtVarsWorkDir)\$(ProjectGuid.Replace('{','').Replace('}','')).$(ProjectName).designtime.idx</QtVarsIndexPathDesignTime>
     <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
       >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
   </PropertyGroup>

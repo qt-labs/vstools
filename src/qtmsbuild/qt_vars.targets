@@ -495,11 +495,6 @@
       SourceFiles="$(QtVarsWorkDir)\qtvars_plugin_import.cpp"
       DestinationFiles="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
 
-    <!--// Remove work dir -->
-    <RemoveDir
-      Condition="'$(QtVarsDebug)' != 'true'"
-      Directories="$(QtVarsWorkDir)"/>
-
     <!--// In design-time, copy generated .props to randomly named file -->
     <PropertyGroup>
       <QtVarsDesignTimeNew
