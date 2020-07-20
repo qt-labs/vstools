@@ -37,6 +37,42 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TASK ListQrc
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // List resource paths in a QRC file.
+  // Parameters:
+  //      in string    QrcFilePath: path to QRC file
+  //     out string[]  Result: paths to files referenced in QRC
+  // -->
+  <UsingTask TaskName="ListQrc"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <QrcFilePath ParameterType="System.String"   Required="true" />
+      <Result      ParameterType="System.String[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.Xml"/>
+      <Reference Include="System.Xml.Linq"/>
+      <Using Namespace="System.Xml.Linq"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            XDocument qrc = XDocument.Load(QrcFilePath, LoadOptions.SetLineInfo);
+            IEnumerable<XElement> files = qrc
+                .Element("RCC")
+                .Elements("qresource")
+                .Elements("file");
+            Uri QrcPath = new Uri(QrcFilePath);
+            Result = files
+                .Select(x => new Uri(QrcPath, x.Value).LocalPath)
+                .ToArray();
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TASK GetItemHash
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Calculate an hash code (Deflate + Base64) for an item, given a list of metadata to use as key

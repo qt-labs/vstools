@@ -107,18 +107,9 @@
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <!--// Parse QRC -->
-    <PropertyGroup>
-      <QtRccExeQuoted Condition="'$(QtVsProjectSettings)' == 'true'">&quot;$(QtToolsPath)\rcc.exe&quot;</QtRccExeQuoted>
-      <QtRccExeQuoted Condition="'$(QtVsProjectSettings)' != 'true'">&quot;%(QtRcc.QTDIR)\bin\rcc.exe&quot;</QtRccExeQuoted>
-      <QtRccQuoted>&quot;%(QtRcc.Identity)&quot;</QtRccQuoted>
-      <RccListQuoted>&quot;$(IntDir)rcc_list.txt&quot;</RccListQuoted>
-    </PropertyGroup>
-    <Exec Condition="'@(QtRcc)' != ''"
-      Command="$(QtRccExeQuoted) --list $(QtRccQuoted) > $(RccListQuoted) 2> nul"/>
-    <ReadLinesFromFile Condition="'@(QtRcc)' != '' AND Exists('$(IntDir)rcc_list.txt')"
-      File="$(IntDir)rcc_list.txt">
-      <Output TaskParameter="Lines" ItemName="res_file"/>
-    </ReadLinesFromFile>
+    <ListQrc QrcFilePath="%(QtRcc.FullPath)">
+      <Output TaskParameter="Result" ItemName="res_file"/>
+    </ListQrc>
 
     <!--// Add dependencies -->
     <ItemGroup Condition="'@(QtRcc)' != '' AND '@(res_file)' != ''">
@@ -138,7 +129,6 @@
     <ItemGroup>
       <res_file Remove="@(res_file)"/>
     </ItemGroup>
-    <Delete Files="$(IntDir)rcc_list.txt"/>
   </Target>
 
   <!--
