@@ -388,7 +388,7 @@
                     proc.BeginErrorReadLine();
                     running.Enqueue(new KeyValuePair<string, Process>(workItem.Key, proc));
                 } catch (Exception e) {
-                    Log.LogMessage(MessageImportance.High,
+                    Log.LogError(
                         string.Format("[QtRunWork] Error starting process {0}: {1}",
                         workItem.ToolPath, e.Message));
                     ok = false;
@@ -461,7 +461,7 @@
             // If there are items still haven't been queued, that means a circular dependency exists
             if (ok && postponedItems.Any()) {
                 ok = false;
-                Log.LogMessage(MessageImportance.High, "[QtRunWork] Error: circular dependency");
+                Log.LogError("[QtRunWork] Error: circular dependency");
                 if (QtDebug) {
                     Log.LogMessage(MessageImportance.High,
                         string.Format("## QtRunWork circularity\r\n##    {0}",
@@ -510,6 +510,8 @@
             }
 
             Result = result.Values.ToArray();
+            if (!ok)
+                return false;
         ]]>
       </Code>
     </Task>
