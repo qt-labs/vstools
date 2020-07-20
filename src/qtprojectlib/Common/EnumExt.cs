@@ -110,6 +110,19 @@ namespace QtVsTools.Common
         }
 
         /// <summary>
+        /// Convert type T to enum
+        /// </summary>
+        public static bool TryCast<T, TEnum>(this T valueT, out TEnum value) where TEnum : struct
+        {
+            value = default(TEnum);
+            IEnumerable<Enum> enumValues = Enum.GetValues(typeof(TEnum)).OfType<Enum>()
+                .Where((Enum valueEnum) => valueEnum.Cast<T>().Equals(valueT));
+            if (enumValues.Any())
+                value = (TEnum)Enum.ToObject(typeof(TEnum), enumValues.FirstOrDefault());
+            return enumValues.Any();
+        }
+
+        /// <summary>
         /// Get list of values of enum type converted to type T
         /// </summary>
         public static IEnumerable<T> GetValues<T>(Type enumType)

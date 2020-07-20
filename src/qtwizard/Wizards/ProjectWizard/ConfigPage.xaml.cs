@@ -74,6 +74,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             public string Name { get; set; }
             public VersionInformation QtVersion { get; set; }
+            public string QtVersionName { get; set; }
             public string Target { get; set; }
             public string Platform { get; set; }
             public bool IsDebug { get; set; }
@@ -94,6 +95,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 {
                     Name = Name,
                     QtVersion = QtVersion,
+                    QtVersionName = QtVersionName,
                     Target = Target,
                     Platform = Platform,
                     IsDebug = IsDebug,
@@ -174,6 +176,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Name = "Debug",
                     IsDebug = true,
                     QtVersion = defaultQtVersionInfo,
+                    QtVersionName = defaultQtVersionInfo.name,
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
@@ -186,6 +189,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Name = "Release",
                     IsDebug = false,
                     QtVersion = defaultQtVersionInfo,
+                    QtVersionName = defaultQtVersionInfo.name,
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
@@ -279,7 +283,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 && GetBinding(comboBoxQtVersion) is Config config) {
                 comboBoxQtVersion.IsEnabled = false;
                 comboBoxQtVersion.ItemsSource = qtVersionList;
-                comboBoxQtVersion.Text = config.QtVersion.name;
+                comboBoxQtVersion.Text = config.QtVersionName;
                 comboBoxQtVersion.IsEnabled = true;
             }
         }
@@ -315,8 +319,12 @@ namespace QtVsTools.Wizards.ProjectWizard
                         }
                     }
                     comboBoxQtVersion.Text = config.QtVersion.name;
-                } else {
+                } else if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
                     config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
+                    config.QtVersionName = comboBoxQtVersion.Text;
+                } else {
+                    config.QtVersion = null;
+                    config.QtVersionName = comboBoxQtVersion.Text;
                 }
                 if (oldQtVersion != config.QtVersion) {
                     if (config.QtVersion != null) {

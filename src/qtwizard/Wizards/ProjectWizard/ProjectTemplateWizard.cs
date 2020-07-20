@@ -54,6 +54,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     {
         string Name { get; }
         VersionInformation QtVersion { get; }
+        string QtVersionName { get; }
         string Target { get; }
         string Platform { get; }
         bool IsDebug { get; }
@@ -64,7 +65,8 @@ namespace QtVsTools.Wizards.ProjectWizard
     {
         Windows,
         [String("Windows Store")] WindowsStore,
-        Linux
+        [String("Linux (SSH)")] LinuxSSH,
+        [String("Linux (WSL)")] LinuxWSL
     }
 
     public enum ProjectPlatforms
@@ -257,6 +259,12 @@ namespace QtVsTools.Wizards.ProjectWizard
             OnProjectGenerated(project);
         }
 
+        protected static bool IsLinux(IWizardConfiguration wizConfig)
+        {
+            return wizConfig.Target.EqualTo(ProjectTargets.LinuxSSH)
+                || wizConfig.Target.EqualTo(ProjectTargets.LinuxWSL);
+        }
+
         protected virtual void Expand()
         {
             Debug.Assert(ParameterValues != null);
@@ -344,8 +352,15 @@ namespace QtVsTools.Wizards.ProjectWizard
             ///////////////////////////////////////////////////////////////////////////////////////
             // Globals: Linux
             //
-            // TODO
-            //
+            foreach (IWizardConfiguration c in Configurations.Where(c => IsLinux(c))) {
+                xml.AppendLine(string.Format(@"
+    <ApplicationType Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">Linux</ApplicationType>
+    <ApplicationTypeRevision Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">Generic</TargetLinuxPlatform>
+    <LinuxProjectType Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">{{D51BCBC9-82E9-4017-911E-C93873C4EA2B}}</LinuxProjectType>",
+                    /*{0}*/ c.Name,
+                    /*{1}*/ c.Platform));
+            }
 
             Parameter[NewProject.Globals] = FormatParam(xml);
 
@@ -354,6 +369,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
+                ProjectTargets target;
+                if (!c.Target.TryCast(out target))
+                    continue;
                 xml.AppendLine(string.Format(@"
   <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"" Label=""Configuration"">",
                     /*{0}*/ c.Name,
@@ -368,10 +386,27 @@ namespace QtVsTools.Wizards.ProjectWizard
                     xml.AppendLine(@"
     <ConfigurationType>Application</ConfigurationType>");
                 }
-                xml.AppendLine(string.Format(@"
+                switch (target) {
+                    case ProjectTargets.Windows:
+                    case ProjectTargets.WindowsStore:
+                        xml.AppendLine(string.Format(@"
     <PlatformToolset>{0}</PlatformToolset>",
-                    /*{0}*/ c.QtVersion.VC_PlatformToolset));
-                if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                            /*{0}*/ c.QtVersion.VC_PlatformToolset));
+                        break;
+                    case ProjectTargets.LinuxSSH:
+                        xml.AppendLine(@"
+    <PlatformToolset>Remote_GCC_1_0</PlatformToolset>");
+                        break;
+                    case ProjectTargets.LinuxWSL:
+                        xml.AppendLine(@"
+    <PlatformToolset>WSL_1_0</PlatformToolset>");
+                        break;
+                }
+                if (IsLinux(c)) {
+                    xml.AppendLine(string.Format(@"
+    <UseDebugLibraries>{0}</UseDebugLibraries>",
+                        /*{0}*/ c.IsDebug ? "true" : "false"));
+                } else if (target == ProjectTargets.WindowsStore) {
                     xml.AppendLine(@"
     <GenerateManifest>false</GenerateManifest>
     <EmbedManifest>false</EmbedManifest>");
@@ -407,7 +442,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     <QtBuildConfig>{4}</QtBuildConfig>",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform,
-                    /*{2}*/ c.QtVersion.name,
+                    /*{2}*/ c.QtVersionName,
                     /*{3}*/ string.Join(";", c.Modules.Union(ExtraModules)),
                     /*{4}*/ c.IsDebug ? "debug" : "release"));
                 if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
@@ -436,75 +471,88 @@ namespace QtVsTools.Wizards.ProjectWizard
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform));
 
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Build settings: C++ compiler
                 //
-                xml.AppendLine(@"
+                if (!IsLinux(c)) {
+                    // Windows
+                    xml.AppendLine(@"
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>");
-                if (c.IsDebug) {
-                    xml.AppendLine(@"
+                    if (c.IsDebug) {
+                        xml.AppendLine(@"
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>");
-                } else {
-                    xml.AppendLine(@"
+                    } else {
+                        xml.AppendLine(@"
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>");
-                }
-                if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    xml.AppendLine(@"
+                    }
+                    if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                        xml.AppendLine(@"
       <CompileAsWinRT>false</CompileAsWinRT>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>");
-                }
-                if (UsePrecompiledHeaders) {
-                    xml.AppendLine(string.Format(@"
+                    }
+                    if (UsePrecompiledHeaders) {
+                        xml.AppendLine(string.Format(@"
       <UsePrecompiledHeader>Use</UsePrecompiledHeader>
       <PrecompiledHeaderFile>{0}</PrecompiledHeaderFile>",
-                        /*{0}*/ PrecompiledHeader.Include));
-                }
-                if (ExtraDefines?.Any() == true) {
-                    xml.AppendLine(string.Format(@"
+                            /*{0}*/ PrecompiledHeader.Include));
+                    }
+                    if (ExtraDefines?.Any() == true) {
+                        xml.AppendLine(string.Format(@"
       <PreprocessorDefinitions>{0};%(PreprocessorDefinitions)</PreprocessorDefinitions>",
-                        /*{0}*/ string.Join(";", ExtraDefines)));
-                }
-                foreach (ItemProperty p in clProperties) {
-                    xml.AppendLine(string.Format(@"
+                            /*{0}*/ string.Join(";", ExtraDefines)));
+                    }
+                    foreach (ItemProperty p in clProperties) {
+                        xml.AppendLine(string.Format(@"
       <{0}>{1}</{0}>",
-                        /*{0}*/ p.Key,
-                        /*{1}*/ p.Value));
-                }
-                xml.AppendLine(@"
+                            /*{0}*/ p.Key,
+                            /*{1}*/ p.Value));
+                    }
+                    xml.AppendLine(@"
     </ClCompile>");
+                } else {
+                    // Linux
+                    xml.AppendLine(@"
+    <ClCompile>
+      <PositionIndependentCode>true</PositionIndependentCode>
+    </ClCompile>");
+                }
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Build settings: Linker
                 //
-                xml.AppendLine(string.Format(@"
+                if (!IsLinux(c)) {
+                    // Windows
+                    xml.AppendLine(string.Format(@"
     <Link>
       <SubSystem>{0}</SubSystem>
       <GenerateDebugInformation>{1}</GenerateDebugInformation>",
-                    /*{0}*/ TemplateType.HasFlag(Options.ConsoleSystem) ? "Console" : "Windows",
-                    /*{1}*/ c.IsDebug ? "true" : "false"));
-                if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    xml.AppendLine(string.Format(@"
+                        /*{0}*/ TemplateType.HasFlag(Options.ConsoleSystem) ? "Console" : "Windows",
+                        /*{1}*/ c.IsDebug ? "true" : "false"));
+                    if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                        xml.AppendLine(string.Format(@"
       <AdditionalOptions>/APPCONTAINER %(AdditionalOptions)</AdditionalOptions>
       <GenerateManifest>false</GenerateManifest>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <TargetMachine>{0}</TargetMachine>",
-                        /*{0}*/ c.QtVersion.VC_Link_TargetMachine));
-                }
-                foreach (ItemProperty p in linkProperties) {
-                    xml.AppendLine(string.Format(@"
+                            /*{0}*/ c.QtVersion.VC_Link_TargetMachine));
+                    }
+                    foreach (ItemProperty p in linkProperties) {
+                        xml.AppendLine(string.Format(@"
       <{0}>{1}</{0}>",
-                        /*{0}*/ p.Key,
-                        /*{1}*/ p.Value));
-                }
-                xml.AppendLine(@"
+                            /*{0}*/ p.Key,
+                            /*{1}*/ p.Value));
+                    }
+                    xml.AppendLine(@"
     </Link>");
+                }
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Build settings: moc
