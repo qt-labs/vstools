@@ -83,7 +83,10 @@ namespace QtVsTools
 
         private void AddQtVersionDialog_Shown(object sender, EventArgs e)
         {
-            Text = SR.GetString("AddQtVersionDialog_Title");
+            if (nameBox.Enabled)
+                Text = SR.GetString("AddQtVersionDialog_Title");
+            else
+                Text = SR.GetString("AddQtVersionDialog_TitleEdit");
         }
 
         void AddQtVersionDialog_KeyPress(object sender, KeyPressEventArgs e)
@@ -465,6 +468,43 @@ namespace QtVsTools
             compilerBox.Enabled = true;
             errorLabel.Text = "";
             skipDataChanged = false;
+        }
+
+        public void SetEdit(string name)
+        {
+            string path;
+            try {
+                path = QtVersionManager.The().GetInstallPath(name);
+            } catch {
+                return;
+            }
+
+            skipDataChanged = true;
+            nameBox.Text = name;
+            skipDataChanged = false;
+
+            if (path.StartsWith("SSH:") || path.StartsWith("WSL:")) {
+                EnableLinuxMode();
+                var linuxPaths = path.Split(':');
+                skipDataChanged = skipHostChanged = true;
+                if (linuxPaths[0] == "SSH")
+                    comboBoxHost.SelectedIndex = 1;
+                else
+                    comboBoxHost.SelectedIndex = 2;
+                pathBox.Text = linuxPaths[1];
+                if (linuxPaths.Length > 2 && !string.IsNullOrEmpty(linuxPaths[2]))
+                    compilerBox.Text = linuxPaths[2];
+                skipDataChanged = skipHostChanged = false;
+            } else {
+                EnableWindowsMode();
+                skipDataChanged = true;
+                pathBox.Text = path;
+                skipDataChanged = false;
+            }
+
+            comboBoxHost.Enabled = false;
+            nameBox.Enabled = false;
+            okButton.Enabled = true;
         }
     }
 }

@@ -159,6 +159,9 @@
   <data name="AddQtVersionDialog_Title" xml:space="preserve">
     <value>Add New Qt Version</value>
   </data>
+  <data name="AddQtVersionDialog_TitleEdit" xml:space="preserve">
+    <value>Edit Qt Version</value>
+  </data>
   <data name="AddQtVersionDialog_VersionAlreadyPresent" xml:space="preserve">
     <value>The given name has already been registered.</value>
   </data>

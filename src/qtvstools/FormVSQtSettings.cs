@@ -207,5 +207,25 @@ namespace QtVsTools
                 }
             }
         }
+
+        private void listView_DoubleClick(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems == null)
+                return;
+            if (listView.SelectedItems.Count == 0)
+                return;
+
+            VersionInformation.Clear();
+            QtVersionManager.The().ClearVersionCache();
+            using (var dia = new AddQtVersionDialog()) {
+                dia.SetEdit(listView.SelectedItems[0].Text);
+                dia.StartPosition = FormStartPosition.CenterParent;
+                var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                if (dia.ShowDialog(ww) == DialogResult.OK) {
+                    UpdateListBox();
+                    SetupDefaultVersionComboBox(null);
+                }
+            }
+        }
     }
 }
