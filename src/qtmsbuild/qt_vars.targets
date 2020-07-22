@@ -64,36 +64,6 @@
     DependsOnTargets="QtMocInit;QtUicInit;ResolveHost"
     Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath)">
 
-    <CreateProperty
-      Condition="Exists('$(QtInstall)')"
-      Value="$(QtInstall)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
-    </CreateProperty>
-    <CreateProperty
-      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
-      Value="HKEY_CURRENT_USER\Software\Digia\Versions\$(QtInstall)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallRegKey" />
-    </CreateProperty>
-    <CreateProperty
-      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
-      Value="$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallRegDir" />
-    </CreateProperty>
-    <CreateProperty
-      Condition="!Exists('$(QtInstall)') AND '$(QtInstall)' != ''"
-      Value="$(QtInstallRegDir)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
-    </CreateProperty>
-    <CreateProperty
-      Condition="'$(ApplicationType)' == 'Linux'" Value="$(QtInstall)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtInstallDir" />
-    </CreateProperty>
-    <CreateProperty
-      Condition="'$(QtInstallDir)' != ''"
-      Value="$([System.IO.Path]::Combine('$(QtInstallDir)', '$(QtPathBinaries)').Replace('\', '/'))">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtToolsPath" />
-    </CreateProperty>
-
     <!--// Check if qmake is in the tools path -->
     <Error Condition="'$(QtToolsPath)' == ''" Text="There's no Qt version assigned to project $(MSBuildProjectFile) for configuration $(Configuration)/$(Platform). Please assign a Qt installation in 'Qt Project Settings'."/>
     <Error
