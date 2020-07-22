@@ -50,9 +50,9 @@
     <QMake_INCLUDEPATH_
 >INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_INCLUDEPATH_>
     <QMake_LIBS_
->LIBS=/(?:\/LIBPATH:(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBS_>
+>LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBS_>
     <QMake_LIBPATH_
->LIBPATH=LIBS/\/LIBPATH:(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBPATH_>
+>LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBPATH_>
     <QtVars
       Condition="'$(QtVars)' == ''"
       >$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
@@ -90,6 +90,8 @@
       >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories
       >$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SharedLibrarySearchPath
+      >$(Qt_LIBPATH_);%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
     </Link>
   </ItemDefinitionGroup>
 
