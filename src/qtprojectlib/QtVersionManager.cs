@@ -103,7 +103,8 @@ namespace QtProjectLib
             if (vi == null) {
                 var qtdir = GetInstallPath(name);
                 versionCache[name] = vi = VersionInformation.Get(qtdir);
-                vi.name = name;
+                if (vi != null)
+                    vi.name = name;
             }
             return vi;
         }
@@ -173,6 +174,9 @@ namespace QtProjectLib
                     invalidVersions.Add(v);
                     continue;
                 }
+
+                if (vPath.StartsWith("SSH:") || vPath.StartsWith("WSL:"))
+                    continue;
 
                 var qmakePath = Path.Combine(vPath, "bin", "qmake.exe");
                 if (!File.Exists(qmakePath))
@@ -266,15 +270,26 @@ namespace QtProjectLib
             return GetInstallPath(version);
         }
 
-        public bool SaveVersion(string versionName, string path)
+        public bool SaveVersion(string versionName, string path, bool checkPath = true)
         {
-            var verName = versionName.Trim();
+            var verName = versionName?.Trim().Replace(@"\", "_");
+            if (string.IsNullOrEmpty(verName))
+                return false;
             var dir = string.Empty;
             if (verName != "$(QTDIR)") {
-                var di = new DirectoryInfo(path);
-                if (verName.Length < 1 || !di.Exists)
+                DirectoryInfo di;
+                try {
+                    di = new DirectoryInfo(path);
+                } catch {
+                    di = null;
+                }
+                if (di?.Exists == true) {
+                    dir = di.FullName;
+                } else if (!checkPath) {
+                    dir = path;
+                } else {
                     return false;
-                dir = di.FullName;
+                }
             }
             var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
             if (key == null) {

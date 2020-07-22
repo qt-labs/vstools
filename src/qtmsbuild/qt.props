@@ -81,9 +81,17 @@
       >$(QtVersionsRegKey)\$(QtInstall)</QtInstallRegKey>
     <QtInstallRegDir Condition="'$(QtInstallDir)' == '' AND '$(QtInstallRegKey)' != ''"
       >$([MSBuild]::GetRegistryValue('$(QtInstallRegKey)','InstallDir'))</QtInstallRegDir>
-    <QtInstallDir Condition="'$(QtInstallDir)' == '' AND Exists('$(QtInstallRegDir)')"
+    <QtInstallDir
+      Condition="'$(ApplicationType)' != 'Linux' AND '$(QtInstallDir)' == ''
+      AND Exists('$(QtInstallRegDir)')"
       >$(QtInstallRegDir)</QtInstallDir>
-    <QtInstallDir Condition="'$(ApplicationType)' == 'Linux'">$(QtInstall)</QtInstallDir>
+    <QtInstallDir
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(QtInstallDir)' == ''
+      AND ( $(QtInstallRegDir.StartsWith('SSH:')) OR $(QtInstallRegDir.StartsWith('WSL:')) )"
+      >$(QtInstallRegDir.Split(':')[1])</QtInstallDir>
+    <QtInstallDir
+      Condition="'$(ApplicationType)' == 'Linux' AND '$(QtInstallDir)' == ''"
+      >$(QtInstall)</QtInstallDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtInstallDir)' != ''">
     <QtToolsPath Condition="'$(QtToolsPath)' == ''"

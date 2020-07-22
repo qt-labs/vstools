@@ -75,6 +75,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             public string Name { get; set; }
             public VersionInformation QtVersion { get; set; }
             public string QtVersionName { get; set; }
+            public string QtVersionPath { get; set; }
             public string Target { get; set; }
             public string Platform { get; set; }
             public bool IsDebug { get; set; }
@@ -297,6 +298,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var oldQtVersion = config.QtVersion;
                 if (comboBoxQtVersion.Text == QT_VERSION_DEFAULT) {
                     config.QtVersion = defaultQtVersionInfo;
+                    config.QtVersionName = defaultQtVersionInfo.name;
+                    config.QtVersionPath = defaultQtVersionInfo.qtDir;
                     comboBoxQtVersion.Text = defaultQtVersionInfo.name;
                 } else if (comboBoxQtVersion.Text == QT_VERSION_BROWSE) {
                     var openFileDialog = new OpenFileDialog
@@ -316,16 +319,20 @@ namespace QtVsTools.Wizards.ProjectWizard
                         if (versionInfo != null) {
                             versionInfo.name = qtVersion;
                             config.QtVersion = versionInfo;
+                            config.QtVersionName = versionInfo.name;
+                            config.QtVersionPath = config.QtVersion.qtDir;
                         }
                     }
                     comboBoxQtVersion.Text = config.QtVersion.name;
                 } else if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
                     config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
+                    config.QtVersionPath = qtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
                 } else {
                     config.QtVersion = null;
-                    config.QtVersionName = comboBoxQtVersion.Text;
+                    config.QtVersionName = config.QtVersionPath = comboBoxQtVersion.Text;
                 }
+
                 if (oldQtVersion != config.QtVersion) {
                     if (config.QtVersion != null) {
                         config.Target = config.QtVersion.isWinRT()
@@ -334,6 +341,10 @@ namespace QtVsTools.Wizards.ProjectWizard
                         config.Platform = config.QtVersion.is64Bit()
                             ? ProjectPlatforms.X64.Cast<string>()
                             : ProjectPlatforms.Win32.Cast<string>();
+                    } else if (config.QtVersionPath.StartsWith("SSH:")) {
+                        config.Target = ProjectTargets.LinuxSSH.Cast<string>();
+                    } else if (config.QtVersionPath.StartsWith("WSL:")) {
+                        config.Target = ProjectTargets.LinuxWSL.Cast<string>();
                     }
                     ConfigTable.Items.Refresh();
                 }

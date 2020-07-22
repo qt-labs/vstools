@@ -58,7 +58,11 @@ namespace QtProjectLib
             if (qtDir == null)
                 return null;
 
-            qtDir = new FileInfo(qtDir).FullName.ToUpperInvariant();
+            try {
+                qtDir = new FileInfo(qtDir).FullName.ToUpperInvariant();
+            } catch {
+                return null;
+            }
             var versionInfo = _cache[qtDir] as VersionInformation;
             if (versionInfo == null) {
                 versionInfo = new VersionInformation(qtDir);

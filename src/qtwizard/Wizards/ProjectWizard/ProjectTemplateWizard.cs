@@ -55,6 +55,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         string Name { get; }
         VersionInformation QtVersion { get; }
         string QtVersionName { get; }
+        string QtVersionPath { get; }
         string Target { get; }
         string Platform { get; }
         bool IsDebug { get; }
@@ -265,6 +266,18 @@ namespace QtVsTools.Wizards.ProjectWizard
                 || wizConfig.Target.EqualTo(ProjectTargets.LinuxWSL);
         }
 
+        protected static string GetLinuxCompilerPath(IWizardConfiguration wizConfig)
+        {
+            if (!IsLinux(wizConfig))
+                return string.Empty;
+            if (string.IsNullOrEmpty(wizConfig.QtVersionPath))
+                return string.Empty;
+            string[] linuxPaths = wizConfig.QtVersionPath.Split(':');
+            if (linuxPaths == null || linuxPaths.Length <= 2)
+                return string.Empty;
+            return linuxPaths[2];
+        }
+
         protected virtual void Expand()
         {
             Debug.Assert(ParameterValues != null);
@@ -300,10 +313,20 @@ namespace QtVsTools.Wizards.ProjectWizard
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
                 xml.AppendLine(string.Format(@"
-  <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">
-  </PropertyGroup>",
+  <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform));
+                if (IsLinux(c)) {
+                    var compilerPath = GetLinuxCompilerPath(c);
+                    if (!string.IsNullOrEmpty(compilerPath))
+                        xml.AppendLine(string.Format(@"
+      <RemoteCCompileToolExe>{0}</RemoteCCompileToolExe>
+      <RemoteCppCompileToolExe>{0}</RemoteCppCompileToolExe>
+      <RemoteLdToolExe>{0}</RemoteLdToolExe>",
+                            /*{0}*/ compilerPath));
+                }
+                xml.AppendLine(@"
+  </PropertyGroup>");
             }
             Parameter[NewProject.Properties] = FormatParam(xml);
 

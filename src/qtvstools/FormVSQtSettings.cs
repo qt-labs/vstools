@@ -102,16 +102,25 @@ namespace QtVsTools
             listView.Items.Clear();
             foreach (var version in QtVersionManager.The().GetVersions()) {
                 string path = null;
+                string compiler = "msvc";
                 if (defaultQtVersionDir != null && version == "$(DefaultQtVersion)")
                     path = defaultQtVersionDir;
                 else
                     path = versionManager.GetInstallPath(version);
                 if (path == null && version != "$(QTDIR)")
                     continue;
+                if (path.StartsWith("SSH:") || path.StartsWith("WSL:")) {
+                    var linuxPaths = path.Split(':');
+                    compiler = "g++";
+                    path = string.Format("[{0}] {1}", linuxPaths[0], linuxPaths[1]);
+                    if (linuxPaths.Length > 2 && !string.IsNullOrEmpty(linuxPaths[2]))
+                        compiler = linuxPaths[2];
+                }
                 var itm = new ListViewItem();
                 itm.Tag = version;
                 itm.Text = version;
                 itm.SubItems.Add(path);
+                itm.SubItems.Add(compiler);
                 listView.Items.Add(itm);
             }
         }
@@ -126,6 +135,11 @@ namespace QtVsTools
             foreach (var v in QtVersionManager.The().GetVersions()) {
                 if (v == "$(DefaultQtVersion)")
                     continue;
+                try {
+                    Path.GetFullPath(QtVersionManager.The().GetInstallPath(v));
+                } catch {
+                    continue;
+                }
                 defaultCombo.Items.Add(v);
             }
 

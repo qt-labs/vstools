@@ -75,6 +75,10 @@ namespace QtVsTools
 
             Shown += AddQtVersionDialog_Shown;
             KeyPress += AddQtVersionDialog_KeyPress;
+
+            skipDataChanged = true;
+            comboBoxHost.SelectedIndex = 0;
+            skipDataChanged = false;
         }
 
         private void AddQtVersionDialog_Shown(object sender, EventArgs e)
@@ -201,6 +205,7 @@ namespace QtVsTools
             this.comboBoxHost.Name = "comboBoxHost";
             this.comboBoxHost.Size = new System.Drawing.Size(296, 21);
             this.comboBoxHost.TabIndex = 0;
+            this.comboBoxHost.SelectedIndexChanged += new System.EventHandler(this.comboBoxHost_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -309,11 +314,22 @@ namespace QtVsTools
         private void okButton_Click(object sender, EventArgs e)
         {
             try {
-                var versionInfo = VersionInformation.Get(pathBox.Text);
-                var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-                if (generator != "MSVC.NET" && generator != "MSBUILD")
-                    throw new Exception(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", generator));
-                QtVersionManager.The().SaveVersion(nameBox.Text, pathBox.Text);
+                if (comboBoxHost.Text == "Windows") {
+                    var versionInfo = VersionInformation.Get(pathBox.Text);
+                    var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                    if (generator != "MSVC.NET" && generator != "MSBUILD")
+                        throw new Exception(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", generator));
+                    QtVersionManager.The().SaveVersion(nameBox.Text, pathBox.Text);
+                } else {
+                    string name = nameBox.Text;
+                    string access = comboBoxHost.Text == "Linux SSH" ? "SSH" : "WSL";
+                    string path = pathBox.Text;
+                    string compiler = compilerBox.Text;
+                    if (compiler == "g++")
+                        compiler = string.Empty;
+                    path = string.Format("{0}:{1}:{2}", access, path, compiler);
+                    QtVersionManager.The().SaveVersion(name, path, checkPath: false);
+                }
                 DialogResult = DialogResult.OK;
                 Close();
             } catch (Exception exception) {
@@ -325,21 +341,32 @@ namespace QtVsTools
         Parser InvalidName => _InvalidName
             ?? (_InvalidName = Char[Path.DirectorySeparatorChar].Render());
 
+        bool skipDataChanged = false;
         private void DataChanged(object sender, EventArgs e)
         {
+            if (skipDataChanged)
+                return;
+
+            bool isWindows = comboBoxHost.Text == "Windows";
+
             if (sender == nameBox)
                 nameBoxDirty = true;
 
             var path = pathBox.Text;
             var name = nameBox.Text.Trim();
 
-            if (!nameBoxDirty) {
-                var str = path.TrimEnd('\\');
-                name = str.Substring(str.LastIndexOf('\\') + 1);
-
-                nameBox.TextChanged -= DataChanged;
-                nameBox.Text = name;
-                nameBox.TextChanged += DataChanged;
+            if (!nameBoxDirty && nameBox.Enabled) {
+                if (isWindows) {
+                    var str = path.TrimEnd('\\');
+                    name = str.Substring(str.LastIndexOf('\\') + 1);
+                } else if (string.IsNullOrEmpty(name)) {
+                    name = path;
+                }
+                if (nameBox.Text != name) {
+                    nameBox.TextChanged -= DataChanged;
+                    nameBox.Text = name;
+                    nameBox.TextChanged += DataChanged;
+                }
             }
 
             pathBox.Enabled = name != "$(QTDIR)";
@@ -357,18 +384,25 @@ namespace QtVsTools
                 errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
             } else if (InvalidName.Regex.IsMatch(name)) {
                 errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
-            } else if (string.IsNullOrWhiteSpace(path) && name == "$(QTDIR)") {
-                errorLabel.Text = SR.GetString("AddQtVersionDialog_RestartVisualStudio");
-            } else if (!Directory.Exists(path)) {
-                errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidDirectory");
-            } else if (File.Exists(Path.Combine(path, "lib", "libqtmain.a"))
-                || File.Exists(Path.Combine(path, "lib", "libqtmaind.a"))) {
-                errorLabel.Text = SR.GetString("AddQtVersionDialog_MingwQt");
-            } else if (!File.Exists(Path.Combine(path, "bin", "qmake.exe"))) {
-                errorLabel.Text = SR.GetString("AddQtVersionDialog_NotFound",
-                    Path.Combine(path, "bin", "qmake.exe"));
-            } else if (QtVersionManager.The().GetVersions().Any(s => name == s)) {
-                errorLabel.Text = SR.GetString("AddQtVersionDialog_VersionAlreadyPresent");
+            }
+            if (isWindows) {
+                if (string.IsNullOrWhiteSpace(name)) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
+                } else if (InvalidName.Regex.IsMatch(name)) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidName");
+                } else if (string.IsNullOrWhiteSpace(path) && name == "$(QTDIR)") {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_RestartVisualStudio");
+                } else if (!Directory.Exists(path)) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_InvalidDirectory");
+                } else if (File.Exists(Path.Combine(path, "lib", "libqtmain.a"))
+                    || File.Exists(Path.Combine(path, "lib", "libqtmaind.a"))) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_MingwQt");
+                } else if (!File.Exists(Path.Combine(path, "bin", "qmake.exe"))) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_NotFound",
+                        Path.Combine(path, "bin", "qmake.exe"));
+                } else if (QtVersionManager.The().GetVersions().Any(s => name == s)) {
+                    errorLabel.Text = SR.GetString("AddQtVersionDialog_VersionAlreadyPresent");
+                }
             }
             okButton.Enabled = string.IsNullOrEmpty(errorLabel.Text);
         }
@@ -390,6 +424,47 @@ namespace QtVsTools
                         (pathBox.Text = fd.SelectedPath));
                 }
             }
+        }
+
+        bool skipHostChanged = false;
+        private void comboBoxHost_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (skipHostChanged)
+                return;
+
+            bool oldIsWindows = browseButton.Visible;
+            bool newIsWindows = comboBoxHost.Text == "Windows";
+            if (oldIsWindows == newIsWindows)
+                return;
+
+            if (oldIsWindows)
+                EnableLinuxMode();
+            else
+                EnableWindowsMode();
+        }
+
+        void EnableWindowsMode()
+        {
+            skipDataChanged = true;
+            browseButton.Visible = true;
+            tableLayoutPanel1.SetColumnSpan(pathBox, 1);
+            pathBox.Text = "";
+            compilerBox.Text = "msvc";
+            compilerBox.Enabled = false;
+            errorLabel.Text = "";
+            skipDataChanged = false;
+        }
+
+        void EnableLinuxMode()
+        {
+            skipDataChanged = true;
+            browseButton.Visible = false;
+            tableLayoutPanel1.SetColumnSpan(pathBox, 2);
+            pathBox.Text = "";
+            compilerBox.Text = "g++";
+            compilerBox.Enabled = true;
+            errorLabel.Text = "";
+            skipDataChanged = false;
         }
     }
 }
