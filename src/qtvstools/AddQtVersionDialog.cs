@@ -43,14 +43,20 @@ namespace QtVsTools
 
     public class AddQtVersionDialog : Form
     {
-        private Label label1;
-        private Label label2;
         private Button okButton;
         private Button cancelButton;
-        private TextBox nameBox;
-        private TextBox pathBox;
-        private Button browseButton;
         private bool nameBoxDirty;
+        private TextBox nameBox;
+        private TableLayoutPanel tableLayoutPanel1;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Label label1;
+        private Button browseButton;
+        private TextBox pathBox;
+        private Label label3;
+        private Label label2;
+        private ComboBox comboBoxHost;
+        private Label label4;
+        private TextBox compilerBox;
         private Label errorLabel;
 
         public AddQtVersionDialog()
@@ -91,111 +97,211 @@ namespace QtVsTools
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
-            okButton = new System.Windows.Forms.Button();
-            cancelButton = new System.Windows.Forms.Button();
-            nameBox = new System.Windows.Forms.TextBox();
-            pathBox = new System.Windows.Forms.TextBox();
-            browseButton = new System.Windows.Forms.Button();
-            errorLabel = new System.Windows.Forms.Label();
-            SuspendLayout();
-            //
-            // label1
-            //
-            label1.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            label1.Location = new System.Drawing.Point(8, 16);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(88, 24);
-            label1.TabIndex = 6;
-            label1.Text = "Version name:";
-            //
-            // label2
-            //
-            label2.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            label2.Location = new System.Drawing.Point(8, 48);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(88, 23);
-            label2.TabIndex = 5;
-            label2.Text = "Path:";
-            //
+            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.errorLabel = new System.Windows.Forms.Label();
+            this.nameBox = new System.Windows.Forms.TextBox();
+            this.browseButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboBoxHost = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.pathBox = new System.Windows.Forms.TextBox();
+            this.compilerBox = new System.Windows.Forms.TextBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
             // okButton
-            //
-            okButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            okButton.Enabled = false;
-            okButton.Location = new System.Drawing.Point(143, 104);
-            okButton.Name = "okButton";
-            okButton.Size = new System.Drawing.Size(75, 23);
-            okButton.TabIndex = 3;
-            okButton.Text = "&OK";
-            //
+            // 
+            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Enabled = false;
+            this.okButton.Location = new System.Drawing.Point(137, 3);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.TabIndex = 5;
+            this.okButton.Text = "&OK";
+            // 
             // cancelButton
-            //
-            cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            cancelButton.Location = new System.Drawing.Point(224, 104);
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new System.Drawing.Size(75, 23);
-            cancelButton.TabIndex = 4;
-            cancelButton.Text = "&Cancel";
-            //
-            // nameBox
-            //
-            nameBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            nameBox.Location = new System.Drawing.Point(96, 16);
-            nameBox.Name = "nameBox";
-            nameBox.Size = new System.Drawing.Size(200, 20);
-            nameBox.TabIndex = 0;
-            //
-            // pathBox
-            //
-            pathBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            pathBox.Location = new System.Drawing.Point(96, 48);
-            pathBox.Name = "pathBox";
-            pathBox.Size = new System.Drawing.Size(176, 20);
-            pathBox.TabIndex = 1;
-            //
-            // browseButton
-            //
-            browseButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            browseButton.Location = new System.Drawing.Point(272, 48);
-            browseButton.Name = "browseButton";
-            browseButton.Size = new System.Drawing.Size(24, 20);
-            browseButton.TabIndex = 2;
-            browseButton.Text = "...";
-            //
+            // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(218, 3);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 6;
+            this.cancelButton.Text = "&Cancel";
+            // 
             // errorLabel
-            //
-            errorLabel.AutoSize = true;
-            errorLabel.ForeColor = System.Drawing.Color.Red;
-            errorLabel.Location = new System.Drawing.Point(8, 71);
-            errorLabel.Name = "errorLabel";
-            errorLabel.Size = new System.Drawing.Size(0, 13);
-            errorLabel.TabIndex = 0;
-            //
+            // 
+            this.errorLabel.AutoEllipsis = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.errorLabel, 3);
+            this.errorLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorLabel.ForeColor = System.Drawing.Color.Red;
+            this.errorLabel.Location = new System.Drawing.Point(3, 108);
+            this.errorLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.errorLabel.Name = "errorLabel";
+            this.errorLabel.Size = new System.Drawing.Size(378, 18);
+            this.errorLabel.TabIndex = 99;
+            this.errorLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // nameBox
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.nameBox, 2);
+            this.nameBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.nameBox.Location = new System.Drawing.Point(85, 30);
+            this.nameBox.Name = "nameBox";
+            this.nameBox.Size = new System.Drawing.Size(296, 20);
+            this.nameBox.TabIndex = 1;
+            // 
+            // browseButton
+            // 
+            this.browseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.browseButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.browseButton.Location = new System.Drawing.Point(347, 56);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(34, 20);
+            this.browseButton.TabIndex = 3;
+            this.browseButton.Text = "...";
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 53);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(76, 26);
+            this.label2.TabIndex = 99;
+            this.label2.Text = "Path:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label3
+            // 
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Location = new System.Drawing.Point(3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(76, 27);
+            this.label3.TabIndex = 99;
+            this.label3.Text = "Build Host:";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // comboBoxHost
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.comboBoxHost, 2);
+            this.comboBoxHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxHost.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxHost.FormattingEnabled = true;
+            this.comboBoxHost.Items.AddRange(new object[] {
+            "Windows",
+            "Linux SSH",
+            "Linux WSL"});
+            this.comboBoxHost.Location = new System.Drawing.Point(85, 3);
+            this.comboBoxHost.Name = "comboBoxHost";
+            this.comboBoxHost.Size = new System.Drawing.Size(296, 21);
+            this.comboBoxHost.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 27);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 26);
+            this.label1.TabIndex = 99;
+            this.label1.Text = "Version Name:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.Controls.Add(this.errorLabel, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.browseButton, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.pathBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.compilerBox, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.comboBoxHost, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.nameBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 5);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(384, 161);
+            this.tableLayoutPanel1.TabIndex = 99;
+            // 
+            // label4
+            // 
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(3, 79);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(76, 26);
+            this.label4.TabIndex = 99;
+            this.label4.Text = "Compiler:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pathBox
+            // 
+            this.pathBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pathBox.Location = new System.Drawing.Point(85, 56);
+            this.pathBox.Name = "pathBox";
+            this.pathBox.Size = new System.Drawing.Size(256, 20);
+            this.pathBox.TabIndex = 2;
+            // 
+            // compilerBox
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.compilerBox, 2);
+            this.compilerBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.compilerBox.Location = new System.Drawing.Point(85, 82);
+            this.compilerBox.Name = "compilerBox";
+            this.compilerBox.Size = new System.Drawing.Size(296, 20);
+            this.compilerBox.TabIndex = 4;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel1, 2);
+            this.flowLayoutPanel1.Controls.Add(this.cancelButton);
+            this.flowLayoutPanel1.Controls.Add(this.okButton);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(85, 129);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(296, 29);
+            this.flowLayoutPanel1.TabIndex = 99;
+            // 
             // AddQtVersionDialog
-            //
-            AcceptButton = okButton;
-            AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            CancelButton = cancelButton;
-            ClientSize = new System.Drawing.Size(304, 134);
-            Controls.Add(errorLabel);
-            Controls.Add(browseButton);
-            Controls.Add(pathBox);
-            Controls.Add(nameBox);
-            Controls.Add(cancelButton);
-            Controls.Add(okButton);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            KeyPreview = true;
-            Name = "AddQtVersionDialog";
-            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            Text = "Add New Qt Version";
-            ResumeLayout(false);
-            PerformLayout();
+            // 
+            this.AcceptButton = this.okButton;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.cancelButton;
+            this.ClientSize = new System.Drawing.Size(384, 161);
+            this.Controls.Add(this.tableLayoutPanel1);
+            this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(800, 200);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(400, 200);
+            this.Name = "AddQtVersionDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.Text = "Add New Qt Version";
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.ResumeLayout(false);
 
         }
         #endregion

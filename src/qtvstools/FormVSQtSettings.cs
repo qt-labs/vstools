@@ -45,10 +45,8 @@ namespace QtVsTools
             InitializeComponent();
             versionManager = QtVersionManager.The();
 
-            listView.Columns.Add(SR.GetString("BuildOptionsPage_Name"), 100,
-                HorizontalAlignment.Left);
-            listView.Columns.Add(SR.GetString("BuildOptionsPage_Path"), 180,
-                HorizontalAlignment.Left);
+            columnVersionName.Text = SR.GetString("BuildOptionsPage_Name");
+            columnVersionPath.Text = SR.GetString("BuildOptionsPage_Path");
             addButton.Text = SR.GetString("Add");
             deleteButton.Text = SR.GetString("Delete");
             label2.Text = SR.GetString("BuildOptionsPage_DefaultQtVersion");
@@ -59,7 +57,6 @@ namespace QtVsTools
 
             SetupDefaultVersionComboBox(null);
             UpdateListBox();
-            FormBorderStyle = FormBorderStyle.FixedDialog;
 
             vsQtSettings = new VSQtSettings();
             optionsPropertyGrid.SelectedObject = vsQtSettings;
