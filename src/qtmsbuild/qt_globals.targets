@@ -502,36 +502,6 @@
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Fixup WSL include paths
-    // -->
-    <Flatten
-      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
-      Items="@(ClCompile)" Metadata="AdditionalIncludeDirectories">
-      <Output
-        TaskParameter="Result" ItemName="IncludePath" />
-    </Flatten>
-    <ItemGroup
-      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
-      <IncludePath>
-        <Value Condition="$([System.String]::Copy('%(Value)').StartsWith('/'))">..%(Value)</Value>
-      </IncludePath>
-    </ItemGroup>
-    <ItemGroup
-      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
-      <ClCompile>
-        <Item>%(Identity)</Item>
-      </ClCompile>
-    </ItemGroup>
-    <ItemGroup
-      Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'">
-      <ClCompile Condition="'%(Item)' != ''">
-        <AdditionalIncludeDirectories>@(IncludePath->'%(Value)')</AdditionalIncludeDirectories>
-        <Item/>
-      </ClCompile>
-    </ItemGroup>
-
-    <!--
-    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Clean-up
     // -->
     <ItemGroup>
