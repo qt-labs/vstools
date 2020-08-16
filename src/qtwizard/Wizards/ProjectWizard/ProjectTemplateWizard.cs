@@ -470,7 +470,9 @@ namespace QtVsTools.Wizards.ProjectWizard
                     /*{4}*/ c.IsDebug ? "debug" : "release"));
                 if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
                     xml.AppendLine(@"
-    <QtDeploy>true</QtDeploy>");
+    <QtDeploy>true</QtDeploy>
+    <QtDeployToProjectDir>true</QtDeployToProjectDir>
+    <QtDeployVsContent>true</QtDeployVsContent>");
                 }
                 xml.AppendLine(@"
   </PropertyGroup>");

@@ -861,6 +861,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\qtmsbuild\deploy\qtdeploy.xml">
+      <Link>QtMsBuild\deploy\qtdeploy.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Target Name="CheckT4Templates" BeforeTargets="Build" Inputs="%(T4Template.FullPath);%(T4Template.DependsOn)" Outputs="@(T4Template->'%(OutputFile)')">
     <Error Text="T4 template '%(T4Template.FullPath)' out-of-date; update by selecting &quot;Build&quot; &gt; &quot;Transform All T4 Templates&quot;" />

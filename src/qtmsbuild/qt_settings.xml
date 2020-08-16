@@ -84,6 +84,11 @@
     <EnumValue Name="debug" DisplayName="Debug"/>
     <EnumValue Name="release" DisplayName="Release"/>
   </EnumProperty>
+  <BoolProperty
+    Name="QtDeploy"
+    Category="QtSettings_01_General"
+    DisplayName="Run Deployment Tool"
+    Description="Select whether Qt for Windows Deployment Tool (windeployqt) should be called after build."/>
   <StringProperty
     Name="QtPathBinaries"
     Category="QtSettings_02_Paths"
