@@ -263,7 +263,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
 
                 var qmake = new QMakeImport(configWinRT.QtVersion, dummyPro);
-                qmake.Run();
+                qmake.Run(setVCVars: true);
 
                 var qmakeAssetsDir = Path.Combine(qmakeTmpDir, "assets");
                 var projAssetsDir = Path.Combine(projDir, "assets");
