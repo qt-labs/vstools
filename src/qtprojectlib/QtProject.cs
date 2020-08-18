@@ -3588,7 +3588,8 @@ namespace QtProjectLib
                     Config = x,
                     Cpp = x.Rules.Item("CL") as IVCRulePropertyStorage,
                 })
-                .Where(x => x.Cpp != null);
+                .Where(x => x.Cpp != null
+                    && x.Config.GetEvaluatedPropertyValue("ApplicationType") != "Linux");
         }
 
         public static IEnumerable<CppConfig> GetCppDebugConfigs(VCProject vcPro)
