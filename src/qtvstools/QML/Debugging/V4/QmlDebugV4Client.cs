@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -176,34 +177,48 @@ namespace QtVsTools.Qml.Debug.V4
             if (string.IsNullOrEmpty(hostName))
                 hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
-            if (!NativeMethods.DebugClientConnect(client,
-                hostNameData, hostNameData.Length, hostPort)) {
-                return null;
-            }
 
             Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
                 connectTimer.Start();
 
-                while (!clientConnected.WaitOne(1000)) {
+                var probe = new Socket(
+                    AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                while (!probe.Connected && connectTimer.ElapsedMilliseconds < 60000) {
+                    try {
+                        probe.Connect(hostName, hostPort);
+                    } catch {
+                        Thread.Sleep(3000);
+                    }
+                }
 
-                    if (sink.QueryRuntimeFrozen()) {
-                        connectTimer.Restart();
+                if (probe.Connected) {
+                    probe.Disconnect(false);
 
-                    } else {
-                        if (connectTimer.ElapsedMilliseconds > 4000) {
-                            if (!Disposing)
-                                clientConnected.Set();
+                    NativeMethods.DebugClientConnect(client,
+                        hostNameData, hostNameData.Length, hostPort);
+                    connectTimer.Restart();
 
-                            if (Atomic(() => State == DebugClientState.Connected,
-                                       () => State = DebugClientState.Disconnecting)) {
-                                NativeMethods.DebugClientDisconnect(client);
-                            }
+                    while (!clientConnected.WaitOne(1000)) {
+
+                        if (sink.QueryRuntimeFrozen()) {
+                            connectTimer.Restart();
 
                         } else {
-                            NativeMethods.DebugClientConnect(client,
-                                hostNameData, hostNameData.Length, hostPort);
+                            if (connectTimer.ElapsedMilliseconds > 4000) {
+                                if (!Disposing)
+                                    clientConnected.Set();
+
+                                if (Atomic(() => State == DebugClientState.Connected,
+                                           () => State = DebugClientState.Disconnecting)) {
+                                    NativeMethods.DebugClientDisconnect(client);
+                                }
+
+                            } else {
+                                NativeMethods.DebugClientConnect(client,
+                                    hostNameData, hostNameData.Length, hostPort);
+                            }
                         }
                     }
                 }
