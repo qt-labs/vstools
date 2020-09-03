@@ -37,6 +37,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtProjectLib;
 using QtProjectLib.QtMsBuild;
+using QtVsTools.SyntaxAnalysis;
+using static QtVsTools.SyntaxAnalysis.RegExpr;
 
 namespace QtVsTools.Qml.Debug
 {
@@ -49,6 +51,7 @@ namespace QtVsTools.Qml.Debug
         IVsDebugger debugger;
         IVsDebugger4 debugger4;
         IVsOutputWindowPane debugOutput;
+        bool started;
 
         public static void Initialize()
         {
@@ -90,8 +93,7 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
-            var evLoadComplete = pEvent as IDebugLoadCompleteEvent2;
-            if (evLoadComplete == null)
+            if (!(pEvent is IDebugLoadCompleteEvent2 || pEvent is IDebugThreadCreateEvent2))
                 return VSConstants.S_OK;
 
             if (pProgram == null)
@@ -100,34 +102,67 @@ namespace QtVsTools.Qml.Debug
             if (pProcess == null && pProgram.GetProcess(out pProcess) != VSConstants.S_OK)
                 return VSConstants.S_OK;
 
-            if (!IsNativeProgram(pProgram))
+            bool native;
+            Guid engineId = GetEngineId(pProgram);
+            if (engineId == NativeEngine.Id)
+                native = true;
+            else if (engineId == GdbEngine.Id)
+                native = false;
+            else
+                return VSConstants.S_OK;
+
+            if (pEvent is IDebugLoadCompleteEvent2)
+                started = false;
+            else if (started)
                 return VSConstants.S_OK;
 
             string execPath;
             uint procId;
-            if (!GetProcessInfo(pProcess, out execPath, out procId))
+            if (!GetProcessInfo(pProcess, native, out execPath, out procId))
                 return VSConstants.S_OK;
 
             string execCmd;
             IEnumerable<string> rccItems;
-            if (!GetProjectInfo(execPath, out execCmd, out rccItems))
+            if (!GetProjectInfo(execPath, native, out execCmd, out rccItems))
                 return VSConstants.S_OK;
+
+            started = true;
 
             LaunchDebug(execPath, execCmd, procId, rccItems);
             return VSConstants.S_OK;
         }
 
-        bool IsNativeProgram(IDebugProgram2 pProgram)
+        Guid GetEngineId(IDebugProgram2 pProgram)
         {
             string engineName;
             Guid engineGuid;
             if (pProgram.GetEngineInfo(out engineName, out engineGuid) != VSConstants.S_OK)
-                return false;
-
-            return (engineGuid == NativeEngine.Id);
+                return Guid.Empty;
+            return engineGuid;
         }
 
-        bool GetProcessInfo(IDebugProcess2 pProcess, out string execPath, out uint procId)
+        class WslPath
+        {
+            public string Drive;
+            public string Path;
+            public static implicit operator string(WslPath wslPath)
+            {
+                return string.Format(@"{0}:\{1}", wslPath.Drive, wslPath.Path);
+            }
+        }
+
+        static RegExpr wslPathRegex = new Token("WSLPATH", SkipWs_Disable, StartOfFile
+            & "/mnt/" & new Token("DRIVE", CharWord) & "/" & new Token("PATH", AnyChar.Repeat()))
+        {
+            new Rule<WslPath>
+            {
+                Update("DRIVE", (WslPath wslPath, string drive) => wslPath.Drive = drive),
+                Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path),
+            }
+        };
+        static RegExpr.Parser wslPathParser = wslPathRegex.Render();
+
+        bool GetProcessInfo(IDebugProcess2 pProcess, bool native, out string execPath, out uint procId)
         {
             execPath = "";
             procId = 0;
@@ -140,12 +175,22 @@ namespace QtVsTools.Qml.Debug
             if (pProcess.GetPhysicalProcessId(pProcessId) != VSConstants.S_OK)
                 return false;
 
-            execPath = Path.GetFullPath(fileName);
+            if (native) {
+                execPath = Path.GetFullPath(fileName);
+            } else {
+                var wslPath = wslPathParser.Parse(fileName)
+                    .GetValues<WslPath>("WSLPATH").FirstOrDefault();
+                if (wslPath != null)
+                    execPath = Path.GetFullPath(wslPath);
+                else
+                    execPath = fileName;
+            }
+
             procId = pProcessId[0].dwProcessId;
             return true;
         }
 
-        bool GetProjectInfo(string execPath, out string execCmd, out IEnumerable<string> rccItems)
+        bool GetProjectInfo(string execPath, bool native, out string execCmd, out IEnumerable<string> rccItems)
         {
             execCmd = "";
             rccItems = null;
@@ -170,8 +215,14 @@ namespace QtVsTools.Qml.Debug
 
                 var props = vcProject as IVCBuildPropertyStorage;
 
-                var debugCommand = props.GetPropertyValue("LocalDebuggerCommand",
+                var localDebugCommand = props.GetPropertyValue("LocalDebuggerCommand",
                     vcConfig.Name, "UserFile");
+
+                var remoteDebugCommand = props.GetPropertyValue("RemoteDebuggerCommand",
+                    vcConfig.Name, "UserFile");
+
+                string debugCommand = (native || string.IsNullOrEmpty(remoteDebugCommand))
+                    ? localDebugCommand : remoteDebugCommand;
 
                 bool sameFile = string.Equals(execPath, Path.GetFullPath(debugCommand),
                     StringComparison.InvariantCultureIgnoreCase);
@@ -197,7 +248,8 @@ namespace QtVsTools.Qml.Debug
                     return false;
                 }
 
-                var execArgs = props.GetPropertyValue("LocalDebuggerCommandArguments",
+                var execArgs = props.GetPropertyValue(
+                    native ? "LocalDebuggerCommandArguments" : "RemoteDebuggerCommandArguments",
                     vcConfig.Name, "UserFile");
                 if (string.IsNullOrEmpty(execArgs)) {
                     OutputWriteLine("DISABLED: Error reading command line arguments");
@@ -253,7 +305,7 @@ namespace QtVsTools.Qml.Debug
             try {
                 debugger4.LaunchDebugTargets4((uint)targets.Length, targets, processInfo);
 
-            } catch (Exception e) {
+            } catch (System.Exception e) {
                 OutputWriteLine(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }

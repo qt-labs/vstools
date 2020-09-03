@@ -325,4 +325,10 @@ namespace QtVsTools.Qml.Debug.AD7
         const string ID_LANGUAGE_CPP = "3a12d0b7-c26c-11d0-b442-00a0244a1dd2";
         public static Guid IdLanguageCpp = new Guid(ID_LANGUAGE_CPP);
     }
+
+    public static class GdbEngine
+    {
+        const string ID_GDBENGINE = "ea6637c6-17df-45b5-a183-0951c54243bc";
+        public static readonly Guid Id = new Guid(ID_GDBENGINE);
+    }
 }
