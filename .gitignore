@@ -269,6 +269,8 @@ ModelManifest.xml
 .fake/
 
 # Generated Files
+src/qttemplates/qml/Properties/AssemblyInfo.tt.cs
+src/qttemplates/qmldir/Properties/AssemblyInfo.tt.cs
 vstools.pri
 src/config/12.0/source.extension.vsixmanifest
 src/config/14.0/source.extension.vsixmanifest

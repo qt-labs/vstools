@@ -116,6 +116,14 @@
       d:TargetPath="|Resource;TemplateProjectOutputGroup|" Path="ItemTemplates"
       d:VsixSubPath="ItemTemplates" />
     <Asset
+      Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="QMLFile"
+      d:TargetPath="|QMLFile;TemplateProjectOutputGroup|" Path="ItemTemplates"
+      d:VsixSubPath="ItemTemplates" />
+    <Asset
+      Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="QMLDir"
+      d:TargetPath="|QMLDir;TemplateProjectOutputGroup|" Path="ItemTemplates"
+      d:VsixSubPath="ItemTemplates" />
+    <Asset
       Type="Microsoft.VisualStudio.ItemTemplate"
       d:Source="Project" d:ProjectName="DialogButtonBottom"
       d:TargetPath="|DialogButtonBottom;TemplateProjectOutputGroup|" Path="ItemTemplates"
