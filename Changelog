@@ -1,3 +1,12 @@
+Qt Visual Studio Tools version 2.6.0:
+
+Changes
+-------
+  - Support for cross-compilation with the Linux development VS workload
+  - Integration of Qt for Windows deployment tool (windeployqt)
+  - Fixed QTVSADDINBUG-797: Incorrect generation of command-line flags for Qt tools
+
+
 Qt Visual Studio Tools version 2.5.2:
 
 Changes
