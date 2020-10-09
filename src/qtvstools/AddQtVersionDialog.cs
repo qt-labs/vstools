@@ -316,13 +316,14 @@ namespace QtVsTools
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            bool ok = false;
             try {
                 if (comboBoxHost.Text == "Windows") {
                     var versionInfo = VersionInformation.Get(pathBox.Text);
                     var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
                     if (generator != "MSVC.NET" && generator != "MSBUILD")
                         throw new Exception(SR.GetString("AddQtVersionDialog_IncorrectMakefileGenerator", generator));
-                    QtVersionManager.The().SaveVersion(nameBox.Text, pathBox.Text);
+                    ok = QtVersionManager.The().SaveVersion(nameBox.Text, pathBox.Text);
                 } else {
                     string name = nameBox.Text;
                     string access = comboBoxHost.Text == "Linux SSH" ? "SSH" : "WSL";
@@ -331,12 +332,19 @@ namespace QtVsTools
                     if (compiler == "g++")
                         compiler = string.Empty;
                     path = string.Format("{0}:{1}:{2}", access, path, compiler);
-                    QtVersionManager.The().SaveVersion(name, path, checkPath: false);
+                    ok = QtVersionManager.The().SaveVersion(name, path, checkPath: false);
                 }
+            } catch (Exception exception) {
+                Messages.PaneMessageSafe(Vsix.Instance.Dte,
+                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace, 5000);
+            }
+            if (ok) {
                 DialogResult = DialogResult.OK;
                 Close();
-            } catch (Exception exception) {
-                Messages.DisplayErrorMessage(exception.Message);
+            } else {
+                DialogResult = DialogResult.Cancel;
+                Close();
+                Messages.DisplayErrorMessage("Error registering Qt version.");
             }
         }
 

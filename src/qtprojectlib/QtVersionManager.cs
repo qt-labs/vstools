@@ -291,17 +291,24 @@ namespace QtProjectLib
                     return false;
                 }
             }
-            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, true);
-            if (key == null) {
-                key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryRootPath);
-                if (key == null)
+
+            string rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
+            string versionKeyPath = strVersionKey + "\\" + verName;
+            using (var key = Registry.CurrentUser.CreateSubKey(rootKeyPath)) {
+                if (key == null) {
+                    Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
+                        "ERROR: root registry key creation failed", timeout: 5000);
                     return false;
+                }
+                using (var versionKey = key.CreateSubKey(versionKeyPath)) {
+                    if (versionKey == null) {
+                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
+                            "ERROR: version registry key creation failed", timeout: 5000);
+                        return false;
+                    }
+                    versionKey.SetValue("InstallDir", dir);
+                }
             }
-            var versionKey = key.CreateSubKey(strVersionKey + "\\" + verName);
-            if (versionKey == null)
-                return false;
-            versionKey.SetValue("InstallDir", dir);
-            versionKey.Close();
             RefreshVersionNames();
             return true;
         }
