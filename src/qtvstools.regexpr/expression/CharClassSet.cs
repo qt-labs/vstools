@@ -344,7 +344,7 @@ namespace QtVsTools.SyntaxAnalysis
             public CharClassLiteral this[string s] { get { return CharRawLiteral(s); } }
         }
 
-        public class CharClassEvalException : RegExpr.Exception
+        public class CharClassEvalException : RegExprException
         {
             public CharClassEvalException(string message = null) : base(message) { }
         }

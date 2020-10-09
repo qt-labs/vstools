@@ -112,7 +112,7 @@ namespace QtVsTools.SyntaxAnalysis
             };
         }
 
-        public class NestedRepeatException : RegExpr.Exception
+        public class NestedRepeatException : RegExprException
         {
             public NestedRepeatException(string message = null) : base(message) { }
         }

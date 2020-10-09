@@ -151,7 +151,7 @@ namespace QtVsTools.SyntaxAnalysis
             }
         }
 
-        public class ParseErrorException : RegExpr.Exception
+        public class ParseErrorException : RegExprException
         {
             public ParseErrorException(string message = null) : base(message) { }
         }

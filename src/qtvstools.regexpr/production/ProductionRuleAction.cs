@@ -306,7 +306,7 @@ namespace QtVsTools.SyntaxAnalysis
             BinaryCallback.Error<T, T1, T2> a)
         { return Error(null, a); }
 
-        public class ErrorException : RegExpr.Exception
+        public class ErrorException : RegExprException
         { public ErrorException(string message = null) : base(message) { } }
 
         #endregion Error

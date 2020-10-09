@@ -184,7 +184,7 @@ namespace QtVsTools.SyntaxAnalysis
             }
         }
 
-        public class NestedAssertException : RegExpr.Exception
+        public class NestedAssertException : RegExprException
         {
             public NestedAssertException(string message = null) : base(message) { }
         }

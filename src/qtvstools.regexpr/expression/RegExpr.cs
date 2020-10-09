@@ -106,9 +106,9 @@ namespace QtVsTools.SyntaxAnalysis
             StringBuilder pattern, ref RenderMode mode)
         { }
 
-        public class Exception : System.Exception
+        public class RegExprException : System.Exception
         {
-            public Exception(string message = null) : base(message) { }
+            public RegExprException(string message = null) : base(message) { }
         }
     }
 }
