@@ -233,7 +233,7 @@
                 IgnoreConflicts;
                 OptionsFile">
       <Output
-        TaskParameter="Result" ItemName="options" />
+        TaskParameter="Result" ItemName="LocalOptions" />
     </Flatten>
 
     <!--
@@ -241,7 +241,7 @@
     // Translate local paths to build host paths
     // -->
     <HostTranslatePaths
-      Items="@(options)"
+      Items="@(LocalOptions)"
       Names="InputFile;
             OutputFile;
             IncludePath;
@@ -252,13 +252,8 @@
             Include;
             OptionsFile">
       <Output
-        TaskParameter="Result" ItemName="HostPath" />
+        TaskParameter="Result" ItemName="options" />
     </HostTranslatePaths>
-    <ItemGroup>
-      <options Condition="'%(Identity)' != ''">
-        <Value>@(HostPath->'%(Value)')</Value>
-      </options>
-    </ItemGroup>
 
     <ItemGroup>
       <!--
@@ -495,6 +490,7 @@
       <input_relative/>
     </PropertyGroup>
     <ItemGroup>
+      <options Remove="@(LocalOptions)"/>
       <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
