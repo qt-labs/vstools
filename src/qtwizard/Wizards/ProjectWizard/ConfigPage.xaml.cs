@@ -294,7 +294,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             if (sender is ComboBox comboBoxQtVersion
                 && comboBoxQtVersion.IsEnabled
                 && GetBinding(comboBoxQtVersion) is Config config
-                && config.QtVersion.name != comboBoxQtVersion.Text) {
+                && config.QtVersionName != comboBoxQtVersion.Text) {
                 var oldQtVersion = config.QtVersion;
                 if (comboBoxQtVersion.Text == QT_VERSION_DEFAULT) {
                     config.QtVersion = defaultQtVersionInfo;
@@ -323,7 +323,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                             config.QtVersionPath = config.QtVersion.qtDir;
                         }
                     }
-                    comboBoxQtVersion.Text = config.QtVersion.name;
+                    comboBoxQtVersion.Text = config.QtVersionName;
                 } else if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
                     config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
