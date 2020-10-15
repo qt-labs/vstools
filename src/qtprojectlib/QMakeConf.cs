@@ -37,7 +37,7 @@ namespace QtProjectLib
         public Hashtable Entries { get; private set; }
         public string QMakeSpecDirectory { get; private set; }
 
-        public QMakeConf(VersionInformation versionInfo)
+        public QMakeConf(VersionInformation versionInfo, QMakeQuery qmakeQuery = null)
         {
             Entries = new Hashtable();
             QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", "default");
@@ -47,7 +47,8 @@ namespace QtProjectLib
             // To find location of "qmake.conf" there is a need to run "qmake -query" command
             // This is what happens below.
             if (!File.Exists(qmakeConf)) {
-                var qmakeQuery = new QMakeQuery(versionInfo);
+                if (qmakeQuery == null)
+                    qmakeQuery = new QMakeQuery(versionInfo);
 
                 string qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
                 if (string.IsNullOrEmpty(qtPrefix))

@@ -38,7 +38,7 @@ namespace QtProjectLib
 {
     using static RegExpr;
 
-    class QMakeQuery : QMake
+    public class QMakeQuery : QMake
     {
         public QMakeQuery(VersionInformation vi) : base(vi)
         { }
@@ -47,17 +47,6 @@ namespace QtProjectLib
         protected override void OutMsg(string msg)
         {
             stdOutput.AppendLine(msg);
-        }
-
-        public string QueryValue(string property)
-        {
-            string result = string.Empty;
-            stdOutput = new StringBuilder();
-            Query = property;
-            if (Run() == 0 && stdOutput.Length > 0)
-                return stdOutput.ToString().Replace("\r", "").Replace("\n", "");
-            else
-                return string.Empty;
         }
 
         public Dictionary<string, string> QueryAllValues()

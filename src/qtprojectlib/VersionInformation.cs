@@ -95,12 +95,13 @@ namespace QtProjectLib
         private VersionInformation(string qtDirIn)
         {
             qtDir = qtDirIn;
-            SetupPlatformSpecificData();
 
-            // Find version number
             try {
                 var qmakeQuery = new QMakeQuery(this);
-                var strVersion = qmakeQuery.QueryValue("QT_VERSION");
+                SetupPlatformSpecificData(qmakeQuery);
+
+                // Find version number
+                var strVersion = qmakeQuery["QT_VERSION"];
                 if (!string.IsNullOrEmpty(strVersion)) {
                     var versionParts = strVersion.Split('.');
                     if (versionParts.Length != 3) {
@@ -130,7 +131,7 @@ namespace QtProjectLib
                 qt5Version = (qtMajor == 5);
 
                 try {
-                    QtInstallDocs = qmakeQuery.QueryValue("QT_INSTALL_DOCS");
+                    QtInstallDocs = qmakeQuery["QT_INSTALL_DOCS"];
                 } catch { }
             } catch {
                 qtDir = null;
@@ -239,10 +240,10 @@ namespace QtProjectLib
         /// <summary>
         /// Read platform name from qmake.conf.
         /// </summary>
-        private void SetupPlatformSpecificData()
+        private void SetupPlatformSpecificData(QMakeQuery qmakeQuery)
         {
             if (qmakeConf == null)
-                qmakeConf = new QMakeConf(this); // TODO: Do we need this?
+                qmakeConf = new QMakeConf(this, qmakeQuery);
             vsPlatformName = (is64Bit()) ? @"x64" : @"Win32";
         }
 
@@ -299,7 +300,7 @@ namespace QtProjectLib
             var qmakeQuery = new QMakeQuery(this);
             string qmakeXSpec;
             try {
-                qmakeXSpec = qmakeQuery.QueryValue("QMAKE_XSPEC");
+                qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
             }
             catch {
                 throw new QtVSException("Error starting qmake process");
