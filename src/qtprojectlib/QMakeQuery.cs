@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,12 @@ namespace QtProjectLib
         protected override void OutMsg(string msg)
         {
             stdOutput.AppendLine(msg);
+        }
+
+        protected override void InfoStart(Process qmakeProc)
+        {
+            base.InfoStart(qmakeProc);
+            InfoMsg("--- qmake: Querying persistent properties");
         }
 
         public Dictionary<string, string> QueryAllValues()

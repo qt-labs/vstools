@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using QtVsTools.VisualStudio;
 
 namespace QtProjectLib
 {
@@ -44,6 +45,7 @@ namespace QtProjectLib
         public bool Recursive { get; protected set; }
         public string ProFile { get; protected set; }
         public string Query { get; protected set; }
+        public bool DisableWarnings { get; set; }
 
         protected VersionInformation QtVersion { get; private set; }
         protected EnvDTE.DTE Dte { get; private set; }
@@ -52,7 +54,7 @@ namespace QtProjectLib
         {
             Debug.Assert(qtVersion != null);
             QtVersion = qtVersion;
-            Dte = dte;
+            Dte = dte ?? VsServiceProvider.GetService<EnvDTE.DTE>();
         }
 
         protected virtual string QMakeExe
@@ -109,6 +111,9 @@ namespace QtProjectLib
                 if (Recursive)
                     args.Append(" -recursive");
 
+                if (DisableWarnings)
+                    args.Append(" -Wnone");
+
                 if (!string.IsNullOrEmpty(ProFile))
                     args.AppendFormat(" \"{0}\"", MakeRelative(ProFile));
 
@@ -143,22 +148,35 @@ namespace QtProjectLib
             return qmakeProc;
         }
 
-        bool hasMessages = false;
-
         protected virtual void OutMsg(string msg)
         {
-            if (Dte != null && !string.IsNullOrEmpty(msg)) {
-                hasMessages = true;
+            if (Dte != null && !string.IsNullOrEmpty(msg))
                 Messages.PaneMessageSafe(Dte, msg, 5000);
-            }
         }
 
         protected virtual void ErrMsg(string msg)
         {
-            if (Dte != null && !string.IsNullOrEmpty(msg)) {
-                hasMessages = true;
+            if (Dte != null && !string.IsNullOrEmpty(msg))
                 Messages.PaneMessageSafe(Dte, msg, 5000);
-            }
+        }
+
+        protected virtual void InfoMsg(string msg)
+        {
+            if (Dte != null && !string.IsNullOrEmpty(msg))
+                Messages.PaneMessageSafe(Dte, msg, 5000);
+        }
+
+        protected virtual void InfoStart(Process qmakeProc)
+        {
+            InfoMsg(string.Format("--- qmake({0}): started {1}",
+                qmakeProc.Id, qmakeProc.StartInfo.FileName));
+        }
+
+        protected virtual void InfoExit(Process qmakeProc)
+        {
+            InfoMsg(string.Format("--- qmake({0}): exit code {1} ({2:0.##} msecs)\r\n",
+                qmakeProc.Id, qmakeProc.ExitCode,
+                (qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds));
         }
 
         public virtual int Run(bool setVCVars=false)
@@ -171,18 +189,17 @@ namespace QtProjectLib
                         OutMsg("Error setting VC vars");
                     }
                     if (qmakeProc.Start()) {
+                        InfoStart(qmakeProc);
                         qmakeProc.BeginOutputReadLine();
                         qmakeProc.BeginErrorReadLine();
                         qmakeProc.WaitForExit();
                         exitCode = qmakeProc.ExitCode;
+                        InfoExit(qmakeProc);
                     }
                 } catch (Exception e) {
                     ErrMsg(string.Format("Exception \"{0}\":\r\n{1}",
                         e.Message,
                         e.StackTrace));
-                } finally {
-                    if (hasMessages)
-                        Messages.ActivateMessagePane();
                 }
             }
             return exitCode;
@@ -213,26 +230,22 @@ namespace QtProjectLib
             };
         }
 
-        protected override Process CreateProcess()
+        protected override void InfoStart(Process qmakeProc)
         {
-            var qmakeProcess = base.CreateProcess();
-            OutMsg("--- (qmake) : Using: " + qmakeProcess.StartInfo.FileName);
-            OutMsg("--- (qmake) : Working Directory: " + qmakeProcess.StartInfo.WorkingDirectory);
-            OutMsg("--- (qmake) : Arguments: "
-                + qmakeProcess.StartInfo.Arguments
-                + Environment.NewLine);
-            if (qmakeProcess.StartInfo.EnvironmentVariables.ContainsKey("QMAKESPEC")) {
-                var qmakeSpec = qmakeProcess.StartInfo.EnvironmentVariables["QMAKESPEC"];
+            base.InfoStart(qmakeProc);
+            InfoMsg("--- qmake: Working Directory: " + qmakeProc.StartInfo.WorkingDirectory);
+            InfoMsg("--- qmake: Arguments: " + qmakeProc.StartInfo.Arguments);
+            if (qmakeProc.StartInfo.EnvironmentVariables.ContainsKey("QMAKESPEC")) {
+                var qmakeSpec = qmakeProc.StartInfo.EnvironmentVariables["QMAKESPEC"];
                 if (qmakeSpec != QtVersion.QMakeSpecDirectory) {
-                    OutMsg("--- (qmake) : Environment "
+                    InfoMsg("--- qmake: Environment "
                         + "variable QMAKESPEC overwriting Qt version QMAKESPEC.");
-                    OutMsg("--- (qmake) : Qt version "
+                    InfoMsg("--- qmake: Qt version "
                         + "QMAKESPEC: " + QtVersion.QMakeSpecDirectory);
-                    OutMsg("--- (qmake) : Environment "
-                        + "variable QMAKESPEC: " + qmakeSpec + Environment.NewLine);
+                    InfoMsg("--- qmake: Environment "
+                        + "variable QMAKESPEC: " + qmakeSpec);
                 }
             }
-            return qmakeProcess;
         }
     }
 }

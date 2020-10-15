@@ -159,6 +159,7 @@ namespace QtProjectLib
                 File.WriteAllText(tempPro, tempProData.ToString());
 
                 var qmake = new QMakeImport(this, tempPro);
+                qmake.DisableWarnings = true;
                 qmake.Run(setVCVars: true);
 
                 var tempVcxproj = Path.Combine(tempDir, string.Format("{0}.vcxproj", randomName));
