@@ -524,7 +524,7 @@
       <two_pass/>
     </PropertyGroup>
     <ItemGroup>
-      <options Remove="@(LocalOptions)"/>
+      <LocalOptions Remove="@(LocalOptions)"/>
       <options Remove="@(options)"/>
     </ItemGroup>
   </Target>
