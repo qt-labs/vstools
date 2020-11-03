@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Condition="'$(VisualStudioVersion)'=='16.0'"
+    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\TextTemplating\Microsoft.TextTemplating.targets" />
+  <Import Condition="'$(VisualStudioVersion)'=='15.0'"
+    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v15.0\TextTemplating\Microsoft.TextTemplating.targets" />
+  <Import Condition="'$(VisualStudioVersion)'=='14.0'"
+    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v14.0\TextTemplating\Microsoft.TextTemplating.targets" />
+  <PropertyGroup>
+    <TransformOnBuild>true</TransformOnBuild>
+    <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
+  </PropertyGroup>
+  <Target Name="PrepareTransform">
+    <ItemGroup>
+      <T4TransformInputs Include="@(T4Template)"/>
+      <T4ParameterValues Include="SolutionDir">
+        <Value>$(SolutionDir)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
+      <T4ParameterValues Include="VisualStudioVersion">
+        <Value>$(VisualStudioVersion)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
+      <T4ParameterValues Include="VCTargetsPath">
+        <Value>$(VCTargetsPath)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
+  </PropertyGroup>
+</Project>

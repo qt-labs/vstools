@@ -1,4 +1,4 @@
-<#@include file="$(SolutionDir)\common.tt" #>
+<#@include file="common.tt" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System.Xml" #>
 <#@ assembly name="System.Xml.Linq" #>

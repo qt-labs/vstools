@@ -39,28 +39,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-    var Dte = ((IServiceProvider)Host).GetService(typeof(DTE)) as DTE;
-    string SolutionDir = Path.GetDirectoryName(Dte.Solution.FullName);
-    string VS_VERSION = Dte.Version;
+    var Dte = ((IServiceProvider)Host)?.GetService(typeof(DTE)) as DTE;
+
+    string SolutionDir = Host?.ResolveParameterValue("-", "-", "SolutionDir");
+    if (string.IsNullOrEmpty(SolutionDir)) {
+        if (Dte != null)
+            SolutionDir = Path.GetDirectoryName(Dte.Solution.FullName);
+        else
+            throw new Exception("Unable to obtain 'SolutionDir' parameter.");
+    }
+
+    string VS_VERSION = Host?.ResolveParameterValue("-", "-", "VisualStudioVersion");
+    if (string.IsNullOrEmpty(VS_VERSION)) {
+        if (Dte != null)
+            VS_VERSION = Dte.Version;
+        else
+            throw new Exception("Unable to obtain 'VisualStudioVersion' parameter.");
+    }
+
     string VS_NAME = VS_VERSION.StartsWith("16.") ? "2019" :
-                     VS_VERSION.StartsWith("15.") ? "2017" :
-                     VS_VERSION.StartsWith("14.") ? "2015" :
-                     VS_VERSION.StartsWith("12.") ? "2013" : "????";
-    string VS_EDITION = Dte.Edition;
-    string VC_TARGETS_PATH = Path.Combine(
-        Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
-        VS_VERSION.StartsWith("16.") ?
-            @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
-        VS_VERSION.StartsWith("15.") ?
-            @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
-        VS_VERSION.StartsWith("14.") ?
-            @"MSBuild\Microsoft.Cpp\v4.0\V140" :
-        VS_VERSION.StartsWith("12.") ?
-            @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
+                        VS_VERSION.StartsWith("15.") ? "2017" :
+                        VS_VERSION.StartsWith("14.") ? "2015" :
+                        VS_VERSION.StartsWith("12.") ? "2013" : "????";
+
+    string VC_TARGETS_PATH = Host?.ResolveParameterValue("-", "-", "VCTargetsPath");
+    if (string.IsNullOrEmpty(VC_TARGETS_PATH)) {
+        if (Dte != null && !string.IsNullOrEmpty(VS_VERSION)) {
+            string VS_EDITION = Dte.Edition;
+            VC_TARGETS_PATH = Path.Combine(
+                Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
+                VS_VERSION.StartsWith("16.") ?
+                    @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
+                VS_VERSION.StartsWith("15.") ?
+                    @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
+                VS_VERSION.StartsWith("14.") ?
+                    @"MSBuild\Microsoft.Cpp\v4.0\V140" :
+                VS_VERSION.StartsWith("12.") ?
+                    @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
+        } else {
+            throw new Exception("Unable to obtain 'VCTargetsPath' parameter.");
+        }
+    }
+
 /***************************************************************************/
     string WARNING_GENERATED_FILE = "This file was generated automatically.";
     string XML_COMMENT_BEGIN      = "<!--";
     string XML_COMMENT_END        = "-->";
+
+    XML_COMMENT_BEGIN = XML_COMMENT_BEGIN.ToString();
+    XML_COMMENT_END = XML_COMMENT_END.ToString();
 
     var XmlLoad = new Func<string, XElement>(xmlText =>
     {

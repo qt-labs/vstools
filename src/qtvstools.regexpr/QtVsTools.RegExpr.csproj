@@ -94,4 +94,5 @@
     <None Include="README" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\transform.targets" />
 </Project>
