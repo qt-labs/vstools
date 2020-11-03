@@ -165,4 +165,17 @@
   <Import Project="..\QtMsBuild\qt.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\qtmsbuild\QtMSBuild.csproj">
+      <Project>{c461c580-37a5-4b37-8a7b-10c8e1d3c5b5}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="VsQml_PreBuild">
+    <ItemGroup>
+      <ProjectReference Remove="..\qtmsbuild\QtMSBuild.csproj"/>
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <ResolveReferencesDependsOn>VsQml_PreBuild;$(ResolveReferencesDependsOn)</ResolveReferencesDependsOn>
+  </PropertyGroup>
 </Project>

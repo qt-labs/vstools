@@ -13,6 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtProjectLib", "qtprojectli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools", "qtvstools\QtVsTools.csproj", "{FD7A42DB-8692-4FBE-AC50-F70AF423275B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5} = {C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Wizards", "qtwizard\QtVsTools.Wizards.csproj", "{244991B0-42AD-4324-B166-A26FB6E8CA5B}"
@@ -121,6 +122,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qrceditor", "qrceditor\qrceditor.vcxproj", "{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qmakefilereader", "qmakefilereader\qmakefilereader.vcxproj", "{70711A97-D9B0-3A86-9756-9FF47337908B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtMSBuild", "qtmsbuild\QtMSBuild.csproj", "{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -422,6 +425,18 @@ Global
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Release|x64.ActiveCfg = Release|Win32
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Release|x86.ActiveCfg = Release|Win32
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Release|x86.Build.0 = Release|Win32
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Debug|x86.Build.0 = Debug|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|x64.Build.0 = Release|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|x86.ActiveCfg = Release|Any CPU
+		{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
