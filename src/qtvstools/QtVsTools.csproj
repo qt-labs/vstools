@@ -370,6 +370,10 @@
       <Project>{70711a97-d9b0-3a86-9756-9ff47337908b}</Project>
       <Name>qmakefilereader</Name>
     </ProjectReference>
+    <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
+      <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
+      <Name>qrceditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\qtappwrapper\QtAppWrapper.csproj">
       <Project>{6E591BB2-3C81-4AB5-B3B0-096045754C3A}</Project>
       <Name>QtAppWrapper</Name>

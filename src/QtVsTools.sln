@@ -118,6 +118,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMLFile", "qttemplates\qml\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMLDir", "qttemplates\qmldir\QMLDir.csproj", "{7AF6C34B-65D2-4010-92F6-420E59DDE9BF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qrceditor", "qrceditor\qrceditor.vcxproj", "{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qmakefilereader", "qmakefilereader\qmakefilereader.vcxproj", "{70711A97-D9B0-3A86-9756-9FF47337908B}"
 EndProject
 Global
@@ -400,6 +402,16 @@ Global
 		{7AF6C34B-65D2-4010-92F6-420E59DDE9BF}.Release|x64.Build.0 = Release|Any CPU
 		{7AF6C34B-65D2-4010-92F6-420E59DDE9BF}.Release|x86.ActiveCfg = Release|Any CPU
 		{7AF6C34B-65D2-4010-92F6-420E59DDE9BF}.Release|x86.Build.0 = Release|Any CPU
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Debug|Any CPU.Build.0 = Debug|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Debug|x64.ActiveCfg = Debug|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Debug|x86.ActiveCfg = Debug|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Debug|x86.Build.0 = Debug|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Release|Any CPU.Build.0 = Release|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Release|x64.ActiveCfg = Release|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Release|x86.ActiveCfg = Release|Win32
+		{4CEE73C9-FCFA-3A72-A0A3-036BDBB3240F}.Release|x86.Build.0 = Release|Win32
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Debug|Any CPU.Build.0 = Debug|Win32
 		{70711A97-D9B0-3A86-9756-9FF47337908B}.Debug|x64.ActiveCfg = Debug|Win32
