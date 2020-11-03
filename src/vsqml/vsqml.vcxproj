@@ -12,28 +12,25 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B12702AD-ABFB-343A-A199-8E24837244A3}</ProjectGuid>
-    <Keyword>QtVS_v302</Keyword>
+    <Keyword>QtVS_v303</Keyword>
     <ProjectName>VsQml</ProjectName>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='12.0'">8.1</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='14.0'">8.1</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='15.0'">10.0.17763.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='16.0'">10.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0' and '$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0' and '$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='14.0' and '$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='14.0' and '$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0' and '$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,55 +38,45 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0' and '$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0' and '$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0' and '$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2013)'==''">
-    <QtBuild_Static_Vs2013>..\..\..\install\qt5-x86-vs2013-static</QtBuild_Static_Vs2013>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2015)'==''">
-    <QtBuild_Static_Vs2015>..\..\..\install\qt5-x86-vs2015-static</QtBuild_Static_Vs2015>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2017)'==''">
-    <QtBuild_Static_Vs2017>..\..\..\install\qt5-x86-vs2017-static</QtBuild_Static_Vs2017>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2019)'==''">
-    <QtBuild_Static_Vs2019>..\..\..\install\qt5-x86-vs2019-static</QtBuild_Static_Vs2019>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0'">
-    <QtBuild>$(QtBuild_Static_Vs2013)</QtBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='14.0'">
-    <QtBuild>$(QtBuild_Static_Vs2015)</QtBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <QtBuild>$(QtBuild_Static_Vs2017)</QtBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
-    <QtBuild>$(QtBuild_Static_Vs2019)</QtBuild>
-  </PropertyGroup>
-  <PropertyGroup>
-    <QtBuild>$([System.IO.Path]::Combine($(ProjectDir),$(QtBuild)))</QtBuild>
-    <QtBuild>$([System.IO.Path]::GetFullPath($(QtBuild)))</QtBuild>
-  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <OutDir>bin\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <OutDir>bin\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(VisualStudioVersion)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="..\QtMsBuild\qt_defaults.props" />
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+    <Import Project="..\QtCppConfig.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+    <Import Project="..\QtCppConfig.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <QtModules>core;core-private;qml;qml-private;qmldebug-private</QtModules>
     <QtInstall>$(QtBuild)</QtInstall>
@@ -98,14 +85,8 @@
     <QtModules>core;core-private;qml;qml-private;qmldebug-private</QtModules>
     <QtInstall>$(QtBuild)</QtInstall>
   </PropertyGroup>
-  <Import Project="..\QtMsBuild\qt.props" />
-  <ImportGroup Label="ExtensionSettings" />
-  <ImportGroup Label="Shared" />
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -114,6 +95,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PreprocessorDefinitions>VSQML_LIB;$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,6 +112,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PreprocessorDefinitions>VSQML_LIB;$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,7 +145,9 @@
     <None Include="README" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="..\QtMsBuild\qt.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
