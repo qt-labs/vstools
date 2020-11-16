@@ -543,21 +543,6 @@
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.102.0\build\net45\System.Data.SQLite.Core.targets'))" />
   </Target>
   <ItemGroup>
-    <T4Template Include="..\..\vstools.pri_TT">
-      <Link>vstools.pri_TT</Link>
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>vstools.pri</LastGenOutput>
-      <OutputFile>..\..\vstools.pri</OutputFile>
-      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-    </T4Template>
-    <Content Include="..\..\vstools.pri">
-      <Link>vstools.pri</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>vstools.pri_TT</DependentUpon>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <T4Template Include="Version.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Version.tt.cs</OutputFile>
