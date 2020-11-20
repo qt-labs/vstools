@@ -131,10 +131,10 @@ namespace QtVsTools
 
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.LaunchDesignerId:
-                DefaultEditorsHandler.Instance.StartEditor(DefaultEditor.Kind.Ui);
+                Vsix.Instance.QtDesigner.Start(hideWindow: false);
                 break;
             case CommandId.LaunchLinguistId:
-                DefaultEditorsHandler.Instance.StartEditor(DefaultEditor.Kind.Ts);
+                Vsix.Instance.QtLinguist.Start(hideWindow: false);
                 break;
             case CommandId.OpenProFileId:
                 ExtLoader.ImportProFile();

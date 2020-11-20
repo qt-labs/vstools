@@ -60,6 +60,7 @@
     <Compile Include="ChangeFor.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\Disposable.cs" />
+    <Compile Include="Common\NativeAPI.cs" />
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\Json\DeferredObject.cs" />
     <Compile Include="Common\Json\Serializable.cs" />
@@ -70,6 +71,10 @@
     <Compile Include="DefaultEditorsClient.cs" />
     <Compile Include="DefaultEditorsHandler.cs" />
     <Compile Include="DteEventsHandler.cs" />
+    <Compile Include="Editors\Editor.cs" />
+    <Compile Include="Editors\Editor.QtDesigner.cs" />
+    <Compile Include="Editors\Editor.QtLinguist.cs" />
+    <Compile Include="Editors\Editor.QtResourceEditor.cs" />
     <Compile Include="ExtLoader.cs" />
     <Compile Include="FormChangeQtVersion.cs">
       <SubType>Form</SubType>

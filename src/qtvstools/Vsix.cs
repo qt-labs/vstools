@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -67,6 +68,30 @@ namespace QtVsTools
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+
+    // Custom editor: Qt Designer
+    [ProvideEditorExtension(typeof(Editors.QtDesigner),
+        extension: ".ui",
+        priority: 999,
+        DefaultName = Editors.QtDesigner.Title)]
+    [ProvideEditorLogicalView(typeof(Editors.QtDesigner),
+        logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
+
+    // Custom editor: Qt Linguist
+    [ProvideEditorExtension(typeof(Editors.QtLinguist),
+        extension: ".ts",
+        priority: 999,
+        DefaultName = Editors.QtLinguist.Title)]
+    [ProvideEditorLogicalView(typeof(Editors.QtLinguist),
+        logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
+
+    // Custom editor: Qt Resource Editor
+    [ProvideEditorExtension(typeof(Editors.QtResourceEditor),
+        extension: ".qrc",
+        priority: 999,
+        DefaultName = Editors.QtResourceEditor.Title)]
+    [ProvideEditorLogicalView(typeof(Editors.QtResourceEditor),
+        logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 #endif
     public sealed class Vsix : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
@@ -130,6 +155,10 @@ namespace QtVsTools
             }
         }
 
+        public Editors.QtDesigner QtDesigner { get; private set; }
+        public Editors.QtLinguist QtLinguist { get; private set; }
+        public Editors.QtResourceEditor QtResourceEditor { get; private set; }
+
         static readonly Stopwatch initTimer = Stopwatch.StartNew();
 
         /// <summary>
@@ -164,15 +193,15 @@ namespace QtVsTools
                 VsShellSettings.Manager = new ShellSettingsManager(this as IServiceProvider);
 
                 eventHandler = new DteEventsHandler(Dte);
-                DefaultEditorsClient.Initialize(eventHandler);
-                DefaultEditorsClient.Instance.Listen();
 
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize(this);
                 QtSolutionContextMenu.Initialize(this);
                 QtProjectContextMenu.Initialize(this);
                 QtItemContextMenu.Initialize(this);
-                DefaultEditorsHandler.Initialize(Dte);
+                RegisterEditorFactory(QtDesigner = new Editors.QtDesigner());
+                RegisterEditorFactory(QtLinguist = new Editors.QtLinguist());
+                RegisterEditorFactory(QtResourceEditor = new Editors.QtResourceEditor());
                 QtHelpMenu.Initialize(this);
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
@@ -236,7 +265,6 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                UpdateDefaultEditors(Mode.Startup);
                 CopyNatvisFile();
 
                 var modules = QtModules.Instance.GetAvailableModuleInformation();
@@ -288,15 +316,8 @@ namespace QtVsTools
             if (eventHandler != null)
             {
                 eventHandler.Disconnect();
-                DefaultEditorsClient.Instance.Shutdown();
             }
 
-            try
-            {
-                UpdateDefaultEditors(Mode.Shutdown);
-            } catch (Exception e) {
-                MessageBox.Show(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
             return base.QueryClose(out canClose);
         }
 
@@ -313,26 +334,6 @@ namespace QtVsTools
             if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
                 return PkgInstallPath + exeName;
             return null;
-        }
-
-        /// <summary>
-        /// This is to support VS2013, both VSIX and Qt4 or Qt5 Add-In installed. Default editor
-        /// values in the registry are changed so that Qt4 or Qt5 Add-in values are default and
-        /// Qt5 VSIX values are set only when the VSIX is loaded. On startup, Qt5 related registry
-        /// values for *.qrc, *.ts and *.ui extensions are written, while on shutdown possible
-        /// existing Add-in values are written back.
-        /// </summary>
-        private void UpdateDefaultEditors(Mode mode)
-        {
-            if (mode == Mode.Shutdown) {
-                var qt5 = new Qt5DefaultEditors();
-                qt5.WriteAddinRegistryValues();
-                var qt4 = new Qt4DefaultEditors();
-                qt4.WriteAddinRegistryValues();
-            } else {
-                var vsix = new QtVsToolsDefaultEditors();
-                vsix.WriteVsixRegistryValues(this);
-            }
         }
 
         private void CopyTextMateLanguageFiles()

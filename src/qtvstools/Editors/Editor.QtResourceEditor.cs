@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2020 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,38 +26,35 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace QtVsTools.VisualStudio
+namespace QtVsTools.Editors
 {
-    static class VsShell
+    [Guid(GuidString)]
+    public class QtResourceEditor : Editor
     {
-        public const uint VSITEMID_ROOT = 0xFFFFFFFE;
+        public const string GuidString = "D0FFB6E6-5829-4DD9-835E-2965449AC6BF";
+        public const string Title = "Qt Resource Editor";
 
-        public static string InstallRootDir
+        Guid? _Guid;
+        public override Guid Guid => (_Guid ?? (_Guid = new Guid(GuidString))).Value;
+
+        public override string ExecutableName => "QrcEditor.exe";
+
+        protected override string GetToolsPath(IVsHierarchy context)
         {
-            get
-            {
-                Initialize();
-                return _InstallRootDir;
-            }
+            return Vsix.Instance?.PkgInstallPath;
         }
 
-        private static IVsShell vsShell;
-        private static string _InstallRootDir;
+        public override Func<string, bool> WindowFilter =>
+            caption => caption.StartsWith(Title);
 
-        private static void Initialize()
+        public override string GetTitle(Process editorProcess)
         {
-            if (vsShell != null)
-                return;
-            vsShell = VsServiceProvider.GetService<IVsShell>();
-
-            object objProp;
-            int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out objProp);
-            if (res == VSConstants.S_OK && objProp is string)
-                _InstallRootDir = objProp as string;
+            return Title;
         }
     }
 }
