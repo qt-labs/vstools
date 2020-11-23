@@ -53,6 +53,11 @@ namespace QtVsTools.Qml.Debug
         IVsOutputWindowPane debugOutput;
         bool started;
 
+        HashSet<Guid> excludedProjects;
+        readonly Guid idThreadCreateEvent = new Guid("2090CCFC-70C5-491D-A5E8-BAD2DD9EE3EA");
+        readonly Guid idLoadCompleteEvent = new Guid("B1844850-1349-45D4-9F12-495212F5EB0B");
+        readonly Guid idProgramDestroyEvent = new Guid("E147E9E3-6440-4073-A7B7-A65592C714B5");
+
         public static void Initialize()
         {
             Instance = new Launcher();
@@ -76,7 +81,9 @@ namespace QtVsTools.Qml.Debug
         }
 
         private Launcher()
-        { }
+        {
+            excludedProjects = new HashSet<Guid>();
+        }
 
         protected override void DisposeManaged()
         {
@@ -93,13 +100,33 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
+            if (riidEvent != idThreadCreateEvent
+                && riidEvent != idLoadCompleteEvent
+                && riidEvent != idProgramDestroyEvent) {
+                return VSConstants.S_OK;
+            }
+
+            if (pProcess == null && pProgram.GetProcess(out pProcess) != VSConstants.S_OK)
+                return VSConstants.S_OK;
+
+            Guid procGuid;
+            if (pProcess.GetProcessId(out procGuid) != VSConstants.S_OK)
+                return VSConstants.S_OK;
+
+            // Run only once per process
+            if (riidEvent == idProgramDestroyEvent) {
+                excludedProjects.Remove(procGuid);
+                return VSConstants.S_OK;
+            } else if (excludedProjects.Contains(procGuid)) {
+                return VSConstants.S_OK;
+            } else {
+                excludedProjects.Add(procGuid);
+            }
+
             if (!(pEvent is IDebugLoadCompleteEvent2 || pEvent is IDebugThreadCreateEvent2))
                 return VSConstants.S_OK;
 
             if (pProgram == null)
-                return VSConstants.S_OK;
-
-            if (pProcess == null && pProgram.GetProcess(out pProcess) != VSConstants.S_OK)
                 return VSConstants.S_OK;
 
             bool native;
