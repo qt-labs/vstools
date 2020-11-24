@@ -133,17 +133,6 @@ namespace QtVsTools
             }
         }
 
-        private string appWrapperPath;
-        public string AppWrapperPath
-        {
-            get
-            {
-                if (appWrapperPath == null)
-                    appWrapperPath = locateHelperExecutable("QtAppWrapper.exe");
-                return appWrapperPath;
-            }
-        }
-
         private string qmakeFileReaderPath;
         public string QMakeFileReaderPath
         {

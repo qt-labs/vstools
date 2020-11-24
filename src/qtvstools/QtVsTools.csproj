@@ -66,10 +66,6 @@
     <Compile Include="Common\Json\Serializable.cs" />
     <Compile Include="Common\Json\SerializableEnum.cs" />
     <Compile Include="Common\Json\Serializer.cs" />
-    <Compile Include="DefaultEditor.cs" />
-    <Compile Include="DefaultEditorsBase.cs" />
-    <Compile Include="DefaultEditorsClient.cs" />
-    <Compile Include="DefaultEditorsHandler.cs" />
     <Compile Include="DteEventsHandler.cs" />
     <Compile Include="Editors\Editor.cs" />
     <Compile Include="Editors\Editor.QtDesigner.cs" />
@@ -150,8 +146,6 @@
     <Compile Include="QML\Parser\QmlParserInterop.cs" />
     <Compile Include="QML\Syntax\QmlAst.cs" />
     <Compile Include="QML\Syntax\QmlSyntax.cs" />
-    <Compile Include="Qt4DefaultEditors.cs" />
-    <Compile Include="Qt5DefaultEditors.cs" />
     <Compile Include="QtHelpLinkChooser.xaml.cs">
       <DependentUpon>QtHelpLinkChooser.xaml</DependentUpon>
     </Compile>
@@ -164,7 +158,6 @@
     <Compile Include="QtMsBuild\Components\QtProjectTracker.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
     <Compile Include="QtSolutionContextMenu.cs" />
-    <Compile Include="QtVsToolsDefaultEditors.cs" />
     <Compile Include="SR.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="TranslationItem.cs" />
@@ -381,13 +374,6 @@
     <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
       <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
       <Name>qrceditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\qtappwrapper\QtAppWrapper.csproj">
-      <Project>{6E591BB2-3C81-4AB5-B3B0-096045754C3A}</Project>
-      <Name>QtAppWrapper</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\qtprojectlib\QtProjectLib.csproj">
       <Project>{faa69518-2feb-4954-9d2c-e7bd6121ea9c}</Project>

@@ -135,7 +135,6 @@ void MainWindow::slotSave()
     m_qrcEditor->setFileName(fileName);
     if (m_qrcEditor->save()) {
         statusBar()->showMessage(tr("%1 written").arg(fileName));
-        sendFileNameToQtAppWrapper();
     } else {
         statusBar()->showMessage(tr("Unable to write %1.").arg(fileName));
         m_qrcEditor->setFileName(oldFileName);
@@ -181,49 +180,4 @@ int MainWindow::fileChangedDialog()
     message.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     message.setDefaultButton(QMessageBox::Yes);
     return message.exec();
-}
-
-void MainWindow::sendFileNameToQtAppWrapper()
-{
-    if (m_qtAppWrapperPath.isNull()) {
-        // Try to find qtappwrapper.exe
-        m_qtAppWrapperPath = QCoreApplication::applicationDirPath();
-        m_qtAppWrapperPath += QLatin1String("/qtappwrapper.exe");
-        if (!QFile::exists(m_qtAppWrapperPath)) {
-            m_qtAppWrapperPath.clear();
-            qWarning("Can't locate qtappwrapper.exe.");
-            return;
-        }
-    }
-
-    if (m_devenvPIDArg.isNull()) {
-        HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-        if (hSnapShot == INVALID_HANDLE_VALUE) {
-            qWarning("CreateToolhelp32Snapshot failed.");
-            return;
-        }
-        BOOL bSuccess;
-        const DWORD dwThisPID = QCoreApplication::applicationPid();
-        PROCESSENTRY32 processEntry;
-        processEntry.dwSize = sizeof(processEntry);
-        bSuccess = Process32First(hSnapShot, &processEntry);
-        while (bSuccess) {
-            if (processEntry.th32ProcessID == dwThisPID) {
-                m_devenvPIDArg = QLatin1String("-pid ");
-                m_devenvPIDArg += QString::number(processEntry.th32ParentProcessID);
-                break;
-            }
-            bSuccess = Process32Next(hSnapShot, &processEntry);
-        }
-        CloseHandle(hSnapShot);
-
-        if (m_devenvPIDArg.isNull()) {
-            qWarning("Couldn't determine parent's process id.");
-            return;
-        }
-    }
-
-    if (!QProcess::startDetached(m_qtAppWrapperPath, QStringList() << m_qrcEditor->fileName() << m_devenvPIDArg)) {
-        qWarning("Couldn't start qtappwrapper.exe.");
-    }
 }

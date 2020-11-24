@@ -56,11 +56,9 @@ private slots:
 
 private:
     int fileChangedDialog();
-    void sendFileNameToQtAppWrapper();
 
 private:
     SharedTools::QrcEditor *m_qrcEditor;
-    QString                 m_qtAppWrapperPath;
     QString                 m_devenvPIDArg;
 };
 

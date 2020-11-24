@@ -238,9 +238,6 @@ Converting project {0}/{1}: {2}...</value>
   <data name="CoreLibrary" xml:space="preserve">
     <value>Core</value>
   </data>
-  <data name="CouldNotConnectToAppwrapper" xml:space="preserve">
-    <value>Cannot connect to Appwrapper. Please make sure that TCP port {0} is not blocked.</value>
-  </data>
   <data name="DeclarativeLibrary" xml:space="preserve">
     <value>Declarative</value>
   </data>

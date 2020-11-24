@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 12.0.40629.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizer", "Visualizer", "{56BEEACF-C297-483D-9E64-C0A7C3B7680E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{D73514C8-019E-44FB-8D42-F1FD52C1FD72}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtAppWrapper", "qtappwrapper\QtAppWrapper.csproj", "{6E591BB2-3C81-4AB5-B3B0-096045754C3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtProjectLib", "qtprojectlib\QtProjectLib.csproj", "{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}"
 EndProject
@@ -81,7 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "qt", "qt", "{62102FDD-016A-
 		qttmlanguage\qt\pri.pro.tmLanguage = qttmlanguage\qt\pri.pro.tmLanguage
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vsqml", "vsqml\vsqml.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VsQml", "vsqml\vsqml.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "T4 Templates", "T4 Templates", "{24A01B54-CE41-4559-8418-0723F8DF723F}"
 	ProjectSection(SolutionItems) = preProject
@@ -135,18 +133,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|x64.Build.0 = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Debug|x86.Build.0 = Debug|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|x64.ActiveCfg = Release|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|x64.Build.0 = Release|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|x86.ActiveCfg = Release|Any CPU
-		{6E591BB2-3C81-4AB5-B3B0-096045754C3A}.Release|x86.Build.0 = Release|Any CPU
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}.Debug|x64.ActiveCfg = Debug|Any CPU
