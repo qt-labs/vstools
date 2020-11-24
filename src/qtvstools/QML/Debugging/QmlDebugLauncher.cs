@@ -35,8 +35,8 @@ using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtProjectLib.QtMsBuild;
+using QtVsTools.Core;
+using QtVsTools.Core.QtMsBuild;
 using QtVsTools.SyntaxAnalysis;
 using static QtVsTools.SyntaxAnalysis.RegExpr;
 

@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System.Collections.Generic;
 using System.IO;

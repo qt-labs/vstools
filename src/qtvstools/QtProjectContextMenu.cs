@@ -31,7 +31,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;

@@ -42,8 +42,8 @@ using Microsoft.VisualStudio.TemplateWizard;
 using QtVsTools.Common;
 using QtVsTools.VisualStudio;
 
-using QtProjectLib;
-using QtProjectLib.QtMsBuild;
+using QtVsTools.Core;
+using QtVsTools.Core.QtMsBuild;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {

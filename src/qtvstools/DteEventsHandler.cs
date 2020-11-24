@@ -31,8 +31,8 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
-using QtProjectLib.QtMsBuild;
+using QtVsTools.Core;
+using QtVsTools.Core.QtMsBuild;
 #if VS2017 || VS2019
 using QtVsTools.QtMsBuild;
 #endif

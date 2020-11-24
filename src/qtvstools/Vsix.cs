@@ -34,7 +34,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
-using QtProjectLib;
+using QtVsTools.Core;
 using System;
 using System.Diagnostics;
 using System.IO;

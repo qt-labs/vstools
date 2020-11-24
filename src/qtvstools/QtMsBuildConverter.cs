@@ -34,7 +34,7 @@ using System.Windows.Forms;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 
 namespace QtVsTools

@@ -40,7 +40,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System.IO;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Editors

@@ -375,9 +375,9 @@
       <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
       <Name>qrceditor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\qtprojectlib\QtProjectLib.csproj">
+    <ProjectReference Include="..\qtvstools.core\QtVsTools.Core.csproj">
       <Project>{faa69518-2feb-4954-9d2c-e7bd6121ea9c}</Project>
-      <Name>QtProjectLib</Name>
+      <Name>QtVsTools.Core</Name>
       <Private>False</Private>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
@@ -496,7 +496,7 @@
     </ProjectReference>
     <ProjectReference Include="..\vsqml\vsqml.vcxproj">
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
-      <Name>vsqml</Name>
+      <Name>VsQml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

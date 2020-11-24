@@ -29,7 +29,7 @@
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System.ComponentModel;
 using System.Text.RegularExpressions;

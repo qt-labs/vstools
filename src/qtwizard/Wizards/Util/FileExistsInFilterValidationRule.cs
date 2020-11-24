@@ -29,7 +29,7 @@
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System.Globalization;
 using System.Linq;

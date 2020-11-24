@@ -173,9 +173,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\qtprojectlib\QtProjectLib.csproj">
+    <ProjectReference Include="..\qtvstools.core\QtVsTools.Core.csproj">
       <Project>{faa69518-2feb-4954-9d2c-e7bd6121ea9c}</Project>
-      <Name>QtProjectLib</Name>
+      <Name>QtVsTools.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

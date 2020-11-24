@@ -32,7 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using EnvDTE;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard

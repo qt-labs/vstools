@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtProjectLib;
+using QtVsTools.Core;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;

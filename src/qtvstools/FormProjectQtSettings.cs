@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
-using QtProjectLib;
+using QtVsTools.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

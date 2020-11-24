@@ -41,7 +41,7 @@ using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using QtProjectLib;
+    using QtVsTools.Core;
 
     public partial class ConfigPage : WizardPage
     {

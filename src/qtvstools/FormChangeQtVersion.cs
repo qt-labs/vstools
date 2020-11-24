@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-using QtProjectLib;
+using QtVsTools.Core;
 using System;
 using System.Windows.Forms;
 

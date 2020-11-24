@@ -39,7 +39,7 @@ using Microsoft.Build.Execution;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using EnvDTE;
-using QtProjectLib;
+using QtVsTools.Core;
 using System.Diagnostics;
 
 namespace QtVsTools.QtMsBuild

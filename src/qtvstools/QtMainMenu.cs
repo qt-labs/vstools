@@ -28,7 +28,7 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using QtProjectLib;
+using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;
