@@ -9,7 +9,7 @@
 <#@import namespace="System.Text" #>
 <#@import namespace="System.Xml" #>
 <#@import namespace="System.Xml.Linq" #>
-<#@assembly name="EnvDTE" #>
+<#@assembly name="$(AssemblyRef_EnvDTE)" #>
 <#@import namespace="EnvDTE" #>
 <#
 /****************************************************************************
@@ -39,7 +39,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-    var Dte = ((IServiceProvider)Host)?.GetService(typeof(DTE)) as DTE;
+    DTE Dte = null;
+    try {
+        Dte = ((IServiceProvider)Host)?.GetService(typeof(DTE)) as DTE;
+    } catch {
+    }
 
     string SolutionDir = Host?.ResolveParameterValue("-", "-", "SolutionDir");
     if (string.IsNullOrEmpty(SolutionDir)) {

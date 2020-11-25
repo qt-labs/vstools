@@ -9,6 +9,19 @@
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
+    <AssemblyRef_EnvDTE
+      Condition="'$(AssemblyRef_EnvDTE)' == ''
+        AND (
+          '$(VisualStudioVersion)' == '16.0'
+          OR '$(VisualStudioVersion) '==' 15.0'
+        )"
+      >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\EnvDTE.dll</AssemblyRef_EnvDTE>
+    <AssemblyRef_EnvDTE
+      Condition="'$(AssemblyRef_EnvDTE)' == ''
+        AND (
+          '$(VisualStudioVersion)' == '14.0'
+        )"
+      >EnvDTE</AssemblyRef_EnvDTE>
   </PropertyGroup>
   <Target Name="PrepareTransform">
     <ItemGroup>
@@ -23,6 +36,10 @@
       </T4ParameterValues>
       <T4ParameterValues Include="VCTargetsPath">
         <Value>$(VCTargetsPath)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
+      <T4ParameterValues Include="AssemblyRef_EnvDTE">
+        <Value>$(AssemblyRef_EnvDTE)</Value>
         <Visible>false</Visible>
       </T4ParameterValues>
     </ItemGroup>
