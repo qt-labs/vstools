@@ -403,31 +403,11 @@ namespace QtVsTools
             var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
-            VCFilter filter = null;
             var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
             if (vcFile == null)
                 return;
 
             try {
-                // Try to find the filter, the file is located in
-                // If the file is not inside any filter, move it to
-                // the according one, used by the Qt VS Tools
-                filter = (VCFilter) vcFile.Parent;
-            } catch { }
-
-            try {
-                var ui = Filters.FormFiles();
-                var qrc = Filters.ResourceFiles();
-                var ts = Filters.TranslationFiles();
-                var h = Filters.HeaderFiles();
-                var src = Filters.SourceFiles();
-
-                var uiFilter = qtPro.FindFilterFromGuid(ui.UniqueIdentifier);
-                var tsFilter = qtPro.FindFilterFromGuid(ts.UniqueIdentifier);
-                var qrcFilter = qtPro.FindFilterFromGuid(qrc.UniqueIdentifier);
-                var hFilter = qtPro.FindFilterFromGuid(h.UniqueIdentifier);
-                var srcFilter = qtPro.FindFilterFromGuid(src.UniqueIdentifier);
-
                 if (HelperFunctions.IsSourceFile(vcFile.Name)) {
                     if (vcFile.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
                         return;
@@ -446,78 +426,31 @@ namespace QtVsTools
                             return;
                         }
                     }
-                    if (filter == null && !HelperFunctions.IsInFilter(vcFile, src)) {
-                        if (null == srcFilter && qtPro.VCProject.CanAddFilter(src.Name)) {
-                            srcFilter = (VCFilter) qtPro.VCProject.AddFilter(src.Name);
-                            srcFilter.Filter = src.Filter;
-                            srcFilter.ParseFiles = src.ParseFiles;
-                            srcFilter.UniqueIdentifier = src.UniqueIdentifier;
-                        }
-                        qtPro.RemoveItem(projectItem);
-                        qtPro.AddFileToProject(vcFile.FullPath, src);
-                    }
                     if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
-                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
+                        if (!qtPro.IsQtMsBuildEnabled())
+                            HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
                 } else if (HelperFunctions.IsHeaderFile(vcFile.Name)) {
                     if (vcFile.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase))
                         return;
-                    if (filter == null && !HelperFunctions.IsInFilter(vcFile, h)) {
-                        if (null == hFilter && qtPro.VCProject.CanAddFilter(h.Name)) {
-                            hFilter = (VCFilter) qtPro.VCProject.AddFilter(h.Name);
-                            hFilter.Filter = h.Filter;
-                            hFilter.ParseFiles = h.ParseFiles;
-                            hFilter.UniqueIdentifier = h.UniqueIdentifier;
-                        }
-                        qtPro.RemoveItem(projectItem);
-                        qtPro.AddFileToProject(vcFile.FullPath, h);
-                    }
                     if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
                         if (!qtPro.IsQtMsBuildEnabled())
                             HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                         qtPro.AddMocStep(vcFile);
                     }
                 } else if (HelperFunctions.IsUicFile(vcFile.Name)) {
-                    if (filter == null && !HelperFunctions.IsInFilter(vcFile, ui)) {
-                        if (null == uiFilter && qtPro.VCProject.CanAddFilter(ui.Name)) {
-                            uiFilter = (VCFilter) qtPro.VCProject.AddFilter(ui.Name);
-                            uiFilter.Filter = ui.Filter;
-                            uiFilter.ParseFiles = ui.ParseFiles;
-                            uiFilter.UniqueIdentifier = ui.UniqueIdentifier;
-                        }
-                        qtPro.RemoveItem(projectItem);
-                        qtPro.AddFileToProject(vcFile.FullPath, ui);
-                    }
-                    HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
+                    if (!qtPro.IsQtMsBuildEnabled())
+                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
 #if VS2017 || VS2019
                     QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
 #endif
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
-                    if (filter == null && !HelperFunctions.IsInFilter(vcFile, qrc)) {
-                        if (null == qrcFilter && qtPro.VCProject.CanAddFilter(qrc.Name)) {
-                            qrcFilter = (VCFilter) qtPro.VCProject.AddFilter(qrc.Name);
-                            qrcFilter.Filter = qrc.Filter;
-                            qrcFilter.ParseFiles = qrc.ParseFiles;
-                            qrcFilter.UniqueIdentifier = qrc.UniqueIdentifier;
-                        }
-                        qtPro.RemoveItem(projectItem);
-                        qtPro.AddFileToProject(vcFile.FullPath, qrc);
-                    }
-                    HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
+                    if (!qtPro.IsQtMsBuildEnabled())
+                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.UpdateRccStep(vcFile, null);
                 } else if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
-                    if (filter == null && !HelperFunctions.IsInFilter(vcFile, ts)) {
-                        if (null == tsFilter && qtPro.VCProject.CanAddFilter(ts.Name)) {
-                            tsFilter = (VCFilter) qtPro.VCProject.AddFilter(ts.Name);
-                            tsFilter.Filter = ts.Filter;
-                            tsFilter.ParseFiles = ts.ParseFiles;
-                            tsFilter.UniqueIdentifier = ts.UniqueIdentifier;
-                        }
-                        qtPro.RemoveItem(projectItem);
-                        qtPro.AddFileToProject(vcFile.FullPath, ts);
-                    }
                 }
             } catch { }
         }
