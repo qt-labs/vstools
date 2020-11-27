@@ -13,7 +13,7 @@
       Condition="'$(AssemblyRef_EnvDTE)' == ''
         AND (
           '$(VisualStudioVersion)' == '16.0'
-          OR '$(VisualStudioVersion) '==' 15.0'
+          OR '$(VisualStudioVersion)' == '15.0'
         )"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\EnvDTE.dll</AssemblyRef_EnvDTE>
     <AssemblyRef_EnvDTE
