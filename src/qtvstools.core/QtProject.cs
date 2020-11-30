@@ -2330,9 +2330,9 @@ namespace QtVsTools.Core
             }
         }
 
-        public string CreateQrcFile(string className, string destName)
+        public static string CreateQrcFile(string projectDir, string className, string destName)
         {
-            var fullDestName = vcPro.ProjectDirectory + "\\" + destName;
+            var fullDestName = projectDir + "\\" + destName;
 
             if (!File.Exists(fullDestName)) {
                 FileStream s = null;

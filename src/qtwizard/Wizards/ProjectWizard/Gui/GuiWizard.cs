@@ -195,6 +195,9 @@ namespace QtVsTools.Wizards.ProjectWizard
                 Path.GetFileNameWithoutExtension(WizardData.UiFile));
 
             Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
+            QtProject.CreateQrcFile(
+                Parameter[NewProject.DestinationDirectory],
+                WizardData.ClassName, WizardData.QrcFile);
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewGuiProject.CentralWidget] = FormatParam(@"
@@ -247,7 +250,6 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override void OnProjectGenerated(Project project)
         {
             var qtProject = QtProject.Create(project);
-            qtProject.CreateQrcFile(WizardData.ClassName, WizardData.QrcFile);
 
             IWizardConfiguration configWinRT = Configurations
                 .Where(whereConfigTargetIsWindowsStore)
