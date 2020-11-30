@@ -44,7 +44,7 @@ namespace QtVsTools.Editors
 
         public override string ExecutableName => "QrcEditor.exe";
 
-        protected override string GetToolsPath(IVsHierarchy context)
+        protected override string GetToolsPath()
         {
             return Vsix.Instance?.PkgInstallPath;
         }
@@ -52,7 +52,7 @@ namespace QtVsTools.Editors
         public override Func<string, bool> WindowFilter =>
             caption => caption.StartsWith(Title);
 
-        public override string GetTitle(Process editorProcess)
+        protected override string GetTitle(Process editorProcess)
         {
             return Title;
         }

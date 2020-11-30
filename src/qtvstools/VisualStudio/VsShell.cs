@@ -34,8 +34,6 @@ namespace QtVsTools.VisualStudio
 {
     static class VsShell
     {
-        public const uint VSITEMID_ROOT = 0xFFFFFFFE;
-
         public static string InstallRootDir
         {
             get
@@ -58,6 +56,33 @@ namespace QtVsTools.VisualStudio
             int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out objProp);
             if (res == VSConstants.S_OK && objProp is string)
                 _InstallRootDir = objProp as string;
+        }
+
+        public static EnvDTE.Project GetProject(IVsHierarchy context)
+        {
+            object value;
+            int res = context.GetProperty(
+                (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
+            if (res != VSConstants.S_OK)
+                return null;
+
+            return value as EnvDTE.Project;
+        }
+
+        public static EnvDTE.ProjectItem GetProjectItem(IVsHierarchy context, uint itemid)
+        {
+            object value;
+            int res = context.GetProperty(
+                itemid, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
+            if (res != VSConstants.S_OK)
+                return null;
+
+            return value as EnvDTE.ProjectItem;
+        }
+
+        public static EnvDTE.Document GetDocument(IVsHierarchy context, uint itemid)
+        {
+            return GetProjectItem(context, itemid)?.Document;
         }
     }
 }

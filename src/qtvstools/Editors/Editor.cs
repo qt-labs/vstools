@@ -28,18 +28,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Diagnostics;
-using System.Security.Permissions;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using System.Security.Permissions;
 using System.Threading;
+using System.Windows.Forms;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using System.IO;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 
@@ -52,25 +52,22 @@ namespace QtVsTools.Editors
 
         public virtual Func<string, bool> WindowFilter => (caption => true);
 
-        public virtual string GetTitle(Process editorProcess)
+        protected virtual string GetTitle(Process editorProcess)
         {
             return editorProcess.StartInfo.FileName;
         }
 
-        protected virtual string GetToolsPath(IVsHierarchy context)
+        protected virtual string GetToolsPath()
         {
-            return GetQtToolsPath(context) ?? GetDefaultQtToolsPath();
+            return GetQtToolsPath() ?? GetDefaultQtToolsPath();
         }
 
-        string GetQtToolsPath(IVsHierarchy context)
-        {
-            object value;
-            int res = context.GetProperty(
-                VsShell.VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
-            if (res != VSConstants.S_OK)
-                return null;
+        protected IVsHierarchy Context { get; private set; }
+        protected uint ItemId { get; private set; }
 
-            var project = value as EnvDTE.Project;
+        string GetQtToolsPath()
+        {
+            var project = VsShell.GetProject(Context);
             if (project == null)
                 return null;
 
@@ -142,7 +139,10 @@ namespace QtVsTools.Editors
                 return VSConstants.VS_E_INCOMPATIBLEDOCDATA;
             }
 
-            var toolsPath = GetToolsPath(pvHier);
+            Context = pvHier;
+            ItemId = itemid;
+
+            var toolsPath = GetToolsPath();
             if (string.IsNullOrEmpty(toolsPath))
                 return VSConstants.VS_E_INCOMPATIBLEDOCDATA;
 
@@ -208,298 +208,308 @@ namespace QtVsTools.Editors
                 return null;
             }
         }
-    }
 
-    class EditorPane : WindowPane, IVsPersistDocData
-    {
-        public Editor Editor { get; private set; }
-        public string QtToolsPath { get; private set; }
-
-        public TableLayoutPanel EditorContainer { get; private set; }
-        public Label EditorTitle { get; private set; }
-        public LinkLabel EditorDetachButton { get; private set; }
-        public Panel EditorControl { get; private set; }
-        public override IWin32Window Window => EditorContainer;
-
-        public Process EditorProcess { get; private set; }
-        public IntPtr EditorWindow { get; private set; }
-        public int EditorWindowStyle { get; private set; }
-        public int EditorWindowStyleExt { get; private set; }
-        public IntPtr EditorIcon { get; private set; }
-
-        public EditorPane(Editor editor, string qtToolsPath)
+        protected virtual void OnStart(Process process)
         {
-            Editor = editor;
-            QtToolsPath = qtToolsPath;
-
-            var titleBar = new FlowLayoutPanel
-            {
-                AutoSize = true,
-                Dock = DockStyle.Fill,
-                BackColor = Color.FromArgb(201, 221, 201),
-            };
-            titleBar.Controls.Add(EditorTitle = new Label
-            {
-                Text = Editor.ExecutableName,
-                ForeColor = Color.FromArgb(9, 16, 43),
-                Font = new Font("Segoe UI", 8F, FontStyle.Bold, GraphicsUnit.Point),
-                AutoSize = true,
-                Margin = new Padding(8),
-            });
-            titleBar.Controls.Add(EditorDetachButton = new LinkLabel
-            {
-                Text = "Detach",
-                Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
-                AutoSize = true,
-                Margin = new Padding(0, 8, 8, 8),
-            });
-            EditorDetachButton.Click += EditorDetachButton_Click;
-
-            EditorControl = new Panel
-            {
-                BackColor = SystemColors.Window,
-                Dock = DockStyle.Fill
-            };
-            EditorControl.Resize += EditorControl_Resize;
-
-            EditorContainer = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-            };
-            EditorContainer.ColumnStyles.Add(new ColumnStyle());
-            EditorContainer.RowStyles.Add(new RowStyle());
-            EditorContainer.RowStyles.Add(new RowStyle());
-            EditorContainer.Controls.Add(titleBar, 0, 0);
-            EditorContainer.Controls.Add(EditorControl, 0, 1);
         }
 
-        protected override void Dispose(bool disposing)
+        protected virtual void OnExit(Process process)
         {
-            try {
-                if (disposing) {
-                    EditorContainer?.Dispose();
-                    EditorContainer = null;
-                    GC.SuppressFinalize(this);
+        }
+
+        private class EditorPane : WindowPane, IVsPersistDocData
+        {
+            public Editor Editor { get; private set; }
+            public string QtToolsPath { get; private set; }
+
+            public TableLayoutPanel EditorContainer { get; private set; }
+            public Label EditorTitle { get; private set; }
+            public LinkLabel EditorDetachButton { get; private set; }
+            public Panel EditorControl { get; private set; }
+            public override IWin32Window Window => EditorContainer;
+
+            public Process EditorProcess { get; private set; }
+            public IntPtr EditorWindow { get; private set; }
+            public int EditorWindowStyle { get; private set; }
+            public int EditorWindowStyleExt { get; private set; }
+            public IntPtr EditorIcon { get; private set; }
+
+            public EditorPane(Editor editor, string qtToolsPath)
+            {
+                Editor = editor;
+                QtToolsPath = qtToolsPath;
+
+                var titleBar = new FlowLayoutPanel
+                {
+                    AutoSize = true,
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.FromArgb(201, 221, 201),
+                };
+                titleBar.Controls.Add(EditorTitle = new Label
+                {
+                    Text = Editor.ExecutableName,
+                    ForeColor = Color.FromArgb(9, 16, 43),
+                    Font = new Font("Segoe UI", 8F, FontStyle.Bold, GraphicsUnit.Point),
+                    AutoSize = true,
+                    Margin = new Padding(8),
+                });
+                titleBar.Controls.Add(EditorDetachButton = new LinkLabel
+                {
+                    Text = "Detach",
+                    Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
+                    AutoSize = true,
+                    Margin = new Padding(0, 8, 8, 8),
+                });
+                EditorDetachButton.Click += EditorDetachButton_Click;
+
+                EditorControl = new Panel
+                {
+                    BackColor = SystemColors.Window,
+                    Dock = DockStyle.Fill
+                };
+                EditorControl.Resize += EditorControl_Resize;
+
+                EditorContainer = new TableLayoutPanel
+                {
+                    ColumnCount = 1,
+                    RowCount = 2,
+                };
+                EditorContainer.ColumnStyles.Add(new ColumnStyle());
+                EditorContainer.RowStyles.Add(new RowStyle());
+                EditorContainer.RowStyles.Add(new RowStyle());
+                EditorContainer.Controls.Add(titleBar, 0, 0);
+                EditorContainer.Controls.Add(EditorControl, 0, 1);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                try {
+                    if (disposing) {
+                        EditorContainer?.Dispose();
+                        EditorContainer = null;
+                        GC.SuppressFinalize(this);
+                    }
+                } finally {
+                    base.Dispose(disposing);
                 }
-            } finally {
-                base.Dispose(disposing);
             }
-        }
 
-        int IVsPersistDocData.GetGuidEditorType(out Guid pClassID)
-        {
-            pClassID = Editor.Guid;
-            return VSConstants.S_OK;
-        }
+            int IVsPersistDocData.GetGuidEditorType(out Guid pClassID)
+            {
+                pClassID = Editor.Guid;
+                return VSConstants.S_OK;
+            }
 
-        int IVsPersistDocData.LoadDocData(string pszMkDocument)
-        {
-            var solution = GetService(typeof(SVsSolution)) as IVsSolution;
-            EditorProcess = Editor.Start(pszMkDocument, QtToolsPath);
-            if (EditorProcess == null)
-                return VSConstants.E_FAIL;
+            int IVsPersistDocData.LoadDocData(string pszMkDocument)
+            {
+                var solution = GetService(typeof(SVsSolution)) as IVsSolution;
+                EditorProcess = Editor.Start(pszMkDocument, QtToolsPath);
+                if (EditorProcess == null)
+                    return VSConstants.E_FAIL;
 
-            EditorTitle.Text = Editor.GetTitle(EditorProcess);
+                EditorTitle.Text = Editor.GetTitle(EditorProcess);
 
-            EditorProcess.WaitForInputIdle();
-            EditorProcess.EnableRaisingEvents = true;
-            EditorProcess.Exited += EditorProcess_Exited;
+                EditorProcess.WaitForInputIdle();
+                EditorProcess.EnableRaisingEvents = true;
+                EditorProcess.Exited += EditorProcess_Exited;
 
-            var t = Stopwatch.StartNew();
-            while (EditorWindow == IntPtr.Zero && t.ElapsedMilliseconds < 5000) {
-                var windows = new Dictionary<IntPtr, string>();
-                foreach (ProcessThread thread in EditorProcess.Threads) {
-                    NativeAPI.EnumThreadWindows(
-                        dwThreadId: (uint)thread.Id,
-                        lParam: IntPtr.Zero,
-                        lpfn: (hWnd, lParam) =>
-                        {
-                            windows.Add(hWnd, NativeAPI.GetWindowCaption(hWnd));
-                            return true;
-                        });
+                var t = Stopwatch.StartNew();
+                while (EditorWindow == IntPtr.Zero && t.ElapsedMilliseconds < 5000) {
+                    var windows = new Dictionary<IntPtr, string>();
+                    foreach (ProcessThread thread in EditorProcess.Threads) {
+                        NativeAPI.EnumThreadWindows(
+                            dwThreadId: (uint)thread.Id,
+                            lParam: IntPtr.Zero,
+                            lpfn: (hWnd, lParam) =>
+                            {
+                                windows.Add(hWnd, NativeAPI.GetWindowCaption(hWnd));
+                                return true;
+                            });
+                    }
+
+                    EditorWindow = windows
+                        .Where(w => Editor.WindowFilter(w.Value))
+                        .Select(w => w.Key)
+                        .FirstOrDefault();
+
+                    if (EditorWindow == IntPtr.Zero)
+                        Thread.Sleep(100);
                 }
 
-                EditorWindow = windows
-                    .Where(w => Editor.WindowFilter(w.Value))
-                    .Select(w => w.Key)
-                    .FirstOrDefault();
+                if (EditorWindow == IntPtr.Zero) {
+                    EditorProcess.Kill();
+                    EditorProcess = null;
+                    return VSConstants.E_FAIL;
+                }
 
-                if (EditorWindow == IntPtr.Zero)
-                    Thread.Sleep(100);
+                // Save editor window styles and icon
+                EditorWindowStyle = NativeAPI.GetWindowLong(
+                    EditorWindow, NativeAPI.GWL_STYLE);
+                EditorWindowStyleExt = NativeAPI.GetWindowLong(
+                    EditorWindow, NativeAPI.GWL_EXSTYLE);
+                EditorIcon = NativeAPI.SendMessage(
+                    EditorWindow, NativeAPI.WM_GETICON, NativeAPI.ICON_SMALL, 0);
+                if (EditorIcon == IntPtr.Zero)
+                    EditorIcon = (IntPtr)NativeAPI.GetClassLong(EditorWindow, NativeAPI.GCL_HICON);
+                if (EditorIcon == IntPtr.Zero)
+                    EditorIcon = (IntPtr)NativeAPI.GetClassLong(EditorWindow, NativeAPI.GCL_HICONSM);
+
+                // Move editor window inside VS
+                if (NativeAPI.SetParent(
+                        EditorWindow, EditorControl.Handle) == IntPtr.Zero) {
+                    EditorWindow = IntPtr.Zero;
+                    EditorProcess.Kill();
+                    EditorProcess = null;
+                    return VSConstants.E_FAIL;
+                }
+                if (NativeAPI.SetWindowLong(
+                        EditorWindow, NativeAPI.GWL_STYLE, NativeAPI.WS_VISIBLE) == 0) {
+                    EditorWindow = IntPtr.Zero;
+                    EditorProcess.Kill();
+                    EditorProcess = null;
+                    return VSConstants.E_FAIL;
+                }
+                if (!NativeAPI.MoveWindow(
+                        EditorWindow, 0, 0, EditorControl.Width, EditorControl.Height, true)) {
+                    EditorWindow = IntPtr.Zero;
+                    EditorProcess.Kill();
+                    EditorProcess = null;
+                    return VSConstants.E_FAIL;
+                }
+
+                Editor.OnStart(EditorProcess);
+                return VSConstants.S_OK;
             }
 
-            if (EditorWindow == IntPtr.Zero) {
-                EditorProcess.Kill();
+            void CloseParentFrame()
+            {
                 EditorProcess = null;
-                return VSConstants.E_FAIL;
-            }
-
-            // Save editor window styles and icon
-            EditorWindowStyle = NativeAPI.GetWindowLong(
-                EditorWindow, NativeAPI.GWL_STYLE);
-            EditorWindowStyleExt = NativeAPI.GetWindowLong(
-                EditorWindow, NativeAPI.GWL_EXSTYLE);
-            EditorIcon = NativeAPI.SendMessage(
-                EditorWindow, NativeAPI.WM_GETICON, NativeAPI.ICON_SMALL, 0);
-            if (EditorIcon == IntPtr.Zero)
-                EditorIcon = (IntPtr)NativeAPI.GetClassLong(EditorWindow, NativeAPI.GCL_HICON);
-            if (EditorIcon == IntPtr.Zero)
-                EditorIcon = (IntPtr)NativeAPI.GetClassLong(EditorWindow, NativeAPI.GCL_HICONSM);
-
-            // Move editor window inside VS
-            if (NativeAPI.SetParent(
-                    EditorWindow, EditorControl.Handle) == IntPtr.Zero) {
                 EditorWindow = IntPtr.Zero;
-                EditorProcess.Kill();
-                EditorProcess = null;
-                return VSConstants.E_FAIL;
-            }
-            if (NativeAPI.SetWindowLong(
-                    EditorWindow, NativeAPI.GWL_STYLE, NativeAPI.WS_VISIBLE) == 0) {
-                EditorWindow = IntPtr.Zero;
-                EditorProcess.Kill();
-                EditorProcess = null;
-                return VSConstants.E_FAIL;
-            }
-            if (!NativeAPI.MoveWindow(
-                    EditorWindow, 0, 0, EditorControl.Width, EditorControl.Height, true)) {
-                EditorWindow = IntPtr.Zero;
-                EditorProcess.Kill();
-                EditorProcess = null;
-                return VSConstants.E_FAIL;
+                var parentFrame = GetService(typeof(SVsWindowFrame)) as IVsWindowFrame;
+                parentFrame?.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave);
             }
 
-            return VSConstants.S_OK;
-        }
+            private void EditorProcess_Exited(object sender, EventArgs e)
+            {
+                CloseParentFrame();
+                Editor.OnExit(EditorProcess);
+            }
 
-        void CloseParentFrame()
-        {
-            EditorProcess = null;
-            EditorWindow = IntPtr.Zero;
-            var parentFrame = GetService(typeof(SVsWindowFrame)) as IVsWindowFrame;
-            parentFrame?.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave);
-        }
+            void EditorControl_Resize(object sender, EventArgs e)
+            {
+                if (EditorControl != null && EditorWindow != IntPtr.Zero) {
+                    NativeAPI.MoveWindow(
+                        EditorWindow, 0, 0, EditorControl.Width, EditorControl.Height, true);
+                }
+            }
 
-        private void EditorProcess_Exited(object sender, EventArgs e)
-        {
-            CloseParentFrame();
-        }
+            private void EditorDetachButton_Click(object sender, EventArgs e)
+            {
+                if (EditorProcess != null) {
+                    var editorWindow = EditorWindow;
+                    DetachEditorWindow();
+                    CloseParentFrame();
+                    NativeAPI.ShowWindow(editorWindow, NativeAPI.SW_RESTORE);
+                    NativeAPI.SetForegroundWindow(editorWindow);
+                }
+            }
 
-        void EditorControl_Resize(object sender, EventArgs e)
-        {
-            if (EditorControl != null && EditorWindow != IntPtr.Zero) {
+            public void DetachEditorWindow()
+            {
+                NativeAPI.ShowWindow(EditorWindow,
+                    NativeAPI.SW_HIDE);
+                NativeAPI.SetParent(
+                    EditorWindow, IntPtr.Zero);
+                NativeAPI.SetWindowLong(
+                    EditorWindow, NativeAPI.GWL_STYLE, EditorWindowStyle);
+                NativeAPI.SetWindowLong(
+                    EditorWindow, NativeAPI.GWL_EXSTYLE, EditorWindowStyleExt);
+                NativeAPI.SendMessage(
+                    EditorWindow, NativeAPI.WM_SETICON, NativeAPI.ICON_SMALL, EditorIcon);
                 NativeAPI.MoveWindow(
                     EditorWindow, 0, 0, EditorControl.Width, EditorControl.Height, true);
-            }
-        }
-
-        private void EditorDetachButton_Click(object sender, EventArgs e)
-        {
-            if (EditorProcess != null) {
-                var editorWindow = EditorWindow;
-                DetachEditorWindow();
-                CloseParentFrame();
-                NativeAPI.ShowWindow(editorWindow, NativeAPI.SW_RESTORE);
-                NativeAPI.SetForegroundWindow(editorWindow);
-            }
-        }
-
-        public void DetachEditorWindow()
-        {
-            NativeAPI.ShowWindow(EditorWindow,
-                NativeAPI.SW_HIDE);
-            NativeAPI.SetParent(
-                EditorWindow, IntPtr.Zero);
-            NativeAPI.SetWindowLong(
-                EditorWindow, NativeAPI.GWL_STYLE, EditorWindowStyle);
-            NativeAPI.SetWindowLong(
-                EditorWindow, NativeAPI.GWL_EXSTYLE, EditorWindowStyleExt);
-            NativeAPI.SendMessage(
-                EditorWindow, NativeAPI.WM_SETICON, NativeAPI.ICON_SMALL, EditorIcon);
-            NativeAPI.MoveWindow(
-                EditorWindow, 0, 0, EditorControl.Width, EditorControl.Height, true);
-            NativeAPI.ShowWindow(EditorWindow,
-                NativeAPI.SW_SHOWMINNOACTIVE);
-        }
-
-        int IVsPersistDocData.Close()
-        {
-            if (EditorProcess != null) {
-                DetachEditorWindow();
-                var editorProcess = EditorProcess;
-                EditorProcess = null;
-                var editorWindow = EditorWindow;
-                EditorWindow = IntPtr.Zero;
-
-                // Close editor window
-                System.Threading.Tasks.Task.Run(() =>
-                {
-                    NativeAPI.SendMessage(editorWindow, NativeAPI.WM_CLOSE, 0, 0);
-                    if (!editorProcess.WaitForExit(500)) {
-                        NativeAPI.ShowWindow(editorWindow,
-                            NativeAPI.SW_RESTORE);
-                        NativeAPI.SetForegroundWindow(editorWindow);
-                    }
-                });
+                NativeAPI.ShowWindow(EditorWindow,
+                    NativeAPI.SW_SHOWMINNOACTIVE);
             }
 
-            if (EditorContainer == null) {
-                if (EditorContainer != null) {
-                    EditorContainer.Dispose();
-                    EditorContainer = null;
+            int IVsPersistDocData.Close()
+            {
+                if (EditorProcess != null) {
+                    DetachEditorWindow();
+                    var editorProcess = EditorProcess;
+                    EditorProcess = null;
+                    var editorWindow = EditorWindow;
+                    EditorWindow = IntPtr.Zero;
+
+                    // Close editor window
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        NativeAPI.SendMessage(editorWindow, NativeAPI.WM_CLOSE, 0, 0);
+                        if (!editorProcess.WaitForExit(500)) {
+                            NativeAPI.ShowWindow(editorWindow,
+                                NativeAPI.SW_RESTORE);
+                            NativeAPI.SetForegroundWindow(editorWindow);
+                        }
+                    });
                 }
+
+                if (EditorContainer == null) {
+                    if (EditorContainer != null) {
+                        EditorContainer.Dispose();
+                        EditorContainer = null;
+                    }
+                }
+                return VSConstants.S_OK;
             }
-            return VSConstants.S_OK;
-        }
 
-        int IVsPersistDocData.RenameDocData(
-            uint grfAttribs,
-            IVsHierarchy pHierNew,
-            uint itemidNew,
-            string pszMkDocumentNew)
-        {
-            return VSConstants.E_NOTIMPL;
-        }
+            int IVsPersistDocData.RenameDocData(
+                uint grfAttribs,
+                IVsHierarchy pHierNew,
+                uint itemidNew,
+                string pszMkDocumentNew)
+            {
+                return VSConstants.E_NOTIMPL;
+            }
 
-        int IVsPersistDocData.IsDocDataDirty(out int pfDirty)
-        {
-            pfDirty = 0;
-            return VSConstants.S_OK;
-        }
+            int IVsPersistDocData.IsDocDataDirty(out int pfDirty)
+            {
+                pfDirty = 0;
+                return VSConstants.S_OK;
+            }
 
-        int IVsPersistDocData.SetUntitledDocPath(string pszDocDataPath)
-        {
-            return VSConstants.S_OK;
-        }
+            int IVsPersistDocData.SetUntitledDocPath(string pszDocDataPath)
+            {
+                return VSConstants.S_OK;
+            }
 
-        int IVsPersistDocData.SaveDocData(
-            VSSAVEFLAGS dwSave,
-            out string pbstrMkDocumentNew,
-            out int pfSaveCanceled)
-        {
-            pbstrMkDocumentNew = string.Empty;
-            pfSaveCanceled = 0;
-            return VSConstants.E_NOTIMPL;
-        }
+            int IVsPersistDocData.SaveDocData(
+                VSSAVEFLAGS dwSave,
+                out string pbstrMkDocumentNew,
+                out int pfSaveCanceled)
+            {
+                pbstrMkDocumentNew = string.Empty;
+                pfSaveCanceled = 0;
+                return VSConstants.E_NOTIMPL;
+            }
 
-        int IVsPersistDocData.OnRegisterDocData(
-            uint docCookie,
-            IVsHierarchy pHierNew,
-            uint itemidNew)
-        {
-            return VSConstants.S_OK;
-        }
+            int IVsPersistDocData.OnRegisterDocData(
+                uint docCookie,
+                IVsHierarchy pHierNew,
+                uint itemidNew)
+            {
+                return VSConstants.S_OK;
+            }
 
-        int IVsPersistDocData.IsDocDataReloadable(out int pfReloadable)
-        {
-            pfReloadable = 0;
-            return VSConstants.S_OK;
-        }
+            int IVsPersistDocData.IsDocDataReloadable(out int pfReloadable)
+            {
+                pfReloadable = 0;
+                return VSConstants.S_OK;
+            }
 
-        int IVsPersistDocData.ReloadDocData(uint grfFlags)
-        {
-            return VSConstants.E_NOTIMPL;
+            int IVsPersistDocData.ReloadDocData(uint grfFlags)
+            {
+                return VSConstants.E_NOTIMPL;
+            }
         }
     }
 }

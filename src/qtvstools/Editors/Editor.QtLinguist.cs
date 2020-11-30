@@ -46,7 +46,7 @@ namespace QtVsTools.Editors
         public override Func<string, bool> WindowFilter =>
             caption => caption.EndsWith(Title);
 
-        public override string GetTitle(Process editorProcess)
+        protected override string GetTitle(Process editorProcess)
         {
             return Title;
         }
