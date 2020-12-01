@@ -491,6 +491,9 @@ namespace QtVsTools
                     }
                     HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
+#if VS2017 || VS2019
+                    QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+#endif
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (filter == null && !HelperFunctions.IsInFilter(vcFile, qrc)) {
                         if (null == qrcFilter && qtPro.VCProject.CanAddFilter(qrc.Name)) {
@@ -547,7 +550,7 @@ namespace QtVsTools
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
 #if VS2017 || VS2019
-                QtProjectTracker.AddProject(project);
+                QtProjectTracker.AddProject(project, runQtTools: true);
 #endif
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
@@ -593,7 +596,7 @@ namespace QtVsTools
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
 #if VS2017 || VS2019
-                    QtProjectTracker.AddProject(p);
+                    QtProjectTracker.AddProject(p, runQtTools: false);
 #endif
                 }
             }

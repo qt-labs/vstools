@@ -417,7 +417,7 @@ namespace QtVsTools
         void IProjectTracker.AddProject(Project project)
         {
 #if VS2017 || VS2019
-            QtProjectTracker.AddProject(project);
+            QtProjectTracker.AddProject(project, runQtTools: false);
 #endif
         }
     }

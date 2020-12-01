@@ -28,7 +28,14 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Shell.Interop;
+#if VS2017 || VS2019
+using QtVsTools.QtMsBuild;
+#endif
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Editors
 {
@@ -50,5 +57,32 @@ namespace QtVsTools.Editors
         {
             return Title;
         }
+
+#if VS2017 || VS2019
+        protected override void OnStart(Process process)
+        {
+            base.OnStart(process);
+            Task.Run(() =>
+            {
+                var document = VsShell.GetDocument(Context, ItemId);
+                if (document == null)
+                    return;
+                var project = document.ProjectItem?.ContainingProject;
+                if (project == null)
+                    return;
+                string filePath = document.FullName;
+                var lastWriteTime = File.GetLastWriteTime(filePath);
+                while (!process.WaitForExit(1000)) {
+                    var latestWriteTime = File.GetLastWriteTime(filePath);
+                    if (lastWriteTime != latestWriteTime) {
+                        lastWriteTime = latestWriteTime;
+                        QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+                    }
+                }
+                if (lastWriteTime != File.GetLastWriteTime(filePath))
+                    QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+            });
+        }
+#endif
     }
 }

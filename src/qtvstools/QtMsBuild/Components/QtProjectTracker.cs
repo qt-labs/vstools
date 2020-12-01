@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -31,6 +31,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,9 +39,10 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
+using Microsoft.VisualStudio.Shell.Interop;
 using EnvDTE;
 using QtVsTools.Core;
-using System.Diagnostics;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.QtMsBuild
 {
@@ -55,26 +57,28 @@ namespace QtVsTools.QtMsBuild
         IProjectLockService LockService { get; set; }
 
         static readonly object criticalSection = new object();
-        public static void AddProject(EnvDTE.Project project)
+        public static void AddProject(EnvDTE.Project project, bool runQtTools)
         {
             lock (criticalSection) {
                 if (Instances == null)
                     Instances = new ConcurrentDictionary<string, QtProjectTracker>();
             }
             QtProjectTracker instance = null;
-            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
-                Instances[project.FullName] = new QtProjectTracker(project);
+            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null) {
+                Instances[project.FullName] = new QtProjectTracker(project, runQtTools);
+            }
         }
 
-        private QtProjectTracker(EnvDTE.Project project)
+        private QtProjectTracker(EnvDTE.Project project, bool runQtTools)
         {
             Project = project;
-            Task.Run(Initialize);
+            Task.Run(async () => { await Initialize(runQtTools); })
+                .Wait();
         }
 
         bool initialized = false;
 
-        private async Task Initialize()
+        private async Task Initialize(bool runQtTools)
         {
             var context = Project.Object as IVsBrowseObjectContext;
             if (context == null)
@@ -99,12 +103,17 @@ namespace QtVsTools.QtMsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 configProject.ProjectChanged += OnProjectChanged;
                 configProject.ProjectUnloading += OnProjectUnloading;
-                await DesignTimeUpdateQtVarsAsync(configProject);
+                await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, null);
             }
         }
 
-        public static void RefreshIntelliSense(EnvDTE.Project project, string configId = null)
+        public static void RefreshIntelliSense(
+            EnvDTE.Project project, string configId = null,
+            bool runQtTools = false, IEnumerable<string> selectedFiles = null)
         {
+            if (project == null)
+                return;
+
             lock (criticalSection) {
                 if (Instances == null)
                     return;
@@ -112,18 +121,41 @@ namespace QtVsTools.QtMsBuild
             QtProjectTracker instance = null;
             if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
                 return;
-            Task.Run(async () => await instance.RefreshIntelliSenseAsync(configId));
+            Task.Run(async () => await instance
+                .RefreshIntelliSenseAsync(configId, runQtTools, selectedFiles));
         }
 
-        private async Task RefreshIntelliSenseAsync(string configId = null)
+        private async Task RefreshIntelliSenseAsync(string configId,
+            bool runQtTools, IEnumerable<string> selectedFiles)
         {
+            WaitDialog waitDialog = null;
+            var statusBar = VsServiceProvider.GetService<SVsStatusbar, IVsStatusbar>();
+
+            if (runQtTools) {
+                waitDialog = WaitDialog.Start(
+                    "Qt Visual Studio Tools", "Updating IntelliSense...",
+                    null, null, 1, false, true);
+                statusBar?.SetText("Qt Visual Studio Tools: Updating IntelliSense...");
+            }
+
             var configs = await UnconfiguredProject.Services
                 .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
             foreach (var config in configs) {
                 if (!string.IsNullOrEmpty(configId) && config.Name != configId)
                     continue;
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
-                await DesignTimeUpdateQtVarsAsync(configProject);
+                await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, selectedFiles);
+            }
+
+            if (runQtTools) {
+                try {
+                    Vsix.Instance.Dte.ExecuteCommand("Project.RescanSolution");
+                } catch (Exception e) {
+                    Messages.PaneMessageSafe(Vsix.Instance.Dte,
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                }
+                waitDialog?.Stop();
+                statusBar?.Clear();
             }
         }
 
@@ -136,7 +168,7 @@ namespace QtVsTools.QtMsBuild
             if (project == null || project.Services == null)
                 return;
 
-            Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project));
+            Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project, false, null));
         }
 
         private static KeyValuePair<TKey, TValue> KVP<TKey, TValue>(TKey key, TValue value)
@@ -144,12 +176,22 @@ namespace QtVsTools.QtMsBuild
             return new KeyValuePair<TKey, TValue>(key, value);
         }
 
-        private async Task DesignTimeUpdateQtVarsAsync(ConfiguredProject project)
+        private async Task DesignTimeUpdateQtVarsAsync(
+            ConfiguredProject project,
+            bool runQtTools,
+            IEnumerable<string> selectedFiles)
         {
             await BuildAsync(
                 project,
                 new[] { KVP("QtVSToolsBuild", "true") },
                 new[] { "QtVars" });
+            if (runQtTools) {
+                await BuildAsync(
+                    project,
+                    (selectedFiles == null) ? new KeyValuePair<string, string>[0]
+                        : new[] { KVP("SelectedFiles", string.Join(";", selectedFiles)) },
+                    new[] { "Qt" });
+            }
         }
 
         private async Task BuildAsync(
