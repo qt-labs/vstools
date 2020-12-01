@@ -85,6 +85,7 @@ QMakeBaseEnv::QMakeBaseEnv()
 {
 #ifdef PROEVALUATOR_THREAD_SAFE
     inProgress = false;
+    isOk = false;
 #endif
 }
 
