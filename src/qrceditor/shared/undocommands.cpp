@@ -153,7 +153,7 @@ void RemoveEntryCommand::freeEntry()
 AddFilesCommand::AddFilesCommand(ResourceView *view, int prefixIndex, int cursorFileIndex,
         const QStringList &fileNames)
         : ViewCommand(view), m_prefixIndex(prefixIndex), m_cursorFileIndex(cursorFileIndex),
-        m_fileNames(fileNames)
+        m_fileNames(fileNames),m_firstFile(-1),m_lastFile(-1);
 { }
 
 void AddFilesCommand::redo()
