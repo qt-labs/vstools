@@ -74,10 +74,10 @@ namespace QtVsTools.Core
 
         private WaitDialog() { }
 
-        static WaitDialog Create()
+        static WaitDialog Create(IVsThreadedWaitDialogFactory dialogFactory)
         {
             if (factory == null) {
-                factory = VsServiceProvider
+                factory = dialogFactory ?? VsServiceProvider
                     .GetService<SVsThreadedWaitDialogFactory, IVsThreadedWaitDialogFactory>();
                 if (factory == null)
                     return null;
@@ -102,9 +102,10 @@ namespace QtVsTools.Core
             string statusBarText,
             int delayToShowDialog,
             bool isCancelable,
-            bool showMarqueeProgress)
+            bool showMarqueeProgress,
+            IVsThreadedWaitDialogFactory dialogFactory = null)
         {
-            var dialog = Create();
+            var dialog = Create(dialogFactory);
             if (dialog == null)
                 return null;
 
@@ -125,9 +126,10 @@ namespace QtVsTools.Core
             int delayToShowDialog,
             bool isCancelable,
             int totalSteps,
-            int currentStep)
+            int currentStep,
+            IVsThreadedWaitDialogFactory dialogFactory = null)
         {
-            var dialog = Create();
+            var dialog = Create(dialogFactory);
             if (dialog == null)
                 return null;
 

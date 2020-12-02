@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -48,7 +48,18 @@ namespace QtVsTools.QtMsBuild
 {
     class QtProjectTracker
     {
-        static ConcurrentDictionary<string, QtProjectTracker> Instances { get; set; }
+        static readonly object criticalSection = new object();
+        static ConcurrentDictionary<string, QtProjectTracker> _Instances;
+        static ConcurrentDictionary<string, QtProjectTracker> Instances {
+            get
+            {
+                lock (criticalSection) {
+                    if (_Instances == null)
+                        _Instances = new ConcurrentDictionary<string, QtProjectTracker>();
+                    return _Instances;
+                }
+            }
+        }
 
         EnvDTE.Project Project { get; set; }
 
@@ -56,13 +67,11 @@ namespace QtVsTools.QtMsBuild
         IEnumerable<ConfiguredProject> ConfiguredProjects { get; set; }
         IProjectLockService LockService { get; set; }
 
-        static readonly object criticalSection = new object();
+        IVsStatusbar StatusBar { get; set; }
+        IVsThreadedWaitDialogFactory WaitDialogFactory { get; set; }
+
         public static void AddProject(EnvDTE.Project project, bool runQtTools)
         {
-            lock (criticalSection) {
-                if (Instances == null)
-                    Instances = new ConcurrentDictionary<string, QtProjectTracker>();
-            }
             QtProjectTracker instance = null;
             if (!Instances.TryGetValue(project.FullName, out instance) || instance == null) {
                 Instances[project.FullName] = new QtProjectTracker(project, runQtTools);
@@ -72,8 +81,7 @@ namespace QtVsTools.QtMsBuild
         private QtProjectTracker(EnvDTE.Project project, bool runQtTools)
         {
             Project = project;
-            Task.Run(async () => { await Initialize(runQtTools); })
-                .Wait();
+            Task.Run(async () => await Initialize(runQtTools));
         }
 
         bool initialized = false;
@@ -97,6 +105,11 @@ namespace QtVsTools.QtMsBuild
             var configs = await UnconfiguredProject.Services
                 .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
 
+            StatusBar = await VsServiceProvider
+                .GetServiceAsync<SVsStatusbar, IVsStatusbar>();
+            WaitDialogFactory = await VsServiceProvider
+                .GetServiceAsync<SVsThreadedWaitDialogFactory, IVsThreadedWaitDialogFactory>();
+
             initialized = true;
 
             foreach (var config in configs) {
@@ -114,13 +127,12 @@ namespace QtVsTools.QtMsBuild
             if (project == null)
                 return;
 
-            lock (criticalSection) {
-                if (Instances == null)
-                    return;
-            }
             QtProjectTracker instance = null;
             if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
                 return;
+            if (!instance.initialized)
+                return;
+
             Task.Run(async () => await instance
                 .RefreshIntelliSenseAsync(configId, runQtTools, selectedFiles));
         }
@@ -129,13 +141,12 @@ namespace QtVsTools.QtMsBuild
             bool runQtTools, IEnumerable<string> selectedFiles)
         {
             WaitDialog waitDialog = null;
-            var statusBar = VsServiceProvider.GetService<SVsStatusbar, IVsStatusbar>();
 
             if (runQtTools) {
                 waitDialog = WaitDialog.Start(
                     "Qt Visual Studio Tools", "Updating IntelliSense...",
-                    null, null, 1, false, true);
-                statusBar?.SetText("Qt Visual Studio Tools: Updating IntelliSense...");
+                    null, null, 1, false, true, WaitDialogFactory);
+                StatusBar?.SetText("Qt Visual Studio Tools: Updating IntelliSense...");
             }
 
             var configs = await UnconfiguredProject.Services
@@ -155,7 +166,7 @@ namespace QtVsTools.QtMsBuild
                         e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
                 }
                 waitDialog?.Stop();
-                statusBar?.Clear();
+                StatusBar?.Clear();
             }
         }
 
