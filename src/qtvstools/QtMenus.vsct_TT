@@ -331,12 +331,21 @@
 
             <Button guid="MainMenuGuid" id="QtOptionsId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
-                <Icon guid="MenuImages" id="QtLogoBitmap" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
-                    <ButtonText>Qt Options</ButtonText>
-                    <ToolTipText>Configure the default Qt settings</ToolTipText>
+                    <ButtonText>Options</ButtonText>
+                    <ToolTipText>Configure default Qt settings</ToolTipText>
+                </Strings>
+            </Button>
+
+            <Button guid="MainMenuGuid" id="QtVersionsId" priority="0x0100" type="Button">
+                <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <Strings>
+                    <ButtonText>Qt Versions</ButtonText>
+                    <ToolTipText>Register installed versions of Qt</ToolTipText>
                 </Strings>
             </Button>
 
@@ -615,6 +624,7 @@
 
             <IDSymbol name="OptionsMenuGroup" value="0x1024" />
             <IDSymbol name="QtOptionsId" value="0x0110" />
+            <IDSymbol name="QtVersionsId" value="0x0111" />
 
             <!-- Endregion Main menu buttons Ids -->
 

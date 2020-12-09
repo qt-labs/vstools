@@ -93,6 +93,15 @@ namespace QtVsTools
     [ProvideEditorLogicalView(typeof(Editors.QtResourceEditor),
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 #endif
+
+    // Options page
+    [ProvideOptionPage(typeof(Options.QtOptionPage),
+        "Qt", "General", 0, 0, true)]
+
+    // Qt Versions page
+    [ProvideOptionPage(typeof(Options.QtVersionsPage),
+        "Qt", "Versions", 0, 0, true)]
+
     public sealed class Vsix : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
         /// <summary>

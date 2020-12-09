@@ -1,0 +1,286 @@
+﻿<!--
+/****************************************************************************
+**
+** Copyright (C) 2020 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
+<UserControl x:Class="QtVsTools.Options.QtVersionsTable"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:QtVsTools.Options"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+  <DataGrid Margin="0,0,0,0"
+            Name="DataGrid"
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            BorderThickness="1"
+            BorderBrush="LightGray"
+            GridLinesVisibility="All"
+            HorizontalGridLinesBrush="LightGray"
+            VerticalGridLinesBrush="LightGray"
+            CanUserReorderColumns="False"
+            CanUserSortColumns="False"
+            CanUserResizeRows="False"
+            RowHeaderWidth="0"
+            FrozenColumnCount="0"
+            Grid.Row="0">
+    <DataGrid.Resources>
+      <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                       Color="Transparent" />
+      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                       Color="Transparent" />
+      <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                       Color="Transparent" />
+    </DataGrid.Resources>
+    <DataGrid.CellStyle>
+      <Style TargetType="DataGridCell">
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
+      </Style>
+    </DataGrid.CellStyle>
+    <DataGrid.Columns>
+      <DataGridTemplateColumn Header="Default"
+                              CanUserResize="False">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <!--//// Default ////-->
+            <CheckBox x:Name="IsDefault"
+                      IsChecked="{Binding IsDefault}"
+                      Focusable="{Binding DefaultEnabled}"
+                      IsHitTestVisible="{Binding DefaultEnabled}"
+                      Visibility="{Binding RowVisibility}"
+                      BorderThickness="1"
+                      Background="Transparent"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Click="Default_Click"
+                      Loaded="Control_Loaded"
+                      ToolTip="{Binding FieldDefault.ToolTip}"></CheckBox>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTemplateColumn Header="Version">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <!--//// Name ////-->
+            <Grid>
+              <Button Cursor="Hand"
+                      Visibility="{Binding RowVisibility}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Click="Remove_Click">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Grid HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Margin="4,0">
+                      <Ellipse Fill="White"
+                               Width="15"
+                               Height="15" />
+                      <Ellipse Fill="Red"
+                               Width="13"
+                               Height="13" />
+                      <Rectangle Width="8"
+                                 Height="2"
+                                 Fill="White" />
+                    </Grid>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+              <Button Cursor="Hand"
+                      Visibility="{Binding ButtonAddVisibility}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      Click="Add_Click">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Grid HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center"
+                          Margin="4,0"
+                          Background="Transparent">
+                      <Grid HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                        <Ellipse Fill="White"
+                                 Width="15"
+                                 Height="15" />
+                        <Ellipse Fill="#FF36B31A"
+                                 Width="13"
+                                 Height="13" />
+                        <Rectangle Width="8"
+                                   Height="2"
+                                   Fill="White" />
+                        <Rectangle Width="2"
+                                   Height="8"
+                                   Fill="White" />
+                      </Grid>
+                      <TextBlock Text="&lt;add new Qt version&gt;"
+                                 Foreground="SlateGray"
+                                 Margin="20,4,2,4"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center" />
+                    </Grid>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+              <TextBox x:Name="VersionName"
+                       Text="{Binding VersionName}"
+                       Visibility="{Binding RowVisibility}"
+                       IsEnabled="{Binding NameEnabled}"
+                       FontWeight="{Binding FontWeight}"
+                       Margin="20,4,2,4"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       Loaded="Control_Loaded"
+                       GotFocus="Control_GotFocus"
+                       LostFocus="Control_LostFocus"
+                       TextChanged="TextBox_TextChanged"
+                       SelectionChanged="TextBox_SelectionChanged"
+                       ToolTip="{Binding FieldName.ToolTip}">
+                <TextBox.Resources>
+                  <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                   Color="LimeGreen" />
+                </TextBox.Resources>
+              </TextBox>
+            </Grid>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTemplateColumn Header="Host">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <!--//// Host ////-->
+            <ComboBox x:Name="Host"
+                      Visibility="{Binding RowVisibility}"
+                      IsEditable="True"
+                      IsReadOnly="True"
+                      BorderThickness="0"
+                      Background="Transparent"
+                      Margin="2,0"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      FrameworkElement.Loaded="ComboBox_Loaded"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      ToolTip="{Binding FieldHost.ToolTip}">
+              <ComboBox.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="LimeGreen" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                                 Color="Transparent" />
+              </ComboBox.Resources>
+            </ComboBox>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTemplateColumn Header="Path">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <Grid>
+              <!--//// Path ////-->
+              <Button Cursor="Hand"
+                      Visibility="{Binding ButtonBrowseVisibility}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Margin="2,0"
+                      Width="18"
+                      Height="18"
+                      Click="Explorer_Click"
+                      Background="White">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Grid HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+                      <Rectangle Fill="White"
+                                 RadiusX="5"
+                                 RadiusY="5"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch" />
+                      <Image Source="{Binding ExplorerIcon}"
+                             Margin="2" />
+                    </Grid>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+              <TextBox x:Name="Path"
+                       Text="{Binding Path}"
+                       Visibility="{Binding RowVisibility}"
+                       BorderThickness="0"
+                       Background="Transparent"
+                       Margin="{Binding PathMargin}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       Loaded="Control_Loaded"
+                       GotFocus="Control_GotFocus"
+                       LostFocus="Control_LostFocus"
+                       TextChanged="TextBox_TextChanged"
+                       SelectionChanged="TextBox_SelectionChanged"
+                       ToolTip="{Binding FieldPath.ToolTip}">
+                <TextBox.Resources>
+                  <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                   Color="LimeGreen" />
+                </TextBox.Resources>
+              </TextBox>
+            </Grid>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTemplateColumn Header="Compiler">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <!--//// Compiler ////-->
+            <TextBox x:Name="Compiler"
+                     Text="{Binding Compiler}"
+                     Visibility="{Binding RowVisibility}"
+                     IsEnabled="{Binding CompilerEnabled}"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     Margin="2,0"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Center"
+                     Loaded="Control_Loaded"
+                     GotFocus="Control_GotFocus"
+                     LostFocus="Control_LostFocus"
+                     TextChanged="TextBox_TextChanged"
+                     SelectionChanged="TextBox_SelectionChanged"
+                     ToolTip="{Binding FieldCompiler.ToolTip}">
+              <TextBox.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="LimeGreen" />
+              </TextBox.Resources>
+            </TextBox>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+    </DataGrid.Columns>
+  </DataGrid>
+</UserControl>

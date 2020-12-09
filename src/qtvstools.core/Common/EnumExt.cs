@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -120,6 +121,24 @@ namespace QtVsTools.Common
             if (enumValues.Any())
                 value = (TEnum)Enum.ToObject(typeof(TEnum), enumValues.FirstOrDefault());
             return enumValues.Any();
+        }
+
+        /// <summary>
+        /// Convert type T to enum
+        /// </summary>
+        public static TEnum Cast<T, TEnum>(this T valueT, TEnum defaultValue) where TEnum : struct
+        {
+            TEnum value;
+            return TryCast(valueT, out value) ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// Get list of values of enum type
+        /// </summary>
+        public static IEnumerable<TEnum> GetValues<TEnum>() where TEnum : struct
+        {
+            Debug.Assert(typeof(TEnum).IsEnum);
+            return Enum.GetValues(typeof(TEnum)).OfType<TEnum>();
         }
 
         /// <summary>

@@ -82,7 +82,8 @@ namespace QtVsTools
             ConvertToQmakeId = 0x0108,
             QtProjectSettingsId = 0x0109,
             ChangeProjectQtVersionId = 0x0126,
-            QtOptionsId = 0x0110
+            QtOptionsId = 0x0110,
+            QtVersionsId = 0x0111,
         }
 
         /// <summary>
@@ -203,15 +204,10 @@ namespace QtVsTools
                 }
                 break;
             case CommandId.QtOptionsId:
-                {
-                    using (var formQtVersions = new FormVSQtSettings()) {
-                        formQtVersions.LoadSettings();
-                        formQtVersions.StartPosition = FormStartPosition.CenterParent;
-                        var ww = new MainWinWrapper(Vsix.Instance.Dte);
-                        if (formQtVersions.ShowDialog(ww) == DialogResult.OK)
-                            formQtVersions.SaveSettings();
-                    }
-                }
+                Vsix.Instance.ShowOptionPage(typeof(Options.QtOptionPage));
+                break;
+            case CommandId.QtVersionsId:
+                Vsix.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
                 break;
             }
         }
@@ -232,6 +228,7 @@ namespace QtVsTools
             case CommandId.LaunchLinguistId:
             case CommandId.OpenProFileId:
             case CommandId.QtOptionsId:
+            case CommandId.QtVersionsId:
                 command.Visible = true;
                 command.Enabled = true;
                 break;

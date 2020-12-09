@@ -84,11 +84,14 @@
     <Compile Include="FormProjectQtSettings.Designer.cs">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormVSQtSettings.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Options\QtOptionPage.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FormVSQtSettings.Designer.cs">
-      <DependentUpon>FormVSQtSettings.cs</DependentUpon>
+    <Compile Include="Options\QtVersionsTable.cs">
+      <DependentUpon>QtVersionsTable.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Options\QtVersionsPage.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectQtSettings.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
@@ -355,9 +358,6 @@
     <EmbeddedResource Include="FormProjectQtSettings.resx">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormVSQtSettings.resx">
-      <DependentUpon>FormVSQtSettings.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -528,6 +528,10 @@
     <Reference Include="System.Threading.Thread" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Options\QtVersionsTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="QtHelpLinkChooser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
