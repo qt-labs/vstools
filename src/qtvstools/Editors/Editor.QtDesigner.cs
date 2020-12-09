@@ -71,16 +71,21 @@ namespace QtVsTools.Editors
                 if (project == null)
                     return;
                 string filePath = document.FullName;
+                string[] itemId = null;
+                itemId = new[] { document.ProjectItem?.Name };
                 var lastWriteTime = File.GetLastWriteTime(filePath);
                 while (!process.WaitForExit(1000)) {
                     var latestWriteTime = File.GetLastWriteTime(filePath);
                     if (lastWriteTime != latestWriteTime) {
                         lastWriteTime = latestWriteTime;
-                        QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+                        QtProjectTracker.RefreshIntelliSense(
+                            project, runQtTools: true, selectedFiles: itemId);
                     }
                 }
-                if (lastWriteTime != File.GetLastWriteTime(filePath))
-                    QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+                if (lastWriteTime != File.GetLastWriteTime(filePath)) {
+                    QtProjectTracker.RefreshIntelliSense(
+                        project, runQtTools: true, selectedFiles: itemId);
+                }
             });
         }
 #endif
