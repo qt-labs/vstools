@@ -13,6 +13,10 @@ $Globals$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 $Configurations$
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+$QtSettings$
   <Target Name="QtMsBuildNotFound"
     BeforeTargets="CustomBuild;ClCompile"
     Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -23,14 +27,7 @@ $Configurations$
   <ImportGroup Label="Shared" />
 $PropertySheets$
   <PropertyGroup Label="UserMacros" />
-  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
-    <Import Project="$(QtMsBuild)\qt_defaults.props" />
-  </ImportGroup>
 $Properties$
-$QtSettings$
-  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
-    <Import Project="$(QtMsBuild)\qt.props" />
-  </ImportGroup>
 $BuildSettings$
   <ItemGroup>
     <ClCompile Include="main.cpp"/>

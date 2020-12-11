@@ -34,6 +34,9 @@
 // Item type definition and default values
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <QtPrivateLoaded>true</QtPrivateLoaded>
+  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -447,6 +447,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 xml.AppendLine(string.Format(@"
   <ImportGroup Label=""PropertySheets"" Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">
     <Import Project=""$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"" Condition=""exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"" Label=""LocalAppDataPlatform"" />
+    <Import Project=""$(QtMsBuild)\Qt.props"" />
   </ImportGroup>",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform));

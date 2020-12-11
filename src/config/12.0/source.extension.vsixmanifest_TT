@@ -139,6 +139,9 @@
       Type="File" d:Source="File" Path="qtmsbuild\qt.props"
       d:VsixSubPath="qtmsbuild" />
     <Asset
+      Type="File" d:Source="File" Path="qtmsbuild\qt_private.props"
+      d:VsixSubPath="qtmsbuild" />
+    <Asset
       Type="File" d:Source="File" Path="qtmsbuild\qt.targets"
       d:VsixSubPath="qtmsbuild" />
     <Asset

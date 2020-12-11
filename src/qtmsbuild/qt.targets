@@ -36,6 +36,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Fail-safe import of private definitions
+  // -->
+  <Import
+    Condition="'$(QtPrivateLoaded)' != 'true'"
+    Project="$(MSBuildThisFileDirectory)\qt_private.props"/>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Defaults for project version constants
   // -->
   <PropertyGroup>

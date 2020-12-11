@@ -83,7 +83,7 @@ namespace QtVsTools.Core
 
         // Qt VS project tag and format version
         public const string qtProjectKeyword = "QtVS";
-        public const int qtProjectFormatVersion = 303;
+        public const int qtProjectFormatVersion = 304;
         public static string QtVSVersionTag
             => string.Format("{0}_v{1}", qtProjectKeyword, qtProjectFormatVersion);
 
