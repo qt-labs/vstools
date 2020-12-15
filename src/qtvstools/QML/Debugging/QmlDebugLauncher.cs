@@ -50,12 +50,10 @@ namespace QtVsTools.Qml.Debug
         public static Launcher Instance { get; private set; }
         IVsDebugger debugger;
         IVsDebugger4 debugger4;
-        bool started;
 
-        HashSet<Guid> excludedProjects;
-        readonly Guid idThreadCreateEvent = new Guid("2090CCFC-70C5-491D-A5E8-BAD2DD9EE3EA");
-        readonly Guid idLoadCompleteEvent = new Guid("B1844850-1349-45D4-9F12-495212F5EB0B");
-        readonly Guid idProgramDestroyEvent = new Guid("E147E9E3-6440-4073-A7B7-A65592C714B5");
+        HashSet<Guid> _ExcludedProcesses;
+        HashSet<Guid> ExcludedProcesses => _ExcludedProcesses
+            ?? (_ExcludedProcesses = new HashSet<Guid>());
 
         public static void Initialize()
         {
@@ -64,11 +62,6 @@ namespace QtVsTools.Qml.Debug
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
             if (Instance.debugger != null && Instance.debugger4 != null)
                 Instance.debugger.AdviseDebugEventCallback(Instance);
-        }
-
-        private Launcher()
-        {
-            excludedProjects = new HashSet<Guid>();
         }
 
         protected override void DisposeManaged()
@@ -86,9 +79,8 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
-            if (riidEvent != idThreadCreateEvent
-                && riidEvent != idLoadCompleteEvent
-                && riidEvent != idProgramDestroyEvent) {
+            if (riidEvent != typeof(IDebugThreadCreateEvent2).GUID
+                && riidEvent != typeof(IDebugProgramDestroyEvent2).GUID) {
                 return VSConstants.S_OK;
             }
 
@@ -100,13 +92,13 @@ namespace QtVsTools.Qml.Debug
                 return VSConstants.S_OK;
 
             // Run only once per process
-            if (riidEvent == idProgramDestroyEvent) {
-                excludedProjects.Remove(procGuid);
+            if (riidEvent == typeof(IDebugProgramDestroyEvent2).GUID) {
+                ExcludedProcesses.Remove(procGuid);
                 return VSConstants.S_OK;
-            } else if (excludedProjects.Contains(procGuid)) {
+            } else if (ExcludedProcesses.Contains(procGuid)) {
                 return VSConstants.S_OK;
             } else {
-                excludedProjects.Add(procGuid);
+                ExcludedProcesses.Add(procGuid);
             }
 
             if (!(pEvent is IDebugLoadCompleteEvent2 || pEvent is IDebugThreadCreateEvent2))
@@ -124,11 +116,6 @@ namespace QtVsTools.Qml.Debug
             else
                 return VSConstants.S_OK;
 
-            if (pEvent is IDebugLoadCompleteEvent2)
-                started = false;
-            else if (started)
-                return VSConstants.S_OK;
-
             string execPath;
             uint procId;
             if (!GetProcessInfo(pProcess, native, out execPath, out procId))
@@ -138,8 +125,6 @@ namespace QtVsTools.Qml.Debug
             IEnumerable<string> rccItems;
             if (!GetProjectInfo(execPath, native, out execCmd, out rccItems))
                 return VSConstants.S_OK;
-
-            started = true;
 
             LaunchDebug(execPath, execCmd, procId, rccItems);
             return VSConstants.S_OK;
