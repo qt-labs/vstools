@@ -200,6 +200,8 @@ namespace QtVsTools.Qml.Debug.AD7
             get
             {
                 var qrcPath = Engine.FileSystem[Parent.FileName].QrcPath;
+                if (qrcPath == null)
+                    return string.Empty;
                 if (qrcPath.StartsWith("qrc:///", StringComparison.InvariantCultureIgnoreCase))
                     qrcPath = qrcPath.Substring("qrc:///".Length);
                 return qrcPath;
