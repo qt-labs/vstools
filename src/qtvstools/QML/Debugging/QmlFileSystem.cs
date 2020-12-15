@@ -191,10 +191,14 @@ namespace QtVsTools.Qml.Debug
             }
 
             QmlFile file;
-            if (!files.TryGetValue(fullPath, out file))
-                return default(QmlFile);
+            if (files.TryGetValue(fullPath, out file))
+                return file;
 
-            return file;
+            return new QmlFile
+            {
+                FilePath = fullPath,
+                QrcPath = new Uri(fullPath).ToString().ToLower()
+            };
         }
 
         public QmlFile this[string path]
