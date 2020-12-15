@@ -28,14 +28,63 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
 using QtVsTools.Core;
+using QtVsTools.Common;
 
 namespace QtVsTools.Options
 {
+    using static EnumExt;
+
     public class QtOptionPage : DialogPage
     {
+        public enum QtOptions
+        {
+            [String("QMLDebug_Timeout")] QmlDebugTimeout
+        }
+
+        public enum Timeout : uint { Disabled = 0 }
+
+        class TimeoutConverter : EnumConverter
+        {
+            public TimeoutConverter(Type t) : base(t)
+            { }
+
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext c)
+                => true;
+
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext c)
+                => false;
+
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext c)
+                => new StandardValuesCollection(new[] { Timeout.Disabled });
+
+            public override object ConvertFrom(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value)
+            {
+                uint n = 0;
+                try {
+                    n = Convert.ToUInt32(value);
+                } catch { }
+                return (Timeout)n;
+            }
+
+            public override object ConvertTo(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value,
+                Type destinationType)
+            {
+                if (destinationType == typeof(string))
+                    return value.ToString();
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+        }
+
         [Category("Source control")]
         [DisplayName("Ask before checking out files")]
         public bool CheckoutPrompt { get; set; }
@@ -76,6 +125,11 @@ namespace QtVsTools.Options
         [DisplayName("Default uic generated files directory")]
         public string DefaultUicDir { get; set; }
 
+        [Category("QML Debugging")]
+        [DisplayName("Runtime connection timeout (msecs)")]
+        [TypeConverter(typeof(TimeoutConverter))]
+        public Timeout QmlDebuggerTimeout { get; set; }
+
         public override void ResetSettings()
         {
             CheckoutPrompt = true;
@@ -88,6 +142,7 @@ namespace QtVsTools.Options
             AutoMoc = true;
             DefaultRccDir = "";
             DefaultUicDir = "";
+            QmlDebuggerTimeout = (Timeout)60000;
         }
 
         public override void LoadSettingsFromStorage()
@@ -118,6 +173,8 @@ namespace QtVsTools.Options
                         DefaultRccDir = rccDir;
                     if (key.GetValue(Resources.uicDirKeyword) is string uicDir)
                         DefaultUicDir = uicDir;
+                    if (key.GetValue(QtOptions.QmlDebugTimeout.Cast<string>()) is int qmlTimeout)
+                        QmlDebuggerTimeout = (Timeout)qmlTimeout;
                 }
             } catch (Exception exception) {
                 Messages.PaneMessageSafe(Vsix.Instance.Dte,
@@ -142,16 +199,14 @@ namespace QtVsTools.Options
                     key.SetValue(Resources.disableAutoMocStepsUpdateKeyword, AutoMoc ? 0 : 1);
                     key.SetValue(Resources.rccDirKeyword, DefaultRccDir);
                     key.SetValue(Resources.uicDirKeyword, DefaultUicDir);
+                    key.SetValue(
+                        QtOptions.QmlDebugTimeout.Cast<string>(),
+                        (int)QmlDebuggerTimeout);
                 }
             } catch (Exception exception) {
                 Messages.PaneMessageSafe(Vsix.Instance.Dte,
                     exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace, 5000);
             }
-        }
-
-        protected override void OnApply(PageApplyEventArgs e)
-        {
-            e.ApplyBehavior = ApplyKind.Apply;
         }
     }
 }

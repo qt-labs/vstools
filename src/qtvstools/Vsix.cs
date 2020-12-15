@@ -144,6 +144,9 @@ namespace QtVsTools
             }
         }
 
+        public Options.QtOptionPage Options
+            => GetDialogPage(typeof(Options.QtOptionPage)) as Options.QtOptionPage;
+
         private string qmakeFileReaderPath;
         public string QMakeFileReaderPath
         {

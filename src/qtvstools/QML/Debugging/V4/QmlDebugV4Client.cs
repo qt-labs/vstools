@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using QtVsTools.Options;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -178,6 +179,7 @@ namespace QtVsTools.Qml.Debug.V4
                 hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
 
+            uint timeout = (uint)Vsix.Instance.Options.QmlDebuggerTimeout;
             Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
@@ -185,7 +187,8 @@ namespace QtVsTools.Qml.Debug.V4
 
                 var probe = new Socket(
                     AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                while (!probe.Connected && connectTimer.ElapsedMilliseconds < 60000) {
+                while (!probe.Connected
+                    && (timeout == 0 || connectTimer.ElapsedMilliseconds < timeout)) {
                     try {
                         probe.Connect(hostName, hostPort);
                     } catch {
@@ -200,13 +203,14 @@ namespace QtVsTools.Qml.Debug.V4
                         hostNameData, hostNameData.Length, hostPort);
                     connectTimer.Restart();
 
+                    uint connectionTimeout = Math.Max(3000, timeout / 20);
                     while (!clientConnected.WaitOne(1000)) {
 
                         if (sink.QueryRuntimeFrozen()) {
                             connectTimer.Restart();
 
                         } else {
-                            if (connectTimer.ElapsedMilliseconds > 4000) {
+                            if (connectTimer.ElapsedMilliseconds > connectionTimeout) {
                                 if (!Disposing)
                                     clientConnected.Set();
 
@@ -240,29 +244,32 @@ namespace QtVsTools.Qml.Debug.V4
                 return null;
             }
 
-            Task.Run(() =>
-            {
-                var connectTimer = new System.Diagnostics.Stopwatch();
-                connectTimer.Start();
+            uint timeout = (uint)Vsix.Instance.Options.QmlDebuggerTimeout;
+            if (timeout != 0) {
+                Task.Run(() =>
+                {
+                    var connectTimer = new System.Diagnostics.Stopwatch();
+                    connectTimer.Start();
 
-                while (!clientConnected.WaitOne(100)) {
+                    while (!clientConnected.WaitOne(100)) {
 
-                    if (sink.QueryRuntimeFrozen()) {
-                        connectTimer.Restart();
+                        if (sink.QueryRuntimeFrozen()) {
+                            connectTimer.Restart();
 
-                    } else {
-                        if (connectTimer.ElapsedMilliseconds > 5000) {
-                            if (!Disposing)
-                                clientConnected.Set();
+                        } else {
+                            if (connectTimer.ElapsedMilliseconds > timeout) {
+                                if (!Disposing)
+                                    clientConnected.Set();
 
-                            if (Atomic(() => State == DebugClientState.Connected,
-                                       () => State = DebugClientState.Disconnecting)) {
-                                NativeMethods.DebugClientDisconnect(client);
+                                if (Atomic(() => State == DebugClientState.Connected,
+                                           () => State = DebugClientState.Disconnecting)) {
+                                    NativeMethods.DebugClientDisconnect(client);
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             return clientConnected;
         }
