@@ -103,8 +103,11 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Add resource files as dependencies of the QRC file
   // -->
-  <Target Name="QtRccSetDependencies" DependsOnTargets="_SelectedFiles;QtRccInit"
+  <Target Name="QtRccSetDependencies" DependsOnTargets="QtRccInit"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
+    <ItemGroup>
+      <selected_files Include="$(SelectedFiles)"/>
+    </ItemGroup>
 
     <!--// Parse QRC -->
     <ListQrc QrcFilePath="%(QtRcc.FullPath)">
@@ -137,14 +140,14 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare items for processing
   // -->
-  <Target Name="QtRccPrepare" DependsOnTargets="_SelectedFiles;QtRccSetDependencies"
+  <Target Name="QtRccPrepare" DependsOnTargets="QtRccSetDependencies"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
         Text="## QtRccPrepare @(QtRcc)"/>
 
     <PropertyGroup>
-      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <selected_files>[@(selected_files->'%(Identity)','][')]</selected_files>
       <file>[@(QtRcc->'%(Identity)')]</file>
       <output_file>@(QtRcc->'%(OutputFile)')</output_file>
       <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
@@ -157,7 +160,7 @@
       Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
 
     <!--// If a source was manually selected to build, remove all other sources -->
-    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+    <ItemGroup Condition="'@(selected_files)' != ''">
       <QtRcc Remove="@(QtRcc)"
         Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
     </ItemGroup>
@@ -526,6 +529,7 @@
     <ItemGroup>
       <LocalOptions Remove="@(LocalOptions)"/>
       <options Remove="@(options)"/>
+      <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
   </Target>
 

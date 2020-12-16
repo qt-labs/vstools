@@ -84,8 +84,11 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare to process sources
   // -->
-  <Target Name="QtRepcPrepare" DependsOnTargets="_SelectedFiles"
+  <Target Name="QtRepcPrepare"
     Inputs="%(QtRepc.Identity)" Outputs="@(QtRepc->'####### Don't skip this target #######')">
+    <ItemGroup>
+      <selected_files Include="$(SelectedFiles)"/>
+    </ItemGroup>
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
         Text="## QtRepcPrepare @(QtRepc)"/>
@@ -102,7 +105,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <selected_files>[@(selected_files->'%(Identity)','][')]</selected_files>
       <file>[@(QtRepc->'%(Identity)')]</file>
       <output_file>@(QtRepc->'%(OutputFile)')</output_file>
       <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
@@ -115,7 +118,7 @@
       Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
 
     <!--// If a source was manually selected to build, remove all other sources -->
-    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+    <ItemGroup Condition="'@(selected_files)' != ''">
       <QtRepc Remove="@(QtRepc)"
         Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
     </ItemGroup>
@@ -369,6 +372,7 @@
     <ItemGroup>
       <LocalOptions Remove="@(LocalOptions)"/>
       <options Remove="@(options)"/>
+      <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
   </Target>
 

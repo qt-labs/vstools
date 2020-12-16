@@ -58,9 +58,12 @@
   // Pre-process rcc source files marked for QML cache generation
   // -->
   <Target Name="QtQmlCachePrepare"
-    DependsOnTargets="_SelectedFiles;QtRccSetDependencies"
+    DependsOnTargets="QtRccSetDependencies"
     BeforeTargets="QtRccPrepare" Condition="'@(QtRcc)' != ''"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
+    <ItemGroup>
+      <selected_files Include="$(SelectedFiles)"/>
+    </ItemGroup>
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
       Text="## QtQmlCachePrepare %(QtRcc.Identity)" />
@@ -76,14 +79,14 @@
     // $(is_selected) ::= file is selected to build
     // -->
     <PropertyGroup>
-      <selected_files>[@(SelectedFiles->'%(Identity)','][')]</selected_files>
+      <selected_files>[@(selected_files->'%(Identity)','][')]</selected_files>
       <file>[@(QtRcc->'%(Identity)')]</file>
       <output_file>@(QtRcc->'%(OutputFile)')</output_file>
       <is_selected
-        Condition="'@(SelectedFiles)' == '' OR $(selected_files.Contains('$(file)'))"
+        Condition="'@(selected_files)' == '' OR $(selected_files.Contains('$(file)'))"
         >true</is_selected>
       <is_selected
-        Condition="'@(SelectedFiles)' != '' AND !$(selected_files.Contains('$(file)'))"
+        Condition="'@(selected_files)' != '' AND !$(selected_files.Contains('$(file)'))"
         >false</is_selected>
     </PropertyGroup>
 
@@ -335,6 +338,7 @@
       <SelectedFiles>$(SelectedFiles);$(selected_rcc)</SelectedFiles>
     </PropertyGroup>
     <ItemGroup Condition="'$(selected_rcc)' != ''">
+      <selected_files Include="$(selected_rcc)"/>
       <SelectedFiles Include="$(selected_rcc)"/>
     </ItemGroup>
 
@@ -592,6 +596,9 @@
       <run_single/>
       <output_relative/>
     </PropertyGroup>
+    <ItemGroup>
+      <selected_files Remove="@(selected_files)"/>
+    </ItemGroup>
   </Target>
 
   <!--
