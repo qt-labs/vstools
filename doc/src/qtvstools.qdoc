@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2019 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -33,7 +33,8 @@
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
     2015, and later. This enables developers to use the standard Windows
     development environment without having to worry about Qt-related build steps
-    or tools.
+    or tools. You can install and update Qt VS Tools directly from Microsoft
+    Visual Studio.
 
     The main features of Qt VS Tools are:
 
@@ -81,8 +82,12 @@
     To create a Qt VS Tools project, you must add at least one
     \l{Managing Qt Versions}{Qt version}.
 
-    Select \uicontrol Tools > \uicontrol {Extensions and Updates} >
-    \uicontrol Online to install or update Qt VS Tools.
+    \section1 Installing Qt VS Tools
+
+    In Microsoft Visual Studio, select \uicontrol Tools >
+    \uicontrol {Extensions and Updates} > \uicontrol Online,
+    and search for \uicontrol {Qt Visual Studio Tools} to install
+    or update Qt VS Tools.
 
     \section1 Creating Qt GUI Application Projects
 
