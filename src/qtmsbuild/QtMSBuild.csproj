@@ -46,43 +46,43 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild common property pages and targets
     // -->
-    <Content Include="qt_defaults.props">
+    <Content Include="QtMSBuild\qt_defaults.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Qt.props">
+    <Content Include="QtMSBuild\Qt.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qt_private.props">
+    <Content Include="QtMSBuild\qt_private.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qt.targets">
+    <Content Include="QtMSBuild\qt.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qt_settings.xml">
+    <Content Include="QtMSBuild\qt_settings.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="qt_settings_vs2015.xml">
+    <Content Include="QtMSBuild\qt_settings_vs2015.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="qt_settings.targets">
+    <Content Include="QtMSBuild\qt_settings.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="qt_tasks.targets">
+    <Content Include="QtMSBuild\qt_tasks.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qt_globals.targets">
+    <Content Include="QtMSBuild\qt_globals.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="qt_vars.targets">
+    <Content Include="QtMSBuild\qt_vars.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -90,44 +90,44 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild moc property pages and targets
     // -->
-    <Content Include="moc\qt_import.props">
+    <Content Include="QtMSBuild\moc\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="moc\qtmoc.props">
+    <Content Include="QtMSBuild\moc\qtmoc.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="moc\qtmoc.targets">
+    <Content Include="QtMSBuild\moc\qtmoc.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="moc\qtmoc.xml">
+    <Content Include="QtMSBuild\moc\qtmoc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <T4Template Include="moc\qtmoc_v3.xml_TT">
+    <T4Template Include="QtMSBuild\moc\qtmoc_v3.xml_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>moc\qtmoc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>qtmoc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="moc\qtmoc_v3.xml">
+    <Content Include="QtMSBuild\moc\qtmoc_v3.xml">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtmoc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <T4Template Include="moc\qtmoc_cl.targets_TT">
+    <T4Template Include="QtMSBuild\moc\qtmoc_cl.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>moc\qtmoc_cl.targets</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <SubType>Designer</SubType>
       <LastGenOutput>qtmoc_cl.targets</LastGenOutput>
     </T4Template>
-    <Content Include="moc\qtmoc_cl.targets">
+    <Content Include="QtMSBuild\moc\qtmoc_cl.targets">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtmoc_cl.targets_TT</DependentUpon>
@@ -137,15 +137,15 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild qml property pages and targets
     // -->
-    <Content Include="qml\qt_import.props">
+    <Content Include="QtMSBuild\qml\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qml\qtqml.props">
+    <Content Include="QtMSBuild\qml\qtqml.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="qml\qtqml.targets">
+    <Content Include="QtMSBuild\qml\qtqml.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
@@ -153,43 +153,43 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild rcc property pages and targets
     // -->
-    <Content Include="rcc\qt_import.props">
+    <Content Include="QtMSBuild\rcc\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="rcc\qtrcc.props">
+    <Content Include="QtMSBuild\rcc\qtrcc.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="rcc\qtrcc.targets">
+    <Content Include="QtMSBuild\rcc\qtrcc.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="rcc\qtrcc.xml">
+    <Content Include="QtMSBuild\rcc\qtrcc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <T4Template Include="rcc\qtrcc_v3.xml_TT">
+    <T4Template Include="QtMSBuild\rcc\qtrcc_v3.xml_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>rcc\qtrcc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>qtrcc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="rcc\qtrcc_v3.xml">
+    <Content Include="QtMSBuild\rcc\qtrcc_v3.xml">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtrcc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <T4Template Include="rcc\qtrcc_cl.targets_TT">
+    <T4Template Include="QtMSBuild\rcc\qtrcc_cl.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>rcc\qtrcc_cl.targets</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <SubType>Designer</SubType>
       <LastGenOutput>qtrcc_cl.targets</LastGenOutput>
     </T4Template>
-    <Content Include="rcc\qtrcc_cl.targets">
+    <Content Include="QtMSBuild\rcc\qtrcc_cl.targets">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtrcc_cl.targets_TT</DependentUpon>
@@ -199,44 +199,44 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild repc property pages and targets
     // -->
-    <Content Include="repc\qt_import.props">
+    <Content Include="QtMSBuild\repc\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="repc\qtrepc.props">
+    <Content Include="QtMSBuild\repc\qtrepc.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="repc\qtrepc.targets">
+    <Content Include="QtMSBuild\repc\qtrepc.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="repc\qtrepc.xml">
+    <Content Include="QtMSBuild\repc\qtrepc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <T4Template Include="repc\qtrepc_v3.xml_TT">
+    <T4Template Include="QtMSBuild\repc\qtrepc_v3.xml_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>repc\qtrepc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>qtrepc_v3.xml</LastGenOutput>
       <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="repc\qtrepc_v3.xml">
+    <Content Include="QtMSBuild\repc\qtrepc_v3.xml">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtrepc_v3.xml_TT</DependentUpon>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <T4Template Include="repc\qtrepc_cl.targets_TT">
+    <T4Template Include="QtMSBuild\repc\qtrepc_cl.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>repc\qtrepc_cl.targets</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <SubType>Designer</SubType>
       <LastGenOutput>qtrepc_cl.targets</LastGenOutput>
     </T4Template>
-    <Content Include="repc\qtrepc_cl.targets">
+    <Content Include="QtMSBuild\repc\qtrepc_cl.targets">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>qtrepc_cl.targets_TT</DependentUpon>
@@ -246,20 +246,20 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild uic property pages and targets
     // -->
-    <Content Include="uic\qt_import.props">
+    <Content Include="QtMSBuild\uic\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="uic\qtuic.props">
+    <Content Include="QtMSBuild\uic\qtuic.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="uic\qtuic.targets">
+    <Content Include="QtMSBuild\uic\qtuic.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="uic\qtuic.xml">
+    <Content Include="QtMSBuild\uic\qtuic.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="uic\qtuic_v3.xml">
+    <Content Include="QtMSBuild\uic\qtuic_v3.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
@@ -267,17 +267,17 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild deploy properties and targets
     // -->
-    <Content Include="deploy\qt_import.props">
+    <Content Include="QtMSBuild\deploy\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="deploy\qtdeploy.props">
+    <Content Include="QtMSBuild\deploy\qtdeploy.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="deploy\qtdeploy.targets">
+    <Content Include="QtMSBuild\deploy\qtdeploy.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="deploy\qtdeploy.xml">
+    <Content Include="QtMSBuild\deploy\qtdeploy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

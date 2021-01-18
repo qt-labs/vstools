@@ -137,30 +137,6 @@
       Type="File" d:Source="File" Path="x64\SQLite.Interop.dll" d:VsixSubPath="x64" />
     <Asset
       Type="file" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
-    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
-<#
-    var uriQtMsBuild = new Uri(Path.Combine(SolutionDir, "qtmsbuild"));
-    var extensions = new[] { ".props", ".targets", ".xml" };
-    var files = Directory
-        .EnumerateFiles(uriQtMsBuild.OriginalString, "*.*", SearchOption.AllDirectories)
-            .Where(file => extensions.Contains(Path.GetExtension(file)))
-            .Select(file => uriQtMsBuild.MakeRelativeUri(new Uri(file)).OriginalString
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
-    foreach (var file in files) {
-#>
-    <#=XmlPrint(new[]
-        {
-            new XElement("Asset",
-                new XAttribute("Type", "File"),
-                new XAttribute("d_NS_Source", "File"),
-                new XAttribute("Path", file),
-                new XAttribute("d_NS_VsixSubPath", Path.GetDirectoryName(file)))
-        })
-        .Replace("_NS_", ":")#>
-<#
-    }
-#>
-    <#=XML_COMMENT_BEGIN#> END Generated Text -->
     <Asset
       Type="File" d:Source="File" Path="qtmodules.xml" />
     <Asset

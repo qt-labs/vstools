@@ -304,9 +304,9 @@ src/qttemplates/server/server.vstemplate
 src/qtvstools/QtMenus.vsct
 MSBuild.MetaInfo.cs
 src/qtvstools/Marketplace/Overview.html
-src/qtmsbuild/moc/qtmoc_v3.xml
-src/qtmsbuild/moc/qtmoc_cl.targets
-src/qtmsbuild/rcc/qtrcc_v3.xml
-src/qtmsbuild/rcc/qtrcc_cl.targets
-src/qtmsbuild/repc/qtrepc_v3.xml
-src/qtmsbuild/repc/qtrepc_cl.targets
+src/qtmsbuild/QtMsBuild/moc/qtmoc_v3.xml
+src/qtmsbuild/QtMsBuild/moc/qtmoc_cl.targets
+src/qtmsbuild/QtMsBuild/rcc/qtrcc_v3.xml
+src/qtmsbuild/QtMsBuild/rcc/qtrcc_cl.targets
+src/qtmsbuild/QtMsBuild/repc/qtrepc_v3.xml
+src/qtmsbuild/QtMsBuild/repc/qtrepc_cl.targets
