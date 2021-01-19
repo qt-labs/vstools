@@ -133,10 +133,6 @@
     <Asset
       Type="File" d:Source="File" Path="qt5.natvis.xml" />
     <Asset
-      Type="File" d:Source="File" Path="x64\SQLite.Interop.dll" d:VsixSubPath="x64" />
-    <Asset
-      Type="file" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
-    <Asset
       Type="File" d:Source="File" Path="qtmodules.xml" />
     <Asset
       Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Qml.Debug.pkgdef" />
