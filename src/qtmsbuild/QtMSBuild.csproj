@@ -295,6 +295,24 @@
   </ItemGroup>
   <!--
   ///////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt/MSBuild translation tools property pages and targets
+  // -->
+  <ItemGroup>
+    <Content Include="QtMSBuild\translation\qttranslation.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\translation\qttranslation.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\translation\qttranslation.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\translation\qt_import.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <!--
+  ///////////////////////////////////////////////////////////////////////////////////////////////
   // Inline tasks
   // -->
   <ItemGroup>

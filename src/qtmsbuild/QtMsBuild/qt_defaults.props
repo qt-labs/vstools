@@ -134,6 +134,7 @@
     <Import Project="$(MSBuildThisFileDirectory)\qml\qtqml.props"/>
     <Import Project="$(MSBuildThisFileDirectory)\repc\qtrepc.props"/>
     <Import Project="$(MSBuildThisFileDirectory)\uic\qtuic.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)\translation\qttranslation.props"/>
   </ImportGroup>
 
 </Project>

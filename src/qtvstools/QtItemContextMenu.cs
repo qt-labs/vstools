@@ -118,8 +118,7 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte),
-                    HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));
                 break;
             case lReleaseOnItemId:
                 Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));

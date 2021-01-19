@@ -2,7 +2,7 @@
 <!--
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -31,61 +31,64 @@
 
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Qt/MSBuild
+// Qt/MSBuild Translation property definitions
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Fail-safe import of private definitions
+  // Import pre-requisites
   // -->
   <Import
-    Condition="'$(QtPrivateLoaded)' != 'true'"
-    Project="$(MSBuildThisFileDirectory)\qt_private.props"/>
+    Condition="'$(QtMsBuildProps_BeforeTranslation)' != ''"
+    Project="$(QtMsBuildProps_BeforeTranslation)"/>
 
   <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Defaults for project version constants
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // Default values of Translation settings
   // -->
   <PropertyGroup>
-    <QtVsProjectVersion
-      Condition="'$(QtVsProjectVersion)' == ''"
-      >0</QtVsProjectVersion>
-    <QtVsProjectMinVersion_Settings
-      Condition="'$(QtVsProjectMinVersion_Settings)' == ''"
-      >0</QtVsProjectMinVersion_Settings>
-    <QtVsProjectMinVersion_ClProperties
-      Condition="'$(QtVsProjectMinVersion_ClProperties)' == ''"
-      >0</QtVsProjectMinVersion_ClProperties>
+    <QtTranslationInput Condition="'$(QtTranslationInput)' == ''"
+      >@(ClCompile);@(ClInclude);@(QtMoc);@(QtUic)</QtTranslationInput>
   </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Qt Common Targets
+  // QtTranslation item template
   // -->
-  <Import Project="qt_globals.targets"/>
-  <Import Project="qt_settings.targets"/>
-  <Import Project="qt_tasks.targets"/>
-  <Import Project="qt_vars.targets"/>
+  <ItemDefinitionGroup>
+    <QtTranslation>
+      <BuildAction>false</BuildAction>
+      <!-- lupdate -->
+      <UpdateDescription>lupdate %(Identity)</UpdateDescription>
+      <UpdateAdditionalOptions>$(QtLUpdateOptions)</UpdateAdditionalOptions>
+      <SourceLanguage>default</SourceLanguage>
+      <TargetLanguage>default</TargetLanguage>
+      <NoObsolete>false</NoObsolete>
+      <PluralOnly>false</PluralOnly>
+      <UpdateSilent>false</UpdateSilent>
+      <NoSort>false</NoSort>
+      <Locations>false</Locations>
+      <NoUiLines>false</NoUiLines>
+      <DisableSameTextHeuristic>false</DisableSameTextHeuristic>
+      <DisableSimilarTextHeuristic>false</DisableSimilarTextHeuristic>
+      <DisableNumberHeuristic>false</DisableNumberHeuristic>
+      <!-- lrelease -->
+      <ReleaseDescription>lrelease %(Identity)</ReleaseDescription>
+      <ReleaseAdditionalOptions>$(QtLReleaseOptions)</ReleaseAdditionalOptions>
+      <IdBased>false</IdBased>
+      <Compress>false</Compress>
+      <NoUnfinished>false</NoUnfinished>
+      <RemoveIdentical>false</RemoveIdentical>
+      <ReleaseSilent>false</ReleaseSilent>
+    </QtTranslation>
+  </ItemDefinitionGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Import subfolder targets
+  // Import dependants
   // -->
   <Import
-    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-    Project="$(QtMsBuildTargets)"/>
-  <ImportGroup
-    Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'">
-    <!--
-        // WORKAROUND: In VS 2013 and VS 2015 importing a list of files does not work
-        // REMOVE when support for VS 2015 is dropped
-    -->
-    <Import Project="$(MSBuildThisFileDirectory)\moc\qtmoc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\rcc\qtrcc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\qml\qtqml.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\repc\qtrepc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\uic\qtuic.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\translation\qttranslation.targets"/>
-  </ImportGroup>
+    Condition="'$(QtMsBuildProps_AfterTranslation)' != ''"
+    Project="$(QtMsBuildProps_AfterTranslation)"/>
 
 </Project>

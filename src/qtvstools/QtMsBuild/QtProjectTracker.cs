@@ -84,12 +84,12 @@ namespace QtVsTools.QtMsBuild
         private QtProjectTracker(EnvDTE.Project project, bool runQtTools)
         {
             Project = project;
-            Task.Run(async () => await Initialize(runQtTools));
+            Task.Run(async () => await InitializeAsync(runQtTools));
         }
 
         bool initialized = false;
 
-        private async Task Initialize(bool runQtTools)
+        private async Task InitializeAsync(bool runQtTools)
         {
             var context = Project.Object as IVsBrowseObjectContext;
             if (context == null)
