@@ -310,3 +310,4 @@ src/qtmsbuild/QtMsBuild/rcc/qtrcc_v3.xml
 src/qtmsbuild/QtMsBuild/rcc/qtrcc_cl.targets
 src/qtmsbuild/QtMsBuild/repc/qtrepc_v3.xml
 src/qtmsbuild/QtMsBuild/repc/qtrepc_cl.targets
+src/qtmsbuild/QtMSBuild/qt_tasks.targets

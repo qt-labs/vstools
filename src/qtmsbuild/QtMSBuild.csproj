@@ -40,6 +40,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.Core" />
+    <Reference Include="Microsoft.Build.Utilities.Core" />
+    <Reference
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+    <Reference
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
   <ItemGroup>
     <!--
@@ -73,10 +82,6 @@
     <Content Include="QtMSBuild\qt_settings.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="QtMSBuild\qt_tasks.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </Content>
     <Content Include="QtMSBuild\qt_globals.targets">
       <SubType>Designer</SubType>
@@ -287,6 +292,53 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <!--
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  // Inline tasks
+  // -->
+  <ItemGroup>
+    <Compile Include="Tasks\ListQrc.cs" />
+    <Compile Include="Tasks\ParseVarDefs.cs" />
+    <Compile Include="Tasks\GetVarsFromMakefile.cs" />
+    <Compile Include="Tasks\QtRunWork.cs" />
+    <Compile Include="Tasks\GetItemHash.cs" />
+    <Compile Include="Tasks\Flatten.cs" />
+    <Compile Include="Tasks\Expand.cs" />
+    <Compile Include="Tasks\DumpItems.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_Windows.cs" />
+    <Compile Include="Tasks\HostExec_Windows.cs" />
+    <Compile
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
+    <Compile
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="Tasks\HostExec_LinuxSSL.cs" />
+    <Compile
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
+    <Compile
+      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
+      Include="Tasks\HostExec_LinuxWSL.cs" />
+    <T4Template Include="QtMSBuild\qt_tasks.targets_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>qt_tasks.targets</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <SubType>Designer</SubType>
+      <LastGenOutput>qt_tasks.targets</LastGenOutput>
+    </T4Template>
+    <Content Include="QtMSBuild\qt_tasks.targets">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>qt_tasks.targets_TT</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />

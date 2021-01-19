@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+*****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+*****************************************************************************
+<#@output extension="targets" #>
+<#@include file="$(SolutionDir)\common.tt" #>
+**          <#=WARNING_GENERATED_FILE#>
+*****************************************************************************
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper inline tasks used by the Qt/MSBuild targets
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- BEGIN Generated code <#=XML_COMMENT_END#><#
+
+    // Parse .cs files and generate inline MSBuild tasks using C# code
+    //
+    var files = Directory.GetFiles(Path.Combine(SolutionDir, "QtMsBuild", "Tasks"), "*.cs");
+    foreach(var file in files) {
+        var text = File.ReadAllText(file);
+        var result = TaskParser.Parse(text);
+        var commentLines = (result.GetValues<string>("COMMENT")
+            .FirstOrDefault() ?? "")
+            .TrimEnd('\r', '\n').Split(new[] {"\r\n"}, StringSplitOptions.None);
+        var taskAttribs = result.GetValues<string>("ATTRIBS")
+            .FirstOrDefault() ?? "";
+        var namespaces = result.GetValues<List<string>>("USING")
+            .FirstOrDefault() ?? new List<string>();
+        var parameters = (result.GetValues<List<ParamDecl>>("PARAMS")
+            .FirstOrDefault() ?? new List<ParamDecl>())
+            .Where((ParamDecl p) => !string.IsNullOrEmpty(p.name))
+            .OrderBy((ParamDecl p) => p.isOut)
+            .ThenBy((ParamDecl p) => p.isOptional);
+        var taskCode = result.GetValues<string>("CODE")
+            .FirstOrDefault()?.TrimEnd('\r', '\n') ?? "";
+        var assemblyRefs = (result.GetValues<List<string>>("REFERENCE")
+            .FirstOrDefault() ?? new List<string>())
+            .Select(assemblyRef => assemblyRef.Trim());
+
+        WriteLine(string.Format(
+////////////////////////////////////////////////////////////////////////////////////////////////////
+@"
+  {0}
+  {1}
+  {2}
+  <UsingTask {3}
+    TaskFactory=""CodeTaskFactory""
+    AssemblyFile=""$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"">
+    <ParameterGroup>{4}
+    </ParameterGroup>
+    <Task>{5}{6}
+      <Code Type=""Fragment"" Language=""cs"">
+        <![CDATA[
+{7}
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>",
+////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*{0}*/ XML_COMMENT_BEGIN,
+        /*{1}*/ string.Join("\r\n  ", commentLines),
+        /*{2}*/ XML_COMMENT_END,
+        /*{3}*/ taskAttribs,
+        /*{4}*/ string.Join("", parameters.Select(param => string.Format(
+@"
+      <{0} ParameterType=""{1}""{2}{3}/>",
+            /*{0}*/ param.name,
+            /*{1}*/ param.type,
+            /*{2}*/ param.isOut ? @" Output=""true""" : "",
+            /*{3}*/ !param.isOut && !param.isOptional ? @" Required=""true""" : ""))),
+        /*{5}*/ string.Join("", assemblyRefs.Select(assemblyRef => string.Format(
+@"
+      <Reference Include=""{0}""/>",
+            /*{0}*/ assemblyRef))),
+        /*{6}*/ string.Join("", namespaces.Select(nameSpc => string.Format(
+@"
+      <Using Namespace=""{0}""/>",
+            /*{0}*/ nameSpc))),
+        /*{7}*/ taskCode));
+    }
+  #>
+  <#=XML_COMMENT_BEGIN#> END Generated code -->
+
+</Project>
+<!--<#=XML_COMMENT_END#>
+<#@assembly Name="$(SolutionDir)\QtVsTools.RegExpr\bin\$(Configuration)\QtVsTools.RegExpr.dll" #>
+<#@import namespace="static QtVsTools.SyntaxAnalysis.RegExpr" #>
+<#+
+    class ParamDecl {
+        public string name;
+        public string type;
+        public bool isOptional;
+        public bool isOut;
+    }
+
+    Parser InitTaskParser()
+    {
+        var name
+            = CharSet[CharWord + Chars['.']].Repeat();
+
+        var assemblyRef
+            = StartOfLine & HorizSpace & "//" & new Token("REF", HorizSpace, Line) & LineBreak;
+
+        var usingStmt
+            = new Token("using")
+            & new Token("NAMESPACE", new Token("static").Optional() & name)
+            & new Token(";");
+
+        var paramDecl = new Token("PARAM",
+            new Token("PARAM_OUT", "out").Optional()
+            & new Token("PARAM_TYPE", name & new Token("[]").Optional())
+            & new Token("PARAM_NAME", Word)
+            & new Token("PARAM_OPTIONAL", "="
+                & (new Token("null") | new Token("0") | new Token("false"))).Optional()
+            & new Token(CharSet[',', ')']))
+            {
+                new Rule<ParamDecl>
+                {
+                    Update("PARAM_NAME", (ParamDecl p, string value) => p.name = value),
+                    Update("PARAM_TYPE", (ParamDecl p, string value) => p.type = value),
+                    Update("PARAM_OUT", (ParamDecl p, string value) => p.isOut = true),
+                    Update("PARAM_OPTIONAL", (ParamDecl p, string value) => p.isOptional = true),
+                }
+            };
+
+        var regionReference
+            = StartOfLine & HorizSpace & "#region Reference" & Line & LineBreak
+            & new Token("REFERENCE", SkipWs_Disable, assemblyRef.Repeat())
+            {
+                new Rule<List<string>>
+                {
+                    Update("REF", (List<string> list, string refName) => list.Add(refName))
+                }
+            };
+
+        var regionUsing
+            = StartOfLine & HorizSpace & "#region Using" & Line & LineBreak
+            & new Token("USING", usingStmt.Repeat())
+            {
+                new Rule<List<string>>
+                {
+                    Update("NAMESPACE", (List<string> list, string nameSpc) => list.Add(nameSpc))
+                }
+            };
+
+        var regionComment
+            = StartOfLine & HorizSpace & "#region Comment" & Line & LineBreak
+            & new Token("COMMENT", SkipWs_Disable,
+                (!LookAhead[StartOfLine & HorizSpace & "#endregion"]
+                & StartOfLine & HorizSpace & Line & LineBreak).Repeat());
+
+        var regionParameters
+            = StartOfLine & HorizSpace & "#region Parameters" & Line & LineBreak
+            & new Token("PARAMS", paramDecl.Repeat())
+            {
+                new Rule<List<ParamDecl>>
+                {
+                    Update("PARAM", (List<ParamDecl> list, ParamDecl param) => list.Add(param))
+                }
+            };
+
+        var regionCode
+            = StartOfLine & HorizSpace & "#region Code" & Line & LineBreak
+            & new Token("CODE", SkipWs_Disable,
+                (!LookAhead[StartOfLine & HorizSpace & "#endregion"]
+                & StartOfLine & HorizSpace & Line & LineBreak).Repeat());
+
+        var task
+            = StartOfLine & HorizSpace & "#region Task" & new Token("ATTRIBS", Line) & LineBreak
+            & ( regionReference
+                | regionUsing
+                | regionComment
+                | regionParameters
+                | regionCode
+                | (Line & LineBreak)
+            ).Repeat();
+
+        return task.Render(Space);
+    }
+
+    Parser _TaskParser;
+    Parser TaskParser => _TaskParser ?? (
+        _TaskParser = InitTaskParser());
+//-->#>

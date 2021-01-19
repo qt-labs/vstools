@@ -30,6 +30,10 @@
         <Value>$(SolutionDir)</Value>
         <Visible>false</Visible>
       </T4ParameterValues>
+      <T4ParameterValues Include="Configuration">
+        <Value>$(Configuration)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
       <T4ParameterValues Include="VisualStudioVersion">
         <Value>$(VisualStudioVersion)</Value>
         <Visible>false</Visible>
