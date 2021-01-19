@@ -104,6 +104,10 @@ namespace QtVsTools.SyntaxAnalysis
                 : this(id.ToString(), skipWs, expr)
             { }
 
+            public Token(RegExpr skipWs, RegExpr expr)
+                : this(string.Empty, skipWs, expr)
+            { }
+
             public Token(RegExpr expr)
                 : this(string.Empty, SkipWhitespace.Enable, expr)
             { }

@@ -44,10 +44,22 @@ namespace QtVsTools.SyntaxAnalysis
         { get { return new CharClassLiteral { LiteralChars = @"\w" }; } }
 
         /// <summary><![CDATA[
+        /// Equivalent to: [\w]*
+        /// ]]></summary>
+        public static RegExpr Word
+        { get { return CharWord.Repeat(); } }
+
+        /// <summary><![CDATA[
         /// Equivalent to: [\d]
         /// ]]></summary>
         public static CharClassLiteral CharDigit
         { get { return new CharClassLiteral { LiteralChars = @"\d" }; } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [\d]*
+        /// ]]></summary>
+        public static RegExpr Number
+        { get { return CharDigit.Repeat(); } }
 
         /// <summary><![CDATA[
         /// Equivalent to: [\r]
@@ -120,6 +132,36 @@ namespace QtVsTools.SyntaxAnalysis
         /// ]]></summary>
         public static RegExprSequence LineBreak
         { get { return CharCr.Optional() & CharLf; } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [\s]*
+        /// ]]></summary>
+        public static RegExpr Space
+        { get { return CharSpace.Repeat(); } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [\S]*
+        /// ]]></summary>
+        public static RegExpr NonSpace
+        { get { return CharNonSpace.Repeat(); } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [\r\n]*
+        /// ]]></summary>
+        public static RegExpr VertSpace
+        { get { return CharVertSpace.Repeat(); } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [^\S\r\n]*
+        /// ]]></summary>
+        public static RegExpr HorizSpace
+        { get { return CharHorizSpace.Repeat(); } }
+
+        /// <summary><![CDATA[
+        /// Equivalent to: [^\r\n]*
+        /// ]]></summary>
+        public static RegExpr Line
+        { get { return CharSet[~CharVertSpace].Repeat(); } }
 
         /// <summary><![CDATA[
         /// Equivalent to: (?i)
