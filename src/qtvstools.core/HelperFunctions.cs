@@ -197,7 +197,7 @@ namespace QtVsTools.Core
                     var activeConf = prj.ConfigurationManager.ActiveConfiguration;
                     activePlatformName = activeConf.PlatformName;
                 } catch {
-                    Messages.PaneMessage(prj.DTE, "Could not get the active platform name.");
+                    Messages.Print("Could not get the active platform name.");
                 }
             } else {
                 activePlatformName = solutionConfig.Split('|')[1];
@@ -576,7 +576,7 @@ namespace QtVsTools.Core
                     var newProject = false;
                     qtPro.CreatePlatform("Win32", platformName, null, vi, ref newProject);
                     if (!qtPro.SelectSolutionPlatform(platformName))
-                        Messages.PaneMessage(project.DTE, "Can't select the platform " + platformName + ".");
+                        Messages.Print("Can't select the platform " + platformName + ".");
                 }
 
                 var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;

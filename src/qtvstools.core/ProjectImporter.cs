@@ -98,7 +98,7 @@ namespace QtVsTools.Core
                     }
                 }
 
-                Messages.PaneMessage(dteObject, "--- (Import): Finished opening " + VCInfo.Name);
+                Messages.Print("--- (Import): Finished opening " + VCInfo.Name);
             } catch (Exception e) {
                 Messages.DisplayCriticalErrorMessage(e);
             }
@@ -120,13 +120,13 @@ namespace QtVsTools.Core
                         try {
                             dteObject.Solution.AddFromFile(VCInfo.FullName, false);
                         } catch (Exception /*exception*/) {
-                            Messages.PaneMessage(dteObject, "--- (Import): Generated project could not be loaded.");
-                            Messages.PaneMessage(dteObject, "--- (Import): Please look in the output above for errors and warnings.");
+                            Messages.Print("--- (Import): Generated project could not be loaded.");
+                            Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
                             return;
                         }
-                        Messages.PaneMessage(dteObject, "--- (Import): Added " + VCInfo.Name + " to Solution");
+                        Messages.Print("--- (Import): Added " + VCInfo.Name + " to Solution");
                     } else {
-                        Messages.PaneMessage(dteObject, "Project already in Solution");
+                        Messages.Print("Project already in Solution");
                     }
 
                     Project pro = null;
@@ -148,7 +148,7 @@ namespace QtVsTools.Core
                             var newProject = false;
                             qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
                             if (!qtPro.SelectSolutionPlatform(platformName))
-                                Messages.PaneMessage(dteObject, "Can't select the platform " + platformName + ".");
+                                Messages.Print("Can't select the platform " + platformName + ".");
                         }
 
                         // try to figure out if the project is a plugin project
@@ -225,7 +225,7 @@ namespace QtVsTools.Core
                 ok = xmlProject.UpdateProjectFormatVersion();
 
             if (!ok) {
-                Messages.PaneMessage(dteObject,
+                Messages.Print(
                     SR.GetString("ImportProject_CannotConvertProject", projectFile.Name));
             }
             xmlProject.Save();
@@ -313,7 +313,7 @@ namespace QtVsTools.Core
 
             if (!VCInfo.Exists || DialogResult.Yes == MessageBox.Show(SR.GetString("ExportProject_ProjectExistsRegenerateOrReuse", VCInfo.Name),
                 SR.GetString("ProjectExists"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
-                Messages.PaneMessage(dteObject, "--- (Import): Generating new project of " + mainInfo.Name + " file");
+                Messages.Print("--- (Import): Generating new project of " + mainInfo.Name + " file");
 
                 var waitDialog = WaitDialog.Start(
                     "Open Qt Project File",

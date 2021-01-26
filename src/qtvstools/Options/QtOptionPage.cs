@@ -177,8 +177,8 @@ namespace QtVsTools.Options
                         QmlDebuggerTimeout = (Timeout)qmlTimeout;
                 }
             } catch (Exception exception) {
-                Messages.PaneMessageSafe(Vsix.Instance.Dte,
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace, 5000);
+                Messages.Print(
+                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
         }
 
@@ -204,8 +204,8 @@ namespace QtVsTools.Options
                         (int)QmlDebuggerTimeout);
                 }
             } catch (Exception exception) {
-                Messages.PaneMessageSafe(Vsix.Instance.Dte,
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace, 5000);
+                Messages.Print(
+                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
         }
     }

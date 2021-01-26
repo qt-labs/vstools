@@ -151,19 +151,19 @@ namespace QtVsTools.Core
         protected virtual void OutMsg(string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.PaneMessageSafe(Dte, msg, 5000);
+                Messages.Print(msg);
         }
 
         protected virtual void ErrMsg(string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.PaneMessageSafe(Dte, msg, 5000);
+                Messages.Print(msg);
         }
 
         protected virtual void InfoMsg(string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.PaneMessageSafe(Dte, msg, 5000);
+                Messages.Print(msg);
         }
 
         protected virtual void InfoStart(Process qmakeProc)

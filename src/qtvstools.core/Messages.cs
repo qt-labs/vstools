@@ -27,54 +27,55 @@
 ****************************************************************************/
 
 using EnvDTE;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using Thread = System.Threading.Thread;
 using System.Windows.Forms;
+using System.Windows.Threading;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core
 {
     public static class Messages
     {
-        private static OutputWindowPane wndp;
+        private static OutputWindow Window { get; set; }
+        private static OutputWindowPane Pane { get; set; }
 
-        private static OutputWindowPane GetBuildPane(OutputWindow outputWindow)
+        private static OutputWindowPane _BuildPane;
+        private static OutputWindowPane BuildPane
         {
-            foreach (OutputWindowPane owp in outputWindow.OutputWindowPanes) {
-                if (owp.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}")
-                    return owp;
+            get {
+                return _BuildPane ?? (_BuildPane = Window.OutputWindowPanes.Cast<OutputWindowPane>()
+                    .Where(pane => pane.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}")
+                    .FirstOrDefault());
             }
-            return null;
-        }
-        public static void PaneMessage(DTE dte, string str)
-        {
-            var wnd = (OutputWindow) dte.Windows.Item(Constants.vsWindowKindOutput).Object;
-            if (wndp == null)
-                wndp = wnd.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
-
-            wndp.OutputString(str + "\r\n");
-            var buildPane = GetBuildPane(wnd);
-            // show buildPane if a build is in progress
-            if (dte.Solution.SolutionBuild.BuildState == vsBuildState.vsBuildStateInProgress && buildPane != null)
-                buildPane.Activate();
         }
 
         /// <summary>
         /// Show a message on the output pane.
-        /// Will wait <paramref name="timeout"/> msecs until the output pane is available.
         /// </summary>
-        public static void PaneMessageSafe(DTE dte, string str, uint timeout)
+        public static void Print(string text, bool clear = false, bool activate = false)
         {
-            new System.Threading.Thread(() =>
+            msgQueue.Enqueue(new Msg()
             {
-                System.Diagnostics.Stopwatch t = new System.Diagnostics.Stopwatch();
-                t.Start();
-                while (t.ElapsedMilliseconds < timeout) {
-                    try {
-                        PaneMessage(dte, str);
-                        break;
-                    } catch {
-                        System.Threading.Thread.Yield();
-                    }
-                }
-            }).Start();
+                Clear = clear,
+                Text = text,
+                Activate = activate
+            });
+            FlushMessages();
+        }
+
+        static void OutputWindowPane_Print(string text)
+        {
+            OutputWindowPane_Init();
+            Pane.OutputString(text + "\r\n");
+            // show buildPane if a build is in progress
+            if (Dte.Solution.SolutionBuild.BuildState == vsBuildState.vsBuildStateInProgress)
+                BuildPane?.Activate();
         }
 
         /// <summary>
@@ -82,9 +83,17 @@ namespace QtVsTools.Core
         /// </summary>
         public static void ActivateMessagePane()
         {
-            if (wndp == null)
-                return;
-            wndp.Activate();
+            msgQueue.Enqueue(new Msg()
+            {
+                Activate = true
+            });
+            FlushMessages();
+        }
+
+        static void OutputWindowPane_Activate()
+        {
+            OutputWindowPane_Init();
+            Pane?.Activate();
         }
 
         private static string ExceptionToString(System.Exception e)
@@ -138,6 +147,95 @@ namespace QtVsTools.Core
             MessageBox.Show(WarningString +
                 msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        public static void ClearPane()
+        {
+            msgQueue.Enqueue(new Msg()
+            {
+                Clear = true
+            });
+            FlushMessages();
+        }
+
+        static void OutputWindowPane_Clear()
+        {
+            OutputWindowPane_Init();
+            Pane?.Clear();
+        }
+
+        class Msg
+        {
+            public bool Clear { get; set; } = false;
+            public string Text { get; set; } = null;
+            public bool Activate { get; set; } = false;
+        }
+
+        static bool shuttingDown = false;
+        static ConcurrentQueue<Msg> msgQueue = new ConcurrentQueue<Msg>();
+        static DTE Dte { get; set; } = null;
+
+        private static void OnBeginShutdown()
+        {
+            shuttingDown = true;
+        }
+
+        private static void OutputWindowPane_Init()
+        {
+            if (Dte == null)
+                Dte = VsServiceProvider.GetService<DTE>();
+            var t = Stopwatch.StartNew();
+            while (Pane == null && t.ElapsedMilliseconds < 5000) {
+                try {
+                    Window = Dte.Windows.Item(Constants.vsWindowKindOutput).Object as OutputWindow;
+                    Pane = Window?.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
+                } catch {
+                }
+                if (Pane == null)
+                    Thread.Yield();
+            }
+            Dte.Events.DTEEvents.OnBeginShutdown += OnBeginShutdown;
+        }
+
+        public static JoinableTaskFactory JoinableTaskFactory { get; set; }
+        static readonly object staticCriticalSection = new object();
+        static Task FlushTask { get; set; }
+        static EventWaitHandle MessageReady { get; set; }
+
+        static void FlushMessages()
+        {
+            lock (staticCriticalSection) {
+                if (FlushTask == null) {
+                    MessageReady = new EventWaitHandle(false, EventResetMode.AutoReset);
+                    FlushTask = Task.Run(async () =>
+                    {
+                        while (!shuttingDown) {
+                            if (!await MessageReady.ToTask(3000))
+                                continue;
+                            while (!msgQueue.IsEmpty) {
+                                Msg msg;
+                                if (!msgQueue.TryDequeue(out msg)) {
+                                    await Task.Yield();
+                                    continue;
+                                }
+                                ////////////////////////////////////////////////////////////////////
+                                // Switch to main (UI) thread
+                                await JoinableTaskFactory.SwitchToMainThreadAsync();
+                                if (msg.Clear)
+                                    OutputWindowPane_Clear();
+                                if (msg.Text != null)
+                                    OutputWindowPane_Print(msg.Text);
+                                if (msg.Activate)
+                                    OutputWindowPane_Activate();
+                                ////////////////////////////////////////////////////////////////////
+                                // Switch to background thread
+                                await TaskScheduler.Default;
+                            }
+                        }
+                    });
+                }
+            }
+            MessageReady.Set();
         }
     }
 }

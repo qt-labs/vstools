@@ -771,7 +771,7 @@ namespace QtVsTools.Core
                     // (only removes it from the project, does not del. the file)
                     var info = new FileInfo(file);
                     HelperFunctions.RemoveFileInProject(vcproj, file);
-                    Messages.PaneMessage(dte, "--- (Importing .pri file) file: " + info.Name +
+                    Messages.Print("--- (Importing .pri file) file: " + info.Name +
                         " does not exist in .pri file, move to " + vcproj.ProjectDirectory + "Deleted");
                 }
             }

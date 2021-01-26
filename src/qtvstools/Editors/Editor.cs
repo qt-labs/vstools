@@ -203,8 +203,8 @@ namespace QtVsTools.Editors
             try {
                 return Process.Start(GetStartInfo(filePath, qtToolsPath, hideWindow));
             } catch (Exception e) {
-                Messages.PaneMessageSafe(VsServiceProvider.GetService<EnvDTE.DTE>(),
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                 return null;
             }
         }

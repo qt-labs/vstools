@@ -127,7 +127,7 @@ namespace QtVsTools
                 projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
                 ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.ResourceFiles());
             } else {
-                Messages.PaneMessage(project.DTE, "--- (Importing .pri file) file: "
+                Messages.Print("--- (Importing .pri file) file: "
                     + priFileInfo + " could not be read.");
             }
         }
@@ -138,7 +138,7 @@ namespace QtVsTools
             foreach (var file in files) {
                 var s = ResolveEnvironmentVariables(file, project);
                 if (s == null) {
-                    Messages.PaneMessage(project.DTE, SR.GetString("ImportPriFileNotResolved", file));
+                    Messages.Print(SR.GetString("ImportPriFileNotResolved", file));
                 } else {
                     if (!HelperFunctions.IsAbsoluteFilePath(s))
                         s = path + "\\" + s;

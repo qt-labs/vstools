@@ -57,7 +57,7 @@ namespace QtVsTools
                         cmdLine += options + " ";
                 }
                 var project = vcProject.Object as EnvDTE.Project;
-                Messages.PaneMessage(project.DTE,
+                Messages.Print(
                     "--- (lrelease) file: " + vcFile.FullPath);
 
                 cmdLine += vcFile.RelativePath.Quoute();
@@ -146,7 +146,7 @@ namespace QtVsTools
 
             var success = true;
             try {
-                Messages.PaneMessage(pro.DTE, "--- (lupdate) file: " + vcFile.FullPath);
+                Messages.Print("--- (lupdate) file: " + vcFile.FullPath);
                 StartProcess(Resources.lupdateCommand, cmdLine, (vcFile.project as VCProject)
                     .ProjectDirectory, pro);
             } catch (QtVSException e) {
@@ -280,7 +280,7 @@ namespace QtVsTools
                     if (index > 0)
                         file = "file: " + arguments.Substring(index + 3) + " ";
 
-                    Messages.PaneMessage(project.DTE,
+                    Messages.Print(
                         "--- (" + Path.GetFileNameWithoutExtension(fileName) + ") " + file
                         + ": Exit Code: " + process.ExitCode);
                 } else {
@@ -304,7 +304,7 @@ namespace QtVsTools
             while ((error = tp.Process.StandardError.ReadLine()) != null) {
                 error = error.Trim();
                 if (error.Length != 0)
-                    Messages.PaneMessage(tp.Dte, "--- " + error);
+                    Messages.Print("--- " + error);
             }
         }
 

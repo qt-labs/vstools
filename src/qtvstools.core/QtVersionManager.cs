@@ -66,8 +66,8 @@ namespace QtVsTools.Core
                 }
 
             } catch (Exception e) {
-                Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
 
@@ -296,14 +296,14 @@ namespace QtVsTools.Core
             string versionKeyPath = strVersionKey + "\\" + verName;
             using (var key = Registry.CurrentUser.CreateSubKey(rootKeyPath)) {
                 if (key == null) {
-                    Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
-                        "ERROR: root registry key creation failed", timeout: 5000);
+                    Messages.Print(
+                        "ERROR: root registry key creation failed");
                     return false;
                 }
                 using (var versionKey = key.CreateSubKey(versionKeyPath)) {
                     if (versionKey == null) {
-                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(),
-                            "ERROR: version registry key creation failed", timeout: 5000);
+                        Messages.Print(
+                            "ERROR: version registry key creation failed");
                         return false;
                     }
                     versionKey.SetValue("InstallDir", dir);

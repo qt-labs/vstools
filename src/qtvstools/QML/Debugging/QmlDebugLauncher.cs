@@ -278,7 +278,7 @@ namespace QtVsTools.Qml.Debug
 
         void OutputWriteLine(string msg)
         {
-            Messages.PaneMessageSafe(VsServiceProvider.GetService<EnvDTE.DTE>(), msg, 5000);
+            Messages.Print(msg);
         }
 
         void LaunchDebug(

@@ -182,14 +182,13 @@ namespace QtVsTools
                 var timeInitBegin = initTimer.Elapsed;
                 VsServiceProvider.Instance = instance = this;
                 QtProject.ProjectTracker = this;
-
+                Messages.JoinableTaskFactory = JoinableTaskFactory;
 #if !VS2013
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
                 await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
                 var timeUiThreadBegin = initTimer.Elapsed;
 #endif
-
                 if ((Dte = VsServiceProvider.GetService<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
 
@@ -220,7 +219,7 @@ namespace QtVsTools
                 var vm = QtVersionManager.The(initDone);
                 var error = string.Empty;
                 if (vm.HasInvalidVersions(out error))
-                    Messages.PaneMessageSafe(Dte, error, 5000);
+                    Messages.Print(error);
 
                 // determine the package installation directory
                 var uri = new Uri(System.Reflection.Assembly
@@ -314,7 +313,7 @@ namespace QtVsTools
                     }
                 }
 
-                Messages.PaneMessageSafe(Dte, string.Format("\r\n"
+                Messages.Print(string.Format("\r\n"
                     + "== Qt Visual Studio Tools version {0}\r\n"
                     + "\r\n"
                     + "   Initialized in: {1:0.##} msecs\r\n"
@@ -326,12 +325,12 @@ namespace QtVsTools
 #if !VS2013
                     , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds
 #endif
-                    ), 5000);
+                    ));
             }
             catch (Exception e)
             {
-                Messages.PaneMessageSafe(Dte,
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
             finally
             {
@@ -440,8 +439,8 @@ namespace QtVsTools
                 File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
                     natvis, System.Text.Encoding.UTF8);
             } catch (Exception e) {
-                Messages.PaneMessageSafe(Dte,
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
 

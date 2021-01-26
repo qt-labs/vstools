@@ -162,8 +162,8 @@ namespace QtVsTools.QtMsBuild
                 try {
                     Vsix.Instance.Dte.ExecuteCommand("Project.RescanSolution");
                 } catch (Exception e) {
-                    Messages.PaneMessageSafe(Vsix.Instance.Dte,
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace, 5000);
+                    Messages.Print(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                 }
                 waitDialog?.Stop();
                 StatusBar?.Clear();
@@ -261,8 +261,7 @@ namespace QtVsTools.QtMsBuild
                     if (result == null
                         || result.ResultsByTarget == null
                         || result.OverallResult != BuildResultCode.Success) {
-                        Messages.PaneMessageSafe(Vsix.Instance.Dte, timeout: 5000,
-                            str: string.Format("{0}: background build FAILED!",
+                        Messages.Print(string.Format("{0}: background build FAILED!",
                                 Path.GetFileName(UnconfiguredProject.FullPath)));
                     } else {
                         bool buildSuccess = true;
@@ -279,8 +278,7 @@ namespace QtVsTools.QtMsBuild
                     await writeAccess.ReleaseAsync();
                 }
             } catch (Exception e) {
-                Messages.PaneMessageSafe(Vsix.Instance.Dte, timeout: 5000,
-                    str: string.Format("{0}: background build ERROR: {1}",
+                Messages.Print(string.Format("{0}: background build ERROR: {1}",
                         Path.GetFileName(UnconfiguredProject.FullPath), e.Message));
             }
         }

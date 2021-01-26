@@ -1380,7 +1380,7 @@ namespace QtVsTools.Core
 
         public void RefreshRccSteps()
         {
-            Messages.PaneMessage(dte, "\r\n=== Update rcc steps ===");
+            Messages.Print("\r\n=== Update rcc steps ===");
             var files = GetResourceFiles();
 
             var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
@@ -1399,13 +1399,13 @@ namespace QtVsTools.Core
 
             qtMsBuild.BeginSetItemProperties();
             foreach (var file in files) {
-                Messages.PaneMessage(dte, "Update rcc step for " + file.Name + ".");
+                Messages.Print("Update rcc step for " + file.Name + ".");
                 var options = new RccOptions(envPro, file);
                 UpdateRccStep(file, options);
             }
             qtMsBuild.EndSetItemProperties();
 
-            Messages.PaneMessage(dte, "\r\n=== " + files.Count + " rcc steps updated. ===\r\n");
+            Messages.Print("\r\n=== " + files.Count + " rcc steps updated. ===\r\n");
         }
 
         public void RefreshRccSteps(string oldRccDir)
@@ -1530,7 +1530,7 @@ namespace QtVsTools.Core
                 if (toolSettings == CustomTool.CustomBuildStep)
                     AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
             } catch (Exception /*e*/) {
-                Messages.PaneMessage(dteObject, "*** WARNING (RCC): Couldn't add rcc step");
+                Messages.Print("*** WARNING (RCC): Couldn't add rcc step");
             }
         }
 
@@ -2214,7 +2214,7 @@ namespace QtVsTools.Core
                     writer.WriteLine(l);
                 writer.Close();
             } catch (Exception e) {
-                Messages.PaneMessage(dte, SR.GetString("QtProject_CannotAdjustWhitespaces",
+                Messages.Print(SR.GetString("QtProject_CannotAdjustWhitespaces",
                     e.ToString()));
             }
         }
@@ -2444,7 +2444,7 @@ namespace QtVsTools.Core
 
         public void UpdateUicSteps(string oldUicDir, bool update_inc_path)
         {
-            Messages.PaneMessage(dte, "\r\n=== Update uic steps ===");
+            Messages.Print("\r\n=== Update uic steps ===");
             var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             if (vcFilter != null) {
                 var filterFiles = (IVCCollection) vcFilter.Files;
@@ -2468,7 +2468,7 @@ namespace QtVsTools.Core
             foreach (var file in files) {
                 if (HelperFunctions.IsUicFile(file.Name) && !IsUic3File(file)) {
                     AddUic4BuildStep(file);
-                    Messages.PaneMessage(dte, "Update uic step for " + file.Name + ".");
+                    Messages.Print("Update uic step for " + file.Name + ".");
                     ++updatedFiles;
                 }
             }
@@ -2476,7 +2476,7 @@ namespace QtVsTools.Core
             if (update_inc_path)
                 UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
 
-            Messages.PaneMessage(dte, "\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
+            Messages.Print("\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
         }
 
         private static bool IsUic3File(VCFile file)
@@ -2865,7 +2865,7 @@ namespace QtVsTools.Core
                         }
                     }
                 } catch {
-                    Messages.PaneMessage(dte, "ERROR: failed to refresh moc step for " + vcfile.ItemName);
+                    Messages.Print("ERROR: failed to refresh moc step for " + vcfile.ItemName);
                 }
             }
         }
@@ -2941,7 +2941,7 @@ namespace QtVsTools.Core
 
         public void UpdateMocSteps(string oldMocDir)
         {
-            Messages.PaneMessage(dte, "\r\n=== Update moc steps ===");
+            Messages.Print("\r\n=== Update moc steps ===");
             var orgFiles = new List<VCFile>();
             var abandonedMocFiles = new List<string>();
             var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
@@ -2984,18 +2984,18 @@ namespace QtVsTools.Core
                     RemoveMocStep(file);
                     AddMocStep(file);
                 } catch (QtVSException e) {
-                    Messages.PaneMessage(dte, e.Message);
+                    Messages.Print(e.Message);
                     continue;
                 }
-                Messages.PaneMessage(dte, "Moc step updated successfully for " + file.Name + ".");
+                Messages.Print("Moc step updated successfully for " + file.Name + ".");
             }
             qtMsBuild.EndSetItemProperties();
 
             foreach (var s in abandonedMocFiles) {
-                Messages.PaneMessage(dte, "Moc step update failed for " + s +
+                Messages.Print("Moc step update failed for " + s +
                     ". Reason: Could not determine source file for moccing.");
             }
-            Messages.PaneMessage(dte, "\r\n=== Moc steps updated. Successful: " + orgFiles.Count
+            Messages.Print("\r\n=== Moc steps updated. Successful: " + orgFiles.Count
                 + "   Failed: " + abandonedMocFiles.Count + " ===\r\n");
 
             CleanupFilter(vcFilter);
@@ -3256,7 +3256,7 @@ namespace QtVsTools.Core
             var error = false;
             error = DeleteFilesFromFilter(genVCFilter);
             if (error)
-                Messages.PaneMessage(dte, SR.GetString("DeleteGeneratedFilesError"));
+                Messages.Print(SR.GetString("DeleteGeneratedFilesError"));
         }
 
         private bool DeleteFilesFromFilter(VCFilter filter)
@@ -3531,7 +3531,7 @@ namespace QtVsTools.Core
                 }
 
             } catch (Exception) {
-                Messages.PaneMessage(envPro.DTE, SR.GetString("QtProject_CannotAccessUserFile", vcPro.ItemName));
+                Messages.Print(SR.GetString("QtProject_CannotAccessUserFile", vcPro.ItemName));
             }
 
             HelperFunctions.SetDebuggingEnvironment(envPro);

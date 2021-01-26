@@ -931,10 +931,10 @@ namespace QtVsTools.Core
 
                     var configId = (string)row.config.Attribute("Include");
                     if (!row.command.Value.Contains(toolExec)) {
-                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(), string.Format(
+                        Messages.Print(string.Format(
                             "{0}: warning: [{1}] converting \"{2}\", configuration \"{3}\": " +
                             "tool not found: \"{4}\"; applying default options",
-                            projPath, itemType, row.itemName, configId, toolExec), 5000);
+                            projPath, itemType, row.itemName, configId, toolExec));
                         continue;
                     }
 
@@ -974,10 +974,10 @@ namespace QtVsTools.Core
                         if (errorLine != null && errorLine.HasLineInfo())
                             lineNumber = errorLine.LineNumber;
 
-                        Messages.PaneMessageSafe(VsServiceProvider.GetService<DTE>(), string.Format(
+                        Messages.Print(string.Format(
                             "{0}({1}): error: [{2}] converting \"{3}\", configuration \"{4}\": " +
                             "failed to convert custom build command",
-                            projPath, lineNumber, itemType, row.itemName, configId), 5000);
+                            projPath, lineNumber, itemType, row.itemName, configId));
 
                         item.Remove();
                         error = true;

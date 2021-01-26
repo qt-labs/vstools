@@ -109,8 +109,8 @@ namespace QtVsTools.Options
                 if (defaultVersion != null)
                     VersionManager.SaveDefaultVersion(defaultVersion.VersionName);
             } catch (Exception exception) {
-                Messages.PaneMessageSafe(Vsix.Instance.Dte,
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace, 5000);
+                Messages.Print(
+                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
         }
 
