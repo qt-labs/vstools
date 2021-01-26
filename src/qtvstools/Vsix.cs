@@ -49,9 +49,7 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools
 {
     using VisualStudio;
-#if VS2017 || VS2019
     using QtMsBuild;
-#endif
 
 #if VS2013
     using AsyncPackage = Package;
@@ -462,9 +460,7 @@ namespace QtVsTools
 
         void IProjectTracker.AddProject(Project project)
         {
-#if VS2017 || VS2019
             QtProjectTracker.AddProject(project, runQtTools: false);
-#endif
         }
     }
 }

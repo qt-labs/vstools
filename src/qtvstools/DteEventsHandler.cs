@@ -33,9 +33,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Core;
 using QtVsTools.Core.QtMsBuild;
-#if VS2017 || VS2019
 using QtVsTools.QtMsBuild;
-#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -296,9 +294,7 @@ namespace QtVsTools
                 if (project == null || !HelperFunctions.IsQtProject(project))
                     continue;
 
-#if VS2017 || VS2019
                 QtProjectTracker.RefreshIntelliSense(project, configId);
-#endif
             }
             buildDoneEvents.Clear();
         }
@@ -443,9 +439,7 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-#if VS2017 || VS2019
                     QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
-#endif
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
@@ -482,9 +476,7 @@ namespace QtVsTools
         {
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
-#if VS2017 || VS2019
                 QtProjectTracker.AddProject(project, runQtTools: true);
-#endif
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection) {
@@ -528,9 +520,7 @@ namespace QtVsTools
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
-#if VS2017 || VS2019
                     QtProjectTracker.AddProject(p, runQtTools: false);
-#endif
                 }
             }
         }

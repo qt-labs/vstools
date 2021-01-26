@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-#if VS2017 || VS2019
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -40,9 +39,13 @@ using Microsoft.Build.Execution;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell.Interop;
+#if VS2015
+using Microsoft.VisualStudio.ProjectSystem.Designers;
+#endif
 using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;
+using Microsoft.Build.Framework;
 
 namespace QtVsTools.QtMsBuild
 {
@@ -182,7 +185,7 @@ namespace QtVsTools.QtMsBuild
             Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project, false, null));
         }
 
-        private static KeyValuePair<TKey, TValue> KVP<TKey, TValue>(TKey key, TValue value)
+        public static KeyValuePair<TKey, TValue> PROPERTY<TKey, TValue>(TKey key, TValue value)
         {
             return new KeyValuePair<TKey, TValue>(key, value);
         }
@@ -194,14 +197,47 @@ namespace QtVsTools.QtMsBuild
         {
             await BuildAsync(
                 project,
-                new[] { KVP("QtVSToolsBuild", "true") },
+                new[] { PROPERTY("QtVSToolsBuild", "true") },
                 new[] { "QtVars" });
             if (runQtTools) {
                 await BuildAsync(
                     project,
                     (selectedFiles == null) ? new KeyValuePair<string, string>[0]
-                        : new[] { KVP("SelectedFiles", string.Join(";", selectedFiles)) },
+                        : new[] { PROPERTY("SelectedFiles", string.Join(";", selectedFiles)) },
                     new[] { "Qt" });
+            }
+        }
+
+        public static void Build(
+            EnvDTE.Project project, string configId,
+            KeyValuePair<string, string>[] properties,
+            params string[] targets)
+        {
+            if (project == null)
+                return;
+
+            QtProjectTracker instance = null;
+            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
+                return;
+            if (!instance.initialized)
+                return;
+
+            Task.Run(async () => await instance
+                .BuildAsync(configId, properties, targets));
+        }
+
+        private async Task BuildAsync(
+            string configId,
+            KeyValuePair<string, string>[] properties,
+            string[] targets)
+        {
+            var configs = await UnconfiguredProject.Services
+                .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
+            foreach (var config in configs) {
+                if (!string.IsNullOrEmpty(configId) && config.Name != configId)
+                    continue;
+                var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
+                await BuildAsync(configProject, properties, targets, true, LoggerVerbosity.Minimal);
             }
         }
 
@@ -209,20 +245,38 @@ namespace QtVsTools.QtMsBuild
             ConfiguredProject project,
             KeyValuePair<string, string>[] properties,
             string[] targets,
-            bool checkTargets)
+            bool checkTargets,
+            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
-            await BuildAsync(project, properties, targets, checkTargets ? targets : null);
+            var targetsToCheck = checkTargets ? targets : null;
+            await BuildAsync(project, properties, targets, targetsToCheck, verbosity);
         }
 
         private async Task BuildAsync(
             ConfiguredProject project,
             KeyValuePair<string, string>[] properties,
             string[] targets,
-            string[] checkTargets = null)
+            string[] targetsToCheck = null,
+            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             if (project == null)
                 return;
 
+            if (verbosity != LoggerVerbosity.Quiet) {
+                Messages.Print(clear: true, activate: true,
+                    text: string.Format(
+@"== {0}: starting build...
+  * Properties: {1}
+  * Targets: {2}
+",
+                    /*{0}*/ Project.Name,
+                    /*{1}*/ string.Join("", properties
+                        .Select(property => string.Format(@"
+        {0} = {1}",     /*{0}*/ property.Key, /*{1}*/ property.Value))),
+                    /*{2}*/ string.Join(";", targets)));
+            }
+
+            bool ok = false;
             try {
                 ProjectWriteLockReleaser writeAccess;
                 var timer = Stopwatch.StartNew();
@@ -251,12 +305,19 @@ namespace QtVsTools.QtMsBuild
                     var projectInstance = new ProjectInstance(msBuildProject.Xml,
                         configProps, null, new ProjectCollection());
 
+                    var buildParams = new BuildParameters()
+                    {
+                        Loggers = (verbosity != LoggerVerbosity.Quiet)
+                                ? new[] { new Logger() { Verbosity = verbosity } }
+                                : null
+                    };
+
                     var buildRequest = new BuildRequestData(projectInstance,
                         targets,
                         hostServices: null,
                         flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-                    var result = buildManager.Build(new BuildParameters(), buildRequest);
+                    var result = buildManager.Build(buildParams, buildRequest);
 
                     if (result == null
                         || result.ResultsByTarget == null
@@ -265,21 +326,29 @@ namespace QtVsTools.QtMsBuild
                                 Path.GetFileName(UnconfiguredProject.FullPath)));
                     } else {
                         bool buildSuccess = true;
-                        if (checkTargets != null) {
+                        if (targetsToCheck != null) {
                             var checkResults = result.ResultsByTarget
-                                .Where(x => checkTargets.Contains(x.Key))
+                                .Where(x => targetsToCheck.Contains(x.Key))
                                 .Select(x => x.Value);
                             buildSuccess = checkResults.Any()
                                 && checkResults.All(x => x.ResultCode == TargetResultCode.Success);
                         }
                         if (buildSuccess)
                             msBuildProject.MarkDirty();
+                        ok = buildSuccess;
                     }
                     await writeAccess.ReleaseAsync();
                 }
             } catch (Exception e) {
                 Messages.Print(string.Format("{0}: background build ERROR: {1}",
                         Path.GetFileName(UnconfiguredProject.FullPath), e.Message));
+            }
+
+            if (verbosity != LoggerVerbosity.Quiet) {
+                Messages.Print(string.Format(
+@"
+== {0}: build {1}",
+                    Project.Name, ok ? "successful" : "ERROR"));
             }
         }
 
@@ -293,6 +362,40 @@ namespace QtVsTools.QtMsBuild
             Instances[Project.FullName] = null;
             await Task.Yield();
         }
+
+        class Logger : ILogger
+        {
+            public LoggerVerbosity Verbosity { get; set; }
+            public string Parameters { get; set; }
+
+            public void Initialize(IEventSource eventSource)
+            {
+                eventSource.MessageRaised += new BuildMessageEventHandler(MessageRaised);
+                eventSource.WarningRaised += new BuildWarningEventHandler(WarningRaised);
+                eventSource.ErrorRaised += new BuildErrorEventHandler(ErrorRaised);
+            }
+
+            private void ErrorRaised(object sender, BuildErrorEventArgs e)
+            {
+                Messages.Print(e.Message);
+            }
+
+            private void WarningRaised(object sender, BuildWarningEventArgs e)
+            {
+                Messages.Print(e.Message);
+            }
+
+            private void MessageRaised(object sender, BuildMessageEventArgs e)
+            {
+                if (e is TaskCommandLineEventArgs)
+                    return;
+                if (e.Importance == MessageImportance.High)
+                    Messages.Print(e.Message);
+            }
+
+            public void Shutdown()
+            {
+            }
+        }
     }
 }
-#endif

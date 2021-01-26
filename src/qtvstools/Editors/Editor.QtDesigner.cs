@@ -32,9 +32,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell.Interop;
-#if VS2017 || VS2019
 using QtVsTools.QtMsBuild;
-#endif
 using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Editors
@@ -58,7 +56,6 @@ namespace QtVsTools.Editors
             return Title;
         }
 
-#if VS2017 || VS2019
         protected override void OnStart(Process process)
         {
             base.OnStart(process);
@@ -88,6 +85,5 @@ namespace QtVsTools.Editors
                 }
             });
         }
-#endif
     }
 }
