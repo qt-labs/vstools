@@ -50,10 +50,9 @@ namespace QtVsTools.Qml.Classification
     /// will only be granted to the first object/thread, which will be responsible for filling in
     /// the data. Once writing is complete, concurrent read-only access will then be allowed.
     /// </summary>
-    class SharedTagList
+    class SharedTagList : Concurrent
     {
         SortedList<int, TrackingTag> data = new SortedList<int, TrackingTag>();
-        Mutex exclusiveWriteAccess = new Mutex();
         object owner;
 
         public bool Ready { get; private set; }
@@ -61,12 +60,12 @@ namespace QtVsTools.Qml.Classification
         public enum AccessType { ReadOnly, ReadWrite }
         public AccessType RequestWriteAccess(object client)
         {
-            exclusiveWriteAccess.WaitOne();
+            EnterCriticalSection();
             if (owner == null) {
                 owner = client;
                 return AccessType.ReadWrite;
             } else {
-                exclusiveWriteAccess.ReleaseMutex();
+                LeaveCriticalSection();
                 return AccessType.ReadOnly;
             }
         }
@@ -77,7 +76,7 @@ namespace QtVsTools.Qml.Classification
                 return;
             Ready = true;
             try {
-                exclusiveWriteAccess.ReleaseMutex();
+                LeaveCriticalSection();
             } catch { }
         }
 
