@@ -105,18 +105,27 @@ IF %BINARYLOG% (
 )
 
 FOR %%v IN (%VS_VERSIONS%) DO (
+    SETLOCAL
+    IF "%%~v"=="%VS2019:"=%" (
+        ECHO 2019 > %TEMP%\vstools.vs_version_current.txt
+    ) ELSE IF "%%~v"=="%VS2017:"=%" (
+        ECHO 2017 > %TEMP%\vstools.vs_version_current.txt
+    ) ELSE IF "%%~v"=="%VS2015:"=%" (
+        ECHO 2015 > %TEMP%\vstools.vs_version_current.txt
+    )
+
     FOR /F "tokens=* usebackq" %%n IN (`%VSWHERE% %%~v -property installationVersion`) DO (
+    FOR /F "delims=" %%x IN (%TEMP%\vstools.vs_version_current.txt) DO (
         ECHO.
         ECHO.
         ECHO ################################################################################
-        ECHO ## Visual Studio %%n
+        ECHO ## Visual Studio %%x^(%%n^)
         IF NOT "%QtVSToolsDeployTarget%"=="" ECHO ## Deploy to: %QtVSToolsDeployTarget%
         ECHO ################################################################################
         ECHO.
-    )
+    ) )
 
     FOR /F "tokens=* usebackq" %%p IN (`%VSWHERE% %%~v -property installationPath`) DO (
-        SETLOCAL
         IF EXIST "%%p\VC\Auxiliary\Build\vcvars32.bat" (
             IF %VERBOSE% ECHO ## CALL "%%p\VC\Auxiliary\Build\vcvars32.bat"
             CALL "%%p\VC\Auxiliary\Build\vcvars32.bat" > NUL
@@ -128,6 +137,29 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             EXIT /B 2
         )
 
+        IF %INIT% (
+            ECHO ################################################################################
+            ECHO ## Building text template pre-requisites...
+            ECHO ################################################################################
+            CD qtvstools.regexpr
+            msbuild ^
+                /verbosity:%MSBUILD_VERBOSITY% ^
+                /p:Configuration=Release ^
+                /p:Platform="AnyCPU" ^
+            && (
+                ECHO ###############################################################################
+                ECHO ## Build successful: QtVsTools.RegExpr
+                ECHO ###############################################################################
+                ECHO.
+            ) || (
+                ECHO ###############################################################################
+                ECHO ## ERROR building QtVsTools.RegExpr 1>&2
+                ECHO ###############################################################################
+                EXIT /B %ERRORLEVEL%
+            )
+            CD ..
+        )
+
         msbuild ^
             /verbosity:%MSBUILD_VERBOSITY% ^
             /maxCpuCount ^
@@ -136,11 +168,37 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             /p:TransformOutOfDateOnly=%TRANSFORM_INCREMENTAL% ^
             /t:%MSBUILD_TARGETS% ^
             %MSBUILD_EXTRAS% ^
-            QtVSTools.sln
-
-        IF NOT "%ERRORLEVEL%"=="0" (
-            ECHO Error building solution 1>&2
+            QtVSTools.sln ^
+        && (
+            ECHO ################################################################################
+            FOR /F "delims=" %%x IN (%TEMP%\vstools.vs_version_current.txt) DO (
+                ECHO ## Visual Studio %%x
+            )
+            ECHO ## Build successful
+            ECHO ################################################################################
+        ) || (
+            ECHO ################################################################################
+            FOR /F "delims=" %%x IN (%TEMP%\vstools.vs_version_current.txt) DO (
+                ECHO ## Visual Studio %%x
+            )
+            ECHO ## ERROR building solution 1>&2
+            ECHO ################################################################################
             EXIT /B %ERRORLEVEL%
+        )
+
+        IF %INIT% (
+            ECHO.
+            WHERE /Q "nuget.exe" && (
+                ECHO ###############################################################################
+                ECHO # Restoring NuGet packages...
+                ECHO ###############################################################################
+                nuget restore QtVSTools.sln
+            ) || (
+                ECHO ###############################################################################
+                ECHO # Warning: NuGet command line tool is not available 1>&2
+                ECHO # Some project dependencies might be missing 1>&2
+                ECHO ###############################################################################
+            )
         )
 
         IF %DO_INSTALL% (
@@ -155,9 +213,8 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             ECHO Installing...
             VSIXInstaller qtvstools\bin\Release\QtVsTools.vsix
         )
-
-        ENDLOCAL
     )
+    ENDLOCAL
 )
 
 EXIT /B 0
