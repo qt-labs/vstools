@@ -532,6 +532,7 @@
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Thread" />
+    <Reference Include="Microsoft.VisualStudio.Validation" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Options\QtVersionsTable.xaml">
