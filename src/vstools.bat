@@ -79,7 +79,7 @@ IF NOT "%1"=="" (
 )
 
 IF %INIT% (
-    SET MSBUILD_TARGETS=Clean
+    SET MSBUILD_TARGETS=QtMsBuild:TransformAll;Clean
     SET MSBUILD_EXTRAS=%MSBUILD_EXTRAS% /p:CleanDependsOn=TransformDuringBuild
     SET VS_VERSIONS=%VS_ALL%
     SET VS_VERSIONS=%VS_LATEST%
