@@ -128,6 +128,7 @@
     BeforeTargets="QtWorkPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
 
     <ReadLinesFromFile File="$(QtLogFilePath)">
       <Output TaskParameter="Lines" ItemName="QtLogData"/>
@@ -524,6 +525,8 @@
     <ItemGroup>
       <ClCompile Remove="DefaultClCompile" />
     </ItemGroup>
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+    <OnError ExecuteTargets="QtLeaveCriticalSection_OnError"/>
   </Target>
 
   <!--
@@ -539,12 +542,21 @@
       Targets="Build"
       Properties="QtInnerBuild=$(MSBuildProjectFullPath);RandomFileName=$(RandomFileName)">
     </MSBuild>
+    <OnError ExecuteTargets="QtLeaveCriticalSection_OnError"/>
   </Target>
 
   <PropertyGroup
     Condition="'$(QtInnerBuild)' == '' AND '$(DesignTimeBuild)' != 'true'">
     <!--// Outer build: invoke inner build -->
-    <BuildDependsOn>$(QtOuterBuildPrepare);QtOuterBuild;$(QtOuterBuildFinalize)</BuildDependsOn>
+    <BuildDependsOn>
+      QtEnterCriticalSection_InitializeBuildStatus;
+      QtLeaveCriticalSection_InitializeBuildStatus;
+      $(QtOuterBuildPrepare);
+      QtOuterBuild;
+      $(QtOuterBuildFinalize);
+      QtEnterCriticalSection_FinalizeBuildStatus;
+      QtLeaveCriticalSection_FinalizeBuildStatus;
+    </BuildDependsOn>
     <QtInnerBuild>$(MSBuildProjectFullPath)</QtInnerBuild>
     <RandomFileName>$([System.IO.Path]::GetRandomFileName())</RandomFileName>
   </PropertyGroup>
@@ -555,4 +567,21 @@
     <BuildDependsOn>$(QtOuterBuildPrepare);$(QtOuterBuildFinalize)</BuildDependsOn>
   </PropertyGroup>
 
+  <Target Name="QtEnterCriticalSection_InitializeBuildStatus" BeforeTargets="InitializeBuildStatus">
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
+  </Target>
+  <Target Name="QtLeaveCriticalSection_InitializeBuildStatus" AfterTargets="InitializeBuildStatus">
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+  </Target>
+
+  <Target Name="QtEnterCriticalSection_FinalizeBuildStatus" BeforeTargets="FinalizeBuildStatus">
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
+  </Target>
+  <Target Name="QtLeaveCriticalSection_FinalizeBuildStatus" AfterTargets="FinalizeBuildStatus">
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+  </Target>
+
+  <Target Name="QtLeaveCriticalSection_OnError">
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+  </Target>
 </Project>
