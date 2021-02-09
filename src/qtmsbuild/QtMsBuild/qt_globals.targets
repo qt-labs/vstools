@@ -549,13 +549,9 @@
     Condition="'$(QtInnerBuild)' == '' AND '$(DesignTimeBuild)' != 'true'">
     <!--// Outer build: invoke inner build -->
     <BuildDependsOn>
-      QtEnterCriticalSection_InitializeBuildStatus;
-      QtLeaveCriticalSection_InitializeBuildStatus;
       $(QtOuterBuildPrepare);
       QtOuterBuild;
-      $(QtOuterBuildFinalize);
-      QtEnterCriticalSection_FinalizeBuildStatus;
-      QtLeaveCriticalSection_FinalizeBuildStatus;
+      $(QtOuterBuildFinalize)
     </BuildDependsOn>
     <QtInnerBuild>$(MSBuildProjectFullPath)</QtInnerBuild>
     <RandomFileName>$([System.IO.Path]::GetRandomFileName())</RandomFileName>
@@ -567,20 +563,66 @@
     <BuildDependsOn>$(QtOuterBuildPrepare);$(QtOuterBuildFinalize)</BuildDependsOn>
   </PropertyGroup>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtEnterCriticalSection_... / QtLeaveCriticalSection_InitializeBuildStatus
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Synchronize calls to InitializeBuildStatus
+  // -->
   <Target Name="QtEnterCriticalSection_InitializeBuildStatus" BeforeTargets="InitializeBuildStatus">
     <CriticalSection Lock="true" Name="$(ProjectGuid)" />
   </Target>
   <Target Name="QtLeaveCriticalSection_InitializeBuildStatus" AfterTargets="InitializeBuildStatus">
     <CriticalSection Lock="false" Name="$(ProjectGuid)" />
   </Target>
+  <PropertyGroup>
+    <!--// Schedule critical section enter/leave targets around InitializeBuildStatus -->
+    <QtSync_InitializeBuildStatus>
+      QtEnterCriticalSection_InitializeBuildStatus;
+      InitializeBuildStatus;
+      QtLeaveCriticalSection_InitializeBuildStatus
+    </QtSync_InitializeBuildStatus>
+    <!--// Replace 'InitializeBuildStatus' with '$(QtSync_InitializeBuildStatus)' -->
+    <BuildDependsOn>
+      $([MSBuild]::Unescape(
+        $([System.Text.RegularExpressions.Regex]::Replace(' $(BuildDependsOn) ',
+          '(?&lt;!\w)InitializeBuildStatus(?!\w)', $(QtSync_InitializeBuildStatus)))))
+    </BuildDependsOn>
+  </PropertyGroup>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtEnterCriticalSection_... / QtLeaveCriticalSection_FinalizeBuildStatus
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Synchronize calls to FinalizeBuildStatus
+  // -->
   <Target Name="QtEnterCriticalSection_FinalizeBuildStatus" BeforeTargets="FinalizeBuildStatus">
     <CriticalSection Lock="true" Name="$(ProjectGuid)" />
   </Target>
   <Target Name="QtLeaveCriticalSection_FinalizeBuildStatus" AfterTargets="FinalizeBuildStatus">
     <CriticalSection Lock="false" Name="$(ProjectGuid)" />
   </Target>
+  <PropertyGroup>
+    <!--// Schedule critical section enter/leave targets around FinalizeBuildStatus -->
+    <QtSync_FinalizeBuildStatus>
+      QtEnterCriticalSection_FinalizeBuildStatus;
+      FinalizeBuildStatus;
+      QtLeaveCriticalSection_FinalizeBuildStatus
+    </QtSync_FinalizeBuildStatus>
+    <!--// Replace 'FinalizeBuildStatus' with '$(QtSync_FinalizeBuildStatus)' -->
+    <BuildDependsOn>
+      $([MSBuild]::Unescape(
+        $([System.Text.RegularExpressions.Regex]::Replace(' $(BuildDependsOn) ',
+          '(?&lt;!\w)FinalizeBuildStatus(?!\w)', $(QtSync_FinalizeBuildStatus)))))
+    </BuildDependsOn>
+  </PropertyGroup>
 
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtLeaveCriticalSection_OnError
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Fail-safe release of critical section lock, to be used in OnError tasks
+  // -->
   <Target Name="QtLeaveCriticalSection_OnError">
     <CriticalSection Lock="false" Name="$(ProjectGuid)" />
   </Target>
