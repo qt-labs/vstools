@@ -204,7 +204,7 @@ namespace QtVsTools
                 }
                 break;
             case CommandId.QtOptionsId:
-                Vsix.Instance.ShowOptionPage(typeof(Options.QtOptionPage));
+                Vsix.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
                 break;
             case CommandId.QtVersionsId:
                 Vsix.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));

@@ -93,12 +93,16 @@ namespace QtVsTools
 #endif
 
     // Options page
-    [ProvideOptionPage(typeof(Options.QtOptionPage),
-        "Qt", "General", 0, 0, true)]
+    [ProvideOptionPage(typeof(Options.QtOptionsPage),
+        "Qt", "General", 0, 0, true, Sort = 0)]
 
     // Qt Versions page
     [ProvideOptionPage(typeof(Options.QtVersionsPage),
-        "Qt", "Versions", 0, 0, true)]
+        "Qt", "Versions", 0, 0, true, Sort = 1)]
+
+    // Legacy options page
+    [ProvideOptionPage(typeof(Options.QtLegacyOptionsPage),
+        "Qt", "Legacy Project Format", 0, 0, true, Sort = 2)]
 
     public sealed class Vsix : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
@@ -142,8 +146,8 @@ namespace QtVsTools
             }
         }
 
-        public Options.QtOptionPage Options
-            => GetDialogPage(typeof(Options.QtOptionPage)) as Options.QtOptionPage;
+        public Options.QtOptionsPage Options
+            => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
 
         private string qmakeFileReaderPath;
         public string QMakeFileReaderPath

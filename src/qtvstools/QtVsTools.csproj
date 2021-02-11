@@ -84,7 +84,10 @@
     <Compile Include="FormProjectQtSettings.Designer.cs">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Options\QtOptionPage.cs">
+    <Compile Include="Options\QtLegacyOptionsPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Options\QtVersionsTable.cs">
@@ -167,7 +170,6 @@
     <Compile Include="VisualStudio\VsShell.cs" />
     <Compile Include="VisualStudio\VsShellSettings.cs" />
     <Compile Include="Vsix.cs" />
-    <Compile Include="VSQtSettings.cs" />
     <Compile Include="VsToolsDialogWindow.cs" />
   </ItemGroup>
   <ItemGroup>

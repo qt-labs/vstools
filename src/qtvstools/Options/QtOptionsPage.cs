@@ -38,7 +38,7 @@ namespace QtVsTools.Options
 {
     using static EnumExt;
 
-    public class QtOptionPage : DialogPage
+    public class QtOptionsPage : DialogPage
     {
         public enum QtOptions
         {
@@ -85,46 +85,6 @@ namespace QtVsTools.Options
             }
         }
 
-        [Category("Source control")]
-        [DisplayName("Ask before checking out files")]
-        public bool CheckoutPrompt { get; set; }
-
-        [Category("Source control")]
-        [DisplayName("Enable file check-out")]
-        public bool Checkout { get; set; }
-
-        [Category("Linguist (lupdate/lrelease)")]
-        [DisplayName("Default lrelease options")]
-        public string DefaultLReleaseOptions { get; set; }
-
-        [Category("Linguist (lupdate/lrelease)")]
-        [DisplayName("Default lupdate options")]
-        public string DefaultLUpdateOptions { get; set; }
-
-        [Category("Linguist (lupdate/lrelease)")]
-        [DisplayName("Run lupdate during build")]
-        public bool EnableLUpdateOnBuild { get; set; }
-
-        [Category("Meta-Object Compiler (moc)")]
-        [DisplayName("Default moc generated files directory")]
-        public string DefaultMocDir { get; set; }
-
-        [Category("Meta-Object Compiler (moc)")]
-        [DisplayName("Default additional moc options ")]
-        public string AdditionalMocOptions { get; set; }
-
-        [Category("Meta-Object Compiler (moc)")]
-        [DisplayName("Enable automatic moc")]
-        public bool AutoMoc { get; set; }
-
-        [Category("Resource Compiler (rcc)")]
-        [DisplayName("Default rcc generated files directory")]
-        public string DefaultRccDir { get; set; }
-
-        [Category("User Interface Compiler (uic)")]
-        [DisplayName("Default uic generated files directory")]
-        public string DefaultUicDir { get; set; }
-
         [Category("QML Debugging")]
         [DisplayName("Runtime connection timeout (msecs)")]
         [TypeConverter(typeof(TimeoutConverter))]
@@ -132,16 +92,6 @@ namespace QtVsTools.Options
 
         public override void ResetSettings()
         {
-            CheckoutPrompt = true;
-            Checkout = true;
-            DefaultLReleaseOptions = "";
-            DefaultLUpdateOptions = "";
-            EnableLUpdateOnBuild = false;
-            DefaultMocDir = "";
-            AdditionalMocOptions = "";
-            AutoMoc = true;
-            DefaultRccDir = "";
-            DefaultUicDir = "";
             QmlDebuggerTimeout = (Timeout)60000;
         }
 
@@ -153,26 +103,6 @@ namespace QtVsTools.Options
                     .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false)) {
                     if (key == null)
                         return;
-                    if (key.GetValue(Resources.askBeforeCheckoutFileKeyword) is int checkoutPrompt)
-                        CheckoutPrompt = (checkoutPrompt != 0);
-                    if (key.GetValue(Resources.disableCheckoutFilesKeyword) is int disableCheckout)
-                        Checkout = (disableCheckout == 0);
-                    if (key.GetValue(Resources.lreleaseOptionsKeyword) is string lreleaseOptions)
-                        DefaultLReleaseOptions = lreleaseOptions;
-                    if (key.GetValue(Resources.lupdateOptionsKeyword) is string lupdateOptions)
-                        DefaultLUpdateOptions = lupdateOptions;
-                    if (key.GetValue(Resources.lupdateKeyword) is int lupdateOnBuild)
-                        EnableLUpdateOnBuild = (lupdateOnBuild != 0);
-                    if (key.GetValue(Resources.mocDirKeyword) is string mocDir)
-                        DefaultMocDir = mocDir;
-                    if (key.GetValue(Resources.mocOptionsKeyword) is string mocOptions)
-                        AdditionalMocOptions = mocOptions;
-                    if (key.GetValue(Resources.disableAutoMocStepsUpdateKeyword) is int autoMocOff)
-                        AutoMoc = (autoMocOff == 0);
-                    if (key.GetValue(Resources.rccDirKeyword) is string rccDir)
-                        DefaultRccDir = rccDir;
-                    if (key.GetValue(Resources.uicDirKeyword) is string uicDir)
-                        DefaultUicDir = uicDir;
                     if (key.GetValue(QtOptions.QmlDebugTimeout.Cast<string>()) is int qmlTimeout)
                         QmlDebuggerTimeout = (Timeout)qmlTimeout;
                 }
@@ -189,16 +119,6 @@ namespace QtVsTools.Options
                     .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath)) {
                     if (key == null)
                         return;
-                    key.SetValue(Resources.askBeforeCheckoutFileKeyword, CheckoutPrompt ? 1 : 0);
-                    key.SetValue(Resources.disableCheckoutFilesKeyword, Checkout ? 0 : 1);
-                    key.SetValue(Resources.lreleaseOptionsKeyword, DefaultLReleaseOptions);
-                    key.SetValue(Resources.lupdateOptionsKeyword, DefaultLUpdateOptions);
-                    key.SetValue(Resources.lupdateKeyword, EnableLUpdateOnBuild ? 1 : 0);
-                    key.SetValue(Resources.mocDirKeyword, DefaultMocDir);
-                    key.SetValue(Resources.mocOptionsKeyword, AdditionalMocOptions);
-                    key.SetValue(Resources.disableAutoMocStepsUpdateKeyword, AutoMoc ? 0 : 1);
-                    key.SetValue(Resources.rccDirKeyword, DefaultRccDir);
-                    key.SetValue(Resources.uicDirKeyword, DefaultUicDir);
                     key.SetValue(
                         QtOptions.QmlDebugTimeout.Cast<string>(),
                         (int)QmlDebuggerTimeout);
