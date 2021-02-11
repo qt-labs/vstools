@@ -305,6 +305,75 @@ namespace QtVsTools.Core
 
         public int FormatVersion { get { return GetFormatVersion(Project); } }
 
+        public string GetPropertyValue(string propName)
+        {
+            return GetPropertyValue(Project, propName);
+        }
+
+        public string GetPropertyValue(string configName, string platformName, string propName)
+        {
+            return GetPropertyValue(Project, configName, platformName, propName);
+        }
+
+        public static string GetPropertyValue(
+            EnvDTE.Project dteProject,
+            string propName)
+        {
+            var activeConfig = dteProject.ConfigurationManager?.ActiveConfiguration;
+            if (activeConfig == null)
+                return null;
+            return GetPropertyValue(
+                dteProject, activeConfig, propName);
+        }
+
+        public static string GetPropertyValue(
+            EnvDTE.Project dteProject,
+            EnvDTE.Configuration dteConfig,
+            string propName)
+        {
+            if (dteProject == null || dteConfig == null)
+                return null;
+            return GetPropertyValue(
+                dteProject.Object as VCProject,
+                dteConfig.ConfigurationName,
+                dteConfig.PlatformName,
+                propName);
+        }
+
+        public static string GetPropertyValue(
+            EnvDTE.Project dteProject,
+            string configName,
+            string platformName,
+            string propName)
+        {
+            return GetPropertyValue(
+                dteProject.Object as VCProject, configName, platformName, propName);
+        }
+
+        public static string GetPropertyValue(
+            VCProject vcProject,
+            string configName,
+            string platformName,
+            string propName)
+        {
+            var vcConfigs = vcProject.Configurations as IVCCollection;
+            if (vcConfigs == null)
+                return null;
+            var configId = string.Format("{0}|{1}",
+                configName, platformName);
+            var vcConfig = vcConfigs.Item(configId) as VCConfiguration;
+            if (vcConfig == null)
+                return null;
+            return GetPropertyValue(vcConfig, propName);
+        }
+
+        public static string GetPropertyValue(
+            VCConfiguration vcConfig,
+            string propName)
+        {
+            return vcConfig.GetEvaluatedPropertyValue(propName);
+        }
+
         public void AddDefine(string define, uint bldConf)
         {
             foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {

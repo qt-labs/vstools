@@ -367,15 +367,15 @@ namespace QtVsTools.Core
 
         public string GetProjectQtVersion(EnvDTE.Project project)
         {
-            string platformName = null;
+            EnvDTE.Configuration config = null;
             try {
-                platformName = project.ConfigurationManager.ActiveConfiguration.PlatformName;
+                config = project.ConfigurationManager.ActiveConfiguration;
             } catch {
                 // Accessing the ActiveConfiguration property throws an exception
                 // if there's an "unconfigured" platform in the Solution platform combo box.
-                platformName = "Win32";
+                config = project.ConfigurationManager.Item(1);
             }
-            var version = GetProjectQtVersion(project, platformName);
+            var version = GetProjectQtVersion(project, config);
 
             if (version == null && project.Globals.get_VariablePersists("Qt5Version")) {
                 version = (string) project.Globals["Qt5Version"];
@@ -389,8 +389,24 @@ namespace QtVsTools.Core
             return version;
         }
 
+        public string GetProjectQtVersion(EnvDTE.Project project, EnvDTE.Configuration config)
+        {
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+                return QtProject.GetPropertyValue(project, config, "QtInstall");
+
+            var key = "Qt5Version " + config.PlatformName;
+            if (!project.Globals.get_VariablePersists(key))
+                return null;
+            var version = (string)project.Globals[key];
+            ExpandEnvironmentVariablesInQtVersion(ref version);
+            return VerifyIfQtVersionExists(version) ? version : null;
+        }
+
         public string GetProjectQtVersion(EnvDTE.Project project, string platform)
         {
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+                return GetProjectQtVersion(project);
+
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
