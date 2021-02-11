@@ -70,6 +70,7 @@ namespace QtVsTools
         private enum CommandId
         {
             QtVersionId = 0x0500,
+            ViewQtHelpId = 0x0501,
             LaunchDesignerId = 0x0100,
             LaunchLinguistId = 0x0101,
             OpenProFileId = 0x0102,
@@ -131,6 +132,9 @@ namespace QtVsTools
                 return;
 
             switch ((CommandId) command.CommandID.ID) {
+            case CommandId.ViewQtHelpId:
+                VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
+                break;
             case CommandId.LaunchDesignerId:
                 Vsix.Instance.QtDesigner.Start(hideWindow: false);
                 break;
@@ -219,6 +223,9 @@ namespace QtVsTools
                 return;
 
             switch ((CommandId) command.CommandID.ID) {
+            case CommandId.ViewQtHelpId:
+                command.Visible = command.Enabled = true;
+                break;
             case CommandId.QtVersionId:
                 command.Text = "Qt Visual Studio Tools version " + Version.USER_VERSION;
                 command.Visible = true;

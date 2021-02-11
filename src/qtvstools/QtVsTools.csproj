@@ -155,7 +155,7 @@
     <Compile Include="QtHelpLinkChooser.xaml.cs">
       <DependentUpon>QtHelpLinkChooser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="QtHelpMenu.cs" />
+    <Compile Include="QtHelp.cs" />
     <Compile Include="QtItemContextMenu.cs" />
     <Compile Include="QtMainMenu.cs" />
     <Compile Include="QtMsBuildConverter.cs" />

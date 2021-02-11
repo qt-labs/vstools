@@ -207,7 +207,7 @@ namespace QtVsTools
                 RegisterEditorFactory(QtDesigner = new Editors.QtDesigner());
                 RegisterEditorFactory(QtLinguist = new Editors.QtLinguist());
                 RegisterEditorFactory(QtResourceEditor = new Editors.QtResourceEditor());
-                QtHelpMenu.Initialize(this);
+                QtHelp.Initialize(this);
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");

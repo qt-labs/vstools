@@ -43,9 +43,11 @@ using System.Linq;
 
 namespace QtVsTools
 {
-    internal sealed class QtHelpMenu
+    public class QtHelp
     {
-        public static QtHelpMenu Instance
+        public enum SourcePreference { Online, Offline }
+
+        public static QtHelp Instance
         {
             get;
             private set;
@@ -53,18 +55,15 @@ namespace QtVsTools
 
         public static void Initialize(Package package)
         {
-            Instance = new QtHelpMenu(package);
+            Instance = new QtHelp(package);
         }
 
-        const int F1QtHelpId = 0x0100;
-        const int ViewQtHelpId = 0x0101;
-        const int OnlineDocumentationId = 0x0102;
-        const int OfflineDocumentationId = 0x0103;
+        const int F1QtHelpId = 0x0502;
 
         readonly Package package;
-        static readonly Guid HelpMenuGroupGuid = new Guid("fc6244f9-ec84-4370-a59c-b009b2eafd1b");
+        public static readonly Guid MainMenuGuid = new Guid("58f83fff-d39d-4c66-810b-2702e1f04e73");
 
-        QtHelpMenu(Package pkg)
+        QtHelp(Package pkg)
         {
             if (pkg == null)
                 throw new ArgumentNullException("package");
@@ -75,21 +74,8 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            var menuCommandID = new CommandID(HelpMenuGroupGuid, F1QtHelpId);
+            var menuCommandID = new CommandID(MainMenuGuid, F1QtHelpId);
             commandService.AddCommand(new MenuCommand(F1QtHelpCallback, menuCommandID));
-
-            menuCommandID = new CommandID(HelpMenuGroupGuid, ViewQtHelpId);
-            commandService.AddCommand(new MenuCommand(ViewQtHelpCallback, menuCommandID));
-
-            var command = new OleMenuCommand(ExecHandler, new CommandID(HelpMenuGroupGuid,
-                OfflineDocumentationId));
-            command.BeforeQueryStatus += BeforeQueryStatus;
-            commandService.AddCommand(command);
-
-            command = new OleMenuCommand(ExecHandler, new CommandID(HelpMenuGroupGuid,
-                OnlineDocumentationId));
-            command.BeforeQueryStatus += BeforeQueryStatus;
-            commandService.AddCommand(command);
         }
 
         IServiceProvider ServiceProvider
@@ -139,11 +125,6 @@ namespace QtVsTools
             if (!reader.IsDBNull(index))
                 return reader.GetString(index);
             return string.Empty;
-        }
-
-        void ViewQtHelpCallback(object sender, EventArgs args)
-        {
-            VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
         }
 
         async void F1QtHelpCallback(object sender, EventArgs args)
@@ -200,9 +181,7 @@ namespace QtVsTools
                     return;
 
                 var settingsManager = VsShellSettings.Manager;
-                var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-                var offline =
-                    store.GetBoolean(Statics.HelpPreferencePath, Statics.HelpPreferenceKey, true);
+                var offline = Vsix.Instance.Options.HelpPreference == SourcePreference.Offline;
 
                 var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
@@ -274,8 +253,8 @@ namespace QtVsTools
                         string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
                         OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 } else {
-                    if (uri.StartsWith("file:///", StringComparison.Ordinal)
-                        && !File.Exists(uri.Substring("file:///".Length))) {
+                    var helpUri = new Uri(uri.Replace('\\', '/'));
+                    if (helpUri.IsFile && !File.Exists(helpUri.LocalPath)) {
                         VsShellUtilities.ShowMessageBox(Instance.ServiceProvider,
                             "Your search - " + keyword + " - did match a document, but it could "
                             + "not be found on disk. To use the online help, select: "
@@ -286,41 +265,9 @@ namespace QtVsTools
                         VsShellUtilities.OpenSystemBrowser(HelperFunctions.ChangePathFormat(uri));
                     }
                 }
-            } catch { }
-        }
-
-        void ExecHandler(object sender, EventArgs e)
-        {
-            var command = sender as OleMenuCommand;
-            if (command == null)
-                return;
-
-            var settingsManager = VsShellSettings.Manager;
-            var store = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-            store.CreateCollection(Statics.HelpPreferencePath);
-
-            var value = command.CommandID.ID == OfflineDocumentationId;
-            store.SetBoolean(Statics.HelpPreferencePath, Statics.HelpPreferenceKey, value);
-        }
-
-        void BeforeQueryStatus(object sender, EventArgs e)
-        {
-            var command = sender as OleMenuCommand;
-            if (command == null)
-                return;
-
-            var settingsManager = VsShellSettings.Manager;
-            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-
-            switch (command.CommandID.ID) {
-            case OnlineDocumentationId:
-                command.Checked = !store.GetBoolean(Statics.HelpPreferencePath,
-                    Statics.HelpPreferenceKey, false);
-                break;
-            case OfflineDocumentationId:
-                command.Checked = store.GetBoolean(Statics.HelpPreferencePath,
-                    Statics.HelpPreferenceKey, true);
-                break;
+            } catch (Exception e) {
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
     }

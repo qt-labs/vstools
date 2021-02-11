@@ -58,6 +58,11 @@ namespace QtVsTools.Options
             [String("IntelliSense_OnUiFile")] OnUiFile
         }
 
+        public enum Help
+        {
+            [String("Help_Preference")] Preference
+        }
+
         public enum Timeout : uint { Disabled = 0 }
 
         class TimeoutConverter : EnumConverter
@@ -122,6 +127,12 @@ namespace QtVsTools.Options
         [DisplayName("Refresh after changes to UI file")]
         public bool RefreshIntelliSenseOnUiFile { get; set; }
 
+        [Category("Help")]
+        [DisplayName("Preferred source")]
+        public QtHelp.SourcePreference HelpPreference { get; set; }
+        bool IQtVsToolsOptions.HelpPreferenceOnline
+            => (HelpPreference == QtHelp.SourcePreference.Online);
+
         public override void ResetSettings()
         {
             QtMsBuildPath = "";
@@ -129,6 +140,7 @@ namespace QtVsTools.Options
             QmlDebuggerTimeout = (Timeout)60000;
             RefreshIntelliSenseOnBuild = true;
             RefreshIntelliSenseOnUiFile = true;
+            HelpPreference = QtHelp.SourcePreference.Online;
         }
 
         public override void LoadSettingsFromStorage()
@@ -149,6 +161,8 @@ namespace QtVsTools.Options
                         RefreshIntelliSenseOnBuild = (iSenseOnBuild != 0);
                     if (key.GetValue(IntelliSense.OnUiFile.Cast<string>()) is int iSenseOnUiFile)
                         RefreshIntelliSenseOnUiFile = (iSenseOnUiFile != 0);
+                    if (key.GetValue(Help.Preference.Cast<string>()) is string preference)
+                        HelpPreference = EnumExt.Cast(preference, QtHelp.SourcePreference.Online);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -177,6 +191,7 @@ namespace QtVsTools.Options
                         RefreshIntelliSenseOnBuild ? 1 : 0);
                     key.SetValue(IntelliSense.OnUiFile.Cast<string>(),
                         RefreshIntelliSenseOnUiFile ? 1 : 0);
+                    key.SetValue(Help.Preference.Cast<string>(), HelpPreference.Cast<string>());
                 }
             } catch (Exception exception) {
                 Messages.Print(

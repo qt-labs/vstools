@@ -41,6 +41,7 @@ namespace QtVsTools.Core
         int QmlDebuggerTimeout { get; }
         bool RefreshIntelliSenseOnBuild { get; }
         bool RefreshIntelliSenseOnUiFile { get; }
+        bool HelpPreferenceOnline { get; }
     }
 
     public static class QtVSIPSettings
