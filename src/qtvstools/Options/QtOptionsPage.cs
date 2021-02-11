@@ -33,16 +33,29 @@ using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
 using QtVsTools.Core;
 using QtVsTools.Common;
+using System.IO;
 
 namespace QtVsTools.Options
 {
     using static EnumExt;
 
-    public class QtOptionsPage : DialogPage
+    public class QtOptionsPage : DialogPage, IQtVsToolsOptions
     {
-        public enum QtOptions
+        public enum QtMsBuild
         {
-            [String("QMLDebug_Timeout")] QmlDebugTimeout
+            [String("QtMsBuild_Path")] Path
+        }
+
+        public enum QmlDebug
+        {
+            [String("QMLDebug_Enable")] Enable,
+            [String("QMLDebug_Timeout")] Timeout
+        }
+
+        public enum IntelliSense
+        {
+            [String("IntelliSense_OnBuild")] OnBuild,
+            [String("IntelliSense_OnUiFile")] OnUiFile
         }
 
         public enum Timeout : uint { Disabled = 0 }
@@ -85,26 +98,57 @@ namespace QtVsTools.Options
             }
         }
 
+        [Category("Qt/MSBuild")]
+        [DisplayName("Path to Qt/MSBuild files")]
+        [Description("Corresponds to the QTMSBUILD environment variable")]
+        public string QtMsBuildPath { get; set; }
+
+        [Category("QML Debugging")]
+        [DisplayName("Process debug events")]
+        [Description("Set to false to turn off processing of all debug events by the QML debug engine, effectively excluding it from the debugging environment. Disabling the QML debug engine will skip debugging of QML code for all projects.")]
+        public bool QmlDebuggerEnabled { get; set; }
+
         [Category("QML Debugging")]
         [DisplayName("Runtime connection timeout (msecs)")]
         [TypeConverter(typeof(TimeoutConverter))]
         public Timeout QmlDebuggerTimeout { get; set; }
+        int IQtVsToolsOptions.QmlDebuggerTimeout => (int)QmlDebuggerTimeout;
+
+        [Category("IntelliSense")]
+        [DisplayName("Refresh after build")]
+        public bool RefreshIntelliSenseOnBuild { get; set; }
+
+        [Category("IntelliSense")]
+        [DisplayName("Refresh after changes to UI file")]
+        public bool RefreshIntelliSenseOnUiFile { get; set; }
 
         public override void ResetSettings()
         {
+            QtMsBuildPath = "";
+            QmlDebuggerEnabled = true;
             QmlDebuggerTimeout = (Timeout)60000;
+            RefreshIntelliSenseOnBuild = true;
+            RefreshIntelliSenseOnUiFile = true;
         }
 
         public override void LoadSettingsFromStorage()
         {
             ResetSettings();
             try {
+                QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");
+
                 using (var key = Registry.CurrentUser
                     .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false)) {
                     if (key == null)
                         return;
-                    if (key.GetValue(QtOptions.QmlDebugTimeout.Cast<string>()) is int qmlTimeout)
-                        QmlDebuggerTimeout = (Timeout)qmlTimeout;
+                    if (key.GetValue(QmlDebug.Enable.Cast<string>()) is int qmlDebugEnabled)
+                        QmlDebuggerEnabled = (qmlDebugEnabled != 0);
+                    if (key.GetValue(QmlDebug.Timeout.Cast<string>()) is int qmlDebugTimeout)
+                        QmlDebuggerTimeout = (Timeout)qmlDebugTimeout;
+                    if (key.GetValue(IntelliSense.OnBuild.Cast<string>()) is int iSenseOnBuild)
+                        RefreshIntelliSenseOnBuild = (iSenseOnBuild != 0);
+                    if (key.GetValue(IntelliSense.OnUiFile.Cast<string>()) is int iSenseOnUiFile)
+                        RefreshIntelliSenseOnUiFile = (iSenseOnUiFile != 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -115,13 +159,24 @@ namespace QtVsTools.Options
         public override void SaveSettingsToStorage()
         {
             try {
+                if (!string.IsNullOrEmpty(QtMsBuildPath)
+                    && QtMsBuildPath != Environment.GetEnvironmentVariable("QTMSBUILD")) {
+                    Environment.SetEnvironmentVariable(
+                        "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.User);
+                    Environment.SetEnvironmentVariable(
+                        "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
+                }
+
                 using (var key = Registry.CurrentUser
                     .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath)) {
                     if (key == null)
                         return;
-                    key.SetValue(
-                        QtOptions.QmlDebugTimeout.Cast<string>(),
-                        (int)QmlDebuggerTimeout);
+                    key.SetValue(QmlDebug.Enable.Cast<string>(), QmlDebuggerEnabled ? 1 : 0);
+                    key.SetValue(QmlDebug.Timeout.Cast<string>(), (int)QmlDebuggerTimeout);
+                    key.SetValue(IntelliSense.OnBuild.Cast<string>(),
+                        RefreshIntelliSenseOnBuild ? 1 : 0);
+                    key.SetValue(IntelliSense.OnUiFile.Cast<string>(),
+                        RefreshIntelliSenseOnUiFile ? 1 : 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(

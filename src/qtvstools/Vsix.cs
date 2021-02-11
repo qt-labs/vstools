@@ -195,6 +195,7 @@ namespace QtVsTools
                     throw new Exception("Unable to get service: DTE");
 
                 VsShellSettings.Manager = new ShellSettingsManager(this as IServiceProvider);
+                QtVSIPSettings.Options = Options;
 
                 eventHandler = new DteEventsHandler(Dte);
 

@@ -59,6 +59,8 @@ namespace QtVsTools.Editors
         protected override void OnStart(Process process)
         {
             base.OnStart(process);
+            if (!Vsix.Instance.Options.RefreshIntelliSenseOnUiFile)
+                return;
             Task.Run(() =>
             {
                 var document = VsShell.GetDocument(Context, ItemId);

@@ -34,8 +34,19 @@ using System.Collections;
 
 namespace QtVsTools.Core
 {
+    public interface IQtVsToolsOptions
+    {
+        string QtMsBuildPath { get; }
+        bool QmlDebuggerEnabled { get; }
+        int QmlDebuggerTimeout { get; }
+        bool RefreshIntelliSenseOnBuild { get; }
+        bool RefreshIntelliSenseOnUiFile { get; }
+    }
+
     public static class QtVSIPSettings
     {
+        public static IQtVsToolsOptions Options { get; set; }
+
         static Hashtable mocDirCache = new Hashtable();
         static Hashtable uicDirCache = new Hashtable();
         static Hashtable rccDirCache = new Hashtable();

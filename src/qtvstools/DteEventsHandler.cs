@@ -294,7 +294,8 @@ namespace QtVsTools
                 if (project == null || !HelperFunctions.IsQtProject(project))
                     continue;
 
-                QtProjectTracker.RefreshIntelliSense(project, configId);
+                if (Vsix.Instance.Options.RefreshIntelliSenseOnBuild)
+                    QtProjectTracker.RefreshIntelliSense(project, configId);
             }
             buildDoneEvents.Clear();
         }
@@ -439,7 +440,8 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+                    if (Vsix.Instance.Options.RefreshIntelliSenseOnUiFile)
+                        QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);

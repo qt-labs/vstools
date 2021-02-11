@@ -79,6 +79,9 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
+            if (!Vsix.Instance.Options.QmlDebuggerEnabled)
+                return VSConstants.S_OK;
+
             if (riidEvent != typeof(IDebugThreadCreateEvent2).GUID
                 && riidEvent != typeof(IDebugProgramDestroyEvent2).GUID) {
                 return VSConstants.S_OK;
