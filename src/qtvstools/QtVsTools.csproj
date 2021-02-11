@@ -698,4 +698,14 @@
     </ItemGroup>
   </Target>
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <Target Name="QtVsTools_PrepareForBuild" BeforeTargets="PrepareForBuild">
+    <!-- Add SQLite interop DLL's to package -->
+    <ItemGroup Condition="'@(SQLiteInteropFiles)' != ''">
+      <Content Include="@(SQLiteInteropFiles)">
+        <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <IncludeInVSIX>true</IncludeInVSIX>
+      </Content>
+    </ItemGroup>
+  </Target>
 </Project>
