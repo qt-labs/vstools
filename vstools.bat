@@ -78,6 +78,13 @@ IF NOT "%1"=="" (
     GOTO :parseArgs
 )
 
+IF EXIST src\QtVsTools.sln (
+    CD src
+) ELSE IF NOT EXIST QtVsTools.sln (
+    ECHO Error: could not find Qt VS Tools solution file.
+    EXIT /B 1
+)
+
 IF %INIT% (
     SET MSBUILD_TARGETS=QtMsBuild:TransformAll;Clean
     SET MSBUILD_EXTRAS=%MSBUILD_EXTRAS% /p:CleanDependsOn=TransformDuringBuild
