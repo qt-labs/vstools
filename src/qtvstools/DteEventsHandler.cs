@@ -28,6 +28,7 @@
 
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -54,6 +55,7 @@ namespace QtVsTools
         private VCProjectEngineEvents vcProjectEngineEvents;
         private CommandEvents debugStartEvents;
         private CommandEvents debugStartWithoutDebuggingEvents;
+        private CommandEvents f1HelpEvents;
         private int dispId_VCFileConfiguration_ExcludedFromBuild;
         private int dispId_VCCLCompilerTool_UsePrecompiledHeader;
         private int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
@@ -92,12 +94,24 @@ namespace QtVsTools
             debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368);
             debugStartWithoutDebuggingEvents.BeforeExecute += debugStartWithoutDebuggingEvents_BeforeExecute;
 
+            f1HelpEvents = events.get_CommandEvents(
+                typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
+                (int)VSConstants.VSStd97CmdID.F1Help);
+            f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
+
             dispId_VCFileConfiguration_ExcludedFromBuild = GetPropertyDispId(typeof(VCFileConfiguration), "ExcludedFromBuild");
             dispId_VCCLCompilerTool_UsePrecompiledHeader = GetPropertyDispId(typeof(VCCLCompilerTool), "UsePrecompiledHeader");
             dispId_VCCLCompilerTool_PrecompiledHeaderThrough = GetPropertyDispId(typeof(VCCLCompilerTool), "PrecompiledHeaderThrough");
             dispId_VCCLCompilerTool_PreprocessorDefinitions = GetPropertyDispId(typeof(VCCLCompilerTool), "PreprocessorDefinitions");
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             InitializeVCProjects();
+        }
+
+        private void F1HelpEvents_BeforeExecute(
+            string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
+        {
+            if (Vsix.Instance.Options.TryQtHelpOnF1Pressed && QtHelp.QueryEditorContextHelp())
+                CancelDefault = true;
         }
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)

@@ -29,11 +29,14 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.Common;
-using System.IO;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Options
 {
@@ -60,7 +63,8 @@ namespace QtVsTools.Options
 
         public enum Help
         {
-            [String("Help_Preference")] Preference
+            [String("Help_Preference")] Preference,
+            [String("Help_TryOnF1Pressed")] TryOnF1Pressed
         }
 
         public enum Timeout : uint { Disabled = 0 }
@@ -128,10 +132,20 @@ namespace QtVsTools.Options
         public bool RefreshIntelliSenseOnUiFile { get; set; }
 
         [Category("Help")]
+        [DisplayName("Keyboard shortcut")]
+        [Description("To change keyboard mapping, go to: Tools > Options > Keyboard")]
+        [ReadOnly(true)]
+        public string QtHelpKeyBinding { get; set; }
+
+        [Category("Help")]
         [DisplayName("Preferred source")]
         public QtHelp.SourcePreference HelpPreference { get; set; }
         bool IQtVsToolsOptions.HelpPreferenceOnline
             => (HelpPreference == QtHelp.SourcePreference.Online);
+
+        [Category("Help")]
+        [DisplayName("Try Qt documentation when F1 is pressed")]
+        public bool TryQtHelpOnF1Pressed { get; set; }
 
         public override void ResetSettings()
         {
@@ -141,6 +155,21 @@ namespace QtVsTools.Options
             RefreshIntelliSenseOnBuild = true;
             RefreshIntelliSenseOnUiFile = true;
             HelpPreference = QtHelp.SourcePreference.Online;
+            TryQtHelpOnF1Pressed = true;
+
+            ////////
+            // Get Qt Help keyboard shortcut
+            //
+            var dte = VsServiceProvider.GetService<SDTE, DTE>();
+            var f1QtHelpBindings = dte.Commands.Item("QtVSTools.F1QtHelp")?.Bindings as Array;
+            var binding = f1QtHelpBindings.Cast<string>()
+                .Select(x => x.Split(new[] { "::" }, StringSplitOptions.None))
+                .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
+                .FirstOrDefault();
+            if (binding != null)
+                QtHelpKeyBinding = string.Format("[{0}] {1}", binding.Scope, binding.Shortcut);
+            else
+                QtHelpKeyBinding = "";
         }
 
         public override void LoadSettingsFromStorage()
@@ -163,6 +192,8 @@ namespace QtVsTools.Options
                         RefreshIntelliSenseOnUiFile = (iSenseOnUiFile != 0);
                     if (key.GetValue(Help.Preference.Cast<string>()) is string preference)
                         HelpPreference = EnumExt.Cast(preference, QtHelp.SourcePreference.Online);
+                    if (key.GetValue(Help.TryOnF1Pressed.Cast<string>()) is int tryOnF1)
+                        TryQtHelpOnF1Pressed = (tryOnF1 != 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -192,6 +223,7 @@ namespace QtVsTools.Options
                     key.SetValue(IntelliSense.OnUiFile.Cast<string>(),
                         RefreshIntelliSenseOnUiFile ? 1 : 0);
                     key.SetValue(Help.Preference.Cast<string>(), HelpPreference.Cast<string>());
+                    key.SetValue(Help.TryOnF1Pressed.Cast<string>(), TryQtHelpOnF1Pressed ? 1 : 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(

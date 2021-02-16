@@ -40,6 +40,8 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
@@ -75,7 +77,7 @@ namespace QtVsTools
                 return;
 
             var menuCommandID = new CommandID(MainMenuGuid, F1QtHelpId);
-            commandService.AddCommand(new MenuCommand(F1QtHelpCallback, menuCommandID));
+            commandService.AddCommand(new MenuCommand(F1QtHelpEventHandler, menuCommandID));
         }
 
         IServiceProvider ServiceProvider
@@ -127,7 +129,12 @@ namespace QtVsTools
             return string.Empty;
         }
 
-        async void F1QtHelpCallback(object sender, EventArgs args)
+        void F1QtHelpEventHandler(object sender, EventArgs args)
+        {
+            QueryEditorContextHelp(true);
+        }
+
+        public static bool QueryEditorContextHelp(bool defaultTryOnline = false)
         {
             try {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
@@ -158,7 +165,7 @@ namespace QtVsTools
 
                 keyword = keyword.Trim();
                 if (keyword.Length <= 1 || IsSuperfluousCharacter(keyword))
-                    return; // suppress single character, operators etc...
+                    return false; // suppress single character, operators etc...
 
                 var qtVersion = "$(DefaultQtVersion)";
                 var project = HelperFunctions.GetSelectedQtProject(dte);
@@ -174,11 +181,11 @@ namespace QtVsTools
 
                 var docPath = QtVersionManager.The().GetVersionInfo(qtVersion).QtInstallDocs;
                 if (string.IsNullOrEmpty(docPath) || !Directory.Exists(docPath))
-                    return;
+                    return false;
 
                 var qchFiles = Directory.GetFiles(docPath, "*?.qch");
                 if (qchFiles.Length == 0)
-                    return;
+                    return false;
 
                 var settingsManager = VsShellSettings.Manager;
                 var offline = Vsix.Instance.Options.HelpPreference == SourcePreference.Offline;
@@ -198,7 +205,8 @@ namespace QtVsTools
                     using (var connection = new SQLiteConnection(builder.ToString())) {
                         connection.Open();
                         using (var command = new SQLiteCommand(linksForKeyword, connection)) {
-                            using (var reader = await command.ExecuteReaderAsync()) {
+                            using (var reader =
+                                Task.Run(async () => await command.ExecuteReaderAsync()).Result) {
                                 while (reader.Read()) {
                                     var title = GetString(reader, 0);
                                     if (string.IsNullOrWhiteSpace(title))
@@ -223,11 +231,13 @@ namespace QtVsTools
                 var uri = string.Empty;
                 switch (links.Values.Count) {
                 case 0:
-                    if (!offline) {
+                    if (!offline && defaultTryOnline) {
                         uri = new UriBuilder("https://doc.qt.io/qt-5/search-results.html")
                         {
                             Query = "q=" + keyword
                         }.ToString();
+                    } else {
+                        return false;
                     }
                     break;
                 case 1:
@@ -241,7 +251,7 @@ namespace QtVsTools
                         ShowInTaskbar = false
                     };
                     if (!dialog.ShowModal().GetValueOrDefault())
-                        return;
+                        return false;
                     uri = dialog.Link
                         .Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     break;
@@ -269,6 +279,7 @@ namespace QtVsTools
                 Messages.Print(
                     e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
+            return true;
         }
     }
 }
