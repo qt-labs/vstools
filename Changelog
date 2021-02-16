@@ -1,3 +1,30 @@
+Qt Visual Studio Tools version 2.7.1:
+
+Changes
+-------
+  - Translation tools integrated with Qt/MSBuild
+  - Qt.props property sheet accessible through the VS Property Manager window
+  - Qt editors are opened in a document window inside Visual Studio
+  - IntelliSense is updated on changes to .ui files
+  - The Qt Options UI will be displayed as part of the standard VS 'Tools > Options' dialog
+  - Added the following new fields to the Qt Options page:
+      * QML debugger connection timeout
+      * Path to Qt/MSBuild files
+      * Enable QML debugger (overrides project settings)
+      * Enable refresh of IntelliSense after build
+      * Enable refresh of IntelliSense when a .ui file is changed
+  - Pressing F1 will query Qt documentation
+  - Fixed QTVSADDINBUG-698: Qt online help not working
+  - Fixed QTVSADDINBUG-755: QML debug not working without a QRC file
+  - Fixed QTVSADDINBUG-822: Incorrect generation of command line options
+  - Fixed QTVSADDINBUG-825: Calls to qmake fail silently
+  - Fixed QTVSADDINBUG-826: Crash in new-project wizard
+  - Fixed QTVSADDINBUG-827: Command line options of Qt tools generated incorrectly
+  - Fixed QTVSADDINBUG-837: Debug output cluttered with QML debugger status messages
+  - Fixed QTVSADDINBUG-841: Incremental build failure
+  - Fixed QTVSADDINBUG-857: Build fails due to concurrency issues
+
+
 Qt Visual Studio Tools version 2.6.0:
 
 Changes
