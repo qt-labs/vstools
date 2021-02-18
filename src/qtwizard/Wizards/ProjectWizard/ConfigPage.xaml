@@ -120,7 +120,12 @@
                         </Button.Template>
                       </Button>
                       <TextBox Text="{Binding Name}" Margin="2,8" BorderThickness="0"
-                          Background="Transparent" TextBoxBase.TextChanged="Name_TextChanged" />
+                          Background="Transparent" TextBoxBase.TextChanged="Name_TextChanged">
+                        <TextBox.Resources>
+                          <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                           Color="LimeGreen" />
+                        </TextBox.Resources>
+                      </TextBox>
                     </StackPanel>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -132,6 +137,10 @@
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         FrameworkElement.Loaded="QtVersion_ComboBox_Loaded"
                         TextBoxBase.TextChanged="QtVersion_TextChanged">
+                      <ComboBox.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="LimeGreen" />
+                      </ComboBox.Resources>
                     </ComboBox>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -143,6 +152,10 @@
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         FrameworkElement.Loaded="Target_ComboBox_Loaded"
                         TextBoxBase.TextChanged="Target_TextChanged">
+                      <ComboBox.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="LimeGreen" />
+                      </ComboBox.Resources>
                     </ComboBox>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -154,6 +167,10 @@
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         FrameworkElement.Loaded="Platform_ComboBox_Loaded"
                         TextBoxBase.TextChanged="Platform_TextChanged">
+                      <ComboBox.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="LimeGreen" />
+                      </ComboBox.Resources>
                     </ComboBox>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
