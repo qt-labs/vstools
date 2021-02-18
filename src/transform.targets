@@ -51,4 +51,16 @@
   <PropertyGroup>
     <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '12.0'">
+    <DefineConstants>$(DefineConstants);VS2013</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '14.0'">
+    <DefineConstants>$(DefineConstants);VS2015</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '15.0'">
+    <DefineConstants>$(DefineConstants);VS2017</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '16.0'">
+    <DefineConstants>$(DefineConstants);VS2019</DefineConstants>
+  </PropertyGroup>
 </Project>
