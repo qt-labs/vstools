@@ -48,6 +48,12 @@
         <LocationField>Enabled</LocationField>
         <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
         <Icon>console.ico</Icon>
+        <LanguageTag>Cpp</LanguageTag>
+        <PlatformTag>Windows</PlatformTag>
+        <PlatformTag>Linux</PlatformTag>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
+        <ProjectTypeTag>Console</ProjectTypeTag>
+        <ProjectTypeTag>IoT</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$safeprojectname$.vcxproj"
