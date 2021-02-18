@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-#region Task TaskName="HostTranslatePaths" Condition="'$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
+#region Task TaskName="HostTranslatePaths" Condition="'$(VisualStudioVersion)' == '16.0' AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
 
 #region Reference
 //$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll
@@ -74,6 +74,7 @@ namespace QtVsTools.QtMsBuild.Tasks
             System.String[] Names = null)
         #endregion
         {
+#if VS2019
             #region Code
             Result = new ITaskItem[] { };
             var newItems = new List<ITaskItem>();
@@ -96,7 +97,9 @@ namespace QtVsTools.QtMsBuild.Tasks
             }
             Result = newItems.ToArray();
             #endregion
-
+#else
+            Result = null;
+#endif
             return true;
         }
     }

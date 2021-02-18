@@ -317,6 +317,8 @@
   // -->
   <ItemGroup>
     <Compile Include="Tasks\CriticalSection.cs" />
+    <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\ListQrc.cs" />
     <Compile Include="Tasks\ParseVarDefs.cs" />
     <Compile Include="Tasks\GetVarsFromMakefile.cs" />
