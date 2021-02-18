@@ -45,10 +45,10 @@
     <Reference Include="Microsoft.Build.Utilities.Core" />
     <Reference
       Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+      Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
     <Reference
       Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\\Application Type\Linux\1.0\liblinux.dll" />
+      Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
   <ItemGroup>
     <!--
