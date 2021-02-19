@@ -138,7 +138,9 @@ namespace QtVsTools
         {
             try {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
-                var objTextDocument = dte.ActiveDocument.Object() as TextDocument;
+                var objTextDocument = dte?.ActiveDocument?.Object() as TextDocument;
+                if (objTextDocument == null)
+                    return false;
 
                 var keyword = string.Empty;
                 var selection = objTextDocument.Selection;
