@@ -56,5 +56,7 @@ namespace QtVsTools.Editors
         {
             return Title;
         }
+
+        protected override bool Detached => Vsix.Instance.Options.ResourceEditorDetached;
     }
 }

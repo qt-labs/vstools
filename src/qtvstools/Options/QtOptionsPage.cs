@@ -67,6 +67,21 @@ namespace QtVsTools.Options
             [String("Help_TryOnF1Pressed")] TryOnF1Pressed
         }
 
+        public enum Designer
+        {
+            [String("Designer_Detached")] Detached,
+        }
+
+        public enum Linguist
+        {
+            [String("Linguist_Detached")] Detached,
+        }
+
+        public enum ResEditor
+        {
+            [String("ResourceEditor_Detached")] Detached,
+        }
+
         public enum Timeout : uint { Disabled = 0 }
 
         class TimeoutConverter : EnumConverter
@@ -147,6 +162,18 @@ namespace QtVsTools.Options
         [DisplayName("Try Qt documentation when F1 is pressed")]
         public bool TryQtHelpOnF1Pressed { get; set; }
 
+        [Category("Qt Designer")]
+        [DisplayName("Run in detached window")]
+        public bool DesignerDetached { get; set; }
+
+        [Category("Qt Linguist")]
+        [DisplayName("Run in detached window")]
+        public bool LinguistDetached { get; set; }
+
+        [Category("Qt Resource Editor")]
+        [DisplayName("Run in detached window")]
+        public bool ResourceEditorDetached { get; set; }
+
         public override void ResetSettings()
         {
             QtMsBuildPath = "";
@@ -156,6 +183,7 @@ namespace QtVsTools.Options
             RefreshIntelliSenseOnUiFile = true;
             HelpPreference = QtHelp.SourcePreference.Online;
             TryQtHelpOnF1Pressed = true;
+            DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -194,6 +222,12 @@ namespace QtVsTools.Options
                         HelpPreference = EnumExt.Cast(preference, QtHelp.SourcePreference.Online);
                     if (key.GetValue(Help.TryOnF1Pressed.Cast<string>()) is int tryOnF1)
                         TryQtHelpOnF1Pressed = (tryOnF1 != 0);
+                    if (key.GetValue(Designer.Detached.Cast<string>()) is int designerDetached)
+                        DesignerDetached = (designerDetached != 0);
+                    if (key.GetValue(Linguist.Detached.Cast<string>()) is int linguistDetached)
+                        LinguistDetached = (linguistDetached != 0);
+                    if (key.GetValue(ResEditor.Detached.Cast<string>()) is int resEditorDetached)
+                        ResourceEditorDetached = (resEditorDetached != 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -224,6 +258,9 @@ namespace QtVsTools.Options
                         RefreshIntelliSenseOnUiFile ? 1 : 0);
                     key.SetValue(Help.Preference.Cast<string>(), HelpPreference.Cast<string>());
                     key.SetValue(Help.TryOnF1Pressed.Cast<string>(), TryQtHelpOnF1Pressed ? 1 : 0);
+                    key.SetValue(Designer.Detached.Cast<string>(), DesignerDetached ? 1 : 0);
+                    key.SetValue(Linguist.Detached.Cast<string>(), LinguistDetached ? 1 : 0);
+                    key.SetValue(ResEditor.Detached.Cast<string>(), ResourceEditorDetached ? 1 : 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(

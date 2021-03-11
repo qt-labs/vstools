@@ -61,18 +61,17 @@ namespace QtVsTools.Editors
             base.OnStart(process);
             if (!Vsix.Instance.Options.RefreshIntelliSenseOnUiFile)
                 return;
+            var document = VsShell.GetDocument(Context, ItemId);
+            if (document == null)
+                return;
+            var project = document.ProjectItem?.ContainingProject;
+            if (project == null)
+                return;
+            string filePath = document.FullName;
+            string[] itemId = new[] { document.ProjectItem?.Name };
+            var lastWriteTime = File.GetLastWriteTime(filePath);
             Task.Run(() =>
             {
-                var document = VsShell.GetDocument(Context, ItemId);
-                if (document == null)
-                    return;
-                var project = document.ProjectItem?.ContainingProject;
-                if (project == null)
-                    return;
-                string filePath = document.FullName;
-                string[] itemId = null;
-                itemId = new[] { document.ProjectItem?.Name };
-                var lastWriteTime = File.GetLastWriteTime(filePath);
                 while (!process.WaitForExit(1000)) {
                     var latestWriteTime = File.GetLastWriteTime(filePath);
                     if (lastWriteTime != latestWriteTime) {
@@ -87,5 +86,7 @@ namespace QtVsTools.Editors
                 }
             });
         }
+
+        protected override bool Detached => Vsix.Instance.Options.DesignerDetached;
     }
 }

@@ -219,6 +219,8 @@ namespace QtVsTools.Editors
         {
         }
 
+        protected virtual bool Detached => false;
+
         private class EditorPane : WindowPane, IVsPersistDocData
         {
             public Editor Editor { get; private set; }
@@ -305,9 +307,15 @@ namespace QtVsTools.Editors
             int IVsPersistDocData.LoadDocData(string pszMkDocument)
             {
                 var solution = GetService(typeof(SVsSolution)) as IVsSolution;
-                EditorProcess = Editor.Start(pszMkDocument, QtToolsPath);
+                EditorProcess = Editor.Start(pszMkDocument, QtToolsPath,
+                    hideWindow: !Editor.Detached);
                 if (EditorProcess == null)
                     return VSConstants.E_FAIL;
+                if (Editor.Detached) {
+                    Editor.OnStart(EditorProcess);
+                    CloseParentFrame();
+                    return VSConstants.S_OK;
+                }
 
                 EditorTitle.Text = Editor.GetTitle(EditorProcess);
 
