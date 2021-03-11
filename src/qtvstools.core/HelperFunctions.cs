@@ -1896,5 +1896,17 @@ namespace QtVsTools.Core
         {
             return string.Format("{{{0}}}", Guid.NewGuid().ToString().ToUpper());
         }
+
+        public static string SafePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return null;
+            path = path.Replace("\"", "");
+            if (!path.Contains(' '))
+                return path;
+            if (path.EndsWith("\\"))
+                path += "\\";
+            return string.Format("\"{0}\"", path);
+        }
     }
 }

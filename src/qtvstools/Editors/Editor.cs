@@ -45,6 +45,8 @@ using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Editors
 {
+    using static Core.HelperFunctions;
+
     public abstract class Editor : IVsEditorFactory
     {
         public abstract Guid Guid { get; }
@@ -188,7 +190,7 @@ namespace QtVsTools.Editors
             return new ProcessStartInfo
             {
                 FileName = Path.GetFullPath(Path.Combine(qtToolsPath, ExecutableName)),
-                Arguments = filePath,
+                Arguments = SafePath(filePath),
                 WindowStyle = hideWindow ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
             };
         }
