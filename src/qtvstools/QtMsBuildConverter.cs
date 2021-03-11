@@ -82,9 +82,8 @@ namespace QtVsTools
             solution.Close(true);
 
             var waitDialog = WaitDialog.StartWithProgress(
-                    SR.GetString("Resources_QtVsTools"),
-                    SR.GetString("ConvertWait"),
-                    null, null, 0, true, projectPaths.Count, 0);
+                SR.GetString("Resources_QtVsTools"), SR.GetString("ConvertWait"),
+                projectPaths.Count, isCancelable: true);
 
             int projCount = 0;
             bool canceled = false;
@@ -93,7 +92,7 @@ namespace QtVsTools
                     waitDialog.Update(string.Format(SR.GetString("ConvertProgress"),
                         projCount + 1, projectPaths.Count,
                         Path.GetFileNameWithoutExtension(projectPath)),
-                        null, null, projCount, projectPaths.Count, false);
+                        projectPaths.Count, projCount);
                     if (waitDialog.Canceled)
                         break;
                 }

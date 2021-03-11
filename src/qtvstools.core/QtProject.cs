@@ -2771,18 +2771,16 @@ namespace QtVsTools.Core
             int progress = 0;
             int progressTotal = filesCollection.Count;
             var waitDialog = WaitDialog.StartWithProgress(SR.GetString("Resources_QtVsTools"),
-                SR.GetString("WaitDialogRefreshMoc"), null, null, 5, false,
-                progressTotal, progress++);
+                SR.GetString("WaitDialogRefreshMoc"), progressTotal, progress++, delay: 5);
             qtMsBuild.BeginSetItemProperties();
             foreach (VCFile vcfile in filesCollection) {
                 RefreshMocStep(vcfile, false);
-                waitDialog.Update(SR.GetString("WaitDialogRefreshMoc"), null, null,
-                    progress++, progressTotal, true);
+                waitDialog.Update(SR.GetString("WaitDialogRefreshMoc"), progressTotal, progress++);
             }
             waitDialog.Stop();
 
             waitDialog = WaitDialog.Start(SR.GetString("Resources_QtVsTools"),
-                SR.GetString("WaitDialogRefreshMoc"), null, null, 2, false, true);
+                SR.GetString("WaitDialogRefreshMoc"), delay: 2);
             qtMsBuild.EndSetItemProperties();
             waitDialog.Stop();
         }

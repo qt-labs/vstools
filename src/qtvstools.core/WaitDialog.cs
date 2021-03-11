@@ -39,7 +39,7 @@ using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core
 {
-    public class WaitDialog
+    public class WaitDialog : IDisposable
     {
         static IVsThreadedWaitDialogFactory factory = null;
 
@@ -96,21 +96,21 @@ namespace QtVsTools.Core
         }
 
         public static WaitDialog Start(
-            string waitCaption,
-            string waitMessage,
-            string progressText,
-            string statusBarText,
-            int delayToShowDialog,
-            bool isCancelable,
-            bool showMarqueeProgress,
+            string caption,
+            string message,
+            string progressText = null,
+            string statusBarText = null,
+            int delay = 0,
+            bool isCancelable = false,
+            bool showMarqueeProgress = true,
             IVsThreadedWaitDialogFactory dialogFactory = null)
         {
             var dialog = Create(dialogFactory);
             if (dialog == null)
                 return null;
 
-            var res = dialog.VsWaitDialog.StartWaitDialog(waitCaption, waitMessage, progressText,
-                    null, statusBarText, delayToShowDialog, isCancelable, showMarqueeProgress);
+            var res = dialog.VsWaitDialog.StartWaitDialog(caption, message, progressText,
+                    null, statusBarText, delay, isCancelable, showMarqueeProgress);
 
             if (res != VSConstants.S_OK)
                 return null;
@@ -119,14 +119,14 @@ namespace QtVsTools.Core
         }
 
         public static WaitDialog StartWithProgress(
-            string waitCaption,
-            string waitMessage,
-            string progressText,
-            string statusBarText,
-            int delayToShowDialog,
-            bool isCancelable,
+            string caption,
+            string message,
             int totalSteps,
-            int currentStep,
+            int currentStep = 0,
+            string progressText = null,
+            string statusBarText = null,
+            int delay = 0,
+            bool isCancelable = false,
             IVsThreadedWaitDialogFactory dialogFactory = null)
         {
             var dialog = Create(dialogFactory);
@@ -134,8 +134,8 @@ namespace QtVsTools.Core
                 return null;
 
             var res = dialog.VsWaitDialog.StartWaitDialogWithPercentageProgress(
-                waitCaption, waitMessage, progressText, null, statusBarText,
-                isCancelable, delayToShowDialog, totalSteps, currentStep);
+                caption, message, progressText, null, statusBarText,
+                isCancelable, delay, totalSteps, currentStep);
 
             if (res != VSConstants.S_OK)
                 return null;
@@ -144,18 +144,18 @@ namespace QtVsTools.Core
         }
 
         public void Update(
-            string updatedWaitMessage,
-            string progressText,
-            string statusBarText,
-            int currentStep,
+            string message,
             int totalSteps,
-            bool disableCancel)
+            int currentStep,
+            string progressText = null,
+            string statusBarText = null,
+            bool disableCancel = false)
         {
             if (!Running)
                 return;
 
             bool canceled = false;
-            int res = VsWaitDialog.UpdateProgress(updatedWaitMessage, progressText,
+            int res = VsWaitDialog.UpdateProgress(message, progressText,
                 statusBarText, currentStep, totalSteps, disableCancel, out canceled);
 
             if (res != VSConstants.S_OK)
@@ -176,5 +176,9 @@ namespace QtVsTools.Core
             Canceled = (canceled != 0);
         }
 
+        void IDisposable.Dispose()
+        {
+            Stop();
+        }
     }
 }

@@ -148,7 +148,7 @@ namespace QtVsTools.QtMsBuild
             if (runQtTools) {
                 waitDialog = WaitDialog.Start(
                     "Qt Visual Studio Tools", "Updating IntelliSense...",
-                    null, null, 1, false, true, WaitDialogFactory);
+                    delay: 1, dialogFactory: WaitDialogFactory);
                 StatusBar?.SetText("Qt Visual Studio Tools: Updating IntelliSense...");
             }
 
