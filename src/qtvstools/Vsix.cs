@@ -341,6 +341,17 @@ namespace QtVsTools
                 initDone.Set();
                 initTimer.Stop();
             }
+
+            ///////////////////////////////////////////////////////////////////////////////////
+            // Switch to main (UI) thread
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+            /////////
+            // Check if a solution was opened during initialization.
+            // If so, fire solution open event.
+            //
+            if (Dte.Solution?.IsOpen == true)
+                eventHandler.SolutionEvents_Opened();
         }
 
         /// <summary>

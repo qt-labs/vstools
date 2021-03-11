@@ -531,7 +531,7 @@ namespace QtVsTools
         {
         }
 
-        void SolutionEvents_Opened()
+        public void SolutionEvents_Opened()
         {
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
