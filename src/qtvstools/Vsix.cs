@@ -185,6 +185,12 @@ namespace QtVsTools
                 VsServiceProvider.Instance = instance = this;
                 QtProject.ProjectTracker = this;
                 Messages.JoinableTaskFactory = JoinableTaskFactory;
+
+                // determine the package installation directory
+                var uri = new Uri(System.Reflection.Assembly
+                    .GetExecutingAssembly().EscapedCodeBase);
+                PkgInstallPath = Path.GetDirectoryName(
+                    Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 #if !VS2013
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
@@ -212,6 +218,18 @@ namespace QtVsTools
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
+                GetTextMateLanguagePath();
+                GetNatvisPath();
+
+                var modules = QtModules.Instance.GetAvailableModuleInformation();
+                foreach (var module in modules) {
+                    if (!string.IsNullOrEmpty(module.ResourceName)) {
+                        var translatedName = SR.GetString(module.ResourceName, this);
+                        if (!string.IsNullOrEmpty(translatedName))
+                            module.Name = translatedName;
+                    }
+                }
+
 #if !VS2013
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
@@ -223,12 +241,6 @@ namespace QtVsTools
                 var error = string.Empty;
                 if (vm.HasInvalidVersions(out error))
                     Messages.Print(error);
-
-                // determine the package installation directory
-                var uri = new Uri(System.Reflection.Assembly
-                    .GetExecutingAssembly().EscapedCodeBase);
-                PkgInstallPath = Path.GetDirectoryName(
-                    Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
                 ///////////
                 // Install Qt/MSBuild files from package folder to standard location
@@ -305,17 +317,6 @@ namespace QtVsTools
                 CopyTextMateLanguageFiles();
                 CopyNatvisFile();
 
-                var modules = QtModules.Instance.GetAvailableModuleInformation();
-                foreach (var module in modules)
-                {
-                    if (!string.IsNullOrEmpty(module.ResourceName))
-                    {
-                        var translatedName = SR.GetString(module.ResourceName, this);
-                        if (!string.IsNullOrEmpty(translatedName))
-                            module.Name = translatedName;
-                    }
-                }
-
                 Messages.Print(string.Format("\r\n"
                     + "== Qt Visual Studio Tools version {0}\r\n"
                     + "\r\n"
@@ -374,29 +375,63 @@ namespace QtVsTools
             return null;
         }
 
+        bool useQtTmLanguage;
+        string qtTmLanguagePath;
+
+        void GetTextMateLanguagePath()
+        {
+            var settingsManager = VsShellSettings.Manager;
+            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+            useQtTmLanguage = store.GetBoolean(Statics.QmlTextMatePath, Statics.QmlTextMateKey, true);
+            qtTmLanguagePath = Environment.
+                ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
+        }
+
         private void CopyTextMateLanguageFiles()
         {
 #if (!VS2013)
-            var settingsManager = VsShellSettings.Manager;
-            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-
-            var qttmlanguage = Environment.
-                ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
-            if (store.GetBoolean(Statics.QmlTextMatePath, Statics.QmlTextMateKey, true)) {
+            if (useQtTmLanguage) {
                 HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
-                    qttmlanguage);
+                    qtTmLanguagePath);
             } else {
-                Directory.Delete(qttmlanguage, true);
+                Directory.Delete(qtTmLanguagePath, true);
             }
 
             //Remove textmate-based QML syntax highlighting
-            var qmlTextmate = Path.Combine(qttmlanguage, "qml");
+            var qmlTextmate = Path.Combine(qtTmLanguagePath, "qml");
             if (Directory.Exists(qmlTextmate)) {
                 try {
                     Directory.Delete(qmlTextmate, true);
                 } catch { }
             }
 #endif
+        }
+
+        string visualizersPath;
+
+        public string GetNatvisPath()
+        {
+            try {
+                using (var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot)) {
+                    if (vsRootKey.GetValue("VisualStudioLocation") is string vsLocation)
+                        visualizersPath = Path.Combine(vsLocation, "Visualizers");
+                }
+            } catch {
+            }
+            if (string.IsNullOrEmpty(visualizersPath)) {
+                visualizersPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+#if VS2019
+                    @"Visual Studio 2019\Visualizers\");
+#elif VS2017
+                    @"Visual Studio 2017\Visualizers\");
+#elif VS2015
+                    @"Visual Studio 2015\Visualizers\");
+#elif VS2013
+                    @"Visual Studio 2013\Visualizers\");
+#endif
+            }
+            return visualizersPath;
         }
 
         public void CopyNatvisFile(string qtNamespace = null)
@@ -412,28 +447,6 @@ namespace QtVsTools
                 } else {
                     natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
                     natvisFile = string.Format("qt5_{0}.natvis", qtNamespace.Replace("::", "_"));
-                }
-
-                string visualizersPath = string.Empty;
-                try {
-                    using (var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot)) {
-                        if (vsRootKey.GetValue("VisualStudioLocation") is string vsLocation)
-                            visualizersPath = Path.Combine(vsLocation, "Visualizers");
-                    }
-                } catch {
-                }
-                if (string.IsNullOrEmpty(visualizersPath)) {
-                    visualizersPath = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-#if VS2019
-                    @"Visual Studio 2019\Visualizers\");
-#elif VS2017
-                    @"Visual Studio 2017\Visualizers\");
-#elif VS2015
-                    @"Visual Studio 2015\Visualizers\");
-#elif VS2013
-                    @"Visual Studio 2013\Visualizers\");
-#endif
                 }
 
                 if (!Directory.Exists(visualizersPath))
