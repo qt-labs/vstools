@@ -9,6 +9,7 @@ SET "USAGE=%USAGE% [-transform_incremental]"
 SET "USAGE=%USAGE% [-vs2019]"
 SET "USAGE=%USAGE% [-vs2017]"
 SET "USAGE=%USAGE% [-vs2015]"
+SET "USAGE=%USAGE% [-version ^<MAJOR_VS_VERSION^>.^<MINOR_VS_VERSION^>]"
 SET "USAGE=%USAGE% [-verbose]"
 SET "USAGE=%USAGE% [-bl]"
 
@@ -53,6 +54,12 @@ IF NOT "%1"=="" (
         SET VERBOSE=%TRUE%
     ) ELSE IF "%1"=="-bl" (
         SET BINARYLOG=%TRUE%
+    ) ELSE IF "%1"=="-version" (
+        SET VS_VERSIONS=%VS_VERSIONS%,"-version [%2^,%2.65535]"
+        SET VS_LATEST="-version [%2^,%2.65535]"
+        SHIFT
+        SET VS_LATEST="-version [%2^,%2.65535]"
+        SET VS_VERSIONS_DEFAULT=%FALSE%
     ) ELSE IF "%1"=="%FLAG_VS2019%" (
         SET VS_VERSIONS=%VS_VERSIONS%,%VS2019%
         SET VS_LATEST=%VS2019%
@@ -113,12 +120,12 @@ IF %BINARYLOG% (
 
 FOR %%v IN (%VS_VERSIONS%) DO (
     SETLOCAL
-    IF "%%~v"=="%VS2019:"=%" (
-        ECHO 2019 > %TEMP%\vstools.vs_version_current.txt
-    ) ELSE IF "%%~v"=="%VS2017:"=%" (
-        ECHO 2017 > %TEMP%\vstools.vs_version_current.txt
-    ) ELSE IF "%%~v"=="%VS2015:"=%" (
-        ECHO 2015 > %TEMP%\vstools.vs_version_current.txt
+    IF "%%~v"=="%VS2015:"=%" (
+        ECHO Visual Studio 2015 > %TEMP%\vstools.vs_version_current.txt
+    ) ELSE (
+        FOR /F "tokens=* usebackq" %%n IN (`%VSWHERE% %%~v -property displayName`) DO (
+            ECHO %%n > %TEMP%\vstools.vs_version_current.txt
+        )
     )
 
     FOR /F "tokens=* usebackq" %%n IN (`%VSWHERE% %%~v -property installationVersion`) DO (
@@ -126,7 +133,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         ECHO.
         ECHO.
         ECHO ################################################################################
-        ECHO ## Visual Studio %%x^(%%n^)
+        ECHO ## %%x^(%%n^)
         IF NOT "%QtVSToolsDeployTarget%"=="" ECHO ## Deploy to: %QtVSToolsDeployTarget%
         ECHO ################################################################################
         ECHO.
@@ -179,14 +186,14 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         && (
             ECHO ################################################################################
             FOR /F "delims=" %%x IN (%TEMP%\vstools.vs_version_current.txt) DO (
-                ECHO ## Visual Studio %%x
+                ECHO ## %%x
             )
             ECHO ## Build successful
             ECHO ################################################################################
         ) || (
             ECHO ################################################################################
             FOR /F "delims=" %%x IN (%TEMP%\vstools.vs_version_current.txt) DO (
-                ECHO ## Visual Studio %%x
+                ECHO ## %%x
             )
             ECHO ## ERROR building solution 1>&2
             ECHO ################################################################################
