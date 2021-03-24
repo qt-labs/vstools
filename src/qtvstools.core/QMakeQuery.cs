@@ -66,6 +66,8 @@ namespace QtVsTools.Core
                 return PropertyParser
                     .Parse(stdOutput.ToString())
                     .GetValues<KeyValuePair<string, string>>("PROP")
+                    .GroupBy(x => x.Key)
+                    .Select(x => new { x.Key, Value = x.Last().Value })
                     .ToDictionary(property => property.Key, property => property.Value);
             } else {
                 return new Dictionary<string, string>();
