@@ -78,6 +78,7 @@
   // -->
   <Target Name="QtTranslationPrepare">
     <ItemGroup>
+      <QtTranslation Include="@(None)" Condition="'%(None.Extension)' == '.ts'" />
       <QtTranslation>
         <InputFiles
           >$(QtTranslationInput)</InputFiles>
