@@ -242,7 +242,7 @@
     // -->
     <ItemGroup>
       <Options>
-        <InputFiles Condition="'%(Name)' == 'InputFiles'"
+        <InputFiles Condition="'%(Name)' == 'InputFiles' AND Exists('%(Value)')"
                     >%(Value)</InputFiles>
       </Options>
       <Options>
