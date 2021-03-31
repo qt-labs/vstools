@@ -45,6 +45,14 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Qt/MSBuild global properties
+  // -->
+  <PropertyGroup>
+    <QtDependsOn>$(QtDependsOn);QtTranslation</QtDependsOn>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Build integration
   // -->
   <PropertyGroup>
@@ -89,7 +97,7 @@
         <TsFile
           >%(Identity)</TsFile>
         <QmFile
-          >$([System.IO.Path]::Combine('$(OutDir)', '%(Filename).qm'))</QmFile>
+          >$([System.IO.Path]::Combine('%(QmOutputDir)', '%(QmOutputFile)'))</QmFile>
         <InputListFile
           >$([System.IO.Path]::Combine('$(IntDir)', '%(Filename).in.txt'))</InputListFile>
       </QtTranslation>

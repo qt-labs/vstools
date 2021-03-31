@@ -110,10 +110,10 @@
     <StringProperty
       Name="ReleaseDescription" Category="lrelease" DisplayName="Execution Description" />
     <StringProperty
-      Name="OutputDir" Category="lrelease" DisplayName="Output Directory"
+      Name="QmOutputDir" Category="lrelease" DisplayName="Output Directory"
       Description="Specifies the path of the generated QM output directory."/>
     <StringProperty
-      Name="OutputFile" Category="lrelease" DisplayName="Output File Name"
+      Name="QmOutputFile" Category="lrelease" DisplayName="Output File Name"
       Description="Specifies the name of the generated QM output file."/>
     <BoolProperty
       Name="IdBased" Category="lrelease" DisplayName="ID Based"

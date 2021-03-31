@@ -74,6 +74,8 @@
       <DisableNumberHeuristic>false</DisableNumberHeuristic>
       <!-- lrelease -->
       <ReleaseDescription>lrelease %(Identity)</ReleaseDescription>
+      <QmOutputDir>$(OutDir)</QmOutputDir>
+      <QmOutputFile>%(Filename).qm</QmOutputFile>
       <ReleaseAdditionalOptions>$(QtLReleaseOptions)</ReleaseAdditionalOptions>
       <IdBased>false</IdBased>
       <Compress>false</Compress>
