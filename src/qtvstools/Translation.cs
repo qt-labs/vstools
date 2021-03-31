@@ -57,7 +57,7 @@ namespace QtVsTools
             var vcProj = vcFile.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Release,
-                project, new[] { vcFile.Name });
+                project, new[] { vcFile.RelativePath });
         }
 
         public static void RunlRelease(VCFile[] vcFiles)
@@ -65,7 +65,7 @@ namespace QtVsTools
             var vcProj = vcFiles.FirstOrDefault()?.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Release,
-                project, vcFiles.Select(vcFile => vcFile?.Name));
+                project, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
 
         public static void RunlRelease(EnvDTE.Project project)
@@ -87,7 +87,7 @@ namespace QtVsTools
             var vcProj = vcFile.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Update,
-                project, new[] { vcFile.Name });
+                project, new[] { vcFile.RelativePath });
         }
 
         public static void RunlUpdate(VCFile[] vcFiles)
@@ -95,7 +95,7 @@ namespace QtVsTools
             var vcProj = vcFiles.FirstOrDefault()?.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Update,
-                project, vcFiles.Select(vcFile => vcFile?.Name));
+                project, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
 
         public static void RunlUpdate(EnvDTE.Project project)
