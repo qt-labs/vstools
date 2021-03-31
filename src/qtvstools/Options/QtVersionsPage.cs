@@ -79,11 +79,16 @@ namespace QtVsTools.Options
 
         public override void SaveSettingsToStorage()
         {
-            try {
-                foreach (var versionName in VersionManager.GetVersions()) {
+            foreach (var versionName in VersionManager.GetVersions()) {
+                try {
                     VersionManager.RemoveVersion(versionName);
+                } catch (Exception exception) {
+                    Messages.Print(
+                        exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
                 }
-                foreach (var version in VersionsTable.Versions) {
+            }
+            foreach (var version in VersionsTable.Versions) {
+                try {
                     if (version.Host == BuildHost.Windows) {
                         var versionInfo = VersionInformation.Get(version.Path);
                         var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
@@ -102,7 +107,12 @@ namespace QtVsTools.Options
                         path = string.Format("{0}:{1}:{2}", access, path, compiler);
                         VersionManager.SaveVersion(name, path, checkPath: false);
                     }
+                } catch (Exception exception) {
+                    Messages.Print(
+                        exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
                 }
+            }
+            try {
                 var defaultVersion = VersionsTable.Versions
                     .Where(version => version.IsDefault)
                     .FirstOrDefault();
