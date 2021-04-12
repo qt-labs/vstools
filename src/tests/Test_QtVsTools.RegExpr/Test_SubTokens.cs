@@ -1,6 +1,6 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
-** Copyright (C) 2019 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,42 +26,35 @@
 **
 ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace QtVsTools.SyntaxAnalysis
+namespace QtVsTools.Test.RegExpr
 {
-    /// <summary>
-    /// Sequential composition
-    /// </summary>
-    public partial class RegExprSequence : RegExpr
-    {
-        public IEnumerable<RegExpr> Exprs { get; set; }
+    using static SyntaxAnalysis.RegExpr;
 
-        protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
-        {
-            base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
-            return Exprs;
-        }
-    }
-
-    public abstract partial class RegExpr
+    [TestClass]
+    public class Test_SubTokens
     {
-        public static RegExprSequence Concat(params RegExpr[] rxs)
+        [TestMethod]
+        public void TestManyToMany()
         {
-            return new RegExprSequence
-            {
-                Exprs = rxs.SelectMany(rx => rx is RegExprSequence
-                    ? ((RegExprSequence)rx).Exprs
-                    : Items(rx))
-            };
+            var tokenA = new Token("A", "a");
+            var tokenB = new Token("B", "b" & tokenA);
+            var tokenC = new Token("C", "c" & tokenB);
+            var tokenX = new Token("X", (tokenA | tokenB | tokenC).Repeat());
+            var parser = tokenX.Render();
+            parser.Parse("abacba");
         }
 
-        public static RegExprSequence operator &(RegExpr rx1, RegExpr rx2)
+        [TestMethod]
+        public void TestLookAhead()
         {
-            return Concat(rx1, rx2);
+            var tokenA = new Token("A", "a");
+            var tokenB = new Token("B", "b" & !LookAhead[tokenA] & AnyChar);
+            var tokenX = new Token("X", (tokenA | tokenB).Repeat());
+            var parser = tokenX.Render();
+            parser.Parse("abc");
         }
     }
 }

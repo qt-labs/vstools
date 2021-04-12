@@ -56,9 +56,9 @@ namespace QtVsTools.SyntaxAnalysis
         bool HasNegative { get { return Negatives != null && Negatives.Any(); } }
 
         protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRender(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
             if (!HasPositive && !HasNegative)
                 return null;
@@ -86,17 +86,17 @@ namespace QtVsTools.SyntaxAnalysis
         }
 
         protected override void OnRenderNext(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRenderNext(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRenderNext(defaultTokenWs, parent, pattern, ref mode, tokenStack);
             if (!IsSubSet && HasPositive && HasNegative)
                 pattern.Append("-[");
         }
 
         protected override void OnRenderEnd(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode, tokenStack);
             if (!IsSubSet) {
                 if (HasPositive && HasNegative)
                     pattern.Append("]]");

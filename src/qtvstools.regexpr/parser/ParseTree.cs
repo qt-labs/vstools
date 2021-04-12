@@ -61,7 +61,6 @@ namespace QtVsTools.SyntaxAnalysis
                 public int End { get; set; }
                 public int GroupIdx { get; set; }
                 public int CaptureIdx { get; set; }
-                public ulong OrderKey { get; set; }
 
                 class NodeComparer : IComparer<Node>
                 {
@@ -81,8 +80,8 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public Node Parent { get; set; }
 
-                SortedList<ulong, Node> _ChildNodes = new SortedList<ulong, Node>();
-                public SortedList<ulong, Node> ChildNodes { get { return _ChildNodes; } }
+                SortedList<int, Node> _ChildNodes = new SortedList<int, Node>();
+                public SortedList<int, Node> ChildNodes { get { return _ChildNodes; } }
 
                 ProductionObjects _ChildProductions = new ProductionObjects();
                 public ProductionObjects ChildProductions { get { return _ChildProductions; } }
@@ -128,7 +127,7 @@ namespace QtVsTools.SyntaxAnalysis
                     {
                         if (Parent == null)
                             return 0;
-                        return Parent.ChildNodes.IndexOfKey(OrderKey);
+                        return Parent.ChildNodes.IndexOfKey(Begin);
                     }
                 }
 

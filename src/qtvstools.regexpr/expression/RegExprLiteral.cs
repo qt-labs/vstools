@@ -39,9 +39,9 @@ namespace QtVsTools.SyntaxAnalysis
         public string LiteralExpr { get; set; }
 
         protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRender(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
             pattern.Append(LiteralExpr);
             return null;
         }

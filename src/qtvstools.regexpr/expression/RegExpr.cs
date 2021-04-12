@@ -79,7 +79,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// external, application specific classes.
         /// </remarks>
         protected virtual IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         { return null; }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// <param name="mode">Rendering mode</param>
         ///
         protected virtual void OnRenderNext(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         { }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// <param name="mode">Rendering mode</param>
         ///
         protected virtual void OnRenderEnd(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         { }
 
         public class RegExprException : System.Exception

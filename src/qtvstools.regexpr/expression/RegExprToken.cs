@@ -55,7 +55,6 @@ namespace QtVsTools.SyntaxAnalysis
         /// </remarks>
         public partial class Token : RegExpr, IEnumerable<IProductionRule>
         {
-            public string CaptureId { get; private set; }
             public string Id { get; set; }
 
             public bool SkipLeadingWhitespace { get; set; }
@@ -63,9 +62,9 @@ namespace QtVsTools.SyntaxAnalysis
 
             public RegExpr Expr { get; set; }
 
-            public Token Parent { get; set; }
-
-            public List<Token> Children { get; set; }
+            public HashSet<Token> Children { get; set; }
+            public Dictionary<string, Token> Parents { get; set; }
+            public IEnumerable<string> CaptureIds => Parents.Keys;
 
             public Token(string id, RegExpr skipWs, RegExpr expr)
             {
@@ -74,8 +73,8 @@ namespace QtVsTools.SyntaxAnalysis
                 LeadingWhitespace = skipWs;
                 Expr = expr;
                 Rules = new TokenRules();
-                CaptureId = GenerateCaptureId(Id);
-                Children = new List<Token>();
+                Children = new HashSet<Token>();
+                Parents = new Dictionary<string, Token>();
             }
 
             public Token(string id, SkipWhitespace skipWs, RegExpr expr)
@@ -84,8 +83,8 @@ namespace QtVsTools.SyntaxAnalysis
                 SkipLeadingWhitespace = (skipWs == SkipWhitespace.Enable);
                 Expr = expr;
                 Rules = new TokenRules();
-                CaptureId = GenerateCaptureId(Id);
-                Children = new List<Token>();
+                Children = new HashSet<Token>();
+                Parents = new Dictionary<string, Token>();
             }
 
             public Token(Enum id, RegExpr expr)
@@ -118,13 +117,15 @@ namespace QtVsTools.SyntaxAnalysis
 
             public static Token CreateRoot()
             {
-                return new Token { CaptureId = ParseTree.KeyRoot };
+                var rootToken = new Token();
+                rootToken.Parents[ParseTree.KeyRoot] = rootToken;
+                return rootToken;
             }
 
             protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-                StringBuilder pattern, ref RenderMode mode)
+                StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
             {
-                base.OnRender(defaultTokenWs, parent, pattern, ref mode);
+                base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
                 var tokenWs = GetTokenWhitespace(defaultTokenWs);
                 if (tokenWs != null)
@@ -135,30 +136,35 @@ namespace QtVsTools.SyntaxAnalysis
             }
 
             protected override void OnRenderNext(RegExpr defaultTokenWs, RegExpr parent,
-                StringBuilder pattern, ref RenderMode mode)
+                StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
             {
-                base.OnRenderNext(defaultTokenWs, parent, pattern, ref mode);
+                base.OnRenderNext(defaultTokenWs, parent, pattern, ref mode, tokenStack);
                 var tokenWs = GetTokenWhitespace(defaultTokenWs);
                 if (NeedsWhitespaceGroup(tokenWs, mode))
                     pattern.Append(")");
                 if (Expr != null) {
-                    if (!mode.HasFlag(RenderMode.Assert) && !string.IsNullOrEmpty(Id))
-                        pattern.AppendFormat("(?<{0}>", CaptureId);
-                    else
+                    if (!mode.HasFlag(RenderMode.Assert) && !string.IsNullOrEmpty(Id)) {
+                        string captureId = GenerateCaptureId(Id);
+                        Parents.Add(captureId, tokenStack.Peek());
+                        tokenStack.Peek().Children.Add(this);
+                        pattern.AppendFormat("(?<{0}>", captureId);
+                    } else {
                         pattern.Append("(?:");
-
+                    }
                 }
+                tokenStack.Push(this);
             }
 
             protected override void OnRenderEnd(RegExpr defaultTokenWs, RegExpr parent,
-                StringBuilder pattern, ref RenderMode mode)
+                StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
             {
-                base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode);
+                base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode, tokenStack);
                 if (Expr != null)
                     pattern.Append(")");
                 var tokenWs = GetTokenWhitespace(defaultTokenWs);
                 if (tokenWs != null)
                     pattern.Append(")");
+                tokenStack.Pop();
             }
 
             /// <summary>

@@ -52,9 +52,9 @@ namespace QtVsTools.SyntaxAnalysis
         }
 
         protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRender(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
             if (ExprNeedsGroup)
                 pattern.Append("(?:");
@@ -63,9 +63,9 @@ namespace QtVsTools.SyntaxAnalysis
         }
 
         protected override void OnRenderEnd(RegExpr defaultTokenWs, RegExpr parent,
-            StringBuilder pattern, ref RenderMode mode)
+            StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
-            base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode);
+            base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
             if (ExprNeedsGroup)
                 pattern.Append(")");

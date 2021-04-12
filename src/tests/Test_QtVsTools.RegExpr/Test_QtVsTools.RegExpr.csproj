@@ -85,6 +85,7 @@
     <Compile Include="Test_MacroParser.cs" />
     <Compile Include="Test_XmlIntParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test_SubTokens.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

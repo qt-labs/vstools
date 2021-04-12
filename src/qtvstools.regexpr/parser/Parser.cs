@@ -107,47 +107,36 @@ namespace QtVsTools.SyntaxAnalysis
                             End = capture.Index + capture.Length,
                             GroupIdx = groupIdx,
                             CaptureIdx = captureIdx,
-                            OrderKey = (((ulong)groupIdx) << 32) | ((uint)captureIdx)
                         }))
-                    .OrderBy(c => c.Begin);
+                    .OrderBy(c => c.Begin)
+                    .ToList();
 
-                // Node list partitioned by token ID
+                // Node list partitioned by token
                 var nodesByToken = nodes
-                    .GroupBy(c => c.CaptureId)
+                    .GroupBy(node => node.Token)
                     .ToDictionary(g => g.Key, g => g.ToArray());
 
-                // Traverse token hierarchy
-                var stack = new Stack<Token>(Pattern.Root.Children);
-                while (stack.Any()) {
-                    var token = stack.Pop();
-
-                    // Get nodes captured by current token (if any)
-                    ParseTree.Node[] tokenNodes;
-                    if (!nodesByToken.TryGetValue(token.CaptureId, out tokenNodes))
-                        continue;
-
+                foreach (var node in nodes.Where(n => n.Token != Pattern.Root)) {
                     // Get nodes captured by parent token
-                    var parentNodes = nodesByToken[token.Parent.CaptureId];
-
-                    // Set parent <-> child relation for nodes of current token
-                    foreach (var node in tokenNodes) {
-                        // Find parent node
-                        int idx = Array.BinarySearch(parentNodes, node, ParseTree.Node.Comparer);
-                        if (idx < 0) {
-                            idx = (~idx) - 1;
-                            if (idx < 0)
-                                throw new ParseErrorException();
-                        }
-                        // Attach to parent node
-                        (node.Parent = parentNodes[idx]).ChildNodes.Add(node.OrderKey, node);
+                    Token parentToken;
+                    if (!node.Token.Parents.TryGetValue(node.CaptureId, out parentToken))
+                        throw new ParseErrorException("Unknown capture ID");
+                    ParseTree.Node[] parentNodes;
+                    if (!nodesByToken.TryGetValue(parentToken, out parentNodes))
+                        throw new ParseErrorException("Missing parent nodes");
+                    // Find parent node
+                    int idx = Array.BinarySearch(parentNodes, node, ParseTree.Node.Comparer);
+                    if (idx < 0) {
+                        idx = (~idx) - 1;
+                        if (idx < 0)
+                            throw new ParseErrorException("Parent node not found");
                     }
-
-                    // Move down token hierarchy
-                    token.Children.ForEach(x => stack.Push(x));
+                    // Attach to parent node
+                    (node.Parent = parentNodes[idx]).ChildNodes.Add(node.Begin, node);
                 }
 
                 // Return parse tree root
-                return nodesByToken[ParseTree.KeyRoot].FirstOrDefault();
+                return nodesByToken[Pattern.Root].FirstOrDefault();
             }
         }
 
