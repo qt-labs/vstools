@@ -61,12 +61,10 @@ namespace QtVsTools.SyntaxAnalysis
             {
                 var pattern = new StringBuilder();
                 var rootToken = Token.CreateRoot();
-                var tokens = new Dictionary<string, Token>
-                {
-                    // Default root token
-                    {rootToken.CaptureId, rootToken }
-                };
-                var parentToken = rootToken;
+                var tokenStack = new Stack<Token>();
+                tokenStack.Push(rootToken);
+                var tokens = new HashSet<Token>();
+
                 var stack = new Stack<StackFrame>();
                 var mode = RenderMode.Default;
 
@@ -81,35 +79,35 @@ namespace QtVsTools.SyntaxAnalysis
                     IEnumerable<RegExpr> children = context.Children;
                     RegExpr parent = stack.Any() ? stack.Peek() : null;
 
-                    var token = expr as Token;
-                    if (children == null) {
-                        if (expr is Token) {
-                            tokens[token.CaptureId] = token;
-                            (token.Parent = parentToken).Children.Add(token);
-                            parentToken = token;
-                        }
+                    if (expr is Token token)
+                        tokens.Add(token);
 
-                        children = expr.OnRender(wsExpr, parent, pattern, ref mode);
+                    if (children == null) {
+                        children = expr.OnRender(wsExpr, parent, pattern, ref mode, tokenStack);
                         if (children != null && children.Any()) {
                             stack.Push(new StackFrame { Expr = expr, Children = children.Skip(1) });
                             stack.Push(children.First());
                         }
                     } else if (children.Any()) {
-                        expr.OnRenderNext(wsExpr, parent, pattern, ref mode);
+                        expr.OnRenderNext(wsExpr, parent, pattern, ref mode, tokenStack);
                         stack.Push(new StackFrame { Expr = expr, Children = children.Skip(1) });
                         stack.Push(children.First());
                     } else {
-                        expr.OnRenderEnd(wsExpr, parent, pattern, ref mode);
-                        if (expr is Token)
-                            parentToken = token.Parent;
+                        expr.OnRenderEnd(wsExpr, parent, pattern, ref mode, tokenStack);
                     }
                 }
+
+                var tokensByCaptureId = tokens
+                    .SelectMany(token => token.CaptureIds
+                        .Select(captureId => new { Id = captureId, Token = token }))
+                    .ToDictionary(idToken => idToken.Id, idToken => idToken.Token);
+                tokensByCaptureId.Add(ParseTree.KeyRoot, rootToken);
 
                 return new Pattern
                 {
                     Expr = rootExpr,
                     ExprRender = pattern.ToString(),
-                    Tokens = tokens,
+                    Tokens = tokensByCaptureId,
                     Root = rootToken
                 };
             }
