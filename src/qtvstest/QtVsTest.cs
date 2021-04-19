@@ -64,11 +64,22 @@ namespace QtVsTest
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
         {
-            // Install .csmacro syntax highlighting
+            // Get package install path
             var uri = new Uri(System.Reflection.Assembly
                 .GetExecutingAssembly().EscapedCodeBase);
             var pkgInstallPath = Path.GetDirectoryName(
                 Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+
+            // Install client interface
+            var qtVsTestFiles = Environment.
+                ExpandEnvironmentVariables(@"%LOCALAPPDATA%\qtvstest");
+            Directory.CreateDirectory(qtVsTestFiles);
+            File.Copy(
+                Path.Combine(pkgInstallPath, "MacroClient.h"),
+                Path.Combine(qtVsTestFiles, "MacroClient.h"),
+                overwrite: true);
+
+            // Install .csmacro syntax highlighting
             var grammarFilesPath = Environment.
                 ExpandEnvironmentVariables(@"%USERPROFILE%\.vs\Extensions\qtcsmacro");
             Directory.CreateDirectory(grammarFilesPath);

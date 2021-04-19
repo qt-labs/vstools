@@ -86,6 +86,10 @@
     <None Include="config\$(VisualStudioVersion)\source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="MacroClient.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\QtVsTest.ico" />
     <T4Template Include="csmacro.tmLanguage_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
