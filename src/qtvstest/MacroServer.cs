@@ -76,6 +76,9 @@ namespace QtVsTest.Macros
             while (!Loop.Token.IsCancellationRequested) {
                 using (var pipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut)) {
 
+                    // Clean-up previous macro session
+                    Macro.Reset();
+
                     await pipe.WaitForConnectionAsync(Loop.Token);
                     if (Loop.Token.IsCancellationRequested)
                         break;

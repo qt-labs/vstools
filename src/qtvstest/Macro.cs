@@ -949,6 +949,11 @@ namespace QtVsTest.Macros
             return macro;
         }
 
+        public static void Reset()
+        {
+            Macros.Clear();
+        }
+
         bool GenerateResultFuncs(StringBuilder csharp)
         {
             csharp.Append(
