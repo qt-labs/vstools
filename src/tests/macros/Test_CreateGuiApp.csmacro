@@ -39,9 +39,9 @@ Directory.CreateDirectory(projectDir);
 var solution = Dte.Solution as Solution2;
 solution.Create(tempDir, solutionName);
 solution.SaveAs(Path.Combine(solutionDir, solutionFileName));
-var templateGuiApp = solution.GetProjectTemplate("Qt GUI Application", "VC");
+var templateGuiApp = solution.GetProjectTemplate("Qt Widgets Application", "VC");
 var taskAddProj = Task.Run(() => solution.AddFromTemplate(templateGuiApp, projectDir, "MyGuiApp"));
-//# ui context VS => "Qt GUI Application Wizard"
+//# ui context VS => "Qt Widgets Application Wizard"
 //# ui pattern Invoke => "Next >"
 //# ui pattern Invoke => "Next >"
 //# ui pattern Invoke => "Finish"
