@@ -36,10 +36,11 @@
         <Description xml:space="preserve">Auto-test framework for Qt Visual Studio Tools.</Description>
     </Metadata>
     <Installation InstalledByMsi="false">
-      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[16.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[16.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[16.0]" />
-      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0]" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[16.0,17.0)" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[16.0,17.0)" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[16.0,17.0)" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0,17.0)" />
+      <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[16.0,17.0)" />
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
