@@ -311,3 +311,5 @@ src/qtmsbuild/QtMsBuild/rcc/qtrcc_cl.targets
 src/qtmsbuild/QtMsBuild/repc/qtrepc_v3.xml
 src/qtmsbuild/QtMsBuild/repc/qtrepc_cl.targets
 src/qtmsbuild/QtMSBuild/qt_tasks.targets
+src/qtvstest/csmacro.tmLanguage
+src/qtvstest/csmacro.tmTheme

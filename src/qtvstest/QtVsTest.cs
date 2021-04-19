@@ -38,6 +38,7 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTest
 {
     using Macros;
+    using System.IO;
 
     [Guid(PackageGuidString)]
     [InstalledProductRegistration(
@@ -63,6 +64,23 @@ namespace QtVsTest
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
         {
+            // Install .csmacro syntax highlighting
+            var uri = new Uri(System.Reflection.Assembly
+                .GetExecutingAssembly().EscapedCodeBase);
+            var pkgInstallPath = Path.GetDirectoryName(
+                Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+            var grammarFilesPath = Environment.
+                ExpandEnvironmentVariables(@"%USERPROFILE%\.vs\Extensions\qtcsmacro");
+            Directory.CreateDirectory(grammarFilesPath);
+            File.Copy(
+                Path.Combine(pkgInstallPath, "csmacro.tmLanguage"),
+                Path.Combine(grammarFilesPath, "csmacro.tmLanguage"),
+                overwrite: true);
+            File.Copy(
+                Path.Combine(pkgInstallPath, "csmacro.tmTheme"),
+                Path.Combine(grammarFilesPath, "csmacro.tmTheme"),
+                overwrite: true);
+
             // Start macro server loop as background task
             await Task.Run(() => MacroServer.LoopAsync().Forget());
         }

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2021 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="tmLanguage" #>
+<#@include file="$(SolutionDir)\common.tt" #>
+<#
+    var csGrammarFile = Path.Combine(DevEnvDir,
+        @"CommonExtensions\Microsoft\TextMate\Starterkit\Extensions\csharp\Syntaxes",
+        "csharp.tmLanguage");
+#>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>name</key>
+    <string>C#</string>
+    <key>scopeName</key>
+    <string>source.cs</string>
+    <key>fileTypes</key>
+    <array>
+      <string>csmacro</string>
+    </array>
+    <key>patterns</key>
+    <array>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# using "<namespace>"
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*using)\s+(\"[^\"\r\n]+")([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>string.quoted.double.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# using <namespace>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*using)\s+([\w\.]*)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# macro <macro name>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*macro)\s+([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# call <macro>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*call)\s+([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# thread <ui | default>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*thread)\s+(ui|default)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# ref <assembly name> [namespace] [namespace] ...
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*ref(?:erence)?)\s+((?:\"[^\"\r\n]*\")|(?:[\w\.]+))((?:\s+[\w\.]+)*)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>string.quoted.double.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# var <type> <name> => <initial value>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>begin</key>
+        <string>(//#\s*var)\s+([\w\.]+)\s+(\w+)\s+(=>)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>^</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# var <type> <name>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*var)\s+([\w\.]+)\s+(\w+)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# service <var name> <service interface> [service type]
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*service)\s+(\w+)\s+([\w\.]+)(?:\s+([\w\.]+))?([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.interface.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# wait [timeout] [ <var type> <var name> ] => <expr>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>begin</key>
+        <string>(//#\s*wait)\s+(?:(\d+)\s+)?(?:([\w\.]+)\s+(\w+)\s+)?(=>)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.decimal.cs</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>^</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# ui context [ VS [timeout] ] => _string_ [, _string_, ... ]
+      //# ui context HWND => _int_
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>begin</key>
+        <string>(//#\s*ui)\s+(context)\s+(?:(?:(?:(VS)(?:\s+(\d+))?)|(HWND))\s+)?(=>)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.decimal.cs</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.cs</string>
+          </dict>
+          <key>6</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>^</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+        </array>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
+      //# ui pattern Invoke [ => _string_ [, _string_, ... ] ]
+      //# ui pattern Toggle [ => _string_ [, _string_, ... ] ]
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>begin</key>
+        <string>(//#\s*ui)\s+(pattern)\s+([\w\.]+)\s+(?:(\w+)\s+)?(=>)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>^</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
+          </dict>
+        </array>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# ui pattern <_TypeName_> <_VarName_>
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*ui)\s+(pattern)\s+([\w\.]+)\s+(\w+)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.class.cs</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.cs</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!--
+      /////////////////////////////////////////////////////////////////////////////////////////////
+      //# quit
+      ///////////////////////////////////////////////////////////////////////////////////////// -->
+      <dict>
+        <key>match</key>
+        <string>(//#\s*quit)([^\r\n]*)\r?\n</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.inline.csmacro</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>comment.line.double-slash.cs</string>
+          </dict>
+        </dict>
+      </dict>
+      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+<#=string.Join("\r\n", File.ReadAllLines(csGrammarFile)
+        .SkipWhile(x => !x.Contains("<key>patterns</key>"))
+        .Skip(2)
+        .TakeWhile(x => !x.Contains("</plist>")))#>
+<#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <!-- <#/* -->
+    </array>
+  </dict>
+  <!-- */#> -->
+</plist>

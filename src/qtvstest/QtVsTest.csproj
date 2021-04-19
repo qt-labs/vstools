@@ -87,9 +87,36 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Resources\QtVsTest.ico" />
+    <T4Template Include="csmacro.tmLanguage_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>csmacro.tmLanguage</OutputFile>
+      <DependsOn>$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>csmacro.tmLanguage</LastGenOutput>
+    </T4Template>
+    <Content Include="csmacro.tmLanguage">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>csmacro.tmLanguage_TT</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <T4Template Include="csmacro.tmTheme_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>csmacro.tmTheme</OutputFile>
+      <DependsOn>$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>csmacro.tmTheme</LastGenOutput>
+    </T4Template>
+    <Content Include="csmacro.tmTheme">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>csmacro.tmTheme_TT</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\transform.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>
     <MetaInfo>
@@ -158,5 +185,8 @@ namespace MSBuild.MetaInfo {
       <Aliases>global</Aliases>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
 </Project>
