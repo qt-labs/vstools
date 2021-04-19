@@ -40,6 +40,8 @@ private:
 private slots:
     void initTestCase()
     {
+        qint64 pid = 0;
+        QVERIFY(client.connect(&pid));
         MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
         MACRO_ASSERT_OK(client.runMacro(
             MACRO_GLOBALS(
@@ -69,7 +71,10 @@ private slots:
 
     void cleanupTestCase()
     {
+#ifdef QT_NO_DEBUG
         client.runMacro("//#quit");
+        client.disconnect(true);
+#endif
     }
 };
 

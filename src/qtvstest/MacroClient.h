@@ -38,6 +38,8 @@
 #include <QProcess>
 #include <QThread>
 
+#include <process.h>
+
 #define MACRO_OK                    QStringLiteral("(ok)")
 #define MACRO_ERROR                 QStringLiteral("(error)")
 #define MACRO_ERROR_MSG(msg)        QStringLiteral("(error)\r\n" msg)
@@ -63,26 +65,32 @@ class MacroClient
 
 public:
     MacroClient()
-    {
-        vsProcess.setProgram("devenv.exe");
-        vsProcess.setArguments({ "/rootsuffix", "Exp" });
-        vsProcess.setWorkingDirectory(QDir::currentPath());
-    }
+    {}
 
     ~MacroClient()
     {
-        disconnectFromServer(false);
+        disconnect(false);
     }
 
-    bool connectToServer()
+    bool connect(qint64 *refPid = 0)
     {
-        if (vsProcess.state() != QProcess::Running) {
-            vsProcess.start();
-            if (!vsProcess.waitForStarted())
-                return false;
+        qint64 pid = 0;
+        if (!refPid)
+            refPid = &pid;
+
+        if (*refPid == 0) {
+            vsProcess.setProgram("devenv.exe");
+            if (vsProcess.state() != QProcess::Running) {
+                vsProcess.start();
+                if (!vsProcess.waitForStarted())
+                    return false;
+            }
+            *refPid = vsProcess.processId();
+        } else if (!vsProcess.setProcessId(*refPid)) {
+            return false;
         }
 
-        QString pipeName = QStringLiteral("QtVSTest_%1").arg(vsProcess.processId());
+        QString pipeName = QStringLiteral("QtVSTest_%1").arg(*refPid);
 
         QElapsedTimer timer;
         timer.start();
@@ -98,40 +106,22 @@ public:
         return (socket.state() == QLocalSocket::ConnectedState);
     }
 
-    bool disconnectFromServer(bool closeVs)
+    void disconnect(bool closeVs)
     {
-        if (vsProcess.state() != QProcess::Running)
-            return true;
-
         if (socket.state() == QLocalSocket::ConnectedState)
             socket.disconnectFromServer();
 
-        if (closeVs)
-            return terminateServerProcess();
-        else
-            vsProcess.detach();
-
-        return true;
-    }
-
-    bool terminateServerProcess()
-    {
-        if (vsProcess.state() != QProcess::Running)
-            return true;
-
-        vsProcess.terminate();
-        if (!vsProcess.waitForFinished(3000)) {
-            vsProcess.kill();
-            if (!vsProcess.waitForFinished(7000))
-                return false;
+        if (vsProcess.isRunning()) {
+            if (closeVs)
+                vsProcess.kill();
+            else
+                vsProcess.detach();
         }
-
-        return true;
     }
 
     QString runMacro(QString macroCode)
     {
-        if (socket.state() != QLocalSocket::ConnectedState && !connectToServer())
+        if (socket.state() != QLocalSocket::ConnectedState && !connect())
             return MACRO_ERROR_MSG("Disconnected");
 
         QByteArray data = macroCode.toUtf8();
@@ -195,12 +185,68 @@ private:
     class QDetachableProcess : public QProcess
     {
     public:
-        QDetachableProcess(QObject *parent = 0) : QProcess(parent)
+        QDetachableProcess(QObject *parent = 0) : QProcess(parent), detachedPid(0)
         { }
         void detach()
         {
-            waitForStarted();
-            setProcessState(QProcess::NotRunning);
+            if (isAttached()) {
+                detachedPid = QProcess::processId();
+                waitForStarted();
+                setProcessState(QProcess::NotRunning);
+            }
+        }
+        qint64 processId()
+        {
+            if (isAttached())
+                return QProcess::processId();
+            return detachedPid;
+        }
+        bool setProcessId(qint64 pid)
+        {
+            if (isAttached())
+                return false;
+            else if (!detachedIsRunning(pid))
+                return false;
+            detachedPid = pid;
+            return true;
+        }
+        void kill()
+        {
+            if (isAttached()) {
+                terminate();
+                if (!waitForFinished(3000))
+                    QProcess::kill();
+            } else {
+                killDetached();
+            }
+        }
+        bool isRunning()
+        {
+            return (isAttached() || detachedIsRunning(detachedPid));
+        }
+    private:
+        qint64 detachedPid;
+        bool isAttached()
+        {
+            return (state() == QProcess::Running);
+        }
+        bool detachedIsRunning(qint64 pid)
+        {
+            if (pid == 0)
+                return false;
+            int errorLevel = system(qPrintable(QString(
+                "tasklist /FI \"PID eq %1\" /FO LIST | find /I /N \"%1\" > NUL 2>&1")
+                .arg(pid)));
+            return (errorLevel == 0);
+        }
+        void killDetached()
+        {
+            if (detachedPid == 0)
+                return;
+            system(qPrintable(QString(
+                "taskkill /PID %1 > NUL 2>&1")
+                .arg(detachedPid)));
+            detachedPid = 0;
         }
     };
 
