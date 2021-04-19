@@ -11,6 +11,8 @@
 <#@import namespace="System.Xml.Linq" #>
 <#@assembly name="$(AssemblyRef_EnvDTE)" #>
 <#@import namespace="EnvDTE" #>
+<#@assembly name="Microsoft.VisualStudio.Shell.Interop" #>
+<#@import namespace="Microsoft.VisualStudio.Shell.Interop" #>
 <#
 /****************************************************************************
 **
@@ -45,12 +47,31 @@
     } catch {
     }
 
+    IVsShell VsShell = null;
+    try {
+        VsShell = ((IServiceProvider)Host)?.GetService(typeof(SVsShell)) as IVsShell;
+    } catch {
+    }
+
     string SolutionDir = Host?.ResolveParameterValue("-", "-", "SolutionDir");
     if (string.IsNullOrEmpty(SolutionDir)) {
         if (Dte != null)
             SolutionDir = Path.GetDirectoryName(Dte.Solution.FullName);
         else
             throw new Exception("Unable to obtain 'SolutionDir' parameter.");
+    }
+
+    string DevEnvDir = Host?.ResolveParameterValue("-", "-", "DevEnvDir");
+    if (string.IsNullOrEmpty(DevEnvDir)) {
+        if (VsShell != null) {
+            object vsShellPropValue = null;
+            VsShell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out vsShellPropValue);
+            DevEnvDir = vsShellPropValue as string;
+            if (string.IsNullOrEmpty(DevEnvDir))
+                throw new Exception("Unable to obtain 'DevEnvDir' parameter.");
+        } else {
+            throw new Exception("Unable to obtain 'DevEnvDir' parameter.");
+        }
     }
 
     string VS_VERSION = Host?.ResolveParameterValue("-", "-", "VisualStudioVersion");
