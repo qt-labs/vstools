@@ -81,11 +81,29 @@
     <Compile Include="Macro.cs" />
     <Compile Include="MacroParser.cs" />
     <Compile Include="MacroServer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
     <Compile Include="QtVsTest.cs" />
-    <None Include="config\$(VisualStudioVersion)\source.extension.vsixmanifest">
-      <SubType>Designer</SubType>
+    <None Include="source.extension.vsixmanifest">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
     </None>
+    <T4Template Include="source.extension.vsixmanifest_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>source.extension.vsixmanifest</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
+    </T4Template>
     <Content Include="MacroClient.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
