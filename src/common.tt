@@ -11,7 +11,7 @@
 <#@import namespace="System.Xml.Linq" #>
 <#@assembly name="$(AssemblyRef_EnvDTE)" #>
 <#@import namespace="EnvDTE" #>
-<#@assembly name="Microsoft.VisualStudio.Shell.Interop" #>
+<#@assembly name="$(VsSdk_Shell_Interop)" #>
 <#@import namespace="Microsoft.VisualStudio.Shell.Interop" #>
 <#
 /****************************************************************************
