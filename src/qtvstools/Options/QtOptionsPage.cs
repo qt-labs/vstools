@@ -37,6 +37,8 @@ using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.Common;
 using QtVsTools.VisualStudio;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace QtVsTools.Options
 {
@@ -210,24 +212,15 @@ namespace QtVsTools.Options
                     .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false)) {
                     if (key == null)
                         return;
-                    if (key.GetValue(QmlDebug.Enable.Cast<string>()) is int qmlDebugEnabled)
-                        QmlDebuggerEnabled = (qmlDebugEnabled != 0);
-                    if (key.GetValue(QmlDebug.Timeout.Cast<string>()) is int qmlDebugTimeout)
-                        QmlDebuggerTimeout = (Timeout)qmlDebugTimeout;
-                    if (key.GetValue(IntelliSense.OnBuild.Cast<string>()) is int iSenseOnBuild)
-                        RefreshIntelliSenseOnBuild = (iSenseOnBuild != 0);
-                    if (key.GetValue(IntelliSense.OnUiFile.Cast<string>()) is int iSenseOnUiFile)
-                        RefreshIntelliSenseOnUiFile = (iSenseOnUiFile != 0);
-                    if (key.GetValue(Help.Preference.Cast<string>()) is string preference)
-                        HelpPreference = EnumExt.Cast(preference, QtHelp.SourcePreference.Online);
-                    if (key.GetValue(Help.TryOnF1Pressed.Cast<string>()) is int tryOnF1)
-                        TryQtHelpOnF1Pressed = (tryOnF1 != 0);
-                    if (key.GetValue(Designer.Detached.Cast<string>()) is int designerDetached)
-                        DesignerDetached = (designerDetached != 0);
-                    if (key.GetValue(Linguist.Detached.Cast<string>()) is int linguistDetached)
-                        LinguistDetached = (linguistDetached != 0);
-                    if (key.GetValue(ResEditor.Detached.Cast<string>()) is int resEditorDetached)
-                        ResourceEditorDetached = (resEditorDetached != 0);
+                    Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
+                    Load(() => QmlDebuggerTimeout, key, QmlDebug.Timeout);
+                    Load(() => RefreshIntelliSenseOnBuild, key, IntelliSense.OnBuild);
+                    Load(() => RefreshIntelliSenseOnUiFile, key, IntelliSense.OnUiFile);
+                    Load(() => HelpPreference, key, Help.Preference);
+                    Load(() => TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
+                    Load(() => DesignerDetached, key, Designer.Detached);
+                    Load(() => LinguistDetached, key, Linguist.Detached);
+                    Load(() => ResourceEditorDetached, key, ResEditor.Detached);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -250,22 +243,52 @@ namespace QtVsTools.Options
                     .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath)) {
                     if (key == null)
                         return;
-                    key.SetValue(QmlDebug.Enable.Cast<string>(), QmlDebuggerEnabled ? 1 : 0);
-                    key.SetValue(QmlDebug.Timeout.Cast<string>(), (int)QmlDebuggerTimeout);
-                    key.SetValue(IntelliSense.OnBuild.Cast<string>(),
-                        RefreshIntelliSenseOnBuild ? 1 : 0);
-                    key.SetValue(IntelliSense.OnUiFile.Cast<string>(),
-                        RefreshIntelliSenseOnUiFile ? 1 : 0);
-                    key.SetValue(Help.Preference.Cast<string>(), HelpPreference.Cast<string>());
-                    key.SetValue(Help.TryOnF1Pressed.Cast<string>(), TryQtHelpOnF1Pressed ? 1 : 0);
-                    key.SetValue(Designer.Detached.Cast<string>(), DesignerDetached ? 1 : 0);
-                    key.SetValue(Linguist.Detached.Cast<string>(), LinguistDetached ? 1 : 0);
-                    key.SetValue(ResEditor.Detached.Cast<string>(), ResourceEditorDetached ? 1 : 0);
+                    Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
+                    Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
+                    Save(RefreshIntelliSenseOnBuild, key, IntelliSense.OnBuild);
+                    Save(RefreshIntelliSenseOnUiFile, key, IntelliSense.OnUiFile);
+                    Save(HelpPreference, key, Help.Preference);
+                    Save(TryQtHelpOnF1Pressed, key, Help.Preference);
+                    Save(DesignerDetached, key, Designer.Detached);
+                    Save(LinguistDetached, key, Linguist.Detached);
+                    Save(ResourceEditorDetached, key, ResEditor.Detached);
                 }
             } catch (Exception exception) {
                 Messages.Print(
                     exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
+        }
+
+        void Save<T>(T property, RegistryKey key, Enum name)
+        {
+            object value = property;
+            if (Equals<T, bool>())
+                value = ((bool)(object)property) ? 1 : 0;
+            else if (Equals<T, Timeout>())
+                value = Convert.ToInt32(property);
+            else if (typeof(T).IsEnum)
+                value = Enum.GetName(typeof(T), property);
+            key.SetValue(name.Cast<string>(), value);
+        }
+
+        void Load<T>(Expression<Func<T>> propertyByRef, RegistryKey key, Enum name)
+        {
+            var propertyExpr = (MemberExpression)propertyByRef.Body;
+            var property = (PropertyInfo)propertyExpr.Member;
+            var regValue = key.GetValue(name.Cast<string>());
+            if (Equals<T, bool>() && regValue is int numValue)
+                property.SetValue(this, numValue == 1);
+            else if (Equals<T, Timeout>() && regValue is int timeout)
+                property.SetValue(this, (Timeout)timeout);
+            else if (typeof(T).IsEnum && regValue is string enumValue)
+                property.SetValue(this, Enum.Parse(typeof(T), enumValue));
+            else if (regValue is T value)
+                property.SetValue(this, value);
+        }
+
+        bool Equals<T1, T2>()
+        {
+            return typeof(T1) == typeof(T2);
         }
     }
 }
