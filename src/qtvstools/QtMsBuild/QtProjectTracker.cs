@@ -73,23 +73,23 @@ namespace QtVsTools.QtMsBuild
         IVsStatusbar StatusBar { get; set; }
         IVsThreadedWaitDialogFactory WaitDialogFactory { get; set; }
 
-        public static void AddProject(EnvDTE.Project project, bool runQtTools)
+        public static void AddProject(EnvDTE.Project project, bool updateVars, bool runQtTools)
         {
             QtProjectTracker instance = null;
             if (!Instances.TryGetValue(project.FullName, out instance) || instance == null) {
-                Instances[project.FullName] = new QtProjectTracker(project, runQtTools);
+                Instances[project.FullName] = new QtProjectTracker(project, updateVars, runQtTools);
             }
         }
 
-        private QtProjectTracker(EnvDTE.Project project, bool runQtTools)
+        private QtProjectTracker(EnvDTE.Project project, bool updateVars, bool runQtTools)
         {
             Project = project;
-            Task.Run(async () => await InitializeAsync(runQtTools));
+            Task.Run(async () => await InitializeAsync(updateVars, runQtTools));
         }
 
         bool initialized = false;
 
-        private async Task InitializeAsync(bool runQtTools)
+        private async Task InitializeAsync(bool updateVars, bool runQtTools)
         {
             var context = Project.Object as IVsBrowseObjectContext;
             if (context == null)
@@ -119,7 +119,15 @@ namespace QtVsTools.QtMsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 configProject.ProjectChanged += OnProjectChanged;
                 configProject.ProjectUnloading += OnProjectUnloading;
-                await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, null);
+                if (Vsix.Instance.Options.BuildDebugInformation) {
+                    Messages.Print(string.Format(
+                        "{0:HH:mm:ss.FFF} QtProjectTracker: Started tracking [{1}] {2}",
+                        DateTime.Now,
+                        config.Name,
+                        UnconfiguredProject.FullPath));
+                }
+                if (updateVars)
+                    await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, null);
             }
         }
 
@@ -135,6 +143,13 @@ namespace QtVsTools.QtMsBuild
                 return;
             if (!instance.initialized)
                 return;
+            if (Vsix.Instance.Options.BuildDebugInformation) {
+                Messages.Print(string.Format(
+                    "{0:HH:mm:ss.FFF} QtProjectTracker: Refreshing: [{1}] {2}",
+                    DateTime.Now,
+                    (configId != null) ? configId : "(all configs)",
+                    project.FullName));
+            }
 
             Task.Run(async () => await instance
                 .RefreshIntelliSenseAsync(configId, runQtTools, selectedFiles));
@@ -182,6 +197,13 @@ namespace QtVsTools.QtMsBuild
             if (project == null || project.Services == null)
                 return;
 
+            if (Vsix.Instance.Options.BuildDebugInformation) {
+                Messages.Print(string.Format(
+                    "{0:HH:mm:ss.FFF} QtProjectTracker: Changed [{1}] {2}",
+                    DateTime.Now,
+                    project.ProjectConfiguration.Name,
+                    project.UnconfiguredProject.FullPath));
+            }
             Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project, false, null));
         }
 
@@ -263,7 +285,7 @@ namespace QtVsTools.QtMsBuild
                 return;
 
             if (verbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(clear: true, activate: true,
+                Messages.Print(clear: !Vsix.Instance.Options.BuildDebugInformation, activate: true,
                     text: string.Format(
 @"== {0}: starting build...
   * Properties: {1}
@@ -317,6 +339,22 @@ namespace QtVsTools.QtMsBuild
                         hostServices: null,
                         flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
+                    if (Vsix.Instance.Options.BuildDebugInformation) {
+                        Messages.Print(string.Format(
+                            "{0:HH:mm:ss.FFF} QtProjectTracker: Build [{1}] {2}",
+                            DateTime.Now,
+                            project.ProjectConfiguration.Name,
+                            project.UnconfiguredProject.FullPath));
+                        Messages.Print("=== Targets");
+                        foreach (var target in buildRequest.TargetNames)
+                            Messages.Print(string.Format("    {0}", target));
+                        Messages.Print("=== Properties");
+                        foreach (var property in properties) {
+                            Messages.Print(string.Format("    {0}={1}",
+                                property.Key, property.Value));
+                        }
+                    }
+
                     var result = buildManager.Build(buildParams, buildRequest);
 
                     if (result == null
@@ -336,6 +374,12 @@ namespace QtVsTools.QtMsBuild
                         if (buildSuccess)
                             msBuildProject.MarkDirty();
                         ok = buildSuccess;
+
+                        if (Vsix.Instance.Options.BuildDebugInformation) {
+                            Messages.Print(string.Format(
+                                "{0:HH:mm:ss.FFF} QtProjectTracker: Build {1}",
+                                DateTime.Now, ok ? "successful" : "ERROR"));
+                        }
                     }
                     await writeAccess.ReleaseAsync();
                 }
@@ -357,6 +401,13 @@ namespace QtVsTools.QtMsBuild
             var project = sender as ConfiguredProject;
             if (project == null || project.Services == null)
                 return;
+            if (Vsix.Instance.Options.BuildDebugInformation) {
+                Messages.Print(string.Format(
+                    "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
+                    DateTime.Now,
+                    project.ProjectConfiguration.Name,
+                    project.UnconfiguredProject.FullPath));
+            }
             project.ProjectChanged -= OnProjectChanged;
             project.ProjectUnloading -= OnProjectUnloading;
             Instances[Project.FullName] = null;

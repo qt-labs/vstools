@@ -84,6 +84,17 @@ namespace QtVsTools.Options
             [String("ResourceEditor_Detached")] Detached,
         }
 
+        public enum BkgBuild
+        {
+            [String("BkgBuild_OnProjectCreated")] OnProjectCreated,
+            [String("BkgBuild_OnProjectOpened")] OnProjectOpened,
+            [String("BkgBuild_OnProjectChanged")] OnProjectChanged,
+            [String("BkgBuild_OnBuildComplete")] OnBuildComplete,
+            [String("BkgBuild_OnUiFileAdded")] OnUiFileAdded,
+            [String("BkgBuild_OnUiFileSaved")] OnUiFileSaved,
+            [String("BkgBuild_DebugInfo")] DebugInfo
+        }
+
         public enum Timeout : uint { Disabled = 0 }
 
         class TimeoutConverter : EnumConverter
@@ -120,6 +131,29 @@ namespace QtVsTools.Options
             {
                 if (destinationType == typeof(string))
                     return value.ToString();
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+        }
+
+        class EnableDisableConverter : BooleanConverter
+        {
+            public override object ConvertFrom(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value)
+            {
+                return string
+                    .Equals(value as string, "Enable", StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public override object ConvertTo(
+                ITypeDescriptorContext context,
+                CultureInfo culture,
+                object value,
+                Type destinationType)
+            {
+                if (value.GetType() == typeof(bool) && destinationType == typeof(string))
+                    return ((bool)value) ? "Enable" : "Disable";
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }
@@ -176,6 +210,41 @@ namespace QtVsTools.Options
         [DisplayName("Run in detached window")]
         public bool ResourceEditorDetached { get; set; }
 
+        [Category("Background Build")]
+        [DisplayName("On project created")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnProjectCreated { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("On project opened")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnProjectOpened { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("On project changed")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnProjectChanged { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("On project build complete")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnProjectBuildComplete { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("On .ui file added")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnUiFileAdded { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("On .ui file changed")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildOnUiFileChanged { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("Show debug information")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildDebugInformation { get; set; }
+
         public override void ResetSettings()
         {
             QtMsBuildPath = "";
@@ -186,6 +255,12 @@ namespace QtVsTools.Options
             HelpPreference = QtHelp.SourcePreference.Online;
             TryQtHelpOnF1Pressed = true;
             DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
+
+            BuildOnProjectCreated = BuildOnProjectOpened = BuildOnProjectChanged
+                = BuildOnProjectBuildComplete
+                = BuildOnUiFileAdded = BuildOnUiFileChanged
+                = true;
+            BuildDebugInformation = false;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -221,6 +296,13 @@ namespace QtVsTools.Options
                     Load(() => DesignerDetached, key, Designer.Detached);
                     Load(() => LinguistDetached, key, Linguist.Detached);
                     Load(() => ResourceEditorDetached, key, ResEditor.Detached);
+                    Load(() => BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
+                    Load(() => BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
+                    Load(() => BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
+                    Load(() => BuildOnProjectBuildComplete, key, BkgBuild.OnBuildComplete);
+                    Load(() => BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
+                    Load(() => BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
+                    Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -252,6 +334,13 @@ namespace QtVsTools.Options
                     Save(DesignerDetached, key, Designer.Detached);
                     Save(LinguistDetached, key, Linguist.Detached);
                     Save(ResourceEditorDetached, key, ResEditor.Detached);
+                    Save(BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
+                    Save(BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
+                    Save(BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
+                    Save(BuildOnProjectBuildComplete, key, BkgBuild.OnBuildComplete);
+                    Save(BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
+                    Save(BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
+                    Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                 }
             } catch (Exception exception) {
                 Messages.Print(

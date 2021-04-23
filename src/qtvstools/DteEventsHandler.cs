@@ -308,8 +308,10 @@ namespace QtVsTools
                 if (project == null || !HelperFunctions.IsQtProject(project))
                     continue;
 
-                if (Vsix.Instance.Options.RefreshIntelliSenseOnBuild)
+                if (Vsix.Instance.Options.RefreshIntelliSenseOnBuild
+                    && Vsix.Instance.Options.BuildOnProjectBuildComplete) {
                     QtProjectTracker.RefreshIntelliSense(project, configId);
+                }
             }
             buildDoneEvents.Clear();
         }
@@ -454,8 +456,10 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    if (Vsix.Instance.Options.RefreshIntelliSenseOnUiFile)
+                    if (Vsix.Instance.Options.RefreshIntelliSenseOnUiFile
+                        && Vsix.Instance.Options.BuildOnUiFileAdded) {
                         QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
+                    }
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
@@ -492,7 +496,9 @@ namespace QtVsTools
         {
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
-                QtProjectTracker.AddProject(project, runQtTools: true);
+                QtProjectTracker.AddProject(project,
+                    updateVars: Vsix.Instance.Options.BuildOnProjectCreated,
+                    runQtTools: true);
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection) {
@@ -536,7 +542,9 @@ namespace QtVsTools
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
-                    QtProjectTracker.AddProject(p, runQtTools: false);
+                    QtProjectTracker.AddProject(p,
+                        updateVars: Vsix.Instance.Options.BuildOnProjectOpened,
+                        runQtTools: false);
                 }
             }
         }

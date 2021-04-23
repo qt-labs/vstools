@@ -59,8 +59,10 @@ namespace QtVsTools.Editors
         protected override void OnStart(Process process)
         {
             base.OnStart(process);
-            if (!Vsix.Instance.Options.RefreshIntelliSenseOnUiFile)
+            if (!Vsix.Instance.Options.RefreshIntelliSenseOnUiFile
+                || !Vsix.Instance.Options.BuildOnUiFileChanged) {
                 return;
+            }
             var document = VsShell.GetDocument(Context, ItemId);
             if (document == null)
                 return;
