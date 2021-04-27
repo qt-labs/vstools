@@ -46,6 +46,7 @@ using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using Microsoft.Build.Framework;
+using System.Text;
 
 namespace QtVsTools.QtMsBuild
 {
@@ -75,6 +76,9 @@ namespace QtVsTools.QtMsBuild
 
         public static void AddProject(EnvDTE.Project project, bool updateVars, bool runQtTools)
         {
+            if (!Vsix.Instance.Options.ProjectTracking)
+                return;
+
             QtProjectTracker instance = null;
             if (!Instances.TryGetValue(project.FullName, out instance) || instance == null) {
                 Instances[project.FullName] = new QtProjectTracker(project, updateVars, runQtTools);
@@ -121,8 +125,10 @@ namespace QtVsTools.QtMsBuild
                 configProject.ProjectUnloading += OnProjectUnloading;
                 if (Vsix.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
-                        "{0:HH:mm:ss.FFF} QtProjectTracker: Started tracking [{1}] {2}",
+                        "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Started tracking [{3}] {4}",
                         DateTime.Now,
+                        System.Threading.Thread.CurrentThread.ManagedThreadId,
+                        Task.CurrentId,
                         config.Name,
                         UnconfiguredProject.FullPath));
                 }
@@ -143,10 +149,13 @@ namespace QtVsTools.QtMsBuild
                 return;
             if (!instance.initialized)
                 return;
+
             if (Vsix.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker: Refreshing: [{1}] {2}",
+                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Refreshing: [{3}] {4}",
                     DateTime.Now,
+                    System.Threading.Thread.CurrentThread.ManagedThreadId,
+                    Task.CurrentId,
                     (configId != null) ? configId : "(all configs)",
                     project.FullName));
             }
@@ -193,14 +202,19 @@ namespace QtVsTools.QtMsBuild
             if (!initialized)
                 return;
 
+            if (!Vsix.Instance.Options.BuildOnProjectChanged)
+                return;
+
             var project = sender as ConfiguredProject;
             if (project == null || project.Services == null)
                 return;
 
             if (Vsix.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker: Changed [{1}] {2}",
+                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Changed [{3}] {4}",
                     DateTime.Now,
+                    System.Threading.Thread.CurrentThread.ManagedThreadId,
+                    Task.CurrentId,
                     project.ProjectConfiguration.Name,
                     project.UnconfiguredProject.FullPath));
             }
@@ -327,10 +341,13 @@ namespace QtVsTools.QtMsBuild
                     var projectInstance = new ProjectInstance(msBuildProject.Xml,
                         configProps, null, new ProjectCollection());
 
+                    var loggerVerbosity = verbosity;
+                    if (Vsix.Instance.Options.BuildDebugInformation)
+                        loggerVerbosity = Vsix.Instance.Options.BuildLoggerVerbosity;
                     var buildParams = new BuildParameters()
                     {
-                        Loggers = (verbosity != LoggerVerbosity.Quiet)
-                                ? new[] { new Logger() { Verbosity = verbosity } }
+                        Loggers = (loggerVerbosity != LoggerVerbosity.Quiet)
+                                ? new[] { new Logger() { Verbosity = loggerVerbosity } }
                                 : null
                     };
 
@@ -341,8 +358,10 @@ namespace QtVsTools.QtMsBuild
 
                     if (Vsix.Instance.Options.BuildDebugInformation) {
                         Messages.Print(string.Format(
-                            "{0:HH:mm:ss.FFF} QtProjectTracker: Build [{1}] {2}",
+                            "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Build [{3}] {4}",
                             DateTime.Now,
+                            System.Threading.Thread.CurrentThread.ManagedThreadId,
+                            Task.CurrentId,
                             project.ProjectConfiguration.Name,
                             project.UnconfiguredProject.FullPath));
                         Messages.Print("=== Targets");
@@ -356,6 +375,48 @@ namespace QtVsTools.QtMsBuild
                     }
 
                     var result = buildManager.Build(buildParams, buildRequest);
+
+                    if (Vsix.Instance.Options.BuildDebugInformation) {
+                        string resMsg;
+                        StringBuilder resInfo = new StringBuilder();
+                        if (result?.OverallResult == BuildResultCode.Success) {
+                            resMsg = "Build ok";
+                        } else {
+                            resMsg = "Build FAIL";
+                            if (result == null) {
+                                resInfo.AppendLine("####### Build returned 'null'");
+                            } else {
+                                resInfo.AppendLine("####### Build returned 'Failure' code");
+                                if (result.ResultsByTarget != null) {
+                                    foreach (var tr in result.ResultsByTarget) {
+                                        var res = tr.Value;
+                                        if (res.ResultCode != TargetResultCode.Failure)
+                                            continue;
+                                        resInfo.AppendFormat("### Target '{0}' FAIL\r\n", tr.Key);
+                                        if (res.Items != null && res.Items.Length > 0) {
+                                            resInfo.AppendFormat(
+                                                "Items: {0}\r\n", string.Join(", ", res.Items
+                                                    .Select(it => it.ItemSpec)));
+                                        }
+                                        var e = tr.Value?.Exception;
+                                        if (e != null) {
+                                            resInfo.AppendFormat(
+                                                "Exception: {0}\r\nStacktrace:\r\n{1}\r\n",
+                                                e.Message, e.StackTrace);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Messages.Print(string.Format(
+                            "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): [{3}] {4}\r\n{5}",
+                            DateTime.Now,
+                            System.Threading.Thread.CurrentThread.ManagedThreadId,
+                            Task.CurrentId,
+                            project.ProjectConfiguration.Name,
+                            resMsg,
+                            resInfo.ToString()));
+                    }
 
                     if (result == null
                         || result.ResultsByTarget == null
@@ -374,12 +435,6 @@ namespace QtVsTools.QtMsBuild
                         if (buildSuccess)
                             msBuildProject.MarkDirty();
                         ok = buildSuccess;
-
-                        if (Vsix.Instance.Options.BuildDebugInformation) {
-                            Messages.Print(string.Format(
-                                "{0:HH:mm:ss.FFF} QtProjectTracker: Build {1}",
-                                DateTime.Now, ok ? "successful" : "ERROR"));
-                        }
                     }
                     await writeAccess.ReleaseAsync();
                 }
@@ -421,27 +476,86 @@ namespace QtVsTools.QtMsBuild
 
             public void Initialize(IEventSource eventSource)
             {
-                eventSource.MessageRaised += new BuildMessageEventHandler(MessageRaised);
-                eventSource.WarningRaised += new BuildWarningEventHandler(WarningRaised);
-                eventSource.ErrorRaised += new BuildErrorEventHandler(ErrorRaised);
+                eventSource.ErrorRaised += ErrorRaised;
+                eventSource.WarningRaised += WarningRaised;
+                eventSource.MessageRaised += MessageRaised;
+                eventSource.TargetStarted += TargetStarted;
+                eventSource.TargetFinished += TargetFinished;
+                eventSource.TaskStarted += TaskStarted;
+                eventSource.TaskFinished += TaskFinished;
+                eventSource.AnyEventRaised += AnyEventRaised;
             }
 
             private void ErrorRaised(object sender, BuildErrorEventArgs e)
             {
+                if (Verbosity == LoggerVerbosity.Quiet)
+                    return;
                 Messages.Print(e.Message);
             }
 
             private void WarningRaised(object sender, BuildWarningEventArgs e)
             {
+                if (Verbosity == LoggerVerbosity.Quiet)
+                    return;
                 Messages.Print(e.Message);
             }
 
             private void MessageRaised(object sender, BuildMessageEventArgs e)
             {
-                if (e is TaskCommandLineEventArgs)
+                if (Verbosity <= LoggerVerbosity.Quiet)
                     return;
-                if (e.Importance == MessageImportance.High)
-                    Messages.Print(e.Message);
+                if (Verbosity <= LoggerVerbosity.Minimal && e.SenderName != "Message")
+                    return;
+                if (Verbosity <= LoggerVerbosity.Normal && e.Importance != MessageImportance.High)
+                    return;
+                if (Verbosity <= LoggerVerbosity.Detailed
+                    && (e.Importance == MessageImportance.Low || e.SenderName == "MSBuild")) {
+                    return;
+                }
+                Messages.Print(e.Message);
+            }
+
+            private void TargetStarted(object sender, TargetStartedEventArgs e)
+            {
+                if (Verbosity < LoggerVerbosity.Detailed)
+                    return;
+                Messages.Print(e.Message);
+            }
+
+            private void TargetFinished(object sender, TargetFinishedEventArgs e)
+            {
+                if (Verbosity < LoggerVerbosity.Detailed)
+                    return;
+                Messages.Print(e.Message);
+            }
+
+            private void TaskStarted(object sender, TaskStartedEventArgs e)
+            {
+                if (Verbosity < LoggerVerbosity.Detailed)
+                    return;
+                Messages.Print(e.Message);
+            }
+
+            private void TaskFinished(object sender, TaskFinishedEventArgs e)
+            {
+                if (Verbosity < LoggerVerbosity.Detailed)
+                    return;
+                Messages.Print(e.Message);
+            }
+
+            private void AnyEventRaised(object sender, BuildEventArgs e)
+            {
+                if (Verbosity < LoggerVerbosity.Diagnostic
+                    || e is BuildMessageEventArgs
+                    || e is BuildErrorEventArgs
+                    || e is BuildWarningEventArgs
+                    || e is TargetStartedEventArgs
+                    || e is TargetFinishedEventArgs
+                    || e is TaskStartedEventArgs
+                    || e is TaskFinishedEventArgs) {
+                    return;
+                }
+                Messages.Print(e.Message);
             }
 
             public void Shutdown()

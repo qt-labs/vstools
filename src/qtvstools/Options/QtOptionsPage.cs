@@ -33,6 +33,7 @@ using System.Linq;
 using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.Build.Framework;
 using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.Common;
@@ -86,13 +87,15 @@ namespace QtVsTools.Options
 
         public enum BkgBuild
         {
+            [String("BkgBuild_ProjectTracking")] ProjectTracking,
             [String("BkgBuild_OnProjectCreated")] OnProjectCreated,
             [String("BkgBuild_OnProjectOpened")] OnProjectOpened,
             [String("BkgBuild_OnProjectChanged")] OnProjectChanged,
             [String("BkgBuild_OnBuildComplete")] OnBuildComplete,
             [String("BkgBuild_OnUiFileAdded")] OnUiFileAdded,
             [String("BkgBuild_OnUiFileSaved")] OnUiFileSaved,
-            [String("BkgBuild_DebugInfo")] DebugInfo
+            [String("BkgBuild_DebugInfo")] DebugInfo,
+            [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity
         }
 
         public enum Timeout : uint { Disabled = 0 }
@@ -211,6 +214,11 @@ namespace QtVsTools.Options
         public bool ResourceEditorDetached { get; set; }
 
         [Category("Background Build")]
+        [DisplayName("Project tracking")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool ProjectTracking { get; set; }
+
+        [Category("Background Build")]
         [DisplayName("On project created")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool BuildOnProjectCreated { get; set; }
@@ -245,6 +253,10 @@ namespace QtVsTools.Options
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool BuildDebugInformation { get; set; }
 
+        [Category("Background Build")]
+        [DisplayName("Show debug information: build log verbosity")]
+        public LoggerVerbosity BuildLoggerVerbosity { get; set; }
+
         public override void ResetSettings()
         {
             QtMsBuildPath = "";
@@ -259,8 +271,10 @@ namespace QtVsTools.Options
             BuildOnProjectCreated = BuildOnProjectOpened = BuildOnProjectChanged
                 = BuildOnProjectBuildComplete
                 = BuildOnUiFileAdded = BuildOnUiFileChanged
+                = ProjectTracking
                 = true;
             BuildDebugInformation = false;
+            BuildLoggerVerbosity = LoggerVerbosity.Quiet;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -296,6 +310,7 @@ namespace QtVsTools.Options
                     Load(() => DesignerDetached, key, Designer.Detached);
                     Load(() => LinguistDetached, key, Linguist.Detached);
                     Load(() => ResourceEditorDetached, key, ResEditor.Detached);
+                    Load(() => ProjectTracking, key, BkgBuild.ProjectTracking);
                     Load(() => BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
                     Load(() => BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
                     Load(() => BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
@@ -303,6 +318,7 @@ namespace QtVsTools.Options
                     Load(() => BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
                     Load(() => BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
                     Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
+                    Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -334,6 +350,7 @@ namespace QtVsTools.Options
                     Save(DesignerDetached, key, Designer.Detached);
                     Save(LinguistDetached, key, Linguist.Detached);
                     Save(ResourceEditorDetached, key, ResEditor.Detached);
+                    Save(ProjectTracking, key, BkgBuild.ProjectTracking);
                     Save(BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
                     Save(BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
                     Save(BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
@@ -341,6 +358,7 @@ namespace QtVsTools.Options
                     Save(BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
                     Save(BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
+                    Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 }
             } catch (Exception exception) {
                 Messages.Print(
