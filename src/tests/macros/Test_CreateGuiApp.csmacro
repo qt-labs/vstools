@@ -41,10 +41,9 @@ solution.Create(tempDir, solutionName);
 solution.SaveAs(Path.Combine(solutionDir, solutionFileName));
 var templateGuiApp = solution.GetProjectTemplate("Qt Widgets Application", "VC");
 var taskAddProj = Task.Run(() => solution.AddFromTemplate(templateGuiApp, projectDir, "MyGuiApp"));
-//# ui context VS => "Qt Widgets Application Wizard"
+//# ui context VSROOT 15000 => "Qt Widgets Application Wizard"
 //# ui pattern Invoke => "Next >"
 //# ui pattern Invoke => "Next >"
 //# ui pattern Invoke => "Finish"
 if (!taskAddProj.Wait(15000))
     throw new Exception("Timeout: Solution2.AddFromTemplate");
-Result = "(ok)";

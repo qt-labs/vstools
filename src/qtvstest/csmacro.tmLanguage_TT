@@ -355,12 +355,12 @@
       </dict>
       <!--
       /////////////////////////////////////////////////////////////////////////////////////////////
-      //# ui context [ VS [timeout] ] => _string_ [, _string_, ... ]
-      //# ui context HWND => _int_
+      //# ui context [ VSROOT | DESKTOP [timeout] ] => _string_ [, _string_, ... ]
+      //# ui context HWND [timeout] => _int_
       ///////////////////////////////////////////////////////////////////////////////////////// -->
       <dict>
         <key>begin</key>
-        <string>(//#\s*ui)\s+(context)\s+(?:(?:(?:(VS)(?:\s+(\d+))?)|(HWND))\s+)?(=>)</string>
+        <string>(//#\s*ui)\s+(context)\s+(?:(?:(?:(VSROOT|DESKTOP)(?:\s+(\d+))?)|(HWND))\s+)?(=>)</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>

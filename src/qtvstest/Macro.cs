@@ -107,6 +107,8 @@ namespace QtVsTest.Macros
         AsyncPackage Package { get; set; }
         EnvDTE80.DTE2 Dte { get; set; }
 
+        AutomationElement UiRoot => AutomationElement.RootElement;
+
         AutomationElement _UiVsRoot;
         AutomationElement UiVsRoot
         {
@@ -184,6 +186,9 @@ namespace QtVsTest.Macros
         static ConcurrentDictionary<string, Macro> Macros
             = new ConcurrentDictionary<string, Macro>();
 
+        static ConcurrentDictionary<string, object> Globals
+            = new ConcurrentDictionary<string, object>();
+
         /// <summary>
         /// Macro constructor
         /// </summary>
@@ -240,17 +245,17 @@ namespace QtVsTest.Macros
             if (!Ok)
                 return;
 
-            if (string.IsNullOrEmpty(CSharpMethodCode))
-                return;
-
             try {
-                InitGlobalVars();
+                InitGlobals();
                 await Run();
                 await SwitchToWorkerThreadAsync();
                 Result = ResultField.GetValue(null) as string;
+                if (string.IsNullOrEmpty(Result))
+                    Result = MACRO_OK;
             } catch (Exception e) {
                 ErrorException(e);
             }
+            UpdateGlobals();
         }
 
         /// <summary>
@@ -400,10 +405,16 @@ namespace QtVsTest.Macros
                     break;
 
                 case StatementType.Var:
-                    if (s.Args.Count < 2)
+                    if (s.Args.Count < 1)
                         return ErrorMsg("Missing args for #var");
-                    var typeName = s.Args[0];
-                    var varName = s.Args[1];
+                    string typeName, varName;
+                    if (s.Args.Count == 1) {
+                        typeName = "object";
+                        varName = s.Args[0];
+                    } else {
+                        typeName = s.Args[0];
+                        varName = s.Args[1];
+                    }
                     var initValue = s.Code;
                     if (varName.Where(c => char.IsWhiteSpace(c)).Any())
                         return ErrorMsg("Wrong var name");
@@ -503,15 +514,16 @@ namespace QtVsTest.Macros
             var uiIterator = uiContext;
             foreach (var item in path) {
                 var itemType = item.GetType();
+                var scope = (uiIterator == UiRoot) ? TreeScope.Children : TreeScope.Subtree;
                 if (itemType.IsAssignableFrom(typeof(string))) {
                     // Find element by name
                     var name = (string)item;
-                    uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
+                    uiIterator = uiIterator.FindFirst(scope,
                         new PropertyCondition(AutomationElement.NameProperty, name));
                 } else if (itemType.IsAssignableFrom(typeof(string[]))) {
                     // Find element by name and type
                     var itemParams = (string[])item;
-                    uiIterator = uiIterator.FindFirst(TreeScope.Subtree,
+                    uiIterator = uiIterator.FindFirst(scope,
                         new AndCondition(itemParams.Select((x, i) =>
                         (i == 0) ? new PropertyCondition(
                             AutomationElement.NameProperty, x) :
@@ -539,6 +551,7 @@ namespace QtVsTest.Macros
         {
             csharp.Append(@"
         public static Func<AutomationElement, object[], AutomationElement> UiFind;
+        public static AutomationElement UiRoot;
         public static AutomationElement UiVsRoot;
         public static AutomationElement UiContext;");
             return true;
@@ -551,6 +564,9 @@ namespace QtVsTest.Macros
 
             MacroClass.GetField("UiFind", PUBLIC_STATIC)
                 .SetValue(null, new Func<AutomationElement, object[], AutomationElement>(UiFind));
+
+            MacroClass.GetField("UiRoot", PUBLIC_STATIC)
+                .SetValue(null, UiRoot);
 
             MacroClass.GetField("UiVsRoot", PUBLIC_STATIC)
                 .SetValue(null, UiVsRoot);
@@ -567,36 +583,34 @@ namespace QtVsTest.Macros
                 return ErrorMsg("Invalid #ui statement");
 
             if (s.Args[0].Equals("context", IGNORE_CASE)) {
-                //# ui context [ VS ] [_int_] => _string_ [, _string_, ... ]
+                //# ui context [ VSROOT | DESKTOP ] [_int_] => _string_ [, _string_, ... ]
                 //# ui context HWND [_int_] => _int_
 
                 if (s.Args.Count > 3 || string.IsNullOrEmpty(s.Code))
                     return ErrorMsg("Invalid #ui statement");
 
-                bool uiVsRoot = (s.Args.Count > 1 && s.Args[1] == "VS");
+                bool uiVsRoot = (s.Args.Count > 1 && s.Args[1] == "VSROOT");
+                bool uiDesktop = (s.Args.Count > 1 && s.Args[1] == "DESKTOP");
                 bool uiHwnd = (s.Args.Count > 1 && s.Args[1] == "HWND");
 
                 string context;
                 if (uiVsRoot)
                     context = string.Format("UiFind(UiVsRoot, new object[] {{ {0} }})", s.Code);
+                else if (uiDesktop)
+                    context = string.Format("UiFind(UiRoot, new object[] {{ {0} }})", s.Code);
                 else if (uiHwnd)
                     context = string.Format("AutomationElement.FromHandle((IntPtr)({0}))", s.Code);
                 else
                     context = string.Format("UiFind(UiContext, new object[] {{ {0} }})", s.Code);
 
-                int timeout = 0;
-                if (s.Args.Count > 1 && !uiVsRoot && !uiHwnd)
+                int timeout = 3000;
+                if (s.Args.Count > 1 && !uiVsRoot && !uiDesktop && !uiHwnd)
                     timeout = int.Parse(s.Args[1]);
                 else if (s.Args.Count > 2)
                     timeout = int.Parse(s.Args[2]);
 
-                if (timeout > 0) {
-                    csharp.AppendFormat(@"
+                csharp.AppendFormat(@"
                     await WaitExpr({0}, () => UiContext = {1});", timeout, context);
-                } else {
-                    csharp.AppendFormat(@"
-                    UiContext = {0};", context);
-                }
 
             } else if (s.Args[0].Equals("pattern", IGNORE_CASE)) {
                 //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
@@ -702,6 +716,13 @@ namespace QtVsTest.Macros
             csharp.Append(
 /** BEGIN generate code **/
 @"
+        static string MACRO_OK { get { return ""(ok)""; } }
+        static string MACRO_ERROR { get { return ""(error)""; } }
+        static string MACRO_WARN { get { return ""(warn)""; } }
+        static string MACRO_ERROR_MSG(string msg)
+            { return string.Format(""{0}\r\n{1}"", MACRO_ERROR, msg); }
+        static string MACRO_WARN_MSG(string msg)
+            { return string.Format(""{0}\r\n{1}"", MACRO_WARN, msg); }
         public static Func<string, Assembly> GetAssembly;
         public static Func<Task> SwitchToUIThread;
         public static Func<Task> SwitchToWorkerThread;
@@ -852,17 +873,12 @@ namespace QtVsTest.Macros
             if (callee == null)
                 throw new FileNotFoundException("Unknown macro");
 
-            callee.InitGlobalVars();
-
-            CopyGlobalVars(
-                from: GlobalVars.Values.Where(x => !x.IsCallOutput),
-                to: callee.GlobalVars.Values);
-
+            callee.InitGlobals();
             await callee.Run();
+            callee.UpdateGlobals();
 
-            CopyGlobalVars(
-                from: callee.GlobalVars.Values,
-                to: GlobalVars.Values);
+            // Refresh caller local copies of globals
+            InitGlobals();
         }
 
         public async Task WaitExprAsync(int timeout, Func<object> expr)
@@ -902,26 +918,31 @@ namespace QtVsTest.Macros
                 return false;
         }
 
-        void InitGlobalVars()
+        void InitGlobals()
         {
-            var globalVarsInit = GlobalVars.Values
-                .Where(x => x.FieldInfo != null && !string.IsNullOrEmpty(x.InitialValueExpr));
-            foreach (var globalVar in globalVarsInit)
-                globalVar.FieldInfo.SetValue(null, globalVar.InitInfo.GetValue(null));
+            foreach (var globalVar in GlobalVars.Values) {
+                string varName = globalVar.Name;
+                Type varType = globalVar.FieldInfo.FieldType;
+                object value;
+                if (Globals.TryGetValue(varName, out value)) {
+                    Type valueType = value.GetType();
+                    if (!varType.IsAssignableFrom(valueType)) {
+                        throw new InvalidCastException(string.Format(
+                            "Global variable '{0}': cannot assign '{1}' from '{2}'",
+                            varName, varType.Name, valueType.Name));
+                    }
+                    globalVar.FieldInfo.SetValue(null, value);
+                } else {
+                    globalVar.FieldInfo.SetValue(null, globalVar.InitInfo.GetValue(null));
+                }
+            }
         }
 
-        static void CopyGlobalVars(IEnumerable<GlobalVar> from, IEnumerable<GlobalVar> to)
+        void UpdateGlobals()
         {
-            var globalVars = to.Join(from,
-                    DstVar => DstVar.Name, SrcVar => SrcVar.Name,
-                    (DstVar, SrcVar) => new { DstVar, SrcVar })
-                .Where(x => x.SrcVar.FieldInfo != null && x.DstVar.FieldInfo != null
-                    && x.DstVar.FieldInfo.FieldType
-                        .IsAssignableFrom(x.SrcVar.FieldInfo.FieldType));
-
-            foreach (var globalVar in globalVars) {
-                globalVar.DstVar.FieldInfo
-                    .SetValue(null, globalVar.SrcVar.FieldInfo.GetValue(null));
+            foreach (var globalVar in GlobalVars.Values) {
+                object value = globalVar.FieldInfo.GetValue(null);
+                Globals.AddOrUpdate(globalVar.Name, value, (key, oldValue) => value);
             }
         }
 
@@ -952,6 +973,7 @@ namespace QtVsTest.Macros
         public static void Reset()
         {
             Macros.Clear();
+            Globals.Clear();
         }
 
         bool GenerateResultFuncs(StringBuilder csharp)

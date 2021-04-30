@@ -33,4 +33,3 @@
 var VsixType = QtVsTools.GetType("QtVsTools.Vsix");
 var VsixInstance = VsixType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
 //# wait 15000 => VsixInstance.GetValue(null)
-Result = "(ok)";

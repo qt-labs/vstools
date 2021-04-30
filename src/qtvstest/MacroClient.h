@@ -40,25 +40,11 @@
 
 #include <process.h>
 
-#define MACRO_OK                    QStringLiteral("(ok)")
-#define MACRO_ERROR                 QStringLiteral("(error)")
-#define MACRO_ERROR_MSG(msg)        QStringLiteral("(error)\r\n" msg)
-
-#define MACRO_ASSERT_OK(result)     QCOMPARE(result, MACRO_OK)
-
-#define MACRO_GLOBALS(globalVars)           "//# macro Globals\r\n" globalVars
-#define MACRO_GLOBAL_VAR(varName, varValue) "//# var string " varName " => " varValue "\r\n"
-
-
-inline bool macroResultOk(QString result)
-{
-    return result == MACRO_OK;
-}
-
-inline bool macroResultError(QString result)
-{
-    return result.startsWith(MACRO_ERROR);
-}
+#define MACRO_OK                QStringLiteral("(ok)")
+#define MACRO_ERROR             QStringLiteral("(error)")
+#define MACRO_ERROR_MSG(msg)    QStringLiteral("(error)\r\n" msg)
+#define MACRO_WARN              QStringLiteral("(warn)")
+#define MACRO_WARN_MSG(msg)     QStringLiteral("(warn)\r\n" msg)
 
 class MacroClient
 {
@@ -160,13 +146,19 @@ public:
         return loadAndRunMacro(macroFile);
     }
 
-    QString loadMacro(QFile &macroFile, QString macroName)
+    QString storeMacro(QString macroName, QString macroCode)
+    {
+        return runMacro(QString() % "//#macro " % macroName % "\r\n" % macroCode);
+    }
+
+    QString storeMacro(QString macroName, QFile &macroFile)
     {
         if (macroName.isNull() || macroName.isEmpty())
             return MACRO_ERROR_MSG("Invalid macro name");
         return loadAndRunMacro(macroFile, QString("//#macro %1").arg(macroName));
     }
 
+private:
     QString loadAndRunMacro(QFile &macroFile, QString macroHeader = QString())
     {
         if (!macroFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -176,12 +168,11 @@ public:
         if (macroCode.isEmpty())
             return MACRO_ERROR_MSG("Macro load failed");
         if (!macroHeader.isNull())
-            return runMacro(macroHeader + "\r\n" + macroCode);
+            return runMacro(macroHeader % "\r\n" % macroCode);
         else
             return runMacro(macroCode);
     }
 
-private:
     class QDetachableProcess : public QProcess
     {
     public:

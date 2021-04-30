@@ -28,7 +28,7 @@
 
 //# using System.IO
 
-//# call Globals
+//# var string QtConfPath
 
 var qtConf = File.ReadAllLines(QtConfPath);
 var prefix = qtConf
@@ -59,11 +59,10 @@ Directory.EnumerateFiles(wigglyPath)
 var taskOpenPro = Task.Run(() => Dte.ExecuteCommand("QtVSTools.OpenQtProjectFile.pro"));
 taskOpenPro.Wait(0);
 
-//# ui context VS 3000 => "Select a Qt Project to Add to the Solution"
+//# ui context VSROOT 3000 => "Select a Qt Project to Add to the Solution"
 //# ui pattern Value proFilePath => new[] { "File name:", "combo box" }, new[] { "File name:", "edit" }
 proFilePath.SetValue(projectFile);
 //# ui pattern Invoke => new[] { "Open", "button", "1" }
 
 if (!taskOpenPro.Wait(15000))
     throw new Exception("Timeout: QtVSTools.OpenQtProjectFile.pro");
-Result = "(ok)";

@@ -42,18 +42,67 @@ private slots:
     {
         qint64 pid = 0;
         QVERIFY(client.connect(&pid));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/QtVsToolsLoaded")));
-        MACRO_ASSERT_OK(client.runMacro(
-            MACRO_GLOBALS(
-                MACRO_GLOBAL_VAR("QtConfPath", "@\"" QT_CONF_PATH "\""))));
+        client.runMacro(QString() % "//# var QtConfPath => @\"" % QT_CONF_PATH % "\"");
+        QCOMPARE(client.runMacro(QFile(":/QtVsToolsLoaded")), MACRO_OK);
+    }
+
+    void tutorial01TestCase()
+    {
+        QSKIP("tutorial");
+        QCOMPARE(client.runMacro(QString()
+            % "//# using System.Windows.Forms\r\n"
+            % "MessageBox.Show(\"Hello from Visual Studio!!\");"),
+            MACRO_OK);
+    }
+
+    void tutorial02TestCase()
+    {
+        QSKIP("tutorial");
+        QCOMPARE(client.runMacro(QString()
+            % "//# using System.Windows.Forms\r\n"
+            % "var task = Task.Run(() => MessageBox.Show(\"Hello, close this in 15 secs!!\"));\r\n"
+            % "//# wait 15000 => task.IsCompleted"),
+            MACRO_OK);
+    }
+
+    void tutorial03TestCase()
+    {
+        QSKIP("tutorial");
+        QCOMPARE(client.runMacro(
+            "Result = Environment.CurrentDirectory.Replace(\"\\\\\", \"/\");"),
+            QDir::currentPath());
+    }
+
+    void tutorial04TestCase()
+    {
+        QSKIP("tutorial");
+        QCOMPARE(client.runMacro("//# var InitTime => DateTime.Now"),
+            MACRO_OK);
+
+        QCOMPARE(client.runMacro(QString()
+            % "//# using System.Windows.Forms\r\n"
+            % "//# var InitTime\r\n"
+            % "MessageBox.Show(\"Test started at \" + InitTime);"),
+            MACRO_OK);
+    }
+
+    void tutorial05TestCase()
+    {
+        QSKIP("tutorial");
+        QCOMPARE(client.runMacro(QString()
+            % "//# using System.Windows.Forms\r\n"
+            % "Task.Run(() => MessageBox.Show(\"Press OK to close.\", \"Hello\"));\r\n"
+            % "//# ui context DESKTOP => \"Hello\", \"OK\"\r\n"
+            % "UiContext.SetFocus();\r\n"),
+            MACRO_OK);
     }
 
     void guiAppCreate_Rebuild_Debug()
     {
         client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/CreateGuiApp")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
+        QCOMPARE(client.runMacro(QFile(":/CreateGuiApp")), MACRO_OK);
+        QCOMPARE(client.runMacro(QFile(":/RebuildSolution")), MACRO_OK);
+        QCOMPARE(client.runMacro(QFile(":/DebugGuiApp")), MACRO_OK);
         client.runMacro(
             "Dte.Solution.Close(false);"                "\r\n"
             "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
@@ -61,9 +110,10 @@ private slots:
 
     void importProFile_Rebuild_Debug()
     {
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/ImportProFile")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/RebuildSolution")));
-        MACRO_ASSERT_OK(client.runMacro(QFile(":/DebugGuiApp")));
+        QSKIP("foo");
+        QCOMPARE(client.runMacro(QFile(":/ImportProFile")), MACRO_OK);
+        QCOMPARE(client.runMacro(QFile(":/RebuildSolution")), MACRO_OK);
+        QCOMPARE(client.runMacro(QFile(":/DebugGuiApp")), MACRO_OK);
         client.runMacro(
             "Dte.Solution.Close(false);"                "\r\n"
             "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");

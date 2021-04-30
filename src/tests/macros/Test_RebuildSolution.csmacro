@@ -38,4 +38,4 @@ var taskRebuild = Task.Run(() =>
 });
 
 bool buildOk = (taskRebuild.Wait(15000) && solutionBuild.LastBuildInfo == 0);
-Result = buildOk ? "(ok)" : "(error)\r\nBuild failed.";
+Result = buildOk ? MACRO_OK : MACRO_ERROR_MSG("Build failed.");
