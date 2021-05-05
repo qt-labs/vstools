@@ -47,70 +47,43 @@ namespace QtVsTools.QtMsBuild
     [AppliesTo("IntegratedConsoleDebugging")]
     internal sealed class QtModulesEditor : IPropertyPageUIValueEditor
     {
-        class Module
-        {
-            public string LibraryPrefix;
-            public QtModuleInfo Info;
-            public IEnumerable<string> Vars;
-        }
-        static Dictionary<string, Module> modules = null;
-
         public async Task<object> EditValueAsync(
             IServiceProvider serviceProvider,
             IProperty ruleProperty,
             object currentValue)
         {
-            if (modules == null) {
-                modules = QtModules.Instance.GetAvailableModuleInformation()
-                    .Where(x => !string.IsNullOrEmpty(x.proVarQT))
-                    .ToDictionary(x => x.LibraryPrefix, x => new Module
-                    {
-                        LibraryPrefix = x.LibraryPrefix,
-                        Info = x,
-                        Vars = x.proVarQT.Split(' ')
-                    });
-            }
+            await System.Threading.Tasks.Task.Yield();
 
-            var currentModules = Enumerable.Empty<Module>();
-            if (currentValue != null) {
-                var currentModuleVars = currentValue.ToString().Split(';');
-                currentModules = modules.Values
-                    .Where(x => x.Vars.All(y => currentModuleVars.Contains(y)));
-            }
-
-            await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var data = new Wizards.WizardData
-            {
-                Modules = currentModules.Select(x => x.LibraryPrefix).ToList()
-            };
-
-            var pages = new List<Wizards.WizardPage>
-            {
-                new Wizards.ProjectWizard.ModulePage
+            var modules = QtModules.Instance.GetAvailableModuleInformation()
+                .Where(x => !string.IsNullOrEmpty(x.proVarQT))
+                .Select(x => new QtModulesPopup.Module
                 {
-                    Data = data,
-                    Header = @"Select Qt Modules",
-                    Message = @"Select the modules you want to include in your project.",
-                    PreviousButtonEnabled = false,
-                    NextButtonEnabled = false,
-                    FinishButtonEnabled = true,
-                    CancelButtonEnabled = true
-                }
-            };
+                    Id = (int)x.ModuleId,
+                    Name = x.Name,
+                    IsReadOnly = !x.Selectable,
+                    QT = x.proVarQT.Split(' ').ToHashSet(),
+                })
+                .ToList();
 
-            var wizard = new Wizards.WizardWindow(pages) { Title = @"Qt Modules" };
-            WindowHelper.ShowModal(wizard);
-            if (!wizard.DialogResult.HasValue || !wizard.DialogResult.Value)
-                return currentValue;
+            var allQT = modules.SelectMany(x => x.QT).ToHashSet();
+            var selectedQT = currentValue.ToString().Split(';').ToHashSet();
+            var extraQT = selectedQT.Except(allQT);
 
-            var selectedModules = data.Modules
-                .Select(x => modules[x])
-                .Where(x => x != null)
-                .SelectMany(x => x.Vars)
-                .OrderBy(x => x);
+            foreach (var module in modules)
+                module.IsSelected = module.QT.Intersect(selectedQT).Count() == module.QT.Count;
 
-            return string.Join(";", selectedModules);
+            var popup = new QtModulesPopup();
+            popup.SetModules(modules);
+
+            WindowHelper.ShowModal(popup);
+
+            selectedQT = modules
+                .Where(x => x.IsSelected)
+                .SelectMany(x => x.QT)
+                .Union(extraQT)
+                .ToHashSet();
+
+            return string.Join(";", selectedQT);
         }
     }
 }

@@ -160,6 +160,9 @@
     <Compile Include="QtMainMenu.cs" />
     <Compile Include="QtMsBuildConverter.cs" />
     <Compile Include="QtMsBuild\QtModulesEditor.cs" />
+    <Compile Include="QtMsBuild\QtModulesPopup.xaml.cs">
+      <DependentUpon>QtModulesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="QtMsBuild\QtVersionProvider.cs" />
     <Compile Include="QtMsBuild\QtProjectTracker.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
@@ -613,6 +616,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="QtHelpLinkChooser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="QtMsBuild\QtModulesPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,101 @@
+﻿<!--
+*****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+*****************************************************************************
+-->
+<Window x:Class="QtVsTools.QtMsBuild.QtModulesPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="true"
+        ResizeMode="CanResizeWithGrip"
+        Width="1000" Height="350"
+        Deactivated="Window_Deactivated"
+        KeyDown="Window_KeyDown"
+        MouseDown="Window_MouseDown">
+    <Grid>
+        <Border x:Name="DropDownBorder"
+                Background="White"
+                BorderThickness="2"
+                BorderBrush="Gray" />
+        <ListView Name="PopupListBox"
+                  BorderThickness="0"
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  Margin="10,10,10,10"
+                  KeyDown="PopupListBox_KeyDown">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}"
+                              IsChecked="{Binding IsSelected}"
+                              IsEnabled="{Binding IsEnabled}"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Click="Module_Click"
+                              Margin="4"
+                              Loaded="CheckBox_Loaded">
+                        <CheckBox.ContentTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Rectangle Fill="#FF36B31A"
+                                               RadiusX="4"
+                                               RadiusY="4"
+                                               Height="20" />
+                                    <Label Content="{Binding}"
+                                           Foreground="White" />
+                                </Grid>
+                            </DataTemplate>
+                        </CheckBox.ContentTemplate>
+                    </CheckBox>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Setters>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style.Setters>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</Window>
