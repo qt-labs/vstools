@@ -88,7 +88,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 => Modules.Values.Where((Module m) => m.IsSelected);
 
             IEnumerable<string> IWizardConfiguration.Modules
-                => SelectedModules.Select((Module m) => m.Id);
+                => SelectedModules.SelectMany((Module m) => m.Id.Split(' '));
 
             public Config Clone()
             {
