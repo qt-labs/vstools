@@ -595,4 +595,39 @@
     <IncludePath>$(QTDIR)\include\QtRemoteObjects</IncludePath>
     <Defines>QT_REMOTEOBJECTS_LIB</Defines>
   </Module>
+  <Module Id="119">
+    <Name>WebView</Name>
+    <proVarQT>webview</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="120">
+    <Name>Purchasing</Name>
+    <proVarQT>purchasing</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="121">
+    <Name>Virtual Keyboard</Name>
+    <proVarQT>virtualkeyboard</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="122">
+    <Name>X11 Extras</Name>
+    <proVarQT>x11extras</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="123">
+    <Name>Wayland Compositor</Name>
+    <proVarQT>waylandcompositor</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="124">
+    <Name>Qt Automotive Suite</Name>
+    <proVarQT>ivicore geniviextras</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
+  <Module Id="125">
+    <Name>Qt for Automation</Name>
+    <proVarQT>coap knx mqtt opcua</proVarQT>
+    <Selectable>true</Selectable>
+  </Module>
 </QtVsTools>
