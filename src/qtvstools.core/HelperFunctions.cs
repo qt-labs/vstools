@@ -874,7 +874,13 @@ namespace QtVsTools.Core
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxFileContainsNotCommented(file, new[] { "Q_OBJECT", "Q_GADGET" },
+            return CxxFileContainsNotCommented(file,
+                new[]
+                {
+                    "Q_OBJECT",
+                    "Q_GADGET",
+                    "Q_NAMESPACE"
+                },
                 StringComparison.Ordinal, true);
         }
 
