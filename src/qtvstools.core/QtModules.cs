@@ -39,7 +39,6 @@ namespace QtVsTools.Core
     public class QtModules
     {
         private static QtModules instance = new QtModules();
-        private readonly Dictionary<string, QtModule> dictModulesByDLL = new Dictionary<string, QtModule>();
         private readonly Dictionary<QtModule, QtModuleInfo> dictModuleInfos = new Dictionary<QtModule, QtModuleInfo>();
 
         public static QtModules Instance
@@ -52,14 +51,6 @@ namespace QtVsTools.Core
             QtModuleInfo moduleInfo;
             dictModuleInfos.TryGetValue(moduleId, out moduleInfo);
             return moduleInfo;
-        }
-
-        public QtModule ModuleIdByName(string moduleName)
-        {
-            QtModule moduleId;
-            if (dictModulesByDLL.TryGetValue(moduleName, out moduleId))
-                return moduleId;
-            return QtModule.Invalid;
         }
 
         public List<QtModuleInfo> GetAvailableModuleInformation()
@@ -109,7 +100,6 @@ namespace QtVsTools.Core
                         moduleInfo.AdditionalLibrariesDebug =
                             xModule.Elements("AdditionalLibrariesDebug")
                             .Select(x => x.Value).ToList();
-                        dictModulesByDLL.Add(moduleInfo.LibraryPrefix, moduleId);
                         dictModuleInfos.Add(moduleId, moduleInfo);
                     }
                 }
