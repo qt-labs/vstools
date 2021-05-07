@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.VisualStudio.ProjectSystem;
@@ -50,6 +51,8 @@ using System.Text;
 
 namespace QtVsTools.QtMsBuild
 {
+    using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
+
     class QtProjectTracker
     {
         static readonly object criticalSection = new object();
@@ -65,10 +68,47 @@ namespace QtVsTools.QtMsBuild
             }
         }
 
+        class Subscriber : IDisposable
+        {
+            public Subscriber(QtProjectTracker tracker, ConfiguredProject config)
+            {
+                Tracker = tracker;
+                Config = config;
+                Subscription = Config.Services.ProjectSubscription.JointRuleSource.SourceBlock
+                    .LinkTo(new SubscriberAction(ProjectUpdateAsync),
+                        ruleNames: new[]
+                        {
+                            "ClCompile",
+                            "QtRule10_Settings",
+                            "QtRule30_Moc",
+                            "QtRule40_Rcc",
+                            "QtRule60_Repc",
+                            "QtRule50_Uic",
+                            "QtRule_Translation",
+                            "QtRule70_Deploy",
+                        });
+            }
+
+            QtProjectTracker Tracker { get; set; }
+            ConfiguredProject Config { get; set; }
+            IDisposable Subscription { get; set; }
+
+            public void Dispose()
+            {
+                Subscription?.Dispose();
+                Subscription = null;
+            }
+
+            async Task ProjectUpdateAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
+            {
+                await Tracker.OnProjectUpdateAsync(Config, update.Value);
+            }
+        }
+
         EnvDTE.Project Project { get; set; }
 
         UnconfiguredProject UnconfiguredProject { get; set; }
-        IEnumerable<ConfiguredProject> ConfiguredProjects { get; set; }
+        List<Subscriber> Subscribers { get; set; }
         IProjectLockService LockService { get; set; }
 
         IVsStatusbar StatusBar { get; set; }
@@ -119,9 +159,10 @@ namespace QtVsTools.QtMsBuild
 
             initialized = true;
 
+            Subscribers = new List<Subscriber>();
             foreach (var config in configs) {
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
-                configProject.ProjectChanged += OnProjectChanged;
+                Subscribers.Add(new Subscriber(this, configProject));
                 configProject.ProjectUnloading += OnProjectUnloading;
                 if (Vsix.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
@@ -197,16 +238,12 @@ namespace QtVsTools.QtMsBuild
             }
         }
 
-        private void OnProjectChanged(object sender, EventArgs e)
+        async Task OnProjectUpdateAsync(ConfiguredProject config, IProjectSubscriptionUpdate update)
         {
             if (!initialized)
                 return;
 
             if (!Vsix.Instance.Options.BuildOnProjectChanged)
-                return;
-
-            var project = sender as ConfiguredProject;
-            if (project == null || project.Services == null)
                 return;
 
             if (Vsix.Instance.Options.BuildDebugInformation) {
@@ -215,10 +252,10 @@ namespace QtVsTools.QtMsBuild
                     DateTime.Now,
                     System.Threading.Thread.CurrentThread.ManagedThreadId,
                     Task.CurrentId,
-                    project.ProjectConfiguration.Name,
-                    project.UnconfiguredProject.FullPath));
+                    config.ProjectConfiguration.Name,
+                    config.UnconfiguredProject.FullPath));
             }
-            Task.Run(async () => await DesignTimeUpdateQtVarsAsync(project, false, null));
+            await DesignTimeUpdateQtVarsAsync(config, false, null);
         }
 
         public static KeyValuePair<TKey, TValue> PROPERTY<TKey, TValue>(TKey key, TValue value)
@@ -463,9 +500,15 @@ namespace QtVsTools.QtMsBuild
                     project.ProjectConfiguration.Name,
                     project.UnconfiguredProject.FullPath));
             }
-            project.ProjectChanged -= OnProjectChanged;
-            project.ProjectUnloading -= OnProjectUnloading;
-            Instances[Project.FullName] = null;
+            lock (criticalSection) {
+                if (Subscribers != null) {
+                    Subscribers.ForEach(s => s.Dispose());
+                    Subscribers.Clear();
+                    Subscribers = null;
+                }
+                project.ProjectUnloading -= OnProjectUnloading;
+                Instances[Project.FullName] = null;
+            }
             await Task.Yield();
         }
 
