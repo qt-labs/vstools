@@ -61,12 +61,15 @@
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />
     <Compile Include="Common\Disposable.cs" />
+    <Compile Include="Common\PriorityQueue.cs" />
     <Compile Include="Common\NativeAPI.cs" />
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\Json\DeferredObject.cs" />
     <Compile Include="Common\Json\Serializable.cs" />
     <Compile Include="Common\Json\SerializableEnum.cs" />
     <Compile Include="Common\Json\Serializer.cs" />
+    <Compile Include="Common\PunisherQueue.cs" />
+    <Compile Include="Common\Timestamp.cs" />
     <Compile Include="DteEventsHandler.cs" />
     <Compile Include="Editors\Editor.cs" />
     <Compile Include="Editors\Editor.QtDesigner.cs" />
