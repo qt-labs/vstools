@@ -37,58 +37,117 @@ namespace QtVsTools
     /// </summary>
     ///
     [DataContract]
-    abstract class Concurrent
+    public abstract class Concurrent<TSubClass>
+        where TSubClass : Concurrent<TSubClass>
     {
-        private readonly static object criticalSectionGlobal = new object();
-        private object criticalSection = null;
+        private static readonly object _StaticCriticalSection = new object();
+        protected static object StaticCriticalSection => _StaticCriticalSection;
 
-        protected object CriticalSection
+        private object _CriticalSection = null;
+        protected object CriticalSection =>
+            StaticThreadSafeInit(() => _CriticalSection, () => _CriticalSection = new object());
+
+        protected T ThreadSafeInit<T>(Func<T> getValue, Action init)
+            where T : class
         {
-            get
-            {
-                if (criticalSection == null) { // prevent global lock at every call
-                    lock (criticalSectionGlobal) {
-                        if (criticalSection == null) // prevent race conditions
-                            criticalSection = new object();
-                    }
+            return StaticThreadSafeInit(getValue, init, this);
+        }
+
+        protected static T StaticThreadSafeInit<T>(
+                Func<T> getValue,
+                Action init,
+                Concurrent<TSubClass> _this = null)
+            where T : class
+        {
+            // prevent global lock at every call
+            T value = getValue();
+            if (value != null)
+                return value;
+            lock (_this?.CriticalSection ?? StaticCriticalSection) {
+                // prevent race conditions
+                value = getValue();
+                if (value == null) {
+                    init();
+                    value = getValue();
                 }
-                return criticalSection;
+                return value;
             }
         }
 
         protected void EnterCriticalSection()
         {
-            Monitor.Enter(CriticalSection);
+            StaticEnterCriticalSection(this);
+        }
+
+        protected static void StaticEnterCriticalSection(Concurrent<TSubClass> _this = null)
+        {
+            Monitor.Enter(_this?.CriticalSection ?? StaticCriticalSection);
         }
 
         protected void LeaveCriticalSection()
         {
-            if (Monitor.IsEntered(CriticalSection))
-                Monitor.Exit(CriticalSection);
+            StaticLeaveCriticalSection(this);
+        }
+
+        protected static void StaticLeaveCriticalSection(Concurrent<TSubClass> _this = null)
+        {
+            if (Monitor.IsEntered(_this?.CriticalSection ?? StaticCriticalSection))
+                Monitor.Exit(_this?.CriticalSection ?? StaticCriticalSection);
         }
 
         protected void AbortCriticalSection()
         {
-            while (Monitor.IsEntered(CriticalSection))
-                Monitor.Exit(CriticalSection);
+            StaticAbortCriticalSection(this);
+        }
+
+        protected static void StaticAbortCriticalSection(Concurrent<TSubClass> _this = null)
+        {
+            while (Monitor.IsEntered(_this?.CriticalSection ?? StaticCriticalSection))
+                Monitor.Exit(_this?.CriticalSection ?? StaticCriticalSection);
         }
 
         protected void ThreadSafe(Action action)
         {
-            lock (CriticalSection)
+            StaticThreadSafe(action, this);
+        }
+
+        protected static void StaticThreadSafe(Action action, Concurrent<TSubClass> _this = null)
+        {
+            lock (_this?.CriticalSection ?? StaticCriticalSection) {
                 action();
+            }
         }
 
         protected T ThreadSafe<T>(Func<T> func)
         {
-            lock (CriticalSection)
-                return func();
+            return StaticThreadSafe(func, this);
         }
 
-        protected bool Atomic(Func<bool> test, Action action, Action actionElse = null)
+        protected static T StaticThreadSafe<T>(Func<T> func, Concurrent<TSubClass> _this = null)
+        {
+            lock (_this?.CriticalSection ?? StaticCriticalSection) {
+                return func();
+            }
+        }
+
+        protected bool Atomic(Func<bool> test, Action action)
+        {
+            return StaticAtomic(test, action, _this: this);
+        }
+
+        protected bool Atomic(Func<bool> test, Action action, Action actionElse)
+        {
+            return StaticAtomic(test, action, actionElse, this);
+        }
+
+        protected static bool StaticAtomic(
+            Func<bool> test,
+            Action action,
+            Action actionElse = null,
+            Concurrent<TSubClass> _this = null)
         {
             bool success = false;
-            lock (CriticalSection) {
+            lock (_this?.CriticalSection ?? StaticCriticalSection) {
                 success = test();
                 if (success)
                     action();
@@ -97,6 +156,15 @@ namespace QtVsTools
             }
             return success;
         }
+    }
+
+    /// <summary>
+    /// Base class of objects requiring thread-safety features
+    /// Sub-classes will share the same static critical section
+    /// </summary>
+    ///
+    public class Concurrent : Concurrent<Concurrent>
+    {
     }
 
     /// <summary>
