@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="ChangeFor.cs" />
     <Compile Include="Common\Concurrent.cs" />
+    <Compile Include="Common\ConcurrentStopwatch.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\NativeAPI.cs" />
     <Compile Include="Common\Prototyped.cs" />
