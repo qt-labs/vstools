@@ -58,12 +58,6 @@ namespace QtVsTools.Options
             [String("QMLDebug_Timeout")] Timeout
         }
 
-        public enum IntelliSense
-        {
-            [String("IntelliSense_OnBuild")] OnBuild,
-            [String("IntelliSense_OnUiFile")] OnUiFile
-        }
-
         public enum Help
         {
             [String("Help_Preference")] Preference,
@@ -88,12 +82,6 @@ namespace QtVsTools.Options
         public enum BkgBuild
         {
             [String("BkgBuild_ProjectTracking")] ProjectTracking,
-            [String("BkgBuild_OnProjectCreated")] OnProjectCreated,
-            [String("BkgBuild_OnProjectOpened")] OnProjectOpened,
-            [String("BkgBuild_OnProjectChanged")] OnProjectChanged,
-            [String("BkgBuild_OnBuildComplete")] OnBuildComplete,
-            [String("BkgBuild_OnUiFileAdded")] OnUiFileAdded,
-            [String("BkgBuild_OnUiFileSaved")] OnUiFileSaved,
             [String("BkgBuild_RunQtTools")] RunQtTools,
             [String("BkgBuild_DebugInfo")] DebugInfo,
             [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity
@@ -178,14 +166,6 @@ namespace QtVsTools.Options
         public Timeout QmlDebuggerTimeout { get; set; }
         int IQtVsToolsOptions.QmlDebuggerTimeout => (int)QmlDebuggerTimeout;
 
-        [Category("IntelliSense")]
-        [DisplayName("Refresh after build")]
-        public bool RefreshIntelliSenseOnBuild { get; set; }
-
-        [Category("IntelliSense")]
-        [DisplayName("Refresh after changes to UI file")]
-        public bool RefreshIntelliSenseOnUiFile { get; set; }
-
         [Category("Help")]
         [DisplayName("Keyboard shortcut")]
         [Description("To change keyboard mapping, go to: Tools > Options > Keyboard")]
@@ -214,53 +194,32 @@ namespace QtVsTools.Options
         [DisplayName("Run in detached window")]
         public bool ResourceEditorDetached { get; set; }
 
-        [Category("Background Build")]
-        [DisplayName("Project tracking")]
+        [Category("IntelliSense")]
+        [DisplayName("Auto project tracking")]
+        [Description(
+            "Enable this option to automatically keep track of project changes and trigger a"
+            + " background build of Qt targets if required to keep IntelliSense updated.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool ProjectTracking { get; set; }
 
-        [Category("Background Build")]
-        [DisplayName("On project created")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnProjectCreated { get; set; }
-
-        [Category("Background Build")]
-        [DisplayName("On project opened")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnProjectOpened { get; set; }
-
-        [Category("Background Build")]
-        [DisplayName("On project changed")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnProjectChanged { get; set; }
-
-        [Category("Background Build")]
-        [DisplayName("On project build complete")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnProjectBuildComplete { get; set; }
-
-        [Category("Background Build")]
-        [DisplayName("On .ui file added")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnUiFileAdded { get; set; }
-
-        [Category("Background Build")]
-        [DisplayName("On .ui file changed")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildOnUiFileChanged { get; set; }
-
-        [Category("Background Build")]
+        [Category("IntelliSense")]
         [DisplayName("Run Qt tools in background build")]
+        [Description(
+            "Enable this option to allow all Qt tools (e.g. moc, uic) to be invoked during a"
+            + " background update of IntelliSense information. If disabled, only qmake will be"
+            + " invoked during background builds, to update a minimal set of Qt build properties.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool BuildRunQtTools { get; set; }
 
-        [Category("Background Build")]
+        [Category("IntelliSense")]
         [DisplayName("Show debug information")]
+        [Description("Enable this option to display debug information about IntelliSense updates.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool BuildDebugInformation { get; set; }
 
-        [Category("Background Build")]
-        [DisplayName("Show debug information: build log verbosity")]
+        [Category("IntelliSense")]
+        [DisplayName("Verbosity of background build log")]
+        [Description("Configure verbosity level of background build log.")]
         public LoggerVerbosity BuildLoggerVerbosity { get; set; }
 
         public override void ResetSettings()
@@ -268,17 +227,11 @@ namespace QtVsTools.Options
             QtMsBuildPath = "";
             QmlDebuggerEnabled = true;
             QmlDebuggerTimeout = (Timeout)60000;
-            RefreshIntelliSenseOnBuild = true;
-            RefreshIntelliSenseOnUiFile = true;
             HelpPreference = QtHelp.SourcePreference.Online;
             TryQtHelpOnF1Pressed = true;
             DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
 
-            BuildOnProjectCreated = BuildOnProjectOpened = BuildOnProjectChanged
-                = BuildOnProjectBuildComplete
-                = BuildOnUiFileAdded = BuildOnUiFileChanged
-                = ProjectTracking
-                = true;
+            BuildRunQtTools = ProjectTracking = true;
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
 
@@ -309,20 +262,13 @@ namespace QtVsTools.Options
                         return;
                     Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
                     Load(() => QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                    Load(() => RefreshIntelliSenseOnBuild, key, IntelliSense.OnBuild);
-                    Load(() => RefreshIntelliSenseOnUiFile, key, IntelliSense.OnUiFile);
                     Load(() => HelpPreference, key, Help.Preference);
                     Load(() => TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
                     Load(() => DesignerDetached, key, Designer.Detached);
                     Load(() => LinguistDetached, key, Linguist.Detached);
                     Load(() => ResourceEditorDetached, key, ResEditor.Detached);
                     Load(() => ProjectTracking, key, BkgBuild.ProjectTracking);
-                    Load(() => BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
-                    Load(() => BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
-                    Load(() => BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
-                    Load(() => BuildOnProjectBuildComplete, key, BkgBuild.OnBuildComplete);
-                    Load(() => BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
-                    Load(() => BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
+                    Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 }
@@ -349,20 +295,13 @@ namespace QtVsTools.Options
                         return;
                     Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
                     Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                    Save(RefreshIntelliSenseOnBuild, key, IntelliSense.OnBuild);
-                    Save(RefreshIntelliSenseOnUiFile, key, IntelliSense.OnUiFile);
                     Save(HelpPreference, key, Help.Preference);
                     Save(TryQtHelpOnF1Pressed, key, Help.Preference);
                     Save(DesignerDetached, key, Designer.Detached);
                     Save(LinguistDetached, key, Linguist.Detached);
                     Save(ResourceEditorDetached, key, ResEditor.Detached);
                     Save(ProjectTracking, key, BkgBuild.ProjectTracking);
-                    Save(BuildOnProjectCreated, key, BkgBuild.OnProjectCreated);
-                    Save(BuildOnProjectOpened, key, BkgBuild.OnProjectOpened);
-                    Save(BuildOnProjectChanged, key, BkgBuild.OnProjectChanged);
-                    Save(BuildOnProjectBuildComplete, key, BkgBuild.OnBuildComplete);
-                    Save(BuildOnUiFileAdded, key, BkgBuild.OnUiFileAdded);
-                    Save(BuildOnUiFileChanged, key, BkgBuild.OnUiFileSaved);
+                    Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 }
