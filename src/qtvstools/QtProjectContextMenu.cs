@@ -39,6 +39,8 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
+    using QtMsBuild;
+
     /// <summary>
     /// Command handler
     /// </summary>
@@ -79,6 +81,7 @@ namespace QtVsTools
             lUpdateOnProjectId = 0x0118,
             lReleaseOnProjectId = 0x0119,
             ProjectConvertToQtMsBuild = 0x0130,
+            ProjectRefreshIntelliSense = 0x0131,
             ConvertToQtProjectId = 0x0120,
             ConvertToQmakeProjectId = 0x0121,
             QtProjectSettingsProjectId = 0x0122,
@@ -198,6 +201,13 @@ namespace QtVsTools
                         HelperFunctions.GetSelectedProject(Vsix.Instance.Dte));
                 }
                 break;
+            case CommandId.ProjectRefreshIntelliSense:
+                {
+                    var selectedProject = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                    var tracker = QtProjectTracker.Get(selectedProject);
+                    QtProjectIntellisense.Refresh(tracker.Project);
+                }
+                break;
             case CommandId.ProjectAddNewQtClassProjectId:
                 {
                     try {
@@ -298,6 +308,11 @@ namespace QtVsTools
                         command.Visible = true;
                         command.Enabled = true;
                     }
+                }
+                break;
+            case CommandId.ProjectRefreshIntelliSense:
+                {
+                    command.Visible = command.Enabled = isQtMsBuildEnabled;
                 }
                 break;
             }

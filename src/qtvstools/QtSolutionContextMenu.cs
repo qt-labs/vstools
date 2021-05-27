@@ -36,6 +36,8 @@ using System.Windows.Forms;
 
 namespace QtVsTools
 {
+    using QtMsBuild;
+
     /// <summary>
     /// Command handler
     /// </summary>
@@ -72,10 +74,14 @@ namespace QtVsTools
         /// <summary>
         /// Command ID.
         /// </summary>
-        private const int lUpdateOnSolutionId = 0x0111;
-        private const int lReleaseOnSolutionId = 0x0112;
-        private const int SolutionConvertToQtMsBuild = 0x0130;
-        private const int ChangeSolutionQtVersionId = 0x0113;
+        private enum CommandId
+        {
+            lUpdateOnSolutionId = 0x0111,
+            lReleaseOnSolutionId = 0x0112,
+            SolutionConvertToQtMsBuild = 0x0130,
+            SolutionEnableProjectTracking = 0x1130,
+            ChangeSolutionQtVersionId = 0x0113
+        }
 
         /// <summary>
         /// Gets the service provider from the owner package.
@@ -102,17 +108,20 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            commandService.AddCommand(new OleMenuCommand(execHandler,
-                new CommandID(SolutionContextMenuGuid, lUpdateOnSolutionId)));
+            foreach (var id in Enum.GetValues(typeof(CommandId))) {
+                var command = new OleMenuCommand(execHandler,
+                    new CommandID(SolutionContextMenuGuid, (int)id));
+                command.BeforeQueryStatus += beforeQueryStatus;
+                commandService.AddCommand(command);
+            }
+        }
 
-            commandService.AddCommand(new OleMenuCommand(execHandler,
-                new CommandID(SolutionContextMenuGuid, lReleaseOnSolutionId)));
-
-            commandService.AddCommand(new OleMenuCommand(execHandler,
-                new CommandID(SolutionContextMenuGuid, ChangeSolutionQtVersionId)));
-
-            commandService.AddCommand(new OleMenuCommand(execHandler,
-                new CommandID(SolutionContextMenuGuid, SolutionConvertToQtMsBuild)));
+        private void beforeQueryStatus(object sender, EventArgs e)
+        {
+            var command = sender as OleMenuCommand;
+            if (command == null)
+                return;
+            command.Enabled = command.Visible = true;
         }
 
         private void execHandler(object sender, EventArgs e)
@@ -121,14 +130,15 @@ namespace QtVsTools
             if (command == null)
                 return;
 
+            var dte = Vsix.Instance.Dte;
             switch (command.CommandID.ID) {
-            case lUpdateOnSolutionId:
+            case (int)CommandId.lUpdateOnSolutionId:
                 Translation.RunlUpdate(Vsix.Instance.Dte.Solution);
                 break;
-            case lReleaseOnSolutionId:
+            case (int)CommandId.lReleaseOnSolutionId:
                 Translation.RunlRelease(Vsix.Instance.Dte.Solution);
                 break;
-            case ChangeSolutionQtVersionId:
+            case (int)CommandId.ChangeSolutionQtVersionId:
                 var newQtVersion = string.Empty;
                 using (var formChangeQtVersion = new FormChangeQtVersion()) {
                     formChangeQtVersion.UpdateContent(ChangeFor.Solution);
@@ -149,7 +159,6 @@ namespace QtVsTools
                 if (string.IsNullOrEmpty(currentPlatform))
                     return;
 
-                var dte = Vsix.Instance.Dte;
                 foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                     if (HelperFunctions.IsQtProject(project)) {
                         var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,
@@ -165,9 +174,17 @@ namespace QtVsTools
                 }
                 QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);
                 break;
-            case SolutionConvertToQtMsBuild:
+            case (int)CommandId.SolutionConvertToQtMsBuild:
                 {
                     QtMsBuildConverter.SolutionToQtMsBuild();
+                }
+                break;
+            case (int)CommandId.SolutionEnableProjectTracking:
+                {
+                    foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
+                        if (HelperFunctions.IsQtProject(project))
+                            QtProjectTracker.Get(project);
+                    }
                 }
                 break;
             }

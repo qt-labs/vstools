@@ -81,8 +81,15 @@
                 </Strings>
             </Menu>
 
-            <Menu guid="ProjectContextMenuGuid" id="QtSubMenu" priority="0x0100" type="Menu">
-                <Parent guid="ProjectContextMenuGuid" id="QtSubMenuGroup" />
+            <Menu guid="ProjectContextMenuGuid" id="QtProjectSubMenu" priority="0x0100" type="Menu">
+                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Qt</ButtonText>
+                </Strings>
+            </Menu>
+
+            <Menu guid="SolutionContextMenuGuid" id="QtSolutionSubMenu" priority="0x0100" type="Menu">
+                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenuGroup" />
                 <Strings>
                     <ButtonText>Qt</ButtonText>
                 </Strings>
@@ -119,28 +126,31 @@
 
             <!-- Region Solution context menu groups -->
 
-            <Group guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" priority="0x0600">
+            <Group guid="SolutionContextMenuGuid" id="QtSolutionSubMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
             </Group>
             <Group guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
+                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenu"/>
+            </Group>
+            <Group guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" priority="0x0600">
+                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenu" />
             </Group>
 
             <!-- Endregion Solution context menu groups -->
 
             <!-- Region Project context menu groups -->
 
-            <Group guid="ProjectContextMenuGuid" id="QtSubMenuGroup" priority="0x0600">
+            <Group guid="ProjectContextMenuGuid" id="QtProjectSubMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
+                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
+                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtSubMenu"/>
+                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextAddNewQtClassMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="cmdidShellWindowNavigate7"/>
@@ -396,6 +406,15 @@
                 <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
               </Strings>
             </Button>
+            <Button guid="SolutionContextMenuGuid" id="SolutionEnableProjectTracking" priority="0x0100" type="Button">
+              <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
+              <CommandFlag>DefaultDisabled</CommandFlag>
+              <CommandFlag>DefaultInvisible</CommandFlag>
+              <CommandFlag>DynamicVisibility</CommandFlag>
+              <Strings>
+                <ButtonText>Refresh project tracking</ButtonText>
+              </Strings>
+            </Button>
 
           <!-- Endregion Solution context menu button -->
 
@@ -468,6 +487,16 @@
                 <CommandFlag>TextChanges</CommandFlag>
                 <Strings>
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="ProjectContextMenuGuid" id="ProjectRefreshIntelliSense" priority="0x0100" type="Button">
+                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+                <CommandFlag>DefaultDisabled</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>TextChanges</CommandFlag>
+                <Strings>
+                    <ButtonText>Refresh IntelliSense</ButtonText>
                 </Strings>
             </Button>
             <Button guid="ProjectContextMenuGuid" id="ConvertToQtProjectId" priority="0x0100" type="Button">
@@ -607,13 +636,17 @@
 
             <!-- Region Solution context menu button Ids -->
 
+            <IDSymbol name="QtSolutionSubMenuGroup" value="0x1026" />
+            <IDSymbol name="QtSolutionSubMenu" value="0x1127"/>
+
             <IDSymbol name="SolutionContextTsMenuGroup" value="0x1025" />
             <IDSymbol name="lUpdateOnSolutionId" value="0x0111" />
             <IDSymbol name="lReleaseOnSolutionId" value="0x0112" />
 
-            <IDSymbol name="SolutionContextQtMenuGroup" value="0x1026" />
+            <IDSymbol name="SolutionContextQtMenuGroup" value="0x1126" />
             <IDSymbol name="ChangeSolutionQtVersionId" value="0x0113" />
             <IDSymbol name="SolutionConvertToQtMsBuild" value="0x0130" />
+            <IDSymbol name="SolutionEnableProjectTracking" value="0x1130" />
 
             <!-- Endregion Solution context menu button Ids -->
 
@@ -623,8 +656,8 @@
 
             <!-- Region Project context menu button Ids -->
 
-            <IDSymbol name="QtSubMenuGroup" value="0x1150"/>
-            <IDSymbol name="QtSubMenu" value="0x1100"/>
+            <IDSymbol name="QtProjectSubMenuGroup" value="0x1150"/>
+            <IDSymbol name="QtProjectSubMenu" value="0x1100"/>
 
             <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
             <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
@@ -638,6 +671,7 @@
 
             <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1029" />
             <IDSymbol name="ProjectConvertToQtMsBuild" value="0x0130" />
+            <IDSymbol name="ProjectRefreshIntelliSense" value="0x0131" />
             <IDSymbol name="ConvertToQtProjectId" value="0x0120" />
             <IDSymbol name="ConvertToQmakeProjectId" value="0x0121" />
             <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
