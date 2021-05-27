@@ -44,8 +44,7 @@ using System.Windows.Forms;
 namespace QtVsTools
 {
     using static Core.HelperFunctions;
-    using static QtMsBuild.QtProjectTracker;
-    using Property = KeyValuePair<string, string>;
+    using QtMsBuild;
 
     /// <summary>
     /// Run Qt translation tools by invoking the corresponding Qt/MSBuild targets
@@ -141,19 +140,19 @@ namespace QtVsTools
                     activeConfig.ConfigurationName, activeConfig.PlatformName);
 
                 var target = "QtTranslation";
-                var properties = new List<Property>();
+                var properties = new Dictionary<string, string>();
                 switch (buildAction) {
                     case BuildAction.Update:
-                        properties.Add(PROPERTY("QtTranslationForceUpdate", "true"));
+                        properties["QtTranslationForceUpdate"] = "true";
                         break;
                     case BuildAction.Release:
-                        properties.Add(PROPERTY("QtTranslationForceRelease", "true"));
+                        properties["QtTranslationForceRelease"] = "true";
                         break;
                 }
                 if (selectedFiles != null)
-                    properties.Add(PROPERTY("SelectedFiles", string.Join(";", selectedFiles)));
+                    properties["SelectedFiles"] = string.Join(";", selectedFiles);
 
-                Build(project, activeConfigId, properties.ToArray(), target);
+                QtProjectBuild.StartBuild(project, activeConfigId, properties, new[] { target });
             }
         }
 

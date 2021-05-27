@@ -39,8 +39,6 @@ namespace QtVsTools.Core
         string QtMsBuildPath { get; }
         bool QmlDebuggerEnabled { get; }
         int QmlDebuggerTimeout { get; }
-        bool RefreshIntelliSenseOnBuild { get; }
-        bool RefreshIntelliSenseOnUiFile { get; }
         bool HelpPreferenceOnline { get; }
     }
 

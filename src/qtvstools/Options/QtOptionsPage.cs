@@ -94,6 +94,7 @@ namespace QtVsTools.Options
             [String("BkgBuild_OnBuildComplete")] OnBuildComplete,
             [String("BkgBuild_OnUiFileAdded")] OnUiFileAdded,
             [String("BkgBuild_OnUiFileSaved")] OnUiFileSaved,
+            [String("BkgBuild_RunQtTools")] RunQtTools,
             [String("BkgBuild_DebugInfo")] DebugInfo,
             [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity
         }
@@ -247,6 +248,11 @@ namespace QtVsTools.Options
         [DisplayName("On .ui file changed")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool BuildOnUiFileChanged { get; set; }
+
+        [Category("Background Build")]
+        [DisplayName("Run Qt tools in background build")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool BuildRunQtTools { get; set; }
 
         [Category("Background Build")]
         [DisplayName("Show debug information")]

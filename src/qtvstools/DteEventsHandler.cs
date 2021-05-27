@@ -308,10 +308,7 @@ namespace QtVsTools
                 if (project == null || !HelperFunctions.IsQtProject(project))
                     continue;
 
-                if (Vsix.Instance.Options.RefreshIntelliSenseOnBuild
-                    && Vsix.Instance.Options.BuildOnProjectBuildComplete) {
-                    QtProjectTracker.RefreshIntelliSense(project, configId);
-                }
+                QtProjectIntellisense.Refresh(project, configId);
             }
             buildDoneEvents.Clear();
         }
@@ -456,10 +453,7 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    if (Vsix.Instance.Options.RefreshIntelliSenseOnUiFile
-                        && Vsix.Instance.Options.BuildOnUiFileAdded) {
-                        QtProjectTracker.RefreshIntelliSense(project, runQtTools: true);
-                    }
+                    QtProjectIntellisense.Refresh(project);
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
@@ -496,9 +490,7 @@ namespace QtVsTools
         {
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
-                QtProjectTracker.AddProject(project,
-                    updateVars: Vsix.Instance.Options.BuildOnProjectCreated,
-                    runQtTools: true);
+                QtProjectTracker.Add(project);
                 var vcpro = project.Object as VCProject;
                 VCFilter filter = null;
                 foreach (VCFilter f in vcpro.Filters as IVCCollection) {
@@ -530,6 +522,7 @@ namespace QtVsTools
                         }
                     }
                 }
+                QtProjectIntellisense.Refresh(project);
             }
         }
 
@@ -542,9 +535,7 @@ namespace QtVsTools
             foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
-                    QtProjectTracker.AddProject(p,
-                        updateVars: Vsix.Instance.Options.BuildOnProjectOpened,
-                        runQtTools: false);
+                    QtProjectTracker.Add(p);
                 }
             }
         }
@@ -552,6 +543,7 @@ namespace QtVsTools
         void SolutionEvents_AfterClosing()
         {
             QtProject.ClearInstances();
+            QtProjectTracker.Reset();
         }
 
         void InitializeVCProjects()

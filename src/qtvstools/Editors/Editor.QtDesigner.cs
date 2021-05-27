@@ -59,15 +59,11 @@ namespace QtVsTools.Editors
         protected override void OnStart(Process process)
         {
             base.OnStart(process);
-            if (!Vsix.Instance.Options.RefreshIntelliSenseOnUiFile
-                || !Vsix.Instance.Options.BuildOnUiFileChanged) {
-                return;
-            }
             var document = VsShell.GetDocument(Context, ItemId);
             if (document == null)
                 return;
             var project = document.ProjectItem?.ContainingProject;
-            if (project == null)
+            if (project == null || !QtProjectTracker.IsTracked(project))
                 return;
             string filePath = document.FullName;
             string[] itemId = new[] { document.ProjectItem?.Name };
@@ -78,13 +74,11 @@ namespace QtVsTools.Editors
                     var latestWriteTime = File.GetLastWriteTime(filePath);
                     if (lastWriteTime != latestWriteTime) {
                         lastWriteTime = latestWriteTime;
-                        QtProjectTracker.RefreshIntelliSense(
-                            project, runQtTools: true, selectedFiles: itemId);
+                        QtProjectIntellisense.Refresh(project, selectedFiles: itemId);
                     }
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
-                    QtProjectTracker.RefreshIntelliSense(
-                        project, runQtTools: true, selectedFiles: itemId);
+                    QtProjectIntellisense.Refresh(project, selectedFiles: itemId);
                 }
             });
         }

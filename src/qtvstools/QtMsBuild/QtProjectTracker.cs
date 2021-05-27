@@ -29,43 +29,51 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Microsoft.VisualStudio.Shell.Interop;
 #if VS2015
 using Microsoft.VisualStudio.ProjectSystem.Designers;
 #endif
+using Microsoft.VisualStudio.TaskStatusCenter;
+using Microsoft.VisualStudio.Threading;
 using EnvDTE;
-using QtVsTools.Core;
-using QtVsTools.VisualStudio;
-using Microsoft.Build.Framework;
-using System.Text;
 
 namespace QtVsTools.QtMsBuild
 {
+    using Core;
+    using VisualStudio;
+    using Thread = System.Threading.Thread;
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
 
-    class QtProjectTracker
+    class QtProjectTracker : Concurrent<QtProjectTracker>
     {
-        static readonly object criticalSection = new object();
         static ConcurrentDictionary<string, QtProjectTracker> _Instances;
-        static ConcurrentDictionary<string, QtProjectTracker> Instances {
-            get
-            {
-                lock (criticalSection) {
-                    if (_Instances == null)
-                        _Instances = new ConcurrentDictionary<string, QtProjectTracker>();
-                    return _Instances;
-                }
-            }
+        static ConcurrentDictionary<string, QtProjectTracker> Instances =>
+            StaticThreadSafeInit(() => _Instances, () =>
+                _Instances = new ConcurrentDictionary<string, QtProjectTracker>());
+
+        static PunisherQueue<QtProjectTracker> _InitQueue;
+        static PunisherQueue<QtProjectTracker> InitQueue =>
+            StaticThreadSafeInit(() => _InitQueue, () =>
+                _InitQueue = new PunisherQueue<QtProjectTracker>());
+
+        static IVsTaskStatusCenterService _StatusCenter;
+        static IVsTaskStatusCenterService StatusCenter => StaticThreadSafeInit(() => _StatusCenter,
+                () => _StatusCenter = VsServiceProvider
+                    .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+
+        static Task InitDispatcher { get; set; }
+        static ITaskHandler2 InitStatus { get; set; }
+
+        private QtProjectTracker()
+        {
+            Initialized = new EventWaitHandle(false, EventResetMode.ManualReset);
         }
 
         class Subscriber : IDisposable
@@ -86,7 +94,8 @@ namespace QtVsTools.QtMsBuild
                             "QtRule50_Uic",
                             "QtRule_Translation",
                             "QtRule70_Deploy",
-                        });
+                        },
+                        initialDataAsNew: false);
             }
 
             QtProjectTracker Tracker { get; set; }
@@ -105,390 +114,152 @@ namespace QtVsTools.QtMsBuild
             }
         }
 
-        EnvDTE.Project Project { get; set; }
-
-        UnconfiguredProject UnconfiguredProject { get; set; }
+        public EnvDTE.Project Project { get; private set; }
+        public UnconfiguredProject UnconfiguredProject { get; private set; }
+        public EventWaitHandle Initialized { get; private set; }
         List<Subscriber> Subscribers { get; set; }
-        IProjectLockService LockService { get; set; }
 
-        IVsStatusbar StatusBar { get; set; }
-        IVsThreadedWaitDialogFactory WaitDialogFactory { get; set; }
+        public static bool IsTracked(EnvDTE.Project project)
+        {
+            return Instances.ContainsKey(project.FullName);
+        }
 
-        public static void AddProject(EnvDTE.Project project, bool updateVars, bool runQtTools)
+        public static void Add(EnvDTE.Project project)
         {
             if (!Vsix.Instance.Options.ProjectTracking)
                 return;
+            Get(project);
+        }
 
-            QtProjectTracker instance = null;
-            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null) {
-                Instances[project.FullName] = new QtProjectTracker(project, updateVars, runQtTools);
+        public static QtProjectTracker Get(EnvDTE.Project project)
+        {
+            lock (StaticCriticalSection) {
+                QtProjectTracker tracker = null;
+                if (Instances.TryGetValue(project.FullName, out tracker))
+                    return tracker;
+                tracker = new QtProjectTracker
+                {
+                    Project = project,
+                };
+                Instances[project.FullName] = tracker;
+                InitQueue.Enqueue(tracker);
+                if (InitDispatcher == null)
+                    InitDispatcher = Task.Run(InitDispatcherLoopAsync);
+                return tracker;
             }
         }
 
-        private QtProjectTracker(EnvDTE.Project project, bool updateVars, bool runQtTools)
+        public static void Reset()
         {
-            Project = project;
-            Task.Run(async () => await InitializeAsync(updateVars, runQtTools));
+            lock (StaticCriticalSection) {
+                Instances.Clear();
+                InitQueue.Clear();
+            }
         }
 
-        bool initialized = false;
-
-        private async Task InitializeAsync(bool updateVars, bool runQtTools)
+        static async Task InitDispatcherLoopAsync()
         {
+            while (!Vsix.Instance.Zombied) {
+                while (InitQueue.IsEmpty)
+                    await Task.Delay(100);
+                QtProjectTracker tracker;
+                if (InitQueue.TryDequeue(out tracker)) {
+                    if (InitStatus == null) {
+                        tracker.BeginInitStatus();
+                    } else {
+                        tracker.UpdateInitStatus(0);
+                    }
+                    await tracker.InitializeAsync();
+                }
+                if (InitStatus != null
+                    && (InitQueue.IsEmpty
+                    || InitStatus.UserCancellation.IsCancellationRequested)) {
+                    if (InitStatus.UserCancellation.IsCancellationRequested) {
+                        InitQueue.Clear();
+                    }
+                    tracker.EndInitStatus();
+                }
+            }
+        }
+
+        async Task InitializeAsync()
+        {
+            int p = 0;
+            UpdateInitStatus(p += 10);
+
+            await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+            UpdateInitStatus(p += 10);
+
             var context = Project.Object as IVsBrowseObjectContext;
             if (context == null)
                 return;
+            UpdateInitStatus(p += 10);
 
             UnconfiguredProject = context.UnconfiguredProject;
             if (UnconfiguredProject == null
                 || UnconfiguredProject.ProjectService == null
                 || UnconfiguredProject.ProjectService.Services == null)
                 return;
-
-            LockService = UnconfiguredProject.ProjectService.Services.ProjectLockService;
-            if (LockService == null)
-                return;
+            await TaskScheduler.Default;
+            UpdateInitStatus(p += 10);
 
             var configs = await UnconfiguredProject.Services
                 .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
+            UpdateInitStatus(p += 10);
 
-            StatusBar = await VsServiceProvider
-                .GetServiceAsync<SVsStatusbar, IVsStatusbar>();
-            WaitDialogFactory = await VsServiceProvider
-                .GetServiceAsync<SVsThreadedWaitDialogFactory, IVsThreadedWaitDialogFactory>();
-
-            initialized = true;
+            Initialized.Set();
 
             Subscribers = new List<Subscriber>();
+            int n = configs.Count;
+            int d = (100 - p) / (n * 2);
             foreach (var config in configs) {
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
+                UpdateInitStatus(p += d);
                 Subscribers.Add(new Subscriber(this, configProject));
                 configProject.ProjectUnloading += OnProjectUnloading;
                 if (Vsix.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
-                        "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Started tracking [{3}] {4}",
-                        DateTime.Now,
-                        System.Threading.Thread.CurrentThread.ManagedThreadId,
-                        Task.CurrentId,
+                        "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
+                        DateTime.Now, Thread.CurrentThread.ManagedThreadId,
                         config.Name,
                         UnconfiguredProject.FullPath));
                 }
-                if (updateVars)
-                    await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, null);
+                UpdateInitStatus(p += d);
             }
         }
 
-        public static void RefreshIntelliSense(
-            EnvDTE.Project project, string configId = null,
-            bool runQtTools = false, IEnumerable<string> selectedFiles = null)
-        {
-            if (project == null)
-                return;
-
-            QtProjectTracker instance = null;
-            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
-                return;
-            if (!instance.initialized)
-                return;
-
-            if (Vsix.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Refreshing: [{3}] {4}",
-                    DateTime.Now,
-                    System.Threading.Thread.CurrentThread.ManagedThreadId,
-                    Task.CurrentId,
-                    (configId != null) ? configId : "(all configs)",
-                    project.FullName));
-            }
-
-            Task.Run(async () => await instance
-                .RefreshIntelliSenseAsync(configId, runQtTools, selectedFiles));
-        }
-
-        private async Task RefreshIntelliSenseAsync(string configId,
-            bool runQtTools, IEnumerable<string> selectedFiles)
-        {
-            WaitDialog waitDialog = null;
-
-            if (runQtTools) {
-                waitDialog = WaitDialog.Start(
-                    "Qt Visual Studio Tools", "Updating IntelliSense...",
-                    delay: 1, dialogFactory: WaitDialogFactory);
-                StatusBar?.SetText("Qt Visual Studio Tools: Updating IntelliSense...");
-            }
-
-            var configs = await UnconfiguredProject.Services
-                .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
-            foreach (var config in configs) {
-                if (!string.IsNullOrEmpty(configId) && config.Name != configId)
-                    continue;
-                var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
-                await DesignTimeUpdateQtVarsAsync(configProject, runQtTools, selectedFiles);
-            }
-
-            if (runQtTools) {
-                try {
-                    Vsix.Instance.Dte.ExecuteCommand("Project.RescanSolution");
-                } catch (Exception e) {
-                    Messages.Print(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-                }
-                waitDialog?.Stop();
-                StatusBar?.Clear();
-            }
-        }
 
         async Task OnProjectUpdateAsync(ConfiguredProject config, IProjectSubscriptionUpdate update)
         {
-            if (!initialized)
+            var changes = update.ProjectChanges.Values
+                .Where(x => x.Difference.AnyChanges)
+                .Select(x => x.Difference);
+            var changesCount = changes
+                .Select(x => x.AddedItems.Count
+                    + x.ChangedItems.Count
+                    + x.ChangedProperties.Count
+                    + x.RemovedItems.Count
+                    + x.RenamedItems.Count)
+                .Sum();
+            var changedProps = changes.SelectMany(x => x.ChangedProperties);
+            if (changesCount == 0
+                || (changesCount == 1
+                    && changedProps.Count() == 1
+                    && changedProps.First() == "QtLastBackgroundBuild")) {
                 return;
-
-            if (!Vsix.Instance.Options.BuildOnProjectChanged)
-                return;
+            }
 
             if (Vsix.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Changed [{3}] {4}",
-                    DateTime.Now,
-                    System.Threading.Thread.CurrentThread.ManagedThreadId,
-                    Task.CurrentId,
+                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Changed [{2}] {3}",
+                    DateTime.Now, Thread.CurrentThread.ManagedThreadId,
                     config.ProjectConfiguration.Name,
                     config.UnconfiguredProject.FullPath));
             }
-            await DesignTimeUpdateQtVarsAsync(config, false, null);
+            await QtProjectIntellisense.RefreshAsync(Project, config.ProjectConfiguration.Name);
         }
 
-        public static KeyValuePair<TKey, TValue> PROPERTY<TKey, TValue>(TKey key, TValue value)
-        {
-            return new KeyValuePair<TKey, TValue>(key, value);
-        }
-
-        private async Task DesignTimeUpdateQtVarsAsync(
-            ConfiguredProject project,
-            bool runQtTools,
-            IEnumerable<string> selectedFiles)
-        {
-            await BuildAsync(
-                project,
-                new[] { PROPERTY("QtVSToolsBuild", "true") },
-                new[] { "QtVars" });
-            if (runQtTools) {
-                await BuildAsync(
-                    project,
-                    (selectedFiles == null) ? new KeyValuePair<string, string>[0]
-                        : new[] { PROPERTY("SelectedFiles", string.Join(";", selectedFiles)) },
-                    new[] { "Qt" });
-            }
-        }
-
-        public static void Build(
-            EnvDTE.Project project, string configId,
-            KeyValuePair<string, string>[] properties,
-            params string[] targets)
-        {
-            if (project == null)
-                return;
-
-            QtProjectTracker instance = null;
-            if (!Instances.TryGetValue(project.FullName, out instance) || instance == null)
-                return;
-            if (!instance.initialized)
-                return;
-
-            Task.Run(async () => await instance
-                .BuildAsync(configId, properties, targets));
-        }
-
-        private async Task BuildAsync(
-            string configId,
-            KeyValuePair<string, string>[] properties,
-            string[] targets)
-        {
-            var configs = await UnconfiguredProject.Services
-                .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
-            foreach (var config in configs) {
-                if (!string.IsNullOrEmpty(configId) && config.Name != configId)
-                    continue;
-                var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
-                await BuildAsync(configProject, properties, targets, true, LoggerVerbosity.Minimal);
-            }
-        }
-
-        private async Task BuildAsync(
-            ConfiguredProject project,
-            KeyValuePair<string, string>[] properties,
-            string[] targets,
-            bool checkTargets,
-            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
-        {
-            var targetsToCheck = checkTargets ? targets : null;
-            await BuildAsync(project, properties, targets, targetsToCheck, verbosity);
-        }
-
-        private async Task BuildAsync(
-            ConfiguredProject project,
-            KeyValuePair<string, string>[] properties,
-            string[] targets,
-            string[] targetsToCheck = null,
-            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
-        {
-            if (project == null)
-                return;
-
-            if (verbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(clear: !Vsix.Instance.Options.BuildDebugInformation, activate: true,
-                    text: string.Format(
-@"== {0}: starting build...
-  * Properties: {1}
-  * Targets: {2}
-",
-                    /*{0}*/ Project.Name,
-                    /*{1}*/ string.Join("", properties
-                        .Select(property => string.Format(@"
-        {0} = {1}",     /*{0}*/ property.Key, /*{1}*/ property.Value))),
-                    /*{2}*/ string.Join(";", targets)));
-            }
-
-            bool ok = false;
-            try {
-                ProjectWriteLockReleaser writeAccess;
-                var timer = Stopwatch.StartNew();
-                while (timer.IsRunning) {
-                    try {
-                        writeAccess = await LockService.WriteLockAsync();
-                        timer.Stop();
-                    } catch (InvalidOperationException) {
-                        if (timer.ElapsedMilliseconds >= 5000)
-                            throw;
-                        using (var readAccess = await LockService.ReadLockAsync())
-                            await readAccess.ReleaseAsync();
-                    }
-                }
-
-                using (writeAccess)
-                using (var buildManager = new BuildManager()) {
-                    var msBuildProject = await writeAccess.GetProjectAsync(project);
-
-                    var configProps = new Dictionary<string, string>(
-                        project.ProjectConfiguration.Dimensions.ToImmutableDictionary());
-
-                    foreach (var property in properties)
-                        configProps[property.Key] = property.Value;
-
-                    var projectInstance = new ProjectInstance(msBuildProject.Xml,
-                        configProps, null, new ProjectCollection());
-
-                    var loggerVerbosity = verbosity;
-                    if (Vsix.Instance.Options.BuildDebugInformation)
-                        loggerVerbosity = Vsix.Instance.Options.BuildLoggerVerbosity;
-                    var buildParams = new BuildParameters()
-                    {
-                        Loggers = (loggerVerbosity != LoggerVerbosity.Quiet)
-                                ? new[] { new Logger() { Verbosity = loggerVerbosity } }
-                                : null
-                    };
-
-                    var buildRequest = new BuildRequestData(projectInstance,
-                        targets,
-                        hostServices: null,
-                        flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
-
-                    if (Vsix.Instance.Options.BuildDebugInformation) {
-                        Messages.Print(string.Format(
-                            "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): Build [{3}] {4}",
-                            DateTime.Now,
-                            System.Threading.Thread.CurrentThread.ManagedThreadId,
-                            Task.CurrentId,
-                            project.ProjectConfiguration.Name,
-                            project.UnconfiguredProject.FullPath));
-                        Messages.Print("=== Targets");
-                        foreach (var target in buildRequest.TargetNames)
-                            Messages.Print(string.Format("    {0}", target));
-                        Messages.Print("=== Properties");
-                        foreach (var property in properties) {
-                            Messages.Print(string.Format("    {0}={1}",
-                                property.Key, property.Value));
-                        }
-                    }
-
-                    var result = buildManager.Build(buildParams, buildRequest);
-
-                    if (Vsix.Instance.Options.BuildDebugInformation) {
-                        string resMsg;
-                        StringBuilder resInfo = new StringBuilder();
-                        if (result?.OverallResult == BuildResultCode.Success) {
-                            resMsg = "Build ok";
-                        } else {
-                            resMsg = "Build FAIL";
-                            if (result == null) {
-                                resInfo.AppendLine("####### Build returned 'null'");
-                            } else {
-                                resInfo.AppendLine("####### Build returned 'Failure' code");
-                                if (result.ResultsByTarget != null) {
-                                    foreach (var tr in result.ResultsByTarget) {
-                                        var res = tr.Value;
-                                        if (res.ResultCode != TargetResultCode.Failure)
-                                            continue;
-                                        resInfo.AppendFormat("### Target '{0}' FAIL\r\n", tr.Key);
-                                        if (res.Items != null && res.Items.Length > 0) {
-                                            resInfo.AppendFormat(
-                                                "Items: {0}\r\n", string.Join(", ", res.Items
-                                                    .Select(it => it.ItemSpec)));
-                                        }
-                                        var e = tr.Value?.Exception;
-                                        if (e != null) {
-                                            resInfo.AppendFormat(
-                                                "Exception: {0}\r\nStacktrace:\r\n{1}\r\n",
-                                                e.Message, e.StackTrace);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        Messages.Print(string.Format(
-                            "{0:HH:mm:ss.FFF} QtProjectTracker({1}/{2}): [{3}] {4}\r\n{5}",
-                            DateTime.Now,
-                            System.Threading.Thread.CurrentThread.ManagedThreadId,
-                            Task.CurrentId,
-                            project.ProjectConfiguration.Name,
-                            resMsg,
-                            resInfo.ToString()));
-                    }
-
-                    if (result == null
-                        || result.ResultsByTarget == null
-                        || result.OverallResult != BuildResultCode.Success) {
-                        Messages.Print(string.Format("{0}: background build FAILED!",
-                                Path.GetFileName(UnconfiguredProject.FullPath)));
-                    } else {
-                        bool buildSuccess = true;
-                        if (targetsToCheck != null) {
-                            var checkResults = result.ResultsByTarget
-                                .Where(x => targetsToCheck.Contains(x.Key))
-                                .Select(x => x.Value);
-                            buildSuccess = checkResults.Any()
-                                && checkResults.All(x => x.ResultCode == TargetResultCode.Success);
-                        }
-                        if (buildSuccess)
-                            msBuildProject.MarkDirty();
-                        ok = buildSuccess;
-                    }
-                    await writeAccess.ReleaseAsync();
-                }
-            } catch (Exception e) {
-                Messages.Print(string.Format("{0}: background build ERROR: {1}",
-                        Path.GetFileName(UnconfiguredProject.FullPath), e.Message));
-            }
-
-            if (verbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(string.Format(
-@"
-== {0}: build {1}",
-                    Project.Name, ok ? "successful" : "ERROR"));
-            }
-        }
-
-        private async Task OnProjectUnloading(object sender, EventArgs args)
+        async Task OnProjectUnloading(object sender, EventArgs args)
         {
             var project = sender as ConfiguredProject;
             if (project == null || project.Services == null)
@@ -500,7 +271,7 @@ namespace QtVsTools.QtMsBuild
                     project.ProjectConfiguration.Name,
                     project.UnconfiguredProject.FullPath));
             }
-            lock (criticalSection) {
+            lock (CriticalSection) {
                 if (Subscribers != null) {
                     Subscribers.ForEach(s => s.Dispose());
                     Subscribers.Clear();
@@ -512,97 +283,50 @@ namespace QtVsTools.QtMsBuild
             await Task.Yield();
         }
 
-        class Logger : ILogger
+        void BeginInitStatus()
         {
-            public LoggerVerbosity Verbosity { get; set; }
-            public string Parameters { get; set; }
-
-            public void Initialize(IEventSource eventSource)
-            {
-                eventSource.ErrorRaised += ErrorRaised;
-                eventSource.WarningRaised += WarningRaised;
-                eventSource.MessageRaised += MessageRaised;
-                eventSource.TargetStarted += TargetStarted;
-                eventSource.TargetFinished += TargetFinished;
-                eventSource.TaskStarted += TaskStarted;
-                eventSource.TaskFinished += TaskFinished;
-                eventSource.AnyEventRaised += AnyEventRaised;
+            lock (StaticCriticalSection) {
+                if (InitStatus != null)
+                    return;
+                InitStatus = StatusCenter.PreRegister(
+                    new TaskHandlerOptions
+                    {
+                        Title = "Qt VS Tools: Setting up project tracking..."
+                    },
+                    new TaskProgressData
+                    {
+                        ProgressText = string.Format("{0} ({1} projects remaining)",
+                            Project.Name, InitQueue.Count),
+                        CanBeCanceled = true,
+                        PercentComplete = 0
+                    })
+                    as ITaskHandler2;
+                InitStatus.RegisterTask(new Task(() => throw new InvalidOperationException()));
             }
+        }
 
-            private void ErrorRaised(object sender, BuildErrorEventArgs e)
-            {
-                if (Verbosity == LoggerVerbosity.Quiet)
+        void UpdateInitStatus(int percentComplete)
+        {
+            lock (StaticCriticalSection) {
+                if (InitStatus == null)
                     return;
-                Messages.Print(e.Message);
+                InitStatus.Progress.Report(new TaskProgressData
+                {
+                    ProgressText = string.Format("{0} ({1} project(s) remaining)",
+                        Project.Name, InitQueue.Count),
+                    CanBeCanceled = true,
+                    PercentComplete = percentComplete
+                });
             }
+        }
 
-            private void WarningRaised(object sender, BuildWarningEventArgs e)
-            {
-                if (Verbosity == LoggerVerbosity.Quiet)
+        void EndInitStatus()
+        {
+            lock (StaticCriticalSection) {
+                if (InitStatus == null)
                     return;
-                Messages.Print(e.Message);
-            }
-
-            private void MessageRaised(object sender, BuildMessageEventArgs e)
-            {
-                if (Verbosity <= LoggerVerbosity.Quiet)
-                    return;
-                if (Verbosity <= LoggerVerbosity.Minimal && e.SenderName != "Message")
-                    return;
-                if (Verbosity <= LoggerVerbosity.Normal && e.Importance != MessageImportance.High)
-                    return;
-                if (Verbosity <= LoggerVerbosity.Detailed
-                    && (e.Importance == MessageImportance.Low || e.SenderName == "MSBuild")) {
-                    return;
-                }
-                Messages.Print(e.Message);
-            }
-
-            private void TargetStarted(object sender, TargetStartedEventArgs e)
-            {
-                if (Verbosity < LoggerVerbosity.Detailed)
-                    return;
-                Messages.Print(e.Message);
-            }
-
-            private void TargetFinished(object sender, TargetFinishedEventArgs e)
-            {
-                if (Verbosity < LoggerVerbosity.Detailed)
-                    return;
-                Messages.Print(e.Message);
-            }
-
-            private void TaskStarted(object sender, TaskStartedEventArgs e)
-            {
-                if (Verbosity < LoggerVerbosity.Detailed)
-                    return;
-                Messages.Print(e.Message);
-            }
-
-            private void TaskFinished(object sender, TaskFinishedEventArgs e)
-            {
-                if (Verbosity < LoggerVerbosity.Detailed)
-                    return;
-                Messages.Print(e.Message);
-            }
-
-            private void AnyEventRaised(object sender, BuildEventArgs e)
-            {
-                if (Verbosity < LoggerVerbosity.Diagnostic
-                    || e is BuildMessageEventArgs
-                    || e is BuildErrorEventArgs
-                    || e is BuildWarningEventArgs
-                    || e is TargetStartedEventArgs
-                    || e is TargetFinishedEventArgs
-                    || e is TaskStartedEventArgs
-                    || e is TaskFinishedEventArgs) {
-                    return;
-                }
-                Messages.Print(e.Message);
-            }
-
-            public void Shutdown()
-            {
+                InitStatus.Dismiss();
+                InitStatus = null;
             }
         }
     }

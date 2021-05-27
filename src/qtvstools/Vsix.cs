@@ -489,10 +489,7 @@ namespace QtVsTools
 
         void IProjectTracker.AddProject(Project project)
         {
-            QtProjectTracker.AddProject(
-                project,
-                updateVars: Instance.Options.BuildOnProjectCreated,
-                runQtTools: false);
+            QtProjectTracker.Add(project);
         }
     }
 }

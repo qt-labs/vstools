@@ -167,6 +167,9 @@
     <Compile Include="QtMsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="QtMsBuild\QtProjectBuild.cs" />
+    <Compile Include="QtMsBuild\QtProjectIntelliSense.cs" />
+    <Compile Include="QtMsBuild\QtProjectLogger.cs" />
     <Compile Include="QtMsBuild\QtVersionProvider.cs" />
     <Compile Include="QtMsBuild\QtProjectTracker.cs" />
     <Compile Include="QtProjectContextMenu.cs" />
