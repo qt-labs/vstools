@@ -215,5 +215,16 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("w");
             Assert.IsTrue(string.Join("", q) == "bxzw");
         }
+
+        [TestMethod]
+        public void TestRemove()
+        {
+            var q = new PunisherQueue<string>();
+            q.Enqueue("a");
+            q.Enqueue("b");
+            q.Enqueue("c");
+            q.Remove("b");
+            Assert.IsTrue(string.Join("", q) == "ac");
+        }
     }
 }

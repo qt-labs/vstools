@@ -54,6 +54,8 @@ namespace QtVsTools
         SortedDictionary<TPriority, T> ItemsByPriority { get; set; }
         Dictionary<object, TPriority> ItemPriority { get; set; }
         T Head { get; set; }
+        public int Count { get; private set; }
+        public bool IsEmpty => (Count == 0);
 
         IEnumerable<T> Items => ThreadSafe(() => ItemsByPriority.Values.ToList());
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => Items.GetEnumerator();
@@ -61,24 +63,27 @@ namespace QtVsTools
 
         Func<T, object> GetItemKey { get; set; }
 
-        public BasePriorityQueue()
-        {
-            Clear();
-            GetItemKey = (x => x);
-        }
+        public BasePriorityQueue() : this(x => x)
+        { }
 
         public BasePriorityQueue(Func<T, object> getItemKey)
         {
-            Clear();
+            ItemsByPriority = new SortedDictionary<TPriority, T>();
+            ItemPriority = new Dictionary<object, TPriority>();
+            Head = default(T);
+            Count = 0;
             GetItemKey = getItemKey;
         }
 
         public void Clear()
         {
             lock (CriticalSection) {
-                ItemsByPriority = new SortedDictionary<TPriority, T>();
-                ItemPriority = new Dictionary<object, TPriority>();
+                if (Count == 0)
+                    return;
+                ItemsByPriority.Clear();
+                ItemPriority.Clear();
                 Head = default(T);
+                Count = 0;
             }
         }
 
@@ -101,11 +106,14 @@ namespace QtVsTools
                 if (ItemsByPriority.TryGetValue(priority, out oldItem) && !item.Equals(oldItem))
                     throw new InvalidOperationException("An item with the same priority exists.");
                 TPriority oldPriority;
-                if (ItemPriority.TryGetValue(GetItemKey(item), out oldPriority))
+                if (ItemPriority.TryGetValue(GetItemKey(item), out oldPriority)) {
                     ItemsByPriority.Remove(oldPriority);
+                    --Count;
+                }
                 ItemPriority[GetItemKey(item)] = priority;
                 ItemsByPriority[priority] = item;
                 Head = ItemsByPriority.First().Value;
+                ++Count;
             }
         }
 
@@ -113,7 +121,7 @@ namespace QtVsTools
         {
             lock (CriticalSection) {
                 result = Head;
-                return ItemsByPriority.Any();
+                return Count > 0;
             }
         }
 
@@ -127,18 +135,31 @@ namespace QtVsTools
             }
         }
 
+        public void Remove(T item)
+        {
+            lock (CriticalSection) {
+                object key = GetItemKey(item);
+                if (key == null)
+                    return;
+                ItemsByPriority.Remove(ItemPriority[key]);
+                ItemPriority.Remove(key);
+                --Count;
+                if (key == GetItemKey(Head)) {
+                    if (IsEmpty)
+                        Head = default(T);
+                    else
+                        Head = ItemsByPriority.First().Value;
+                }
+            }
+        }
+
         public bool TryDequeue(out T result)
         {
             lock (CriticalSection) {
                 result = Head;
-                if (!ItemsByPriority.Any())
+                if (IsEmpty)
                     return false;
-                ItemsByPriority.Remove(ItemPriority[GetItemKey(result)]);
-                ItemPriority.Remove(GetItemKey(result));
-                if (ItemsByPriority.Any())
-                    Head = ItemsByPriority.First().Value;
-                else
-                    Head = default(T);
+                Remove(Head);
                 return true;
             }
         }
