@@ -163,6 +163,7 @@ namespace QtVsTools
     /// Sub-classes will share the same static critical section
     /// </summary>
     ///
+    [DataContract]
     public class Concurrent : Concurrent<Concurrent>
     {
     }
