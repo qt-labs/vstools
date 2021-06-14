@@ -1,3 +1,25 @@
+Qt Visual Studio Tools version 2.7.2:
+
+Changes
+-------
+  - Fixed QTVSADDINBUG-805: Q_NAMESPACE needs mocing
+  - Fixed QTVSADDINBUG-871: lupdate/lrelease not working on .ts file context menu
+  - Fixed QTVSADDINBUG-873: Update list of Qt modules
+  - Fixed QTVSADDINBUG-874: Add option to open Designer in detached window
+  - Fixed QTVSADDINBUG-875: Can't open .ui files if path has space
+  - Fixed QTVSADDINBUG-887: Cannot add Qt version
+  - Fixed QTVSADDINBUG-888: lupdate fails to locate source files
+  - Fixed QTVSADDINBUG-890: Background build and VS2019 freeze on open solution
+  - Fixed QTVSADDINBUG-898: .ts files not processed
+  - Fixed QTVSADDINBUG-916: Build concurrency issues
+  - Fixed QTVSADDINBUG-917: Build concurrency issues
+  - Added module selection popup in Qt Settings property page
+  - Optimized IntelliSense updates ("background build")
+  - UI feedback of IntelliSense update, with the option to cancel background tasks
+  - Context menu option to update Qt project IntelliSense information (Qt > Refresh IntelliSense)
+  - Notification of available development release
+
+
 Qt Visual Studio Tools version 2.7.1:
 
 Changes
