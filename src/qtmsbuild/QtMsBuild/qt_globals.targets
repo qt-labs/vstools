@@ -354,7 +354,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Save tracking log of files read during build; used by VS to check the up-to-date status
     // -->
-    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true' AND '$(QtVSToolsBuild)' != 'true'">
       <read_log Include="^%(QtWorkResult.FullPath);%(QtWorkResult.AdditionalDependencies)"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
@@ -377,7 +377,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Save tracking log of files written during build; used by VS to check the up-to-date status
     // -->
-    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true' AND '$(QtVSToolsBuild)' != 'true'">
       <write_log Include="^%(QtWorkResult.FullPath);%(QtWorkResult.OutputFile)"
         Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.DisableLog)' != 'true'">
         <WorkType>%(QtWorkResult.WorkType)</WorkType>
@@ -398,7 +398,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Log output files; this is used by VS to determine what files to delete on "Clean"
     // -->
-    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup Condition="'$(DesignTimeBuild)' != 'true' AND '$(QtVSToolsBuild)' != 'true'">
       <clean_log Include="%(QtWorkResult.OutputFile)"
         Condition="'%(QtWorkResult.ExitCode)' == '0'">
         <Source>@(QtWorkResult, '|')</Source>
