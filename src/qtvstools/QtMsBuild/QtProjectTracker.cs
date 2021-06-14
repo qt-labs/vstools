@@ -165,7 +165,9 @@ namespace QtVsTools.QtMsBuild
                 QtProjectTracker tracker;
                 if (InitQueue.TryDequeue(out tracker)) {
                     if (InitStatus == null) {
+                        await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
+                        await TaskScheduler.Default;
                     } else {
                         tracker.UpdateInitStatus(0);
                     }
@@ -288,19 +290,24 @@ namespace QtVsTools.QtMsBuild
             lock (StaticCriticalSection) {
                 if (InitStatus != null)
                     return;
-                InitStatus = StatusCenter.PreRegister(
-                    new TaskHandlerOptions
-                    {
-                        Title = "Qt VS Tools: Setting up project tracking..."
-                    },
-                    new TaskProgressData
-                    {
-                        ProgressText = string.Format("{0} ({1} projects remaining)",
-                            Project.Name, InitQueue.Count),
-                        CanBeCanceled = true,
-                        PercentComplete = 0
-                    })
-                    as ITaskHandler2;
+                try {
+                    InitStatus = StatusCenter.PreRegister(
+                        new TaskHandlerOptions
+                        {
+                            Title = "Qt VS Tools: Setting up project tracking..."
+                        },
+                        new TaskProgressData
+                        {
+                            ProgressText = string.Format("{0} ({1} projects remaining)",
+                                Project.Name, InitQueue.Count),
+                            CanBeCanceled = true,
+                            PercentComplete = 0
+                        })
+                        as ITaskHandler2;
+                } catch (Exception e) {
+                    Messages.Print(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                }
                 InitStatus.RegisterTask(new Task(() => throw new InvalidOperationException()));
             }
         }
@@ -310,13 +317,18 @@ namespace QtVsTools.QtMsBuild
             lock (StaticCriticalSection) {
                 if (InitStatus == null)
                     return;
-                InitStatus.Progress.Report(new TaskProgressData
-                {
-                    ProgressText = string.Format("{0} ({1} project(s) remaining)",
-                        Project.Name, InitQueue.Count),
-                    CanBeCanceled = true,
-                    PercentComplete = percentComplete
-                });
+                try {
+                    InitStatus.Progress.Report(new TaskProgressData
+                    {
+                        ProgressText = string.Format("{0} ({1} project(s) remaining)",
+                            Project.Name, InitQueue.Count),
+                        CanBeCanceled = true,
+                        PercentComplete = percentComplete
+                    });
+                } catch (Exception e) {
+                    Messages.Print(
+                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                }
             }
         }
 
