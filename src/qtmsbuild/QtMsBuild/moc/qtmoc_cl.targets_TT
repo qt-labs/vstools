@@ -69,6 +69,16 @@ XmlPrint(xmlRule.Elements()
             (string)x.Attribute("Name")))))
 #>
         <#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <AdditionalCppOptions
+        Condition="'%(QtMoc.AdditionalCppOptions)' != ''"
+        >@(ClCompile->
+          WithMetadataValue('Identity','DefaultClCompile')->
+          '%(AdditionalOptions)') %(QtMoc.AdditionalCppOptions)</AdditionalCppOptions>
+      <AdditionalCppOptions
+        Condition="'%(QtMoc.AdditionalCppOptions)' == ''"
+        >@(ClCompile->
+          WithMetadataValue('Identity','DefaultClCompile')->
+          '%(AdditionalOptions)')</AdditionalCppOptions>
       </QtMoc>
       <QtMoc>
         <IncludePath>%(QtMoc.AdditionalIncludeDirectories)</IncludePath>
@@ -129,6 +139,10 @@ XmlPrint(xmlRule.Elements()
           >@(ClCompile->
             WithMetadataValue('Identity','DefaultClCompile')->
             '%(UndefinePreprocessorDefinitions)')</Undefine>
+        <AdditionalCppOptions
+          >@(ClCompile->
+            WithMetadataValue('Identity','DefaultClCompile')->
+            '%(AdditionalOptions)')</AdditionalCppOptions>
       </QtMoc>
     </ItemGroup>
 

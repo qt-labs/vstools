@@ -340,6 +340,11 @@ XmlPrint(xmlRule.Elements()
             new string('#', 10), categoryNames[y.Key], new string('#', 30)))))))
 #>
       <#=XML_COMMENT_BEGIN#> END Generated Text -->
+    <StringProperty
+      Name="AdditionalCppOptions"
+      DisplayName="Additional Options"
+      Description="Additional Options."
+      Category="MocCpp"/>
   </Rule>
   <ItemType
     Name="QtMoc"

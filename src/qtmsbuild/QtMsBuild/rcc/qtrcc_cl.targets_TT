@@ -69,6 +69,16 @@ XmlPrint(xmlRule.Elements()
             (string)x.Attribute("Name")))))
 #>
         <#=XML_COMMENT_BEGIN#> END Generated Text -->
+      <AdditionalCppOptions
+        Condition="'%(QtRcc.AdditionalCppOptions)' != ''"
+        >@(ClCompile->
+          WithMetadataValue('Identity','DefaultClCompile')->
+          '%(AdditionalOptions)') %(QtRcc.AdditionalCppOptions)</AdditionalCppOptions>
+      <AdditionalCppOptions
+        Condition="'%(QtRcc.AdditionalCppOptions)' == ''"
+        >@(ClCompile->
+          WithMetadataValue('Identity','DefaultClCompile')->
+          '%(AdditionalOptions)')</AdditionalCppOptions>
       </QtRcc>
     </ItemGroup>
 

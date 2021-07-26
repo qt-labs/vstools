@@ -462,6 +462,8 @@
           >$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
           >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
+        <AdditionalOptions
+          >%(QtWork_ClCompile_Expanded.AdditionalCppOptions)</AdditionalOptions>
       </QtWork_ClCompile_Expanded>
     </ItemGroup>
 
