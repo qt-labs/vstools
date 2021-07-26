@@ -27,10 +27,9 @@
 ****************************************************************************/
 
 #include <QtTest>
-
 #include <MacroClient.h>
 
-class TestCoreFeatures : public QObject
+class TestSample : public QObject
 {
     Q_OBJECT
 
@@ -42,8 +41,11 @@ private slots:
     {
         qint64 pid = 0;
         QVERIFY(client.connect(&pid));
+
         client.runMacro(QString() % "//# var QtConfPath => @\"" % QT_CONF_PATH % "\"");
-        QCOMPARE(client.runMacro(QFile(":/QtVsToolsLoaded")), MACRO_OK);
+
+        QFile macroQtVsToolsLoaded(":/QtVsToolsLoaded");
+        QCOMPARE(client.runMacro(macroQtVsToolsLoaded), MACRO_OK);
     }
 
     void tutorial01TestCase()
@@ -100,9 +102,12 @@ private slots:
     void guiAppCreate_Rebuild_Debug()
     {
         client.runMacro("//# wait 5000 => !Dte.Solution.IsOpen");
-        QCOMPARE(client.runMacro(QFile(":/CreateGuiApp")), MACRO_OK);
-        QCOMPARE(client.runMacro(QFile(":/RebuildSolution")), MACRO_OK);
-        QCOMPARE(client.runMacro(QFile(":/DebugGuiApp")), MACRO_OK);
+        QFile macroCreateGuiApp(":/CreateGuiApp"),
+            macroRebuildSolution(":/RebuildSolution"),
+            macroDebugGuiApp(":/DebugGuiApp");
+        QCOMPARE(client.runMacro(macroCreateGuiApp), MACRO_OK);
+        QCOMPARE(client.runMacro(macroRebuildSolution), MACRO_OK);
+        QCOMPARE(client.runMacro(macroDebugGuiApp), MACRO_OK);
         client.runMacro(
             "Dte.Solution.Close(false);"                "\r\n"
             "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
@@ -111,9 +116,12 @@ private slots:
     void importProFile_Rebuild_Debug()
     {
         QSKIP("foo");
-        QCOMPARE(client.runMacro(QFile(":/ImportProFile")), MACRO_OK);
-        QCOMPARE(client.runMacro(QFile(":/RebuildSolution")), MACRO_OK);
-        QCOMPARE(client.runMacro(QFile(":/DebugGuiApp")), MACRO_OK);
+        QFile macroImportProFile(":/ImportProFile"),
+            macroRebuildSolution(":/RebuildSolution"),
+            macroDebugGuiApp(":/DebugGuiApp");
+        QCOMPARE(client.runMacro(macroImportProFile), MACRO_OK);
+        QCOMPARE(client.runMacro(macroRebuildSolution), MACRO_OK);
+        QCOMPARE(client.runMacro(macroDebugGuiApp), MACRO_OK);
         client.runMacro(
             "Dte.Solution.Close(false);"                "\r\n"
             "//# wait 15000 => !Dte.Solution.IsOpen"    "\r\n");
@@ -128,5 +136,5 @@ private slots:
     }
 };
 
-QTEST_MAIN(TestCoreFeatures)
+QTEST_MAIN(TestSample)
 #include "main.moc"

@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="QtVsToolsLoaded">Test_QtVsToolsLoaded.csmacro</file>
+    <file alias="CreateGuiApp"   >Test_CreateGuiApp.csmacro</file>
+    <file alias="RebuildSolution">Test_RebuildSolution.csmacro</file>
+    <file alias="DebugGuiApp"    >Test_DebugGuiApp.csmacro</file>
+    <file alias="ImportProFile"  >Test_ImportProFile.csmacro</file>
+  </qresource>
+</RCC>

@@ -18,7 +18,8 @@
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='14.0'">8.1</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='15.0'">10.0.17763.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='16.0'">10.0</WindowsTargetPlatformVersion>
-    <QtMsBuild>$(SolutionDir)\qtmsbuild\QtMsBuild</QtMsBuild>
+    <QtMsBuild Condition="Exists('..\..\qtmsbuild\QtMsBuild')">..\..\qtmsbuild\QtMsBuild</QtMsBuild>
+    <ProjectName>SampleTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0' and '$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -108,12 +109,19 @@
     <QtRcc>
     </QtRcc>
     <QtMoc>
+      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_CONF_PATH="$(QMake_QT_INSTALL_PREFIX_)/mkspecs/$(QMake_QMAKE_SPEC_)/qt.conf"</PreprocessorDefinitions>
       <OverrideClCompile>extend</OverrideClCompile>
-      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
+      <AdditionalCppOptions>/Zc:referenceBinding</AdditionalCppOptions>
     </QtMoc>
+    <QtRcc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtRcc>
+    <QtRcc>
+      <AdditionalCppOptions>/Zc:referenceBinding</AdditionalCppOptions>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,12 +141,19 @@
     <QtRcc>
     </QtRcc>
     <QtMoc>
+      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_CONF_PATH="$(QMake_QT_INSTALL_PREFIX_)/mkspecs/$(QMake_QMAKE_SPEC_)/qt.conf"</PreprocessorDefinitions>
       <OverrideClCompile>extend</OverrideClCompile>
-      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(IntDir)\moc\%(RelativeDir)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>QT_CONF_PATH=R"__($(QtToolsPath)\qt.conf)__"</PreprocessorDefinitions>
+      <AdditionalCppOptions>/Zc:referenceBinding</AdditionalCppOptions>
     </QtMoc>
+    <QtRcc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtRcc>
+    <QtRcc>
+      <AdditionalCppOptions>/Zc:referenceBinding</AdditionalCppOptions>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtMoc Include="main.cpp">
@@ -149,7 +164,7 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\qtvstest\MacroClient.h" />
+    <ClInclude Include="$(LocalAppData)\qtvstest\MacroClient.h" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Macros.qrc">
@@ -157,14 +172,13 @@
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\macros\Test_CreateGuiApp.csmacro"/>
-    <None Include="..\macros\Test_DebugGuiApp.csmacro"/>
-    <None Include="..\macros\Test_QtVsToolsLoaded.csmacro"/>
-    <None Include="..\macros\Test_RebuildSolution.csmacro"/>
-    <None Include="..\macros\Test_ImportProFile.csmacro" />
+    <None Include="Test_CreateGuiApp.csmacro" />
+    <None Include="Test_DebugGuiApp.csmacro" />
+    <None Include="Test_QtVsToolsLoaded.csmacro" />
+    <None Include="Test_RebuildSolution.csmacro" />
+    <None Include="Test_ImportProFile.csmacro" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)\transform.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />
   </ImportGroup>

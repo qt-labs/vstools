@@ -92,7 +92,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTest", "QtVsTest\QtVsTe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{06C8A2E6-A894-4DBA-9DFD-B8E5CB8A2B4F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreFeatures", "tests\CoreFeatures\CoreFeatures.vcxproj", "{12857847-9877-466C-B056-DD286A219093}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleTest", "tests\SampleTest\SampleTest.vcxproj", "{12857847-9877-466C-B056-DD286A219093}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{E5CE38AA-4083-438E-B1F7-DD2F0BDEBE47}"
 EndProject

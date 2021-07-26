@@ -36,19 +36,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\macros\Test_QtVsToolsLoaded.csmacro">
+    <None Include="Test_QtVsToolsLoaded.csmacro">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\macros\Test_CreateGuiApp.csmacro">
+    <None Include="Test_CreateGuiApp.csmacro">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\macros\Test_RebuildSolution.csmacro">
+    <None Include="Test_RebuildSolution.csmacro">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\macros\Test_DebugGuiApp.csmacro">
+    <None Include="Test_DebugGuiApp.csmacro">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\macros\Test_ImportProFile.csmacro">
+    <None Include="Test_ImportProFile.csmacro">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
