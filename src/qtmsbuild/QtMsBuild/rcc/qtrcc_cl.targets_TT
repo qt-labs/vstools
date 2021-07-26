@@ -44,7 +44,7 @@
     *****************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="QtRccOverrideCpp" DependsOnTargets="QtRccPrepare"
+  <Target Name="QtRccOverrideCpp" DependsOnTargets="QtRccPrepare;QtGetDefaultClCompile"
     Inputs="%(QtRcc.Identity)" Outputs="@(QtRcc->'####### Don't skip this target #######')">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
