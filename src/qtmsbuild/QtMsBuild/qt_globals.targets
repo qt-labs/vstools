@@ -542,7 +542,7 @@
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="Build"
-      Properties="QtInnerBuild=$(MSBuildProjectFullPath);RandomFileName=$(RandomFileName)">
+      Properties="QtInnerBuild=$(MSBuildProjectFullPath);RandomFileName=$(RandomFileName);BuildProjectReferences=false">
     </MSBuild>
     <OnError ExecuteTargets="QtLeaveCriticalSection_OnError"/>
   </Target>
