@@ -83,14 +83,22 @@ namespace QtVsTools.QtMsBuild.Tasks
             }
             if (Lock) {
                 // Wait until locked
-                while (!buildLock.WaitOne(3000)) {
-                    // Check every 3 secs. for build errors
-                    if (Log.HasLoggedErrors) {
-                        Log.LogError("Qt::BuildLock[{0}]: Errors logged; wait aborted", Name);
-                        return false;
-                    }
-                    // Issue "still waiting" warning
+                if (!buildLock.WaitOne(1000)) {
+                    // Issue waiting warning
                     Log.LogWarning("Qt::BuildLock[{0}]: Waiting...", Name);
+                    var t = Stopwatch.StartNew();
+                    do {
+                        // Check for build errors
+                        if (Log.HasLoggedErrors) {
+                            Log.LogError("Qt::BuildLock[{0}]: Errors logged; wait aborted", Name);
+                            return false;
+                        }
+                        // Timeout after 10 secs.
+                        if (t.ElapsedMilliseconds >= 10000) {
+                            Log.LogError("Qt::BuildLock[{0}]: Timeout; wait aborted", Name);
+                            return false;
+                        }
+                    } while (!buildLock.WaitOne(1000));
                 }
             } else {
                 // Unlock
