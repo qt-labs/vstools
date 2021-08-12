@@ -34,11 +34,11 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
-using QtVsTools.Core;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,8 +48,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
-    using VisualStudio;
+    using Core;
     using QtMsBuild;
+    using SyntaxAnalysis;
+    using static SyntaxAnalysis.RegExpr;
+    using VisualStudio;
 
 #if VS2013
     using AsyncPackage = Package;
@@ -165,6 +168,9 @@ namespace QtVsTools
         public Editors.QtResourceEditor QtResourceEditor { get; private set; }
 
         static readonly Stopwatch initTimer = Stopwatch.StartNew();
+
+        static readonly HttpClient http = new HttpClient();
+        const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited,
@@ -330,6 +336,16 @@ namespace QtVsTools
                     , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds
 #endif
                     ));
+
+                var devRelease = await GetLatestDevelopmentRelease();
+                if (devRelease != null) {
+                    Messages.Print(string.Format(@"
+    ================================================================
+      Qt Visual Studio Tools version {1} PREVIEW available at:
+      {0}{1}/
+    ================================================================",
+                        urlDownloadQtIo, devRelease));
+                }
             }
             catch (Exception e)
             {
@@ -490,6 +506,40 @@ namespace QtVsTools
         void IProjectTracker.AddProject(Project project)
         {
             QtProjectTracker.Add(project);
+        }
+
+        async Task<string> GetLatestDevelopmentRelease()
+        {
+            var currentVersion = new System.Version(Version.PRODUCT_VERSION);
+            try {
+                var response = await http.GetAsync(urlDownloadQtIo);
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var tokenVersion = new Token("VERSION", Number & "." & Number & "." & Number)
+                {
+                    new Rule<System.Version> { Capture(value => new System.Version(value)) }
+                };
+                var regexHrefVersion = "href=\"" & tokenVersion & Chars["/"].Optional() & "\"";
+                var regexResponse = (regexHrefVersion | AnyChar | VertSpace).Repeat();
+                var parserResponse = regexResponse.Render();
+
+                var responseData = await response.Content.ReadAsStringAsync();
+                var devVersion = parserResponse.Parse(responseData)
+                    .GetValues<System.Version>("VERSION")
+                    .Where(v => currentVersion < v)
+                    .Max();
+                if (devVersion == null)
+                    return null;
+
+                response = await http.GetAsync(
+                    string.Format("{0}{1}/", urlDownloadQtIo, devVersion));
+                if (!response.IsSuccessStatusCode)
+                    return null;
+                return devVersion.ToString();
+            } catch {
+                return null;
+            }
         }
     }
 }
