@@ -40,7 +40,9 @@ using Microsoft.VisualStudio.ProjectSystem.Properties;
 #if VS2015
 using Microsoft.VisualStudio.ProjectSystem.Designers;
 #endif
+#if !VS2015
 using Microsoft.VisualStudio.TaskStatusCenter;
+#endif
 using Microsoft.VisualStudio.Threading;
 using EnvDTE;
 
@@ -63,13 +65,17 @@ namespace QtVsTools.QtMsBuild
             StaticThreadSafeInit(() => _InitQueue, () =>
                 _InitQueue = new PunisherQueue<QtProjectTracker>());
 
+#if !VS2015
         static IVsTaskStatusCenterService _StatusCenter;
         static IVsTaskStatusCenterService StatusCenter => StaticThreadSafeInit(() => _StatusCenter,
                 () => _StatusCenter = VsServiceProvider
                     .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+#endif
 
         static Task InitDispatcher { get; set; }
+#if !VS2015
         static ITaskHandler2 InitStatus { get; set; }
+#endif
 
         private QtProjectTracker()
         {
@@ -83,7 +89,9 @@ namespace QtVsTools.QtMsBuild
                 Tracker = tracker;
                 Config = config;
                 Subscription = Config.Services.ProjectSubscription.JointRuleSource.SourceBlock
-                    .LinkTo(new SubscriberAction(ProjectUpdateAsync),
+                    .LinkTo(new SubscriberAction(ProjectUpdateAsync)
+#if !VS2015
+                        ,
                         ruleNames: new[]
                         {
                             "ClCompile",
@@ -95,7 +103,9 @@ namespace QtVsTools.QtMsBuild
                             "QtRule_Translation",
                             "QtRule70_Deploy",
                         },
-                        initialDataAsNew: false);
+                        initialDataAsNew: false
+#endif
+                    );
             }
 
             QtProjectTracker Tracker { get; set; }
@@ -164,6 +174,7 @@ namespace QtVsTools.QtMsBuild
                     await Task.Delay(100);
                 QtProjectTracker tracker;
                 if (InitQueue.TryDequeue(out tracker)) {
+#if !VS2015
                     if (InitStatus == null) {
                         await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
@@ -171,8 +182,10 @@ namespace QtVsTools.QtMsBuild
                     } else {
                         tracker.UpdateInitStatus(0);
                     }
+#endif
                     await tracker.InitializeAsync();
                 }
+#if !VS2015
                 if (InitStatus != null
                     && (InitQueue.IsEmpty
                     || InitStatus.UserCancellation.IsCancellationRequested)) {
@@ -181,6 +194,7 @@ namespace QtVsTools.QtMsBuild
                     }
                     tracker.EndInitStatus();
                 }
+#endif
             }
         }
 
@@ -285,6 +299,7 @@ namespace QtVsTools.QtMsBuild
             await Task.Yield();
         }
 
+#if !VS2015
         void BeginInitStatus()
         {
             lock (StaticCriticalSection) {
@@ -311,9 +326,11 @@ namespace QtVsTools.QtMsBuild
                 InitStatus.RegisterTask(new Task(() => throw new InvalidOperationException()));
             }
         }
+#endif
 
         void UpdateInitStatus(int percentComplete)
         {
+#if !VS2015
             lock (StaticCriticalSection) {
                 if (InitStatus == null)
                     return;
@@ -330,8 +347,10 @@ namespace QtVsTools.QtMsBuild
                         e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                 }
             }
+#endif
         }
 
+#if !VS2015
         void EndInitStatus()
         {
             lock (StaticCriticalSection) {
@@ -341,5 +360,6 @@ namespace QtVsTools.QtMsBuild
                 InitStatus = null;
             }
         }
+#endif
     }
 }

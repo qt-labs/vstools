@@ -40,7 +40,9 @@ using Microsoft.VisualStudio.ProjectSystem;
 #if VS2015
 using Microsoft.VisualStudio.ProjectSystem.Designers;
 #endif
+#if !VS2015
 using Microsoft.VisualStudio.TaskStatusCenter;
+#endif
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 using EnvDTE;
@@ -67,10 +69,12 @@ namespace QtVsTools.QtMsBuild
         static ConcurrentStopwatch RequestTimer =>
             StaticThreadSafeInit(() => _RequestTimer, () => _RequestTimer = new ConcurrentStopwatch());
 
+#if !VS2015
         static IVsTaskStatusCenterService _StatusCenter;
         static IVsTaskStatusCenterService StatusCenter => StaticThreadSafeInit(() => _StatusCenter,
                 () => _StatusCenter = VsServiceProvider
                     .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+#endif
 
         EnvDTE.Project Project { get; set; }
         UnconfiguredProject UnconfiguredProject { get; set; }
@@ -155,17 +159,22 @@ namespace QtVsTools.QtMsBuild
 
         static async Task BuildDispatcherLoopAsync()
         {
+#if !VS2015
             ITaskHandler2 dispatchStatus = null;
+#endif
             while (!Vsix.Instance.Zombied) {
                 while (BuildQueue.IsEmpty || RequestTimer.ElapsedMilliseconds < 1000) {
+#if !VS2015
                     if (BuildQueue.IsEmpty && dispatchStatus != null) {
                         dispatchStatus.Dismiss();
                         dispatchStatus = null;
                     }
+#endif
                     await Task.Delay(100);
                 }
                 QtProjectBuild buildRequest;
                 if (BuildQueue.TryDequeue(out buildRequest)) {
+#if !VS2015
                     if (dispatchStatus == null) {
                         dispatchStatus = StatusCenter.PreRegister(
                             new TaskHandlerOptions
@@ -192,14 +201,20 @@ namespace QtVsTools.QtMsBuild
                                 CanBeCanceled = true,
                             });
                     }
+#endif
                     await buildRequest.BuildAsync();
                 }
                 if (BuildQueue.IsEmpty
-                    || dispatchStatus?.UserCancellation.IsCancellationRequested == true) {
+#if !VS2015
+                    || dispatchStatus?.UserCancellation.IsCancellationRequested == true
+#endif
+                    ) {
+#if !VS2015
                     if (dispatchStatus != null) {
                         dispatchStatus.Dismiss();
                         dispatchStatus = null;
                     }
+#endif
                     Reset();
                 }
             }

@@ -61,6 +61,15 @@
     <EnumValue Name="QtVS_v303" DisplayName="Version 3.3"/>
     <EnumValue Name="QtVS_v304" DisplayName="Version 3.4"/>
   </EnumProperty>
+  <StringProperty
+    Name="QtLastBackgroundBuild"
+    DisplayName="Last Background Build"
+    Category="QtSettings_01_General"
+    Visible="False">
+    <StringProperty.DataSource>
+      <DataSource Persistence="UserFile" Label="QtSettings" HasConfigurationCondition="true"/>
+    </StringProperty.DataSource>
+  </StringProperty>
   <DynamicEnumProperty
     Name="QtInstall"
     DisplayName="Qt Installation"
