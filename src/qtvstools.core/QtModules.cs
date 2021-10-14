@@ -100,6 +100,11 @@ namespace QtVsTools.Core
                         moduleInfo.AdditionalLibrariesDebug =
                             xModule.Elements("AdditionalLibrariesDebug")
                             .Select(x => x.Value).ToList();
+                        if (string.IsNullOrEmpty(moduleInfo.Name)
+                            || string.IsNullOrEmpty(moduleInfo.LibraryPrefix)) {
+                            Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
+                            throw new QtVSException("qtmodules.xml");
+                        }
                         dictModuleInfos.Add(moduleId, moduleInfo);
                     }
                 }
