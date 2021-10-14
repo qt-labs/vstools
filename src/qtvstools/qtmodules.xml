@@ -599,35 +599,54 @@
     <Name>WebView</Name>
     <proVarQT>webview</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebView</LibraryPrefix>
   </Module>
   <Module Id="120">
     <Name>Purchasing</Name>
     <proVarQT>purchasing</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtPurchasing</LibraryPrefix>
   </Module>
   <Module Id="121">
     <Name>Virtual Keyboard</Name>
     <proVarQT>virtualkeyboard</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtVirtualKeyboard</LibraryPrefix>
   </Module>
   <Module Id="122">
     <Name>X11 Extras</Name>
     <proVarQT>x11extras</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtX11Extras</LibraryPrefix>
   </Module>
   <Module Id="123">
     <Name>Wayland Compositor</Name>
     <proVarQT>waylandcompositor</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtWaylandCompositor</LibraryPrefix>
   </Module>
   <Module Id="124">
     <Name>Qt Automotive Suite</Name>
     <proVarQT>ivicore geniviextras</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtIviCore</LibraryPrefix>
+    <AdditionalLibraries>Qt5IviCore.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5IviCored.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5GeniviExtras.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5GeniviExtrasd.lib</AdditionalLibraries>
   </Module>
   <Module Id="125">
     <Name>Qt for Automation</Name>
     <proVarQT>coap knx mqtt opcua</proVarQT>
     <Selectable>true</Selectable>
+    <LibraryPrefix>QtCoap</LibraryPrefix>
+    <AdditionalLibraries>Qt5Coap.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5Coapd.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5Knx.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5Knxd.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5Mqtt.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5Mqttd.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5OpcUa.lib</AdditionalLibraries>
+    <AdditionalLibraries>Qt5OpcUad.lib</AdditionalLibraries>
   </Module>
 </QtVsTools>
