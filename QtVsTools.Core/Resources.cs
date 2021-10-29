@@ -135,7 +135,7 @@ namespace QtVsTools.Core
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2013";
 #elif VS2015
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2015";
-#elif (VS2017 || VS2019)
+#elif (VS2017 || VS2019 || VS2022)
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2017";
 #else
 #error Unknown Visual Studio version!

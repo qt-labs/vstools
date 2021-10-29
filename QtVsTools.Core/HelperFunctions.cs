@@ -1691,7 +1691,10 @@ namespace QtVsTools.Core
 
         private static string GetVCPathFromRegistry()
         {
-#if VS2019
+#if VS2022
+            Debug.Assert(false, "VCPath for VS2022 is not available through the registry");
+            string vcPath = string.Empty;
+#elif VS2019
             Debug.Assert(false, "VCPath for VS2019 is not available through the registry");
             string vcPath = string.Empty;
 #elif VS2017
@@ -1730,7 +1733,7 @@ namespace QtVsTools.Core
                 return false;
 
             string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
-#if (VS2017 || VS2019)
+#if (VS2017 || VS2019 || VS2022)
             string vcVarsCmd = "";
             string vcVarsArg = "";
             if (isOS64Bit && isQt64Bit)

@@ -382,7 +382,9 @@ namespace QtVsTools
             if (string.IsNullOrEmpty(visualizersPath)) {
                 visualizersPath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-#if VS2019
+#if VS2022
+                    @"Visual Studio 2022\Visualizers\");
+#elif VS2019
                     @"Visual Studio 2019\Visualizers\");
 #elif VS2017
                     @"Visual Studio 2017\Visualizers\");

@@ -9,6 +9,7 @@
 <#@import namespace="System.Text" #>
 <#@import namespace="System.Xml" #>
 <#@import namespace="System.Xml.Linq" #>
+<#@assembly name="$(AssemblyRef_Microsoft_VisualStudio_Interop)" #>
 <#@assembly name="$(AssemblyRef_EnvDTE)" #>
 <#@import namespace="EnvDTE" #>
 <#@assembly name="$(VsSdk_Shell_Interop)" #>
@@ -82,7 +83,8 @@
             throw new Exception("Unable to obtain 'VisualStudioVersion' parameter.");
     }
 
-    string VS_NAME = VS_VERSION.StartsWith("16.") ? "2019" :
+    string VS_NAME = VS_VERSION.StartsWith("17.") ? "2022" :
+                        VS_VERSION.StartsWith("16.") ? "2019" :
                         VS_VERSION.StartsWith("15.") ? "2017" :
                         VS_VERSION.StartsWith("14.") ? "2015" :
                         VS_VERSION.StartsWith("12.") ? "2013" : "????";
@@ -91,16 +93,24 @@
     if (string.IsNullOrEmpty(VC_TARGETS_PATH)) {
         if (Dte != null && !string.IsNullOrEmpty(VS_VERSION)) {
             string VS_EDITION = Dte.Edition;
-            VC_TARGETS_PATH = Path.Combine(
-                Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
-                VS_VERSION.StartsWith("16.") ?
-                    @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
-                VS_VERSION.StartsWith("15.") ?
-                    @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
-                VS_VERSION.StartsWith("14.") ?
-                    @"MSBuild\Microsoft.Cpp\v4.0\V140" :
-                VS_VERSION.StartsWith("12.") ?
-                    @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
+            if (VS_VERSION.StartsWith("17.")) {
+                VC_TARGETS_PATH = Path.Combine(
+                    Environment.GetEnvironmentVariable("ProgramFiles"),
+                        @"Microsoft Visual Studio\2022",
+                        @"Preview",
+                        @"MSBuild\Microsoft\VC\v170");
+            } else {
+                VC_TARGETS_PATH = Path.Combine(
+                    Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
+                    VS_VERSION.StartsWith("16.") ?
+                        @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
+                    VS_VERSION.StartsWith("15.") ?
+                        @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
+                    VS_VERSION.StartsWith("14.") ?
+                        @"MSBuild\Microsoft.Cpp\v4.0\V140" :
+                    VS_VERSION.StartsWith("12.") ?
+                        @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
+            }
         } else {
             throw new Exception("Unable to obtain 'VCTargetsPath' parameter.");
         }

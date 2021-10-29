@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Condition="'$(VisualStudioVersion)'=='17.0'"
+    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='16.0'"
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='15.0'"
@@ -9,10 +11,23 @@
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
+    <AssemblyRef_Microsoft_VisualStudio_Interop
+      Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
+        AND (
+          '$(VisualStudioVersion)' != '17.0'
+        )"
+      >System</AssemblyRef_Microsoft_VisualStudio_Interop>
+    <AssemblyRef_Microsoft_VisualStudio_Interop
+      Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
+        AND (
+          '$(VisualStudioVersion)' == '17.0'
+        )"
+      >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Interop.dll</AssemblyRef_Microsoft_VisualStudio_Interop>
     <AssemblyRef_EnvDTE
       Condition="'$(AssemblyRef_EnvDTE)' == ''
         AND (
-          '$(VisualStudioVersion)' == '16.0'
+          '$(VisualStudioVersion)' == '17.0'
+          OR '$(VisualStudioVersion)' == '16.0'
           OR '$(VisualStudioVersion)' == '15.0'
         )"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\EnvDTE.dll</AssemblyRef_EnvDTE>
@@ -25,7 +40,8 @@
     <VsSdk_Shell_Interop
       Condition="'$(VsSdk_Shell_Interop)' == ''
         AND (
-          '$(VisualStudioVersion)' == '16.0'
+          '$(VisualStudioVersion)' == '17.0'
+          OR '$(VisualStudioVersion)' == '16.0'
           OR '$(VisualStudioVersion)' == '15.0'
         )"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Shell.Interop.dll</VsSdk_Shell_Interop>
@@ -63,6 +79,10 @@
         <Value>$(AssemblyRef_EnvDTE)</Value>
         <Visible>false</Visible>
       </T4ParameterValues>
+      <T4ParameterValues Include="AssemblyRef_Microsoft_VisualStudio_Interop">
+        <Value>$(AssemblyRef_Microsoft_VisualStudio_Interop)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
       <T4ParameterValues Include="VsSdk_Shell_Interop">
         <Value>$(VsSdk_Shell_Interop)</Value>
         <Visible>false</Visible>
@@ -83,5 +103,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '16.0'">
     <DefineConstants>$(DefineConstants);VS2019</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '17.0'">
+    <DefineConstants>$(DefineConstants);VS2022</DefineConstants>
   </PropertyGroup>
 </Project>

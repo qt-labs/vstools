@@ -45,7 +45,11 @@ namespace QtVsTools.Core
             get
             {
                 if (dteObject != null)
+#if VS2022
+                    return dteObject.MainWindow.HWnd;
+#else
                     return new IntPtr(dteObject.MainWindow.HWnd);
+#endif
                 return new IntPtr(0);
             }
         }

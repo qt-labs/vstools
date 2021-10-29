@@ -43,6 +43,8 @@ namespace QtVsTools.Core
             return "141";
 #elif VS2019
             return "142";
+#elif VS2022
+            return "143";
 #else
 #error Unknown Visual Studio version!
 #endif
