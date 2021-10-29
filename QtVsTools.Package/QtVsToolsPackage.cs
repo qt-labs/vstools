@@ -26,25 +26,28 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
-using Microsoft.VisualStudio.Threading;
-using Microsoft.Win32;
 using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-
 using Task = System.Threading.Tasks.Task;
+using System.Windows.Forms;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.Settings;
+using Microsoft.VisualStudio.Threading;
+using Microsoft.Win32;
+using EnvDTE;
 
 namespace QtVsTools
 {
@@ -54,18 +57,9 @@ namespace QtVsTools
     using static SyntaxAnalysis.RegExpr;
     using VisualStudio;
 
-#if VS2013
-    using AsyncPackage = Package;
-#endif
-
-    [Guid(PackageGuid)]
+    [Guid(QtVsToolsPackage.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-#if VS2013
-    [PackageRegistration(UseManagedResourcesOnly = true)]
-    [ProvideAutoLoad(UIContextGuids.SolutionExists)]
-    [ProvideAutoLoad(UIContextGuids.NoSolution)]
-#else
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
@@ -93,7 +87,6 @@ namespace QtVsTools
         DefaultName = Editors.QtResourceEditor.Title)]
     [ProvideEditorLogicalView(typeof(Editors.QtResourceEditor),
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
-#endif
 
     // Options page
     [ProvideOptionPage(typeof(Options.QtOptionsPage),
@@ -109,38 +102,21 @@ namespace QtVsTools
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
-        /// <summary>
-        /// The package GUID string.
-        /// </summary>
-        public const string PackageGuid = "15021976-647e-4876-9040-2507afde45d2";
-
-        /// <summary>
-        /// Gets the Visual Studio application object that hosts the package.
-        /// </summary>
-        public DTE Dte
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the installation path of the package.
-        /// </summary>
-        public string PkgInstallPath
-        {
-            get;
-            private set;
-        }
-
-        static EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
-        static Vsix instance = null;
-
+        public const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
         const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
-        /// <summary>
-        /// Gets the instance of the package.
-        /// </summary>
-        public static Vsix Instance
+        public DTE Dte { get; private set; }
+        public string PkgInstallPath { get; private set; }
+        public Options.QtOptionsPage Options
+            => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
+        public Editors.QtDesigner QtDesigner { get; private set; }
+        public Editors.QtLinguist QtLinguist { get; private set; }
+        public Editors.QtResourceEditor QtResourceEditor { get; private set; }
+
+        static EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
+
+        static QtVsToolsPackage instance = null;
+        public static QtVsToolsPackage Instance
         {
             get
             {
@@ -149,44 +125,43 @@ namespace QtVsTools
             }
         }
 
-        public Options.QtOptionsPage Options
-            => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
+        private string locateHelperExecutable(string exeName)
+        {
+            if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
+                return PkgInstallPath + exeName;
+            return null;
+        }
 
-        private string qmakeFileReaderPath;
+        private string _QMakeFileReaderPath;
         public string QMakeFileReaderPath
         {
             get
             {
-                if (qmakeFileReaderPath == null)
-                    qmakeFileReaderPath = locateHelperExecutable("QMakeFileReader.exe");
-                return qmakeFileReaderPath;
+                if (_QMakeFileReaderPath == null)
+                    _QMakeFileReaderPath = locateHelperExecutable("QMakeFileReader.exe");
+                return _QMakeFileReaderPath;
             }
         }
 
-        public Editors.QtDesigner QtDesigner { get; private set; }
-        public Editors.QtLinguist QtLinguist { get; private set; }
-        public Editors.QtResourceEditor QtResourceEditor { get; private set; }
-
         static readonly Stopwatch initTimer = Stopwatch.StartNew();
-
         static readonly HttpClient http = new HttpClient();
         const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited,
-        /// so this is the place where you can put all the initialization code that rely on services
-        /// provided by VisualStudio.
-        /// </summary>
-#if VS2013
-        protected override void Initialize()
-#else
+        private DteEventsHandler eventHandler;
+        private bool useQtTmLanguage;
+        private string qtTmLanguagePath;
+        private string visualizersPath;
+
+
+        public QtVsToolsPackage()
+        {
+        }
+
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
-#endif
         {
-            try
-            {
+            try {
                 var timeInitBegin = initTimer.Elapsed;
                 VsServiceProvider.Instance = instance = this;
                 QtProject.ProjectTracker = this;
@@ -197,16 +172,16 @@ namespace QtVsTools
                     .GetExecutingAssembly().EscapedCodeBase);
                 PkgInstallPath = Path.GetDirectoryName(
                     Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
-#if !VS2013
+
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
                 await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
                 var timeUiThreadBegin = initTimer.Elapsed;
-#endif
+
                 if ((Dte = VsServiceProvider.GetService<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
 
-                VsShellSettings.Manager = new ShellSettingsManager(this as IServiceProvider);
+                VsShellSettings.Manager = new ShellSettingsManager(this as System.IServiceProvider);
                 QtVSIPSettings.Options = Options;
 
                 eventHandler = new DteEventsHandler(Dte);
@@ -236,12 +211,10 @@ namespace QtVsTools
                     }
                 }
 
-#if !VS2013
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
                 await TaskScheduler.Default;
                 var timeUiThreadEnd = initTimer.Elapsed;
-#endif
 
                 var vm = QtVersionManager.The(initDone);
                 var error = string.Empty;
@@ -308,8 +281,7 @@ namespace QtVsTools
                 // Set %QTMSBUILD% by default to point to standard location of Qt/MSBuild
                 //
                 var QtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
-                if (string.IsNullOrEmpty(QtMsBuildPath))
-                {
+                if (string.IsNullOrEmpty(QtMsBuildPath)) {
 
                     Environment.SetEnvironmentVariable(
                         "QtMsBuild", QtMsBuildDefault,
@@ -327,17 +299,13 @@ namespace QtVsTools
                     + "== Qt Visual Studio Tools version {0}\r\n"
                     + "\r\n"
                     + "   Initialized in: {1:0.##} msecs\r\n"
-#if !VS2013
                     + "   Main (UI) thread: {2:0.##} msecs\r\n"
-#endif
                     , Version.USER_VERSION
                     , (initTimer.Elapsed - timeInitBegin).TotalMilliseconds
-#if !VS2013
                     , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds
-#endif
                     ));
 
-                var devRelease = await GetLatestDevelopmentRelease();
+                var devRelease = await GetLatestDevelopmentReleaseAsync();
                 if (devRelease != null) {
                     Messages.Print(string.Format(@"
     ================================================================
@@ -346,14 +314,10 @@ namespace QtVsTools
     ================================================================",
                         urlDownloadQtIo, devRelease));
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Messages.Print(
                     e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
-            finally
-            {
+            } finally {
                 initDone.Set();
                 initTimer.Stop();
             }
@@ -366,57 +330,30 @@ namespace QtVsTools
             // Check if a solution was opened during initialization.
             // If so, fire solution open event.
             //
-            if (Dte.Solution?.IsOpen == true)
+            if (Dte?.Solution?.IsOpen == true)
                 eventHandler.SolutionEvents_Opened();
         }
 
-        /// <summary>
-        /// Called to ask the package if the shell can be closed.
-        /// </summary>
-        /// <param term='canClose'>Returns true if the shell can be closed, otherwise false.</param>
-        /// <returns>
-        /// Microsoft.VisualStudio.VSConstants.S_OK if the method succeeded, otherwise an error code.
-        /// </returns>
         protected override int QueryClose(out bool canClose)
         {
-            if (eventHandler != null)
-            {
+            if (eventHandler != null) {
                 eventHandler.Disconnect();
             }
-
             return base.QueryClose(out canClose);
         }
 
-        private enum Mode
-        {
-            Startup = 0,
-            Shutdown
-        }
-
-        private DteEventsHandler eventHandler;
-
-        private string locateHelperExecutable(string exeName)
-        {
-            if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
-                return PkgInstallPath + exeName;
-            return null;
-        }
-
-        bool useQtTmLanguage;
-        string qtTmLanguagePath;
-
-        void GetTextMateLanguagePath()
+        private void GetTextMateLanguagePath()
         {
             var settingsManager = VsShellSettings.Manager;
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-            useQtTmLanguage = store.GetBoolean(Statics.QmlTextMatePath, Statics.QmlTextMateKey, true);
+            useQtTmLanguage = store.GetBoolean(
+                Statics.QmlTextMatePath, Statics.QmlTextMateKey, true);
             qtTmLanguagePath = Environment.
                 ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
         }
 
         private void CopyTextMateLanguageFiles()
         {
-#if (!VS2013)
             if (useQtTmLanguage) {
                 HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
                     qtTmLanguagePath);
@@ -431,10 +368,7 @@ namespace QtVsTools
                     Directory.Delete(qmlTextmate, true);
                 } catch { }
             }
-#endif
         }
-
-        string visualizersPath;
 
         public string GetNatvisPath()
         {
@@ -452,10 +386,6 @@ namespace QtVsTools
                     @"Visual Studio 2019\Visualizers\");
 #elif VS2017
                     @"Visual Studio 2017\Visualizers\");
-#elif VS2015
-                    @"Visual Studio 2015\Visualizers\");
-#elif VS2013
-                    @"Visual Studio 2013\Visualizers\");
 #endif
             }
             return visualizersPath;
@@ -494,21 +424,19 @@ namespace QtVsTools
             return GetService(typeof(T)) as I;
         }
 
-#if !VS2013
         public async Task<I> GetServiceAsync<T, I>()
             where T : class
             where I : class
         {
             return await GetServiceAsync(typeof(T)) as I;
         }
-#endif
 
         void IProjectTracker.AddProject(Project project)
         {
             QtProjectTracker.Add(project);
         }
 
-        async Task<string> GetLatestDevelopmentRelease()
+        async Task<string> GetLatestDevelopmentReleaseAsync()
         {
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
             try {
