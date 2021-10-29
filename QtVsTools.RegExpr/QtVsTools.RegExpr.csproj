@@ -1,49 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="$(VisualStudioVersion)" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--
-    *****************************************************************************
-    **
-    ** Copyright (C) 2019 The Qt Company Ltd.
-    ** Contact: https://www.qt.io/licensing/
-    **
-    ** This file is part of the Qt VS Tools.
-    **
-    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-    ** Commercial License Usage
-    ** Licensees holding valid commercial Qt licenses may use this file in
-    ** accordance with the commercial license agreement provided with the
-    ** Software or, alternatively, in accordance with the terms contained in
-    ** a written agreement between you and The Qt Company. For licensing terms
-    ** and conditions see https://www.qt.io/terms-conditions. For further
-    ** information use the contact form at https://www.qt.io/contact-us.
-    **
-    ** GNU General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU
-    ** General Public License version 3 as published by the Free Software
-    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-    ** included in the packaging of this file. Please review the following
-    ** information to ensure the GNU General Public License requirements will
-    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-    **
-    ** $QT_END_LICENSE$
-    **
-    *****************************************************************************
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 -->
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" />
+<Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0BDF77D1-4705-402C-8E58-F0D4D2679C08}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTools.RegExpr</RootNamespace>
     <AssemblyName>QtVsTools.RegExpr</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <ProjectGuid>{A2831B9B-4D3B-46CB-85DF-1B5C277C17DB}</ProjectGuid>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,47 +60,58 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific references
+  // -->
+  <!-- // Visual Studio 2022 -->
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
+  </ItemGroup>
+  <!-- // Visual Studio 2019 -->
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+  </ItemGroup>
+  <!-- // Visual Studio 2017 -->
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
   <ItemGroup>
-    <Compile Include="Expression\CharClassLiteral.cs" />
-    <Compile Include="Expression\CharClassRange.cs" />
-    <Compile Include="Expression\CharClassSet.cs" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
+  <ItemGroup>
+    <Compile Include="expression\CharClassLiteral.cs" />
+    <Compile Include="expression\CharClassRange.cs" />
+    <Compile Include="expression\CharClassSet.cs" />
+    <Compile Include="expression\RegExpr.cs" />
+    <Compile Include="expression\RegExprAssert.cs" />
+    <Compile Include="expression\RegExprChoice.cs" />
+    <Compile Include="expression\RegExprLiteral.cs" />
+    <Compile Include="expression\RegExprRepeat.cs" />
+    <Compile Include="expression\RegExprSequence.cs" />
+    <Compile Include="expression\RegExprToken.cs" />
+    <Compile Include="expression\Renderer.cs" />
+    <Compile Include="parser\Parser.cs" />
+    <Compile Include="parser\ParseTree.cs" />
+    <Compile Include="production\Production.cs" />
+    <Compile Include="production\ProductionRule.cs" />
+    <Compile Include="production\ProductionRuleAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Expression\RegExpr.cs" />
-    <Compile Include="Parser\ParseTree.cs" />
-    <Compile Include="Production\ProductionRuleAction.cs" />
-    <Compile Include="Expression\RegExprAssert.cs" />
-    <Compile Include="Expression\RegExprChoice.cs" />
-    <Compile Include="Utils\Consts.cs" />
-    <Compile Include="Expression\RegExprLiteral.cs" />
-    <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Production\Production.cs" />
-    <Compile Include="Production\ProductionRule.cs" />
-    <Compile Include="Expression\Renderer.cs" />
-    <Compile Include="Expression\RegExprRepeat.cs" />
-    <Compile Include="Expression\RegExprSequence.cs" />
-    <Compile Include="Expression\RegExprToken.cs" />
-    <Compile Include="Utils\Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="README" />
+    <Compile Include="utils\Consts.cs" />
+    <Compile Include="utils\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props'))" />
-  </Target>
 </Project>

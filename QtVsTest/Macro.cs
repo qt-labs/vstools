@@ -115,7 +115,11 @@ namespace QtVsTest.Macros
             get
             {
                 if (_UiVsRoot == null)
+#if VS2022
+                    _UiVsRoot = AutomationElement.FromHandle(Dte.MainWindow.HWnd);
+#else
                     _UiVsRoot = AutomationElement.FromHandle(new IntPtr(Dte.MainWindow.HWnd));
+#endif
                 return _UiVsRoot;
             }
         }
@@ -130,7 +134,7 @@ namespace QtVsTest.Macros
 
         List<string> SelectedAssemblies { get { return _SelectedAssemblies; } }
         List<string> _SelectedAssemblies =
-            new List<string>(MSBuild.MetaInfo.QtVsTest.Reference)
+            new List<string>
             {
                 "QtVsTest",
                 "System.Core",

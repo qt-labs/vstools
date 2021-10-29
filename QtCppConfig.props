@@ -14,6 +14,9 @@
   <PropertyGroup Condition="'$(QtBuild_Static_Vs2019)'==''">
     <QtBuild_Static_Vs2019>..\..\..\install\qt5-x86-vs2019-static</QtBuild_Static_Vs2019>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(QtBuild_Static_Vs2022)'==''">
+    <QtBuild_Static_Vs2022>..\..\..\install\qt5-x86-vs2022-static</QtBuild_Static_Vs2022>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0'">
     <QtBuild>$(QtBuild_Static_Vs2013)</QtBuild>
   </PropertyGroup>
@@ -25,6 +28,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
     <QtBuild>$(QtBuild_Static_Vs2019)</QtBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
+    <QtBuild>$(QtBuild_Static_Vs2022)</QtBuild>
   </PropertyGroup>
   <PropertyGroup>
     <QtBuild>$([System.IO.Path]::Combine($(ProjectDir),$(QtBuild)))</QtBuild>

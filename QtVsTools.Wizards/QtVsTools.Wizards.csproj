@@ -1,20 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props" Condition="'$(VisualStudioVersion)' == '14.0' AND Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTools.Wizards</RootNamespace>
     <AssemblyName>QtVsTools.Wizards</AssemblyName>
+    <ProjectGuid>{8DF0A4C4-A32D-44A4-9DA4-41A6BCA80B44}</ProjectGuid>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,10 +51,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,11 +61,66 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>Resources\QtProjectWizard.ico</ApplicationIcon>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Microsoft.VisualStudio.VCCodeModel" />
+    <Reference Include="Microsoft.VisualStudio.ExtensionsExplorer.UI, Version=$(VisualStudioVersion).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(DevEnvDir)PrivateAssemblies\Microsoft.VisualStudio.ExtensionsExplorer.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific references
+  // -->
+  <Import Project="$(SolutionDir)\references.props" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.SDK"
+      Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools"
+      Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="Newtonsoft.Json"
+      Version="$(Version_Newtonsoft_Json)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
+      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)"
+      Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <Reference Include="Microsoft.VisualStudio.TemplateWizardInterface" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+    <Reference Include="Microsoft.VisualStudio.VCProjectEngine" />
+    <Reference Include="Microsoft.VisualStudio.TemplateWizardInterface" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.Core\QtVsTools.Core.csproj">
+      <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
+      <Name>QtVsTools.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
   <ItemGroup>
     <Content Include="Resources\QtProjectWizard.ico" />
     <Resource Include="Resources\medium.png">
@@ -121,8 +203,6 @@
     <Compile Include="Wizards\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Wizards\ClassWizard\AddClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -172,32 +252,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\qtvstools.core\QtVsTools.Core.csproj">
-      <Project>{faa69518-2feb-4954-9d2c-e7bd6121ea9c}</Project>
-      <Name>QtVsTools.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.ExtensionsExplorer.UI, Version=$(VisualStudioVersion).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(DevEnvDir)PrivateAssemblies\Microsoft.VisualStudio.ExtensionsExplorer.UI.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
-  <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -1,16 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="$(SolutionDir)\version.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C461C580-37A5-4B37-8A7B-10C8E1D3C5B5}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtMSBuild</RootNamespace>
     <AssemblyName>QtMSBuild</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <ProjectGuid>{A618D28B-9352-44F4-AA71-609BF68BF871}</ProjectGuid>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -31,26 +60,57 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Tasks.Core" />
-    <Reference Include="Microsoft.Build.Utilities.Core" />
-    <Reference
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
-    <Reference
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
+    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific references
+  // -->
+  <Import Project="$(SolutionDir)\references.props" />
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build"
+      Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="Microsoft.Build.Framework"
+      Version="$(Version_Microsoft_Build_Framework)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core"
+      Version="$(Version_Microsoft_Build_Tasks_Core)" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces"
+      Version="$(Version_Microsoft_Bcl_AsyncInterfaces)" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{a2831b9b-4d3b-46cb-85df-1b5c277c17db}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
+  <ItemGroup>
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild common property pages and targets
@@ -286,18 +346,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
   <!--
   ///////////////////////////////////////////////////////////////////////////////////////////////
   // Qt/MSBuild translation tools property pages and targets
   // -->
-  <ItemGroup>
     <Content Include="QtMSBuild\translation\qttranslation.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -310,12 +362,10 @@
     <Content Include="QtMSBuild\translation\qt_import.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <!--
-  ///////////////////////////////////////////////////////////////////////////////////////////////
-  // Inline tasks
-  // -->
-  <ItemGroup>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Inline tasks
+    // -->
     <Compile Include="Tasks\CriticalSection.cs" />
     <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
@@ -354,12 +404,6 @@
       <DependentUpon>qt_tasks.targets_TT</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
-      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
-      <Name>QtVsTools.RegExpr</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />

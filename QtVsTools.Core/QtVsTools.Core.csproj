@@ -1,33 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props" Condition="'$(VisualStudioVersion)' == '14.0' AND Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FAA69518-2FEB-4954-9D2C-E7BD6121EA9C}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTools.Core</RootNamespace>
     <AssemblyName>QtVsTools.Core</AssemblyName>
+    <ProjectGuid>{2621AD55-C4E9-4884-81E9-DA0D00B4C6E5}</ProjectGuid>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -38,6 +63,56 @@
   <PropertyGroup>
     <ApplicationIcon>QtVsTools.Core.ico</ApplicationIcon>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific references
+  // -->
+  <Import Project="$(SolutionDir)\references.props" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.SDK"
+      Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools"
+      Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="Microsoft.Build"
+      Version="$(Version_Microsoft_Build)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
+      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
+      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+    <Reference Include="Microsoft.VisualStudio.VCProjectEngine" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{a2831b9b-4d3b-46cb-85df-1b5c277c17db}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
     <Compile Include="CommandLineParser.cs" />
@@ -105,13 +180,9 @@
     <Compile Include="VisualStudio\IProjectTracker.cs" />
     <Compile Include="VisualStudio\VsServiceProvider.cs" />
     <Compile Include="WaitDialog.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="ExportProjectDialog.resx">
       <DependentUpon>ExportProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="QtVsTools.Core.ico" />
     <EmbeddedResource Include="Resources.resx">
     </EmbeddedResource>
@@ -120,34 +191,6 @@
     <EmbeddedResource Include="Resources\newitem.png" />
     <EmbeddedResource Include="Resources\newitem_d.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Linq" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Runtime.InteropServices" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
-    <Reference Include="System.Threading.Thread" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
-      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
-      <Name>QtVsTools.RegExpr</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
-  <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

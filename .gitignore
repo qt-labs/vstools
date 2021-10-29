@@ -299,6 +299,7 @@ templates/quick/quick.vstemplate
 templates/gui/gui.vstemplate
 templates/lib/lib.vstemplate
 templates/server/server.vstemplate
+qtmsbuild/Properties/AssemblyInfo.tt.cs
 qtmsbuild/QtMsBuild/moc/qtmoc_v3.xml
 qtmsbuild/QtMsBuild/moc/qtmoc_cl.targets
 qtmsbuild/QtMsBuild/rcc/qtrcc_v3.xml

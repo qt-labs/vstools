@@ -1,13 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Qt VS Tools.
+**
+** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 as published by the Free Software
+** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(SolutionDir)\version.targets" />
-  <PropertyGroup>
-    <VsixVersion Condition="'$(VsixVersion)' == ''">$(QtVSToolsVersion)</VsixVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -24,12 +46,22 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{FD7A42DB-8692-4FBE-AC50-F70AF423275B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QtVsTools</RootNamespace>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <RootNamespace>QtVsTools.Package</RootNamespace>
     <AssemblyName>QtVsTools</AssemblyName>
+    <ProjectGuid>{671C3821-7BD9-4C16-9A8D-EC1470EDBC9B}</ProjectGuid>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <StartAction>Program</StartAction>
+    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,17 +79,248 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
   <ItemGroup>
-    <Compile Include="AddQtVersionDialog.cs">
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Reference Include="System" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific references
+  // -->
+  <Import Project="$(SolutionDir)\references.props" />
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Composition"
+      Version="$(System_ComponentModel_Composition)" />
+    <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework"
+      Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" />
+    <PackageReference Include="Newtonsoft.Json"
+      Version="$(Version_Newtonsoft_Json)" />
+    <PackageReference Include="Microsoft.Build"
+      Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="Microsoft.Build.Framework"
+      Version="$(Version_Microsoft_Build_Framework)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core"
+      Version="$(Version_Microsoft_Build_Tasks_Core)" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK"
+      Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools"
+      Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem"
+      Version="$(Version_Microsoft_VisualStudio_ProjectSystem)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework"
+      Version="$(Version_Microsoft_VisualStudio_Shell_Framework)" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation"
+      Version="$(Version_Microsoft_VisualStudio_Validation)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
+      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
+      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+    <Reference Include="Microsoft.VisualStudio.VCProjectEngine" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{a2831b9b-4d3b-46cb-85df-1b5c277c17db}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QtMSBuild\QtMSBuild.csproj">
+      <Project>{a618d28b-9352-44f4-aa71-609bf68bf871}</Project>
+      <Name>QtMSBuild</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QtVsTools.Core\QtVsTools.Core.csproj">
+      <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
+      <Name>QtVsTools.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QtVsTools.Wizards\QtVsTools.Wizards.csproj">
+      <Project>{8df0a4c4-a32d-44a4-9da4-41a6bca80b44}</Project>
+      <Name>QtVsTools.Wizards</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\qmakefilereader\qmakefilereader.vcxproj">
+      <Project>{70711a97-d9b0-3a86-9756-9ff47337908b}</Project>
+      <Name>qmakefilereader</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
+      <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
+      <Name>qrceditor</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\vsqml\vsqml.vcxproj">
+      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+      <Name>VsQml</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\console\QtTemplate.Project.Console.csproj">
+      <Project>{71e4f2b9-3628-45e2-a664-a2f6e3aafe55}</Project>
+      <Name>QtTemplate.Project.Console</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\gui\QtTemplate.Project.Gui.csproj">
+      <Project>{3e1f9741-01d3-480a-a484-3cd373ae4a7f}</Project>
+      <Name>QtTemplate.Project.Gui</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\designer\QtTemplate.Project.Designer.csproj">
+      <Project>{191b2b91-d5fd-4138-a72a-ab0b149988c6}</Project>
+      <Name>QtTemplate.Project.Designer</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\empty\QtTemplate.Project.Empty.csproj">
+      <Project>{73c3dfb8-bd8a-4634-aad5-dc71edc37b98}</Project>
+      <Name>QtTemplate.Project.Empty</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\lib\QtTemplate.Project.Lib.csproj">
+      <Project>{191b1b91-d9fd-4138-a72a-ab0b149958c6}</Project>
+      <Name>QtTemplate.Project.Lib</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\quick\QtTemplate.Project.Quick.csproj">
+      <Project>{4833e4c7-ffff-4da5-a7a5-36c6c3840f16}</Project>
+      <Name>QtTemplate.Project.Quick</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\server\QtTemplate.Project.Server.csproj">
+      <Project>{8ae9d385-a379-4f5f-a703-3df643da6742}</Project>
+      <Name>QtTemplate.Project.Server</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\widget\QtTemplate.Item.Widget.csproj">
+      <Project>{40adfd6a-64ea-4c77-9d4b-3a91d6ab76b4}</Project>
+      <Name>QtTemplate.Item.Widget</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\dialogbuttonbottom\QtTemplate.Item.DialogButtonBottom.csproj">
+      <Project>{f7407750-5f72-460f-9c53-27cf509a39b1}</Project>
+      <Name>QtTemplate.Item.DialogButtonBottom</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\dialogbuttonright\QtTemplate.Item.DialogButtonRight.csproj">
+      <Project>{f2166b59-e41b-4328-b31d-9e2b9ac5a59c}</Project>
+      <Name>QtTemplate.Item.DialogButtonRight</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\mainwindow\QtTemplate.Item.MainWindow.csproj">
+      <Project>{20055427-1352-44fb-8442-bf7f15f9c59e}</Project>
+      <Name>QtTemplate.Item.MainWindow</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\qmldir\QtTemplate.Item.QMLDir.csproj">
+      <Project>{7af6c34b-65d2-4010-92f6-420e59dde9bf}</Project>
+      <Name>QtTemplate.Item.QMLDir</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\qml\QtTemplate.Item.QMLFile.csproj">
+      <Project>{dc1ae91b-45ce-4c5b-8f77-cdb58566038f}</Project>
+      <Name>QtTemplate.Item.QMLFile</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\resource\QtTemplate.Item.Resource.csproj">
+      <Project>{bda1cd69-624b-4d9d-9b88-acbeb14ac471}</Project>
+      <Name>QtTemplate.Item.Resource</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Item</TemplateType>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
+  <ItemGroup>
+    <T4Template Include="Properties\AssemblyInfo.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Properties\AssemblyInfo.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QtVsToolsPackage.cs" />
+    <T4Template Include="QtMenus.vsct_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>QtMenus.vsct</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>QtMenus.vsct</LastGenOutput>
+    </T4Template>
+    <VSCTCompile Include="QtMenus.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QtMenus.vsct_TT</DependentUpon>
+    </VSCTCompile>
+    <Content Include="Resources\Vsix.ico" />
+    <EmbeddedResource Include="VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <ManifestResourceName>VSPackage</ManifestResourceName>
+    </EmbeddedResource>
+    <Compile Include="Package\AddQtVersionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddTranslationDialog.cs">
+    <Compile Include="Package\AddTranslationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChangeFor.cs" />
+    <Compile Include="Package\ChangeFor.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />
     <Compile Include="Common\Disposable.cs" />
@@ -70,22 +333,22 @@
     <Compile Include="Common\Json\Serializer.cs" />
     <Compile Include="Common\PunisherQueue.cs" />
     <Compile Include="Common\Timestamp.cs" />
-    <Compile Include="DteEventsHandler.cs" />
+    <Compile Include="Package\DteEventsHandler.cs" />
     <Compile Include="Editors\Editor.cs" />
     <Compile Include="Editors\Editor.QtDesigner.cs" />
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
-    <Compile Include="ExtLoader.cs" />
-    <Compile Include="FormChangeQtVersion.cs">
+    <Compile Include="Package\ExtLoader.cs" />
+    <Compile Include="Package\FormChangeQtVersion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChangeQtVersion.Designer.cs">
+    <Compile Include="Package\FormChangeQtVersion.Designer.cs">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormProjectQtSettings.cs">
+    <Compile Include="Package\FormProjectQtSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormProjectQtSettings.Designer.cs">
+    <Compile Include="Package\FormProjectQtSettings.Designer.cs">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Options\QtLegacyOptionsPage.cs">
@@ -100,19 +363,8 @@
     <Compile Include="Options\QtVersionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ProjectQtSettings.cs" />
-    <T4Template Include="Properties\AssemblyInfo.cs">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
-      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
-    </T4Template>
-    <Compile Include="Properties\AssemblyInfo.tt.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="QMakeWrapper.cs" />
+    <Compile Include="Package\ProjectQtSettings.cs" />
+    <Compile Include="Package\QMakeWrapper.cs" />
     <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
     <Compile Include="QML\Classification\QmlExpressionEvalClassifier.cs" />
@@ -156,13 +408,13 @@
     <Compile Include="QML\Parser\QmlParserInterop.cs" />
     <Compile Include="QML\Syntax\QmlAst.cs" />
     <Compile Include="QML\Syntax\QmlSyntax.cs" />
-    <Compile Include="QtHelpLinkChooser.xaml.cs">
+    <Compile Include="Package\QtHelpLinkChooser.xaml.cs">
       <DependentUpon>QtHelpLinkChooser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="QtHelp.cs" />
-    <Compile Include="QtItemContextMenu.cs" />
-    <Compile Include="QtMainMenu.cs" />
-    <Compile Include="QtMsBuildConverter.cs" />
+    <Compile Include="Package\QtHelp.cs" />
+    <Compile Include="Package\QtItemContextMenu.cs" />
+    <Compile Include="Package\QtMainMenu.cs" />
+    <Compile Include="Package\QtMsBuildConverter.cs" />
     <Compile Include="QtMsBuild\QtModulesEditor.cs" />
     <Compile Include="QtMsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>
@@ -172,126 +424,38 @@
     <Compile Include="QtMsBuild\QtProjectLogger.cs" />
     <Compile Include="QtMsBuild\QtVersionProvider.cs" />
     <Compile Include="QtMsBuild\QtProjectTracker.cs" />
-    <Compile Include="QtProjectContextMenu.cs" />
-    <Compile Include="QtSolutionContextMenu.cs" />
-    <Compile Include="SR.cs" />
-    <Compile Include="Translation.cs" />
-    <Compile Include="TranslationItem.cs" />
+    <Compile Include="Package\QtProjectContextMenu.cs" />
+    <Compile Include="Package\QtSolutionContextMenu.cs" />
+    <Compile Include="Package\SR.cs" />
+    <Compile Include="Package\Translation.cs" />
+    <Compile Include="Package\TranslationItem.cs" />
     <Compile Include="VisualStudio\VsShell.cs" />
     <Compile Include="VisualStudio\VsShellSettings.cs" />
-    <Compile Include="Vsix.cs" />
-    <Compile Include="VsToolsDialogWindow.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Changelog">
+    <Compile Include="Package\VsToolsDialogWindow.cs" />
+    <Content Include="..\Changelog">
       <Link>Changelog</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\..\LICENSE.GPL3-EXCEPT">
+    <Content Include="..\LICENSE.GPL3-EXCEPT">
       <Link>LICENSE.GPL3-EXCEPT</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-  </ItemGroup>
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '16.0'">
-      <ItemGroup>
-        <T4Template Include="..\config\16.0\source.extension.vsixmanifest_TT">
-          <Link>source.extension.vsixmanifest_TT</Link>
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <OutputFile>..\config\16.0\source.extension.vsixmanifest</OutputFile>
-          <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-          <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
-        </T4Template>
-        <None Include="..\config\16.0\source.extension.vsixmanifest">
-          <Link>source.extension.vsixmanifest</Link>
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
-        </None>
-      </ItemGroup>
-    </When>
-    <When Condition="'$(VisualStudioVersion)' == '15.0'">
-      <ItemGroup>
-        <T4Template Include="..\config\15.0\source.extension.vsixmanifest_TT">
-          <Link>source.extension.vsixmanifest_TT</Link>
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <OutputFile>..\config\15.0\source.extension.vsixmanifest</OutputFile>
-          <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-          <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
-        </T4Template>
-        <None Include="..\config\15.0\source.extension.vsixmanifest">
-          <Link>source.extension.vsixmanifest</Link>
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
-        </None>
-      </ItemGroup>
-    </When>
-    <When Condition="'$(VisualStudioVersion)' == '14.0'">
-      <ItemGroup>
-        <T4Template Include="..\config\14.0\source.extension.vsixmanifest_TT">
-          <Link>source.extension.vsixmanifest_TT</Link>
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <OutputFile>..\config\14.0\source.extension.vsixmanifest</OutputFile>
-          <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-          <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
-        </T4Template>
-        <None Include="..\config\14.0\source.extension.vsixmanifest">
-          <Link>source.extension.vsixmanifest</Link>
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
-        </None>
-      </ItemGroup>
-    </When>
-    <When Condition="'$(VisualStudioVersion)' == '12.0'">
-      <ItemGroup>
-        <T4Template Include="..\config\12.0\source.extension.vsixmanifest_TT">
-          <Link>source.extension.vsixmanifest_TT</Link>
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <OutputFile>..\config\12.0\source.extension.vsixmanifest</OutputFile>
-          <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-          <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
-        </T4Template>
-        <None Include="..\config\12.0\source.extension.vsixmanifest">
-          <Link>source.extension.vsixmanifest</Link>
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
-        </None>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <PropertyGroup>
-    <QtTmLanguage>$(SolutionDir)\qttmlanguage</QtTmLanguage>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="$(QtTmLanguage)\**\*.*">
+    <T4Template Include="source.extension.vsixmanifest_TT">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>source.extension.vsixmanifest</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
+    </T4Template>
+    <None Include="source.extension.vsixmanifest">
+      <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
+      <SubType>Designer</SubType>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </None>
+    <Content Include="$(SolutionDir)\qttmlanguage\**\*.*">
       <Link>QtTmLanguage\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\qrceditor\bin\QrcEditor.exe">
-      <Link>QrcEditor.exe</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\qmakefilereader\bin\QMakeFileReader.exe">
-      <Link>QMakeFileReader.exe</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\vsqml\bin\vsqml.dll">
-      <Link>vsqml.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -333,340 +497,54 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <T4Template Include="QtMenus.vsct_TT">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>QtMenus.vsct</OutputFile>
-      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>QtMenus.vsct</LastGenOutput>
-    </T4Template>
-    <VSCTCompile Include="QtMenus.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>QtMenus.vsct_TT</DependentUpon>
-    </VSCTCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AddQtVersionDialog.resx">
+    <EmbeddedResource Include="Package\AddQtVersionDialog.resx">
       <DependentUpon>AddQtVersionDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddTranslationDialog.resx">
+    <EmbeddedResource Include="Package\AddTranslationDialog.resx">
       <DependentUpon>AddTranslationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChangeQtVersion.resx">
+    <EmbeddedResource Include="Package\FormChangeQtVersion.resx">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormProjectQtSettings.resx">
+    <EmbeddedResource Include="Package\FormProjectQtSettings.resx">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="VSPackage.resx">
-      <MergeWithCTO>true</MergeWithCTO>
-      <ManifestResourceName>VSPackage</ManifestResourceName>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\qmakefilereader\qmakefilereader.vcxproj">
-      <Project>{70711a97-d9b0-3a86-9756-9ff47337908b}</Project>
-      <Name>qmakefilereader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
-      <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
-      <Name>qrceditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\qtmsbuild\QtMSBuild.csproj">
-      <Project>{c461c580-37a5-4b37-8a7b-10c8e1d3c5b5}</Project>
-      <Name>QtMSBuild</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\qtvstools.core\QtVsTools.Core.csproj">
-      <Project>{faa69518-2feb-4954-9d2c-e7bd6121ea9c}</Project>
-      <Name>QtVsTools.Core</Name>
-      <Private>False</Private>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\console\Console.csproj">
-      <Project>{71E4F2B9-3628-45E2-A664-A2F6E3AAFE55}</Project>
-      <Name>Console</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\designer\Designer.csproj">
-      <Project>{191B2B91-D5FD-4138-A72A-AB0B149988C6}</Project>
-      <Name>Designer</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\dialogbuttonbottom\DialogButtonBottom.csproj">
-      <Project>{F7407750-5F72-460F-9C53-27CF509A39B1}</Project>
-      <Name>DialogButtonBottom</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\dialogbuttonright\DialogButtonRight.csproj">
-      <Project>{F2166B59-E41B-4328-B31D-9E2B9AC5A59C}</Project>
-      <Name>DialogButtonRight</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\gui\Gui.csproj">
-      <Project>{3E1F9741-01D3-480A-A484-3CD373AE4A7F}</Project>
-      <Name>Gui</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\empty\Empty.csproj">
-      <Project>{73C3DFB8-BD8A-4634-AAD5-DC71EDC37B98}</Project>
-      <Name>Empty</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\lib\Lib.csproj">
-      <Project>{191B1B91-D9FD-4138-A72A-AB0B149958C6}</Project>
-      <Name>Lib</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\mainwindow\MainWindow.csproj">
-      <Project>{20055427-1352-44FB-8442-BF7F15F9C59E}</Project>
-      <Name>MainWindow</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\qmldir\QMLDir.csproj">
-      <Project>{7af6c34b-65d2-4010-92f6-420e59dde9bf}</Project>
-      <Name>QMLDir</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\qml\QMLFile.csproj">
-      <Project>{dc1ae91b-45ce-4c5b-8f77-cdb58566038f}</Project>
-      <Name>QMLFile</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\quick\Quick.csproj">
-      <Project>{4833e4c7-ffff-4da5-a7a5-36c6c3840f16}</Project>
-      <Name>Quick</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\resource\Resource.csproj">
-      <Project>{BDA1CD69-624B-4D9D-9B88-ACBEB14AC471}</Project>
-      <Name>Resource</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\server\Server.csproj">
-      <Project>{8AE9D385-A379-4F5F-A703-3DF643DA6742}</Project>
-      <Name>Server</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\qttemplates\widget\Widget.csproj">
-      <Project>{40ADFD6A-64EA-4C77-9D4B-3A91D6AB76B4}</Project>
-      <Name>Widget</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
-      <Project>{0bdf77d1-4705-402c-8e58-f0d4d2679c08}</Project>
-      <Name>QtVsTools.RegExpr</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\qtwizard\QtVsTools.Wizards.csproj">
-      <Project>{244991B0-42AD-4324-B166-A26FB6E8CA5B}</Project>
-      <Name>QtVsTools.Wizards</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
-    <ProjectReference Include="..\vsqml\vsqml.vcxproj">
-      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
-      <Name>VsQml</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Composition">
-      <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Composition.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem">
-      <HintPath>$(VsInstallRoot)\Common7\IDE\CommonExtensions\Microsoft\Project\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Linq" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
-    <Reference Include="System.Threading.Tasks.Dataflow">
-      <HintPath>..\packages\System.Threading.Tasks.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Thread" />
-    <Reference Include="Microsoft.VisualStudio.Validation" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)' == '14.0'">
-    <Reference Include="Microsoft.VisualStudio.Composition, Version=14.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Composition.14.2.19-pre\lib\net451\Microsoft.VisualStudio.Composition.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Composition.Configuration, Version=14.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Composition.14.2.19-pre\lib\net451\Microsoft.VisualStudio.Composition.Configuration.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Interop, Version=14.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.1.170-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Utilities.v14.0, Version=14.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.1.170-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.Utilities.v14.0.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.V14Only, Version=14.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.1.170-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.V14Only.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.VS.V14Only, Version=14.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.1.170-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.VS.V14Only.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Threading, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Threading.14.1.131\lib\net45\Microsoft.VisualStudio.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.14.1.111\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.3.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Setup.Configuration.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Setup.Configuration.Interop.1.16.30\lib\net35\Microsoft.VisualStudio.Setup.Configuration.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.IO.Compression">
-      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Reflection" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Options\QtVersionsTable.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="QtHelpLinkChooser.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="QtMsBuild\QtModulesPopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Reference Include="System.ComponentModel.Composition" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\transform.targets" />
-  <Import Project="..\config\$(VisualStudioVersion)\qtvstools.targets" />
-  <Import Project="..\config\qtvstools.afterbuild.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <ItemGroup>
-    <T4Template Include="Version.cs">
+    <T4Template Include="Package\Version.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Version.tt.cs</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>Version.tt.cs</LastGenOutput>
     </T4Template>
-    <Compile Include="Version.tt.cs">
+    <Compile Include="Package\Version.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Version.cs</DependentUpon>
     </Compile>
+    <Page Include="Options\QtVersionsTable.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Package\QtHelpLinkChooser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="QtMsBuild\QtModulesPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
-  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(SolutionDir)\transform.targets" />
   <Target Name="QtVsTools_PostBuild" AfterTargets="Build">
     <Error Condition="!Exists('$(TargetPath)')" Text="Build failed." />
     <PropertyGroup>
-      <MsvcVersion Condition="'$(VisualStudioVersion)'=='12.0'">2013</MsvcVersion>
-      <MsvcVersion Condition="'$(VisualStudioVersion)'=='14.0'">2015</MsvcVersion>
       <MsvcVersion Condition="'$(VisualStudioVersion)'=='15.0'">2017</MsvcVersion>
       <MsvcVersion Condition="'$(VisualStudioVersion)'=='16.0'">2019</MsvcVersion>
+      <MsvcVersion Condition="'$(VisualStudioVersion)'=='17.0'">2022</MsvcVersion>
     </PropertyGroup>
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="QtVsToolsDll" />
@@ -712,14 +590,4 @@
     </ItemGroup>
   </Target>
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
-  <Target Name="QtVsTools_PrepareForBuild" BeforeTargets="PrepareForBuild">
-    <!-- Add SQLite interop DLL's to package -->
-    <ItemGroup Condition="'@(SQLiteInteropFiles)' != ''">
-      <Content Include="@(SQLiteInteropFiles)">
-        <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <IncludeInVSIX>true</IncludeInVSIX>
-      </Content>
-    </ItemGroup>
-  </Target>
 </Project>
