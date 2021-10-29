@@ -1,38 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <!--
-  *****************************************************************************
-  **
-  ** Copyright (C) 2021 The Qt Company Ltd.
-  ** Contact: https://www.qt.io/licensing/
-  **
-  ** This file is part of the Qt VS Tools.
-  **
-  ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-  ** Commercial License Usage
-  ** Licensees holding valid commercial Qt licenses may use this file in
-  ** accordance with the commercial license agreement provided with the
-  ** Software or, alternatively, in accordance with the terms contained in
-  ** a written agreement between you and The Qt Company. For licensing terms
-  ** and conditions see https://www.qt.io/terms-conditions. For further
-  ** information use the contact form at https://www.qt.io/contact-us.
-  **
-  ** GNU General Public License Usage
-  ** Alternatively, this file may be used under the terms of the GNU
-  ** General Public License version 3 as published by the Free Software
-  ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-  ** included in the packaging of this file. Please review the following
-  ** information to ensure the GNU General Public License requirements will
-  ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-  **
-  ** $QT_END_LICENSE$
-  **
-  *****************************************************************************
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2021 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
 <#@output extension="vsixmanifest" #>
 <#@include file="$(SolutionDir)\version.tt" #>
-  **          <#=WARNING_GENERATED_FILE#>
-  *****************************************************************************
-  -->
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+<#
+    string[] VsProducts = new string[0];
+    string VersionRange = "";
+    switch (VS_NAME) {
+        case "2022":
+            VsProducts = new[]
+            {
+                "Microsoft.VisualStudio.Pro",
+                "Microsoft.VisualStudio.Premium",
+                "Microsoft.VisualStudio.Ultimate",
+                "Microsoft.VisualStudio.Community",
+                "Microsoft.VisualStudio.Enterprise"
+            };
+            VersionRange = "[17.0, 18.0)";
+            break;
+        case "2019":
+            VsProducts = new[]
+            {
+                "Microsoft.VisualStudio.Pro",
+                "Microsoft.VisualStudio.Premium",
+                "Microsoft.VisualStudio.Ultimate",
+                "Microsoft.VisualStudio.Community",
+                "Microsoft.VisualStudio.Enterprise"
+            };
+            VersionRange = "[16.0, 17.0)";
+            break;
+        case "2017":
+            VsProducts = new[]
+            {
+                "Microsoft.VisualStudio.Pro",
+                "Microsoft.VisualStudio.Premium",
+                "Microsoft.VisualStudio.Ultimate",
+                "Microsoft.VisualStudio.Community",
+                "Microsoft.VisualStudio.Enterprise"
+            };
+            VersionRange = "[15.0.28010.0,16.0)";
+            break;
+    }
+#>
+-->
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
+    xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <!--<#/*#>--><Identity/><!--<#*/#>-->
     <!--<#=XML_COMMENT_END#>
@@ -44,52 +84,39 @@
     <DisplayName>Qt Visual Studio Test</DisplayName>
     <Description xml:space="preserve">Auto-test framework for Qt Visual Studio Tools.</Description>
   </Metadata>
-  <Installation InstalledByMsi="false">
-    <!--<# if (VS_NAME == "2015") { #>-->
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[14.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[14.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
-    <!--<# } else if (VS_NAME == "2017") { #>-->
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[15.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[15.0]" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
-    <!--<# } else if (VS_NAME == "2019") { #>-->
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Premium" Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[16.0,17.0)" />
-    <!--<# } #>-->
+  <Installation>
+    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+    <#foreach (var VsProduct in VsProducts) {#>
+      <InstallationTarget Id="<#=VsProduct#>" Version="<#=VersionRange#>">
+        <#if (VS_NAME == "2022") {#>
+          <ProductArchitecture>amd64</ProductArchitecture>
+        <#}#>
+      </InstallationTarget>
+    <#}#>
+    <#=XML_COMMENT_BEGIN#> END Generated Text -->
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+      <#if (VS_NAME == "2022") {#>
+        <Dependency Id="Microsoft.VisualStudio.MPF.16.0" DisplayName="Visual Studio MPF 16.0" d:Source="Installed" Version="[16.0,17.0)" />
+      <#}#>
+      <#=XML_COMMENT_BEGIN#> END Generated Text -->
   </Dependencies>
+  <Prerequisites>
+    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
+                  Version="<#=VersionRange#>"
+                  DisplayName="Visual Studio core editor" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
+                  Version="<#=VersionRange#>"
+                  DisplayName="Visual Studio C++ core features" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+                  Version="<#=VersionRange#>"
+                  DisplayName="MSVC C++ x64/x86 build tools" />
+    <#=XML_COMMENT_BEGIN#> END Generated Text -->
+  </Prerequisites>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
   </Assets>
-  <Prerequisites>
-    <!--<# if (VS_NAME == "2017") { #>-->
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
-                  Version="[15.0.26208.0,16.0)"
-                  DisplayName="Visual Studio core editor" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
-                  Version="[15.0.26208.0,16.0)"
-                  DisplayName="Visual Studio C++ core features" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-                  Version="[15.0.26208.0,16.0)"
-                  DisplayName="VC++ 2017 v141 toolset (x86,x64)" />
-    <!--<# } else if (VS_NAME == "2019") { #>-->
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
-                  Version="[16.0,17.0)"
-                  DisplayName="Visual Studio core editor" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
-                  Version="[16.0,17.0)"
-                  DisplayName="Visual Studio C++ core features" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-                  Version="[16.0,17.0)"
-                  DisplayName="VC++ 2017 v141 toolset (x86,x64)" />
-    <!--<# } #>-->
-  </Prerequisites>
 </PackageManifest>
