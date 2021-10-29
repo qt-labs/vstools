@@ -118,10 +118,10 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case lUpdateOnItemId:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(QtVsToolsPackage.Instance.Dte));
                 break;
             case lReleaseOnItemId:
-                Translation.RunlRelease(HelperFunctions.GetSelectedFiles(Vsix.Instance.Dte));
+                Translation.RunlRelease(HelperFunctions.GetSelectedFiles(QtVsToolsPackage.Instance.Dte));
                 break;
             }
         }
@@ -135,11 +135,11 @@ namespace QtVsTools
             command.Enabled = false;
             command.Visible = false;
 
-            var prj = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
-            if (!HelperFunctions.IsQtProject(prj) || Vsix.Instance.Dte.SelectedItems.Count <= 0)
+            var prj = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+            if (!HelperFunctions.IsQtProject(prj) || QtVsToolsPackage.Instance.Dte.SelectedItems.Count <= 0)
                 return;
 
-            foreach (SelectedItem si in Vsix.Instance.Dte.SelectedItems) {
+            foreach (SelectedItem si in QtVsToolsPackage.Instance.Dte.SelectedItems) {
                 if (!HelperFunctions.IsTranslationFile(si.Name))
                     return; // Don't display commands if one of the selected files is not a .ts file.
             }

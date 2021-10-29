@@ -83,6 +83,6 @@ namespace QtVsTools.Editors
             });
         }
 
-        protected override bool Detached => Vsix.Instance.Options.DesignerDetached;
+        protected override bool Detached => QtVsToolsPackage.Instance.Options.DesignerDetached;
     }
 }

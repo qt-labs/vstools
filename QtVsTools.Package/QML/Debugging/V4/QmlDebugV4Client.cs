@@ -179,7 +179,7 @@ namespace QtVsTools.Qml.Debug.V4
                 hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
 
-            uint timeout = (uint)Vsix.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
             Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
@@ -244,7 +244,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return null;
             }
 
-            uint timeout = (uint)Vsix.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
             if (timeout != 0) {
                 Task.Run(() =>
                 {

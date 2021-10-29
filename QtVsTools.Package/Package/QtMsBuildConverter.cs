@@ -43,7 +43,7 @@ namespace QtVsTools
     {
         public static bool SolutionToQtMsBuild()
         {
-            var solution = Vsix.Instance.Dte.Solution;
+            var solution = QtVsToolsPackage.Instance.Dte.Solution;
             if (solution == null)
                 return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"), ""));
 
@@ -99,7 +99,7 @@ namespace QtVsTools
                 if (!ConvertProject(projectPath)) {
                     if (waitDialog != null)
                         waitDialog.Stop();
-                    Vsix.Instance.Dte.Solution.Open(solutionPath);
+                    QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
                     return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"),
                         Path.GetFileName(projectPath)));
                 }
@@ -109,7 +109,7 @@ namespace QtVsTools
             if (waitDialog != null)
                 waitDialog.Stop();
 
-            Vsix.Instance.Dte.Solution.Open(solutionPath);
+            QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show(string.Format(SR.GetString("ConvertCanceled"),
                     projectPaths.Count - projCount), SR.GetString("Resources_QtVsTools"),

@@ -130,13 +130,13 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var dte = Vsix.Instance.Dte;
+            var dte = QtVsToolsPackage.Instance.Dte;
             switch (command.CommandID.ID) {
             case (int)CommandId.lUpdateOnSolutionId:
-                Translation.RunlUpdate(Vsix.Instance.Dte.Solution);
+                Translation.RunlUpdate(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
             case (int)CommandId.lReleaseOnSolutionId:
-                Translation.RunlRelease(Vsix.Instance.Dte.Solution);
+                Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
             case (int)CommandId.ChangeSolutionQtVersionId:
                 var newQtVersion = string.Empty;
@@ -152,7 +152,7 @@ namespace QtVsTools
 
                 string currentPlatform = null;
                 try {
-                    var config2 = Vsix.Instance.Dte.Solution.SolutionBuild
+                    var config2 = QtVsToolsPackage.Instance.Dte.Solution.SolutionBuild
                         .ActiveConfiguration as SolutionConfiguration2;
                     currentPlatform = config2.PlatformName;
                 } catch { }

@@ -75,14 +75,14 @@ namespace QtVsTools
             lbQtVersions.Items.Add("$(DefaultQtVersion)");
             string qtVer = null;
             if (change == ChangeFor.Solution) {
-                qtVer = vm.GetSolutionQtVersion(Vsix.Instance.Dte.Solution);
+                qtVer = vm.GetSolutionQtVersion(QtVsToolsPackage.Instance.Dte.Solution);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();
                 if (qtVer != null)
                     lbQtVersions.SelectedItem = qtVer;
                 Text = SR.GetString("SolutionQtVersion");
             } else {
-                var pro = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                var pro = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                 qtVer = vm.GetProjectQtVersion(pro);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();

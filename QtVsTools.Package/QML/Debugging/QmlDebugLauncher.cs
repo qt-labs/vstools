@@ -79,7 +79,7 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
-            if (!Vsix.Instance.Options.QmlDebuggerEnabled)
+            if (!QtVsToolsPackage.Instance.Options.QmlDebuggerEnabled)
                 return VSConstants.S_OK;
 
             if (riidEvent != typeof(IDebugThreadCreateEvent2).GUID
@@ -196,7 +196,7 @@ namespace QtVsTools.Qml.Debug
             execCmd = "";
             rccItems = null;
 
-            foreach (var project in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
+            foreach (var project in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
 
                 var vcProject = project.Object as VCProject;
                 if (vcProject == null)

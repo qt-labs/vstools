@@ -110,7 +110,7 @@ namespace QtVsTools
         private void F1HelpEvents_BeforeExecute(
             string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
-            if (Vsix.Instance.Options.TryQtHelpOnF1Pressed && QtHelp.QueryEditorContextHelp())
+            if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed && QtHelp.QueryEditorContextHelp())
                 CancelDefault = true;
         }
 
@@ -130,7 +130,7 @@ namespace QtVsTools
                     var qtVersion = qtProject.GetQtVersion();
                     var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
                     if (!string.IsNullOrEmpty(versionInfo.Namespace()))
-                        Vsix.Instance.CopyNatvisFile(versionInfo.Namespace());
+                        QtVsToolsPackage.Instance.CopyNatvisFile(versionInfo.Namespace());
                 }
             }
         }
@@ -409,7 +409,7 @@ namespace QtVsTools
 
         public void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
         {
-            var project = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var project = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
@@ -465,7 +465,7 @@ namespace QtVsTools
 
         void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
         {
-            var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -477,7 +477,7 @@ namespace QtVsTools
         {
             if (OldName == null)
                 return;
-            var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -532,7 +532,7 @@ namespace QtVsTools
 
         public void SolutionEvents_Opened()
         {
-            foreach (var p in HelperFunctions.ProjectsInSolution(Vsix.Instance.Dte)) {
+            foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);

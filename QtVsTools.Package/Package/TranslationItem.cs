@@ -43,7 +43,7 @@ namespace QtVsTools
             if (NativeName != DisplayName)
                 return DisplayName;
 
-            var culture = GetCultureInfo(Vsix.Instance.Dte.LocaleID);
+            var culture = GetCultureInfo(QtVsToolsPackage.Instance.Dte.LocaleID);
             if (culture.TwoLetterISOLanguageName == TwoLetterISOLanguageName)
                 return DisplayName;
 

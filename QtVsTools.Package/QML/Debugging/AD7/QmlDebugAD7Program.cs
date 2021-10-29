@@ -295,14 +295,14 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             get
             {
-                return ((bool)Vsix.Instance.Dte
+                return ((bool)QtVsToolsPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
                     .Value);
             }
             set
             {
-                Vsix.Instance.Dte
+                QtVsToolsPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
                     .let_Value(value ? "True" : "False");

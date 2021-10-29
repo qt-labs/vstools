@@ -190,7 +190,7 @@ namespace QtVsTools
                     return false;
 
                 var settingsManager = VsShellSettings.Manager;
-                var offline = Vsix.Instance.Options.HelpPreference == SourcePreference.Offline;
+                var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
 
                 var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "

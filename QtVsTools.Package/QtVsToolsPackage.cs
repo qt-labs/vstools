@@ -107,7 +107,7 @@ namespace QtVsTools
     [ProvideOptionPage(typeof(Options.QtLegacyOptionsPage),
         "Qt", "Legacy Project Format", 0, 0, true, Sort = 2)]
 
-    public sealed class Vsix : AsyncPackage, IVsServiceProvider, IProjectTracker
+    public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
         /// <summary>
         /// The package GUID string.

@@ -136,16 +136,16 @@ namespace QtVsTools
                 VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
                 break;
             case CommandId.LaunchDesignerId:
-                Vsix.Instance.QtDesigner.Start(hideWindow: false);
+                QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
                 break;
             case CommandId.LaunchLinguistId:
-                Vsix.Instance.QtLinguist.Start(hideWindow: false);
+                QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
                 break;
             case CommandId.OpenProFileId:
                 ExtLoader.ImportProFile();
                 break;
             case CommandId.ImportPriFileId:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case CommandId.ExportPriFileId:
                 ExtLoader.ExportPriFile();
@@ -154,7 +154,7 @@ namespace QtVsTools
                 ExtLoader.ExportProFile();
                 break;
             case CommandId.CreateNewTsFileId:
-                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(Vsix
+                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage
                     .Instance.Dte));
                 break;
             case CommandId.ConvertToQtId:
@@ -163,7 +163,7 @@ namespace QtVsTools
                     var caption = SR.GetString("ConvertTitle");
                     var text = SR.GetString("ConvertConfirmation");
                     if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                        HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Vsix
+                        HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(QtVsToolsPackage
                             .Instance.Dte));
                     }
                 }
@@ -175,15 +175,15 @@ namespace QtVsTools
                 break;
             case CommandId.QtProjectSettingsId:
                 {
-                    var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     int projectVersion = QtProject.GetFormatVersion(pro);
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
-                        Vsix.Instance.Dte.ExecuteCommand("Project.Properties");
+                        QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
                         using (var formProjectQtSettings = new FormProjectQtSettings()) {
                             formProjectQtSettings.SetProject(pro);
                             formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
-                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                             formProjectQtSettings.ShowDialog(ww);
                         }
                     } else {
@@ -193,11 +193,11 @@ namespace QtVsTools
                 break;
             case CommandId.ChangeProjectQtVersionId:
                 {
-                    var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     if (HelperFunctions.IsQMakeProject(pro)) {
                         using (var formChangeQtVersion = new FormChangeQtVersion()) {
                             formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                             if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                                 var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
                                 HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
@@ -208,10 +208,10 @@ namespace QtVsTools
                 }
                 break;
             case CommandId.QtOptionsId:
-                Vsix.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
+                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
                 break;
             case CommandId.QtVersionsId:
-                Vsix.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
+                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
                 break;
             }
         }
@@ -246,7 +246,7 @@ namespace QtVsTools
                 {
                     command.Visible = true;
                     command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
-                        .GetSelectedProject(Vsix.Instance.Dte));
+                        .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 }
                 break;
             // TODO: Fix these functionality and re-enable the menu items
@@ -260,7 +260,7 @@ namespace QtVsTools
             case CommandId.QtProjectSettingsId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                    var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if (project != null) {
                         if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
@@ -275,7 +275,7 @@ namespace QtVsTools
             case CommandId.ChangeProjectQtVersionId:
                 {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                    var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if ((project == null) || HelperFunctions.IsQtProject(project))
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     else if (HelperFunctions.IsQMakeProject(project))
@@ -289,9 +289,9 @@ namespace QtVsTools
             case CommandId.ConvertToQtMsBuild:
                 {
                     command.Visible = true;
-                    command.Enabled = (Vsix.Instance.Dte.Solution != null
-                        && Vsix.Instance.Dte.Solution.Projects != null
-                        && Vsix.Instance.Dte.Solution.Projects.Count > 0);
+                    command.Enabled = (QtVsToolsPackage.Instance.Dte.Solution != null
+                        && QtVsToolsPackage.Instance.Dte.Solution.Projects != null
+                        && QtVsToolsPackage.Instance.Dte.Solution.Projects.Count > 0);
                 }
                 break;
             }

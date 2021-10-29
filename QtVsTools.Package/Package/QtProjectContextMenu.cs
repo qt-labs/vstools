@@ -135,7 +135,7 @@ namespace QtVsTools
 
             switch ((CommandId) command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case CommandId.ExportPriFileProjectId:
                 ExtLoader.ExportPriFile();
@@ -144,14 +144,14 @@ namespace QtVsTools
                 ExtLoader.ExportProFile();
                 break;
             case CommandId.CreateNewTsFileProjectId:
-                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(Vsix
+                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage
                     .Instance.Dte));
                 break;
             case CommandId.lUpdateOnProjectId:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case CommandId.lReleaseOnProjectId:
-                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte));
+                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case CommandId.ConvertToQtProjectId:
             case CommandId.ConvertToQmakeProjectId:
@@ -159,19 +159,19 @@ namespace QtVsTools
                     var caption = SR.GetString("ConvertTitle");
                     var text = SR.GetString("ConvertConfirmation");
                     if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                        HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(Vsix
+                        HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(QtVsToolsPackage
                             .Instance.Dte));
                     }
                 }
                 break;
             case CommandId.QtProjectSettingsProjectId:
                 {
-                    var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     if (pro != null) {
                         using (var formProjectQtSettings = new FormProjectQtSettings()) {
                             formProjectQtSettings.SetProject(pro);
                             formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
-                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                             formProjectQtSettings.ShowDialog(ww);
                         }
                     } else {
@@ -181,11 +181,11 @@ namespace QtVsTools
                 break;
             case CommandId.ChangeProjectQtVersionProjectId:
                 {
-                    var pro = HelperFunctions.GetSelectedQtProject(Vsix.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     if (HelperFunctions.IsQMakeProject(pro)) {
                         using (var formChangeQtVersion = new FormChangeQtVersion()) {
                             formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                            var ww = new MainWinWrapper(Vsix.Instance.Dte);
+                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                             if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                                 var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
                                 HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
@@ -198,12 +198,12 @@ namespace QtVsTools
             case CommandId.ProjectConvertToQtMsBuild:
                 {
                     QtMsBuildConverter.ProjectToQtMsBuild(
-                        HelperFunctions.GetSelectedProject(Vsix.Instance.Dte));
+                        HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 }
                 break;
             case CommandId.ProjectRefreshIntelliSense:
                 {
-                    var selectedProject = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                    var selectedProject = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     var tracker = QtProjectTracker.Get(selectedProject);
                     QtProjectIntellisense.Refresh(tracker.Project);
                 }
@@ -211,7 +211,7 @@ namespace QtVsTools
             case CommandId.ProjectAddNewQtClassProjectId:
                 {
                     try {
-                        var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+                        var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                         if (!HelperFunctions.IsQtProject(project))
                             return;
 
@@ -222,7 +222,7 @@ namespace QtVsTools
                         var loop = true;
                         do {
                             var classWizard = new Wizards.ClassWizard.AddClassWizard();
-                            loop = classWizard.Run(Vsix.Instance.Dte, vcProject.Name,
+                            loop = classWizard.Run(QtVsToolsPackage.Instance.Dte, vcProject.Name,
                                 vcProject.ProjectDirectory) == Wizards.WizardResult.Exception;
                         } while (loop);
                     } catch {
@@ -239,7 +239,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var project = HelperFunctions.GetSelectedProject(Vsix.Instance.Dte);
+            var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
             var isQtProject = HelperFunctions.IsQtProject(project);
             var isQMakeProject = HelperFunctions.IsQMakeProject(project);
             var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
@@ -265,7 +265,7 @@ namespace QtVsTools
             case CommandId.lReleaseOnProjectId:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
-                    .GetSelectedProject(Vsix.Instance.Dte));
+                    .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 break;
             //case CommandId.ConvertToQmakeProjectId:
             case CommandId.QtProjectSettingsProjectId:

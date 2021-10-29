@@ -136,7 +136,7 @@ namespace QtVsTools.QtMsBuild
 
         public static void Add(EnvDTE.Project project)
         {
-            if (!Vsix.Instance.Options.ProjectTracking)
+            if (!QtVsToolsPackage.Instance.Options.ProjectTracking)
                 return;
             Get(project);
         }
@@ -169,14 +169,14 @@ namespace QtVsTools.QtMsBuild
 
         static async Task InitDispatcherLoopAsync()
         {
-            while (!Vsix.Instance.Zombied) {
+            while (!QtVsToolsPackage.Instance.Zombied) {
                 while (InitQueue.IsEmpty)
                     await Task.Delay(100);
                 QtProjectTracker tracker;
                 if (InitQueue.TryDequeue(out tracker)) {
 #if !VS2015
                     if (InitStatus == null) {
-                        await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
                         await TaskScheduler.Default;
                     } else {
@@ -203,7 +203,7 @@ namespace QtVsTools.QtMsBuild
             int p = 0;
             UpdateInitStatus(p += 10);
 
-            await Vsix.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
             UpdateInitStatus(p += 10);
 
             var context = Project.Object as IVsBrowseObjectContext;
@@ -233,7 +233,7 @@ namespace QtVsTools.QtMsBuild
                 UpdateInitStatus(p += d);
                 Subscribers.Add(new Subscriber(this, configProject));
                 configProject.ProjectUnloading += OnProjectUnloading;
-                if (Vsix.Instance.Options.BuildDebugInformation) {
+                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
                         DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -265,7 +265,7 @@ namespace QtVsTools.QtMsBuild
                 return;
             }
 
-            if (Vsix.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                     "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Changed [{2}] {3}",
                     DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -280,7 +280,7 @@ namespace QtVsTools.QtMsBuild
             var project = sender as ConfiguredProject;
             if (project == null || project.Services == null)
                 return;
-            if (Vsix.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                     "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
                     DateTime.Now,

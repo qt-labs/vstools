@@ -113,7 +113,7 @@ namespace QtVsTools.QtMsBuild
                 throw new ArgumentException("Configuration name cannot be null.");
 
             RequestTimer.Restart();
-            if (Vsix.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                 "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Request [{2}] {3}",
                 DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -162,7 +162,7 @@ namespace QtVsTools.QtMsBuild
 #if !VS2015
             ITaskHandler2 dispatchStatus = null;
 #endif
-            while (!Vsix.Instance.Zombied) {
+            while (!QtVsToolsPackage.Instance.Zombied) {
                 while (BuildQueue.IsEmpty || RequestTimer.ElapsedMilliseconds < 1000) {
 #if !VS2015
                     if (BuildQueue.IsEmpty && dispatchStatus != null) {
@@ -223,7 +223,7 @@ namespace QtVsTools.QtMsBuild
         async Task BuildAsync()
         {
             if (LoggerVerbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(clear: !Vsix.Instance.Options.BuildDebugInformation, activate: true,
+                Messages.Print(clear: !QtVsToolsPackage.Instance.Options.BuildDebugInformation, activate: true,
                     text: string.Format(
 @"== {0}: starting build...
   * Properties: {1}
@@ -267,8 +267,8 @@ namespace QtVsTools.QtMsBuild
                         configProps, null, new ProjectCollection());
 
                     var loggerVerbosity = LoggerVerbosity;
-                    if (Vsix.Instance.Options.BuildDebugInformation)
-                        loggerVerbosity = Vsix.Instance.Options.BuildLoggerVerbosity;
+                    if (QtVsToolsPackage.Instance.Options.BuildDebugInformation)
+                        loggerVerbosity = QtVsToolsPackage.Instance.Options.BuildLoggerVerbosity;
                     var buildParams = new BuildParameters()
                     {
                         Loggers = (loggerVerbosity != LoggerVerbosity.Quiet)
@@ -281,7 +281,7 @@ namespace QtVsTools.QtMsBuild
                         hostServices: null,
                         flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-                    if (Vsix.Instance.Options.BuildDebugInformation) {
+                    if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                         Messages.Print(string.Format(
                             "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Build [{2}] {3}",
                             DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -303,7 +303,7 @@ namespace QtVsTools.QtMsBuild
                             result = BuildManager.DefaultBuildManager.Build(
                                 buildParams, buildRequest);
                         } catch (InvalidOperationException) {
-                            if (Vsix.Instance.Options.BuildDebugInformation) {
+                            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                                 Messages.Print(string.Format(
                                     "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] "
                                     + "Warning: Another build is in progress; waiting...",
@@ -315,7 +315,7 @@ namespace QtVsTools.QtMsBuild
                         }
                     }
 
-                    if (Vsix.Instance.Options.BuildDebugInformation) {
+                    if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                         string resMsg;
                         StringBuilder resInfo = new StringBuilder();
                         if (result?.OverallResult == BuildResultCode.Success) {

@@ -46,7 +46,7 @@ namespace QtVsTools.Editors
 
         protected override string GetToolsPath()
         {
-            return Vsix.Instance?.PkgInstallPath;
+            return QtVsToolsPackage.Instance?.PkgInstallPath;
         }
 
         public override Func<string, bool> WindowFilter =>
@@ -57,6 +57,6 @@ namespace QtVsTools.Editors
             return Title;
         }
 
-        protected override bool Detached => Vsix.Instance.Options.ResourceEditorDetached;
+        protected override bool Detached => QtVsToolsPackage.Instance.Options.ResourceEditorDetached;
     }
 }

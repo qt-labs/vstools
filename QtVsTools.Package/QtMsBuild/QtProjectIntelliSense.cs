@@ -47,7 +47,7 @@ namespace QtVsTools.QtMsBuild
         {
             if (project == null || !QtProjectTracker.IsTracked(project))
                 return;
-            if (Vsix.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                     "{0:HH:mm:ss.FFF} QtProjectIntellisense({1}): Refreshing: [{2}] {3}",
                     DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -71,7 +71,7 @@ namespace QtVsTools.QtMsBuild
             if (selectedFiles != null)
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
             var targets = new List<string> { "QtVars" };
-            if (Vsix.Instance.Options.BuildRunQtTools)
+            if (QtVsToolsPackage.Instance.Options.BuildRunQtTools)
                 targets.Add("Qt");
 
             IEnumerable<string> configs;

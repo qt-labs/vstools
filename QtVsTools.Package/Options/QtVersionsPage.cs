@@ -135,7 +135,7 @@ namespace QtVsTools.Options
             VersionsTable.Focus();
             string errorMessage = string.Format("Invalid Qt versions:\r\n{0}",
                     string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg)));
-            VsShellUtilities.ShowMessageBox(Vsix.Instance,
+            VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
                 errorMessage, "Qt VS Tools", OLEMSGICON.OLEMSGICON_WARNING,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
