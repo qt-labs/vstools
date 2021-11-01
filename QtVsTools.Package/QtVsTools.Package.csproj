@@ -87,9 +87,18 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem">
+      <HintPath>$(VsInstallRoot)\Common7\IDE\CommonExtensions\Microsoft\Project\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Composition">
+      <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Composition.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +107,7 @@
   <Import Project="$(SolutionDir)\references.props" />
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Composition"
-      Version="$(System_ComponentModel_Composition)" />
+      Version="$(Version_System_ComponentModel_Composition)" />
     <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework"
       Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" />
     <PackageReference Include="Newtonsoft.Json"
@@ -113,12 +122,14 @@
       Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools"
       Version="$(Version_Microsoft_VSSDK_BuildTools)" />
-    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem"
-      Version="$(Version_Microsoft_VisualStudio_ProjectSystem)" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.Framework"
       Version="$(Version_Microsoft_VisualStudio_Shell_Framework)" />
     <PackageReference Include="Microsoft.VisualStudio.Validation"
       Version="$(Version_Microsoft_VisualStudio_Validation)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading)"
+      Version="$(Version_Microsoft_VisualStudio_Threading)" />
+    <PackageReference Include="System.Collections.Immutable"
+      Version="$(Version_System_Collections_Immutable)" />
   </ItemGroup>
   <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
     <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"

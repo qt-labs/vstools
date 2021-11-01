@@ -10,23 +10,27 @@
       >5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
     <Version_Stub_System_Data_SQLite_Core_NetFramework
       >1.0.115</Version_Stub_System_Data_SQLite_Core_NetFramework>
-    <System_ComponentModel_Composition
-      >5.0.0</System_ComponentModel_Composition>
+    <Version_System_Collections_Immutable
+      >5.0.0</Version_System_Collections_Immutable>
+    <Version_System_ComponentModel_Composition
+      >5.0.0</Version_System_ComponentModel_Composition>
     <Version_Newtonsoft_Json
       >13.0.1</Version_Newtonsoft_Json>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Name_DummyPackage
+      >Stub.System.Data.SQLite.Core.NetFramework</Name_DummyPackage>
+    <Version_DummyPackage
+      >$(Version_Stub_System_Data_SQLite_Core_NetFramework)</Version_DummyPackage>
+  </PropertyGroup>
+  <!-- // Visual Studio 2022 -->
+  <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
     <Version_Microsoft_Build
       >16.11.0</Version_Microsoft_Build>
     <Version_Microsoft_Build_Framework
       >16.11.0</Version_Microsoft_Build_Framework>
     <Version_Microsoft_Build_Tasks_Core
       >16.11.0</Version_Microsoft_Build_Tasks_Core>
-    <Name_DummyPackage
-      >Microsoft.Build</Name_DummyPackage>
-    <Version_DummyPackage
-      >16.11.0</Version_DummyPackage>
-  </PropertyGroup>
-  <!-- // Visual Studio 2022 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
     <Version_Microsoft_VisualStudio_SDK
       >17.0.0-previews-4-31709-430</Version_Microsoft_VisualStudio_SDK>
     <Version_Microsoft_VSSDK_BuildTools
@@ -45,9 +49,21 @@
       >Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface
       >17.0.0-previews-1-31410-258</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Name_Microsoft_VisualStudio_Threading
+      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_Threading>
+    <Version_Microsoft_VisualStudio_Threading
+      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_Threading>
+    <Version_System_Collections_Immutable
+      >5.0.0</Version_System_Collections_Immutable>
   </PropertyGroup>
   <!-- // Visual Studio 2019 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <Version_Microsoft_Build
+      >16.8.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build_Framework
+      >16.8.0</Version_Microsoft_Build_Framework>
+    <Version_Microsoft_Build_Tasks_Core
+      >16.8.0</Version_Microsoft_Build_Tasks_Core>
     <Version_Microsoft_VisualStudio_SDK
       >16.0.206</Version_Microsoft_VisualStudio_SDK>
     <Version_Microsoft_VSSDK_BuildTools
@@ -66,9 +82,21 @@
       >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface
       >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Name_Microsoft_VisualStudio_Threading
+      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_Threading>
+    <Version_Microsoft_VisualStudio_Threading
+      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_Threading>
+    <Version_System_Collections_Immutable
+      >1.5.0</Version_System_Collections_Immutable>
   </PropertyGroup>
   <!-- // Visual Studio 2017 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+    <Version_Microsoft_Build
+      >15.9.20</Version_Microsoft_Build>
+    <Version_Microsoft_Build_Framework
+      >15.9.20</Version_Microsoft_Build_Framework>
+    <Version_Microsoft_Build_Tasks_Core
+      >15.9.20</Version_Microsoft_Build_Tasks_Core>
     <Version_Microsoft_VisualStudio_SDK
       >15.0.1</Version_Microsoft_VisualStudio_SDK>
     <Version_Microsoft_VSSDK_BuildTools
@@ -79,13 +107,15 @@
       >15.5.31</Version_Microsoft_VisualStudio_Validation>
     <Version_Microsoft_VisualStudio_Shell_Framework
       >15.9.28307</Version_Microsoft_VisualStudio_Shell_Framework>
-    <Name_Microsoft_VisualStudio_VCProjectEngine
-      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_VCProjectEngine>
-    <Version_Microsoft_VisualStudio_VCProjectEngine
-      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_VCProjectEngine>
     <Name_Microsoft_VisualStudio_TemplateWizardInterface
       >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface
       >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Name_Microsoft_VisualStudio_Threading
+      >Microsoft.VisualStudio.Threading</Name_Microsoft_VisualStudio_Threading>
+    <Version_Microsoft_VisualStudio_Threading
+      >15.8.209</Version_Microsoft_VisualStudio_Threading>
+    <Version_System_Collections_Immutable
+      >1.5.0</Version_System_Collections_Immutable>
   </PropertyGroup>
 </Project>

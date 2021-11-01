@@ -33,7 +33,6 @@ using System.Linq;
 using System.Threading;
 using Thread = System.Threading.Thread;
 using System.Windows.Forms;
-using System.Windows.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
 using QtVsTools.VisualStudio;
