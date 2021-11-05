@@ -313,3 +313,4 @@ qtvstest/Properties/AssemblyInfo.tt.cs
 qtvstest/source.extension.vsixmanifest
 QtVsTools.Package/source.extension.vsixmanifest
 QtNatvisPoC/*.txt
+Tests/BigSolution/generated/
