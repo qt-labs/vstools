@@ -109,6 +109,8 @@ namespace QtVsTools
         public string PkgInstallPath { get; private set; }
         public Options.QtOptionsPage Options
             => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
+        public Options.QtLegacyOptionsPage LegacyOptions
+            => GetDialogPage(typeof(Options.QtLegacyOptionsPage)) as Options.QtLegacyOptionsPage;
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
         public Editors.QtResourceEditor QtResourceEditor { get; private set; }

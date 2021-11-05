@@ -76,6 +76,12 @@ namespace QtVsTools.Options
         [DisplayName("User Interface Compiler: Default uic generated files directory")]
         public string DefaultUicDir { get; set; }
 
+        [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
+        [DisplayName("Build: Run pre-build setup")]
+        public bool PreBuildSetup { get; set; }
+
+        const string VALUENAME_LegacyPreBuild = "LegacyPreBuild";
+
         public override void ResetSettings()
         {
             CheckoutPrompt = true;
@@ -88,6 +94,7 @@ namespace QtVsTools.Options
             AutoMoc = true;
             DefaultRccDir = "";
             DefaultUicDir = "";
+            PreBuildSetup = false;
         }
 
         public override void LoadSettingsFromStorage()
@@ -118,6 +125,8 @@ namespace QtVsTools.Options
                         DefaultRccDir = rccDir;
                     if (key.GetValue(Resources.uicDirKeyword) is string uicDir)
                         DefaultUicDir = uicDir;
+                    if (key.GetValue(VALUENAME_LegacyPreBuild) is int preBuild)
+                        PreBuildSetup = (preBuild != 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -142,6 +151,7 @@ namespace QtVsTools.Options
                     key.SetValue(Resources.disableAutoMocStepsUpdateKeyword, AutoMoc ? 0 : 1);
                     key.SetValue(Resources.rccDirKeyword, DefaultRccDir);
                     key.SetValue(Resources.uicDirKeyword, DefaultUicDir);
+                    key.SetValue(VALUENAME_LegacyPreBuild, PreBuildSetup ? 1 : 0);
                 }
             } catch (Exception exception) {
                 Messages.Print(

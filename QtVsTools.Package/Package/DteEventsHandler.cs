@@ -228,6 +228,11 @@ namespace QtVsTools
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)
         {
+            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild &&
+                !QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup) {
+                return;
+            }
+
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
@@ -276,6 +281,9 @@ namespace QtVsTools
             string configId,
             bool success)
         {
+            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
+                return;
+
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
@@ -289,11 +297,17 @@ namespace QtVsTools
 
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
+            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
+                return;
+
             currentBuildAction = Action;
         }
 
         public void buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
         {
+            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
+                return;
+
             foreach (var buildDoneEvent in buildDoneEvents) {
                 string projectName = buildDoneEvent[0];
                 string configId = buildDoneEvent[1];
