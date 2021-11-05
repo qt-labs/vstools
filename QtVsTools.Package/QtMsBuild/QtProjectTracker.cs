@@ -296,7 +296,6 @@ namespace QtVsTools.QtMsBuild
                 project.ProjectUnloading -= OnProjectUnloading;
                 Instances[Project.FullName] = null;
             }
-            await Task.Yield();
         }
 
 #if !VS2015
