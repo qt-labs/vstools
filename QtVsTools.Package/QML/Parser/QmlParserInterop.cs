@@ -306,7 +306,9 @@ namespace QtVsTools.Qml
 
             IntPtr ptrRef;
             try {
-                ptrRef = new IntPtr(nodeData.ReadInt32());
+                long ptrHi = nodeData.ReadInt32();
+                long ptrLo = nodeData.ReadInt32();
+                ptrRef = new IntPtr((ptrHi << 32) | (ptrLo & 0xFFFFFFFFL));
             } catch (Exception) {
                 return;
             }

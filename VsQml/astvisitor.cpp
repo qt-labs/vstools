@@ -67,7 +67,11 @@ private:
 
     void marshalPointer(QVector<int> &nodeData, void *ptr)
     {
-        nodeData.append(reinterpret_cast<int>(ptr));
+        auto ptrRef = reinterpret_cast<long long>(ptr);
+        auto ptrHi = ptrRef >> 32;
+        auto ptrLo = ptrRef & 0xFFFFFFFFLL;
+        nodeData.append(int(ptrHi));
+        nodeData.append(int(ptrLo));
     }
 
     void marshalNode(QVector<int> &nodeData, Node *node)
