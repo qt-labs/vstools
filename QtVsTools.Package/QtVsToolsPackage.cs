@@ -295,7 +295,7 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                CopyNatvisFile();
+                CopyNatvisFiles();
 
                 Messages.Print(string.Format("\r\n"
                     + "== Qt Visual Studio Tools version {0}\r\n"
@@ -372,6 +372,32 @@ namespace QtVsTools
             }
         }
 
+        private void CopyNatvisFile(string filename, string qtNamespace)
+        {
+            try {
+                string natvis = File.ReadAllText(Path.Combine(PkgInstallPath, filename));
+
+                string natvisFile;
+                if (string.IsNullOrEmpty(qtNamespace)) {
+                    natvis = natvis.Replace("##NAMESPACE##::", string.Empty);
+                    natvisFile = Path.GetFileNameWithoutExtension(filename);
+                } else {
+                    natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
+                    natvisFile = string.Format(filename.Substring(0, filename.IndexOf('.'))
+                        + "_{0}.natvis", qtNamespace.Replace("::", "_"));
+                }
+
+                if (!Directory.Exists(visualizersPath))
+                    Directory.CreateDirectory(visualizersPath);
+
+                File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
+                    natvis, System.Text.Encoding.UTF8);
+            } catch (Exception e) {
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            }
+        }
+
         public string GetNatvisPath()
         {
             try {
@@ -395,30 +421,11 @@ namespace QtVsTools
             return visualizersPath;
         }
 
-        public void CopyNatvisFile(string qtNamespace = null)
+        public void CopyNatvisFiles(string qtNamespace = null)
         {
-            try {
-                string natvis = File.ReadAllText(
-                    Path.Combine(PkgInstallPath, "qt5.natvis.xml"));
-
-                string natvisFile;
-                if (string.IsNullOrEmpty(qtNamespace)) {
-                    natvis = natvis.Replace("##NAMESPACE##::", string.Empty);
-                    natvisFile = "qt5.natvis";
-                } else {
-                    natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
-                    natvisFile = string.Format("qt5_{0}.natvis", qtNamespace.Replace("::", "_"));
-                }
-
-                if (!Directory.Exists(visualizersPath))
-                    Directory.CreateDirectory(visualizersPath);
-
-                File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
-                    natvis, System.Text.Encoding.UTF8);
-            } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
+            string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
+            foreach (var file in files)
+                CopyNatvisFile(file, qtNamespace);
         }
 
         public I GetService<T, I>()

@@ -130,7 +130,7 @@ namespace QtVsTools
                     var qtVersion = qtProject.GetQtVersion();
                     var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
                     if (!string.IsNullOrEmpty(versionInfo.Namespace()))
-                        QtVsToolsPackage.Instance.CopyNatvisFile(versionInfo.Namespace());
+                        QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
                 }
             }
         }
