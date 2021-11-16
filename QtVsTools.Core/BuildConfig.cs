@@ -37,9 +37,7 @@ namespace QtVsTools.Core
         public static string PlatformToolset(string version)
         {
             // TODO: Find a proper way to return the PlatformToolset version.
-#if (VS2013 || VS2015)
-            return version.Replace(".", string.Empty);
-#elif VS2017
+#if VS2017
             return "141";
 #elif VS2019
             return "142";

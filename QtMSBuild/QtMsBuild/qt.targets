@@ -72,20 +72,6 @@
   // Import subfolder targets
   // -->
   <Import
-    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
     Project="$(QtMsBuildTargets)"/>
-  <ImportGroup
-    Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'">
-    <!--
-        // WORKAROUND: In VS 2013 and VS 2015 importing a list of files does not work
-        // REMOVE when support for VS 2015 is dropped
-    -->
-    <Import Project="$(MSBuildThisFileDirectory)\moc\qtmoc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\rcc\qtrcc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\qml\qtqml.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\repc\qtrepc.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\uic\qtuic.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)\translation\qttranslation.targets"/>
-  </ImportGroup>
 
 </Project>

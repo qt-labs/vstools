@@ -2,12 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2013)'==''">
-    <QtBuild_Static_Vs2013>..\..\..\install\qt5-x86-vs2013-static</QtBuild_Static_Vs2013>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(QtBuild_Static_Vs2015)'==''">
-    <QtBuild_Static_Vs2015>..\..\..\install\qt5-x86-vs2015-static</QtBuild_Static_Vs2015>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(QtBuild_Static_Vs2017)'==''">
     <QtBuild_Static_Vs2017>..\..\..\install\qt5-x86-vs2017-static</QtBuild_Static_Vs2017>
   </PropertyGroup>
@@ -16,12 +10,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtBuild_Static_Vs2022)'==''">
     <QtBuild_Static_Vs2022>..\..\..\install\qt5-x86-vs2022-static</QtBuild_Static_Vs2022>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='12.0'">
-    <QtBuild>$(QtBuild_Static_Vs2013)</QtBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='14.0'">
-    <QtBuild>$(QtBuild_Static_Vs2015)</QtBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
     <QtBuild>$(QtBuild_Static_Vs2017)</QtBuild>

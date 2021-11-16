@@ -1702,14 +1702,6 @@ namespace QtVsTools.Core
             if (string.IsNullOrEmpty(vsPath))
                 return "";
             string vcPath = Path.Combine(vsPath, "VC");
-#elif VS2015
-            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "14.0");
-            if (string.IsNullOrEmpty(vcPath))
-                return ""; //could not get registry key
-#elif VS2013
-            string vcPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VC7", "12.0");
-            if (string.IsNullOrEmpty(vcPath))
-                return ""; //could not get registry key
 #endif
             return vcPath;
         }
@@ -1733,7 +1725,6 @@ namespace QtVsTools.Core
                 return false;
 
             string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
-#if (VS2017 || VS2019 || VS2022)
             string vcVarsCmd = "";
             string vcVarsArg = "";
             if (isOS64Bit && isQt64Bit)
@@ -1744,18 +1735,7 @@ namespace QtVsTools.Core
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsamd64_x86.bat");
             else if (!isOS64Bit && isQt64Bit)
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
-#elif VS2015 || VS2013
-            string vcVarsCmd = Path.Combine(vcPath, "vcvarsall.bat");
-            string vcVarsArg = "";
-            if (isOS64Bit && isQt64Bit)
-                vcVarsArg = "amd64";
-            else if (!isOS64Bit && !isQt64Bit)
-                vcVarsArg = "x86";
-            else if (isOS64Bit && !isQt64Bit)
-                vcVarsArg = "amd64_x86";
-            else if (!isOS64Bit && isQt64Bit)
-                vcVarsArg = "x86_amd64";
-#endif
+
             const string markSTX = ":@:@:@";
             const string markEOL = ":#:#:#";
             string command =

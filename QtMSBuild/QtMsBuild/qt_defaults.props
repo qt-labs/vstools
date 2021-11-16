@@ -99,8 +99,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Read subfolder dependencies (qt_import.props)
   // -->
-  <PropertyGroup
-    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'">
+  <PropertyGroup>
     <SubFolder>$([System.IO.Directory]::GetDirectories('$(MSBuildThisFileDirectory)'))</SubFolder>
     <SubFolderImports Condition="'$(SubFolder)' != ''"
       >
@@ -113,7 +112,6 @@
     <SubFolderImports/>
   </PropertyGroup>
   <Import
-    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
     Project="$(QtImports)"/>
 
   <!--
@@ -121,20 +119,6 @@
   // Import subfolder props
   // -->
   <Import
-    Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
     Project="$(QtMsBuildProps)"/>
-  <ImportGroup
-    Condition="'$(VisualStudioVersion)' == '12.0' OR '$(VisualStudioVersion)' == '14.0'">
-    <!--
-        // WORKAROUND: In VS 2013 and VS 2015 importing a list of files does not work
-        // REMOVE when support for VS 2015 is dropped
-    -->
-    <Import Project="$(MSBuildThisFileDirectory)\moc\qtmoc.props"/>
-    <Import Project="$(MSBuildThisFileDirectory)\rcc\qtrcc.props"/>
-    <Import Project="$(MSBuildThisFileDirectory)\qml\qtqml.props"/>
-    <Import Project="$(MSBuildThisFileDirectory)\repc\qtrepc.props"/>
-    <Import Project="$(MSBuildThisFileDirectory)\uic\qtuic.props"/>
-    <Import Project="$(MSBuildThisFileDirectory)\translation\qttranslation.props"/>
-  </ImportGroup>
 
 </Project>

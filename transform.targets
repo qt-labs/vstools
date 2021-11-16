@@ -6,8 +6,6 @@
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='15.0'"
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v15.0\TextTemplating\Microsoft.TextTemplating.targets" />
-  <Import Condition="'$(VisualStudioVersion)'=='14.0'"
-    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v14.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
@@ -24,33 +22,11 @@
         )"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Interop.dll</AssemblyRef_Microsoft_VisualStudio_Interop>
     <AssemblyRef_EnvDTE
-      Condition="'$(AssemblyRef_EnvDTE)' == ''
-        AND (
-          '$(VisualStudioVersion)' == '17.0'
-          OR '$(VisualStudioVersion)' == '16.0'
-          OR '$(VisualStudioVersion)' == '15.0'
-        )"
+      Condition="'$(AssemblyRef_EnvDTE)' == ''"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\EnvDTE.dll</AssemblyRef_EnvDTE>
-    <AssemblyRef_EnvDTE
-      Condition="'$(AssemblyRef_EnvDTE)' == ''
-        AND (
-          '$(VisualStudioVersion)' == '14.0'
-        )"
-      >EnvDTE</AssemblyRef_EnvDTE>
-    <VsSdk_Shell_Interop
-      Condition="'$(VsSdk_Shell_Interop)' == ''
-        AND (
-          '$(VisualStudioVersion)' == '17.0'
-          OR '$(VisualStudioVersion)' == '16.0'
-          OR '$(VisualStudioVersion)' == '15.0'
-        )"
+      <VsSdk_Shell_Interop
+        Condition="'$(VsSdk_Shell_Interop)' == ''"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Shell.Interop.dll</VsSdk_Shell_Interop>
-    <VsSdk_Shell_Interop
-      Condition="'$(VsSdk_Shell_Interop)' == ''
-        AND (
-          '$(VisualStudioVersion)' == '14.0'
-        )"
-      >Microsoft.VisualStudio.Shell.Interop</VsSdk_Shell_Interop>
   </PropertyGroup>
   <Target Name="PrepareTransform">
     <ItemGroup>
@@ -91,12 +67,6 @@
   </Target>
   <PropertyGroup>
     <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)' == '12.0'">
-    <DefineConstants>$(DefineConstants);VS2013</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)' == '14.0'">
-    <DefineConstants>$(DefineConstants);VS2015</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '15.0'">
     <DefineConstants>$(DefineConstants);VS2017</DefineConstants>

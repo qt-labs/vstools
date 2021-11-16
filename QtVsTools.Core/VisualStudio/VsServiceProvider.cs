@@ -38,9 +38,7 @@ namespace QtVsTools.VisualStudio
     public interface IVsServiceProvider
     {
         I GetService<T, I>() where T : class where I : class;
-#if !VS2013
         Task<I> GetServiceAsync<T, I>() where T : class where I : class;
-#endif
     }
 
     public static class VsServiceProvider
@@ -72,7 +70,6 @@ namespace QtVsTools.VisualStudio
             return serviceInterface;
         }
 
-#if !VS2013
         public static async Task<I> GetServiceAsync<I>()
             where I : class
         {
@@ -94,6 +91,5 @@ namespace QtVsTools.VisualStudio
             services.TryAdd(new ServiceType(typeof(T), typeof(I)), serviceInterface);
             return serviceInterface;
         }
-#endif
     }
 }
