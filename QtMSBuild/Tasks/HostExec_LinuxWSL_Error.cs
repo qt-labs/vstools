@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-#region Task TaskName="HostExec" Condition="'$(VisualStudioVersion)' != '16.0' AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
+#region Task TaskName="HostExec" Condition="('$(VisualStudioVersion)' != '16.0' AND '$(VisualStudioVersion)' != '17.0') AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
 
 namespace QtVsTools.QtMsBuild.Tasks
 {

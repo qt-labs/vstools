@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-#region Task TaskName="HostExec" Condition="'$(VisualStudioVersion)' == '16.0' AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
+#region Task TaskName="HostExec" Condition="('$(VisualStudioVersion)' == '16.0' OR '$(VisualStudioVersion)' == '17.0') AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
 
 #region Reference
 //$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll
@@ -85,7 +85,7 @@ namespace QtVsTools.QtMsBuild.Tasks
             System.Boolean IgnoreExitCode = false)
         #endregion
         {
-#if VS2019
+#if (VS2019 || VS2022)
             #region Code
             if (!string.IsNullOrEmpty(Message))
                 Log.LogMessage(MessageImportance.High, Message);
