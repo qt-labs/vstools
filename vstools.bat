@@ -4,7 +4,7 @@ SETLOCAL
 SET SCRIPT=%~n0
 
 SET "USAGE=%SCRIPT%"
-SET "USAGE=%USAGE% [ -init ^| [-rebuild] [-deploy ^<DEPLOY_DIR^>] [-install] ]"
+SET "USAGE=%USAGE% [ -init ^| [-rebuild] [-config [debug^|release^|test]] [-deploy ^<DEPLOY_DIR^>] [-install] ]"
 SET "USAGE=%USAGE% [-transform_incremental]"
 SET "USAGE=%USAGE% [-vs2022]"
 SET "USAGE=%USAGE% [-vs2019]"
@@ -38,6 +38,7 @@ SET REBUILD=%FALSE%
 SET INIT=%FALSE%
 SET CLEAN=%FALSE%
 SET BINARYLOG=%FALSE%
+SET CONFIGURATION=Release
 SET DO_INSTALL=%FALSE%
 SET TRANSFORM_INCREMENTAL=false
 SET START_VS=%FALSE%
@@ -51,11 +52,24 @@ SET FLAG_VS2019=-vs2019
 SET FLAG_VS2017=-vs2017
 
 :parseArgs
+
+SET NEXT_ARG=%2
+SET NEXT_ARG_FIRST_TOKEN=%NEXT_ARG:~0,1%
+
 IF NOT "%1"=="" (
     IF "%1"=="-init" (
         SET INIT=%TRUE%
     ) ELSE IF "%1"=="-rebuild" (
         SET REBUILD=%TRUE%
+    ) ELSE IF "%1"=="-config" (
+        IF NOT "%NEXT_ARG_FIRST_TOKEN%"=="-" (
+            IF "%NEXT_ARG%"=="" (
+                ECHO Unknown argument '%2' 1>&2
+                GOTO :usage
+            )
+            SET CONFIGURATION=%NEXT_ARG%
+            SHIFT
+        )
     ) ELSE IF "%1"=="-deploy" (
         SET QtVSToolsDeployTarget=%~f2
         SHIFT
@@ -232,7 +246,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
                 -verbosity:%MSBUILD_VERBOSITY% ^
                 -maxCpuCount ^
                 -t:%DEPENDENCIES% ^
-                -p:Configuration=Release ^
+                -p:Configuration=%CONFIGURATION% ^
                 -p:Platform=%%f ^
                 -p:TransformOutOfDateOnly=false ^
                 %MSBUILD_EXTRAS% ^
@@ -250,7 +264,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         ECHO ################################################################################
         ECHO ## msbuild: vstools.sln
         ECHO ## msbuild: -t:%MSBUILD_TARGETS%
-        ECHO ## msbuild: -p:Configuration=Release
+        ECHO ## msbuild: -p:Configuration=%CONFIGURATION%
         ECHO ## msbuild: -p:Platform=%%f
         IF %VERBOSE% (
             ECHO ## msbuild: -p:TransformOutOfDateOnly=%TRANSFORM_INCREMENTAL%
@@ -262,7 +276,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             -nologo ^
             -verbosity:%MSBUILD_VERBOSITY% ^
             -maxCpuCount ^
-            -p:Configuration=Release ^
+            -p:Configuration=%CONFIGURATION% ^
             -p:Platform=%%f ^
             -p:TransformOutOfDateOnly=%TRANSFORM_INCREMENTAL% ^
             -t:%MSBUILD_TARGETS% ^
