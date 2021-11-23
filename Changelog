@@ -590,8 +590,8 @@ Changes
   after each build. (QTBUG-6482)
 - Switching between qmake and AddIn projects more robust. (QTBUG-6434)
 - Set target machine explicitly when changing Qt version. (QTBUG-5206)
-- Work around Visual Studio bug to support the simplified Chinese
-  version of Visual Studio.  (QTBUG-6318)
+- Work around Visual Studio bug to support the simplified Chinese
+  version of Visual Studio.  (QTBUG-6318)
 - Fixed bug for Windows CE static builds. (QTBUG-3493)
 - Create signature step for Windows CE projects. (QTBUG-3493)
 - Fixed visualizers for QList and QMap. (very simple version for QMap as
