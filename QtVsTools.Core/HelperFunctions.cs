@@ -168,6 +168,11 @@ namespace QtVsTools.Core
             return ".ts".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
         }
 
+        public static bool IsQmlFile(string fileName)
+        {
+            return ".qml".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+        }
+
         static public void SetDebuggingEnvironment(Project prj)
         {
             SetDebuggingEnvironment(prj, string.Empty);
@@ -1096,6 +1101,10 @@ namespace QtVsTools.Core
                     break;
                 case FilesToList.FL_CppFiles:
                     if (IsSourceFile(vcfile.Name))
+                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                    break;
+                case FilesToList.FL_QmlFiles:
+                    if (IsQmlFile(vcfile.Name))
                         fileList.Add(ChangePathFormat(vcfile.RelativePath));
                     break;
                 }

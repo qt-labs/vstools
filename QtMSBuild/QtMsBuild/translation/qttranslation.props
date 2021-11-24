@@ -48,7 +48,7 @@
   // -->
   <PropertyGroup>
     <QtTranslationInput Condition="'$(QtTranslationInput)' == ''"
-      >@(ClCompile);@(ClInclude);@(QtMoc);@(QtUic)</QtTranslationInput>
+      >@(ClCompile);@(ClInclude);@(QtMoc);@(QtUic);@(QtRCC)</QtTranslationInput>
   </PropertyGroup>
 
   <!--

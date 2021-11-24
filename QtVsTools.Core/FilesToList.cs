@@ -36,6 +36,7 @@ namespace QtVsTools.Core
         FL_UiFiles = 4,
         FL_Generated = 5,
         FL_Translation = 6,
-        FL_WinResource = 7
+        FL_WinResource = 7,
+        FL_QmlFiles = 8
     }
 }

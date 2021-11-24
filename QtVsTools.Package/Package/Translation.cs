@@ -217,7 +217,8 @@ namespace QtVsTools
                     if (tempFile == null) {
                         var inputFiles = GetProjectFiles(qtProject.Project, FilesToList.FL_HFiles)
                             .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_CppFiles))
-                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_UiFiles));
+                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_UiFiles))
+                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_QmlFiles));
                         tempFile = Path.GetTempFileName();
                         File.WriteAllLines(tempFile, inputFiles);
                     }
