@@ -841,17 +841,6 @@ namespace QtVsTools.Core
             return preprocessorDefines;
         }
 
-        private List<string> GetDefinesFromPropertySheet(VCPropertySheet sheet)
-        {
-            var defines = CompilerToolWrapper.Create(sheet).PreprocessorDefinitions;
-            var propertySheets = sheet.PropertySheets as IVCCollection;
-            if (propertySheets != null) {
-                foreach (VCPropertySheet subSheet in propertySheets)
-                    defines.AddRange(GetDefinesFromPropertySheet(subSheet));
-            }
-            return defines;
-        }
-
         private string GetIncludes(VCFileConfiguration conf)
         {
             var includeList = GetIncludesFromCompilerTool(CompilerToolWrapper.Create(conf));

@@ -197,9 +197,6 @@ Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
   <data name="ExportProjectDialog_Title" xml:space="preserve">
     <value>Export Project</value>
   </data>
-  <data name="QMakeProcess_OpenSolutionFromFile" xml:space="preserve">
-    <value>Open solution from file: </value>
-  </data>
   <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
     <value>Cannot write environment variable QTDIR.</value>
   </data>

@@ -147,50 +147,6 @@ namespace QtVsTools
             }
         }
 
-#if DEBUG
-        public void setDirectory(string dir, string value)
-        {
-            foreach (EnvDTE.Project project in HelperFunctions.ProjectsInSolution(dte)) {
-                var vcProject = project.Object as VCProject;
-                if (vcProject == null || vcProject.Files == null)
-                    continue;
-                var qtProject = QtProject.Create(project);
-                if (qtProject == null)
-                    continue;
-
-                if (dir == "MocDir") {
-                    var oldMocDir = QtVSIPSettings.GetMocDirectory(project);
-                    QtVSIPSettings.SaveMocDirectory(project, value);
-                    qtProject.UpdateMocSteps(oldMocDir);
-                } else if (dir == "RccDir") {
-                    var oldRccDir = QtVSIPSettings.GetRccDirectory(project);
-                    QtVSIPSettings.SaveRccDirectory(project, value);
-                    qtProject.RefreshRccSteps(oldRccDir);
-                } else if (dir == "UicDir") {
-                    var oldUicDir = QtVSIPSettings.GetUicDirectory(project);
-                    QtVSIPSettings.SaveUicDirectory(project, value);
-                    qtProject.UpdateUicSteps(oldUicDir, true);
-                }
-            }
-        }
-#endif
-
-        public void OnQRCFileSaved(string fileName)
-        {
-            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                var vcProject = project.Object as VCProject;
-                if (vcProject == null || vcProject.Files == null)
-                    continue;
-
-                var vcFile = (VCFile) ((IVCCollection) vcProject.Files).Item(fileName);
-                if (vcFile == null)
-                    continue;
-
-                var qtProject = QtProject.Create(project);
-                qtProject.UpdateRccStep(vcFile, null);
-            }
-        }
-
         public void Disconnect()
         {
             if (buildEvents != null) {

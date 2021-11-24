@@ -300,19 +300,6 @@ namespace QtVsTools
             }
         }
 
-        private static bool ContainsInvalidVariable(string directory)
-        {
-            if (string.IsNullOrEmpty(directory))
-                return false;
-
-            var matches = Regex.Matches(directory, "\\$\\([^\\)]+\\)");
-            foreach (var m in matches) {
-                if (m.ToString() != "$(ConfigurationName)" && m.ToString() != "$(PlatformName)")
-                    return true;
-            }
-            return false;
-        }
-
         public static string IncompatibleMacros(string stringToExpand)
         {
             string incompatibleMacros = "";

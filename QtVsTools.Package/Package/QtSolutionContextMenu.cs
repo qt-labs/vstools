@@ -84,14 +84,6 @@ namespace QtVsTools
         }
 
         /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private IServiceProvider ServiceProvider
-        {
-            get { return m_package; }
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="QtMainMenu"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>

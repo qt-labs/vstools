@@ -31,8 +31,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -276,17 +274,6 @@ namespace QtVsTools.Core
             }
 
             throw new QtVSException("qglobal.h not found");
-        }
-
-        internal static class NativeMethods
-        {
-            [DllImport("kernel32.dll",
-                BestFitMapping = false,
-                CharSet = CharSet.Auto,
-                SetLastError = true)
-            ]
-            [ResourceExposure(ResourceScope.None)]
-            internal static extern int GetBinaryType(string lpApplicationName, ref int lpBinaryType);
         }
 
         public bool is64Bit()

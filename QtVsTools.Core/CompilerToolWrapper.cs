@@ -100,28 +100,6 @@ namespace QtVsTools.Core
             return compilerTool == null && compilerObj == null;
         }
 
-        public string ObjectFile
-        {
-            set
-            {
-                if (compilerTool != null)
-                    compilerTool.ObjectFile = value;
-                else
-                    SetStringProperty("ObjectFile", value);
-            }
-        }
-
-        public string ProgramDataBaseFileName
-        {
-            set
-            {
-                if (compilerTool != null)
-                    compilerTool.ProgramDataBaseFileName = value;
-                else
-                    SetStringProperty("ProgramDataBaseFileName", value);
-            }
-        }
-
         public List<string> AdditionalIncludeDirectories
         {
             get

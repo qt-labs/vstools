@@ -234,62 +234,6 @@ namespace QtVsTools.Core
             xmlProject.BuildTarget("QtVarsDesignTime");
         }
 
-        private static string ParseQtDirFromFileContent(string vcFileContent, VersionInformation vi)
-        {
-            // Starting with Qt5 beta2 the "\\mkspecs\\default" folder is not available anymore,
-            var mkspecs = "mkspecs\\"; // try to use the spec we run qmake with.
-            var index = vi.QMakeSpecDirectory.IndexOf(mkspecs, StringComparison.OrdinalIgnoreCase);
-            if (!string.IsNullOrEmpty(vi.QMakeSpecDirectory) && index >= 0)
-                mkspecs = vi.QMakeSpecDirectory.Substring(index);
-
-            var uicQtDir = FindQtDirFromExtension(vcFileContent, "bin\\uic.exe");
-            var rccQtDir = FindQtDirFromExtension(vcFileContent, "bin\\rcc.exe");
-            var mkspecQtDir = FindQtDirFromExtension(vcFileContent, mkspecs);
-
-            if (!string.IsNullOrEmpty(mkspecQtDir)) {
-                if (!string.IsNullOrEmpty(uicQtDir) && uicQtDir.ToLower() != mkspecQtDir.ToLower())
-                    return "";
-                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != mkspecQtDir.ToLower())
-                    return "";
-                return mkspecQtDir;
-            }
-            if (!string.IsNullOrEmpty(uicQtDir)) {
-                if (!string.IsNullOrEmpty(rccQtDir) && rccQtDir.ToLower() != uicQtDir.ToLower())
-                    return "";
-                return uicQtDir;
-            }
-            if (!string.IsNullOrEmpty(rccQtDir))
-                return rccQtDir;
-            return string.Empty;
-        }
-
-        private static string FindQtDirFromExtension(string content, string extension)
-        {
-            var s = string.Empty;
-            var index = -1;
-            index = content.IndexOf(extension.ToLower(), StringComparison.OrdinalIgnoreCase);
-            if (index != -1) {
-                s = content.Remove(index);
-                index = s.LastIndexOf("CommandLine=", StringComparison.Ordinal);
-                if (s.LastIndexOf("AdditionalDependencies=", StringComparison.Ordinal) > index)
-                    index = s.LastIndexOf("AdditionalDependencies=", StringComparison.Ordinal);
-                if (index != -1) {
-                    s = s.Substring(index);
-                    s = s.Substring(s.IndexOf('=') + 1);
-                }
-
-                index = s.LastIndexOf(';');
-                if (index != -1)
-                    s = s.Substring(index + 1);
-            }
-            if (!string.IsNullOrEmpty(s)) {
-                s = s.Trim(' ', '\"', ',');
-                if (s.StartsWith(">", StringComparison.Ordinal))
-                    s = s.Substring(1);
-            }
-            return s;
-        }
-
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
             qtProject.RemoveResFilesFromGeneratedFilesFilter();

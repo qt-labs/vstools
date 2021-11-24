@@ -130,9 +130,6 @@
     <Compile Include="ImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="InfoDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="LinkerToolWrapper.cs" />
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />
