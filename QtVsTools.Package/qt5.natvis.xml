@@ -249,6 +249,34 @@
         </Expand>
     </Type>
 
+    <Type Name="##NAMESPACE##::QUrl">
+        <Intrinsic Name="isEmpty" Expression="size==0">
+            <Parameter Name="size" Type="int"/>
+        </Intrinsic>
+        <Intrinsic Name="memberOffset" Expression="sizeof(QAtomicInt) + sizeof(int) + (sizeof(QString) * count)">
+            <Parameter Name="count" Type="int"/>
+        </Intrinsic>
+        <Intrinsic Name="scheme" Expression="*((QString*)(((char*)(d) + memberOffset(0))))" />
+        <Intrinsic Name="username" Expression="*((QString*)(((char*)(d) + memberOffset(1))))" />
+        <Intrinsic Name="password" Expression="*((QString*)(((char*)(d) + memberOffset(2))))" />
+        <Intrinsic Name="host" Expression="*((QString*)(((char*)(d) + memberOffset(3))))" />
+        <Intrinsic Name="path" Expression="*((QString*)(((char*)(d) + memberOffset(4))))" />
+        <Intrinsic Name="query" Expression="*((QString*)(((char*)(d) + memberOffset(5))))" />
+        <Intrinsic Name="fragment" Expression="*((QString*)(((char*)(d) + memberOffset(6))))" />
+
+        <DisplayString Condition="!isEmpty(scheme().d->size)">{scheme()}://{host()}{path()}</DisplayString>
+        <DisplayString Condition="isEmpty(scheme().d->size)">{path()}</DisplayString>
+        <Expand>
+            <Item Name="[scheme]">scheme()</Item>
+            <Item Name="[username]">username()</Item>
+            <Item Name="[password]">password()</Item>
+            <Item Name="[host]">host()</Item>
+            <Item Name="[path]">path()</Item>
+            <Item Name="[query]">query()</Item>
+            <Item Name="[fragment]">fragment()</Item>
+        </Expand>
+    </Type>
+
     <Type Name="##NAMESPACE##::QBitArray">
         <DisplayString>{{ size = {(d.d-&gt;size &lt;&lt; 3) - *((reinterpret_cast&lt;char*&gt;(d.d)) + d.d-&gt;offset)} }}</DisplayString>
         <Expand>
