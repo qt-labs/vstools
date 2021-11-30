@@ -721,12 +721,12 @@ namespace QtVsTools.Core
                 foreach (VCFileConfiguration config in (IVCCollection) file.FileConfigurations) {
 
                     switch (toolSettings) {
-                        case CustomTool.MSBuildTarget:
-                            AddUic4BuildStepMsBuild(config, description, uiFileMacro);
-                            break;
-                        default:
-                            AddUic4BuildStepCustomBuild(config, description, uiFileMacro);
-                            break;
+                    case CustomTool.MSBuildTarget:
+                        AddUic4BuildStepMsBuild(config, description, uiFileMacro);
+                        break;
+                    default:
+                        AddUic4BuildStepCustomBuild(config, description, uiFileMacro);
+                        break;
                     }
 
                     var conf = config.ProjectConfiguration as VCConfiguration;
@@ -1567,22 +1567,22 @@ namespace QtVsTools.Core
             try {
                 foreach (VCFileConfiguration vfc in (IVCCollection) qrcFile.FileConfigurations) {
                     switch (toolSettings) {
-                        case CustomTool.MSBuildTarget:
-                            UpdateRccStepMsBuild(
-                                vfc,
-                                rccOpts,
-                                filesInQrcFile,
-                                nameOnly,
-                                qrcCppFile);
-                            break;
-                        default:
-                            UpdateRccStepCustomBuild(
-                                vfc,
-                                rccOpts,
-                                filesInQrcFile,
-                                nameOnly,
-                                qrcCppFile);
-                            break;
+                    case CustomTool.MSBuildTarget:
+                        UpdateRccStepMsBuild(
+                            vfc,
+                            rccOpts,
+                            filesInQrcFile,
+                            nameOnly,
+                            qrcCppFile);
+                        break;
+                    default:
+                        UpdateRccStepCustomBuild(
+                            vfc,
+                            rccOpts,
+                            filesInQrcFile,
+                            nameOnly,
+                            qrcCppFile);
+                        break;
                     }
                 }
                 if (toolSettings == CustomTool.CustomBuildStep)
@@ -4061,38 +4061,38 @@ namespace QtVsTools.Core
             get
             {
                 switch (itemType) {
-                    case FileItemType.CustomBuild:
-                        return (tool != null) ? tool.CommandLine : "";
-                    case FileItemType.QtMoc:
-                        return qtMsBuild.GenerateQtMocCommandLine(vcConfig);
-                    case FileItemType.QtRcc:
-                        return qtMsBuild.GenerateQtRccCommandLine(vcConfig);
-                    case FileItemType.QtRepc:
-                        return qtMsBuild.GenerateQtRepcCommandLine(vcConfig);
-                    case FileItemType.QtUic:
-                        return qtMsBuild.GenerateQtUicCommandLine(vcConfig);
+                case FileItemType.CustomBuild:
+                    return (tool != null) ? tool.CommandLine : "";
+                case FileItemType.QtMoc:
+                    return qtMsBuild.GenerateQtMocCommandLine(vcConfig);
+                case FileItemType.QtRcc:
+                    return qtMsBuild.GenerateQtRccCommandLine(vcConfig);
+                case FileItemType.QtRepc:
+                    return qtMsBuild.GenerateQtRepcCommandLine(vcConfig);
+                case FileItemType.QtUic:
+                    return qtMsBuild.GenerateQtUicCommandLine(vcConfig);
                 }
                 return "";
             }
             set
             {
                 switch (itemType) {
-                    case FileItemType.CustomBuild:
-                        if (tool != null)
-                            tool.CommandLine = value;
-                        break;
-                    case FileItemType.QtMoc:
-                        qtMsBuild.SetQtMocCommandLine(vcConfig, value, macros);
-                        break;
-                    case FileItemType.QtRcc:
-                        qtMsBuild.SetQtRccCommandLine(vcConfig, value, macros);
-                        break;
-                    case FileItemType.QtRepc:
-                        qtMsBuild.SetQtRepcCommandLine(vcConfig, value, macros);
-                        break;
-                    case FileItemType.QtUic:
-                        qtMsBuild.SetQtUicCommandLine(vcConfig, value, macros);
-                        break;
+                case FileItemType.CustomBuild:
+                    if (tool != null)
+                        tool.CommandLine = value;
+                    break;
+                case FileItemType.QtMoc:
+                    qtMsBuild.SetQtMocCommandLine(vcConfig, value, macros);
+                    break;
+                case FileItemType.QtRcc:
+                    qtMsBuild.SetQtRccCommandLine(vcConfig, value, macros);
+                    break;
+                case FileItemType.QtRepc:
+                    qtMsBuild.SetQtRepcCommandLine(vcConfig, value, macros);
+                    break;
+                case FileItemType.QtUic:
+                    qtMsBuild.SetQtUicCommandLine(vcConfig, value, macros);
+                    break;
                 }
             }
         }
@@ -4102,16 +4102,16 @@ namespace QtVsTools.Core
             get
             {
                 switch (itemType) {
-                    case FileItemType.CustomBuild:
-                        return (tool != null) ? tool.Outputs : "";
-                    case FileItemType.QtMoc:
-                        return qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile);
-                    case FileItemType.QtRcc:
-                        return qtMsBuild.GetPropertyValue(vcConfig, QtRcc.Property.OutputFile);
-                    case FileItemType.QtRepc:
-                        return qtMsBuild.GetPropertyValue(vcConfig, QtRepc.Property.OutputFile);
-                    case FileItemType.QtUic:
-                        return qtMsBuild.GetPropertyValue(vcConfig, QtUic.Property.OutputFile);
+                case FileItemType.CustomBuild:
+                    return (tool != null) ? tool.Outputs : "";
+                case FileItemType.QtMoc:
+                    return qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile);
+                case FileItemType.QtRcc:
+                    return qtMsBuild.GetPropertyValue(vcConfig, QtRcc.Property.OutputFile);
+                case FileItemType.QtRepc:
+                    return qtMsBuild.GetPropertyValue(vcConfig, QtRepc.Property.OutputFile);
+                case FileItemType.QtUic:
+                    return qtMsBuild.GetPropertyValue(vcConfig, QtUic.Property.OutputFile);
                 }
                 return "";
             }

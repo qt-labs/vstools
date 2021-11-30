@@ -208,64 +208,64 @@ namespace QtVsTools.Qml.Syntax
         {
             Token token;
             switch (kind) {
-                #region case KEYWORD:
-                case TokenKind.T_AS:
-                case TokenKind.T_BREAK:
-                case TokenKind.T_CASE:
-                case TokenKind.T_CATCH:
-                case TokenKind.T_CONST:
-                case TokenKind.T_CONTINUE:
-                case TokenKind.T_DEFAULT:
-                case TokenKind.T_DELETE:
-                case TokenKind.T_DO:
-                case TokenKind.T_ELSE:
-                case TokenKind.T_ENUM:
-                case TokenKind.T_FALSE:
-                case TokenKind.T_FINALLY:
-                case TokenKind.T_FOR:
-                case TokenKind.T_FUNCTION:
-                case TokenKind.T_IF:
-                case TokenKind.T_IMPORT:
-                case TokenKind.T_IN:
-                case TokenKind.T_INSTANCEOF:
-                case TokenKind.T_LET:
-                case TokenKind.T_NEW:
-                case TokenKind.T_NULL:
-                case TokenKind.T_ON:
-                case TokenKind.T_PRAGMA:
-                case TokenKind.T_PROPERTY:
-                case TokenKind.T_PUBLIC:
-                case TokenKind.T_READONLY:
-                case TokenKind.T_RESERVED_WORD:
-                case TokenKind.T_RETURN:
-                case TokenKind.T_SET:
-                case TokenKind.T_SIGNAL:
-                case TokenKind.T_SWITCH:
-                case TokenKind.T_THIS:
-                case TokenKind.T_THROW:
-                case TokenKind.T_TRUE:
-                case TokenKind.T_TRY:
-                case TokenKind.T_TYPEOF:
-                case TokenKind.T_VAR:
-                case TokenKind.T_VOID:
-                case TokenKind.T_WHILE:
-                case TokenKind.T_WITH:
-                    #endregion
-                    token = new KeywordToken();
-                    break;
-                case TokenKind.T_NUMERIC_LITERAL:
-                    token = new NumberToken();
-                    break;
-                case TokenKind.T_MULTILINE_STRING_LITERAL:
-                case TokenKind.T_STRING_LITERAL:
-                    token = new StringToken();
-                    break;
-                case TokenKind.T_COMMENT:
-                    token = new CommentToken();
-                    break;
-                default:
-                    token = new Token();
-                    break;
+            #region case KEYWORD:
+            case TokenKind.T_AS:
+            case TokenKind.T_BREAK:
+            case TokenKind.T_CASE:
+            case TokenKind.T_CATCH:
+            case TokenKind.T_CONST:
+            case TokenKind.T_CONTINUE:
+            case TokenKind.T_DEFAULT:
+            case TokenKind.T_DELETE:
+            case TokenKind.T_DO:
+            case TokenKind.T_ELSE:
+            case TokenKind.T_ENUM:
+            case TokenKind.T_FALSE:
+            case TokenKind.T_FINALLY:
+            case TokenKind.T_FOR:
+            case TokenKind.T_FUNCTION:
+            case TokenKind.T_IF:
+            case TokenKind.T_IMPORT:
+            case TokenKind.T_IN:
+            case TokenKind.T_INSTANCEOF:
+            case TokenKind.T_LET:
+            case TokenKind.T_NEW:
+            case TokenKind.T_NULL:
+            case TokenKind.T_ON:
+            case TokenKind.T_PRAGMA:
+            case TokenKind.T_PROPERTY:
+            case TokenKind.T_PUBLIC:
+            case TokenKind.T_READONLY:
+            case TokenKind.T_RESERVED_WORD:
+            case TokenKind.T_RETURN:
+            case TokenKind.T_SET:
+            case TokenKind.T_SIGNAL:
+            case TokenKind.T_SWITCH:
+            case TokenKind.T_THIS:
+            case TokenKind.T_THROW:
+            case TokenKind.T_TRUE:
+            case TokenKind.T_TRY:
+            case TokenKind.T_TYPEOF:
+            case TokenKind.T_VAR:
+            case TokenKind.T_VOID:
+            case TokenKind.T_WHILE:
+            case TokenKind.T_WITH:
+                #endregion
+                token = new KeywordToken();
+                break;
+            case TokenKind.T_NUMERIC_LITERAL:
+                token = new NumberToken();
+                break;
+            case TokenKind.T_MULTILINE_STRING_LITERAL:
+            case TokenKind.T_STRING_LITERAL:
+                token = new StringToken();
+                break;
+            case TokenKind.T_COMMENT:
+                token = new CommentToken();
+                break;
+            default:
+                token = new Token();
+                break;
             }
             token.Kind = kind;
             token.Location = location;

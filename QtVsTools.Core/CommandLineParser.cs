@@ -349,86 +349,86 @@ namespace QtVsTools.Core.CommandLine
                     }
                     string optionName = "";
                     switch (singleDashWordOptionMode) {
-                        case SingleDashWordOptionMode.ParseAsCompactedShortOptions:
-                            bool valueFound = false;
-                            for (int pos = 1; pos < argument.Length; ++pos) {
-                                optionName = argument.Substring(pos, 1);
-                                if (!RegisterFoundOption(optionName)) {
-                                    error = true;
-                                } else {
-                                    int optionOffset;
-                                    Trace.Assert(nameHash.TryGetValue(
-                                        optionName,
-                                        out optionOffset));
-                                    bool withValue = !string.IsNullOrEmpty(
-                                        commandLineOptionList[optionOffset].ValueName);
-                                    if (withValue) {
-                                        if (pos + 1 < argument.Length) {
-                                            if (argument[pos + 1] == assignChar)
-                                                ++pos;
-                                            if (!optionValuesHash.ContainsKey(optionOffset)) {
-                                                optionValuesHash.Add(
-                                                    optionOffset,
-                                                    new List<string>());
-                                            }
-                                            optionValuesHash[optionOffset].Add(
-                                                argument.Substring(pos + 1));
-                                            valueFound = true;
-                                        }
-                                        break;
-                                    }
-                                    if (pos + 1 < argument.Length
-                                        && argument[pos + 1] == assignChar) {
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!valueFound
-                                && !ParseOptionValue(
-                                    optionName,
-                                    argument,
-                                    argumentIterator,
-                                    ref atEnd)) {
+                    case SingleDashWordOptionMode.ParseAsCompactedShortOptions:
+                        bool valueFound = false;
+                        for (int pos = 1; pos < argument.Length; ++pos) {
+                            optionName = argument.Substring(pos, 1);
+                            if (!RegisterFoundOption(optionName)) {
                                 error = true;
-                            }
-
-                            break;
-                        case SingleDashWordOptionMode.ParseAsLongOptions:
-                            if (argument.Length > 2) {
-                                string possibleShortOptionStyleName = argument.Substring(1, 1);
-
-                                int shortOptionIdx;
-                                if (nameHash.TryGetValue(
-                                    possibleShortOptionStyleName,
-                                    out shortOptionIdx)) {
-                                    var arg = commandLineOptionList[shortOptionIdx];
-                                    if ((arg.Flags & Option.Flag.ShortOptionStyle) != 0) {
-                                        RegisterFoundOption(possibleShortOptionStyleName);
-                                        if (!optionValuesHash.ContainsKey(shortOptionIdx)) {
+                            } else {
+                                int optionOffset;
+                                Trace.Assert(nameHash.TryGetValue(
+                                    optionName,
+                                    out optionOffset));
+                                bool withValue = !string.IsNullOrEmpty(
+                                    commandLineOptionList[optionOffset].ValueName);
+                                if (withValue) {
+                                    if (pos + 1 < argument.Length) {
+                                        if (argument[pos + 1] == assignChar)
+                                            ++pos;
+                                        if (!optionValuesHash.ContainsKey(optionOffset)) {
                                             optionValuesHash.Add(
-                                                shortOptionIdx,
+                                                optionOffset,
                                                 new List<string>());
                                         }
-                                        optionValuesHash[shortOptionIdx].Add(
-                                            argument.Substring(2));
-                                        break;
+                                        optionValuesHash[optionOffset].Add(
+                                            argument.Substring(pos + 1));
+                                        valueFound = true;
                                     }
+                                    break;
+                                }
+                                if (pos + 1 < argument.Length
+                                    && argument[pos + 1] == assignChar) {
+                                    break;
                                 }
                             }
-                            optionName = argument.Substring(1).Split(new char[] { assignChar })[0];
-                            if (RegisterFoundOption(optionName)) {
-                                if (!ParseOptionValue(
-                                    optionName,
-                                    argument,
-                                    argumentIterator,
-                                    ref atEnd)) {
-                                    error = true;
-                                }
+                        }
+                        if (!valueFound
+                            && !ParseOptionValue(
+                                optionName,
+                                argument,
+                                argumentIterator,
+                                ref atEnd)) {
+                            error = true;
+                        }
 
-                            } else {
+                        break;
+                    case SingleDashWordOptionMode.ParseAsLongOptions:
+                        if (argument.Length > 2) {
+                            string possibleShortOptionStyleName = argument.Substring(1, 1);
+
+                            int shortOptionIdx;
+                            if (nameHash.TryGetValue(
+                                possibleShortOptionStyleName,
+                                out shortOptionIdx)) {
+                                var arg = commandLineOptionList[shortOptionIdx];
+                                if ((arg.Flags & Option.Flag.ShortOptionStyle) != 0) {
+                                    RegisterFoundOption(possibleShortOptionStyleName);
+                                    if (!optionValuesHash.ContainsKey(shortOptionIdx)) {
+                                        optionValuesHash.Add(
+                                            shortOptionIdx,
+                                            new List<string>());
+                                    }
+                                    optionValuesHash[shortOptionIdx].Add(
+                                        argument.Substring(2));
+                                    break;
+                                }
+                            }
+                        }
+                        optionName = argument.Substring(1).Split(new char[] { assignChar })[0];
+                        if (RegisterFoundOption(optionName)) {
+                            if (!ParseOptionValue(
+                                optionName,
+                                argument,
+                                argumentIterator,
+                                ref atEnd)) {
                                 error = true;
                             }
-                            break;
+
+                        } else {
+                            error = true;
+                        }
+                        break;
                     }
                 } else {
                     positionalArgumentList.Add(argument);

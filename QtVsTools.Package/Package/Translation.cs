@@ -142,12 +142,12 @@ namespace QtVsTools
                 var target = "QtTranslation";
                 var properties = new Dictionary<string, string>();
                 switch (buildAction) {
-                    case BuildAction.Update:
-                        properties["QtTranslationForceUpdate"] = "true";
-                        break;
-                    case BuildAction.Release:
-                        properties["QtTranslationForceRelease"] = "true";
-                        break;
+                case BuildAction.Update:
+                    properties["QtTranslationForceUpdate"] = "true";
+                    break;
+                case BuildAction.Release:
+                    properties["QtTranslationForceRelease"] = "true";
+                    break;
                 }
                 if (selectedFiles != null)
                     properties["SelectedFiles"] = string.Join(";", selectedFiles);
@@ -208,30 +208,30 @@ namespace QtVsTools
                 Arguments = ""
             };
             switch (buildAction) {
-                case BuildAction.Update:
-                    Messages.Print("\r\n--- (lupdate) file: " + tsFile);
-                    procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lupdate.exe");
-                    var options = QtVSIPSettings.GetLUpdateOptions();
-                    if (!string.IsNullOrEmpty(options))
-                        procInfo.Arguments += options + " ";
-                    if (tempFile == null) {
-                        var inputFiles = GetProjectFiles(qtProject.Project, FilesToList.FL_HFiles)
-                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_CppFiles))
-                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_UiFiles))
-                            .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_QmlFiles));
-                        tempFile = Path.GetTempFileName();
-                        File.WriteAllLines(tempFile, inputFiles);
-                    }
-                    procInfo.Arguments += string.Format("\"@{0}\" -ts \"{1}\"", tempFile, tsFile);
-                    break;
-                case BuildAction.Release:
-                    Messages.Print("\r\n--- (lrelease) file: " + tsFile);
-                    procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lrelease.exe");
-                    options = QtVSIPSettings.GetLReleaseOptions();
-                    if (!string.IsNullOrEmpty(options))
-                        procInfo.Arguments += options + " ";
-                    procInfo.Arguments += string.Format("\"{0}\"", tsFile);
-                    break;
+            case BuildAction.Update:
+                Messages.Print("\r\n--- (lupdate) file: " + tsFile);
+                procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lupdate.exe");
+                var options = QtVSIPSettings.GetLUpdateOptions();
+                if (!string.IsNullOrEmpty(options))
+                    procInfo.Arguments += options + " ";
+                if (tempFile == null) {
+                    var inputFiles = GetProjectFiles(qtProject.Project, FilesToList.FL_HFiles)
+                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_CppFiles))
+                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_UiFiles))
+                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_QmlFiles));
+                    tempFile = Path.GetTempFileName();
+                    File.WriteAllLines(tempFile, inputFiles);
+                }
+                procInfo.Arguments += string.Format("\"@{0}\" -ts \"{1}\"", tempFile, tsFile);
+                break;
+            case BuildAction.Release:
+                Messages.Print("\r\n--- (lrelease) file: " + tsFile);
+                procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lrelease.exe");
+                options = QtVSIPSettings.GetLReleaseOptions();
+                if (!string.IsNullOrEmpty(options))
+                    procInfo.Arguments += options + " ";
+                procInfo.Arguments += string.Format("\"{0}\"", tsFile);
+                break;
             }
             using (var proc = Process.Start(procInfo)) {
                 proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
@@ -248,12 +248,12 @@ namespace QtVsTools
                 proc.BeginErrorReadLine();
                 proc.WaitForExit();
                 switch (proc.ExitCode) {
-                    case 0:
-                        Messages.Print("translation: ok");
-                        break;
-                    default:
-                        Messages.Print(string.Format("translation: ERROR {0}", proc.ExitCode));
-                        break;
+                case 0:
+                    Messages.Print("translation: ok");
+                    break;
+                default:
+                    Messages.Print(string.Format("translation: ERROR {0}", proc.ExitCode));
+                    break;
                 }
             }
         }

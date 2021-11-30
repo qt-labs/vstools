@@ -166,13 +166,11 @@ namespace QtVsTools
                 }
                 QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);
                 break;
-            case (int)CommandId.SolutionConvertToQtMsBuild:
-                {
+            case (int)CommandId.SolutionConvertToQtMsBuild: {
                     QtMsBuildConverter.SolutionToQtMsBuild();
                 }
                 break;
-            case (int)CommandId.SolutionEnableProjectTracking:
-                {
+            case (int)CommandId.SolutionEnableProjectTracking: {
                     foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                         if (HelperFunctions.IsQtProject(project))
                             QtProjectTracker.Get(project);

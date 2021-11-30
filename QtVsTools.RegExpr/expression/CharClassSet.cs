@@ -278,26 +278,26 @@ namespace QtVsTools.SyntaxAnalysis
                                 classSet = new CharClassSet(expr.Term as Element);
                         } else if (context.SubSets != null && context.SubSets.Any()) {
                             switch (expr.Operator) {
-                                case Op.Tilde:
-                                    classSet = new CharClassSet
+                            case Op.Tilde:
+                                classSet = new CharClassSet
                                     {
                                         { context.SubSets.First(), Invert }
                                     };
-                                    break;
-                                case Op.Plus:
-                                    classSet = new CharClassSet
+                                break;
+                            case Op.Plus:
+                                classSet = new CharClassSet
                                     {
                                         { context.SubSets.First() },
                                         { context.SubSets.Last() }
                                     };
-                                    break;
-                                case Op.Minus:
-                                    classSet = new CharClassSet
+                                break;
+                            case Op.Minus:
+                                classSet = new CharClassSet
                                     {
                                         { context.SubSets.First() },
                                         { context.SubSets.Last(), Invert }
                                     };
-                                    break;
+                                break;
                             }
                         }
 

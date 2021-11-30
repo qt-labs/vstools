@@ -1537,20 +1537,20 @@ namespace QtVsTools.Core
                 string propName = propNameMatch.Groups[1].Value;
                 string propValue = "";
                 switch (propName) {
-                    case "Configuration":
-                    case "ConfigurationName":
-                        if (string.IsNullOrEmpty(configName))
-                            return false;
-                        propValue = configName;
-                        break;
-                    case "Platform":
-                    case "PlatformName":
-                        if (string.IsNullOrEmpty(platformName))
-                            return false;
-                        propValue = platformName;
-                        break;
-                    default:
+                case "Configuration":
+                case "ConfigurationName":
+                    if (string.IsNullOrEmpty(configName))
                         return false;
+                    propValue = configName;
+                    break;
+                case "Platform":
+                case "PlatformName":
+                    if (string.IsNullOrEmpty(platformName))
+                        return false;
+                    propValue = platformName;
+                    break;
+                default:
+                    return false;
                 }
                 expanded = expanded.Replace(string.Format("$({0})", propName), propValue);
             }
@@ -1560,75 +1560,75 @@ namespace QtVsTools.Core
                 string metaName = metaNameMatch.Groups[1].Value;
                 string metaValue = "";
                 switch (metaName) {
-                    case "FullPath":
-                        if (vcFile == null)
-                            return false;
-                        metaValue = vcFile.FullPath;
-                        break;
-                    case "RootDir":
-                        if (vcFile == null)
-                            return false;
-                        metaValue = Path.GetPathRoot(vcFile.FullPath);
-                        break;
-                    case "Filename":
-                        if (vcFile == null)
-                            return false;
-                        metaValue = Path.GetFileNameWithoutExtension(vcFile.FullPath);
-                        break;
-                    case "Extension":
-                        if (vcFile == null)
-                            return false;
-                        metaValue = Path.GetExtension(vcFile.FullPath);
-                        break;
-                    case "RelativeDir":
-                        if (vcProj == null || vcFile == null)
-                            return false;
-                        metaValue = Path.GetDirectoryName(GetRelativePath(
-                            Path.GetDirectoryName(vcProj.ProjectFile),
-                            vcFile.FullPath));
-                        if (!metaValue.EndsWith("\\"))
-                            metaValue += "\\";
-                        if (metaValue.StartsWith(".\\"))
-                            metaValue = metaValue.Substring(2);
-                        break;
-                    case "Directory":
-                        if (vcFile == null)
-                            return false;
-                        metaValue = Path.GetDirectoryName(GetRelativePath(
-                            Path.GetPathRoot(vcFile.FullPath),
-                            vcFile.FullPath));
-                        if (!metaValue.EndsWith("\\"))
-                            metaValue += "\\";
-                        if (metaValue.StartsWith(".\\"))
-                            metaValue = metaValue.Substring(2);
-                        break;
-                    case "Identity":
-                        if (vcProj == null || vcFile == null)
-                            return false;
-                        metaValue = GetRelativePath(
-                            Path.GetDirectoryName(vcProj.ProjectFile),
-                            vcFile.FullPath);
-                        if (metaValue.StartsWith(".\\"))
-                            metaValue = metaValue.Substring(2);
-                        break;
-                    case "RecursiveDir":
-                    case "ModifiedTime":
-                    case "CreatedTime":
-                    case "AccessedTime":
+                case "FullPath":
+                    if (vcFile == null)
                         return false;
-                    default:
-                        var vcFileConfig = config as VCFileConfiguration;
-                        if (vcFileConfig == null)
-                            return false;
-                        var propStoreTool = vcFileConfig.Tool as IVCRulePropertyStorage;
-                        if (propStoreTool == null)
-                            return false;
-                        try {
-                            metaValue = propStoreTool.GetEvaluatedPropertyValue(metaName);
-                        } catch {
-                            return false;
-                        }
-                        break;
+                    metaValue = vcFile.FullPath;
+                    break;
+                case "RootDir":
+                    if (vcFile == null)
+                        return false;
+                    metaValue = Path.GetPathRoot(vcFile.FullPath);
+                    break;
+                case "Filename":
+                    if (vcFile == null)
+                        return false;
+                    metaValue = Path.GetFileNameWithoutExtension(vcFile.FullPath);
+                    break;
+                case "Extension":
+                    if (vcFile == null)
+                        return false;
+                    metaValue = Path.GetExtension(vcFile.FullPath);
+                    break;
+                case "RelativeDir":
+                    if (vcProj == null || vcFile == null)
+                        return false;
+                    metaValue = Path.GetDirectoryName(GetRelativePath(
+                        Path.GetDirectoryName(vcProj.ProjectFile),
+                        vcFile.FullPath));
+                    if (!metaValue.EndsWith("\\"))
+                        metaValue += "\\";
+                    if (metaValue.StartsWith(".\\"))
+                        metaValue = metaValue.Substring(2);
+                    break;
+                case "Directory":
+                    if (vcFile == null)
+                        return false;
+                    metaValue = Path.GetDirectoryName(GetRelativePath(
+                        Path.GetPathRoot(vcFile.FullPath),
+                        vcFile.FullPath));
+                    if (!metaValue.EndsWith("\\"))
+                        metaValue += "\\";
+                    if (metaValue.StartsWith(".\\"))
+                        metaValue = metaValue.Substring(2);
+                    break;
+                case "Identity":
+                    if (vcProj == null || vcFile == null)
+                        return false;
+                    metaValue = GetRelativePath(
+                        Path.GetDirectoryName(vcProj.ProjectFile),
+                        vcFile.FullPath);
+                    if (metaValue.StartsWith(".\\"))
+                        metaValue = metaValue.Substring(2);
+                    break;
+                case "RecursiveDir":
+                case "ModifiedTime":
+                case "CreatedTime":
+                case "AccessedTime":
+                    return false;
+                default:
+                    var vcFileConfig = config as VCFileConfiguration;
+                    if (vcFileConfig == null)
+                        return false;
+                    var propStoreTool = vcFileConfig.Tool as IVCRulePropertyStorage;
+                    if (propStoreTool == null)
+                        return false;
+                    try {
+                        metaValue = propStoreTool.GetEvaluatedPropertyValue(metaName);
+                    } catch {
+                        return false;
+                    }
+                    break;
                 }
                 expanded = expanded.Replace(string.Format("%({0})", metaName), metaValue);
             }

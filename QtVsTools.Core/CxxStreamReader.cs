@@ -114,8 +114,7 @@ namespace QtVsTools.Core
         private string ProcessString(string line, bool removeStrings)
         {
             switch (state) {
-            case State.Normal:
-                {
+            case State.Normal: {
                     var lineCopy = line;
                     line = string.Empty;
                     for (int i = 0, j = 1; i < lineCopy.Length; ++i, ++j) {
@@ -164,8 +163,7 @@ namespace QtVsTools.Core
                     }
                 }
                 break;
-            case State.Comment:
-                {
+            case State.Comment: {
                     var idx = line.IndexOf("*/", StringComparison.Ordinal);
                     if (idx >= 0) {
                         state = State.Normal;
@@ -175,8 +173,7 @@ namespace QtVsTools.Core
                     }
                 }
                 break;
-            case State.String:
-                {
+            case State.String: {
                     var lineCopy = line;
                     line = string.Empty;
                     var endIdx = -1;

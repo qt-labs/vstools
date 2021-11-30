@@ -410,20 +410,20 @@ namespace QtVsTools.Wizards.ProjectWizard
     <ConfigurationType>Application</ConfigurationType>");
                 }
                 switch (target) {
-                    case ProjectTargets.Windows:
-                    case ProjectTargets.WindowsStore:
-                        xml.AppendLine(string.Format(@"
+                case ProjectTargets.Windows:
+                case ProjectTargets.WindowsStore:
+                    xml.AppendLine(string.Format(@"
     <PlatformToolset>{0}</PlatformToolset>",
-                            /*{0}*/ c.QtVersion.VC_PlatformToolset));
-                        break;
-                    case ProjectTargets.LinuxSSH:
-                        xml.AppendLine(@"
+                        /*{0}*/ c.QtVersion.VC_PlatformToolset));
+                    break;
+                case ProjectTargets.LinuxSSH:
+                    xml.AppendLine(@"
     <PlatformToolset>Remote_GCC_1_0</PlatformToolset>");
-                        break;
-                    case ProjectTargets.LinuxWSL:
-                        xml.AppendLine(@"
+                    break;
+                case ProjectTargets.LinuxWSL:
+                    xml.AppendLine(@"
     <PlatformToolset>WSL_1_0</PlatformToolset>");
-                        break;
+                    break;
                 }
                 if (IsLinux(c)) {
                     xml.AppendLine(string.Format(@"

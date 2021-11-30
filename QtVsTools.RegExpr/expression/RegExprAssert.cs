@@ -61,18 +61,18 @@ namespace QtVsTools.SyntaxAnalysis
                 throw new NestedAssertException();
 
             switch (Context) {
-                case AssertLook.Ahead:
-                    if (Negative)
-                        pattern.Append("(?!");
-                    else
-                        pattern.Append("(?=");
-                    break;
-                case AssertLook.Behind:
-                    if (Negative)
-                        pattern.Append("(?<!");
-                    else
-                        pattern.Append("(?<=");
-                    break;
+            case AssertLook.Ahead:
+                if (Negative)
+                    pattern.Append("(?!");
+                else
+                    pattern.Append("(?=");
+                break;
+            case AssertLook.Behind:
+                if (Negative)
+                    pattern.Append("(?<!");
+                else
+                    pattern.Append("(?<=");
+                break;
             }
 
             mode |= RenderMode.Assert;

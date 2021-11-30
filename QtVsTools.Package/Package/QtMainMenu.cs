@@ -123,7 +123,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            switch ((CommandId) command.CommandID.ID) {
+            switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
                 VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
                 break;
@@ -150,8 +150,7 @@ namespace QtVsTools
                     .Instance.Dte));
                 break;
             case CommandId.ConvertToQtId:
-            case CommandId.ConvertToQmakeId:
-                {
+            case CommandId.ConvertToQmakeId: {
                     var caption = SR.GetString("ConvertTitle");
                     var text = SR.GetString("ConvertConfirmation");
                     if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
@@ -160,13 +159,11 @@ namespace QtVsTools
                     }
                 }
                 break;
-            case CommandId.ConvertToQtMsBuild:
-                {
+            case CommandId.ConvertToQtMsBuild: {
                     QtMsBuildConverter.SolutionToQtMsBuild();
                 }
                 break;
-            case CommandId.QtProjectSettingsId:
-                {
+            case CommandId.QtProjectSettingsId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     int projectVersion = QtProject.GetFormatVersion(pro);
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
@@ -183,8 +180,7 @@ namespace QtVsTools
                     }
                 }
                 break;
-            case CommandId.ChangeProjectQtVersionId:
-                {
+            case CommandId.ChangeProjectQtVersionId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     if (HelperFunctions.IsQMakeProject(pro)) {
                         using (var formChangeQtVersion = new FormChangeQtVersion()) {
@@ -214,7 +210,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            switch ((CommandId) command.CommandID.ID) {
+            switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
                 command.Visible = command.Enabled = true;
                 break;
@@ -234,8 +230,7 @@ namespace QtVsTools
             case CommandId.ImportPriFileId:
             case CommandId.ExportPriFileId:
             case CommandId.ExportProFileId:
-            case CommandId.CreateNewTsFileId:
-                {
+            case CommandId.CreateNewTsFileId: {
                     command.Visible = true;
                     command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
                         .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
@@ -243,14 +238,12 @@ namespace QtVsTools
                 break;
             // TODO: Fix these functionality and re-enable the menu items
             case CommandId.ConvertToQtId:
-            case CommandId.ConvertToQmakeId:
-                {
+            case CommandId.ConvertToQmakeId: {
                     command.Visible = false;
                 }
                 break;
             //case CommandId.ConvertToQmakeId:
-            case CommandId.QtProjectSettingsId:
-                {
+            case CommandId.QtProjectSettingsId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if (project != null) {
@@ -264,8 +257,7 @@ namespace QtVsTools
                 }
                 break;
             //case CommandId.ConvertToQtId:
-            case CommandId.ChangeProjectQtVersionId:
-                {
+            case CommandId.ChangeProjectQtVersionId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if ((project == null) || HelperFunctions.IsQtProject(project))
@@ -278,8 +270,7 @@ namespace QtVsTools
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }
                 break;
-            case CommandId.ConvertToQtMsBuild:
-                {
+            case CommandId.ConvertToQtMsBuild: {
                     command.Visible = true;
                     command.Enabled = (QtVsToolsPackage.Instance.Dte.Solution != null
                         && QtVsToolsPackage.Instance.Dte.Solution.Projects != null

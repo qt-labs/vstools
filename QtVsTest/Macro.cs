@@ -355,160 +355,160 @@ namespace QtVsTest.Macros
         {
             switch (s.Type) {
 
-                case StatementType.Quit:
-                    QuitWhenDone = true;
-                    break;
+            case StatementType.Quit:
+                QuitWhenDone = true;
+                break;
 
-                case StatementType.Macro:
-                    if (csharp.Length > 0)
-                        return ErrorMsg("#macro must be first statement");
-                    if (!string.IsNullOrEmpty(Name))
-                        return ErrorMsg("Only one #macro statement allowed");
-                    if (s.Args.Count < 1)
-                        return ErrorMsg("Missing macro name");
-                    Name = s.Args[0];
-                    break;
+            case StatementType.Macro:
+                if (csharp.Length > 0)
+                    return ErrorMsg("#macro must be first statement");
+                if (!string.IsNullOrEmpty(Name))
+                    return ErrorMsg("Only one #macro statement allowed");
+                if (s.Args.Count < 1)
+                    return ErrorMsg("Missing macro name");
+                Name = s.Args[0];
+                break;
 
-                case StatementType.Thread:
-                    if (s.Args.Count < 1)
-                        return ErrorMsg("Missing thread id");
-                    if (s.Args[0].Equals("ui", IGNORE_CASE)) {
+            case StatementType.Thread:
+                if (s.Args.Count < 1)
+                    return ErrorMsg("Missing thread id");
+                if (s.Args[0].Equals("ui", IGNORE_CASE)) {
 
-                        csharp.Append(
+                    csharp.Append(
 /** BEGIN generate code **/
 @"
             await SwitchToUIThread();"
 /** END generate code **/ );
 
-                    } else if (s.Args[0].Equals("default", IGNORE_CASE)) {
+                } else if (s.Args[0].Equals("default", IGNORE_CASE)) {
 
-                        csharp.Append(
+                    csharp.Append(
 /** BEGIN generate code **/
 @"
             await SwitchToWorkerThread();"
 /** END generate code **/ );
 
-                    } else {
-                        return ErrorMsg("Unknown thread id");
-                    }
-                    break;
+                } else {
+                    return ErrorMsg("Unknown thread id");
+                }
+                break;
 
-                case StatementType.Reference:
-                    if (!s.Args.Any())
-                        return ErrorMsg("Missing args for #reference");
-                    SelectedAssemblies.Add(s.Args.First());
-                    foreach (var ns in s.Args.Skip(1))
-                        Namespaces.Add(ns);
-                    break;
+            case StatementType.Reference:
+                if (!s.Args.Any())
+                    return ErrorMsg("Missing args for #reference");
+                SelectedAssemblies.Add(s.Args.First());
+                foreach (var ns in s.Args.Skip(1))
+                    Namespaces.Add(ns);
+                break;
 
-                case StatementType.Using:
-                    if (!s.Args.Any())
-                        return ErrorMsg("Missing args for #using");
-                    foreach (var ns in s.Args)
-                        Namespaces.Add(ns);
-                    break;
+            case StatementType.Using:
+                if (!s.Args.Any())
+                    return ErrorMsg("Missing args for #using");
+                foreach (var ns in s.Args)
+                    Namespaces.Add(ns);
+                break;
 
-                case StatementType.Var:
-                    if (s.Args.Count < 1)
-                        return ErrorMsg("Missing args for #var");
-                    string typeName, varName;
-                    if (s.Args.Count == 1) {
-                        typeName = "object";
-                        varName = s.Args[0];
-                    } else {
-                        typeName = s.Args[0];
-                        varName = s.Args[1];
-                    }
-                    var initValue = s.Code;
-                    if (varName.Where(c => char.IsWhiteSpace(c)).Any())
-                        return ErrorMsg("Wrong var name");
-                    GlobalVars[varName] = new GlobalVar
-                    {
-                        Type = typeName,
-                        Name = varName,
-                        InitialValueExpr = initValue
-                    };
-                    break;
+            case StatementType.Var:
+                if (s.Args.Count < 1)
+                    return ErrorMsg("Missing args for #var");
+                string typeName, varName;
+                if (s.Args.Count == 1) {
+                    typeName = "object";
+                    varName = s.Args[0];
+                } else {
+                    typeName = s.Args[0];
+                    varName = s.Args[1];
+                }
+                var initValue = s.Code;
+                if (varName.Where(c => char.IsWhiteSpace(c)).Any())
+                    return ErrorMsg("Wrong var name");
+                GlobalVars[varName] = new GlobalVar
+                {
+                    Type = typeName,
+                    Name = varName,
+                    InitialValueExpr = initValue
+                };
+                break;
 
-                case StatementType.Service:
-                    if (s.Args.Count <= 1)
-                        return ErrorMsg("Missing args for #service");
-                    var serviceVarName = s.Args[0];
-                    if (serviceVarName.Where(c => char.IsWhiteSpace(c)).Any())
-                        return ErrorMsg("Invalid service var name");
-                    if (ServiceRefs.ContainsKey(serviceVarName))
-                        return ErrorMsg("Duplicate service var name");
-                    ServiceRefs.Add(serviceVarName, new VSServiceRef
-                    {
-                        Name = serviceVarName,
-                        Interface = s.Args[1],
-                        Type = s.Args.Count > 2 ? s.Args[2] : s.Args[1]
-                    });
-                    break;
+            case StatementType.Service:
+                if (s.Args.Count <= 1)
+                    return ErrorMsg("Missing args for #service");
+                var serviceVarName = s.Args[0];
+                if (serviceVarName.Where(c => char.IsWhiteSpace(c)).Any())
+                    return ErrorMsg("Invalid service var name");
+                if (ServiceRefs.ContainsKey(serviceVarName))
+                    return ErrorMsg("Duplicate service var name");
+                ServiceRefs.Add(serviceVarName, new VSServiceRef
+                {
+                    Name = serviceVarName,
+                    Interface = s.Args[1],
+                    Type = s.Args.Count > 2 ? s.Args[2] : s.Args[1]
+                });
+                break;
 
-                case StatementType.Call:
-                    if (s.Args.Count < 1)
-                        return ErrorMsg("Missing args for #call");
-                    var calleeName = s.Args[0];
-                    var callee = GetMacro(calleeName);
-                    if (callee == null)
-                        return ErrorMsg("Undefined macro");
+            case StatementType.Call:
+                if (s.Args.Count < 1)
+                    return ErrorMsg("Missing args for #call");
+                var calleeName = s.Args[0];
+                var callee = GetMacro(calleeName);
+                if (callee == null)
+                    return ErrorMsg("Undefined macro");
 
-                    csharp.AppendFormat(
+                csharp.AppendFormat(
 /** BEGIN generate code **/
 @"
             await CallMacro(""{0}"");"
 /** END generate code **/ , calleeName);
 
-                    foreach (var globalVar in callee.GlobalVars.Values) {
-                        if (GlobalVars.ContainsKey(globalVar.Name))
-                            continue;
-                        GlobalVars[globalVar.Name] = new GlobalVar
-                        {
-                            Type = globalVar.Type,
-                            Name = globalVar.Name,
-                            IsCallOutput = true
-                        };
-                    }
-                    break;
+                foreach (var globalVar in callee.GlobalVars.Values) {
+                    if (GlobalVars.ContainsKey(globalVar.Name))
+                        continue;
+                    GlobalVars[globalVar.Name] = new GlobalVar
+                    {
+                        Type = globalVar.Type,
+                        Name = globalVar.Name,
+                        IsCallOutput = true
+                    };
+                }
+                break;
 
-                case StatementType.Wait:
-                    if (string.IsNullOrEmpty(s.Code))
-                        return ErrorMsg("Missing args for #wait");
-                    var expr = s.Code;
-                    uint timeout = uint.MaxValue;
-                    if (s.Args.Count > 0 && !uint.TryParse(s.Args[0], out timeout))
-                        return ErrorMsg("Timeout format error in #wait");
-                    if (s.Args.Count > 2) {
-                        var evalVarType = s.Args[1];
-                        var evalVarName = s.Args[2];
+            case StatementType.Wait:
+                if (string.IsNullOrEmpty(s.Code))
+                    return ErrorMsg("Missing args for #wait");
+                var expr = s.Code;
+                uint timeout = uint.MaxValue;
+                if (s.Args.Count > 0 && !uint.TryParse(s.Args[0], out timeout))
+                    return ErrorMsg("Timeout format error in #wait");
+                if (s.Args.Count > 2) {
+                    var evalVarType = s.Args[1];
+                    var evalVarName = s.Args[2];
 
-                        csharp.AppendFormat(
+                    csharp.AppendFormat(
 /** BEGIN generate code **/
 @"
             {0} {1} = default({0});
             await WaitExpr({2}, () => {1} = {3});"
 /** END generate code **/ , evalVarType,
-                            evalVarName,
-                            timeout,
-                            expr);
+                        evalVarName,
+                        timeout,
+                        expr);
 
-                    } else {
+                } else {
 
-                        csharp.AppendFormat(
+                    csharp.AppendFormat(
 /** BEGIN generate code **/
 @"
             await WaitExpr({0}, () => {1});"
 /** END generate code **/ , timeout,
-                            expr);
+                        expr);
 
-                    }
-                    break;
+                }
+                break;
 
-                case StatementType.Ui:
-                    if (!GenerateUiStatement(s, csharp))
-                        return false;
-                    break;
+            case StatementType.Ui:
+                if (!GenerateUiStatement(s, csharp))
+                    return false;
+                break;
             }
             return true;
         }

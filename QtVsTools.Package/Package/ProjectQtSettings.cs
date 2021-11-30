@@ -307,14 +307,14 @@ namespace QtVsTools
                 string metaName = metaNameMatch.Groups[1].Value;
                 if (!incompatibleMacros.Contains(string.Format("%({0})", metaName))) {
                     switch (metaName) {
-                        case "RecursiveDir":
-                        case "ModifiedTime":
-                        case "CreatedTime":
-                        case "AccessedTime":
-                            if (!string.IsNullOrEmpty(incompatibleMacros))
-                                incompatibleMacros += ", ";
-                            incompatibleMacros += string.Format("%({0})", metaName);
-                            break;
+                    case "RecursiveDir":
+                    case "ModifiedTime":
+                    case "CreatedTime":
+                    case "AccessedTime":
+                        if (!string.IsNullOrEmpty(incompatibleMacros))
+                            incompatibleMacros += ", ";
+                        incompatibleMacros += string.Format("%({0})", metaName);
+                        break;
                     }
                 }
             }

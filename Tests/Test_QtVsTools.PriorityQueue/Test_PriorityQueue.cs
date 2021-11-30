@@ -194,17 +194,17 @@ namespace QtVsTools.Test.PriorityQueue
             var q = new PunisherQueue<string>(item =>
             {
                 switch (item) {
-                    case "a":
-                    case "x":
-                        return "ax";
-                    case "b":
-                    case "y":
-                        return "by";
-                    case "c":
-                    case "z":
-                        return "cz";
-                    default:
-                        return item;
+                case "a":
+                case "x":
+                    return "ax";
+                case "b":
+                case "y":
+                    return "by";
+                case "c":
+                case "z":
+                    return "cz";
+                default:
+                    return item;
                 }
             });
             q.Enqueue("a");
