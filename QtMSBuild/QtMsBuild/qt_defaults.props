@@ -32,16 +32,44 @@
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Default values of Qt settings
+//
+// Preceding evaluation chain:
+//  * Project global properties, incl. $(Keyword), $(WindowsTargetPlatformVersion), $(QtMsBuild)
+//  * Microsoft.Cpp.Default.props
+//  * Configuration properties, incl. $(ConfigurationType), $(PlatformToolset)
+//
 // -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <QtDefaultsLoaded>true</QtDefaultsLoaded>
+  </PropertyGroup>
 
+  <!-- // Qt VS Project Format Version -->
+  <PropertyGroup>
+    <QtVsProjectVersion>0</QtVsProjectVersion>
+    <QtVsProjectMinVersion_Settings>300</QtVsProjectMinVersion_Settings>
+    <QtVsProjectMinVersion_ClProperties>300</QtVsProjectMinVersion_ClProperties>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Keyword)' != ''">
+    <QtVsProjectVersion Condition="'$(Keyword)' == 'Qt4VSv1.0'">200</QtVsProjectVersion>
+    <QtVsProjectVersion Condition="$(Keyword.StartsWith('QtVS_v'))"
+      >$([System.Convert]::ToInt32($(Keyword.Substring(6))))</QtVsProjectVersion>
+    <QtVsProjectSettings Condition="$(QtVsProjectVersion) &gt;= $(QtVsProjectMinVersion_Settings)"
+      >true</QtVsProjectSettings>
+    <QtVsProjectSettings Condition="$(QtVsProjectVersion) &lt; $(QtVsProjectMinVersion_Settings)"
+      >false</QtVsProjectSettings>
+    <QtVsProjectClProperties
+      Condition="$(QtVsProjectVersion) &gt;= $(QtVsProjectMinVersion_ClProperties)"
+      >true</QtVsProjectClProperties>
+    <QtVsProjectClProperties
+      Condition="$(QtVsProjectVersion) &lt; $(QtVsProjectMinVersion_ClProperties)"
+      >false</QtVsProjectClProperties>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!--// Path of Qt binary files -->
-    <QtPathBinaries Condition="'$(QtPathBinaries)' == ''"
-      >bin</QtPathBinaries>
-    <QtPathLibraryExecutables Condition="'$(QtPathLibraryExecutables)' == ''"
-      >bin</QtPathLibraryExecutables>
+    <QtPathBinaries>bin</QtPathBinaries>
+    <QtPathLibraryExecutables>bin</QtPathLibraryExecutables>
 
     <!--// Extract Qt variables from qmake-generated Makefile
         //     Syntax: < var_name > [ = [ makefile_name ] / < pattern > / < replace > / ] -->
@@ -54,7 +82,6 @@
     <QMake_LIBPATH_
 >LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBPATH_>
     <QtVars
-      Condition="'$(QtVars)' == ''"
       >$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
 
     <!--// Default Qt version -->
@@ -67,33 +94,6 @@
     <QtBuildConfig Condition="'$(Configuration)' == 'Debug'">debug</QtBuildConfig>
     <QtBuildConfig Condition="'$(Configuration)' != 'Debug'">release</QtBuildConfig>
   </PropertyGroup>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Default item metadata
-  // -->
-  <ItemDefinitionGroup>
-
-    <!--// C++ -->
-    <ClCompile>
-      <PreprocessorDefinitions
-      >$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
-        >QT_QML_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories
-      >$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-
-    <!--// Linker (.obj files) -->
-    <Link>
-      <AdditionalDependencies
-      >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories
-      >$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SharedLibrarySearchPath
-      >$(Qt_LIBPATH_);%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
-    </Link>
-  </ItemDefinitionGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,12 +113,5 @@
   </PropertyGroup>
   <Import
     Project="$(QtImports)"/>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Import subfolder props
-  // -->
-  <Import
-    Project="$(QtMsBuildProps)"/>
 
 </Project>
