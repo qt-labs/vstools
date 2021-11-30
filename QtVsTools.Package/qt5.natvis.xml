@@ -574,6 +574,27 @@
         </Expand>
     </Type>
 
+    <Type Name="##NAMESPACE##::QStandardItemPrivate">
+        <Intrinsic Name="memberOffset" Expression="sizeof(QStandardItemModel *)
+                                                 + sizeof(QStandardItem *)
+                                                 + sizeof(int *)
+                                                 + sizeof(int *)
+                                                 + (sizeof(int) * count)">
+            <Parameter Name="count" Type="int"/>
+        </Intrinsic>
+        <Intrinsic Name="rows" Expression="*((int*)(((char*)(this)) + memberOffset(0)))" />
+        <Intrinsic Name="columns" Expression="*((int*)(((char*)(this)) + memberOffset(1)))" />
+    </Type>
+
+    <Type Name="##NAMESPACE##::QStandardItem">
+        <DisplayString>{{ row count = {(*d_ptr.d).rows()}, column count = {(*d_ptr.d).columns()} }}</DisplayString>
+        <Expand>
+            <Item Name="[d]">d_ptr.d,!</Item>
+            <Item Name="[row count]">(*d_ptr.d).rows()</Item>
+            <Item Name="[column count]">(*d_ptr.d).columns()</Item>
+        </Expand>
+    </Type>
+
     <Type Name="##NAMESPACE##::QVariant">
         <!--Region DisplayString QVariant-->
 
