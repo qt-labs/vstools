@@ -3163,20 +3163,26 @@ namespace QtVsTools.Core
         {
             newProjectCreated = false;
             var versionManager = QtVersionManager.The();
-            var viOld = versionManager.GetVersionInfo(oldVersion);
             var viNew = versionManager.GetVersionInfo(newVersion);
+            if (viNew == null) {
+                Messages.DisplayErrorMessage(SR.GetString("CannotChangeQtVersion"));
+                return false;
+            }
+            string vsPlatformNameNew = viNew.GetVSPlatformName();
 
+            var viOld = versionManager.GetVersionInfo(oldVersion);
             string vsPlatformNameOld = null;
             if (viOld != null)
                 vsPlatformNameOld = viOld.GetVSPlatformName();
-            var vsPlatformNameNew = viNew.GetVSPlatformName();
-            var bRefreshMocSteps = (vsPlatformNameNew != vsPlatformNameOld);
+
+            var refreshMocSteps = (vsPlatformNameNew != vsPlatformNameOld);
+            var platformChanged = (vsPlatformNameNew != vsPlatformNameOld);
 
             try {
-                if (vsPlatformNameOld != vsPlatformNameNew) {
+                if (platformChanged) {
                     if (!SelectSolutionPlatform(vsPlatformNameNew) || !HasPlatform(vsPlatformNameNew)) {
                         CreatePlatform(vsPlatformNameOld, vsPlatformNameNew, viOld, viNew, ref newProjectCreated);
-                        bRefreshMocSteps = false;
+                        refreshMocSteps = false;
                         UpdateMocSteps(QtVSIPSettings.GetMocDirectory(envPro));
                     }
                 }
@@ -3194,15 +3200,15 @@ namespace QtVsTools.Core
                 return false;
             }
 
-            // We have to delete the generated files because of
-            // major differences between the platforms or Qt-Versions.
-            if (vsPlatformNameOld != vsPlatformNameNew || viOld.qtPatch != viNew.qtPatch
+            // We have to delete the generated files because of major
+            // differences between the platforms or Qt-Versions.
+            if (platformChanged || viOld.qtPatch != viNew.qtPatch
                 || viOld.qtMinor != viNew.qtMinor || viOld.qtMajor != viNew.qtMajor) {
                 DeleteGeneratedFiles();
                 Clean();
             }
 
-            if (bRefreshMocSteps)
+            if (refreshMocSteps)
                 RefreshMocSteps();
 
             SetQtEnvironment(newVersion);

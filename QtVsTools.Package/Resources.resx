@@ -195,9 +195,6 @@
   <data name="Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>
-  <data name="CannotChangeQtVersion" xml:space="preserve">
-    <value>The Qt version of at least one project cannot be changed.</value>
-  </data>
   <data name="CannotFindQMake" xml:space="preserve">
     <value>Cannot find qmake. Make sure you have specified a Qt version.</value>
   </data>

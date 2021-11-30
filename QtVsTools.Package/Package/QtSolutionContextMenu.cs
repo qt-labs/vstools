@@ -131,16 +131,15 @@ namespace QtVsTools
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
             case (int)CommandId.ChangeSolutionQtVersionId:
-                var newQtVersion = string.Empty;
+                string newQtVersion = null;
                 using (var formChangeQtVersion = new FormChangeQtVersion()) {
                     formChangeQtVersion.UpdateContent(ChangeFor.Solution);
                     if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
                         return;
-
                     newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                    if (newQtVersion == null)
-                        return;
                 }
+                if (newQtVersion == null)
+                    return;
 
                 string currentPlatform = null;
                 try {
