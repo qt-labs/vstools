@@ -321,7 +321,7 @@ and select the Qt version to use.</value>
     <value>Set Project's Qt Version</value>
   </data>
   <data name="ProjectQtVersionNotFoundError" xml:space="preserve">
-    <value>There's no Qt version assigned to project {0} for configuration {1}/{2}. Please assign a Qt installation in 'Qt Project Settings'.</value>
+    <value>There's no Qt version assigned to project {0} for configuration {1}/{2}. Please use the 'Qt Project Settings' editor to change the 'Version' to a valid Qt version for this platform.</value>
   </data>
   <data name="QmlLibrary" xml:space="preserve">
     <value>QML</value>
