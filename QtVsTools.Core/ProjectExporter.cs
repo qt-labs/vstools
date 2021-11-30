@@ -133,10 +133,10 @@ namespace QtVsTools.Core
             // hack to get active config
             var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
             var activePlatform = project.ConfigurationManager.ActiveConfiguration.PlatformName;
-            var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+            var config = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
             var compiler = CompilerToolWrapper.Create(config);
-            var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
-            var libTool = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
+            var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
+            var libTool = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
 
             var outPut = config.PrimaryOutput;
             var fi = new FileInfo(outPut);
@@ -698,7 +698,7 @@ namespace QtVsTools.Core
                 newPath = newPath.Substring(2);
             filterPathTable.Add(filter, newPath);
             pathFilterTable.Add(newPath, filter);
-            foreach (VCFilter f in (IVCCollection) filter.Filters)
+            foreach (VCFilter f in (IVCCollection)filter.Filters)
                 CollectFilters(f, newPath, ref filterPathTable, ref pathFilterTable);
         }
 
@@ -818,7 +818,7 @@ namespace QtVsTools.Core
 
             if (HelperFunctions.IsQtProject(proj)) {
                 try {
-                    vcproj = (VCProject) proj.Object;
+                    vcproj = (VCProject)proj.Object;
                 } catch (Exception e) {
                     Messages.DisplayErrorMessage(e);
                     return null;

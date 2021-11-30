@@ -47,7 +47,8 @@ namespace QtVsTools.Core
         private static OutputWindowPane _BuildPane;
         private static OutputWindowPane BuildPane
         {
-            get {
+            get
+            {
                 return _BuildPane ?? (_BuildPane = Window.OutputWindowPanes.Cast<OutputWindowPane>()
                     .Where(pane => pane.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}")
                     .FirstOrDefault());

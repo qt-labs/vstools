@@ -58,7 +58,7 @@ namespace QtVsTools.Core
             get
             {
                 if (project.Globals.get_VariablePersists("RccCompressFiles" + id)
-                    && (string) project.Globals["RccCompressFiles" + id] == "true")
+                    && (string)project.Globals["RccCompressFiles" + id] == "true")
                     return true;
                 return false;
             }
@@ -78,7 +78,7 @@ namespace QtVsTools.Core
             get
             {
                 if (project.Globals.get_VariablePersists("RccCompressLevel" + id))
-                    return Convert.ToInt32((string) project.Globals["RccCompressLevel" + id], 10);
+                    return Convert.ToInt32((string)project.Globals["RccCompressLevel" + id], 10);
                 return 0;
             }
             set
@@ -94,7 +94,7 @@ namespace QtVsTools.Core
             get
             {
                 if (project.Globals.get_VariablePersists("RccCompressThreshold" + id))
-                    return Convert.ToInt32((string) project.Globals["RccCompressThreshold" + id], 10);
+                    return Convert.ToInt32((string)project.Globals["RccCompressThreshold" + id], 10);
                 return 0;
             }
             set

@@ -95,7 +95,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 WhereConfig = whereConfig;
             }
 
-            public static implicit operator ItemProperty[] (ItemProperty that)
+            public static implicit operator ItemProperty[](ItemProperty that)
             {
                 return new[] { that };
             }

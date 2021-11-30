@@ -113,7 +113,7 @@ namespace QtVsTools.Core
 
             project[Files.User].filePath = pathToProject + ".user";
             if (File.Exists(project[Files.User].filePath) && !LoadXml(project[Files.User]))
-                    return null;
+                return null;
 
             return project;
         }
@@ -691,8 +691,7 @@ namespace QtVsTools.Core
                         || userProp.Name.LocalName == "MocOptions"
                         || userProp.Name.LocalName == "RccDir"
                         || userProp.Name.LocalName == "UicDir"
-                        || userProp.Name.LocalName.StartsWith("Qt5Version_x0020_"))
-                    {
+                        || userProp.Name.LocalName.StartsWith("Qt5Version_x0020_")) {
                         userProp.Remove();
                     }
                 });

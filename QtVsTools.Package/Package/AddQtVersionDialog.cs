@@ -91,7 +91,7 @@ namespace QtVsTools
 
         void AddQtVersionDialog_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar != (char) Keys.Escape)
+            if (e.KeyChar != (char)Keys.Escape)
                 return;
             DialogResult = DialogResult.Cancel;
             Close();

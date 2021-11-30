@@ -101,7 +101,7 @@ namespace QtVsTools
             //
             // langLabel
             //
-            langLabel.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+            langLabel.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
                         | AnchorStyles.Right)));
             langLabel.Location = new System.Drawing.Point(8, 8);
             langLabel.Name = "langLabel";
@@ -111,7 +111,7 @@ namespace QtVsTools
             //
             // langComboBox
             //
-            langComboBox.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+            langComboBox.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
             langComboBox.AutoCompleteMode = AutoCompleteMode.Suggest;
             langComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
             langComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -124,7 +124,7 @@ namespace QtVsTools
             //
             // cancelButton
             //
-            cancelButton.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+            cancelButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
             cancelButton.DialogResult = DialogResult.Cancel;
             cancelButton.Location = new System.Drawing.Point(200, 72);
             cancelButton.Name = "cancelButton";
@@ -134,7 +134,7 @@ namespace QtVsTools
             //
             // okButton
             //
-            okButton.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+            okButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
             okButton.DialogResult = DialogResult.OK;
             okButton.Location = new System.Drawing.Point(120, 72);
             okButton.Name = "okButton";
@@ -144,7 +144,7 @@ namespace QtVsTools
             //
             // label1
             //
-            label1.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+            label1.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
                         | AnchorStyles.Right)));
             label1.Location = new System.Drawing.Point(8, 32);
             label1.Name = "label1";
@@ -154,7 +154,7 @@ namespace QtVsTools
             //
             // fileTextBox
             //
-            fileTextBox.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+            fileTextBox.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
             fileTextBox.Location = new System.Drawing.Point(80, 32);
             fileTextBox.Name = "fileTextBox";
             fileTextBox.Size = new System.Drawing.Size(192, 20);
@@ -162,7 +162,7 @@ namespace QtVsTools
             //
             // panel1
             //
-            panel1.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+            panel1.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
                         | AnchorStyles.Right)));
             panel1.Controls.Add(langLabel);
             panel1.Controls.Add(label1);
@@ -206,7 +206,7 @@ namespace QtVsTools
 
         private void langComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            var country = ((TranslationItem) langComboBox.SelectedItem).TwoLetterISOLanguageName;
+            var country = ((TranslationItem)langComboBox.SelectedItem).TwoLetterISOLanguageName;
             fileTextBox.Text = project.Name.ToLower() + "_" + country + ".ts";
         }
     }

@@ -32,11 +32,12 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Core
 {
-        enum BuildType {
-            Unknown,
-            Static,
-            Shared
-        }
+    enum BuildType
+    {
+        Unknown,
+        Static,
+        Shared
+    }
 
     /// <summary>
     /// A very simple reader for the qconfig.pri file.

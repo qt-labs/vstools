@@ -162,7 +162,7 @@ namespace QtVsTools.Wizards.ClassWizard
                 iVsUIShell.GetDialogOwnerHwnd(out owner);
 
                 var browseInfo = new VSBROWSEINFOW[1];
-                browseInfo[0].lStructSize = (uint) Marshal.SizeOf(typeof(VSBROWSEINFOW));
+                browseInfo[0].lStructSize = (uint)Marshal.SizeOf(typeof(VSBROWSEINFOW));
                 browseInfo[0].pwzInitialDir = Location;
                 browseInfo[0].pwzDlgTitle = @"Location";
                 browseInfo[0].hwndOwner = owner;

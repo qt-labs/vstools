@@ -74,7 +74,7 @@ namespace QtVsTools.Core
 
         public static void Clear()
         {
-             _cache.Clear();
+            _cache.Clear();
         }
 
         Dictionary<string, bool> _IsModuleAvailable;
@@ -289,8 +289,7 @@ namespace QtVsTools.Core
             string qmakeXSpec;
             try {
                 qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
-            }
-            catch {
+            } catch {
                 throw new QtVSException("Error starting qmake process");
             }
 

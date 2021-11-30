@@ -44,7 +44,7 @@ namespace QtVsTest
     [InstalledProductRegistration(
         productName: "Qt Visual Studio Test",
         productDetails: "Auto-test framework for Qt Visual Studio Tools.",
-        productId:"1.0",
+        productId: "1.0",
         IconResourceID = 400)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]

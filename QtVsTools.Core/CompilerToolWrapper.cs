@@ -52,7 +52,7 @@ namespace QtVsTools.Core
         {
             CompilerToolWrapper wrapper = null;
             try {
-                wrapper = new CompilerToolWrapper(((IVCCollection) config.Tools)
+                wrapper = new CompilerToolWrapper(((IVCCollection)config.Tools)
                     .Item("VCCLCompilerTool"));
             } catch {
             }
@@ -75,7 +75,7 @@ namespace QtVsTools.Core
         {
             CompilerToolWrapper wrapper = null;
             try {
-                wrapper = new CompilerToolWrapper(((IVCCollection) sheet.Tools)
+                wrapper = new CompilerToolWrapper(((IVCCollection)sheet.Tools)
                     .Item("VCCLCompilerTool"));
             } catch {
             }
@@ -325,7 +325,7 @@ namespace QtVsTools.Core
                 BindingFlags.GetProperty, null, compilerObj, null);
             if (obj == null)
                 return pchOption.pchNone;
-            return (pchOption) obj;
+            return (pchOption)obj;
         }
 
         public void SetDebugInformationFormat(debugOption value)
@@ -353,7 +353,7 @@ namespace QtVsTools.Core
                     null, compilerObj, null);
                 if (obj == null)
                     return runtimeLibraryOption.rtMultiThreaded;
-                return (runtimeLibraryOption) obj;
+                return (runtimeLibraryOption)obj;
             }
 
             set
@@ -458,7 +458,7 @@ namespace QtVsTools.Core
             }
             if (obj == null)
                 return string.Empty;
-            return (string) obj;
+            return (string)obj;
         }
 
     }

@@ -196,14 +196,16 @@ namespace QtVsTools.Qml.Syntax
         public SourceLocation ColonToken { get; set; }
     }
 
-    public class UiScriptBinding : AstNode {
+    public class UiScriptBinding : AstNode
+    {
         public UiScriptBinding() : base(AstNodeKind.UiScriptBinding) { }
         public UiQualifiedId QualifiedId { get; set; }
         public AstNode /*Statement*/ Statement { get; set; }
         public SourceLocation ColonToken { get; set; }
     }
 
-    public class UiArrayBinding : AstNode {
+    public class UiArrayBinding : AstNode
+    {
         public UiArrayBinding() : base(AstNodeKind.UiArrayBinding) { }
         public UiQualifiedId QualifiedId { get; set; }
         public AstNode /*UiArrayMemberList*/ Members { get; set; }
@@ -214,7 +216,8 @@ namespace QtVsTools.Qml.Syntax
 
     public enum UiPublicMemberType { Signal, Property };
 
-    public class UiPublicMember : AstNode {
+    public class UiPublicMember : AstNode
+    {
         public UiPublicMember() : base(AstNodeKind.UiPublicMember) { }
         public UiPublicMemberType Type { get; set; }
         public UiQualifiedId MemberType { get; set; }

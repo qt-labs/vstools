@@ -138,7 +138,8 @@ namespace QtVsTest.Macros
             return _this.Initialize() ? _this : null;
         }
 
-        enum TokenId {
+        enum TokenId
+        {
             Macro,
             Code,
             Statement,

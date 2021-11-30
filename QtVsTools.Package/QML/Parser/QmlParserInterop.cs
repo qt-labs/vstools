@@ -241,8 +241,7 @@ namespace QtVsTools.Qml
 
                 FirstErrorOffset = qmlTextNormalized.Length + 1;
                 using (var rdr = new BinaryReader(new MemoryStream(diagnosticMessagesData))) {
-                    while (rdr.BaseStream.Position + (3 * sizeof(int)) <= diagnosticMessagesLength)
-                    {
+                    while (rdr.BaseStream.Position + (3 * sizeof(int)) <= diagnosticMessagesLength) {
                         var kind = (DiagnosticMessageKind)rdr.ReadInt32();
                         int offset = rdr.ReadInt32();
                         int length = rdr.ReadInt32();

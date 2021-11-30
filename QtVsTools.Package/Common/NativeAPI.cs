@@ -98,7 +98,7 @@ namespace QtVsTools
         public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd,int nCmdShow);
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern int SHGetFileInfo(

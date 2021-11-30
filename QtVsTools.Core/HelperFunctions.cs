@@ -129,7 +129,7 @@ namespace QtVsTools.Core
             return qtDir;
         }
 
-        static readonly HashSet<string> _sources = new HashSet<string>(new [] { ".c", ".cpp", ".cxx"},
+        static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },
             StringComparer.OrdinalIgnoreCase);
         static public bool IsSourceFile(string fileName)
         {
@@ -416,14 +416,14 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static void ReplaceInCustomBuildTools(Project project, string oldString, string replaceString)
         {
-            var vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject)project.Object;
             if (vcPro == null)
                 return;
 
             var qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
             qtMsBuild.BeginSetItemProperties();
-            foreach (VCFile vcfile in (IVCCollection) vcPro.Files) {
-                foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
+            foreach (VCFile vcfile in (IVCCollection)vcPro.Files) {
+                foreach (VCFileConfiguration config in (IVCCollection)vcfile.FileConfigurations) {
                     try {
                         if (vcfile.ItemType == "CustomBuild") {
                             var tool = GetCustomBuildTool(config);
@@ -492,7 +492,7 @@ namespace QtVsTools.Core
         {
             foreach (Property prop in projectItem.Properties) {
                 if (prop.Name == "ItemType") {
-                    if ((string) prop.Value != "CustomBuild")
+                    if ((string)prop.Value != "CustomBuild")
                         prop.Value = "CustomBuild";
                     break;
                 }
@@ -528,7 +528,7 @@ namespace QtVsTools.Core
                 return;
 
             string qtDir = null;
-            var vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject)project.Object;
             if (!IsQMakeProject(project))
                 return;
             if (IsQtProject(project)) {
@@ -537,15 +537,15 @@ namespace QtVsTools.Core
                 var vm = QtVersionManager.The();
                 qtDir = vm.GetInstallPath(project);
 
-                foreach (var global in (string[]) project.Globals.VariableNames) {
+                foreach (var global in (string[])project.Globals.VariableNames) {
                     if (global.StartsWith("Qt5Version", StringComparison.Ordinal))
                         project.Globals.set_VariablePersists(global, false);
                 }
 
-                foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
+                foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                     var compiler = CompilerToolWrapper.Create(config);
-                    var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
-                    var librarian = (VCLibrarianTool) ((IVCCollection) config.Tools).Item("VCLibrarianTool");
+                    var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
+                    var librarian = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
                     if (compiler != null) {
                         var additionalIncludes = compiler.GetAdditionalIncludeDirectories();
                         additionalIncludes = additionalIncludes.Replace("$(QTDIR)", qtDir,
@@ -585,10 +585,10 @@ namespace QtVsTools.Core
                 }
 
                 var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                var activeVCConfig = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+                var activeVCConfig = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
                 if (activeVCConfig.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
                     var compiler = CompilerToolWrapper.Create(activeVCConfig);
-                    var linker = (VCLinkerTool) ((IVCCollection) activeVCConfig.Tools).Item("VCLinkerTool");
+                    var linker = (VCLinkerTool)((IVCCollection)activeVCConfig.Tools).Item("VCLinkerTool");
                     var ppdefs = compiler.GetPreprocessorDefinitions();
                     if (ppdefs != null
                         && ppdefs.IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1
@@ -602,9 +602,9 @@ namespace QtVsTools.Core
 
                 CleanupQMakeDependencies(project);
 
-                foreach (VCConfiguration config in (IVCCollection) vcPro.Configurations) {
+                foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                     var compiler = CompilerToolWrapper.Create(config);
-                    var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+                    var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
                     if (compiler != null) {
                         var additionalIncludes = compiler.AdditionalIncludeDirectories;
@@ -688,7 +688,7 @@ namespace QtVsTools.Core
                         }
                     }
 
-                    var linker = (VCLinkerTool) ((IVCCollection) projectConfig.Tools).Item("VCLinkerTool");
+                    var linker = (VCLinkerTool)((IVCCollection)projectConfig.Tools).Item("VCLinkerTool");
                     if (linker != null) {
                         var linkerWrapper = new LinkerToolWrapper(linker);
                         var linkerPaths = linkerWrapper.AdditionalDependencies;
@@ -812,14 +812,14 @@ namespace QtVsTools.Core
 
         public static void CleanupQMakeDependencies(Project project)
         {
-            var vcPro = (VCProject) project.Object;
+            var vcPro = (VCProject)project.Object;
             // clean up qmake mess
             var rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
             var rxp2 = new Regex("\\bQAx\\w+\\.lib\\b");
             var rxp3 = new Regex("\\bqtmaind?.lib\\b");
             var rxp4 = new Regex("\\benginiod?.lib\\b");
-            foreach (VCConfiguration cfg in (IVCCollection) vcPro.Configurations) {
-                var linker = (VCLinkerTool) ((IVCCollection) cfg.Tools).Item("VCLinkerTool");
+            foreach (VCConfiguration cfg in (IVCCollection)vcPro.Configurations) {
+                var linker = (VCLinkerTool)((IVCCollection)cfg.Tools).Item("VCLinkerTool");
                 if (linker == null || linker.AdditionalDependencies == null)
                     continue;
                 var linkerWrapper = new LinkerToolWrapper(linker);
@@ -964,13 +964,13 @@ namespace QtVsTools.Core
 
         public static bool IsInFilter(VCFile vcfile, FakeFilter filter)
         {
-            var item = (VCProjectItem) vcfile;
+            var item = (VCProjectItem)vcfile;
 
             while ((item.Parent != null) && (item.Kind != "VCProject")) {
-                item = (VCProjectItem) item.Parent;
+                item = (VCProjectItem)item.Parent;
 
                 if (item.Kind == "VCFilter") {
-                    var f = (VCFilter) item;
+                    var f = (VCFilter)item;
                     if (f.UniqueIdentifier != null
                         && f.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower())
                         return true;
@@ -1046,7 +1046,7 @@ namespace QtVsTools.Core
 
             VCProject vcpro;
             try {
-                vcpro = (VCProject) pro.Object;
+                vcpro = (VCProject)pro.Object;
             } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
                 return null;
@@ -1054,12 +1054,12 @@ namespace QtVsTools.Core
 
             var configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
 
-            foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
+            foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
                 // Why project files are also returned?
                 if (vcfile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
                     continue;
                 var excluded = false;
-                var fileConfigurations = (IVCCollection) vcfile.FileConfigurations;
+                var fileConfigurations = (IVCCollection)vcfile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations) {
                     if (config.ExcludedFromBuild && config.MatchName(configurationName, false)) {
                         excluded = true;
@@ -1123,7 +1123,7 @@ namespace QtVsTools.Core
             var qtProj = QtProject.Create(vcpro);
             var fi = new FileInfo(fileName);
 
-            foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
+            foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
                 if (vcfile.FullPath.ToLower() == fi.FullName.ToLower()) {
                     vcpro.RemoveFile(vcfile);
                     qtProj.MoveFileToDeletedFolder(vcfile);
@@ -1137,7 +1137,7 @@ namespace QtVsTools.Core
                 return null;
             Array prjs = null;
             try {
-                prjs = (Array) dteObject.ActiveSolutionProjects;
+                prjs = (Array)dteObject.ActiveSolutionProjects;
             } catch {
                 // When VS2010 is started from the command line,
                 // we may catch a "Unspecified error" here.
@@ -1147,7 +1147,7 @@ namespace QtVsTools.Core
 
             // don't handle multiple selection... use the first one
             if (prjs.GetValue(0) is Project)
-                return (Project) prjs.GetValue(0);
+                return (Project)prjs.GetValue(0);
             return null;
         }
 
@@ -1214,13 +1214,13 @@ namespace QtVsTools.Core
 
                 VCProjectItem vcitem;
                 try {
-                    vcitem = (VCProjectItem) item.ProjectItem.Object;
+                    vcitem = (VCProjectItem)item.ProjectItem.Object;
                 } catch (Exception) {
                     return null;
                 }
 
                 if (vcitem.Kind == "VCFile")
-                    files[i - 1] = (VCFile) vcitem;
+                    files[i - 1] = (VCFile)vcitem;
             }
             files[items.Count] = null;
             return files;
@@ -1239,7 +1239,7 @@ namespace QtVsTools.Core
 
         public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)
         {
-            var pro = VCProjectToProject((VCProject) qrcFile.project);
+            var pro = VCProjectToProject((VCProject)qrcFile.project);
 
             var rccOpts = new RccOptions(pro, qrcFile);
 
@@ -1261,7 +1261,7 @@ namespace QtVsTools.Core
 
         public static Project VCProjectToProject(VCProject vcproj)
         {
-            return (Project) vcproj.Object;
+            return (Project)vcproj.Object;
         }
 
         public static List<Project> ProjectsInSolution(DTE dteObject)

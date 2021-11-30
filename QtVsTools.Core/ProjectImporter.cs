@@ -154,10 +154,10 @@ namespace QtVsTools.Core
                         // try to figure out if the project is a plugin project
                         try {
                             var activeConfig = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                            var config = (VCConfiguration) ((IVCCollection) qtPro.VCProject.Configurations).Item(activeConfig);
+                            var config = (VCConfiguration)((IVCCollection)qtPro.VCProject.Configurations).Item(activeConfig);
                             if (config.ConfigurationType == ConfigurationTypes.typeDynamicLibrary) {
                                 var compiler = CompilerToolWrapper.Create(config);
-                                var linker = (VCLinkerTool) ((IVCCollection) config.Tools).Item("VCLinkerTool");
+                                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
                                 if (compiler.GetPreprocessorDefinitions().IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1
                                     && compiler.GetPreprocessorDefinitions().IndexOf("QDESIGNER_EXPORT_WIDGETS", StringComparison.Ordinal) > -1
                                     && compiler.GetAdditionalIncludeDirectories().IndexOf("QtDesigner", StringComparison.Ordinal) > -1

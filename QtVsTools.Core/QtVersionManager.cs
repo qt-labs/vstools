@@ -257,7 +257,7 @@ namespace QtVsTools.Core
             var versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
             if (versionKey == null)
                 return null;
-            return (string) versionKey.GetValue("InstallDir");
+            return (string)versionKey.GetValue("InstallDir");
         }
 
         public string GetInstallPath(EnvDTE.Project project)
@@ -378,7 +378,7 @@ namespace QtVsTools.Core
             var version = GetProjectQtVersion(project, config);
 
             if (version == null && project.Globals.get_VariablePersists("Qt5Version")) {
-                version = (string) project.Globals["Qt5Version"];
+                version = (string)project.Globals["Qt5Version"];
                 ExpandEnvironmentVariablesInQtVersion(ref version);
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
@@ -410,7 +410,7 @@ namespace QtVsTools.Core
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
-            var version = (string) project.Globals[key];
+            var version = (string)project.Globals[key];
             ExpandEnvironmentVariablesInQtVersion(ref version);
             return VerifyIfQtVersionExists(version) ? version : null;
         }
@@ -446,7 +446,7 @@ namespace QtVsTools.Core
                 return null;
 
             if (solution.Globals.get_VariableExists("Qt5Version")) {
-                var version = (string) solution.Globals["Qt5Version"];
+                var version = (string)solution.Globals["Qt5Version"];
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
 
@@ -464,7 +464,7 @@ namespace QtVsTools.Core
             try {
                 var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
                 if (key != null)
-                    defaultVersion = (string) key.GetValue("DefaultQtVersion");
+                    defaultVersion = (string)key.GetValue("DefaultQtVersion");
             } catch {
                 Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
             }

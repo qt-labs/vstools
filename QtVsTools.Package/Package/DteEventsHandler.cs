@@ -290,7 +290,7 @@ namespace QtVsTools
             if (!HelperFunctions.IsQtProject(qtPro.VCProject))
                 return;
 
-            var file = (VCFile) ((IVCCollection) qtPro.VCProject.Files).Item(document.FullName);
+            var file = (VCFile)((IVCCollection)qtPro.VCProject.Files).Item(document.FullName);
 
             if (HelperFunctions.IsUicFile(file.Name)) {
                 if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
@@ -321,9 +321,9 @@ namespace QtVsTools
                         var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
                         var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
                         var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-                        foreach (VCFile fileInFilter in (IVCCollection) generatedFiles.Files) {
+                        foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files) {
                             if (fileInFilter.Name == moccedFileName) {
-                                foreach (VCFileConfiguration config in (IVCCollection) fileInFilter.FileConfigurations) {
+                                foreach (VCFileConfiguration config in (IVCCollection)fileInFilter.FileConfigurations) {
                                     var exclude = true;
                                     var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                     if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform) {
@@ -347,10 +347,10 @@ namespace QtVsTools
                                 }
                             }
                         }
-                        foreach (VCFilter filt in (IVCCollection) generatedFiles.Filters) {
-                            foreach (VCFile f in (IVCCollection) filt.Files) {
+                        foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters) {
+                            foreach (VCFile f in (IVCCollection)filt.Files) {
                                 if (f.Name == moccedFileName) {
-                                    foreach (VCFileConfiguration config in (IVCCollection) f.FileConfigurations) {
+                                    foreach (VCFileConfiguration config in (IVCCollection)f.FileConfigurations) {
                                         var vcConfig = config.ProjectConfiguration as VCConfiguration;
                                         var filterToLookFor = string.Empty;
                                         if (hasDifferentMocFilesPerConfig)
@@ -613,7 +613,7 @@ namespace QtVsTools
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
         {
-            foreach (VCFile f in (IVCCollection) project.Files) {
+            foreach (VCFile f in (IVCCollection)project.Files) {
                 if (f.Name.ToLower() == absFileName.ToLower())
                     return f;
             }

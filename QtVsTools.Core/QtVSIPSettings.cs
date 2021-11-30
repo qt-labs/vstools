@@ -288,7 +288,7 @@ namespace QtVsTools.Core
             try {
                 var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
                 if (key != null) {
-                    var path = (string) key.GetValue(type, null);
+                    var path = (string)key.GetValue(type, null);
                     if (path != null)
                         return HelperFunctions.NormalizeRelativeFilePath(path);
                 }
@@ -303,7 +303,7 @@ namespace QtVsTools.Core
             try {
                 var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
                 if (key != null) {
-                    var opt = (string) key.GetValue(type, null);
+                    var opt = (string)key.GetValue(type, null);
                     if (opt != null)
                         return opt;
                 }
@@ -336,27 +336,27 @@ namespace QtVsTools.Core
             // - fallback on hardcoded directory
             if (project != null) {
                 if (project.Globals.get_VariablePersists(type))
-                    return HelperFunctions.NormalizeRelativeFilePath((string) project.Globals[type]);
+                    return HelperFunctions.NormalizeRelativeFilePath((string)project.Globals[type]);
 
                 try {
                     if (type == Resources.mocDirKeyword && mocDirCache.Contains(project.FullName))
-                        return (string) mocDirCache[project.FullName];
+                        return (string)mocDirCache[project.FullName];
                     if (type == Resources.uicDirKeyword && uicDirCache.Contains(project.FullName))
-                        return (string) uicDirCache[project.FullName];
+                        return (string)uicDirCache[project.FullName];
                     if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
-                        return (string) rccDirCache[project.FullName];
+                        return (string)rccDirCache[project.FullName];
 
                     QtCustomBuildTool tool = null;
                     string configName = null;
                     string platformName = null;
-                    var vcpro = (VCProject) project.Object;
-                    foreach (VCFile vcfile in (IVCCollection) vcpro.Files) {
+                    var vcpro = (VCProject)project.Object;
+                    foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
                         var name = vcfile.Name;
                         if ((type == Resources.mocDirKeyword && HelperFunctions.IsHeaderFile(name))
                             || (type == Resources.mocDirKeyword && HelperFunctions.IsMocFile(name))
                             || (type == Resources.uicDirKeyword && HelperFunctions.IsUicFile(name))
                             || (type == Resources.rccDirKeyword && HelperFunctions.IsQrcFile(name))) {
-                            foreach (VCFileConfiguration config in (IVCCollection) vcfile.FileConfigurations) {
+                            foreach (VCFileConfiguration config in (IVCCollection)vcfile.FileConfigurations) {
                                 tool = new QtCustomBuildTool(config);
                                 configName = config.Name.Remove(config.Name.IndexOf('|'));
                                 var vcConfig = config.ProjectConfiguration as VCConfiguration;
@@ -416,7 +416,7 @@ namespace QtVsTools.Core
             // - globally defined default option
             // - empty options
             if (project != null && project.Globals.get_VariablePersists(type))
-                return (string) project.Globals[type];
+                return (string)project.Globals[type];
             return GetOption(type);
         }
 
@@ -475,7 +475,7 @@ namespace QtVsTools.Core
             try {
                 var mocEnumerator = mocDirCache.GetEnumerator();
                 while (mocEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) mocEnumerator.Key)) {
+                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)mocEnumerator.Key)) {
                         mocDirCache.Remove(mocEnumerator.Key);
                         mocEnumerator = mocDirCache.GetEnumerator();
                     }
@@ -483,7 +483,7 @@ namespace QtVsTools.Core
 
                 var uicEnumerator = uicDirCache.GetEnumerator();
                 while (uicEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) uicEnumerator.Key)) {
+                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)uicEnumerator.Key)) {
                         uicDirCache.Remove(uicEnumerator.Key);
                         uicEnumerator = uicDirCache.GetEnumerator();
                     }
@@ -491,7 +491,7 @@ namespace QtVsTools.Core
 
                 var rccEnumerator = rccDirCache.GetEnumerator();
                 while (rccEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string) rccEnumerator.Key)) {
+                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)rccEnumerator.Key)) {
                         rccDirCache.Remove(rccEnumerator.Key);
                         rccEnumerator = rccDirCache.GetEnumerator();
                     }
@@ -530,7 +530,7 @@ namespace QtVsTools.Core
             var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
             if (regKey == null)
                 return defaultValue;
-            return ((int) regKey.GetValue(key, defaultValue ? 1 : 0)) > 0;
+            return ((int)regKey.GetValue(key, defaultValue ? 1 : 0)) > 0;
         }
 
         private static bool ValueExists(string key)

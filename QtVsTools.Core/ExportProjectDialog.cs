@@ -115,7 +115,7 @@ namespace QtVsTools.Core
             //
             // cancelButton
             //
-            cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             cancelButton.Location = new System.Drawing.Point(352, 232);
             cancelButton.Name = "cancelButton";
@@ -125,7 +125,7 @@ namespace QtVsTools.Core
             //
             // okButton
             //
-            okButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             okButton.Location = new System.Drawing.Point(272, 232);
             okButton.Name = "okButton";
@@ -135,7 +135,7 @@ namespace QtVsTools.Core
             //
             // projLabel
             //
-            projLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            projLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             projLabel.Location = new System.Drawing.Point(0, 8);
             projLabel.Name = "projLabel";
@@ -187,7 +187,7 @@ namespace QtVsTools.Core
             //
             // projListBox
             //
-            projListBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            projListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             projListBox.Location = new System.Drawing.Point(0, 24);
             projListBox.Name = "projListBox";
@@ -198,7 +198,7 @@ namespace QtVsTools.Core
             //
             // openCheckBox
             //
-            openCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            openCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             openCheckBox.Checked = true;
             openCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -210,7 +210,7 @@ namespace QtVsTools.Core
             //
             // lineBox
             //
-            lineBox.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            lineBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             lineBox.Location = new System.Drawing.Point(-8, 216);
             lineBox.Name = "lineBox";
             lineBox.Size = new System.Drawing.Size(536, 8);
@@ -219,7 +219,7 @@ namespace QtVsTools.Core
             //
             // createPriFileCheckBox
             //
-            createPriFileCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            createPriFileCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             createPriFileCheckBox.Checked = true;
             createPriFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -231,7 +231,7 @@ namespace QtVsTools.Core
             //
             // panel1
             //
-            panel1.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right)));
             panel1.Controls.Add(projLabel);
             panel1.Controls.Add(projListBox);
@@ -244,7 +244,7 @@ namespace QtVsTools.Core
             //
             // panel2
             //
-            panel2.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             panel2.Controls.Add(newButton);
             panel2.Controls.Add(delButton);
             panel2.Controls.Add(optionLabel);

@@ -57,7 +57,7 @@ namespace QtVsTools
                 if (string.IsNullOrEmpty(searchBox.Text))
                     return true;
 
-                var item = (KeyValuePair<string, string>) obj;
+                var item = (KeyValuePair<string, string>)obj;
                 return item.Key.IndexOf(searchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
             };
             linkListBox.SelectedIndex = 0;

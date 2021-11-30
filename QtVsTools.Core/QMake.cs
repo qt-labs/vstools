@@ -179,7 +179,7 @@ namespace QtVsTools.Core
                 (qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds));
         }
 
-        public virtual int Run(bool setVCVars=false)
+        public virtual int Run(bool setVCVars = false)
         {
             int exitCode = -1;
             using (var qmakeProc = CreateProcess()) {

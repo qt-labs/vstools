@@ -102,7 +102,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             public string ToolTip
             {
-                get {
+                get
+                {
                     return string.Format(
                         "Select this if you want to include the {0} library",
                         module.Name);

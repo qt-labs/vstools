@@ -40,7 +40,7 @@ namespace QtVsTools.Core
             var retval = GetPropertyValue(obj, name);
             if (retval == null)
                 return default(T);
-            return (T) retval;
+            return (T)retval;
         }
 
         public static object GetPropertyValue(object obj, string name)
