@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ThreeDLibrary" xml:space="preserve">
+  <data name="Qt3DLibrary" xml:space="preserve">
     <value>3D</value>
   </data>
   <data name="ActionDialog_Properties" xml:space="preserve">
@@ -129,44 +129,8 @@
   <data name="ActiveQtServerLibrary" xml:space="preserve">
     <value>ActiveQt server</value>
   </data>
-  <data name="Add" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="AddQtModule" xml:space="preserve">
-    <value>Add/Remove Qt Module</value>
-  </data>
   <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
     <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
-  </data>
-  <data name="AddQtVersionDialog_InvalidName" xml:space="preserve">
-    <value>Name is not valid.</value>
-  </data>
-  <data name="AddQtVersionDialog_RestartVisualStudio" xml:space="preserve">
-    <value>You might need to restart Visual Studio to use $(QTDIR).</value>
-  </data>
-  <data name="AddQtVersionDialog_InvalidDirectory" xml:space="preserve">
-    <value>The given path is not a valid directory or does not exist.</value>
-  </data>
-  <data name="AddQtVersionDialog_MingwQt" xml:space="preserve">
-    <value>Qt in the given path was built using MinGW.</value>
-  </data>
-  <data name="AddQtVersionDialog_NotFound" xml:space="preserve">
-    <value>{0} cannot be found.</value>
-  </data>
-  <data name="AddQtVersionDialog_Path" xml:space="preserve">
-    <value>Path:</value>
-  </data>
-  <data name="AddQtVersionDialog_Title" xml:space="preserve">
-    <value>Add New Qt Version</value>
-  </data>
-  <data name="AddQtVersionDialog_TitleEdit" xml:space="preserve">
-    <value>Edit Qt Version</value>
-  </data>
-  <data name="AddQtVersionDialog_VersionAlreadyPresent" xml:space="preserve">
-    <value>The given name has already been registered.</value>
-  </data>
-  <data name="AddQtVersionDialog_VersionName" xml:space="preserve">
-    <value>Version name:</value>
   </data>
   <data name="AddTranslationDialog_FileName" xml:space="preserve">
     <value>Filename:</value>
@@ -179,18 +143,6 @@
   </data>
   <data name="BluetoothLibrary" xml:space="preserve">
     <value>Bluetooth</value>
-  </data>
-  <data name="BuildOptionsPage_DefaultQtVersion" xml:space="preserve">
-    <value>Default Qt/Win version:</value>
-  </data>
-  <data name="BuildOptionsPage_Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="BuildOptionsPage_Path" xml:space="preserve">
-    <value>Path</value>
-  </data>
-  <data name="BuildOptionsPage_Title" xml:space="preserve">
-    <value>Qt Versions</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
@@ -227,25 +179,13 @@ Converting project {0}/{1}: {2}...</value>
     <value>Error converting project {0}</value>
   </data>
   <data name="CancelConvertingProject" xml:space="preserve">
-    <value>Project conversion cancelled.</value>
+    <value>Project conversion canceled.</value>
   </data>
   <data name="NoProjectsToConvert" xml:space="preserve">
     <value>No projects to convert.</value>
   </data>
   <data name="CoreLibrary" xml:space="preserve">
     <value>Core</value>
-  </data>
-  <data name="DeclarativeLibrary" xml:space="preserve">
-    <value>Declarative</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="DeleteGeneratedFilesError" xml:space="preserve">
-    <value>The generated files cannot be deleted.</value>
-  </data>
-  <data name="DesignerAddError" xml:space="preserve">
-    <value>Cannot open .ui file in Qt Designer.</value>
   </data>
   <data name="EnginioLibrary" xml:space="preserve">
     <value>Enginio</value>
@@ -256,18 +196,8 @@ Converting project {0}/{1}: {2}...</value>
   <data name="GUILibrary" xml:space="preserve">
     <value>GUI</value>
   </data>
-  <data name="Helpers_CannotStart" xml:space="preserve">
-    <value>Cannot start {0}
-
-Make sure that you have specified a valid Qt version in the current project.
-If you haven't specified a Qt version at all, go to Qt VS Tools|Qt Project Settings|Version
-and select the Qt version to use.</value>
-  </data>
   <data name="HelpLibrary" xml:space="preserve">
     <value>Help</value>
-  </data>
-  <data name="ImportPriFileButtonText" xml:space="preserve">
-    <value>Import .pri File to Project...</value>
   </data>
   <data name="ImportPriFileNotResolved" xml:space="preserve">
     <value>--- (importing .pri file) file: {0} cannot be resolved. Skipping file.</value>
@@ -290,17 +220,11 @@ and select the Qt version to use.</value>
   <data name="NfcLibrary" xml:space="preserve">
     <value>NFC</value>
   </data>
-  <data name="NoDefaultQtVersionError" xml:space="preserve">
-    <value>No default Qt version found. Check your Qt VS Tools settings.</value>
-  </data>
   <data name="NoProjectOpened" xml:space="preserve">
     <value>No Project Opened</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>&amp;OK</value>
-  </data>
-  <data name="OnlyVariableInDir" xml:space="preserve">
-    <value>The path may only contain the "$(ConfigurationName)" and/or "$(PlatformName)" variable. A valid path is e.g.".$(ConfigurationName)/moc".</value>
   </data>
   <data name="IncompatibleMacros" xml:space="preserve">
     <value>The following macros are not compatible: {0}</value>
@@ -326,25 +250,8 @@ and select the Qt version to use.</value>
   <data name="QmlLibrary" xml:space="preserve">
     <value>QML</value>
   </data>
-  <data name="QProcess_UnspecifiedError" xml:space="preserve">
-    <value>&lt;unspecified return code&gt;</value>
-  </data>
-  <data name="QtAppNotFoundErrorMessage" xml:space="preserve">
-    <value>*** Couldn't start {0}.</value>
-  </data>
-  <data name="QtAppNotFoundErrorTitle" xml:space="preserve">
-    <value>Not starting {0}</value>
-  </data>
-  <data name="QtDefaultSettings" xml:space="preserve">
-    <value>Qt Default Settings</value>
-  </data>
   <data name="QtModules" xml:space="preserve">
     <value>Qt Modules</value>
-  </data>
-  <data name="QuestionSCCCheckoutOnOpen" xml:space="preserve">
-    <value>The file {0} is under source control and not checked out. Do you want to check out the file before opening it?
-
-Note: You can turn off this question by setting "Ask before checking out files" to "False" in Qt Options.</value>
   </data>
   <data name="QuickLibrary" xml:space="preserve">
     <value>Qt Quick</value>
@@ -357,9 +264,6 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   </data>
   <data name="ScriptToolsLibrary" xml:space="preserve">
     <value>Script Tools</value>
-  </data>
-  <data name="SelectQtPath" xml:space="preserve">
-    <value>Select Qt Path</value>
   </data>
   <data name="SensorsLibrary" xml:space="preserve">
     <value>Sensors</value>
@@ -381,9 +285,6 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   </data>
   <data name="UiToolsLibrary" xml:space="preserve">
     <value>UI Tools</value>
-  </data>
-  <data name="VSQtOptionsButtonText" xml:space="preserve">
-    <value>Qt Options</value>
   </data>
   <data name="WebChannelLibrary" xml:space="preserve">
     <value>Web Channel</value>
@@ -412,9 +313,6 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   <data name="ExportProject_ImportPriFile" xml:space="preserve">
     <value>Import from .pri File</value>
   </data>
-  <data name="Helpers_ExitError" xml:space="preserve">
-    <value>The application exited with an error (ExitCode {0}):</value>
-  </data>
   <data name="Resources_QtVsTools" xml:space="preserve">
     <value>Qt VS Tools</value>
   </data>
@@ -429,5 +327,44 @@ Note: You can turn off this question by setting "Ask before checking out files" 
   </data>
   <data name="TextToSpeechLibrary" xml:space="preserve">
     <value>Speech</value>
+  </data>
+  <data name="DesignerLibrary" xml:space="preserve">
+    <value>Designer</value>
+  </data>
+  <data name="Qt3DQuickLibrary" xml:space="preserve">
+    <value>3D Quick</value>
+  </data>
+  <data name="DBusLibrary" xml:space="preserve">
+    <value>DBus</value>
+  </data>
+  <data name="GamepadLibrary" xml:space="preserve">
+    <value>Gamepad</value>
+  </data>
+  <data name="OpenGLExtensionsLibrary" xml:space="preserve">
+    <value>OpenGL Extensions</value>
+  </data>
+  <data name="QuickTestLibrary" xml:space="preserve">
+    <value>Qt Quick Tests</value>
+  </data>
+  <data name="QuickControls2Library" xml:space="preserve">
+    <value>Qt Quick Controls 2</value>
+  </data>
+  <data name="ScxmlLibrary" xml:space="preserve">
+    <value>SCXML</value>
+  </data>
+  <data name="SerialBusLibrary" xml:space="preserve">
+    <value>SerialBus</value>
+  </data>
+  <data name="UiPluginLibrary" xml:space="preserve">
+    <value>UI Plugin</value>
+  </data>
+  <data name="WebEngineLibrary" xml:space="preserve">
+    <value>WebEngine</value>
+  </data>
+  <data name="WebEngineWidgetsLibrary" xml:space="preserve">
+    <value>WebEngine Widgets</value>
+  </data>
+  <data name="RemoteObjectsLibrary" xml:space="preserve">
+    <value>RemoteObjects</value>
   </data>
 </root>

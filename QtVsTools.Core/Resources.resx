@@ -126,17 +126,10 @@
   <data name="ProjectExists" xml:space="preserve">
     <value>Project file already exists.</value>
   </data>
-  <data name="ExportProject_CheckFileAndSyntax" xml:space="preserve">
-    <value>1. Check that all the files exist.
-2. Check for syntax errors in the .pri file.</value>
-  </data>
   <data name="ExportProject_EditProjectFileManually" xml:space="preserve">
     <value>qmake has generated a .vcproj file, but it needs to be converted.
 To do this you must open the .vcproj file manually.
 (Reason: qmake in Qt3 does not support generation of Visual Studio 2005 .vcproj files)</value>
-  </data>
-  <data name="ExportProject_ErrorParsingPriFile" xml:space="preserve">
-    <value>Error while parsing .pri file. ({0})</value>
   </data>
   <data name="ExportProject_ExistsOverwriteQuestion" xml:space="preserve">
     <value>{0} already exists.
@@ -145,9 +138,6 @@ Do you want to overwrite it?</value>
   </data>
   <data name="ExportProject_ExportPriFile" xml:space="preserve">
     <value>Export to .pri File</value>
-  </data>
-  <data name="ExportProject_ImportPriFile" xml:space="preserve">
-    <value>Import from .pri File</value>
   </data>
   <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
     <value>Cannot find any Qt 4 projects to export.</value>
@@ -263,17 +253,6 @@ To solve this problem:
     <value>Cannot replace token ({0} -&gt; {1}) in file (write).
 ({3})</value>
   </data>
-  <data name="QtProject_CannotEnableSectionRead" xml:space="preserve">
-    <value>Cannot enable section {0} in file (read).
-({1})</value>
-  </data>
-  <data name="QtProject_CannotEnableSectionWrite" xml:space="preserve">
-    <value>Cannot enable section {0} in file (write).
-({1})</value>
-  </data>
-  <data name="QtProject_CannotUpdateUicStep" xml:space="preserve">
-    <value>Cannot update uic steps.</value>
-  </data>
   <data name="QtProject_FileExistsInProjectFolder" xml:space="preserve">
     <value>The file {0} exists in your project folder. Qt VS Tools will overwrite the existing file.
 
@@ -284,9 +263,6 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   </data>
   <data name="Resources_QtVsTools" xml:space="preserve">
     <value>Qt VS Tools</value>
-  </data>
-  <data name="Resources_AddQtResource" xml:space="preserve">
-    <value>Add Qt Resource</value>
   </data>
   <data name="Resources_SourceFiles" xml:space="preserve">
     <value>Source Files</value>
@@ -312,9 +288,6 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
     <value>Could not add QTDIR to {0}'s .user file.</value>
   </data>
-  <data name="ImportProject_CannotFindQtDirectory" xml:space="preserve">
-    <value>Could not parse QTDIR from project file {0}.</value>
-  </data>
   <data name="ImportProject_CannotConvertProject" xml:space="preserve">
     <value>Could not convert project file {0} to Qt/MSBuild.</value>
   </data>
@@ -326,5 +299,8 @@ Select 'Yes' to overwrite, select 'No' to keep the existing file and automatical
   </data>
   <data name="CannotChangeQtVersion" xml:space="preserve">
     <value>The Qt version of at least one project cannot be changed.</value>
+  </data>
+  <data name="DeleteGeneratedFilesError" xml:space="preserve">
+    <value>The generated files cannot be deleted.</value>
   </data>
 </root>

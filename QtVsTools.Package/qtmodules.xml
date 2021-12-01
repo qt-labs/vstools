@@ -102,6 +102,7 @@
   </Module>
   <Module Id="14">
     <Name>Designer</Name>
+    <ResourceName>DesignerLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtDesigner</LibraryPrefix>
     <HasDLL>true</HasDLL>
