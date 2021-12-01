@@ -162,28 +162,47 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Extract Qt build settings from qmake-generated project files
+  // -->
+  <PropertyGroup>
+    <QtVars
+      Condition="'$(QtQMakeTemplate)' == 'app'"
+      >$(QMake_Makefile)</QtVars>
+    <QtVars
+      Condition="'$(QtQMakeTemplate)' == 'vcapp'"
+      >$(QMake_MSBuild);</QtVars>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Default item metadata
   // -->
   <ItemDefinitionGroup>
 
     <!--// C++ -->
     <ClCompile>
-      <PreprocessorDefinitions
-      >$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Qt_DEFINES_)' != ''"
+        >$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
         >QT_QML_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories
-      >$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Qt_INCLUDEPATH_)' != ''"
+        >$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
+        >$(Qt_STDCPP_)</LanguageStandard>
+      <AdditionalOptions Condition="'$(Qt_CL_OPTIONS_)' != ''"
+        >$(Qt_CL_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
 
     <!--// Linker (.obj files) -->
     <Link>
-      <AdditionalDependencies
-      >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories
-      >$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SharedLibrarySearchPath
-      >$(Qt_LIBPATH_);%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <AdditionalDependencies Condition="'$(Qt_LIBS_)' != ''"
+        >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Qt_LIBPATH_)' != ''"
+        >$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SharedLibrarySearchPath Condition="'$(Qt_LIBPATH_)' != ''"
+        >$(Qt_LIBPATH_);%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <AdditionalOptions Condition="'$(Qt_LINK_OPTIONS_)' != ''"
+        >$(Qt_LINK_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
 

@@ -71,18 +71,28 @@
     <QtPathBinaries>bin</QtPathBinaries>
     <QtPathLibraryExecutables>bin</QtPathLibraryExecutables>
 
+    <!--// qmake template -->
+    <QtQMakeTemplate>vcapp</QtQMakeTemplate>
+
     <!--// Extract Qt variables from qmake-generated Makefile
         //     Syntax: < var_name > [ = [ makefile_name ] / < pattern > / < replace > / ] -->
-    <QMake_DEFINES_
->DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/</QMake_DEFINES_>
-    <QMake_INCLUDEPATH_
->INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_INCLUDEPATH_>
-    <QMake_LIBS_
->LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBS_>
-    <QMake_LIBPATH_
->LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/</QMake_LIBPATH_>
-    <QtVars
-      >$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
+    <QMake_Makefile>
+      DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/;
+      INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/;
+      LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/;
+      LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/;
+    </QMake_Makefile>
+
+    <!--// Extract Qt variables from qmake-generated .vcxproj file
+        //     Syntax: < var_name >  = < xpath_to_value > -->
+    <QMake_MSBuild>
+      DEFINES=/Project/ItemDefinitionGroup/ClCompile/PreprocessorDefinitions;
+      INCLUDEPATH=/Project/ItemDefinitionGroup/ClCompile/AdditionalIncludeDirectories;
+      STDCPP=/Project/ItemDefinitionGroup/ClCompile/LanguageStandard;
+      CL_OPTIONS=/Project/ItemDefinitionGroup/ClCompile/AdditionalOptions;
+      LIBS=/Project/ItemDefinitionGroup/Link/AdditionalDependencies;
+      LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions;
+    </QMake_MSBuild>
 
     <!--// Default Qt version -->
     <QtVersionsRegKey Condition="'$(QtVersionsRegKey)' == ''"

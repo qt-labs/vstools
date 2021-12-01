@@ -363,6 +363,7 @@
     // Inline tasks
     // -->
     <Compile Include="Tasks\CriticalSection.cs" />
+    <Compile Include="Tasks\GetVarsFromMSBuild.cs" />
     <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\ListQrc.cs" />

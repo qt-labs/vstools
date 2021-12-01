@@ -119,13 +119,19 @@
     Name="QtLibrarySearchPath"
     Category="QtSettings_02_Paths"
     DisplayName="Additional Qt library search paths" />
+  <EnumProperty
+    Name="QtQMakeTemplate"
+    Category="QtSettings_03_QMake"
+    DisplayName="Template"
+    Description="Template of generated project files for extraction of Qt build settings.">
+    <EnumValue Name="vcapp" DisplayName="MSBuild" />
+    <EnumValue Name="app" DisplayName="Makefile" />
+  </EnumProperty>
   <StringListProperty
     Name="QtVars"
     Category="QtSettings_03_QMake"
     DisplayName="Extract Variables"
-    Description=
-"Extract Qt variables from qmake-generated Makefile.
-Syntax: &lt; var_name &gt; [ = [ makefile_var_name ] / &lt; pattern &gt; / &lt; replace &gt; / ]"/>
+    Visible="False" />
   <StringListProperty
     Name="QMakeExtraArgs"
     Category="QtSettings_03_QMake"

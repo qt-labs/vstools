@@ -212,6 +212,7 @@
     </ItemGroup>
     <PropertyGroup>
       <QMakeArgs>@(QMakeArgsList->'%(Escaped)', ' ')</QMakeArgs>
+      <QMakeArgs Condition="'$(QtQMakeTemplate)' == 'vcapp'"> -tp vc $(QMakeArgs)</QMakeArgs>
     </PropertyGroup>
 
     <!--// Modules and additional .pro file lines -->
@@ -323,7 +324,10 @@
     </HostExec>
 
     <!--// Check qmake result -->
-    <PropertyGroup Condition="'$(ErrorLevel)' != '0' OR !Exists('$(QtVarsWorkDir)\Makefile')">
+    <PropertyGroup
+      Condition="'$(ErrorLevel)' != '0'
+        OR ( '$(QtQMakeTemplate)' == 'app' AND !Exists('$(QtVarsWorkDir)\Makefile') )
+        OR ( '$(QtQMakeTemplate)' == 'vcapp' AND !Exists('$(QtVarsWorkDir)\qtvars.vcxproj') )">
       <QMakeError>true</QMakeError>
     </PropertyGroup>
 
@@ -341,8 +345,11 @@
         Condition="$([System.String]::Copy('%(Identity)').StartsWith('Info: creating stash file'))"
         Remove="@(QMakeError)"/>
       <QMakeError
-        Condition="!Exists('$(QtVarsWorkDir)\Makefile')"
+        Condition="'$(QtQMakeTemplate)' == 'app' AND !Exists('$(QtVarsWorkDir)\Makefile')"
         Include="Error creating Makefile"/>
+      <QMakeError
+        Condition="'$(QtQMakeTemplate)' == 'vcapp' AND !Exists('$(QtVarsWorkDir)\qtvars.vcxproj')"
+        Include="Error creating .vcxproj file"/>
     </ItemGroup>
 
     <!--// If error, show qmake console output and stop build -->
@@ -355,17 +362,43 @@
       Condition="'$(QMakeError)' != 'true' AND '$(QtVarsDebug)' == 'true'"
       Text="qmake: @(QMakeError->'%(Identity)','%0D%0Aqmake: ')"/>
 
-    <!--// Parse variable definition expressions -->
+
+    <!--//// Extract Qt vars from Makefile
+        // -->
+    <!--// Parse variable definition expressions for Makefile -->
     <ParseVarDefs
-      Condition="'$(QtVars)' != ''" QtVars="$(QtVars)">
-      <Output TaskParameter="OutVarDefs" ItemName="QtVarDef"/>
+      Condition="'$(QtQMakeTemplate)' == 'app' AND '$(QtVars)' != ''"
+      QtVars="$(QtVars)">
+      <Output TaskParameter="OutVarDefs" ItemName="QMake_Makefile_VarDef"/>
     </ParseVarDefs>
 
     <!--// Read variables from Makefile -->
     <GetVarsFromMakefile
-      Makefile="$(QtVarsWorkDir)\Makefile" VarDefs="@(QtVarDef)" ExcludeValues="$(QtVarsWorkDir)">
+      Condition="'$(QtQMakeTemplate)' == 'app'"
+      Makefile="$(QtVarsWorkDir)\Makefile" VarDefs="@(QMake_Makefile_VarDef)"
+      ExcludeValues="$(QtVarsWorkDir)">
       <Output TaskParameter="OutVars" ItemName="QtVar"/>
     </GetVarsFromMakefile>
+
+    <!--//// Extract Qt vars from .vcxproj file
+        // -->
+    <!--// Parse variable definition expressions for .vcxproj file -->
+    <ItemGroup Condition="'$(QtQMakeTemplate)' == 'vcapp'">
+      <QMake_MSBuild_VarDef Include="$(QMake_MSBuild)"/>
+      <QMake_MSBuild_VarDef>
+        <Name>$([System.String]::Copy('%(Identity)').Split('=')[0].Trim())</Name>
+        <XPath>$([System.String]::Copy('%(Identity)').Split('=')[1].Trim())</XPath>
+      </QMake_MSBuild_VarDef>
+    </ItemGroup>
+
+    <!--// Read variables from .vcxproj file -->
+    <GetVarsFromMSBuild
+      Condition="'$(QtQMakeTemplate)' == 'vcapp'"
+      Project="$(QtVarsWorkDir)\qtvars.vcxproj"
+      VarDefs="@(QMake_MSBuild_VarDef)"
+      ExcludeValues="$(QtVarsWorkDir)">
+      <Output TaskParameter="OutVars" ItemName="QtVar"/>
+    </GetVarsFromMSBuild>
 
     <!--// Write variables as MSBuild properties to .props file -->
     <PropertyGroup>
@@ -495,7 +528,8 @@
       <QtVariables Remove="@(QtVariables)"/>
       <QMakeCodeLines Remove="@(QMakeCodeLines)"/>
       <QtBuildConfig Remove="@(QtBuildConfig)"/>
-      <QtVarDef Remove="@(QtVarDef)"/>
+      <QMake_Makefile_VarDef Remove="@(QMake_Makefile_VarDef)"/>
+      <QMake_MSBuild_VarDef Remove="@(QMake_MSBuild_VarDef)"/>
       <QtVar Remove="@(QtVar)"/>
     </ItemGroup>
     <PropertyGroup>
