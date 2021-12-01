@@ -157,7 +157,10 @@ namespace QtVsTools
                 break;
             case CommandId.QtProjectSettingsProjectId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                    if (pro != null) {
+                    int projectVersion = QtProject.GetFormatVersion(pro);
+                    if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
+                        QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
+                    } else if (pro != null) {
                         using (var formProjectQtSettings = new FormProjectQtSettings()) {
                             formProjectQtSettings.SetProject(pro);
                             formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
@@ -301,7 +304,6 @@ namespace QtVsTools
             if (project != null && isQtProject) {
                 int projectVersion = QtProject.GetFormatVersion(project);
                 switch ((CommandId)command.CommandID.ID) {
-                case CommandId.QtProjectSettingsProjectId:
                 case CommandId.ChangeProjectQtVersionProjectId:
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings)
                         command.Visible = command.Enabled = false;
