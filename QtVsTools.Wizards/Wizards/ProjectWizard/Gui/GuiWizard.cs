@@ -210,26 +210,39 @@ namespace QtVsTools.Wizards.ProjectWizard
             StringBuilder winRcFile = new StringBuilder();
 
             if (WizardData.AddDefaultAppIcon) {
-                _ExtraItems.Add(new ItemDef
-                {
-                    ItemType = "None",
-                    Include = Parameter[NewProject.SafeName] + ".ico",
-                    Filter = "Resource Files"
-                });
                 var projectIcon = Path.Combine(
                     Parameter[NewProject.DestinationDirectory],
                     Parameter[NewProject.SafeName] + ".ico");
-                var templateIcon = Path.Combine(
-                    Parameter[NewProject.DestinationDirectory],
-                    "gui.ico");
-                if (!File.Exists(projectIcon)) {
-                    File.Move(templateIcon, projectIcon);
-                    File.SetAttributes(projectIcon,
-                        File.GetAttributes(projectIcon) & (~FileAttributes.ReadOnly));
+                var iconExists = File.Exists(projectIcon);
+                if (!iconExists) {
+                    try {
+                        var uri =
+                            new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
+                        var pkgInstallPath
+                            = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+                        var templateIcon
+                            = Path.Combine(pkgInstallPath, @"ProjectTemplates\VC\Qt\1033\gui\gui.ico");
+                        File.Copy(templateIcon, projectIcon);
+                        File.SetAttributes(projectIcon,
+                            File.GetAttributes(projectIcon) & (~FileAttributes.ReadOnly));
+                        iconExists = true;
+                    }  catch (Exception /*ex*/) {
+                        // Silently ignore any error, the project is working
+                        // without icon too.
+                    }
                 }
-                winRcFile.AppendLine(
-                    string.Format("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"{0}.ico",
-                        /*{0}*/ Parameter[NewProject.SafeName]));
+
+                if (iconExists) {
+                    _ExtraItems.Add(new ItemDef
+                    {
+                        ItemType = "None",
+                        Include = Parameter[NewProject.SafeName] + ".ico",
+                        Filter = "Resource Files"
+                    });
+                    winRcFile.AppendLine(
+                        string.Format("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"{0}.ico\"",
+                            /*{0}*/ Parameter[NewProject.SafeName]));
+                }
             }
 
             if (winRcFile.Length > 0) {
