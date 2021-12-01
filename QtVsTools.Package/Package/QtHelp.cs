@@ -189,7 +189,6 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return false;
 
-                var settingsManager = VsShellSettings.Manager;
                 var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
 
                 var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "

@@ -183,7 +183,6 @@ namespace QtVsTools
                 if ((Dte = VsServiceProvider.GetService<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
 
-                VsShellSettings.Manager = new ShellSettingsManager(this as System.IServiceProvider);
                 QtVSIPSettings.Options = Options;
 
                 eventHandler = new DteEventsHandler(Dte);
@@ -346,10 +345,9 @@ namespace QtVsTools
 
         private void GetTextMateLanguagePath()
         {
-            var settingsManager = VsShellSettings.Manager;
+            var settingsManager = new ShellSettingsManager(this as System.IServiceProvider);
             var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-            useQtTmLanguage = store.GetBoolean(
-                Statics.QmlTextMatePath, Statics.QmlTextMateKey, true);
+            useQtTmLanguage = store.GetBoolean(@"QtVsTools\Qml\TextMate", @"Enable", true);
             qtTmLanguagePath = Environment.
                 ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
         }
