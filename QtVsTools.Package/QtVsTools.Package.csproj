@@ -325,9 +325,6 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
-    <Compile Include="Package\AddQtVersionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Package\AddTranslationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -512,9 +509,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <EmbeddedResource Include="Package\AddQtVersionDialog.resx">
-      <DependentUpon>AddQtVersionDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Package\AddTranslationDialog.resx">
       <DependentUpon>AddTranslationDialog.cs</DependentUpon>
     </EmbeddedResource>
