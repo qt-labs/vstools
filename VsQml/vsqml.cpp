@@ -62,8 +62,8 @@ QCoreApplication *GetQtApplication()
 {
     if (app == nullptr) {
         static int argc = 1;
-        static char *argv[] = { "vsqml", nullptr };
-        app = new QCoreApplication(argc, argv);
+        static const char *argv[] = { "vsqml", nullptr };
+        app = new QCoreApplication(argc, const_cast<char **>(argv));
     }
 
     return app;

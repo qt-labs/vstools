@@ -76,8 +76,10 @@ private:
 
     void marshalNode(QVector<int> &nodeData, Node *node)
     {
-        marshalLocation(nodeData, node->firstSourceLocation());
-        marshalLocation(nodeData, node->lastSourceLocation());
+        auto firstLocation = node->firstSourceLocation();
+        auto lastLocation = node->lastSourceLocation();
+        marshalLocation(nodeData, firstLocation);
+        marshalLocation(nodeData, lastLocation);
     }
 
     bool visitCallback(UiImport *node, bool beginVisit)
