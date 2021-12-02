@@ -459,7 +459,7 @@
     <ItemGroup Condition="'$(ApplicationType)' != 'Linux'">
       <QtWork_ClCompile_Expanded>
         <AdditionalIncludeDirectories
-          >$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+          >$(ProjectDir);%(QtWork_ClCompile_Expanded.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
           >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
         <AdditionalOptions
