@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Package", "QtVsTools.Package\QtVsTools.Package.csproj", "{671C3821-7BD9-4C16-9A8D-EC1470EDBC9B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.RegExpr", "QtVsTools.RegExpr\QtVsTools.RegExpr.csproj", "{A2831B9B-4D3B-46CB-85DF-1B5C277C17DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtMSBuild", "QtMSBuild\QtMSBuild.csproj", "{A618D28B-9352-44F4-AA71-609BF68BF871}"
@@ -44,8 +46,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Item", "Item", "{A7918293-56E9-465A-AE1C-0724576ADD66}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{DD307619-BF80-4E5D-AE54-196057187702}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Package", "QtVsTools.Package\QtVsTools.Package.csproj", "{671C3821-7BD9-4C16-9A8D-EC1470EDBC9B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9B109DDA-0521-46AD-B087-B7CBCB33FEE5}"
 	ProjectSection(SolutionItems) = preProject
