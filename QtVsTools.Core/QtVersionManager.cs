@@ -349,12 +349,10 @@ namespace QtVsTools.Core
                 var vcPro = project.Object as VCProject;
                 if (vcPro == null)
                     return false;
-#if VS2017 || VS2019
                 foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
                     config.SetPropertyValue(Resources.projLabelQtSettings, true,
                         "QtInstall", version);
                 }
-#endif
                 return true;
             }
             var key = "Qt5Version " + platform;

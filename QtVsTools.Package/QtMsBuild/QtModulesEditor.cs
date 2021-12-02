@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-#if VS2017 || VS2019
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
@@ -87,4 +86,3 @@ namespace QtVsTools.QtMsBuild
         }
     }
 }
-#endif

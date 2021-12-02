@@ -399,7 +399,6 @@ namespace QtVsTools.Core
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
 
                 var info = QtModules.Instance.ModuleInformation(module);
-#if VS2017 || VS2019
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
                     var config3 = config as VCConfiguration3;
                     if (config3 == null)
@@ -418,7 +417,6 @@ namespace QtVsTools.Core
                     // required by modules are set by Qt/MSBuild.
                     continue;
                 }
-#endif
 
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
@@ -2002,7 +2000,7 @@ namespace QtVsTools.Core
                         if (!vfilt.CanAddFilter(subfilterName))
                             throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
 
-#if !(VS2017 || VS2019)
+#if !(VS2017 || VS2019 || VS2022)
                         // TODO: Enable once the freeze gets fixed in VS.
                         vfilt = (VCFilter)vfilt.AddFilter(subfilterName);
                         vfilt.Filter = "cpp;moc";

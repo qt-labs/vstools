@@ -214,13 +214,11 @@ namespace QtVsTools.Core
                 ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
-#if (VS2019 || VS2017)
             if (ok) {
                 string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
                 if (!string.IsNullOrEmpty(versionWin10SDK))
                     ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
             }
-#endif
             if (ok)
                 ok = xmlProject.UpdateProjectFormatVersion();
 
