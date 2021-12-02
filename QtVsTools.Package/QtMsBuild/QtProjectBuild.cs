@@ -239,8 +239,16 @@ namespace QtVsTools.QtMsBuild
                 using (writeAccess) {
                     var msBuildProject = await writeAccess.GetProjectAsync(ConfiguredProject);
 
+                    var solutionPath = QtProjectTracker.SolutionPath;
                     var configProps = new Dictionary<string, string>(
-                        ConfiguredProject.ProjectConfiguration.Dimensions.ToImmutableDictionary());
+                        ConfiguredProject.ProjectConfiguration.Dimensions.ToImmutableDictionary())
+                    {
+                        { "SolutionPath", solutionPath },
+                        { "SolutionFileName", Path.GetFileName(solutionPath) },
+                        { "SolutionName", Path.GetFileNameWithoutExtension(solutionPath) },
+                        { "SolutionExt", Path.GetExtension(solutionPath) },
+                        { "SolutionDir", Path.GetDirectoryName(solutionPath).TrimEnd('\\') + '\\'  }
+                    };
 
                     foreach (var property in Properties)
                         configProps[property.Key] = property.Value;

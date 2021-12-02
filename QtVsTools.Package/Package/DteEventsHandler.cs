@@ -502,6 +502,7 @@ namespace QtVsTools
 
         public void SolutionEvents_Opened()
         {
+            QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
                     InitializeVCProject(p);
@@ -514,6 +515,7 @@ namespace QtVsTools
         {
             QtProject.ClearInstances();
             QtProjectTracker.Reset();
+            QtProjectTracker.SolutionPath = string.Empty;
         }
 
         void InitializeVCProjects()

@@ -68,6 +68,8 @@ namespace QtVsTools.QtMsBuild
         static Task InitDispatcher { get; set; }
         static ITaskHandler2 InitStatus { get; set; }
 
+        public static string SolutionPath { get; set; } = string.Empty;
+
         private QtProjectTracker()
         {
             Initialized = new EventWaitHandle(false, EventResetMode.ManualReset);
