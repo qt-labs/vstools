@@ -438,7 +438,7 @@
     <Compile Include="Package\Translation.cs" />
     <Compile Include="Package\TranslationItem.cs" />
     <Compile Include="VisualStudio\VsShell.cs" />
-    <Compile Include="Package\VsToolsDialogWindow.cs" />
+    <Compile Include="Common\VsToolsDialogWindow.cs" />
     <Content Include="..\Changelog">
       <Link>Changelog</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -26,24 +26,14 @@
 **
 ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace QtVsTools.QtMsBuild
 {
-    public partial class QtModulesPopup : Window
+    public partial class QtModulesPopup : VsToolsDialogWindow
     {
         public class Module
         {
@@ -90,29 +80,23 @@ namespace QtVsTools.QtMsBuild
 
         private void PopupListBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter) {
+            if (e.Key == Key.Enter || e.Key == Key.Space) {
                 var module = PopupListBox.SelectedItem as Module;
                 if (module != null && module.IsEnabled)
                     module.CheckBox.IsChecked = (module.CheckBox.IsChecked != true);
             }
         }
 
-        private void Window_Deactivated(object sender, EventArgs e)
-        {
-            if (DialogResult == null)
-                DialogResult = true;
-        }
-
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-                DialogResult = true;
-        }
-
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
+        }
+
+        private void buttonOk_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
     }
 }

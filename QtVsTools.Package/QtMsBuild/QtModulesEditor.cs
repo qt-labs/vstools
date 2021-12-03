@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2019 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -28,8 +28,6 @@
 
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using System;
 using System.ComponentModel.Composition;
@@ -50,7 +48,7 @@ namespace QtVsTools.QtMsBuild
             IProperty ruleProperty,
             object currentValue)
         {
-            await System.Threading.Tasks.Task.Yield();
+            await Task.Yield();
 
             var modules = QtModules.Instance.GetAvailableModules()
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
@@ -73,14 +71,13 @@ namespace QtVsTools.QtMsBuild
             var popup = new QtModulesPopup();
             popup.SetModules(modules);
 
-            WindowHelper.ShowModal(popup);
-
-            selectedQT = modules
-                .Where(x => x.IsSelected)
-                .SelectMany(x => x.QT)
-                .Union(extraQT)
-                .ToHashSet();
-
+            if (popup.ShowModal().GetValueOrDefault()) {
+                selectedQT = modules
+                    .Where(x => x.IsSelected)
+                    .SelectMany(x => x.QT)
+                    .Union(extraQT)
+                    .ToHashSet();
+            }
             return string.Join(";", selectedQT);
         }
     }
