@@ -202,11 +202,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="QtMSBuild\qml\qtqml.props">
+    <Content Include="QtMSBuild\qml\qtqml_cache.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="QtMSBuild\qml\qtqml.targets">
+    <Content Include="QtMSBuild\qml\qtqml_cache.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

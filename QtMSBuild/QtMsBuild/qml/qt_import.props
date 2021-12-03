@@ -36,11 +36,11 @@
   <PropertyGroup>
     <QtMsBuildProps_AfterRcc>
       $(QtMsBuildProps_AfterRcc);
-      $(MSBuildThisFileDirectory)qtqml.props
+      $(MSBuildThisFileDirectory)qtqml_cache.props
     </QtMsBuildProps_AfterRcc>
     <QtMsBuildTargets_AfterRcc>
       $(QtMsBuildTargets_AfterRcc);
-      $(MSBuildThisFileDirectory)qtqml.targets
+      $(MSBuildThisFileDirectory)qtqml_cache.targets
     </QtMsBuildTargets_AfterRcc>
   </PropertyGroup>
 </Project>

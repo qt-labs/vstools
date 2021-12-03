@@ -38,8 +38,8 @@
   // Import pre-requisites
   // -->
   <Import
-    Condition="'$(QtMsBuildProps_BeforeQml)' != ''"
-    Project="$(QtMsBuildProps_BeforeQml)"/>
+    Condition="'$(QtMsBuildProps_BeforeQmlCache)' != ''"
+    Project="$(QtMsBuildProps_BeforeQmlCache)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@
   // Import dependants
   // -->
   <Import
-    Condition="'$(QtMsBuildProps_AfterQml)' != ''"
-    Project="$(QtMsBuildProps_AfterQml)"/>
+    Condition="'$(QtMsBuildProps_AfterQmlCache)' != ''"
+    Project="$(QtMsBuildProps_AfterQmlCache)"/>
 
 </Project>
