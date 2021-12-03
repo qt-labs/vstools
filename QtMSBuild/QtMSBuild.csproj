@@ -374,6 +374,7 @@
     <Compile Include="Tasks\GetItemHash.cs" />
     <Compile Include="Tasks\Flatten.cs" />
     <Compile Include="Tasks\Expand.cs" />
+    <Compile Include="Tasks\Join.cs" />
     <Compile Include="Tasks\DumpItems.cs" />
     <Compile Include="Tasks\HostTranslatePaths_Windows.cs" />
     <Compile Include="Tasks\HostExec_Windows.cs" />
