@@ -492,7 +492,7 @@ namespace QtVsTools.Core
         private static void AddModules(QtProject qtPrj, ProFileOption optionQT, ProFileOption optionCONFIG)
         {
             foreach (var module in QtModules.Instance.GetAvailableModules()) {
-                if (!qtPrj.HasModule(module.ModuleId))
+                if (!qtPrj.HasModule(module.Id))
                     continue;
 
                 if (module.proVarQT != null)

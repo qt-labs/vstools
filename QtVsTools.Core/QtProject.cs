@@ -386,9 +386,9 @@ namespace QtVsTools.Core
             }
         }
 
-        public void AddModule(int moduleId)
+        public void AddModule(int id)
         {
-            if (HasModule(moduleId))
+            if (HasModule(id))
                 return;
 
             var vm = QtVersionManager.The();
@@ -398,7 +398,7 @@ namespace QtVsTools.Core
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
 
-                var info = QtModules.Instance.Module(moduleId);
+                var info = QtModules.Instance.Module(id);
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
                     var config3 = config as VCConfiguration3;
                     if (config3 == null)
@@ -451,13 +451,13 @@ namespace QtVsTools.Core
             }
         }
 
-        public void RemoveModule(int moduleId)
+        public void RemoveModule(int id)
         {
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.Module(moduleId);
+                var info = QtModules.Instance.Module(id);
                 if (compiler != null) {
                     foreach (var define in info.Defines)
                         compiler.RemovePreprocessorDefinition(define);
@@ -501,7 +501,7 @@ namespace QtVsTools.Core
 
                         var libsDesktop = new List<string>();
                         foreach (var module in QtModules.Instance.GetAvailableModules()) {
-                            if (HasModule(module.ModuleId))
+                            if (HasModule(module.Id))
                                 libsDesktop.AddRange(module.AdditionalLibraries);
                         }
                         var libsToAdd = libsDesktop;
@@ -538,7 +538,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public bool HasModule(int moduleId)
+        public bool HasModule(int id)
         {
             var foundInIncludes = false;
             var foundInLibs = false;
@@ -549,7 +549,7 @@ namespace QtVsTools.Core
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)
                 return false; // neither a default or project Qt version
-            var info = QtModules.Instance.Module(moduleId);
+            var info = QtModules.Instance.Module(id);
             if (info == null)
                 return false;
 

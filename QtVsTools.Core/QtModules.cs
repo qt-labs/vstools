@@ -46,10 +46,10 @@ namespace QtVsTools.Core
             get { return instance; }
         }
 
-        public QtModule Module(int moduleId)
+        public QtModule Module(int id)
         {
             QtModule module;
-            modules.TryGetValue(moduleId, out module);
+            modules.TryGetValue(id, out module);
             return module;
         }
 
@@ -84,8 +84,8 @@ namespace QtVsTools.Core
                 return;
 
             foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
-                int moduleId = (int)xModule.Attribute("Id");
-                QtModule module = new QtModule(moduleId);
+                int id = (int)xModule.Attribute("Id");
+                QtModule module = new QtModule(id);
                 module.Name = (string)xModule.Element("Name");
                 module.ResourceName = (string)xModule.Element("ResourceName");
                 module.Selectable = ((string)xModule.Element("Selectable") == "true");
@@ -107,7 +107,7 @@ namespace QtVsTools.Core
                     Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
                     throw new QtVSException("qtmodules.xml");
                 }
-                modules.Add(moduleId, module);
+                modules.Add(id, module);
             }
         }
     }

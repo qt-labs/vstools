@@ -70,10 +70,10 @@ namespace QtVsTools.Core
 
         public QtModule(int id)
         {
-            ModuleId = id;
+            Id = id;
         }
 
-        public int ModuleId { get; } = -1;
+        public int Id { get; } = -1;
 
         public List<string> GetIncludePath()
         {

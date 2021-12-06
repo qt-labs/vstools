@@ -78,7 +78,7 @@ namespace QtVsTools
                 checkBox.UseVisualStyleBackColor = true;
                 flowLayoutPanel1.Controls.Add(checkBox);
                 checkBox.Text = module.Name;
-                AddMapping(checkBox, module.ModuleId);
+                AddMapping(checkBox, module.Id);
             }
 
             KeyPress += FormProjectQtSettings_KeyPress;
