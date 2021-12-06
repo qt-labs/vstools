@@ -441,6 +441,10 @@
       <QtWork_ClCompile
         Condition="Exists('$(QtVarsOutputDir)\qtvars_plugin_import.cpp')"
         Include="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
+      <!-- Add QML static plugins -->
+      <QtWork_ClCompile
+        Condition="Exists('$(QtQmlPluginImportCpp)')"
+        Include="$(QtQmlPluginImportCpp)"/>
     </ItemGroup>
     <ItemGroup Condition="'$(ApplicationType)' == 'Linux'">
       <QtWork_ClCompile Condition="'%(QtWork_ClCompile.ObjectFileName)' == ''">

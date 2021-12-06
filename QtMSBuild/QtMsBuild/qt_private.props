@@ -208,6 +208,15 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Check static plugin import:
+  //  * If qmake generated a platform plugin import, assume QML plugins are also required.
+  // -->
+  <PropertyGroup Condition="Exists('$(QtVarsWorkDir)\qtvars_plugin_import.cpp')">
+    <QtStaticPlugins>true</QtStaticPlugins>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Evaluate subfolder properties
   // -->
   <Import
