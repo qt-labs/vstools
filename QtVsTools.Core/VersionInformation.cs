@@ -142,9 +142,9 @@ namespace QtVsTools.Core
                 tempProData.AppendLine("SOURCES = main.cpp");
 
                 var modules = QtModules.Instance.GetAvailableModuleInformation()
-                    .Where((QtModuleInfo mi) => mi.Selectable);
+                    .Where((QtModule mi) => mi.Selectable);
 
-                foreach (QtModuleInfo mi in modules) {
+                foreach (QtModule mi in modules) {
                     tempProData.AppendLine(string.Format(
                         "qtHaveModule({0}): HEADERS += {0}.h", mi.proVarQT));
                 }
@@ -169,8 +169,8 @@ namespace QtVsTools.Core
                     .Select((string s) => Path.GetFileNameWithoutExtension(s));
 
                 _IsModuleAvailable = modules.ToDictionary(
-                    (QtModuleInfo mi) => mi.proVarQT,
-                    (QtModuleInfo mi) => availableModules.Contains(mi.proVarQT));
+                    (QtModule mi) => mi.proVarQT,
+                    (QtModule mi) => availableModules.Contains(mi.proVarQT));
 
                 VC_MinimumVisualStudioVersion =
                     msbuildProj.GetProperty("MinimumVisualStudioVersion");

@@ -45,19 +45,19 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             private bool isChecked;
             private bool isEnabled;
-            private QtModuleInfo module;
+            private QtModule module;
 
             public ModuleCheckBox()
             {
             }
 
-            public ModuleCheckBox(QtModuleInfo module)
+            public ModuleCheckBox(QtModule module)
             {
                 this.module = module;
                 isChecked = isEnabled = false;
             }
 
-            public QtModuleInfo Module
+            public QtModule Module
             {
                 get { return module; }
                 set

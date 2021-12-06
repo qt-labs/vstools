@@ -39,23 +39,23 @@ namespace QtVsTools.Core
     public class QtModules
     {
         private static QtModules instance = new QtModules();
-        private readonly Dictionary<int, QtModuleInfo> dictModuleInfos = new Dictionary<int, QtModuleInfo>();
+        private readonly Dictionary<int, QtModule> dictModuleInfos = new Dictionary<int, QtModule>();
 
         public static QtModules Instance
         {
             get { return instance; }
         }
 
-        public QtModuleInfo ModuleInformation(int moduleId)
+        public QtModule ModuleInformation(int moduleId)
         {
-            QtModuleInfo moduleInfo;
+            QtModule moduleInfo;
             dictModuleInfos.TryGetValue(moduleId, out moduleInfo);
             return moduleInfo;
         }
 
-        public List<QtModuleInfo> GetAvailableModuleInformation()
+        public List<QtModule> GetAvailableModuleInformation()
         {
-            var lst = new List<QtModuleInfo>(dictModuleInfos.Count);
+            var lst = new List<QtModule>(dictModuleInfos.Count);
             foreach (var entry in dictModuleInfos)
                 lst.Add(entry.Value);
             return lst;
@@ -63,7 +63,7 @@ namespace QtVsTools.Core
 
         private QtModules()
         {
-            QtModuleInfo moduleInfo = null;
+            QtModule moduleInfo = null;
 
             var uri = new Uri(
                 System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
@@ -82,7 +82,7 @@ namespace QtVsTools.Core
                 if (xml != null) {
                     foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
                         int moduleId = (int)xModule.Attribute("Id");
-                        moduleInfo = new QtModuleInfo(moduleId);
+                        moduleInfo = new QtModule(moduleId);
                         moduleInfo.Name = (string)xModule.Element("Name");
                         moduleInfo.ResourceName = (string)xModule.Element("ResourceName");
                         moduleInfo.Selectable = ((string)xModule.Element("Selectable") == "true");

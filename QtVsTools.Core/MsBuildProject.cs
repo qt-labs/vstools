@@ -776,7 +776,7 @@ namespace QtVsTools.Core
         }
 
         bool IsModuleUsed(
-            QtModuleInfo module,
+            QtModule module,
             IEnumerable<XElement> compiler,
             IEnumerable<XElement> linker)
         {
@@ -800,7 +800,7 @@ namespace QtVsTools.Core
         }
 
         bool IsPrivateIncludePathUsed(
-            QtModuleInfo module,
+            QtModule module,
             IEnumerable<XElement> compiler)
         {
             // Module private header path is present in compiler include dirs

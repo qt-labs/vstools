@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -32,7 +32,7 @@ using System.IO;
 
 namespace QtVsTools.Core
 {
-    public class QtModuleInfo
+    public class QtModule
     {
         public string Name;
         public string ResourceName;
@@ -68,7 +68,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public QtModuleInfo(int id)
+        public QtModule(int id)
         {
             ModuleId = id;
         }

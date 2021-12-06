@@ -82,7 +82,7 @@ namespace QtVsTools.Wizards.ClassWizard
                                 + @"wizard creates a .h and .cpp file.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = QtModuleInfo.IsInstalled(@"QtCore"),
+                            FinishButtonEnabled = QtModule.IsInstalled(@"QtCore"),
                             CancelButtonEnabled = true
                         }
                     })
