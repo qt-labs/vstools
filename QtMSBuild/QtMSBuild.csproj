@@ -106,6 +106,7 @@
       <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
+    <Compile Include="ITaskLoggingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

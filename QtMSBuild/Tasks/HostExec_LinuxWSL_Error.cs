@@ -32,7 +32,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 {
     public static class HostExec_LinuxWSL_Error
     {
-        public static Microsoft.Build.Utilities.TaskLoggingHelper Log { get; set; }
+        public static QtMSBuild.ITaskLoggingHelper Log { get; set; }
 
         public static bool Execute(
         #region Parameters

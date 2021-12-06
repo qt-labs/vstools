@@ -63,7 +63,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 {
     public static class HostExec_Windows
     {
-        public static Microsoft.Build.Utilities.TaskLoggingHelper Log { get; set; }
+        public static QtMSBuild.ITaskLoggingHelper Log { get; set; }
         public static IBuildEngine BuildEngine { get; set; }
         public static ITaskHost HostObject { get; set; }
 

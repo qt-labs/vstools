@@ -51,7 +51,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 {
     public static class CriticalSection
     {
-        public static Microsoft.Build.Utilities.TaskLoggingHelper Log { get; set; }
+        public static QtMSBuild.ITaskLoggingHelper Log { get; set; }
         public static IBuildEngine BuildEngine { get; set; }
 
         public static bool Execute(

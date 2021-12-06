@@ -56,7 +56,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 {
     public static class QtRunWork
     {
-        public static Microsoft.Build.Utilities.TaskLoggingHelper Log { get; set; }
+        public static QtMSBuild.ITaskLoggingHelper Log { get; set; }
 
         public static bool Execute(
         #region Parameters
