@@ -160,7 +160,6 @@
     <Compile Include="QrcParser.cs" />
     <Compile Include="QrcPrefix.cs" />
     <Compile Include="QtConfig.cs" />
-    <Compile Include="QtModule.cs" />
     <Compile Include="QtModuleInfo.cs" />
     <Compile Include="QtModules.cs" />
     <Compile Include="QtMsBuild.cs" />

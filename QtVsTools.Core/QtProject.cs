@@ -386,9 +386,9 @@ namespace QtVsTools.Core
             }
         }
 
-        public void AddModule(QtModule module)
+        public void AddModule(int moduleId)
         {
-            if (HasModule(module))
+            if (HasModule(moduleId))
                 return;
 
             var vm = QtVersionManager.The();
@@ -398,7 +398,7 @@ namespace QtVsTools.Core
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
 
-                var info = QtModules.Instance.ModuleInformation(module);
+                var info = QtModules.Instance.ModuleInformation(moduleId);
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
                     var config3 = config as VCConfiguration3;
                     if (config3 == null)
@@ -451,13 +451,13 @@ namespace QtVsTools.Core
             }
         }
 
-        public void RemoveModule(QtModule module)
+        public void RemoveModule(int moduleId)
         {
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.ModuleInformation(module);
+                var info = QtModules.Instance.ModuleInformation(moduleId);
                 if (compiler != null) {
                     foreach (var define in info.Defines)
                         compiler.RemovePreprocessorDefinition(define);
@@ -538,7 +538,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public bool HasModule(QtModule module)
+        public bool HasModule(int moduleId)
         {
             var foundInIncludes = false;
             var foundInLibs = false;
@@ -549,7 +549,7 @@ namespace QtVsTools.Core
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)
                 return false; // neither a default or project Qt version
-            var info = QtModules.Instance.ModuleInformation(module);
+            var info = QtModules.Instance.ModuleInformation(moduleId);
             if (info == null)
                 return false;
 

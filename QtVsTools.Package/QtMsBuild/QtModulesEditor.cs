@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,7 +56,7 @@ namespace QtVsTools.QtMsBuild
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
                 .Select(x => new QtModulesPopup.Module
                 {
-                    Id = (int)x.ModuleId,
+                    Id = x.ModuleId,
                     Name = x.Name,
                     IsReadOnly = !x.Selectable,
                     QT = x.proVarQT.Split(' ').ToHashSet(),

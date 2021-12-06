@@ -45,10 +45,10 @@ namespace QtVsTools
         private struct ModuleMapItem
         {
             public CheckBox checkbox;
-            public QtModule moduleId;
+            public int moduleId;
             public bool initialValue;
 
-            public ModuleMapItem(CheckBox cb, QtModule mid)
+            public ModuleMapItem(CheckBox cb, int mid)
             {
                 checkbox = cb;
                 moduleId = mid;
@@ -91,7 +91,7 @@ namespace QtVsTools
             Text = SR.GetString("ProjectQtSettingsButtonText");
         }
 
-        private void AddMapping(CheckBox checkbox, QtModule moduleId)
+        private void AddMapping(CheckBox checkbox, int moduleId)
         {
             moduleMap.Add(new ModuleMapItem(checkbox, moduleId));
         }

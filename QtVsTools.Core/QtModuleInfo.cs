@@ -34,7 +34,6 @@ namespace QtVsTools.Core
 {
     public class QtModuleInfo
     {
-        private QtModule moduleId = QtModule.Invalid;
         public string Name;
         public string ResourceName;
         public bool Selectable;
@@ -69,15 +68,12 @@ namespace QtVsTools.Core
             }
         }
 
-        public QtModuleInfo(QtModule id)
+        public QtModuleInfo(int id)
         {
-            moduleId = id;
+            ModuleId = id;
         }
 
-        public QtModule ModuleId
-        {
-            get { return moduleId; }
-        }
+        public int ModuleId { get; } = -1;
 
         public List<string> GetIncludePath()
         {

@@ -39,14 +39,14 @@ namespace QtVsTools.Core
     public class QtModules
     {
         private static QtModules instance = new QtModules();
-        private readonly Dictionary<QtModule, QtModuleInfo> dictModuleInfos = new Dictionary<QtModule, QtModuleInfo>();
+        private readonly Dictionary<int, QtModuleInfo> dictModuleInfos = new Dictionary<int, QtModuleInfo>();
 
         public static QtModules Instance
         {
             get { return instance; }
         }
 
-        public QtModuleInfo ModuleInformation(QtModule moduleId)
+        public QtModuleInfo ModuleInformation(int moduleId)
         {
             QtModuleInfo moduleInfo;
             dictModuleInfos.TryGetValue(moduleId, out moduleInfo);
@@ -81,8 +81,7 @@ namespace QtVsTools.Core
                 } catch { }
                 if (xml != null) {
                     foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
-                        var id = (string)xModule.Attribute("Id");
-                        QtModule moduleId = (QtModule)Convert.ToUInt32(id);
+                        int moduleId = (int)xModule.Attribute("Id");
                         moduleInfo = new QtModuleInfo(moduleId);
                         moduleInfo.Name = (string)xModule.Element("Name");
                         moduleInfo.ResourceName = (string)xModule.Element("ResourceName");
