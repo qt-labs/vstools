@@ -52,7 +52,7 @@ namespace QtVsTools.QtMsBuild
         {
             await System.Threading.Tasks.Task.Yield();
 
-            var modules = QtModules.Instance.GetAvailableModuleInformation()
+            var modules = QtModules.Instance.GetAvailableModules()
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
                 .Select(x => new QtModulesPopup.Module
                 {

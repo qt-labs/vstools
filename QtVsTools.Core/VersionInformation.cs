@@ -141,7 +141,7 @@ namespace QtVsTools.Core
                 var tempProData = new StringBuilder();
                 tempProData.AppendLine("SOURCES = main.cpp");
 
-                var modules = QtModules.Instance.GetAvailableModuleInformation()
+                var modules = QtModules.Instance.GetAvailableModules()
                     .Where((QtModule mi) => mi.Selectable);
 
                 foreach (QtModule mi in modules) {

@@ -39,76 +39,76 @@ namespace QtVsTools.Core
     public class QtModules
     {
         private static QtModules instance = new QtModules();
-        private readonly Dictionary<int, QtModule> dictModuleInfos = new Dictionary<int, QtModule>();
+        private readonly Dictionary<int, QtModule> modules = new Dictionary<int, QtModule>();
 
         public static QtModules Instance
         {
             get { return instance; }
         }
 
-        public QtModule ModuleInformation(int moduleId)
+        public QtModule Module(int moduleId)
         {
-            QtModule moduleInfo;
-            dictModuleInfos.TryGetValue(moduleId, out moduleInfo);
-            return moduleInfo;
+            QtModule module;
+            modules.TryGetValue(moduleId, out module);
+            return module;
         }
 
-        public List<QtModule> GetAvailableModuleInformation()
+        public List<QtModule> GetAvailableModules()
         {
-            var lst = new List<QtModule>(dictModuleInfos.Count);
-            foreach (var entry in dictModuleInfos)
+            var lst = new List<QtModule>(modules.Count);
+            foreach (var entry in modules)
                 lst.Add(entry.Value);
             return lst;
         }
 
         private QtModules()
         {
-            QtModule moduleInfo = null;
-
             var uri = new Uri(
                 System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             var pkgInstallPath = Path.GetDirectoryName(
                 Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
-            var modulesFile = Path.Combine(pkgInstallPath, "qtmodules.xml");
 
-            if (File.Exists(modulesFile)) {
-                var xmlText = File.ReadAllText(modulesFile, Encoding.UTF8);
-                XDocument xml = null;
-                try {
-                    using (var reader = XmlReader.Create(new StringReader(xmlText))) {
-                        xml = XDocument.Load(reader);
-                    }
-                } catch { }
-                if (xml != null) {
-                    foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
-                        int moduleId = (int)xModule.Attribute("Id");
-                        moduleInfo = new QtModule(moduleId);
-                        moduleInfo.Name = (string)xModule.Element("Name");
-                        moduleInfo.ResourceName = (string)xModule.Element("ResourceName");
-                        moduleInfo.Selectable = ((string)xModule.Element("Selectable") == "true");
-                        moduleInfo.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
-                        moduleInfo.HasDLL = ((string)xModule.Element("HasDLL") == "true");
-                        moduleInfo.proVarQT = (string)xModule.Element("proVarQT");
-                        moduleInfo.proVarCONFIG = (string)xModule.Element("proVarCONFIG");
-                        moduleInfo.IncludePath = xModule.Elements("IncludePath")
-                            .Select(x => x.Value).ToList();
-                        moduleInfo.Defines = xModule.Elements("Defines")
-                            .Select(x => x.Value).ToList();
-                        moduleInfo.AdditionalLibraries = xModule.Elements("AdditionalLibraries")
-                            .Select(x => x.Value).ToList();
-                        moduleInfo.AdditionalLibrariesDebug =
-                            xModule.Elements("AdditionalLibrariesDebug")
-                            .Select(x => x.Value).ToList();
-                        if (string.IsNullOrEmpty(moduleInfo.Name)
-                            || string.IsNullOrEmpty(moduleInfo.LibraryPrefix)) {
-                            Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
-                            throw new QtVSException("qtmodules.xml");
-                        }
-                        dictModuleInfos.Add(moduleId, moduleInfo);
-                    }
+            var modulesFile = Path.Combine(pkgInstallPath, "qtmodules.xml");
+            if (!File.Exists(modulesFile))
+                return;
+
+            var xmlText = File.ReadAllText(modulesFile, Encoding.UTF8);
+            XDocument xml = null;
+            try {
+                using (var reader = XmlReader.Create(new StringReader(xmlText))) {
+                    xml = XDocument.Load(reader);
                 }
+            } catch { }
+
+            if (xml == null)
+                return;
+
+            foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
+                int moduleId = (int)xModule.Attribute("Id");
+                QtModule module = new QtModule(moduleId);
+                module.Name = (string)xModule.Element("Name");
+                module.ResourceName = (string)xModule.Element("ResourceName");
+                module.Selectable = ((string)xModule.Element("Selectable") == "true");
+                module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
+                module.HasDLL = ((string)xModule.Element("HasDLL") == "true");
+                module.proVarQT = (string)xModule.Element("proVarQT");
+                module.proVarCONFIG = (string)xModule.Element("proVarCONFIG");
+                module.IncludePath = xModule.Elements("IncludePath")
+                    .Select(x => x.Value).ToList();
+                module.Defines = xModule.Elements("Defines")
+                    .Select(x => x.Value).ToList();
+                module.AdditionalLibraries = xModule.Elements("AdditionalLibraries")
+                    .Select(x => x.Value).ToList();
+                module.AdditionalLibrariesDebug =
+                    xModule.Elements("AdditionalLibrariesDebug")
+                    .Select(x => x.Value).ToList();
+                if (string.IsNullOrEmpty(module.Name)
+                    || string.IsNullOrEmpty(module.LibraryPrefix)) {
+                    Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
+                    throw new QtVSException("qtmodules.xml");
+                }
+                modules.Add(moduleId, module);
             }
         }
-
     }
 }

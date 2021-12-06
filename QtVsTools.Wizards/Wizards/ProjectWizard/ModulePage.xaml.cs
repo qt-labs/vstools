@@ -118,7 +118,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             InitializeComponent();
 
             ModuleCheckBoxes = new ObservableCollection<ModuleCheckBox>();
-            var modules = QtModules.Instance.GetAvailableModuleInformation()
+            var modules = QtModules.Instance.GetAvailableModules()
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
             foreach (var module in modules)

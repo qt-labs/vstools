@@ -66,7 +66,7 @@ namespace QtVsTools
             tabControl1.TabPages[0].Text = SR.GetString("ActionDialog_Properties");
             tabControl1.TabPages[1].Text = SR.GetString("QtModules");
 
-            var modules = QtModules.Instance.GetAvailableModuleInformation()
+            var modules = QtModules.Instance.GetAvailableModules()
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
             foreach (var module in modules) {
@@ -140,7 +140,7 @@ namespace QtVsTools
                 moduleMap[i] = item;
 
                 // Disable if module not installed
-                var info = QtModules.Instance.ModuleInformation(item.moduleId);
+                var info = QtModules.Instance.Module(item.moduleId);
                 var versionInfo = versionManager.GetVersionInfo(qtVersion);
                 if (info != null && versionInfo != null) {
                     var libraryPrefix = info.LibraryPrefix;

@@ -154,7 +154,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             Loaded -= OnLoaded;
 
-            var qtModules = QtModules.Instance.GetAvailableModuleInformation()
+            var qtModules = QtModules.Instance.GetAvailableModules()
                 .Where((QtModule mi) => mi.Selectable)
                 .Select((QtModule mi) => new Module()
                 {

@@ -491,14 +491,14 @@ namespace QtVsTools.Core
 
         private static void AddModules(QtProject qtPrj, ProFileOption optionQT, ProFileOption optionCONFIG)
         {
-            foreach (var moduleInfo in QtModules.Instance.GetAvailableModuleInformation()) {
-                if (!qtPrj.HasModule(moduleInfo.ModuleId))
+            foreach (var module in QtModules.Instance.GetAvailableModules()) {
+                if (!qtPrj.HasModule(module.ModuleId))
                     continue;
 
-                if (moduleInfo.proVarQT != null)
-                    optionQT.List.Add(moduleInfo.proVarQT);
-                if (moduleInfo.proVarCONFIG != null)
-                    optionCONFIG.List.Add(moduleInfo.proVarCONFIG);
+                if (module.proVarQT != null)
+                    optionQT.List.Add(module.proVarQT);
+                if (module.proVarCONFIG != null)
+                    optionCONFIG.List.Add(module.proVarCONFIG);
             }
         }
 

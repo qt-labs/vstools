@@ -398,7 +398,7 @@ namespace QtVsTools.Core
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
 
-                var info = QtModules.Instance.ModuleInformation(moduleId);
+                var info = QtModules.Instance.Module(moduleId);
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
                     var config3 = config as VCConfiguration3;
                     if (config3 == null)
@@ -457,7 +457,7 @@ namespace QtVsTools.Core
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.ModuleInformation(moduleId);
+                var info = QtModules.Instance.Module(moduleId);
                 if (compiler != null) {
                     foreach (var define in info.Defines)
                         compiler.RemovePreprocessorDefinition(define);
@@ -500,7 +500,7 @@ namespace QtVsTools.Core
                         var additionalDependencies = linkerWrapper.AdditionalDependencies;
 
                         var libsDesktop = new List<string>();
-                        foreach (var module in QtModules.Instance.GetAvailableModuleInformation()) {
+                        foreach (var module in QtModules.Instance.GetAvailableModules()) {
                             if (HasModule(module.ModuleId))
                                 libsDesktop.AddRange(module.AdditionalLibraries);
                         }
@@ -549,7 +549,7 @@ namespace QtVsTools.Core
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)
                 return false; // neither a default or project Qt version
-            var info = QtModules.Instance.ModuleInformation(moduleId);
+            var info = QtModules.Instance.Module(moduleId);
             if (info == null)
                 return false;
 

@@ -613,7 +613,7 @@ namespace QtVsTools.Core
             var moduleLibs = new HashSet<string>();
 
             // Go through all known Qt modules and check which ones are currently being used
-            foreach (var module in QtModules.Instance.GetAvailableModuleInformation()) {
+            foreach (var module in QtModules.Instance.GetAvailableModules()) {
 
                 if (IsModuleUsed(module, compiler, linker)) {
 
