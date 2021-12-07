@@ -16,6 +16,10 @@
       >5.0.0</Version_System_ComponentModel_Composition>
     <Version_Newtonsoft_Json
       >13.0.1</Version_Newtonsoft_Json>
+    <Version_MSTest_TestAdapter
+      >2.2.8</Version_MSTest_TestAdapter>
+    <Version_MSTest_TestFramework
+      >2.2.8</Version_MSTest_TestFramework>
   </PropertyGroup>
   <PropertyGroup>
     <Name_DummyPackage
