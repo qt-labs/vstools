@@ -2,7 +2,6 @@
 <QtVsTools>
   <Module Id="1">
     <Name>Core</Name>
-    <ResourceName>CoreLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCore</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -12,7 +11,6 @@
   </Module>
   <Module Id="2">
     <Name>Xml</Name>
-    <ResourceName>XMLLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXml</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -22,7 +20,6 @@
   </Module>
   <Module Id="3">
     <Name>Sql</Name>
-    <ResourceName>SQLLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSql</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -32,7 +29,6 @@
   </Module>
   <Module Id="4">
     <Name>OpenGL</Name>
-    <ResourceName>OpenGLLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtOpenGL</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -42,7 +38,6 @@
   </Module>
   <Module Id="5">
     <Name>Network</Name>
-    <ResourceName>NetworkLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetwork</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -52,7 +47,6 @@
   </Module>
   <Module Id="7">
     <Name>Gui</Name>
-    <ResourceName>GUILibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtGui</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -63,7 +57,6 @@
   </Module>
   <Module Id="8">
     <Name>ActiveQtS</Name>
-    <ResourceName>ActiveQtServerLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxServer</LibraryPrefix>
     <HasDLL>false</HasDLL>
@@ -75,7 +68,6 @@
   </Module>
   <Module Id="9">
     <Name>ActiveQtC</Name>
-    <ResourceName>ActiveQtContainerLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxContainer</LibraryPrefix>
     <HasDLL>false</HasDLL>
@@ -92,7 +84,6 @@
   </Module>
   <Module Id="13">
     <Name>Svg</Name>
-    <ResourceName>SVGLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSvg</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -102,7 +93,6 @@
   </Module>
   <Module Id="14">
     <Name>Designer</Name>
-    <ResourceName>DesignerLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtDesigner</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -113,7 +103,6 @@
   </Module>
   <Module Id="15">
     <Name>Test</Name>
-    <ResourceName>TestLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTest</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -123,7 +112,6 @@
   </Module>
   <Module Id="16">
     <Name>Script</Name>
-    <ResourceName>ScriptLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtScript</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -133,7 +121,6 @@
   </Module>
   <Module Id="17">
     <Name>Help</Name>
-    <ResourceName>HelpLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtHelp</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -143,7 +130,6 @@
   </Module>
   <Module Id="18">
     <Name>WebKit</Name>
-    <ResourceName>WebKitLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtWebKit</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -152,7 +138,6 @@
   </Module>
   <Module Id="19">
     <Name>XmlPatterns</Name>
-    <ResourceName>XmlPatternsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXmlPatterns</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -162,7 +147,6 @@
   </Module>
   <Module Id="20">
     <Name>Enginio</Name>
-    <ResourceName>EnginioLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>Enginio</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -172,7 +156,6 @@
   </Module>
   <Module Id="21">
     <Name>Multimedia</Name>
-    <ResourceName>MultimediaLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimedia</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -182,7 +165,6 @@
   </Module>
   <Module Id="23">
     <Name>ScriptTools</Name>
-    <ResourceName>ScriptToolsLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtScriptTools</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -192,7 +174,6 @@
   </Module>
   <Module Id="24">
     <Name>UiTools</Name>
-    <ResourceName>UiToolsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtUiTools</LibraryPrefix>
     <HasDLL>false</HasDLL>
@@ -202,7 +183,6 @@
   </Module>
   <Module Id="25">
     <Name>Widgets</Name>
-    <ResourceName>WidgetsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWidgets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -212,7 +192,6 @@
   </Module>
   <Module Id="27">
     <Name>Location</Name>
-    <ResourceName>LocationLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtLocation</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -222,7 +201,6 @@
   </Module>
   <Module Id="28">
     <Name>Nfc</Name>
-    <ResourceName>NfcLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNfc</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -232,7 +210,6 @@
   </Module>
   <Module Id="29">
     <Name>Qml</Name>
-    <ResourceName>QmlLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQml</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -242,7 +219,6 @@
   </Module>
   <Module Id="30">
     <Name>Bluetooth</Name>
-    <ResourceName>BluetoothLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtBluetooth</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -252,7 +228,6 @@
   </Module>
   <Module Id="31">
     <Name>Positioning</Name>
-    <ResourceName>PositioningLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPositioning</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -262,7 +237,6 @@
   </Module>
   <Module Id="32">
     <Name>SerialPort</Name>
-    <ResourceName>SerialPortLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialPort</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -272,7 +246,6 @@
   </Module>
   <Module Id="33">
     <Name>PrintSupport</Name>
-    <ResourceName>PrintSupportLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -282,7 +255,6 @@
   </Module>
   <Module Id="34">
     <Name>WebChannel</Name>
-    <ResourceName>WebChannelLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebChannel</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -292,7 +264,6 @@
   </Module>
   <Module Id="35">
     <Name>WebSockets</Name>
-    <ResourceName>WebSocketsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebSockets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -302,7 +273,6 @@
   </Module>
   <Module Id="36">
     <Name>Sensors</Name>
-    <ResourceName>SensorsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSensors</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -312,7 +282,6 @@
   </Module>
   <Module Id="37">
     <Name>WindowsExtras</Name>
-    <ResourceName>WindowsExtrasLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWinExtras</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -322,7 +291,6 @@
   </Module>
   <Module Id="38">
     <Name>QuickWidgets</Name>
-    <ResourceName>QuickWidgetsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickWidgets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -332,7 +300,6 @@
   </Module>
   <Module Id="40">
     <Name>Quick</Name>
-    <ResourceName>QuickLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuick</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -342,7 +309,6 @@
   </Module>
   <Module Id="50">
     <Name>WebkitWidgets</Name>
-    <ResourceName>WebkitWidgetsLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtWebkitWidgets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -352,7 +318,6 @@
   </Module>
   <Module Id="51">
     <Name>Concurrent</Name>
-    <ResourceName>ConcurrentLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtConcurrent</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -362,7 +327,6 @@
   </Module>
   <Module Id="52">
     <Name>MultimediaWidgets</Name>
-    <ResourceName>MultimediaWidgetsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimediaWidgets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -372,7 +336,6 @@
   </Module>
   <Module Id="101">
     <Name>3D</Name>
-    <ResourceName>Qt3DLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DCore</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -404,7 +367,6 @@
   </Module>
   <Module Id="102">
     <Name>3D Quick</Name>
-    <ResourceName>Qt3DQuickLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DQuick</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -436,7 +398,6 @@
   </Module>
   <Module Id="103">
     <Name>DBus</Name>
-    <ResourceName>DBusLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDBus</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -446,7 +407,6 @@
   </Module>
   <Module Id="104">
     <Name>Gamepad</Name>
-    <ResourceName>GamepadLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtGamepad</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -456,7 +416,6 @@
   </Module>
   <Module Id="105">
     <Name>OpenGL Extensions</Name>
-    <ResourceName>OpenGLExtensionsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtOpenGLExtensions</LibraryPrefix>
     <HasDLL>false</HasDLL>
@@ -466,7 +425,6 @@
   </Module>
   <Module Id="106">
     <Name>QuickTest</Name>
-    <ResourceName>QuickTestLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickTest</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -476,7 +434,6 @@
   </Module>
   <Module Id="107">
     <Name>Quick Controls2</Name>
-    <ResourceName>QuickControls2Library</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickControls2</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -486,7 +443,6 @@
   </Module>
   <Module Id="108">
     <Name>Scxml</Name>
-    <ResourceName>ScxmlLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtScxml</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -496,7 +452,6 @@
   </Module>
   <Module Id="109">
     <Name>Serial Bus</Name>
-    <ResourceName>SerialBusLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialBus</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -506,7 +461,6 @@
   </Module>
   <Module Id="110">
     <Name>UI Plugin</Name>
-    <ResourceName>UiPluginLibrary</ResourceName>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtUiPlugin</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -516,7 +470,6 @@
   </Module>
   <Module Id="111">
     <Name>WebEngine</Name>
-    <ResourceName>WebEngineLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngine</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -532,7 +485,6 @@
   </Module>
   <Module Id="113">
     <Name>WebEngine Widgets</Name>
-    <ResourceName>WebEngineWidgetsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngineWidgets</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -548,7 +500,6 @@
   </Module>
   <Module Id="114">
     <Name>Charts</Name>
-    <ResourceName>ChartsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCharts</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -558,7 +509,6 @@
   </Module>
   <Module Id="115">
     <Name>Data Visualization</Name>
-    <ResourceName>DataVisualizationLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDataVisualization</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -568,7 +518,6 @@
   </Module>
   <Module Id="116">
     <Name>Network Authorization</Name>
-    <ResourceName>NetworkAuthLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetworkAuth</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -578,7 +527,6 @@
   </Module>
   <Module Id="117">
     <Name>Speech</Name>
-    <ResourceName>TextToSpeechLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTextToSpeech</LibraryPrefix>
     <HasDLL>true</HasDLL>
@@ -588,7 +536,6 @@
   </Module>
   <Module Id="118">
     <Name>Remote Objects</Name>
-    <ResourceName>RemoteObjectsLibrary</ResourceName>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtRemoteObjects</LibraryPrefix>
     <HasDLL>true</HasDLL>

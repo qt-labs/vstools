@@ -203,15 +203,6 @@ namespace QtVsTools
                 GetTextMateLanguagePath();
                 GetNatvisPath();
 
-                var modules = QtModules.Instance.GetAvailableModules();
-                foreach (var module in modules) {
-                    if (!string.IsNullOrEmpty(module.ResourceName)) {
-                        var translatedName = SR.GetString(module.ResourceName, this);
-                        if (!string.IsNullOrEmpty(translatedName))
-                            module.Name = translatedName;
-                    }
-                }
-
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
                 await TaskScheduler.Default;

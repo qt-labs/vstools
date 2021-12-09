@@ -35,7 +35,6 @@ namespace QtVsTools.Core
     public class QtModule
     {
         public string Name;
-        public string ResourceName;
         public bool Selectable;
         public List<string> Defines = new List<string>();
         public string LibraryPrefix = string.Empty;

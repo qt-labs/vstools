@@ -87,7 +87,6 @@ namespace QtVsTools.Core
                 int id = (int)xModule.Attribute("Id");
                 QtModule module = new QtModule(id);
                 module.Name = (string)xModule.Element("Name");
-                module.ResourceName = (string)xModule.Element("ResourceName");
                 module.Selectable = ((string)xModule.Element("Selectable") == "true");
                 module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
                 module.HasDLL = ((string)xModule.Element("HasDLL") == "true");
