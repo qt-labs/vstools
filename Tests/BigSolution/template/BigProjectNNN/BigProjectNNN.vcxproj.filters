@@ -25,10 +25,24 @@
     <ClInclude Include="BigClassNNN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <QtMoc Include="BigProjectQtClassNNN.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BigClassNNN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BigProjectQtClassNNN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <QtUic Include="BigProjectNNN.ui">
+      <Filter>Source Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="BigProjectNNN.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>
