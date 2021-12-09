@@ -394,18 +394,10 @@
     <Compile Include="Tasks\DumpItems.cs" />
     <Compile Include="Tasks\HostTranslatePaths_Windows.cs" />
     <Compile Include="Tasks\HostExec_Windows.cs" />
-    <Compile
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
-    <Compile
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="Tasks\HostExec_LinuxSSL.cs" />
-    <Compile
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
-    <Compile
-      Condition="'$(VisualStudioVersion)' != '12.0' AND '$(VisualStudioVersion)' != '14.0'"
-      Include="Tasks\HostExec_LinuxWSL.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
+    <Compile Include="Tasks\HostExec_LinuxSSL.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
+    <Compile Include="Tasks\HostExec_LinuxWSL.cs" />
     <T4Template Include="QtMSBuild\qt_tasks.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>qt_tasks.targets</OutputFile>
