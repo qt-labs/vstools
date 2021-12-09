@@ -174,9 +174,6 @@
       <DependentUpon>LibraryClassPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\ProjectWizard\Library\LibraryWizard.cs" />
-    <Compile Include="Wizards\ProjectWizard\ModulePage.xaml.cs">
-      <DependentUpon>ModulePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Wizards\Util\NativeMethods.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -232,10 +229,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Wizards\ProjectWizard\Library\LibraryClassPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Wizards\ProjectWizard\ModulePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
