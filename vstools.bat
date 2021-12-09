@@ -2,26 +2,21 @@
 SETLOCAL
 
 SET SCRIPT=%~n0
-
-SET "USAGE=%SCRIPT%"
-SET "USAGE=%USAGE% [ -init ^| [-rebuild] [-config [debug^|release^|test]] [-deploy ^<DEPLOY_DIR^>] [-install] ]"
-SET "USAGE=%USAGE% [-transform_incremental]"
-SET "USAGE=%USAGE% [-vs2022]"
-SET "USAGE=%USAGE% [-vs2019]"
-SET "USAGE=%USAGE% [-vs2017]"
-SET "USAGE=%USAGE% [-startvs]"
-SET "USAGE=%USAGE% [-version ^<MAJOR_VS_VERSION^>.^<MINOR_VS_VERSION^>]"
-SET "USAGE=%USAGE% [-verbose]"
-SET "USAGE=%USAGE% [-bl]"
+SET ROOT=%CD%
 
 SET TRUE="0"=="0"
 SET FALSE="0"=="1"
 SET ALL="tokens=* usebackq"
 
-SET VSWHERE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+SET VSWHERE_EXE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+SET VSWHERE=%VSWHERE_EXE%
 SET VSWHERE=%VSWHERE:(=^(%
 SET VSWHERE=%VSWHERE:)=^)%
 SET QUERY=-latest -prerelease
+SET VSWHERE_MAJOR=2
+SET VSWHERE_MINOR=7
+SET VSWHERE_PATCH=1
+SET VSWHERE_VERSION=%VSWHERE_MAJOR%.%VSWHERE_MINOR%.%VSWHERE_PATCH%
 
 SET DEPENDENCIES=QtVsTools_RegExpr;QtMsBuild:TransformAll
 
@@ -40,7 +35,7 @@ SET CLEAN=%FALSE%
 SET BINARYLOG=%FALSE%
 SET CONFIGURATION=Release
 SET DO_INSTALL=%FALSE%
-SET TRANSFORM_INCREMENTAL=false
+SET TRANSFORM_INCREMENTAL=true
 SET START_VS=%FALSE%
 
 SET PLATFORM_VS2017="Any CPU"
@@ -51,6 +46,8 @@ SET FLAG_VS2022=-vs2022
 SET FLAG_VS2019=-vs2019
 SET FLAG_VS2017=-vs2017
 
+REM ///////////////////////////////////////////////////////////////////////////////////////////////
+REM // Process command line arguments
 :parseArgs
 
 SET NEXT_ARG=%2
@@ -75,8 +72,8 @@ IF NOT "%1"=="" (
         SHIFT
     ) ELSE IF "%1"=="-install" (
         SET DO_INSTALL=%TRUE%
-    ) ELSE IF "%1"=="-transform_incremental" (
-        SET TRANSFORM_INCREMENTAL=true
+    ) ELSE IF "%1"=="-build" (
+        REM NOOP
     ) ELSE IF "%1"=="-verbose" (
         SET VERBOSE=%TRUE%
     ) ELSE IF "%1"=="-bl" (
@@ -147,6 +144,49 @@ IF %BINARYLOG% (
     SET MSBUILD_EXTRAS=%MSBUILD_EXTRAS% -bl
 )
 
+REM ///////////////////////////////////////////////////////////////////////////////////////////////
+REM // Check requirements
+
+IF %VERBOSE% ECHO ## root: %ROOT%
+
+IF NOT EXIST vstools.sln (
+    ECHO Error: could not find Qt VS Tools solution file.
+    EXIT /B 1
+)
+
+IF NOT EXIST %VSWHERE_EXE% (
+    ECHO Error: could not find Visual Studio Locator tool.
+    EXIT /B 1
+)
+
+FOR /F %ALL% %%v IN (`"%VSWHERE% -help"`) DO (
+    SET VSWHERE_LOGO=%%v
+    GOTO :break_vswhere_help
+)
+:break_vswhere_help
+
+IF %VERBOSE% ECHO ## vswhere: %VSWHERE_LOGO%
+
+SET VSWHERE_OK=%TRUE%
+FOR /F "tokens=5,6,7 delims=.+ " %%v IN ("%VSWHERE_LOGO%") DO (
+    IF %%v LSS %VSWHERE_MAJOR% (
+        SET VSWHERE_OK=%FALSE%
+    ) ELSE IF %%v EQU %VSWHERE_MAJOR% (
+        IF %%w LSS %VSWHERE_MINOR% (
+            SET VSWHERE_OK=%FALSE%
+        ) ELSE IF %%w EQU %VSWHERE_MINOR% IF %%x LSS %VSWHERE_PATCH% (
+            SET VSWHERE_OK=%FALSE%
+        )
+    )
+)
+IF NOT %VSWHERE_OK% (
+    ECHO Error: Visual Studio Locator version must be %VSWHERE_VERSION% or greater.
+    EXIT /B 1
+)
+
+REM ///////////////////////////////////////////////////////////////////////////////////////////////
+REM // Cycle through installed VS products
+
 IF %VERBOSE% ECHO ## VS versions: %VS_VERSIONS%
 
 FOR %%v IN (%VS_VERSIONS%) DO (
@@ -154,25 +194,24 @@ FOR %%v IN (%VS_VERSIONS%) DO (
 
     IF %VERBOSE% ECHO ## Querying VS version: %%v
 
-    IF %VERBOSE% ECHO ## "%VSWHERE% %QUERY% %%~v -property installationPath"
+    IF %VERBOSE% ECHO ##   %VSWHERE% %QUERY% %%~v -property installationPath
     FOR /F %ALL% %%p IN (`"%VSWHERE% %QUERY% %%~v -property installationPath"`) DO (
     IF %VERBOSE% ECHO ## installationPath: %%p
 
-    IF %VERBOSE% ECHO ## "%VSWHERE% -path "%%p" -property catalog_productLineVersion"
+    IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property catalog_productLineVersion
     FOR /F %ALL% %%e IN (`"%VSWHERE% -path "%%p" -property catalog_productLineVersion"`) DO (
     IF %VERBOSE% ECHO ## catalog_productLineVersion: %%e
 
-    IF %VERBOSE% ECHO ## "%VSWHERE% -path "%%p" -property displayName"
+    IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property displayName
     FOR /F %ALL% %%n IN (`"%VSWHERE% -path "%%p" -property displayName"`) DO (
     IF %VERBOSE% ECHO ## displayName: %%n
 
-    IF %VERBOSE% ECHO ## "%VSWHERE% -path "%%p" -property installationVersion"
+    IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property installationVersion
     FOR /F %ALL% %%i IN (`"%VSWHERE% -path "%%p" -property installationVersion"`) DO (
     IF %VERBOSE% ECHO ## installationVersion: %%i
 
-    IF %VERBOSE% ECHO ## CMD /C "ECHO %%PLATFORM_VS%%e%%"
     FOR /F %ALL% %%f IN (`CMD /C "ECHO %%PLATFORM_VS%%e%%"`) DO (
-    IF %VERBOSE% ECHO ## platform: %%f
+        IF %VERBOSE% ECHO ## platform: %%f
 
         IF "%%e"=="2022" (
             IF %VERBOSE% ECHO ## CALL "%%p\VC\Auxiliary\Build\vcvars64.bat"
@@ -240,6 +279,14 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         IF %INIT% (
             ECHO ################################################################################
             ECHO ## Building pre-requisites...
+            IF %VERBOSE% (
+                ECHO ## msbuild: vstools.sln
+                ECHO ## msbuild: -t:%DEPENDENCIES%
+                ECHO ## msbuild: -p:Configuration=%CONFIGURATION%
+                ECHO ## msbuild: -p:Platform=%%f
+                ECHO ## msbuild: -p:TransformOutOfDateOnly=false
+                ECHO ## msbuild extras: %MSBUILD_EXTRAS%
+            )
             ECHO ################################################################################
             msbuild ^
                 -nologo ^
@@ -322,12 +369,49 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         )
 
         ECHO.
-    )))))
+        )
+    ))))
     ENDLOCAL
 )
 
 EXIT /B 0
 
 :usage
-ECHO Syntax: %USAGE%
+
+ECHO Usage:
+ECHO.
+ECHO     %SCRIPT% [VS Versions] [Operation] [Options]
+ECHO.
+ECHO == 'VS Versions' can be one or more of the following:
+ECHO  -vs2022 ................ Select the latest version of Visual Studio 2022
+ECHO  -vs2019 ................ Select the latest version of Visual Studio 2019
+ECHO  -vs2017 ................ Select the latest version of Visual Studio 2017
+ECHO  -version ^<X^>.^<Y^> ....... Select version X.Y of Visual Studio
+ECHO                           Can be specified several times
+ECHO.
+ECHO  If no version is specified, the most recent version of VS is selected.
+ECHO.
+ECHO == 'Operation' can be one of the following:
+ECHO  -build ......... Incremental build of solution
+ECHO  -rebuild ....... Clean build of solution
+ECHO  -init .......... Initialize vstools solution for the specified version of VS
+ECHO                   If multiple versions are specified, the last one is selected
+ECHO  -startvs ....... Open vstools solution in selected VS version
+ECHO.
+ECHO  If no operation is specified, -build is assumed by default.
+ECHO.
+ECHO == 'Options' can be one or more of the following
+ECHO  -config ^<CONFIG_NAME^> ....... Select CONFIG_NAME as the build configuration
+ECHO                                Defaults to the 'Release' configuration
+ECHO                                Only valid with -build or -rebuild
+ECHO  -deploy ^<DEPLOY_DIR^> ........ Deploy installation package to DEPLOY_DIR
+ECHO                                Only valid with -build or -rebuild
+ECHO  -install .................... Install extension to selected VS version(s)
+ECHO                                Only valid with -build or -rebuild
+ECHO  -startvs .................... Open vstools solution in selected VS version
+ECHO  -verbose .................... Print more detailed log information
+ECHO  -bl ......................... Generate MSBuild binary log
+ECHO                                Only valid with -build or -rebuild
+ECHO.
+
 EXIT /B 1
