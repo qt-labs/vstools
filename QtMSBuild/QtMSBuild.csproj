@@ -419,6 +419,21 @@
       <DependentUpon>qt_tasks.targets_TT</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <T4Template Include="$(SolutionDir)\vstools.pri_TT">
+      <Link>vstools.pri_TT</Link>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>$(SolutionDir)\vstools.pri</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>vstools.pri</LastGenOutput>
+      <SubType>Designer</SubType>
+    </T4Template>
+    <None Include="$(SolutionDir)\vstools.pri">
+      <Link>vstools.pri</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>vstools.pri_TT</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
