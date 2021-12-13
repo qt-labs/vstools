@@ -69,7 +69,6 @@
 
 /*!
     \page qtvstools-getting-started.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Qt VS Tools Manual
     \nextpage Managing Projects
     \title Getting Started
@@ -391,7 +390,6 @@
 
 /*!
     \page qtvstools-managing-projects.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Getting Started
     \nextpage Adding Form Files to Projects
     \title Managing Projects
@@ -512,7 +510,6 @@
 
 /*!
     \page qtvstools-form-files.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Managing Projects
     \nextpage Managing Resources
     \title Adding Form Files to Projects
@@ -533,7 +530,6 @@
 
 /*!
     \page qtvstools-managing-resources.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Adding Form Files to Projects
     \nextpage Creating Qt Translation Files for Projects
     \title Managing Resources
@@ -572,7 +568,6 @@
 
 /*!
     \page qtvstools-translation-files.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Managing Resources
     \nextpage FAQ
     \title Creating Qt Translation Files for Projects
@@ -602,7 +597,6 @@
 
 /*!
     \page qtvstools-faq.html
-    \contentspage {Qt VS Tools}{Contents}
     \previouspage Creating Qt Translation Files for Projects
     \title FAQ
 
