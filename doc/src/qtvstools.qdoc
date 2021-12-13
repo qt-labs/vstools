@@ -73,38 +73,43 @@
     \nextpage Managing Projects
     \title Getting Started
 
-    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt GUI}
+    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
     application. You will create a project using a project wizard and design a
-    UI using \QD. In addition, you will learn how to convert a Visual Studio
-    project file into a qmake compatible \c .pro file.
+    widget-based UI using \QD. In addition, you will learn how to convert a
+    Microsoft Visual Studio project file into a qmake compatible \c .pro file.
+
+    You can use Qt VS Tools to develop also \l{Qt Quick} applications.
+
+    \section1 Install Qt VS Tools
+
+    In Microsoft Visual Studio, select \uicontrol Extensions >
+    \uicontrol {Manage Extensions} > \uicontrol Online,
+    and search for \uicontrol {Qt Visual Studio Tools}
+    to install or update Qt VS Tools.
+
+    \section1 Add a Qt Version
 
     To create a Qt VS Tools project, you must add at least one
     \l{Managing Qt Versions}{Qt version}.
 
-    \section1 Installing Qt VS Tools
+    \section1 Create a Qt Widgets Application Project
 
-    In Microsoft Visual Studio, select \uicontrol Tools >
-    \uicontrol {Extensions and Updates} > \uicontrol Online,
-    and search for \uicontrol {Qt Visual Studio Tools} to install
-    or update Qt VS Tools.
-
-    \section1 Creating Qt GUI Application Projects
-
-    To create a Qt GUI application project in Visual Studio:
+    To create a Qt Widgets application project in Visual Studio:
 
     \list 1
-        \li Select \uicontrol {New Project} > \uicontrol Installed >
-            \uicontrol Templates > \uicontrol {Visual C++} > \uicontrol Qt >
-            \uicontrol {Qt GUI Application}.
+        \li Select \uicontrol File > \uicontrol New > \uicontrol Project, and
+            search for \uicontrol {Qt Widgets Application}.
         \li In the \uicontrol Name field, enter \e AddressBook, and then select
             \uicontrol OK.
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
-        \li Select the modules to include in the project, and then select
-            \uicontrol Next.
-
-            The modules that are typically needed in GUI application projects
+        \li Set up the \uicontrol Debug build configuration and select the
+            modules to include in the project:
+            \image qtvstools-widgets-app-modules.png "Selecting Qt modules in Qt Widgets Application Wizard"
+            The modules that are typically needed in widget application projects
             are selected by default.
+        \li Select \uicontrol Next to continue to the class creation page:
+            \image qtvstools-widgets-app-class.png "Creating a class in Qt Widgets Application Wizard"
         \li In the \uicontrol {Base class} field, enter \uicontrol QWidget as
             the base class type.
         \li Select the \uicontrol {Lower case filenames} check box to
@@ -121,16 +126,20 @@
     \uicontrol {Start Debugging} to run it. For now, the result is an empty
     window.
 
-    \section1 Designing the Main Window
+    \section1 Design the Main Window
 
     You can use \QD to design the application's main window, which contains
     some widgets placed in layouts:
 
     \image qtvstools-addressbook-mainwindow.png AddressBook's main dialog
 
+    To run \QD in a separate window by default, select \uicontrol Extensions >
+    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {\QD}, and set
+    \uicontrol {Run in detached window} to \uicontrol True.
+
     For more information about using \QD, see the \l{Qt Designer Manual}.
 
-    \section2 Adding Widgets
+    \section2 Add Widgets
 
     To add widgets to the UI and to set properties for them:
 
@@ -159,7 +168,7 @@
     resized correctly when the form is resized, you need to add layouts to the
     form.
 
-    \section2 Adding Widgets to Layouts
+    \section2 Add Widgets to Layouts
 
     You will need a vertical layout for the buttons as well as a spacer to push
     the buttons to the top of the layout. In addition, you will need a second
@@ -188,7 +197,7 @@
 
     Build and run the application to check the main window.
 
-    \section1 Adding Dialogs
+    \section1 Add a Dialog
 
     Now that the main window is ready, you can move on to add functionality to
     the application. To have the application open a dialog when the user clicks
@@ -201,18 +210,19 @@
     QDialog::accept() and QDialog::reject() slots, respectively. You can use \QD
     to add other widgets to the form.
 
-    \section2 Creating the Dialog
+    \section2 Create the Dialog
 
     To add a dialog to a project:
 
     \list 1
         \li In Visual Studio, select \uicontrol Project >
             \uicontrol {Add Qt Class} > \uicontrol Installed >
-            \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt GUI Class}.
-        \li In the \uicontrol Name field, enter \e AddDialog, and then select
-            \uicontrol Add.
+            \uicontrol {Visual C++} > \uicontrol Qt >
+            \uicontrol {Qt Widgets Class}.
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
+        \li In the \uicontrol Name field, enter \e AddDialog.
+            \image qtvstools-qt-widget-class-wizard.png "Creating a class in Qt Widgets Class Wizard"
         \li In the \uicontrol {Base class} field, enter \uicontrol QDialog as
             the base class type.
         \li Select the \uicontrol {Multiple inheritance} radio button.
@@ -222,7 +232,7 @@
             the dialog.
     \endlist
 
-    \section2 Designing the Dialog
+    \section2 Design the Dialog
 
     \image qtvstools-addressbook-adddialog.png Add Address Dialog
 
@@ -256,7 +266,7 @@
         \li Select \uicontrol File > \uicontrol Save to save the form.
     \endlist
 
-    \section1 Connecting to the Dialog's OK Button
+    \section1 Connect to the Dialog's OK Button
 
     To have the \uicontrol OK button invoke the QDialog::accept() slot, click
     the \uicontrol {Edit Signals/Slots} toolbar button to enter
@@ -267,7 +277,7 @@
     \uicontrol {Configure Connection} dialog, connect the button's
     QPushButton::clicked() signal to the form's QDialog::accept() slot.
 
-    \section1 Opening Dialogs from the Main Window
+    \section1 Open Dialogs from the Main Window
 
     To invoke the dialog when the user selects \uicontrol Add in the main
     window, you must add a slot to the \c AddressBook class and invoke
@@ -311,7 +321,7 @@
     \uicontrol Add button to open the \uicontrol {Add Address} dialog, and then
     select \uicontrol OK to close it.
 
-    \section1 Adding Items to the List Widget
+    \section1 Add Items to the List Widget
 
     When the user selects \uicontrol OK, an item should be added to the
     QListWidget. To implement this function, modify the code in the
@@ -325,7 +335,7 @@
     the \uicontrol Name and \uicontrol Email fields are extracted and a
     QListWidgetItem that contains the specified information is created.
 
-    \section1 Displaying the Selected Item
+    \section1 Display the Selected Item
 
     When the user selects an item in the list widget, the \c nameLabel and
     \c emailLabel at the bottom of the form should be updated. This behavior
@@ -348,7 +358,7 @@
     to the QListWidget::currentItemChanged() signal of \c{addressList} and
     invoked whenever the selected item in the list changes.
 
-    \section1 Adding Functionality for the Delete Button
+    \section1 Add Functionality for the Delete Button
 
     To implement a slot for the \uicontrol Delete button, open the
     \c addressbook.h file in Visual Studio and add a declaration for the
@@ -362,7 +372,7 @@
 
     Your application is now complete.
 
-    \section1 Creating Qt Project Files
+    \section1 Create Qt Project Files
 
     To build the application on other platforms, you need to create a \c .pro
     file for the project.
@@ -370,8 +380,8 @@
     To let Qt VS Tools create a basic \c .pro file for you:
 
     \list 1
-        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Create Basic .pro
-            File}.
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Create Basic .pro File}.
         \li In the \uicontrol {Export Project} dialog, make sure that the
             \uicontrol {Create .pri file} check box is selected, and then select
             \uicontrol OK.
@@ -519,9 +529,9 @@
 
     To add a new \c .ui file to the project, select \uicontrol Project >
     \uicontrol {Add Qt Class} > \uicontrol Installed > \uicontrol {Visual C++} >
-    \uicontrol Qt > \uicontrol {Qt GUI Class}.
+    \uicontrol Qt > \uicontrol {Qt Widget Class}.
 
-    \image qtvstools-qt-gui-class-wizard.png
+    \image qtvstools-qt-widget-class-wizard.png
 
     Typically, you need to wrap the code generated for the form file into a
     QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
