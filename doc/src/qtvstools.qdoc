@@ -59,7 +59,9 @@
 
     \list
         \li \l {Getting Started}
-        \li \l {Managing Projects}
+        \li \l {Managing Qt Versions}
+        \li \l {Creating Projects}
+        \li \l {Importing and Exporting Projects}
         \li \l {Adding Form Files to Projects}
         \li \l {Managing Resources}
         \li \l {Creating Qt Translation Files for Projects}
@@ -71,7 +73,7 @@
 /*!
     \page qtvstools-getting-started.html
     \previouspage Qt VS Tools Manual
-    \nextpage Managing Projects
+    \nextpage Managing Qt Versions
     \title Getting Started
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
@@ -394,7 +396,7 @@
     \endlist
 
     For more information about \c .pro files and their associated \c .pri files,
-    see \l {Managing Projects}.
+    see \l {Creating Projects}.
 
     You should now have a working \c .pro file and \c .pri file for your
     project. For more complex projects, manually editing the \c .pro file
@@ -403,39 +405,48 @@
 */
 
 /*!
-    \page qtvstools-managing-projects.html
-    \previouspage Getting Started
-    \nextpage Adding Form Files to Projects
-    \title Managing Projects
+    \page qtvstools-creating-projects.html
+    \previouspage Managing Qt Versions
+    \nextpage Importing and Exporting Projects
+    \title Creating Projects
 
-    Once you have installed Qt VS Tools, you can select the following project
-    templates in Visual Studio in \uicontrol File > \uicontrol {New Project} >
-    \uicontrol Installed > \uicontrol Templates > \uicontrol {Visual C++} >
-    \uicontrol Qt:
+    Once you have installed Qt VS Tools, you can search for and then select
+    the following project templates in Visual Studio in \uicontrol File >
+    \uicontrol New \uicontrol Project:
 
     \list
-        \li \uicontrol {Qt GUI Application} creates a simple Qt widgets
-            application with one form.
-        \li \uicontrol {Qt Designer Custom Widget} creates a \QD custom widget
-            plugin.
-        \li \uicontrol {Qt Console Application} creates a basic Qt console
-            application.
+        \li \uicontrol {Qt ActiveQt Server} creates a simple ActiveX server.
         \li \uicontrol {Qt Class Library} creates a basic Qt-based dynamic
             library.
-        \li \uicontrol {Qt ActiveQt Server} creates a simple ActiveX server.
+        \li \uicontrol {Qt Console Application} creates a basic Qt console
+            application.
+        \li \uicontrol {Qt Designer Custom Widget} creates a \QD custom widget
+            plugin.
+        \li \uicontrol {Qt Empty Application} creates a an empty Qt application
+            project.
+        \li \uicontrol {Qt Quick Application} creates a Qt Quick application
+            project.
+        \li \uicontrol {Qt Widgets Application} creates a simple Qt widgets
+            application with one form.
     \endlist
 
     Each Qt project provides a wizard that allows you to specify the Qt modules
     required for your project. For some projects, the wizard will also generate
-    a skeleton class that you can use to get started.
+    a skeleton class or QML type instance that you can use to get started.
 
     To start writing Qt code and building your projects, you must tell Visual
-    Studio where to find the Qt version that you want to use.
+    Studio where to find the \l{Managing Qt Versions}{Qt version} that you want
+    to use.
+*/
 
-    \section1 Managing Qt Versions
+/*!
+    \page qtvstools-managing-qt-versions.html
+    \previouspage Getting Started
+    \nextpage Creating Projects
+    \title Managing Qt Versions
 
     Qt VS Tools provide you with basic Qt version management that enables you to
-    use multiple versions of Qt 5 in parallel. For example, Qt 5.12.5 and 5.13.1.
+    use multiple Qt versions in parallel. For example, Qt 5.15.4 and 6.2.0.
     You have to add at least one Qt version to be able to create Qt projects.
 
     \image qtvstools-qt-versions.png Qt Versions
@@ -443,23 +454,36 @@
     To manage Qt versions:
 
     \list 1
-        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Qt Options} >
-            \uicontrol {Qt Versions} > \uicontrol Add.
-        \li In the \uicontrol {Version name} field, enter a name for the Qt
-            version.
-        \li In the \uicontrol Path field, enter the path to the Qt root
-            directory. For example: \c {C:\Qt5\5.13.1\msvc2017_64}.
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Qt Versions} > \inlineimage qtvstools-plus.png
+            .
+        \li In the \uicontrol Version field, enter a name for the Qt version.
+            If you add the path to Qt first, this field is filled automatically.
+        \li In the \uicontrol Host field, select \uicontrol Windows, unless you
+            want to cross-compile the application for an embedded Linux device.
+        \li In the \uicontrol Path field, enter the path to the qmake.exe for
+            the Qt version.
+            For example: \c {C:\Qt\6.2.0\msvc2019_64\bin\qmake.exe}.
+        \li In the \uicontrol Default field, select the Qt version to be used
+            by default when creating new projects or importing a project from a
+            \c {.pro} file.
         \li Select \uicontrol OK.
-        \li In the \uicontrol {Default Qt/Win version} field, select the Qt
-            version to be used by default when creating new projects or
-            importing a project from a \c {.pro} file.
     \endlist
 
-    To specify the Qt version that a project or solution should use, select
-    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
-    \uicontrol Properties > \uicontrol Version.
+    To remove a Qt version, select \inlineimage qtvstools-minus.png
+    .
 
-    \section1 Importing and Exporting Projects
+    To specify Qt versions for a project, right-click the project in Solution
+    Explorer and select \uicontrol Properties in the context menu. Select
+    \uicontrol {Qt Project Settings}, and set the Qt version as the value of
+    the \uicontrol {Qt Installation} option.
+*/
+
+/*!
+    \page qtvstools-importing-and-exporting-projects.html
+    \previouspage Creating Projects
+    \nextpage Adding Form Files to Projects
+    \title Importing and Exporting Projects
 
     Qt and Visual Studio use different file formats to save projects. If you
     build your application on multiple platforms, you probably already use
@@ -471,7 +495,8 @@
     to manually maintain \c .pro files and \c .vcproj files in parallel. You
     start by creating a \c .vcproj file, as usual. When you need a qmake
     \c .pro file for storing Linux and macOS specific settings, select
-    \uicontrol {Qt VS Tools} > \uicontrol {Create Basic .pro File}.
+    \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+    \uicontrol {Create Basic .pro File}.
 
     \image qtvstools-export-project.png Export Projects dialog
 
@@ -486,7 +511,8 @@
 
     The \c .pri file contains the list of source files, header files, \c .ui
     files, and \c .qrc files in the project. To generate the \c .pri file,
-    select \uicontrol {Qt VS Tools} > \uicontrol {Export Project to .pri File}.
+    select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+    \uicontrol {Export Project to .pri File}.
     When you add or remove a file from the Visual Studio project file, you must
     regenerate the \c .pri file to ensure that the application can still be
     built on other platforms.
@@ -497,9 +523,9 @@
 
     Developers on platforms other than Windows might add or remove files to the
     project by editing the \c .pri file. When this happens, Windows developers
-    must select \uicontrol {Qt VS Tools} > \uicontrol {Import .pri File to
-    Project} to synchronize the Visual Studio project file with the \c .pri
-    file.
+    must select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+    \uicontrol {Import .pri File to Project} to synchronize the Visual Studio
+    project file with the \c .pri file.
 
     If your project contains platform-specific source files, you should list
     them in the \c .pro file so that they are not overwritten by Qt VS Tools.
@@ -515,7 +541,8 @@
     \endlist
 
     If you already have a \c .pro file but no \c .vcproj file, select
-    \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)} to
+    \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+    \uicontrol {Open Qt Project File (.pro)} to
     convert your \c .pro file to a \c .vcproj file. The generated \c .vcproj
     only contains Windows-specific settings. Also, there is no other way to
     convert a \c .vcproj file back to the \c .pro file format than using the
@@ -524,7 +551,7 @@
 
 /*!
     \page qtvstools-form-files.html
-    \previouspage Managing Projects
+    \previouspage Importing and Exporting Projects
     \nextpage Managing Resources
     \title Adding Form Files to Projects
 
