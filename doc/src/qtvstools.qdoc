@@ -133,6 +133,9 @@
 
     \image qtvstools-addressbook-mainwindow.png AddressBook's main dialog
 
+    By default, \QD opens in Visual Studio. To open it as a stand-alone
+    application, select \uicontrol Detach.
+
     To run \QD in a separate window by default, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {\QD}, and set
     \uicontrol {Run in detached window} to \uicontrol True.
@@ -552,6 +555,14 @@
 
     \image qtvstools-qrc-editor.png Qt Resource Editor dialog
 
+    By default, Qt Resource Editor opens in Visual Studio. To run it in a
+    separate window, select \uicontrol Detach.
+
+    To run \l{Qt Resource Editor} in a separate window by default,
+    select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+    \uicontrol Options > \uicontrol {Qt Resource Editor}, and
+    set \uicontrol {Run in detached window} to \uicontrol True.
+
     To add new resources:
 
     \list 1
@@ -585,8 +596,8 @@
     To add a new translation file to the project:
 
     \list 1
-        \li Select \uicontrol {Qt VS Tools} > \uicontrol {Create New Translation
-            File}.
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Create New Translation File}.
         \li In the \uicontrol Language field, select a language from the list of
             supported languages.
         \li In the \uicontrol Filename field, enter a filename for the
@@ -597,9 +608,16 @@
             for running \c lupdate and \c lrelease.
     \endlist
 
-    To start \QL, select \uicontrol {Qt VS Tools} >
+    To start \QL, select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
     \uicontrol {Launch Qt Linguist} or double-click a \c .ts file in the
     Solution Explorer.
+
+    By default, \QL opens in Visual Studio. To open it as a stand-alone
+    application, select \uicontrol Detach.
+
+    To run \QL in a separate window by default, select \uicontrol Extensions >
+    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {\QL}, and set
+    \uicontrol {Run in detached window} to \uicontrol True.
 
     For more information about Qt's translation tools, see the
     \l {Qt Linguist Manual}.
