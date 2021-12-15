@@ -85,7 +85,6 @@ namespace QtVsTools.Options
             [String("BkgBuild_RunQtTools")] RunQtTools,
             [String("BkgBuild_DebugInfo")] DebugInfo,
             [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity,
-            [String("BkgBuild_PostBuild")] PostBuild
         }
 
         public enum Timeout : uint { Disabled = 0 }
@@ -223,12 +222,6 @@ namespace QtVsTools.Options
         [Description("Configure verbosity level of background build log.")]
         public LoggerVerbosity BuildLoggerVerbosity { get; set; }
 
-        [Category("IntelliSense")]
-        [DisplayName("Refresh on build done")]
-        [Description("Refresh IntelliSense after project build.")]
-        [TypeConverter(typeof(EnableDisableConverter))]
-        public bool RefreshPostBuild { get; set; }
-
         public override void ResetSettings()
         {
             QtMsBuildPath = "";
@@ -237,7 +230,6 @@ namespace QtVsTools.Options
             HelpPreference = QtHelp.SourcePreference.Online;
             TryQtHelpOnF1Pressed = true;
             DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
-            RefreshPostBuild = false;
 
             BuildRunQtTools = ProjectTracking = true;
             BuildDebugInformation = false;
@@ -279,7 +271,6 @@ namespace QtVsTools.Options
                     Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                    Load(() => RefreshPostBuild, key, BkgBuild.PostBuild);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -313,7 +304,6 @@ namespace QtVsTools.Options
                     Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                    Save(RefreshPostBuild, key, BkgBuild.PostBuild);
                 }
             } catch (Exception exception) {
                 Messages.Print(

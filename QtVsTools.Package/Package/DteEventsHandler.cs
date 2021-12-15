@@ -70,8 +70,6 @@ namespace QtVsTools
             buildEvents = events.BuildEvents;
             buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
             buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
-            buildEvents.OnBuildProjConfigDone += OnBuildProjConfigDone;
-            buildEvents.OnBuildDone += buildEvents_OnBuildDone;
 
             documentEvents = events.get_DocumentEvents(null);
             documentEvents.DocumentSaved += DocumentSaved;
@@ -152,8 +150,6 @@ namespace QtVsTools
             if (buildEvents != null) {
                 buildEvents.OnBuildBegin -= buildEvents_OnBuildBegin;
                 buildEvents.OnBuildProjConfigBegin -= OnBuildProjConfigBegin;
-                buildEvents.OnBuildProjConfigDone -= OnBuildProjConfigDone;
-                buildEvents.OnBuildDone -= buildEvents_OnBuildDone;
             }
 
             if (documentEvents != null)
@@ -184,10 +180,8 @@ namespace QtVsTools
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)
         {
-            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild &&
-                !QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup) {
+            if (!QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup)
                 return;
-            }
 
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
@@ -228,59 +222,9 @@ namespace QtVsTools
                 Translation.RunlUpdate(project);
         }
 
-        List<string[]> buildDoneEvents = new List<string[]>();
-
-        public void OnBuildProjConfigDone(
-            string projectName,
-            string configName,
-            string platformName,
-            string configId,
-            bool success)
-        {
-            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
-                return;
-
-            if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
-                currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
-                return;     // Don't do anything, if we're not building.
-            }
-
-            if (!success)
-                return;
-
-            buildDoneEvents.Add(new[] { projectName, configId });
-        }
-
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
-            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
-                return;
-
             currentBuildAction = Action;
-        }
-
-        public void buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
-        {
-            if (!QtVsToolsPackage.Instance.Options.RefreshPostBuild)
-                return;
-
-            foreach (var buildDoneEvent in buildDoneEvents) {
-                string projectName = buildDoneEvent[0];
-                string configId = buildDoneEvent[1];
-
-                Project project = null;
-                foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
-                    if (p.UniqueName == projectName) {
-                        project = p;
-                        break;
-                    }
-                }
-                if (project == null || !HelperFunctions.IsQtProject(project))
-                    continue;
-
-                QtProjectIntellisense.Refresh(project, configId);
-            }
-            buildDoneEvents.Clear();
         }
 
         public void DocumentSaved(Document document)
