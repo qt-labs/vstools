@@ -280,7 +280,7 @@ namespace QtVsTools.QtMsBuild
                     Subscribers = null;
                 }
                 project.ProjectUnloading -= OnProjectUnloading;
-                Instances[Project.FullName] = null;
+                Instances.TryRemove(Project.FullName, out QtProjectTracker tracker);
             }
         }
 
