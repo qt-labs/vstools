@@ -181,7 +181,8 @@ namespace QtVsTools
                     qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
                 }
 
-                var docPath = QtVersionManager.The().GetVersionInfo(qtVersion).QtInstallDocs;
+                var info = QtVersionManager.The().GetVersionInfo(qtVersion);
+                var docPath = info?.QtInstallDocs;
                 if (string.IsNullOrEmpty(docPath) || !Directory.Exists(docPath))
                     return false;
 
@@ -217,8 +218,8 @@ namespace QtVsTools
                                         path = "file:///" + Path.Combine(docPath,
                                             GetString(reader, 2), GetString(reader, 3));
                                     } else {
-                                        path = "https://" + Path.Combine("doc.qt.io", "qt-5",
-                                            GetString(reader, 3));
+                                        path = "https://" + Path.Combine("doc.qt.io",
+                                            $"qt-{info.qtMajor}", GetString(reader, 3));
                                     }
                                     if (!string.IsNullOrWhiteSpace(GetString(reader, 4)))
                                         path += "#" + GetString(reader, 4);
@@ -233,7 +234,7 @@ namespace QtVsTools
                 switch (links.Values.Count) {
                 case 0:
                     if (!offline && defaultTryOnline) {
-                        uri = new UriBuilder("https://doc.qt.io/qt-5/search-results.html")
+                        uri = new UriBuilder($"https://doc.qt.io/qt-{info.qtMajor}/search-results.html")
                         {
                             Query = "q=" + keyword
                         }.ToString();
