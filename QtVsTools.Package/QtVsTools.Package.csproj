@@ -109,7 +109,8 @@
     <PackageReference Include="System.ComponentModel.Composition"
       Version="$(Version_System_ComponentModel_Composition)" />
     <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework"
-      Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" />
+      Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)"
+      GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json"
       Version="$(Version_Newtonsoft_Json)" />
     <PackageReference Include="Microsoft.Build"
@@ -597,5 +598,34 @@
       <DeployTargetFullPath Remove="@(DeployTargetFullPath)" />
     </ItemGroup>
   </Target>
-  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // NuGet native libs
+  // -->
+  <PropertyGroup
+    Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' != ''">
+    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''"
+      >$(PkgStub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
+  </PropertyGroup>
+  <PropertyGroup
+    Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' == ''">
+    <NuGetGlobalPkgDir Condition="'$(NuGetGlobalPkgDir)' == ''"
+      >$(USERPROFILE)\.nuget\packages</NuGetGlobalPkgDir>
+    <SQLitePkgRoot
+      >$(NuGetGlobalPkgDir)\Stub.System.Data.SQLite.Core.NetFramework</SQLitePkgRoot>
+    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''"
+      >$(SQLitePkgRoot)\$(Version_Stub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(SQLitePkgDir)\build\net46\x64\SQLite.Interop.dll">
+      <Link>SQLite.Interop\x64\SQLite.Interop.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>x64\</VSIXSubPath>
+    </Content>
+    <Content Include="$(SQLitePkgDir)\build\net46\x86\SQLite.Interop.dll">
+      <Link>SQLite.Interop\x86\SQLite.Interop.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>x86\</VSIXSubPath>
+    </Content>
+  </ItemGroup>
 </Project>
