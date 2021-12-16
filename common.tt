@@ -85,32 +85,37 @@
 
     string VS_NAME = VS_VERSION.StartsWith("17.") ? "2022" :
                         VS_VERSION.StartsWith("16.") ? "2019" :
-                        VS_VERSION.StartsWith("15.") ? "2017" :
-                        VS_VERSION.StartsWith("14.") ? "2015" :
-                        VS_VERSION.StartsWith("12.") ? "2013" : "????";
+                        VS_VERSION.StartsWith("15.") ? "2017" : "????";
 
     string VC_TARGETS_PATH = Host?.ResolveParameterValue("-", "-", "VCTargetsPath");
+
+    if (string.IsNullOrEmpty(VC_TARGETS_PATH) && !string.IsNullOrEmpty(VS_VERSION)) {
+        var proc = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
+                @"Microsoft Visual Studio\Installer\vswhere.exe"),
+            Arguments = string.Format(@"-property installationPath -latest -Version [{0})",
+                VS_VERSION.StartsWith("17.") ? "17.0,18.0" :
+                VS_VERSION.StartsWith("16.") ? "16.0,17.0" :
+                VS_VERSION.StartsWith("15.") ? "15.0,16.0" : string.Empty),
+            WorkingDirectory = Directory.GetParent(SolutionDir).FullName,
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        });
+        if (proc.WaitForExit(3000) && proc.ExitCode == 0)
+            VC_TARGETS_PATH = proc.StandardOutput.ReadLine();
+    }
+
     if (string.IsNullOrEmpty(VC_TARGETS_PATH)) {
         if (Dte != null && !string.IsNullOrEmpty(VS_VERSION)) {
-            string VS_EDITION = Dte.Edition;
-            if (VS_VERSION.StartsWith("17.")) {
-                VC_TARGETS_PATH = Path.Combine(
-                    Environment.GetEnvironmentVariable("ProgramFiles"),
-                        @"Microsoft Visual Studio\2022",
-                        @"Preview",
-                        @"MSBuild\Microsoft\VC\v170");
-            } else {
-                VC_TARGETS_PATH = Path.Combine(
-                    Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
-                    VS_VERSION.StartsWith("16.") ?
-                        @"Microsoft Visual Studio\2019\" + VS_EDITION + @"\MSBuild\Microsoft\VC\v160" :
-                    VS_VERSION.StartsWith("15.") ?
-                        @"Microsoft Visual Studio\2017\" + VS_EDITION + @"\Common7\IDE\VC\VCTargets" :
-                    VS_VERSION.StartsWith("14.") ?
-                        @"MSBuild\Microsoft.Cpp\v4.0\V140" :
-                    VS_VERSION.StartsWith("12.") ?
-                        @"MSBuild\Microsoft.Cpp\v4.0\V120" : null);
-            }
+            Path.Combine(Environment.GetEnvironmentVariable(
+                VS_VERSION.StartsWith("17.") ? "ProgramFiles" : "ProgramFiles(x86)"),
+                $"Microsoft Visual Studio\\{VS_NAME}\\{Dte.Edition}",
+                VS_VERSION.StartsWith("17.") ? @"MSBuild\Microsoft\VC\v170"
+                    : VS_VERSION.StartsWith("16.") ? @"MSBuild\Microsoft\VC\v160"
+                        : VS_VERSION.StartsWith("15.") ? @"Common7\IDE\VC\VCTargets" : null);
         } else {
             throw new Exception("Unable to obtain 'VCTargetsPath' parameter.");
         }
