@@ -34,18 +34,16 @@ namespace QtVsTools.Core
         public const uint Release = 0x01;
         public const uint Debug = 0x02;
 
-        public static string PlatformToolset(string version)
-        {
+        public static string PlatformToolset =>
             // TODO: Find a proper way to return the PlatformToolset version.
 #if VS2017
-            return "141";
+            "141";
 #elif VS2019
-            return "142";
+            "142";
 #elif VS2022
-            return "143";
+            "143";
 #else
 #error Unknown Visual Studio version!
 #endif
-        }
     }
 }

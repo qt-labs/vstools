@@ -415,8 +415,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 case ProjectTargets.Windows:
                 case ProjectTargets.WindowsStore:
                     xml.AppendLine(string.Format(@"
-    <PlatformToolset>{0}</PlatformToolset>",
-                        /*{0}*/ c.QtVersion.VC_PlatformToolset));
+    <PlatformToolset>v{0}</PlatformToolset>",
+                        /*{0}*/ BuildConfig.PlatformToolset));
                     break;
                 case ProjectTargets.LinuxSSH:
                     xml.AppendLine(@"
