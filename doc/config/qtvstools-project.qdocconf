@@ -33,6 +33,7 @@ indexes  += $QDOC_INDEX_DIR/qmake/qmake.index \
             $QDOC_INDEX_DIR/qtgui/qtgui.index \
             $QDOC_INDEX_DIR/qthelp/qthelp.index \
             $QDOC_INDEX_DIR/qtlinguist/qtlinguist.index \
+            $QDOC_INDEX_DIR/qtquick/qtquick.index \
             $QDOC_INDEX_DIR/qtwidgets/qtwidgets.index
 
 # Doxygen compatibility commands
