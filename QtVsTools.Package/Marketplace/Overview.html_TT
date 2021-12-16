@@ -50,6 +50,14 @@
 <p>
     See also:
     <ul>
+        <#if (VS_NAME !="2022" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2022"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022">
+                    Qt VS Tools for Visual Studio 2019
+                </a>
+            </li>
+        <#}#>
         <#if (VS_NAME !="2019" ) {#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2019"
@@ -63,22 +71,6 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
                 <a title="Qt VS Tools for Visual Studio 2017"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools-19123">
                 Qt VS Tools for Visual Studio 2017
-                </a>
-            </li>
-        <#}#>
-        <#if (VS_NAME !="2015" ) {#>
-            <li>
-                <a title="Qt VS Tools for Visual Studio 2015"
-href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2015">
-                Qt VS Tools for Visual Studio 2015
-                </a>
-            </li>
-        <#}#>
-        <#if (VS_NAME !="2013" ) {#>
-            <li>
-                <a title="Qt VS Tools for Visual Studio 2013"
-href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools">
-                Qt VS Tools for Visual Studio 2013
                 </a>
             </li>
         <#}#>

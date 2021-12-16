@@ -6,7 +6,7 @@ This project requires an x86 static build of Qt that includes at least qtbase an
 By default, it will look for the Qt build three levels higher in the file system hierarchy, in
 "build\qt5-x86-<VS Version>-static", where <VS Version> is one of "vs2017", "vs2019" or "vs2022".
 
-For example, when building in Visual Studio 2015, if the Qt VS Tools solution is located in
+For example, when building in Visual Studio 2017, if the Qt VS Tools solution is located in
 X:\dev\vstools (and therefore vsqml is located in X:\dev\vstools\src\vsqml), the project will look
 for the static build of Qt in X:\dev\build\qt5-x86-vs2017-static.
 

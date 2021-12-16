@@ -31,7 +31,7 @@
     \title Qt VS Tools Manual
 
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
-    2015, and later. This enables developers to use the standard Windows
+    2017, and later. This enables developers to use the standard Windows
     development environment without having to worry about Qt-related build steps
     or tools. You can install and update Qt VS Tools directly from Microsoft
     Visual Studio.
