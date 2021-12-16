@@ -43,6 +43,8 @@ namespace QtVsTools.Wizards.ClassWizard
     {
         public WizardResult Run(EnvDTE.DTE dte, string name, string location)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var serviceProvider = new ServiceProvider(dte as IServiceProvider);
             var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
 
@@ -67,7 +69,7 @@ namespace QtVsTools.Wizards.ClassWizard
                         new WizardIntroPage {
                             Data = data,
                             Header = @"Welcome to the Qt Class Wizard",
-                            Message = @"This wizard will add a new Qt5 class to your project. The "
+                            Message = @"This wizard will add a new Qt class to your project. The "
                                 + @"wizard creates a .h and .cpp file." + System.Environment.NewLine
                                 + System.Environment.NewLine + "To continue, click Next.",
                             PreviousButtonEnabled = false,
@@ -78,11 +80,11 @@ namespace QtVsTools.Wizards.ClassWizard
                         new CoreClassPage {
                             Data = data,
                             Header = @"Welcome to the Qt Class Wizard",
-                            Message = @"This wizard will add a new Qt5 class to your project. The "
+                            Message = @"This wizard will add a new Qt class to your project. The "
                                 + @"wizard creates a .h and .cpp file.",
                             PreviousButtonEnabled = true,
                             NextButtonEnabled = false,
-                            FinishButtonEnabled = QtModule.IsInstalled(@"QtCore"),
+                            FinishButtonEnabled = true,
                             CancelButtonEnabled = true
                         }
                     })

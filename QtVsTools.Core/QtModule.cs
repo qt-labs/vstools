@@ -106,24 +106,5 @@ namespace QtVsTools.Core
                 return AdditionalLibrariesDebug;
             return AdditionalLibraries;
         }
-
-        public static bool IsInstalled(string moduleName)
-        {
-            var qtVersion = QtVersionManager.The().GetDefaultVersion();
-            if (qtVersion == null) {
-                throw new QtVSException("Unable to find a Qt build!" + Environment.NewLine
-                                        + "To solve this problem specify a Qt build.");
-            }
-
-            var installPath = QtVersionManager.The().GetInstallPath(qtVersion);
-            if (moduleName.StartsWith("Qt", StringComparison.Ordinal))
-                moduleName = "Qt5" + moduleName.Substring(2);
-
-            var qtVersionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            var libPath = Path.Combine(installPath, "lib",
-                string.Format("{0}{1}.lib", moduleName, qtVersionInfo.LibInfix()));
-
-            return File.Exists(libPath);
-        }
     }
 }
