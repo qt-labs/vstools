@@ -559,7 +559,7 @@
     By default, Qt Resource Editor opens in Visual Studio. To run it in a
     separate window, select \uicontrol Detach.
 
-    To run \l{Qt Resource Editor} in a separate window by default,
+    To run \uicontrol {Qt Resource Editor} in a separate window by default,
     select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
     \uicontrol Options > \uicontrol {Qt Resource Editor}, and
     set \uicontrol {Run in detached window} to \uicontrol True.
