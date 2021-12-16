@@ -43,7 +43,6 @@
     <Category Name="QtSettings_02_Paths" DisplayName="Paths"/>
     <Category Name="QtSettings_03_QMake" DisplayName="qmake"/>
     <Category Name="QtSettings_04_QML" DisplayName="QML"/>
-    <Category Name="QtSettings_05_LUpdateLRelease" DisplayName="lupdate/lrelease"/>
   </Rule.Categories>
   <EnumProperty
     Name="Keyword"
@@ -146,19 +145,4 @@
     DisplayName="Enable QML Debugging"
     Description="Select whether to launch a QML session when debugging.">
   </BoolProperty>
-  <BoolProperty
-    Name="QtRunLUpdateOnBuild"
-    Category="QtSettings_05_LUpdateLRelease"
-    DisplayName="Run lupdate On Build"
-    Description="Select whether lupdate should be called during build."/>
-  <StringProperty
-    Name="QtLUpdateOptions"
-    Category="QtSettings_05_LUpdateLRelease"
-    DisplayName="Additional lupdate Options"
-    Description="Additional options passed to lupdate"/>
-  <StringProperty
-    Name="QtLReleaseOptions"
-    Category="QtSettings_05_LUpdateLRelease"
-    DisplayName="Additional lrelease Options"
-    Description="Additional options passed to lrelease"/>
 </Rule>

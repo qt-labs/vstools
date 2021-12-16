@@ -111,34 +111,60 @@
   // Select files to include in build
   // -->
   <Target Name="QtTranslationSelect"
-    DependsOnTargets="QtTranslationPrepare">
-    <PropertyGroup>
-      <QtHasTranslation Condition="'@(QtTranslation)' != ''">true</QtHasTranslation>
-    </PropertyGroup>
+    DependsOnTargets="QtTranslationPrepare"
+    Condition="'@(QtTranslation)' != ''">
+    <!-- QtTranslation ::= list of .ts files in the project -->
+
+    <!-- selected_files ::= list of explicitly selected files
+    (e.g. in VS, right-click file and select 'Compile') -->
     <ItemGroup>
       <selected_files Include="$(SelectedFiles)"/>
     </ItemGroup>
+
+    <!-- selected_ts_files ::= list of explicitly selected .ts files -->
+    <Join LeftItems="@(QtTranslation)" RightItems="@(selected_files)" On="Identity">
+      <Output TaskParameter="Result" ItemName="selected_ts_files"/>
+    </Join>
+
+    <!-- if there are explicitly selected files: -->
     <ItemGroup Condition="'@(selected_files)' != ''">
-      <QtTranslation Remove="@(QtTranslation)" Condition="'%(Identity)' != '@(selected_files)'"/>
-      <QtTranslation>
+
+      <!-- QtTranslation ::= list of selected .ts files (if any) -->
+      <QtTranslation Remove="@(QtTranslation)" />
+      <QtTranslation Include="@(selected_ts_files)" Condition="'@(selected_ts_files)' != ''">
         <ForceRebuild>####### Don't skip this target #######</ForceRebuild>
       </QtTranslation>
+
+      <!-- selected_files ::= list of selected files that are not .ts files (if any) -->
+      <selected_files Remove="@(QtTranslation)" />
     </ItemGroup>
+
+    <!-- only_selected_ts ::= true if all selected files are .ts files -->
+    <PropertyGroup>
+      <only_selected_ts
+        Condition="'@(selected_ts_files)' != '' AND '@(selected_files)' == ''"
+        >true</only_selected_ts>
+    </PropertyGroup>
+
     <ItemGroup>
+      <!-- input files for lupdate -->
       <QtTranslationUpdate
         Include="@(QtTranslation)"
         Condition="'$(QtTranslationForceUpdate)' == 'true'
                 OR $([System.String]::Copy('%(BuildAction)').Contains('lupdate'))">
         <Force Condition="'$(QtTranslationForceUpdate)' == 'true'">true</Force>
       </QtTranslationUpdate>
+      <!-- input files for lrelease -->
       <QtTranslationRelease
         Include="@(QtTranslation)"
         Condition="'$(QtTranslationForceRelease)' == 'true'
                 OR $([System.String]::Copy('%(BuildAction)').Contains('lrelease'))">
         <Force Condition="'$(QtTranslationForceRelease)' == 'true'">true</Force>
       </QtTranslationRelease>
-      <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
+
+    <!-- if translation files are marked for mandatory
+    processing, delete corresponding generated files -->
     <Delete
       Condition="'%(QtTranslationUpdate.Force)' == 'true'"
       Files="%(QtTranslationUpdate.InputListFile)"
@@ -147,12 +173,24 @@
       Condition="'%(QtTranslationRelease.Force)' == 'true'"
       Files="%(QtTranslationRelease.QmFile)"
       TreatErrorsAsWarnings="true"/>
+
+    <!-- print message if only .ts files were selected but
+    lupdate and/or lrelease are not enabled during build -->
     <Message Importance="high"
       Condition="'$(SelectedFiles)' != ''
-             AND '$(QtHasTranslation)' == 'true'
+             AND '$(only_selected_ts)' == 'true'
              AND '@(QtTranslationUpdate)' == ''
              AND '@(QtTranslationRelease)' == ''"
-      Text="Translation disabled during build; skipping."/>
+      Text="Translation tools disabled during build; skipping."/>
+
+    <!-- clean-up  -->
+    <ItemGroup>
+      <selected_files Remove="@(selected_files)"/>
+      <selected_ts_files Remove="@(selected_ts_files)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <only_selected_ts/>
+    </PropertyGroup>
   </Target>
 
   <!--
