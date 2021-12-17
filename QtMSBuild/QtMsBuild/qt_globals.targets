@@ -466,8 +466,9 @@
           >$(ProjectDir);%(QtWork_ClCompile_Expanded.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
           >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
-        <AdditionalOptions
-          >%(QtWork_ClCompile_Expanded.AdditionalCppOptions)</AdditionalOptions>
+        <AdditionalOptions>$([System.String]::Copy(
+'%(QtWork_ClCompile_Expanded.AdditionalOptions) %(QtWork_ClCompile_Expanded.AdditionalCppOptions)')
+          .Trim())</AdditionalOptions>
       </QtWork_ClCompile_Expanded>
     </ItemGroup>
 
