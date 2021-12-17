@@ -1,3 +1,27 @@
+Qt Visual Studio Tools version 2.8.1:
+
+Changes
+-------
+ - Fixed QTVSADDINBUG-340: QML files are not updated with lupdate
+ - Fixed QTVSADDINBUG-431: Difficult to find feature to change Qt Version
+ - Fixed QTVSADDINBUG-801, QTVSADDINBUG-498: Error in qt5.natvis: "identifier "$T1" is undefined"
+ - Fixed QTVSADDINBUG-628: Change Qt Project settings lead to an error message
+ - Fixed QTVSADDINBUG-659: Missing Qurl debug visualizer
+ - Fixed QTVSADDINBUG-700: In debug, a QStandardItem will not be resolved unless inside the class
+ - Fixed QTVSADDINBUG-701: "Qt Project Settings" incorrect behavior
+ - Fixed QTVSADDINBUG-831: Error creating new Qt project when "application icon" option is enabled
+ - Fixed QTVSADDINBUG-883: Background build error when using common props file
+ - Fixed QTVSADDINBUG-919: Missing QML/QtQuick plugins when using a static Qt build
+ - Fixed QTVSADDINBUG-924: New Qt projects use C++14 standard by default
+ - Fixed QTVSADDINBUG-926: Qt module selection can't be confirmed
+ - Fixed QTVSADDINBUG-930: "Finish" button always disabled in Qt Class Wizard
+ - Fixed QTVSADDINBUG-936: Generated C++ source file fails to compile with precompiled header
+ - Fixed QTVSADDINBUG-941: "Translation disabled during build; skipping"
+ - Fixed QTVSADDINBUG-943: Document Qt 6 Support
+ - Fixed QTVSADDINBUG-950: Get Qt build settings from 'vcapp' qmake template
+ - Fixed QTVSADDINBUG-952: lupdate is not run during build
+
+
 Qt Visual Studio Tools version 2.8.0:
 
 Changes
