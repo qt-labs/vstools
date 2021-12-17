@@ -1745,6 +1745,8 @@ namespace QtVsTools.Core
             else if (!isOS64Bit && isQt64Bit)
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
 
+            Messages.Print($"vcvars: {vcVarsCmd}");
+
             const string markSTX = ":@:@:@";
             const string markEOL = ":#:#:#";
             string command =
@@ -1818,6 +1820,12 @@ namespace QtVsTools.Core
                     }
                 }
             }
+            string envPath = startInfo.EnvironmentVariables["PATH"];
+            string clPath = envPath.Split(';')
+                .Select(path => Path.Combine(path, "cl.exe"))
+                .Where(pathToCl => File.Exists(pathToCl))
+                .FirstOrDefault();
+            Messages.Print($"cl: {clPath ?? "NOT FOUND"}");
 
             return true;
         }
