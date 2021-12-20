@@ -199,7 +199,7 @@
     <ItemGroup>
       <QMakeArgsList Condition="'$(QMakeOptionEarly)' == 'true'" Include="-early"/>
       <QMakeArgsList Include="CONFIG -= debug release debug_and_release"/>
-      <QMakeArgsList Include="CONFIG += $(QtBuildConfig)"/>
+      <QMakeArgsList Include="CONFIG += $(QtBuildConfig) warn_off"/>
       <QMakeArgsList Include="$(QMakeExtraArgs)"/>
     </ItemGroup>
     <ItemGroup>
