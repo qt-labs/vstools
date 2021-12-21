@@ -22,7 +22,7 @@ qhp.QtVSTools.customFilters.QtVSTools.filterAttributes  = qtvstools $QTVSTOOLS_V
 qhp.QtVSTools.indexRoot                                 =
 
 qhp.QtVSTools.subprojects                               = manual
-qhp.QtVSTools.subprojects.manual.indexTitle             = Qt VS Tools Manual
+qhp.QtVSTools.subprojects.manual.indexTitle             = All Topics
 qhp.QtVSTools.subprojects.manual.title                  = Qt VS Tools Manual
 qhp.QtVSTools.subprojects.manual.type                   = manual
 

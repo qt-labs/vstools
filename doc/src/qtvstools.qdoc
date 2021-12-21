@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -36,6 +36,86 @@
     or tools. You can install and update Qt VS Tools directly from Microsoft
     Visual Studio.
 
+    \table
+        \row
+            \li {4,1} \b {\l{All Topics}}
+        \row
+            \li \inlineimage front-gs.png
+            \li \inlineimage front-advanced.png
+            \li \inlineimage front-projects.png
+        \row
+            \li \b {\l{Getting Started}}
+                \list
+                    \li \l {Tutorial: Qt Widgets Application}
+                \endlist
+            \li \b {\l {Configuring Builds}}
+                \list
+                    \li \l {Managing Qt Versions}
+                    \li \l {Building}
+                    \li \l {Cross-Compiling}
+               \endlist
+            \li \b {\l {Managing Projects}}
+                \list
+                    \li \l {Creating Projects}
+                    \li \l {Importing and Exporting Projects}
+                    \li \l {Adding Form Files to Projects}
+                    \li \l {Managing Resources}
+                    \li \l {Creating Qt Translation Files for Projects}
+                \endlist
+        \row
+            \li \inlineimage front-coding.png
+            \li \inlineimage front-preview.png
+            \li \inlineimage front-help.png
+        \row
+        \li \b {\l {Updating IntelliSense Info}}
+        \li \b {\l {Debugging}}
+            \list
+                \li \l {Debugging Qt Quick Applications}
+                \li \l {Debugging on Linux}
+            \endlist
+        \li \b {\l {Getting Help}}
+    \endtable
+*/
+
+/*!
+    \page qtvstools-toc.html
+    \title All Topics
+
+    \list
+        \li \l {Getting Started}
+            \list
+                \li \l {Tutorial: Qt Widgets Application}
+            \endlist
+        \li \l {Configuring Builds}
+            \list
+                \li \l {Managing Qt Versions}
+                \li \l {Building}
+                \li \l {Cross-Compiling}
+            \endlist
+        \li \l {Managing Projects}
+            \list
+                \li \l {Creating Projects}
+                \li \l {Importing and Exporting Projects}
+                \li \l {Adding Form Files to Projects}
+                \li \l {Managing Resources}
+                \li \l {Creating Qt Translation Files for Projects}
+            \endlist
+        \li \l {Updating IntelliSense Info}
+        \li \l {Debugging}
+            \list
+                \li \l {Debugging Qt Quick Applications}
+                \li \l {Debugging on Linux}
+            \endlist
+        \li \l {Getting Help}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-getting-started.html
+    \previouspage Qt VS Tools Manual
+    \nextpage Tutorial: Qt Widgets Application
+    \title Getting Started
+
     The main features of Qt VS Tools are:
 
     \list
@@ -55,37 +135,6 @@
         \li Debugging extensions for Qt data types.
     \endlist
 
-    \section1 Table of Contents
-
-    \list
-        \li \l {Getting Started}
-        \li \l {Managing Qt Versions}
-        \li \l {Building}
-        \li \l {Cross-Compiling}
-        \li \l {Creating Projects}
-        \li \l {Importing and Exporting Projects}
-        \li \l {Adding Form Files to Projects}
-        \li \l {Managing Resources}
-        \li \l {Creating Qt Translation Files for Projects}
-        \li \l {Updating IntelliSense Info}
-        \li \l {Debugging}
-        \li \l {Getting Help}
-    \endlist
-*/
-
-/*!
-    \page qtvstools-getting-started.html
-    \previouspage Qt VS Tools Manual
-    \nextpage Managing Qt Versions
-    \title Getting Started
-
-    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
-    application. You will create a project using a project wizard and design a
-    widget-based UI using \QD. In addition, you will learn how to convert a
-    Microsoft Visual Studio project file into a qmake compatible \c .pro file.
-
-    You can use Qt VS Tools to develop also \l{Qt Quick} applications.
-
     \section1 Install Qt VS Tools
 
     In Microsoft Visual Studio, select \uicontrol Extensions >
@@ -98,6 +147,39 @@
     To create a Qt VS Tools project, you must add at least one
     \l{Managing Qt Versions}{Qt version}.
 
+    \section1 Create a Project
+
+    Follow the tutorials to create your first applications:
+
+    \list
+        \li \l {Tutorial: Qt Widgets Application}
+    \endlist
+
+    For all the options you have, see \l {Creating Projects}.
+*/
+
+/*!
+    \page qtvstools-qt-widgets-application.html
+    \previouspage Getting Started
+    \nextpage Configuring Builds
+    \title Tutorial: Qt Widgets Application
+
+    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
+    application. You will create a project using a project wizard and design a
+    widget-based UI using \QD. In addition, you will learn how to convert a
+    Microsoft Visual Studio project file into a qmake compatible \c .pro file.
+
+    You can use Qt VS Tools to develop also \l{Qt Quick} applications.
+
+    \section1 Before You Start
+
+    Before you start, you have to:
+
+    \list
+        \li \l {Install Qt VS Tools}
+        \li \l {Add a Qt Version}
+    \endlist
+
     \section1 Create a Qt Widgets Application Project
 
     To create a Qt Widgets application project in Visual Studio:
@@ -105,8 +187,9 @@
     \list 1
         \li Select \uicontrol File > \uicontrol New > \uicontrol Project, and
             search for \uicontrol {Qt Widgets Application}.
-        \li In the \uicontrol Name field, enter \e AddressBook, and then select
-            \uicontrol OK.
+        \li Select the project wizard, and then select \uicontrol Next.
+        \li In the \uicontrol {Project name} field, enter \e AddressBook,
+            and then select \uicontrol OK.
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
         \li Set up the \uicontrol Debug build configuration and select the
@@ -408,8 +491,40 @@
 */
 
 /*!
-    \page qtvstools-creating-projects.html
+/*!
+    \page qtvstools-managing-projects.html
     \previouspage Cross-Compiling
+    \nextpage Creating Projects
+    \title Managing Projects
+
+    Qt VS Tools provides wizards for creating several types of Qt projects and
+    files that you can add to the projects, such as classes, form files, or
+    custom QML types.
+
+    Qt uses \c .pro files with \l {qmake Manual}{qmake} to build projects,
+    whereas Visual Studio uses \c .vcproj files. Qt VS Tools enables you to
+    import Qt project files into Visual Studio and export them back into
+    Qt build files. In addition, you can convert Qt VS Tools projects into
+    a qmake project, or the other way around.
+
+    You can use the integrated Qt Resource editor to manage the resources in
+    Qt projects.
+
+    In addition, you can create a Qt translation source (TS) file and start
+    \QL from Visual Studio to translate the strings in your application.
+
+    \list
+        \li \l {Creating Projects}
+        \li \l {Importing and Exporting Projects}
+        \li \l {Adding Form Files to Projects}
+        \li \l {Managing Resources}
+        \li \l {Creating Qt Translation Files for Projects}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-creating-projects.html
+    \previouspage Managing Projects
     \nextpage Importing and Exporting Projects
     \title Creating Projects
 
@@ -443,8 +558,21 @@
 */
 
 /*!
+    \page qtvstools-configuring-builds.html
+    \previouspage Tutorial: Qt Widgets Application
+    \nextpage Managing Qt Versions
+    \title Configuring Builds
+
+    \list
+        \li \l {Managing Qt Versions}
+        \li \l {Building}
+        \li \l {Cross-Compiling}
+   \endlist
+*/
+
+/*!
     \page qtvstools-managing-qt-versions.html
-    \previouspage Getting Started
+    \previouspage Configuring Builds
     \nextpage Building
     \title Managing Qt Versions
 
@@ -530,7 +658,7 @@
 /*!
     \page qtvstools-cross-compiling.html
     \previouspage Building
-    \nextpage Creating Projects
+    \nextpage Managing Projects
     \title Cross-Compiling
 
     Qt VS Tools supports cross-compilation of Qt projects by integrating
