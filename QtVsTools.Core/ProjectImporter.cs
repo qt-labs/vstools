@@ -274,7 +274,7 @@ namespace QtVsTools.Core
 
         private static bool CheckQtVersion(VersionInformation vi)
         {
-            if (!vi.qt5Version) {
+            if (vi.qtMajor < 5) {
                 Messages.DisplayWarningMessage(SR.GetString("ExportProject_EditProjectFileManually"));
                 return false;
             }

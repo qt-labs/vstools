@@ -46,7 +46,6 @@ namespace QtVsTools.Core
         public uint qtMajor; // X in version x.y.z
         public uint qtMinor; // Y in version x.y.z
         public uint qtPatch; // Z in version x.y.z
-        public bool qt5Version = true;
         private QtConfig qtConfig;
         private QMakeConf qmakeConf;
         private string vsPlatformName;
@@ -128,7 +127,6 @@ namespace QtVsTools.Core
                     qtMinor = (version >> 8) & 0xFF;
                     qtPatch = version & 0xFF;
                 }
-                qt5Version = (qtMajor == 5);
 
                 try {
                     QtInstallDocs = qmakeQuery["QT_INSTALL_DOCS"];
