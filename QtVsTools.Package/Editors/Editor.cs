@@ -202,11 +202,16 @@ namespace QtVsTools.Editors
         {
             if (string.IsNullOrEmpty(qtToolsPath))
                 qtToolsPath = GetDefaultQtToolsPath();
+            var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
             try {
-                return Process.Start(GetStartInfo(filePath, qtToolsPath, hideWindow));
+                return Process.Start(st);
             } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                Messages.Print("\r\n" + e.Message);
+                if (!File.Exists(st.Arguments))
+                    Messages.Print("The system cannot find the file: " + st.Arguments);
+                if (!File.Exists(st.FileName))
+                    Messages.Print("The system cannot find the file: " + st.FileName);
+                Messages.Print("\r\nStacktrace:\r\n" + e.StackTrace);
                 return null;
             }
         }
