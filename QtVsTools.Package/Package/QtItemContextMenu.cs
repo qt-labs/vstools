@@ -136,7 +136,7 @@ namespace QtVsTools
                     return; // Don't display commands if one of the selected files is not a .ts file.
             }
 
-            command.Enabled = true;
+            command.Enabled = Translation.ToolsAvailable(prj);
             command.Visible = true;
         }
     }

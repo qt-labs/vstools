@@ -395,6 +395,7 @@
       <Cmd>$(Cmd.Trim())</Cmd>
     </PropertyGroup>
     <HostExec
+      Condition="Exists(@(Options->'%(CmdExec)', ''))"
       Message="%(QtTranslationUpdate.UpdateDescription)"
       Command="$(Cmd)"
       Inputs="@(Options->'%(InputListFile)');@(Options->'%(InputFiles)')"
@@ -402,6 +403,9 @@
       RemoteTarget="$(ResolvedRemoteTarget)"
       RemoteProjectDir="$(_ResolvedRemoteProjectDir)">
     </HostExec>
+    <Warning
+      Condition="!Exists(@(Options->'%(CmdExec)', ''))"
+      File="%(QtTranslationUpdate.Identity)" Text="'lupdate' not found; skipping" />
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -556,6 +560,7 @@
       <Cmd>$(Cmd.Trim())</Cmd>
     </PropertyGroup>
     <HostExec
+      Condition="Exists(@(Options->'%(CmdExec)', ''))"
       Message="%(QtTranslationRelease.ReleaseDescription)"
       Command="$(Cmd)"
       Inputs="@(Options->'%(InputFile)')"
@@ -563,6 +568,9 @@
       RemoteTarget="$(ResolvedRemoteTarget)"
       RemoteProjectDir="$(_ResolvedRemoteProjectDir)">
     </HostExec>
+    <Warning
+      Condition="!Exists(@(Options->'%(CmdExec)', ''))"
+      File="%(QtTranslationRelease.Identity)" Text="'lrelease' not found; skipping" />
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////

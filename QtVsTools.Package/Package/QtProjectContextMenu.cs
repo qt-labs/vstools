@@ -248,12 +248,15 @@ namespace QtVsTools
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:
             case CommandId.ExportProFileProjectId:
+                command.Visible = true;
+                command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
+                    .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+                break;
             case CommandId.CreateNewTsFileProjectId:
             case CommandId.lUpdateOnProjectId:
             case CommandId.lReleaseOnProjectId:
                 command.Visible = true;
-                command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
-                    .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+                command.Enabled = Translation.ToolsAvailable(project);
                 break;
             //case CommandId.ConvertToQmakeProjectId:
             case CommandId.QtProjectSettingsProjectId:

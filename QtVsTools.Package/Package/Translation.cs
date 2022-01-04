@@ -277,5 +277,12 @@ namespace QtVsTools
                 }
             }
         }
+
+        public static bool ToolsAvailable(EnvDTE.Project project)
+        {
+            var qtToolsPath = QtProject.GetPropertyValue(project, "QtToolsPath");
+            return File.Exists(Path.Combine(qtToolsPath, "lupdate.exe"))
+                && File.Exists(Path.Combine(qtToolsPath, "lrelease.exe"));
+        }
     }
 }

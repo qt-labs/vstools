@@ -210,6 +210,8 @@ namespace QtVsTools
             if (command == null)
                 return;
 
+            var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
                 command.Visible = command.Enabled = true;
@@ -230,11 +232,13 @@ namespace QtVsTools
             case CommandId.ImportPriFileId:
             case CommandId.ExportPriFileId:
             case CommandId.ExportProFileId:
-            case CommandId.CreateNewTsFileId: {
-                    command.Visible = true;
-                    command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
-                        .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
-                }
+                command.Visible = true;
+                command.Enabled = HelperFunctions.IsQtProject(project);
+                break;
+            case CommandId.CreateNewTsFileId:
+                command.Visible = true;
+                command.Enabled = HelperFunctions.IsQtProject(project)
+                    && Translation.ToolsAvailable(project);
                 break;
             // TODO: Fix these functionality and re-enable the menu items
             case CommandId.ConvertToQtId:
@@ -245,7 +249,6 @@ namespace QtVsTools
             //case CommandId.ConvertToQmakeId:
             case CommandId.QtProjectSettingsId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if (project != null) {
                         if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
@@ -259,7 +262,6 @@ namespace QtVsTools
             //case CommandId.ConvertToQtId:
             case CommandId.ChangeProjectQtVersionId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
                     if ((project == null) || HelperFunctions.IsQtProject(project))
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     else if (HelperFunctions.IsQMakeProject(project))
