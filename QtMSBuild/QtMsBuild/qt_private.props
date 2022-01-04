@@ -186,7 +186,7 @@
       <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
         >QT_QML_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Qt_INCLUDEPATH_)' != ''"
-        >$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        >%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_)</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
         >$(Qt_STDCPP_)</LanguageStandard>
       <AdditionalOptions Condition="'$(Qt_CL_OPTIONS_)' != ''"
@@ -196,11 +196,11 @@
     <!--// Linker (.obj files) -->
     <Link>
       <AdditionalDependencies Condition="'$(Qt_LIBS_)' != ''"
-        >$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+        >%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Qt_LIBPATH_)' != ''"
-        >$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        >%(AdditionalLibraryDirectories);$(Qt_LIBPATH_)</AdditionalLibraryDirectories>
       <SharedLibrarySearchPath Condition="'$(Qt_LIBPATH_)' != ''"
-        >$(Qt_LIBPATH_);%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+        >%(SharedLibrarySearchPath);$(Qt_LIBPATH_)</SharedLibrarySearchPath>
       <AdditionalOptions Condition="'$(Qt_LINK_OPTIONS_)' != ''"
         >$(Qt_LINK_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
     </Link>
