@@ -321,7 +321,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QtMenus.vsct_TT</DependentUpon>
     </VSCTCompile>
-    <Content Include="Resources\Vsix.ico" />
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
