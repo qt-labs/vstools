@@ -267,9 +267,8 @@ namespace QtVsTools
                 if (transDlg.ShowDialog() == DialogResult.OK) {
                     try {
                         var qtPro = QtProject.Create(project);
-                        var file = qtPro.AddFileInFilter(Filters.TranslationFiles(),
+                        qtPro.AddFileInFilter(Filters.TranslationFiles(),
                             transDlg.TranslationFile, true);
-                        RunlUpdate(file);
                     } catch (QtVSException e) {
                         Messages.DisplayErrorMessage(e.Message);
                     } catch (System.Exception ex) {

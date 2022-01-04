@@ -373,6 +373,7 @@ namespace QtVsTools
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.UpdateRccStep(vcFile, null);
                 } else if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
+                    Translation.RunlUpdate(vcFile);
                 }
             } catch { }
         }
