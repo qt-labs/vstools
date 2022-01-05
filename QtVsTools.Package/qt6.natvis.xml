@@ -313,8 +313,8 @@
         <Intrinsic Name="query" Expression="*((QString*)(((char*)(d) + memberOffset(5))))" />
         <Intrinsic Name="fragment" Expression="*((QString*)(((char*)(d) + memberOffset(6))))" />
 
-        <DisplayString Condition="!isEmpty(scheme().d->size)">{scheme()}://{host()}{path()}</DisplayString>
-        <DisplayString Condition="isEmpty(scheme().d->size)">{path()}</DisplayString>
+        <DisplayString Condition="!isEmpty(scheme().d-&gt;size)">{scheme()}://{host()}{path()}</DisplayString>
+        <DisplayString Condition="isEmpty(scheme().d-&gt;size)">{path()}</DisplayString>
         <Expand>
             <Item Name="[scheme]">scheme()</Item>
             <Item Name="[username]">username()</Item>

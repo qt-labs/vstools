@@ -224,14 +224,14 @@
     </Type>
 
     <Type Name="##NAMESPACE##::QString">
-        <DisplayString>{((reinterpret_cast&lt;unsigned short*&gt;(d)) + d->offset / 2),sub}</DisplayString>
-        <StringView>((reinterpret_cast&lt;unsigned short*&gt;(d)) + d->offset / 2),sub</StringView>
+        <DisplayString>{((reinterpret_cast&lt;unsigned short*&gt;(d)) + d-&gt;offset / 2),sub}</DisplayString>
+        <StringView>((reinterpret_cast&lt;unsigned short*&gt;(d)) + d-&gt;offset / 2),sub</StringView>
         <Expand>
             <Item Name="[size]">d-&gt;size</Item>
             <Item Name="[referenced]">d-&gt;ref.atomic._q_value</Item>
             <ArrayItems>
                 <Size>d-&gt;size</Size>
-                <ValuePointer>((reinterpret_cast&lt;unsigned short*&gt;(d)) + d->offset / 2),c</ValuePointer>
+                <ValuePointer>((reinterpret_cast&lt;unsigned short*&gt;(d)) + d-&gt;offset / 2),c</ValuePointer>
             </ArrayItems>
         </Expand>
     </Type>
@@ -291,8 +291,8 @@
         <Intrinsic Name="query" Expression="*((QString*)(((char*)(d) + memberOffset(5))))" />
         <Intrinsic Name="fragment" Expression="*((QString*)(((char*)(d) + memberOffset(6))))" />
 
-        <DisplayString Condition="!isEmpty(scheme().d->size)">{scheme()}://{host()}{path()}</DisplayString>
-        <DisplayString Condition="isEmpty(scheme().d->size)">{path()}</DisplayString>
+        <DisplayString Condition="!isEmpty(scheme().d-&gt;size)">{scheme()}://{host()}{path()}</DisplayString>
+        <DisplayString Condition="isEmpty(scheme().d-&gt;size)">{path()}</DisplayString>
         <Expand>
             <Item Name="[scheme]">scheme()</Item>
             <Item Name="[username]">username()</Item>
@@ -451,8 +451,8 @@
             <IndexListItems>
                 <Size>d-&gt;end - d-&gt;begin</Size>
                 <ValueNode>*reinterpret_cast&lt;$T1*&gt;((sizeof($T1) &gt; sizeof(void*))
-                    ? reinterpret_cast&lt;Node*&gt;(d->array + d->begin + $i)->v
-                    : reinterpret_cast&lt;$T1*&gt;(d->array + d->begin + $i))
+                    ? reinterpret_cast&lt;Node*&gt;(d-&gt;array + d-&gt;begin + $i)-&gt;v
+                    : reinterpret_cast&lt;$T1*&gt;(d-&gt;array + d-&gt;begin + $i))
                 </ValueNode>
             </IndexListItems>
         </Expand>
@@ -466,8 +466,8 @@
                 <Size>d-&gt;end - d-&gt;begin</Size>
                 <ValueNode>
                     *reinterpret_cast&lt;QString*&gt;((sizeof(QString) &gt; sizeof(void*))
-                    ? reinterpret_cast&lt;Node*&gt;(d->array + d->begin + $i)->v
-                    : reinterpret_cast&lt;QString*&gt;(d->array + d->begin + $i))
+                    ? reinterpret_cast&lt;Node*&gt;(d-&gt;array + d-&gt;begin + $i)-&gt;v
+                    : reinterpret_cast&lt;QString*&gt;(d-&gt;array + d-&gt;begin + $i))
                 </ValueNode>
             </IndexListItems>
         </Expand>
@@ -481,8 +481,8 @@
                 <Size>d-&gt;end - d-&gt;begin</Size>
                 <ValueNode>
                     *reinterpret_cast&lt;QVariant*&gt;((sizeof(QVariant) &gt; sizeof(void*))
-                    ? reinterpret_cast&lt;Node*&gt;(d->array + d->begin + $i)->v
-                    : reinterpret_cast&lt;QVariant*&gt;(d->array + d->begin + $i))
+                    ? reinterpret_cast&lt;Node*&gt;(d-&gt;array + d-&gt;begin + $i)-&gt;v
+                    : reinterpret_cast&lt;QVariant*&gt;(d-&gt;array + d-&gt;begin + $i))
                 </ValueNode>
             </IndexListItems>
         </Expand>
@@ -553,7 +553,7 @@
                     <Exec>node = *(bucket++)</Exec>
                     <Exec>--n</Exec>
                     <Loop>
-                        <Break Condition="!node || !node->next"/>
+                        <Break Condition="!node || !node-&gt;next"/>
                         <Exec>keyValuePair = reinterpret_cast&lt;Node *&gt;(node)</Exec>
                         <Item Name="[{keyValuePair-&gt;key}]">keyValuePair-&gt;value</Item>
                         <Exec>node = node-&gt;next</Exec>
