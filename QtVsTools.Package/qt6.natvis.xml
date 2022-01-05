@@ -259,7 +259,34 @@
         </Expand>
     </Type>
 
-   <Type Name="##NAMESPACE##::QByteArray">
+    <Type Name="##NAMESPACE##::QStringRef">
+        <DisplayString Condition="m_string == nullptr">{m_string,[m_size]} u""</DisplayString>
+        <DisplayString Condition="m_string != nullptr">{m_string-&gt;d.ptr+m_position,[m_size]}</DisplayString>
+        <StringView Condition="m_string == nullptr">""</StringView>
+        <StringView Condition="m_string != nullptr">m_string,[m_position+m_size]</StringView>
+        <Expand>
+            <Item Name="[position]" ExcludeView="simple">m_position</Item>
+            <Item Name="[size]" ExcludeView="simple">m_size</Item>
+            <ArrayItems Condition="m_string != nullptr">
+                <Size>m_size</Size>
+                <ValuePointer>m_string-&gt;d.ptr+m_position</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="##NAMESPACE##::QStringView">
+        <DisplayString>{m_data,[m_size]}</DisplayString>
+        <StringView>m_data,[m_size]</StringView>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">m_size</Item>
+            <ArrayItems>
+                <Size>m_size</Size>
+                <ValuePointer>m_data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="##NAMESPACE##::QByteArray">
         <DisplayString>&quot;{((reinterpret_cast&lt;char*&gt;(d.ptr))),sb}&quot;</DisplayString>
         <StringView>((reinterpret_cast&lt;char*&gt;(d.ptr))),sb</StringView>
         <Expand>
