@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -31,8 +31,6 @@ using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ClassWizard
 {
-    using Util;
-
     public partial class GuiClassPage : WizardPage
     {
         public GuiClassPage()

@@ -1,7 +1,7 @@
 ﻿<!--
     *****************************************************************************
     **
-    ** Copyright (C) 2016 The Qt Company Ltd.
+    ** Copyright (C) 2022 The Qt Company Ltd.
     ** Contact: https://www.qt.io/licensing/
     **
     ** This file is part of the Qt VS Tools.
@@ -189,6 +189,7 @@
                     </TextBox>
                 </Grid>
                 <CheckBox Grid.Row="5"
+                          Grid.Column="1"
                           Content="Lower case file names"
                           Name="LowerCaseFileNames"
                           Click="OnLowerCaseFileNamesClick"

@@ -2,14 +2,15 @@
 
 #include <QtWidgets/$baseclass$>
 #include "$ui_hdr$"
-
-class $classname$ : public $baseclass$
+$forward_declare_class$
+class $classname$ : public $baseclass$$multiple_inheritance$
 {
     Q_OBJECT
 
 public:
     $classname$(QWidget *parent = nullptr);
+    ~$classname$();
 
 private:
-    Ui::$classname$Class ui;
+    $ui_classname$ $asterisk$$member$$semicolon$
 };

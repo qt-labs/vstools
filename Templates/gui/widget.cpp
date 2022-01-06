@@ -1,7 +1,10 @@
 $include$
 
 $classname$::$classname$(QWidget *parent)
-    : $baseclass$(parent)
+    : $baseclass$(parent)$new$
 {
-    ui.setupUi(this);
+    $member$$operator$setupUi(this);
 }
+
+$classname$::~$classname$()
+{$delete$}

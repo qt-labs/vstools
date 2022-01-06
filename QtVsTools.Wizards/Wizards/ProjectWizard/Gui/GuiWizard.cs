@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -63,6 +63,19 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("qrcfilename")] QrcFileName,
             [String("uifilename")] UiFileName,
             [String("ui_hdr")] UiHeaderName,
+            [String("forward_declare_class")] ForwardDeclClass,
+            [String("multiple_inheritance")] MultipleInheritance,
+            [String("ui_classname")] UiClassName,
+            [String("member")] Member,
+        }
+
+        enum Meta
+        {
+            [String("operator")] Operator,
+            [String("asterisk")] Asterisk,
+            [String("semicolon")] Semicolon,
+            [String("new")] New,
+            [String("delete")] Delete
         }
 
         WizardData _WizardData;
@@ -175,6 +188,18 @@ namespace QtVsTools.Wizards.ProjectWizard
             WizardData.ClassSourceFile = className + @".cpp";
             WizardData.UiFile = WizardData.ClassName + @".ui";
             WizardData.QrcFile = WizardData.ClassName + @".qrc";
+            WizardData.UiClassInclusion = ClassWizard.UiClassInclusion.Member;
+
+            Parameter[NewGuiProject.ForwardDeclClass] = "";
+            Parameter[NewGuiProject.MultipleInheritance] = "";
+            Parameter[NewGuiProject.UiClassName] = "";
+            Parameter[NewGuiProject.Member] = "ui";
+
+            Parameter[Meta.Asterisk] ="";
+            Parameter[Meta.Operator] = ".";
+            Parameter[Meta.Semicolon] = ";";
+            Parameter[Meta.New] = "";
+            Parameter[Meta.Delete] = "";
         }
 
         protected override void BeforeTemplateExpansion()
@@ -257,6 +282,35 @@ namespace QtVsTools.Wizards.ProjectWizard
                         Parameter[NewProject.DestinationDirectory],
                         Parameter[NewProject.SafeName] + ".rc"),
                     winRcFile.ToString());
+            }
+
+            switch (WizardData.UiClassInclusion) {
+            case ClassWizard.UiClassInclusion.MemberPointer:
+                Parameter[NewGuiProject.ForwardDeclClass] =
+                    string.Format(
+                          "\r\nQT_BEGIN_NAMESPACE\r\n"
+                        + "namespace Ui {{ class {0}Class; }};\r\n"
+                        + "QT_END_NAMESPACE\r\n", WizardData.ClassName
+                    );
+                Parameter[Meta.Asterisk] = "*";
+                Parameter[Meta.Operator] = "->";
+                Parameter[Meta.New] = string.Format("\r\n    , {0}(new Ui::{1}Class())",
+                                                    Parameter[NewGuiProject.Member],
+                                                    WizardData.ClassName);
+                Parameter[Meta.Delete] = string.Format("\r\n    delete {0};\r\n",
+                                                       Parameter[NewGuiProject.Member]);
+                goto case ClassWizard.UiClassInclusion.Member;
+            case ClassWizard.UiClassInclusion.Member:
+                Parameter[NewGuiProject.UiClassName] = string.Format("Ui::{0}Class",
+                                                                     WizardData.ClassName);
+                break;
+            case ClassWizard.UiClassInclusion.MultipleInheritance:
+                Parameter[NewGuiProject.MultipleInheritance] =
+                    string.Format(", public Ui::{0}Class", WizardData.ClassName);
+                Parameter[NewGuiProject.Member] = "";
+                Parameter[Meta.Operator] = "";
+                Parameter[Meta.Semicolon] = "";
+                break;
             }
         }
 
