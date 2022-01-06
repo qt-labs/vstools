@@ -9,7 +9,7 @@ class $plugin_class$ : public QObject, public QDesignerCustomWidgetInterface
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-    $plugin_class$(QObject *parent = Q_NULLPTR);
+    $plugin_class$(QObject *parent = nullptr);
 
     bool isContainer() const;
     bool isInitialized() const;

@@ -7,5 +7,5 @@ class $classname$ : public $baseclass$
     Q_OBJECT
 
 public:
-    $classname$(QWidget *parent = Q_NULLPTR);
+    $classname$(QWidget *parent = nullptr);
 };

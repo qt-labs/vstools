@@ -36,7 +36,7 @@ class BigProjectQtClassNNN : public QMainWindow
     Q_OBJECT
 
 public:
-    BigProjectQtClassNNN(QWidget *parent = Q_NULLPTR);
+    BigProjectQtClassNNN(QWidget *parent = nullptr);
 
 private:
     Ui::BigProjectNNNUi ui;

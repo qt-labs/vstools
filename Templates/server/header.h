@@ -10,7 +10,7 @@ class $classname$ : public QWidget, public QAxBindable
     Q_OBJECT
 
 public:
-    $classname$(QWidget *parent = Q_NULLPTR);
+    $classname$(QWidget *parent = nullptr);
 
 private:
     Ui::$classname$Class ui;

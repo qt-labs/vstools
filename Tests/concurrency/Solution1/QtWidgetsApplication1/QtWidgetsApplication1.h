@@ -10,7 +10,7 @@ class QtWidgetsApplication1 : public QMainWindow
     Q_OBJECT
 
 public:
-    QtWidgetsApplication1(QWidget *parent = Q_NULLPTR);
+    QtWidgetsApplication1(QWidget *parent = nullptr);
 
 private:
     Ui::QtWidgetsApplication1Class ui;
