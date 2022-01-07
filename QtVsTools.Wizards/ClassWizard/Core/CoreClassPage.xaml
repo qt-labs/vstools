@@ -87,7 +87,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
-                    <Style TargetType="{x:Type TextBox}">
+                    <Style TargetType="TextBox">
                         <Style.Triggers>
                             <Trigger Property="Validation.HasError"
                                      Value="true">
@@ -132,7 +132,7 @@
                     <ComboBoxItem Content="QWidget *parent" />
                     <ComboBoxItem Content="" />
                     <ComboBox.Style>
-                        <Style TargetType="{x:Type ComboBox}">
+                        <Style TargetType="ComboBox">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=BaseClass, Path=Text}"
                                              Value="">
@@ -225,7 +225,7 @@
                           TabIndex="3"
                           IsChecked="True">
                     <CheckBox.Style>
-                        <Style TargetType="{x:Type CheckBox}">
+                        <Style TargetType="CheckBox">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=BaseClass, Path=Text}"
                                              Value="">
@@ -258,7 +258,7 @@
                         Content="_Finish"
                         VerticalAlignment="Bottom">
                     <Button.Style>
-                        <Style TargetType="{x:Type Button}">
+                        <Style TargetType="Button">
                             <Setter Property="IsEnabled"
                                     Value="false" />
                             <Style.Triggers>

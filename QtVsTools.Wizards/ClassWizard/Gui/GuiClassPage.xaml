@@ -87,7 +87,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
-                    <Style TargetType="{x:Type TextBox}">
+                    <Style TargetType="TextBox">
                         <Style.Triggers>
                             <Trigger Property="Validation.HasError"
                                      Value="true">
@@ -273,7 +273,7 @@
                         Content="_Finish"
                         VerticalAlignment="Bottom">
                     <Button.Style>
-                        <Style TargetType="{x:Type Button}">
+                        <Style TargetType="Button">
                             <Setter Property="IsEnabled"
                                     Value="false" />
                             <Style.Triggers>
