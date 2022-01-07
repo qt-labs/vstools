@@ -40,6 +40,7 @@ using System.Windows.Forms;
 namespace QtVsTools
 {
     using QtMsBuild;
+    using QtVsTools.Wizards.Common;
 
     /// <summary>
     /// Command handler
@@ -212,7 +213,7 @@ namespace QtVsTools
                         do {
                             var classWizard = new Wizards.ClassWizard.AddClassWizard();
                             loop = classWizard.Run(QtVsToolsPackage.Instance.Dte, vcProject.Name,
-                                vcProject.ProjectDirectory) == Wizards.WizardResult.Exception;
+                                vcProject.ProjectDirectory) == WizardResult.Exception;
                         } while (loop);
                     } catch {
                         // Deliberately ignore any kind of exception but close the dialog.

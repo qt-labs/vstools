@@ -134,47 +134,47 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Wizards\ClassWizard\AddClassPage.xaml.cs">
+    <Compile Include="ClassWizard\AddClassPage.xaml.cs">
       <DependentUpon>AddClassPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ClassWizard\AddClassWizard.cs" />
-    <Compile Include="Wizards\ClassWizard\Class.cs" />
-    <Compile Include="Wizards\ClassWizard\ClassKind.cs" />
-    <Compile Include="Wizards\ProjectWizard\ConfigPage.xaml.cs">
+    <Compile Include="ClassWizard\AddClassWizard.cs" />
+    <Compile Include="ClassWizard\Class.cs" />
+    <Compile Include="ClassWizard\ClassKind.cs" />
+    <Compile Include="ProjectWizard\ConfigPage.xaml.cs">
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\ProjectTemplateWizard.cs" />
-    <Compile Include="Wizards\ProjectWizard\Quick\QuickWizard.cs" />
-    <Compile Include="Wizards\Util\ClassNameValidationRule.cs" />
-    <Compile Include="Wizards\ProjectWizard\Console\ConsoleWizard.cs" />
-    <Compile Include="Wizards\ClassWizard\Core\CoreClassPage.xaml.cs">
+    <Compile Include="ProjectWizard\ProjectTemplateWizard.cs" />
+    <Compile Include="ProjectWizard\Quick\QuickWizard.cs" />
+    <Compile Include="Util\ClassNameValidationRule.cs" />
+    <Compile Include="ProjectWizard\Console\ConsoleWizard.cs" />
+    <Compile Include="ClassWizard\Core\CoreClassPage.xaml.cs">
       <DependentUpon>CoreClassPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ClassWizard\Core\CoreClassWizard.cs" />
-    <Compile Include="Wizards\ProjectWizard\Designer\DesignerPage.xaml.cs">
+    <Compile Include="ClassWizard\Core\CoreClassWizard.cs" />
+    <Compile Include="ProjectWizard\Designer\DesignerPage.xaml.cs">
       <DependentUpon>DesignerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Designer\DesignerWizard.cs" />
-    <Compile Include="Wizards\Util\FileExistsInFilterValidationRule.cs" />
-    <Compile Include="Wizards\Util\FileNameValidationRule.cs" />
-    <Compile Include="Wizards\ClassWizard\Gui\GuiClassPage.xaml.cs">
+    <Compile Include="ProjectWizard\Designer\DesignerWizard.cs" />
+    <Compile Include="Util\FileExistsInFilterValidationRule.cs" />
+    <Compile Include="Util\FileNameValidationRule.cs" />
+    <Compile Include="ClassWizard\Gui\GuiClassPage.xaml.cs">
       <DependentUpon>GuiClassPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ClassWizard\Gui\GuiClassWizard.cs" />
-    <Compile Include="Wizards\ProjectWizard\Gui\GuiPage.xaml.cs">
+    <Compile Include="ClassWizard\Gui\GuiClassWizard.cs" />
+    <Compile Include="ProjectWizard\Gui\GuiPage.xaml.cs">
       <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Gui\GuiWizard.cs" />
-    <Compile Include="Wizards\ProjectWizard\Empty\EmptyWizard.cs" />
-    <Compile Include="Wizards\ClassWizard\IClassWizard.cs" />
-    <Compile Include="Wizards\WizardIntroPage.xaml.cs">
+    <Compile Include="ProjectWizard\Gui\GuiWizard.cs" />
+    <Compile Include="ProjectWizard\Empty\EmptyWizard.cs" />
+    <Compile Include="ClassWizard\IClassWizard.cs" />
+    <Compile Include="Common\WizardIntroPage.xaml.cs">
       <DependentUpon>WizardIntroPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Library\LibraryClassPage.xaml.cs">
+    <Compile Include="ProjectWizard\Library\LibraryClassPage.xaml.cs">
       <DependentUpon>LibraryClassPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Library\LibraryWizard.cs" />
-    <Compile Include="Wizards\Util\NativeMethods.cs" />
+    <Compile Include="ProjectWizard\Library\LibraryWizard.cs" />
+    <Compile Include="Util\NativeMethods.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
@@ -186,50 +186,50 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Server\ServerPage.xaml.cs">
+    <Compile Include="ProjectWizard\Server\ServerPage.xaml.cs">
       <DependentUpon>ServerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\ProjectWizard\Server\ServerWizard.cs" />
-    <Compile Include="Wizards\Util\SortComboBoxItem.cs" />
-    <Compile Include="Wizards\Util\UiClassInclusionConverter.cs" />
-    <Compile Include="Wizards\ClassWizard\UiClassInclusion.cs" />
-    <Compile Include="Wizards\Util\UnsafeNativeMethods.cs" />
-    <Compile Include="Wizards\Util\VCLanguageManagerValidationRule.cs" />
-    <Compile Include="Wizards\WizardData.cs" />
-    <Compile Include="Wizards\WizardPage.cs" />
-    <Compile Include="Wizards\WizardResult.cs" />
-    <Compile Include="Wizards\WizardWindow.xaml.cs">
+    <Compile Include="ProjectWizard\Server\ServerWizard.cs" />
+    <Compile Include="Util\SortComboBoxItem.cs" />
+    <Compile Include="Util\UiClassInclusionConverter.cs" />
+    <Compile Include="Common\UiClassInclusion.cs" />
+    <Compile Include="Util\UnsafeNativeMethods.cs" />
+    <Compile Include="Util\VCLanguageManagerValidationRule.cs" />
+    <Compile Include="Common\WizardData.cs" />
+    <Compile Include="Common\WizardPage.cs" />
+    <Compile Include="Common\WizardResult.cs" />
+    <Compile Include="Common\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Wizards\ClassWizard\AddClassPage.xaml">
+    <Page Include="ClassWizard\AddClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ClassWizard\Core\CoreClassPage.xaml">
+    <Page Include="ClassWizard\Core\CoreClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ProjectWizard\Designer\DesignerPage.xaml">
+    <Page Include="ProjectWizard\Designer\DesignerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ClassWizard\Gui\GuiClassPage.xaml">
+    <Page Include="ClassWizard\Gui\GuiClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ProjectWizard\Gui\GuiPage.xaml">
+    <Page Include="ProjectWizard\Gui\GuiPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ProjectWizard\ConfigPage.xaml">
+    <Page Include="ProjectWizard\ConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Wizards\WizardIntroPage.xaml">
+    <Page Include="Common\WizardIntroPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ProjectWizard\Library\LibraryClassPage.xaml">
+    <Page Include="ProjectWizard\Library\LibraryClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,15 +237,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\ProjectWizard\Server\ServerPage.xaml">
+    <Page Include="ProjectWizard\Server\ServerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Wizards\WizardWindow.xaml">
+    <Page Include="Common\WizardWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
 </Project>
