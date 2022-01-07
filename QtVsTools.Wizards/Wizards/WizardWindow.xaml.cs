@@ -112,7 +112,7 @@ namespace QtVsTools.Wizards
             var tmp = currentPage + 1;
             if (tmp >= Pages.Count) {
                 throw new InvalidOperationException(@"Current wizard page "
-                    + @"cannot be equal or greather then pages count.");
+                    + @"cannot be equal or greater than pages count.");
             }
             currentPage++;
         }
