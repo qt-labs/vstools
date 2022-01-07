@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -26,42 +26,18 @@
 **
 ****************************************************************************/
 
-using System.Windows;
-using System.Windows.Controls;
+using System;
+using System.Globalization;
+using System.Windows.Data;
 
-namespace QtVsTools.Wizards.ClassWizard
+namespace QtVsTools.Wizards.Util
 {
-    public partial class GuiClassPage : WizardPage
+    public class UiClassInclusionConverter : IValueConverter
     {
-        public GuiClassPage()
-        {
-            InitializeComponent();
-            DataContext = this;
-        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value?.Equals(parameter);
 
-        private void OnClassNameChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateFileNames();
-        }
-
-        private void OnLowerCaseFileNamesClick(object sender, RoutedEventArgs e)
-        {
-            UpdateFileNames();
-        }
-
-        private void UpdateFileNames()
-        {
-            var filename = ClassName.Text;
-            if (LowerCaseFileNames.IsChecked.GetValueOrDefault())
-                filename = filename.ToLower();
-
-            var index = filename.LastIndexOf(@":", System.StringComparison.Ordinal);
-            if (index >= 0)
-                filename = filename.Substring(index + 1);
-
-            ClassHeaderFile.Text = filename + @".h";
-            ClassSourceFile.Text = filename + @".cpp";
-            UiFile.Text = filename + @".ui";
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => value?.Equals(true) == true ? parameter : Binding.DoNothing;
     }
 }

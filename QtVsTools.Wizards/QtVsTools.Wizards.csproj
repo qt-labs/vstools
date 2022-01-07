@@ -191,6 +191,7 @@
     </Compile>
     <Compile Include="Wizards\ProjectWizard\Server\ServerWizard.cs" />
     <Compile Include="Wizards\Util\SortComboBoxItem.cs" />
+    <Compile Include="Wizards\Util\UiClassInclusionConverter.cs" />
     <Compile Include="Wizards\ClassWizard\UiClassInclusion.cs" />
     <Compile Include="Wizards\Util\UnsafeNativeMethods.cs" />
     <Compile Include="Wizards\Util\VCLanguageManagerValidationRule.cs" />

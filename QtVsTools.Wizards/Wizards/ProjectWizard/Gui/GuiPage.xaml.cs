@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using QtVsTools.Wizards.ClassWizard;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -60,19 +59,6 @@ namespace QtVsTools.Wizards.ProjectWizard
             ClassSourceFile.Text = filename + @".cpp";
             UiFile.Text = filename + @".ui";
             QrcFile.Text = filename + @".qrc";
-        }
-
-        private void OnRadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            if (Data == null)
-                return;
-
-            if (Member.IsChecked.GetValueOrDefault())
-                Data.UiClassInclusion = UiClassInclusion.Member;
-            if (MemberPointer.IsChecked.GetValueOrDefault())
-                Data.UiClassInclusion = UiClassInclusion.MemberPointer;
-            if (MultipleInheritance.IsChecked.GetValueOrDefault())
-                Data.UiClassInclusion = UiClassInclusion.MultipleInheritance;
         }
     }
 }
