@@ -61,6 +61,7 @@ namespace QtVsTools.Wizards.Common
         public bool UsePrecompiledHeader { get; set; }
         public bool InsertQObjectMacro { get; set; }
         public bool LowerCaseFileNames { get; set; }
+        public bool IncludeQObjectMacro { get; set; }
         public UiClassInclusion UiClassInclusion { get; set; }
 
         public IEnumerable<IWizardConfiguration> Configs { get; set; }

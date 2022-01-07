@@ -157,11 +157,8 @@
     <Compile Include="ProjectWizard\Designer\DesignerWizard.cs" />
     <Compile Include="Util\FileExistsInFilterValidationRule.cs" />
     <Compile Include="Util\FileNameValidationRule.cs" />
-    <Compile Include="ClassWizard\Gui\GuiClassPage.xaml.cs">
-      <DependentUpon>GuiClassPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ClassWizard\Gui\GuiClassWizard.cs" />
-    <Compile Include="ProjectWizard\Gui\GuiPage.xaml.cs">
+    <Compile Include="Common\GuiPage.xaml.cs">
       <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectWizard\Gui\GuiWizard.cs" />
@@ -213,11 +210,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ClassWizard\Gui\GuiClassPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ProjectWizard\Gui\GuiPage.xaml">
+    <Page Include="Common\GuiPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

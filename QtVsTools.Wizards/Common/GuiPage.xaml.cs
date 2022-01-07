@@ -28,16 +28,20 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using QtVsTools.Wizards.Common;
 
-namespace QtVsTools.Wizards.ProjectWizard
+namespace QtVsTools.Wizards.Common
 {
     public partial class GuiPage : WizardPage
     {
+        public bool IsClassWizardPage { get; set; } = false;
+        public Visibility ClassPageVisible => IsClassWizardPage ? Visibility.Hidden : Visibility.Visible;
+        public Visibility QObjectMacro => IsClassWizardPage ? Visibility.Visible : Visibility.Collapsed;
+
         public GuiPage()
         {
             InitializeComponent();
             DataContext = this;
+            UpdateFileNames();
         }
 
         private void OnClassNameChanged(object sender, TextChangedEventArgs e)

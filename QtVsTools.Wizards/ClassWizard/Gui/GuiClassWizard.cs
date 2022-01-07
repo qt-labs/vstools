@@ -61,6 +61,7 @@ namespace QtVsTools.Wizards.ClassWizard
                     data.ClassHeaderFile = name + @".h";
                     data.ClassSourceFile = name + @".cpp";
                     data.UiFile = data.ClassName + @".ui";
+                    data.QrcFile = data.ClassName + @".qrc";
 
                     var wizard = new WizardWindow(new List<WizardPage> {
                         new WizardIntroPage {
@@ -75,8 +76,9 @@ namespace QtVsTools.Wizards.ClassWizard
                             FinishButtonEnabled = false,
                             CancelButtonEnabled = true
                         },
-                        new GuiClassPage {
+                        new GuiPage {
                             Data = data,
+                            IsClassWizardPage = true,
                             Header = @"Welcome to the Qt Widgets Class Wizard",
                             Message = @"This wizard will add a new Qt Widgets class to your project. "
                                 + @"The wizard creates a .h and .cpp file. It also creates a new "
@@ -149,7 +151,8 @@ namespace QtVsTools.Wizards.ClassWizard
         {
             DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets"
-            }
+            },
+            IncludeQObjectMacro = true
         };
 
         private const string MemberClassHeader =
@@ -160,8 +163,7 @@ namespace QtVsTools.Wizards.ClassWizard
             + "\r\n"
             + "%NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%\r\n"
             + "{\r\n"
-            + "    Q_OBJECT\r\n"
-            + "\r\n"
+            + "%QOBJECT%"
             + "public:\r\n"
             + "    %CLASS%(QWidget *parent = nullptr);\r\n"
             + "    ~%CLASS%();\r\n"
@@ -195,8 +197,7 @@ namespace QtVsTools.Wizards.ClassWizard
             + "\r\n"
             + "%NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%\r\n"
             + "{\r\n"
-            + "    Q_OBJECT\r\n"
-            + "\r\n"
+            + "%QOBJECT%"
             + "public:\r\n"
             + "    %CLASS%(QWidget *parent = nullptr);\r\n"
             + "    ~%CLASS%();\r\n"
@@ -231,8 +232,7 @@ namespace QtVsTools.Wizards.ClassWizard
             + "\r\n"
             + "%NAMESPACE_BEGIN%class %CLASS% : public %BASECLASS%, public Ui::%CLASS%\r\n"
             + "{\r\n"
-            + "    Q_OBJECT\r\n"
-            + "\r\n"
+            + "%QOBJECT%"
             + "public:\r\n"
             + "    %CLASS%(QWidget *parent = nullptr);\r\n"
             + "    ~%CLASS%();\r\n"
@@ -268,18 +268,19 @@ namespace QtVsTools.Wizards.ClassWizard
         {
             var replaceUiHeader = true;
             var hppFile = Path.GetTempFileName();
+            var value = data.IncludeQObjectMacro ? "    Q_OBJECT\r\n\r\n" : "";
             using (var tmp = new StreamWriter(hppFile)) {
                 var content = string.Empty;
                 switch (data.UiClassInclusion) {
                 case UiClassInclusion.Member:
-                    content = MemberClassHeader;
+                    content = MemberClassHeader.Replace("%QOBJECT%", value);
                     break;
                 case UiClassInclusion.MemberPointer:
                     replaceUiHeader = false;
-                    content = MemberPointerClassHeader;
+                    content = MemberPointerClassHeader.Replace("%QOBJECT%", value);
                     break;
                 case UiClassInclusion.MultipleInheritance:
-                    content = InheritanceClassHeader;
+                    content = InheritanceClassHeader.Replace("%QOBJECT%", value);
                     break;
                 }
                 tmp.Write(content);

@@ -28,7 +28,7 @@
     *****************************************************************************
 -->
 
-<common:WizardPage x:Class="QtVsTools.Wizards.ClassWizard.GuiClassPage"
+<common:WizardPage x:Class="QtVsTools.Wizards.Common.GuiPage"
                   xmlns:common="clr-namespace:QtVsTools.Wizards.Common"
                   xmlns:util="clr-namespace:QtVsTools.Wizards.Util"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -74,14 +74,6 @@
                 <LineBreak />
             </TextBlock>
             <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -98,63 +90,43 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Resources>
-                <TextBlock Grid.Row="0"
-                           Text="Class Name:"
-                           Margin="0,0,10,0" />
-                <TextBox Grid.Row="1"
-                         Margin="0,0,10,10"
-                         Name="ClassName"
-                         TextChanged="OnClassNameChanged"
-                         TabIndex="0">
-                    <TextBox.Text>
-                        <Binding Path="Data.ClassName"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <util:ClassNameValidationRule SupportNamespaces="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBlock TextWrapping="Wrap"
-                           Text="User Interface (.ui) file:"
-                           Grid.Row="2"
-                           Margin="0,0,10,5" />
-                <TextBlock TextWrapping="Wrap"
-                           Text="Base class:"
-                           Margin="0,0,10,0"
-                           Grid.Column="1" />
-                <TextBox x:Name="BaseClass"
-                         Margin="0,0,0,10"
-                         TabIndex="1"
-                         Grid.Column="1"
-                         Grid.Row="1">
-                    <TextBox.Text>
-                        <Binding Path="Data.BaseClass"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <util:ClassNameValidationRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Grid Grid.Row="4"
-                      Grid.ColumnSpan="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Margin="0,0,10,5"
-                               Text="Header (.h) file:" />
-                    <TextBox Grid.Row="1"
-                             Margin="0,0,10,0"
-                             Name="ClassHeaderFile"
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Class Name:"
+                               Margin="0,0,10,0" />
+                    <TextBox Margin="0,0,10,15"
+                             Name="ClassName"
+                             TextChanged="OnClassNameChanged"
+                             TabIndex="0">
+                        <TextBox.Text>
+                            <Binding Path="Data.ClassName"
+                                     NotifyOnValidationError="True"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <util:ClassNameValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock Text="User Interface (.ui) file:"
+                               Margin="0,0,10,0" />
+                    <TextBox Name="UiFile"
+                             Margin="0,0,10,52"
+                             TabIndex="2">
+                        <TextBox.Text>
+                            <Binding Path="Data.UiFile"
+                                     NotifyOnValidationError="True"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <util:FileNameValidationRule FileExt=".ui" />
+                                    <util:FileExistsinFilterValidationRule Filter="FL_UiFiles" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock Text="Header (.h) file:"
+                               Margin="0,0,10,0" />
+                    <TextBox Name="ClassHeaderFile"
+                             Margin="0,0,10,5"
                              TabIndex="6">
                         <TextBox.Text>
                             <Binding Path="Data.ClassHeaderFile"
@@ -167,15 +139,11 @@
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="1"
-                               Margin="0,0,0,5"
-                               Text="Source (.cpp) file:" />
-                    <TextBox Grid.Row="1"
-                             Grid.Column="1"
-                             Margin="0,0,0,00"
-                             Name="ClassSourceFile"
-                             TabIndex="7">
+                    <TextBlock Text="Source (.cpp) file:"
+                               Margin="0,0,0,0" />
+                    <TextBox Name="ClassSourceFile"
+                             Margin="0,0,10,15"
+                             TabIndex="8">
                         <TextBox.Text>
                             <Binding Path="Data.ClassSourceFile"
                                      NotifyOnValidationError="True"
@@ -187,28 +155,31 @@
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
-                </Grid>
-                <CheckBox Grid.Row="5"
-                          Grid.Column="1"
-                          Content="Lower case file names"
-                          Name="LowerCaseFileNames"
-                          Click="OnLowerCaseFileNamesClick"
-                          Margin="0,20,10,5"
-                          TabIndex="8" />
-                <TextBlock Grid.Column="1"
-                           Grid.Row="2"
-                           TextWrapping="Wrap"
+
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Base class:" />
+                    <ComboBox Margin="0,0,0,11"
+                                  IsEditable="{Binding Path=IsClassWizardPage}"
+                                  SelectedIndex="0"
+                                  Text="{Binding Path=Data.BaseClass}"
+                                  IsSynchronizedWithCurrentItem="True"
+                                  TabIndex="1">
+                        <ComboBoxItem Content="QMainWindow"
+                                          IsSelected="True" />
+                        <ComboBoxItem Content="QWidget" />
+                        <ComboBoxItem Content="QDialog" />
+                    </ComboBox>
+                    <TextBlock TextWrapping="Wrap"
                            Text="Ui Class Inclusion as:"
-                           Margin="0"
-                           VerticalAlignment="Top" />
-                <StackPanel Grid.Column="1"
-                            Grid.Row="3"
-                            Margin="10,0,0,20">
-                    <StackPanel.Resources>
-                        <util:UiClassInclusionConverter x:Key="UiClassInclusionConverter" />
-                    </StackPanel.Resources>
-                    <RadioButton x:Name="Member"
-                                 Content="Member"
+                           Margin="0,0,0,5"
+                           VerticalAlignment="Top"/>
+                    <StackPanel Grid.Column="1"
+                            Margin="10,0,0,10">
+                        <StackPanel.Resources>
+                            <util:UiClassInclusionConverter x:Key="UiClassInclusionConverter" />
+                        </StackPanel.Resources>
+                        <RadioButton Content="Member"
                                  Margin="0,0,0,5"
                                  IsChecked="{
                                     Binding Path=Data.UiClassInclusion,
@@ -216,8 +187,7 @@
                                     ConverterParameter={x:Static common:UiClassInclusion.Member}
                                  }"
                                  TabIndex="3" />
-                    <RadioButton x:Name="MemberPointer"
-                                 Content="Member Pointer"
+                        <RadioButton Content="Member Pointer"
                                  Margin="0,0,0,5"
                                  IsChecked="{
                                     Binding Path=Data.UiClassInclusion,
@@ -225,32 +195,53 @@
                                     ConverterParameter={x:Static common:UiClassInclusion.MemberPointer}
                                  }"
                                  TabIndex="4" />
-                    <RadioButton x:Name="MultipleInheritance"
-                                 Content="Multiple Inheritance"
+                        <RadioButton Content="Multiple Inheritance"
                                  IsChecked="{
                                     Binding Path=Data.UiClassInclusion,
                                     Converter={StaticResource UiClassInclusionConverter},
                                     ConverterParameter={x:Static common:UiClassInclusion.MultipleInheritance}
                                  }"
                                  TabIndex="5" />
+                    </StackPanel>
+                    <CheckBox Content="Include Q_OBJECT macro"
+                              TabIndex="7"
+                              Margin="0,0,0,-17"
+                              Name="IncludeQObjectMacro"
+                              Visibility="{Binding Path=QObjectMacro}"
+                              IsChecked="{Binding Path=Data.IncludeQObjectMacro}" />
+                    <TextBlock Margin="0,0,10,0"
+                               Text="Resource (.qrc) file:"
+                               Visibility="{Binding Path=ClassPageVisible}" />
+                    <TextBox Name="QrcFile"
+                             Margin="0,0,0,23"
+                             TabIndex="7"
+                             Visibility="{Binding Path=ClassPageVisible}" >
+                        <TextBox.Text>
+                            <Binding Path="Data.QrcFile"
+                                     NotifyOnValidationError="True"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <util:FileNameValidationRule FileExt=".qrc" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <CheckBox Content="Lower case file names"
+                              Margin="0,0,0,5"
+                              Name="LowerCaseFileNames"
+                              TabIndex="9"
+                              Click="OnLowerCaseFileNamesClick" />
+                    <CheckBox Content="Precompiled header"
+                              Margin="0,0,0,5"
+                              IsChecked="{Binding Path=Data.UsePrecompiledHeader}"
+                              TabIndex="10"
+                              Visibility="{Binding Path=ClassPageVisible}"/>
+                    <CheckBox Content="Add default application icon"
+                              Margin="0,0,0,0"
+                              IsChecked="{Binding Path=Data.AddDefaultAppIcon}"
+                              TabIndex="11"
+                              Visibility="{Binding Path=ClassPageVisible}" />
                 </StackPanel>
-                <TextBox x:Name="UiFile"
-                         Grid.Row="3"
-                         TextWrapping="Wrap"
-                         VerticalAlignment="Top"
-                         Margin="0,0,10,0"
-                         TabIndex="2">
-                    <TextBox.Text>
-                        <Binding Path="Data.UiFile"
-                                 NotifyOnValidationError="True"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <util:FileNameValidationRule FileExt=".ui" />
-                                <util:FileExistsinFilterValidationRule Filter="FL_UiFiles" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
             </Grid>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal"
@@ -284,16 +275,16 @@
                                         <Condition Binding="{Binding ElementName=ClassName,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
-                                        <Condition Binding="{Binding ElementName=BaseClass,
+                                        <Condition Binding="{Binding ElementName=ClassHeaderFile,
+                                            Path=(Validation.HasError)}"
+                                                   Value="false" />
+                                        <Condition Binding="{Binding ElementName=ClassSourceFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
                                         <Condition Binding="{Binding ElementName=UiFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
-                                        <Condition Binding="{Binding ElementName=ClassHeaderFile,
-                                            Path=(Validation.HasError)}"
-                                                   Value="false" />
-                                        <Condition Binding="{Binding ElementName=ClassSourceFile,
+                                        <Condition Binding="{Binding ElementName=QrcFile,
                                             Path=(Validation.HasError)}"
                                                    Value="false" />
                                     </MultiDataTrigger.Conditions>
