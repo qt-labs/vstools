@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="ProjectWizard\Library\LibraryWizard.cs" />
     <Compile Include="Util\NativeMethods.cs" />
+    <Compile Include="ItemWizard\WidgetsClass\WidgetsClassWizard.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>

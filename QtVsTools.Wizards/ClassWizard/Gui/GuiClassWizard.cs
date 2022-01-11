@@ -152,7 +152,7 @@ namespace QtVsTools.Wizards.ClassWizard
             DefaultModules = new List<string> {
                 @"QtCore", @"QtGui", @"QtWidgets"
             },
-            IncludeQObjectMacro = true
+            InsertQObjectMacro = true
         };
 
         private const string MemberClassHeader =
@@ -268,7 +268,7 @@ namespace QtVsTools.Wizards.ClassWizard
         {
             var replaceUiHeader = true;
             var hppFile = Path.GetTempFileName();
-            var value = data.IncludeQObjectMacro ? "    Q_OBJECT\r\n\r\n" : "";
+            var value = data.InsertQObjectMacro ? "    Q_OBJECT\r\n\r\n" : "";
             using (var tmp = new StreamWriter(hppFile)) {
                 var content = string.Empty;
                 switch (data.UiClassInclusion) {

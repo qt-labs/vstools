@@ -203,12 +203,12 @@
                                  }"
                                  TabIndex="5" />
                     </StackPanel>
-                    <CheckBox Content="Include Q_OBJECT macro"
+                    <CheckBox Content="Insert Q_OBJECT macro"
                               TabIndex="7"
                               Margin="0,0,0,-17"
-                              Name="IncludeQObjectMacro"
+                              Name="InsertQObjectMacro"
                               Visibility="{Binding Path=QObjectMacro}"
-                              IsChecked="{Binding Path=Data.IncludeQObjectMacro}" />
+                              IsChecked="{Binding Path=Data.InsertQObjectMacro}" />
                     <TextBlock Margin="0,0,10,0"
                                Text="Resource (.qrc) file:"
                                Visibility="{Binding Path=ClassPageVisible}" />

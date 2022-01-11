@@ -315,3 +315,5 @@ QtVsTools.Package/source.extension.vsixmanifest
 QtNatvisPoC/*.txt
 Tests/BigSolution/generated/
 vstools.pri
+templates/widgetsclass/Properties/AssemblyInfo.tt.cs
+templates/widgetsclass/widgetsclass.vstemplate

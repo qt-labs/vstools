@@ -174,6 +174,13 @@
       <Name>qrceditor</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\Templates\widgetsclass\QtTemplate.Item.WidgetsClass.csproj">
+      <Project>{020422DA-33AB-4495-A439-7DAC2690795C}</Project>
+      <Name>QtTemplate.Item.WidgetsClass</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\vsqml\vsqml.vcxproj">
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
       <Name>VsQml</Name>

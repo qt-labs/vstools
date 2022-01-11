@@ -195,6 +195,10 @@
       d:TargetPath="|QtTemplate.Item.Widget;TemplateProjectOutputGroup|" Path="ItemTemplates"
       d:VsixSubPath="ItemTemplates" />
     <Asset
+      Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="WidgetsClass"
+      d:TargetPath="|QtTemplate.Item.WidgetsClass;TemplateProjectOutputGroup|" Path="ItemTemplates"
+      d:VsixSubPath="ItemTemplates" />
+    <Asset
       Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Qml.Debug.pkgdef" />
   </Assets>
 </PackageManifest>
