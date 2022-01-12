@@ -47,6 +47,7 @@
             \li \b {\l{Getting Started}}
                 \list
                     \li \l {Tutorial: Qt Widgets Application}
+                    \li \l {Tutorial: Qt Quick Application}
                 \endlist
             \li \b {\l {Configuring Builds}}
                 \list
@@ -85,6 +86,7 @@
         \li \l {Getting Started}
             \list
                 \li \l {Tutorial: Qt Widgets Application}
+                \li \l {Tutorial: Qt Quick Application}
             \endlist
         \li \l {Configuring Builds}
             \list
@@ -119,7 +121,7 @@
     The main features of Qt VS Tools are:
 
     \list
-        \li Wizards for creating new Qt projects and classes.
+        \li Wizards for creating new Qt and Qt Quick projects and files.
         \li Automated build setup for the \l {Using the Meta-Object Compiler
             (moc)}{Meta-Object Compiler (moc)}, \l {User Interface Compiler
             (uic)}, and \l {Resource Compiler (rcc)}.
@@ -153,6 +155,7 @@
 
     \list
         \li \l {Tutorial: Qt Widgets Application}
+        \li \l {Tutorial: Qt Quick Application}
     \endlist
 
     For all the options you have, see \l {Creating Projects}.
@@ -161,7 +164,7 @@
 /*!
     \page qtvstools-qt-widgets-application.html
     \previouspage Getting Started
-    \nextpage Configuring Builds
+    \nextpage Tutorial: Qt Quick Application
     \title Tutorial: Qt Widgets Application
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
@@ -491,6 +494,340 @@
 */
 
 /*!
+    \page qtvstools-qt-quick-application.html
+    \previouspage Tutorial: Qt Widgets Application
+    \nextpage Configuring Builds
+    \title Tutorial: Qt Quick Application
+
+    This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Quick}
+    application. You will create a project using a project wizard and design a
+    Qt Quick UI. In addition, you will learn how to add QML module definitions
+    and QML files to your projects.
+
+    You can use Qt VS Tools to develop also \l{Qt Widgets} applications.
+
+    \section1 Before You Start
+
+    Before you start, you have to:
+
+    \list
+        \li \l {Install Qt VS Tools}
+        \li \l {Add a Qt Version}
+    \endlist
+
+    \section1 Create a Qt Quick Application Project
+
+    To create a Qt Quick application project in Visual Studio:
+
+    \list 1
+        \li Select \uicontrol File > \uicontrol New > \uicontrol Project, and
+            search for \uicontrol {Qt Quick Application}.
+        \li Select the project wizard, and then select \uicontrol Next.
+        \li In the \uicontrol {Project name} field, enter \e QuickAddressBook,
+            and then select \uicontrol Create.
+        \li To acknowledge the \uicontrol Welcome dialog, select
+            \uicontrol Next.
+        \li To set up debug and release build configurations, click in
+            \uicontrol {Quick Modules}, and select the \uicontrol {Quick} and
+            \uicontrol {Quick Controls2} modules to include in the project:
+            \image qtvstools-qtquick-app-modules.png "Selecting Qt modules in Qt Quick Application Wizard"
+        \li Select \uicontrol Finish to create the project.
+    \endlist
+
+    You now have a small working Qt Quick application. Select \uicontrol Build >
+    \uicontrol {Build Solution} to build it, and then select \uicontrol Debug >
+    \uicontrol {Start Debugging} to run it. For now, the result is an empty
+    window.
+
+    \section1 Design the Main Window
+
+    The wizard created a main QML file for you, which declares a root object of
+    the type \l Window. You can modify the file to design the application's main
+    window.
+
+    Specify values for the Window \c color and \c title properties to set the
+    background color and title of the application main window:
+
+    \quotefromfile quickaddressbook/main.qml
+    \skipto Window {
+    \printuntil title
+
+    \section2 Add a Button
+
+    To create the \uicontrol Add button, declare an object of the \l Button type
+    from the \l {Qt Quick Controls} module. Set the value of the button \c text
+    property to \e Add and the value of the \c font.pointSize property to \e 24:
+
+    \skipto Button {
+    \printuntil font.pointSize
+
+    When you run the application, you should now see this:
+
+    \image qtvstools-quick-addressbook-mainwindow.png QuickAddressBook's main window
+
+    \section2 Connect the Button to an Action
+
+    QML has a signal and handler mechanism, where the signal is the event and
+    the signal is responded to through a signal handler. When a signal is
+    emitted, the corresponding signal handler is invoked. Placing logic such
+    as a script or other operations in the handler allows the component to
+    respond to the event.
+
+    To receive a notification when a particular signal is emitted for a
+    particular object, the object definition should declare a signal handler
+    named \c on<Signal>, where \c <Signal> is the name of the signal, with
+    the first letter capitalized. The signal handler should contain the
+    JavaScript code to be executed when the signal handler is invoked.
+
+    The \l Button type has a \c clicked signal, which is emitted when the users
+    click the button. To invoke a popup for adding an address book entry when
+    the users select the \uicontrol Add button in the main window, you must
+    connect the \c onClicked signal handler of the button to the \c open()
+    method of the popup. You will add the popup as a separate QML type later.
+
+    \printuntil }
+
+    \section2 Add a List Model
+
+    \image qtvstools-quick-addressbook-entries.png QuickAddressBook entries
+
+    Within the Window, declare an object of the \l ListModel type with the
+    \c id \e addressList for storing the contact data. A list model defines
+    a free-form list data source:
+
+    \quotefromfile quickaddressbook/main.qml
+    \skipto ListModel {
+    \printuntil }
+
+    \section2 Declare a Popup
+
+    Declare an object of the custom \c NewAddressPopup type that
+    defines the popup where the users will add address book entries.
+    Use the \c onAddressAdded signal handler to determine that address
+    book entries are appended to the \e addressList model:
+
+    \printuntil }
+    \printuntil }
+
+    You will create the \c NewAddressPopup type later.
+
+    \section2 Position the Button
+
+    Declare an object of \l ColumnLayout type to position the \l Button object
+    and an instance of the \l Repeater type:
+
+    \printuntil }
+
+    Anchor the column layout to the left and right edges of its parent to make
+    the application scalable on different screen sizes. Set the \c spacing
+    between the rows in the column to \e 0.
+
+    \section2 Add a Repeater
+
+    The \l Repeater type is used to create a large number of similar items. It
+    has a model and a delegate: for each entry in the model, the delegate is
+    instantiated in a context seeded with data from the model. A repeater is
+    usually enclosed in an instance of a positioner type such as a
+    \l ColumnLayout to visually position the multiple delegate items created
+    by the repeater.
+
+    Specify \e addressList as the \c model to use for the repeater:
+
+    \printuntil anchors.right
+
+    Declare an object of the custom \c AddressBookItem type that the
+    repeater will use to instantiate address book entries:
+
+    \printuntil id:
+
+    You will create the \c AddressBookItem type later.
+
+    \section2 Connect the Remove Button to an Action
+
+    Use the \c onRemoved signal handler to specify that an address book entry
+    is removed from the list when the users click the \uicontrol Remove button
+    for an address book entry.
+
+    \printuntil }
+
+    \section1 Add a Popup
+
+    Now that the main window is ready, you can move on to create the popup
+    where users can add address book entries. The data that the
+    users enter is instantiated by the repeater in the main window, as
+    specified by the \c AddressBookItem type.
+
+    \image qtvstools-quick-addressbook-popup.png QuickAddressBook's popup
+
+    You can use a Qt file wizard in Visual Studio to create a custom type
+    that defines the popup.
+
+    To create custom QML types, you must first add a QML Module Definition
+    (\c qmldir) file to the project.
+
+    \section2 Add a QML Module Definition
+
+    A QML module definition (\c qmldir) maps each custom QML type to its
+    corresponding source file.
+
+    To add a QML module definition, select \uicontrol Project >
+    \uicontrol {Add New Item} > \uicontrol Qt >
+    \uicontrol {Qt QML Module Definition} > \uicontrol Add.
+
+    In the \c qmldir file, add QML type definitions for \e AddressBookItem and
+    \e NewAddressPopup:
+
+    \quotefile quickaddressbook/qmldir
+
+    Next, you will create the QML types.
+
+    \section2 Create a Popup
+
+    To add a custom QML type to the project:
+
+    \list 1
+        \li Select \uicontrol Project > \uicontrol {Add New File} >
+            \uicontrol Qt > \uicontrol {Qt QML File} > \uicontrol Add.
+        \li In the \uicontrol Name field, enter \e NewAddressPopup.
+        \li Select \uicontrol Finish to create a custom QML type.
+    \endlist
+
+    \section2 Design the Popup
+
+    In \e NewAddressPopup.qml, declare a root object of the type \l Popup to
+    create a popup that can be opened within a \l Window. A popup does not
+    provide a layout of its own, so you will use a \l ColumnLayout and a
+    \l RowLayout to position the \uicontrol Name and \uicontrol {E-Mail Address}
+    fields.
+
+    \quotefromfile quickaddressbook/QuickAddressBookTypes/NewAddressPopup.qml
+    \skipto Popup {
+    \printuntil id:
+
+    Set the \c modal property to \c true to specify that the popup is modal. Set
+    the \c focus property to \c true to specify that the popup requests focus:
+
+    \printuntil focus:
+
+    Specify values for the \c width, \c x, and \c y properties to determine the
+    position and size of the popup on top of the main window:
+
+    \printuntil y:
+
+    \section2 Reset Popup Controls
+
+    When the popup opens, the \uicontrol Name and \uicontrol {E-Mail Address}
+    fields should display placeholder text and any values entered previously
+    should be cleared. You use the \c onOpened signal handler to reset the
+    values of the fields and give focus to the \uicontrol Name field:
+
+    \printuntil }
+
+    \section2 Position Fields
+
+    Use an instance of the \l ColumnLayout type to position the \l TextField
+    objects that specify the \uicontrol Name and \uicontrol {E-Mail Address}
+    fields of the popup:
+
+    \skipto ColumnLayout {
+    \printuntil id: addrField
+    \printuntil }
+    \printuntil }
+
+    \section2 Position Buttons
+
+    Use an instance of a \l RowLayout type to position two \l Button objects
+    that specify the \uicontrol Add and \uicontrol Cancel buttons:
+
+    \printuntil Layout.fillWidth: true
+
+    \section2 Connect Buttons to Actions
+
+    When the users click the \uicontrol Add button, the values they entered to
+    the \uicontrol Name and \uicontrol {E-Mail Address} fields are added to the
+    address list in the main window and the popup is closed.
+
+    To enable this, add the \c {addressAdded(string newName, string newAddr)}
+    signal:
+
+    \quotefromfile quickaddressbook/QuickAddressBookTypes/NewAddressPopup.qml
+    \skipto addressAdded(
+    \printuntil )
+
+    Connect the \c onClicked signal handler of the \uicontrol Add button to
+    the \c addressAdded() signal and to the popup's \c close() method:
+
+    \skipto Button {
+    \printuntil }
+    \printuntil }
+
+    For the \uicontrol Cancel button, connect the \c onClicked signal handler to
+    the to the popup's \c close() method to close the popup without saving the
+    data:
+
+    \printuntil }
+
+    \section1 Define an Address Book Entry
+
+    Address book entries are presented in the main window as specified by a
+    custom \c AddressBookItem type.
+
+    Select \uicontrol Project > \uicontrol {Add New File} > \uicontrol Qt >
+    \uicontrol {Qt QML File} > \uicontrol Add, to create a new QML file
+    called \e AddressBookItem.qml.
+
+    \section2 Design the Entry
+
+    First, you will declare a root object of type \l Rectangle. It is one of the
+    basic building blocks you can use to create an application in QML. Give it
+    an \c id to be able to refer to it later.
+
+    \quotefromfile quickaddressbook/QuickAddressBookTypes/AddressBookItem.qml
+    \skipto Rectangle {
+    \printuntil id:
+
+    To use alternating colors for rows, set the value of the \c color property:
+
+    \printuntil color:
+
+    Anchor the rectangle to the left and right edges of its parent to make
+    the application scalable on different screen sizes. Bind the rectangle
+    \c height property to the height of the text items it will contain:
+
+    \printuntil height:
+
+    \section2 Connect the Remove Button to an Action
+
+    Add the \c removed() signal that you will connect to the \onClicked
+    signal handler of the remove button. This removes an address book entry
+    from the main window when users click the button:
+
+    \printuntil signal removed()
+
+    \section2 Position the Button and Text
+
+    Use instances of the \l RoundButton and \l Text types within an instance of
+    a \l RowLayout type to define an address book entry:
+
+    \printuntil }
+
+    \section2 Format the Text
+
+    Set the value of the \c text property to combine the values of the \c name
+    and \c addr fields from the popup and to use bold and italic formatting for
+    the values:
+
+    \printuntil }
+
+    Your application is now complete.
+
+    \section1 Create Project Files
+
+    To build the application on other platforms, you need to create a \c .pro
+    file for the project, as instructed in \l{Create Qt Project Files}.
+
+*/
+
 /*!
     \page qtvstools-managing-projects.html
     \previouspage Cross-Compiling
@@ -559,7 +896,7 @@
 
 /*!
     \page qtvstools-configuring-builds.html
-    \previouspage Tutorial: Qt Widgets Application
+    \previouspage Tutorial: Qt Quick Application
     \nextpage Managing Qt Versions
     \title Configuring Builds
 
