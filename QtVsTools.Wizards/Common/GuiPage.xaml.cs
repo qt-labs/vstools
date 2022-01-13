@@ -60,6 +60,11 @@ namespace QtVsTools.Wizards.Common
             if (LowerCaseFileNames.IsChecked.GetValueOrDefault())
                 filename = filename.ToLower();
 
+            // support namespaces in class name
+            var index = filename.LastIndexOf(@":", System.StringComparison.Ordinal);
+            if (index >= 0)
+                filename = filename.Substring(index + 1);
+
             ClassHeaderFile.Text = filename + @".h";
             ClassSourceFile.Text = filename + @".cpp";
             UiFile.Text = filename + @".ui";

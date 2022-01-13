@@ -72,11 +72,14 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         enum Meta
         {
+            [String("namespace")] Namespace,
+            [String("namespacebegin")] NamespaceBegin,
             [String("operator")] Operator,
             [String("asterisk")] Asterisk,
             [String("semicolon")] Semicolon,
             [String("new")] New,
-            [String("delete")] Delete
+            [String("delete")] Delete,
+            [String("namespaceend")] NamespaceEnd
         }
 
         WizardData _WizardData;
@@ -205,7 +208,11 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void BeforeTemplateExpansion()
         {
-            Parameter[NewClass.ClassName] = WizardData.ClassName;
+            var array = WizardData.ClassName.Split(new[] { "::" },
+                StringSplitOptions.RemoveEmptyEntries);
+            var className = array.LastOrDefault();
+
+            Parameter[NewClass.ClassName] = className;
             Parameter[NewClass.BaseClass] = WizardData.BaseClass;
             Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
@@ -223,7 +230,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
             QtProject.CreateQrcFile(
                 Parameter[NewProject.DestinationDirectory],
-                WizardData.ClassName, WizardData.QrcFile);
+                className, WizardData.QrcFile);
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewGuiProject.CentralWidget] = FormatParam(@"
@@ -291,28 +298,36 @@ namespace QtVsTools.Wizards.ProjectWizard
                     string.Format(
                           "\r\nQT_BEGIN_NAMESPACE\r\n"
                         + "namespace Ui {{ class {0}Class; }};\r\n"
-                        + "QT_END_NAMESPACE\r\n", WizardData.ClassName
+                        + "QT_END_NAMESPACE\r\n", className
                     );
                 Parameter[Meta.Asterisk] = "*";
                 Parameter[Meta.Operator] = "->";
                 Parameter[Meta.New] = string.Format("\r\n    , {0}(new Ui::{1}Class())",
-                                                    Parameter[NewGuiProject.Member],
-                                                    WizardData.ClassName);
+                                                    Parameter[NewGuiProject.Member], className);
                 Parameter[Meta.Delete] = string.Format("\r\n    delete {0};\r\n",
                                                        Parameter[NewGuiProject.Member]);
                 goto case UiClassInclusion.Member;
             case UiClassInclusion.Member:
-                Parameter[NewGuiProject.UiClassName] = string.Format("Ui::{0}Class",
-                                                                     WizardData.ClassName);
+                Parameter[NewGuiProject.UiClassName] = string.Format("Ui::{0}Class", className);
                 break;
             case UiClassInclusion.MultipleInheritance:
                 Parameter[NewGuiProject.MultipleInheritance] =
-                    string.Format(", public Ui::{0}Class", WizardData.ClassName);
+                    string.Format(", public Ui::{0}Class", className);
                 Parameter[NewGuiProject.Member] = "";
                 Parameter[Meta.Operator] = "";
                 Parameter[Meta.Semicolon] = "";
                 break;
             }
+
+            string ns = "",  nsBegin = "", nsEnd = "";
+            for (var i = 0; i < array.Length - 1; ++i) {
+                ns += array[i] + "::";
+                nsBegin += "namespace " + array[i] + " {\r\n";
+                nsEnd = "} // namespace " + array[i] + "\r\n" + nsEnd;
+            }
+            Parameter[Meta.Namespace] = ns;
+            Parameter[Meta.NamespaceBegin] = nsBegin;
+            Parameter[Meta.NamespaceEnd] = nsEnd;
         }
 
         protected override void OnProjectGenerated(Project project)

@@ -102,7 +102,7 @@
                                      NotifyOnValidationError="True"
                                      UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <util:ClassNameValidationRule />
+                                    <util:ClassNameValidationRule SupportNamespaces="True"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>

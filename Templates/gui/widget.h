@@ -3,7 +3,7 @@
 #include <QtWidgets/$baseclass$>
 #include "$ui_hdr$"
 $forward_declare_class$
-class $classname$ : public $baseclass$$multiple_inheritance$
+$namespacebegin$class $classname$ : public $baseclass$$multiple_inheritance$
 {
     Q_OBJECT
 
@@ -14,3 +14,4 @@ public:
 private:
     $ui_classname$ $asterisk$$member$$semicolon$
 };
+$namespaceend$
