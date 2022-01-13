@@ -527,7 +527,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     }
                     if (UsePrecompiledHeaders) {
                         xml.AppendLine(string.Format(@"
-      <UsePrecompiledHeader>Use</UsePrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>{0}</PrecompiledHeaderFile>",
                             /*{0}*/ PrecompiledHeader.Include));
                     }
