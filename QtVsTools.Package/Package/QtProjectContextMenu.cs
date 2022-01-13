@@ -86,8 +86,7 @@ namespace QtVsTools
             ConvertToQtProjectId = 0x0120,
             ConvertToQmakeProjectId = 0x0121,
             QtProjectSettingsProjectId = 0x0122,
-            ChangeProjectQtVersionProjectId = 0x0123,
-            ProjectAddNewQtClassProjectId = 0x200
+            ChangeProjectQtVersionProjectId = 0x0123
         }
 
         /// <summary>
@@ -199,27 +198,6 @@ namespace QtVsTools
                     QtProjectIntellisense.Refresh(tracker.Project);
                 }
                 break;
-            case CommandId.ProjectAddNewQtClassProjectId: {
-                    try {
-                        var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                        if (!HelperFunctions.IsQtProject(project))
-                            return;
-
-                        var vcProject = project.Object as VCProject;
-                        if (vcProject == null)
-                            return;
-
-                        var loop = true;
-                        do {
-                            var classWizard = new Wizards.ClassWizard.AddClassWizard();
-                            loop = classWizard.Run(QtVsToolsPackage.Instance.Dte, vcProject.Name,
-                                vcProject.ProjectDirectory) == WizardResult.Exception;
-                        } while (loop);
-                    } catch {
-                        // Deliberately ignore any kind of exception but close the dialog.
-                    }
-                }
-                break;
             }
         }
 
@@ -260,8 +238,7 @@ namespace QtVsTools
                 command.Enabled = Translation.ToolsAvailable(project);
                 break;
             //case CommandId.ConvertToQmakeProjectId:
-            case CommandId.QtProjectSettingsProjectId:
-            case CommandId.ProjectAddNewQtClassProjectId: {
+            case CommandId.QtProjectSettingsProjectId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if (project != null) {
                         if (isQtProject)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,12 +26,42 @@
 **
 ****************************************************************************/
 
+using System.Windows;
+using System.Windows.Controls;
 using QtVsTools.Wizards.Common;
 
-namespace QtVsTools.Wizards.ClassWizard
+namespace QtVsTools.Wizards.ItemWizard
 {
-    public interface IClassWizard
+    public partial class QtClassPage : WizardPage
     {
-        WizardResult Run(EnvDTE.DTE dte, string name, string location);
+        public QtClassPage()
+        {
+            InitializeComponent();
+            DataContext = this;
+        }
+
+        private void OnClassNameChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateFileNames();
+        }
+
+        private void OnLowerCaseFileNamesClick(object sender, RoutedEventArgs e)
+        {
+            UpdateFileNames();
+        }
+
+        private void UpdateFileNames()
+        {
+            var filename = ClassName.Text;
+            if (LowerCaseFileNames.IsChecked.GetValueOrDefault())
+                filename = filename.ToLower();
+
+            var index = filename.LastIndexOf(@":", System.StringComparison.Ordinal);
+            if (index >= 0)
+                filename = filename.Substring(index + 1);
+
+            ClassHeaderFile.Text = filename + @".h";
+            ClassSourceFile.Text = filename + @".cpp";
+        }
     }
 }

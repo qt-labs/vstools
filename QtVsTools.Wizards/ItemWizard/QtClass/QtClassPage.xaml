@@ -1,7 +1,7 @@
 ﻿<!--
     *****************************************************************************
     **
-    ** Copyright (C) 2016 The Qt Company Ltd.
+    ** Copyright (C) 2022 The Qt Company Ltd.
     ** Contact: https://www.qt.io/licensing/
     **
     ** This file is part of the Qt VS Tools.
@@ -28,7 +28,7 @@
     *****************************************************************************
 -->
 
-<common:WizardPage x:Class="QtVsTools.Wizards.ClassWizard.CoreClassPage"
+<common:WizardPage x:Class="QtVsTools.Wizards.ItemWizard.QtClassPage"
                   xmlns:common="clr-namespace:QtVsTools.Wizards.Common"
                   xmlns:util="clr-namespace:QtVsTools.Wizards.Util"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

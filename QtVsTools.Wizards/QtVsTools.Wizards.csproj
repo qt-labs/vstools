@@ -134,12 +134,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassWizard\AddClassPage.xaml.cs">
-      <DependentUpon>AddClassPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ClassWizard\AddClassWizard.cs" />
-    <Compile Include="ClassWizard\Class.cs" />
-    <Compile Include="ClassWizard\ClassKind.cs" />
     <Compile Include="ProjectWizard\ConfigPage.xaml.cs">
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
@@ -147,23 +141,20 @@
     <Compile Include="ProjectWizard\Quick\QuickWizard.cs" />
     <Compile Include="Util\ClassNameValidationRule.cs" />
     <Compile Include="ProjectWizard\Console\ConsoleWizard.cs" />
-    <Compile Include="ClassWizard\Core\CoreClassPage.xaml.cs">
-      <DependentUpon>CoreClassPage.xaml</DependentUpon>
+    <Compile Include="ItemWizard\QtClass\QtClassPage.xaml.cs">
+      <DependentUpon>QtClassPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClassWizard\Core\CoreClassWizard.cs" />
     <Compile Include="ProjectWizard\Designer\DesignerPage.xaml.cs">
       <DependentUpon>DesignerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectWizard\Designer\DesignerWizard.cs" />
     <Compile Include="Util\FileExistsInFilterValidationRule.cs" />
     <Compile Include="Util\FileNameValidationRule.cs" />
-    <Compile Include="ClassWizard\Gui\GuiClassWizard.cs" />
     <Compile Include="Common\GuiPage.xaml.cs">
       <DependentUpon>GuiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectWizard\Gui\GuiWizard.cs" />
     <Compile Include="ProjectWizard\Empty\EmptyWizard.cs" />
-    <Compile Include="ClassWizard\IClassWizard.cs" />
     <Compile Include="Common\WizardIntroPage.xaml.cs">
       <DependentUpon>WizardIntroPage.xaml</DependentUpon>
     </Compile>
@@ -200,11 +191,7 @@
     <Compile Include="Common\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="ClassWizard\AddClassPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ClassWizard\Core\CoreClassPage.xaml">
+    <Page Include="ItemWizard\QtClass\QtClassPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

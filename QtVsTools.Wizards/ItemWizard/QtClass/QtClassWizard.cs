@@ -33,7 +33,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using QtVsTools.Common;
 using QtVsTools.Core;
-using QtVsTools.Wizards.ClassWizard;
 using QtVsTools.Wizards.Common;
 using QtVsTools.Wizards.ProjectWizard;
 
@@ -96,7 +95,7 @@ namespace QtVsTools.Wizards.ItemWizard
                     FinishButtonEnabled = false,
                     CancelButtonEnabled = true
                 },
-                new CoreClassPage {
+                new QtClassPage {
                     Data = WizardData,
                     Header = @"Welcome to the Qt Class Wizard",
                     Message = @"This wizard will add a new Qt class to your project. The "
