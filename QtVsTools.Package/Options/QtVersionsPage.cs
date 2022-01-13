@@ -122,6 +122,9 @@ namespace QtVsTools.Options
                 Messages.Print(
                     exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
+
+            if (InfoBarMessages.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)
+                InfoBarMessages.NoQtVersion.Close();
         }
 
         protected override void OnApply(PageApplyEventArgs e)

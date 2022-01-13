@@ -56,6 +56,7 @@ namespace QtVsTools
         private CommandEvents debugStartEvents;
         private CommandEvents debugStartWithoutDebuggingEvents;
         private CommandEvents f1HelpEvents;
+        private WindowEvents windowEvents;
         private int dispId_VCFileConfiguration_ExcludedFromBuild;
         private int dispId_VCCLCompilerTool_UsePrecompiledHeader;
         private int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
@@ -85,6 +86,9 @@ namespace QtVsTools
             solutionEvents.Opened += SolutionEvents_Opened;
             solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
 
+            windowEvents = events.WindowEvents;
+            windowEvents.WindowActivated += WindowEvents_WindowActivated;
+
             var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
             debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
             debugStartEvents.BeforeExecute += debugStartEvents_BeforeExecute;
@@ -103,6 +107,16 @@ namespace QtVsTools
             dispId_VCCLCompilerTool_PreprocessorDefinitions = GetPropertyDispId(typeof(VCCLCompilerTool), "PreprocessorDefinitions");
             dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             InitializeVCProjects();
+        }
+
+        private void WindowEvents_WindowActivated(Window gotFocus, Window lostFocus)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (dte.MainWindow?.Visible == true) {
+                windowEvents.WindowActivated -= WindowEvents_WindowActivated;
+                windowEvents = null;
+                QtVsToolsPackage.Instance.VsMainWindowActivated();
+            }
         }
 
         private void F1HelpEvents_BeforeExecute(
@@ -176,6 +190,9 @@ namespace QtVsTools
 
             if (vcProjectEngineEvents != null)
                 vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
+
+            if (windowEvents != null)
+                windowEvents.WindowActivated -= WindowEvents_WindowActivated;
         }
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)

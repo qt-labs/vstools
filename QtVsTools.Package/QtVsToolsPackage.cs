@@ -326,6 +326,12 @@ namespace QtVsTools
                 eventHandler.SolutionEvents_Opened();
         }
 
+        public void VsMainWindowActivated()
+        {
+            if (QtVersionManager.The().GetVersions()?.Length == 0)
+                InfoBarMessages.NoQtVersion.Show();
+        }
+
         protected override int QueryClose(out bool canClose)
         {
             if (eventHandler != null) {
