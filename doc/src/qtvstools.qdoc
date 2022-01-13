@@ -54,14 +54,12 @@
                     \li \l {Managing Qt Versions}
                     \li \l {Building}
                     \li \l {Cross-Compiling}
-               \endlist
+                    \li \l {Importing and Exporting Projects}
+                \endlist
             \li \b {\l {Managing Projects}}
                 \list
                     \li \l {Creating Projects}
-                    \li \l {Importing and Exporting Projects}
-                    \li \l {Adding Form Files to Projects}
-                    \li \l {Managing Resources}
-                    \li \l {Creating Qt Translation Files for Projects}
+                    \li \l {Creating Files}
                 \endlist
         \row
             \li \inlineimage front-coding.png
@@ -93,14 +91,17 @@
                 \li \l {Managing Qt Versions}
                 \li \l {Building}
                 \li \l {Cross-Compiling}
+                \li \l {Importing and Exporting Projects}
             \endlist
         \li \l {Managing Projects}
             \list
                 \li \l {Creating Projects}
-                \li \l {Importing and Exporting Projects}
-                \li \l {Adding Form Files to Projects}
-                \li \l {Managing Resources}
-                \li \l {Creating Qt Translation Files for Projects}
+                \li \l {Creating Files}
+                    \list
+                        \li \l {Adding Form Files}
+                        \li \l {Managing Resources}
+                        \li \l {Creating Qt Translation Files}
+                    \endlist
             \endlist
         \li \l {Updating IntelliSense Info}
         \li \l {Debugging}
@@ -830,19 +831,13 @@
 
 /*!
     \page qtvstools-managing-projects.html
-    \previouspage Cross-Compiling
+    \previouspage Importing and Exporting Projects
     \nextpage Creating Projects
     \title Managing Projects
 
-    Qt VS Tools provides wizards for creating several types of Qt projects and
-    files that you can add to the projects, such as classes, form files, or
-    custom QML types.
-
-    Qt uses \c .pro files with \l {qmake Manual}{qmake} to build projects,
-    whereas Visual Studio uses \c .vcproj files. Qt VS Tools enables you to
-    import Qt project files into Visual Studio and export them back into
-    Qt build files. In addition, you can convert Qt VS Tools projects into
-    a qmake project, or the other way around.
+    Qt VS Tools provides wizards for creating several types of Qt and Qt Quick
+    projects and files that you can add to the projects, such as classes, form
+    files, or custom QML types.
 
     You can use the integrated Qt Resource editor to manage the resources in
     Qt projects.
@@ -852,17 +847,14 @@
 
     \list
         \li \l {Creating Projects}
-        \li \l {Importing and Exporting Projects}
-        \li \l {Adding Form Files to Projects}
-        \li \l {Managing Resources}
-        \li \l {Creating Qt Translation Files for Projects}
+        \li \l {Creating Files}
     \endlist
 */
 
 /*!
     \page qtvstools-creating-projects.html
     \previouspage Managing Projects
-    \nextpage Importing and Exporting Projects
+    \nextpage Creating Files
     \title Creating Projects
 
     Once you have installed Qt VS Tools, you can search for and then select
@@ -892,6 +884,60 @@
     To start writing Qt code and building your projects, you must tell Visual
     Studio where to find the \l{Managing Qt Versions}{Qt version} that you want
     to use.
+
+    The application tutorials contain examples of using the project templates:
+
+    \list
+        \li \l {Tutorial: Qt Widgets Application}
+        \li \l {Tutorial: Qt Quick Application}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-creating-files.html
+    \previouspage Creating Projects
+    \nextpage Adding Form Files
+    \title Creating Files
+
+    You can use file templates to add the following types of files to projects
+    by selecting \uicontrol Project > \uicontrol {Add New Item} >
+    \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt:
+
+    \list
+        \li \uicontrol {Qt Dialog Form File (Button Bottom)} adds a dialog with
+            \uicontrol OK and \uicontrol Cancel buttons at its bottom to a
+            Qt Widgets Application project.
+        \li \uicontrol {Qt Dialog Form File (Button Right)} adds a dialog with
+            buttons at its right edge to a Qt Widgets Application project.
+        \li \uicontrol {Qt MainWindow Form File} adds a form file to a
+            Qt Widgets Application project.
+        \li \uicontrol {Qt QML File} adds a custom QML type to a Qt Quick
+            Application project.
+        \li \uicontrol {Qt QML Module Definition} adds a qmldir file that
+            specifies the custom QML types used in a Qt Quick Application
+            project.
+        \li \uicontrol {Qt Resource File} adds a Qt resource file (.qrc) to
+            an application project.
+        \li \uicontrol {Qt Widget Class} adds a Qt Widgets class to a
+            Qt Widgets application project.
+    \endlist
+
+    The following sections describe how to add different types of files to
+    projects:
+
+    \list
+        \li \l {Adding Form Files}
+        \li \l {Managing Resources}
+        \li \l {Creating Qt Translation Files}
+    \endlist
+
+    The application tutorials contain examples of using file templates to add
+    files to projects:
+
+    \list
+        \li \l {Tutorial: Qt Widgets Application}
+        \li \l {Tutorial: Qt Quick Application}
+    \endlist
 */
 
 /*!
@@ -905,10 +951,17 @@
     Qt VS Tools make use of the extensibility of MSBuild to provide
     design-time and build-time integration of Qt in Visual Studio projects.
 
+    Qt uses \c .pro files with \l {qmake Manual}{qmake} to build projects,
+    whereas Visual Studio uses \c .vcproj files. Qt VS Tools enables you to
+    import Qt project files into Visual Studio and export them back into
+    Qt build files. In addition, you can convert Qt VS Tools projects into
+    a qmake project, or the other way around.
+
     \list
         \li \l {Managing Qt Versions}
         \li \l {Building}
         \li \l {Cross-Compiling}
+        \li \l {Importing and Exporting Projects}
    \endlist
 
     \section1 MSBuild Configurations
@@ -1063,7 +1116,7 @@
 /*!
     \page qtvstools-cross-compiling.html
     \previouspage Building
-    \nextpage Managing Projects
+    \nextpage Importing and Exporting Projects
     \title Cross-Compiling
 
     Qt VS Tools supports cross-compilation of Qt projects by integrating
@@ -1123,8 +1176,8 @@
 
 /*!
     \page qtvstools-importing-and-exporting-projects.html
-    \previouspage Creating Projects
-    \nextpage Adding Form Files to Projects
+    \previouspage Cross-Compiling
+    \nextpage Managing Projects
     \title Importing and Exporting Projects
 
     Qt and Visual Studio use different file formats to save projects. If you
@@ -1193,9 +1246,9 @@
 
 /*!
     \page qtvstools-form-files.html
-    \previouspage Importing and Exporting Projects
+    \previouspage Creating Files
     \nextpage Managing Resources
-    \title Adding Form Files to Projects
+    \title Adding Form Files
 
     You can start \QD from Qt VS Tools by double-clicking a \c .ui file. For
     more information about using \QD, see the \l{Qt Designer Manual}.
@@ -1213,8 +1266,8 @@
 
 /*!
     \page qtvstools-managing-resources.html
-    \previouspage Adding Form Files to Projects
-    \nextpage Creating Qt Translation Files for Projects
+    \previouspage Adding Form Files
+    \nextpage Creating Qt Translation Files
     \title Managing Resources
 
     Adding new resources to a Qt project is similar to adding resources to a
@@ -1261,7 +1314,7 @@
     \page qtvstools-translation-files.html
     \previouspage Managing Resources
     \nextpage Updating IntelliSense Info
-    \title Creating Qt Translation Files for Projects
+    \title Creating Qt Translation Files
 
     To add a new translation file to the project:
 
@@ -1324,7 +1377,7 @@
 
 /*!
     \page qtvstools-intellisense-info.html
-    \previouspage Creating Qt Translation Files for Projects
+    \previouspage Creating Qt Translation Files
     \nextpage Debugging
     \title Updating IntelliSense Info
 

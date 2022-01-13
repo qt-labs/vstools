@@ -6,6 +6,9 @@ include($QT_INSTALL_DOCS/global/fileextensions.qdocconf)
 project             = "QtVSTools"
 description         = "Qt VS Tools Manual"
 
+#Words to ignore for auto-linking
+ignorewords += MainWindow
+
 sourcedirs         += ..
 imagedirs          += ../images
 outputdir           = $OUTDIR
