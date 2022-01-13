@@ -451,6 +451,7 @@
     <Compile Include="Package\SR.cs" />
     <Compile Include="Package\Translation.cs" />
     <Compile Include="Package\TranslationItem.cs" />
+    <Compile Include="VisualStudio\InfoBar.cs" />
     <Compile Include="VisualStudio\VsShell.cs" />
     <Compile Include="Common\VsToolsDialogWindow.cs" />
     <Content Include="..\Changelog">

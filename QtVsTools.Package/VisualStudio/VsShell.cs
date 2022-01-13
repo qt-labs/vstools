@@ -84,5 +84,20 @@ namespace QtVsTools.VisualStudio
         {
             return GetProjectItem(context, itemid)?.Document;
         }
+
+        private static IVsInfoBarHost _InfoBarHost = null;
+        public static IVsInfoBarHost InfoBarHost
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                if (_InfoBarHost != null)
+                    return _InfoBarHost;
+                Initialize();
+                object host = null;
+                vsShell?.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out host);
+                return _InfoBarHost = host as IVsInfoBarHost;
+            }
+        }
     }
 }
