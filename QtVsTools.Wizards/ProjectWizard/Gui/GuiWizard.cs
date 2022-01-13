@@ -219,9 +219,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewGuiProject.UiFileName] = WizardData.UiFile;
 
             var include = new StringBuilder();
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
             if (UsePrecompiledHeaders)
                 include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
             Parameter[NewClass.Include] = FormatParam(include);
 
             Parameter[NewGuiProject.UiHeaderName] = string.Format("ui_{0}.h",

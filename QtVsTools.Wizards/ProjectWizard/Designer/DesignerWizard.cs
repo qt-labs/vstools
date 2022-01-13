@@ -159,9 +159,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
 
             var include = new StringBuilder();
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
             if (UsePrecompiledHeaders)
                 include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
             Parameter[NewClass.Include] = FormatParam(include);
 
             Parameter[NewDesignerPlugin.ClassName] = WizardData.PluginClass;

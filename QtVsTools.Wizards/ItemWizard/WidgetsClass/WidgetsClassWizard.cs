@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using QtVsTools.Common;
@@ -161,20 +162,18 @@ namespace QtVsTools.Wizards.ItemWizard
 
             Parameter[NewWidgetsItem.ClassName] = className;
             Parameter[NewWidgetsItem.BaseClass] = WizardData.BaseClass;
-            Parameter[NewWidgetsItem.Include] = FormatParam(string.Format("#include \"{0}\"",
-                                                      WizardData.ClassHeaderFile));
 
+            var include = new StringBuilder();
             var pro = HelperFunctions.GetSelectedQtProject(Dte);
             if (pro != null) {
                 var qtProject = QtProject.Create(pro);
                 if (qtProject != null && qtProject.UsesPrecompiledHeaders()) {
-                    var pch = qtProject.GetPrecompiledHeaderThrough();
-                    Parameter[NewWidgetsItem.Include] = FormatParam(
-                        string.Format(
-                            "#include \"{0}\"\r\n#include \"{1}\"", pch, WizardData.ClassHeaderFile)
-                        );
+                    include.AppendLine(string.Format("#include \"{0}\"", qtProject
+                        .GetPrecompiledHeaderThrough()));
                 }
             }
+            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            Parameter[NewWidgetsItem.Include] = FormatParam(include);
 
             Parameter[NewWidgetsItem.QObject] = WizardData.InsertQObjectMacro
                                                     ? "\r\n    Q_OBJECT\r\n" : "";
