@@ -317,3 +317,5 @@ Tests/BigSolution/generated/
 vstools.pri
 templates/widgetsclass/Properties/AssemblyInfo.tt.cs
 templates/widgetsclass/widgetsclass.vstemplate
+templates/qtclass/Properties/AssemblyInfo.tt.cs
+templates/qtclass/qtclass.vstemplate

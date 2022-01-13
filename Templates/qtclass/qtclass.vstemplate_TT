@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    *****************************************************************************
+    **
+    ** Copyright (C) 2022 The Qt Company Ltd.
+    ** Contact: https://www.qt.io/licensing/
+    **
+    ** This file is part of the Qt VS Tools.
+    **
+    ** $QT_BEGIN_LICENSE:GPL-EXCEPT$
+    ** Commercial License Usage
+    ** Licensees holding valid commercial Qt licenses may use this file in
+    ** accordance with the commercial license agreement provided with the
+    ** Software or, alternatively, in accordance with the terms contained in
+    ** a written agreement between you and The Qt Company. For licensing terms
+    ** and conditions see https://www.qt.io/terms-conditions. For further
+    ** information use the contact form at https://www.qt.io/contact-us.
+    **
+    ** GNU General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU
+    ** General Public License version 3 as published by the Free Software
+    ** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
+    ** included in the packaging of this file. Please review the following
+    ** information to ensure the GNU General Public License requirements will
+    ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+    **
+    ** $QT_END_LICENSE$
+    **
+    *****************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+
+<VSTemplate Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005"
+            xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
+            Type="Item" >
+    <TemplateData>
+        <Name>Qt Class</Name>
+        <Description>Adds a Qt class to the project.</Description>
+        <ProjectType>VC</ProjectType>
+        <CreateNewFolder>true</CreateNewFolder>
+        <DefaultName>QtClass</DefaultName>
+        <ProvideDefaultName>true</ProvideDefaultName>
+        <LocationField>Enabled</LocationField>
+        <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+        <Icon>qtclass.ico</Icon>
+        <LanguageTag>Cpp</LanguageTag>
+        <PlatformTag>Windows</PlatformTag>
+        <PlatformTag>Linux</PlatformTag>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
+        <ProjectTypeTag>IoT</ProjectTypeTag>
+        <ProjectTypeTag>Desktop</ProjectTypeTag>
+        <ProjectTypeTag>Console</ProjectTypeTag>
+    </TemplateData>
+    <TemplateContent>
+        <ProjectItem OpenInEditor="true"
+                     ReplaceParameters="true"
+                     TargetFileName="$sourcefilename$">source.cpp</ProjectItem>
+        <ProjectItem ReplaceParameters="true"
+                     TargetFileName="$headerfilename$">header.h</ProjectItem>
+    </TemplateContent>
+    <WizardExtension>
+        <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Assembly>QtVsTools.Wizards, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
+        <FullClassName>QtVsTools.Wizards.ItemWizard.QtClassWizard</FullClassName>
+    </WizardExtension>
+</VSTemplate>

@@ -217,13 +217,13 @@
                           Click="OnLowerCaseFileNamesClick"
                           Margin="0,20,10,5"
                           TabIndex="6" />
-                <CheckBox Content="Insert Q__OBJECT macro"
+                <CheckBox Content="Insert Q_OBJECT macro"
                           Grid.Column="1"
                           Grid.Row="3"
                           VerticalAlignment="Center"
                           Margin="0,0,0,30"
                           TabIndex="3"
-                          IsChecked="True">
+                          IsChecked="{Binding Path=Data.InsertQObjectMacro}">
                     <CheckBox.Style>
                         <Style TargetType="CheckBox">
                             <Style.Triggers>
