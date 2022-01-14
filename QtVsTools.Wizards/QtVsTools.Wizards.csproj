@@ -124,6 +124,10 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ItemWizard\Translation\TranslationPage.xaml.cs">
+      <DependentUpon>TranslationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ItemWizard\Translation\TranslationWizard.cs" />
     <Compile Include="ProjectWizard\ConfigPage.xaml.cs">
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
@@ -182,6 +186,10 @@
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="ItemWizard\QtClass\QtClassPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ItemWizard\Translation\TranslationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

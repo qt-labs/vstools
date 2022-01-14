@@ -181,6 +181,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\Templates\translation\QtTemplate.Item.Translation.csproj">
+      <Project>{202F4A6D-77CD-4992-AA53-01B585463287}</Project>
+      <Name>QtTemplate.Item.Translation</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\Templates\widgetsclass\QtTemplate.Item.WidgetsClass.csproj">
       <Project>{020422DA-33AB-4495-A439-7DAC2690795C}</Project>
       <Name>QtTemplate.Item.WidgetsClass</Name>

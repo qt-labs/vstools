@@ -319,3 +319,5 @@ templates/widgetsclass/Properties/AssemblyInfo.tt.cs
 templates/widgetsclass/widgetsclass.vstemplate
 templates/qtclass/Properties/AssemblyInfo.tt.cs
 templates/qtclass/qtclass.vstemplate
+templates/translation/Properties/AssemblyInfo.tt.cs
+templates/translation/translation.vstemplate
