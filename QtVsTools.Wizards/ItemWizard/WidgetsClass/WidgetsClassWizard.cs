@@ -33,6 +33,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
+using EnvDTE;
 using QtVsTools.Common;
 using QtVsTools.Core;
 using QtVsTools.Wizards.Common;
@@ -229,6 +230,12 @@ namespace QtVsTools.Wizards.ItemWizard
         protected override void Expand()
         {
             // do not call the base class method here
+        }
+
+        public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            QtProject.AdjustWhitespace(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
         }
     }
 }
