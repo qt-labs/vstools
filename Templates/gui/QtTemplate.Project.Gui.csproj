@@ -108,6 +108,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="main.cpp" />
+    <None Include="widget.qrc" />
     <None Include="stdafx.cpp" />
     <None Include="stdafx.h" />
     <None Include="widget.cpp" />

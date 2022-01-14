@@ -226,11 +226,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             Parameter[NewGuiProject.UiHeaderName] = string.Format("ui_{0}.h",
                 Path.GetFileNameWithoutExtension(WizardData.UiFile));
-
             Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
-            QtProject.CreateQrcFile(
-                Parameter[NewProject.DestinationDirectory],
-                className, WizardData.QrcFile);
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewGuiProject.CentralWidget] = FormatParam(@"

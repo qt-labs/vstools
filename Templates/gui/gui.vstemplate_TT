@@ -71,6 +71,8 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$safeprojectname$.vcxproj.filters">gui.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">gui.ico</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$qrcfilename$">widget.qrc</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

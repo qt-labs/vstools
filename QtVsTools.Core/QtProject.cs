@@ -29,13 +29,11 @@
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using QtVsTools.Core.QtMsBuild;
@@ -2232,35 +2230,6 @@ namespace QtVsTools.Core
                 if (filter.Name == "Source Files")
                     filter.Name = Filters.SourceFiles().Name;
             }
-        }
-
-        public static string CreateQrcFile(string projectDir, string className, string destName)
-        {
-            var fullDestName = projectDir + "\\" + destName;
-
-            if (!File.Exists(fullDestName)) {
-                FileStream s = null;
-                try {
-                    s = File.Open(fullDestName, FileMode.CreateNew);
-                    if (s.CanWrite) {
-                        using (var sw = new StreamWriter(s)) {
-                            s = null;
-                            sw.WriteLine("<RCC>");
-                            sw.WriteLine("    <qresource prefix=\"" + className + "\">");
-                            sw.WriteLine("    </qresource>");
-                            sw.WriteLine("</RCC>");
-                        }
-                    }
-                } finally {
-                    if (s != null)
-                        s.Dispose();
-                }
-                var attribs = File.GetAttributes(fullDestName);
-                File.SetAttributes(fullDestName, attribs & (~FileAttributes.ReadOnly));
-            }
-
-            var fi = new FileInfo(fullDestName);
-            return fi.FullName;
         }
 
         public void AddActiveQtBuildStep(string version, string defFile = null)
