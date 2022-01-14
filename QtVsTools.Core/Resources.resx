@@ -238,25 +238,9 @@ To solve this problem:
   <data name="QtProject_ProjectCannotAddResourceFilter" xml:space="preserve">
     <value>Cannot add a resource filter.</value>
   </data>
-  <data name="QtProject_CannotCreateResourceDir" xml:space="preserve">
-    <value>Cannot create a resource directory.</value>
-  </data>
   <data name="QtProject_CannotAdjustWhitespaces" xml:space="preserve">
     <value>Cannot adjust whitespace or tabs in file (write).
 ({0})</value>
-  </data>
-  <data name="QtProject_CannotReplaceTokenRead" xml:space="preserve">
-    <value>Cannot replace token ({0} -&gt; {1}) in file (read).
-({3})</value>
-  </data>
-  <data name="QtProject_CannotReplaceTokenWrite" xml:space="preserve">
-    <value>Cannot replace token ({0} -&gt; {1}) in file (write).
-({3})</value>
-  </data>
-  <data name="QtProject_FileExistsInProjectFolder" xml:space="preserve">
-    <value>The file {0} exists in your project folder. Qt VS Tools will overwrite the existing file.
-
-Select 'Yes' to overwrite, select 'No' to keep the existing file and automatically add it to the project.</value>
   </data>
   <data name="QtVersionManager_CannotLoadQtVersion" xml:space="preserve">
     <value>Cannot load the default Qt version.</value>

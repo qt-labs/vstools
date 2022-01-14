@@ -2149,42 +2149,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public void AddDirectories()
-        {
-            try {
-                // resource directory
-                var fi = new FileInfo(envPro.FullName);
-                var dfi = new DirectoryInfo(fi.DirectoryName + "\\" + Resources.resourceDir);
-                dfi.Create();
-            } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotCreateResourceDir"));
-            }
-            AddFilterToProject(Filters.ResourceFiles());
-        }
-
-        public void Finish()
-        {
-            try {
-                var solutionExplorer = dte.Windows.Item(Constants.vsWindowKindSolutionExplorer);
-                if (solutionExplorer != null) {
-                    var hierarchy = (UIHierarchy)solutionExplorer.Object;
-                    var projects = hierarchy.UIHierarchyItems.Item(1).UIHierarchyItems;
-
-                    foreach (UIHierarchyItem itm in projects) {
-                        if (itm.Name == envPro.Name) {
-                            foreach (UIHierarchyItem i in itm.UIHierarchyItems) {
-                                if (i.Name == Filters.GeneratedFiles().Name)
-                                    i.UIHierarchyItems.Expanded = false;
-                            }
-                            break;
-                        }
-                    }
-                }
-            } catch { }
-
-            ProjectTracker?.AddProject(envPro);
-        }
-
         public bool IsDesignerPluginProject()
         {
             var b = false;
@@ -2198,44 +2162,10 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Adds a file to a specified filter in a project.
-        /// </summary>
-        /// <param name="destName">name of the file in the project (relative to the project directory)</param>
-        /// <param name="filter">filter</param>
-        /// <returns>VCFile</returns>
-        public VCFile AddFileToProject(string destName, FakeFilter filter)
-        {
-            VCFile file = null;
-            if (filter != null)
-                file = AddFileInFilter(filter, destName);
-            else
-                file = (VCFile)vcPro.AddFile(destName);
-
-            if (file == null)
-                return null;
-
-            if (HelperFunctions.IsHeaderFile(file.Name)) {
-                foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                    var compiler = CompilerToolWrapper.Create(config);
-                    if (compiler == null)
-                        continue;
-
-                    var paths = compiler.GetAdditionalIncludeDirectoriesList();
-                    var fi = new FileInfo(file.FullPath);
-                    var relativePath = HelperFunctions.GetRelativePath(ProjectDir, fi.Directory.ToString());
-                    var fixedRelativePath = FixFilePathForComparison(relativePath);
-                    if (!paths.Any(p => FixFilePathForComparison(p) == fixedRelativePath))
-                        compiler.AddAdditionalIncludeDirectories(relativePath);
-                }
-            }
-            return file;
-        }
-
-        /// <summary>
         /// adjusts the whitespaces, tabs in the given file according to VS settings
         /// </summary>
         /// <param name="file"></param>
-        public void AdjustWhitespace(string file)
+        public static void AdjustWhitespace(DTE dte, string file)
         {
             if (!File.Exists(file))
                 return;
@@ -2247,6 +2177,7 @@ namespace QtVsTools.Core
             }
 
             try {
+                Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
                 var prop = dte.get_Properties("TextEditor", "C/C++");
                 var tabSize = Convert.ToInt64(prop.Item("TabSize").Value);
                 var insertTabs = Convert.ToBoolean(prop.Item("InsertTabs").Value);
@@ -2281,89 +2212,6 @@ namespace QtVsTools.Core
             for (long i = 0; i < size; ++i)
                 whitespaces += " ";
             return whitespaces;
-        }
-
-        /// <summary>
-        /// Copy a file to the projects folder. Does not add the file to the project.
-        /// </summary>
-        /// <param name="srcFile">full name of the file to add</param>
-        /// <param name="destFolder">the name of the project folder</param>
-        /// <param name="destName">name of the file in the project (relative to the project directory)</param>
-        /// <returns>full name of the destination file</returns>
-        public static string CopyFileToFolder(string srcFile, string destFolder, string destName)
-        {
-            var fullDestName = destFolder + "\\" + destName;
-            var fi = new FileInfo(fullDestName);
-
-            var replace = true;
-            if (File.Exists(fullDestName)) {
-                if (DialogResult.No == MessageBox.Show(SR.GetString("QtProject_FileExistsInProjectFolder", destName)
-                    , SR.GetString("Resources_QtVsTools"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
-                    replace = false;
-                }
-            }
-
-            if (replace) {
-                if (!fi.Directory.Exists)
-                    fi.Directory.Create();
-                File.Copy(srcFile, fullDestName, true);
-                var attribs = File.GetAttributes(fullDestName);
-                File.SetAttributes(fullDestName, attribs & (~FileAttributes.ReadOnly));
-            }
-            return fi.FullName;
-        }
-
-        public static void ReplaceTokenInFile(string file, string token, string replacement)
-        {
-            var text = string.Empty;
-            try {
-                var reader = new StreamReader(file);
-                text = reader.ReadToEnd();
-                reader.Close();
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(
-                    SR.GetString("QtProject_CannotReplaceTokenRead", token, replacement, e.ToString()));
-                return;
-            }
-
-            try {
-                if (token.ToUpper() == "%PRE_DEF%" && !Char.IsLetter(replacement[0]))
-                    replacement = "_" + replacement;
-
-                text = text.Replace(token, replacement);
-                var writer = new StreamWriter(file);
-                writer.Write(text);
-                writer.Close();
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(
-                    SR.GetString("QtProject_CannotReplaceTokenWrite", token, replacement, e.ToString()));
-            }
-        }
-
-        public void RepairGeneratedFilesStructure()
-        {
-            DeleteGeneratedFiles();
-
-            var files = new ConcurrentBag<VCFile>();
-            Task.WaitAll(
-                Task.Run(() =>
-                    Parallel.ForEach(((IVCCollection)vcPro.Files).Cast<VCFile>(), file =>
-                    {
-                        var name = file.Name;
-                        if (!HelperFunctions.IsHeaderFile(name) && !HelperFunctions.IsSourceFile(name))
-                            return;
-                        if (HelperFunctions.HasQObjectDeclaration(file))
-                            files.Add(file);
-                    })
-                )
-            );
-
-            qtMsBuild.BeginSetItemProperties();
-            foreach (var file in files) {
-                RemoveMocStep(file);
-                AddMocStep(file);
-            }
-            qtMsBuild.EndSetItemProperties();
         }
 
         public void TranslateFilterNames()
