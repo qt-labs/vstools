@@ -280,6 +280,9 @@ namespace QtVsTools
 
         public static bool ToolsAvailable(EnvDTE.Project project)
         {
+            if (QtProject.GetPropertyValue(project, "ApplicationType") == "Linux")
+                return true;
+
             var qtToolsPath = QtProject.GetPropertyValue(project, "QtToolsPath");
             return File.Exists(Path.Combine(qtToolsPath, "lupdate.exe"))
                 && File.Exists(Path.Combine(qtToolsPath, "lrelease.exe"));

@@ -90,10 +90,14 @@
       <QtTranslation>
         <InputFiles
           >$(QtTranslationInput)</InputFiles>
-        <LUpdate
+        <LUpdate Condition="'$(ApplicationType)' == 'Linux'"
           >$(QtToolsPath)/lupdate</LUpdate>
-        <LRelease
+        <LRelease Condition="'$(ApplicationType)' == 'Linux'"
           >$(QtToolsPath)/lrelease</LRelease>
+        <LUpdate Condition="'$(ApplicationType)' != 'Linux'"
+          >$(QtToolsPath)/lupdate.exe</LUpdate>
+        <LRelease Condition="'$(ApplicationType)' != 'Linux'"
+          >$(QtToolsPath)/lrelease.exe</LRelease>
         <TsFile
           >%(Identity)</TsFile>
         <QmFile
