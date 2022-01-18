@@ -76,10 +76,6 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
     <Reference Include="Microsoft.VisualStudio.VCCodeModel" />
-    <Reference Include="Microsoft.VisualStudio.ExtensionsExplorer.UI, Version=$(VisualStudioVersion).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(DevEnvDir)PrivateAssemblies\Microsoft.VisualStudio.ExtensionsExplorer.UI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,14 +119,8 @@
   // -->
   <ItemGroup>
     <Content Include="Resources\QtProjectWizard.ico" />
-    <Resource Include="Resources\medium.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Resources\Qt-logo-small.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\small.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
   <ItemGroup>
@@ -212,10 +202,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProjectWizard\Library\LibraryClassPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\ExpanderStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
