@@ -326,10 +326,28 @@ namespace QtVsTools
                 eventHandler.SolutionEvents_Opened();
         }
 
+        bool TestVersionInstalled()
+        {
+            bool newVersion = false;
+            string versionFile = Path.Combine(PkgInstallPath, "lastversion.txt");
+            if (File.Exists(versionFile)) {
+                string lastVersion = File.ReadAllText(versionFile);
+                newVersion = (lastVersion!= Version.PRODUCT_VERSION);
+            } else {
+                newVersion = true;
+            }
+            if (newVersion)
+                File.WriteAllText(versionFile, Version.PRODUCT_VERSION);
+            return newVersion;
+        }
+
         public void VsMainWindowActivated()
         {
             if (QtVersionManager.The().GetVersions()?.Length == 0)
                 InfoBarMessages.NoQtVersion.Show();
+            if (TestVersionInstalled()) {
+                InfoBarMessages.NotifyInstall.Show();
+            }
         }
 
         protected override int QueryClose(out bool canClose)

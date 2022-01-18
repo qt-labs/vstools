@@ -28,6 +28,7 @@
 
 using System;
 using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
@@ -56,6 +57,34 @@ namespace QtVsTools
                         CloseInfoBar = false,
                         OnClicked = () =>
                             QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage))
+                    }
+                }
+            }
+        );
+
+        static IMessage _NotifyInstall = null;
+        public static IMessage NotifyInstall => _NotifyInstall ?? (
+            _NotifyInstall = new Message
+            {
+                Icon = KnownMonikers.StatusWarning,
+                Text = new TextSpan[]
+                {
+                    new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+                    new TextSpacer(2),
+                    "\u2014", // Em dash
+                    new TextSpacer(2),
+                    $"Version {Version.USER_VERSION} was installed."
+                },
+                Hyperlinks = new Hyperlink[]
+                {
+                    new Hyperlink
+                    {
+                        Text = "Release Notes",
+                        CloseInfoBar = false,
+                        OnClicked= () => {
+                            VsShellUtilities.OpenSystemBrowser(
+                                "https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog");
+                        }
                     }
                 }
             }
