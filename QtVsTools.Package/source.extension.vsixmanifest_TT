@@ -88,9 +88,9 @@
     <DisplayName>Qt Visual Studio Tools</DisplayName>
     <Description xml:space="preserve">The Qt VS Tools for Visual Studio <#=VS_NAME#> allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</Description>
     <#=XML_COMMENT_BEGIN#> END Generated Text -->
-    <MoreInfo>http://www.qt.io</MoreInfo>
+    <MoreInfo>https://doc.qt.io/qtvstools/index.html</MoreInfo>
     <License>LICENSE.GPL3-EXCEPT</License>
-    <ReleaseNotes>Changelog</ReleaseNotes>
+    <ReleaseNotes>https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog</ReleaseNotes>
     <Icon>qt.ico</Icon>
     <PreviewImage>preview.png</PreviewImage>
   </Metadata>
