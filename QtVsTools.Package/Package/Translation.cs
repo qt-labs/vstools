@@ -26,19 +26,13 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Core;
-using QtVsTools.VisualStudio;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QtVsTools
@@ -254,26 +248,6 @@ namespace QtVsTools
                 default:
                     Messages.Print(string.Format("translation: ERROR {0}", proc.ExitCode));
                     break;
-                }
-            }
-        }
-
-        public static void CreateNewTranslationFile(EnvDTE.Project project)
-        {
-            if (project == null)
-                return;
-
-            using (var transDlg = new AddTranslationDialog(project)) {
-                if (transDlg.ShowDialog() == DialogResult.OK) {
-                    try {
-                        var qtPro = QtProject.Create(project);
-                        qtPro.AddFileInFilter(Filters.TranslationFiles(),
-                            transDlg.TranslationFile, true);
-                    } catch (QtVSException e) {
-                        Messages.DisplayErrorMessage(e.Message);
-                    } catch (System.Exception ex) {
-                        Messages.DisplayErrorMessage(ex.Message);
-                    }
                 }
             }
         }

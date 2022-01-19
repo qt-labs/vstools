@@ -77,7 +77,6 @@ namespace QtVsTools
             ImportPriFileId = 0x0103,
             ExportPriFileId = 0x0104,
             ExportProFileId = 0x0105,
-            CreateNewTsFileId = 0x0107,
             ConvertToQtMsBuild = 0x0130,
             ConvertToQtId = 0x0124,
             ConvertToQmakeId = 0x0108,
@@ -144,10 +143,6 @@ namespace QtVsTools
                 break;
             case CommandId.ExportProFileId:
                 ExtLoader.ExportProFile();
-                break;
-            case CommandId.CreateNewTsFileId:
-                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage
-                    .Instance.Dte));
                 break;
             case CommandId.ConvertToQtId:
             case CommandId.ConvertToQmakeId: {
@@ -234,11 +229,6 @@ namespace QtVsTools
             case CommandId.ExportProFileId:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsQtProject(project);
-                break;
-            case CommandId.CreateNewTsFileId:
-                command.Visible = true;
-                command.Enabled = HelperFunctions.IsQtProject(project)
-                    && Translation.ToolsAvailable(project);
                 break;
             // TODO: Fix these functionality and re-enable the menu items
             case CommandId.ConvertToQtId:

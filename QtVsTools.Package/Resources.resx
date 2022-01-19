@@ -123,15 +123,6 @@
   <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
     <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
   </data>
-  <data name="AddTranslationDialog_FileName" xml:space="preserve">
-    <value>Filename:</value>
-  </data>
-  <data name="AddTranslationDialog_Language" xml:space="preserve">
-    <value>Language:</value>
-  </data>
-  <data name="AddTranslationDialog_Title" xml:space="preserve">
-    <value>Add Translation</value>
-  </data>
   <data name="Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>

@@ -78,7 +78,6 @@ namespace QtVsTools
             ImportPriFileProjectId = 0x0114,
             ExportPriFileProjectId = 0x0115,
             ExportProFileProjectId = 0x0116,
-            CreateNewTsFileProjectId = 0x0117,
             lUpdateOnProjectId = 0x0118,
             lReleaseOnProjectId = 0x0119,
             ProjectConvertToQtMsBuild = 0x0130,
@@ -134,10 +133,6 @@ namespace QtVsTools
                 break;
             case CommandId.ExportProFileProjectId:
                 ExtLoader.ExportProFile();
-                break;
-            case CommandId.CreateNewTsFileProjectId:
-                Translation.CreateNewTranslationFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage
-                    .Instance.Dte));
                 break;
             case CommandId.lUpdateOnProjectId:
                 Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
@@ -231,7 +226,6 @@ namespace QtVsTools
                 command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
                     .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 break;
-            case CommandId.CreateNewTsFileProjectId:
             case CommandId.lUpdateOnProjectId:
             case CommandId.lReleaseOnProjectId:
                 command.Visible = true;

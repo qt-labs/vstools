@@ -71,17 +71,6 @@ namespace QtVsTools.Core
             };
         }
 
-        public static FakeFilter TranslationFiles()
-        {
-            return new FakeFilter
-            {
-                UniqueIdentifier = "{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}",
-                Name = SR.GetString("Resources_TranslationFiles"),
-                Filter = "ts",
-                ParseFiles = false
-            };
-        }
-
         public static FakeFilter GeneratedFiles()
         {
             return new FakeFilter
@@ -89,16 +78,6 @@ namespace QtVsTools.Core
                 UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}",
                 Name = SR.GetString("Resources_GeneratedFiles"),
                 Filter = "moc;h;cpp",
-            };
-        }
-
-        public static FakeFilter OtherFiles()
-        {
-            return new FakeFilter
-            {
-                UniqueIdentifier = "{B67473BF-9FA1-4674-831E-CB28F72D4791}",
-                Name = SR.GetString("Resources_OtherFiles"),
-                Filter = "*",
             };
         }
     }

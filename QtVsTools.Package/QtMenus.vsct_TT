@@ -278,16 +278,6 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="CreateNewTsFileId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <Strings>
-                    <ButtonText>Create New Translation File</ButtonText>
-                    <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
-                </Strings>
-            </Button>
             <Button guid="MainMenuGuid" id="ConvertToQtMsBuild" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -444,15 +434,6 @@
                 </Strings>
             </Button>
 
-            <Button guid="ProjectContextMenuGuid" id="CreateNewTsFileProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Create New Translation File</ButtonText>
-                    <ToolTipText>Create a new translation file that you can open in Qt Linguist</ToolTipText>
-                </Strings>
-            </Button>
             <Button guid="ProjectContextMenuGuid" id="lUpdateOnProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
@@ -600,7 +581,6 @@
             <IDSymbol name="ExportProFileId" value="0x0105" />
 
             <IDSymbol name="OthersMenuGroup" value="0x1023" />
-            <IDSymbol name="CreateNewTsFileId" value="0x0107" />
             <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="ConvertToQtId" value="0x0124" />
             <IDSymbol name="ConvertToQmakeId" value="0x0108" />
@@ -648,7 +628,6 @@
             <IDSymbol name="ExportProFileProjectId" value="0x0116" />
 
             <IDSymbol name="ProjectContextTsMenuGroup" value="0x1028" />
-            <IDSymbol name="CreateNewTsFileProjectId" value="0x0117" />
             <IDSymbol name="lUpdateOnProjectId" value="0x0118" />
             <IDSymbol name="lReleaseOnProjectId" value="0x0119" />
 

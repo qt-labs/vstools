@@ -734,7 +734,7 @@ namespace QtVsTools.Core
                     }
                 }
                 if (toolSettings == CustomTool.CustomBuildStep && !uiFileExists)
-                    AddFileInFilter(Filters.GeneratedFiles(), uiFile);
+                    AddFileInFilter(Filters.GeneratedFiles(), uiFile, false);
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotAddUicStep", file.FullPath));
             }
@@ -1906,18 +1906,6 @@ namespace QtVsTools.Core
             foreach (VCFilter subfilter in (IVCCollection)filter.Filters)
                 tmpList.AddRange(GetAllFilesFromFilter(subfilter));
             return tmpList;
-        }
-
-        /// <summary>
-        /// Adds a file to a filter. If the filter doesn't exist yet, it
-        /// will be created. (Doesn't check for duplicates)
-        /// </summary>
-        /// <param name="filter">fake filter</param>
-        /// <param name="fileName">relative file name</param>
-        /// <returns>A VCFile object of the added file.</returns>
-        public VCFile AddFileInFilter(FakeFilter filter, string fileName)
-        {
-            return AddFileInFilter(filter, fileName, false);
         }
 
         public void RemoveItem(ProjectItem item)
