@@ -549,7 +549,7 @@
     Specify values for the Window \c color and \c title properties to set the
     background color and title of the application main window:
 
-    \quotefromfile quickaddressbook/main.qml
+    \quotefromfile QuickAddressBook/main.qml
     \skipto Window {
     \printuntil title
 
@@ -596,7 +596,7 @@
     \c id \e addressList for storing the contact data. A list model defines
     a free-form list data source:
 
-    \quotefromfile quickaddressbook/main.qml
+    \quotefromfile QuickAddressBook/main.qml
     \skipto ListModel {
     \printuntil }
 
@@ -701,7 +701,7 @@
     \l RowLayout to position the \uicontrol Name and \uicontrol {E-Mail Address}
     fields.
 
-    \quotefromfile quickaddressbook/QuickAddressBookTypes/NewAddressPopup.qml
+    \quotefromfile QuickAddressBook/QuickAddressBookTypes/NewAddressPopup.qml
     \skipto Popup {
     \printuntil id:
 
@@ -751,7 +751,7 @@
     To enable this, add the \c {addressAdded(string newName, string newAddr)}
     signal:
 
-    \quotefromfile quickaddressbook/QuickAddressBookTypes/NewAddressPopup.qml
+    \quotefromfile QuickAddressBook/QuickAddressBookTypes/NewAddressPopup.qml
     \skipto addressAdded(
     \printuntil )
 
@@ -783,7 +783,7 @@
     basic building blocks you can use to create an application in QML. Give it
     an \c id to be able to refer to it later.
 
-    \quotefromfile quickaddressbook/QuickAddressBookTypes/AddressBookItem.qml
+    \quotefromfile QuickAddressBook/QuickAddressBookTypes/AddressBookItem.qml
     \skipto Rectangle {
     \printuntil id:
 
