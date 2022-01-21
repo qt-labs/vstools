@@ -94,7 +94,7 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
 <p><h3><span>The main features of Qt VS Tools are:</span></h3></p>
 <ul>
     <li>
-        Wizards for creating new Qt projects and classes.
+        Wizards for creating new Qt and Qt Quick projects and files.
     </li>
     <li>
         Automated build setup for the <a href="http://doc.qt.io/qt-5/moc.html">
@@ -121,6 +121,9 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
     </li>
     <li>
         Debugging extensions for Qt data types.
+    </li>
+    <li>
+        QML debug engine for debugging Qt Quick applications.
     </li>
 </ul>
 <p><h3>How to set up F1 help</h3></p>
