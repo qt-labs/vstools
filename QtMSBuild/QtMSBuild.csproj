@@ -67,6 +67,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Reference Include="System" />
+    <Reference Include="System.Runtime" />
     <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
     <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
@@ -380,6 +381,7 @@
     // Inline tasks
     // -->
     <Compile Include="Tasks\CriticalSection.cs" />
+    <Compile Include="Tasks\QtRunTask.cs" />
     <Compile Include="Tasks\GetVarsFromMSBuild.cs" />
     <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
