@@ -159,6 +159,7 @@
     <Compile Include="Util\NativeMethods.cs" />
     <Compile Include="ItemWizard\QtClass\QtClassWizard.cs" />
     <Compile Include="ItemWizard\WidgetsClass\WidgetsClassWizard.cs" />
+    <Compile Include="Util\VCRulePropertyStorageHelper.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>

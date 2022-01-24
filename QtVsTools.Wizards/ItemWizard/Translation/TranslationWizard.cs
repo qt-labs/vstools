@@ -35,6 +35,7 @@ using QtVsTools.Common;
 using QtVsTools.Core;
 using QtVsTools.Wizards.Common;
 using QtVsTools.Wizards.ProjectWizard;
+using QtVsTools.Wizards.Util;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
@@ -62,7 +63,7 @@ namespace QtVsTools.Wizards.ItemWizard
         protected override WizardData WizardData => _WizardData
             ?? (_WizardData = new TsWizardData
             {
-                DefaultModules = new List<string> { "QtCore"}
+                DefaultModules = new List<string> { "core"}
             });
 
         WizardWindow _WizardWindow;
@@ -103,7 +104,7 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void Expand()
         {
-            // do not call the base class method here
+            VCRulePropertyStorageHelper.SetQtModules(Dte, WizardData.DefaultModules);
         }
 
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
