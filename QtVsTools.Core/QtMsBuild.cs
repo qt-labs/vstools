@@ -1385,8 +1385,8 @@ namespace QtVsTools.Core.QtMsBuild
                 GenerateCommandLineOption(cmd, options[Property.InputFileType], inputType);
 
             var outputType = container.GetPropertyValue(propertyStorage, Property.OutputFileType);
-            if (!string.IsNullOrEmpty(inputType))
-                GenerateCommandLineOption(cmd, options[Property.InputFileType], inputType);
+            if (!string.IsNullOrEmpty(outputType))
+                GenerateCommandLineOption(cmd, options[Property.OutputFileType], outputType);
 
             string value = container.GetPropertyValue(propertyStorage, Property.IncludePath);
             if (!string.IsNullOrEmpty(value))
