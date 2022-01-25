@@ -267,7 +267,7 @@ namespace QtVsTools.Core.CommandLine
                             var optFilePath = macros.ExpandString(argData.Substring(1));
                             string[] additionalArgs = File.ReadAllLines(
                                 Path.Combine(workingDir, optFilePath));
-                            if (additionalArgs != null) {
+                            if (additionalArgs.Length != 0) {
                                 var additionalArgsString = string.Join(" ", additionalArgs
                                     .Select(x => "\"" + x.Replace("\"", "\\\"") + "\""));
                                 arguments.AddRange(TokenizeArgs(additionalArgsString, macros));
