@@ -175,7 +175,6 @@
       <DependentUpon>ServerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectWizard\Server\ServerWizard.cs" />
-    <Compile Include="Util\SortComboBoxItem.cs" />
     <Compile Include="Util\UiClassInclusionConverter.cs" />
     <Compile Include="Common\UiClassInclusion.cs" />
     <Compile Include="Util\UnsafeNativeMethods.cs" />
