@@ -55,11 +55,6 @@ namespace QtVsTools.Core
             return GetBoolValue(Resources.disableAutoMocStepsUpdateKeyword, false);
         }
 
-        public static void SaveDisableAutoMocStepsUpdate(bool b)
-        {
-            SetBoolValue(Resources.disableAutoMocStepsUpdateKeyword, b);
-        }
-
         public static string GetUicDirectory(EnvDTE.Project project)
         {
             return GetDirectory(project, Resources.uicDirKeyword);
@@ -190,26 +185,6 @@ namespace QtVsTools.Core
             return GetOption(project, Resources.lreleaseOptionsKeyword);
         }
 
-        public static bool GetAskBeforeCheckoutFile()
-        {
-            return GetBoolValue(Resources.askBeforeCheckoutFileKeyword, true);
-        }
-
-        public static void SaveAskBeforeCheckoutFile(bool value)
-        {
-            SetBoolValue(Resources.askBeforeCheckoutFileKeyword, value);
-        }
-
-        public static bool GetDisableCheckoutFiles()
-        {
-            return GetBoolValue(Resources.disableCheckoutFilesKeyword, false);
-        }
-
-        public static void SaveDisableCheckoutFiles(bool value)
-        {
-            SetBoolValue(Resources.disableCheckoutFilesKeyword, value);
-        }
-
         public static void SaveMocDirectory(EnvDTE.Project project, string directory)
         {
             if (directory == null)
@@ -225,16 +200,6 @@ namespace QtVsTools.Core
             SaveOption(project, Resources.mocOptionsKeyword, options);
         }
 
-        public static void SaveMocOptions(string options)
-        {
-            SaveOption(Resources.mocOptionsKeyword, options);
-        }
-
-        public static void SaveLUpdateOnBuild(EnvDTE.Project project)
-        {
-            SetBoolValue(project, Resources.lupdateKeyword, GetLUpdateOnBuild());
-        }
-
         public static void SaveLUpdateOnBuild(EnvDTE.Project project, bool value)
         {
             SetBoolValue(project, Resources.lupdateKeyword, value);
@@ -248,11 +213,6 @@ namespace QtVsTools.Core
             SaveOption(project, Resources.lupdateOptionsKeyword, options);
         }
 
-        public static void SaveLUpdateOptions(string options)
-        {
-            SaveOption(Resources.lupdateOptionsKeyword, options);
-        }
-
         public static void SaveLReleaseOptions(EnvDTE.Project project, string options)
         {
             if (options == null)
@@ -260,19 +220,9 @@ namespace QtVsTools.Core
             SaveOption(project, Resources.lreleaseOptionsKeyword, options);
         }
 
-        public static void SaveLReleaseOptions(string options)
-        {
-            SaveOption(Resources.lreleaseOptionsKeyword, options);
-        }
-
         public static string GetRccDirectory(EnvDTE.Project project)
         {
             return GetDirectory(project, Resources.rccDirKeyword);
-        }
-
-        public static void SaveRccDirectory(string dir)
-        {
-            SaveDirectory(Resources.rccDirKeyword, dir);
         }
 
         public static void SaveRccDirectory(EnvDTE.Project project, string directory)
@@ -309,11 +259,6 @@ namespace QtVsTools.Core
                 }
             } catch { }
             return null;
-        }
-
-        public static bool GetLUpdateOnBuild()
-        {
-            return GetBoolValue(Resources.lupdateKeyword, false);
         }
 
         public static string GetRccDirectory()
@@ -455,21 +400,6 @@ namespace QtVsTools.Core
                 project.Globals.set_VariablePersists(type, true);
         }
 
-        public static void SaveUicDirectory(string dir)
-        {
-            SaveDirectory(Resources.uicDirKeyword, dir);
-        }
-
-        public static void SaveMocDirectory(string dir)
-        {
-            SaveDirectory(Resources.mocDirKeyword, dir);
-        }
-
-        public static void SaveLUpdateOnBuild(bool val)
-        {
-            SetBoolValue(Resources.lupdateKeyword, val);
-        }
-
         public static void cleanUpCache(EnvDTE.Project project)
         {
             try {
@@ -499,25 +429,6 @@ namespace QtVsTools.Core
             } catch { }
         }
 
-        private static void SaveDirectory(string type, string dir)
-        {
-            dir = HelperFunctions.NormalizeRelativeFilePath(dir);
-            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (key == null)
-                return;
-            key.SetValue(type, dir);
-        }
-
-        private static void SaveOption(string type, string option)
-        {
-            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (key == null)
-                return;
-            if (option == null)
-                option = "";
-            key.SetValue(type, option);
-        }
-
         public static bool AutoUpdateUicSteps()
         {
             if (ValueExists("AutoUpdateUicSteps"))
@@ -543,14 +454,6 @@ namespace QtVsTools.Core
                 }
             }
             return false;
-        }
-
-        private static void SetBoolValue(string key, bool val)
-        {
-            var regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + Resources.registryPackagePath);
-            if (regKey == null)
-                return;
-            regKey.SetValue(key, val ? 1 : 0);
         }
 
         public static bool GetQmlDebug(EnvDTE.Project project)

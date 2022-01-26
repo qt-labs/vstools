@@ -46,7 +46,6 @@ namespace QtVsTools.Wizards.ProjectWizard
         enum NewLibClass
         {
             [String("classname")] ClassName,
-            [String("baseclass")] BaseClass,
             [String("sourcefilename")] SourceFileName,
             [String("headerfilename")] HeaderFileName,
             [String("include")] Include,

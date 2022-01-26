@@ -117,8 +117,6 @@ namespace QtVsTools.Wizards.ProjectWizard
             public WhereConfig WhereConfig { get; set; }
         }
 
-        // keep in sync with QtVsTools.Core.TemplateType
-
         [Flags]
         protected enum Options : uint
         {

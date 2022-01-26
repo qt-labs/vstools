@@ -114,12 +114,6 @@ namespace QtVsTools.Core
             return GetVersionInfo(GetProjectQtVersion(project));
         }
 
-        public void ClearVersionCache()
-        {
-            if (versionCache != null)
-                versionCache.Clear();
-        }
-
         public string[] GetVersions()
         {
             return GetVersions(Registry.CurrentUser);

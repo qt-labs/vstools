@@ -100,18 +100,11 @@ namespace QtVsTools.Core
         public const int qtMinFormatVersion_PropertyEval = 303;
 
         // Project properties labels
-        public const string projLabelGlobals = "Globals";
         public const string projLabelQtSettings = "QtSettings";
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
         public const string moc4Command = "$(QTDIR)\\bin\\moc.exe";
         public const string rcc4Command = "$(QTDIR)\\bin\\rcc.exe";
-        public const string lupdateCommand = "\\bin\\lupdate.exe";
-        public const string lreleaseCommand = "\\bin\\lrelease.exe";
-
-        // All defined paths have to be relative to the project directory!!!
-
-        public const string resourceDir = "Resources";
 
         // If those directories do not equal to the project directory
         // they have to be added to the include directories for

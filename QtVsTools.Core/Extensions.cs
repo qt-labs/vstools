@@ -32,15 +32,6 @@ namespace QtVsTools.Core
 {
     public static class Extensions
     {
-        public static string Quoute(this string input)
-        {
-            if (!input.StartsWith("\"", StringComparison.Ordinal))
-                input = "\"" + input;
-            if (!input.EndsWith("\"", StringComparison.Ordinal))
-                input += "\"";
-            return input;
-        }
-
         public static string Replace(this string original, string oldValue, string newValue,
             StringComparison comparison)
         {

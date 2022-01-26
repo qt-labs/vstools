@@ -45,14 +45,6 @@ namespace QtVsTools
     /// </summary>
     public static class Translation
     {
-        public static void RunlRelease(VCFile vcFile)
-        {
-            var vcProj = vcFile.project as VCProject;
-            var project = vcProj?.Object as EnvDTE.Project;
-            RunTranslationTarget(BuildAction.Release,
-                project, new[] { vcFile.RelativePath });
-        }
-
         public static void RunlRelease(VCFile[] vcFiles)
         {
             var vcProj = vcFiles.FirstOrDefault()?.project as VCProject;

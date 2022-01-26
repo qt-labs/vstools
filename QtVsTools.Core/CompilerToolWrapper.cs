@@ -302,13 +302,6 @@ namespace QtVsTools.Core
             return GetStringProperty("AdditionalIncludeDirectories");
         }
 
-        public string GetPrecompiledHeaderFile()
-        {
-            if (compilerTool != null)
-                return compilerTool.PrecompiledHeaderFile;
-            return GetStringProperty("PrecompiledHeaderFile");
-        }
-
         public string GetPrecompiledHeaderThrough()
         {
             if (compilerTool != null)
@@ -326,20 +319,6 @@ namespace QtVsTools.Core
             if (obj == null)
                 return pchOption.pchNone;
             return (pchOption)obj;
-        }
-
-        public void SetDebugInformationFormat(debugOption value)
-        {
-            if (compilerTool != null) {
-                compilerTool.DebugInformationFormat = value;
-            } else {
-                compilerType.InvokeMember(
-                    "DebugInformationFormat",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { value });
-            }
         }
 
         public runtimeLibraryOption RuntimeLibrary
@@ -364,62 +343,6 @@ namespace QtVsTools.Core
                 } else {
                     compilerTool.RuntimeLibrary = value;
                 }
-            }
-        }
-
-        public void SetOptimization(optimizeOption value)
-        {
-            if (compilerTool != null) {
-                compilerTool.Optimization = value;
-            } else {
-                compilerType.InvokeMember(
-                    "Optimization",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { value });
-            }
-        }
-
-        public void SetTreatWChar_tAsBuiltInType(bool value)
-        {
-            if (compilerTool != null) {
-                compilerTool.TreatWChar_tAsBuiltInType = value;
-            } else {
-                compilerType.InvokeMember(
-                    "TreatWChar_tAsBuiltInType",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { value });
-            }
-        }
-
-        public void SetPrecompiledHeaderFile(string file)
-        {
-            if (compilerTool != null) {
-                compilerTool.PrecompiledHeaderFile = file;
-            } else {
-                compilerType.InvokeMember(
-                    "PrecompiledHeaderFile",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { file });
-            }
-        }
-
-        public void SetPrecompiledHeaderThrough(string value)
-        {
-            if (compilerTool != null) {
-                compilerTool.PrecompiledHeaderThrough = value;
-            } else {
-                compilerType.InvokeMember(
-                    "PrecompiledHeaderThrough",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { value });
             }
         }
 

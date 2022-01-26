@@ -30,7 +30,6 @@ using QtVsTools.Core;
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace QtVsTools
 {
@@ -123,118 +122,6 @@ namespace QtVsTools
             }
         }
 
-        public string MocDirectory
-        {
-            get
-            {
-                return newMocDir;
-            }
-            set
-            {
-                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldMocDir.ToLower())
-                    return;
-
-                string badMacros = IncompatibleMacros(tmp);
-                if (!string.IsNullOrEmpty(badMacros))
-                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
-                else
-                    newMocDir = tmp;
-            }
-        }
-
-        public string MocOptions
-        {
-            get
-            {
-                return newMocOptions;
-            }
-
-            set
-            {
-                newMocOptions = value;
-            }
-        }
-
-        public string UicDirectory
-        {
-            get
-            {
-                return newUicDir;
-            }
-            set
-            {
-                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldUicDir.ToLower())
-                    return;
-
-                string badMacros = IncompatibleMacros(tmp);
-                if (!string.IsNullOrEmpty(badMacros))
-                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
-                else
-                    newUicDir = tmp;
-            }
-        }
-
-        public string RccDirectory
-        {
-            get
-            {
-                return newRccDir;
-            }
-            set
-            {
-                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldRccDir.ToLower())
-                    return;
-
-                string badMacros = IncompatibleMacros(tmp);
-                if (!string.IsNullOrEmpty(badMacros))
-                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
-                else
-                    newRccDir = tmp;
-            }
-        }
-
-        public bool lupdateOnBuild
-        {
-            get
-            {
-                return newLUpdateOnBuild;
-            }
-
-            set
-            {
-                newLUpdateOnBuild = value;
-            }
-        }
-
-        public string LUpdateOptions
-        {
-            get
-            {
-                return newLUpdateOptions;
-            }
-
-            set
-            {
-                newLUpdateOptions = value;
-            }
-        }
-
-        public string LReleaseOptions
-        {
-            get
-            {
-                return newLReleaseOptions;
-            }
-
-            set
-            {
-                newLReleaseOptions = value;
-            }
-        }
-
         [DisplayName("QML Debug")]
         [TypeConverter(typeof(QmlDebugConverter))]
         public bool QmlDebug { get; set; }
@@ -298,27 +185,6 @@ namespace QtVsTools
             {
                 return true;
             }
-        }
-
-        public static string IncompatibleMacros(string stringToExpand)
-        {
-            string incompatibleMacros = "";
-            foreach (Match metaNameMatch in Regex.Matches(stringToExpand, @"\%\(([^\)]+)\)")) {
-                string metaName = metaNameMatch.Groups[1].Value;
-                if (!incompatibleMacros.Contains(string.Format("%({0})", metaName))) {
-                    switch (metaName) {
-                    case "RecursiveDir":
-                    case "ModifiedTime":
-                    case "CreatedTime":
-                    case "AccessedTime":
-                        if (!string.IsNullOrEmpty(incompatibleMacros))
-                            incompatibleMacros += ", ";
-                        incompatibleMacros += string.Format("%({0})", metaName);
-                        break;
-                    }
-                }
-            }
-            return incompatibleMacros;
         }
     }
 }

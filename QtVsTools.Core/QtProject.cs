@@ -110,30 +110,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public static string GetRuleName(VCProject project, string itemType)
-        {
-            if (project == null)
-                return string.Empty;
-            var configs = project.Configurations as IVCCollection;
-            if (configs.Count == 0)
-                return string.Empty;
-            try {
-                var firstConfig = configs.Item(1) as VCConfiguration;
-                if (firstConfig == null)
-                    return string.Empty;
-                return GetRuleName(firstConfig, itemType);
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-                return string.Empty;
-            }
-        }
-
-        public string GetRuleName(string itemType)
-        {
-            return GetRuleName(vcPro, itemType);
-        }
-
         public static bool IsQtMsBuildEnabled(VCProject project)
         {
             if (project == null)
@@ -246,7 +222,8 @@ namespace QtVsTools.Core
         /// replaced by the value of configName.
         /// <param name="file">full file name of either the header or the source file</param>
         /// <returns></returns>
-        private string GetRelativeMocFilePath(string file, string configName, string platformName)
+        private string GetRelativeMocFilePath(string file, string configName = null,
+                                              string platformName = null)
         {
             var fileName = GetMocFileName(file);
             if (fileName == null)
@@ -256,27 +233,6 @@ namespace QtVsTools.Core
             if (HelperFunctions.IsAbsoluteFilePath(mocDir))
                 mocDir = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory, mocDir);
             return mocDir;
-        }
-
-        /// <summary>
-        /// Returns the file name of the generated moc file relative to the
-        /// project directory.
-        /// </summary>
-        /// The returned file path may contain the macros $(ConfigurationName) and $(PlatformName).
-        /// <param name="file">full file name of either the header or the source file</param>
-        /// <returns></returns>
-        private string GetRelativeMocFilePath(string file)
-        {
-            return GetRelativeMocFilePath(file, null, null);
-        }
-
-        /// <summary>
-        /// Marks the specified project as a Qt project.
-        /// </summary>
-        public void MarkAsQtProject()
-        {
-            vcPro.keyword = string.Format("{0}_v{1}",
-                Resources.qtProjectKeyword, Resources.qtProjectFormatVersion);
         }
 
         public static int GetFormatVersion(VCProject vcPro)
@@ -302,16 +258,6 @@ namespace QtVsTools.Core
         }
 
         public int FormatVersion { get { return GetFormatVersion(Project); } }
-
-        public string GetPropertyValue(string propName)
-        {
-            return GetPropertyValue(Project, propName);
-        }
-
-        public string GetPropertyValue(string configName, string platformName, string propName)
-        {
-            return GetPropertyValue(Project, configName, platformName, propName);
-        }
 
         public static string GetPropertyValue(
             EnvDTE.Project dteProject,
@@ -339,16 +285,6 @@ namespace QtVsTools.Core
         }
 
         public static string GetPropertyValue(
-            EnvDTE.Project dteProject,
-            string configName,
-            string platformName,
-            string propName)
-        {
-            return GetPropertyValue(
-                dteProject.Object as VCProject, configName, platformName, propName);
-        }
-
-        public static string GetPropertyValue(
             VCProject vcProject,
             string configName,
             string platformName,
@@ -370,18 +306,6 @@ namespace QtVsTools.Core
             string propName)
         {
             return vcConfig.GetEvaluatedPropertyValue(propName);
-        }
-
-        public void AddDefine(string define, uint bldConf)
-        {
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var compiler = CompilerToolWrapper.Create(config);
-
-                if (((!IsDebugConfiguration(config)) && ((bldConf & BuildConfig.Release) != 0)) ||
-                    ((IsDebugConfiguration(config)) && ((bldConf & BuildConfig.Debug) != 0))) {
-                    compiler.AddPreprocessorDefinition(define);
-                }
-            }
         }
 
         public void AddModule(int id)
@@ -586,76 +510,6 @@ namespace QtVsTools.Core
                 }
             }
             return foundInIncludes || foundInLibs;
-        }
-
-        public void WriteProjectBasicConfigurations(uint type, bool usePrecompiledHeader)
-        {
-            WriteProjectBasicConfigurations(type, usePrecompiledHeader, null);
-        }
-
-        public void WriteProjectBasicConfigurations(uint type, bool usePrecompiledHeader, VersionInformation vi)
-        {
-            var configType = ConfigurationTypes.typeApplication;
-            var targetExtension = ".exe";
-            string qtVersion = null;
-            var vm = QtVersionManager.The();
-            if (vi == null) {
-                qtVersion = vm.GetDefaultVersion();
-                vi = vm.GetVersionInfo(qtVersion);
-            }
-
-            switch (type & TemplateType.ProjectType) {
-            case TemplateType.DynamicLibrary:
-                configType = ConfigurationTypes.typeDynamicLibrary;
-                targetExtension = ".dll";
-                break;
-            case TemplateType.StaticLibrary:
-                configType = ConfigurationTypes.typeStaticLibrary;
-                targetExtension = ".lib";
-                break;
-            }
-
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                config.ConfigurationType = configType;
-                var compiler = CompilerToolWrapper.Create(config);
-                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-                var librarian = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");
-
-                if (linker != null) {
-                    if ((type & TemplateType.ConsoleSystem) != 0)
-                        linker.SubSystem = subSystemOption.subSystemConsole;
-                    else
-                        linker.SubSystem = subSystemOption.subSystemWindows;
-
-                    linker.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
-                } else {
-                    librarian.OutputFile = "$(OutDir)\\$(ProjectName)" + targetExtension;
-                }
-
-                if ((type & TemplateType.PluginProject) != 0)
-                    compiler.AddPreprocessorDefinition("QT_PLUGIN");
-
-                var isDebugConfiguration = false;
-                if (config.Name.StartsWith("Release", StringComparison.Ordinal)) {
-                    compiler.SetDebugInformationFormat(debugOption.debugDisabled);
-                    compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDLL;
-                } else if (config.Name.StartsWith("Debug", StringComparison.Ordinal)) {
-                    isDebugConfiguration = true;
-                    compiler.SetOptimization(optimizeOption.optimizeDisabled);
-                    compiler.SetDebugInformationFormat(debugOption.debugEnabled);
-                    compiler.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDebugDLL;
-                }
-
-                compiler.SetTreatWChar_tAsBuiltInType(true);
-
-                if (linker != null)
-                    linker.GenerateDebugInformation = isDebugConfiguration;
-
-                if (usePrecompiledHeader)
-                    UsePrecompiledHeaders(config);
-            }
-            if ((type & TemplateType.PluginProject) != 0)
-                MarkAsDesignerPluginProject();
         }
 
         public void MarkAsDesignerPluginProject()
@@ -1908,22 +1762,6 @@ namespace QtVsTools.Core
             return tmpList;
         }
 
-        public void RemoveItem(ProjectItem item)
-        {
-            foreach (ProjectItem tmpFilter in Project.ProjectItems) {
-                if (tmpFilter.Name == item.Name) {
-                    tmpFilter.Remove();
-                    return;
-                }
-                foreach (ProjectItem tmpItem in tmpFilter.ProjectItems) {
-                    if (tmpItem.Name == item.Name) {
-                        tmpItem.Remove();
-                        return;
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Adds a file to a filter. If the filter doesn't exist yet, it
         /// will be created.
@@ -2327,7 +2165,7 @@ namespace QtVsTools.Core
 
             qtMsBuild.BeginSetItemProperties();
             foreach (var file in files) {
-                if (HelperFunctions.IsUicFile(file.Name) && !IsUic3File(file)) {
+                if (HelperFunctions.IsUicFile(file.Name)) {
                     AddUic4BuildStep(file);
                     Messages.Print("Update uic step for " + file.Name + ".");
                     ++updatedFiles;
@@ -2338,42 +2176,6 @@ namespace QtVsTools.Core
                 UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
 
             Messages.Print("\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
-        }
-
-        private static bool IsUic3File(VCFile file)
-        {
-            foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
-                var tool = HelperFunctions.GetCustomBuildTool(config);
-                if (tool == null)
-                    return false;
-                if (tool.CommandLine.IndexOf("uic3.exe", StringComparison.OrdinalIgnoreCase) > -1)
-                    return true;
-            }
-            return false;
-        }
-
-        public bool UsePrecompiledHeaders(VCConfiguration config)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            return UsePrecompiledHeaders(compiler);
-        }
-
-        private bool UsePrecompiledHeaders(CompilerToolWrapper compiler)
-        {
-            try {
-                compiler.SetUsePrecompiledHeader(pchOption.pchUseUsingSpecific);
-                var pcHeaderThrough = GetPrecompiledHeaderThrough();
-                if (string.IsNullOrEmpty(pcHeaderThrough))
-                    pcHeaderThrough = "stdafx.h";
-                compiler.SetPrecompiledHeaderThrough(pcHeaderThrough);
-                var pcHeaderFile = GetPrecompiledHeaderFile();
-                if (string.IsNullOrEmpty(pcHeaderFile))
-                    pcHeaderFile = ".\\$(ConfigurationName)/" + Project.Name + ".pch";
-                compiler.SetPrecompiledHeaderFile(pcHeaderFile);
-                return true;
-            } catch {
-                return false;
-            }
         }
 
         public bool UsesPrecompiledHeaders()
@@ -2422,32 +2224,6 @@ namespace QtVsTools.Core
                 var header = compiler.GetPrecompiledHeaderThrough();
                 if (!string.IsNullOrEmpty(header))
                     return header.ToLower();
-            } catch { }
-            return null;
-        }
-
-        public string GetPrecompiledHeaderFile()
-        {
-            foreach (VCConfiguration config in vcPro.Configurations as IVCCollection) {
-                var file = GetPrecompiledHeaderFile(config);
-                if (!string.IsNullOrEmpty(file))
-                    return file;
-            }
-            return null;
-        }
-
-        public static string GetPrecompiledHeaderFile(VCConfiguration config)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            return GetPrecompiledHeaderFile(compiler);
-        }
-
-        private static string GetPrecompiledHeaderFile(CompilerToolWrapper compiler)
-        {
-            try {
-                var file = compiler.GetPrecompiledHeaderFile();
-                if (!string.IsNullOrEmpty(file))
-                    return file;
             } catch { }
             return null;
         }

@@ -47,88 +47,6 @@ namespace QtVsTools.Core
 {
     public static class HelperFunctions
     {
-        public static string FindQtDirWithTools(Project project)
-        {
-            var versionManager = QtVersionManager.The();
-            string projectQtVersion = null;
-            if (IsQtProject(project))
-                projectQtVersion = versionManager.GetProjectQtVersion(project);
-            return FindQtDirWithTools(projectQtVersion);
-        }
-
-        public static string FindQtDirWithTools(string projectQtVersion)
-        {
-            string tool = null;
-            return FindQtDirWithTools(tool, projectQtVersion);
-        }
-
-        public static string FindQtDirWithTools(string tool, string projectQtVersion)
-        {
-            if (!string.IsNullOrEmpty(tool)) {
-                if (!tool.StartsWith("\\bin\\", StringComparison.OrdinalIgnoreCase))
-                    tool = "\\bin\\" + tool;
-                if (!tool.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                    tool += ".exe";
-            }
-
-            var versionManager = QtVersionManager.The();
-            string qtDir = null;
-            if (projectQtVersion != null)
-                qtDir = versionManager.GetInstallPath(projectQtVersion);
-
-            if (qtDir == null)
-                qtDir = Environment.GetEnvironmentVariable("QTDIR");
-
-            var found = false;
-            if (tool == null) {
-                found = File.Exists(qtDir + "\\bin\\designer.exe")
-                    && File.Exists(qtDir + "\\bin\\linguist.exe");
-            } else {
-                found = File.Exists(qtDir + tool);
-            }
-            if (!found) {
-                VersionInformation exactlyMatchingVersion = null;
-                VersionInformation matchingVersion = null;
-                VersionInformation somehowMatchingVersion = null;
-                var viProjectQtVersion = versionManager.GetVersionInfo(projectQtVersion);
-                foreach (var qtVersion in versionManager.GetVersions()) {
-                    var vi = versionManager.GetVersionInfo(qtVersion);
-                    if (tool == null) {
-                        found = File.Exists(vi.qtDir + "\\bin\\designer.exe")
-                            && File.Exists(vi.qtDir + "\\bin\\linguist.exe");
-                    } else {
-                        found = File.Exists(vi.qtDir + tool);
-                    }
-                    if (!found)
-                        continue;
-
-                    if (viProjectQtVersion != null
-                        && vi.qtMajor == viProjectQtVersion.qtMajor
-                        && vi.qtMinor == viProjectQtVersion.qtMinor) {
-                        exactlyMatchingVersion = vi;
-                        break;
-                    }
-                    if (matchingVersion == null
-                        && viProjectQtVersion != null
-                        && vi.qtMajor == viProjectQtVersion.qtMajor) {
-                        matchingVersion = vi;
-                    }
-                    if (somehowMatchingVersion == null)
-                        somehowMatchingVersion = vi;
-                }
-
-                if (exactlyMatchingVersion != null)
-                    qtDir = exactlyMatchingVersion.qtDir;
-                else if (matchingVersion != null)
-                    qtDir = matchingVersion.qtDir;
-                else if (somehowMatchingVersion != null)
-                    qtDir = somehowMatchingVersion.qtDir;
-                else
-                    qtDir = null;
-            }
-            return qtDir;
-        }
-
         static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },
             StringComparer.OrdinalIgnoreCase);
         static public bool IsSourceFile(string fileName)
@@ -1393,21 +1311,6 @@ namespace QtVsTools.Core
             return true;
         }
 
-        public static string FindFileInPATH(string fileName)
-        {
-            var envPATH = Environment.ExpandEnvironmentVariables("%PATH%");
-            var directories = envPATH.Split(';');
-            foreach (var directory in directories) {
-                var fullFilePath = directory;
-                if (!fullFilePath.EndsWith("\\", StringComparison.Ordinal))
-                    fullFilePath += '\\';
-                fullFilePath += fileName;
-                if (File.Exists(fullFilePath))
-                    return fullFilePath;
-            }
-            return null;
-        }
-
         /// <summary>
         /// This method copies the specified directory and all its child directories and files to
         /// the specified destination. The destination directory is created if it does not exist.
@@ -1637,36 +1540,6 @@ namespace QtVsTools.Core
             return true;
         }
 
-        private static string GetRegistrySoftwareString(string subKeyName, string valueName)
-        {
-            var keyName = new StringBuilder();
-            keyName.Append(@"SOFTWARE\");
-            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
-                keyName.Append(@"WOW6432Node\");
-            keyName.Append(subKeyName);
-
-            try {
-                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
-                    if (key == null)
-                        return ""; //key not found
-
-                    RegistryValueKind valueKind = key.GetValueKind(valueName);
-                    if (valueKind != RegistryValueKind.String
-                        && valueKind != RegistryValueKind.ExpandString) {
-                        return ""; //wrong value kind
-                    }
-
-                    Object objValue = key.GetValue(valueName);
-                    if (objValue == null)
-                        return ""; //error getting value
-
-                    return objValue.ToString();
-                }
-            } catch {
-                return "";
-            }
-        }
-
         public static string GetWindows10SDKVersion()
         {
 #if VS2019 || VS2022
@@ -1713,11 +1586,6 @@ namespace QtVsTools.Core
             string vcPath = Path.Combine(vsPath, "VC");
 #endif
             return vcPath;
-        }
-
-        public static bool SetVCVars(ProcessStartInfo startInfo)
-        {
-            return SetVCVars(null, startInfo);
         }
 
         public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
@@ -1872,12 +1740,6 @@ namespace QtVsTools.Core
             } else {
                 return canonicalPath;
             }
-        }
-
-        public static bool PathEquals(string path1, string path2)
-        {
-            return (CanonicalPath(path1).Equals(CanonicalPath(path2),
-                StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static bool PathIsRelativeTo(string path, string subPath)
