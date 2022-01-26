@@ -513,6 +513,7 @@
     // Clean-up
     // -->
     <ItemGroup>
+      <ClCompile    Remove="DefaultClCompile" />
       <QtWork       Remove="@(QtWork)"/>
       <QtWorkResult Remove="@(QtWorkResult)"/>
       <QtWorkLog    Remove="@(QtWorkLog)"/>
@@ -524,14 +525,138 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtSetAdditionalOptions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Adds additional compiler options flowing from Qt.
+  // Skips options that are already specified in the user project.
+  // -->
+  <Target Name="QtSetAdditionalOptions" Condition="'@(ClCompile)' != ''">
+
+    <!-- Command line parser regex -->
+    <PropertyGroup>
+      <CmdLineParser>"[^"]*"|[^\s]+</CmdLineParser>
+    </PropertyGroup>
+
+    <!-- Parse compiler options from Qt -->
+    <PropertyGroup>
+      <QtCmdLine
+          >$([System.Text.RegularExpressions.Regex]::Matches(
+            '$(Qt_CL_OPTIONS_)', '$(CmdLineParser)'))</QtCmdLine>
+    </PropertyGroup>
+
+    <!-- Calculate command line for each source file in the project -->
+    <QtRunTask
+      Items="@(ClCompile)"
+      AssemblyPath="$(VCTargetsPath)\Microsoft.Build.CPPTasks.Common.dll"
+      TaskName="Microsoft.Build.CPPTasks.CLCommandLine"
+      TaskInput="Sources"
+      TaskOutput="CommandLines"
+      NewMetadata="ProjectOptions">
+      <Output TaskParameter="Result" ItemName="ClCompile_CmdLine" />
+    </QtRunTask>
+
+    <!-- Parse compiler command line of each source file -->
+    <ItemGroup>
+      <ClCompile_CmdLine>
+        <ProjectOptions
+          >$([System.Text.RegularExpressions.Regex]::Matches(
+            '%(ProjectOptions)', '$(CmdLineParser)'))</ProjectOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
+    <!-- Add (previously parsed) Qt options to each source file -->
+    <ItemGroup>
+      <ClCompile_CmdLine>
+        <QtOptions>$(QtCmdLine)</QtOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
+    <!-- Result of parsing command lines, per source file:
+          * ClCompile_CmdLine ::= (Item x ProjectOptions x QtOptions), where:
+             * Item ::= source file
+             * ProjectOptions ::= list of tokens from the compiler command line for Item
+             * QtOptions ::= list of tokens from the Qt additional options -->
+
+    <!-- Flatten results into a list of tokens per source file:
+          * ClOptions ::= (Item x Name x Value), where:
+             * Item  ::= source file
+             * Name  ::= token origin: from compiler command line or from Qt
+             * Value ::= token value -->
+    <Flatten Items="@(ClCompile_CmdLine)" Metadata="ProjectOptions;QtOptions">
+      <Output TaskParameter="Result" ItemName="ClOptions" />
+    </Flatten>
+
+    <!-- Remove non-switch tokens, i.e. tokens that do not start with '/' or '-' -->
+    <ItemGroup>
+      <ClOptions
+        Remove="@(ClOptions)"
+        Condition="!$([System.String]::Copy('%(Value)').StartsWith('-'))
+               AND !$([System.String]::Copy('%(Value)').StartsWith('/'))"/>
+    </ItemGroup>
+
+    <!-- Calculate option id: token without leading '/' or '-', and without trailing '-' -->
+    <ItemGroup>
+      <ClOptions>
+        <OptionId>$([System.String]::Copy('%(Value)').Substring(1).TrimEnd('-'))</OptionId>
+      </ClOptions>
+    </ItemGroup>
+
+    <!-- Split into list of Qt options and list of project options -->
+    <ItemGroup>
+      <QtOptions
+        Include="@(ClOptions->'%(Item)')"
+        Condition="'%(ClOptions.Name)' == 'QtOptions'"/>
+      <ProjectOptions
+        Include="@(ClOptions->'%(Item)')"
+        Condition="'%(ClOptions.Name)' == 'ProjectOptions'"/>
+    </ItemGroup>
+
+    <!-- Find conflicting options, i.e. defined both in Qt options and project options -->
+    <ItemGroup>
+      <QtOptions
+        Condition="'@(QtOptions)' != ''
+               AND '@(ProjectOptions)' != ''
+               AND '%(Item)' != ''
+               AND '%(OptionId)' != ''">
+        <Conflict>true</Conflict>
+      </QtOptions>
+    </ItemGroup>
+
+    <!-- Set additional compiler options for all source files -->
+    <ItemGroup>
+      <ClCompile Condition="'%(Identity)' != '' AND '%(QtOptions.Conflict)' != 'true'">
+        <AdditionalOptions
+          >@(QtOptions->'%(Value)', ' ') @(ClCompile->'%(AdditionalOptions)')</AdditionalOptions>
+      </ClCompile>
+      <ClCompile Condition="'%(AdditionalOptions)' != ''">
+        <AdditionalOptions
+          >$([System.String]::Copy('%(AdditionalOptions)').Trim())</AdditionalOptions>
+      </ClCompile>
+    </ItemGroup>
+
+    <!-- Clean-up -->
+    <PropertyGroup>
+      <CmdLineParser/>
+      <QtCmdLine/>
+    </PropertyGroup>
+    <ItemGroup>
+      <ClCompile_CmdLine Remove="@(ClCompile_CmdLine)"/>
+      <ClOptions Remove="@(ClOptions)"/>
+      <ProjectOptions Remove="@(ProjectOptions)"/>
+      <QtOptions Remove="@(QtOptions)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET Qt
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Root Qt target
   // -->
-  <Target Name="Qt" DependsOnTargets="QtPrepare;QtWork" BeforeTargets="FixupCLCompileOptions">
-    <ItemGroup>
-      <ClCompile Remove="DefaultClCompile" />
-    </ItemGroup>
+  <Target
+    Name="Qt"
+    DependsOnTargets="QtPrepare;QtWork;QtSetAdditionalOptions"
+    BeforeTargets="FixupCLCompileOptions">
     <CriticalSection Lock="false" Name="$(ProjectGuid)" />
     <OnError ExecuteTargets="QtLeaveCriticalSection_OnError"/>
   </Target>

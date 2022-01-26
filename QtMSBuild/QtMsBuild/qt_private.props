@@ -189,8 +189,6 @@
         >%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_)</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
         >$(Qt_STDCPP_)</LanguageStandard>
-      <AdditionalOptions Condition="'$(Qt_CL_OPTIONS_)' != ''"
-        >$(Qt_CL_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
 
     <!--// Linker (.obj files) -->
