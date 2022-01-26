@@ -26,10 +26,7 @@
 **
 ****************************************************************************/
 
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Threading;
 
 namespace QtVsTools.Qml.Debug.V4
 {

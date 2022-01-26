@@ -32,10 +32,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using QtVsTools.VisualStudio;
-using EnvDTE;
 
 namespace QtVsTools.Core
 {

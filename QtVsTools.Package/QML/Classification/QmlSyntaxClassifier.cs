@@ -29,11 +29,7 @@
 /// This file implements the actual highlighting of the text according to the
 /// classification of the syntax elements recognized by the QML parser.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;

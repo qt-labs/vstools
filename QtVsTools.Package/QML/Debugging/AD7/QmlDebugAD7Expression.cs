@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;

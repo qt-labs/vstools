@@ -38,9 +38,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
-using QtVsTools.VisualStudio;
 using QtVsTools.SyntaxAnalysis;
-using EnvDTE;
 
 namespace QtVsTools.Core
 {

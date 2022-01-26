@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;

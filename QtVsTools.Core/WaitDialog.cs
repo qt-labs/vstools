@@ -27,14 +27,8 @@
 ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core

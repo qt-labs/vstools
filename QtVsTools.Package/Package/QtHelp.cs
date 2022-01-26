@@ -27,10 +27,8 @@
 ****************************************************************************/
 
 using EnvDTE;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System;
@@ -40,7 +38,6 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools

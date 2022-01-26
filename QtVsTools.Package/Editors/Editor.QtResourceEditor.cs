@@ -29,7 +29,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Editors
 {

@@ -28,11 +28,7 @@
 
 /// Highlighting of syntax errors
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;

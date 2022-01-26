@@ -27,10 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;
 using System;
@@ -40,7 +37,6 @@ using System.Windows.Forms;
 namespace QtVsTools
 {
     using QtMsBuild;
-    using QtVsTools.Wizards.Common;
 
     /// <summary>
     /// Command handler

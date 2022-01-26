@@ -40,7 +40,6 @@ using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
-using EnvDTE;
 
 namespace QtVsTools.QtMsBuild
 {

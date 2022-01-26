@@ -33,7 +33,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using EnvDTE;
-using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Common;
 using QtVsTools.Core;
 using QtVsTools.Wizards.Common;

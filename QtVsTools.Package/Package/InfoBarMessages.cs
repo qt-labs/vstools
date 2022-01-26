@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using System;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 

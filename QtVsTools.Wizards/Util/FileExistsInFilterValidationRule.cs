@@ -27,7 +27,6 @@
 ****************************************************************************/
 
 using EnvDTE;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using QtVsTools.Core;
 using QtVsTools.VisualStudio;

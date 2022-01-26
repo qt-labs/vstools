@@ -28,7 +28,6 @@
 
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Microsoft.Internal.VisualStudio.PlatformUI;
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;

@@ -28,7 +28,6 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
-using Microsoft.Win32;
 using QtVsTools.Core.QtMsBuild;
 using System;
 using System.Collections.Generic;

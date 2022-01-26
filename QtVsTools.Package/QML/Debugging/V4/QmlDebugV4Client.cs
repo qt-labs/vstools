@@ -26,14 +26,9 @@
 **
 ****************************************************************************/
 
-using QtVsTools.Options;
 using System;
-using System.Collections.Concurrent;
-using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
