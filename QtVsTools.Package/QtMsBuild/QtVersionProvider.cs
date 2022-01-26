@@ -57,7 +57,6 @@ namespace QtVsTools.QtMsBuild
 
         public async Task<ICollection<IEnumValue>> GetListedValuesAsync()
         {
-            List<IEnumValue> values = new List<IEnumValue>();
             using (var qtVersions = Registry.CurrentUser.OpenSubKey(@"Software\Digia\Versions")) {
 
                 return await Task.FromResult(

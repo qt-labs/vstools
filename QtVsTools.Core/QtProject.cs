@@ -782,7 +782,6 @@ namespace QtVsTools.Core
             var hasDifferentMocFilePerPlatform =
                 QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
 
-            var workFile = workFileConfig.File as VCFile;
             var mocFileName = GetMocFileName(sourceFile.FullPath);
             var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
             var vcConfig = workFileConfig.ProjectConfiguration as VCConfiguration;
@@ -1069,7 +1068,6 @@ namespace QtVsTools.Core
             VCFileConfiguration workConfig,
             CustomTool toolSettings)
         {
-            var workFile = workConfig.File as VCFile;
             var mocFileName = GetMocFileName(sourceFile.FullPath);
             var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
             var vcConfig = workConfig.ProjectConfiguration as VCConfiguration;
@@ -1384,8 +1382,6 @@ namespace QtVsTools.Core
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
 
             var vcpro = (VCProject)qrcFile.project;
-            var dteObject = ((Project)vcpro.Object).DTE;
-
             var qtPro = Create(vcpro);
             var parser = new QrcParser(qrcFile.FullPath);
             var filesInQrcFile = ProjectMacros.Path;

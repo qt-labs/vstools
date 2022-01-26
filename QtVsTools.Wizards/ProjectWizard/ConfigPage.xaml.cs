@@ -419,7 +419,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         void Module_Click(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBoxModule
-                && (checkBoxModule.TemplatedParent as ContentPresenter)?.Content is Module module
+                && (checkBoxModule.TemplatedParent as ContentPresenter)?.Content is Module
                 && GetBinding(checkBoxModule) is Config config
                 && FindAncestor(checkBoxModule, "Modules") is ComboBox comboBoxModules
                 && FindDescendant(comboBoxModules, "SelectedModules") is ListView selectedModules) {

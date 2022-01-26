@@ -293,12 +293,8 @@ namespace QtVsTools.Core
             if (ConfigCondition == null)
                 return false;
 
-            // Get default Qt dir
-            string defaultQtDir = null;
             var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
             var defaultVersion = QtVersionManager.The().GetVersionInfo(defaultVersionName);
-            if (defaultVersion != null)
-                defaultQtDir = defaultVersion.qtDir;
 
             // Get project configurations
             var configs = this[Files.Project].xml
@@ -314,15 +310,6 @@ namespace QtVsTools.Core
                 .FirstOrDefault();
             if (globals == null)
                 return false;
-
-            // Get project configuration properties
-            var configProps = this[Files.Project].xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .Where(pg =>
-                    (string)pg.Attribute("Label") == "Configuration"
-                    && pg.Attribute("Condition") != null)
-                .ToDictionary(pg => (string)pg.Attribute("Condition"));
 
             // Set Qt project format version
             var projKeyword = globals

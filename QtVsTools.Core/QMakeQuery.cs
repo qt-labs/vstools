@@ -58,7 +58,6 @@ namespace QtVsTools.Core
 
         public Dictionary<string, string> QueryAllValues()
         {
-            string result = string.Empty;
             stdOutput = new StringBuilder();
             Query = " ";
 

@@ -328,8 +328,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            var qtProject = QtProject.Create(project);
-
             IWizardConfiguration configWinRT = Configurations
                 .Where(whereConfigTargetIsWindowsStore)
                 .FirstOrDefault();

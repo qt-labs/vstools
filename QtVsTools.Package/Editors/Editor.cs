@@ -311,7 +311,6 @@ namespace QtVsTools.Editors
 
             int IVsPersistDocData.LoadDocData(string pszMkDocument)
             {
-                var solution = GetService(typeof(SVsSolution)) as IVsSolution;
                 EditorProcess = Editor.Start(pszMkDocument, QtToolsPath,
                     hideWindow: !Editor.Detached);
                 if (EditorProcess == null)
