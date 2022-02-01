@@ -43,6 +43,7 @@
     <Category Name="QtSettings_02_Paths" DisplayName="Paths"/>
     <Category Name="QtSettings_03_QMake" DisplayName="qmake"/>
     <Category Name="QtSettings_04_QML" DisplayName="QML"/>
+    <Category Name="QtSettings_05_AdditionalOptions" DisplayName="Qt Additional Compiler Options"/>
   </Rule.Categories>
   <EnumProperty
     Name="Keyword"
@@ -145,4 +146,26 @@
     DisplayName="Enable QML Debugging"
     Description="Select whether to launch a QML session when debugging.">
   </BoolProperty>
-</Rule>
+  <StringProperty
+    Name="Qt_CL_OPTIONS_"
+    ReadOnly="true"
+    Category="QtSettings_05_AdditionalOptions"
+    DisplayName="Additional Options"
+    Description="
+Additional compiler options required by Qt. These options will be passed
+to the compiler, unless specifically excluded in the next field." />
+  <StringProperty
+    Name="QtExcludedOptions"
+    Category="QtSettings_05_AdditionalOptions"
+    DisplayName="Excluded Options"
+    Description="
+Options to exclude from the above compiler options required by Qt.
+These options will NOT be passed to the compiler. Prefix options
+with '/' or '-', and separate them with spaces." />
+  <BoolProperty
+    Name="QtOptionsBuildLog"
+    Category="QtSettings_05_AdditionalOptions"
+    DisplayName="Show in Build Log"
+    Description="
+Print to the build log the list of additional options passed to the compiler." />
+  </Rule>

@@ -555,6 +555,13 @@
       <Output TaskParameter="Result" ItemName="ClCompile_CmdLine" />
     </QtRunTask>
 
+    <!-- Append excluded Qt options to calculated command line -->
+    <ItemGroup>
+      <ClCompile_CmdLine Condition="'$(QtExcludedOptions)' != ''">
+        <ProjectOptions>%(ProjectOptions) $(QtExcludedOptions)</ProjectOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
     <!-- Parse compiler command line of each source file -->
     <ItemGroup>
       <ClCompile_CmdLine>
@@ -633,6 +640,17 @@
           >$([System.String]::Copy('%(AdditionalOptions)').Trim())</AdditionalOptions>
       </ClCompile>
     </ItemGroup>
+
+    <!-- Print result to build log, if requested -->
+    <Message
+      Condition="'$(QtOptionsBuildLog)' == 'true'"
+      Importance="High"
+      Text=" Qt - Additional Compiler Options"/>
+    <Message
+      Condition="'$(QtOptionsBuildLog)' == 'true'
+             AND '%(Identity)' != '' AND '%(QtOptions.Conflict)' != 'true'"
+      Importance="High"
+      Text="    [%(Identity)]: @(QtOptions->'%(Value)', ' ')"/>
 
     <!-- Clean-up -->
     <PropertyGroup>
