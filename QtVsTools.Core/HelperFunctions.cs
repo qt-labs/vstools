@@ -28,6 +28,9 @@
 
 using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
+#if VS2017
+using Microsoft.Win32;
+#endif
 using QtVsTools.Core.QtMsBuild;
 using System;
 using System.Collections.Generic;
@@ -1538,6 +1541,34 @@ namespace QtVsTools.Core
             stringToExpand = expanded;
             return true;
         }
+
+#if VS2017
+        private static string GetRegistrySoftwareString(string subKeyName, string valueName)
+        {
+            var keyName = new StringBuilder();
+            keyName.Append(@"SOFTWARE\");
+            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
+                keyName.Append(@"WOW6432Node\");
+            keyName.Append(subKeyName);
+            try {
+                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
+                    if (key == null)
+                        return ""; //key not found
+                    RegistryValueKind valueKind = key.GetValueKind(valueName);
+                    if (valueKind != RegistryValueKind.String
+                        && valueKind != RegistryValueKind.ExpandString) {
+                        return ""; //wrong value kind
+                    }
+                    Object objValue = key.GetValue(valueName);
+                    if (objValue == null)
+                        return ""; //error getting value
+                    return objValue.ToString();
+                }
+            } catch {
+                return "";
+            }
+        }
+#endif
 
         public static string GetWindows10SDKVersion()
         {
