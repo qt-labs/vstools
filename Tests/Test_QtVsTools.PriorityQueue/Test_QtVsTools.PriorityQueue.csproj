@@ -76,12 +76,12 @@
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Version specific references
+  // General package references
   // -->
   <Import Project="$(SolutionDir)\references.props" />
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="$(Version_MSTest_TestAdapter)" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(Version_MSTest_TestFramework)" />
+    <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
+    <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

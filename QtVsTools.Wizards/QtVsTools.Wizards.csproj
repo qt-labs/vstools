@@ -79,30 +79,35 @@
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Version specific references
+  // General package references
   // -->
   <Import Project="$(SolutionDir)\references.props" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK"
-      Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools"
-      Version="$(Version_Microsoft_VSSDK_BuildTools)" />
-    <PackageReference Include="Newtonsoft.Json"
-      Version="$(Version_Newtonsoft_Json)" />
+    <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
   </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
-      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)"
-      Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
-    <Reference Include="Microsoft.VisualStudio.TemplateWizardInterface" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <Reference Include="Microsoft.VisualStudio.VCProjectEngine" />
-    <Reference Include="Microsoft.VisualStudio.TemplateWizardInterface" />
-  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific package references
+  // -->
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)'=='17.0'">
+      <ItemGroup>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='16.0'">
+      <ItemGroup>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='15.0'">
+      <ItemGroup>
+        <Reference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" />
+        <Reference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" />
+      </ItemGroup>
+    </When>
+  </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references

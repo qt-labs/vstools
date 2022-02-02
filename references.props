@@ -2,124 +2,69 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // References versions
+  // Package References names/version
   // -->
   <!-- // Common -->
   <PropertyGroup>
-    <Version_Microsoft_Bcl_AsyncInterfaces
-      >5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
-    <Version_Stub_System_Data_SQLite_Core_NetFramework
-      >1.0.115</Version_Stub_System_Data_SQLite_Core_NetFramework>
-    <Version_System_Collections_Immutable
-      >5.0.0</Version_System_Collections_Immutable>
-    <Version_System_ComponentModel_Composition
-      >5.0.0</Version_System_ComponentModel_Composition>
-    <Version_Newtonsoft_Json
-      >13.0.1</Version_Newtonsoft_Json>
-    <Version_MSTest_TestAdapter
-      >2.2.8</Version_MSTest_TestAdapter>
-    <Version_MSTest_TestFramework
-      >2.2.8</Version_MSTest_TestFramework>
+    <Name_Microsoft_Build>Microsoft.Build</Name_Microsoft_Build>
+    <Name_Microsoft_Build_Tasks_Core>Microsoft.Build.Tasks.Core</Name_Microsoft_Build_Tasks_Core>
+    <Name_Microsoft_VSSDK_BuildTools>Microsoft.VSSDK.BuildTools</Name_Microsoft_VSSDK_BuildTools>
+    <Name_Microsoft_VisualStudio_SDK>Microsoft.VisualStudio.SDK</Name_Microsoft_VisualStudio_SDK>
+    <Name_Microsoft_Bcl_AsyncInterfaces>Microsoft.Bcl.AsyncInterfaces</Name_Microsoft_Bcl_AsyncInterfaces>
+    <Name_Microsoft_VisualStudio_Validation>Microsoft.VisualStudio.Validation</Name_Microsoft_VisualStudio_Validation>
+    <Name_Microsoft_VisualStudio_RpcContracts>Microsoft.VisualStudio.RpcContracts</Name_Microsoft_VisualStudio_RpcContracts>
+    <Name_Microsoft_VisualStudio_ProjectSystem>Microsoft.VisualStudio.ProjectSystem</Name_Microsoft_VisualStudio_ProjectSystem>
+    <Name_Microsoft_VisualStudio_VCProjectEngine>Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
+    <Name_Microsoft_VisualStudio_Shell_Framework>Microsoft.VisualStudio.Shell.Framework</Name_Microsoft_VisualStudio_Shell_Framework>
+    <Name_Microsoft_VisualStudio_TemplateWizardInterface>Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
+
+    <Name_MSTest_TestAdapter>MSTest.TestAdapter</Name_MSTest_TestAdapter>
+    <Version_MSTest_TestAdapter>2.2.8</Version_MSTest_TestAdapter>
+
+    <Name_MSTest_TestFramework>MSTest.TestFramework</Name_MSTest_TestFramework>
+    <Version_MSTest_TestFramework>2.2.8</Version_MSTest_TestFramework>
+
+    <Name_Newtonsoft_Json>Newtonsoft.Json</Name_Newtonsoft_Json>
+    <Version_Newtonsoft_Json>13.0.1</Version_Newtonsoft_Json>
+
+    <Name_Stub_System_Data_SQLite_Core_NetFramework>Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
+    <Version_Stub_System_Data_SQLite_Core_NetFramework>1.0.115.5</Version_Stub_System_Data_SQLite_Core_NetFramework>
   </PropertyGroup>
-  <PropertyGroup>
-    <Name_DummyPackage
-      >Stub.System.Data.SQLite.Core.NetFramework</Name_DummyPackage>
-    <Version_DummyPackage
-      >$(Version_Stub_System_Data_SQLite_Core_NetFramework)</Version_DummyPackage>
-  </PropertyGroup>
+
   <!-- // Visual Studio 2022 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <Version_Microsoft_Build
-      >16.11.0</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Framework
-      >16.11.0</Version_Microsoft_Build_Framework>
-    <Version_Microsoft_Build_Tasks_Core
-      >16.11.0</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VisualStudio_SDK
-      >17.0.0-previews-4-31709-430</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VSSDK_BuildTools
-      >17.0.5232</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_VisualStudio_ProjectSystem
-      >17.0.667-pre</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_Validation
-      >17.0.34</Version_Microsoft_VisualStudio_Validation>
-    <Version_Microsoft_VisualStudio_Shell_Framework
-      >17.0.0-previews-5-31722-452</Version_Microsoft_VisualStudio_Shell_Framework>
-    <Name_Microsoft_VisualStudio_VCProjectEngine
-      >Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
-    <Version_Microsoft_VisualStudio_VCProjectEngine
-      >17.0.0-previews-4-31709-430</Version_Microsoft_VisualStudio_VCProjectEngine>
-    <Name_Microsoft_VisualStudio_TemplateWizardInterface
-      >Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface
-      >17.0.0-previews-1-31410-258</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Name_Microsoft_VisualStudio_Threading
-      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_Threading>
-    <Version_Microsoft_VisualStudio_Threading
-      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_Threading>
-    <Version_System_Collections_Immutable
-      >5.0.0</Version_System_Collections_Immutable>
+    <Version_Microsoft_Build>17.0.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build_Tasks_Core>17.0.0</Version_Microsoft_Build_Tasks_Core>
+    <Version_Microsoft_VSSDK_BuildTools>17.0.5234</Version_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_Bcl_AsyncInterfaces>6.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
+    <Version_Microsoft_VisualStudio_SDK>17.0.32112.339</Version_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_VisualStudio_ProjectSystem>17.0.1313-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_TemplateWizardInterface>17.0.31902.203</Version_Microsoft_VisualStudio_TemplateWizardInterface>
   </PropertyGroup>
+
   <!-- // Visual Studio 2019 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
-    <Version_Microsoft_Build
-      >16.8.0</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Framework
-      >16.8.0</Version_Microsoft_Build_Framework>
-    <Version_Microsoft_Build_Tasks_Core
-      >16.8.0</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VisualStudio_SDK
-      >16.0.206</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VSSDK_BuildTools
-      >16.4.1060</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_VisualStudio_ProjectSystem
-      >16.2.133-pre</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_Validation
-      >16.8.33</Version_Microsoft_VisualStudio_Validation>
-    <Version_Microsoft_VisualStudio_Shell_Framework
-      >16.4.29519.181</Version_Microsoft_VisualStudio_Shell_Framework>
-    <Name_Microsoft_VisualStudio_VCProjectEngine
-      >Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
-    <Version_Microsoft_VisualStudio_VCProjectEngine
-      >16.7.30328.74</Version_Microsoft_VisualStudio_VCProjectEngine>
-    <Name_Microsoft_VisualStudio_TemplateWizardInterface
-      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface
-      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Name_Microsoft_VisualStudio_Threading
-      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_Threading>
-    <Version_Microsoft_VisualStudio_Threading
-      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_Threading>
-    <Version_System_Collections_Immutable
-      >1.5.0</Version_System_Collections_Immutable>
+    <Version_Microsoft_Build>16.11.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build_Tasks_Core>16.11.0</Version_Microsoft_Build_Tasks_Core>
+    <Version_Microsoft_VSSDK_BuildTools>16.11.35</Version_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_Bcl_AsyncInterfaces>5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
+    <Version_Microsoft_VisualStudio_SDK>16.10.31321.278</Version_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_VisualStudio_Validation>16.10.35</Version_Microsoft_VisualStudio_Validation>
+    <Version_Microsoft_VisualStudio_RpcContracts>17.0.51</Version_Microsoft_VisualStudio_RpcContracts>
+    <Version_Microsoft_VisualStudio_ProjectSystem>16.2.133-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_VCProjectEngine>16.10.31320.204</Version_Microsoft_VisualStudio_VCProjectEngine>
+    <Version_Microsoft_VisualStudio_TemplateWizardInterface>16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
   </PropertyGroup>
+
   <!-- // Visual Studio 2017 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <Version_Microsoft_Build
-      >15.9.20</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Framework
-      >15.9.20</Version_Microsoft_Build_Framework>
-    <Version_Microsoft_Build_Tasks_Core
-      >15.9.20</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VisualStudio_SDK
-      >15.0.1</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VSSDK_BuildTools
-      >15.9.3039</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_VisualStudio_ProjectSystem
-      >15.8.243</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_Validation
-      >15.5.31</Version_Microsoft_VisualStudio_Validation>
-    <Version_Microsoft_VisualStudio_Shell_Framework
-      >15.9.28307</Version_Microsoft_VisualStudio_Shell_Framework>
-    <Name_Microsoft_VisualStudio_TemplateWizardInterface
-      >$(Name_DummyPackage)</Name_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface
-      >$(Version_DummyPackage)</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Name_Microsoft_VisualStudio_Threading
-      >Microsoft.VisualStudio.Threading</Name_Microsoft_VisualStudio_Threading>
-    <Version_Microsoft_VisualStudio_Threading
-      >15.8.209</Version_Microsoft_VisualStudio_Threading>
-    <Version_System_Collections_Immutable
-      >1.5.0</Version_System_Collections_Immutable>
+    <Version_Microsoft_Build>15.9.20</Version_Microsoft_Build>
+    <Version_Microsoft_VisualStudio_SDK>15.0.1</Version_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_Build_Tasks_Core>15.9.20</Version_Microsoft_Build_Tasks_Core>
+    <Version_Microsoft_VSSDK_BuildTools>15.9.3039</Version_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_Bcl_AsyncInterfaces>5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
+    <Version_Microsoft_VisualStudio_ProjectSystem>15.8.243</Version_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_Shell_Framework>15.9.28307</Version_Microsoft_VisualStudio_Shell_Framework>
   </PropertyGroup>
+
 </Project>

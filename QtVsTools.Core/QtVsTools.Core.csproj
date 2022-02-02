@@ -77,28 +77,35 @@
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Version specific references
+  // General package references
   // -->
   <Import Project="$(SolutionDir)\references.props" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK"
-      Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools"
-      Version="$(Version_Microsoft_VSSDK_BuildTools)" />
-    <PackageReference Include="Microsoft.Build"
-      Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+    <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
   </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
-      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)"
-      Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <Reference Include="Microsoft.VisualStudio.VCProjectEngine" />
-  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific package references
+  // -->
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)'=='17.0'">
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='16.0'">
+      <ItemGroup>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_Validation)" Version="$(Version_Microsoft_VisualStudio_Validation)" />
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)"/>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='15.0'">
+      <ItemGroup>
+        <Reference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" />
+      </ItemGroup>
+    </When>
+  </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references
