@@ -31,11 +31,14 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Thread = System.Threading.Thread;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
 using QtVsTools.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+
+using Thread = System.Threading.Thread;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core
 {
@@ -49,8 +52,13 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
                 return _BuildPane ?? (_BuildPane = Window.OutputWindowPanes.Cast<OutputWindowPane>()
-                    .Where(pane => pane.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}")
+                    .Where(pane =>
+                    {
+                        ThreadHelper.ThrowIfNotOnUIThread();
+                        return pane.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}";
+                    })
                     .FirstOrDefault());
             }
         }
@@ -66,11 +74,14 @@ namespace QtVsTools.Core
                 Text = text,
                 Activate = activate
             });
+
+            ThreadHelper.ThrowIfNotOnUIThread();
             FlushMessages();
         }
 
         static void OutputWindowPane_Print(string text)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             OutputWindowPane_Init();
             Pane.OutputString(text + "\r\n");
             // show buildPane if a build is in progress
@@ -87,12 +98,17 @@ namespace QtVsTools.Core
             {
                 Activate = true
             });
+
+            ThreadHelper.ThrowIfNotOnUIThread();
             FlushMessages();
         }
 
         static void OutputWindowPane_Activate()
         {
             OutputWindowPane_Init();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Pane?.Activate();
         }
 
@@ -155,12 +171,18 @@ namespace QtVsTools.Core
             {
                 Clear = true
             });
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             FlushMessages();
         }
 
         static void OutputWindowPane_Clear()
         {
             OutputWindowPane_Init();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Pane?.Clear();
         }
 
@@ -185,6 +207,9 @@ namespace QtVsTools.Core
             if (Dte == null)
                 Dte = VsServiceProvider.GetService<DTE>();
             var t = Stopwatch.StartNew();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             while (Pane == null && t.ElapsedMilliseconds < 5000) {
                 try {
                     Window = Dte.Windows.Item(Constants.vsWindowKindOutput).Object as OutputWindow;

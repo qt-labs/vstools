@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using QtVsTools.Core.QtMsBuild;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -59,6 +60,7 @@ namespace QtVsTools.Core
 
         public static QtProject Create(VCProject vcProject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return Create((Project)vcProject.Object);
         }
 
@@ -79,6 +81,8 @@ namespace QtVsTools.Core
 
         private QtProject(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null)
                 throw new QtVSException(SR.GetString("QtProject_CannotConstructWithoutValidProject"));
             envPro = project;
@@ -131,6 +135,8 @@ namespace QtVsTools.Core
 
         public static bool IsQtMsBuildEnabled(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null)
                 return false;
             return IsQtMsBuildEnabled(project.Object as VCProject);
@@ -139,6 +145,8 @@ namespace QtVsTools.Core
         private bool? isQtMsBuildEnabled = null;
         public bool IsQtMsBuildEnabled()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!isQtMsBuildEnabled.HasValue) {
                 if (vcPro != null)
                     isQtMsBuildEnabled = IsQtMsBuildEnabled(vcPro);
@@ -166,6 +174,8 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 var ret = false;
                 if (lastConfigurationRowNames == null) {
                     lastConfigurationRowNames = envPro.ConfigurationManager.ConfigurationRowNames as Array;
@@ -187,6 +197,8 @@ namespace QtVsTools.Core
         /// <param name="uiFile">name of the ui file</param>
         public string GetUiGeneratedFileName(string uiFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var fi = new FileInfo(uiFile);
             var file = fi.Name;
             if (HelperFunctions.IsUicFile(file)) {
@@ -225,6 +237,8 @@ namespace QtVsTools.Core
         private string GetRelativeMocFilePath(string file, string configName = null,
                                               string platformName = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var fileName = GetMocFileName(file);
             if (fileName == null)
                 return null;
@@ -252,17 +266,25 @@ namespace QtVsTools.Core
 
         public static int GetFormatVersion(Project pro)
         {
-            if (pro == null)
-                return 0;
-            return GetFormatVersion(pro.Object as VCProject);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return pro == null ? 0 : GetFormatVersion(pro.Object as VCProject);
         }
 
-        public int FormatVersion { get { return GetFormatVersion(Project); } }
+        public int FormatVersion
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return GetFormatVersion(Project);
+            }
+        }
 
         public static string GetPropertyValue(
             EnvDTE.Project dteProject,
             string propName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var activeConfig = dteProject.ConfigurationManager?.ActiveConfiguration;
             if (activeConfig == null)
                 return null;
@@ -275,6 +297,8 @@ namespace QtVsTools.Core
             EnvDTE.Configuration dteConfig,
             string propName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (dteProject == null || dteConfig == null)
                 return null;
             return GetPropertyValue(
@@ -310,6 +334,8 @@ namespace QtVsTools.Core
 
         public void AddModule(int id)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (HasModule(id))
                 return;
 
@@ -375,6 +401,8 @@ namespace QtVsTools.Core
 
         public void RemoveModule(int id)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
@@ -413,6 +441,8 @@ namespace QtVsTools.Core
 
         public void UpdateModules(VersionInformation oldVersion, VersionInformation newVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
@@ -462,6 +492,8 @@ namespace QtVsTools.Core
 
         public bool HasModule(int id)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var foundInIncludes = false;
             var foundInLibs = false;
 
@@ -514,6 +546,8 @@ namespace QtVsTools.Core
 
         public void MarkAsDesignerPluginProject()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Project.Globals["IsDesignerPlugin"] = true.ToString();
             if (!Project.Globals.get_VariablePersists("IsDesignerPlugin"))
                 Project.Globals.set_VariablePersists("IsDesignerPlugin", true);
@@ -557,6 +591,8 @@ namespace QtVsTools.Core
                 file.ItemType = QtUic.ItemTypeName;
                 return;
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
@@ -751,6 +787,8 @@ namespace QtVsTools.Core
 
         private string GetPCHMocOptions(VCFile file, CompilerToolWrapper compiler)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // As .moc files are included, we should not add anything there
             if (!HelperFunctions.IsHeaderFile(file.Name))
                 return string.Empty;
@@ -777,6 +815,8 @@ namespace QtVsTools.Core
             VCFileConfiguration workFileConfig,
             VCFile mocFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var hasDifferentMocFilePerConfig =
                 QtVSIPSettings.HasDifferentMocFilePerConfig(envPro);
             var hasDifferentMocFilePerPlatform =
@@ -903,6 +943,9 @@ namespace QtVsTools.Core
                 + mocFileName + "))";
             var regExp = new Regex(pattern);
             var matchList = regExp.Matches(tool.Outputs.Replace(ProjectMacros.Name, baseFileName));
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (matchList.Count > 0) {
                 if (matchList[0].Length > 0)
                     outputMocFile = matchList[0].ToString();
@@ -1037,6 +1080,8 @@ namespace QtVsTools.Core
             string includes,
             string description)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var baseFileName = sourceFile.Name.Remove(sourceFile.Name.LastIndexOf('.'));
             var outputMocFile = GetRelativeMocFilePath(sourceFile.FullPath);
             var outputMocPath = Path.GetDirectoryName(outputMocFile);
@@ -1073,6 +1118,8 @@ namespace QtVsTools.Core
             var vcConfig = workConfig.ProjectConfiguration as VCConfiguration;
             var platform = vcConfig.Platform as VCPlatform;
             var platformName = platform.Name;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var mocRelPath = GetRelativeMocFilePath(
                 sourceFile.FullPath,
@@ -1164,6 +1211,7 @@ namespace QtVsTools.Core
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 var mocFileName = GetMocFileName(file.FullPath);
                 if (mocFileName == null)
@@ -1257,6 +1305,8 @@ namespace QtVsTools.Core
             if (HelperFunctions.IsHeaderFile(file.Name))
                 return CheckForCommand(file, "moc.exe");
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (HelperFunctions.IsSourceFile(file.Name)) {
                 return (HasCppMocFiles(file));
             }
@@ -1286,6 +1336,8 @@ namespace QtVsTools.Core
 
         public void RefreshRccSteps()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Messages.Print("\r\n=== Update rcc steps ===");
             var files = GetResourceFiles();
 
@@ -1316,6 +1368,8 @@ namespace QtVsTools.Core
 
         public void RefreshRccSteps(string oldRccDir)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             RefreshRccSteps();
             UpdateCompilerIncludePaths(oldRccDir, QtVSIPSettings.GetRccDirectory(envPro));
         }
@@ -1348,15 +1402,14 @@ namespace QtVsTools.Core
             var cmdLine = string.Empty;
 
             var cbt = HelperFunctions.GetCustomBuildTool(vfc);
-
             cbt.AdditionalDependencies = filesInQrcFile;
-
             cbt.Description = "Rcc'ing " + ProjectMacros.FileName + "...";
-
             cbt.Outputs = qrcCppFile.Replace(nameOnly, ProjectMacros.Name);
 
             cmdLine += "\"" + Resources.rcc4Command + "\""
                 + " -name \"" + ProjectMacros.Name + "\"";
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (rccOptsCfg == null)
                 rccOptsCfg = HelperFunctions.ParseRccOptions(cbt.CommandLine, qrcFile);
@@ -1377,6 +1430,8 @@ namespace QtVsTools.Core
                 qrcFile.ItemType = QtRcc.ItemTypeName;
                 return;
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             CustomTool toolSettings =
                 IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
@@ -1529,27 +1584,30 @@ namespace QtVsTools.Core
 
         bool HasCppMocFiles(VCFile cppFile)
         {
-            if (!IsQtMsBuildEnabled()) {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (!IsQtMsBuildEnabled())
                 return File.Exists(Path.ChangeExtension(cppFile.FullPath, ".cbt"));
-            } else {
-                var vcProj = cppFile.project as VCProject;
-                if (vcProj != null) {
-                    foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
-                        if (vcFile.ItemType == "CustomBuild") {
-                            if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
-                                return true;
-                        } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                            if (IsCppMocFileQtMsBuild(vcProj, vcFile, cppFile))
-                                return true;
-                        }
+
+            var vcProj = cppFile.project as VCProject;
+            if (vcProj != null) {
+                foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
+                    if (vcFile.ItemType == "CustomBuild") {
+                        if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
+                            return true;
+                    } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
+                        if (IsCppMocFileQtMsBuild(vcProj, vcFile, cppFile))
+                            return true;
                     }
                 }
-                return false;
             }
+            return false;
         }
 
         public void RemoveMocStep(VCFile file)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (file.ItemType == QtMoc.ItemTypeName) {
                 RemoveMocStepQtMsBuild(file);
             } else if (HelperFunctions.IsHeaderFile(file.Name)) {
@@ -1588,6 +1646,7 @@ namespace QtVsTools.Core
         /// <param name="file">file</param>
         public void RemoveMocStepCustomBuild(VCFile file)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 if (!HasMocStep(file))
                     return;
@@ -1971,6 +2030,8 @@ namespace QtVsTools.Core
 
         public bool IsDesignerPluginProject()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var b = false;
             if (Project.Globals.get_VariablePersists("IsDesignerPlugin")) {
                 var s = (string)Project.Globals["IsDesignerPlugin"];
@@ -1997,7 +2058,7 @@ namespace QtVsTools.Core
             }
 
             try {
-                Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+                ThreadHelper.ThrowIfNotOnUIThread();
                 var prop = dte.get_Properties("TextEditor", "C/C++");
                 var tabSize = Convert.ToInt64(prop.Item("TabSize").Value);
                 var insertTabs = Convert.ToBoolean(prop.Item("InsertTabs").Value);
@@ -2056,6 +2117,8 @@ namespace QtVsTools.Core
 
         public void AddActiveQtBuildStep(string version, string defFile = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (FormatVersion < Resources.qtMinFormatVersion_ClProperties)
                 return;
 
@@ -2086,6 +2149,8 @@ namespace QtVsTools.Core
 
         private void UpdateCompilerIncludePaths(string oldDir, string newDir)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var fixedOldDir = FixFilePathForComparison(oldDir);
             var dirs = new[] {
                 FixFilePathForComparison(QtVSIPSettings.GetUicDirectory(envPro)),
@@ -2139,6 +2204,8 @@ namespace QtVsTools.Core
 
         public void UpdateUicSteps(string oldUicDir, bool update_inc_path)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Messages.Print("\r\n=== Update uic steps ===");
             var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             if (vcFilter != null) {
@@ -2253,6 +2320,8 @@ namespace QtVsTools.Core
         /// <returns></returns>
         private VCFile GetGeneratedMocFile(string fileName, VCFileConfiguration fileConfig)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtVSIPSettings.HasDifferentMocFilePerConfig(envPro)
                 || QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro)) {
                 var projectConfig = (VCConfiguration)fileConfig.ProjectConfiguration;
@@ -2332,6 +2401,8 @@ namespace QtVsTools.Core
             if (filesCollection == null)
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             int progress = 0;
             int progressTotal = filesCollection.Count;
             var waitDialog = WaitDialog.StartWithProgress(SR.GetString("Resources_QtVsTools"),
@@ -2351,6 +2422,7 @@ namespace QtVsTools.Core
 
         public void RefreshMocStep(VCFile vcfile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             RefreshMocStep(vcfile, true);
         }
 
@@ -2370,6 +2442,8 @@ namespace QtVsTools.Core
 
             if (mocCmdChecker == null)
                 mocCmdChecker = new MocCmdChecker();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (VCFileConfiguration config in (IVCCollection)vcfile.FileConfigurations) {
                 try {
@@ -2503,6 +2577,8 @@ namespace QtVsTools.Core
 
         public void OnExcludedFromBuildChanged(VCFile vcFile, VCFileConfiguration vcFileCfg)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // Update the ExcludedFromBuild flags of the mocced file
             // according to the ExcludedFromBuild flag of the mocable source file.
             var moccedFileName = GetMocFileName(vcFile.Name);
@@ -2572,6 +2648,8 @@ namespace QtVsTools.Core
 
         public void UpdateMocSteps(string oldMocDir)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Messages.Print("\r\n=== Update moc steps ===");
             var orgFiles = new List<VCFile>();
             var abandonedMocFiles = new List<string>();
@@ -2634,6 +2712,8 @@ namespace QtVsTools.Core
 
         private void Clean()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var solutionConfigs = envPro.DTE.Solution.SolutionBuild.SolutionConfigurations;
             var backup = new List<KeyValuePair<SolutionContext, bool>>();
             foreach (SolutionConfiguration config in solutionConfigs) {
@@ -2688,6 +2768,8 @@ namespace QtVsTools.Core
 
         public bool isWinRT()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try {
                 var vcProject = Project.Object as VCProject;
                 var vcConfigs = vcProject.Configurations as IVCCollection;
@@ -2713,6 +2795,8 @@ namespace QtVsTools.Core
 
             if (newIsWinRt == oldIsWinRt || newIsWinRt == isWinRT())
                 return true;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var promptCaption = string.Format("Change Qt Version ({0})", Project.Name);
             var promptText = string.Format(
@@ -2752,6 +2836,8 @@ namespace QtVsTools.Core
 
             var refreshMocSteps = (vsPlatformNameNew != vsPlatformNameOld);
             var platformChanged = (vsPlatformNameNew != vsPlatformNameOld);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             try {
                 if (platformChanged) {
@@ -2804,6 +2890,8 @@ namespace QtVsTools.Core
 
         public bool SelectSolutionPlatform(string platformName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (SolutionConfiguration solutionCfg in dte.Solution.SolutionBuild.SolutionConfigurations) {
                 var contexts = solutionCfg.SolutionContexts;
                 for (var i = 1; i <= contexts.Count; ++i) {
@@ -2829,6 +2917,8 @@ namespace QtVsTools.Core
         public void CreatePlatform(string oldPlatform, string newPlatform,
                                    VersionInformation viOld, VersionInformation viNew, ref bool newProjectCreated)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try {
                 var cfgMgr = envPro.ConfigurationManager;
                 cfgMgr.AddPlatform(newPlatform, oldPlatform, true);
@@ -2890,9 +2980,9 @@ namespace QtVsTools.Core
             if (genVCFilter == null)
                 return;
 
-            var error = false;
-            error = DeleteFilesFromFilter(genVCFilter);
-            if (error)
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (DeleteFilesFromFilter(genVCFilter))
                 Messages.Print(SR.GetString("DeleteGeneratedFilesError"));
         }
 
@@ -3037,6 +3127,8 @@ namespace QtVsTools.Core
 
         public void CollapseFilter(string filterName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var solutionExplorer = (UIHierarchy)dte.Windows.Item(Constants.vsext_wk_SProjectWindow).Object;
             if (solutionExplorer.UIHierarchyItems.Count == 0)
                 return;
@@ -3050,6 +3142,8 @@ namespace QtVsTools.Core
 
         private UIHierarchyItem FindProjectHierarchyItem(UIHierarchy hierarchy)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (hierarchy.UIHierarchyItems.Count == 0)
                 return null;
 
@@ -3065,6 +3159,8 @@ namespace QtVsTools.Core
 
         private UIHierarchyItem FindProjectHierarchyItem(UIHierarchyItem root)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             UIHierarchyItem projectItem = null;
             try {
                 if (root.Name == envPro.Name)
@@ -3085,6 +3181,7 @@ namespace QtVsTools.Core
         /// </summary>
         public string GetQtVersion()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return QtVersionManager.The().GetProjectQtVersion(envPro);
         }
 
@@ -3093,6 +3190,7 @@ namespace QtVsTools.Core
         /// </summary>
         public void SetQtEnvironment()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetQtEnvironment(QtVersionManager.The().GetProjectQtVersion(envPro));
         }
 
@@ -3101,6 +3199,7 @@ namespace QtVsTools.Core
         /// </summary>
         public void SetQtEnvironment(string qtVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetQtEnvironment(qtVersion, string.Empty);
         }
 
@@ -3119,6 +3218,8 @@ namespace QtVsTools.Core
             if (qtVersion != "$(QTDIR)")
                 qtDir = QtVersionManager.The().GetInstallPath(qtVersion);
             HelperFunctions.SetEnvironmentVariableEx("QTDIR", qtDir);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 var propertyAccess = (IVCBuildPropertyStorage)vcPro;
                 var vcprj = envPro.Object as VCProject;

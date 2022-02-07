@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core
@@ -141,6 +142,9 @@ namespace QtVsTools.Core
             {
                 StartInfo = qmakeStartInfo,
             };
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             qmakeProc.OutputDataReceived += (sender, ev) => OutMsg(ev.Data);
             qmakeProc.ErrorDataReceived += (sender, ev) => ErrMsg(ev.Data);
 
@@ -149,30 +153,37 @@ namespace QtVsTools.Core
 
         protected virtual void OutMsg(string msg)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (Dte != null && !string.IsNullOrEmpty(msg))
                 Messages.Print(msg);
         }
 
         protected virtual void ErrMsg(string msg)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (Dte != null && !string.IsNullOrEmpty(msg))
                 Messages.Print(msg);
         }
 
         protected virtual void InfoMsg(string msg)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (Dte != null && !string.IsNullOrEmpty(msg))
                 Messages.Print(msg);
         }
 
         protected virtual void InfoStart(Process qmakeProc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             InfoMsg(string.Format("--- qmake({0}): started {1}",
                 qmakeProc.Id, qmakeProc.StartInfo.FileName));
         }
 
         protected virtual void InfoExit(Process qmakeProc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             InfoMsg(string.Format("--- qmake({0}): exit code {1} ({2:0.##} msecs)\r\n",
                 qmakeProc.Id, qmakeProc.ExitCode,
                 (qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds));
@@ -180,6 +191,8 @@ namespace QtVsTools.Core
 
         public virtual int Run(bool setVCVars = false)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             int exitCode = -1;
             using (var qmakeProc = CreateProcess()) {
                 try {
@@ -231,6 +244,8 @@ namespace QtVsTools.Core
 
         protected override void InfoStart(Process qmakeProc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             base.InfoStart(qmakeProc);
             InfoMsg("--- qmake: Working Directory: " + qmakeProc.StartInfo.WorkingDirectory);
             InfoMsg("--- qmake: Arguments: " + qmakeProc.StartInfo.Arguments);

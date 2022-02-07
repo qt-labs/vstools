@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Globalization;
 using System.Resources;
@@ -71,6 +72,8 @@ namespace QtVsTools
 
         public static string GetString(string name, params object[] args)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var res = GetString(name);
             if (!string.IsNullOrEmpty(res) && args != null && args.Length > 0)
                 return string.Format(res, args);
@@ -79,11 +82,14 @@ namespace QtVsTools
 
         public static string GetString(string name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetString(name, QtVsToolsPackage.Instance);
         }
 
         public static string GetString(string name, QtVsToolsPackage vsixInstance)
         {
+           ThreadHelper.ThrowIfNotOnUIThread();
+
             var sys = GetLoader(vsixInstance.Dte.LocaleID);
             if (sys == null)
                 return null;

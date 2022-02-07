@@ -114,6 +114,7 @@ namespace QtVsTest.Macros
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
                 if (_UiVsRoot == null)
 #if VS2022
                     _UiVsRoot = AutomationElement.FromHandle(Dte.MainWindow.HWnd);
@@ -290,6 +291,8 @@ namespace QtVsTest.Macros
         /// <returns></returns>
         bool CompileMacro()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (UiVsRoot == null)
                 return ErrorMsg("UI Automation not available");
 
@@ -563,6 +566,8 @@ namespace QtVsTest.Macros
 
         bool InitializeUiGlobals()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (MacroClass == null)
                 return false;
 
@@ -832,6 +837,8 @@ namespace QtVsTest.Macros
 
             MacroClass.GetField("WaitExpr", PUBLIC_STATIC)
                 .SetValue(null, new Func<int, Func<object>, Task>(WaitExprAsync));
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!InitializeUiGlobals())
                 return false;

@@ -61,6 +61,7 @@ namespace QtVsTools.Editors
 
         protected virtual string GetToolsPath()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetQtToolsPath() ?? GetDefaultQtToolsPath();
         }
 
@@ -72,6 +73,8 @@ namespace QtVsTools.Editors
             var project = VsShell.GetProject(Context);
             if (project == null)
                 return null;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var vcProject = project.Object as VCProject;
             if (vcProject == null)
@@ -143,6 +146,8 @@ namespace QtVsTools.Editors
 
             Context = pvHier;
             ItemId = itemid;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var toolsPath = GetToolsPath();
             if (string.IsNullOrEmpty(toolsPath))
@@ -315,6 +320,9 @@ namespace QtVsTools.Editors
                     hideWindow: !Editor.Detached);
                 if (EditorProcess == null)
                     return VSConstants.E_FAIL;
+
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (Editor.Detached) {
                     Editor.OnStart(EditorProcess);
                     CloseParentFrame();
@@ -397,6 +405,8 @@ namespace QtVsTools.Editors
 
             void CloseParentFrame()
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 EditorProcess = null;
                 EditorWindow = IntPtr.Zero;
                 var parentFrame = GetService(typeof(SVsWindowFrame)) as IVsWindowFrame;
@@ -405,6 +415,8 @@ namespace QtVsTools.Editors
 
             private void EditorProcess_Exited(object sender, EventArgs e)
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 CloseParentFrame();
                 Editor.OnExit(EditorProcess);
             }
@@ -419,6 +431,8 @@ namespace QtVsTools.Editors
 
             private void EditorDetachButton_Click(object sender, EventArgs e)
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (EditorProcess != null) {
                     var editorWindow = EditorWindow;
                     DetachEditorWindow();

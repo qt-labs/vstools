@@ -42,6 +42,7 @@ using static QtVsTools.SyntaxAnalysis.RegExpr;
 namespace QtVsTools.Qml.Debug
 {
     using AD7;
+    using Microsoft.VisualStudio.Shell;
     using VisualStudio;
 
     class Launcher : Disposable, IDebugEventCallback2
@@ -59,12 +60,17 @@ namespace QtVsTools.Qml.Debug
             Instance = new Launcher();
             Instance.debugger = VsServiceProvider.GetService<IVsDebugger>();
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (Instance.debugger != null && Instance.debugger4 != null)
                 Instance.debugger.AdviseDebugEventCallback(Instance);
         }
 
         protected override void DisposeManaged()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (debugger != null)
                 debugger.UnadviseDebugEventCallback(this);
         }
@@ -127,6 +133,8 @@ namespace QtVsTools.Qml.Debug
             IEnumerable<string> rccItems;
             if (!GetProjectInfo(execPath, native, out execCmd, out rccItems))
                 return VSConstants.S_OK;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             LaunchDebug(execPath, execCmd, procId, rccItems);
             return VSConstants.S_OK;
@@ -192,6 +200,8 @@ namespace QtVsTools.Qml.Debug
 
         bool GetProjectInfo(string execPath, bool native, out string execCmd, out IEnumerable<string> rccItems)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             execCmd = "";
             rccItems = null;
 
@@ -289,6 +299,8 @@ namespace QtVsTools.Qml.Debug
             uint procId,
             IEnumerable<string> rccItems)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var targets = new[] { new VsDebugTargetInfo4
             {
                 dlo = (uint)DEBUG_LAUNCH_OPERATION.DLO_CreateProcess,

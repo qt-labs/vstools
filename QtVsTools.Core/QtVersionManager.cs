@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
 using System;
@@ -48,6 +49,8 @@ namespace QtVsTools.Core
 
         protected QtVersionManager()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
             RefreshVersionNames();
@@ -63,8 +66,8 @@ namespace QtVsTools.Core
                 }
 
             } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                ThreadHelper.ThrowIfNotOnUIThread();
+                Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
 
@@ -89,6 +92,8 @@ namespace QtVsTools.Core
 
         public VersionInformation GetVersionInfo(string name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
             if (name == null)
@@ -108,6 +113,7 @@ namespace QtVsTools.Core
 
         public VersionInformation GetVersionInfo(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetVersionInfo(GetProjectQtVersion(project));
         }
 
@@ -118,6 +124,8 @@ namespace QtVsTools.Core
 
         public string GetQtVersionFromInstallDir(string qtDir)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (qtDir == null)
                 return null;
 
@@ -153,6 +161,8 @@ namespace QtVsTools.Core
         /// <returns>true, if we found an invalid version</returns>
         public bool HasInvalidVersions(out string errorMessage)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var validVersions = new Dictionary<string, QtConfig>();
             var invalidVersions = new List<string>();
 
@@ -230,6 +240,8 @@ namespace QtVsTools.Core
 
         public string GetInstallPath(string version)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             return GetInstallPath(version, Registry.CurrentUser);
@@ -237,6 +249,8 @@ namespace QtVsTools.Core
 
         public string GetInstallPath(string version, RegistryKey root)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion(root);
             if (version == "$(QTDIR)")
@@ -253,6 +267,8 @@ namespace QtVsTools.Core
 
         public string GetInstallPath(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var version = GetProjectQtVersion(project);
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
@@ -283,6 +299,8 @@ namespace QtVsTools.Core
                 }
             }
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
             string versionKeyPath = strVersionKey + "\\" + verName;
             using (var key = Registry.CurrentUser.CreateSubKey(rootKeyPath)) {
@@ -311,6 +329,9 @@ namespace QtVsTools.Core
                 return;
             key.DeleteSubKey(versionName);
             key.Close();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             RefreshVersionNames();
         }
 
@@ -329,6 +350,7 @@ namespace QtVsTools.Core
 
         public bool SaveProjectQtVersion(EnvDTE.Project project, string version)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return SaveProjectQtVersion(project, version, project.ConfigurationManager.ActiveConfiguration.PlatformName);
         }
 
@@ -336,6 +358,9 @@ namespace QtVsTools.Core
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings) {
                 var vcPro = project.Object as VCProject;
                 if (vcPro == null)
@@ -346,6 +371,9 @@ namespace QtVsTools.Core
                 }
                 return true;
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
                 project.Globals[key] = version;
@@ -356,6 +384,8 @@ namespace QtVsTools.Core
 
         public string GetProjectQtVersion(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             EnvDTE.Configuration config = null;
             try {
                 config = project.ConfigurationManager.ActiveConfiguration;
@@ -383,6 +413,8 @@ namespace QtVsTools.Core
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return QtProject.GetPropertyValue(project, config, "QtInstall");
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var key = "Qt5Version " + config.PlatformName;
             if (!project.Globals.get_VariablePersists(key))
                 return null;
@@ -395,6 +427,8 @@ namespace QtVsTools.Core
         {
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return GetProjectQtVersion(project);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
@@ -423,6 +457,9 @@ namespace QtVsTools.Core
         {
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             solution.Globals["Qt5Version"] = version;
             if (!solution.Globals.get_VariablePersists("Qt5Version"))
                 solution.Globals.set_VariablePersists("Qt5Version", true);
@@ -434,6 +471,8 @@ namespace QtVsTools.Core
             if (solution == null)
                 return null;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (solution.Globals.get_VariableExists("Qt5Version")) {
                 var version = (string)solution.Globals["Qt5Version"];
                 return VerifyIfQtVersionExists(version) ? version : null;
@@ -444,6 +483,7 @@ namespace QtVsTools.Core
 
         public string GetDefaultVersion()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetDefaultVersion(Registry.CurrentUser);
         }
 
@@ -457,6 +497,8 @@ namespace QtVsTools.Core
             } catch {
                 Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (defaultVersion == null) {
                 MergeVersions();
@@ -498,6 +540,8 @@ namespace QtVsTools.Core
             var hkcuVersions = GetVersions();
             var hklmVersions = GetVersions(Registry.LocalMachine);
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var hkcuInstDirs = new string[hkcuVersions.Length];
             for (var i = 0; i < hkcuVersions.Length; ++i)
                 hkcuInstDirs[i] = GetInstallPath(hkcuVersions[i]);
@@ -533,6 +577,8 @@ namespace QtVsTools.Core
 
         private bool VerifyIfQtVersionExists(string version)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             if (!string.IsNullOrEmpty(version)) {

@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -95,6 +96,7 @@ namespace QtVsTools.Core
         {
             qtDir = qtDirIn;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 var qmakeQuery = new QMakeQuery(this);
                 SetupPlatformSpecificData(qmakeQuery);
@@ -287,6 +289,8 @@ namespace QtVsTools.Core
         {
             var qmakeQuery = new QMakeQuery(this);
             string qmakeXSpec;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
             } catch {

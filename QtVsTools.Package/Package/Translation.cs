@@ -38,6 +38,7 @@ namespace QtVsTools
 {
     using static Core.HelperFunctions;
     using QtMsBuild;
+    using Microsoft.VisualStudio.Shell;
 
     /// <summary>
     /// Run Qt translation tools by invoking the corresponding Qt/MSBuild targets
@@ -46,6 +47,8 @@ namespace QtVsTools
     {
         public static void RunlRelease(VCFile[] vcFiles)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcProj = vcFiles.FirstOrDefault()?.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Release,
@@ -54,11 +57,14 @@ namespace QtVsTools
 
         public static void RunlRelease(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             RunTranslationTarget(BuildAction.Release, project);
         }
 
         public static void RunlRelease(EnvDTE.Solution solution)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (solution == null)
                 return;
 
@@ -68,6 +74,8 @@ namespace QtVsTools
 
         public static void RunlUpdate(VCFile vcFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcProj = vcFile.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Update,
@@ -76,6 +84,8 @@ namespace QtVsTools
 
         public static void RunlUpdate(VCFile[] vcFiles)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcProj = vcFiles.FirstOrDefault()?.project as VCProject;
             var project = vcProj?.Object as EnvDTE.Project;
             RunTranslationTarget(BuildAction.Update,
@@ -84,6 +94,7 @@ namespace QtVsTools
 
         public static void RunlUpdate(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             RunTranslationTarget(BuildAction.Update, project);
         }
 
@@ -94,6 +105,8 @@ namespace QtVsTools
             EnvDTE.Project project,
             IEnumerable<string> selectedFiles = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             using (WaitDialog.Start(
                 "Qt Visual Studio Tools", "Running translation tool...")) {
 
@@ -143,6 +156,8 @@ namespace QtVsTools
 
         public static void RunlUpdate(EnvDTE.Solution solution)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (solution == null)
                 return;
 

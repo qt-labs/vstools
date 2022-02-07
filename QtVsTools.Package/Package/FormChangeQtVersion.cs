@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.Core;
 using System;
 using System.Windows.Forms;
@@ -37,6 +38,8 @@ namespace QtVsTools
 
         public FormChangeQtVersion()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             InitializeComponent();
             btnOK.Text = SR.GetString("OK");
             btnCancel.Text = SR.GetString("Cancel");
@@ -48,6 +51,7 @@ namespace QtVsTools
 
         private void FormChangeQtVersion_Shown(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             Text = SR.GetString("SolutionQtVersion");
         }
 
@@ -67,6 +71,8 @@ namespace QtVsTools
 
         public void UpdateContent(ChangeFor change)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             lbQtVersions.Items.Clear();
             var vm = QtVersionManager.The();
             foreach (var versionName in vm.GetVersions())

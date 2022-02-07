@@ -33,6 +33,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -168,6 +169,8 @@ namespace QtVsTools.Qml.Classification
 
         int IVsTextViewFilter.GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             pbstrText = "";
             var dbgMode = new DBGMODE[1];
             if (debugger.GetMode(dbgMode) != VSConstants.S_OK
@@ -214,6 +217,7 @@ namespace QtVsTools.Qml.Classification
             OLECMD[] prgCmds,
             IntPtr pCmdText)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return nextTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
         }
 
@@ -224,6 +228,7 @@ namespace QtVsTools.Qml.Classification
             IntPtr pvaIn,
             IntPtr pvaOut)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return nextTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
 

@@ -45,8 +45,11 @@ namespace QtVsTools.QtMsBuild
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null || !QtProjectTracker.IsTracked(project))
                 return;
+
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                     "{0:HH:mm:ss.FFF} QtProjectIntellisense({1}): Refreshing: [{2}] {3}",

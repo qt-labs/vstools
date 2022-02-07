@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 #if VS2017
 using Microsoft.Win32;
@@ -95,16 +96,19 @@ namespace QtVsTools.Core
 
         static public void SetDebuggingEnvironment(Project prj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, string.Empty);
         }
 
         static public void SetDebuggingEnvironment(Project prj, string solutionConfig)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
         static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, envpath, overwrite, string.Empty);
         }
 
@@ -112,6 +116,8 @@ namespace QtVsTools.Core
         {
             if (QtProject.GetFormatVersion(prj) >= Resources.qtMinFormatVersion_Settings)
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             // Get platform name from given solution configuration
             // or if not available take the active configuration
@@ -174,8 +180,9 @@ namespace QtVsTools.Core
 
         public static bool IsProjectInSolution(DTE dteObject, string fullName)
         {
-            var fi = new FileInfo(fullName);
+            ThreadHelper.ThrowIfNotOnUIThread();
 
+            var fi = new FileInfo(fullName);
             foreach (var p in ProjectsInSolution(dteObject)) {
                 if (p.FullName.ToLower() == fi.FullName.ToLower())
                     return true;
@@ -336,6 +343,8 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static void ReplaceInCustomBuildTools(Project project, string oldString, string replaceString)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcPro = (VCProject)project.Object;
             if (vcPro == null)
                 return;
@@ -410,6 +419,8 @@ namespace QtVsTools.Core
         /// <param name="projectItem">Project Item which needs to have custom build tool</param>
         static public void EnsureCustomBuildToolAvailable(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (Property prop in projectItem.Properties) {
                 if (prop.Name == "ItemType") {
                     if ((string)prop.Value != "CustomBuild")
@@ -447,7 +458,8 @@ namespace QtVsTools.Core
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return;
 
-            string qtDir = null;
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcPro = (VCProject)project.Object;
             if (!IsQMakeProject(project))
                 return;
@@ -455,7 +467,7 @@ namespace QtVsTools.Core
                 // TODO: qtPro is never used.
                 var qtPro = QtProject.Create(project);
                 var vm = QtVersionManager.The();
-                qtDir = vm.GetInstallPath(project);
+                string qtDir = vm.GetInstallPath(project);
 
                 foreach (var global in (string[])project.Globals.VariableNames) {
                     if (global.StartsWith("Qt5Version", StringComparison.Ordinal))
@@ -485,7 +497,7 @@ namespace QtVsTools.Core
 
                 ReplaceInCustomBuildTools(project, "$(QTDIR)", qtDir);
             } else {
-                qtDir = GetQtDirFromQMakeProject(project);
+                string qtDir = GetQtDirFromQMakeProject(project);
 
                 var vm = QtVersionManager.The();
                 var qtVersion = vm.GetQtVersionFromInstallDir(qtDir);
@@ -558,6 +570,8 @@ namespace QtVsTools.Core
         /// <param name="project">The project is needed to convert relative paths to absolute paths.</param>
         private static void ReplaceDirectory(ref List<string> paths, string oldDirectory, string replacement, Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             for (var i = 0; i < paths.Count; ++i) {
                 var dirName = paths[i];
                 if (dirName.StartsWith("\"", StringComparison.Ordinal) && dirName.EndsWith("\"", StringComparison.Ordinal)) {
@@ -582,6 +596,8 @@ namespace QtVsTools.Core
 
         public static string GetQtDirFromQMakeProject(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcProject = project.Object as VCProject;
             if (vcProject == null)
                 return null;
@@ -674,6 +690,8 @@ namespace QtVsTools.Core
             if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
                 return true;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var envPro = proj.Object as Project;
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
                 return false;
@@ -691,6 +709,7 @@ namespace QtVsTools.Core
         /// <param name="proj">project</param>
         public static bool IsQtProject(Project proj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
                     return IsQtProject(proj.Object as VCProject);
@@ -723,6 +742,7 @@ namespace QtVsTools.Core
         /// <param name="proj">project</param>
         public static bool IsQMakeProject(Project proj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
                     return IsQMakeProject(proj.Object as VCProject);
@@ -732,6 +752,8 @@ namespace QtVsTools.Core
 
         public static void CleanupQMakeDependencies(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcPro = (VCProject)project.Object;
             // clean up qmake mess
             var rxp1 = new Regex("\\bQt\\w+d?5?\\.lib\\b");
@@ -904,6 +926,8 @@ namespace QtVsTools.Core
             if (string.IsNullOrEmpty(nodeToCollapseFilter))
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (UIHierarchyItem innerItem in item.UIHierarchyItems) {
                 if (innerItem.Name == nodeToCollapseFilter)
                     CollapseFilter(innerItem, hierarchy);
@@ -914,6 +938,8 @@ namespace QtVsTools.Core
 
         public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var subItems = item.UIHierarchyItems;
             if (subItems != null) {
                 foreach (UIHierarchyItem innerItem in subItems) {
@@ -962,7 +988,7 @@ namespace QtVsTools.Core
 
         public static List<string> GetProjectFiles(Project pro, FilesToList filter)
         {
-            var fileList = new List<string>();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             VCProject vcpro;
             try {
@@ -972,6 +998,7 @@ namespace QtVsTools.Core
                 return null;
             }
 
+            var fileList = new List<string>();
             var configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
 
             foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
@@ -1040,6 +1067,8 @@ namespace QtVsTools.Core
         /// <param name="fileName"></param>
         public static void RemoveFileInProject(VCProject vcpro, string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var qtProj = QtProject.Create(vcpro);
             var fi = new FileInfo(fileName);
 
@@ -1055,6 +1084,9 @@ namespace QtVsTools.Core
         {
             if (dteObject == null)
                 return null;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Array prjs = null;
             try {
                 prjs = (Array)dteObject.ActiveSolutionProjects;
@@ -1073,6 +1105,8 @@ namespace QtVsTools.Core
 
         public static Project GetActiveDocumentProject(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (dteObject == null)
                 return null;
             var doc = dteObject.ActiveDocument;
@@ -1087,6 +1121,8 @@ namespace QtVsTools.Core
 
         public static Project GetSingleProjectInSolution(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var projectList = ProjectsInSolution(dteObject);
             if (dteObject == null || dteObject.Solution == null ||
                     projectList.Count != 1)
@@ -1102,6 +1138,8 @@ namespace QtVsTools.Core
         /// </summary>
         public static Project GetSelectedQtProject(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // can happen sometimes shortly after starting VS
             if (dteObject == null || dteObject.Solution == null
                 || ProjectsInSolution(dteObject).Count == 0)
@@ -1120,6 +1158,8 @@ namespace QtVsTools.Core
         {
             if (GetSelectedQtProject(dteObject) == null)
                 return null;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (dteObject.SelectedItems.Count <= 0)
                 return null;
@@ -1159,6 +1199,8 @@ namespace QtVsTools.Core
 
         public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var pro = VCProjectToProject((VCProject)qrcFile.project);
 
             var rccOpts = new RccOptions(pro, qrcFile);
@@ -1181,11 +1223,14 @@ namespace QtVsTools.Core
 
         public static Project VCProjectToProject(VCProject vcproj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return (Project)vcproj.Object;
         }
 
         public static List<Project> ProjectsInSolution(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var projects = new List<Project>();
             var solution = dteObject.Solution;
             if (solution != null) {
@@ -1207,6 +1252,8 @@ namespace QtVsTools.Core
 
         private static void addSubProjects(Project prj, ref List<Project> projects)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // If the actual object of the project is null then the project was probably unloaded.
             if (prj.Object == null)
                 return;
@@ -1225,6 +1272,8 @@ namespace QtVsTools.Core
         {
             if (subItems == null)
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (ProjectItem item in subItems) {
                 Project subprj = null;
@@ -1358,13 +1407,14 @@ namespace QtVsTools.Core
             string platformName,
             string filePath = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null
                 || string.IsNullOrEmpty(configName)
                 || string.IsNullOrEmpty(platformName))
                 return false;
 
             var vcProject = project.Object as VCProject;
-
             if (filePath == null) {
                 var vcConfig = (from VCConfiguration _config
                                 in (IVCCollection)vcProject.Configurations
@@ -1620,6 +1670,8 @@ namespace QtVsTools.Core
 
         public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (VersionInfo == null) {
                 VersionInfo = QtVersionManager.The().GetVersionInfo(
                     QtVersionManager.The().GetDefaultVersion());

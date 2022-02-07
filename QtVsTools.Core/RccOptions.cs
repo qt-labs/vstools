@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 
@@ -57,6 +58,8 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (project.Globals.get_VariablePersists("RccCompressFiles" + id)
                     && (string)project.Globals["RccCompressFiles" + id] == "true")
                     return true;
@@ -64,6 +67,8 @@ namespace QtVsTools.Core
             }
             set
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (value)
                     project.Globals["RccCompressFiles" + id] = "true";
                 else
@@ -77,12 +82,16 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (project.Globals.get_VariablePersists("RccCompressLevel" + id))
                     return Convert.ToInt32((string)project.Globals["RccCompressLevel" + id], 10);
                 return 0;
             }
             set
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 project.Globals["RccCompressLevel" + id] = value.ToString();
                 if (!project.Globals.get_VariablePersists("RccCompressLevel" + id))
                     project.Globals.set_VariablePersists("RccCompressLevel" + id, true);
@@ -93,12 +102,16 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (project.Globals.get_VariablePersists("RccCompressThreshold" + id))
                     return Convert.ToInt32((string)project.Globals["RccCompressThreshold" + id], 10);
                 return 0;
             }
             set
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 project.Globals["RccCompressThreshold" + id] = value.ToString();
                 if (!project.Globals.get_VariablePersists("RccCompressThreshold" + id))
                     project.Globals.set_VariablePersists("RccCompressThreshold" + id, true);

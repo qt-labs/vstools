@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Core;
 using System.Collections.Generic;
@@ -42,6 +43,9 @@ namespace QtVsTools
             var vm = QtVersionManager.The();
             var qtVersion = vm.GetDefaultVersion();
             var qtDir = vm.GetInstallPath(qtVersion);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (qtDir == null) {
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
                 return;
@@ -65,6 +69,8 @@ namespace QtVsTools
             VCProject vcproj;
             if (!HelperFunctions.IsQtProject(project))
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             vcproj = project.Object as VCProject;
             if (vcproj == null)
@@ -92,6 +98,8 @@ namespace QtVsTools
 
             if (!HelperFunctions.IsQtProject(project))
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var vcproj = project.Object as VCProject;
             if (vcproj == null)
@@ -134,6 +142,8 @@ namespace QtVsTools
 
         private static List<string> ResolveFilesFromQMake(string[] files, EnvDTE.Project project, string path)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var lst = new List<string>();
             foreach (var file in files) {
                 var s = ResolveEnvironmentVariables(file, project);

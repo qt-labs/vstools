@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections;
 using System.IO;
@@ -39,6 +40,8 @@ namespace QtVsTools.Core
 
         public QMakeConf(VersionInformation versionInfo, QMakeQuery qmakeQuery = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Entries = new Hashtable();
             QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", "default");
             var qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");

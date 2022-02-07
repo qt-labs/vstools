@@ -28,6 +28,7 @@
 
 using System;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using QtVsTools.VisualStudio;
 
@@ -53,6 +54,8 @@ namespace QtVsTools.Core
                 if (VsWaitDialog == null)
                     return false;
 
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 bool canceled = false;
                 int res = VsWaitDialog.HasCanceled(out canceled);
                 if (res != VSConstants.S_OK)
@@ -76,6 +79,8 @@ namespace QtVsTools.Core
                 if (factory == null)
                     return null;
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             IVsThreadedWaitDialog2 vsWaitDialog = null;
             factory.CreateInstance(out vsWaitDialog);
@@ -103,6 +108,8 @@ namespace QtVsTools.Core
             if (dialog == null)
                 return null;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var res = dialog.VsWaitDialog.StartWaitDialog(caption, message, progressText,
                     null, statusBarText, delay, isCancelable, showMarqueeProgress);
 
@@ -127,6 +134,8 @@ namespace QtVsTools.Core
             if (dialog == null)
                 return null;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var res = dialog.VsWaitDialog.StartWaitDialogWithPercentageProgress(
                 caption, message, progressText, null, statusBarText,
                 isCancelable, delay, totalSteps, currentStep);
@@ -148,6 +157,8 @@ namespace QtVsTools.Core
             if (!Running)
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             bool canceled = false;
             int res = VsWaitDialog.UpdateProgress(message, progressText,
                 statusBarText, currentStep, totalSteps, disableCancel, out canceled);
@@ -164,6 +175,8 @@ namespace QtVsTools.Core
             if (!Running)
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Running = false;
             int canceled = 0;
             VsWaitDialog.EndWaitDialog(out canceled);
@@ -172,6 +185,7 @@ namespace QtVsTools.Core
 
         void IDisposable.Dispose()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             Stop();
         }
     }

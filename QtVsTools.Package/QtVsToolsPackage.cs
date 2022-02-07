@@ -346,9 +346,10 @@ namespace QtVsTools
 
         protected override int QueryClose(out bool canClose)
         {
-            if (eventHandler != null) {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (eventHandler != null)
                 eventHandler.Disconnect();
-            }
             return base.QueryClose(out canClose);
         }
 
@@ -407,6 +408,8 @@ namespace QtVsTools
 
         public string GetNatvisPath()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try {
                 using (var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot)) {
                     if (vsRootKey.GetValue("VisualStudioLocation") is string vsLocation)
@@ -451,6 +454,7 @@ namespace QtVsTools
 
         void IProjectTracker.AddProject(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             QtProjectTracker.Add(project);
         }
 

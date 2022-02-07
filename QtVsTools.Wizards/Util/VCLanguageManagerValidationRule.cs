@@ -37,6 +37,8 @@ namespace QtVsTools.Wizards.Util
     {
         protected VCLanguageManagerValidationRule()
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             ValidatesOnTargetUpdated = true;
 
             var dte = VsServiceProvider.GetService<DTE>();

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.SyntaxAnalysis;
 
 namespace QtVsTools.Core
@@ -49,6 +50,8 @@ namespace QtVsTools.Core
 
         protected override void InfoStart(Process qmakeProc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             base.InfoStart(qmakeProc);
             InfoMsg("--- qmake: Querying persistent properties");
         }
@@ -57,6 +60,8 @@ namespace QtVsTools.Core
         {
             stdOutput = new StringBuilder();
             Query = " ";
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (Run() == 0 && stdOutput.Length > 0) {
                 return PropertyParser
@@ -74,6 +79,8 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 string value = string.Empty;
                 if (Properties.TryGetValue(name, out value))
                     return value;
@@ -83,7 +90,14 @@ namespace QtVsTools.Core
         }
 
         Dictionary<string, string> _Properties;
-        Dictionary<string, string> Properties => _Properties ?? (_Properties = QueryAllValues());
+        Dictionary<string, string> Properties
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return _Properties ?? (_Properties = QueryAllValues());
+            }
+        }
 
         Parser _PropertyParser;
         Parser PropertyParser

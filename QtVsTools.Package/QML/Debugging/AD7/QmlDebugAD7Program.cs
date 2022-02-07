@@ -32,6 +32,7 @@ using System.IO;
 using System.Windows.Threading;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using QtVsTools.VisualStudio;
 
@@ -82,6 +83,8 @@ namespace QtVsTools.Qml.Debug.AD7
             string execPath,
             string execArgs)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var _this = new Program();
             return _this.Initialize(engine, nativeProc, execPath, execArgs) ? _this : null;
         }
@@ -95,6 +98,8 @@ namespace QtVsTools.Qml.Debug.AD7
             string execPath,
             string execArgs)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Engine = engine;
             NativeProc = nativeProc;
 
@@ -136,6 +141,8 @@ namespace QtVsTools.Qml.Debug.AD7
 
         protected override void DisposeManaged()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Debugger.Dispose();
             if (VsDebugger != null)
                 VsDebugger.UnadviseDebugEventCallback(this as IDebugEventCallback2);
@@ -158,7 +165,11 @@ namespace QtVsTools.Qml.Debug.AD7
             var debugMode = new DBGMODE[1];
             int res = VSConstants.S_FALSE;
             vsDebuggerThreadDispatcher
-                .BeginInvoke(new Action(() => res = VsDebugger.GetMode(debugMode)), new object[0])
+                .BeginInvoke(new Action(() =>
+                {
+                    ThreadHelper.ThrowIfNotOnUIThread();
+                    res = VsDebugger.GetMode(debugMode);
+                }), new object[0])
                 .Wait();
 
             if (res != VSConstants.S_OK)
@@ -252,6 +263,8 @@ namespace QtVsTools.Qml.Debug.AD7
 
         void IDebuggerEventSink.NotifyBreak()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             BreakAllProcesses = false;
             DebugEvent.Send(new StepCompleteEvent(this));
         }
@@ -283,6 +296,8 @@ namespace QtVsTools.Qml.Debug.AD7
 
         public void NotifyBreakpointHit(Breakpoint breakpoint)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             BreakAllProcesses = false;
             DebugEvent.Send(new BreakpointEvent(this, BoundBreakpointsEnum.Create(breakpoint)));
         }
@@ -291,6 +306,8 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 return ((bool)QtVsToolsPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
@@ -298,6 +315,8 @@ namespace QtVsTools.Qml.Debug.AD7
             }
             set
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 QtVsToolsPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")

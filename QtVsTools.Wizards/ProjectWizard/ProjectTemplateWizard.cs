@@ -45,6 +45,7 @@ using QtVsTools.VisualStudio;
 using QtVsTools.Core;
 using QtVsTools.Core.QtMsBuild;
 using QtVsTools.Wizards.Common;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -222,6 +223,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             WizardRunKind runKind,
             object[] customParams)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Dte = automationObject as DTE;
             ParameterValues = parameterValues;
 
@@ -280,6 +283,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected virtual void Expand()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Debug.Assert(ParameterValues != null);
             Debug.Assert(Dte != null);
             Debug.Assert(Configurations != null);

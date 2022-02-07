@@ -174,6 +174,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             project.Globals["IsDesignerPlugin"] = true.ToString();
             if (!project.Globals.get_VariablePersists("IsDesignerPlugin"))
                 project.Globals.set_VariablePersists("IsDesignerPlugin", true);

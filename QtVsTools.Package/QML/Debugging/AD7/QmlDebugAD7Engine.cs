@@ -129,6 +129,8 @@ namespace QtVsTools.Qml.Debug.AD7
             if (pPort.GetProcess(nativeProcId, out nativeProc) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var program = Program.Create(this, nativeProc, pszExe, pszArgs);
             if (program == null)
                 return VSConstants.E_FAIL;

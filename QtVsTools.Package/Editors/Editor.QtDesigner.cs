@@ -61,6 +61,9 @@ namespace QtVsTools.Editors
             var document = VsShell.GetDocument(Context, ItemId);
             if (document == null)
                 return;
+
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var project = document.ProjectItem?.ContainingProject;
             if (project == null || !QtProjectTracker.IsTracked(project))
                 return;

@@ -38,6 +38,8 @@ namespace QtVsTools.VisualStudio
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 Initialize();
                 return _InstallRootDir;
             }
@@ -48,6 +50,8 @@ namespace QtVsTools.VisualStudio
 
         private static void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (vsShell != null)
                 return;
             vsShell = VsServiceProvider.GetService<IVsShell>();
@@ -60,6 +64,8 @@ namespace QtVsTools.VisualStudio
 
         public static EnvDTE.Project GetProject(IVsHierarchy context)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             object value;
             int res = context.GetProperty(
                 (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
@@ -71,6 +77,8 @@ namespace QtVsTools.VisualStudio
 
         public static EnvDTE.ProjectItem GetProjectItem(IVsHierarchy context, uint itemid)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             object value;
             int res = context.GetProperty(
                 itemid, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
@@ -82,6 +90,7 @@ namespace QtVsTools.VisualStudio
 
         public static EnvDTE.Document GetDocument(IVsHierarchy context, uint itemid)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetProjectItem(context, itemid)?.Document;
         }
 

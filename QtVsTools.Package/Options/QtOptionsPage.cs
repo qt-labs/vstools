@@ -235,6 +235,8 @@ namespace QtVsTools.Options
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ////////
             // Get Qt Help keyboard shortcut
             //
@@ -252,6 +254,8 @@ namespace QtVsTools.Options
 
         public override void LoadSettingsFromStorage()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ResetSettings();
             try {
                 QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");

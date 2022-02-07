@@ -128,11 +128,14 @@ namespace QtVsTools
 
         void F1QtHelpEventHandler(object sender, EventArgs args)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             QueryEditorContextHelp(true);
         }
 
         public static bool QueryEditorContextHelp(bool defaultTryOnline = false)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 var objTextDocument = dte?.ActiveDocument?.Object() as TextDocument;

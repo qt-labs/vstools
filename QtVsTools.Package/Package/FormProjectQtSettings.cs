@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
@@ -60,6 +61,8 @@ namespace QtVsTools
 
         public FormProjectQtSettings()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             InitializeComponent();
             okButton.Text = SR.GetString("OK");
             cancelButton.Text = SR.GetString("Cancel");
@@ -88,6 +91,7 @@ namespace QtVsTools
 
         private void FormProjectQtSettings_Shown(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             Text = SR.GetString("ProjectQtSettingsButtonText");
         }
 

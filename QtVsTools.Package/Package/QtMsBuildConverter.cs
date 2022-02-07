@@ -32,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 using QtVsTools.Core;
@@ -43,6 +44,8 @@ namespace QtVsTools
     {
         public static bool SolutionToQtMsBuild()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = QtVsToolsPackage.Instance.Dte.Solution;
             if (solution == null)
                 return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"), ""));
@@ -68,7 +71,11 @@ namespace QtVsTools
                 MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return WarningMessage(SR.GetString("CancelConvertingProject"));
 
-            if (projects.Where(project => project.IsDirty).Any()) {
+            if (projects.Any(project =>
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return project.IsDirty;
+            })) {
                 if (MessageBox.Show(
                     SR.GetString("ConvertSaveConfirmation"),
                     SR.GetString("ConvertTitle"),
@@ -76,7 +83,11 @@ namespace QtVsTools
                     return WarningMessage(SR.GetString("CancelConvertingProject"));
             }
 
-            var projectPaths = projects.Select(x => x.FullName).ToList();
+            var projectPaths = projects.Select(x =>
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return x.FullName;
+            }).ToList();
 
             string solutionPath = solution.FileName;
             solution.Close(true);
@@ -142,6 +153,8 @@ namespace QtVsTools
 
         public static bool ProjectToQtMsBuild(EnvDTE.Project project, bool askConfirmation = true)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null)
                 return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"), ""));
             var pathToProject = project.FullName;

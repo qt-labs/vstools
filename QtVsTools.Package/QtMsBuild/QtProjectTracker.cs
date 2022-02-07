@@ -42,7 +42,10 @@ namespace QtVsTools.QtMsBuild
 {
     using Core;
     using VisualStudio;
+    using Microsoft.VisualStudio.Shell;
+
     using Thread = System.Threading.Thread;
+    using Task = System.Threading.Tasks.Task;
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
 
     class QtProjectTracker : Concurrent<QtProjectTracker>
@@ -118,6 +121,7 @@ namespace QtVsTools.QtMsBuild
 
         public static bool IsTracked(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return Instances.ContainsKey(project.FullName);
         }
 
@@ -125,11 +129,15 @@ namespace QtVsTools.QtMsBuild
         {
             if (!QtVsToolsPackage.Instance.Options.ProjectTracking)
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
             Get(project);
         }
 
         public static QtProjectTracker Get(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             lock (StaticCriticalSection) {
                 QtProjectTracker tracker = null;
                 if (Instances.TryGetValue(project.FullName, out tracker))
@@ -283,6 +291,8 @@ namespace QtVsTools.QtMsBuild
 
         void BeginInitStatus()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             lock (StaticCriticalSection) {
                 if (InitStatus != null)
                     return;
@@ -310,6 +320,8 @@ namespace QtVsTools.QtMsBuild
 
         void UpdateInitStatus(int percentComplete)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             lock (StaticCriticalSection) {
                 if (InitStatus == null)
                     return;

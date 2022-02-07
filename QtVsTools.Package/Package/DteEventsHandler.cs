@@ -62,6 +62,8 @@ namespace QtVsTools
 
         public DteEventsHandler(DTE _dte)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             dte = _dte;
             var events = dte.Events as Events2;
 
@@ -119,12 +121,15 @@ namespace QtVsTools
         private void F1HelpEvents_BeforeExecute(
             string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed && QtHelp.QueryEditorContextHelp())
                 CancelDefault = true;
         }
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var debugger = dte.Debugger;
             if (debugger != null && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
                 return;
@@ -158,6 +163,8 @@ namespace QtVsTools
 
         public void Disconnect()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (buildEvents != null) {
                 buildEvents.OnBuildBegin -= buildEvents_OnBuildBegin;
                 buildEvents.OnBuildProjConfigBegin -= OnBuildProjConfigBegin;
@@ -202,6 +209,8 @@ namespace QtVsTools
                 return;     // Don't do anything, if we're not building.
             }
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Project project = null;
             foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
                 if (p.UniqueName == projectName) {
@@ -243,6 +252,8 @@ namespace QtVsTools
 
         public void DocumentSaved(Document document)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
 
             if (!HelperFunctions.IsQtProject(qtPro.VCProject))
@@ -341,6 +352,9 @@ namespace QtVsTools
             var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
             if (vcFile == null)
                 return;
@@ -398,6 +412,8 @@ namespace QtVsTools
             if (pro == null)
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(ProjectItem.Name);
         }
@@ -412,11 +428,16 @@ namespace QtVsTools
 
             var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(OldName);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ProjectItemsEvents_ItemAdded(ProjectItem);
         }
 
         void SolutionEvents_ProjectAdded(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (HelperFunctions.IsQMakeProject(project)) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
@@ -461,6 +482,8 @@ namespace QtVsTools
 
         public void SolutionEvents_Opened()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
                 if (HelperFunctions.IsQtProject(p)) {
@@ -479,6 +502,8 @@ namespace QtVsTools
 
         void InitializeVCProjects()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (project != null && HelperFunctions.IsQtProject(project))
                     InitializeVCProject(project);
@@ -487,6 +512,8 @@ namespace QtVsTools
 
         void InitializeVCProject(Project p)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (vcProjectEngineEvents != null)
                 return;
 

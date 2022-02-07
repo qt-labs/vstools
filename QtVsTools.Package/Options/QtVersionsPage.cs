@@ -79,6 +79,8 @@ namespace QtVsTools.Options
 
         public override void SaveSettingsToStorage()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (var versionName in VersionManager.GetVersions()) {
                 try {
                     VersionManager.RemoveVersion(versionName);

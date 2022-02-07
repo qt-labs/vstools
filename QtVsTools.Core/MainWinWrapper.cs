@@ -44,6 +44,8 @@ namespace QtVsTools.Core
         {
             get
             {
+                Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (dteObject != null)
 #if VS2022
                     return dteObject.MainWindow.HWnd;

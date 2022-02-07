@@ -178,6 +178,7 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void Expand()
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             VCRulePropertyStorageHelper.SetQtModules(Dte, WizardData.DefaultModules);
         }
 

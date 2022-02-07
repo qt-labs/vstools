@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,8 @@ namespace QtVsTools.Core
             if (DialogResult.OK != toOpen.ShowDialog())
                 return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var mainInfo = new FileInfo(toOpen.FileName);
             if (HelperFunctions.IsSubDirsFile(mainInfo.FullName)) {
                 // we use the safe way. Make the user close the existing solution manually
@@ -83,6 +86,8 @@ namespace QtVsTools.Core
             if (null == VCInfo)
                 return;
             ImportQMakeSolution(VCInfo, versionInfo);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -113,6 +118,7 @@ namespace QtVsTools.Core
 
             ImportQMakeProject(VCInfo, versionInfo);
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 if (CheckQtVersion(versionInfo)) {
                     // no need to add the project again if it's already there...
@@ -179,6 +185,9 @@ namespace QtVsTools.Core
         private void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (var project in projects) {
                 var projectInfo = new FileInfo(project);
                 ImportQMakeProject(projectInfo, vi);
@@ -205,6 +214,8 @@ namespace QtVsTools.Core
 
         private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var xmlProject = MsBuildProject.Load(projectFile.FullName);
             xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
@@ -241,6 +252,7 @@ namespace QtVsTools.Core
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);
             qtProject.CollapseFilter(Filters.GeneratedFiles().Name);
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 // save the project after modification
                 qtProject.Project.Save(null);
@@ -249,6 +261,8 @@ namespace QtVsTools.Core
 
         private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
 
             var VCInfo = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);

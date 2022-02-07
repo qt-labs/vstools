@@ -39,6 +39,7 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
 using QtVsTools.SyntaxAnalysis;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -288,6 +289,8 @@ namespace QtVsTools.Core
         /// <returns>true if successful</returns>
         public bool UpdateProjectFormatVersion()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (ConfigCondition == null)
                 return false;
 
@@ -910,6 +913,9 @@ namespace QtVsTools.Core
 
             var projPath = this[Files.Project].filePath;
             bool error = false;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
                 foreach (var row in query) {
 
@@ -1201,6 +1207,8 @@ namespace QtVsTools.Core
 
             //remove .moc.cbt CustomBuild items
             cbtToRemove.ForEach(x => x.Remove());
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);

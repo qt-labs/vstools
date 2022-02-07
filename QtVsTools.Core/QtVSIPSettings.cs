@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
 using System;
@@ -56,11 +57,14 @@ namespace QtVsTools.Core
 
         public static string GetUicDirectory(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetDirectory(project, Resources.uicDirKeyword);
         }
 
         public static void SaveUicDirectory(EnvDTE.Project project, string directory)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (directory == null)
                 SaveDirectory(project, Resources.uicDirKeyword, GetDirectory(project, Resources.uicDirKeyword));
             else
@@ -74,6 +78,7 @@ namespace QtVsTools.Core
 
         public static string GetMocDirectory(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetDirectory(project, Resources.mocDirKeyword);
         }
 
@@ -82,6 +87,8 @@ namespace QtVsTools.Core
             string configName,
             string platformName, VCFile vCFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string filePath = null;
             if (vCFile != null)
                 filePath = vCFile.FullPath;
@@ -94,6 +101,8 @@ namespace QtVsTools.Core
             string platformName,
             string filePath = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var dir = GetDirectory(project, Resources.mocDirKeyword);
             if (!string.IsNullOrEmpty(configName)
                 && !string.IsNullOrEmpty(platformName))
@@ -103,12 +112,16 @@ namespace QtVsTools.Core
 
         public static bool HasDifferentMocFilePerConfig(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var mocDir = GetMocDirectory(project);
             return mocDir.Contains("$(ConfigurationName)");
         }
 
         public static bool HasDifferentMocFilePerPlatform(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var mocDir = GetMocDirectory(project);
             return mocDir.Contains("$(PlatformName)");
         }
@@ -120,11 +133,14 @@ namespace QtVsTools.Core
 
         public static string GetMocOptions(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetOption(project, Resources.mocOptionsKeyword);
         }
 
         public static bool GetLUpdateOnBuild(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (GetProjectQtSetting(project, "QtRunLUpdateOnBuild") == "true")
                 return true;
             return GetBoolValue(project, Resources.lupdateKeyword);
@@ -137,6 +153,8 @@ namespace QtVsTools.Core
 
         static string GetProjectQtSetting(EnvDTE.Project project, string propertyName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vcProject = project.Object as VCProject;
             if (vcProject == null)
                 return null;
@@ -165,6 +183,8 @@ namespace QtVsTools.Core
 
         public static string GetLUpdateOptions(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string qtLUpdateOptions = GetProjectQtSetting(project, "QtLUpdateOptions");
             if (!string.IsNullOrEmpty(qtLUpdateOptions))
                 return qtLUpdateOptions;
@@ -178,6 +198,8 @@ namespace QtVsTools.Core
 
         public static string GetLReleaseOptions(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string qtLReleaseOptions = GetProjectQtSetting(project, "QtLReleaseOptions");
             if (!string.IsNullOrEmpty(qtLReleaseOptions))
                 return qtLReleaseOptions;
@@ -186,6 +208,8 @@ namespace QtVsTools.Core
 
         public static void SaveMocDirectory(EnvDTE.Project project, string directory)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (directory == null)
                 SaveDirectory(project, Resources.mocDirKeyword, GetDirectory(project, Resources.mocDirKeyword));
             else
@@ -196,11 +220,15 @@ namespace QtVsTools.Core
         {
             if (options == null)
                 options = GetMocOptions();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             SaveOption(project, Resources.mocOptionsKeyword, options);
         }
 
         public static void SaveLUpdateOnBuild(EnvDTE.Project project, bool value)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             SetBoolValue(project, Resources.lupdateKeyword, value);
         }
 
@@ -209,6 +237,8 @@ namespace QtVsTools.Core
             if (options == null)
                 options = GetLUpdateOptions();
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             SaveOption(project, Resources.lupdateOptionsKeyword, options);
         }
 
@@ -216,16 +246,22 @@ namespace QtVsTools.Core
         {
             if (options == null)
                 options = GetLReleaseOptions();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             SaveOption(project, Resources.lreleaseOptionsKeyword, options);
         }
 
         public static string GetRccDirectory(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return GetDirectory(project, Resources.rccDirKeyword);
         }
 
         public static void SaveRccDirectory(EnvDTE.Project project, string directory)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (directory == null)
                 SaveDirectory(project, Resources.rccDirKeyword, GetDirectory(project, Resources.rccDirKeyword));
             else
@@ -272,6 +308,8 @@ namespace QtVsTools.Core
 
         private static string GetDirectory(EnvDTE.Project project, string type)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // check for directory in following order:
             // - stored in project
             // - stored in cache
@@ -355,6 +393,8 @@ namespace QtVsTools.Core
 
         private static string GetOption(EnvDTE.Project project, string type)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // check for directory in following order:
             // - stored in project
             // - globally defined default option
@@ -366,6 +406,8 @@ namespace QtVsTools.Core
 
         private static bool GetBoolValue(EnvDTE.Project project, string type)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // check for directory in following order:
             // - stored in project
             // - globally defined default option
@@ -377,6 +419,8 @@ namespace QtVsTools.Core
 
         private static void SaveDirectory(EnvDTE.Project project, string type, string dir)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             dir = HelperFunctions.NormalizeRelativeFilePath(dir);
             project.Globals[type] = dir;
             if (!project.Globals.get_VariablePersists(type))
@@ -387,6 +431,8 @@ namespace QtVsTools.Core
 
         private static void SaveOption(EnvDTE.Project project, string type, string option)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             project.Globals[type] = option;
             if (!project.Globals.get_VariablePersists(type))
                 project.Globals.set_VariablePersists(type, true);
@@ -394,6 +440,8 @@ namespace QtVsTools.Core
 
         private static void SetBoolValue(EnvDTE.Project project, string type, bool value)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             project.Globals[type] = Convert.ToInt32(value).ToString();
             if (!project.Globals.get_VariablePersists(type))
                 project.Globals.set_VariablePersists(type, true);
@@ -401,6 +449,8 @@ namespace QtVsTools.Core
 
         public static void cleanUpCache(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try {
                 var mocEnumerator = mocDirCache.GetEnumerator();
                 while (mocEnumerator.MoveNext()) {

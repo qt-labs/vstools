@@ -83,6 +83,8 @@ namespace QtVsTools.Core
             if (xml == null)
                 return;
 
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
                 int id = (int)xModule.Attribute("Id");
                 QtModule module = new QtModule(id);

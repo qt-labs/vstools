@@ -104,6 +104,8 @@ namespace QtVsTools
 
         private void execHandler(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var command = sender as OleMenuCommand;
             if (command == null)
                 return;
@@ -120,6 +122,8 @@ namespace QtVsTools
 
         private void beforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var command = sender as OleMenuCommand;
             if (command == null)
                 return;
