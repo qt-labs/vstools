@@ -64,7 +64,8 @@ namespace QtVsTools.Core
             User,
             Count
         }
-        MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
+
+        readonly MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
 
         MsBuildProject()
         {
@@ -93,7 +94,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private static XNamespace ns = "http://schemas.microsoft.com/developer/msbuild/2003";
+        private static readonly XNamespace ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 
         public static MsBuildProject Load(string pathToProject)
         {
@@ -1462,12 +1463,12 @@ namespace QtVsTools.Core
 
         class MSBuildEvaluator : IVSMacroExpander, IDisposable
         {
-            MsBuildXmlFile projFile;
+            readonly MsBuildXmlFile projFile;
             string tempProjFilePath;
             XElement evaluateTarget;
             XElement evaluateProperty;
             ProjectRootElement projRoot;
-            public Dictionary<string, string> expansionCache;
+            public readonly Dictionary<string, string> expansionCache;
 
             public Dictionary<string, string> Properties
             {
@@ -1642,7 +1643,7 @@ namespace QtVsTools.Core
             return true;
         }
 
-        static Regex ConditionParser =
+        static readonly Regex ConditionParser =
             new Regex(@"\'\$\(Configuration[^\)]*\)\|\$\(Platform[^\)]*\)\'\=\=\'([^\']+)\'");
 
         class MsBuildConverterProvider : IPropertyStorageProvider

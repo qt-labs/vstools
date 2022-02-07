@@ -39,7 +39,7 @@ namespace QtVsTools.Core
     /// </summary>
     public class LinkerToolWrapper
     {
-        private VCLinkerTool linker;
+        private readonly VCLinkerTool linker;
 
         public LinkerToolWrapper(VCLinkerTool linkerTool)
         {

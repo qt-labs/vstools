@@ -55,7 +55,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private List<ProFileContent> proFiles;
-        private Solution prosln;
+        private readonly List<ProFileContent> proFiles;
+        private readonly Solution prosln;
     }
 }

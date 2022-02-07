@@ -109,7 +109,7 @@ namespace QtVsTools
         public Editors.QtLinguist QtLinguist { get; private set; }
         public Editors.QtResourceEditor QtResourceEditor { get; private set; }
 
-        static EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
+        static readonly EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         static QtVsToolsPackage instance = null;
         public static QtVsToolsPackage Instance

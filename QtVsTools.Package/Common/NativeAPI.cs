@@ -127,12 +127,12 @@ namespace QtVsTools
                 szTypeName = "";
             }
             public IntPtr hIcon;
-            public int iIcon;
-            public uint dwAttributes;
+            public readonly int iIcon;
+            public readonly uint dwAttributes;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-            public string szDisplayName;
+            public readonly string szDisplayName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_TYPE)]
-            public string szTypeName;
+            public readonly string szTypeName;
         };
 
         [Flags]

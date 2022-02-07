@@ -176,20 +176,20 @@ namespace QtVsTools.SyntaxAnalysis
         public static RegExpr SkipWs
         { get { return new Token(); } }
 
-        static CharExprBuilder _Char = new CharExprBuilder();
+        static readonly CharExprBuilder _Char = new CharExprBuilder();
         public static CharExprBuilder Char { get { return _Char; } }
         public static CharExprBuilder Chars { get { return _Char; } }
 
-        static CharSetExprBuilder _CharSet = new CharSetExprBuilder();
+        static readonly CharSetExprBuilder _CharSet = new CharSetExprBuilder();
         public static CharSetExprBuilder CharSet { get { return _CharSet; } }
 
-        static CharSetRawExprBuilder _CharSetRaw = new CharSetRawExprBuilder();
+        static readonly CharSetRawExprBuilder _CharSetRaw = new CharSetRawExprBuilder();
         public static CharSetRawExprBuilder CharSetRaw { get { return _CharSetRaw; } }
 
-        static AssertExprBuilder _LookAhead = new AssertExprBuilder(AssertLookAhead);
+        static readonly AssertExprBuilder _LookAhead = new AssertExprBuilder(AssertLookAhead);
         public static AssertExprBuilder LookAhead { get { return _LookAhead; } }
 
-        static AssertExprBuilder _LookBehind = new AssertExprBuilder(AssertLookBehind);
+        static readonly AssertExprBuilder _LookBehind = new AssertExprBuilder(AssertLookBehind);
         public static AssertExprBuilder LookBehind { get { return _LookBehind; } }
 
         public const SkipWhitespace SkipWs_Disable = SkipWhitespace.Disable;

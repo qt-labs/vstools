@@ -45,8 +45,8 @@ namespace QtVsTools
 
         private struct ModuleMapItem
         {
-            public CheckBox checkbox;
-            public int moduleId;
+            public readonly CheckBox checkbox;
+            public readonly int moduleId;
             public bool initialValue;
 
             public ModuleMapItem(CheckBox cb, int mid)
@@ -57,7 +57,7 @@ namespace QtVsTools
             }
         }
 
-        private List<ModuleMapItem> moduleMap = new List<ModuleMapItem>();
+        private readonly List<ModuleMapItem> moduleMap = new List<ModuleMapItem>();
 
         public FormProjectQtSettings()
         {

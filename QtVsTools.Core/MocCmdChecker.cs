@@ -34,8 +34,8 @@ namespace QtVsTools.Core
 {
     class MocCmdChecker
     {
-        private Regex backslashRegEx = new Regex(@"\\+\.?\\+");
-        private Regex endRegEx = new Regex(@"\\\.?$");
+        private readonly Regex backslashRegEx = new Regex(@"\\+\.?\\+");
+        private readonly Regex endRegEx = new Regex(@"\\\.?$");
 
         private string NormalizePath(string path)
         {

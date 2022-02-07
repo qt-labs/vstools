@@ -114,7 +114,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class ProgramDestroyEvent : DebugEvent, IDebugProgramDestroyEvent2
     {
-        uint exitCode;
+        readonly uint exitCode;
         public new Program Program { get; private set; }
 
         public ProgramDestroyEvent(Program program, uint exitCode)
@@ -142,7 +142,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class ThreadDestroyEvent : DebugEvent, IDebugThreadDestroyEvent2
     {
-        uint exitCode;
+        readonly uint exitCode;
 
         public ThreadDestroyEvent(Program program, uint exitCode)
         : base(program.Engine, typeof(IDebugThreadDestroyEvent2).GUID,
@@ -201,7 +201,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class BreakpointEvent : DebugEvent, IDebugBreakpointEvent2
     {
-        IEnumDebugBoundBreakpoints2 boundBreakpoints;
+        readonly IEnumDebugBoundBreakpoints2 boundBreakpoints;
 
         public BreakpointEvent(Program program,
             IEnumDebugBoundBreakpoints2 boundBreakpoints)
@@ -257,7 +257,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class OutputStringEvent : DebugEvent, IDebugOutputStringEvent2
     {
-        string outputString;
+        readonly string outputString;
 
         public OutputStringEvent(QmlEngine engine, string outputString)
         : base(engine, typeof(IDebugOutputStringEvent2).GUID, ASYNCHRONOUS)

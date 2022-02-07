@@ -57,7 +57,7 @@ namespace QtVsTools.Qml.Debug.V4
         IConnectionEventSink sink;
         IntPtr client;
         Task clientThread;
-        EventWaitHandle clientCreated = new EventWaitHandle(false, EventResetMode.ManualReset);
+        readonly EventWaitHandle clientCreated = new EventWaitHandle(false, EventResetMode.ManualReset);
         EventWaitHandle clientConnected;
 
         public uint? ThreadId { get; private set; }

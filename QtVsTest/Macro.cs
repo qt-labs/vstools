@@ -188,10 +188,10 @@ namespace QtVsTest.Macros
         const BindingFlags PUBLIC_STATIC = BindingFlags.Public | BindingFlags.Static;
         const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
-        static ConcurrentDictionary<string, Macro> Macros
+        static readonly ConcurrentDictionary<string, Macro> Macros
             = new ConcurrentDictionary<string, Macro>();
 
-        static ConcurrentDictionary<string, object> Globals
+        static readonly ConcurrentDictionary<string, object> Globals
             = new ConcurrentDictionary<string, object>();
 
         /// <summary>

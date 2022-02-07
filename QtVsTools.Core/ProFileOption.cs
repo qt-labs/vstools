@@ -137,7 +137,7 @@ namespace QtVsTools.Core
         private bool incComment;
         private string comment;
         private string newOpt;
-        private string name;
-        private List<string> list;
+        private readonly string name;
+        private readonly List<string> list;
     }
 }

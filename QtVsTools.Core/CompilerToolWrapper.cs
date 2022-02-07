@@ -44,7 +44,7 @@ namespace QtVsTools.Core
     /// Using VCCLCompilerTool directly will break the VS integration for Win CE.
     class CompilerToolWrapper
     {
-        private VCCLCompilerTool compilerTool;
+        private readonly VCCLCompilerTool compilerTool;
         private readonly Object compilerObj;
         private readonly Type compilerType;
 

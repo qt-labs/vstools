@@ -63,7 +63,7 @@ namespace QtVsTools.SyntaxAnalysis
             public virtual Delimiter Delimiters { get { return Delimiter.None; } }
             public virtual Operand Operands { get { return Operand.None; } }
 
-            protected List<IRuleAction<T>> Actions = new List<IRuleAction<T>>();
+            protected readonly List<IRuleAction<T>> Actions = new List<IRuleAction<T>>();
 
             protected void Init(
                 int priority, RuleCallback.Selector select, RuleCallback.PreCondition pre)

@@ -40,13 +40,12 @@ namespace QtVsTools.Core.CommandLine
 
     public class Parser
     {
-
-        List<Option> commandLineOptionList = new List<Option>();
-        Dictionary<string, int> nameHash = new Dictionary<string, int>();
-        Dictionary<int, List<string>> optionValuesHash = new Dictionary<int, List<string>>();
-        List<string> optionNames = new List<string>();
-        List<string> positionalArgumentList = new List<string>();
-        List<string> unknownOptionNames = new List<string>();
+        readonly List<Option> commandLineOptionList = new List<Option>();
+        readonly Dictionary<string, int> nameHash = new Dictionary<string, int>();
+        readonly Dictionary<int, List<string>> optionValuesHash = new Dictionary<int, List<string>>();
+        readonly List<string> optionNames = new List<string>();
+        readonly List<string> positionalArgumentList = new List<string>();
+        readonly List<string> unknownOptionNames = new List<string>();
         bool needsParsing = true;
 
         public enum SingleDashWordOptionMode
@@ -558,7 +557,7 @@ namespace QtVsTools.Core.CommandLine
 
     static class Lexer
     {
-        static Regex lexer = new Regex(
+        static readonly Regex lexer = new Regex(
             /* Newline    */ @"(\n)" +
             /* Unquoted   */ @"|((?:(?:[^\s\""])|(?:(?<=\\)\""))+)" +
             /* Quoted     */ @"|(?:\""((?:(?:[^\""])|(?:(?<=\\)\""))+)\"")" +

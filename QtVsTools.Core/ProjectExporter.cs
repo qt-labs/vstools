@@ -44,7 +44,7 @@ namespace QtVsTools.Core
     /// </summary>
     public class ProjectExporter
     {
-        private DTE dteObject;
+        private readonly DTE dteObject;
 
         public ProjectExporter(DTE dte)
         {

@@ -53,8 +53,8 @@ namespace QtVsTools.Core
         private VCProject vcPro;
         private MocCmdChecker mocCmdChecker;
         private Array lastConfigurationRowNames;
-        private static Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
-        private QtMsBuildContainer qtMsBuild;
+        private static readonly Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
+        private readonly QtMsBuildContainer qtMsBuild;
 
         public static QtVsTools.VisualStudio.IProjectTracker ProjectTracker { get; set; }
 
@@ -3688,8 +3688,7 @@ namespace QtVsTools.Core
 
     public class VCMacroExpander : IVSMacroExpander
     {
-        object config;
-
+        readonly object config;
         public VCMacroExpander(object config)
         {
             this.config = config;
@@ -3704,14 +3703,15 @@ namespace QtVsTools.Core
 
     public class QtCustomBuildTool
     {
-        QtMsBuildContainer qtMsBuild;
-        VCFileConfiguration vcConfig;
-        VCFile vcFile;
-        VCCustomBuildTool tool;
-        VCMacroExpander macros;
+        readonly QtMsBuildContainer qtMsBuild;
+        readonly VCFileConfiguration vcConfig;
+        readonly VCFile vcFile;
+        readonly VCCustomBuildTool tool;
+        readonly VCMacroExpander macros;
 
         enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic };
-        FileItemType itemType = FileItemType.Other;
+        readonly FileItemType itemType = FileItemType.Other;
+
         public QtCustomBuildTool(VCFileConfiguration vcConfig, QtMsBuildContainer container = null)
         {
             if (container != null)

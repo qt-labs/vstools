@@ -38,7 +38,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
     [TestClass]
     public class Test_Join
     {
-        ITaskItem[] LeftItems = new TaskItem[]
+        readonly ITaskItem[] LeftItems = new TaskItem[]
         {
                 new TaskItem("A", new Dictionary<string, string> {
                     { "X", "foo" },
@@ -53,8 +53,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                     { "Y", "3.14159" },
                 }),
         };
-
-        ITaskItem[] RightItems = new TaskItem[]
+        readonly ITaskItem[] RightItems = new TaskItem[]
         {
                 new TaskItem("A", new Dictionary<string, string> {
                     { "Z", "foo" },

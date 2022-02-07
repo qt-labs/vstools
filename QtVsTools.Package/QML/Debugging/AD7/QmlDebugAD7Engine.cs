@@ -78,13 +78,13 @@ namespace QtVsTools.Qml.Debug.AD7
             FileSystem = FileSystem.Create();
         }
 
-        Dictionary<Guid, Program> programs = new Dictionary<Guid, Program>();
+        readonly Dictionary<Guid, Program> programs = new Dictionary<Guid, Program>();
         public IEnumerable<Program> Programs
         {
             get { return ThreadSafe(() => programs.Values.ToList()); }
         }
 
-        HashSet<PendingBreakpoint> pendingBreakpoints = new HashSet<PendingBreakpoint>();
+        readonly HashSet<PendingBreakpoint> pendingBreakpoints = new HashSet<PendingBreakpoint>();
         public IEnumerable<PendingBreakpoint> PendingBreakpoints
         {
             get { return ThreadSafe(() => pendingBreakpoints.ToList()); }
@@ -273,7 +273,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         #region //////////////////// Concurrent ///////////////////////////////////////////////////
 
-        LocalConcurrent concurrent = new LocalConcurrent();
+        readonly LocalConcurrent concurrent = new LocalConcurrent();
         class LocalConcurrent : Concurrent
         {
             public void LocalThreadSafe(Action action)

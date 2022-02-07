@@ -43,22 +43,22 @@ namespace QtVsTools
 {
     class DteEventsHandler
     {
-        private DTE dte;
-        private SolutionEvents solutionEvents;
-        private BuildEvents buildEvents;
-        private DocumentEvents documentEvents;
-        private ProjectItemsEvents projectItemsEvents;
+        private readonly DTE dte;
+        private readonly SolutionEvents solutionEvents;
+        private readonly BuildEvents buildEvents;
+        private readonly DocumentEvents documentEvents;
+        private readonly ProjectItemsEvents projectItemsEvents;
         private vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
         private VCProjectEngineEvents vcProjectEngineEvents;
-        private CommandEvents debugStartEvents;
-        private CommandEvents debugStartWithoutDebuggingEvents;
-        private CommandEvents f1HelpEvents;
+        private readonly CommandEvents debugStartEvents;
+        private readonly CommandEvents debugStartWithoutDebuggingEvents;
+        private readonly CommandEvents f1HelpEvents;
         private WindowEvents windowEvents;
-        private int dispId_VCFileConfiguration_ExcludedFromBuild;
-        private int dispId_VCCLCompilerTool_UsePrecompiledHeader;
-        private int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
-        private int dispId_VCCLCompilerTool_PreprocessorDefinitions;
-        private int dispId_VCCLCompilerTool_AdditionalIncludeDirectories;
+        private readonly int dispId_VCFileConfiguration_ExcludedFromBuild;
+        private readonly int dispId_VCCLCompilerTool_UsePrecompiledHeader;
+        private readonly int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
+        private readonly int dispId_VCCLCompilerTool_PreprocessorDefinitions;
+        private readonly int dispId_VCCLCompilerTool_AdditionalIncludeDirectories;
 
         public DteEventsHandler(DTE _dte)
         {

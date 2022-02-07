@@ -51,27 +51,27 @@ namespace QtVsTools
             QmlDebug = oldQmlDebug = QtVSIPSettings.GetQmlDebug(project);
         }
 
-        private QtVersionManager versionManager;
+        private readonly QtVersionManager versionManager;
         private EnvDTE.Project project;
 
-        private string oldMocDir;
-        private string oldMocOptions;
-        private string oldRccDir;
-        private string oldUicDir;
-        private string oldQtVersion;
-        private bool oldLUpdateOnBuild;
-        private string oldLUpdateOptions;
-        private string oldLReleaseOptions;
-        private bool oldQmlDebug;
+        private readonly string oldMocDir;
+        private readonly string oldMocOptions;
+        private readonly string oldRccDir;
+        private readonly string oldUicDir;
+        private readonly string oldQtVersion;
+        private readonly bool oldLUpdateOnBuild;
+        private readonly string oldLUpdateOptions;
+        private readonly string oldLReleaseOptions;
+        private readonly bool oldQmlDebug;
 
-        private string newMocDir;
-        private string newMocOptions;
-        private string newRccDir;
-        private string newUicDir;
+        private readonly string newMocDir;
+        private readonly string newMocOptions;
+        private readonly string newRccDir;
+        private readonly string newUicDir;
         private string newQtVersion;
-        private bool newLUpdateOnBuild;
-        private string newLUpdateOptions;
-        private string newLReleaseOptions;
+        private readonly bool newLUpdateOnBuild;
+        private readonly string newLUpdateOptions;
+        private readonly string newLReleaseOptions;
 
         public void SaveSettings()
         {
@@ -161,7 +161,7 @@ namespace QtVsTools
 
         internal class VersionConverter : StringConverter
         {
-            private QtVersionManager versionManager;
+            private readonly QtVersionManager versionManager;
 
             public VersionConverter()
             {

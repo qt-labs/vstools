@@ -51,7 +51,7 @@ namespace QtVsTools.Qml.Classification
     /// </summary>
     class SharedTagList : Concurrent
     {
-        SortedList<int, TrackingTag> data = new SortedList<int, TrackingTag>();
+        readonly SortedList<int, TrackingTag> data = new SortedList<int, TrackingTag>();
         object owner;
 
         public bool Ready { get; private set; }
@@ -96,7 +96,7 @@ namespace QtVsTools.Qml.Classification
 
         class TrackingTagComparer : Comparer<TrackingTag>
         {
-            ITextSnapshot snapshot;
+            readonly ITextSnapshot snapshot;
             public TrackingTagComparer(ITextSnapshot snapshot)
             {
                 this.snapshot = snapshot;
@@ -235,13 +235,12 @@ namespace QtVsTools.Qml.Classification
         protected ITextBuffer Buffer { get; private set; }
 
         readonly object criticalSection = new object();
-
-        string classificationType;
+        readonly string classificationType;
         ParserKey currentParserKey;
         TagListKey currentTagListKey;
         SharedTagList currentTagList;
-        Dispatcher dispatcher;
-        DispatcherTimer timer;
+        readonly Dispatcher dispatcher;
+        readonly DispatcherTimer timer;
         bool flag = false;
 
         protected QmlAsyncClassifier(
@@ -510,7 +509,7 @@ namespace QtVsTools.Qml.Classification
                 public TValue Value { get; set; }
                 public HashSet<object> ClientObjects { get; set; }
             }
-            Dictionary<TKey, ValueRef> data = new Dictionary<TKey, ValueRef>();
+            readonly Dictionary<TKey, ValueRef> data = new Dictionary<TKey, ValueRef>();
 
             static readonly object staticCriticalSection = new object();
             readonly object criticalSection = new object();

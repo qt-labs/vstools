@@ -43,8 +43,8 @@ namespace QtVsTools.Core
     public class QtVersionManager
     {
         private static QtVersionManager instance;
-        private string regVersionPath;
-        private string strVersionKey;
+        private readonly string regVersionPath;
+        private readonly string strVersionKey;
         private Hashtable versionCache;
 
         protected QtVersionManager()
@@ -71,9 +71,8 @@ namespace QtVsTools.Core
             }
         }
 
-        static EventWaitHandle
-            packageInit = new EventWaitHandle(false, EventResetMode.ManualReset),
-            packageInitDone = null;
+        private static readonly EventWaitHandle packageInit = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private static EventWaitHandle packageInitDone = null;
 
         static public QtVersionManager The(EventWaitHandle initDone = null)
         {

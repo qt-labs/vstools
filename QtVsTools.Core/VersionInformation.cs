@@ -43,7 +43,7 @@ namespace QtVsTools.Core
     {
         //fields
         public string name;
-        public string qtDir;
+        public readonly string qtDir;
         public uint qtMajor; // X in version x.y.z
         public uint qtMinor; // Y in version x.y.z
         public uint qtPatch; // Z in version x.y.z
@@ -79,7 +79,7 @@ namespace QtVsTools.Core
             _cache.Clear();
         }
 
-        Dictionary<string, bool> _IsModuleAvailable;
+        readonly Dictionary<string, bool> _IsModuleAvailable;
         public bool IsModuleAvailable(string module)
         {
             return _IsModuleAvailable?[module] ?? false;

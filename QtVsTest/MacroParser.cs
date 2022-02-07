@@ -37,7 +37,7 @@ namespace QtVsTest.Macros
 
     class MacroLines : IEnumerable<MacroLine>
     {
-        List<MacroLine> Lines = new List<MacroLine>();
+        readonly List<MacroLine> Lines = new List<MacroLine>();
 
         public void Add(MacroLine line) { Lines.Add(line); }
 
@@ -120,7 +120,7 @@ namespace QtVsTest.Macros
 
     public class CodeLine : MacroLine
     {
-        public string Code;
+        public readonly string Code;
         public CodeLine(string code)
         {
             Code = code;

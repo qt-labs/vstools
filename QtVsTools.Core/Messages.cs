@@ -194,7 +194,7 @@ namespace QtVsTools.Core
         }
 
         static bool shuttingDown = false;
-        static ConcurrentQueue<Msg> msgQueue = new ConcurrentQueue<Msg>();
+        static readonly ConcurrentQueue<Msg> msgQueue = new ConcurrentQueue<Msg>();
         static DTE Dte { get; set; } = null;
 
         private static void OnBeginShutdown()

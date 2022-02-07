@@ -73,7 +73,7 @@ namespace QtVsTools.Qml.Debug.AD7
         public class Mapping<TStruct, TFieldMask> : Mapping,
             IEnumerable<MapField<TStruct, TFieldMask>>
         {
-            List<MapField<TStruct, TFieldMask>> fieldMaps;
+            readonly List<MapField<TStruct, TFieldMask>> fieldMaps;
 
             protected static Action<Ref<TStruct>, TFieldMask> UpdateMask { get; set; }
 

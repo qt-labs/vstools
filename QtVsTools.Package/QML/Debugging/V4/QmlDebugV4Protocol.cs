@@ -53,10 +53,10 @@ namespace QtVsTools.Qml.Debug.V4
         IMessageEventSink sink;
         DebugClient client;
         int nextRequestSeq = 0;
-        Dictionary<int, PendingRequest> pendingRequests = new Dictionary<int, PendingRequest>();
+        readonly Dictionary<int, PendingRequest> pendingRequests = new Dictionary<int, PendingRequest>();
         Task eventHandlingThread;
-        EventWaitHandle eventReceived = new EventWaitHandle(false, EventResetMode.AutoReset);
-        ConcurrentQueue<Event> eventQueue = new ConcurrentQueue<Event>();
+        readonly EventWaitHandle eventReceived = new EventWaitHandle(false, EventResetMode.AutoReset);
+        readonly ConcurrentQueue<Event> eventQueue = new ConcurrentQueue<Event>();
 
         public uint? ThreadId { get { return client.ThreadId; } }
 
@@ -210,7 +210,7 @@ namespace QtVsTools.Qml.Debug.V4
         public class PendingRequest : Finalizable
         {
             public Request Request { get; private set; }
-            EventWaitHandle responded;
+            readonly EventWaitHandle responded;
 
             public PendingRequest()
             {

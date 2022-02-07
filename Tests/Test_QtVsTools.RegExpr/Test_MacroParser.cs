@@ -37,7 +37,7 @@ namespace QtVsTools.Test.RegExpr
     [TestClass]
     public class Test_MacroParser
     {
-        MacroParser Parser = MacroParser.Get();
+        readonly MacroParser Parser = MacroParser.Get();
 
         [TestMethod]
         public void TestMacro()

@@ -134,7 +134,7 @@ namespace QtVsTools
 
             static readonly object classCriticalSection = new object();
 
-            static Dictionary<Type, List<Type>> types = GetTypeHierarchy(typeof(TBase));
+            static readonly Dictionary<Type, List<Type>> types = GetTypeHierarchy(typeof(TBase));
 
             static Dictionary<Type, List<Type>> GetTypeHierarchy(Type baseType)
             {
@@ -174,7 +174,7 @@ namespace QtVsTools
                 return subTypes;
             }
 
-            static Dictionary<Type, SubClass> classes = types
+            static readonly Dictionary<Type, SubClass> classes = types
                 .ToDictionary(x => x.Key, x => Create(x.Key, x.Value));
 
             static SubClass Create(Type type, IEnumerable<Type> subTypes)
@@ -213,7 +213,7 @@ namespace QtVsTools
                 }
             }
 
-            public static SubClass baseClass = Get(typeof(TBase));
+            public static readonly SubClass baseClass = Get(typeof(TBase));
         }
 
         #endregion //////////////////// SubClass //////////////////////////////////////////////////

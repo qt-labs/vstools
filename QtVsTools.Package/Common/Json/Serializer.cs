@@ -245,9 +245,9 @@ namespace QtVsTools.Json
 
         #region //////////////////// Data Contract Surrogate //////////////////////////////////////
 
-        static Exclusive<Serializer> sharedInstance = new Exclusive<Serializer>();
+        static readonly Exclusive<Serializer> sharedInstance = new Exclusive<Serializer>();
         private XmlReader reader = null;
-        private List<IDeferredObject> deferredObjects = new List<IDeferredObject>();
+        private readonly List<IDeferredObject> deferredObjects = new List<IDeferredObject>();
 
         public static IJsonData GetCurrentJsonData()
         {

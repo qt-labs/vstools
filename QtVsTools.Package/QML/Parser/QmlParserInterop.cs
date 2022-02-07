@@ -148,14 +148,13 @@ namespace QtVsTools.Qml
 
         IntPtr qmlTextPtr = IntPtr.Zero;
         IntPtr qmlParserPtr = IntPtr.Zero;
-
-        List<Token> tokens;
+        readonly List<Token> tokens;
         public IEnumerable<Token> Tokens
         {
             get { return tokens; }
         }
 
-        List<DiagnosticMessage> diagnosticMessages;
+        readonly List<DiagnosticMessage> diagnosticMessages;
         public IEnumerable<DiagnosticMessage> DiagnosticMessages
         {
             get { return diagnosticMessages; }
@@ -163,13 +162,13 @@ namespace QtVsTools.Qml
 
         public int FirstErrorOffset { get; private set; }
 
-        List<AstNode> visitedNodes;
+        readonly List<AstNode> visitedNodes;
         public IEnumerable<AstNode> AstNodes { get { return visitedNodes; } }
 
         public bool ParsedCorrectly { get; private set; }
 
-        Dictionary<IntPtr, AstNode> nodesBytPtr;
-        Dictionary<IntPtr, List<KeyValuePair<AstNode, PropertyInfo>>> pendingDereferences;
+        readonly Dictionary<IntPtr, AstNode> nodesBytPtr;
+        readonly Dictionary<IntPtr, List<KeyValuePair<AstNode, PropertyInfo>>> pendingDereferences;
 
         Parser()
         {

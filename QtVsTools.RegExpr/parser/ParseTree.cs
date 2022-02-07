@@ -67,7 +67,7 @@ namespace QtVsTools.SyntaxAnalysis
                     }
                 }
 
-                static NodeComparer _Comparer = new NodeComparer();
+                static readonly NodeComparer _Comparer = new NodeComparer();
                 public static IComparer<Node> Comparer { get { return _Comparer; } }
 
                 public Token Token { get; set; }
@@ -77,10 +77,10 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public Node Parent { get; set; }
 
-                SortedList<int, Node> _ChildNodes = new SortedList<int, Node>();
+                readonly SortedList<int, Node> _ChildNodes = new SortedList<int, Node>();
                 public SortedList<int, Node> ChildNodes { get { return _ChildNodes; } }
 
-                ProductionObjects _ChildProductions = new ProductionObjects();
+                readonly ProductionObjects _ChildProductions = new ProductionObjects();
                 public ProductionObjects ChildProductions { get { return _ChildProductions; } }
 
                 public Queue<Node> TokenStream { get; set; }

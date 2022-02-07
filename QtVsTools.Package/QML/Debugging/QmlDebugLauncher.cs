@@ -159,7 +159,7 @@ namespace QtVsTools.Qml.Debug
             }
         }
 
-        static RegExpr wslPathRegex = new Token("WSLPATH", SkipWs_Disable, StartOfFile
+        static readonly RegExpr wslPathRegex = new Token("WSLPATH", SkipWs_Disable, StartOfFile
             & "/mnt/" & new Token("DRIVE", CharWord) & "/" & new Token("PATH", AnyChar.Repeat()))
         {
             new Rule<WslPath>
@@ -168,7 +168,7 @@ namespace QtVsTools.Qml.Debug
                 Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path),
             }
         };
-        static RegExpr.Parser wslPathParser = wslPathRegex.Render();
+        static readonly RegExpr.Parser wslPathParser = wslPathRegex.Render();
 
         bool GetProcessInfo(IDebugProcess2 pProcess, bool native, out string execPath, out uint procId)
         {

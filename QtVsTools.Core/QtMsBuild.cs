@@ -84,8 +84,7 @@ namespace QtVsTools.Core.QtMsBuild
 
     public class QtMsBuildContainer
     {
-
-        IPropertyStorageProvider provider;
+        readonly IPropertyStorageProvider provider;
         public QtMsBuildContainer(IPropertyStorageProvider provider)
         {
             this.provider = provider;
@@ -198,9 +197,9 @@ namespace QtVsTools.Core.QtMsBuild
             return provider.GetProjectConfiguration(GetProject(), configName);
         }
 
-        Dictionary<string, ItemPropertyChange> itemPropertyChanges
+        readonly Dictionary<string, ItemPropertyChange> itemPropertyChanges
             = new Dictionary<string, ItemPropertyChange>();
-        Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped
+        readonly Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped
             = new Dictionary<string, List<ItemPropertyChange>>();
         bool pendingChanges = false;
 
@@ -658,8 +657,8 @@ namespace QtVsTools.Core.QtMsBuild
 
     public abstract class QtTool
     {
-        protected CommandLineParser parser;
-        protected CommandLineOption outputOption;
+        protected readonly CommandLineParser parser;
+        protected readonly CommandLineOption outputOption;
         protected CommandLineOption helpOption;
         protected CommandLineOption versionOption;
 
@@ -779,7 +778,7 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        Dictionary<Property, CommandLineOption> options
+        readonly Dictionary<Property, CommandLineOption> options
             = new Dictionary<Property, CommandLineOption>();
 
         public QtMoc() : base()
@@ -1078,7 +1077,7 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        Dictionary<Property, CommandLineOption> options
+        readonly Dictionary<Property, CommandLineOption> options
             = new Dictionary<Property, CommandLineOption>();
 
         public QtRcc() : base()
@@ -1272,7 +1271,7 @@ namespace QtVsTools.Core.QtMsBuild
             PrintDebug,
         }
 
-        Dictionary<Property, CommandLineOption> options
+        readonly Dictionary<Property, CommandLineOption> options
             = new Dictionary<Property, CommandLineOption>();
 
         public QtRepc() : base(defaultInputOutput: false)
@@ -1436,7 +1435,7 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        Dictionary<Property, CommandLineOption> options
+        readonly Dictionary<Property, CommandLineOption> options
             = new Dictionary<Property, CommandLineOption>();
 
         public QtUic() : base()

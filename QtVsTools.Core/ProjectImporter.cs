@@ -38,7 +38,7 @@ namespace QtVsTools.Core
 {
     public class ProjectImporter
     {
-        private DTE dteObject;
+        private readonly DTE dteObject;
         const string projectFileExtension = ".vcxproj";
 
         public ProjectImporter(DTE dte)

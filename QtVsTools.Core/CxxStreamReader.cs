@@ -42,12 +42,12 @@ namespace QtVsTools.Core
             Normal, Comment, String
         }
         private State state = State.Normal;
-        private StreamReader sr;
+        private readonly StreamReader sr;
         private string partialLine;
         bool disposed;
 
         int _lineNum;
-        string[] _lines;
+        readonly string[] _lines;
 
         public CxxStreamReader(string[] lines)
         {

@@ -223,7 +223,7 @@ namespace QtVsTools.Test.RegExpr
             return xmlInt.Render(CharSpace.Repeat());
         }
 
-        Parser Parser = GetParser();
+        readonly Parser Parser = GetParser();
 
         [TestMethod]
         public void TestConst()

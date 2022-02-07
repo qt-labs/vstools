@@ -73,8 +73,8 @@ namespace QtVsTools.Core
             }
         }
 
-        private VCProject vcproj;
+        private readonly VCProject vcproj;
         private bool export;
-        private List<ProFileOption> options;
+        private readonly List<ProFileOption> options;
     }
 }

@@ -46,9 +46,9 @@ namespace QtVsTools.Core
     {
         public static IQtVsToolsOptions Options { get; set; }
 
-        static Hashtable mocDirCache = new Hashtable();
-        static Hashtable uicDirCache = new Hashtable();
-        static Hashtable rccDirCache = new Hashtable();
+        static readonly Hashtable mocDirCache = new Hashtable();
+        static readonly Hashtable uicDirCache = new Hashtable();
+        static readonly Hashtable rccDirCache = new Hashtable();
 
         public static bool GetDisableAutoMocStepsUpdate()
         {
