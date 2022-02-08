@@ -61,21 +61,21 @@ namespace QtVsTools.Qml.Debug.AD7
 
         public QmlEngine Engine { get; private set; }
 
-        public List<StackFrame> CurrentFrames { get; private set; }
+        private List<StackFrame> CurrentFrames { get; set; }
 
-        public const string Name = "QML Debugger";
-        public Guid ProcessId { get; private set; }
+        private const string Name = "QML Debugger";
+        public Guid ProcessId { get; set; }
         public Guid ProgramId { get; set; }
-        public IDebugProcess2 NativeProc { get; private set; }
-        public uint NativeProcId { get; private set; }
-        public string ExecPath { get; private set; }
-        public string ExecArgs { get; private set; }
-        public IVsDebugger VsDebugger { get; private set; }
-        Dispatcher vsDebuggerThreadDispatcher;
+        private IDebugProcess2 NativeProc { get; set; }
+        private uint NativeProcId { get; set; }
+        private string ExecPath { get; set; }
+        private string ExecArgs { get; set; }
+        private IVsDebugger VsDebugger { get; set; }
+        private Dispatcher vsDebuggerThreadDispatcher;
 
         private readonly static object criticalSectionGlobal = new object();
-        static bool originalBreakAllProcesses = BreakAllProcesses;
-        static int runningPrograms = 0;
+        private static bool originalBreakAllProcesses = BreakAllProcesses;
+        private static int runningPrograms = 0;
 
         public static Program Create(
             QmlEngine engine,

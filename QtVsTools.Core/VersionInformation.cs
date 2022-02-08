@@ -90,7 +90,7 @@ namespace QtVsTools.Core
         public string VC_WindowsTargetPlatformMinVersion { get; }
         public string VC_WindowsTargetPlatformVersion { get; }
         public string VC_Link_TargetMachine { get; }
-        public string VC_PlatformToolset { get; }
+        private string VC_PlatformToolset { get; }
 
         private VersionInformation(string qtDirIn)
         {

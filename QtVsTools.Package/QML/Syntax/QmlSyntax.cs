@@ -192,7 +192,7 @@ namespace QtVsTools.Qml.Syntax
     /// </summary>
     public class Token : SyntaxElement
     {
-        public TokenKind Kind { get; private set; }
+        private TokenKind Kind { get; set; }
         public SourceLocation Location { get; private set; }
         protected Token() { }
         public static Token Create(TokenKind kind, int offset, int length)

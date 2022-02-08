@@ -57,13 +57,13 @@ namespace QtVsTools.SyntaxAnalysis
         {
             public string Id { get; set; }
 
-            public bool SkipLeadingWhitespace { get; set; }
-            public RegExpr LeadingWhitespace { get; set; }
+            private bool SkipLeadingWhitespace { get; }
+            private RegExpr LeadingWhitespace { get; }
 
-            public RegExpr Expr { get; set; }
+            private RegExpr Expr { get; }
 
-            public HashSet<Token> Children { get; set; }
-            public Dictionary<string, Token> Parents { get; set; }
+            private HashSet<Token> Children { get; }
+            public Dictionary<string, Token> Parents { get; }
             public IEnumerable<string> CaptureIds => Parents.Keys;
 
             public Token(string id, RegExpr skipWs, RegExpr expr)

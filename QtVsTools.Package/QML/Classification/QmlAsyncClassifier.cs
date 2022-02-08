@@ -231,8 +231,8 @@ namespace QtVsTools.Qml.Classification
         /// <returns>Instance of T corresponding to the given TrackingTag</returns>
         protected abstract T GetClassification(TrackingTag tag);
 
-        protected ITextView TextView { get; }
-        protected ITextBuffer Buffer { get; }
+        private ITextView TextView { get; }
+        private ITextBuffer Buffer { get; }
 
         readonly object criticalSection = new object();
         readonly string classificationType;
@@ -571,8 +571,8 @@ namespace QtVsTools.Qml.Classification
 
         class TagListKey
         {
-            public string Classification { get; }
-            public ITextSnapshot Snapshot { get; }
+            private string Classification { get; }
+            private ITextSnapshot Snapshot { get; }
             public TagListKey(string classification, ITextSnapshot snapshot)
             {
                 Classification = classification;

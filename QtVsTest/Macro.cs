@@ -82,7 +82,7 @@ namespace QtVsTest.Macros
         /// <summary>
         /// Name of reusable macro
         /// </summary>
-        public string Name { get; private set; }
+        private string Name { get; set; }
 
         /// <summary>
         /// True if macro compilation was successful

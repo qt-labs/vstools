@@ -53,7 +53,7 @@ namespace QtVsTools.Wizards.Common
         public string UiFile { get; set; }
         public string QrcFile { get; set; }
 
-        public List<string> Modules { get; set; }
+        private List<string> Modules { get; }
         public List<string> DefaultModules { get; set; }
 
         public bool AddDefaultAppIcon { get; set; }

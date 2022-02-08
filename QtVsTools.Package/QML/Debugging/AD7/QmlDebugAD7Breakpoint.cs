@@ -44,12 +44,12 @@ namespace QtVsTools.Qml.Debug.AD7
         static readonly string[] ValidExtensions = new string[] { ".qml", ".js" };
 
         public QmlEngine Engine { get; private set; }
-        public IDebugBreakpointRequest2 Request { get; private set; }
-        public enum_BP_LOCATION_TYPE LocationType { get; private set; }
-        public BP_REQUEST_INFO RequestInfo { get; private set; }
+        private IDebugBreakpointRequest2 Request { get; set; }
+        private enum_BP_LOCATION_TYPE LocationType { get; set; }
+        private BP_REQUEST_INFO RequestInfo { get; set; }
         public string FileName { get; private set; }
         public TEXT_POSITION BeginPosition { get; private set; }
-        public TEXT_POSITION EndPosition { get; private set; }
+        private TEXT_POSITION EndPosition { get; set; }
         public bool Enabled { get; private set; }
 
         HashSet<Breakpoint> breakpoints;
@@ -186,12 +186,12 @@ namespace QtVsTools.Qml.Debug.AD7
         IDebugBreakpointResolution2 // "This interface represents the information that describes a
                                     //  bound breakpoint."
     {
-        public QmlDebugger Debugger { get; private set; }
-        public QmlEngine Engine { get; private set; }
+        private QmlDebugger Debugger { get; set; }
+        private QmlEngine Engine { get; set; }
         public Program Program { get; private set; }
         public PendingBreakpoint Parent { get; private set; }
-        public CodeContext CodeContext { get; private set; }
-        public bool Enabled { get; set; }
+        private CodeContext CodeContext { get; set; }
+        private bool Enabled { get; set; }
 
         bool supressNotify;
 

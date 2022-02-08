@@ -140,7 +140,7 @@ namespace QtVsTools.Options
                 ?? (_ExplorerIcon = GetExplorerIcon());
         }
 
-        public bool IsValid { get; private set; }
+        private bool IsValid { get; set; }
 
         Field FocusedField { get; set; }
 

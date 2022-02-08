@@ -78,7 +78,7 @@ namespace QtVsTools.VisualStudio
             static IVsInfoBarUIFactory Factory => _Factory ?? (_Factory =
                 VsServiceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>());
 
-            public IVsInfoBarUIElement UIElement { get; private set; }
+            private IVsInfoBarUIElement UIElement { get; set; }
             private uint cookie;
 
             public bool IsOpen => UIElement != null;

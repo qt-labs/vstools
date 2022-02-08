@@ -42,23 +42,23 @@ namespace QtVsTools.Qml.Debug.AD7
                         //  property, or some other property. The property is usually the result of
                         //  an expression evaluation."
     {
-        public QmlDebugger Debugger { get; private set; }
+        private QmlDebugger Debugger { get; set; }
 
-        public QmlEngine Engine { get; private set; }
-        public Program Program { get; private set; }
-        public StackFrame StackFrame { get; private set; }
-        public CodeContext CodeContext { get; private set; }
+        private QmlEngine Engine { get; set; }
+        private Program Program { get; set; }
+        private StackFrame StackFrame { get; set; }
+        private CodeContext CodeContext { get; set; }
 
-        public Property Parent { get; private set; }
-        public SortedDictionary<string, Property> Children { get; private set; }
+        private Property Parent { get; set; }
+        private SortedDictionary<string, Property> Children { get; set; }
 
-        public int FrameNumber { get; private set; }
-        public int ScopeNumber { get; private set; }
-        public JsValue JsValue { get; private set; }
-        public string Name { get; private set; }
-        public string FullName { get; private set; }
-        public string Type { get; private set; }
-        public string Value { get; private set; }
+        private int FrameNumber { get; set; }
+        private int ScopeNumber { get; set; }
+        private JsValue JsValue { get; set; }
+        private string Name { get; set; }
+        private string FullName { get; set; }
+        private string Type { get; set; }
+        private string Value { get; set; }
 
         public static Property Create(
             StackFrame frame,

@@ -48,7 +48,7 @@ namespace QtVsTools.Json
     {
         #region //////////////////// Prototype ////////////////////////////////////////////////////
 
-        protected Serializer Serializer { get; set; }
+        private Serializer Serializer { get; set; }
 
         protected Serializable()
         { }

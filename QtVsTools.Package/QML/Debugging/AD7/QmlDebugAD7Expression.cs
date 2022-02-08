@@ -39,13 +39,13 @@ namespace QtVsTools.Qml.Debug.AD7
         IDebugExpression2 // "This interface represents a parsed expression ready for binding
                           //  and evaluating."
     {
-        public string ExpressionString { get; private set; }
+        private string ExpressionString { get; set; }
 
-        public StackFrame StackFrame { get; private set; }
+        private StackFrame StackFrame { get; set; }
         public QmlEngine Engine { get; private set; }
         public Program Program { get; private set; }
-        public QmlDebugger Debugger { get; private set; }
-        public CodeContext CodeContext { get; private set; }
+        private QmlDebugger Debugger { get; set; }
+        private CodeContext CodeContext { get; set; }
 
         public static Expression Create(StackFrame frame, string expr)
         {

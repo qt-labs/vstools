@@ -141,7 +141,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected virtual IEnumerable<IWizardConfiguration> Configurations => WizardData.Configs;
         protected virtual bool UsePrecompiledHeaders => WizardData.UsePrecompiledHeader;
 
-        protected Dictionary<string, string> ParameterValues { get; private set; }
+        private Dictionary<string, string> ParameterValues { get; set; }
         protected EnvDTE.DTE Dte { get; private set; }
 
         ItemDef _PrecompiledHeaderFile;

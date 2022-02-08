@@ -76,7 +76,7 @@ namespace QtVsTools.Wizards.Common
             }
         }
 
-        public List<WizardPage> Pages
+        private List<WizardPage> Pages
         {
             get;
         }

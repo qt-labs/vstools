@@ -47,8 +47,8 @@ namespace QtVsTools.SyntaxAnalysis
     ///
     public partial class CharClassSet : CharClass, IEnumerable<IEnumerable<Element>>
     {
-        public IEnumerable<Element> Positives { get; set; }
-        public IEnumerable<Element> Negatives { get; set; }
+        private IEnumerable<Element> Positives { get; set; }
+        private IEnumerable<Element> Negatives { get; set; }
 
         bool IsSubSet { get; set; }
         bool HasPositive { get { return Positives != null && Positives.Any(); } }

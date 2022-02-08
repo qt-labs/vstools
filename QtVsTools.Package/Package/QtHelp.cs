@@ -46,10 +46,10 @@ namespace QtVsTools
     {
         public enum SourcePreference { Online, Offline }
 
-        public static QtHelp Instance
+        private static QtHelp Instance
         {
             get;
-            private set;
+            set;
         }
 
         public static void Initialize(Package package)

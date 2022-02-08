@@ -38,9 +38,9 @@ namespace QtVsTools.Core
     {
         static IVsThreadedWaitDialogFactory factory = null;
 
-        public IVsThreadedWaitDialog2 VsWaitDialog { get; private set; }
+        private IVsThreadedWaitDialog2 VsWaitDialog { get; set; }
 
-        public bool Running { get; private set; }
+        private bool Running { get; set; }
 
         bool? vsDialogCanceled = null;
 

@@ -52,12 +52,12 @@ namespace QtVsTools.Qml.Debug.AD7
         public Program Program { get; private set; }
 
         public CodeContext Context { get; private set; }
-        public Dictionary<int, Dictionary<string, Property>> Properties { get; private set; }
+        private Dictionary<int, Dictionary<string, Property>> Properties { get; set; }
 
-        public string Name { get; private set; }
-        public int FrameNumber { get; private set; }
-        public IEnumerable<int> Scopes { get; private set; }
-        public Task InitThread { get; private set; }
+        private string Name { get; set; }
+        public int FrameNumber { get; set; }
+        private IEnumerable<int> Scopes { get; set; }
+        private Task InitThread { get; set; }
 
         static public StackFrame Create(
             string name,

@@ -40,7 +40,7 @@ namespace QtVsTools.Core
     {
         public Dictionary<string, string> Vars { get; protected set; }
         public string OutputFile { get; protected set; }
-        public uint DebugLevel { get; protected set; }
+        private uint DebugLevel { get; set; }
         public string TemplatePrefix { get; protected set; }
         public bool Recursive { get; protected set; }
         public string ProFile { get; protected set; }
@@ -48,7 +48,7 @@ namespace QtVsTools.Core
         public bool DisableWarnings { get; set; }
 
         protected VersionInformation QtVersion { get; }
-        protected EnvDTE.DTE Dte { get; }
+        private EnvDTE.DTE Dte { get; }
 
         public QMake(VersionInformation qtVersion, EnvDTE.DTE dte = null)
         {

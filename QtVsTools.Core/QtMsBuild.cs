@@ -508,7 +508,8 @@ namespace QtVsTools.Core.QtMsBuild
 
         #region QtRcc
         static QtRcc qtRccInstance;
-        public static QtRcc QtRccInstance
+
+        private static QtRcc QtRccInstance
         {
             get
             {
@@ -557,7 +558,8 @@ namespace QtVsTools.Core.QtMsBuild
 
         #region QtRepc
         static QtRepc qtRepcInstance;
-        public static QtRepc QtRepcInstance
+
+        private static QtRepc QtRepcInstance
         {
             get
             {
@@ -606,7 +608,8 @@ namespace QtVsTools.Core.QtMsBuild
 
         #region QtUic
         static QtUic qtUicInstance;
-        public static QtUic QtUicInstance
+
+        private static QtUic QtUicInstance
         {
             get
             {

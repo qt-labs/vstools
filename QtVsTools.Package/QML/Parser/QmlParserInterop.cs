@@ -160,7 +160,7 @@ namespace QtVsTools.Qml
             get { return diagnosticMessages; }
         }
 
-        public int FirstErrorOffset { get; private set; }
+        private int FirstErrorOffset { get; set; }
 
         readonly List<AstNode> visitedNodes;
         public IEnumerable<AstNode> AstNodes { get { return visitedNodes; } }

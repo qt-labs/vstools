@@ -37,8 +37,8 @@ namespace QtVsTools.Qml
     /// </summary>
     public class DiagnosticMessage
     {
-        public DiagnosticMessageKind Kind { get; set; }
-        public SourceLocation Location { get; set; }
+        private DiagnosticMessageKind Kind { get; }
+        public SourceLocation Location { get; }
         public DiagnosticMessage(DiagnosticMessageKind kind, int offset, int length)
         {
             Kind = kind;

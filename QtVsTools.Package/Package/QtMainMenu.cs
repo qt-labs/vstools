@@ -49,10 +49,10 @@ namespace QtVsTools
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static QtMainMenu Instance
+        private static QtMainMenu Instance
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             readonly List<MapField<TStruct, TFieldMask>> fieldMaps;
 
-            protected static Action<Ref<TStruct>, TFieldMask> UpdateMask { get; set; }
+            private static Action<Ref<TStruct>, TFieldMask> UpdateMask { get; set; }
 
             public Mapping(Action<Ref<TStruct>, TFieldMask> updateMask)
             {

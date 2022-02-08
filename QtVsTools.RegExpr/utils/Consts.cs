@@ -77,7 +77,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: [\S]
         /// ]]></summary>
-        public static CharClassLiteral CharNonSpace
+        private static CharClassLiteral CharNonSpace
         { get { return new CharClassLiteral { LiteralChars = @"\S" }; } }
 
         /// <summary><![CDATA[

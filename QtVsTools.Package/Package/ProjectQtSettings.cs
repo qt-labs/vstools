@@ -124,7 +124,7 @@ namespace QtVsTools
 
         [DisplayName("QML Debug")]
         [TypeConverter(typeof(QmlDebugConverter))]
-        public bool QmlDebug { get; set; }
+        private bool QmlDebug { get; }
 
         internal class QmlDebugConverter : BooleanConverter
         {

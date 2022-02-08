@@ -47,7 +47,7 @@ namespace QtVsTools.Qml.Debug
 
     class Launcher : Disposable, IDebugEventCallback2
     {
-        public static Launcher Instance { get; private set; }
+        private static Launcher Instance { get; set; }
         IVsDebugger debugger;
         IVsDebugger4 debugger4;
 

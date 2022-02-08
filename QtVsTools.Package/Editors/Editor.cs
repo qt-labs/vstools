@@ -233,20 +233,20 @@ namespace QtVsTools.Editors
 
         private class EditorPane : WindowPane, IVsPersistDocData
         {
-            public Editor Editor { get; }
-            public string QtToolsPath { get; }
+            private Editor Editor { get; }
+            private string QtToolsPath { get; }
 
-            public TableLayoutPanel EditorContainer { get; private set; }
-            public Label EditorTitle { get; }
-            public LinkLabel EditorDetachButton { get; }
-            public Panel EditorControl { get; }
+            private TableLayoutPanel EditorContainer { get; set; }
+            private Label EditorTitle { get; }
+            private LinkLabel EditorDetachButton { get; }
+            private Panel EditorControl { get; }
             public override IWin32Window Window => EditorContainer;
 
-            public Process EditorProcess { get; private set; }
-            public IntPtr EditorWindow { get; private set; }
-            public int EditorWindowStyle { get; private set; }
-            public int EditorWindowStyleExt { get; private set; }
-            public IntPtr EditorIcon { get; private set; }
+            private Process EditorProcess { get; set; }
+            private IntPtr EditorWindow { get; set; }
+            private int EditorWindowStyle { get; set; }
+            private int EditorWindowStyleExt { get; set; }
+            private IntPtr EditorIcon { get; set; }
 
             public EditorPane(Editor editor, string qtToolsPath)
             {

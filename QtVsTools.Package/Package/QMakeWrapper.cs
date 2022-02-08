@@ -37,7 +37,7 @@ namespace QtVsTools
         public string QtDir { get; set; }
 
         public bool IsFlat { get; private set; }
-        public bool IsValid { get; private set; }
+        private bool IsValid { get; set; }
 
         public string[] SourceFiles { get; private set; }
         public string[] HeaderFiles { get; private set; }

@@ -170,7 +170,7 @@ namespace QtVsTools.Options
         [DisplayName("Keyboard shortcut")]
         [Description("To change keyboard mapping, go to: Tools > Options > Keyboard")]
         [ReadOnly(true)]
-        public string QtHelpKeyBinding { get; set; }
+        private string QtHelpKeyBinding { get; set; }
 
         [Category("Help")]
         [DisplayName("Preferred source")]

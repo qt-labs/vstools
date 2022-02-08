@@ -107,7 +107,7 @@ namespace QtVsTools
             => GetDialogPage(typeof(Options.QtLegacyOptionsPage)) as Options.QtLegacyOptionsPage;
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
-        public Editors.QtResourceEditor QtResourceEditor { get; private set; }
+        private Editors.QtResourceEditor QtResourceEditor { get; set; }
 
         static readonly EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
 

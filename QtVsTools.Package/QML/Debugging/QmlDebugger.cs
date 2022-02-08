@@ -78,11 +78,11 @@ namespace QtVsTools.Qml.Debug
         List<Request> outbox;
         Dictionary<int, IBreakpoint> breakpoints;
 
-        public bool Started { get; private set; }
+        private bool Started { get; set; }
 
-        public bool Running { get; private set; }
+        private bool Running { get; set; }
 
-        public string Version { get; private set; }
+        private string Version { get; set; }
 
         public uint? ThreadId { get { return driver.ThreadId; } }
 

@@ -120,7 +120,7 @@ namespace QtVsTest.Macros
 
     public class CodeLine : MacroLine
     {
-        private readonly string Code;
+        public readonly string Code;
         public CodeLine(string code)
         {
             Code = code;

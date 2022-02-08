@@ -38,8 +38,8 @@ namespace QtVsTools.Qml.Debug.AD7
                      //  such as stopping at a breakpoint, and non-critical information, such as a
                      //  debugging message."
     {
-        public Guid InterfaceId { get; protected set; }
-        public uint Attributes { get; protected set; }
+        private Guid InterfaceId { get; }
+        private uint Attributes { get; }
 
         protected const uint ASYNCHRONOUS = (uint)enum_EVENTATTRIBUTES.EVENT_ASYNCHRONOUS;
         protected const uint STOPPING = (uint)enum_EVENTATTRIBUTES.EVENT_ASYNC_STOP;
@@ -48,10 +48,10 @@ namespace QtVsTools.Qml.Debug.AD7
               (uint)enum_EVENTATTRIBUTES.EVENT_STOPPING
             | (uint)enum_EVENTATTRIBUTES.EVENT_SYNCHRONOUS;
 
-        protected QmlEngine Engine { get; set; }
-        protected IDebugProgram2 Program { get; set; }
-        protected IDebugThread2 Thread { get; set; }
-        protected IDebugEventCallback2 Callback { get; set; }
+        protected QmlEngine Engine { get; }
+        private IDebugProgram2 Program { get; }
+        private IDebugThread2 Thread { get; }
+        private IDebugEventCallback2 Callback { get; }
 
         protected DebugEvent(
             QmlEngine engine,
@@ -115,7 +115,7 @@ namespace QtVsTools.Qml.Debug.AD7
     class ProgramDestroyEvent : DebugEvent, IDebugProgramDestroyEvent2
     {
         readonly uint exitCode;
-        public new Program Program { get; }
+        public Program Program { get; }
 
         public ProgramDestroyEvent(Program program, uint exitCode)
         : base(program.Engine, typeof(IDebugProgramDestroyEvent2).GUID,
@@ -176,7 +176,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class BreakpointBoundEvent : DebugEvent, IDebugBreakpointBoundEvent2
     {
-        public Breakpoint Breakpoint { get; }
+        private Breakpoint Breakpoint { get; }
         public BreakpointBoundEvent(Breakpoint breakpoint)
         : base(breakpoint.Program.Engine, typeof(IDebugBreakpointBoundEvent2).GUID,
               ASYNCHRONOUS, breakpoint.Program, breakpoint.Program)
@@ -228,8 +228,8 @@ namespace QtVsTools.Qml.Debug.AD7
 
     class ExpressionEvaluationCompleteEvent : DebugEvent, IDebugExpressionEvaluationCompleteEvent2
     {
-        public Expression Expression { get; }
-        public Property Property { get; }
+        private Expression Expression { get; }
+        private Property Property { get; }
 
         public ExpressionEvaluationCompleteEvent(
             IDebugEventCallback2 callback,
