@@ -59,7 +59,7 @@ namespace QtVsTools.Qml.Debug.AD7
         private IEnumerable<int> Scopes { get; set; }
         private Task InitThread { get; set; }
 
-        static public StackFrame Create(
+        public static StackFrame Create(
             string name,
             int number,
             IEnumerable<int> scopes,

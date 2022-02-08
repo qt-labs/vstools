@@ -74,7 +74,7 @@ namespace QtVsTools.Core
         private static readonly EventWaitHandle packageInit = new EventWaitHandle(false, EventResetMode.ManualReset);
         private static EventWaitHandle packageInitDone = null;
 
-        static public QtVersionManager The(EventWaitHandle initDone = null)
+        public static QtVersionManager The(EventWaitHandle initDone = null)
         {
             if (initDone == null) {
                 packageInit.WaitOne();

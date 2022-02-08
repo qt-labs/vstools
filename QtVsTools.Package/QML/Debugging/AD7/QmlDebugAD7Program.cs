@@ -73,7 +73,7 @@ namespace QtVsTools.Qml.Debug.AD7
         private IVsDebugger VsDebugger { get; set; }
         private Dispatcher vsDebuggerThreadDispatcher;
 
-        private readonly static object criticalSectionGlobal = new object();
+        private static readonly object criticalSectionGlobal = new object();
         private static bool originalBreakAllProcesses = BreakAllProcesses;
         private static int runningPrograms = 0;
 

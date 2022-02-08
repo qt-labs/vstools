@@ -1493,7 +1493,7 @@ namespace QtVsTools.Core
             }
         }
 
-        static public void ExcludeFromAllBuilds(VCFile file)
+        public static void ExcludeFromAllBuilds(VCFile file)
         {
             if (file == null)
                 return;
@@ -3040,7 +3040,7 @@ namespace QtVsTools.Core
                 resFile.Remove();
         }
 
-        static private void AddPlatformToVCProj(string projectFileName, string oldPlatformName, string newPlatformName)
+        private static void AddPlatformToVCProj(string projectFileName, string oldPlatformName, string newPlatformName)
         {
             var tempFileName = Path.GetTempFileName();
             var fi = new FileInfo(projectFileName);
@@ -3055,7 +3055,7 @@ namespace QtVsTools.Core
             fi.Delete();
         }
 
-        static private void AddPlatformToVCProj(XmlDocument doc, string oldPlatformName, string newPlatformName)
+        private static void AddPlatformToVCProj(XmlDocument doc, string oldPlatformName, string newPlatformName)
         {
             var vsProj = doc.DocumentElement.SelectSingleNode("/VisualStudioProject");
             var platforms = vsProj.SelectSingleNode("Platforms");
@@ -3089,7 +3089,7 @@ namespace QtVsTools.Core
             }
         }
 
-        static private void SetTargetMachine(VCLinkerTool linker, VersionInformation versionInfo)
+        private static void SetTargetMachine(VCLinkerTool linker, VersionInformation versionInfo)
         {
             var qMakeLFlagsWindows = versionInfo.GetQMakeConfEntry("QMAKE_LFLAGS_WINDOWS");
             var rex = new Regex("/MACHINE:(\\S+)");

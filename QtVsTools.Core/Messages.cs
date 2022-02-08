@@ -121,35 +121,35 @@ namespace QtVsTools.Core
         private static readonly string WarningString = SR.GetString("Messages_Warning");
         private static readonly string SolutionString = SR.GetString("Messages_SolveProblem");
 
-        static public void DisplayCriticalErrorMessage(System.Exception e)
+        public static void DisplayCriticalErrorMessage(System.Exception e)
         {
             MessageBox.Show(ErrorString +
                 ExceptionToString(e),
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        static public void DisplayCriticalErrorMessage(string msg)
+        public static void DisplayCriticalErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
                 msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        static public void DisplayErrorMessage(System.Exception e)
+        public static void DisplayErrorMessage(System.Exception e)
         {
             MessageBox.Show(ErrorString +
                 ExceptionToString(e),
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        static public void DisplayErrorMessage(string msg)
+        public static void DisplayErrorMessage(string msg)
         {
             MessageBox.Show(ErrorString +
                 msg,
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        static public void DisplayWarningMessage(System.Exception e, string solution)
+        public static void DisplayWarningMessage(System.Exception e, string solution)
         {
             MessageBox.Show(WarningString +
                 ExceptionToString(e) +
@@ -158,7 +158,7 @@ namespace QtVsTools.Core
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        static public void DisplayWarningMessage(string msg)
+        public static void DisplayWarningMessage(string msg)
         {
             MessageBox.Show(WarningString +
                 msg,

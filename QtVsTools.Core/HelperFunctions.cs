@@ -52,14 +52,14 @@ namespace QtVsTools.Core
     {
         static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },
             StringComparer.OrdinalIgnoreCase);
-        static public bool IsSourceFile(string fileName)
+        public static bool IsSourceFile(string fileName)
         {
             return _sources.Contains(Path.GetExtension(fileName));
         }
 
         static readonly HashSet<string> _headers = new HashSet<string>(new[] { ".h", ".hpp", ".hxx" },
             StringComparer.OrdinalIgnoreCase);
-        static public bool IsHeaderFile(string fileName)
+        public static bool IsHeaderFile(string fileName)
         {
             return _headers.Contains(Path.GetExtension(fileName));
         }
@@ -94,25 +94,25 @@ namespace QtVsTools.Core
             return ".qml".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
         }
 
-        static public void SetDebuggingEnvironment(Project prj)
+        public static void SetDebuggingEnvironment(Project prj)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, string.Empty);
         }
 
-        static public void SetDebuggingEnvironment(Project prj, string solutionConfig)
+        public static void SetDebuggingEnvironment(Project prj, string solutionConfig)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
-        static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite)
+        public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             SetDebuggingEnvironment(prj, envpath, overwrite, string.Empty);
         }
 
-        static public void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
+        public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
         {
             if (QtProject.GetFormatVersion(prj) >= Resources.qtMinFormatVersion_Settings)
                 return;
@@ -194,13 +194,13 @@ namespace QtVsTools.Core
         /// Returns the normalized file path of a given file.
         /// </summary>
         /// <param name="name">file name</param>
-        static public string NormalizeFilePath(string name)
+        public static string NormalizeFilePath(string name)
         {
             var fi = new FileInfo(name);
             return fi.FullName;
         }
 
-        static public string NormalizeRelativeFilePath(string path)
+        public static string NormalizeRelativeFilePath(string path)
         {
             if (path == null)
                 return ".\\";
@@ -226,7 +226,7 @@ namespace QtVsTools.Core
             return path;
         }
 
-        static public bool IsAbsoluteFilePath(string path)
+        public static bool IsAbsoluteFilePath(string path)
         {
             path = path.Trim();
             if (path.Length >= 2 && path[1] == ':')
@@ -243,7 +243,7 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="streamReader"></param>
         /// <returns>the composite string</returns>
-        static private string ReadProFileLine(StreamReader streamReader)
+        private static string ReadProFileLine(StreamReader streamReader)
         {
             var line = streamReader.ReadLine();
             if (line == null)
@@ -264,7 +264,7 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="profile">full name of .pro file to read</param>
         /// <returns>true if this is a subdirs file</returns>
-        static public bool IsSubDirsFile(string profile)
+        public static bool IsSubDirsFile(string profile)
         {
             StreamReader sr = null;
             try {
@@ -392,7 +392,7 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="config">File configuration</param>
         /// <returns></returns>
-        static public VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
+        public static VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
             var file = config.File as VCFile;
             if (file == null || file.ItemType != "CustomBuild")
@@ -417,7 +417,7 @@ namespace QtVsTools.Core
         /// has to be "CustomBuild"
         /// </summary>
         /// <param name="projectItem">Project Item which needs to have custom build tool</param>
-        static public void EnsureCustomBuildToolAvailable(ProjectItem projectItem)
+        public static void EnsureCustomBuildToolAvailable(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
