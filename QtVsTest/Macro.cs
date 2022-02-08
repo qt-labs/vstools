@@ -133,48 +133,40 @@ namespace QtVsTest.Macros
         static MacroParser Parser { get; set; }
         MacroLines MacroLines { get; set; }
 
-        List<string> SelectedAssemblies { get { return _SelectedAssemblies; } }
-        List<string> _SelectedAssemblies =
-            new List<string>
-            {
-                "QtVsTest",
-                "System.Core",
-            };
+        private List<string> SelectedAssemblies { get; } = new List<string>
+        {
+            "QtVsTest",
+            "System.Core",
+        };
 
         IEnumerable<string> RefAssemblies { get; set; }
 
-        List<string> Namespaces { get { return _Namespaces; } }
-        List<string> _Namespaces =
-            new List<string>
-            {
-                "System",
-                "System.Linq",
-                "System.Reflection",
-                "Task = System.Threading.Tasks.Task",
-                "System.Windows.Automation",
-                "EnvDTE",
-                "EnvDTE80",
-            };
+        private List<string> Namespaces { get; } = new List<string>
+        {
+            "System",
+            "System.Linq",
+            "System.Reflection",
+            "Task = System.Threading.Tasks.Task",
+            "System.Windows.Automation",
+            "EnvDTE",
+            "EnvDTE80",
+        };
 
-        Dictionary<string, VSServiceRef> ServiceRefs { get { return _ServiceRefs; } }
-        Dictionary<string, VSServiceRef> _ServiceRefs =
-            new Dictionary<string, VSServiceRef>
+        private Dictionary<string, VSServiceRef> ServiceRefs { get; } = new Dictionary<string, VSServiceRef>
+        {
             {
-                {
-                    "Dte", new VSServiceRef
+                "Dte", new VSServiceRef
                     { Name = "Dte", Interface = "DTE2", Type = "DTE" }
-                },
-            };
+            },
+        };
 
-        Dictionary<string, GlobalVar> GlobalVars { get { return _GlobalVars; } }
-        Dictionary<string, GlobalVar> _GlobalVars =
-            new Dictionary<string, GlobalVar>
+        private Dictionary<string, GlobalVar> GlobalVars { get; } = new Dictionary<string, GlobalVar>
+        {
             {
-                {
-                    "Result", new GlobalVar
+                "Result", new GlobalVar
                     { Type = "string", Name = "Result", InitialValueExpr = "string.Empty" }
-                },
-            };
+            },
+        };
 
         string CSharpMethodCode { get; set; }
         string CSharpClassCode { get; set; }

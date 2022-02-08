@@ -34,95 +34,33 @@ namespace QtVsTools.Core
     {
         public ProFileOption(string optname)
         {
-            name = optname;
-            astype = AssignType.AT_PlusEquals;
-            comment = null;
-            shortComment = "Default";
-            incComment = false;
-            newOpt = " \\\r\n    ";
-            list = new List<string>();
+            Name = optname;
+            AssignSymbol = AssignType.AT_PlusEquals;
+            Comment = null;
+            ShortComment = "Default";
+            IncludeComment = false;
+            NewOption = " \\\r\n    ";
+            List = new List<string>();
         }
 
         public override string ToString()
         {
-            return shortComment;
+            return ShortComment;
         }
 
-        public string Comment
-        {
-            get
-            {
-                return comment;
-            }
-            set
-            {
-                comment = value;
-            }
-        }
+        public string Comment { get; set; }
 
-        public string ShortComment
-        {
-            get
-            {
-                return shortComment;
-            }
-            set
-            {
-                shortComment = value;
-            }
-        }
+        public string ShortComment { get; set; }
 
-        public AssignType AssignSymbol
-        {
-            get
-            {
-                return astype;
-            }
-            set
-            {
-                astype = value;
-            }
-        }
+        public AssignType AssignSymbol { get; set; }
 
-        public string NewOption
-        {
-            get
-            {
-                return newOpt;
-            }
-            set
-            {
-                newOpt = value;
-            }
-        }
+        public string NewOption { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name { get; }
 
-        public List<string> List
-        {
-            get
-            {
-                return list;
-            }
-        }
+        public List<string> List { get; }
 
-        public bool IncludeComment
-        {
-            get
-            {
-                return incComment;
-            }
-            set
-            {
-                incComment = value;
-            }
-        }
+        public bool IncludeComment { get; set; }
 
         public enum AssignType
         {
@@ -131,13 +69,5 @@ namespace QtVsTools.Core
             AT_MinusEquals = 3,
             AT_Function = 4
         }
-
-        private AssignType astype;
-        private string shortComment;
-        private bool incComment;
-        private string comment;
-        private string newOpt;
-        private readonly string name;
-        private readonly List<string> list;
     }
 }

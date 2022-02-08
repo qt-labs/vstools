@@ -35,46 +35,20 @@ namespace QtVsTools.Core
     {
         public ProFileContent(VCProject proj)
         {
-            export = true;
-            vcproj = proj;
-            options = new List<ProFileOption>();
+            Export = true;
+            Project = proj;
+            Options = new List<ProFileOption>();
         }
 
         public override string ToString()
         {
-            return vcproj.Name;
+            return Project.Name;
         }
 
-        public VCProject Project
-        {
-            get
-            {
-                return vcproj;
-            }
-        }
+        public VCProject Project { get; }
 
-        public bool Export
-        {
-            get
-            {
-                return export;
-            }
-            set
-            {
-                export = value;
-            }
-        }
+        public bool Export { get; set; }
 
-        public List<ProFileOption> Options
-        {
-            get
-            {
-                return options;
-            }
-        }
-
-        private readonly VCProject vcproj;
-        private bool export;
-        private readonly List<ProFileOption> options;
+        public List<ProFileOption> Options { get; }
     }
 }

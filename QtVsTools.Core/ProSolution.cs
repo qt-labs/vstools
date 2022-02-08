@@ -35,27 +35,12 @@ namespace QtVsTools.Core
     {
         public ProSolution(Solution sln)
         {
-            prosln = sln;
-            proFiles = new List<ProFileContent>();
+            ProjectSolution = sln;
+            ProFiles = new List<ProFileContent>();
         }
 
-        public List<ProFileContent> ProFiles
-        {
-            get
-            {
-                return proFiles;
-            }
-        }
+        public List<ProFileContent> ProFiles { get; }
 
-        public Solution ProjectSolution
-        {
-            get
-            {
-                return prosln;
-            }
-        }
-
-        private readonly List<ProFileContent> proFiles;
-        private readonly Solution prosln;
+        public Solution ProjectSolution { get; }
     }
 }

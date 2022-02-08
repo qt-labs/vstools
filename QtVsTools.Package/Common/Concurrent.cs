@@ -40,8 +40,7 @@ namespace QtVsTools
     public abstract class Concurrent<TSubClass>
         where TSubClass : Concurrent<TSubClass>
     {
-        private static readonly object _StaticCriticalSection = new object();
-        protected static object StaticCriticalSection => _StaticCriticalSection;
+        protected static object StaticCriticalSection { get; } = new object();
 
         private object _CriticalSection = null;
         protected object CriticalSection =>

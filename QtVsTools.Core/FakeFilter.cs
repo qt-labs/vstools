@@ -34,11 +34,6 @@ namespace QtVsTools.Core
         public string Filter { get; set; }
         public string UniqueIdentifier { get; set; }
 
-        private bool parseFiles = true;
-        public bool ParseFiles
-        {
-            get { return parseFiles; }
-            set { parseFiles = value; }
-        }
+        public bool ParseFiles { get; set; } = true;
     }
 }

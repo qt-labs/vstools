@@ -77,11 +77,9 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public Node Parent { get; set; }
 
-                readonly SortedList<int, Node> _ChildNodes = new SortedList<int, Node>();
-                public SortedList<int, Node> ChildNodes { get { return _ChildNodes; } }
+                public SortedList<int, Node> ChildNodes { get; } = new SortedList<int, Node>();
 
-                readonly ProductionObjects _ChildProductions = new ProductionObjects();
-                public ProductionObjects ChildProductions { get { return _ChildProductions; } }
+                public ProductionObjects ChildProductions { get; } = new ProductionObjects();
 
                 public Queue<Node> TokenStream { get; set; }
                 public Stack<Node> OperatorStack { get; set; }

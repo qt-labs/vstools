@@ -38,13 +38,9 @@ namespace QtVsTools.Core
 {
     public class QtModules
     {
-        private static readonly QtModules instance = new QtModules();
+        public static QtModules Instance { get; } = new QtModules();
         private readonly Dictionary<int, QtModule> modules = new Dictionary<int, QtModule>();
 
-        public static QtModules Instance
-        {
-            get { return instance; }
-        }
 
         public QtModule Module(int id)
         {
