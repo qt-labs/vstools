@@ -1463,12 +1463,12 @@ namespace QtVsTools.Core
 
         class MSBuildEvaluator : IVSMacroExpander, IDisposable
         {
-            readonly MsBuildXmlFile projFile;
-            string tempProjFilePath;
-            XElement evaluateTarget;
-            XElement evaluateProperty;
-            ProjectRootElement projRoot;
-            public readonly Dictionary<string, string> expansionCache;
+            private readonly MsBuildXmlFile projFile;
+            private string tempProjFilePath;
+            private XElement evaluateTarget;
+            private XElement evaluateProperty;
+            private ProjectRootElement projRoot;
+            private readonly Dictionary<string, string> expansionCache;
 
             public Dictionary<string, string> Properties
             {

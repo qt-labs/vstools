@@ -73,7 +73,7 @@ namespace QtVsTools.Options
         {
             public enum FieldNames { IsDefault, VersionName, Host, Path, Compiler }
 
-            public Dictionary<FieldNames, Field> _Fields;
+            private Dictionary<FieldNames, Field> _Fields;
             public Dictionary<FieldNames, Field> Fields => _Fields
                 ?? (_Fields = GetValues<FieldNames>()
                     .Select(field => new KeyValuePair<FieldNames, Field>(field, null))
@@ -135,7 +135,7 @@ namespace QtVsTools.Options
             public FontWeight FontWeight
                 => IsDefault ? FontWeights.Bold : FontWeights.Normal;
 
-            public static ImageSource _ExplorerIcon;
+            private static ImageSource _ExplorerIcon;
             public static ImageSource ExplorerIcon => _ExplorerIcon
                 ?? (_ExplorerIcon = GetExplorerIcon());
         }

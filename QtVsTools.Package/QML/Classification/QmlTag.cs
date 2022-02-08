@@ -118,7 +118,7 @@ namespace QtVsTools.Qml.Classification
             return new QmlSyntaxTag(snapshot, parentNode, classificationType, fullNameLocation);
         }
 
-        public static readonly HashSet<string> QmlBasicTypes = new HashSet<string> {
+        private static readonly HashSet<string> QmlBasicTypes = new HashSet<string> {
             "bool", "double", "enumeration", "int",
             "list", "real", "string", "url", "var",
             "date", "point", "rect", "size", "alias"

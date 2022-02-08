@@ -82,7 +82,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public abstract class ProjectTemplateWizard : IWizard
     {
-        protected readonly WhereConfig WhereConfig_SelectAll = (x => true);
+        private readonly WhereConfig WhereConfig_SelectAll = (x => true);
 
         protected struct ItemProperty
         {

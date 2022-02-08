@@ -42,8 +42,8 @@ namespace QtVsTools
         internal const string OK = "OK";
         internal const string Cancel = "Cancel";
 
-        internal static CultureInfo appCultureInfo;
-        internal static CultureInfo defaultCultureInfo;
+        private static CultureInfo appCultureInfo;
+        private static CultureInfo defaultCultureInfo;
 
         internal SR(int localeId)
         {

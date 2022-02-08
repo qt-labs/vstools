@@ -658,9 +658,9 @@ namespace QtVsTools.Core.QtMsBuild
     public abstract class QtTool
     {
         protected readonly CommandLineParser parser;
-        protected readonly CommandLineOption outputOption;
-        protected CommandLineOption helpOption;
-        protected CommandLineOption versionOption;
+        private readonly CommandLineOption outputOption;
+        private CommandLineOption helpOption;
+        private CommandLineOption versionOption;
 
         protected QtTool(bool defaultInputOutput = true)
         {
