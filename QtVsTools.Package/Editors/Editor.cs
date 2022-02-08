@@ -470,7 +470,7 @@ namespace QtVsTools.Editors
                     EditorWindow = IntPtr.Zero;
 
                     // Close editor window
-                    System.Threading.Tasks.Task.Run(() =>
+                    _ = System.Threading.Tasks.Task.Run(() =>
                     {
                         NativeAPI.SendMessage(editorWindow, NativeAPI.WM_CLOSE, 0, 0);
                         if (!editorProcess.WaitForExit(500)) {

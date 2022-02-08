@@ -56,7 +56,7 @@ namespace QtVsTools.QtMsBuild
                     DateTime.Now, Thread.CurrentThread.ManagedThreadId,
                     (configId != null) ? configId : "(all configs)", project.FullName));
             }
-            Task.Run(() => RefreshAsync(project, configId, selectedFiles));
+            _ = Task.Run(() => RefreshAsync(project, configId, selectedFiles));
         }
 
         public static async Task RefreshAsync(

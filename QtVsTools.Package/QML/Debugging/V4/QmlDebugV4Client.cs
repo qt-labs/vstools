@@ -77,7 +77,7 @@ namespace QtVsTools.Qml.Debug.V4
                 if (state != value) {
                     var oldState = state;
                     state = value;
-                    Task.Run(() => sink.NotifyStateTransition(this, oldState, value));
+                    _ = Task.Run(() => sink.NotifyStateTransition(this, oldState, value));
                 }
             }
         }
@@ -175,7 +175,7 @@ namespace QtVsTools.Qml.Debug.V4
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
 
             uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
-            Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
                 connectTimer.Start();
@@ -241,7 +241,7 @@ namespace QtVsTools.Qml.Debug.V4
 
             uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
             if (timeout != 0) {
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     var connectTimer = new System.Diagnostics.Stopwatch();
                     connectTimer.Start();

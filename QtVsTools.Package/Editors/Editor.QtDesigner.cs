@@ -70,7 +70,7 @@ namespace QtVsTools.Editors
             string filePath = document.FullName;
             string[] itemId = new[] { document.ProjectItem?.Name };
             var lastWriteTime = File.GetLastWriteTime(filePath);
-            Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 while (!process.WaitForExit(1000)) {
                     var latestWriteTime = File.GetLastWriteTime(filePath);

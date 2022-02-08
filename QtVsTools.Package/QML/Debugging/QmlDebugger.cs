@@ -158,7 +158,7 @@ namespace QtVsTools.Qml.Debug
             if (!Started) {
                 Running = Started = true;
                 LeaveCriticalSection();
-                Task.Run(() => ConnectToDebugger());
+                _ = Task.Run(() => ConnectToDebugger());
 
             } else if (!Running) {
                 Running = true;
@@ -404,20 +404,20 @@ namespace QtVsTools.Qml.Debug
         {
             if (oldState != DebugClientState.Unavailable
                 && newState == DebugClientState.Disconnected) {
-                Task.Run(() => sink.NotifyClientDisconnected());
+                _ = Task.Run(() => sink.NotifyClientDisconnected());
             }
         }
 
         void IMessageEventSink.NotifyRequestResponded(Request msgRequest)
         {
             if (msgRequest is SetBreakpointRequest)
-                Task.Run(() => SetBreakpointResponded(msgRequest as SetBreakpointRequest));
+                _ = Task.Run(() => SetBreakpointResponded(msgRequest as SetBreakpointRequest));
         }
 
         void IMessageEventSink.NotifyEvent(Event msgEvent)
         {
             if (msgEvent is BreakEvent)
-                Task.Run(() => BreakNotified(msgEvent as BreakEvent));
+                _ = Task.Run(() => BreakNotified(msgEvent as BreakEvent));
         }
 
         void IMessageEventSink.NotifyMessage(Message msg)

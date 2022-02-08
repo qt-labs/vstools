@@ -168,7 +168,7 @@ namespace QtVsTools.Test.PriorityQueue
         {
             var q = new PunisherQueue<string>();
             int n = 0;
-            Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 for (int i = 0; i < 10000; ++i) {
                     q.Enqueue(Path.GetRandomFileName());

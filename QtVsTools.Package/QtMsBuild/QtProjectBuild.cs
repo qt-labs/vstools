@@ -89,7 +89,7 @@ namespace QtVsTools.QtMsBuild
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
 
-            Task.Run(() => StartBuildAsync(project, configName, properties, targets, verbosity));
+            _ = Task.Run(() => StartBuildAsync(project, configName, properties, targets, verbosity));
         }
 
         public static async Task StartBuildAsync(

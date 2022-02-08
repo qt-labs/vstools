@@ -85,7 +85,7 @@ namespace QtVsTools.Qml.Debug.AD7
             enum_EVALFLAGS dwFlags,
             IDebugEventCallback2 pExprCallback)
         {
-            Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 var value = Debugger.Evaluate(StackFrame.FrameNumber, ExpressionString);
                 if (value != null)
