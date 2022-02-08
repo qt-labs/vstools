@@ -143,14 +143,14 @@ namespace QtVsTools.Qml.Debug.V4
             set { Atomic(() => tag == null, () => tag = value); }
         }
 
-        public virtual ProtocolDriver.PendingRequest SendAsync()
+        public virtual ProtocolDriver.PendingRequest SendRequest()
         {
             return Driver.SendRequest(this);
         }
 
         public new Response Send()
         {
-            return SendAsync().WaitForResponse();
+            return SendRequest().WaitForResponse();
         }
 
         public static new Response Send<T>(ProtocolDriver driver, Action<T> initMsg = null)
@@ -173,7 +173,7 @@ namespace QtVsTools.Qml.Debug.V4
 
         public new virtual TResponse Send()
         {
-            var pendingRequest = SendAsync();
+            var pendingRequest = SendRequest();
             if (!pendingRequest.RequestSent)
                 return null;
 

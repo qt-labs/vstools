@@ -215,7 +215,7 @@ namespace QtVsTools.QtMsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
                 Subscribers.Add(new Subscriber(this, configProject));
-                configProject.ProjectUnloading += OnProjectUnloading;
+                configProject.ProjectUnloading += OnProjectUnloadingAsync;
                 if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
@@ -258,7 +258,7 @@ namespace QtVsTools.QtMsBuild
             await QtProjectIntellisense.RefreshAsync(Project, config.ProjectConfiguration.Name);
         }
 
-        async Task OnProjectUnloading(object sender, EventArgs args)
+        async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
             var project = sender as ConfiguredProject;
             if (project == null || project.Services == null)
@@ -276,7 +276,7 @@ namespace QtVsTools.QtMsBuild
                     Subscribers.Clear();
                     Subscribers = null;
                 }
-                project.ProjectUnloading -= OnProjectUnloading;
+                project.ProjectUnloading -= OnProjectUnloadingAsync;
                 Instances.TryRemove(Project.FullName, out QtProjectTracker tracker);
             }
         }

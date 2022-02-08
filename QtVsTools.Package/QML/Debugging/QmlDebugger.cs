@@ -199,7 +199,7 @@ namespace QtVsTools.Qml.Debug
             setBreakpoint.Arguments.Line = (int)breakpoint.Line;
             setBreakpoint.Tag = breakpoint;
             if (driver.ConnectionState == DebugClientState.Connected)
-                setBreakpoint.SendAsync();
+                setBreakpoint.SendRequest();
             else
                 ThreadSafe(() => outbox.Add(setBreakpoint));
         }
@@ -229,7 +229,7 @@ namespace QtVsTools.Qml.Debug
 
             var reqClearBreak = Message.Create<ClearBreakpointRequest>(driver);
             reqClearBreak.Arguments.Breakpoint = breakpointNum[breakpoint];
-            reqClearBreak.SendAsync();
+            reqClearBreak.SendRequest();
         }
 
         void RefreshFrames()
