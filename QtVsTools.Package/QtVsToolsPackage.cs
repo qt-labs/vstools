@@ -182,14 +182,14 @@ namespace QtVsTools
                 eventHandler = new DteEventsHandler(Dte);
 
                 Qml.Debug.Launcher.Initialize();
-                QtMainMenu.Initialize(this);
-                QtSolutionContextMenu.Initialize(this);
-                QtProjectContextMenu.Initialize(this);
-                QtItemContextMenu.Initialize(this);
+                QtMainMenu.Initialize();
+                QtSolutionContextMenu.Initialize();
+                QtProjectContextMenu.Initialize();
+                QtItemContextMenu.Initialize();
                 RegisterEditorFactory(QtDesigner = new Editors.QtDesigner());
                 RegisterEditorFactory(QtLinguist = new Editors.QtLinguist());
                 RegisterEditorFactory(QtResourceEditor = new Editors.QtResourceEditor());
-                QtHelp.Initialize(this);
+                QtHelp.Initialize();
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");

@@ -52,22 +52,17 @@ namespace QtVsTools
             set;
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize()
         {
-            Instance = new QtHelp(package);
+            Instance = new QtHelp();
         }
 
         const int F1QtHelpId = 0x0502;
 
-        readonly Package package;
         private static readonly Guid MainMenuGuid = new Guid("58f83fff-d39d-4c66-810b-2702e1f04e73");
 
-        QtHelp(Package pkg)
+        private QtHelp()
         {
-            if (pkg == null)
-                throw new ArgumentNullException("package");
-            package = pkg;
-
             var commandService = VsServiceProvider
                 .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)
@@ -76,12 +71,6 @@ namespace QtVsTools
             var menuCommandID = new CommandID(MainMenuGuid, F1QtHelpId);
             commandService.AddCommand(new MenuCommand(F1QtHelpEventHandler, menuCommandID));
         }
-
-        IServiceProvider ServiceProvider
-        {
-            get { return package; }
-        }
-
         static bool IsSuperfluousCharacter(string text)
         {
             switch (text) {
@@ -260,14 +249,14 @@ namespace QtVsTools
                 }
 
                 if (string.IsNullOrEmpty(uri)) { // offline mode without a single search hit
-                    VsShellUtilities.ShowMessageBox(Instance.ServiceProvider,
+                    VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
                         "Your search - " + keyword + " - did not match any documents.",
                         string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
                         OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 } else {
                     var helpUri = new Uri(uri.Replace('\\', '/'));
                     if (helpUri.IsFile && !File.Exists(helpUri.LocalPath)) {
-                        VsShellUtilities.ShowMessageBox(Instance.ServiceProvider,
+                        VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
                             "Your search - " + keyword + " - did match a document, but it could "
                             + "not be found on disk. To use the online help, select: "
                             + "Help | Set Qt Help Preference | Use Online Documentation",

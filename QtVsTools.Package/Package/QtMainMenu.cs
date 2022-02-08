@@ -58,10 +58,9 @@ namespace QtVsTools
         /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(Package package)
+        public static void Initialize()
         {
-            Instance = new QtMainMenu(package);
+            Instance = new QtMainMenu();
         }
 
         /// <summary>
@@ -87,22 +86,12 @@ namespace QtVsTools
         }
 
         /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
-        private readonly Package m_package;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="QtMainMenu"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private QtMainMenu(Package package)
+        private QtMainMenu()
         {
-            if (package == null)
-                throw new ArgumentNullException("package");
-
-            m_package = package;
-
             var commandService = VsServiceProvider
                 .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)
