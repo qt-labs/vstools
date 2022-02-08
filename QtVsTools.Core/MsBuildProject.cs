@@ -961,8 +961,7 @@ namespace QtVsTools.Core
                         evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
                     if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator)) {
                         int lineNumber = 1;
-                        var errorLine = row.command as IXmlLineInfo;
-                        if (errorLine != null && errorLine.HasLineInfo())
+                        if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
                             lineNumber = errorLine.LineNumber;
 
                         Messages.Print(string.Format(

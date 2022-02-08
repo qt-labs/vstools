@@ -558,8 +558,7 @@ namespace QtVsTools.Core
             string description,
             string outputFile)
         {
-            var file = config.File as VCFile;
-            if (file != null)
+            if (config.File is VCFile file)
                 file.ItemType = QtUic.ItemTypeName;
             qtMsBuild.SetItemProperty(config, QtUic.Property.ExecutionDescription, description);
             qtMsBuild.SetItemProperty(config, QtUic.Property.OutputFile, outputFile);
@@ -684,15 +683,15 @@ namespace QtVsTools.Core
         public string GetDefines(VCFileConfiguration conf)
         {
             var defines = string.Empty;
-            var propsFile = conf.Tool as IVCRulePropertyStorage;
-            var projectConfig = conf.ProjectConfiguration as VCConfiguration;
-            var propsProject = projectConfig.Rules.Item("CL") as IVCRulePropertyStorage;
-            if (propsFile != null) {
+            if (conf.Tool is IVCRulePropertyStorage propsFile) {
                 try {
                     defines = propsFile.GetUnevaluatedPropertyValue("PreprocessorDefinitions");
                 } catch { }
             }
-            if (string.IsNullOrEmpty(defines) && propsProject != null) {
+
+            var projectConfig = conf.ProjectConfiguration as VCConfiguration;
+            if (string.IsNullOrEmpty(defines)
+                && projectConfig?.Rules.Item("CL") is IVCRulePropertyStorage propsProject) {
                 try {
                     defines = propsProject.GetUnevaluatedPropertyValue("PreprocessorDefinitions");
                 } catch { }
@@ -734,8 +733,7 @@ namespace QtVsTools.Core
             var projectConfig = conf.ProjectConfiguration as VCConfiguration;
             includeList.AddRange(GetIncludesFromCompilerTool(CompilerToolWrapper.Create(projectConfig)));
 
-            var propertySheets = projectConfig.PropertySheets as IVCCollection;
-            if (propertySheets != null) {
+            if (projectConfig.PropertySheets is IVCCollection propertySheets) {
                 foreach (VCPropertySheet sheet in propertySheets)
                     includeList.AddRange(GetIncludesFromPropertySheet(sheet));
             }
@@ -756,8 +754,7 @@ namespace QtVsTools.Core
         private List<string> GetIncludesFromPropertySheet(VCPropertySheet sheet)
         {
             var includeList = GetIncludesFromCompilerTool(CompilerToolWrapper.Create(sheet));
-            var propertySheets = sheet.PropertySheets as IVCCollection;
-            if (propertySheets != null) {
+            if (sheet.PropertySheets is IVCCollection propertySheets) {
                 foreach (VCPropertySheet subSheet in propertySheets)
                     includeList.AddRange(GetIncludesFromPropertySheet(subSheet));
             }
@@ -1225,8 +1222,7 @@ namespace QtVsTools.Core
                     File.WriteAllText(cbtFullPath, string.Format(
                         "This is a dummy file needed to create {0}", mocFileName));
                     file = AddFileInSubfilter(Filters.GeneratedFiles(), null, cbtFullPath, true);
-                    var mocFileItem = file.Object as ProjectItem;
-                    if (mocFileItem != null)
+                    if (file.Object is ProjectItem mocFileItem)
                         HelperFunctions.EnsureCustomBuildToolAvailable(mocFileItem);
                 }
 
@@ -1381,8 +1377,7 @@ namespace QtVsTools.Core
             string nameOnly,
             string qrcCppFile)
         {
-            var file = vfc.File as VCFile;
-            if (file != null)
+            if (vfc.File is VCFile file)
                 file.ItemType = QtRcc.ItemTypeName;
             qtMsBuild.SetItemProperty(vfc,
                 QtRcc.Property.ExecutionDescription, "Rcc'ing " + ProjectMacros.FileName + "...");
@@ -1559,8 +1554,7 @@ namespace QtVsTools.Core
         List<VCFile> GetCppMocFiles(VCFile cppFile)
         {
             List<VCFile> mocFiles = new List<VCFile>();
-            var vcProj = cppFile.project as VCProject;
-            if (vcProj != null) {
+            if (cppFile.project is VCProject vcProj) {
                 mocFiles.AddRange(from VCFile vcFile
                                   in (IVCCollection)vcProj.Files
                                   where vcFile.ItemType == "CustomBuild"
@@ -1589,8 +1583,7 @@ namespace QtVsTools.Core
             if (!IsQtMsBuildEnabled())
                 return File.Exists(Path.ChangeExtension(cppFile.FullPath, ".cbt"));
 
-            var vcProj = cppFile.project as VCProject;
-            if (vcProj != null) {
+            if (cppFile.project is VCProject vcProj) {
                 foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
                     if (vcFile.ItemType == "CustomBuild") {
                         if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
@@ -3252,8 +3245,7 @@ namespace QtVsTools.Core
                             debuggerEnv = propertyAccess.GetPropertyValue(
                                 "LocalDebuggerEnvironment", cur_solution, "UserFile");
                             if (!string.IsNullOrEmpty(debuggerEnv)) {
-                                var debugSettings = conf.DebugSettings as VCDebugSettings;
-                                if (debugSettings != null) {
+                                if (conf.DebugSettings is VCDebugSettings debugSettings) {
                                     //Get original value without expanded properties
                                     debuggerEnv = debugSettings.Environment;
                                 }
@@ -3632,10 +3624,10 @@ namespace QtVsTools.Core
         {
             if (propertyStorage == null)
                 return null;
-            if (propertyStorage is VCFileConfiguration)
-                return GetParentProject(propertyStorage as VCFileConfiguration);
-            else if (propertyStorage is VCConfiguration)
-                return GetParentProject(propertyStorage as VCConfiguration);
+            if (propertyStorage is VCFileConfiguration configuration)
+                return GetParentProject(configuration);
+            else if (propertyStorage is VCConfiguration storage)
+                return GetParentProject(storage);
             return null;
         }
 

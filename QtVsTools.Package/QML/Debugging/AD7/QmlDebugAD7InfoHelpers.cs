@@ -185,8 +185,7 @@ namespace QtVsTools.Qml.Debug.AD7
             TFieldMask fieldMask,
             out TStruct infoStruct)
         {
-            var mappingToStruct = mapping as Mapping<TStruct, TFieldMask>;
-            if (mappingToStruct != null)
+            if (mapping is Mapping<TStruct, TFieldMask> mappingToStruct)
                 mappingToStruct.Map(this as TDerived, fieldMask, out infoStruct);
             else
                 infoStruct = default(TStruct);

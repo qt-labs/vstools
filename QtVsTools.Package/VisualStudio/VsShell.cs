@@ -58,8 +58,8 @@ namespace QtVsTools.VisualStudio
 
             object objProp;
             int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out objProp);
-            if (res == VSConstants.S_OK && objProp is string)
-                _InstallRootDir = objProp as string;
+            if (res == VSConstants.S_OK && objProp is string property)
+                _InstallRootDir = property;
         }
 
         public static EnvDTE.Project GetProject(IVsHierarchy context)
@@ -69,10 +69,9 @@ namespace QtVsTools.VisualStudio
             object value;
             int res = context.GetProperty(
                 (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
-            if (res != VSConstants.S_OK)
-                return null;
-
-            return value as EnvDTE.Project;
+            if (res == VSConstants.S_OK && value is EnvDTE.Project project)
+                return project;
+            return null;
         }
 
         public static EnvDTE.ProjectItem GetProjectItem(IVsHierarchy context, uint itemid)
@@ -82,10 +81,9 @@ namespace QtVsTools.VisualStudio
             object value;
             int res = context.GetProperty(
                 itemid, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
-            if (res != VSConstants.S_OK)
-                return null;
-
-            return value as EnvDTE.ProjectItem;
+            if (res == VSConstants.S_OK && value is EnvDTE.ProjectItem item)
+                return item;
+            return null;
         }
 
         public static EnvDTE.Document GetDocument(IVsHierarchy context, uint itemid)

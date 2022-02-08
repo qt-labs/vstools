@@ -151,8 +151,7 @@ namespace QtVsTools.Json
                     using (reader = XmlReader.Create(data.XmlStream)) {
                         var obj = serializer.ReadObject(reader, false);
 
-                        var container = obj as IDeferredObjectContainer;
-                        if (container != null)
+                        if (obj is IDeferredObjectContainer container)
                             deferredObjects.ForEach(x => container.Add(x));
 
                         return obj;

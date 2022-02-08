@@ -81,8 +81,7 @@ namespace QtVsTools.QtMsBuild
         private void PopupListBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter || e.Key == Key.Space) {
-                var module = PopupListBox.SelectedItem as Module;
-                if (module != null && module.IsEnabled)
+                if (PopupListBox.SelectedItem is Module module && module.IsEnabled)
                     module.CheckBox.IsChecked = (module.CheckBox.IsChecked != true);
             }
         }

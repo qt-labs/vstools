@@ -237,8 +237,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugEngine2.ContinueFromSynchronousEvent(IDebugEvent2 pEvent)
         {
-            var evtProgramDestroy = pEvent as ProgramDestroyEvent;
-            if (evtProgramDestroy != null)
+            if (pEvent is ProgramDestroyEvent evtProgramDestroy)
                 evtProgramDestroy.Program.Dispose();
 
             return VSConstants.S_OK;

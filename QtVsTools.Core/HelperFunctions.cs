@@ -394,21 +394,17 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
-            var file = config.File as VCFile;
-            if (file == null || file.ItemType != "CustomBuild")
-                return null;
-
-            var tool = config.Tool as VCCustomBuildTool;
-            if (tool == null)
-                return null;
-
-            try {
-                // TODO: The return value is not used at all?
-                var cmdLine = tool.CommandLine;
-            } catch {
-                return null;
+            if (config.File is VCFile file
+                && file.ItemType == "CustomBuild"
+                && config.Tool is VCCustomBuildTool tool) {
+                    try {
+                        _ = tool.CommandLine;
+                    } catch {
+                        return null;
+                    }
+                    return tool;
             }
-            return tool;
+            return null;
         }
 
         /// <summary>
@@ -1098,8 +1094,8 @@ namespace QtVsTools.Core
                 return null;
 
             // don't handle multiple selection... use the first one
-            if (prjs.GetValue(0) is Project)
-                return (Project)prjs.GetValue(0);
+            if (prjs.GetValue(0) is Project project)
+                return project;
             return null;
         }
 
@@ -1458,12 +1454,10 @@ namespace QtVsTools.Core
             VCProject vcProj = null;
             VCFile vcFile = null;
             string configName = "", platformName = "";
-            var vcConfig = config as VCConfiguration;
-            if (vcConfig != null) {
+            if (config is VCConfiguration vcConfig) {
                 vcProj = vcConfig.project as VCProject;
                 configName = vcConfig.ConfigurationName;
-                var vcPlatform = vcConfig.Platform as VCPlatform;
-                if (vcPlatform != null)
+                if (vcConfig.Platform is VCPlatform vcPlatform)
                     platformName = vcPlatform.Name;
                 try {
                     expanded = vcConfig.Evaluate(expanded);
@@ -1475,11 +1469,9 @@ namespace QtVsTools.Core
                 vcFile = vcFileConfig.File as VCFile;
                 if (vcFile != null)
                     vcProj = vcFile.project as VCProject;
-                var vcProjConfig = vcFileConfig.ProjectConfiguration as VCConfiguration;
-                if (vcProjConfig != null) {
+                if (vcFileConfig.ProjectConfiguration is VCConfiguration vcProjConfig) {
                     configName = vcProjConfig.ConfigurationName;
-                    var vcPlatform = vcProjConfig.Platform as VCPlatform;
-                    if (vcPlatform != null)
+                    if (vcProjConfig.Platform is VCPlatform vcPlatform)
                         platformName = vcPlatform.Name;
                 }
                 try {

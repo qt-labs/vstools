@@ -522,8 +522,7 @@ namespace QtVsTools
                 return;
 
             // Retrieves the VCProjectEngine from the given project and registers the handlers for VCProjectEngineEvents.
-            var prjEngine = vcPrj.VCProjectEngine as VCProjectEngine;
-            if (prjEngine != null) {
+            if (vcPrj.VCProjectEngine is VCProjectEngine prjEngine) {
                 vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
                 if (vcProjectEngineEvents != null) {
                     try {
@@ -616,8 +615,7 @@ namespace QtVsTools
             var pi = type.GetProperty(propertyName);
             if (pi != null) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {
-                    var dispIdAttribute = attribute as DispIdAttribute;
-                    if (dispIdAttribute != null)
+                    if (attribute is DispIdAttribute dispIdAttribute)
                         return dispIdAttribute.Value;
                 }
             }

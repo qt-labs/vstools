@@ -144,8 +144,8 @@ namespace QtVsTools.Options
                 object value,
                 Type destinationType)
             {
-                if (value.GetType() == typeof(bool) && destinationType == typeof(string))
-                    return ((bool)value) ? "Enable" : "Disable";
+                if (value is bool b && destinationType == typeof(string))
+                    return b ? "Enable" : "Disable";
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }

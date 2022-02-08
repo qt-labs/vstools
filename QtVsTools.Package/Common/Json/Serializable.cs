@@ -192,9 +192,11 @@ namespace QtVsTools.Json
                 var container = toDo.Dequeue();
                 foreach (var defObj in container.PendingObjects) {
                     defObj.Deserialize();
-                    var subContainer = defObj.Object as IDeferredObjectContainer;
-                    if (subContainer != null && subContainer.PendingObjects.Any())
+                    if (defObj.Object is IDeferredObjectContainer subContainer
+                        && subContainer.PendingObjects.Any()) {
                         toDo.Enqueue(subContainer);
+
+                    }
                 }
             }
             return obj;

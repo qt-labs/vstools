@@ -199,8 +199,7 @@ namespace QtVsTools.Core
             if (config.ConfigurationType == ConfigurationTypes.typeStaticLibrary)
                 option.List.Add("staticlib");
             if (linker != null) {
-                var linkerRule = linker as IVCRulePropertyStorage;
-                var generateDebugInformation = (linkerRule != null) ?
+                var generateDebugInformation = (linker is IVCRulePropertyStorage linkerRule) ?
                     linkerRule.GetUnevaluatedPropertyValue("GenerateDebugInformation") : null;
                 if (generateDebugInformation != "false")
                     option.List.Add("debug");
@@ -448,10 +447,7 @@ namespace QtVsTools.Core
                 if (!d.StartsWith("$(qtdir)\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.StartsWith(qtDir + "\\include", StringComparison.OrdinalIgnoreCase) &&
                     !d.EndsWith("win32-msvc2005", StringComparison.OrdinalIgnoreCase)) {
-
-                    var vcConfig = project.ConfigurationManager.ActiveConfiguration.Object
-                        as VCConfiguration;
-                    if (vcConfig != null)
+                    if (project.ConfigurationManager.ActiveConfiguration.Object is VCConfiguration vcConfig)
                         HelperFunctions.ExpandString(ref d, vcConfig);
                     if (HelperFunctions.IsAbsoluteFilePath(d))
                         d = HelperFunctions.GetRelativePath(project.FullName, d);
