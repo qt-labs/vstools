@@ -209,7 +209,7 @@ namespace QtVsTools.Qml.Debug.V4
 
         public class PendingRequest : Finalizable
         {
-            public Request Request { get; private set; }
+            public Request Request { get; }
             readonly EventWaitHandle responded;
 
             public PendingRequest()

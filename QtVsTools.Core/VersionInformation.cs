@@ -85,12 +85,12 @@ namespace QtVsTools.Core
             return _IsModuleAvailable?[module] ?? false;
         }
 
-        public string VC_MinimumVisualStudioVersion { get; private set; }
-        public string VC_ApplicationTypeRevision { get; private set; }
-        public string VC_WindowsTargetPlatformMinVersion { get; private set; }
-        public string VC_WindowsTargetPlatformVersion { get; private set; }
-        public string VC_Link_TargetMachine { get; private set; }
-        public string VC_PlatformToolset { get; private set; }
+        public string VC_MinimumVisualStudioVersion { get; }
+        public string VC_ApplicationTypeRevision { get; }
+        public string VC_WindowsTargetPlatformMinVersion { get; }
+        public string VC_WindowsTargetPlatformVersion { get; }
+        public string VC_Link_TargetMachine { get; }
+        public string VC_PlatformToolset { get; }
 
         private VersionInformation(string qtDirIn)
         {
@@ -194,7 +194,7 @@ namespace QtVsTools.Core
 
         public string QtInstallDocs
         {
-            get; private set;
+            get;
         }
 
         public string QMakeSpecDirectory

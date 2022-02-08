@@ -53,7 +53,7 @@ namespace QtVsTest
     public sealed class QtVsTest : AsyncPackage
     {
         public const string PackageGuidString = "0e258dce-fc8a-49a2-81c5-c9e138bfe500";
-        MacroServer MacroServer { get; set; }
+        MacroServer MacroServer { get; }
 
         public QtVsTest()
         {

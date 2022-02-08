@@ -98,8 +98,8 @@ namespace QtVsTools.QtMsBuild
                     );
             }
 
-            QtProjectTracker Tracker { get; set; }
-            ConfiguredProject Config { get; set; }
+            QtProjectTracker Tracker { get; }
+            ConfiguredProject Config { get; }
             IDisposable Subscription { get; set; }
 
             public void Dispose()
@@ -116,7 +116,7 @@ namespace QtVsTools.QtMsBuild
 
         public EnvDTE.Project Project { get; private set; }
         public UnconfiguredProject UnconfiguredProject { get; private set; }
-        public EventWaitHandle Initialized { get; private set; }
+        public EventWaitHandle Initialized { get; }
         List<Subscriber> Subscribers { get; set; }
 
         public static bool IsTracked(EnvDTE.Project project)

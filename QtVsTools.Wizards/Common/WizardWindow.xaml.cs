@@ -79,7 +79,6 @@ namespace QtVsTools.Wizards.Common
         public List<WizardPage> Pages
         {
             get;
-            private set;
         }
 
         public IEnumerator<WizardPage> GetEnumerator()

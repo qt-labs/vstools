@@ -35,8 +35,8 @@ namespace QtVsTools.Core
 {
     public class QMakeConf
     {
-        public Hashtable Entries { get; private set; }
-        public string QMakeSpecDirectory { get; private set; }
+        public Hashtable Entries { get; }
+        public string QMakeSpecDirectory { get; }
 
         public QMakeConf(VersionInformation versionInfo, QMakeQuery qmakeQuery = null)
         {

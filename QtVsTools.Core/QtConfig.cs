@@ -44,17 +44,17 @@ namespace QtVsTools.Core
     /// </summary>
     class QtConfig
     {
-        public BuildType BuildType { get; private set; }
+        public BuildType BuildType { get; }
 
-        public string LibInfix { get; private set; }
+        public string LibInfix { get; }
 
-        public bool Is64Bit { get; private set; }
+        public bool Is64Bit { get; }
 
-        public string Namespace { get; private set; }
+        public string Namespace { get; }
 
-        public uint VersionMajor { get; private set; }
-        public uint VersionMinor { get; private set; }
-        public uint VersionPatch { get; private set; }
+        public uint VersionMajor { get; }
+        public uint VersionMinor { get; }
+        public uint VersionPatch { get; }
 
         public QtConfig(string qtdir)
         {

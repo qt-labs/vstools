@@ -156,7 +156,7 @@ namespace QtVsTools.Qml.Syntax
 
     public class AstNode : SyntaxElement
     {
-        public AstNodeKind Kind { get; private set; }
+        public AstNodeKind Kind { get; }
         public AstNode(AstNodeKind kind) { Kind = kind; }
         public SourceLocation FirstSourceLocation { get; set; }
         public SourceLocation LastSourceLocation { get; set; }

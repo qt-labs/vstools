@@ -1473,7 +1473,6 @@ namespace QtVsTools.Core
             public Dictionary<string, string> Properties
             {
                 get;
-                private set;
             }
 
             public MSBuildEvaluator(MsBuildXmlFile projFile)

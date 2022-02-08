@@ -47,8 +47,8 @@ namespace QtVsTools.Core
         public string Query { get; protected set; }
         public bool DisableWarnings { get; set; }
 
-        protected VersionInformation QtVersion { get; private set; }
-        protected EnvDTE.DTE Dte { get; private set; }
+        protected VersionInformation QtVersion { get; }
+        protected EnvDTE.DTE Dte { get; }
 
         public QMake(VersionInformation qtVersion, EnvDTE.DTE dte = null)
         {

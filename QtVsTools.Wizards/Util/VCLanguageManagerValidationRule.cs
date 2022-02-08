@@ -46,6 +46,6 @@ namespace QtVsTools.Wizards.Util
         }
 
         public string FileExt { get; set; }
-        public VCLanguageManager Vclm { get; private set; }
+        public VCLanguageManager Vclm { get; }
     }
 }

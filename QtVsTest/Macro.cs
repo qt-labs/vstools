@@ -104,8 +104,8 @@ namespace QtVsTest.Macros
         /// </summary>
         public bool QuitWhenDone { get; private set; }
 
-        AsyncPackage Package { get; set; }
-        EnvDTE80.DTE2 Dte { get; set; }
+        AsyncPackage Package { get; }
+        EnvDTE80.DTE2 Dte { get; }
 
         AutomationElement UiRoot => AutomationElement.RootElement;
 
@@ -125,8 +125,8 @@ namespace QtVsTest.Macros
             }
         }
 
-        JoinableTaskFactory JoinableTaskFactory { get; set; }
-        CancellationToken ServerLoop { get; set; }
+        JoinableTaskFactory JoinableTaskFactory { get; }
+        CancellationToken ServerLoop { get; }
 
         string Message { get; set; }
 

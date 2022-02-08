@@ -47,10 +47,10 @@ namespace QtVsTools.Qml.Classification
     /// </summary>
     public class TrackingTag : ITag
     {
-        public ITextSnapshot Snapshot { get; private set; }
-        public int Start { get; private set; }
-        public int Length { get; private set; }
-        public ITrackingSpan Span { get; private set; }
+        public ITextSnapshot Snapshot { get; }
+        public int Start { get; }
+        public int Length { get; }
+        public ITrackingSpan Span { get; }
         public TrackingTag(ITextSnapshot snapshot, int start, int length)
         {
             Snapshot = snapshot;
@@ -76,9 +76,9 @@ namespace QtVsTools.Qml.Classification
         public const string TypeName = "typename.qml";
         public const string Binding = "binding.qml";
 
-        public SyntaxElement SyntaxElement { get; private set; }
-        public SourceLocation SourceLocation { get; private set; }
-        public IClassificationType ClassificationType { get; private set; }
+        public SyntaxElement SyntaxElement { get; }
+        public SourceLocation SourceLocation { get; }
+        public IClassificationType ClassificationType { get; }
 
         private QmlSyntaxTag(ITextSnapshot snapshot, SourceLocation location)
             : base(snapshot, location.Offset, location.Length)
@@ -223,7 +223,7 @@ namespace QtVsTools.Qml.Classification
 
     public class QmlDiagnosticsTag : TrackingTag
     {
-        public DiagnosticMessage DiagnosticMessage { get; private set; }
+        public DiagnosticMessage DiagnosticMessage { get; }
         public QmlDiagnosticsTag(ITextSnapshot snapshot, DiagnosticMessage diagnosticMessage)
             : base(snapshot, diagnosticMessage.Location.Offset, diagnosticMessage.Location.Length)
         {

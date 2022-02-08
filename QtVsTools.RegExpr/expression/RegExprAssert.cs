@@ -138,7 +138,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class AssertExprBuilder
         {
-            AssertTemplate Template { get; set; }
+            AssertTemplate Template { get; }
 
             public AssertExprBuilder(AssertTemplate template)
             {

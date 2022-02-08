@@ -46,10 +46,10 @@ namespace QtVsTest.Macros
     /// </summary>
     class MacroServer
     {
-        public CancellationTokenSource Loop { get; private set; }
+        public CancellationTokenSource Loop { get; }
 
-        AsyncPackage Package { get; set; }
-        JoinableTaskFactory JoinableTaskFactory { get; set; }
+        AsyncPackage Package { get; }
+        JoinableTaskFactory JoinableTaskFactory { get; }
 
         /// <summary>
         /// Macro server constructor

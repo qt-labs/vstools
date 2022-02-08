@@ -234,7 +234,7 @@ namespace QtVsTools.Qml.Classification
 
         class ExprTrackingTag : TrackingTag
         {
-            public IOrderedEnumerable<AstNode> Exprs { get; private set; }
+            public IOrderedEnumerable<AstNode> Exprs { get; }
 
             public ExprTrackingTag(
                 ITextSnapshot snapshot,
@@ -249,7 +249,7 @@ namespace QtVsTools.Qml.Classification
 
         class ExprTag : ClassificationTag
         {
-            public IOrderedEnumerable<AstNode> Exprs { get; private set; }
+            public IOrderedEnumerable<AstNode> Exprs { get; }
 
             public ExprTag(IOrderedEnumerable<AstNode> exprs, IClassificationType type)
                 : base(type)

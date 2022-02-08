@@ -44,7 +44,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// </summary>
         public partial class Parser
         {
-            Renderer Renderer { get; set; }
+            Renderer Renderer { get; }
             Pattern Pattern { get; set; }
             public Regex Regex { get; private set; }
 

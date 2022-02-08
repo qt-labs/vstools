@@ -33,7 +33,7 @@ namespace QtVsTools
 {
     public class ConcurrentStopwatch : Concurrent<ConcurrentStopwatch>
     {
-        Stopwatch Stopwatch { get; set; }
+        Stopwatch Stopwatch { get; }
 
         public ConcurrentStopwatch()
         {

@@ -211,8 +211,8 @@ namespace QtVsTools.SyntaxAnalysis
         /// </summary>
         public partial class ProductionObjects : IEnumerable<KeyValuePair<string, object>>
         {
-            List<KeyValuePair<string, object>> Productions { get; set; }
-            Dictionary<string, List<object>> ProductionsByTokenId { get; set; }
+            List<KeyValuePair<string, object>> Productions { get; }
+            Dictionary<string, List<object>> ProductionsByTokenId { get; }
 
             public ProductionObjects()
             {

@@ -209,13 +209,13 @@ namespace QtVsTools.SyntaxAnalysis
 
             public class Expr
             {
-                public Op Operator { get; private set; }
+                public Op Operator { get; }
 
-                public List<Expr> Factors { get; private set; }
+                public List<Expr> Factors { get; }
                 public Expr(Op op, List<Expr> factors) { Operator = op; Factors = factors; }
                 public Expr(Op op, params Expr[] factors) : this(op, factors.ToList()) { }
 
-                public CharClass Term { get; private set; }
+                public CharClass Term { get; }
                 public Expr(CharClass c) { Operator = Op.Term; Term = c; }
                 public static implicit operator Expr(CharClass c) { return new Expr(c); }
                 public static implicit operator Expr(string s) { return Char[s]; }
@@ -324,7 +324,7 @@ namespace QtVsTools.SyntaxAnalysis
             {
                 public Expr Expr { get; set; }
                 public Queue<Expr> Children { get; set; }
-                public List<CharClassSet> SubSets { get; set; }
+                public List<CharClassSet> SubSets { get; }
                 public StackFrame()
                 {
                     Expr = null;

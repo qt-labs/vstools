@@ -170,7 +170,7 @@ namespace QtVsTools.SyntaxAnalysis
             /// <summary>
             /// Set of rules that can be applied to the token.
             /// </summary>
-            TokenRules Rules { get; set; }
+            TokenRules Rules { get; }
 
             public void Add(IProductionRule rule)
             {
@@ -221,7 +221,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class TokenGroup : IEnumerable<string>
         {
-            HashSet<string> TokenIds { get; set; }
+            HashSet<string> TokenIds { get; }
 
             public TokenGroup(params string[] tokenIds)
             {
@@ -261,7 +261,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class TokenRules : IEnumerable<IProductionRule>
         {
-            Dictionary<RuleCallback.Selector, IProductionRule> Rules { get; set; }
+            Dictionary<RuleCallback.Selector, IProductionRule> Rules { get; }
             IProductionRule DefaultRule { get; set; }
 
             public TokenRules()

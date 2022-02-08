@@ -64,7 +64,7 @@ namespace QtVsTools.Common
         [AttributeUsage(AttributeTargets.All)]
         public sealed class StringAttribute : Attribute, ICast<string>
         {
-            public string Value { get; private set; }
+            public string Value { get; }
             public StringAttribute(string str) { Value = str; }
         }
 

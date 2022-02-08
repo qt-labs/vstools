@@ -105,7 +105,7 @@ namespace QtVsTools.Json
 
     class EnumStringAttribute : Attribute
     {
-        public string ValueString { get; private set; }
+        public string ValueString { get; }
 
         public EnumStringAttribute(string enumValueString)
         {

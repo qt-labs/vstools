@@ -51,8 +51,8 @@ namespace QtVsTools
     public abstract class BasePriorityQueue<T, TPriority> : Concurrent, IEnumerable<T>
         where TPriority : IComparable<TPriority>
     {
-        SortedDictionary<TPriority, T> ItemsByPriority { get; set; }
-        Dictionary<object, TPriority> ItemPriority { get; set; }
+        SortedDictionary<TPriority, T> ItemsByPriority { get; }
+        Dictionary<object, TPriority> ItemPriority { get; }
         T Head { get; set; }
         public int Count { get; private set; }
         public bool IsEmpty => (Count == 0);
@@ -61,7 +61,7 @@ namespace QtVsTools
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => Items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => Items.GetEnumerator();
 
-        Func<T, object> GetItemKey { get; set; }
+        Func<T, object> GetItemKey { get; }
 
         public BasePriorityQueue() : this(x => x)
         { }

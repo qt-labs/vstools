@@ -524,7 +524,6 @@ namespace QtVsTools.Core.CommandLine
         public IEnumerable<string> Names
         {
             get;
-            private set;
         }
 
         public string ValueName
