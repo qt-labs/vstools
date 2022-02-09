@@ -205,8 +205,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         void AddChange(ItemPropertyChange newChange)
         {
-            ItemPropertyChange oldChange;
-            if (itemPropertyChanges.TryGetValue(newChange.Key, out oldChange)) {
+            if (itemPropertyChanges.TryGetValue(newChange.Key, out ItemPropertyChange oldChange)) {
                 if (oldChange.GroupKey == newChange.GroupKey) {
                     oldChange.CopyFrom(newChange);
                     return;
@@ -883,14 +882,13 @@ namespace QtVsTools.Core.QtMsBuild
         {
             properties = new Dictionary<Property, string>();
 
-            string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
                 macros,
                 ToolExecName,
-                out qtDir,
-                out inputPath,
-                out outputPath)) {
+                out string qtDir,
+                out string inputPath,
+                out string outputPath)) {
                 return false;
             }
 
@@ -1132,14 +1130,13 @@ namespace QtVsTools.Core.QtMsBuild
         {
             properties = new Dictionary<Property, string>();
 
-            string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
                 macros,
                 ToolExecName,
-                out qtDir,
-                out inputPath,
-                out outputPath)) {
+                out string qtDir,
+                out string inputPath,
+                out string outputPath)) {
                 return false;
             }
 
@@ -1159,8 +1156,7 @@ namespace QtVsTools.Core.QtMsBuild
                 properties[Property.Root] = parser.Value(options[Property.Root]);
 
             if (parser.IsSet(options[Property.Compression])) {
-                int level;
-                if (!int.TryParse(parser.Value(options[Property.Compression]), out level))
+                if (!int.TryParse(parser.Value(options[Property.Compression]), out int level))
                     return false;
                 if (level < 1 || 9 < level)
                     return false;
@@ -1332,14 +1328,13 @@ namespace QtVsTools.Core.QtMsBuild
         {
             properties = new Dictionary<Property, string>();
 
-            string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
                 macros,
                 ToolExecName,
-                out qtDir,
-                out inputPath,
-                out outputPath)) {
+                out string qtDir,
+                out string inputPath,
+                out string outputPath)) {
                 return false;
             }
 
@@ -1475,14 +1470,13 @@ namespace QtVsTools.Core.QtMsBuild
         {
             properties = new Dictionary<Property, string>();
 
-            string qtDir, inputPath, outputPath;
             if (!ParseCommandLine(
                 commandLine,
                 macros,
                 ToolExecName,
-                out qtDir,
-                out inputPath,
-                out outputPath)) {
+                out string qtDir,
+                out string inputPath,
+                out string outputPath)) {
                 return false;
             }
 

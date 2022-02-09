@@ -44,8 +44,7 @@ namespace QtVsTools.Core
 
         public QtModule Module(int id)
         {
-            QtModule module;
-            modules.TryGetValue(id, out module);
+            modules.TryGetValue(id, out QtModule module);
             return module;
         }
 

@@ -135,11 +135,9 @@ namespace QtVsTools.SyntaxAnalysis
             public bool Execute(ref T prod, string value, params object[] operands)
             {
                 int idx = 0;
-                T1 x;
-                T2 y;
-                if (!GetOperand(out x, operands, ref idx))
+                if (!GetOperand(out T1 x, operands, ref idx))
                     return false;
-                if (!GetOperand(out y, operands, ref idx))
+                if (!GetOperand(out T2 y, operands, ref idx))
                     return false;
 
                 if (!TestAssert(prod, value, x, y))

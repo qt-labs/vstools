@@ -926,8 +926,7 @@ namespace QtVsTest.Macros
             foreach (var globalVar in GlobalVars.Values) {
                 string varName = globalVar.Name;
                 Type varType = globalVar.FieldInfo.FieldType;
-                object value;
-                if (Globals.TryGetValue(varName, out value)) {
+                if (Globals.TryGetValue(varName, out object value)) {
                     Type valueType = value.GetType();
                     if (!varType.IsAssignableFrom(valueType)) {
                         throw new InvalidCastException(string.Format(
@@ -967,8 +966,7 @@ namespace QtVsTest.Macros
 
         static Macro GetMacro(string name)
         {
-            Macro macro;
-            if (!Macros.TryGetValue(name, out macro))
+            if (!Macros.TryGetValue(name, out Macro macro))
                 return null;
             return macro;
         }

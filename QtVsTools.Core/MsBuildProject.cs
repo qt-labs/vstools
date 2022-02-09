@@ -375,10 +375,8 @@ namespace QtVsTools.Core
                 foreach (var pg in uncategorizedPropertyGroups) {
                     foreach (var p in pg.Elements().ToList()) {
                         var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
-                        XElement configPropertyGroup = null;
-                        if (condition != null)
-                            propertyGroups.TryGetValue((string)condition, out configPropertyGroup);
-                        if (configPropertyGroup != null) {
+                        if (condition != null && propertyGroups
+                            .TryGetValue((string)condition, out XElement configPropertyGroup)) {
                             p.Remove();
                             p.SetAttributeValue("Condition", null);
                             configPropertyGroup.Add(p);
@@ -524,12 +522,10 @@ namespace QtVsTools.Core
                 foreach (var configQtSettings in qtSettings) {
                     var configCondition = (string)configQtSettings.Attribute("Condition");
 
-                    XElement oldConfigQtInstall;
-                    if (oldQtInstall.TryGetValue(configCondition, out oldConfigQtInstall))
+                    if (oldQtInstall.TryGetValue(configCondition, out XElement oldConfigQtInstall))
                         configQtSettings.Add(oldConfigQtInstall);
 
-                    XElement oldConfigQtSettings;
-                    if (oldQtSettings.TryGetValue(configCondition, out oldConfigQtSettings)) {
+                    if (oldQtSettings.TryGetValue(configCondition, out XElement oldConfigQtSettings)) {
                         foreach (var qtSetting in oldConfigQtSettings.Elements())
                             configQtSettings.Add(qtSetting);
                     }
@@ -1050,8 +1046,7 @@ namespace QtVsTools.Core
                     return (string)cbt.Attribute("Include");
                 }
             }
-            string ouputFile;
-            if (!properties.TryGetValue(QtMoc.Property.InputFile, out ouputFile))
+            if (!properties.TryGetValue(QtMoc.Property.InputFile, out string ouputFile))
                 return (string)cbt.Attribute("Include");
             return ouputFile;
         }
@@ -1076,8 +1071,7 @@ namespace QtVsTools.Core
                         Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
                 var outputItems = new List<XElement>();
                 foreach (var outputFile in outputFiles) {
-                    List<XElement> mocOutput = null;
-                    if (projItemsByPath.TryGetValue(outputFile, out mocOutput)) {
+                    if (projItemsByPath.TryGetValue(outputFile, out List<XElement> mocOutput)) {
                         outputItems.AddRange(mocOutput);
                         hasGeneratedFiles |= hasGeneratedFiles ? true : mocOutput
                             .Where(x => !x.Elements(ns + "ExcludedFromBuild")
@@ -1514,8 +1508,7 @@ namespace QtVsTools.Core
 
             public string ExpandString(string stringToExpand)
             {
-                string expandedString;
-                if (TryExpansionCache(stringToExpand, out expandedString))
+                if (TryExpansionCache(stringToExpand, out string expandedString))
                     return expandedString;
 
                 if (evaluateTarget == null) {

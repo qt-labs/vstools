@@ -56,9 +56,8 @@ namespace QtVsTools.VisualStudio
                 return;
             vsShell = VsServiceProvider.GetService<IVsShell>();
 
-            object objProp;
-            int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out objProp);
-            if (res == VSConstants.S_OK && objProp is string property)
+            int res = vsShell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out object o);
+            if (res == VSConstants.S_OK && o is string property)
                 _InstallRootDir = property;
         }
 
@@ -66,9 +65,8 @@ namespace QtVsTools.VisualStudio
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            object value;
             int res = context.GetProperty(
-                (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
+                (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out object value);
             if (res == VSConstants.S_OK && value is EnvDTE.Project project)
                 return project;
             return null;
@@ -78,9 +76,8 @@ namespace QtVsTools.VisualStudio
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            object value;
             int res = context.GetProperty(
-                itemid, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
+                itemid, (int)__VSHPROPID.VSHPROPID_ExtObject, out object value);
             if (res == VSConstants.S_OK && value is EnvDTE.ProjectItem item)
                 return item;
             return null;

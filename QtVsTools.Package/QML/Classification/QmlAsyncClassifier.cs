@@ -522,8 +522,7 @@ namespace QtVsTools.Qml.Classification
             public TValue Get(object client, TKey key)
             {
                 lock (criticalSection) {
-                    ValueRef valueRef;
-                    if (!data.TryGetValue(key, out valueRef)) {
+                    if (!data.TryGetValue(key, out ValueRef valueRef)) {
                         valueRef = new ValueRef
                         {
                             Value = GetDefaultValue(key),
@@ -541,8 +540,7 @@ namespace QtVsTools.Qml.Classification
             {
                 IDisposable disposable = null;
                 lock (criticalSection) {
-                    ValueRef valueRef;
-                    if (data.TryGetValue(key, out valueRef)) {
+                    if (data.TryGetValue(key, out ValueRef valueRef)) {
                         valueRef.ClientObjects.Remove(client);
                         if (valueRef.ClientObjects.Count == 0) {
                             data.Remove(key);

@@ -156,8 +156,7 @@ namespace QtVsTools.Qml.Debug
 
             qrcPath = string.Format("qrc:///{0}", qrcPath);
 
-            QmlFile file;
-            if (!files.TryGetValue(qrcPath, out file))
+            if (!files.TryGetValue(qrcPath, out QmlFile file))
                 return default(QmlFile);
 
             return file;
@@ -190,8 +189,7 @@ namespace QtVsTools.Qml.Debug
                 return default(QmlFile);
             }
 
-            QmlFile file;
-            if (files.TryGetValue(fullPath, out file))
+            if (files.TryGetValue(fullPath, out QmlFile file))
                 return file;
 
             return new QmlFile

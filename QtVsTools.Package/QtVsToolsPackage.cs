@@ -203,8 +203,7 @@ namespace QtVsTools
                 var timeUiThreadEnd = initTimer.Elapsed;
 
                 var vm = QtVersionManager.The(initDone);
-                var error = string.Empty;
-                if (vm.HasInvalidVersions(out error))
+                if (vm.HasInvalidVersions(out string error))
                     Messages.Print(error);
 
                 ///////////

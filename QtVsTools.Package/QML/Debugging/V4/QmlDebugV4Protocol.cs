@@ -100,8 +100,7 @@ namespace QtVsTools.Qml.Debug.V4
         {
             while (!Disposing) {
                 eventReceived.WaitOne();
-                Event evt;
-                while (!Disposing && eventQueue.TryDequeue(out evt))
+                while (!Disposing && eventQueue.TryDequeue(out Event evt))
                     sink.NotifyEvent(evt);
             }
         }

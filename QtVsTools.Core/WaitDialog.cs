@@ -56,8 +56,7 @@ namespace QtVsTools.Core
 
                 ThreadHelper.ThrowIfNotOnUIThread();
 
-                bool canceled = false;
-                int res = VsWaitDialog.HasCanceled(out canceled);
+                int res = VsWaitDialog.HasCanceled(out bool canceled);
                 if (res != VSConstants.S_OK)
                     return false;
 
@@ -82,8 +81,7 @@ namespace QtVsTools.Core
 
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            IVsThreadedWaitDialog2 vsWaitDialog = null;
-            factory.CreateInstance(out vsWaitDialog);
+            factory.CreateInstance(out IVsThreadedWaitDialog2 vsWaitDialog);
             if (vsWaitDialog == null)
                 return null;
 
@@ -159,9 +157,8 @@ namespace QtVsTools.Core
 
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            bool canceled = false;
             int res = VsWaitDialog.UpdateProgress(message, progressText,
-                statusBarText, currentStep, totalSteps, disableCancel, out canceled);
+                statusBarText, currentStep, totalSteps, disableCancel, out bool canceled);
 
             if (res != VSConstants.S_OK)
                 return;
@@ -178,8 +175,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             Running = false;
-            int canceled = 0;
-            VsWaitDialog.EndWaitDialog(out canceled);
+            VsWaitDialog.EndWaitDialog(out int canceled);
             Canceled = (canceled != 0);
         }
 

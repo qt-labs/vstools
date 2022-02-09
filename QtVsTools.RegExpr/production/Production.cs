@@ -223,8 +223,7 @@ namespace QtVsTools.SyntaxAnalysis
             public void Add(string tokenId, object prodObj)
             {
                 Productions.Add(new KeyValuePair<string, object>(tokenId, prodObj));
-                List<object> prodObjs;
-                if (!ProductionsByTokenId.TryGetValue(tokenId, out prodObjs))
+                if (!ProductionsByTokenId.TryGetValue(tokenId, out List<object> prodObjs))
                     ProductionsByTokenId.Add(tokenId, prodObjs = new List<object>());
                 prodObjs.Add(prodObj);
             }
@@ -234,8 +233,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (string.IsNullOrEmpty(tokenId))
                     return Empty<T>();
 
-                List<object> tokenProds;
-                if (!ProductionsByTokenId.TryGetValue(tokenId, out tokenProds))
+                if (!ProductionsByTokenId.TryGetValue(tokenId, out List<object> tokenProds))
                     return Empty<T>();
 
                 return tokenProds

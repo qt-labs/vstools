@@ -160,8 +160,7 @@ namespace QtVsTools.QtMsBuild
                     }
                     await Task.Delay(100);
                 }
-                QtProjectBuild buildRequest;
-                if (BuildQueue.TryDequeue(out buildRequest)) {
+                if (BuildQueue.TryDequeue(out QtProjectBuild buildRequest)) {
                     if (dispatchStatus == null) {
                         dispatchStatus = StatusCenter.PreRegister(
                             new TaskHandlerOptions

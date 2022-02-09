@@ -119,11 +119,9 @@ namespace QtVsTools.Qml.Debug.AD7
 
         static string GetChildKey(string childName)
         {
-            int childIndex;
-            if (int.TryParse(childName, out childIndex))
+            if (int.TryParse(childName, out int childIndex))
                 return string.Format("{0:D9}", childIndex);
-            else
-                return childName;
+            return childName;
         }
 
         int IDebugProperty2.SetValueAsString(string pszValue, uint dwRadix, uint dwTimeout)
@@ -241,8 +239,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         public DEBUG_PROPERTY_INFO GetInfo(enum_DEBUGPROP_INFO_FLAGS dwFields)
         {
-            DEBUG_PROPERTY_INFO info;
-            Info.Map(MappingToDEBUG_PROPERTY_INFO, dwFields, out info);
+            Info.Map(MappingToDEBUG_PROPERTY_INFO, dwFields, out DEBUG_PROPERTY_INFO info);
             return info;
         }
 

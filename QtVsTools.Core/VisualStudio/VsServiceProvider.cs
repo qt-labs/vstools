@@ -60,8 +60,7 @@ namespace QtVsTools.VisualStudio
             if (Instance == null)
                 return null;
 
-            object serviceObj;
-            if (services.TryGetValue(new ServiceType(typeof(T), typeof(I)), out serviceObj))
+            if (services.TryGetValue(new ServiceType(typeof(T), typeof(I)), out object serviceObj))
                 return serviceObj as I;
 
             var serviceInterface = Instance.GetService<T, I>();
@@ -82,8 +81,7 @@ namespace QtVsTools.VisualStudio
             if (Instance == null)
                 return null;
 
-            object serviceObj;
-            if (services.TryGetValue(new ServiceType(typeof(T), typeof(I)), out serviceObj))
+            if (services.TryGetValue(new ServiceType(typeof(T), typeof(I)), out object serviceObj))
                 return serviceObj as I;
 
             var serviceInterface = await Instance.GetServiceAsync<T, I>();

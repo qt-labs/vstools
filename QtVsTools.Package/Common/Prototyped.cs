@@ -194,8 +194,7 @@ namespace QtVsTools
 
                 lock (classCriticalSection) {
 
-                    SubClass subClass = null;
-                    if (!classes.TryGetValue(type, out subClass)) {
+                    if (!classes.TryGetValue(type, out SubClass subClass)) {
 
                         var newTypes = GetTypeHierarchy(type)
                             .Where(x => !classes.ContainsKey(x.Key));

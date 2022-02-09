@@ -102,11 +102,10 @@ namespace QtVsTools
             if (item == null)
                 throw new InvalidOperationException("Item cannot be null.");
             lock (CriticalSection) {
-                T oldItem;
-                if (ItemsByPriority.TryGetValue(priority, out oldItem) && !item.Equals(oldItem))
+                if (ItemsByPriority.TryGetValue(priority, out T oldItem) && !item.Equals(oldItem))
                     throw new InvalidOperationException("An item with the same priority exists.");
-                TPriority oldPriority;
-                if (ItemPriority.TryGetValue(GetItemKey(item), out oldPriority)) {
+
+                if (ItemPriority.TryGetValue(GetItemKey(item), out TPriority oldPriority)) {
                     ItemsByPriority.Remove(oldPriority);
                     --Count;
                 }
@@ -128,8 +127,7 @@ namespace QtVsTools
         public T Peek()
         {
             lock (CriticalSection) {
-                T result;
-                if (!TryPeek(out result))
+                if (!TryPeek(out T result))
                     throw new InvalidOperationException("Queue is empty.");
                 return result;
             }
@@ -167,8 +165,7 @@ namespace QtVsTools
         public T Dequeue()
         {
             lock (CriticalSection) {
-                T result;
-                if (!TryDequeue(out result))
+                if (!TryDequeue(out T result))
                     throw new InvalidOperationException("Queue is empty.");
                 return result;
             }

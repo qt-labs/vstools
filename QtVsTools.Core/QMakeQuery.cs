@@ -81,11 +81,9 @@ namespace QtVsTools.Core
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
 
-                string value = string.Empty;
-                if (Properties.TryGetValue(name, out value))
+                if (Properties.TryGetValue(name, out string value))
                     return value;
-                else
-                    return null;
+                return null;
             }
         }
 

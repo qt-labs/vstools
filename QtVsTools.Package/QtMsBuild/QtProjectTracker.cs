@@ -139,8 +139,7 @@ namespace QtVsTools.QtMsBuild
             ThreadHelper.ThrowIfNotOnUIThread();
 
             lock (StaticCriticalSection) {
-                QtProjectTracker tracker = null;
-                if (Instances.TryGetValue(project.FullName, out tracker))
+                if (Instances.TryGetValue(project.FullName, out QtProjectTracker tracker))
                     return tracker;
                 tracker = new QtProjectTracker
                 {
@@ -167,8 +166,7 @@ namespace QtVsTools.QtMsBuild
             while (!QtVsToolsPackage.Instance.Zombied) {
                 while (InitQueue.IsEmpty)
                     await Task.Delay(100);
-                QtProjectTracker tracker;
-                if (InitQueue.TryDequeue(out tracker)) {
+                if (InitQueue.TryDequeue(out QtProjectTracker tracker)) {
                     if (InitStatus == null) {
                         await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();

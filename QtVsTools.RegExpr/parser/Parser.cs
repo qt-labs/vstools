@@ -116,11 +116,9 @@ namespace QtVsTools.SyntaxAnalysis
 
                 foreach (var node in nodes.Where(n => n.Token != Pattern.Root)) {
                     // Get nodes captured by parent token
-                    Token parentToken;
-                    if (!node.Token.Parents.TryGetValue(node.CaptureId, out parentToken))
+                    if (!node.Token.Parents.TryGetValue(node.CaptureId, out Token parentToken))
                         throw new ParseErrorException("Unknown capture ID");
-                    ParseTree.Node[] parentNodes;
-                    if (!nodesByToken.TryGetValue(parentToken, out parentNodes))
+                    if (!nodesByToken.TryGetValue(parentToken, out ParseTree.Node[] parentNodes))
                         throw new ParseErrorException("Missing parent nodes");
                     // Find parent node
                     int idx = Array.BinarySearch(parentNodes, node, ParseTree.Node.Comparer);

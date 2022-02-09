@@ -152,9 +152,8 @@ namespace QtVsTools.Qml.Debug.AD7
             uint dwTimeout,
             out IEnumDebugPropertyInfo2 ppEnum)
         {
-            uint pcelt;
             return ((IDebugStackFrame2)this)
-                .EnumProperties(dwFields, dwRadix, guidFilter, dwTimeout, out pcelt, out ppEnum);
+                .EnumProperties(dwFields, dwRadix, guidFilter, dwTimeout, out _, out ppEnum);
         }
 
         #region //////////////////// Info /////////////////////////////////////////////////////////

@@ -238,8 +238,7 @@ namespace QtVsTools.Core
                             if (!await MessageReady.ToTask(3000))
                                 continue;
                             while (!msgQueue.IsEmpty) {
-                                Msg msg;
-                                if (!msgQueue.TryDequeue(out msg)) {
+                                if (!msgQueue.TryDequeue(out Msg msg)) {
                                     await Task.Yield();
                                     continue;
                                 }

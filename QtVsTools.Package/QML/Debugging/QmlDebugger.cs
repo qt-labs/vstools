@@ -284,8 +284,7 @@ namespace QtVsTools.Qml.Debug
 
             } else {
                 foreach (int breakpointId in evtBreak.Body.Breakpoints) {
-                    IBreakpoint breakpoint;
-                    if (!breakpoints.TryGetValue(breakpointId, out breakpoint))
+                    if (!breakpoints.TryGetValue(breakpointId, out IBreakpoint breakpoint))
                         continue;
                     breakpoint.NotifyBreak();
                 }
@@ -428,13 +427,7 @@ namespace QtVsTools.Qml.Debug
 
         public static bool CheckCommandLine(string execPath, string args)
         {
-            ushort portFrom;
-            ushort portTo;
-            string hostName;
-            string fileName;
-            bool block;
-            return ParseCommandLine(
-                execPath, args, out portFrom, out portTo, out hostName, out fileName, out block);
+            return ParseCommandLine(execPath, args, out _, out _, out _, out _, out _);
         }
 
         /// <summary>

@@ -89,12 +89,11 @@ namespace QtVsTools.Test.PriorityQueue
         public void TestTryPeek()
         {
             var q = new PunisherQueue<string>();
-            string s;
-            Assert.IsTrue(!q.TryPeek(out s));
+            Assert.IsTrue(!q.TryPeek(out _));
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.TryPeek(out s) && s == "a");
+            Assert.IsTrue(q.TryPeek(out string s) && s == "a");
             Assert.IsTrue(string.Join("", q) == "abc");
         }
 
@@ -121,12 +120,11 @@ namespace QtVsTools.Test.PriorityQueue
         public void TestTryDequeue()
         {
             var q = new PunisherQueue<string>();
-            string s;
-            Assert.IsTrue(!q.TryDequeue(out s));
+            Assert.IsTrue(!q.TryDequeue(out _));
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.TryDequeue(out s) && s == "a");
+            Assert.IsTrue(q.TryDequeue(out string s) && s == "a");
             Assert.IsTrue(string.Join("", q) == "bc");
         }
 
@@ -177,8 +175,7 @@ namespace QtVsTools.Test.PriorityQueue
                 }
             });
             for (int i = 0; i < 10000; ++i) {
-                string s;
-                if (!q.TryDequeue(out s))
+                if (!q.TryDequeue(out _))
                     --i;
                 --n;
                 Thread.Yield();

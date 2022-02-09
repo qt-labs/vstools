@@ -95,8 +95,7 @@ namespace QtVsTools.Qml.Debug
             if (pProcess == null && pProgram.GetProcess(out pProcess) != VSConstants.S_OK)
                 return VSConstants.S_OK;
 
-            Guid procGuid;
-            if (pProcess.GetProcessId(out procGuid) != VSConstants.S_OK)
+            if (pProcess.GetProcessId(out Guid procGuid) != VSConstants.S_OK)
                 return VSConstants.S_OK;
 
             // Run only once per process
@@ -124,14 +123,10 @@ namespace QtVsTools.Qml.Debug
             else
                 return VSConstants.S_OK;
 
-            string execPath;
-            uint procId;
-            if (!GetProcessInfo(pProcess, native, out execPath, out procId))
+            if (!GetProcessInfo(pProcess, native, out string execPath, out uint procId))
                 return VSConstants.S_OK;
 
-            string execCmd;
-            IEnumerable<string> rccItems;
-            if (!GetProjectInfo(execPath, native, out execCmd, out rccItems))
+            if (!GetProjectInfo(execPath, native, out string execCmd, out IEnumerable<string> rccItems))
                 return VSConstants.S_OK;
 
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -142,9 +137,7 @@ namespace QtVsTools.Qml.Debug
 
         Guid GetEngineId(IDebugProgram2 pProgram)
         {
-            string engineName;
-            Guid engineGuid;
-            if (pProgram.GetEngineInfo(out engineName, out engineGuid) != VSConstants.S_OK)
+            if (pProgram.GetEngineInfo(out _, out Guid engineGuid) != VSConstants.S_OK)
                 return Guid.Empty;
             return engineGuid;
         }
@@ -175,8 +168,7 @@ namespace QtVsTools.Qml.Debug
             execPath = "";
             procId = 0;
 
-            string fileName;
-            if (pProcess.GetName(enum_GETNAME_TYPE.GN_FILENAME, out fileName) != VSConstants.S_OK)
+            if (pProcess.GetName(enum_GETNAME_TYPE.GN_FILENAME, out string fileName) != VSConstants.S_OK)
                 return false;
 
             var pProcessId = new AD_PROCESS_ID[1];

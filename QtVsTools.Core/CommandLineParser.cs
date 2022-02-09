@@ -117,8 +117,7 @@ namespace QtVsTools.Core.CommandLine
 
         IEnumerable<string> Aliases(string optionName)
         {
-            int optionIndex;
-            if (!nameHash.TryGetValue(optionName, out optionIndex)) {
+            if (!nameHash.TryGetValue(optionName, out int optionIndex)) {
                 return new List<string>();
             }
             return commandLineOptionList[optionIndex].Names;
@@ -203,8 +202,7 @@ namespace QtVsTools.Core.CommandLine
              IEnumerator<string> argumentEnumerator, ref bool atEnd)
         {
             const char assignChar = '=';
-            int optionOffset;
-            if (nameHash.TryGetValue(optionName, out optionOffset)) {
+            if (nameHash.TryGetValue(optionName, out int optionOffset)) {
                 int assignPos = argument.IndexOf(assignChar);
                 bool withValue = !string.IsNullOrEmpty(
                     commandLineOptionList[optionOffset].ValueName);
@@ -355,10 +353,9 @@ namespace QtVsTools.Core.CommandLine
                             if (!RegisterFoundOption(optionName)) {
                                 error = true;
                             } else {
-                                int optionOffset;
                                 Trace.Assert(nameHash.TryGetValue(
                                     optionName,
-                                    out optionOffset));
+                                    out int optionOffset));
                                 bool withValue = !string.IsNullOrEmpty(
                                     commandLineOptionList[optionOffset].ValueName);
                                 if (withValue) {
@@ -396,10 +393,9 @@ namespace QtVsTools.Core.CommandLine
                         if (argument.Length > 2) {
                             string possibleShortOptionStyleName = argument.Substring(1, 1);
 
-                            int shortOptionIdx;
                             if (nameHash.TryGetValue(
                                 possibleShortOptionStyleName,
-                                out shortOptionIdx)) {
+                                out int shortOptionIdx)) {
                                 var arg = commandLineOptionList[shortOptionIdx];
                                 if ((arg.Flags & Option.Flag.ShortOptionStyle) != 0) {
                                     RegisterFoundOption(possibleShortOptionStyleName);
@@ -465,8 +461,7 @@ namespace QtVsTools.Core.CommandLine
         public IEnumerable<string> Values(string optionName)
         {
             CheckParsed("Values");
-            int optionOffset;
-            if (nameHash.TryGetValue(optionName, out optionOffset)) {
+            if (nameHash.TryGetValue(optionName, out int optionOffset)) {
                 var values = optionValuesHash[optionOffset];
                 return values;
             }

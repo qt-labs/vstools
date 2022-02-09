@@ -89,9 +89,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             //                  ---------------
 
             var criteria = new string[] { "Y" };
-            ITaskItem[] result;
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out result, criteria));
+                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result != null && result.Length == 3);
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");
@@ -123,9 +122,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             //                      -------------------
 
             var criteria = new string[] { "ROW_NUMBER" };
-            ITaskItem[] result;
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out result, criteria));
+                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result != null && result.Length == 3);
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");
@@ -157,9 +155,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             //                      -------------------
 
             var criteria = new string[] { "ROW_NUMBER", "Y" };
-            ITaskItem[] result;
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out result, criteria));
+                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result != null && result.Length == 0);
         }
 
@@ -186,9 +183,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                 .ToArray();
 
             var criteria = new string[] { "ROW_NUMBER", "Y" };
-            ITaskItem[] result;
             Assert.IsTrue(
-                Join.Execute(newLeftItems, RightItems, out result, criteria));
+                Join.Execute(newLeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result != null && result.Length == 1);
 
             Assert.IsTrue(result[0].GetMetadata("X") == "zzz");
@@ -211,9 +207,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             // ---------------------    A  | bar | 99          B  | bar | 99 | bar
             //                        ---------------------  ----------------------
 
-            ITaskItem[] result;
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out result));
+                Join.Execute(LeftItems, RightItems, out ITaskItem[] result));
             Assert.IsTrue(result != null && result.Length == 4);
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");

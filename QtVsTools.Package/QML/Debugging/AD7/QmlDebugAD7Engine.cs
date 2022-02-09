@@ -106,8 +106,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (string.IsNullOrEmpty(pszOptions))
                 return VSConstants.E_FAIL;
 
-            uint procId;
-            if (!uint.TryParse(pszOptions, out procId))
+            if (!uint.TryParse(pszOptions, out uint procId))
                 return VSConstants.E_FAIL;
 
             var env = bstrEnv.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
@@ -120,13 +119,12 @@ namespace QtVsTools.Qml.Debug.AD7
                     FileSystem.RegisterRccFile(rccFile);
             }
 
-            IDebugProcess2 nativeProc;
             var nativeProcId = new AD_PROCESS_ID
             {
                 ProcessIdType = (uint)enum_AD_PROCESS_ID.AD_PROCESS_ID_SYSTEM,
                 dwProcessId = procId
             };
-            if (pPort.GetProcess(nativeProcId, out nativeProc) != VSConstants.S_OK)
+            if (pPort.GetProcess(nativeProcId, out IDebugProcess2 nativeProc) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
@@ -146,20 +144,11 @@ namespace QtVsTools.Qml.Debug.AD7
             if (program == null)
                 return VSConstants.E_FAIL;
 
-            IDebugPort2 port;
-            if (process.GetPort(out port) != VSConstants.S_OK)
+            if (process.GetPort(out IDebugPort2 port) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
-            string portName;
-            port.GetPortName(out portName);
-
-            Guid guidPort;
-            port.GetPortId(out guidPort);
-
             IDebugDefaultPort2 defaultPort = (IDebugDefaultPort2)port;
-
-            IDebugPortNotify2 portNotify;
-            if (defaultPort.GetPortNotify(out portNotify) != VSConstants.S_OK)
+            if (defaultPort.GetPortNotify(out IDebugPortNotify2 portNotify) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
             if (portNotify.AddProgramNode(program) != VSConstants.S_OK)
@@ -183,8 +172,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
             DebugEvent.Send(new EngineCreateEvent(this));
 
-            Guid pguidProgramId;
-            if (rgpPrograms[0].GetProgramId(out pguidProgramId) != VSConstants.S_OK)
+            if (rgpPrograms[0].GetProgramId(out Guid pguidProgramId) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
             program.ProgramId = pguidProgramId;
@@ -201,15 +189,10 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugEngineLaunch2.CanTerminateProcess(IDebugProcess2 pProcess)
         {
-            Guid procId;
-            if (pProcess.GetProcessId(out procId) != VSConstants.S_OK)
+            if (pProcess.GetProcessId(out Guid procId) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
-            Program program;
-            if (!programs.TryGetValue(procId, out program))
-                return VSConstants.S_FALSE;
-
-            return VSConstants.S_OK;
+            return programs.TryGetValue(procId, out _) ? VSConstants.S_OK : VSConstants.S_FALSE;
         }
 
         public bool ProgramIsRunning(Program program)
@@ -219,12 +202,10 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugEngineLaunch2.TerminateProcess(IDebugProcess2 pProcess)
         {
-            Guid procId;
-            if (pProcess.GetProcessId(out procId) != VSConstants.S_OK)
+            if (pProcess.GetProcessId(out Guid procId) != VSConstants.S_OK)
                 return VSConstants.E_FAIL;
 
-            Program program;
-            if (!programs.TryGetValue(procId, out program))
+            if (!programs.TryGetValue(procId, out Program program))
                 return VSConstants.S_FALSE;
 
             programs.Remove(procId);

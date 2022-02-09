@@ -128,8 +128,7 @@ namespace QtVsTools.Common
         /// </summary>
         public static TEnum Cast<T, TEnum>(this T valueT, TEnum defaultValue) where TEnum : struct
         {
-            TEnum value;
-            return TryCast(valueT, out value) ? value : defaultValue;
+            return TryCast(valueT, out TEnum value) ? value : defaultValue;
         }
 
         /// <summary>

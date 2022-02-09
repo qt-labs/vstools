@@ -85,8 +85,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (docPosition == null)
                 return false;
 
-            string fileName;
-            if (docPosition.GetFileName(out fileName) != VSConstants.S_OK)
+            if (docPosition.GetFileName(out string fileName) != VSConstants.S_OK)
                 return false;
 
             if (!ValidExtensions.Where(x => string.Equals(x, Path.GetExtension(fileName))).Any())

@@ -314,8 +314,7 @@ namespace QtVsTools.Qml
             if (ptrRef == IntPtr.Zero)
                 return;
 
-            AstNode nodeRef;
-            if (nodesBytPtr.TryGetValue(ptrRef, out nodeRef)) {
+            if (nodesBytPtr.TryGetValue(ptrRef, out AstNode nodeRef)) {
                 nodeProperty.SetValue(node, nodeRef);
             } else {
                 List<KeyValuePair<AstNode, PropertyInfo>> pendingRefList;
