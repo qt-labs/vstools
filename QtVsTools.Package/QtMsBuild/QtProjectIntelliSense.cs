@@ -47,7 +47,7 @@ namespace QtVsTools.QtMsBuild
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (project == null || !QtProjectTracker.IsTracked(project))
+            if (project == null || !QtProjectTracker.IsTracked(project.FullName))
                 return;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
@@ -56,17 +56,19 @@ namespace QtVsTools.QtMsBuild
                     DateTime.Now, Thread.CurrentThread.ManagedThreadId,
                     (configId != null) ? configId : "(all configs)", project.FullName));
             }
-            _ = Task.Run(() => RefreshAsync(project, configId, selectedFiles));
+            string projectPath = project.FullName;
+            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles));
         }
 
         public static async Task RefreshAsync(
             EnvDTE.Project project,
+            string projectPath,
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
-            if (project == null || !QtProjectTracker.IsTracked(project))
+            if (project == null || !QtProjectTracker.IsTracked(projectPath))
                 return;
-            var tracker = QtProjectTracker.Get(project);
+            var tracker = QtProjectTracker.Get(project, projectPath);
             await tracker.Initialized;
 
             var properties = new Dictionary<string, string>();
@@ -88,7 +90,7 @@ namespace QtVsTools.QtMsBuild
 
             foreach (var config in configs) {
                 await QtProjectBuild.StartBuildAsync(
-                    project, config, properties, targets,
+                    project, projectPath, config, properties, targets,
                     LoggerVerbosity.Quiet);
             }
         }

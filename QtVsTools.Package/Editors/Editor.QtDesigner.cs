@@ -65,7 +65,7 @@ namespace QtVsTools.Editors
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 
             var project = document.ProjectItem?.ContainingProject;
-            if (project == null || !QtProjectTracker.IsTracked(project))
+            if (project == null || !QtProjectTracker.IsTracked(project.FullName))
                 return;
             string filePath = document.FullName;
             string[] itemId = new[] { document.ProjectItem?.Name };

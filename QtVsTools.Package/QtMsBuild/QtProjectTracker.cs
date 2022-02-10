@@ -37,6 +37,7 @@ using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.QtMsBuild
 {
@@ -115,14 +116,14 @@ namespace QtVsTools.QtMsBuild
         }
 
         public EnvDTE.Project Project { get; private set; }
+        public VCProject VcProject { get; private set; }
         public UnconfiguredProject UnconfiguredProject { get; private set; }
         public EventWaitHandle Initialized { get; }
         List<Subscriber> Subscribers { get; set; }
 
-        public static bool IsTracked(EnvDTE.Project project)
+        public static bool IsTracked(string projectPath)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return Instances.ContainsKey(project.FullName);
+            return Instances.ContainsKey(projectPath);
         }
 
         public static void Add(EnvDTE.Project project)
@@ -131,21 +132,19 @@ namespace QtVsTools.QtMsBuild
                 return;
 
             ThreadHelper.ThrowIfNotOnUIThread();
-            Get(project);
+            Get(project, project.FullName);
         }
 
-        public static QtProjectTracker Get(EnvDTE.Project project)
+        public static QtProjectTracker Get(EnvDTE.Project project, string projectPath)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             lock (StaticCriticalSection) {
-                if (Instances.TryGetValue(project.FullName, out QtProjectTracker tracker))
+                if (Instances.TryGetValue(projectPath, out QtProjectTracker tracker))
                     return tracker;
                 tracker = new QtProjectTracker
                 {
                     Project = project,
                 };
-                Instances[project.FullName] = tracker;
+                Instances[projectPath] = tracker;
                 InitQueue.Enqueue(tracker);
                 if (InitDispatcher == null)
                     InitDispatcher = Task.Run(InitDispatcherLoopAsync);
@@ -168,11 +167,15 @@ namespace QtVsTools.QtMsBuild
                     await Task.Delay(100);
                 if (InitQueue.TryDequeue(out QtProjectTracker tracker)) {
                     if (InitStatus == null) {
-                        await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        await QtVsToolsPackage.Instance.JoinableTaskFactory
+                            .SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
                         await TaskScheduler.Default;
                     } else {
+                        await QtVsToolsPackage.Instance.JoinableTaskFactory
+                            .SwitchToMainThreadAsync();
                         tracker.UpdateInitStatus(0);
+                        await TaskScheduler.Default;
                     }
                     await tracker.InitializeAsync();
                 }
@@ -190,9 +193,14 @@ namespace QtVsTools.QtMsBuild
         async Task InitializeAsync()
         {
             int p = 0;
-            UpdateInitStatus(p += 10);
+            UpdateInitStatus(p += 5);
 
             await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+            UpdateInitStatus(p += 5);
+
+            VcProject = Project.Object as VCProject;
+            if (VcProject == null)
+                return;
             UpdateInitStatus(p += 10);
 
             var context = Project.Object as IVsBrowseObjectContext;
@@ -283,8 +291,9 @@ namespace QtVsTools.QtMsBuild
                     Subscribers = null;
                 }
                 project.ProjectUnloading -= OnProjectUnloadingAsync;
-                Instances.TryRemove(Project.FullName, out QtProjectTracker tracker);
+                Instances.TryRemove(project.UnconfiguredProject.FullPath, out QtProjectTracker _);
             }
+            await Task.Yield();
         }
 
         void BeginInitStatus()

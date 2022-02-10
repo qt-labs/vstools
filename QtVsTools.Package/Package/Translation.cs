@@ -150,7 +150,8 @@ namespace QtVsTools
                 if (selectedFiles != null)
                     properties["SelectedFiles"] = string.Join(";", selectedFiles);
 
-                QtProjectBuild.StartBuild(project, activeConfigId, properties, new[] { target });
+                QtProjectBuild.StartBuild(
+                    project, project.FullName, activeConfigId, properties, new[] { target });
             }
         }
 

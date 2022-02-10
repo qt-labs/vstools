@@ -162,7 +162,7 @@ namespace QtVsTools
             case (int)CommandId.SolutionEnableProjectTracking: {
                     foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                         if (HelperFunctions.IsQtProject(project))
-                            QtProjectTracker.Get(project);
+                            QtProjectTracker.Get(project, project.FullName);
                     }
                 }
                 break;

@@ -175,7 +175,7 @@ namespace QtVsTools
                 break;
             case CommandId.ProjectRefreshIntelliSense: {
                     var selectedProject = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                    var tracker = QtProjectTracker.Get(selectedProject);
+                    var tracker = QtProjectTracker.Get(selectedProject, selectedProject.FullName);
                     QtProjectIntellisense.Refresh(tracker.Project);
                 }
                 break;
