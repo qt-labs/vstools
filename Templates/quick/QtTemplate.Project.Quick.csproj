@@ -78,6 +78,45 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // General package references
+  // -->
+  <Import Project="$(SolutionDir)\references.props" />
+  <ItemGroup>
+    <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific package references
+  // -->
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)'=='17.0'">
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='16.0'">
+      <ItemGroup>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_Validation)" Version="$(Version_Microsoft_VisualStudio_Validation)" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='15.0'">
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
   <ItemGroup>
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -114,9 +153,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>quick.vstemplate_TT</DependentUpon>
     </VSTemplate>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="main.cpp" />

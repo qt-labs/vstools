@@ -69,6 +69,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget Condition="'$(VisualStudioVersion)' == '17.0'">x64</PlatformTarget>
+    <PlatformTarget Condition="'$(VisualStudioVersion)' != '17.0'">x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -213,7 +215,7 @@
     </When>
   </Choose>
   <PropertyGroup Condition="'$(Win10SDKPath)' != ''">
-    <UIAVerifyPath>$(Win10SDKPath)\x86\UIAVerify</UIAVerifyPath>
+    <UIAVerifyPath>$(Win10SDKPath)\$(PlatformTarget)\UIAVerify</UIAVerifyPath>
   </PropertyGroup>
   <ItemGroup Condition="'$(UIAVerifyPath)' != ''">
     <Reference Include="Interop.UIAutomationClient">
@@ -227,9 +229,6 @@
       <Aliases>global</Aliases>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
