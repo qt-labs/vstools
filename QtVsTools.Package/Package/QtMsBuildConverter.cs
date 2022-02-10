@@ -191,7 +191,7 @@ namespace QtVsTools
             try {
                 if (solution.UnloadProject(
                     ref projectGuid,
-                    (uint)_VSProjectUnloadStatus.UNLOADSTATUS_LoadPendingIfNeeded)
+                    (uint)_VSProjectUnloadStatus.UNLOADSTATUS_UnloadedByUser)
                     != VSConstants.S_OK)
                     return ErrorMessage(
                         string.Format(SR.GetString("ErrorConvertingProject"), projectName));

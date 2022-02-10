@@ -95,14 +95,17 @@ namespace QtVsTools.Qml.Debug.V4
         {
             this.sink = sink;
 
-            Task.WaitAny(new[]
+            QtVsToolsPackage.Instance.JoinableTaskFactory.Run(async () =>
             {
-                // Try to start client thread
-                // Unblock if thread was abruptly terminated (e.g. DLL not found)
-                clientThread = Task.Run(() => ClientThread()),
+                await Task.WhenAny(new[]
+                {
+                    // Try to start client thread
+                    // Unblock if thread was abruptly terminated (e.g. DLL not found)
+                    clientThread = Task.Run(() => ClientThread()),
 
-                // Unblock if client was created (i.e. client thread is running)
-                Task.Run(() => clientCreated.WaitOne())
+                    // Unblock if client was created (i.e. client thread is running)
+                    Task.Run(() => clientCreated.WaitOne())
+                });
             });
 
             if (State == DebugClientState.Unavailable) {
@@ -130,7 +133,9 @@ namespace QtVsTools.Qml.Debug.V4
         {
             if (State != DebugClientState.Unavailable) {
                 NativeMethods.DebugClientShutdown(client);
-                clientThread.Wait();
+
+                QtVsToolsPackage.Instance.JoinableTaskFactory.Run(
+                    async () => await Task.WhenAll(new[] { clientThread }));
             }
         }
 

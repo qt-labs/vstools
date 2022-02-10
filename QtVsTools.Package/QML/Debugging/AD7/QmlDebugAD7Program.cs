@@ -164,13 +164,12 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             var debugMode = new DBGMODE[1];
             int res = VSConstants.S_FALSE;
-            vsDebuggerThreadDispatcher
-                .BeginInvoke(new Action(() =>
-                {
-                    ThreadHelper.ThrowIfNotOnUIThread();
-                    res = VsDebugger.GetMode(debugMode);
-                }), new object[0])
-                .Wait();
+
+            QtVsToolsPackage.Instance.JoinableTaskFactory.Run(async () =>
+            {
+                await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+                res = VsDebugger.GetMode(debugMode);
+            });
 
             if (res != VSConstants.S_OK)
                 return false;

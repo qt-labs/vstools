@@ -196,8 +196,9 @@ namespace QtVsTools
                     using (var connection = new SQLiteConnection(builder.ToString())) {
                         connection.Open();
                         using (var command = new SQLiteCommand(linksForKeyword, connection)) {
-                            using (var reader =
-                                Task.Run(async () => await command.ExecuteReaderAsync()).Result) {
+                            var reader = QtVsToolsPackage.Instance.JoinableTaskFactory
+                                .Run(async () => await command.ExecuteReaderAsync());
+                            using (reader) {
                                 while (reader.Read()) {
                                     var title = GetString(reader, 0);
                                     if (string.IsNullOrWhiteSpace(title))

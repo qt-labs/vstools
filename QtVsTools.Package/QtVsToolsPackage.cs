@@ -174,7 +174,7 @@ namespace QtVsTools
                 await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
                 var timeUiThreadBegin = initTimer.Elapsed;
 
-                if ((Dte = VsServiceProvider.GetService<DTE>()) == null)
+                if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
 
                 QtVSIPSettings.Options = Options;

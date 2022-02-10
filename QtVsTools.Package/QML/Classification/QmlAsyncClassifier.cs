@@ -265,7 +265,7 @@ namespace QtVsTools.Qml.Classification
             currentTagList = null;
             this.classificationType = classificationType;
 
-            AsyncParse(buffer.CurrentSnapshot);
+            Parse(buffer.CurrentSnapshot);
         }
 
         private void TextView_Closed(object sender, EventArgs e)
@@ -284,16 +284,16 @@ namespace QtVsTools.Qml.Classification
         private void Buffer_Changed(object sender, TextContentChangedEventArgs e)
         {
             timer.Stop();
-            AsyncParse(e.After);
+            Parse(e.After);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
-            AsyncParse(Buffer.CurrentSnapshot);
+            Parse(Buffer.CurrentSnapshot);
         }
 
-        private async void AsyncParse(ITextSnapshot snapshot)
+        private void Parse(ITextSnapshot snapshot)
         {
             lock (criticalSection) {
                 if (flag)
@@ -309,7 +309,7 @@ namespace QtVsTools.Qml.Classification
             ParserKey oldParserKey = null;
             TagListKey oldTagListKey = null;
 
-            await Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 var parser = ParserStore.Instance.Get(this, newParserKey);
 
@@ -342,7 +342,7 @@ namespace QtVsTools.Qml.Classification
                 flag = false;
             }
 
-            await Task.Run(() =>
+            _ = Task.Run(() =>
             {
                 if (oldParserKey != null)
                     ParserStore.Instance.Release(this, oldParserKey);

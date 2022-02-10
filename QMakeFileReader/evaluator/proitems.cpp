@@ -341,7 +341,7 @@ static QString ProStringList_join(const ProStringList &this_, const QChar *sep, 
         totalLength += this_.at(i).size();
 
     if (sz)
-        totalLength += sepSize * (sz - 1);
+        totalLength += int(sepSize) * (sz - 1);
 
     QString res(totalLength, Qt::Uninitialized);
     QChar *ptr = (QChar *)res.constData();

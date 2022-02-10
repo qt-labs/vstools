@@ -32,6 +32,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
+using Microsoft.VisualStudio.Threading;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
@@ -57,7 +58,7 @@ namespace QtVsTools.Qml.Debug.AD7
         private string Name { get; set; }
         public int FrameNumber { get; set; }
         private IEnumerable<int> Scopes { get; set; }
-        private Task InitThread { get; set; }
+        private JoinableTask InitThread { get; set; }
 
         public static StackFrame Create(
             string name,
@@ -85,7 +86,11 @@ namespace QtVsTools.Qml.Debug.AD7
             Name = string.Format("{0}@{1}:{2}", name, context.FilePath, context.FileLine + 1);
             FrameNumber = number;
             Scopes = scopes;
-            InitThread = Task.Run(() => InitializeProperties());
+            InitThread = QtVsToolsPackage.Instance.JoinableTaskFactory.RunAsync(async () =>
+            {
+                InitializeProperties();
+                await Task.Yield();
+            });
             return true;
         }
 
@@ -134,7 +139,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (guidFilter != Guid.Empty && !Property.Filter.LocalsSelected(ref guidFilter))
                 return VSConstants.S_OK;
 
-            InitThread.Wait();
+            InitThread.Join();
             pcelt = 0;
             ppEnum = PropertyEnum.Create(Properties
                 .SelectMany(x => x.Value

@@ -92,7 +92,8 @@ namespace QtVsTools.Qml.Debug.V4
         protected override void DisposeFinally()
         {
             eventReceived.Set();
-            eventHandlingThread.Wait();
+            QtVsToolsPackage.Instance.JoinableTaskFactory.Run(
+                async () => await Task.WhenAll(new[] { eventHandlingThread }));
             eventReceived.Dispose();
         }
 
