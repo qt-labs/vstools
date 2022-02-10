@@ -106,6 +106,7 @@ namespace QtVsTest.Macros
 
         AsyncPackage Package { get; }
         EnvDTE80.DTE2 Dte { get; }
+        IntPtr MainWindowHWnd { get; }
 
         AutomationElement UiRoot => AutomationElement.RootElement;
 
@@ -114,13 +115,8 @@ namespace QtVsTest.Macros
         {
             get
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
                 if (_UiVsRoot == null)
-#if VS2022
-                    _UiVsRoot = AutomationElement.FromHandle(Dte.MainWindow.HWnd);
-#else
-                    _UiVsRoot = AutomationElement.FromHandle(new IntPtr(Dte.MainWindow.HWnd));
-#endif
+                    _UiVsRoot = AutomationElement.FromHandle(MainWindowHWnd);
                 return _UiVsRoot;
             }
         }
@@ -195,6 +191,7 @@ namespace QtVsTest.Macros
         public Macro(
             AsyncPackage package,
             EnvDTE80.DTE2 dte,
+            IntPtr mainWindowHWnd,
             JoinableTaskFactory joinableTaskFactory,
             CancellationToken serverLoop)
         {
@@ -202,6 +199,7 @@ namespace QtVsTest.Macros
             JoinableTaskFactory = joinableTaskFactory;
             ServerLoop = serverLoop;
             Dte = dte;
+            MainWindowHWnd = mainWindowHWnd;
             ErrorMsg("Uninitialized");
         }
 
@@ -283,8 +281,6 @@ namespace QtVsTest.Macros
         /// <returns></returns>
         bool CompileMacro()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (UiVsRoot == null)
                 return ErrorMsg("UI Automation not available");
 
@@ -558,8 +554,6 @@ namespace QtVsTest.Macros
 
         bool InitializeUiGlobals()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (MacroClass == null)
                 return false;
 
@@ -829,8 +823,6 @@ namespace QtVsTest.Macros
 
             MacroClass.GetField("WaitExpr", PUBLIC_STATIC)
                 .SetValue(null, new Func<int, Func<object>, Task>(WaitExprAsync));
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!InitializeUiGlobals())
                 return false;

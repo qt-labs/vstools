@@ -70,6 +70,7 @@ namespace QtVsTest.Macros
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(Loop.Token);
             var DTE = await Package.GetServiceAsync(typeof(DTE)) as DTE2;
+            var mainWindowHWnd = new IntPtr((long)DTE.MainWindow.HWnd);
             await TaskScheduler.Default;
 
             var pipeName = string.Format("QtVSTest_{0}", Process.GetCurrentProcess().Id);
@@ -97,7 +98,8 @@ namespace QtVsTest.Macros
                             if (Loop.Token.IsCancellationRequested)
                                 break;
 
-                            var macro = new Macro(Package, DTE, JoinableTaskFactory, Loop.Token);
+                            var macro = new Macro(
+                                Package, DTE, mainWindowHWnd, JoinableTaskFactory, Loop.Token);
                             await macro.CompileAsync(Encoding.UTF8.GetString(data));
                             if (macro.AutoRun)
                                 await macro.RunAsync();
