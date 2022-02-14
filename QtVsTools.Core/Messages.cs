@@ -27,41 +27,25 @@
 ****************************************************************************/
 
 using EnvDTE;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using QtVsTools.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-
-using Thread = System.Threading.Thread;
-using Task = System.Threading.Tasks.Task;
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace QtVsTools.Core
 {
+    using Task = System.Threading.Tasks.Task;
+
     public static class Messages
     {
-        private static OutputWindow Window { get; set; }
         private static OutputWindowPane Pane { get; set; }
 
-        private static OutputWindowPane _BuildPane;
-        private static OutputWindowPane BuildPane
-        {
-            get
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                return _BuildPane ?? (_BuildPane = Window.OutputWindowPanes.Cast<OutputWindowPane>()
-                    .Where(pane =>
-                    {
-                        ThreadHelper.ThrowIfNotOnUIThread();
-                        return pane.Guid == "{1BD8A850-02D1-11D1-BEE7-00A0C913D1F8}";
-                    })
-                    .FirstOrDefault());
-            }
-        }
+        private static readonly string PaneName = "Qt VS Tools";
+        private static readonly Guid PaneGuid = new Guid("8f6a1e44-fa0b-49e5-9934-1c050555350e");
 
         /// <summary>
         /// Show a message on the output pane.
@@ -74,19 +58,7 @@ namespace QtVsTools.Core
                 Text = text,
                 Activate = activate
             });
-
-            ThreadHelper.ThrowIfNotOnUIThread();
             FlushMessages();
-        }
-
-        static void OutputWindowPane_Print(string text)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            OutputWindowPane_Init();
-            Pane.OutputString(text + "\r\n");
-            // show buildPane if a build is in progress
-            if (Dte.Solution.SolutionBuild.BuildState == vsBuildState.vsBuildStateInProgress)
-                BuildPane?.Activate();
         }
 
         /// <summary>
@@ -98,18 +70,13 @@ namespace QtVsTools.Core
             {
                 Activate = true
             });
-
-            ThreadHelper.ThrowIfNotOnUIThread();
             FlushMessages();
         }
 
-        static void OutputWindowPane_Activate()
+        static async Task OutputWindowPane_ActivateAsync()
         {
-            OutputWindowPane_Init();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Pane?.Activate();
+            await OutputWindowPane_InitAsync();
+            await Pane?.ActivateAsync();
         }
 
         private static string ExceptionToString(System.Exception e)
@@ -171,19 +138,13 @@ namespace QtVsTools.Core
             {
                 Clear = true
             });
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             FlushMessages();
         }
 
-        static void OutputWindowPane_Clear()
+        static async Task OutputWindowPane_ClearAsync()
         {
-            OutputWindowPane_Init();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Pane?.Clear();
+            await OutputWindowPane_InitAsync();
+            await Pane?.ClearAsync();
         }
 
         class Msg
@@ -193,36 +154,20 @@ namespace QtVsTools.Core
             public bool Activate { get; set; } = false;
         }
 
-        static bool shuttingDown = false;
         static readonly ConcurrentQueue<Msg> msgQueue = new ConcurrentQueue<Msg>();
-        static DTE Dte { get; set; } = null;
 
-        private static void OnBeginShutdown()
+        private static async Task OutputWindowPane_InitAsync()
         {
-            shuttingDown = true;
-        }
-
-        private static void OutputWindowPane_Init()
-        {
-            if (Dte == null)
-                Dte = VsServiceProvider.GetService<DTE>();
-            var t = Stopwatch.StartNew();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            while (Pane == null && t.ElapsedMilliseconds < 5000) {
-                try {
-                    Window = Dte.Windows.Item(Constants.vsWindowKindOutput).Object as OutputWindow;
-                    Pane = Window?.OutputWindowPanes.Add(SR.GetString("Resources_QtVsTools"));
-                } catch {
-                }
+            try {
                 if (Pane == null)
-                    Thread.Yield();
+                    Pane = await OutputWindowPane.CreateAsync(PaneName, PaneGuid);
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
-            Dte.Events.DTEEvents.OnBeginShutdown += OnBeginShutdown;
         }
 
         public static JoinableTaskFactory JoinableTaskFactory { get; set; }
+
         static readonly object staticCriticalSection = new object();
         static Task FlushTask { get; set; }
         static EventWaitHandle MessageReady { get; set; }
@@ -234,7 +179,8 @@ namespace QtVsTools.Core
                     MessageReady = new EventWaitHandle(false, EventResetMode.AutoReset);
                     FlushTask = Task.Run(async () =>
                     {
-                        while (!shuttingDown) {
+                        var package = VsServiceProvider.Instance as Package;
+                        while (!package.Zombied) {
                             if (!await MessageReady.ToTask(3000))
                                 continue;
                             while (!msgQueue.IsEmpty) {
@@ -242,24 +188,28 @@ namespace QtVsTools.Core
                                     await Task.Yield();
                                     continue;
                                 }
-                                ////////////////////////////////////////////////////////////////////
-                                // Switch to main (UI) thread
-                                await JoinableTaskFactory.SwitchToMainThreadAsync();
                                 if (msg.Clear)
-                                    OutputWindowPane_Clear();
+                                    await OutputWindowPane_ClearAsync();
                                 if (msg.Text != null)
-                                    OutputWindowPane_Print(msg.Text);
+                                    await OutputWindowPane_PrintAsync(msg.Text);
                                 if (msg.Activate)
-                                    OutputWindowPane_Activate();
-                                ////////////////////////////////////////////////////////////////////
-                                // Switch to background thread
-                                await TaskScheduler.Default;
+                                    await OutputWindowPane_ActivateAsync();
                             }
                         }
                     });
                 }
             }
             MessageReady.Set();
+        }
+
+        static async Task OutputWindowPane_PrintAsync(string text)
+        {
+            var active = await OutputWindowPane.GetActiveAsync();
+
+            await OutputWindowPane_InitAsync();
+            await Pane.PrintAsync(text);
+
+            (active?.ActivateAsync()).Forget();
         }
     }
 }

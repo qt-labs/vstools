@@ -143,6 +143,7 @@
     <Compile Include="MocCmdChecker.cs" />
     <Compile Include="MsBuildProject.cs" />
     <Compile Include="Observable.cs" />
+    <Compile Include="OutputWindowPane.cs" />
     <Compile Include="ProFileContent.cs" />
     <Compile Include="ProFileOption.cs" />
     <Compile Include="ProjectExporter.cs" />
