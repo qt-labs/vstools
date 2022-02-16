@@ -50,18 +50,16 @@ namespace QtVsTools.Core
 
         protected override void InfoStart(Process qmakeProc)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             base.InfoStart(qmakeProc);
             InfoMsg("--- qmake: Querying persistent properties");
         }
 
         public Dictionary<string, string> QueryAllValues()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             stdOutput = new StringBuilder();
             Query = " ";
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (Run() == 0 && stdOutput.Length > 0) {
                 return PropertyParser
@@ -93,6 +91,7 @@ namespace QtVsTools.Core
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
+
                 return _Properties ?? (_Properties = QueryAllValues());
             }
         }

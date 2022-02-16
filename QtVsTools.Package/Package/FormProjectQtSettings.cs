@@ -102,6 +102,8 @@ namespace QtVsTools
 
         public void SetProject(Project pro)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             project = pro;
             qtProject = QtProject.Create(project);
             InitModules();
@@ -119,6 +121,8 @@ namespace QtVsTools
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // Disable the buttons since some operations are quite expensive (e.g. changing
             // the Qt version) and take some to finish. Keeping the buttons enables allows to hit
             // the buttons several times resulting in successive executions of these operations.
@@ -133,6 +137,8 @@ namespace QtVsTools
 
         private void InitModules()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versionManager = QtVersionManager.The();
             var qtVersion = qtProject.GetQtVersion();
             var install_path = versionManager.GetInstallPath(qtVersion) ?? string.Empty;
@@ -167,6 +173,8 @@ namespace QtVsTools
 
         private void saveModules()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             qtProject = QtProject.Create(project);
             for (var i = 0; i < moduleMap.Count; ++i) {
                 var item = moduleMap[i];

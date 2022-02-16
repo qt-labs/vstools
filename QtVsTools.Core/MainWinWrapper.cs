@@ -28,32 +28,18 @@
 
 using System;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
     public class MainWinWrapper : IWin32Window
     {
-        private readonly EnvDTE.DTE dteObject;
+        public IntPtr Handle { get; }
 
         public MainWinWrapper(EnvDTE.DTE dte)
         {
-            dteObject = dte;
-        }
-
-        public IntPtr Handle
-        {
-            get
-            {
-                Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-
-                if (dteObject != null)
-#if VS2022
-                    return dteObject.MainWindow.HWnd;
-#else
-                    return new IntPtr(dteObject.MainWindow.HWnd);
-#endif
-                return new IntPtr(0);
-            }
+            ThreadHelper.ThrowIfNotOnUIThread();
+            Handle = new IntPtr((long)dte.MainWindow.HWnd);
         }
     }
 }

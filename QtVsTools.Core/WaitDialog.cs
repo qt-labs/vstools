@@ -181,8 +181,10 @@ namespace QtVsTools.Core
 
         void IDisposable.Dispose()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            Stop();
+            ThreadHelper.JoinableTaskFactory.Run(async () => {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                Stop();
+            });
         }
     }
 }

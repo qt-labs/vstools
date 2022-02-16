@@ -160,6 +160,8 @@ namespace QtVsTools
 
         private static string ResolveEnvironmentVariables(string str, EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string env = null;
             string val = null;
             var reg = new Regex(@"\$\(([^\s\(\)]+)\)");
@@ -183,6 +185,8 @@ namespace QtVsTools
 
         public static void ExportProFile()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtVsToolsPackage.Instance.Dte != null) {
                 var proFileExporter = new ProjectExporter(QtVsToolsPackage.Instance.Dte);
                 proFileExporter.ExportToProFile();
@@ -191,6 +195,8 @@ namespace QtVsTools
 
         public static void ExportPriFile()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var dte = QtVsToolsPackage.Instance.Dte;
             if (dte != null) {
                 var proFileExporter = new ProjectExporter(dte);

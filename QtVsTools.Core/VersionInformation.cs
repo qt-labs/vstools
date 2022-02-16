@@ -94,9 +94,10 @@ namespace QtVsTools.Core
 
         private VersionInformation(string qtDirIn)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             qtDir = qtDirIn;
 
-            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 var qmakeQuery = new QMakeQuery(this);
                 SetupPlatformSpecificData(qmakeQuery);
@@ -287,10 +288,10 @@ namespace QtVsTools.Core
 
         public bool isWinRT()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var qmakeQuery = new QMakeQuery(this);
             string qmakeXSpec;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
             } catch {

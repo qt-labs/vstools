@@ -39,6 +39,7 @@ using QtVsTools.Core;
 using QtVsTools.Wizards.Common;
 using QtVsTools.Wizards.ProjectWizard;
 using QtVsTools.Wizards.Util;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
@@ -154,6 +155,8 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeTemplateExpansion()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
             Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
             Parameter[NewClass.UiFileName] = WizardData.UiFile;

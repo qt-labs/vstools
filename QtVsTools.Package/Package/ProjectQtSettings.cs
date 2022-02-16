@@ -30,6 +30,7 @@ using QtVsTools.Core;
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
@@ -38,6 +39,8 @@ namespace QtVsTools
 
         public ProjectQtSettings(EnvDTE.Project proj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             versionManager = QtVersionManager.The();
             project = proj;
             newMocDir = oldMocDir = QtVSIPSettings.GetMocDirectory(project);
@@ -75,6 +78,8 @@ namespace QtVsTools
 
         public void SaveSettings()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var updateMoc = false;
             var qtPro = QtProject.Create(project);
 

@@ -272,7 +272,6 @@ namespace QtVsTools.Qml.Debug.AD7
 
         void IBreakpoint.NotifyBreak()
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             Program.NotifyBreakpointHit(this);
         }
 

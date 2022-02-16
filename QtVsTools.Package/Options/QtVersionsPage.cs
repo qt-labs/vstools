@@ -48,6 +48,8 @@ namespace QtVsTools.Options
 
         public override void LoadSettingsFromStorage()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versions = new List<QtVersionsTable.Row>();
             foreach (var versionName in VersionManager.GetVersions()) {
                 var versionPath = VersionManager.GetInstallPath(versionName);

@@ -69,10 +69,13 @@ namespace QtVsTools.Qml.Debug
 
         protected override void DisposeManaged()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (debugger != null)
-                debugger.UnadviseDebugEventCallback(this);
+            if (debugger != null) {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    debugger.UnadviseDebugEventCallback(this);
+                });
+            }
         }
 
         int IDebugEventCallback2.Event(

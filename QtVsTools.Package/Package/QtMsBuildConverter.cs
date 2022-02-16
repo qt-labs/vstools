@@ -71,11 +71,14 @@ namespace QtVsTools
                 MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return WarningMessage(SR.GetString("CancelConvertingProject"));
 
-            if (projects.Any(project =>
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                return project.IsDirty;
-            })) {
+            bool hasDirtyProjects = projects
+                .Where(project =>
+                {
+                    ThreadHelper.ThrowIfNotOnUIThread();
+                    return project.IsDirty;
+                })
+                .Any();
+            if (hasDirtyProjects) {
                 if (MessageBox.Show(
                     SR.GetString("ConvertSaveConfirmation"),
                     SR.GetString("ConvertTitle"),
@@ -83,11 +86,13 @@ namespace QtVsTools
                     return WarningMessage(SR.GetString("CancelConvertingProject"));
             }
 
-            var projectPaths = projects.Select(x =>
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                return x.FullName;
-            }).ToList();
+            var projectPaths = projects
+                .Select(x =>
+                {
+                    ThreadHelper.ThrowIfNotOnUIThread();
+                    return x.FullName;
+                })
+                .ToList();
 
             string solutionPath = solution.FileName;
             solution.Close(true);
@@ -132,6 +137,8 @@ namespace QtVsTools
 
         static bool ConvertProject(string pathToProject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var xmlProject = MsBuildProject.Load(pathToProject);
             bool ok = (xmlProject != null);
             if (ok)

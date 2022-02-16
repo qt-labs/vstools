@@ -48,6 +48,7 @@ namespace QtVsTools.QtMsBuild
     using Thread = System.Threading.Thread;
     using Task = System.Threading.Tasks.Task;
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
+    using System.IO;
 
     class QtProjectTracker : Concurrent<QtProjectTracker>
     {
@@ -116,6 +117,7 @@ namespace QtVsTools.QtMsBuild
         }
 
         public EnvDTE.Project Project { get; private set; }
+        public string ProjectPath { get; private set; }
         public VCProject VcProject { get; private set; }
         public UnconfiguredProject UnconfiguredProject { get; private set; }
         public EventWaitHandle Initialized { get; }
@@ -143,6 +145,7 @@ namespace QtVsTools.QtMsBuild
                 tracker = new QtProjectTracker
                 {
                     Project = project,
+                    ProjectPath = projectPath
                 };
                 Instances[projectPath] = tracker;
                 InitQueue.Enqueue(tracker);
@@ -193,10 +196,8 @@ namespace QtVsTools.QtMsBuild
         async Task InitializeAsync()
         {
             int p = 0;
-            UpdateInitStatus(p += 5);
-
-            await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
-            UpdateInitStatus(p += 5);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            UpdateInitStatus(p += 10);
 
             VcProject = Project.Object as VCProject;
             if (VcProject == null)
@@ -234,8 +235,7 @@ namespace QtVsTools.QtMsBuild
                     Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
                         DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                        config.Name,
-                        UnconfiguredProject.FullPath));
+                        config.Name, ProjectPath));
                 }
                 UpdateInitStatus(p += d);
             }
@@ -327,8 +327,6 @@ namespace QtVsTools.QtMsBuild
 
         void UpdateInitStatus(int percentComplete)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             lock (StaticCriticalSection) {
                 if (InitStatus == null)
                     return;
@@ -336,7 +334,7 @@ namespace QtVsTools.QtMsBuild
                     InitStatus.Progress.Report(new TaskProgressData
                     {
                         ProgressText = string.Format("{0} ({1} project(s) remaining)",
-                            Project.Name, InitQueue.Count),
+                            Path.GetFileNameWithoutExtension(ProjectPath), InitQueue.Count),
                         CanBeCanceled = true,
                         PercentComplete = percentComplete
                     });

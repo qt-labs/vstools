@@ -278,6 +278,8 @@ namespace QtVsTools.Core
 
         public bool SaveVersion(string versionName, string path, bool checkPath = true)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var verName = versionName?.Trim().Replace(@"\", "_");
             if (string.IsNullOrEmpty(verName))
                 return false;
@@ -297,8 +299,6 @@ namespace QtVsTools.Core
                     return false;
                 }
             }
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             string rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
             string versionKeyPath = strVersionKey + "\\" + verName;
@@ -323,14 +323,13 @@ namespace QtVsTools.Core
 
         public void RemoveVersion(string versionName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);
             key.Close();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             RefreshVersionNames();
         }
 
@@ -370,9 +369,6 @@ namespace QtVsTools.Core
                 }
                 return true;
             }
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
                 project.Globals[key] = version;
@@ -488,6 +484,8 @@ namespace QtVsTools.Core
 
         public string GetDefaultVersion(RegistryKey root)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string defaultVersion = null;
             try {
                 var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
@@ -536,10 +534,10 @@ namespace QtVsTools.Core
 
         private void MergeVersions()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var hkcuVersions = GetVersions();
             var hklmVersions = GetVersions(Registry.LocalMachine);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var hkcuInstDirs = new string[hkcuVersions.Length];
             for (var i = 0; i < hkcuVersions.Length; ++i)

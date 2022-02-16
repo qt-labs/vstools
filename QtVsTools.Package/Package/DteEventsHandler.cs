@@ -151,6 +151,8 @@ namespace QtVsTools
 
         void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
                 if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
@@ -247,6 +249,8 @@ namespace QtVsTools
 
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             currentBuildAction = Action;
         }
 
@@ -478,6 +482,7 @@ namespace QtVsTools
 
         void SolutionEvents_ProjectRemoved(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
         }
 
         public void SolutionEvents_Opened()
@@ -495,6 +500,8 @@ namespace QtVsTools
 
         void SolutionEvents_AfterClosing()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             QtProject.ClearInstances();
             QtProjectTracker.Reset();
             QtProjectTracker.SolutionPath = string.Empty;
@@ -536,6 +543,8 @@ namespace QtVsTools
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             //System.Diagnostics.Debug.WriteLine("OnVCProjectEngineItemPropertyChange " + dispid.ToString());
             var vcFileCfg = item as VCFileConfiguration;
             if (vcFileCfg == null) {
@@ -600,6 +609,8 @@ namespace QtVsTools
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (VCFile f in (IVCCollection)project.Files) {
                 if (f.Name.ToLower() == absFileName.ToLower())
                     return f;
@@ -612,6 +623,8 @@ namespace QtVsTools
         /// </summary>
         private static int GetPropertyDispId(Type type, string propertyName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var pi = type.GetProperty(propertyName);
             if (pi != null) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {

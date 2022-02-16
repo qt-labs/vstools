@@ -29,6 +29,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Editors
 {
@@ -45,6 +46,8 @@ namespace QtVsTools.Editors
 
         protected override string GetToolsPath()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return QtVsToolsPackage.Instance?.PkgInstallPath;
         }
 

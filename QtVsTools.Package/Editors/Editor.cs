@@ -70,39 +70,43 @@ namespace QtVsTools.Editors
 
         string GetQtToolsPath()
         {
-            var project = VsShell.GetProject(Context);
-            if (project == null)
-                return null;
+            return ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                var project = VsShell.GetProject(Context);
+                if (project == null)
+                    return null;
 
-            ThreadHelper.ThrowIfNotOnUIThread();
+                var vcProject = project.Object as VCProject;
+                if (vcProject == null)
+                    return null;
 
-            var vcProject = project.Object as VCProject;
-            if (vcProject == null)
-                return null;
+                var vcConfigs = vcProject.Configurations as IVCCollection;
+                if (vcConfigs == null)
+                    return null;
 
-            var vcConfigs = vcProject.Configurations as IVCCollection;
-            if (vcConfigs == null)
-                return null;
+                var activeConfig = project.ConfigurationManager?.ActiveConfiguration;
+                if (activeConfig == null)
+                    return null;
 
-            var activeConfig = project.ConfigurationManager?.ActiveConfiguration;
-            if (activeConfig == null)
-                return null;
+                var activeConfigId = string.Format("{0}|{1}",
+                    activeConfig.ConfigurationName, activeConfig.PlatformName);
+                var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
+                if (vcConfig == null)
+                    return null;
 
-            var activeConfigId = string.Format("{0}|{1}",
-                activeConfig.ConfigurationName, activeConfig.PlatformName);
-            var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
-            if (vcConfig == null)
-                return null;
+                var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
+                if (string.IsNullOrEmpty(qtToolsPath))
+                    return null;
 
-            var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
-            if (string.IsNullOrEmpty(qtToolsPath))
-                return null;
-
-            return qtToolsPath;
+                return qtToolsPath;
+            });
         }
 
         string GetDefaultQtToolsPath()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versionMgr = QtVersionManager.The();
             if (versionMgr == null)
                 return null;
@@ -205,6 +209,8 @@ namespace QtVsTools.Editors
             string qtToolsPath = null,
             bool hideWindow = true)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (string.IsNullOrEmpty(qtToolsPath))
                 qtToolsPath = GetDefaultQtToolsPath();
             var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
@@ -405,18 +411,18 @@ namespace QtVsTools.Editors
 
             void CloseParentFrame()
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
                 EditorProcess = null;
                 EditorWindow = IntPtr.Zero;
-                var parentFrame = GetService(typeof(SVsWindowFrame)) as IVsWindowFrame;
-                parentFrame?.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave);
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    var parentFrame = GetService(typeof(SVsWindowFrame)) as IVsWindowFrame;
+                    parentFrame?.CloseFrame((uint)__FRAMECLOSE.FRAMECLOSE_NoSave);
+                });
             }
 
             private void EditorProcess_Exited(object sender, EventArgs e)
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
                 CloseParentFrame();
                 Editor.OnExit(EditorProcess);
             }
@@ -431,8 +437,6 @@ namespace QtVsTools.Editors
 
             private void EditorDetachButton_Click(object sender, EventArgs e)
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
                 if (EditorProcess != null) {
                     var editorWindow = EditorWindow;
                     DetachEditorWindow();

@@ -83,8 +83,6 @@ namespace QtVsTools.Qml.Debug.AD7
             string execPath,
             string execArgs)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var _this = new Program();
             return _this.Initialize(engine, nativeProc, execPath, execArgs) ? _this : null;
         }
@@ -98,8 +96,6 @@ namespace QtVsTools.Qml.Debug.AD7
             string execPath,
             string execArgs)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             Engine = engine;
             NativeProc = nativeProc;
 
@@ -115,8 +111,13 @@ namespace QtVsTools.Qml.Debug.AD7
                 return false;
 
             VsDebugger = VsServiceProvider.GetService<IVsDebugger>();
-            if (VsDebugger != null)
-                VsDebugger.AdviseDebugEventCallback(this as IDebugEventCallback2);
+            if (VsDebugger != null) {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    VsDebugger.AdviseDebugEventCallback(this);
+                });
+            }
             vsDebuggerThreadDispatcher = Dispatcher.CurrentDispatcher;
 
             ProcessId = Guid.NewGuid();
@@ -141,11 +142,14 @@ namespace QtVsTools.Qml.Debug.AD7
 
         protected override void DisposeManaged()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             Debugger.Dispose();
-            if (VsDebugger != null)
-                VsDebugger.UnadviseDebugEventCallback(this as IDebugEventCallback2);
+            if (VsDebugger != null) {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    VsDebugger.UnadviseDebugEventCallback(this as IDebugEventCallback2);
+                });
+            }
 
             lock (criticalSectionGlobal) {
                 runningPrograms--;
@@ -262,8 +266,6 @@ namespace QtVsTools.Qml.Debug.AD7
 
         void IDebuggerEventSink.NotifyBreak()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             BreakAllProcesses = false;
             DebugEvent.Send(new StepCompleteEvent(this));
         }
@@ -295,8 +297,6 @@ namespace QtVsTools.Qml.Debug.AD7
 
         public void NotifyBreakpointHit(Breakpoint breakpoint)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             BreakAllProcesses = false;
             DebugEvent.Send(new BreakpointEvent(this, BoundBreakpointsEnum.Create(breakpoint)));
         }
@@ -305,21 +305,24 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             get
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
-                return ((bool)QtVsToolsPackage.Instance.Dte
-                    .Properties["Debugging", "General"]
-                    .Item("BreakAllProcesses")
-                    .Value);
+                return ThreadHelper.JoinableTaskFactory.Run(async () => {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    return ((bool)QtVsToolsPackage.Instance.Dte
+                        .Properties["Debugging", "General"]
+                        .Item("BreakAllProcesses")
+                        .Value);
+                });
             }
             set
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
-                QtVsToolsPackage.Instance.Dte
-                    .Properties["Debugging", "General"]
-                    .Item("BreakAllProcesses")
-                    .let_Value(value ? "True" : "False");
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    QtVsToolsPackage.Instance.Dte
+                        .Properties["Debugging", "General"]
+                        .Item("BreakAllProcesses")
+                        .let_Value(value ? "True" : "False");
+                });
             }
         }
 

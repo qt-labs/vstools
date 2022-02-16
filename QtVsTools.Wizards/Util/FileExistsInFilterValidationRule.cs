@@ -33,6 +33,7 @@ using QtVsTools.VisualStudio;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.Util
 {
@@ -40,6 +41,8 @@ namespace QtVsTools.Wizards.Util
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (value is string) {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 if (dte == null)

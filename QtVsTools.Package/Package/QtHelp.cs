@@ -54,6 +54,8 @@ namespace QtVsTools
 
         public static void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Instance = new QtHelp();
         }
 
@@ -63,6 +65,8 @@ namespace QtVsTools
 
         private QtHelp()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var commandService = VsServiceProvider
                 .GetService<IMenuCommandService, OleMenuCommandService>();
             if (commandService == null)

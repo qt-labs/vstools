@@ -161,7 +161,6 @@ namespace QtVsTools
                 var timeInitBegin = initTimer.Elapsed;
                 VsServiceProvider.Instance = instance = this;
                 QtProject.ProjectTracker = this;
-                Messages.JoinableTaskFactory = JoinableTaskFactory;
 
                 // determine the package installation directory
                 var uri = new Uri(System.Reflection.Assembly
@@ -336,6 +335,8 @@ namespace QtVsTools
 
         public void VsMainWindowActivated()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtVersionManager.The().GetVersions()?.Length == 0)
                 InfoBarMessages.NoQtVersion.Show();
             if (TestVersionInstalled()) {

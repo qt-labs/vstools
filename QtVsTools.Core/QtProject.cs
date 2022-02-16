@@ -2776,6 +2776,8 @@ namespace QtVsTools.Core
 
         public bool PromptChangeQtVersion(string oldVersion, string newVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versionManager = QtVersionManager.The();
             var viOld = versionManager.GetVersionInfo(oldVersion);
             var viNew = versionManager.GetVersionInfo(newVersion);

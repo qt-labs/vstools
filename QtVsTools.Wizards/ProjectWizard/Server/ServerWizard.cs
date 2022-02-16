@@ -35,6 +35,7 @@ using EnvDTE;
 using QtVsTools.Core;
 using QtVsTools.Common;
 using QtVsTools.Wizards.Common;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -161,6 +162,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var qtProject = QtProject.Create(project);
             qtProject.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
         }
