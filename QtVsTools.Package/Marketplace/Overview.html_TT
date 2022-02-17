@@ -143,13 +143,41 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
         Select <strong>Assign</strong>, and then select <strong>OK</strong>.
     </li>
 </ol>
-<p><h3>How to report bugs and contribute code?</h3></p>
+<p><h3>How to contribute via GitHub?</h3></p>
 <ul>
     <li>
-        <a title="Bug reports" href="https://bugreports.qt.io/browse/QTVSADDINBUG">Bug reports</a>
+        <a title="Source code on GitHub"
+           href="https://github.com/qt-labs/vstools">Source code on GitHub</a>
     </li>
     <li>
-        <a title="Source code" href="https://code.qt.io/cgit/qt-labs/vstools.git">Source code</a>
+        <a title="Pull requests on GitHub"
+           href="https://github.com/qt-labs/vstools/pulls">Pull requests on GitHub</a>
+    </li>
+</ul>
+<p><h3>How to contribute via Qt Labs?</h3></p>
+<ul>
+    <li>
+        <a title="Source code on Qt Labs"
+           href="https://code.qt.io/cgit/qt-labs/vstools.git">Source code on Qt Labs</a>
+    </li>
+    <li>
+        <a title="Qt VS Tools Code Review"
+           href="https://codereview.qt-project.org/q/project:qt-labs/vstools">Qt VS Tools Code Review</a>
+    </li>
+</ul>
+For more information on how to contribute to the Qt Visual Tools via Qt Labs, please look at the
+        <a title="Qt contribution Guidelines"
+           href="https://wiki.qt.io/Qt_Contribution_Guidelines">
+                Qt contribution Guidelines</a> first.
+<p><h3>How to report bugs?</h3></p>
+<ul>
+    <li>
+        <a title="Qt Bug Tracker"
+           href="https://bugreports.qt.io/browse/QTVSADDINBUG">Qt Bug Tracker</a>
+    </li>
+    <li>
+        <a title="GitHub Issue Tracker"
+           href="https://github.com/qt-labs/vstools/issues">GitHub Issue Tracker</a>
     </li>
 </ul>
 <p>
