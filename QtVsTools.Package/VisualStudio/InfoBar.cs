@@ -110,10 +110,10 @@ namespace QtVsTools.VisualStudio
 
             public void Close()
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (UIElement == null)
                     return;
-
-                ThreadHelper.ThrowIfNotOnUIThread();
                 UIElement?.Close();
             }
 
@@ -121,8 +121,8 @@ namespace QtVsTools.VisualStudio
                 IVsInfoBarUIElement infoBarUIElement,
                 IVsInfoBarActionItem actionItem)
             {
-                Debug.Assert(infoBarUIElement == UIElement);
                 ThreadHelper.ThrowIfNotOnUIThread();
+                Debug.Assert(infoBarUIElement == UIElement);
                 var hyperlink = actionItem.ActionContext as Hyperlink;
                 if (hyperlink == null)
                     return;
@@ -133,8 +133,8 @@ namespace QtVsTools.VisualStudio
 
             public void OnClosed(IVsInfoBarUIElement infoBarUIElement)
             {
-                Debug.Assert(infoBarUIElement == UIElement);
                 ThreadHelper.ThrowIfNotOnUIThread();
+                Debug.Assert(infoBarUIElement == UIElement);
                 if (UIElement != null) {
                     UIElement.Unadvise(cookie);
                     UIElement = null;

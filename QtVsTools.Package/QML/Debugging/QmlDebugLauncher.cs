@@ -57,11 +57,11 @@ namespace QtVsTools.Qml.Debug
 
         public static void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Instance = new Launcher();
             Instance.debugger = VsServiceProvider.GetService<IVsDebugger>();
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (Instance.debugger != null && Instance.debugger4 != null)
                 Instance.debugger.AdviseDebugEventCallback(Instance);
@@ -87,6 +87,8 @@ namespace QtVsTools.Qml.Debug
             ref Guid riidEvent,
             uint dwAttrib)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!QtVsToolsPackage.Instance.Options.QmlDebuggerEnabled)
                 return VSConstants.S_OK;
 
@@ -131,8 +133,6 @@ namespace QtVsTools.Qml.Debug
 
             if (!GetProjectInfo(execPath, native, out string execCmd, out IEnumerable<string> rccItems))
                 return VSConstants.S_OK;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             LaunchDebug(execPath, execCmd, procId, rccItems);
             return VSConstants.S_OK;

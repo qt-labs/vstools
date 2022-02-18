@@ -48,6 +48,8 @@ namespace QtVsTools.Core
 
         public void ImportProFile(string qtVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             FileDialog toOpen = new OpenFileDialog();
             toOpen.FilterIndex = 1;
             toOpen.CheckFileExists = true;
@@ -56,8 +58,6 @@ namespace QtVsTools.Core
 
             if (DialogResult.OK != toOpen.ShowDialog())
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var mainInfo = new FileInfo(toOpen.FileName);
             if (HelperFunctions.IsSubDirsFile(mainInfo.FullName)) {
@@ -81,13 +81,13 @@ namespace QtVsTools.Core
 
         private void ImportSolution(FileInfo mainInfo, string qtVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
             var VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == VCInfo)
                 return;
             ImportQMakeSolution(VCInfo, versionInfo);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             try {
                 if (CheckQtVersion(versionInfo)) {
@@ -111,6 +111,8 @@ namespace QtVsTools.Core
 
         public void ImportProject(FileInfo mainInfo, string qtVersion)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
             var VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
             if (null == VCInfo)
@@ -118,7 +120,6 @@ namespace QtVsTools.Core
 
             ImportQMakeProject(VCInfo, versionInfo);
 
-            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 if (CheckQtVersion(versionInfo)) {
                     // no need to add the project again if it's already there...
@@ -185,9 +186,6 @@ namespace QtVsTools.Core
         private void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             foreach (var project in projects) {
                 var projectInfo = new FileInfo(project);
                 ImportQMakeProject(projectInfo, vi);
@@ -214,8 +212,6 @@ namespace QtVsTools.Core
 
         private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var xmlProject = MsBuildProject.Load(projectFile.FullName);
             xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
@@ -245,6 +241,8 @@ namespace QtVsTools.Core
 
         private static void ApplyPostImportSteps(QtProject qtProject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             qtProject.RemoveResFilesFromGeneratedFilesFilter();
             qtProject.TranslateFilterNames();
 
@@ -252,7 +250,6 @@ namespace QtVsTools.Core
             qtProject.CollapseFilter(Filters.ResourceFiles().Name);
             qtProject.CollapseFilter(Filters.GeneratedFiles().Name);
 
-            ThreadHelper.ThrowIfNotOnUIThread();
             try {
                 // save the project after modification
                 qtProject.Project.Save(null);

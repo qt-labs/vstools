@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCCodeModel;
 using QtVsTools.VisualStudio;
 using System.Windows.Controls;
@@ -37,7 +38,7 @@ namespace QtVsTools.Wizards.Util
     {
         protected VCLanguageManagerValidationRule()
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             ValidatesOnTargetUpdated = true;
 

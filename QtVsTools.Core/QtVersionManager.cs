@@ -354,10 +354,10 @@ namespace QtVsTools.Core
 
         public bool SaveProjectQtVersion(EnvDTE.Project project, string version, string platform)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings) {
                 var vcPro = project.Object as VCProject;
@@ -405,10 +405,10 @@ namespace QtVsTools.Core
 
         public string GetProjectQtVersion(EnvDTE.Project project, EnvDTE.Configuration config)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return QtProject.GetPropertyValue(project, config, "QtInstall");
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var key = "Qt5Version " + config.PlatformName;
             if (!project.Globals.get_VariablePersists(key))
@@ -420,10 +420,10 @@ namespace QtVsTools.Core
 
         public string GetProjectQtVersion(EnvDTE.Project project, string platform)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return GetProjectQtVersion(project);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariablePersists(key))
@@ -450,10 +450,10 @@ namespace QtVsTools.Core
 
         public bool SaveSolutionQtVersion(EnvDTE.Solution solution, string version)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             solution.Globals["Qt5Version"] = version;
             if (!solution.Globals.get_VariablePersists("Qt5Version"))
@@ -463,10 +463,10 @@ namespace QtVsTools.Core
 
         public string GetSolutionQtVersion(EnvDTE.Solution solution)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (solution == null)
                 return null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (solution.Globals.get_VariableExists("Qt5Version")) {
                 var version = (string)solution.Globals["Qt5Version"];

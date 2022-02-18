@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.Common;
 using QtVsTools.Core;
 using QtVsTools.Wizards.Common;
@@ -104,13 +105,13 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void Expand()
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             VCRulePropertyStorageHelper.SetQtModules(Dte, WizardData.DefaultModules);
         }
 
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             QtProject.AdjustWhitespace(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
         }
     }

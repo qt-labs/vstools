@@ -94,8 +94,6 @@ namespace QtVsTools.Core
 
         private VersionInformation(string qtDirIn)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             qtDir = qtDirIn;
 
             try {
@@ -288,8 +286,6 @@ namespace QtVsTools.Core
 
         public bool isWinRT()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var qmakeQuery = new QMakeQuery(this);
             string qmakeXSpec;
             try {

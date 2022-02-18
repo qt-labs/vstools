@@ -48,8 +48,6 @@ namespace QtVsTools.Options
 
         public override void LoadSettingsFromStorage()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var versions = new List<QtVersionsTable.Row>();
             foreach (var versionName in VersionManager.GetVersions()) {
                 var versionPath = VersionManager.GetInstallPath(versionName);
@@ -81,8 +79,6 @@ namespace QtVsTools.Options
 
         public override void SaveSettingsToStorage()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             foreach (var versionName in VersionManager.GetVersions()) {
                 try {
                     VersionManager.RemoveVersion(versionName);
@@ -97,8 +93,9 @@ namespace QtVsTools.Options
                         var versionInfo = VersionInformation.Get(version.Path);
                         var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
                         if (generator != "MSVC.NET" && generator != "MSBUILD")
-                            throw new Exception(SR.GetString(
-                                "AddQtVersionDialog_IncorrectMakefileGenerator", generator));
+                            throw new Exception(string.Format(
+                                "This Qt version uses an unsupported makefile generator (used: "
+                                + "{0}, supported: MSVC.NET, MSBUILD)", generator));
                         VersionManager.SaveVersion(version.VersionName, version.Path);
                     } else {
                         string name = version.VersionName;

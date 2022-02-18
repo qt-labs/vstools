@@ -105,8 +105,6 @@ namespace QtVsTools.Editors
 
         string GetDefaultQtToolsPath()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var versionMgr = QtVersionManager.The();
             if (versionMgr == null)
                 return null;
@@ -133,6 +131,8 @@ namespace QtVsTools.Editors
             out Guid pguidCmdUI,
             out int pgrfCDW)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // Initialize to null
             ppunkDocView = IntPtr.Zero;
             ppunkDocData = IntPtr.Zero;
@@ -150,8 +150,6 @@ namespace QtVsTools.Editors
 
             Context = pvHier;
             ItemId = itemid;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var toolsPath = GetToolsPath();
             if (string.IsNullOrEmpty(toolsPath))
@@ -209,8 +207,6 @@ namespace QtVsTools.Editors
             string qtToolsPath = null,
             bool hideWindow = true)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (string.IsNullOrEmpty(qtToolsPath))
                 qtToolsPath = GetDefaultQtToolsPath();
             var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
@@ -326,8 +322,6 @@ namespace QtVsTools.Editors
                     hideWindow: !Editor.Detached);
                 if (EditorProcess == null)
                     return VSConstants.E_FAIL;
-
-                ThreadHelper.ThrowIfNotOnUIThread();
 
                 if (Editor.Detached) {
                     Editor.OnStart(EditorProcess);

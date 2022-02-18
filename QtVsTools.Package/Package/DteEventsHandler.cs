@@ -151,8 +151,6 @@ namespace QtVsTools
 
         void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
             if (selectedProject != null) {
                 if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
@@ -203,6 +201,8 @@ namespace QtVsTools
 
         public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup)
                 return;
 
@@ -210,8 +210,6 @@ namespace QtVsTools
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
             }
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             Project project = null;
             foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
@@ -249,8 +247,6 @@ namespace QtVsTools
 
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             currentBuildAction = Action;
         }
 
@@ -352,12 +348,12 @@ namespace QtVsTools
 
         public void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var project = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsQtProject(project))
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
             if (vcFile == null)
@@ -412,11 +408,11 @@ namespace QtVsTools
 
         void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             if (pro == null)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(ProjectItem.Name);
@@ -424,6 +420,8 @@ namespace QtVsTools
 
         void ProjectItemsEvents_ItemRenamed(ProjectItem ProjectItem, string OldName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (OldName == null)
                 return;
             var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
@@ -432,8 +430,6 @@ namespace QtVsTools
 
             var qtPro = QtProject.Create(pro);
             qtPro.RemoveGeneratedFiles(OldName);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             ProjectItemsEvents_ItemAdded(ProjectItem);
         }
@@ -482,7 +478,6 @@ namespace QtVsTools
 
         void SolutionEvents_ProjectRemoved(Project project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
         }
 
         public void SolutionEvents_Opened()
@@ -500,8 +495,6 @@ namespace QtVsTools
 
         void SolutionEvents_AfterClosing()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             QtProject.ClearInstances();
             QtProjectTracker.Reset();
             QtProjectTracker.SolutionPath = string.Empty;
@@ -543,9 +536,6 @@ namespace QtVsTools
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            //System.Diagnostics.Debug.WriteLine("OnVCProjectEngineItemPropertyChange " + dispid.ToString());
             var vcFileCfg = item as VCFileConfiguration;
             if (vcFileCfg == null) {
                 // A global or project specific property has changed.
@@ -609,8 +599,6 @@ namespace QtVsTools
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             foreach (VCFile f in (IVCCollection)project.Files) {
                 if (f.Name.ToLower() == absFileName.ToLower())
                     return f;
@@ -623,8 +611,6 @@ namespace QtVsTools
         /// </summary>
         private static int GetPropertyDispId(Type type, string propertyName)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var pi = type.GetProperty(propertyName);
             if (pi != null) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {

@@ -92,10 +92,10 @@ namespace QtVsTools.Core
 
         private ProSolution CreateProFileSolution(Solution sln)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ProFileContent content;
             var prosln = new ProSolution(sln);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
                 try {
@@ -131,11 +131,11 @@ namespace QtVsTools.Core
 
         private static ProFileContent CreateProFileContent(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ProFileOption option;
             var qtPro = QtProject.Create(project);
             var content = new ProFileContent(qtPro.VCProject);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             // hack to get active config
             var activeConfig = project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
@@ -425,6 +425,8 @@ namespace QtVsTools.Core
 
         private static void AddIncludePaths(Project project, ProFileOption option, string includePaths)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_ClProperties)
                 return;
 
@@ -439,8 +441,6 @@ namespace QtVsTools.Core
                 qtDir = "";
 
             qtDir = HelperFunctions.NormalizeRelativeFilePath(qtDir);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var s in includePaths.Split(';', ',')) {
                 var d = HelperFunctions.NormalizeRelativeFilePath(s);
@@ -585,6 +585,8 @@ namespace QtVsTools.Core
 
         private void WriteProFile(ProFileContent content, string proFile, string priFileToInclude, bool openFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             StreamWriter sw;
             if (File.Exists(proFile)) {
                 if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", proFile),
@@ -617,7 +619,6 @@ namespace QtVsTools.Core
                 WriteProFileOptions(sw, content.Options);
             }
 
-            ThreadHelper.ThrowIfNotOnUIThread();
             if (openFile) // open the file in vs
                 dteObject.OpenFile(Constants.vsViewKindTextView, proFile).Activate();
         }
@@ -717,6 +718,8 @@ namespace QtVsTools.Core
         public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
             List<string> projFiles, DTE dte, bool flat, FakeFilter fakeFilter)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var cmpPriFiles = new List<string>(priFiles.Count);
             foreach (var s in priFiles)
                 cmpPriFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
@@ -725,8 +728,6 @@ namespace QtVsTools.Core
             var cmpProjFiles = new List<string>(projFiles.Count);
             foreach (var s in projFiles)
                 cmpProjFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var qtPro = QtProject.Create(vcproj);
             var filterPathTable = new Hashtable(17);

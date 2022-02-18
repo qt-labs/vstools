@@ -31,12 +31,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
+
+using Task = System.Threading.Tasks.Task;
+using Thread = System.Threading.Thread;
 
 namespace QtVsTools.QtMsBuild
 {
     using Core;
-    using Thread = System.Threading.Thread;
 
     static class QtProjectIntellisense
     {
@@ -45,7 +48,7 @@ namespace QtVsTools.QtMsBuild
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (project == null || !QtProjectTracker.IsTracked(project.FullName))
                 return;

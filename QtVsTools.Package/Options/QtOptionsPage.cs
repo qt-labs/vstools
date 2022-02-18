@@ -224,6 +224,8 @@ namespace QtVsTools.Options
 
         public override void ResetSettings()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             QtMsBuildPath = "";
             QmlDebuggerEnabled = true;
             QmlDebuggerTimeout = (Timeout)60000;
@@ -234,8 +236,6 @@ namespace QtVsTools.Options
             BuildRunQtTools = ProjectTracking = true;
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             ////////
             // Get Qt Help keyboard shortcut

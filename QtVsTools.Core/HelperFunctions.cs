@@ -114,10 +114,10 @@ namespace QtVsTools.Core
 
         public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(prj) >= Resources.qtMinFormatVersion_Settings)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             // Get platform name from given solution configuration
             // or if not available take the active configuration
@@ -451,10 +451,10 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static void ToggleProjectKind(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var vcPro = (VCProject)project.Object;
             if (!IsQMakeProject(project))
@@ -537,7 +537,8 @@ namespace QtVsTools.Core
                     if (compiler != null) {
                         var additionalIncludes = compiler.AdditionalIncludeDirectories;
                         if (additionalIncludes != null) {
-                            ReplaceDirectory(ref additionalIncludes, qtDir, "$(QTDIR)", project);
+                            ReplaceDirectory(ref additionalIncludes, qtDir, "$(QTDIR)",
+                                project.FullName);
                             compiler.AdditionalIncludeDirectories = additionalIncludes;
                         }
                     }
@@ -545,7 +546,7 @@ namespace QtVsTools.Core
                         var linkerToolWrapper = new LinkerToolWrapper(linker);
                         var paths = linkerToolWrapper.AdditionalLibraryDirectories;
                         if (paths != null) {
-                            ReplaceDirectory(ref paths, qtDir, "$(QTDIR)", project);
+                            ReplaceDirectory(ref paths, qtDir, "$(QTDIR)", project.FullName);
                             linkerToolWrapper.AdditionalLibraryDirectories = paths;
                         }
                     }
@@ -558,16 +559,16 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Replaces every occurrence of oldDirectory with replacement in the array of strings.
-        /// Parameter oldDirectory must be an absolute path.
-        /// This function converts relative directories to absolute paths internally
-        /// and replaces them, if necessary. If no replacement is done, the path isn't altered.
+        /// Replaces every occurrence of oldDirectory with replacement in the array of
+        /// strings.Parameter oldDirectory must be an absolute path. This function converts
+        /// relative directories to absolute paths internally and replaces them, if necessary. If
+        /// no replacement is done, the path isn't altered.
         /// </summary>
-        /// <param name="project">The project is needed to convert relative paths to absolute paths.</param>
-        private static void ReplaceDirectory(ref List<string> paths, string oldDirectory, string replacement, Project project)
+        /// <param name="fullName">The projects full name is needed to convert relative paths to
+        ///  absolute paths.</param>
+        private static void ReplaceDirectory(ref List<string> paths, string oldDirectory,
+                                             string replacement, string fullName)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             for (var i = 0; i < paths.Count; ++i) {
                 var dirName = paths[i];
                 if (dirName.StartsWith("\"", StringComparison.Ordinal) && dirName.EndsWith("\"", StringComparison.Ordinal)) {
@@ -575,7 +576,7 @@ namespace QtVsTools.Core
                 }
                 if (!Path.IsPathRooted(dirName)) {
                     // convert to absolute path
-                    dirName = Path.Combine(Path.GetDirectoryName(project.FullName), dirName);
+                    dirName = Path.Combine(Path.GetDirectoryName(fullName), dirName);
                     dirName = Path.GetFullPath(dirName);
                     var alteredDirName = dirName.Replace(oldDirectory, replacement, StringComparison
                         .OrdinalIgnoreCase);
@@ -680,13 +681,13 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static bool IsQtProject(VCProject proj)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!IsQMakeProject(proj))
                 return false;
 
             if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
                 return true;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var envPro = proj.Object as Project;
             if (envPro.Globals == null || envPro.Globals.VariableNames == null)
@@ -919,10 +920,10 @@ namespace QtVsTools.Core
 
         public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy, string nodeToCollapseFilter)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (string.IsNullOrEmpty(nodeToCollapseFilter))
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (UIHierarchyItem innerItem in item.UIHierarchyItems) {
                 if (innerItem.Name == nodeToCollapseFilter)
@@ -1078,10 +1079,10 @@ namespace QtVsTools.Core
 
         public static Project GetSelectedProject(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (dteObject == null)
                 return null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             Array prjs = null;
             try {
@@ -1152,10 +1153,10 @@ namespace QtVsTools.Core
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (GetSelectedQtProject(dteObject) == null)
                 return null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (dteObject.SelectedItems.Count <= 0)
                 return null;
@@ -1266,10 +1267,10 @@ namespace QtVsTools.Core
 
         private static void addSubProjects(ProjectItems subItems, ref List<Project> projects)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (subItems == null)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (ProjectItem item in subItems) {
                 Project subprj = null;
@@ -1662,8 +1663,6 @@ namespace QtVsTools.Core
 
         public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (VersionInfo == null) {
                 VersionInfo = QtVersionManager.The().GetVersionInfo(
                     QtVersionManager.The().GetDefaultVersion());

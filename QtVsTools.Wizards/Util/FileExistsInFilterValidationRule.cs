@@ -41,8 +41,6 @@ namespace QtVsTools.Wizards.Util
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (value is string) {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 if (dte == null)

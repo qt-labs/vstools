@@ -31,6 +31,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using System.Collections.Generic;
 using QtVsTools.Core;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.Util
 {
@@ -38,6 +39,8 @@ namespace QtVsTools.Wizards.Util
     {
         public static void SetQtModules(DTE dte, List<string> modules)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var newModules = modules.ToHashSet();
             if (modules.Count == 0)
                 return;
@@ -46,7 +49,6 @@ namespace QtVsTools.Wizards.Util
             if (project == null)
                 return;
 
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             var vcproject = project.Object as VCProject;
             if (vcproject == null)
                 return;

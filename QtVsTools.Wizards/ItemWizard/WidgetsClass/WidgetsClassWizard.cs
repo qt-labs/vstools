@@ -155,8 +155,6 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeTemplateExpansion()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
             Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
             Parameter[NewClass.UiFileName] = WizardData.UiFile;
@@ -233,13 +231,13 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void Expand()
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             VCRulePropertyStorageHelper.SetQtModules(Dte, WizardData.DefaultModules);
         }
 
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             QtProject.AdjustWhitespace(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
         }
     }

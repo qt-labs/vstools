@@ -48,13 +48,13 @@ namespace QtVsTools.Core
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 if (vsDialogCanceled.HasValue)
                     return vsDialogCanceled.Value;
 
                 if (VsWaitDialog == null)
                     return false;
-
-                ThreadHelper.ThrowIfNotOnUIThread();
 
                 int res = VsWaitDialog.HasCanceled(out bool canceled);
                 if (res != VSConstants.S_OK)
@@ -72,14 +72,14 @@ namespace QtVsTools.Core
 
         static WaitDialog Create(IVsThreadedWaitDialogFactory dialogFactory)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (factory == null) {
                 factory = dialogFactory ?? VsServiceProvider
                     .GetService<SVsThreadedWaitDialogFactory, IVsThreadedWaitDialogFactory>();
                 if (factory == null)
                     return null;
             }
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             factory.CreateInstance(out IVsThreadedWaitDialog2 vsWaitDialog);
             if (vsWaitDialog == null)
@@ -102,11 +102,11 @@ namespace QtVsTools.Core
             bool showMarqueeProgress = true,
             IVsThreadedWaitDialogFactory dialogFactory = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var dialog = Create(dialogFactory);
             if (dialog == null)
                 return null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var res = dialog.VsWaitDialog.StartWaitDialog(caption, message, progressText,
                     null, statusBarText, delay, isCancelable, showMarqueeProgress);
@@ -128,11 +128,11 @@ namespace QtVsTools.Core
             bool isCancelable = false,
             IVsThreadedWaitDialogFactory dialogFactory = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var dialog = Create(dialogFactory);
             if (dialog == null)
                 return null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var res = dialog.VsWaitDialog.StartWaitDialogWithPercentageProgress(
                 caption, message, progressText, null, statusBarText,
@@ -152,10 +152,10 @@ namespace QtVsTools.Core
             string statusBarText = null,
             bool disableCancel = false)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!Running)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             int res = VsWaitDialog.UpdateProgress(message, progressText,
                 statusBarText, currentStep, totalSteps, disableCancel, out bool canceled);
@@ -169,10 +169,10 @@ namespace QtVsTools.Core
 
         public void Stop()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!Running)
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             Running = false;
             VsWaitDialog.EndWaitDialog(out int canceled);

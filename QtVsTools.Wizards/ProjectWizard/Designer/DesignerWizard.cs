@@ -31,6 +31,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.Common;
 using QtVsTools.Wizards.Common;
 
@@ -174,7 +175,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             project.Globals["IsDesignerPlugin"] = true.ToString();
             if (!project.Globals.get_VariablePersists("IsDesignerPlugin"))

@@ -56,8 +56,6 @@ namespace QtVsTools.Core
 
         public Dictionary<string, string> QueryAllValues()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             stdOutput = new StringBuilder();
             Query = " ";
 
@@ -77,8 +75,6 @@ namespace QtVsTools.Core
         {
             get
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
                 if (Properties.TryGetValue(name, out string value))
                     return value;
                 return null;
@@ -90,8 +86,6 @@ namespace QtVsTools.Core
         {
             get
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
                 return _Properties ?? (_Properties = QueryAllValues());
             }
         }

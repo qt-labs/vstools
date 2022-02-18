@@ -171,8 +171,6 @@ namespace QtVsTools
             QtProject qtProject,
             IEnumerable<string> tsFiles)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (tsFiles == null) {
                 tsFiles = (qtProject.VCProject
                     .GetFilesEndingWith(".ts") as IVCCollection)
@@ -194,8 +192,6 @@ namespace QtVsTools
             string tsFile,
             ref string tempFile)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var qtVersion = qtProject.GetQtVersion();
             var qtInstallPath = QtVersionManager.The().GetInstallPath(qtVersion);
             if (string.IsNullOrEmpty(qtInstallPath)) {
@@ -265,8 +261,6 @@ namespace QtVsTools
 
         public static bool ToolsAvailable(EnvDTE.Project project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (QtProject.GetPropertyValue(project, "ApplicationType") == "Linux")
                 return true;
 

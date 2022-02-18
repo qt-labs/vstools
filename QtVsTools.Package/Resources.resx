@@ -120,9 +120,6 @@
   <data name="ActionDialog_Properties" xml:space="preserve">
     <value>Properties</value>
   </data>
-  <data name="AddQtVersionDialog_IncorrectMakefileGenerator" xml:space="preserve">
-    <value>This Qt version uses an unsupported makefile generator (used: {0}, supported: MSVC.NET, MSBUILD)</value>
-  </data>
   <data name="Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>

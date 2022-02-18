@@ -40,11 +40,11 @@ namespace QtVsTools
     {
         public static void ImportProFile()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vm = QtVersionManager.The();
             var qtVersion = vm.GetDefaultVersion();
             var qtDir = vm.GetInstallPath(qtVersion);
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (qtDir == null) {
                 Messages.DisplayErrorMessage(SR.GetString("CannotFindQMake"));
@@ -63,14 +63,14 @@ namespace QtVsTools
 
         public static void ImportPriFile(EnvDTE.Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null)
                 return;
 
             VCProject vcproj;
             if (!HelperFunctions.IsQtProject(project))
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             vcproj = project.Object as VCProject;
             if (vcproj == null)
@@ -93,13 +93,13 @@ namespace QtVsTools
 
         public static void ImportPriFile(EnvDTE.Project project, string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project == null)
                 return;
 
             if (!HelperFunctions.IsQtProject(project))
                 return;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             var vcproj = project.Object as VCProject;
             if (vcproj == null)
@@ -160,8 +160,6 @@ namespace QtVsTools
 
         private static string ResolveEnvironmentVariables(string str, EnvDTE.Project project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             string env = null;
             string val = null;
             var reg = new Regex(@"\$\(([^\s\(\)]+)\)");
@@ -185,8 +183,6 @@ namespace QtVsTools
 
         public static void ExportProFile()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (QtVsToolsPackage.Instance.Dte != null) {
                 var proFileExporter = new ProjectExporter(QtVsToolsPackage.Instance.Dte);
                 proFileExporter.ExportToProFile();
@@ -195,8 +191,6 @@ namespace QtVsTools
 
         public static void ExportPriFile()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var dte = QtVsToolsPackage.Instance.Dte;
             if (dte != null) {
                 var proFileExporter = new ProjectExporter(dte);

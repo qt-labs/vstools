@@ -88,7 +88,7 @@ namespace QtVsTools
 
         public static string GetString(string name, QtVsToolsPackage vsixInstance)
         {
-           ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var sys = GetLoader(vsixInstance.Dte.LocaleID);
             if (sys == null)

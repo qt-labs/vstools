@@ -137,8 +137,6 @@ namespace QtVsTools
 
         static bool ConvertProject(string pathToProject)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var xmlProject = MsBuildProject.Load(pathToProject);
             bool ok = (xmlProject != null);
             if (ok)

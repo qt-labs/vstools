@@ -181,8 +181,6 @@ namespace QtVsTools.Core
 
         public virtual int Run(bool setVCVars = false)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             int exitCode = -1;
             using (var qmakeProc = CreateProcess()) {
                 try {

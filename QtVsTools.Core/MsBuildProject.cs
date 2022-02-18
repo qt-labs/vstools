@@ -290,8 +290,6 @@ namespace QtVsTools.Core
         /// <returns>true if successful</returns>
         public bool UpdateProjectFormatVersion()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (ConfigCondition == null)
                 return false;
 

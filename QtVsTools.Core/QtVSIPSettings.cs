@@ -218,10 +218,10 @@ namespace QtVsTools.Core
 
         public static void SaveMocOptions(EnvDTE.Project project, string options)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (options == null)
                 options = GetMocOptions();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             SaveOption(project, Resources.mocOptionsKeyword, options);
         }
@@ -234,20 +234,20 @@ namespace QtVsTools.Core
 
         public static void SaveLUpdateOptions(EnvDTE.Project project, string options)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (options == null)
                 options = GetLUpdateOptions();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             SaveOption(project, Resources.lupdateOptionsKeyword, options);
         }
 
         public static void SaveLReleaseOptions(EnvDTE.Project project, string options)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (options == null)
                 options = GetLReleaseOptions();
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             SaveOption(project, Resources.lreleaseOptionsKeyword, options);
         }

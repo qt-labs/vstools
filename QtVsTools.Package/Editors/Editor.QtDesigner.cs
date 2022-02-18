@@ -31,8 +31,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Shell;
 using QtVsTools.QtMsBuild;
 using QtVsTools.VisualStudio;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Editors
 {
@@ -57,12 +60,12 @@ namespace QtVsTools.Editors
 
         protected override void OnStart(Process process)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             base.OnStart(process);
             var document = VsShell.GetDocument(Context, ItemId);
             if (document == null)
                 return;
-
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 
             var project = document.ProjectItem?.ContainingProject;
             if (project == null || !QtProjectTracker.IsTracked(project.FullName))
