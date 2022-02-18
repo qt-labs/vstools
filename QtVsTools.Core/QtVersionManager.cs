@@ -49,8 +49,6 @@ namespace QtVsTools.Core
 
         protected QtVersionManager()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
             RefreshVersionNames();
@@ -64,9 +62,7 @@ namespace QtVsTools.Core
                 using (var versionsKey = rootKey.OpenSubKey(strVersionKey, true)) {
                     versionsKey.SetValue("VersionNames", string.Join(";", GetVersions()));
                 }
-
             } catch (Exception e) {
-                ThreadHelper.ThrowIfNotOnUIThread();
                 Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
         }
@@ -91,8 +87,6 @@ namespace QtVsTools.Core
 
         public VersionInformation GetVersionInfo(string name)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
             if (name == null)
@@ -123,8 +117,6 @@ namespace QtVsTools.Core
 
         public string GetQtVersionFromInstallDir(string qtDir)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (qtDir == null)
                 return null;
 
@@ -160,8 +152,6 @@ namespace QtVsTools.Core
         /// <returns>true, if we found an invalid version</returns>
         public bool HasInvalidVersions(out string errorMessage)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var validVersions = new Dictionary<string, QtConfig>();
             var invalidVersions = new List<string>();
 
@@ -239,8 +229,6 @@ namespace QtVsTools.Core
 
         public string GetInstallPath(string version)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             return GetInstallPath(version, Registry.CurrentUser);
@@ -248,8 +236,6 @@ namespace QtVsTools.Core
 
         public string GetInstallPath(string version, RegistryKey root)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion(root);
             if (version == "$(QTDIR)")
@@ -278,8 +264,6 @@ namespace QtVsTools.Core
 
         public bool SaveVersion(string versionName, string path, bool checkPath = true)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var verName = versionName?.Trim().Replace(@"\", "_");
             if (string.IsNullOrEmpty(verName))
                 return false;
@@ -323,8 +307,6 @@ namespace QtVsTools.Core
 
         public void RemoveVersion(string versionName)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
             if (key == null)
                 return;
@@ -478,14 +460,11 @@ namespace QtVsTools.Core
 
         public string GetDefaultVersion()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
             return GetDefaultVersion(Registry.CurrentUser);
         }
 
         public string GetDefaultVersion(RegistryKey root)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             string defaultVersion = null;
             try {
                 var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
@@ -494,8 +473,6 @@ namespace QtVsTools.Core
             } catch {
                 Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
             }
-
-            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (defaultVersion == null) {
                 MergeVersions();
@@ -534,8 +511,6 @@ namespace QtVsTools.Core
 
         private void MergeVersions()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             var hkcuVersions = GetVersions();
             var hklmVersions = GetVersions(Registry.LocalMachine);
 
@@ -574,8 +549,6 @@ namespace QtVsTools.Core
 
         private bool VerifyIfQtVersionExists(string version)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             if (!string.IsNullOrEmpty(version)) {
