@@ -32,10 +32,11 @@ using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using QtVsTools.Core;
 
 namespace QtVsTools.Options
 {
+    using Core;
+
     public class QtVersionsPage : UIElementDialogPage
     {
         QtVersionManager VersionManager => QtVersionManager.The();

@@ -26,15 +26,16 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using QtVsTools.Core;
-using QtVsTools.VisualStudio;
 using System;
 using System.ComponentModel.Design;
+using Microsoft.VisualStudio.Shell;
+using EnvDTE;
 
 namespace QtVsTools
 {
+    using Core;
+    using VisualStudio;
+
     /// <summary>
     /// Command handler
     /// </summary>

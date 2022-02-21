@@ -35,7 +35,7 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.QtMsBuild
 {
-    using QtVsTools.Core;
+    using Core;
 
     [Export(typeof(IPropertyPageUIValueEditor))]
     [ExportMetadata("Name", "QtModulesEditor")]

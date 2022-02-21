@@ -27,10 +27,11 @@
 ****************************************************************************/
 
 using System.Collections.Generic;
-using QtVsTools.Wizards.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Wizards.Common;
+
     public class QuickWizard : ProjectTemplateWizard
     {
         protected override Options TemplateType => Options.Application | Options.GUISystem;

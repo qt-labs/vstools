@@ -26,19 +26,20 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools
 {
-    using static Core.HelperFunctions;
+    using Core;
     using QtMsBuild;
-    using Microsoft.VisualStudio.Shell;
+
+    using static Core.HelperFunctions;
 
     /// <summary>
     /// Run Qt translation tools by invoking the corresponding Qt/MSBuild targets

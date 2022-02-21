@@ -26,15 +26,16 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using QtVsTools.QtMsBuild.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.QtMsBuild.Tasks
 {
+    using QtVsTools.QtMsBuild.Tasks;
+
     [TestClass]
     public class Test_Join
     {

@@ -31,11 +31,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.SyntaxAnalysis;
 
 namespace QtVsTools.Core
 {
-    using static RegExpr;
+    using static SyntaxAnalysis.RegExpr;
 
     public class QMakeQuery : QMake
     {

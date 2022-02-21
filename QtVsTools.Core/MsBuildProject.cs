@@ -30,21 +30,22 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using QtVsTools.Core.QtMsBuild;
-using System.Text.RegularExpressions;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
-using QtVsTools.SyntaxAnalysis;
 using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
+    using QtMsBuild;
+    using SyntaxAnalysis;
+
     using static HelperFunctions;
-    using static RegExpr;
+    using static SyntaxAnalysis.RegExpr;
 
     public class MsBuildProject
     {

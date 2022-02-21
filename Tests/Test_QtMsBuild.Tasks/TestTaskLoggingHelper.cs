@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-using Microsoft.Build.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using Microsoft.Build.Framework;
 
 namespace QtVsTools.Test.QtMsBuild.Tasks
 {

@@ -35,11 +35,12 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core;
-using QtVsTools.VisualStudio;
 
 namespace QtVsTools
 {
+    using Core;
+    using VisualStudio;
+
     static class QtMsBuildConverter
     {
         public static bool SolutionToQtMsBuild()

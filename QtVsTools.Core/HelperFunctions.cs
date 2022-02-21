@@ -26,13 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
-#if VS2017
-using Microsoft.Win32;
-#endif
-using QtVsTools.Core.QtMsBuild;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,11 +36,19 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+#if VS2017
+using Microsoft.Win32;
+#endif
+using EnvDTE;
 
 using Process = System.Diagnostics.Process;
 
 namespace QtVsTools.Core
 {
+    using QtMsBuild;
+
     public static class HelperFunctions
     {
         static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },

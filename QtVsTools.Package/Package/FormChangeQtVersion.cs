@@ -26,13 +26,14 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
-using QtVsTools.Core;
 using System;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
+    using Core;
+
     public partial class FormChangeQtVersion : Form
     {
 

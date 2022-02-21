@@ -29,26 +29,26 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.QtMsBuild
 {
     using Core;
     using VisualStudio;
-    using Microsoft.VisualStudio.Shell;
 
-    using Thread = System.Threading.Thread;
-    using Task = System.Threading.Tasks.Task;
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
-    using System.IO;
 
     class QtProjectTracker : Concurrent<QtProjectTracker>
     {

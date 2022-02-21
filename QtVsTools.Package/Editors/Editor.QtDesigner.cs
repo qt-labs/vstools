@@ -32,13 +32,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.QtMsBuild;
-using QtVsTools.VisualStudio;
 
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Editors
 {
+    using QtMsBuild;
+    using VisualStudio;
+
     [Guid(GuidString)]
     public class QtDesigner : Editor
     {

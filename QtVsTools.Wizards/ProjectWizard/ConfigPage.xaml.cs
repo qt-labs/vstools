@@ -37,12 +37,12 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using QtVsTools.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using QtVsTools.Core;
-    using QtVsTools.Wizards.Common;
+    using Core;
+    using QtVsTools.Common;
+    using Wizards.Common;
 
     public partial class ConfigPage : WizardPage
     {

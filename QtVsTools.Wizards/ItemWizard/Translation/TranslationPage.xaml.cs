@@ -31,10 +31,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using QtVsTools.Wizards.Common;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
+    using Wizards.Common;
+
     public partial class TranslationPage : WizardPage
     {
         public TranslationPage()

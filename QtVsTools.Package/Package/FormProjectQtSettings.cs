@@ -26,17 +26,18 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using QtVsTools.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.VisualStudio.Shell;
+using EnvDTE;
 
 namespace QtVsTools
 {
+    using Core;
+
     public partial class FormProjectQtSettings : Form
     {
         private Project project;

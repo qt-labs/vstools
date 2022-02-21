@@ -34,10 +34,11 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
+    using VisualStudio;
+
     sealed partial class Program : Disposable, IDebuggerEventSink,
 
         IDebugProgramNode2,  // "This interface represents a program that can be debugged."

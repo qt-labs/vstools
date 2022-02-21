@@ -26,13 +26,13 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+using EnvDTE;
 
 namespace QtVsTools.Core
 {

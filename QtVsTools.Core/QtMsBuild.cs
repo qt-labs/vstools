@@ -26,17 +26,17 @@
 **
 ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System;
-using System.IO;
-
-using CommandLineParser = QtVsTools.Core.CommandLine.Parser;
-using CommandLineOption = QtVsTools.Core.CommandLine.Option;
 
 namespace QtVsTools.Core.QtMsBuild
 {
+    using CommandLineParser = CommandLine.Parser;
+    using CommandLineOption = CommandLine.Option;
+
     public interface IVSMacroExpander
     {
         string ExpandString(string stringToExpand);

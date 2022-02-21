@@ -27,13 +27,13 @@
 ****************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Navigation;
 
 namespace QtVsTools.Wizards.Common
 {
-    using System.Collections;
-    using Util;
+    using Wizards.Util;
 
     public partial class WizardWindow : NavigationWindow, IEnumerable<WizardPage>
     {

@@ -26,10 +26,10 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections;
 using System.IO;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {

@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {

@@ -26,17 +26,18 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell.Interop;
-using QtVsTools.Core;
-using QtVsTools.VisualStudio;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.Util
 {
+    using Core;
+    using VisualStudio;
+
     internal class FileExistsinFilterValidationRule : VCLanguageManagerValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)

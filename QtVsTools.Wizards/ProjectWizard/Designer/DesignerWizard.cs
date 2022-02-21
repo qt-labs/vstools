@@ -30,14 +30,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.Common;
-using QtVsTools.Wizards.Common;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using static EnumExt;
+    using Wizards.Common;
+
+    using static QtVsTools.Common.EnumExt;
 
     public class DesignerWizard : ProjectTemplateWizard
     {

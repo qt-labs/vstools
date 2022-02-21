@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using QtVsTools.Core;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -34,6 +33,8 @@ using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
+    using Core;
+
     public class ProjectQtSettings
     {
 

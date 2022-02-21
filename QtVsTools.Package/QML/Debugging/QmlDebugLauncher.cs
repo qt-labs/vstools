@@ -32,18 +32,19 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core;
-using QtVsTools.Core.QtMsBuild;
-using QtVsTools.SyntaxAnalysis;
-using static QtVsTools.SyntaxAnalysis.RegExpr;
 
 namespace QtVsTools.Qml.Debug
 {
     using AD7;
-    using Microsoft.VisualStudio.Shell;
+    using Core;
+    using Core.QtMsBuild;
+    using SyntaxAnalysis;
     using VisualStudio;
+
+    using static SyntaxAnalysis.RegExpr;
 
     class Launcher : Disposable, IDebugEventCallback2
     {

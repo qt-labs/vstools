@@ -26,14 +26,14 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
-using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {

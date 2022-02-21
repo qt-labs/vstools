@@ -41,11 +41,12 @@ using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 
+using Thread = System.Threading.Thread;
+
 namespace QtVsTools.QtMsBuild
 {
     using Core;
     using VisualStudio;
-    using Thread = System.Threading.Thread;
 
     class QtProjectBuild : Concurrent<QtProjectBuild>
     {

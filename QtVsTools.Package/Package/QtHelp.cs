@@ -26,11 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using QtVsTools.Core;
-using QtVsTools.VisualStudio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -38,10 +33,17 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using EnvDTE;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
+    using Core;
+    using VisualStudio;
+
     public class QtHelp
     {
         public enum SourcePreference { Online, Offline }

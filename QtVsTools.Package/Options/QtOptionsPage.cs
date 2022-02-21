@@ -30,20 +30,20 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Win32;
+using System.Linq.Expressions;
+using System.Reflection;
+using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Build.Framework;
+using Microsoft.Win32;
 using EnvDTE;
-using QtVsTools.Core;
-using QtVsTools.Common;
-using QtVsTools.VisualStudio;
-using System.Reflection;
-using System.Linq.Expressions;
 
 namespace QtVsTools.Options
 {
-    using static EnumExt;
+    using Core;
+    using VisualStudio;
+
+    using static Common.EnumExt;
 
     public class QtOptionsPage : DialogPage, IQtVsToolsOptions
     {

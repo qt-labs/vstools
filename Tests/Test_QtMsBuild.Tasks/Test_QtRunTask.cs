@@ -32,10 +32,11 @@ using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QtVsTools.QtMsBuild.Tasks;
 
 namespace QtVsTools.Test.QtMsBuild.Tasks
 {
+    using QtVsTools.QtMsBuild.Tasks;
+
     [TestClass]
     public class Test_QtRunTask
     {

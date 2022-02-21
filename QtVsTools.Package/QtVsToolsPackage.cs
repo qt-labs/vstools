@@ -34,7 +34,6 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
@@ -44,12 +43,15 @@ using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 using EnvDTE;
 
+using Task = System.Threading.Tasks.Task;
+
 namespace QtVsTools
 {
     using Core;
     using QtMsBuild;
-    using static SyntaxAnalysis.RegExpr;
     using VisualStudio;
+
+    using static SyntaxAnalysis.RegExpr;
 
     [Guid(QtVsToolsPackage.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]

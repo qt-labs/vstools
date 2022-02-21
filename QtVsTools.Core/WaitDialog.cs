@@ -30,10 +30,11 @@ using System;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core
 {
+    using VisualStudio;
+
     public class WaitDialog : IDisposable
     {
         static IVsThreadedWaitDialogFactory factory = null;

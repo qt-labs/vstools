@@ -31,15 +31,15 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using EnvDTE;
-using QtVsTools.Core;
-using QtVsTools.Common;
-using QtVsTools.Wizards.Common;
 using Microsoft.VisualStudio.Shell;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using static EnumExt;
+    using Core;
+    using Wizards.Common;
+
+    using static QtVsTools.Common.EnumExt;
 
     public class ServerWizard : ProjectTemplateWizard
     {

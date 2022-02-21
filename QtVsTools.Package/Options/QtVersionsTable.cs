@@ -37,11 +37,10 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using QtVsTools.Common;
 
 namespace QtVsTools.Options
 {
-    using static EnumExt;
+    using static Common.EnumExt;
 
     public enum BuildHost
     {

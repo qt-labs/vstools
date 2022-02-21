@@ -26,8 +26,6 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,11 +34,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using QtVsTools.Core.QtMsBuild;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+using EnvDTE;
 
 namespace QtVsTools.Core
 {
+    using QtMsBuild;
+
     /// <summary>
     /// QtProject holds the Qt specific properties for a Visual Studio project.
     /// There exists at most one QtProject per EnvDTE.Project.

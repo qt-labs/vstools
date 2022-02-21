@@ -26,21 +26,22 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core;
-using QtVsTools.QtMsBuild;
 using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+using EnvDTE;
+using EnvDTE80;
 
 namespace QtVsTools
 {
+    using Core;
+    using QtMsBuild;
+
     class DteEventsHandler
     {
         private readonly DTE dte;

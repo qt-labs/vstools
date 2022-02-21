@@ -41,11 +41,12 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
-using QtVsTools.Qml.Syntax;
-using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Qml.Classification
 {
+    using QtVsTools.VisualStudio;
+    using Syntax;
+
     [Export(typeof(IViewTaggerProvider))]
     [ContentType("qml")]
     [TagType(typeof(ClassificationTag))]

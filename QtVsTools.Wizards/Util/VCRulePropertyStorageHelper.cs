@@ -26,15 +26,16 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.VCProjectEngine;
 using System.Collections.Generic;
-using QtVsTools.Core;
 using System.Linq;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.Util
 {
+    using Core;
+
     static class VCRulePropertyStorageHelper
     {
         public static void SetQtModules(DTE dte, List<string> modules)

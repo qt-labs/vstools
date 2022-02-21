@@ -30,10 +30,11 @@ using System;
 using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.Core;
 
 namespace QtVsTools.Options
 {
+    using Core;
+
     public class QtLegacyOptionsPage : DialogPage
     {
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]

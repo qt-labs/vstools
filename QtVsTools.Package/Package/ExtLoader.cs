@@ -26,16 +26,17 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools
 {
+    using Core;
+
     public static class ExtLoader
     {
         public static void ImportProFile()

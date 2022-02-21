@@ -26,9 +26,9 @@
 **
 ****************************************************************************/
 
+using System;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
-using System;
 
 namespace QtVsTools.Core
 {

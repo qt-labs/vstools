@@ -29,13 +29,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using QtVsTools.SyntaxAnalysis;
-using static QtVsTools.SyntaxAnalysis.RegExpr;
-using RegExprParser = QtVsTools.SyntaxAnalysis.RegExpr.Parser;
 
 namespace QtVsTools.Qml.Debug
 {
+    using SyntaxAnalysis;
     using V4;
+
+    using RegExprParser = SyntaxAnalysis.RegExpr.Parser;
+
+    using static SyntaxAnalysis.RegExpr;
 
     struct FrameInfo
     {

@@ -32,10 +32,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.VisualStudio;
 
 namespace QtVsTools.Core
 {
+    using VisualStudio;
+
     public abstract class QMake
     {
         public Dictionary<string, string> Vars { get; protected set; }

@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
@@ -38,7 +39,6 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTest
 {
     using Macros;
-    using System.IO;
 
     [Guid(PackageGuidString)]
     [InstalledProductRegistration(

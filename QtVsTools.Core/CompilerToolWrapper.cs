@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {

@@ -27,11 +27,12 @@
 ****************************************************************************/
 
 using System.Collections.Generic;
-using QtVsTools.Common;
-using QtVsTools.Wizards.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
+    using Wizards.Common;
+
     public class ConsoleWizard : ProjectTemplateWizard
     {
         protected override Options TemplateType => Options.Application | Options.ConsoleSystem;

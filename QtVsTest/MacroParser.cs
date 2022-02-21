@@ -27,13 +27,14 @@
 ****************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using QtVsTools.SyntaxAnalysis;
 
 namespace QtVsTest.Macros
 {
-    using System.Collections;
-    using static QtVsTools.SyntaxAnalysis.RegExpr;
+    using static RegExpr;
 
     class MacroLines : IEnumerable<MacroLine>
     {

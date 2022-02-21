@@ -26,14 +26,15 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
+using System.Windows.Controls;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCCodeModel;
-using QtVsTools.VisualStudio;
-using System.Windows.Controls;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.Util
 {
+    using VisualStudio;
+
     internal abstract class VCLanguageManagerValidationRule : ValidationRule
     {
         protected VCLanguageManagerValidationRule()

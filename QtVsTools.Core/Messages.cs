@@ -26,19 +26,20 @@
 **
 ****************************************************************************/
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
-using QtVsTools.VisualStudio;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
+using EnvDTE;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core
 {
-    using Task = System.Threading.Tasks.Task;
+    using VisualStudio;
 
     public static class Messages
     {

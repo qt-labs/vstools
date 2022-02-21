@@ -32,11 +32,12 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using QtVsTools.VisualStudio;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core
 {
-    using Task = System.Threading.Tasks.Task;
+    using VisualStudio;
 
     public class OutputWindowPane
     {

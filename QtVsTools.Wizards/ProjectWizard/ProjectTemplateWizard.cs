@@ -33,24 +33,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
-using EnvDTE;
 using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
+using EnvDTE;
 
-using QtVsTools.Common;
-using QtVsTools.VisualStudio;
-
-using QtVsTools.Core;
-using QtVsTools.Core.QtMsBuild;
-using QtVsTools.Wizards.Common;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using static EnumExt;
+    using Core;
+    using Core.QtMsBuild;
+    using VisualStudio;
+    using Wizards.Common;
+
     using WhereConfig = Func<IWizardConfiguration, bool>;
+
+    using static QtVsTools.Common.EnumExt;
 
     public interface IWizardConfiguration
     {

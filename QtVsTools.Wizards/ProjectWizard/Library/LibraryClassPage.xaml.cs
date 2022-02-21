@@ -28,10 +28,11 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using QtVsTools.Wizards.Common;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Wizards.Common;
+
     public partial class LibraryClassPage : WizardPage
     {
         public LibraryClassPage()

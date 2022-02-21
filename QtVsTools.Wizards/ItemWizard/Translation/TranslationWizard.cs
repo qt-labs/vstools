@@ -30,17 +30,17 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.Common;
-using QtVsTools.Core;
-using QtVsTools.Wizards.Common;
-using QtVsTools.Wizards.ProjectWizard;
-using QtVsTools.Wizards.Util;
+using EnvDTE;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
-    using static EnumExt;
+    using Core;
+    using Wizards.Common;
+    using Wizards.ProjectWizard;
+    using Wizards.Util;
+
+    using static QtVsTools.Common.EnumExt;
 
     public sealed class TsWizardData : WizardData
     {
