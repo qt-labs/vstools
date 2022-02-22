@@ -90,6 +90,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xaml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
@@ -104,7 +106,8 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_ProjectSystem)" Version="$(Version_Microsoft_VisualStudio_ProjectSystem)" />
     <PackageReference Include="$(Name_Newtonsoft_Json)" Version="$(Version_Newtonsoft_Json)" />
-    <PackageReference Include="$(Name_Stub_System_Data_SQLite_Core_NetFramework)" Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" GeneratePathProperty="true"/>
+    <PackageReference Include="$(Name_Stub_System_Data_SQLite_Core_NetFramework)" Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" GeneratePathProperty="true" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Shell_15)" Version="$(Version_Microsoft_VisualStudio_Shell_15)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -440,7 +443,6 @@
     <Compile Include="VisualStudio\InfoBar.cs" />
     <Compile Include="Package\InfoBarMessages.cs" />
     <Compile Include="VisualStudio\VsShell.cs" />
-    <Compile Include="Common\VsToolsDialogWindow.cs" />
     <Content Include="..\Changelog">
       <Link>Changelog</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

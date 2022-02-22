@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -32,10 +32,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace QtVsTools
 {
-    partial class QtHelpLinkChooser : VsToolsDialogWindow
+    partial class QtHelpLinkChooser : DialogWindow
     {
         public QtHelpLinkChooser()
         {

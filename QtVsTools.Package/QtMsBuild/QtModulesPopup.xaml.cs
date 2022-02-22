@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -30,10 +30,11 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace QtVsTools.QtMsBuild
 {
-    public partial class QtModulesPopup : VsToolsDialogWindow
+    public partial class QtModulesPopup : DialogWindow
     {
         public class Module
         {
