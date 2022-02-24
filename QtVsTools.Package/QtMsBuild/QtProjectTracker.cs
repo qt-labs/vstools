@@ -45,6 +45,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.QtMsBuild
 {
+    using Common;
     using Core;
     using VisualStudio;
 
@@ -52,20 +53,17 @@ namespace QtVsTools.QtMsBuild
 
     class QtProjectTracker : Concurrent<QtProjectTracker>
     {
-        static ConcurrentDictionary<string, QtProjectTracker> _Instances;
-        static ConcurrentDictionary<string, QtProjectTracker> Instances =>
-            StaticThreadSafeInit(() => _Instances, () =>
-                _Instances = new ConcurrentDictionary<string, QtProjectTracker>());
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
 
-        static PunisherQueue<QtProjectTracker> _InitQueue;
-        static PunisherQueue<QtProjectTracker> InitQueue =>
-            StaticThreadSafeInit(() => _InitQueue, () =>
-                _InitQueue = new PunisherQueue<QtProjectTracker>());
+        static ConcurrentDictionary<string, QtProjectTracker> Instances => StaticLazy.Get(() =>
+            Instances, () => new ConcurrentDictionary<string, QtProjectTracker>());
 
-        static IVsTaskStatusCenterService _StatusCenter;
-        static IVsTaskStatusCenterService StatusCenter => StaticThreadSafeInit(() => _StatusCenter,
-                () => _StatusCenter = VsServiceProvider
-                    .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+        static PunisherQueue<QtProjectTracker> InitQueue => StaticLazy.Get(() =>
+            InitQueue, () => new PunisherQueue<QtProjectTracker>());
+
+        static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
+            StatusCenter, () => VsServiceProvider
+                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
 
         static Task InitDispatcher { get; set; }
         static ITaskHandler2 InitStatus { get; set; }

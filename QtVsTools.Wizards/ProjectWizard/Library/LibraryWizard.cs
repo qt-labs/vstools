@@ -33,12 +33,15 @@ using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Wizards.Common;
 
     using static QtVsTools.Common.EnumExt;
 
     public class LibraryWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.GUISystem
             | (WizardData.CreateStaticLibrary ? Options.StaticLibrary : Options.DynamicLibrary);
 
@@ -53,19 +56,17 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("pro_lib_export")] LibExport,
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> { "QtCore" }
             });
 
-        readonly List<string> _ExtraDefines = new List<string>();
-        protected override IEnumerable<string> ExtraDefines => _ExtraDefines;
+        readonly List<string> LibExtraDefines = new List<string>();
+        protected override IEnumerable<string> ExtraDefines => LibExtraDefines;
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Class Library Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Class Library Wizard")
             {
                 new WizardIntroPage {
                     Data = WizardData,
@@ -133,9 +134,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewLibClass.LibDefine] = safeprojectname.ToUpper() + "_LIB";
             Parameter[NewLibClass.LibExport] = safeprojectname.ToUpper() + "_EXPORT";
 
-            _ExtraDefines.Add(Parameter[NewLibClass.LibDefine]);
+            LibExtraDefines.Add(Parameter[NewLibClass.LibDefine]);
             if (WizardData.CreateStaticLibrary)
-                _ExtraDefines.Add("BUILD_STATIC");
+                LibExtraDefines.Add("BUILD_STATIC");
         }
     }
 }

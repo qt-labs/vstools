@@ -35,6 +35,7 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
+    using QtVsTools.Common;
     using Core;
     using Wizards.Common;
     using Wizards.ProjectWizard;
@@ -51,6 +52,8 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class TranslationWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.ConsoleSystem | Options.GUISystem;
 
         enum NewTranslationItem
@@ -60,16 +63,14 @@ namespace QtVsTools.Wizards.ItemWizard
             [String("cultureinfoname")] CultureInfoName
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new TsWizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new TsWizardData
             {
                 DefaultModules = new List<string> { "core"}
             });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Translation File Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Translation File Wizard")
             {
                 new TranslationPage
                 {

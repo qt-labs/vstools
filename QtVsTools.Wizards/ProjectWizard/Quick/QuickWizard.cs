@@ -30,22 +30,23 @@ using System.Collections.Generic;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Wizards.Common;
 
     public class QuickWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> { "QtQuick" }
             });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Quick Application Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Quick Application Wizard")
             {
                 new WizardIntroPage {
                     Data = WizardData,

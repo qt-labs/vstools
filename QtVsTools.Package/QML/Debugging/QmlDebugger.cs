@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Qml.Debug
 {
+    using Common;
     using SyntaxAnalysis;
     using V4;
 
@@ -69,6 +70,8 @@ namespace QtVsTools.Qml.Debug
 
     class QmlDebugger : Disposable, IMessageEventSink
     {
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
+
         IDebuggerEventSink sink;
         ProtocolDriver driver;
         string connectionHostName;
@@ -449,8 +452,8 @@ namespace QtVsTools.Qml.Debug
         /// <summary>
         /// Regex-based parser for QML debug connection parameters
         /// </summary>
-        static RegExprParser ConnectParamsParser => _ConnectParamsParser ?? (
-            _ConnectParamsParser = new Token(TokenId.ConnectParams, RxConnectParams)
+        static RegExprParser ConnectParamsParser => StaticLazy.Get(() =>
+            ConnectParamsParser, () => new Token(TokenId.ConnectParams, RxConnectParams)
             {
                 new Rule<ConnectParams>
                 {
@@ -462,7 +465,6 @@ namespace QtVsTools.Qml.Debug
                 }
             }
             .Render());
-        static RegExprParser _ConnectParamsParser;
 
         /// <summary>
         /// Regular expression for parsing connection parameters string in the form:

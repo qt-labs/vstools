@@ -35,15 +35,17 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Options
 {
+    using Common;
     using Core;
 
     public class QtVersionsPage : UIElementDialogPage
     {
+        static LazyFactory Lazy { get; } = new LazyFactory();
+
         QtVersionManager VersionManager => QtVersionManager.The();
 
-        QtVersionsTable _VersionsTable;
-        QtVersionsTable VersionsTable => _VersionsTable
-            ?? (_VersionsTable = new QtVersionsTable());
+        QtVersionsTable VersionsTable => Lazy.Get(() =>
+            VersionsTable, () => new QtVersionsTable());
 
         protected override UIElement Child => VersionsTable;
 

@@ -35,6 +35,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.VisualStudio
 {
+    using Common;
+
     internal static class InfoBar
     {
         public interface IMessage
@@ -70,13 +72,15 @@ namespace QtVsTools.VisualStudio
 
         public class Message : IMessage, IVsInfoBarUIEvents
         {
+            static LazyFactory StaticLazy { get; } = new LazyFactory();
+
             public ImageMoniker Icon { get; set; }
             public TextSpan[] Text { get; set; }
             public Hyperlink[] Hyperlinks { get; set; }
 
-            static IVsInfoBarUIFactory _Factory = null;
-            static IVsInfoBarUIFactory Factory => _Factory ?? (_Factory =
-                VsServiceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>());
+            static IVsInfoBarUIFactory Factory => StaticLazy.Get(() =>
+                Factory, () => VsServiceProvider
+                    .GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>());
 
             private IVsInfoBarUIElement UIElement { get; set; }
             private uint cookie;

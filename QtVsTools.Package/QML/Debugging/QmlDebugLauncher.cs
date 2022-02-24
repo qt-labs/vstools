@@ -39,6 +39,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools.Qml.Debug
 {
     using AD7;
+    using Common;
     using Core;
     using Core.QtMsBuild;
     using SyntaxAnalysis;
@@ -48,13 +49,14 @@ namespace QtVsTools.Qml.Debug
 
     class Launcher : Disposable, IDebugEventCallback2
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         private static Launcher Instance { get; set; }
         IVsDebugger debugger;
         IVsDebugger4 debugger4;
 
-        HashSet<Guid> _ExcludedProcesses;
-        HashSet<Guid> ExcludedProcesses => _ExcludedProcesses
-            ?? (_ExcludedProcesses = new HashSet<Guid>());
+        HashSet<Guid> ExcludedProcesses => Lazy.Get(() =>
+            ExcludedProcesses, () => new HashSet<Guid>());
 
         public static void Initialize()
         {

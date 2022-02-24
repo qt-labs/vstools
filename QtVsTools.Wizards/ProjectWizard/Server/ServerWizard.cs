@@ -36,6 +36,7 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Core;
     using Wizards.Common;
 
@@ -43,6 +44,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class ServerWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.DynamicLibrary | Options.GUISystem;
 
         enum NewClass
@@ -60,16 +63,14 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("ui_hdr")] UiHeaderName,
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> { "QtCore", "QtGui", "QtWidgets", "QtAxServer" }
             });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt ActiveQt Server Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt ActiveQt Server Wizard")
             {
                 new WizardIntroPage {
                     Data = WizardData,

@@ -42,9 +42,7 @@ namespace QtVsTools
     {
         protected static object StaticCriticalSection { get; } = new object();
 
-        private object _CriticalSection = null;
-        protected object CriticalSection =>
-            StaticThreadSafeInit(() => _CriticalSection, () => _CriticalSection = new object());
+        protected object CriticalSection { get; } = new object();
 
         protected T ThreadSafeInit<T>(Func<T> getValue, Action init)
             where T : class

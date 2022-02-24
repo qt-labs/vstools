@@ -37,6 +37,7 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Core;
     using Wizards.Common;
 
@@ -44,6 +45,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class GuiWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
         readonly Func<IWizardConfiguration, bool> whereConfigTargetIsWindowsStore
@@ -82,16 +85,14 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("namespaceend")] NamespaceEnd
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> { "QtCore", "QtGui", "QtWidgets" }
             });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Widgets Application Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Widgets Application Wizard")
             {
                 new WizardIntroPage
                 {
@@ -132,12 +133,12 @@ namespace QtVsTools.Wizards.ProjectWizard
                 }
             });
 
-        readonly List<ItemDef> _ExtraItems;
-        protected override IEnumerable<ItemDef> ExtraItems => _ExtraItems;
+        readonly List<ItemDef> GuiExtraItems;
+        protected override IEnumerable<ItemDef> ExtraItems => GuiExtraItems;
 
         public GuiWizard()
         {
-            _ExtraItems = new List<ItemDef>
+            GuiExtraItems = new List<ItemDef>
             {
                 new ItemDef
                 {
@@ -262,7 +263,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 }
 
                 if (iconExists) {
-                    _ExtraItems.Add(new ItemDef
+                    GuiExtraItems.Add(new ItemDef
                     {
                         ItemType = "None",
                         Include = Parameter[NewProject.SafeName] + ".ico",
@@ -275,7 +276,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             }
 
             if (winRcFile.Length > 0) {
-                _ExtraItems.Add(new ItemDef
+                GuiExtraItems.Add(new ItemDef
                 {
                     ItemType = "ResourceCompile",
                     Include = Parameter[NewProject.SafeName] + ".rc",

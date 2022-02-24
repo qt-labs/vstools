@@ -40,6 +40,7 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Options
 {
+    using Common;
     using static Common.EnumExt;
 
     public enum BuildHost
@@ -51,6 +52,8 @@ namespace QtVsTools.Options
 
     public partial class QtVersionsTable : UserControl
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         public QtVersionsTable()
         {
             InitializeComponent();
@@ -70,11 +73,13 @@ namespace QtVsTools.Options
 
         public class Row
         {
+            static LazyFactory StaticLazy { get; } = new LazyFactory();
+            LazyFactory Lazy { get; } = new LazyFactory();
+
             public enum FieldNames { IsDefault, VersionName, Host, Path, Compiler }
 
-            private Dictionary<FieldNames, Field> _Fields;
-            public Dictionary<FieldNames, Field> Fields => _Fields
-                ?? (_Fields = GetValues<FieldNames>()
+            public Dictionary<FieldNames, Field> Fields => Lazy.Get(() =>
+                Fields, () => GetValues<FieldNames>()
                     .Select(field => new KeyValuePair<FieldNames, Field>(field, null))
                     .ToDictionary(keyValue => keyValue.Key, keyValue => keyValue.Value));
 
@@ -134,17 +139,15 @@ namespace QtVsTools.Options
             public FontWeight FontWeight
                 => IsDefault ? FontWeights.Bold : FontWeights.Normal;
 
-            private static ImageSource _ExplorerIcon;
-            public static ImageSource ExplorerIcon => _ExplorerIcon
-                ?? (_ExplorerIcon = GetExplorerIcon());
+            public static ImageSource ExplorerIcon => StaticLazy.Get(() =>
+                ExplorerIcon, () => GetExplorerIcon());
         }
 
         private bool IsValid { get; set; }
 
         Field FocusedField { get; set; }
 
-        List<Row> _Rows;
-        List<Row> Rows => _Rows ?? (_Rows = new List<Row>());
+        List<Row> Rows => Lazy.Get(() => Rows, () => new List<Row>());
         public IEnumerable<Row> Versions => Rows.TakeWhile(item => !item.LastRow);
 
         public void UpdateVersions(IEnumerable<Row> versions)

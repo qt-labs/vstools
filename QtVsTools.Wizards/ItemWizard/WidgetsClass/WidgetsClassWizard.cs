@@ -38,6 +38,7 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
+    using QtVsTools.Common;
     using Core;
     using Wizards.Common;
     using Wizards.ProjectWizard;
@@ -47,6 +48,8 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class WidgetsClassWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType => Options.GUISystem;
 
         enum NewClass
@@ -82,9 +85,8 @@ namespace QtVsTools.Wizards.ItemWizard
             [String("namespaceend")] NamespaceEnd
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 InsertQObjectMacro = true,
                 LowerCaseFileNames = false,
@@ -92,9 +94,8 @@ namespace QtVsTools.Wizards.ItemWizard
                 DefaultModules = new List<string> { "core", "gui", "widgets" }
             });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Widgets Class Wizard")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Widgets Class Wizard")
             {
                 new WizardIntroPage
                 {

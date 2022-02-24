@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,33 +26,32 @@
 **
 ****************************************************************************/
 
+using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Reflection;
 
-namespace QtVsTools
+namespace QtVsTools.Common
 {
-    using Common;
-
-    public class Timestamp : Concurrent<Timestamp>
+    public class LazyFactory
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        private Lazy<ConcurrentDictionary<PropertyInfo, Lazy<object>>> LazyObjs { get; }
+        private ConcurrentDictionary<PropertyInfo, Lazy<object>> Objs => LazyObjs.Value;
 
-        long LastTimestamp { get; set; }
-        long GetStrictMonotonicTimestamp()
+        public LazyFactory()
         {
-            lock (CriticalSection) {
-                long t = Stopwatch.GetTimestamp();
-                if (t <= LastTimestamp)
-                    t = LastTimestamp + 1;
-                return (LastTimestamp = t);
-            }
+            LazyObjs = new Lazy<ConcurrentDictionary<PropertyInfo, Lazy<object>>>();
         }
 
-        static Timestamp Instance => StaticLazy.Get(() =>
-            Instance, () => new Timestamp());
-
-        public static long Next()
+        public T Get<T>(Expression<Func<T>> propertyRef, Func<T> initFunc) where T : class
         {
-            return Instance.GetStrictMonotonicTimestamp();
+            var lazyPropertyExpr = propertyRef?.Body as MemberExpression;
+            var lazyProperty = lazyPropertyExpr?.Member as PropertyInfo;
+            if (lazyProperty == null)
+                throw new ArgumentException("Invalid property reference", "propertyRef");
+            var lazyObj = Objs.GetOrAdd(lazyProperty, (_) => new Lazy<object>(() => initFunc()));
+            return lazyObj.Value as T;
         }
     }
 }

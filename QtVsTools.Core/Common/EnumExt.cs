@@ -40,6 +40,8 @@ namespace QtVsTools.Common
     /// </summary>
     public static class EnumExt
     {
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
+
         /// <summary>
         /// Wrapper for enum cast values.
         /// </summary>
@@ -200,15 +202,14 @@ namespace QtVsTools.Common
                 .FirstOrDefault();
         }
 
-        static IEnumerable<Type> _CastAttribTypes;
         /// <summary>
         /// List of cast attribute types.
         /// </summary>
         /// <remarks>
         /// Future cast attribute types need to be added to this list.
         /// </remarks>
-        static IEnumerable<Type> CastAttribTypes => _CastAttribTypes
-            ?? (_CastAttribTypes = new[]
+        static IEnumerable<Type> CastAttribTypes => StaticLazy.Get(() =>
+            CastAttribTypes, () => new[]
             {
                 typeof(StringAttribute)
             });

@@ -31,13 +31,15 @@ using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
+    using Common;
     using static VisualStudio.InfoBar;
 
     internal static class InfoBarMessages
     {
-        static IMessage _NoQtVersion = null;
-        public static IMessage NoQtVersion => _NoQtVersion ?? (
-            _NoQtVersion = new Message
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
+
+        public static IMessage NoQtVersion => StaticLazy.Get(() =>
+            NoQtVersion, () => new Message
             {
                 Icon = KnownMonikers.StatusInformation,
                 Text = new TextSpan[]
@@ -61,9 +63,8 @@ namespace QtVsTools
             }
         );
 
-        static IMessage _NotifyInstall = null;
-        public static IMessage NotifyInstall => _NotifyInstall ?? (
-            _NotifyInstall = new Message
+        public static IMessage NotifyInstall => StaticLazy.Get(() =>
+            NotifyInstall, () => new Message
             {
                 Icon = KnownMonikers.StatusWarning,
                 Text = new TextSpan[]

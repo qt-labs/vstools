@@ -42,6 +42,7 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Core;
     using Core.QtMsBuild;
     using VisualStudio;
@@ -81,6 +82,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public abstract class ProjectTemplateWizard : IWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         private readonly WhereConfig WhereConfig_SelectAll = (x => true);
 
         protected struct ItemProperty
@@ -143,18 +146,16 @@ namespace QtVsTools.Wizards.ProjectWizard
         private Dictionary<string, string> ParameterValues { get; set; }
         protected EnvDTE.DTE Dte { get; private set; }
 
-        ItemDef _PrecompiledHeaderFile;
-        protected virtual ItemDef PrecompiledHeader => _PrecompiledHeaderFile
-            ?? (_PrecompiledHeaderFile = new ItemDef
+        protected virtual ItemDef PrecompiledHeader => Lazy.Get(() =>
+            PrecompiledHeader, () => new ItemDef
             {
                 ItemType = "ClInclude",
                 Include = "stdafx.h",
                 Filter = "Header Files"
             });
 
-        ItemDef _PrecompiledHeaderSourceFile;
-        protected virtual ItemDef PrecompiledHeaderSource => _PrecompiledHeaderSourceFile
-            ?? (_PrecompiledHeaderSourceFile = new ItemDef
+        protected virtual ItemDef PrecompiledHeaderSource => Lazy.Get(() =>
+            PrecompiledHeaderSource, () => new ItemDef
             {
                 ItemType = "ClCompile",
                 Include = "stdafx.cpp",
@@ -201,9 +202,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             FilterItems,
         }
 
-        TemplateParameters _Parameter;
-        protected TemplateParameters Parameter => _Parameter
-            ?? (_Parameter = new TemplateParameters { Template = this });
+        protected TemplateParameters Parameter => Lazy.Get(() =>
+            Parameter, () => new TemplateParameters { Template = this });
 
         protected QtVersionManager VersionManager => QtVersionManager.The();
 

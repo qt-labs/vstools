@@ -35,12 +35,15 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using QtVsTools.Common;
     using Wizards.Common;
 
     using static QtVsTools.Common.EnumExt;
 
     public class DesignerWizard : ProjectTemplateWizard
     {
+        LazyFactory Lazy { get; } = new LazyFactory();
+
         protected override Options TemplateType =>
             Options.PluginProject | Options.DynamicLibrary | Options.GUISystem;
 
@@ -62,26 +65,22 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("plugin_json")] JsonFileName,
         }
 
-        WizardData _WizardData;
-        protected override WizardData WizardData => _WizardData
-            ?? (_WizardData = new WizardData
+        protected override WizardData WizardData => Lazy.Get(() =>
+            WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> {
                     "QtCore", "QtGui", "QtWidgets", "QtXml"
                 }
             });
 
-        string[] _ExtraModules;
-        protected override IEnumerable<string> ExtraModules => _ExtraModules
-            ?? (_ExtraModules = new[] { "designer" });
+        protected override IEnumerable<string> ExtraModules => Lazy.Get(() =>
+            ExtraModules, () => new[] { "designer" });
 
-        string[] _ExtraDefines;
-        protected override IEnumerable<string> ExtraDefines => _ExtraDefines
-            ?? (_ExtraDefines = new[] { "QT_PLUGIN" });
+        protected override IEnumerable<string> ExtraDefines => Lazy.Get(() =>
+            ExtraDefines, () => new[] { "QT_PLUGIN" });
 
-        WizardWindow _WizardWindow;
-        protected override WizardWindow WizardWindow => _WizardWindow
-            ?? (_WizardWindow = new WizardWindow(title: "Qt Custom Designer Widget")
+        protected override WizardWindow WizardWindow => Lazy.Get(() =>
+            WizardWindow, () => new WizardWindow(title: "Qt Custom Designer Widget")
             {
                 new WizardIntroPage {
                     Data = WizardData,

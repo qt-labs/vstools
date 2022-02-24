@@ -45,29 +45,27 @@ using Thread = System.Threading.Thread;
 
 namespace QtVsTools.QtMsBuild
 {
+    using Common;
     using Core;
     using VisualStudio;
 
     class QtProjectBuild : Concurrent<QtProjectBuild>
     {
-        static PunisherQueue<QtProjectBuild> _BuildQueue;
-        static PunisherQueue<QtProjectBuild> BuildQueue =>
-            StaticThreadSafeInit(() => _BuildQueue,
-                () => _BuildQueue = new PunisherQueue<QtProjectBuild>(
-                    getItemKey: (QtProjectBuild build) =>
-                    {
-                        return build.ConfiguredProject;
-                    })
-                );
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
 
-        static ConcurrentStopwatch _RequestTimer;
-        static ConcurrentStopwatch RequestTimer =>
-            StaticThreadSafeInit(() => _RequestTimer, () => _RequestTimer = new ConcurrentStopwatch());
+        static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
+            BuildQueue, () => new PunisherQueue<QtProjectBuild>(
+                getItemKey: (QtProjectBuild build) =>
+                {
+                    return build.ConfiguredProject;
+                }));
 
-        static IVsTaskStatusCenterService _StatusCenter;
-        static IVsTaskStatusCenterService StatusCenter => StaticThreadSafeInit(() => _StatusCenter,
-                () => _StatusCenter = VsServiceProvider
-                    .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+        static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
+            RequestTimer, () => new ConcurrentStopwatch());
+
+        static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
+            StatusCenter, () => VsServiceProvider
+                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
 
         EnvDTE.Project Project { get; set; }
         VCProject VcProject { get; set; }
