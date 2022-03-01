@@ -166,7 +166,7 @@
                        LostFocus="Control_LostFocus"
                        TextChanged="TextBox_TextChanged"
                        SelectionChanged="TextBox_SelectionChanged"
-                       ToolTip="{Binding FieldName.ToolTip}">
+                       ToolTip="{Binding FieldVersionName.ToolTip}">
                 <TextBox.Resources>
                   <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                    Color="LimeGreen" />
