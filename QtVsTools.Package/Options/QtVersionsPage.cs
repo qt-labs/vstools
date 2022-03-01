@@ -54,6 +54,9 @@ namespace QtVsTools.Options
             var versions = new List<QtVersionsTable.Row>();
             foreach (var versionName in VersionManager.GetVersions()) {
                 var versionPath = VersionManager.GetInstallPath(versionName);
+                if (string.IsNullOrEmpty(versionPath))
+                    continue;
+
                 BuildHost host = BuildHost.Windows;
                 string compiler = "msvc";
                 if (versionPath.StartsWith("SSH:") || versionPath.StartsWith("WSL:")) {
