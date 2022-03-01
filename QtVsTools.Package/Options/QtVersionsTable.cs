@@ -510,9 +510,9 @@ namespace QtVsTools.Options
         static object GetBinding(FrameworkElement control)
         {
             if (control == null
-            || control.BindingGroup == null
-            || control.BindingGroup.Items == null
-            || control.BindingGroup.Items.Count == 0) {
+                || control.BindingGroup == null
+                || control.BindingGroup.Items == null
+                || control.BindingGroup.Items.Count == 0) {
                 return null;
             }
             return control.BindingGroup.Items[0];
@@ -522,7 +522,7 @@ namespace QtVsTools.Options
         {
             while (control != null) {
                 if (control is ContentPresenter contentPresenter
-                && contentPresenter.Parent is DataGridCell cell) {
+                    && contentPresenter.Parent is DataGridCell cell) {
                     return cell;
                 }
                 control = VisualTreeHelper.GetParent(control);
