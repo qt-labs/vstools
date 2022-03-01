@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -59,13 +59,21 @@ namespace QtVsTools.Options
             InitializeComponent();
         }
 
-        public enum Column
+        [Flags] public enum Column
         {
-            IsDefault,
-            VersionName,
-            Host,
-            Path,
-            Compiler
+            IsDefault = 0x10,
+            VersionName = 0x20,
+            Host = 0x40,
+            Path = 0x80,
+            Compiler = 0x100
+        }
+
+        [Flags] public enum State
+        {
+            Unknown = 0x00,
+            Existing = 0x01,
+            Removed = 0x02,
+            Modified = 0x04
         }
 
         public class Field
@@ -84,7 +92,6 @@ namespace QtVsTools.Options
         {
             static LazyFactory StaticLazy { get; } = new LazyFactory();
             LazyFactory Lazy { get; } = new LazyFactory();
-
 
             public Dictionary<Column, Field> Fields => Lazy.Get(() =>
                 Fields, () => GetValues<Column>()
@@ -106,6 +113,7 @@ namespace QtVsTools.Options
                 get => FieldVersionName.Value;
                 set => FieldVersionName.Value = value;
             }
+            public string InitialVersionName { get; set; }
 
             public Field FieldHost => Fields[Column.Host]
                 ?? (Fields[Column.Host] = new Field());
@@ -149,6 +157,9 @@ namespace QtVsTools.Options
 
             public static ImageSource ExplorerIcon => StaticLazy.Get(() =>
                 ExplorerIcon, () => GetExplorerIcon());
+
+            public State State { get; set; } = State.Unknown;
+            public bool RowVisible => State != State.Removed;
         }
 
         private bool IsValid { get; set; }
@@ -167,12 +178,14 @@ namespace QtVsTools.Options
             IsValid = true;
             FocusedField = null;
             Validate(true);
+            Rows.ForEach(item => item.State = State.Existing);
         }
 
         public IEnumerable<string> GetErrorMessages()
         {
             Validate(true);
             return Versions
+                .Where(v => v.State != State.Removed)
                 .SelectMany(v => v.Fields.Values.Select(f => f.ValidationError))
                 .Where(s => !string.IsNullOrEmpty(s))
                 .Distinct();
@@ -180,90 +193,92 @@ namespace QtVsTools.Options
 
         void Validate(bool mustRefresh)
         {
-            /////////////////////////
-            // Automatic cell values
-            foreach (var version in Versions) {
-                if (version.Host != BuildHost.Windows && version.Compiler == "msvc") {
-                    version.Compiler = "g++";
-                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
-                    mustRefresh = true;
-                } else if (version.Host == BuildHost.Windows && version.Compiler != "msvc") {
-                    version.Compiler = "msvc";
-                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
-                    mustRefresh = true;
-                }
-            }
-
             ////////////////////////
             // Validate cell values
             string previousValidation;
             bool wasValid = IsValid;
             IsValid = true;
             foreach (var version in Versions) {
+                if (!version.State.HasFlag(State.Modified))
+                    continue;
 
                 //////////////////////
                 // Default validation
-                previousValidation = version.FieldDefault.ValidationError;
-                version.FieldDefault.ValidationError = null;
-                if (version.IsDefault && version.Host != BuildHost.Windows) {
-                    version.FieldDefault.ValidationError = "Default version: host must be Windows";
-                    IsValid = false;
+                if (version.State.HasFlag((State)Column.IsDefault)) {
+                    previousValidation = version.FieldDefault.ValidationError;
+                    version.FieldDefault.ValidationError = null;
+                    if (version.IsDefault && version.Host != BuildHost.Windows) {
+                        version.FieldDefault.ValidationError = "Default version: Host must be Windows";
+                        IsValid = false;
+                    }
+                    if (previousValidation != version.FieldDefault.ValidationError)
+                        mustRefresh = true;
                 }
-                if (previousValidation != version.FieldDefault.ValidationError)
-                    mustRefresh = true;
 
                 ///////////////////
                 // Name validation
-                previousValidation = version.FieldVersionName.ValidationError;
-                version.FieldVersionName.ValidationError = null;
-                if (string.IsNullOrEmpty(version.VersionName)) {
-                    version.FieldVersionName.ValidationError = "Name cannot be empty";
-                    IsValid = false;
-                } else if (Versions
-                    .Where(otherVersion => otherVersion != version
-                        && otherVersion.VersionName == version.VersionName)
-                    .Any()) {
-                    version.FieldVersionName.ValidationError = "Duplicate version names";
-                    IsValid = false;
+                if (version.State.HasFlag((State)Column.VersionName)) {
+                    previousValidation = version.FieldVersionName.ValidationError;
+                    version.FieldVersionName.ValidationError = null;
+                    if (string.IsNullOrEmpty(version.VersionName)) {
+                        version.FieldVersionName.ValidationError = "Name cannot be empty";
+                        IsValid = false;
+                    } else if (Versions.Where(otherVersion => otherVersion != version
+                        && otherVersion.VersionName == version.VersionName).Any()) {
+                        version.FieldVersionName.ValidationError = "Duplicate version names";
+                        IsValid = false;
+                    }
+                    if (previousValidation != version.FieldVersionName.ValidationError)
+                        mustRefresh = true;
                 }
-                if (previousValidation != version.FieldVersionName.ValidationError)
-                    mustRefresh = true;
 
                 ///////////////////
                 // Host validation
-                previousValidation = version.FieldHost.ValidationError;
-                version.FieldHost.ValidationError = null;
-                if (version.IsDefault && version.Host != BuildHost.Windows) {
-                    version.FieldHost.ValidationError = "Default version: host must be Windows";
-                    IsValid = false;
+                if (version.State.HasFlag((State)Column.Host)) {
+                    previousValidation = version.FieldHost.ValidationError;
+                    version.FieldHost.ValidationError = null;
+                    if (version.IsDefault && version.Host != BuildHost.Windows) {
+                        version.FieldHost.ValidationError = "Default version: Host must be Windows";
+                        IsValid = false;
+                    }
+                    if (previousValidation != version.FieldHost.ValidationError)
+                        mustRefresh = true;
                 }
-                if (previousValidation != version.FieldHost.ValidationError)
-                    mustRefresh = true;
 
                 ///////////////////
                 // Path validation
-                previousValidation = version.FieldPath.ValidationError;
-                version.FieldPath.ValidationError = null;
-                if (string.IsNullOrEmpty(version.Path)) {
-                    version.FieldPath.ValidationError = "Path cannot be empty";
-                    IsValid = false;
-                } else if (version.Host == BuildHost.Windows && !Directory.Exists(version.Path)) {
-                    version.FieldPath.ValidationError = "Path does not exist";
-                    IsValid = false;
+                if (version.State.HasFlag((State)Column.Path)) {
+                    previousValidation = version.FieldPath.ValidationError;
+                    version.FieldPath.ValidationError = null;
+                    if (string.IsNullOrEmpty(version.Path)) {
+                        version.FieldPath.ValidationError = "Path cannot be empty";
+                        IsValid = false;
+                    } else if (version.Host == BuildHost.Windows) {
+                        var path = NormalizePath(version.Path);
+                        if (!Directory.Exists(path)) {
+                            version.FieldPath.ValidationError = "Path does not exist";
+                            IsValid = false;
+                        } else if (!File.Exists(Path.Combine(path, "qmake.exe"))) {
+                            version.FieldPath.ValidationError = "Cannot find qmake.exe";
+                            IsValid = false;
+                        }
+                    }
+                    if (previousValidation != version.FieldPath.ValidationError)
+                        mustRefresh = true;
                 }
-                if (previousValidation != version.FieldPath.ValidationError)
-                    mustRefresh = true;
 
                 ///////////////////////
                 // Compiler validation
-                previousValidation = version.FieldCompiler.ValidationError;
-                version.FieldCompiler.ValidationError = null;
-                if (string.IsNullOrEmpty(version.Compiler)) {
-                    version.FieldCompiler.ValidationError = "Compiler cannot be empty";
-                    IsValid = false;
+                if (version.State.HasFlag((State)Column.Compiler)) {
+                    previousValidation = version.FieldCompiler.ValidationError;
+                    version.FieldCompiler.ValidationError = null;
+                    if (string.IsNullOrEmpty(version.Compiler)) {
+                        version.FieldCompiler.ValidationError = "Compiler cannot be empty";
+                        IsValid = false;
+                    }
+                    if (previousValidation != version.FieldCompiler.ValidationError)
+                        mustRefresh = true;
                 }
-                if (previousValidation != version.FieldCompiler.ValidationError)
-                    mustRefresh = true;
             }
 
             //////////////////////////////////////
@@ -394,8 +409,11 @@ namespace QtVsTools.Options
                     || field.Control != textBox
                     || field.Value == textBox.Text)
                     return;
+
                 field.SelectionStart = textBox.SelectionStart;
                 field.Value = textBox.Text;
+                version.State |= State.Modified | (State)column;
+
                 Validate(false);
             }
         }
@@ -414,18 +432,40 @@ namespace QtVsTools.Options
                     || field.Control != comboBox
                     || field.Value == comboBoxValue)
                     return;
+
                 field.Value = comboBoxValue;
-                Validate(false);
+                version.State |= State.Modified | (State)Column.Host;
+
+                bool mustRefresh = false;
+                if (version.Host != BuildHost.Windows && version.Compiler == "msvc") {
+                    version.Compiler = "g++";
+                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
+                    version.State |= (State)Column.Compiler;
+                    mustRefresh = true;
+                } else if (version.Host == BuildHost.Windows && version.Compiler != "msvc") {
+                    version.Compiler = "msvc";
+                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
+                    version.State |= (State)Column.Compiler;
+                    mustRefresh = true;
+                }
+
+                Validate(mustRefresh);
             }
+        }
+
+        static void SetDefaultState(ref Row version, bool value)
+        {
+            version.IsDefault = value;
+            version.State |= State.Modified | (State)Column.IsDefault;
         }
 
         void Default_Click(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox && GetBinding(checkBox) is Row version) {
-                var defaultVersion = Rows.Where(row => row.IsDefault).FirstOrDefault();
+                var defaultVersion = Rows.FirstOrDefault(row => row.IsDefault);
                 if (defaultVersion != null)
-                    defaultVersion.IsDefault = false;
-                version.IsDefault = true;
+                    SetDefaultState(ref defaultVersion, false);
+                SetDefaultState(ref version, true);
                 Validate(true);
             }
         }
@@ -434,12 +474,16 @@ namespace QtVsTools.Options
         {
             var version = new Row()
             {
-                IsDefault = !Versions.Any(),
+                IsDefault = !Versions.Any(x => x.State != State.Removed),
                 Host = BuildHost.Windows,
                 Path = "",
                 Compiler = "msvc",
-                LastRow = false
+                LastRow = false,
+                State = State.Modified | (State)Column.VersionName | (State)Column.Host
+                                       | (State)Column.Path | (State)Column.Compiler
             };
+            if (version.IsDefault)
+                version.State |= (State)Column.IsDefault;
             Rows.Insert(Rows.Count - 1, version);
             FocusedField = version.FieldVersionName;
             Validate(true);
@@ -448,11 +492,24 @@ namespace QtVsTools.Options
         void Remove_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && GetBinding(button) is Row version) {
-                Rows.Remove(version);
-                if (version.IsDefault && Versions.Any())
-                    Versions.First().IsDefault = true;
+                version.State = State.Removed;
+                if (version.IsDefault) {
+                    var first = Versions.FirstOrDefault(x => x.State != State.Removed);
+                    if (first != null)
+                        SetDefaultState(ref first, true);
+                }
                 Validate(true);
             }
+        }
+
+        static string NormalizePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .ToUpperInvariant();
         }
 
         void Explorer_Click(object sender, RoutedEventArgs e)
@@ -469,6 +526,7 @@ namespace QtVsTools.Options
                 if (openFileDialog.ShowDialog() == true) {
                     var qmakePath = openFileDialog.FileName;
                     var qmakeDir = Path.GetDirectoryName(qmakePath);
+                    var previousPath = NormalizePath(version.Path);
                     if (Path.GetFileName(qmakeDir)
                         .Equals("bin", StringComparison.InvariantCultureIgnoreCase)) {
                         qmakeDir = Path.GetDirectoryName(qmakeDir);
@@ -476,12 +534,18 @@ namespace QtVsTools.Options
                     } else {
                         version.Path = qmakePath;
                     }
+
+                    if (previousPath != NormalizePath(version.Path))
+                        version.State |= State.Modified | (State)Column.Path;
+
                     if (string.IsNullOrEmpty(version.VersionName)) {
                         version.VersionName = string.Format("{0}_{1}",
                             Path.GetFileName(Path.GetDirectoryName(qmakeDir)),
                             Path.GetFileName(qmakeDir))
                             .Replace(" ", "_");
+                        version.State |= State.Modified | (State)Column.VersionName;
                     }
+
                     Validate(true);
                 }
             }

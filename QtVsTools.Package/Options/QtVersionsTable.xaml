@@ -1,7 +1,7 @@
 ﻿<!--
 /****************************************************************************
 **
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -58,7 +58,13 @@
                        Color="Transparent" />
       <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
                        Color="Transparent" />
+      <BooleanToVisibilityConverter x:Key="b2v" />
     </DataGrid.Resources>
+    <DataGrid.RowStyle>
+      <Style TargetType="{x:Type DataGridRow}">
+        <Setter Property="Visibility" Value="{Binding RowVisible, Converter={StaticResource b2v}}"/>
+      </Style>
+    </DataGrid.RowStyle>
     <DataGrid.CellStyle>
       <Style TargetType="DataGridCell">
         <Setter Property="BorderThickness"

@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -37,6 +37,7 @@ namespace QtVsTools.Options
 {
     using Common;
     using Core;
+    using static QtVsTools.Options.QtVersionsTable;
 
     public class QtVersionsPage : UIElementDialogPage
     {
@@ -51,7 +52,7 @@ namespace QtVsTools.Options
 
         public override void LoadSettingsFromStorage()
         {
-            var versions = new List<QtVersionsTable.Row>();
+            var versions = new List<Row>();
             foreach (var versionName in VersionManager.GetVersions()) {
                 var versionPath = VersionManager.GetInstallPath(versionName);
                 if (string.IsNullOrEmpty(versionPath))
@@ -71,13 +72,15 @@ namespace QtVsTools.Options
                         compiler = linuxPaths[2];
                 }
                 var defaultVersion = VersionManager.GetDefaultVersion();
-                versions.Add(new QtVersionsTable.Row()
+                versions.Add(new Row()
                 {
                     IsDefault = (versionName == defaultVersion),
                     VersionName = versionName,
+                    InitialVersionName = versionName,
                     Path = versionPath,
                     Host = host,
                     Compiler = compiler,
+                    State = State.Unknown
                 });
             }
             VersionsTable.UpdateVersions(versions);
@@ -85,23 +88,34 @@ namespace QtVsTools.Options
 
         public override void SaveSettingsToStorage()
         {
-            foreach (var versionName in VersionManager.GetVersions()) {
+            void RemoveVersion(string versionName)
+            {
                 try {
                     VersionManager.RemoveVersion(versionName);
                 } catch (Exception exception) {
-                    Messages.Print(
-                        exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                    Messages.Print(exception.Message + "\r\n\r\nStacktrace:\r\n"
+                        + exception.StackTrace);
                 }
             }
-            foreach (var version in VersionsTable.Versions) {
+
+            var versions = VersionsTable.Versions;
+            foreach (var version in versions) {
+                if (version.State.HasFlag(State.Removed))
+                    RemoveVersion(version.VersionName);
+
+                if (!version.State.HasFlag(State.Modified))
+                    continue;
+
                 try {
                     if (version.Host == BuildHost.Windows) {
-                        var versionInfo = VersionInformation.Get(version.Path);
-                        var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-                        if (generator != "MSVC.NET" && generator != "MSBUILD")
-                            throw new Exception(string.Format(
-                                "This Qt version uses an unsupported makefile generator (used: "
-                                + "{0}, supported: MSVC.NET, MSBUILD)", generator));
+                        if (version.State.HasFlag((State)Column.Path)) {
+                            var versionInfo = VersionInformation.Get(version.Path);
+                            var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                            if (generator != "MSVC.NET" && generator != "MSBUILD")
+                                throw new Exception(string.Format(
+                                    "This Qt version uses an unsupported makefile generator (used: "
+                                    + "{0}, supported: MSVC.NET, MSBUILD)", generator));
+                        }
                         VersionManager.SaveVersion(version.VersionName, version.Path);
                     } else {
                         string name = version.VersionName;
@@ -114,17 +128,29 @@ namespace QtVsTools.Options
                         path = string.Format("{0}:{1}:{2}", access, path, compiler);
                         VersionManager.SaveVersion(name, path, checkPath: false);
                     }
+
+                    if (version.State.HasFlag((State)Column.VersionName)) {
+                        try {
+                            if (!string.IsNullOrEmpty(version.InitialVersionName))
+                                VersionManager.RemoveVersion(version.InitialVersionName);
+                        } catch (Exception exception) {
+                            Messages.Print(exception.Message + "\r\n\r\nStacktrace:\r\n"
+                                + exception.StackTrace);
+                        }
+                    }
                 } catch (Exception exception) {
                     Messages.Print(
                         exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                    version.State = State.Removed;
+                    RemoveVersion(version.VersionName);
                 }
             }
+
             try {
-                var defaultVersion = VersionsTable.Versions
-                    .Where(version => version.IsDefault)
-                    .FirstOrDefault();
-                if (defaultVersion != null)
-                    VersionManager.SaveDefaultVersion(defaultVersion.VersionName);
+                var defaultVersion =
+                    versions.FirstOrDefault(v => v.IsDefault && v.State != State.Removed)
+                        ?? versions.FirstOrDefault(v => v.State != State.Removed);
+                VersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
             } catch (Exception exception) {
                 Messages.Print(
                     exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
