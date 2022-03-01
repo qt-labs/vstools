@@ -77,7 +77,7 @@
                       IsChecked="{Binding IsDefault}"
                       Focusable="{Binding DefaultEnabled}"
                       IsHitTestVisible="{Binding DefaultEnabled}"
-                      Visibility="{Binding RowVisibility}"
+                      Visibility="{Binding RowContentVisibility}"
                       BorderThickness="1"
                       Background="Transparent"
                       VerticalAlignment="Center"
@@ -94,7 +94,7 @@
             <!--//// Name ////-->
             <Grid>
               <Button Cursor="Hand"
-                      Visibility="{Binding RowVisibility}"
+                      Visibility="{Binding RowContentVisibility}"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Center"
                       Click="Remove_Click">
@@ -153,7 +153,7 @@
               </Button>
               <TextBox x:Name="VersionName"
                        Text="{Binding VersionName}"
-                       Visibility="{Binding RowVisibility}"
+                       Visibility="{Binding RowContentVisibility}"
                        IsEnabled="{Binding NameEnabled}"
                        FontWeight="{Binding FontWeight}"
                        Margin="20,4,2,4"
@@ -181,7 +181,7 @@
           <DataTemplate>
             <!--//// Host ////-->
             <ComboBox x:Name="Host"
-                      Visibility="{Binding RowVisibility}"
+                      Visibility="{Binding RowContentVisibility}"
                       IsEditable="True"
                       IsReadOnly="True"
                       BorderThickness="0"
@@ -233,7 +233,7 @@
               </Button>
               <TextBox x:Name="Path"
                        Text="{Binding Path}"
-                       Visibility="{Binding RowVisibility}"
+                       Visibility="{Binding RowContentVisibility}"
                        BorderThickness="0"
                        Background="Transparent"
                        Margin="{Binding PathMargin}"
@@ -260,7 +260,7 @@
             <!--//// Compiler ////-->
             <TextBox x:Name="Compiler"
                      Text="{Binding Compiler}"
-                     Visibility="{Binding RowVisibility}"
+                     Visibility="{Binding RowContentVisibility}"
                      IsEnabled="{Binding CompilerEnabled}"
                      BorderThickness="0"
                      Background="Transparent"

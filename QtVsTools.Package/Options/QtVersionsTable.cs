@@ -59,6 +59,15 @@ namespace QtVsTools.Options
             InitializeComponent();
         }
 
+        public enum Column
+        {
+            IsDefault,
+            VersionName,
+            Host,
+            Path,
+            Compiler
+        }
+
         public class Field
         {
             public string Value { get; set; }
@@ -76,47 +85,46 @@ namespace QtVsTools.Options
             static LazyFactory StaticLazy { get; } = new LazyFactory();
             LazyFactory Lazy { get; } = new LazyFactory();
 
-            public enum FieldNames { IsDefault, VersionName, Host, Path, Compiler }
 
-            public Dictionary<FieldNames, Field> Fields => Lazy.Get(() =>
-                Fields, () => GetValues<FieldNames>()
-                    .Select(field => new KeyValuePair<FieldNames, Field>(field, null))
+            public Dictionary<Column, Field> Fields => Lazy.Get(() =>
+                Fields, () => GetValues<Column>()
+                    .Select(field => new KeyValuePair<Column, Field>(field, null))
                     .ToDictionary(keyValue => keyValue.Key, keyValue => keyValue.Value));
 
-            public Field FieldDefault => Fields[FieldNames.IsDefault]
-                ?? (Fields[FieldNames.IsDefault] = new Field());
+            public Field FieldDefault => Fields[Column.IsDefault]
+                ?? (Fields[Column.IsDefault] = new Field());
             public bool IsDefault
             {
                 get => (FieldDefault.Value == true.ToString());
                 set => FieldDefault.Value = value.ToString();
             }
 
-            public Field FieldVersionName => Fields[FieldNames.VersionName]
-                ?? (Fields[FieldNames.VersionName] = new Field());
+            public Field FieldVersionName => Fields[Column.VersionName]
+                ?? (Fields[Column.VersionName] = new Field());
             public string VersionName
             {
                 get => FieldVersionName.Value;
                 set => FieldVersionName.Value = value;
             }
 
-            public Field FieldHost => Fields[FieldNames.Host]
-                ?? (Fields[FieldNames.Host] = new Field());
+            public Field FieldHost => Fields[Column.Host]
+                ?? (Fields[Column.Host] = new Field());
             public BuildHost Host
             {
                 get => FieldHost.Value.Cast(defaultValue: BuildHost.Windows);
                 set => FieldHost.Value = value.Cast<string>();
             }
 
-            public Field FieldPath => Fields[FieldNames.Path]
-                ?? (Fields[FieldNames.Path] = new Field());
+            public Field FieldPath => Fields[Column.Path]
+                ?? (Fields[Column.Path] = new Field());
             public string Path
             {
                 get => FieldPath.Value;
                 set => FieldPath.Value = value;
             }
 
-            public Field FieldCompiler => Fields[FieldNames.Compiler]
-                ?? (Fields[FieldNames.Compiler] = new Field());
+            public Field FieldCompiler => Fields[Column.Compiler]
+                ?? (Fields[Column.Compiler] = new Field());
             public string Compiler
             {
                 get => FieldCompiler.Value;
@@ -128,7 +136,7 @@ namespace QtVsTools.Options
             public bool DefaultEnabled => !IsDefault && !LastRow;
             public bool NameEnabled => !LastRow;
             public bool CompilerEnabled => (Host != BuildHost.Windows);
-            public Visibility RowVisibility
+            public Visibility RowContentVisibility
                 => LastRow ? Visibility.Hidden : Visibility.Visible;
             public Visibility ButtonAddVisibility
                 => LastRow ? Visibility.Visible : Visibility.Hidden;
@@ -306,22 +314,20 @@ namespace QtVsTools.Options
             if (sender is Control control && GetBinding(control) is Row version) {
                 if (version.LastRow)
                     return;
-
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out field))
+                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
                     return;
 
-                var fieldBinding = version.Fields[field];
-                fieldBinding.Control = control;
-                fieldBinding.Cell = FindContainingCell(control);
-                if (fieldBinding.Cell != null) {
-                    fieldBinding.Cell.Background =
-                        fieldBinding.IsValid ? Brushes.Transparent : InvalidCellBackground;
+                var field = version.Fields[column];
+                field.Control = control;
+                field.Cell = FindContainingCell(control);
+                if (field.Cell != null) {
+                    field.Cell.Background =
+                        field.IsValid ? Brushes.Transparent : InvalidCellBackground;
                 }
-                if (fieldBinding == FocusedField)
+                if (field == FocusedField)
                     control.Focus();
-                if (control is TextBox textBox && fieldBinding.SelectionStart >= 0)
-                    textBox.Select(fieldBinding.SelectionStart, 0);
+                if (control is TextBox textBox && field.SelectionStart >= 0)
+                    textBox.Select(field.SelectionStart, 0);
             }
         }
 
@@ -341,24 +347,24 @@ namespace QtVsTools.Options
         void Control_GotFocus(object sender, RoutedEventArgs e)
         {
             if (sender is Control control && GetBinding(control) is Row version) {
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out field))
+                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
                     return;
-                var fieldBinding = version.Fields[field];
-                if (fieldBinding.Control != control)
+
+                var field = version.Fields[column];
+                if (field.Control != control)
                     return;
-                FocusedField = fieldBinding;
+                FocusedField = field;
             }
         }
 
         void Control_LostFocus(object sender, RoutedEventArgs e)
         {
             if (sender is Control control && GetBinding(control) is Row version) {
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out field))
+                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
                     return;
-                var fieldBinding = version.Fields[field];
-                if (fieldBinding != FocusedField || fieldBinding.Control != control)
+
+                var field = version.Fields[column];
+                if (field != FocusedField || field.Control != control)
                     return;
                 FocusedField = null;
             }
@@ -367,29 +373,29 @@ namespace QtVsTools.Options
         void TextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (sender is TextBox textBox && GetBinding(textBox) is Row version) {
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out field))
+                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out Column column))
                     return;
-                var fieldBinding = version.Fields[field];
-                if (fieldBinding.Control != textBox)
+
+                var field = version.Fields[column];
+                if (field.Control != textBox)
                     return;
-                fieldBinding.SelectionStart = textBox.SelectionStart;
+                field.SelectionStart = textBox.SelectionStart;
             }
         }
 
         void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox textBox && GetBinding(textBox) is Row version) {
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out field))
+                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out Column column))
                     return;
-                var fieldBinding = version.Fields[field];
-                if (fieldBinding == null
-                    || fieldBinding.Control != textBox
-                    || fieldBinding.Value == textBox.Text)
+
+                var field = version.Fields[column];
+                if (field == null
+                    || field.Control != textBox
+                    || field.Value == textBox.Text)
                     return;
-                fieldBinding.SelectionStart = textBox.SelectionStart;
-                fieldBinding.Value = textBox.Text;
+                field.SelectionStart = textBox.SelectionStart;
+                field.Value = textBox.Text;
                 Validate(false);
             }
         }
@@ -399,17 +405,16 @@ namespace QtVsTools.Options
             if (sender is ComboBox comboBox && GetBinding(comboBox) is Row version) {
                 if (!comboBox.IsEnabled || comboBox.SelectedIndex < 0)
                     return;
+                if (string.IsNullOrEmpty(comboBox.Name) || !comboBox.Name.TryCast(out Column column))
+                    return;
+
                 string comboBoxValue = comboBox.Items[comboBox.SelectedIndex] as string;
-                string controlName = comboBox.Name;
-                Row.FieldNames field;
-                if (string.IsNullOrEmpty(controlName) || !controlName.TryCast(out field))
+                var field = version.Fields[column];
+                if (field == null
+                    || field.Control != comboBox
+                    || field.Value == comboBoxValue)
                     return;
-                var fieldBinding = version.Fields[field];
-                if (fieldBinding == null
-                    || fieldBinding.Control != comboBox
-                    || fieldBinding.Value == comboBoxValue)
-                    return;
-                fieldBinding.Value = comboBoxValue;
+                field.Value = comboBoxValue;
                 Validate(false);
             }
         }
