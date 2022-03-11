@@ -46,15 +46,13 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner">
     <vsui:DialogWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="b2v" />
         <Style x:Key="ListBoxDoubleClickStyle"
                TargetType="ListBoxItem">
             <EventSetter Event="MouseDoubleClick"
                          Handler="OnListBoxItem_DoubleClick" />
         </Style>
     </vsui:DialogWindow.Resources>
-    <Grid Margin="10"
-          FocusManager.FocusedElement="{Binding ElementName=searchBox}">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -68,18 +66,8 @@
                  Text="{Binding Path=Keyword}" />
             <Run Text=":" />
         </TextBlock>
-        <Grid Grid.Row="1"
-              MinHeight="22"
-              Background="White">
-            <TextBlock Text=" Filter..."
-                       Foreground="LightSteelBlue"
-                       VerticalAlignment="Center"
-                       Visibility="{Binding ElementName=searchBox,
-                                    Path=Text.IsEmpty, Converter={StaticResource b2v}}" />
-            <TextBox Name="searchBox"
-                     Background="Transparent"
-                     TextChanged="OnSearchBox_TextChanged"
-                     VerticalContentAlignment="Center" />
+        <Grid Grid.Row="1">
+            <Grid Name="searchControlHost" />
         </Grid>
         <ListBox Grid.Row="2"
                  Margin="0,10,0,0"

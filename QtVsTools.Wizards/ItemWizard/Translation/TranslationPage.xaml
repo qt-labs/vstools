@@ -30,7 +30,6 @@
 
 <common:WizardPage x:Class="QtVsTools.Wizards.ItemWizard.TranslationPage"
     xmlns:common="clr-namespace:QtVsTools.Wizards.Common"
-    xmlns:util="clr-namespace:QtVsTools.Wizards.Util"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -38,12 +37,8 @@
     KeepAlive="True"
     mc:Ignorable="d"
     d:DesignHeight="445"
-    d:DesignWidth="585"
-    FocusManager.FocusedElement="{Binding ElementName=LanguageListBox}">
-    <common:WizardPage.Resources>
-        <BooleanToVisibilityConverter x:Key="b2v" />
-    </common:WizardPage.Resources>
-        <Grid>
+    d:DesignWidth="585" >
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="*" />
@@ -92,19 +87,8 @@
                 <TextBlock Grid.Row="0"
                            Margin="0,0,0,5"
                            Text="Select a Language:" />
-                <Grid Grid.Row="1"
-                      MinHeight="22"
-                      Background="White">
-                    <TextBlock Text=" Filter..."
-                               Foreground="LightSteelBlue"
-                               VerticalAlignment="Center"
-                               Visibility="{Binding ElementName=searchBox,
-                                                    Path=Text.IsEmpty,
-                                                    Converter={StaticResource b2v}}" />
-                    <TextBox Name="searchBox"
-                             Background="Transparent"
-                             TextChanged="OnSearchBoxTextChanged"
-                             VerticalContentAlignment="Center" />
+                <Grid Grid.Row="1">
+                    <Grid Name="searchControlHost" />
                 </Grid>
                 <ListBox Grid.Row="2"
                          Margin="0,10,0,8"
@@ -115,6 +99,7 @@
                          SelectedValue="{Binding Path=Data.CultureInfoName}"
                          SelectionChanged="OnLanguageBoxSelectionChanged" />
                 <TextBlock Grid.Row="3"
+                           Margin="0,0,0,5"
                            Text="Save as:"/>
                 <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
@@ -123,7 +108,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBox Text="{Binding Path=Data.TsFile}"/>
                     <TextBlock Grid.Column="1"
-                               Margin="5,0,0,0">
+                               Margin="5,0,0,0"
+                               VerticalAlignment="Center">
                         <Run FontWeight="Bold"
                              Text="{Binding Path=Data.CultureInfoName}" />
                         <Run Text=".ts" />

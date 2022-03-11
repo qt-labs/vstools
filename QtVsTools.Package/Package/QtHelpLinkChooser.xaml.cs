@@ -33,6 +33,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using QtVsTools.VisualStudio;
 
 namespace QtVsTools
 {
@@ -47,28 +50,32 @@ namespace QtVsTools
         }
 
         public string Link { get; set; }
+        public string SearchText { get; set; }
+
         public string Keyword { private get; set; }
         public Dictionary<string, string> Links { private get; set; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var view = CollectionViewSource.GetDefaultView(linkListBox.ItemsSource);
             view.Filter = obj =>
             {
-                if (string.IsNullOrEmpty(searchBox.Text))
+                if (string.IsNullOrEmpty(SearchText))
                     return true;
 
                 var item = (KeyValuePair<string, string>)obj;
-                return item.Key.IndexOf(searchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+                return item.Key.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0;
             };
             linkListBox.SelectedIndex = 0;
-        }
 
-        private void OnSearchBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            CollectionViewSource.GetDefaultView(linkListBox.ItemsSource).Refresh();
-            if (linkListBox.Items.Count == 1 || linkListBox.SelectedItem == null)
-                linkListBox.SelectedIndex = 0;
+            var factory = VsServiceProvider
+                .GetService<SVsWindowSearchHostFactory, IVsWindowSearchHostFactory>();
+            var host = factory.CreateWindowSearchHost(searchControlHost);
+
+            host.SetupSearch(new ListBoxSearch(linkListBox, value => SearchText = value));
+            host.Activate(); // set focus
         }
 
         private void OnListBoxItem_DoubleClick(object sender, MouseButtonEventArgs e)

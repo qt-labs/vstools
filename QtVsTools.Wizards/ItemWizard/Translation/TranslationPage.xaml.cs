@@ -31,13 +31,18 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
+    using QtVsTools.VisualStudio;
     using Wizards.Common;
 
     public partial class TranslationPage : WizardPage
     {
+        private string SearchText { get; set; }
+
         public TranslationPage()
         {
             InitializeComponent();
@@ -47,16 +52,25 @@ namespace QtVsTools.Wizards.ItemWizard
 
         private void OnTranslationPageLoaded(object sender, RoutedEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var view = CollectionViewSource.GetDefaultView(LanguageListBox.ItemsSource);
             view.Filter = obj =>
             {
-                if (string.IsNullOrEmpty(searchBox.Text))
+                if (string.IsNullOrEmpty(SearchText))
                     return true;
 
                 var item = (KeyValuePair<string, string>)obj;
-                return item.Value.IndexOf(searchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+                return item.Value.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0;
             };
             LanguageListBox.SelectedIndex = 0;
+
+            var factory = VsServiceProvider
+                .GetService<SVsWindowSearchHostFactory, IVsWindowSearchHostFactory>();
+            var host = factory.CreateWindowSearchHost(searchControlHost);
+
+            host.SetupSearch(new ListBoxSearch(LanguageListBox, value => SearchText = value));
+            host.Activate(); // set focus
         }
 
         private void OnSearchBoxTextChanged(object sender, TextChangedEventArgs e)
