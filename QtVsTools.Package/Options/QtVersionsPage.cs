@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.Shell;
@@ -109,14 +110,20 @@ namespace QtVsTools.Options
                 try {
                     if (version.Host == BuildHost.Windows) {
                         if (version.State.HasFlag((State)Column.Path)) {
-                            var versionInfo = VersionInformation.Get(version.Path);
+                            var versionPath = version.Path;
+                            var ignoreCase = StringComparison.CurrentCultureIgnoreCase;
+                            if (Path.GetFileName(versionPath).Equals("qmake.exe", ignoreCase))
+                                versionPath = Path.GetDirectoryName(versionPath);
+                            if (Path.GetFileName(versionPath).Equals("bin", ignoreCase))
+                                versionPath = Path.GetDirectoryName(versionPath);
+                            var versionInfo = VersionInformation.Get(versionPath);
                             var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
                             if (generator != "MSVC.NET" && generator != "MSBUILD")
                                 throw new Exception(string.Format(
                                     "This Qt version uses an unsupported makefile generator (used: "
                                     + "{0}, supported: MSVC.NET, MSBUILD)", generator));
+                            VersionManager.SaveVersion(version.VersionName, versionPath);
                         }
-                        VersionManager.SaveVersion(version.VersionName, version.Path);
                     } else {
                         string name = version.VersionName;
                         string access =

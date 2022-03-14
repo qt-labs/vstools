@@ -254,13 +254,28 @@ namespace QtVsTools.Options
                         version.FieldPath.ValidationError = "Path cannot be empty";
                         IsValid = false;
                     } else if (version.Host == BuildHost.Windows) {
-                        var path = NormalizePath(version.Path);
-                        if (!Directory.Exists(path)) {
-                            version.FieldPath.ValidationError = "Path does not exist";
+                        string path = NormalizePath(version.Path);
+                        if (path == null) {
+                            version.FieldPath.ValidationError = "Invalid path format";
                             IsValid = false;
-                        } else if (!File.Exists(Path.Combine(path, "qmake.exe"))) {
-                            version.FieldPath.ValidationError = "Cannot find qmake.exe";
-                            IsValid = false;
+                        } else {
+                            var possibleQMakePaths = new[] {
+                                // Path points to qmake.exe
+                                path,
+                                // Path points to folder containing qmake.exe
+                                Path.Combine(path, "qmake.exe"),
+                                // Path points to folder containing bin\qmake.exe
+                                Path.Combine(path, "bin", "qmake.exe"),
+                            };
+                            bool qmakeExists = possibleQMakePaths
+                                .Where(p => File.Exists(p)
+                                    && Path.GetFileName(p).Equals("qmake.exe",
+                                        StringComparison.CurrentCultureIgnoreCase))
+                                .Any();
+                            if (!qmakeExists) {
+                                version.FieldPath.ValidationError = "Cannot find qmake.exe";
+                                IsValid = false;
+                            }
                         }
                     }
                     if (previousValidation != version.FieldPath.ValidationError)
@@ -506,10 +521,13 @@ namespace QtVsTools.Options
         {
             if (string.IsNullOrEmpty(path))
                 return path;
-
-            return Path.GetFullPath(new Uri(path).LocalPath)
-                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                .ToUpperInvariant();
+            try {
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
+            } catch (UriFormatException) {
+                return null;
+            }
         }
 
         void Explorer_Click(object sender, RoutedEventArgs e)
