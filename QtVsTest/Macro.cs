@@ -131,7 +131,9 @@ namespace QtVsTest.Macros
 
         private List<string> SelectedAssemblies { get; } = new List<string>
         {
-            "QtVsTest",
+            typeof(Macro).Assembly.FullName,
+            typeof(EnvDTE.DTE).Assembly.FullName,
+            typeof(AutomationElement).Assembly.FullName,
             "System.Core",
         };
 
@@ -501,6 +503,8 @@ namespace QtVsTest.Macros
                     return false;
                 break;
             }
+
+            csharp.AppendLine();
             return true;
         }
 
@@ -606,6 +610,38 @@ namespace QtVsTest.Macros
 
                 csharp.AppendFormat(@"
                     await WaitExpr({0}, () => UiContext = {1});", timeout, context);
+
+            } else if (s.Args[0].Equals("find", IGNORE_CASE)) {
+                //# ui find [all] [_var_name_] [_timeout_] => <_scope_>, <_condition_>
+
+                var args = new Queue<string>(s.Args.Skip(1));
+
+                bool findAll = false;
+                if (args.Any() && args.Peek().Equals("all", IGNORE_CASE)) {
+                    findAll = true;
+                    args.Dequeue();
+                }
+                string funcName = findAll ? "FindAll" : "FindFirst";
+                string varType = findAll ? "AutomationElementCollection" : "AutomationElement";
+
+                string varName = null;
+                if (args.Any() && !char.IsDigit(args.Peek()[0]))
+                    varName = args.Dequeue();
+                if (findAll && string.IsNullOrEmpty(varName))
+                    return ErrorMsg("Invalid #ui statement");
+
+                int timeout = 3000;
+                if (args.Any() && char.IsDigit(args.Peek()[0]))
+                    timeout = int.Parse(args.Dequeue());
+
+                if (varName == null) {
+                    varName = "UiContext";
+                } else {
+                    csharp.Append($@"
+                        {varType} {varName} = null;");
+                }
+                csharp.Append($@"
+                    await WaitExpr({timeout}, () => {varName} = UiContext.{funcName}({s.Code}));");
 
             } else if (s.Args[0].Equals("pattern", IGNORE_CASE)) {
                 //# ui pattern <_TypeName_> <_VarName_> [ => _string_ [, _string_, ... ] ]
@@ -781,7 +817,9 @@ namespace QtVsTest.Macros
                     File.Delete(macroDllPath);
                 return ErrorMsg(string.Join("\r\n",
                     CompilerResults.Errors.Cast<CompilerError>()
-                        .Select(x => x.ErrorText)));
+                        .Select(x => $"{x.Line}: {x.ErrorText}")
+                        .Append(CSharpClassCode)
+                        .Union(RefAssemblies)));
             }
 
             MacroAssembly = AppDomain.CurrentDomain.Load(File.ReadAllBytes(macroDllPath));
