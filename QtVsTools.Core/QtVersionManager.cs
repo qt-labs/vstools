@@ -51,20 +51,6 @@ namespace QtVsTools.Core
         {
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
-            RefreshVersionNames();
-        }
-
-        void RefreshVersionNames()
-        {
-            var rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
-            try {
-                using (var rootKey = Registry.CurrentUser.OpenSubKey(rootKeyPath, true))
-                using (var versionsKey = rootKey.OpenSubKey(strVersionKey, true)) {
-                    versionsKey.SetValue("VersionNames", string.Join(";", GetVersions()));
-                }
-            } catch (Exception e) {
-                Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
         }
 
         private static readonly EventWaitHandle packageInit = new EventWaitHandle(false, EventResetMode.ManualReset);
@@ -301,7 +287,6 @@ namespace QtVsTools.Core
                     versionKey.SetValue("InstallDir", dir);
                 }
             }
-            RefreshVersionNames();
             return true;
         }
 
@@ -312,7 +297,6 @@ namespace QtVsTools.Core
                 return;
             key.DeleteSubKey(versionName);
             key.Close();
-            RefreshVersionNames();
         }
 
         private bool IsVersionAvailable(string version)
