@@ -133,7 +133,7 @@
               <DataGridTemplateColumn Header="Qt Version">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
-                    <ComboBox Text="{Binding QtVersion}" IsEditable="True" Height="22"
+                    <ComboBox Text="{Binding QtVersionName}" IsEditable="True" Height="22"
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         FrameworkElement.Loaded="QtVersion_ComboBox_Loaded"
                         TextBoxBase.TextChanged="QtVersion_TextChanged">

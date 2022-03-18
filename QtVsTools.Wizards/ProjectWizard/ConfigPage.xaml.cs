@@ -83,7 +83,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             public Dictionary<string, Module> Modules { get; set; }
 
-            private IEnumerable<Module> AllModules
+            public IEnumerable<Module> AllModules
                 => Modules.Values;
             public IEnumerable<Module> SelectedModules
                 => Modules.Values.Where((Module m) => m.IsSelected);
