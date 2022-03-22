@@ -84,8 +84,6 @@ namespace QtVsTools.QtMsBuild.Tasks
             if (Lock) {
                 // Wait until locked
                 if (!buildLock.WaitOne(1000)) {
-                    // Issue waiting warning
-                    Log.LogWarning("Qt::BuildLock[{0}]: Waiting...", Name);
                     var t = Stopwatch.StartNew();
                     do {
                         // Check for build errors
