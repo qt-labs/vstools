@@ -84,7 +84,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             public Dictionary<string, Module> Modules { get; set; }
 
             public IEnumerable<Module> AllModules
-                => Modules.Values;
+                => Modules.Values.OrderBy(module => module.Name);
             public IEnumerable<Module> SelectedModules
                 => Modules.Values.Where((Module m) => m.IsSelected);
 

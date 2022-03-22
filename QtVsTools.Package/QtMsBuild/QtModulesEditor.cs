@@ -68,7 +68,7 @@ namespace QtVsTools.QtMsBuild
                 module.IsSelected = module.QT.Intersect(selectedQT).Count() == module.QT.Count;
 
             var popup = new QtModulesPopup();
-            popup.SetModules(modules);
+            popup.SetModules(modules.OrderBy(module => module.Name));
 
             if (popup.ShowModal().GetValueOrDefault()) {
                 selectedQT = modules
