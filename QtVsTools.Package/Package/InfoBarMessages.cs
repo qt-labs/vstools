@@ -41,7 +41,7 @@ namespace QtVsTools
         public static IMessage NoQtVersion => StaticLazy.Get(() =>
             NoQtVersion, () => new Message
             {
-                Icon = KnownMonikers.StatusInformation,
+                Icon = KnownMonikers.StatusWarning,
                 Text = new TextSpan[]
                 {
                     new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
@@ -66,14 +66,14 @@ namespace QtVsTools
         public static IMessage NotifyInstall => StaticLazy.Get(() =>
             NotifyInstall, () => new Message
             {
-                Icon = KnownMonikers.StatusWarning,
+                Icon = KnownMonikers.StatusInformation,
                 Text = new TextSpan[]
                 {
                     new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                     new TextSpacer(2),
                     "\u2014", // Em dash
                     new TextSpacer(2),
-                    $"Version {Version.USER_VERSION} was installed."
+                    $"Version {Version.USER_VERSION} was recently installed."
                 },
                 Hyperlinks = new Hyperlink[]
                 {
@@ -81,9 +81,20 @@ namespace QtVsTools
                     {
                         Text = "Release Notes",
                         CloseInfoBar = false,
-                        OnClicked= () => {
+                        OnClicked= () =>
+                        {
                             VsShellUtilities.OpenSystemBrowser(
                                 "https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog");
+                        }
+                    },
+                    new Hyperlink
+                    {
+                        Text = "Don't show again",
+                        CloseInfoBar = true,
+                        OnClicked = () =>
+                        {
+                            QtVsToolsPackage.Instance.Options.NotifyInstalled = false;
+                            QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
                         }
                     }
                 }

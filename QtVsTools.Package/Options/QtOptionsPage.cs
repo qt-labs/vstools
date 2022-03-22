@@ -87,6 +87,11 @@ namespace QtVsTools.Options
             [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity,
         }
 
+        public enum Notifications
+        {
+            [String("Notifications_Installed")] Installed,
+        }
+
         public enum Timeout : uint { Disabled = 0 }
 
         class TimeoutConverter : EnumConverter
@@ -222,6 +227,12 @@ namespace QtVsTools.Options
         [Description("Configure verbosity level of background build log.")]
         public LoggerVerbosity BuildLoggerVerbosity { get; set; }
 
+        [Category("Notifications")]
+        [DisplayName("New version installed")]
+        [Description("Show notification when a new version was recently installed.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyInstalled { get; set; }
+
         public override void ResetSettings()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -236,6 +247,7 @@ namespace QtVsTools.Options
             BuildRunQtTools = ProjectTracking = true;
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
+            NotifyInstalled = true;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -275,6 +287,7 @@ namespace QtVsTools.Options
                     Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                    Load(() => NotifyInstalled, key, Notifications.Installed);
                 }
             } catch (Exception exception) {
                 Messages.Print(
@@ -308,6 +321,7 @@ namespace QtVsTools.Options
                     Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                    Save(NotifyInstalled, key, Notifications.Installed);
                 }
             } catch (Exception exception) {
                 Messages.Print(
