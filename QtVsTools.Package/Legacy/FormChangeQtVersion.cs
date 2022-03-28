@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -30,13 +30,10 @@ using System;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 
-namespace QtVsTools
+namespace QtVsTools.Legacy
 {
-    using Core;
-
     public partial class FormChangeQtVersion : Form
     {
-
         public FormChangeQtVersion()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -52,8 +49,7 @@ namespace QtVsTools
 
         private void FormChangeQtVersion_Shown(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            Text = SR.GetString("SolutionQtVersion");
+            Text = "Set Solution's Qt Version";
         }
 
         void lbQtVersions_DoubleClick(object sender, EventArgs e)
@@ -75,27 +71,27 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             lbQtVersions.Items.Clear();
-            var vm = QtVersionManager.The();
+            var vm = Core.QtVersionManager.The();
             foreach (var versionName in vm.GetVersions())
                 lbQtVersions.Items.Add(versionName);
 
             lbQtVersions.Items.Add("$(DefaultQtVersion)");
-            string qtVer = null;
             if (change == ChangeFor.Solution) {
-                qtVer = vm.GetSolutionQtVersion(QtVsToolsPackage.Instance.Dte.Solution);
+                var qtVer = Core.Legacy.QtVersionManager
+                    .GetSolutionQtVersion(QtVsToolsPackage.Instance.Dte.Solution);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();
                 if (qtVer != null)
                     lbQtVersions.SelectedItem = qtVer;
-                Text = SR.GetString("SolutionQtVersion");
+                Text = "Set Solution's Qt Version";
             } else {
-                var pro = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                qtVer = vm.GetProjectQtVersion(pro);
+                var pro = Core.HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+                var qtVer = vm.GetProjectQtVersion(pro);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();
                 if (qtVer != null)
                     lbQtVersions.SelectedItem = qtVer;
-                Text = SR.GetString("ProjectQtVersion");
+                Text = "Set Project's Qt Version";
             }
         }
 

@@ -178,17 +178,11 @@ Converting project {0}/{1}: {2}...</value>
   <data name="ProjectQtSettingsButtonText" xml:space="preserve">
     <value>Qt Project Settings</value>
   </data>
-  <data name="ProjectQtVersion" xml:space="preserve">
-    <value>Set Project's Qt Version</value>
-  </data>
   <data name="ProjectQtVersionNotFoundError" xml:space="preserve">
     <value>There's no Qt version assigned to project {0} for configuration {1}/{2}. Please use the 'Qt Project Settings' editor to change the 'Version' to a valid Qt version for this platform.</value>
   </data>
   <data name="QtModules" xml:space="preserve">
     <value>Qt Modules</value>
-  </data>
-  <data name="SolutionQtVersion" xml:space="preserve">
-    <value>Set Solution's Qt Version</value>
   </data>
   <data name="ExportProject_ImportPriFile" xml:space="preserve">
     <value>Import from .pri File</value>

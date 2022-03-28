@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -156,8 +156,8 @@ namespace QtVsTools
             case CommandId.ChangeProjectQtVersionProjectId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     if (HelperFunctions.IsQMakeProject(pro)) {
-                        using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                            formChangeQtVersion.UpdateContent(ChangeFor.Project);
+                        using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
+                            formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Project);
                             var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                             if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                                 var qtVersion = formChangeQtVersion.GetSelectedQtVersion();

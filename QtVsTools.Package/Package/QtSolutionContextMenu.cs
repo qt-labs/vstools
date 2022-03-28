@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -101,7 +101,23 @@ namespace QtVsTools
             var command = sender as OleMenuCommand;
             if (command == null)
                 return;
-            command.Enabled = command.Visible = true;
+
+            switch (command.CommandID.ID) {
+            case (int)CommandId.ChangeSolutionQtVersionId:
+                var projects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
+                foreach (var project in projects) {
+                    if (!HelperFunctions.IsQtProject(project)
+                        && HelperFunctions.IsQMakeProject(project)) {
+                        command.Enabled = command.Visible = true;
+                        return;
+                    }
+                }
+                command.Enabled = command.Visible = false;
+                break;
+            default:
+                command.Enabled = command.Visible = true;
+                break;
+            }
         }
 
         private void execHandler(object sender, EventArgs e)
@@ -113,17 +129,17 @@ namespace QtVsTools
                 return;
 
             var dte = QtVsToolsPackage.Instance.Dte;
-            switch (command.CommandID.ID) {
-            case (int)CommandId.lUpdateOnSolutionId:
+            switch ((CommandId)command.CommandID.ID) {
+            case CommandId.lUpdateOnSolutionId:
                 Translation.RunlUpdate(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
-            case (int)CommandId.lReleaseOnSolutionId:
+            case CommandId.lReleaseOnSolutionId:
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
-            case (int)CommandId.ChangeSolutionQtVersionId:
+            case CommandId.ChangeSolutionQtVersionId:
                 string newQtVersion = null;
-                using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                    formChangeQtVersion.UpdateContent(ChangeFor.Solution);
+                using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
+                    formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Solution);
                     if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
                         return;
                     newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
@@ -153,13 +169,12 @@ namespace QtVsTools
                             qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
                     }
                 }
-                QtVersionManager.The().SaveSolutionQtVersion(dte.Solution, newQtVersion);
+                Core.Legacy.QtVersionManager.SaveSolutionQtVersion(dte.Solution, newQtVersion);
                 break;
-            case (int)CommandId.SolutionConvertToQtMsBuild: {
-                    QtMsBuildConverter.SolutionToQtMsBuild();
-                }
+            case CommandId.SolutionConvertToQtMsBuild:
+                QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
-            case (int)CommandId.SolutionEnableProjectTracking: {
+            case CommandId.SolutionEnableProjectTracking: {
                     foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                         if (HelperFunctions.IsQtProject(project))
                             QtProjectTracker.Get(project, project.FullName);

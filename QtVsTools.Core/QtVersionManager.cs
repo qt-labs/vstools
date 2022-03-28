@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -299,7 +299,7 @@ namespace QtVsTools.Core
             key.Close();
         }
 
-        private bool IsVersionAvailable(string version)
+        internal bool IsVersionAvailable(string version)
         {
             var versionAvailable = false;
             var versions = GetVersions();
@@ -364,7 +364,7 @@ namespace QtVsTools.Core
             }
 
             if (version == null)
-                version = GetSolutionQtVersion(project.DTE.Solution);
+                version = Legacy.QtVersionManager.GetSolutionQtVersion(project.DTE.Solution);
 
             return version;
         }
@@ -412,34 +412,6 @@ namespace QtVsTools.Core
                     version = Environment.GetEnvironmentVariable(env);
                 }
             }
-        }
-
-        public bool SaveSolutionQtVersion(EnvDTE.Solution solution, string version)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
-                return false;
-
-            solution.Globals["Qt5Version"] = version;
-            if (!solution.Globals.get_VariablePersists("Qt5Version"))
-                solution.Globals.set_VariablePersists("Qt5Version", true);
-            return true;
-        }
-
-        public string GetSolutionQtVersion(EnvDTE.Solution solution)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (solution == null)
-                return null;
-
-            if (solution.Globals.get_VariableExists("Qt5Version")) {
-                var version = (string)solution.Globals["Qt5Version"];
-                return VerifyIfQtVersionExists(version) ? version : null;
-            }
-
-            return null;
         }
 
         public string GetDefaultVersion()
@@ -531,7 +503,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private bool VerifyIfQtVersionExists(string version)
+        internal bool VerifyIfQtVersionExists(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();

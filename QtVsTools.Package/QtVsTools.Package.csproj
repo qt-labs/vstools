@@ -332,7 +332,7 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
-    <Compile Include="Package\ChangeFor.cs" />
+    <Compile Include="Legacy\ChangeFor.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />
     <Compile Include="Common\Disposable.cs" />
@@ -351,10 +351,10 @@
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
     <Compile Include="Package\ExtLoader.cs" />
-    <Compile Include="Package\FormChangeQtVersion.cs">
+    <Compile Include="Legacy\FormChangeQtVersion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Package\FormChangeQtVersion.Designer.cs">
+    <Compile Include="Legacy\FormChangeQtVersion.Designer.cs">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </Compile>
     <Compile Include="Package\FormProjectQtSettings.cs">
@@ -512,7 +512,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <EmbeddedResource Include="Package\FormChangeQtVersion.resx">
+    <EmbeddedResource Include="Legacy\FormChangeQtVersion.resx">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Package\FormProjectQtSettings.resx">

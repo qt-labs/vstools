@@ -1,4 +1,4 @@
-namespace QtVsTools
+namespace QtVsTools.Legacy
 {
     partial class FormChangeQtVersion
     {

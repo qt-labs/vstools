@@ -97,7 +97,7 @@
     <When Condition="'$(VisualStudioVersion)'=='16.0'">
       <ItemGroup>
         <PackageReference Include="$(Name_Microsoft_VisualStudio_Validation)" Version="$(Version_Microsoft_VisualStudio_Validation)" />
-        <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)"/>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" Version="$(Version_Microsoft_VisualStudio_VCProjectEngine)" />
       </ItemGroup>
     </When>
     <When Condition="'$(VisualStudioVersion)'=='15.0'">
@@ -138,6 +138,7 @@
     <Compile Include="ImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Legacy\QtVersionManager.cs" />
     <Compile Include="LinkerToolWrapper.cs" />
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />

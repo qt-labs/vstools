@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -93,7 +93,7 @@ namespace QtVsTools.Core
                 if (CheckQtVersion(versionInfo)) {
                     dteObject.Solution.Open(VCInfo.FullName);
                     if (qtVersion != null) {
-                        QtVersionManager.The().SaveSolutionQtVersion(dteObject.Solution, qtVersion);
+                        Legacy.QtVersionManager.SaveSolutionQtVersion(dteObject.Solution, qtVersion);
                         foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
                             var qtPro = QtProject.Create(prj);
