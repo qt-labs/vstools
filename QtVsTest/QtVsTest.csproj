@@ -2,7 +2,7 @@
 <!--
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -193,6 +193,26 @@
     </Content>
   </ItemGroup>
   <Choose>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.22000.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.22000.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.20348.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.20348.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.19041.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.19041.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.18362.0')">
+      <PropertyGroup>
+        <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.18362.0</Win10SDKPath>
+      </PropertyGroup>
+    </When>
     <When Condition="Exists('$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17763.0')">
       <PropertyGroup>
         <Win10SDKPath>$(MSBuildProgramFiles32)\Windows Kits\10\bin\10.0.17763.0</Win10SDKPath>
