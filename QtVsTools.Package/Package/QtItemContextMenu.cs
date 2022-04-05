@@ -121,7 +121,7 @@ namespace QtVsTools
             command.Visible = false;
 
             var prj = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-            if (!HelperFunctions.IsQtProject(prj) || QtVsToolsPackage.Instance.Dte.SelectedItems.Count <= 0)
+            if (!HelperFunctions.IsVsToolsProject(prj) || QtVsToolsPackage.Instance.Dte.SelectedItems.Count <= 0)
                 return;
 
             foreach (SelectedItem si in QtVsToolsPackage.Instance.Dte.SelectedItems) {

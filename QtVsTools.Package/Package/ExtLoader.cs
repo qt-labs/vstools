@@ -70,7 +70,7 @@ namespace QtVsTools
                 return;
 
             VCProject vcproj;
-            if (!HelperFunctions.IsQtProject(project))
+            if (!HelperFunctions.IsVsToolsProject(project))
                 return;
 
             vcproj = project.Object as VCProject;
@@ -99,7 +99,7 @@ namespace QtVsTools
             if (project == null)
                 return;
 
-            if (!HelperFunctions.IsQtProject(project))
+            if (!HelperFunctions.IsVsToolsProject(project))
                 return;
 
             var vcproj = project.Object as VCProject;

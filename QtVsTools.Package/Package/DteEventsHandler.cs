@@ -219,7 +219,7 @@ namespace QtVsTools
                     break;
                 }
             }
-            if (project == null || !HelperFunctions.IsQtProject(project))
+            if (project == null || !HelperFunctions.IsVsToolsProject(project))
                 return;
 
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
@@ -257,7 +257,7 @@ namespace QtVsTools
 
             var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
 
-            if (!HelperFunctions.IsQtProject(qtPro.VCProject))
+            if (!HelperFunctions.IsVsToolsProject(qtPro.VCProject))
                 return;
 
             var file = (VCFile)((IVCCollection)qtPro.VCProject.Files).Item(document.FullName);
@@ -353,7 +353,7 @@ namespace QtVsTools
 
             var project = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             var qtPro = QtProject.Create(project);
-            if (!HelperFunctions.IsQtProject(project))
+            if (!HelperFunctions.IsVsToolsProject(project))
                 return;
 
             var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
@@ -487,7 +487,7 @@ namespace QtVsTools
 
             QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
-                if (HelperFunctions.IsQtProject(p)) {
+                if (HelperFunctions.IsVsToolsProject(p)) {
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);
                 }
@@ -506,7 +506,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                if (project != null && HelperFunctions.IsQtProject(project))
+                if (project != null && HelperFunctions.IsVsToolsProject(project))
                     InitializeVCProject(project);
             }
         }
@@ -547,7 +547,7 @@ namespace QtVsTools
                 var vcPrj = vcCfg.project as VCProject;
                 if (vcPrj == null)
                     return;
-                if (!HelperFunctions.IsQtProject(vcPrj))
+                if (!HelperFunctions.IsVsToolsProject(vcPrj))
                     return;
                 // Ignore property events when using shared compiler properties
                 if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
@@ -579,7 +579,7 @@ namespace QtVsTools
                 var vcPrj = vcFile.project as VCProject;
                 if (vcPrj == null)
                     return;
-                if (!HelperFunctions.IsQtProject(vcPrj))
+                if (!HelperFunctions.IsVsToolsProject(vcPrj))
                     return;
                 // Ignore property events when using shared compiler properties
                 if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)

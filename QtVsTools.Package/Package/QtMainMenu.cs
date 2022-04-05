@@ -222,7 +222,7 @@ namespace QtVsTools
             case CommandId.ExportPriFileId:
             case CommandId.ExportProFileId:
                 command.Visible = true;
-                command.Enabled = HelperFunctions.IsQtProject(project);
+                command.Enabled = HelperFunctions.IsVsToolsProject(project);
                 break;
             // TODO: Fix these functionality and re-enable the menu items
             case CommandId.ConvertToQtId:
@@ -234,7 +234,7 @@ namespace QtVsTools
             case CommandId.QtProjectSettingsId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if (project != null) {
-                        if (HelperFunctions.IsQtProject(project))
+                        if (HelperFunctions.IsVsToolsProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
                         else if (HelperFunctions.IsQMakeProject(project))
                             status |= vsCommandStatus.vsCommandStatusInvisible;
@@ -246,7 +246,7 @@ namespace QtVsTools
             //case CommandId.ConvertToQtId:
             case CommandId.ChangeProjectQtVersionId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
-                    if ((project == null) || HelperFunctions.IsQtProject(project))
+                    if ((project == null) || HelperFunctions.IsVsToolsProject(project))
                         status |= vsCommandStatus.vsCommandStatusInvisible;
                     else if (HelperFunctions.IsQMakeProject(project))
                         status |= vsCommandStatus.vsCommandStatusEnabled;

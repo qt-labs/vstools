@@ -460,7 +460,7 @@ namespace QtVsTools.Core
             var vcPro = (VCProject)project.Object;
             if (!IsQMakeProject(project))
                 return;
-            if (IsQtProject(project)) {
+            if (IsVsToolsProject(project)) {
                 // TODO: qtPro is never used.
                 var qtPro = QtProject.Create(project);
                 var vm = QtVersionManager.The();
@@ -676,14 +676,24 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Return true if the project is a Qt project, otherwise false.
+        /// Return true if the project is a VS tools project; false otherwise.
         /// </summary>
         /// <param name="proj">project</param>
-        /// <returns></returns>
-        public static bool IsQtProject(VCProject proj)
+        public static bool IsVsToolsProject(Project proj)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread(); // C++ Project Type GUID
+            if (proj == null || proj.Kind != "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
+                return false;
+            return IsVsToolsProject(proj.Object as VCProject);
+        }
+
+        /// <summary>
+        /// Return true if the project is a VS tools project; false otherwise.
+        /// </summary>
+        /// <param name="proj">project</param>
+        public static bool IsVsToolsProject(VCProject proj)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
             if (!IsQMakeProject(proj))
                 return false;
 
@@ -695,23 +705,11 @@ namespace QtVsTools.Core
                 return false;
 
             foreach (var global in envPro.Globals.VariableNames as string[]) {
-                if (global.StartsWith("Qt5Version", StringComparison.Ordinal) && envPro.Globals.get_VariablePersists(global))
+                if (global.StartsWith("Qt5Version", StringComparison.Ordinal)
+                    && envPro.Globals.get_VariablePersists(global)) {
                     return true;
+                }
             }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if the specified project is a Qt Project.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsQtProject(Project proj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            try {
-                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
-                    return IsQtProject(proj.Object as VCProject);
-            } catch { }
             return false;
         }
 
@@ -1149,7 +1147,7 @@ namespace QtVsTools.Core
                 if ((pro = GetSingleProjectInSolution(dteObject)) == null)
                     pro = GetActiveDocumentProject(dteObject);
             }
-            return IsQtProject(pro) ? pro : null;
+            return IsVsToolsProject(pro) ? pro : null;
         }
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)

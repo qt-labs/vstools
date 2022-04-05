@@ -57,7 +57,7 @@ namespace QtVsTools
                 return WarningMessage(SR.GetString("NoProjectsToConvert"));
 
             foreach (EnvDTE.Project project in allProjects) {
-                if ((HelperFunctions.IsQtProject(project)
+                if ((HelperFunctions.IsVsToolsProject(project)
                     || HelperFunctions.IsQMakeProject(project))
                     && !QtProject.IsQtMsBuildEnabled(project)) {
                     projects.Add(project);

@@ -106,7 +106,7 @@ namespace QtVsTools
             case (int)CommandId.ChangeSolutionQtVersionId:
                 var projects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
                 foreach (var project in projects) {
-                    if (!HelperFunctions.IsQtProject(project)
+                    if (!HelperFunctions.IsVsToolsProject(project)
                         && HelperFunctions.IsQMakeProject(project)) {
                         command.Enabled = command.Visible = true;
                         return;
@@ -157,7 +157,7 @@ namespace QtVsTools
                     return;
 
                 foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                    if (HelperFunctions.IsQtProject(project)) {
+                    if (HelperFunctions.IsVsToolsProject(project)) {
                         var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,
                             currentPlatform);
                         if (OldQtVersion == null)
@@ -176,7 +176,7 @@ namespace QtVsTools
                 break;
             case CommandId.SolutionEnableProjectTracking: {
                     foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                        if (HelperFunctions.IsQtProject(project))
+                        if (HelperFunctions.IsVsToolsProject(project))
                             QtProjectTracker.Get(project, project.FullName);
                     }
                 }

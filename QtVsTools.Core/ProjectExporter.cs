@@ -100,7 +100,7 @@ namespace QtVsTools.Core
             foreach (var proj in HelperFunctions.ProjectsInSolution(sln.DTE)) {
                 try {
                     // only add qt projects
-                    if (HelperFunctions.IsQtProject(proj)) {
+                    if (HelperFunctions.IsVsToolsProject(proj)) {
                         content = CreateProFileContent(proj);
                         prosln.ProFiles.Add(content);
                     } else if (proj.Kind == ProjectKinds.vsProjectKindSolutionFolder) {
@@ -120,7 +120,7 @@ namespace QtVsTools.Core
 
             foreach (ProjectItem pi in solutionFolder.ProjectItems) {
                 var containedProject = pi.Object as Project;
-                if (HelperFunctions.IsQtProject(containedProject)) {
+                if (HelperFunctions.IsVsToolsProject(containedProject)) {
                     var content = CreateProFileContent(containedProject);
                     sln.ProFiles.Add(content);
                 } else if (containedProject.Kind == ProjectKinds.vsProjectKindSolutionFolder) {
@@ -833,7 +833,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             VCProject vcproj;
-            if (HelperFunctions.IsQtProject(proj)) {
+            if (HelperFunctions.IsVsToolsProject(proj)) {
                 try {
                     vcproj = (VCProject)proj.Object;
                 } catch (Exception e) {

@@ -189,7 +189,7 @@ namespace QtVsTools
                 return;
 
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-            var isQtProject = HelperFunctions.IsQtProject(project);
+            var isQtProject = HelperFunctions.IsVsToolsProject(project);
             var isQMakeProject = HelperFunctions.IsQMakeProject(project);
             var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
 
@@ -209,7 +209,7 @@ namespace QtVsTools
             case CommandId.ExportPriFileProjectId:
             case CommandId.ExportProFileProjectId:
                 command.Visible = true;
-                command.Enabled = HelperFunctions.IsQtProject(HelperFunctions
+                command.Enabled = HelperFunctions.IsVsToolsProject(HelperFunctions
                     .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case CommandId.lUpdateOnProjectId:
