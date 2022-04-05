@@ -14,7 +14,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{8463051a-b32c-43f0-9a77-9f223598aac9}</ProjectGuid>
-    <RootNamespace>StaticLib1</RootNamespace>
+    <RootNamespace>StaticLib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -82,7 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="StaticLib1.cpp" />
+    <ClCompile Include="StaticLib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h" />

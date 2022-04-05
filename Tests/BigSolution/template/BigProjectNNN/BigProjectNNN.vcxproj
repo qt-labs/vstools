@@ -95,6 +95,14 @@
     <QtUic Include="BigProjectNNN.ui" />
     <QtRcc Include="BigProjectNNN.qrc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QtClassLibrary\QtClassLibrary.vcxproj">
+      <Project>{ce78ec51-c4a0-465b-a161-21c257bd057b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\StaticLib\StaticLib.vcxproj">
+      <Project>{8463051a-b32c-43f0-9a77-9f223598aac9}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />
