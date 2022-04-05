@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -31,10 +31,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using Microsoft.VisualStudio.Shell;
 using EnvDTE;
 
-namespace QtVsTools
+namespace QtVsTools.Legacy
 {
     using Core;
 
@@ -62,24 +61,24 @@ namespace QtVsTools
 
         public FormProjectQtSettings()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             InitializeComponent();
-            okButton.Text = SR.GetString("OK");
-            cancelButton.Text = SR.GetString("Cancel");
-            tabControl1.TabPages[0].Text = SR.GetString("ActionDialog_Properties");
-            tabControl1.TabPages[1].Text = SR.GetString("QtModules");
+            okButton.Text = "OK";
+            cancelButton.Text = "Cancel";
+            tabControl1.TabPages[0].Text = "Properties";
+            tabControl1.TabPages[1].Text = "Qt Modules";
 
             var modules = QtModules.Instance.GetAvailableModules()
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
             foreach (var module in modules) {
-                var checkBox = new CheckBox();
-                checkBox.Location = new System.Drawing.Point(844, 152);
-                checkBox.Margin = new Padding(3, 2, 6, 2);
-                checkBox.Name = module.LibraryPrefix;
-                checkBox.Size = new System.Drawing.Size(256, 46);
-                checkBox.UseVisualStyleBackColor = true;
+                var checkBox = new CheckBox
+                {
+                    Location = new System.Drawing.Point(844, 152),
+                    Margin = new Padding(3, 2, 6, 2),
+                    Name = module.LibraryPrefix,
+                    Size = new System.Drawing.Size(256, 46),
+                    UseVisualStyleBackColor = true
+                };
                 flowLayoutPanel1.Controls.Add(checkBox);
                 checkBox.Text = module.Name;
                 AddMapping(checkBox, module.Id);
@@ -92,8 +91,7 @@ namespace QtVsTools
 
         private void FormProjectQtSettings_Shown(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            Text = SR.GetString("ProjectQtSettingsButtonText");
+            Text = "Qt Project Settings";
         }
 
         private void AddMapping(CheckBox checkbox, int moduleId)
@@ -118,7 +116,7 @@ namespace QtVsTools
             }
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
             // Disable the buttons since some operations are quite expensive (e.g. changing
             // the Qt version) and take some to finish. Keeping the buttons enables allows to hit
@@ -127,7 +125,7 @@ namespace QtVsTools
             cancelButton.Enabled = false;
 
             qtSettings.SaveSettings();
-            saveModules();
+            SaveModules();
             okButton.DialogResult = DialogResult.OK;
             Close();
         }
@@ -166,7 +164,7 @@ namespace QtVsTools
             }
         }
 
-        private void saveModules()
+        private void SaveModules()
         {
             qtProject = QtProject.Create(project);
             for (var i = 0; i < moduleMap.Count; ++i) {

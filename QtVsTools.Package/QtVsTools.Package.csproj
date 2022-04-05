@@ -357,10 +357,10 @@
     <Compile Include="Legacy\FormChangeQtVersion.Designer.cs">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </Compile>
-    <Compile Include="Package\FormProjectQtSettings.cs">
+    <Compile Include="Legacy\FormProjectQtSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Package\FormProjectQtSettings.Designer.cs">
+    <Compile Include="Legacy\FormProjectQtSettings.Designer.cs">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Options\QtLegacyOptionsPage.cs">
@@ -515,8 +515,9 @@
     <EmbeddedResource Include="Legacy\FormChangeQtVersion.resx">
       <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Package\FormProjectQtSettings.resx">
+    <EmbeddedResource Include="Legacy\FormProjectQtSettings.resx">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>
@@ -602,19 +603,13 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // NuGet native libs
   // -->
-  <PropertyGroup
-    Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' != ''">
-    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''"
-      >$(PkgStub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
+  <PropertyGroup Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' != ''">
+    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''">$(PkgStub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
   </PropertyGroup>
-  <PropertyGroup
-    Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' == ''">
-    <NuGetGlobalPkgDir Condition="'$(NuGetGlobalPkgDir)' == ''"
-      >$(USERPROFILE)\.nuget\packages</NuGetGlobalPkgDir>
-    <SQLitePkgRoot
-      >$(NuGetGlobalPkgDir)\Stub.System.Data.SQLite.Core.NetFramework</SQLitePkgRoot>
-    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''"
-      >$(SQLitePkgRoot)\$(Version_Stub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
+  <PropertyGroup Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' == ''">
+    <NuGetGlobalPkgDir Condition="'$(NuGetGlobalPkgDir)' == ''">$(USERPROFILE)\.nuget\packages</NuGetGlobalPkgDir>
+    <SQLitePkgRoot>$(NuGetGlobalPkgDir)\Stub.System.Data.SQLite.Core.NetFramework</SQLitePkgRoot>
+    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''">$(SQLitePkgRoot)\$(Version_Stub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(SQLitePkgDir)\build\net46\x64\SQLite.Interop.dll">

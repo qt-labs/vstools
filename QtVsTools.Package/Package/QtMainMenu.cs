@@ -156,7 +156,7 @@ namespace QtVsTools
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
                         QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
-                        using (var formProjectQtSettings = new FormProjectQtSettings()) {
+                        using (var formProjectQtSettings = new Legacy.FormProjectQtSettings()) {
                             formProjectQtSettings.SetProject(pro);
                             formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
                             var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);

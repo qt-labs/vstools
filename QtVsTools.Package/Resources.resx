@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActionDialog_Properties" xml:space="preserve">
-    <value>Properties</value>
-  </data>
   <data name="Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>
@@ -175,14 +172,8 @@ Converting project {0}/{1}: {2}...</value>
   <data name="IncompatibleMacros" xml:space="preserve">
     <value>The following macros are not compatible: {0}</value>
   </data>
-  <data name="ProjectQtSettingsButtonText" xml:space="preserve">
-    <value>Qt Project Settings</value>
-  </data>
   <data name="ProjectQtVersionNotFoundError" xml:space="preserve">
     <value>There's no Qt version assigned to project {0} for configuration {1}/{2}. Please use the 'Qt Project Settings' editor to change the 'Version' to a valid Qt version for this platform.</value>
-  </data>
-  <data name="QtModules" xml:space="preserve">
-    <value>Qt Modules</value>
   </data>
   <data name="ExportProject_ImportPriFile" xml:space="preserve">
     <value>Import from .pri File</value>

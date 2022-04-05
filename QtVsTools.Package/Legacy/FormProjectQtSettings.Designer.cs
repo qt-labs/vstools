@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace QtVsTools
+namespace QtVsTools.Legacy
 {
     partial class FormProjectQtSettings
     {
@@ -57,7 +57,7 @@ namespace QtVsTools
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(150, 44);
             this.okButton.TabIndex = 0;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             //
             // cancelButton
             //
