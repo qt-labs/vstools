@@ -254,21 +254,17 @@ namespace QtVsTools.Core
         {
             if (vcPro == null)
                 return 0;
-            if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword,
-                StringComparison.InvariantCultureIgnoreCase)) {
+            if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
                 return Convert.ToInt32(vcPro.keyword.Substring(6));
-            } else if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword,
-                StringComparison.InvariantCultureIgnoreCase)) {
+            if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal))
                 return 200;
-            } else {
-                return 0;
-            }
+            return 0;
         }
 
         public static int GetFormatVersion(Project pro)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return pro == null ? 0 : GetFormatVersion(pro.Object as VCProject);
+            return GetFormatVersion(pro?.Object as VCProject);
         }
 
         public int FormatVersion
