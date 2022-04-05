@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,10 +26,7 @@
 **
 ****************************************************************************/
 
-using System;
-using System.Globalization;
 using System.Resources;
-using System.Threading;
 
 namespace QtVsTools.Core
 {
@@ -37,7 +34,7 @@ namespace QtVsTools.Core
     {
         static SR loader;
         readonly ResourceManager resources;
-        static readonly Object obj = new Object();
+        static readonly object obj = new object();
 
         internal SR()
         {
@@ -52,20 +49,7 @@ namespace QtVsTools.Core
                         loader = new SR();
                 }
             }
-
             return loader;
-        }
-
-        private static CultureInfo Culture
-        {
-            get { return null/*use ResourceManager default, CultureInfo.CurrentUICulture*/; }
-            //get { return new CultureInfo("de-DE"); }
-        }
-
-        public static string LanguageName
-        {
-            get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName; }
-            //get { return Culture.TwoLetterISOLanguageName; }
         }
 
         public static string GetString(string name, params object[] args)
@@ -73,19 +57,16 @@ namespace QtVsTools.Core
             var sys = GetLoader();
             if (sys == null)
                 return null;
-            var res = sys.resources.GetString(name, Culture);
 
-            if (args != null && args.Length > 0)
+            var res = sys.resources.GetString(name, null);
+            if (args != null && args.Length > 0 && !string.IsNullOrEmpty(res))
                 return string.Format(res, args);
             return res;
         }
 
         public static string GetString(string name)
         {
-            var sys = GetLoader();
-            if (sys == null)
-                return null;
-            return sys.resources.GetString(name, Culture);
+            return GetString(name, null);
         }
     }
 }

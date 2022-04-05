@@ -140,7 +140,7 @@ Do you want to overwrite it?</value>
     <value>Export to .pri File</value>
   </data>
   <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
-    <value>Cannot find any Qt 4 projects to export.</value>
+    <value>Cannot find any Qt projects to export.</value>
   </data>
   <data name="ExportProject_PriFileContainsSpaces" xml:space="preserve">
     <value>The generated .pri file contains paths with spaces. You will not be able to import from this file.
@@ -260,9 +260,6 @@ To solve this problem:
   <data name="Resources_ResourceFiles" xml:space="preserve">
     <value>Resource Files</value>
   </data>
-  <data name="Resources_TranslationFiles" xml:space="preserve">
-    <value>Translation Files</value>
-  </data>
   <data name="Resources_GeneratedFiles" xml:space="preserve">
     <value>Generated Files</value>
   </data>
@@ -274,9 +271,6 @@ To solve this problem:
   </data>
   <data name="ImportProject_CannotConvertProject" xml:space="preserve">
     <value>Could not convert project file {0} to Qt/MSBuild.</value>
-  </data>
-  <data name="Resources_OtherFiles" xml:space="preserve">
-    <value>Other Files</value>
   </data>
   <data name="WaitDialogRefreshMoc" xml:space="preserve">
     <value>Updating moc steps...</value>

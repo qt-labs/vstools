@@ -68,11 +68,7 @@ namespace QtVsTools.Core
             optionTextBox.Text = "";
             openCheckBox.Text = SR.GetString("ExportProjectDialog_Open");
             createPriFileCheckBox.Text = SR.GetString("ExportProjectDialog_CreatePri");
-
-            if (SR.LanguageName == "de")
-                Size = new Size(470, 300);
-            else
-                Size = new Size(400, 300);
+            Size = new Size(400, 300);
 
             ShowInTaskbar = false;
             Shown += ExportProjectDialog_Shown;

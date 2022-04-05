@@ -36,13 +36,11 @@ namespace QtVsTools.Legacy
     {
         public FormChangeQtVersion()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             InitializeComponent();
-            btnOK.Text = SR.GetString("OK");
-            btnCancel.Text = SR.GetString("Cancel");
-            lQtVersions.Text = SR.GetString("InstalledQtVersions");
-            lbQtVersions.DoubleClick += lbQtVersions_DoubleClick;
+            btnOK.Text = "&OK";
+            btnCancel.Text = "&Cancel";
+            lQtVersions.Text = "Installed Qt Versions";
+            lbQtVersions.DoubleClick += OnQtVersions_DoubleClick;
             KeyPress += FormChangeQtVersion_KeyPress;
             Shown += FormChangeQtVersion_Shown;
         }
@@ -52,7 +50,7 @@ namespace QtVsTools.Legacy
             Text = "Set Solution's Qt Version";
         }
 
-        void lbQtVersions_DoubleClick(object sender, EventArgs e)
+        void OnQtVersions_DoubleClick(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             Close();

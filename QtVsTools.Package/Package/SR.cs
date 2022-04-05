@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -26,10 +26,7 @@
 **
 ****************************************************************************/
 
-using System;
-using System.Globalization;
 using System.Resources;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
@@ -37,71 +34,39 @@ namespace QtVsTools
     {
         static SR loader;
         readonly ResourceManager resources;
-        static readonly Object obj = new Object();
+        static readonly object obj = new object();
 
-        internal const string OK = "OK";
-        internal const string Cancel = "Cancel";
-
-        private static CultureInfo appCultureInfo;
-        private static CultureInfo defaultCultureInfo;
-
-        internal SR(int localeId)
+        internal SR()
         {
-            defaultCultureInfo = CultureInfo.GetCultureInfo("en");
-            appCultureInfo = CultureInfo.GetCultureInfo(localeId);
-            if (appCultureInfo.Name.StartsWith("en", StringComparison.Ordinal))
-                appCultureInfo = null;
             resources = new ResourceManager("QtVsTools.Package.Resources", GetType().Assembly);
         }
 
-        private static SR GetLoader(int localeId)
+        private static SR GetLoader()
         {
             if (loader == null) {
                 lock (obj) {
                     if (loader == null)
-                        loader = new SR(localeId);
+                        loader = new SR();
                 }
             }
             return loader;
         }
 
-        private static CultureInfo Culture
-        {
-            get { return appCultureInfo; }
-        }
-
         public static string GetString(string name, params object[] args)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            var sys = GetLoader();
+            if (sys == null)
+                return null;
 
-            var res = GetString(name);
-            if (!string.IsNullOrEmpty(res) && args != null && args.Length > 0)
+            var res = sys.resources.GetString(name, null);
+            if (args != null && args.Length > 0 && !string.IsNullOrEmpty(res))
                 return string.Format(res, args);
             return res;
         }
 
         public static string GetString(string name)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetString(name, QtVsToolsPackage.Instance);
-        }
-
-        public static string GetString(string name, QtVsToolsPackage vsixInstance)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var sys = GetLoader(vsixInstance.Dte.LocaleID);
-            if (sys == null)
-                return null;
-
-            string result;
-            try {
-                result = sys.resources.GetString(name, Culture);
-            } catch (Exception) {
-                result = sys.resources.GetString(name, defaultCultureInfo);
-            }
-
-            return result;
+            return GetString(name, null);
         }
     }
 }
