@@ -439,7 +439,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (HelperFunctions.IsQMakeProject(project)) {
+            if (HelperFunctions.IsQtProject(project)) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
                 var vcpro = project.Object as VCProject;

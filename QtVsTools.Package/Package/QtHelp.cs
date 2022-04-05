@@ -162,7 +162,7 @@ namespace QtVsTools
                 var project = HelperFunctions.GetSelectedQtProject(dte);
                 if (project == null) {
                     project = HelperFunctions.GetSelectedProject(dte);
-                    if (project != null && HelperFunctions.IsQMakeProject(project)) {
+                    if (project != null && HelperFunctions.IsQtProject(project)) {
                         var qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(project);
                         qtVersion = QtVersionManager.The().GetQtVersionFromInstallDir(qmakeQtDir);
                     }

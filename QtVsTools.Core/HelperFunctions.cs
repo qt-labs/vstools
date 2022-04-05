@@ -458,7 +458,7 @@ namespace QtVsTools.Core
                 return;
 
             var vcPro = (VCProject)project.Object;
-            if (!IsQMakeProject(project))
+            if (!IsQtProject(project))
                 return;
             if (IsVsToolsProject(project)) {
                 // TODO: qtPro is never used.
@@ -694,7 +694,7 @@ namespace QtVsTools.Core
         public static bool IsVsToolsProject(VCProject proj)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (!IsQMakeProject(proj))
+            if (!IsQtProject(proj))
                 return false;
 
             if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
@@ -714,36 +714,30 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Return true if the project is a QMake -tp vc project, otherwise false.
+        /// Return true if the project is a Qt project; false otherwise.
         /// </summary>
         /// <param name="proj">project</param>
-        /// <returns></returns>
-        public static bool IsQMakeProject(VCProject proj)
+        public static bool IsQtProject(Project proj)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread(); //C++ Project Type GUID
+            if (proj == null || proj.Kind != "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
+                return false;
+            return IsQtProject(proj.Object as VCProject);
+        }
+
+        /// <summary>
+        /// Return true if the project is a Qt project; false otherwise.
+        /// </summary>
+        /// <param name="proj">project</param>
+        public static bool IsQtProject(VCProject proj)
         {
             if (proj == null)
                 return false;
             var keyword = proj.keyword;
-            if (keyword == null ||
-                (!keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal)
-                && !keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))) {
+            if (string.IsNullOrEmpty(keyword))
                 return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns true if the specified project is a QMake -tp vc Project.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsQMakeProject(Project proj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            try {
-                if (proj != null && proj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
-                    return IsQMakeProject(proj.Object as VCProject);
-            } catch { }
-            return false;
+            return keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal)
+                || keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal);
         }
 
         public static void CleanupQMakeDependencies(Project project)

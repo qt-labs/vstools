@@ -58,7 +58,7 @@ namespace QtVsTools
 
             foreach (EnvDTE.Project project in allProjects) {
                 if ((HelperFunctions.IsVsToolsProject(project)
-                    || HelperFunctions.IsQMakeProject(project))
+                    || HelperFunctions.IsQtProject(project))
                     && !QtProject.IsQtMsBuildEnabled(project)) {
                     projects.Add(project);
                 }

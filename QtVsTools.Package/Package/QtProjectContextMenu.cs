@@ -155,7 +155,7 @@ namespace QtVsTools
                 break;
             case CommandId.ChangeProjectQtVersionProjectId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                    if (HelperFunctions.IsQMakeProject(pro)) {
+                    if (HelperFunctions.IsQtProject(pro)) {
                         using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
                             formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Project);
                             var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
@@ -190,7 +190,7 @@ namespace QtVsTools
 
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
             var isQtProject = HelperFunctions.IsVsToolsProject(project);
-            var isQMakeProject = HelperFunctions.IsQMakeProject(project);
+            var isQMakeProject = HelperFunctions.IsQtProject(project);
             var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
 
             if (!isQtProject && !isQMakeProject) {

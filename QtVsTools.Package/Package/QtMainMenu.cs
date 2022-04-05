@@ -169,7 +169,7 @@ namespace QtVsTools
                 break;
             case CommandId.ChangeProjectQtVersionId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                    if (HelperFunctions.IsQMakeProject(pro)) {
+                    if (HelperFunctions.IsQtProject(pro)) {
                         using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
                             formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Project);
                             var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
@@ -236,7 +236,7 @@ namespace QtVsTools
                     if (project != null) {
                         if (HelperFunctions.IsVsToolsProject(project))
                             status |= vsCommandStatus.vsCommandStatusEnabled;
-                        else if (HelperFunctions.IsQMakeProject(project))
+                        else if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusInvisible;
                     }
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
@@ -248,7 +248,7 @@ namespace QtVsTools
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if ((project == null) || HelperFunctions.IsVsToolsProject(project))
                         status |= vsCommandStatus.vsCommandStatusInvisible;
-                    else if (HelperFunctions.IsQMakeProject(project))
+                    else if (HelperFunctions.IsQtProject(project))
                         status |= vsCommandStatus.vsCommandStatusEnabled;
                     else
                         status |= vsCommandStatus.vsCommandStatusInvisible;

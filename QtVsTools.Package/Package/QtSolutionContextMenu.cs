@@ -107,7 +107,7 @@ namespace QtVsTools
                 var projects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
                 foreach (var project in projects) {
                     if (!HelperFunctions.IsVsToolsProject(project)
-                        && HelperFunctions.IsQMakeProject(project)) {
+                        && HelperFunctions.IsQtProject(project)) {
                         command.Enabled = command.Visible = true;
                         return;
                     }
