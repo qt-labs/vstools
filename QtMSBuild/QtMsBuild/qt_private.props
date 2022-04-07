@@ -175,6 +175,27 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Normalize QtVars (incl. backup)
+  // -->
+  <PropertyGroup>
+    <QtVars
+      Condition="'$(QtVars)' !=''"
+      >$(QtVars
+        .Replace(' ', '')
+        .Replace('%0a', '')
+        .Replace('%0d', '')
+        .Trim(';'))</QtVars>
+    <QtBkup_QtVars
+      Condition="'$(QtBkup_QtVars)' !=''"
+      >$(QtBkup_QtVars
+        .Replace(' ', '')
+        .Replace('%0a', '')
+        .Replace('%0d', '')
+        .Trim(';'))</QtBkup_QtVars>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Default item metadata
   // -->
   <ItemDefinitionGroup>
