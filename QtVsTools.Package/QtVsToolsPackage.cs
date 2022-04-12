@@ -279,7 +279,7 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                DeleteNatvisFiles();
+                CopyNatvisFiles();
 
                 Messages.Print(string.Format("\r\n"
                     + "== Qt Visual Studio Tools version {0}\r\n"
@@ -379,7 +379,33 @@ namespace QtVsTools
             }
         }
 
-        public void GetNatvisPath()
+        private void CopyNatvisFile(string filename, string qtNamespace)
+        {
+            try {
+                string natvis = File.ReadAllText(Path.Combine(PkgInstallPath, filename));
+
+                string natvisFile;
+                if (string.IsNullOrEmpty(qtNamespace)) {
+                    natvis = natvis.Replace("##NAMESPACE##::", string.Empty);
+                    natvisFile = Path.GetFileNameWithoutExtension(filename);
+                } else {
+                    natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
+                    natvisFile = string.Format(filename.Substring(0, filename.IndexOf('.'))
+                        + "_{0}.natvis", qtNamespace.Replace("::", "_"));
+                }
+
+                if (!Directory.Exists(visualizersPath))
+                    Directory.CreateDirectory(visualizersPath);
+
+                File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
+                    natvis, System.Text.Encoding.UTF8);
+            } catch (Exception e) {
+                Messages.Print(
+                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            }
+        }
+
+        public string GetNatvisPath()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -401,23 +427,14 @@ namespace QtVsTools
                     @"Visual Studio 2017\Visualizers\");
 #endif
             }
+            return visualizersPath;
         }
 
-        private void DeleteNatvisFiles()
+        public void CopyNatvisFiles(string qtNamespace = null)
         {
-            try {
-                if (!Directory.Exists(visualizersPath))
-                    return;
-
-                string[] names = { "qt5.natvis", "qt6.natvis" };
-                foreach (var name in names) {
-                    var file = Path.Combine(visualizersPath, name);
-                    if (File.Exists(file))
-                        File.Delete(file);
-                }
-            } catch (Exception e) {
-                Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
-            }
+            string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
+            foreach (var file in files)
+                CopyNatvisFile(file, qtNamespace);
         }
 
         public I GetService<T, I>()
