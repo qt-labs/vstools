@@ -130,6 +130,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
+    <Content Include="QtMSBuild\qt5.natvis.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\qt6.natvis.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild common property pages and targets

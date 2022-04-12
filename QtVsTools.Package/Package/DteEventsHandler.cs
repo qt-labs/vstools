@@ -138,15 +138,7 @@ namespace QtVsTools
             if (selectedProject != null) {
                 if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
                     return;
-                var qtProject = QtProject.Create(selectedProject);
-                if (qtProject != null) {
-                    qtProject.SetQtEnvironment();
-
-                    var qtVersion = qtProject.GetQtVersion();
-                    var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-                    if (!string.IsNullOrEmpty(versionInfo.Namespace()))
-                        QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
-                }
+                QtProject.Create(selectedProject)?.SetQtEnvironment();
             }
         }
 

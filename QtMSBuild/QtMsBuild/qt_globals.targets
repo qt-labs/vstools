@@ -776,4 +776,29 @@
   <Target Name="QtLeaveCriticalSection_OnError">
     <CriticalSection Lock="false" Name="$(ProjectGuid)" />
   </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtNatvis
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Copies the .natvis file matching the Qt version and replaces the namespace placeholder
+  // -->
+  <Target Name="QtNatvis" BeforeTargets="Link"
+          Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'"
+          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml"
+          Outputs="$(IntDir)\qt.natvis">
+    <PropertyGroup>
+      <InputFile>$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml</InputFile>
+      <NatvisLinkFile>$(IntDir)\qt.natvis</NatvisLinkFile>
+    </PropertyGroup>
+    <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
+      Overwrite="true"
+      File="$(NatvisLinkFile)"
+      Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('##NAMESPACE##::',''))" />
+    <WriteLinesToFile Condition="'$(QtNamespace)' != ''"
+      Overwrite="true"
+      File="$(NatvisLinkFile)"
+      Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('##NAMESPACE##','$(QtNamespace)'))" />
+  </Target>
+
 </Project>
