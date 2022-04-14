@@ -313,7 +313,7 @@ namespace QtVsTools.Options
                     Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
                     Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
                     Save(HelpPreference, key, Help.Preference);
-                    Save(TryQtHelpOnF1Pressed, key, Help.Preference);
+                    Save(TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
                     Save(DesignerDetached, key, Designer.Detached);
                     Save(LinguistDetached, key, Linguist.Detached);
                     Save(ResourceEditorDetached, key, ResEditor.Detached);
