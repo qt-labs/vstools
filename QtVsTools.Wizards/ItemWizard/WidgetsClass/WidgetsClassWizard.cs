@@ -91,7 +91,7 @@ namespace QtVsTools.Wizards.ItemWizard
                 InsertQObjectMacro = true,
                 LowerCaseFileNames = false,
                 UsePrecompiledHeader = false,
-                DefaultModules = new List<string> { "core", "gui", "widgets" }
+                DefaultModules = new List<string> { "QtCore", "QtGui", "QtWidgets" }
             });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>

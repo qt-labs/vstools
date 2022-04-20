@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -501,7 +501,12 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            foreach (var module in QtModules.Instance.GetAvailableModules()) {
+            var vm = QtVersionManager.The();
+            var versionInfo = vm.GetVersionInfo(qtPrj.Project);
+            if (versionInfo == null)
+                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+
+            foreach (var module in QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)) {
                 if (!qtPrj.HasModule(module.Id))
                     continue;
 

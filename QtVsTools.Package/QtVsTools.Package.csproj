@@ -502,6 +502,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="qt6modules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="QtVsTools.ico" />
     <Content Include="QtVsTools.Qml.Debug.pkgdef">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

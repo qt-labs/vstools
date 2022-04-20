@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -39,31 +39,57 @@ namespace QtVsTools.Core
     public class QtModules
     {
         public static QtModules Instance { get; } = new QtModules();
-        private readonly Dictionary<int, QtModule> modules = new Dictionary<int, QtModule>();
 
+        private List<QtModule> qt5list = null, qt6list = null;
+        private readonly Dictionary<int, QtModule> qt5modules = new Dictionary<int, QtModule>();
+        private readonly Dictionary<int, QtModule> qt6modules = new Dictionary<int, QtModule>();
 
-        public QtModule Module(int id)
+        public QtModule Module(int id, uint major)
         {
-            modules.TryGetValue(id, out QtModule module);
+            QtModule module = null;
+            if (major < 6)
+                qt5modules.TryGetValue(id, out module);
+            if (major == 6)
+                qt6modules.TryGetValue(id, out module);
+            if (major > 6)
+                throw new QtVSException("Unsupported Qt version.");
             return module;
         }
 
-        public List<QtModule> GetAvailableModules()
+        public List<QtModule> GetAvailableModules(uint major)
         {
-            var lst = new List<QtModule>(modules.Count);
-            foreach (var entry in modules)
-                lst.Add(entry.Value);
-            return lst;
+            if (major < 6) {
+                if (qt5list == null) {
+                    qt5list = new List<QtModule>(qt5modules.Count);
+                    foreach (var entry in qt5modules)
+                        qt5list.Add(entry.Value);
+                }
+                return qt5list;
+            }
+            if (major == 6) {
+                if (qt6list == null) {
+                    qt6list = new List<QtModule>(qt6modules.Count);
+                    foreach (var entry in qt6modules)
+                        qt6list.Add(entry.Value);
+                }
+                return qt6list;
+            }
+            if (major > 6)
+                throw new QtVSException("Unsupported Qt version.");
+            return null;
         }
 
         private QtModules()
         {
-            var uri = new Uri(
-                System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-            var pkgInstallPath = Path.GetDirectoryName(
-                Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+            var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
+            var pkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath));
 
-            var modulesFile = Path.Combine(pkgInstallPath, "qtmodules.xml");
+            FillModules(Path.Combine(pkgInstallPath, "qtmodules.xml"), ref qt5modules);
+            FillModules(Path.Combine(pkgInstallPath, "qt6modules.xml"), ref qt6modules);
+        }
+
+        private void FillModules(string modulesFile, ref Dictionary<int, QtModule> dict)
+        {
             if (!File.Exists(modulesFile))
                 return;
 
@@ -101,7 +127,7 @@ namespace QtVsTools.Core
                     Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
                     throw new QtVSException("qtmodules.xml");
                 }
-                modules.Add(id, module);
+                dict.Add(id, module);
             }
         }
     }

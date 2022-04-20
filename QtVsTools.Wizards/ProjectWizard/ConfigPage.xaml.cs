@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -155,7 +155,15 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             Loaded -= OnLoaded;
 
-            var qtModules = QtModules.Instance.GetAvailableModules()
+            qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
+                .Union(QtVersionManager.The().GetVersions());
+
+            if (defaultQtVersionInfo == null) {
+                Validate();
+                return;
+            }
+
+            var qtModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
                 .Where((QtModule mi) => mi.Selectable)
                 .Select((QtModule mi) => new Module()
                 {
@@ -164,14 +172,6 @@ namespace QtVsTools.Wizards.ProjectWizard
                     IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
                     IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
                 });
-
-            qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
-                .Union(QtVersionManager.The().GetVersions());
-
-            if (defaultQtVersionInfo == null) {
-                Validate();
-                return;
-            }
 
             defaultConfigs = new CloneableList<Config> {
                 new Config {
@@ -342,6 +342,16 @@ namespace QtVsTools.Wizards.ProjectWizard
                         config.Platform = config.QtVersion.is64Bit()
                             ? ProjectPlatforms.X64.Cast<string>()
                             : ProjectPlatforms.Win32.Cast<string>();
+                        config.Modules =
+                            QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
+                                .Where((QtModule mi) => mi.Selectable)
+                                .Select((QtModule mi) => new Module()
+                                {
+                                    Name = mi.Name,
+                                    Id = mi.proVarQT,
+                                    IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                                }).ToDictionary((Module m) => m.Name);
                     } else if (config.QtVersionPath.StartsWith("SSH:")) {
                         config.Target = ProjectTargets.LinuxSSH.Cast<string>();
                     } else if (config.QtVersionPath.StartsWith("WSL:")) {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -142,7 +142,7 @@ namespace QtVsTools.Core
                 var tempProData = new StringBuilder();
                 tempProData.AppendLine("SOURCES = main.cpp");
 
-                var modules = QtModules.Instance.GetAvailableModules()
+                var modules = QtModules.Instance.GetAvailableModules(qtMajor)
                     .Where((QtModule mi) => mi.Selectable);
 
                 foreach (QtModule mi in modules) {

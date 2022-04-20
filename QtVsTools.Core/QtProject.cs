@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -343,7 +343,7 @@ namespace QtVsTools.Core
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
 
-                var info = QtModules.Instance.Module(id);
+                var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
                 if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
                     var config3 = config as VCConfiguration3;
                     if (config3 == null)
@@ -400,11 +400,16 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            var vm = QtVersionManager.The();
+            var versionInfo = vm.GetVersionInfo(Project);
+            if (versionInfo == null)
+                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
                 var compiler = CompilerToolWrapper.Create(config);
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
 
-                var info = QtModules.Instance.Module(id);
+                var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
                 if (compiler != null) {
                     foreach (var define in info.Defines)
                         compiler.RemovePreprocessorDefinition(define);
@@ -420,11 +425,6 @@ namespace QtVsTools.Core
                 }
                 if (linker != null && linker.AdditionalDependencies != null) {
                     var linkerWrapper = new LinkerToolWrapper(linker);
-                    var vm = QtVersionManager.The();
-                    var versionInfo = vm.GetVersionInfo(Project);
-                    if (versionInfo == null)
-                        versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-
                     var moduleLibs = info.GetLibs(IsDebugConfiguration(config), versionInfo);
                     var additionalDependencies = linkerWrapper.AdditionalDependencies;
                     var dependenciesChanged = false;
@@ -449,7 +449,7 @@ namespace QtVsTools.Core
                         var additionalDependencies = linkerWrapper.AdditionalDependencies;
 
                         var libsDesktop = new List<string>();
-                        foreach (var module in QtModules.Instance.GetAvailableModules()) {
+                        foreach (var module in QtModules.Instance.GetAvailableModules(newVersion.qtMajor)) {
                             if (HasModule(module.Id))
                                 libsDesktop.AddRange(module.AdditionalLibraries);
                         }
@@ -500,7 +500,7 @@ namespace QtVsTools.Core
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)
                 return false; // neither a default or project Qt version
-            var info = QtModules.Instance.Module(id);
+            var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
             if (info == null)
                 return false;
 

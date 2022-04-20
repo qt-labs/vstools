@@ -66,7 +66,7 @@ namespace QtVsTools.Wizards.ItemWizard
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new TsWizardData
             {
-                DefaultModules = new List<string> { "core"}
+                DefaultModules = new List<string> { "QtCore"}
             });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>

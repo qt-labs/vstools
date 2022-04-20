@@ -67,7 +67,12 @@ namespace QtVsTools.Legacy
             tabControl1.TabPages[0].Text = "Properties";
             tabControl1.TabPages[1].Text = "Qt Modules";
 
-            var modules = QtModules.Instance.GetAvailableModules()
+            var vm = QtVersionManager.The();
+            var versionInfo = vm.GetVersionInfo(project);
+            if (versionInfo == null)
+                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+
+            var modules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
             foreach (var module in modules) {
@@ -143,8 +148,8 @@ namespace QtVsTools.Legacy
                 moduleMap[i] = item;
 
                 // Disable if module not installed
-                var info = QtModules.Instance.Module(item.moduleId);
                 var versionInfo = versionManager.GetVersionInfo(qtVersion);
+                var info = QtModules.Instance.Module(item.moduleId, versionInfo.qtMajor);
                 if (info != null && versionInfo != null) {
                     var libraryPrefix = info.LibraryPrefix;
                     if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))

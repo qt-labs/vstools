@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -49,7 +49,15 @@ namespace QtVsTools.QtMsBuild
         {
             await Task.Yield();
 
-            var modules = QtModules.Instance.GetAvailableModules()
+            var qtSettings = ruleProperty.ContainingRule;
+            var qtVersion = await qtSettings.GetPropertyValueAsync("QtInstall");
+
+            var vm = QtVersionManager.The();
+            var versionInfo = vm.GetVersionInfo(qtVersion);
+            if (versionInfo == null)
+                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+
+            var modules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
                 .Select(x => new QtModulesPopup.Module
                 {
