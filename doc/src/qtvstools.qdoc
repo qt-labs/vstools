@@ -678,7 +678,7 @@
     In the \c qmldir file, add QML type definitions for \e AddressBookItem and
     \e NewAddressPopup:
 
-    \quotefile quickaddressbook/qmldir
+    \quotefile QuickAddressBook/qmldir
 
     Next, you will create the QML types.
 
