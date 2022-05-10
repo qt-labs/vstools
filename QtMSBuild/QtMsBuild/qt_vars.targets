@@ -501,15 +501,15 @@
     <!--// In design-time, copy generated .props to randomly named file -->
     <PropertyGroup>
       <QtVarsDesignTimeNew
-        Condition="'$(ErrorLevel)' == '0' AND '$(QtVSToolsBuild)' == 'true'"
+        Condition="'$(ErrorLevel)' == '0' AND '$(QtDesignTimeBuild)' == 'true'"
         >$([System.IO.Path]::Combine('$(TEMP)','$([System.IO.Path]::GetRandomFileName()).designtime.props'))
       </QtVarsDesignTimeNew>
     </PropertyGroup>
     <Copy
-      Condition="'$(ErrorLevel)' == '0' AND '$(QtVSToolsBuild)' == 'true'"
+      Condition="'$(ErrorLevel)' == '0' AND '$(QtDesignTimeBuild)' == 'true'"
       SourceFiles="$(QtVarsFilePath)" DestinationFiles="$(QtVarsDesignTimeNew)"/>
     <WriteLinesToFile
-      Condition="'$(ErrorLevel)' == '0' AND '$(QtVSToolsBuild)' == 'true'"
+      Condition="'$(ErrorLevel)' == '0' AND '$(QtDesignTimeBuild)' == 'true'"
       File="$(QtVarsIndexPathDesignTime)" Overwrite="true" Lines="$(QtVarsDesignTimeNew)"/>
 
     <!--// Clean-up -->

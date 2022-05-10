@@ -48,10 +48,17 @@ namespace QtVsTools.QtMsBuild
     using Common;
     using Core;
     using VisualStudio;
+    using static Common.EnumExt;
 
     class QtProjectBuild : Concurrent<QtProjectBuild>
     {
         static LazyFactory StaticLazy { get; } = new LazyFactory();
+
+        public enum Target
+        {
+            // Mark project as dirty, but do not request a build
+            [String("QtVsTools.QtMsBuild.QtProjectBuild.Target.SetOutdated")] SetOutdated
+        }
 
         static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
             BuildQueue, () => new PunisherQueue<QtProjectBuild>(
@@ -148,6 +155,35 @@ namespace QtVsTools.QtMsBuild
                 .Forget();
         }
 
+        public static void SetOutdated(
+            EnvDTE.Project project,
+            string projectPath,
+            string configName,
+            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
+        {
+            if (project == null)
+                throw new ArgumentException("Project cannot be null.");
+            if (configName == null)
+                throw new ArgumentException("Configuration name cannot be null.");
+
+            _ = Task.Run(() => SetOutdatedAsync(project, projectPath, configName, verbosity));
+        }
+
+        public static async Task SetOutdatedAsync(
+            EnvDTE.Project project,
+            string projectPath,
+            string configName,
+            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
+        {
+            await StartBuildAsync(
+                project,
+                projectPath,
+                configName,
+                null,
+                new[] { Target.SetOutdated.Cast<string>() },
+                verbosity);
+        }
+
         public static void Reset()
         {
             BuildQueue.Clear();
@@ -207,6 +243,12 @@ namespace QtVsTools.QtMsBuild
         async Task<bool> BuildProjectAsync(ProjectWriteLockReleaser writeAccess)
         {
             var msBuildProject = await writeAccess.GetProjectAsync(ConfiguredProject);
+
+            if (Targets.Any(t => t == Target.SetOutdated.Cast<string>())) {
+                msBuildProject.MarkDirty();
+                await writeAccess.ReleaseAsync();
+                return true;
+            }
 
             var solutionPath = QtProjectTracker.SolutionPath;
             var configProps = new Dictionary<string, string>(

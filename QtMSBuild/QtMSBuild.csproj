@@ -172,6 +172,10 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="QtMSBuild\qt_inner.targets">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild moc property pages and targets

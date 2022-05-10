@@ -60,14 +60,15 @@ namespace QtVsTools.QtMsBuild
                     (configId != null) ? configId : "(all configs)", project.FullName));
             }
             string projectPath = project.FullName;
-            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles));
+            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles, false));
         }
 
         public static async Task RefreshAsync(
             EnvDTE.Project project,
             string projectPath,
             string configId = null,
-            IEnumerable<string> selectedFiles = null)
+            IEnumerable<string> selectedFiles = null,
+            bool refreshQtVars = false)
         {
             if (project == null || !QtProjectTracker.IsTracked(projectPath))
                 return;
@@ -92,9 +93,14 @@ namespace QtVsTools.QtMsBuild
             }
 
             foreach (var config in configs) {
-                await QtProjectBuild.StartBuildAsync(
-                    project, projectPath, config, properties, targets,
-                    LoggerVerbosity.Quiet);
+                if (refreshQtVars) {
+                    await QtProjectBuild.StartBuildAsync(
+                        project, projectPath, config, properties, targets,
+                        LoggerVerbosity.Quiet);
+                } else {
+                    await QtProjectBuild.SetOutdatedAsync(
+                        project, projectPath, config, LoggerVerbosity.Quiet);
+                }
             }
         }
     }

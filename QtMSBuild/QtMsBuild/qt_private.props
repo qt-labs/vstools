@@ -57,6 +57,18 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Check if design-time build
+  // -->
+  <PropertyGroup>
+    <QtDesignTimeBuild>false</QtDesignTimeBuild>
+    <QtDesignTimeBuild
+      Condition="'$(DesignTimeBuild)' == 'true'
+              OR '$(QtVSToolsBuild)'  == 'true'"
+      >true</QtDesignTimeBuild>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Setup Qt installation path
   // -->
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
@@ -112,21 +124,29 @@
       >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
   </PropertyGroup>
 
-  <!--// Import Qt variables (full build) -->
-  <Import
-    Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(QtVarsFilePath)')"
-    Project="$(QtVarsFilePath)"/>
+  <PropertyGroup>
+    <!--// Path to Qt variables .props: full build -->
+    <QtVarsImportPath
+      Condition="'$(QtDesignTimeBuild)' != 'true'
+        AND Exists('$(QtVarsFilePath)')"
+      >$(QtVarsFilePath)</QtVarsImportPath>
 
-  <!--// Import Qt variables (design-time build) -->
-  <Import
-    Condition="'$(DesignTimeBuild)' == 'true' AND Exists('$(QtVarsDesignTime)')"
-    Project="$(QtVarsDesignTime)"/>
+    <!--// Path to Qt variables .props: design-time build -->
+    <QtVarsImportPath
+      Condition="'$(QtDesignTimeBuild)' == 'true'
+        AND Exists('$(QtVarsDesignTime)')"
+      >$(QtVarsDesignTime)</QtVarsImportPath>
 
-  <!--// Import Qt variables (fall-back) -->
-  <Import
-    Condition=
-"'$(DesignTimeBuild)' == 'true' AND !Exists('$(QtVarsDesignTime)') AND Exists('$(QtVarsFilePath)')"
-    Project="$(QtVarsFilePath)"/>
+    <!--// Path to Qt variables .props: fall-back -->
+    <QtVarsImportPath
+      Condition="'$(QtDesignTimeBuild)' == 'true'
+        AND !Exists('$(QtVarsDesignTime)')
+        AND  Exists('$(QtVarsFilePath)')"
+      >$(QtVarsFilePath)</QtVarsImportPath>
+  </PropertyGroup>
+
+  <!--// Import Qt vars property file -->
+  <Import Condition="Exists('$(QtVarsImportPath)')" Project="$(QtVarsImportPath)"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

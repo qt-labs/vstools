@@ -71,6 +71,9 @@
     <QtPathBinaries>bin</QtPathBinaries>
     <QtPathLibraryExecutables>bin</QtPathLibraryExecutables>
 
+    <!--// Run Qt tools during design-time build -->
+    <QtToolsDesignTime>true</QtToolsDesignTime>
+
     <!--// qmake template -->
     <QtQMakeTemplate>vcapp</QtQMakeTemplate>
 

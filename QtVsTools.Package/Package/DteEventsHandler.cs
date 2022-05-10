@@ -185,8 +185,10 @@ namespace QtVsTools
             if (debugStartWithoutDebuggingEvents != null)
                 debugStartWithoutDebuggingEvents.BeforeExecute -= debugStartWithoutDebuggingEvents_BeforeExecute;
 
-            if (vcProjectEngineEvents != null)
+            if (vcProjectEngineEvents != null) {
                 vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
+                vcProjectEngineEvents.ItemPropertyChange2 -= OnVCProjectEngineItemPropertyChange2;
+            }
 
             if (windowEvents != null)
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
@@ -520,6 +522,7 @@ namespace QtVsTools
                 if (vcProjectEngineEvents != null) {
                     try {
                         vcProjectEngineEvents.ItemPropertyChange += OnVCProjectEngineItemPropertyChange;
+                        vcProjectEngineEvents.ItemPropertyChange2 += OnVCProjectEngineItemPropertyChange2;
                     } catch {
                         Messages.DisplayErrorMessage("VCProjectEngine events could not be registered.");
                     }
@@ -587,6 +590,23 @@ namespace QtVsTools
                     var qtPrj = QtProject.Create(vcPrj);
                     qtPrj.RefreshMocStep(vcFile);
                 }
+            }
+        }
+
+        private void OnVCProjectEngineItemPropertyChange2(
+            object item,
+            string propertySheet,
+            string itemType,
+            string propertyName)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
+                return;
+            if (item is VCConfiguration vcConfig
+                && vcConfig.project is VCProject vcProject
+                && vcProject.Object is Project project) {
+                QtProjectIntellisense.Refresh(
+                    QtProjectTracker.Get(project, project.FullName).Project, vcConfig.Name);
             }
         }
 

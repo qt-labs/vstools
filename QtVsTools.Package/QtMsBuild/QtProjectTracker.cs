@@ -75,51 +75,11 @@ namespace QtVsTools.QtMsBuild
             Initialized = new EventWaitHandle(false, EventResetMode.ManualReset);
         }
 
-        class Subscriber : IDisposable
-        {
-            public Subscriber(QtProjectTracker tracker, ConfiguredProject config)
-            {
-                Tracker = tracker;
-                Config = config;
-                Subscription = Config.Services.ProjectSubscription.JointRuleSource.SourceBlock
-                    .LinkTo(new SubscriberAction(ProjectUpdateAsync),
-                        ruleNames: new[]
-                        {
-                            "ClCompile",
-                            "QtRule10_Settings",
-                            "QtRule30_Moc",
-                            "QtRule40_Rcc",
-                            "QtRule60_Repc",
-                            "QtRule50_Uic",
-                            "QtRule_Translation",
-                            "QtRule70_Deploy",
-                        },
-                        initialDataAsNew: false
-                    );
-            }
-
-            QtProjectTracker Tracker { get; }
-            ConfiguredProject Config { get; }
-            IDisposable Subscription { get; set; }
-
-            public void Dispose()
-            {
-                Subscription?.Dispose();
-                Subscription = null;
-            }
-
-            async Task ProjectUpdateAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> update)
-            {
-                await Tracker.OnProjectUpdateAsync(Config, update.Value);
-            }
-        }
-
         public EnvDTE.Project Project { get; private set; }
         public string ProjectPath { get; private set; }
         public VCProject VcProject { get; private set; }
         public UnconfiguredProject UnconfiguredProject { get; private set; }
         public EventWaitHandle Initialized { get; }
-        List<Subscriber> Subscribers { get; set; }
 
         public static bool IsTracked(string projectPath)
         {
@@ -221,13 +181,11 @@ namespace QtVsTools.QtMsBuild
 
             Initialized.Set();
 
-            Subscribers = new List<Subscriber>();
             int n = configs.Count;
             int d = (100 - p) / (n * 2);
             foreach (var config in configs) {
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
-                Subscribers.Add(new Subscriber(this, configProject));
                 configProject.ProjectUnloading += OnProjectUnloadingAsync;
                 if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
@@ -237,37 +195,6 @@ namespace QtVsTools.QtMsBuild
                 }
                 UpdateInitStatus(p += d);
             }
-        }
-
-
-        async Task OnProjectUpdateAsync(ConfiguredProject config, IProjectSubscriptionUpdate update)
-        {
-            var changes = update.ProjectChanges.Values
-                .Where(x => x.Difference.AnyChanges)
-                .Select(x => x.Difference);
-            var changesCount = changes
-                .Select(x => x.AddedItems.Count
-                    + x.ChangedItems.Count
-                    + x.ChangedProperties.Count
-                    + x.RemovedItems.Count
-                    + x.RenamedItems.Count)
-                .Sum();
-            var changedProps = changes.SelectMany(x => x.ChangedProperties);
-            if (changesCount == 0
-                || (changesCount == 1
-                    && changedProps.Count() == 1
-                    && changedProps.First() == "QtLastBackgroundBuild")) {
-                return;
-            }
-
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Changed [{2}] {3}",
-                    DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                    config.ProjectConfiguration.Name,
-                    config.UnconfiguredProject.FullPath));
-            }
-            await QtProjectIntellisense.RefreshAsync(Project, config.ProjectConfiguration.Name);
         }
 
         async Task OnProjectUnloadingAsync(object sender, EventArgs args)
@@ -283,11 +210,6 @@ namespace QtVsTools.QtMsBuild
                     project.UnconfiguredProject.FullPath));
             }
             lock (CriticalSection) {
-                if (Subscribers != null) {
-                    Subscribers.ForEach(s => s.Dispose());
-                    Subscribers.Clear();
-                    Subscribers = null;
-                }
                 project.ProjectUnloading -= OnProjectUnloadingAsync;
                 Instances.TryRemove(project.UnconfiguredProject.FullPath, out QtProjectTracker _);
             }

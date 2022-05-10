@@ -100,6 +100,14 @@
     Category="QtSettings_01_General"
     DisplayName="Run Deployment Tool"
     Description="Select whether Qt for Windows Deployment Tool (windeployqt) should be called after build."/>
+  <EnumProperty
+    Name="QtToolsDesignTime"
+    Category="QtSettings_01_General"
+    DisplayName="Design Time Build"
+    Description="Run Qt tools during IntelliSense builds.">
+    <EnumValue Name="true" DisplayName="Run Qt Tools"/>
+    <EnumValue Name="false" DisplayName="Skip Qt Tools"/>
+  </EnumProperty>
   <StringProperty
     Name="QtPathBinaries"
     Category="QtSettings_02_Paths"
