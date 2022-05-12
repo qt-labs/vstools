@@ -82,7 +82,7 @@ namespace QtVsTools.Wizards.ItemWizard
                 InsertQObjectMacro = true,
                 LowerCaseFileNames = false,
                 UsePrecompiledHeader = false,
-                DefaultModules = new List<string> { "QtCore" }
+                DefaultModules = new List<string> { "core" }
             });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>
