@@ -18,8 +18,5 @@
  </widget>
  <layoutDefault spacing="6" margin="11" />
  <pixmapfunction></pixmapfunction>
- <resources>
-   <include location="$qrcfilename$"/>
- </resources>
  <connections/>
 </UI>
