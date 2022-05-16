@@ -459,6 +459,9 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>source.extension.vsixmanifest</LastGenOutput>
     </T4Template>
+    <Content Include="Icons\Monikers.imagemanifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
       <SubType>Designer</SubType>
@@ -476,6 +479,16 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>Overview.html</LastGenOutput>
     </T4Template>
+    <Content Include="QtVsTools.Icons.pkgdef">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Resource Include="Icons\prf32.png" />
+    <Resource Include="Icons\pri32.png" />
+    <Resource Include="Icons\pro32.png" />
+    <Resource Include="Icons\qml32.png" />
+    <Resource Include="Icons\qrc32.png" />
+    <Resource Include="Icons\ts32.png" />
+    <Resource Include="Icons\ui32.png" />
     <Content Include="Marketplace\Overview.html">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

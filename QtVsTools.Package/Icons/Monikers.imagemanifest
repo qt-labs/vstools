@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImageManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="http://schemas.microsoft.com/VisualStudio/ImageManifestSchema/2014">
+  <Symbols>
+    <String Name="Resources" Value="/QtVsTools;Component/Icons" />
+    <Guid Name="QtMonikersGuid" Value="{0d2e443f-6dbb-4001-99dc-9cd7d5c924e7}" />
+    <ID Name="prf" Value="0" />
+    <ID Name="pri" Value="1" />
+    <ID Name="pro" Value="2" />
+    <ID Name="qml" Value="3" />
+    <ID Name="qrc" Value="4" />
+    <ID Name="ts" Value="5" />
+    <ID Name="ui" Value="6" />
+  </Symbols>
+  <Images>
+    <Image Guid="$(QtMonikersGuid)" ID="$(prf)">
+      <Source Uri="$(Resources)/prf32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(pri)">
+      <Source Uri="$(Resources)/pri32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(pro)">
+      <Source Uri="$(Resources)/pro32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(qml)">
+      <Source Uri="$(Resources)/qml32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(qrc)">
+      <Source Uri="$(Resources)/qrc32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(ts)">
+      <Source Uri="$(Resources)/ts32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+    <Image Guid="$(QtMonikersGuid)" ID="$(ui)">
+      <Source Uri="$(Resources)/ui32.png">
+        <Size Value="32" />
+      </Source>
+    </Image>
+  </Images>
+  <ImageLists />
+</ImageManifest>
