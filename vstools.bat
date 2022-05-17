@@ -12,7 +12,9 @@ SET VSWHERE_EXE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.e
 SET VSWHERE=%VSWHERE_EXE%
 SET VSWHERE=%VSWHERE:(=^(%
 SET VSWHERE=%VSWHERE:)=^)%
-SET QUERY=-latest -prerelease
+SET QUERY_LATEST=-latest -prerelease
+SET QUERY_ALL=-prerelease
+SET QUERY=%QUERY_LATEST%
 SET VSWHERE_MAJOR=2
 SET VSWHERE_MINOR=7
 SET VSWHERE_PATCH=1
@@ -37,6 +39,7 @@ SET CONFIGURATION=Release
 SET DO_INSTALL=%FALSE%
 SET TRANSFORM_INCREMENTAL=true
 SET START_VS=%FALSE%
+SET LIST_VERSIONS=%FALSE%
 
 SET PLATFORM_VS2017="Any CPU"
 SET PLATFORM_VS2019="Any CPU"
@@ -101,6 +104,10 @@ IF NOT "%1"=="" (
         SET VS_LATEST=%VS2017%
         SET VS_VERSIONS_DEFAULT=%FALSE%
         SET FLAG_VS2017=
+    ) ELSE IF "%1"=="-list" (
+        SET LIST_VERSIONS=%TRUE%
+    ) ELSE IF "%1"=="-all" (
+        SET QUERY=%QUERY_ALL%
     ) ELSE IF "%1"=="-help" (
         GOTO :usage
     ) ELSE (
@@ -203,15 +210,28 @@ FOR %%v IN (%VS_VERSIONS%) DO (
     IF %VERBOSE% ECHO ## catalog_productLineVersion: %%e
 
     IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property displayName
-    FOR /F %ALL% %%n IN (`"%VSWHERE% -path "%%p" -property displayName"`) DO (
-    IF %VERBOSE% ECHO ## displayName: %%n
+    FOR /F %ALL% %%u IN (`"%VSWHERE% -path "%%p" -property displayName"`) DO (
+    IF %VERBOSE% ECHO ## displayName: %%u
+
+    IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property isPrerelease
+    FOR /F %ALL% %%b IN (`"%VSWHERE% -path "%%p" -property isPrerelease"`) DO (
+    IF %VERBOSE% ECHO ## isPrerelease: %%b
+
+    FOR /F %ALL% %%n IN (`"(ECHO %%b | FINDSTR /C:1 > NUL) && (ECHO %%u PREVIEW) || ECHO %%u"`) DO (
+    IF %VERBOSE% ECHO ## friendlyName: %%n
 
     IF %VERBOSE% ECHO ##   %VSWHERE% -path "%%p" -property installationVersion
     FOR /F %ALL% %%i IN (`"%VSWHERE% -path "%%p" -property installationVersion"`) DO (
     IF %VERBOSE% ECHO ## installationVersion: %%i
 
     FOR /F %ALL% %%f IN (`CMD /C "ECHO %%PLATFORM_VS%%e%%"`) DO (
-        IF %VERBOSE% ECHO ## platform: %%f
+    IF %VERBOSE% ECHO ## platform: %%f
+
+    IF %LIST_VERSIONS% (
+        IF %VERBOSE% ECHO ## listVersion
+        ECHO %%n ^(%%i^)
+        ECHO ^[%%p^]
+    ) ELSE (
 
         IF "%%e"=="2022" (
             IF %VERBOSE% ECHO ## CALL "%%p\VC\Auxiliary\Build\vcvars64.bat"
@@ -368,9 +388,9 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             EXIT /B 0
         )
 
-        ECHO.
         )
-    ))))
+        ECHO.
+    )))))))
     ENDLOCAL
 )
 
@@ -397,6 +417,8 @@ ECHO  -rebuild ....... Clean build of solution
 ECHO  -init .......... Initialize vstools solution for the specified version of VS
 ECHO                   If multiple versions are specified, the last one is selected
 ECHO  -startvs ....... Open vstools solution in selected VS version
+ECHO  -list .......... Print list of Visual Studio installations
+ECHO  -help .......... Print tool usage instructions
 ECHO.
 ECHO  If no operation is specified, -build is assumed by default.
 ECHO.
@@ -409,6 +431,9 @@ ECHO                                Only valid with -build or -rebuild
 ECHO  -install .................... Install extension to selected VS version(s)
 ECHO                                Only valid with -build or -rebuild
 ECHO  -startvs .................... Open vstools solution in selected VS version
+ECHO                                If multiple versions are specified, the last one is selected
+ECHO  -all ........................ Include all VS installations
+ECHO                                By default, the latest installation is selected
 ECHO  -verbose .................... Print more detailed log information
 ECHO  -bl ......................... Generate MSBuild binary log
 ECHO                                Only valid with -build or -rebuild
