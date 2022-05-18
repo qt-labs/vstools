@@ -1334,7 +1334,6 @@ namespace QtVsTools.Core.MsBuild
                     QtRepc.Property.InputFile, "%(FullPath)");
             }
 
-
             //convert uic custom build steps
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds,
@@ -1366,6 +1365,38 @@ namespace QtVsTools.Core.MsBuild
                     QtUic.Property.InputFile, "%(FullPath)");
             }
 
+            // convert qm custom build steps
+            var qmCustomBuilds = GetCustomBuilds(QtLRelease.ToolExecName);
+            if (!SetCommandLines(qtMsBuild, configurations, qmCustomBuilds,
+                QtLRelease.ToolExecName, QtLRelease.ItemTypeName,
+                new ItemCommandLineReplacement[]
+                {
+                    (item, cmdLine) => cmdLine.Replace(
+                        $@"{Path.GetFileNameWithoutExtension(item)}.ts",
+                        @"%(Filename).ts", IgnoreCase)
+                    .Replace(
+                        $"{Path.GetFileNameWithoutExtension(item)}.qm",
+                        @"%(Filename).qm", IgnoreCase)
+                })) {
+                Rollback();
+                return false;
+            }
+            foreach (var qtQm in qmCustomBuilds.Elements(ns + QtLRelease.ItemTypeName)) {
+                var itemName = qtQm.Attribute("Include").ToString();
+                var configName = qtQm.Attribute("ConfigName").ToString();
+
+                // remove items with generated files
+                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName, projItemsByPath,
+                    filterItemsByPath);
+
+                // set properties
+                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.ReleaseDescription,
+                    "lrelease %(Identity)");
+
+                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.BuildAction, "lrelease");
+                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.InputFile, "%(FullPath)");
+            }
+
             qtMsBuild.EndSetItemProperties();
 
             //disable dynamic C++ source for moc headers without generated files
@@ -1379,6 +1410,7 @@ namespace QtVsTools.Core.MsBuild
             FinalizeProjectChanges(rccCustomBuilds, QtRcc.ItemTypeName);
             FinalizeProjectChanges(repcCustomBuilds, QtRepc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds, QtUic.ItemTypeName);
+            FinalizeProjectChanges(qmCustomBuilds, QtLRelease.ItemTypeName);
 
             Commit("Converting custom build steps to Qt/MSBuild items");
             return true;

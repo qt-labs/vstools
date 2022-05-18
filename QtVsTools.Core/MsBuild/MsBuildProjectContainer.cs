@@ -272,6 +272,7 @@ namespace QtVsTools.Core.MsBuild
                 QtRcc.ItemTypeName => SetQtRccCommandLine(propertyStorage, commandLine, macros),
                 QtRepc.ItemTypeName => SetQtRepcCommandLine(propertyStorage, commandLine, macros),
                 QtUic.ItemTypeName => SetQtUicCommandLine(propertyStorage, commandLine, macros),
+                QtLRelease.ItemTypeName => SetQtLReleaseCommandLine(propertyStorage, commandLine, macros),
                 _ => false
             };
         }
@@ -360,6 +361,29 @@ namespace QtVsTools.Core.MsBuild
             IVsMacroExpander macros)
         {
             if (!QtUicInstance.ParseCommandLine(commandLine, macros, out var properties))
+                return false;
+            return properties.All(property => SetItemProperty(propertyStorage, property.Key,
+                property.Value));
+        }
+
+        #endregion
+
+        #region QtLRelease
+
+        private static QtLRelease _qtLReleaseInstance;
+
+        private static QtLRelease QtLReleaseInstance => _qtLReleaseInstance ??= new QtLRelease();
+
+        public bool SetItemProperty(object propertyStorage, QtLRelease.Property property,
+            string propertyValue)
+        {
+            return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
+        }
+
+        public bool SetQtLReleaseCommandLine(object propertyStorage, string commandLine,
+            IVsMacroExpander macros)
+        {
+            if (!QtLReleaseInstance.ParseCommandLine(commandLine, macros, out var properties))
                 return false;
             return properties.All(property => SetItemProperty(propertyStorage, property.Key,
                 property.Value));

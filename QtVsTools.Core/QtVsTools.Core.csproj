@@ -146,6 +146,7 @@
     <Compile Include="MsBuild\ConversionReport.cs" />
     <Compile Include="MsBuild\IPropertyStorageProvider.cs" />
     <Compile Include="MsBuild\IVsMacroExpander.cs" />
+    <Compile Include="MsBuild\QtLRelease.cs" />
     <Compile Include="MsBuild\QtMoc.cs" />
     <Compile Include="MsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>

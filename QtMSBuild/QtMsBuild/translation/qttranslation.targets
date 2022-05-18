@@ -429,8 +429,9 @@
                 Compress;
                 NoUnfinished;
                 RemoveIdentical;
-                ReleaseSilent;
-                UntranslatedPrefix">
+                Project;
+                UntranslatedPrefix;
+                ReleaseSilent">
       <Output
         TaskParameter="Result" ItemName="LocalOptions" />
     </Flatten>
@@ -515,12 +516,16 @@
                    >-removeidentical</CmdOption>
       </Options>
       <Options>
-        <CmdOption Condition="'%(Name)' == 'ReleaseSilent' AND '%(Value)' == 'true'"
-                   >-silent</CmdOption>
+        <CmdOption Condition="'%(Name)' == 'Project'"
+                   >-project %(Value)</CmdOption>
       </Options>
       <Options>
         <CmdOption Condition="'%(Name)' == 'UntranslatedPrefix'"
                    >-markuntranslated %(Value)</CmdOption>
+      </Options>
+      <Options>
+        <CmdOption Condition="'%(Name)' == 'ReleaseSilent' AND '%(Value)' == 'true'"
+                   >-silent</CmdOption>
       </Options>
     </ItemGroup>
 
