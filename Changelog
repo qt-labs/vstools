@@ -1,3 +1,34 @@
+Qt Visual Studio Tools version 2.9.0:
+
+Changes
+-------
+ - Added QStringRef and QStringView debug visualizers
+ - Check if Qt translation tools are available
+ - New widget class wizards accessible from "Add New Item"
+ - New Qt class wizards accessible from "Add New Item"
+ - InfoBar notification of missing Qt installation
+ - InfoBar notification of recently installed new Qt VS Tools version
+ - Additional compiler options from Qt included in the build
+ - Enabled reporting issues and feature requests via GitHub
+ - Debug visualizer for Qt types added to PDB
+ - Improved intellisense performance for Qt projects
+- Fixed QTVSADDINBUG-626: Qt VS Tools does not generate the same code as Qt Creator
+- Fixed QTVSADDINBUG-707: Integrating the main window widget into the Qt Gui application wizard.
+- Fixed QTVSADDINBUG-884: QStringRef and QStringView have no natvis definitions
+- Fixed QTVSADDINBUG-925: Can't add an "add-on" module to project using GUI
+- Fixed QTVSADDINBUG-937: OpenGL Widgets module missing
+- Fixed QTVSADDINBUG-951: Can't build QT6 WebEngine example
+- Fixed QTVSADDINBUG-965: Pragma warning not working with "external header warning level" option
+- Fixed QTVSADDINBUG-966: Debug version of Qt Dlls are linked even if we asked for release mode
+- Fixed QTVSADDINBUG-970: Qt6 in Visual Studio plugin doesn't load qmake projects
+- Fixed QTVSADDINBUG-972: VS Plugin is ignoring module core5compat when loading project with QT6
+- Fixed QTVSADDINBUG-973: unable to add a new qt version with visual studio 2022
+- Fixed QTVSADDINBUG-979: Project Properties are overwritten by Qt Vs Tools
+- Fixed QTVSADDINBUG-980: The "Release Notes" link does not work
+- Fixed QTVSADDINBUG-982: Can't add new Qt Version
+
+
+
 Qt Visual Studio Tools version 2.8.1:
 
 Changes
