@@ -262,24 +262,28 @@ namespace QtVsTools.Core
 
             var name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
 
-            var VCInfo = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);
-
-            if (!VCInfo.Exists || DialogResult.Yes == MessageBox.Show(SR.GetString("ExportProject_ProjectExistsRegenerateOrReuse", VCInfo.Name),
-                SR.GetString("ProjectExists"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)) {
-                Messages.Print("--- (Import): Generating new project of " + mainInfo.Name + " file");
-
-                var waitDialog = WaitDialog.Start(
-                    "Open Qt Project File",
-                    "Generating Visual Studio project...", delay: 2);
-
-                var qmake = new QMakeImport(vi, mainInfo.FullName, recursive, dteObject);
-                int exitCode = qmake.Run(setVCVars: true);
-                waitDialog.Stop();
-
-                if (exitCode == 0)
-                    return VCInfo;
+            var vcxproj = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);
+            if (vcxproj.Exists) {
+                var result = MessageBox.Show($@"{vcxproj.Name} already exists. Select 'OK' to " +
+                    "regenerate the file or 'Cancel' to quit importing the project.",
+                    "Project file already exists.",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel)
+                    return null;
             }
 
+            Messages.Print("--- (Import): Generating new project of " + mainInfo.Name + " file");
+
+            var waitDialog = WaitDialog.Start("Open Qt Project File",
+                "Generating Visual Studio project...", delay: 2);
+
+            var qmake = new QMakeImport(vi, mainInfo.FullName, recursive, dteObject);
+            int exitCode = qmake.Run(setVCVars: true);
+
+            waitDialog.Stop();
+
+            if (exitCode == 0)
+                return vcxproj;
             return null;
         }
 

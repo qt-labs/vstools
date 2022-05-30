@@ -123,9 +123,6 @@
   <data name="OpenSolution" xml:space="preserve">
     <value>Open Solution</value>
   </data>
-  <data name="ProjectExists" xml:space="preserve">
-    <value>Project file already exists.</value>
-  </data>
   <data name="ExportProject_EditProjectFileManually" xml:space="preserve">
     <value>qmake has generated a .vcproj file, but it needs to be converted.
 To do this you must open the .vcproj file manually.
@@ -147,10 +144,6 @@ Do you want to overwrite it?</value>
 1. Manually edit the generated .pri file.
 2. Move your project to a location without spaces in the path.
 3. Place the .pri file in another directory.</value>
-  </data>
-  <data name="ExportProject_ProjectExistsRegenerateOrReuse" xml:space="preserve">
-    <value>{0} already exists.
-Select 'Yes' to regenerate the file, and 'No' to use the existing one.</value>
   </data>
   <data name="ExportProject_ProjectOrSolutionCorrupt" xml:space="preserve">
     <value>{0}
