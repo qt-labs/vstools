@@ -942,9 +942,9 @@ namespace QtVsTools.Core
                         commandLine = replace(row.itemName, commandLine);
                     //
                     //   * Configuration/platform, e.g. x64\Debug --> $(Platform)\$(Configuration)
-                    commandLine = commandLine
-                        .Replace(configName, "$(Configuration)",
-                            StringComparison.InvariantCultureIgnoreCase)
+                    //   * ignore any word other than the expected configuration, e.g. lrelease.exe
+                    commandLine = Regex.Replace(commandLine, @"\b" + configName + @"\b",
+                            "$(Configuration)", RegexOptions.IgnoreCase)
                         .Replace(platformName, "$(Platform)",
                             StringComparison.InvariantCultureIgnoreCase);
 
