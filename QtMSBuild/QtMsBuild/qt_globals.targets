@@ -779,15 +779,14 @@
           Outputs="$(IntDir)\qt.natvis">
     <PropertyGroup>
       <InputFile>$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml</InputFile>
-      <NatvisLinkFile>$(IntDir)\qt.natvis</NatvisLinkFile>
     </PropertyGroup>
     <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
       Overwrite="true"
-      File="$(NatvisLinkFile)"
+      File="$(IntDir)\qt.natvis"
       Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('##NAMESPACE##::',''))" />
     <WriteLinesToFile Condition="'$(QtNamespace)' != ''"
       Overwrite="true"
-      File="$(NatvisLinkFile)"
+      File="$(IntDir)\qt.natvis"
       Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('##NAMESPACE##','$(QtNamespace)'))" />
   </Target>
 

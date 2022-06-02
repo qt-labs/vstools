@@ -232,9 +232,6 @@
     <LinkNatvisFile>true</LinkNatvisFile>
     <LinkNatvisFile Condition="'$(LinkNatvisRegValue)' == '0'">false</LinkNatvisFile>
   </PropertyGroup>
-  <PropertyGroup  Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'">
-    <NatvisLinkFile>$(IntDir)\qt.natvis</NatvisLinkFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'
                             AND '$(LinkNatvisFile)' == 'true' AND '$(QtInstallDir)' != ''">
     <QConfigPriPath>$([System.IO.Path]::Combine('$(QtInstallDir)',
@@ -280,7 +277,7 @@
       <AdditionalOptions Condition="'$(Qt_LINK_OPTIONS_)' != ''"
         >$(Qt_LINK_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'"
-        >/NATVIS:$(NatvisLinkFile) %(AdditionalOptions)</AdditionalOptions>
+        >/NATVIS:$(IntDir)\qt.natvis %(AdditionalOptions)</AdditionalOptions>
     </Link>
 
   </ItemDefinitionGroup>
