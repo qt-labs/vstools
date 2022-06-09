@@ -428,7 +428,7 @@ namespace QtVsTools.QtMsBuild
                     var vcConfigs = VcProject.Configurations as IVCCollection;
                     var vcConfig = vcConfigs.Item(ConfiguredProject.ProjectConfiguration.Name) as VCConfiguration;
                     var props = vcConfig.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage;
-                    props.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));
+                    props?.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));
                 }
             } catch (Exception e) {
                 Messages.Print(string.Format("{0}: background build ERROR: {1}",
