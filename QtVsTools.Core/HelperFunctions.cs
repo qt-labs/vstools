@@ -1754,8 +1754,21 @@ namespace QtVsTools.Core
                     }
                 }
             }
+
+            // Get PATH
             string envPath = startInfo.EnvironmentVariables["PATH"];
-            string clPath = envPath.Split(';')
+
+            // Remove invalid chars
+            envPath = string.Join("", envPath.Split(Path.GetInvalidPathChars()));
+
+            // Split into list of paths
+            var paths = envPath
+                .Split(';')
+                .Where(x => !string.IsNullOrEmpty(x))
+                .Select(x => x.Trim());
+
+            // Check if cl.exe is in PATH
+            string clPath = paths
                 .Select(path => Path.Combine(path, "cl.exe"))
                 .Where(pathToCl => File.Exists(pathToCl))
                 .FirstOrDefault();
