@@ -363,9 +363,7 @@
     <LibraryPrefix>QtWebEngine</LibraryPrefix>
     <HasDLL>true</HasDLL>
     <proVarQT>webenginecore</proVarQT>
-    <IncludePath>$(QTDIR)\include\QtWebEngine</IncludePath>
     <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
-    <Defines>QT_WEBENGINE_LIB</Defines>
     <Defines>QT_WEBENGINECORE_LIB</Defines>
     <AdditionalLibraries>Qt6WebEngine.lib</AdditionalLibraries>
     <AdditionalLibraries>Qt6WebEngineCore.lib</AdditionalLibraries>
@@ -498,5 +496,35 @@
     <proVarQT>waylandcompositor</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWaylandCompositor</LibraryPrefix>
+  </Module>
+  <Module Id="50">
+    <Name>Qt WebEngine Widgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebEngineWidgets</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webenginewidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWebEngineWidgets</IncludePath>
+    <Defines>QT_WEBENGINECORE_LIB</Defines>
+    <Defines>QT_WEBENGINEWIDGETS_LIB</Defines>
+    <AdditionalLibraries>Qt6WebEngineCore.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6WebEngineCored.lib</AdditionalLibrariesDebug>
+    <AdditionalLibraries>Qt6WebEngineWidgets.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6WebEngineWidgetsd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module Id="51">
+    <Name>Qt WebEngine Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebEngineQuick</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>webenginequick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWebEngineQuick</IncludePath>
+    <Defines>QT_WEBENGINECORE_LIB</Defines>
+    <Defines>QT_WEBENGINEQUICK_LIB</Defines>
+    <AdditionalLibraries>Qt6WebEngineCore.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6WebEngineCored.lib</AdditionalLibrariesDebug>
+    <AdditionalLibraries>Qt6WebEngineQuick.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6WebEngineQuickd.lib</AdditionalLibrariesDebug>
   </Module>
 </QtVsTools>
