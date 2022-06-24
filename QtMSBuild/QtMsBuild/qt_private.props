@@ -242,9 +242,9 @@
         .Replace('&#xD;&#xA;', ';')
         .Replace(' =', '=')
         .Replace('= ', '='))
-      ));</QConfigPriContent>
+      ))</QConfigPriContent>
     <QtNamespace>$([System.Text.RegularExpressions.Regex]::Match($(QConfigPriContent),
-        'QT_NAMESPACE=([a-zA-Z0-9]+);').get_Groups().get_Item(1)
+        'QT_NAMESPACE=([a-zA-Z0-9]+)').get_Groups().get_Item(1)
       )</QtNamespace>
   </PropertyGroup>
 
@@ -277,7 +277,7 @@
       <AdditionalOptions Condition="'$(Qt_LINK_OPTIONS_)' != ''"
         >$(Qt_LINK_OPTIONS_) %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'"
-        >/NATVIS:$(IntDir)\qt.natvis %(AdditionalOptions)</AdditionalOptions>
+        >/NATVIS:&quot;$(IntDir)\qt.natvis&quot; %(AdditionalOptions)</AdditionalOptions>
     </Link>
 
   </ItemDefinitionGroup>
