@@ -262,9 +262,6 @@ To solve this problem:
   <data name="QtProject_CannotAccessUserFile" xml:space="preserve">
     <value>Could not add QTDIR to {0}'s .user file.</value>
   </data>
-  <data name="ImportProject_CannotConvertProject" xml:space="preserve">
-    <value>Could not convert project file {0} to Qt/MSBuild.</value>
-  </data>
   <data name="WaitDialogRefreshMoc" xml:space="preserve">
     <value>Updating moc steps...</value>
   </data>

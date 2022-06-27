@@ -229,14 +229,13 @@ namespace QtVsTools.Core
             if (ok)
                 ok = xmlProject.UpdateProjectFormatVersion();
 
-            if (!ok) {
-                Messages.Print(
-                    SR.GetString("ImportProject_CannotConvertProject", projectFile.Name));
+            if (ok) {
+                xmlProject.Save();
+                // Initialize Qt variables
+                xmlProject.BuildTarget("QtVarsDesignTime");
+            } else {
+                Messages.Print($"Could not convert project file {projectFile.Name} to Qt/MSBuild.");
             }
-            xmlProject.Save();
-
-            // Initialize Qt variables
-            xmlProject.BuildTarget("QtVarsDesignTime");
         }
 
         private static void ApplyPostImportSteps(QtProject qtProject)
