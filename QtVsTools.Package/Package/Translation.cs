@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -28,7 +28,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.Shell;
@@ -38,8 +37,6 @@ namespace QtVsTools
 {
     using Core;
     using QtMsBuild;
-
-    using static Core.HelperFunctions;
 
     /// <summary>
     /// Run Qt translation tools by invoking the corresponding Qt/MSBuild targets
@@ -99,7 +96,7 @@ namespace QtVsTools
             RunTranslationTarget(BuildAction.Update, project);
         }
 
-        enum BuildAction { Update, Release }
+        internal enum BuildAction { Update, Release }
 
         static void RunTranslationTarget(
             BuildAction buildAction,
@@ -121,7 +118,7 @@ namespace QtVsTools
                 if (qtPro.FormatVersion < Resources.qtMinFormatVersion_Settings) {
                     Messages.Print("translation: Legacy project format");
                     try {
-                        Legacy_RunTranslation(buildAction, qtPro, selectedFiles);
+                        Legacy.Translation.Run(buildAction, qtPro, selectedFiles);
                     } catch (Exception e) {
                         Messages.Print(
                             e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
@@ -167,105 +164,18 @@ namespace QtVsTools
                 RunlUpdate(project);
         }
 
-        static void Legacy_RunTranslation(
-            BuildAction buildAction,
-            QtProject qtProject,
-            IEnumerable<string> tsFiles)
-        {
-            if (tsFiles == null) {
-                tsFiles = (qtProject.VCProject
-                    .GetFilesEndingWith(".ts") as IVCCollection)
-                    .Cast<VCFile>()
-                    .Select(vcFile => vcFile.RelativePath);
-                if (tsFiles == null) {
-                    Messages.Print("translation: no translation files found");
-                    return;
-                }
-            }
-            string tempFile = null;
-            foreach (var file in tsFiles.Where(file => file != null))
-                Legacy_RunTranslation(buildAction, qtProject, file, ref tempFile);
-        }
-
-        static void Legacy_RunTranslation(
-            BuildAction buildAction,
-            QtProject qtProject,
-            string tsFile,
-            ref string tempFile)
-        {
-            var qtVersion = qtProject.GetQtVersion();
-            var qtInstallPath = QtVersionManager.The().GetInstallPath(qtVersion);
-            if (string.IsNullOrEmpty(qtInstallPath)) {
-                Messages.Print("translation: Error accessing Qt installation");
-                return;
-            }
-
-            var procInfo = new ProcessStartInfo
-            {
-                WorkingDirectory = qtProject.ProjectDir,
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                Arguments = ""
-            };
-            switch (buildAction) {
-            case BuildAction.Update:
-                Messages.Print("\r\n--- (lupdate) file: " + tsFile);
-                procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lupdate.exe");
-                var options = QtVSIPSettings.GetLUpdateOptions();
-                if (!string.IsNullOrEmpty(options))
-                    procInfo.Arguments += options + " ";
-                if (tempFile == null) {
-                    var inputFiles = GetProjectFiles(qtProject.Project, FilesToList.FL_HFiles)
-                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_CppFiles))
-                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_UiFiles))
-                        .Union(GetProjectFiles(qtProject.Project, FilesToList.FL_QmlFiles));
-                    tempFile = Path.GetTempFileName();
-                    File.WriteAllLines(tempFile, inputFiles);
-                }
-                procInfo.Arguments += string.Format("\"@{0}\" -ts \"{1}\"", tempFile, tsFile);
-                break;
-            case BuildAction.Release:
-                Messages.Print("\r\n--- (lrelease) file: " + tsFile);
-                procInfo.FileName = Path.Combine(qtInstallPath, "bin", "lrelease.exe");
-                options = QtVSIPSettings.GetLReleaseOptions();
-                if (!string.IsNullOrEmpty(options))
-                    procInfo.Arguments += options + " ";
-                procInfo.Arguments += string.Format("\"{0}\"", tsFile);
-                break;
-            }
-            using (var proc = Process.Start(procInfo)) {
-                proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                        Messages.Print(e.Data);
-                };
-                proc.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                        Messages.Print(e.Data);
-                };
-                proc.BeginOutputReadLine();
-                proc.BeginErrorReadLine();
-                proc.WaitForExit();
-                switch (proc.ExitCode) {
-                case 0:
-                    Messages.Print("translation: ok");
-                    break;
-                default:
-                    Messages.Print(string.Format("translation: ERROR {0}", proc.ExitCode));
-                    break;
-                }
-            }
-        }
-
         public static bool ToolsAvailable(EnvDTE.Project project)
         {
+            if (project == null)
+                return false;
             if (QtProject.GetPropertyValue(project, "ApplicationType") == "Linux")
                 return true;
 
             var qtToolsPath = QtProject.GetPropertyValue(project, "QtToolsPath");
+            if (string.IsNullOrEmpty(qtToolsPath)) {
+                var qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
+                qtToolsPath = Path.Combine(QtVersionManager.The().GetInstallPath(qtVersion), "bin");
+            }
             return File.Exists(Path.Combine(qtToolsPath, "lupdate.exe"))
                 && File.Exists(Path.Combine(qtToolsPath, "lrelease.exe"));
         }

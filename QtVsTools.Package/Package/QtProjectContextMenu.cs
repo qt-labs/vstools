@@ -142,35 +142,14 @@ namespace QtVsTools
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
                         QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
-                        var vm = QtVersionManager.The();
-                        var versionInfo = vm.GetVersionInfo(pro);
-                        if (versionInfo == null)
-                            versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-                        using (var form = new Legacy.FormProjectQtSettings(versionInfo.qtMajor)) {
-                            form.SetProject(pro);
-                            form.StartPosition = FormStartPosition.CenterParent;
-                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
-                            form.ShowDialog(ww);
-                        }
+                        Legacy.QtMenu.ShowFormProjectQtSettings(pro);
                     } else {
                         MessageBox.Show(SR.GetString("NoProjectOpened"));
                     }
                 }
                 break;
-            case CommandId.ChangeProjectQtVersionProjectId: {
-                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                    if (HelperFunctions.IsQtProject(pro)) {
-                        using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
-                            formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Project);
-                            var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
-                            if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
-                                var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                                HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
-                                    .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
-                            }
-                        }
-                    }
-                }
+            case CommandId.ChangeProjectQtVersionProjectId:
+                Legacy.QtMenu.ShowFormChangeProjectQtVersion();
                 break;
             case CommandId.ProjectConvertToQtMsBuild: {
                     QtMsBuildConverter.ProjectToQtMsBuild(

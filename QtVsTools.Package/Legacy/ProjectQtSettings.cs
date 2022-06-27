@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -29,28 +29,27 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using Microsoft.VisualStudio.Shell;
 
-namespace QtVsTools
+namespace QtVsTools.Legacy
 {
     using Core;
+    using Legacy = Core.Legacy;
 
     public class ProjectQtSettings
     {
-
         public ProjectQtSettings(EnvDTE.Project proj)
         {
             versionManager = QtVersionManager.The();
             project = proj;
-            newMocDir = oldMocDir = QtVSIPSettings.GetMocDirectory(project);
-            newMocOptions = oldMocOptions = QtVSIPSettings.GetMocOptions(project);
-            newRccDir = oldRccDir = QtVSIPSettings.GetRccDirectory(project);
-            newUicDir = oldUicDir = QtVSIPSettings.GetUicDirectory(project);
-            newLUpdateOnBuild = oldLUpdateOnBuild = QtVSIPSettings.GetLUpdateOnBuild(project);
-            newLUpdateOptions = oldLUpdateOptions = QtVSIPSettings.GetLUpdateOptions(project);
-            newLReleaseOptions = oldLReleaseOptions = QtVSIPSettings.GetLReleaseOptions(project);
+            newMocDir = oldMocDir = Legacy.QtVSIPSettings.GetMocDirectory(project);
+            newMocOptions = oldMocOptions = Legacy.QtVSIPSettings.GetMocOptions(project);
+            newRccDir = oldRccDir = Legacy.QtVSIPSettings.GetRccDirectory(project);
+            newUicDir = oldUicDir = Legacy.QtVSIPSettings.GetUicDirectory(project);
+            newLUpdateOnBuild = oldLUpdateOnBuild = Legacy.QtVSIPSettings.GetLUpdateOnBuild(project);
+            newLUpdateOptions = oldLUpdateOptions = Legacy.QtVSIPSettings.GetLUpdateOptions(project);
+            newLReleaseOptions = oldLReleaseOptions = Legacy.QtVSIPSettings.GetLReleaseOptions(project);
             newQtVersion = oldQtVersion = versionManager.GetProjectQtVersion(project);
-            QmlDebug = oldQmlDebug = QtVSIPSettings.GetQmlDebug(project);
+            QmlDebug = oldQmlDebug = Legacy.QtVSIPSettings.GetQmlDebug(project);
         }
 
         private readonly QtVersionManager versionManager;
@@ -81,37 +80,37 @@ namespace QtVsTools
             var qtPro = QtProject.Create(project);
 
             if (oldMocDir != newMocDir) {
-                QtVSIPSettings.SaveMocDirectory(project, newMocDir);
+                Legacy.QtVSIPSettings.SaveMocDirectory(project, newMocDir);
                 updateMoc = true;
             }
             if (oldMocOptions != newMocOptions) {
-                QtVSIPSettings.SaveMocOptions(project, newMocOptions);
+                Legacy.QtVSIPSettings.SaveMocOptions(project, newMocOptions);
                 updateMoc = true;
             }
             if (updateMoc)
                 qtPro.UpdateMocSteps(oldMocDir);
 
             if (oldUicDir != newUicDir) {
-                QtVSIPSettings.SaveUicDirectory(project, newUicDir);
+                Legacy.QtVSIPSettings.SaveUicDirectory(project, newUicDir);
                 qtPro.UpdateUicSteps(oldUicDir, true);
             }
 
             if (oldRccDir != newRccDir) {
-                QtVSIPSettings.SaveRccDirectory(project, newRccDir);
+                Legacy.QtVSIPSettings.SaveRccDirectory(project, newRccDir);
                 qtPro.RefreshRccSteps(oldRccDir);
             }
 
             if (oldLUpdateOnBuild != newLUpdateOnBuild)
-                QtVSIPSettings.SaveLUpdateOnBuild(project, newLUpdateOnBuild);
+                Legacy.QtVSIPSettings.SaveLUpdateOnBuild(project, newLUpdateOnBuild);
 
             if (oldLUpdateOptions != newLUpdateOptions)
-                QtVSIPSettings.SaveLUpdateOptions(project, newLUpdateOptions);
+                Legacy.QtVSIPSettings.SaveLUpdateOptions(project, newLUpdateOptions);
 
             if (oldLReleaseOptions != newLReleaseOptions)
-                QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
+                Legacy.QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
 
             if (oldQmlDebug != QmlDebug)
-                QtVSIPSettings.SaveQmlDebug(project, QmlDebug);
+                Legacy.QtVSIPSettings.SaveQmlDebug(project, QmlDebug);
 
             if (oldQtVersion != newQtVersion) {
                 if (qtPro.PromptChangeQtVersion(oldQtVersion, newQtVersion)) {

@@ -64,7 +64,7 @@ namespace QtVsTools.Legacy
             }
         }
 
-        public void UpdateContent(ChangeFor change)
+        internal void UpdateContent(ChangeFor change)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 

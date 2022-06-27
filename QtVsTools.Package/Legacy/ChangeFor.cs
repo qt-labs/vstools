@@ -28,5 +28,5 @@
 
 namespace QtVsTools.Legacy
 {
-    public enum ChangeFor { Solution, Project }
+    internal enum ChangeFor { Solution, Project }
 }

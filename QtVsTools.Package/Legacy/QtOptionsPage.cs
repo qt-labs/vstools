@@ -31,11 +31,11 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.VisualStudio.Shell;
 
-namespace QtVsTools.Options
+namespace QtVsTools.Legacy
 {
     using Core;
 
-    public class QtLegacyOptionsPage : DialogPage
+    public class QtOptionsPage : DialogPage
     {
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Source control: Ask before checking out files")]

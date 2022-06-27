@@ -28,9 +28,7 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
-using EnvDTE80;
 
 namespace QtVsTools
 {
@@ -137,39 +135,7 @@ namespace QtVsTools
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
             case CommandId.ChangeSolutionQtVersionId:
-                string newQtVersion = null;
-                using (var formChangeQtVersion = new Legacy.FormChangeQtVersion()) {
-                    formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Solution);
-                    if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
-                        return;
-                    newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                }
-                if (newQtVersion == null)
-                    return;
-
-                string currentPlatform = null;
-                try {
-                    var config2 = QtVsToolsPackage.Instance.Dte.Solution.SolutionBuild
-                        .ActiveConfiguration as SolutionConfiguration2;
-                    currentPlatform = config2.PlatformName;
-                } catch { }
-                if (string.IsNullOrEmpty(currentPlatform))
-                    return;
-
-                foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                    if (HelperFunctions.IsVsToolsProject(project)) {
-                        var OldQtVersion = QtVersionManager.The().GetProjectQtVersion(project,
-                            currentPlatform);
-                        if (OldQtVersion == null)
-                            OldQtVersion = QtVersionManager.The().GetDefaultVersion();
-
-                        var created = false;
-                        var qtProject = QtProject.Create(project);
-                        if (qtProject.PromptChangeQtVersion(OldQtVersion, newQtVersion))
-                            qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
-                    }
-                }
-                Core.Legacy.QtVersionManager.SaveSolutionQtVersion(dte.Solution, newQtVersion);
+                Legacy.QtMenu.ShowFormChangeSolutionQtVersion();
                 break;
             case CommandId.SolutionConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();

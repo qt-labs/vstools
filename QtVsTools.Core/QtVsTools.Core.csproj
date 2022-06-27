@@ -127,6 +127,7 @@
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="Common\EnumExt.cs" />
     <Compile Include="Common\LazyFactory.cs" />
+    <Compile Include="Common\QtVSIPSettingsShared.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
     <Compile Include="ExportProjectDialog.cs">
@@ -141,6 +142,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Legacy\QtVersionManager.cs" />
+    <Compile Include="Legacy\QtVSIPSettings.cs" />
     <Compile Include="LinkerToolWrapper.cs" />
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />

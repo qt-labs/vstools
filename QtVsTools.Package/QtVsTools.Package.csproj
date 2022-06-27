@@ -310,6 +310,12 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
+    <Compile Include="Legacy\ProjectQtSettings.cs" />
+    <Compile Include="Legacy\QtMenu.cs" />
+    <Compile Include="Legacy\QtOptionsPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Legacy\Translation.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -363,9 +369,6 @@
     <Compile Include="Legacy\FormProjectQtSettings.Designer.cs">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Options\QtLegacyOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -375,7 +378,6 @@
     <Compile Include="Options\QtVersionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Package\ProjectQtSettings.cs" />
     <Compile Include="Package\QMakeWrapper.cs" />
     <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
