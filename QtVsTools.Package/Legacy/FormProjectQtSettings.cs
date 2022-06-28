@@ -59,7 +59,7 @@ namespace QtVsTools.Legacy
 
         private readonly List<ModuleMapItem> moduleMap = new List<ModuleMapItem>();
 
-        public FormProjectQtSettings()
+        public FormProjectQtSettings(uint qtMajor)
         {
             InitializeComponent();
             okButton.Text = "OK";
@@ -67,12 +67,7 @@ namespace QtVsTools.Legacy
             tabControl1.TabPages[0].Text = "Properties";
             tabControl1.TabPages[1].Text = "Qt Modules";
 
-            var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(project);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-
-            var modules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
+            var modules = QtModules.Instance.GetAvailableModules(qtMajor)
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
             foreach (var module in modules) {

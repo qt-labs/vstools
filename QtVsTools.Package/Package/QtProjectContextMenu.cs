@@ -142,11 +142,15 @@ namespace QtVsTools
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
                         QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
-                        using (var formProjectQtSettings = new Legacy.FormProjectQtSettings()) {
-                            formProjectQtSettings.SetProject(pro);
-                            formProjectQtSettings.StartPosition = FormStartPosition.CenterParent;
+                        var vm = QtVersionManager.The();
+                        var versionInfo = vm.GetVersionInfo(pro);
+                        if (versionInfo == null)
+                            versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+                        using (var form = new Legacy.FormProjectQtSettings(versionInfo.qtMajor)) {
+                            form.SetProject(pro);
+                            form.StartPosition = FormStartPosition.CenterParent;
                             var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
-                            formProjectQtSettings.ShowDialog(ww);
+                            form.ShowDialog(ww);
                         }
                     } else {
                         MessageBox.Show(SR.GetString("NoProjectOpened"));
