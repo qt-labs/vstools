@@ -73,11 +73,11 @@ namespace QtVsTools.Legacy
             foreach (var module in modules) {
                 var checkBox = new CheckBox
                 {
-                    Location = new System.Drawing.Point(844, 152),
-                    Margin = new Padding(3, 2, 6, 2),
+                    Margin = new Padding(6),
+                    Location = new System.Drawing.Point(150, 150),
                     Name = module.LibraryPrefix,
-                    Size = new System.Drawing.Size(256, 46),
-                    UseVisualStyleBackColor = true
+                    UseVisualStyleBackColor = true,
+                    AutoSize = true,
                 };
                 flowLayoutPanel1.Controls.Add(checkBox);
                 checkBox.Text = module.Name;

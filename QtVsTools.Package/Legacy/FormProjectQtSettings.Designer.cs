@@ -44,7 +44,7 @@ namespace QtVsTools.Legacy
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.okButton);
             this.panel1.Controls.Add(this.cancelButton);
-            this.panel1.Location = new System.Drawing.Point(608, 746);
+            this.panel1.Location = new System.Drawing.Point(620, 700);
             this.panel1.Margin = new System.Windows.Forms.Padding(6);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(336, 73);
@@ -122,14 +122,14 @@ namespace QtVsTools.Legacy
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(962, 842);
+            this.ClientSize = new System.Drawing.Size(962, 801);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(988, 913);
+            this.MinimumSize = new System.Drawing.Size(988, 750);
             this.Name = "FormProjectQtSettings";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
