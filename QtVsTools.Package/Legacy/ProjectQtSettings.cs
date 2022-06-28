@@ -29,6 +29,7 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace QtVsTools.Legacy
 {
@@ -65,14 +66,14 @@ namespace QtVsTools.Legacy
         private readonly string oldLReleaseOptions;
         private readonly bool oldQmlDebug;
 
-        private readonly string newMocDir;
-        private readonly string newMocOptions;
-        private readonly string newRccDir;
-        private readonly string newUicDir;
+        private string newMocDir;
+        private string newMocOptions;
+        private string newRccDir;
+        private string newUicDir;
         private string newQtVersion;
-        private readonly bool newLUpdateOnBuild;
-        private readonly string newLUpdateOptions;
-        private readonly string newLReleaseOptions;
+        private bool newLUpdateOnBuild;
+        private string newLUpdateOptions;
+        private string newLReleaseOptions;
 
         public void SaveSettings()
         {
@@ -123,9 +124,142 @@ namespace QtVsTools.Legacy
             }
         }
 
+        public string MocDirectory
+        {
+            get
+            {
+                return newMocDir;
+            }
+            set
+            {
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                if (tmp.ToLower() == oldMocDir.ToLower())
+                    return;
+
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
+                else
+                    newMocDir = tmp;
+            }
+        }
+
+        public string MocOptions
+        {
+            get
+            {
+                return newMocOptions;
+            }
+
+            set
+            {
+                newMocOptions = value;
+            }
+        }
+
+        public string UicDirectory
+        {
+            get
+            {
+                return newUicDir;
+            }
+            set
+            {
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                if (tmp.ToLower() == oldUicDir.ToLower())
+                    return;
+
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
+                else
+                    newUicDir = tmp;
+            }
+        }
+
+        public string RccDirectory
+        {
+            get
+            {
+                return newRccDir;
+            }
+            set
+            {
+                var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
+                if (tmp.ToLower() == oldRccDir.ToLower())
+                    return;
+
+                string badMacros = IncompatibleMacros(tmp);
+                if (!string.IsNullOrEmpty(badMacros))
+                    Messages.DisplayErrorMessage(SR.GetString("IncompatibleMacros", badMacros));
+                else
+                    newRccDir = tmp;
+            }
+        }
+
+        public bool lupdateOnBuild
+        {
+            get
+            {
+                return newLUpdateOnBuild;
+            }
+
+            set
+            {
+                newLUpdateOnBuild = value;
+            }
+        }
+
+        public string LUpdateOptions
+        {
+            get
+            {
+                return newLUpdateOptions;
+            }
+
+            set
+            {
+                newLUpdateOptions = value;
+            }
+        }
+
+        public string LReleaseOptions
+        {
+            get
+            {
+                return newLReleaseOptions;
+            }
+
+            set
+            {
+                newLReleaseOptions = value;
+            }
+        }
+
         [DisplayName("QML Debug")]
         [TypeConverter(typeof(QmlDebugConverter))]
         private bool QmlDebug { get; }
+
+        private static string IncompatibleMacros(string stringToExpand)
+        {
+            string incompatibleMacros = "";
+            foreach (Match metaNameMatch in Regex.Matches(stringToExpand, @"\%\(([^\)]+)\)")) {
+                string metaName = metaNameMatch.Groups[1].Value;
+                if (!incompatibleMacros.Contains(string.Format("%({0})", metaName))) {
+                    switch (metaName) {
+                    case "RecursiveDir":
+                    case "ModifiedTime":
+                    case "CreatedTime":
+                    case "AccessedTime":
+                        if (!string.IsNullOrEmpty(incompatibleMacros))
+                            incompatibleMacros += ", ";
+                        incompatibleMacros += string.Format("%({0})", metaName);
+                        break;
+                    }
+                }
+            }
+            return incompatibleMacros;
+        }
 
         internal class QmlDebugConverter : BooleanConverter
         {

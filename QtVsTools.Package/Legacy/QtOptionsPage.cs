@@ -39,43 +39,43 @@ namespace QtVsTools.Legacy
     {
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Source control: Ask before checking out files")]
-        private bool CheckoutPrompt { get; set; }
+        public bool CheckoutPrompt { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Source control: Enable file check-out")]
-        private bool Checkout { get; set; }
+        public bool Checkout { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Linguist: Default lrelease options")]
-        private string DefaultLReleaseOptions { get; set; }
+        public string DefaultLReleaseOptions { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Linguist: Default lupdate options")]
-        private string DefaultLUpdateOptions { get; set; }
+        public string DefaultLUpdateOptions { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Linguist: Run lupdate during build")]
-        private bool EnableLUpdateOnBuild { get; set; }
+        public bool EnableLUpdateOnBuild { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Meta-Object Compiler: Default moc generated files directory")]
-        private string DefaultMocDir { get; set; }
+        public string DefaultMocDir { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Meta-Object Compiler: Default additional moc options ")]
-        private string AdditionalMocOptions { get; set; }
+        public string AdditionalMocOptions { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Meta-Object Compiler: Enable automatic moc")]
-        private bool AutoMoc { get; set; }
+        public bool AutoMoc { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Resource Compiler: Default rcc generated files directory")]
-        private string DefaultRccDir { get; set; }
+        public string DefaultRccDir { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("User Interface Compiler: Default uic generated files directory")]
-        private string DefaultUicDir { get; set; }
+        public string DefaultUicDir { get; set; }
 
         [Category(@"Qt VS Project Format v2 (Qt tools integrated via custom-build steps)")]
         [DisplayName("Build: Run pre-build setup")]
