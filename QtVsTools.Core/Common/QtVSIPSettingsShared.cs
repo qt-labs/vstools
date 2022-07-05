@@ -126,10 +126,12 @@ namespace QtVsTools.Common
             return GetDirectory(type);
         }
 
+        private const string registryPath = "SOFTWARE\\" + Resources.registryPackagePath;
+
         public static string GetDirectory(string type)
         {
             try {
-                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+                var key = Registry.CurrentUser.OpenSubKey(registryPath);
                 if (key != null) {
                     var path = (string)key.GetValue(type, null);
                     if (path != null)
@@ -157,7 +159,7 @@ namespace QtVsTools.Common
         public static string GetOption(string type)
         {
             try {
-                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+                var key = Registry.CurrentUser.OpenSubKey(registryPath);
                 if (key != null) {
                     var opt = (string)key.GetValue(type, null);
                     if (opt != null)
@@ -182,7 +184,7 @@ namespace QtVsTools.Common
 
         public static bool GetBoolValue(string key, bool defaultValue)
         {
-            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.OpenSubKey(registryPath);
             if (regKey == null)
                 return defaultValue;
             return ((int)regKey.GetValue(key, defaultValue ? 1 : 0)) > 0;
@@ -190,7 +192,7 @@ namespace QtVsTools.Common
 
         public static bool ValueExists(string key)
         {
-            var regKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + Resources.registryPackagePath);
+            var regKey = Registry.CurrentUser.OpenSubKey(registryPath);
             if (regKey != null) {
                 foreach (var s in regKey.GetValueNames()) {
                     if (s == key)
