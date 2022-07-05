@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
@@ -37,9 +37,12 @@ namespace QtVsTools.Common
 {
     public static class QtVSIPSettingsShared
     {
-        private static readonly Hashtable mocDirCache = new Hashtable();
-        private static readonly Hashtable uicDirCache = new Hashtable();
-        private static readonly Hashtable rccDirCache = new Hashtable();
+        private static readonly Dictionary<string, string> mocDirCache
+            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> uicDirCache
+            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> rccDirCache
+            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public static string GetDirectory(EnvDTE.Project project, string type)
         {
@@ -56,12 +59,12 @@ namespace QtVsTools.Common
                     return HelperFunctions.NormalizeRelativeFilePath((string)project.Globals[type]);
 
                 try {
-                    if (type == Resources.mocDirKeyword && mocDirCache.Contains(project.FullName))
-                        return (string)mocDirCache[project.FullName];
-                    if (type == Resources.uicDirKeyword && uicDirCache.Contains(project.FullName))
-                        return (string)uicDirCache[project.FullName];
-                    if (type == Resources.rccDirKeyword && rccDirCache.Contains(project.FullName))
-                        return (string)rccDirCache[project.FullName];
+                    if (type == Resources.mocDirKeyword && mocDirCache.ContainsKey(project.FullName))
+                        return mocDirCache[project.FullName];
+                    if (type == Resources.uicDirKeyword && uicDirCache.ContainsKey(project.FullName))
+                        return uicDirCache[project.FullName];
+                    if (type == Resources.rccDirKeyword && rccDirCache.ContainsKey(project.FullName))
+                        return rccDirCache[project.FullName];
 
                     QtCustomBuildTool tool = null;
                     string configName = null;
@@ -236,31 +239,21 @@ namespace QtVsTools.Common
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            try {
-                var mocEnumerator = mocDirCache.GetEnumerator();
-                while (mocEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)mocEnumerator.Key)) {
-                        mocDirCache.Remove(mocEnumerator.Key);
-                        mocEnumerator = mocDirCache.GetEnumerator();
-                    }
-                }
+            var projects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var p in HelperFunctions.ProjectsInSolution(project.DTE))
+                projects.Add(p.FullName);
 
-                var uicEnumerator = uicDirCache.GetEnumerator();
-                while (uicEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)uicEnumerator.Key)) {
-                        uicDirCache.Remove(uicEnumerator.Key);
-                        uicEnumerator = uicDirCache.GetEnumerator();
-                    }
-                }
+            mocDirCache.RemoveValues(projects);
+            uicDirCache.RemoveValues(projects);
+            rccDirCache.RemoveValues(projects);
+        }
 
-                var rccEnumerator = rccDirCache.GetEnumerator();
-                while (rccEnumerator.MoveNext()) {
-                    if (!HelperFunctions.IsProjectInSolution(project.DTE, (string)rccEnumerator.Key)) {
-                        rccDirCache.Remove(rccEnumerator.Key);
-                        rccEnumerator = rccDirCache.GetEnumerator();
-                    }
-                }
-            } catch { }
+        static void RemoveValues(this Dictionary<string, string> cache, HashSet<string> projects)
+        {
+            foreach (var key in cache.Keys) {
+                if (projects.Contains(key))
+                    cache.Remove(key);
+            }
         }
     }
 }
