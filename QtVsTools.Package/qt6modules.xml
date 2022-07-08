@@ -308,14 +308,6 @@
     <IncludePath>$(QTDIR)\include\QtSvg</IncludePath>
     <Defines>QT_SVG_LIB</Defines>
   </Module>
-  <Module Id="33">
-    <Name>Qt UI Tools</Name>
-    <Selectable>true</Selectable>
-    <LibraryPrefix>QtUiTools</LibraryPrefix>
-    <proVarQT>uitools</proVarQT>
-    <IncludePath>$(QTDIR)\include\QtUiTools</IncludePath>
-    <Defines>QT_UITOOLS_LIB</Defines>
-  </Module>
   <Module Id="34">
     <Name>Qt WebChannel</Name>
     <Selectable>true</Selectable>
@@ -483,4 +475,36 @@
     <AdditionalLibraries>Qt6WebEngineQuick.lib</AdditionalLibraries>
     <AdditionalLibrariesDebug>Qt6WebEngineQuickd.lib</AdditionalLibrariesDebug>
   </Module>
+
+  <!-- Designer -->
+  <Module Id="52">
+    <Name>Designer</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtDesigner</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>designer</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtDesigner</IncludePath>
+    <Defines>QT_DESIGNER_LIB</Defines>
+    <Defines>QDESIGNER_EXPORT_WIDGETS</Defines>
+  </Module>
+  <Module Id="53">
+    <Name>Qt UI Tools</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtUiTools</LibraryPrefix>
+    <HasDLL>true</HasDLL>
+    <proVarQT>uitools</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtUiTools</IncludePath>
+    <Defines>QT_UITOOLS_LIB</Defines>
+  </Module>
+  <Module Id="54">
+    <Name>Qt UI Plugin</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtUiPlugin</LibraryPrefix>
+    <HasDLL>false</HasDLL>
+    <proVarQT>uiplugin</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtUiPlugin</IncludePath>
+    <Defines>QT_UIPLUGIN_LIB</Defines>
+  </Module>
+  <!-- Designer -->
+
 </QtVsTools>
