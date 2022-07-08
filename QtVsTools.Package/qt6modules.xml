@@ -7,7 +7,6 @@
     <Name>Qt Core</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCore</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>core</proVarQT>
     <IncludePath>$(QTDIR)\include\QtCore</IncludePath>
     <Defines>QT_CORE_LIB</Defines>
@@ -17,7 +16,6 @@
     <Name>Qt D-Bus</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDBus</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>dbus</proVarQT>
     <IncludePath>$(QTDIR)\include\QtDBus</IncludePath>
     <Defines>QT_DBUS_LIB</Defines>
@@ -27,7 +25,6 @@
     <Name>Qt GUI</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtGui</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>gui</proVarQT>
     <IncludePath>$(QTDIR)\include\QtGui</IncludePath>
     <Defines>QT_GUI_LIB</Defines>
@@ -37,7 +34,6 @@
     <Name>Qt Network</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetwork</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>network</proVarQT>
     <IncludePath>$(QTDIR)\include\QtNetwork</IncludePath>
     <Defines>QT_NETWORK_LIB</Defines>
@@ -47,7 +43,6 @@
     <Name>Qt QML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQml</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>qml</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQml</IncludePath>
     <Defines>QT_QML_LIB</Defines>
@@ -57,7 +52,6 @@
     <Name>Qt Quick</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuick</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>quick</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuick</IncludePath>
     <Defines>QT_QUICK_LIB</Defines>
@@ -67,7 +61,6 @@
     <Name>Qt Quick Controls</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickControls2</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>quickcontrols2</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuickControls2</IncludePath>
     <Defines>QT_QUICKCONTROLS2_LIB</Defines>
@@ -77,7 +70,6 @@
     <Name>Qt Quick Dialogs</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickDialogs2</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>quickdialogs2</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuickDialogs2</IncludePath>
     <Defines>QT_QUICKDIALOGS2_LIB</Defines>
@@ -87,7 +79,6 @@
     <Name>Qt Quick Layouts</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickLayouts</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>quicklayouts</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuickLayouts</IncludePath>
     <Defines>QT_QUICKLAYOUTS_LIB</Defines>
@@ -97,7 +88,6 @@
     <Name>Qt Quick Test</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickTest</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>qmltest</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuickTest</IncludePath>
     <Defines>QT_QMLTEST_LIB</Defines>
@@ -107,7 +97,6 @@
     <Name>Qt Test</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTest</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>testlib</proVarQT>
     <IncludePath>$(QTDIR)\include\QtTest</IncludePath>
     <Defines>QT_TESTLIB_LIB</Defines>
@@ -117,7 +106,6 @@
     <Name>Qt Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWidgets</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>widgets</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWidgets</IncludePath>
     <Defines>QT_WIDGETS_LIB</Defines>
@@ -130,7 +118,6 @@
     <Name>Active Qt (Server)</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxServer</LibraryPrefix>
-    <HasDLL>false</HasDLL>
     <proVarQT>axserver</proVarQT>
     <IncludePath>$(QTDIR)\include\ActiveQt</IncludePath>
     <Defines>QAXSERVER</Defines>
@@ -142,7 +129,6 @@
     <Name>Active Qt (Container)</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxContainer</LibraryPrefix>
-    <HasDLL>false</HasDLL>
     <proVarQT>axcontainer</proVarQT>
     <IncludePath>$(QTDIR)\include\ActiveQt</IncludePath>
     <Defines>QT_AXCONTAINER_LIB</Defines>
@@ -153,7 +139,6 @@
     <Name>Qt Bluetooth</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtBluetooth</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>bluetooth</proVarQT>
     <IncludePath>$(QTDIR)\include\QtBluetooth</IncludePath>
     <Defines>QT_BLUETOOTH_LIB</Defines>
@@ -162,7 +147,6 @@
     <Name>Qt 3D</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DCore</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>3dcore 3danimation 3dextras 3dinput 3dlogic 3drender</proVarQT>
     <IncludePath>$(QTDIR)\include\Qt3DCore</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DAnimation</IncludePath>
@@ -193,7 +177,6 @@
     <Name>Qt 5 Core Compatibility APIs</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCore5Compat</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>core5compat</proVarQT>
     <IncludePath>$(QTDIR)\include\QtCore5Compat</IncludePath>
     <Defines>QT_CORE5COMPAT_LIB</Defines>
@@ -214,7 +197,6 @@
     <Name>Qt Concurrent</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtConcurrent</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>concurrent</proVarQT>
     <IncludePath>$(QTDIR)\include\QtConcurrent</IncludePath>
     <Defines>QT_CONCURRENT_LIB</Defines>
@@ -223,7 +205,6 @@
     <Name>Qt Help</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtHelp</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>help</proVarQT>
     <IncludePath>$(QTDIR)\include\QtHelp</IncludePath>
     <Defines>QT_HELP_LIB</Defines>
@@ -235,7 +216,6 @@
     <Name>Qt OpenGL</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtOpenGL</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>opengl</proVarQT>
     <IncludePath>$(QTDIR)\include\QtOpenGL</IncludePath>
     <Defines>QT_OPENGL_LIB</Defines>
@@ -244,7 +224,6 @@
     <Name>Qt Multimedia</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimedia</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>multimedia</proVarQT>
     <IncludePath>$(QTDIR)\include\QtMultimedia</IncludePath>
     <Defines>QT_MULTIMEDIA_LIB</Defines>
@@ -253,7 +232,6 @@
     <Name>Qt Print Support</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>printsupport</proVarQT>
     <IncludePath>$(QTDIR)\include\QtPrintSupport</IncludePath>
     <Defines>QT_PRINTSUPPORT_LIB</Defines>
@@ -262,7 +240,6 @@
     <Name>Qt Quick Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickWidgets</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>quickwidgets</proVarQT>
     <IncludePath>$(QTDIR)\include\QtQuickWidgets</IncludePath>
     <Defines>QT_QUICKWIDGETS_LIB</Defines>
@@ -271,7 +248,6 @@
     <Name>Qt Remote Objects</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtRemoteObjects</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>remoteobjects</proVarQT>
     <IncludePath>$(QTDIR)\include\QtRemoteObjects</IncludePath>
     <Defines>QT_REMOTEOBJECTS_LIB</Defines>
@@ -280,7 +256,6 @@
     <Name>Qt SCXML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtScxml</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>scxml</proVarQT>
     <IncludePath>$(QTDIR)\include\QtScxml</IncludePath>
     <Defines>QT_SCXML_LIB</Defines>
@@ -289,7 +264,6 @@
     <Name>Qt Sensors</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSensors</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>sensors</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSensors</IncludePath>
     <Defines>QT_SENSORS_LIB</Defines>
@@ -298,7 +272,6 @@
     <Name>Qt Serial Bus</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialBus</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>serialbus</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSerialBus</IncludePath>
     <Defines>QT_SERIALBUS_LIB</Defines>
@@ -307,7 +280,6 @@
     <Name>Qt Serial Port</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialPort</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>serialport</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSerialPort</IncludePath>
     <Defines>QT_SERIALPORT_LIB</Defines>
@@ -316,7 +288,6 @@
     <Name>Qt SQL</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSql</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>sql</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSql</IncludePath>
     <Defines>QT_SQL_LIB</Defines>
@@ -325,7 +296,6 @@
     <Name>Qt State Machine</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtStateMachine</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>statemachine</proVarQT>
     <IncludePath>$(QTDIR)\include\QtStateMachine</IncludePath>
     <Defines>QT_STATEMACHINE_LIB</Defines>
@@ -334,7 +304,6 @@
     <Name>Qt SVG</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSvg</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>svg</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSvg</IncludePath>
     <Defines>QT_SVG_LIB</Defines>
@@ -343,7 +312,6 @@
     <Name>Qt UI Tools</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtUiTools</LibraryPrefix>
-    <HasDLL>false</HasDLL>
     <proVarQT>uitools</proVarQT>
     <IncludePath>$(QTDIR)\include\QtUiTools</IncludePath>
     <Defines>QT_UITOOLS_LIB</Defines>
@@ -352,7 +320,6 @@
     <Name>Qt WebChannel</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebChannel</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>webchannel</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebChannel</IncludePath>
     <Defines>QT_WEBCHANNEL_LIB</Defines>
@@ -361,7 +328,6 @@
     <Name>Qt WebEngine</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngine</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>webenginecore</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
     <Defines>QT_WEBENGINECORE_LIB</Defines>
@@ -374,7 +340,6 @@
     <Name>Qt WebSockets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebSockets</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>websockets</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebSockets</IncludePath>
     <Defines>QT_WEBSOCKETS_LIB</Defines>
@@ -389,7 +354,6 @@
     <Name>Qt XML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXml</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>xml</proVarQT>
     <IncludePath>$(QTDIR)\include\QtXml</IncludePath>
     <Defines>QT_XML_LIB</Defines>
@@ -398,7 +362,6 @@
     <Name>Qt Positioning</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPositioning</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>positioning</proVarQT>
     <IncludePath>$(QTDIR)\include\QtPositioning</IncludePath>
     <Defines>QT_POSITIONING_LIB</Defines>
@@ -407,7 +370,6 @@
     <Name>Qt NFC</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNfc</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>nfc</proVarQT>
     <IncludePath>$(QTDIR)\include\QtNfc</IncludePath>
     <Defines>QT_NFC_LIB</Defines>
@@ -416,7 +378,6 @@
     <Name>Qt Charts</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCharts</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>charts</proVarQT>
     <IncludePath>$(QTDIR)\include\QtCharts</IncludePath>
     <Defines>QT_CHARTS_LIB</Defines>
@@ -425,7 +386,6 @@
     <Name>Qt Data Visualization</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDataVisualization</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>datavisualization</proVarQT>
     <IncludePath>$(QTDIR)\include\QtDataVisualization</IncludePath>
     <Defines>QT_DATAVISUALIZATION_LIB</Defines>
@@ -437,7 +397,6 @@
     <Name>Qt Network Authorization</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetworkAuth</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>networkauth</proVarQT>
     <IncludePath>$(QTDIR)\include\QtNetworkAuth</IncludePath>
     <Defines>QT_NETWORKAUTH_LIB</Defines>
@@ -452,7 +411,6 @@
     <Name>Qt Quick 3D</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DQuick</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>3dquick</proVarQT>
     <IncludePath>$(QTDIR)\include\Qt3DQuick</IncludePath>
     <IncludePath>$(QTDIR)\include\Qt3DQuickAnimation</IncludePath>
@@ -501,7 +459,6 @@
     <Name>Qt WebEngine Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngineWidgets</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>webenginewidgets</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
     <IncludePath>$(QTDIR)\include\QtWebEngineWidgets</IncludePath>
@@ -516,7 +473,6 @@
     <Name>Qt WebEngine Quick</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngineQuick</LibraryPrefix>
-    <HasDLL>true</HasDLL>
     <proVarQT>webenginequick</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebEngineCore</IncludePath>
     <IncludePath>$(QTDIR)\include\QtWebEngineQuick</IncludePath>

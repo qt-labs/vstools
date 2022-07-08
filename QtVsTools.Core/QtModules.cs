@@ -110,7 +110,6 @@ namespace QtVsTools.Core
                 module.Name = (string)xModule.Element("Name");
                 module.Selectable = ((string)xModule.Element("Selectable") == "true");
                 module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
-                module.HasDLL = ((string)xModule.Element("HasDLL") == "true");
                 module.proVarQT = (string)xModule.Element("proVarQT");
                 module.proVarCONFIG = (string)xModule.Element("proVarCONFIG");
                 module.IncludePath = xModule.Elements("IncludePath")

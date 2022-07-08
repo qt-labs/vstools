@@ -37,7 +37,6 @@ namespace QtVsTools.Core
         public bool Selectable;
         public List<string> Defines = new List<string>();
         public string LibraryPrefix = string.Empty;
-        public bool HasDLL = true;
         public List<string> AdditionalLibraries = new List<string>();
         public List<string> AdditionalLibrariesDebug = new List<string>();
         public List<string> IncludePath = new List<string>();
