@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.VCProjectEngine;
 using EnvDTE;
 
 namespace QtVsTools.Core
@@ -123,9 +122,11 @@ namespace QtVsTools.Core
             try {
                 if (CheckQtVersion(versionInfo)) {
                     // no need to add the project again if it's already there...
-                    if (!HelperFunctions.IsProjectInSolution(dteObject, VCInfo.FullName)) {
+                    var fullName = VCInfo.FullName;
+                    var pro = HelperFunctions.ProjectFromSolution(dteObject, fullName);
+                    if (pro == null) {
                         try {
-                            dteObject.Solution.AddFromFile(VCInfo.FullName, false);
+                            pro = dteObject.Solution.AddFromFile(fullName, false);
                         } catch (Exception /*exception*/) {
                             Messages.Print("--- (Import): Generated project could not be loaded.");
                             Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
@@ -136,13 +137,6 @@ namespace QtVsTools.Core
                         Messages.Print("Project already in Solution");
                     }
 
-                    Project pro = null;
-                    foreach (var p in HelperFunctions.ProjectsInSolution(dteObject)) {
-                        if (p.FullName.ToLower() == VCInfo.FullName.ToLower()) {
-                            pro = p;
-                            break;
-                        }
-                    }
                     if (pro != null) {
                         var qtPro = QtProject.Create(pro);
                         qtPro.SetQtEnvironment();

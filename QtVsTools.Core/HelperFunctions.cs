@@ -179,16 +179,16 @@ namespace QtVsTools.Core
             }
         }
 
-        public static bool IsProjectInSolution(DTE dteObject, string fullName)
+        public static Project ProjectFromSolution(DTE dteObject, string fullName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var fi = new FileInfo(fullName);
+            fullName = new FileInfo(fullName).FullName;
             foreach (var p in ProjectsInSolution(dteObject)) {
-                if (p.FullName.ToLower() == fi.FullName.ToLower())
-                    return true;
+                if (p.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+                    return p;
             }
-            return false;
+            return null;
         }
 
         /// <summary>
