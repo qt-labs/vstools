@@ -1074,13 +1074,11 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProj = QtProject.Create(vcpro);
             var fi = new FileInfo(fileName);
-
             foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
                 if (vcfile.FullPath.ToLower() == fi.FullName.ToLower()) {
                     vcpro.RemoveFile(vcfile);
-                    qtProj.MoveFileToDeletedFolder(vcfile);
+                    QtProject.Create(vcpro)?.MoveFileToDeletedFolder(vcfile);
                 }
             }
         }
@@ -1111,17 +1109,7 @@ namespace QtVsTools.Core
         public static Project GetActiveDocumentProject(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (dteObject == null)
-                return null;
-            var doc = dteObject.ActiveDocument;
-            if (doc == null)
-                return null;
-
-            if (doc.ProjectItem == null)
-                return null;
-
-            return doc.ProjectItem.ContainingProject;
+            return dteObject?.ActiveDocument?.ProjectItem?.ContainingProject;
         }
 
         public static Project GetSingleProjectInSolution(DTE dteObject)
@@ -1129,8 +1117,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var projectList = ProjectsInSolution(dteObject);
-            if (dteObject == null || dteObject.Solution == null ||
-                    projectList.Count != 1)
+            if (projectList.Count != 1)
                 return null; // no way to know which one to select
 
             return projectList[0];
@@ -1146,13 +1133,11 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // can happen sometimes shortly after starting VS
-            if (dteObject == null || dteObject.Solution == null
-                || ProjectsInSolution(dteObject).Count == 0)
+            if (ProjectsInSolution(dteObject).Count == 0)
                 return null;
 
-            Project pro;
-
-            if ((pro = GetSelectedProject(dteObject)) == null) {
+            var pro = GetSelectedProject(dteObject);
+            if (pro == null) {
                 if ((pro = GetSingleProjectInSolution(dteObject)) == null)
                     pro = GetActiveDocumentProject(dteObject);
             }
@@ -1235,6 +1220,9 @@ namespace QtVsTools.Core
         public static List<Project> ProjectsInSolution(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (dteObject == null)
+                return new List<Project>();
 
             var projects = new List<Project>();
             var solution = dteObject.Solution;
