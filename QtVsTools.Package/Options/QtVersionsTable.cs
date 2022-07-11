@@ -270,7 +270,7 @@ namespace QtVsTools.Options
                             bool qmakeExists = possibleQMakePaths
                                 .Where(p => File.Exists(p)
                                     && Path.GetFileName(p).Equals("qmake.exe",
-                                        StringComparison.CurrentCultureIgnoreCase))
+                                        StringComparison.OrdinalIgnoreCase))
                                 .Any();
                             if (!qmakeExists) {
                                 version.FieldPath.ValidationError = "Cannot find qmake.exe";

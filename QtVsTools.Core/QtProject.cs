@@ -1772,14 +1772,11 @@ namespace QtVsTools.Core
         public VCFile GetFileFromProject(string fileName)
         {
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
-
-            var nf = fileName;
             if (!HelperFunctions.IsAbsoluteFilePath(fileName))
-                nf = HelperFunctions.NormalizeFilePath(vcPro.ProjectDirectory + "\\" + fileName);
-            nf = nf.ToLower();
+                fileName = HelperFunctions.NormalizeFilePath(vcPro.ProjectDirectory + "\\" + fileName);
 
             foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                if (f.FullPath.ToLower() == nf)
+                if (f.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                     return f;
             }
             return null;
@@ -1795,7 +1792,7 @@ namespace QtVsTools.Core
         {
             var fi = new FileInfo(HelperFunctions.NormalizeRelativeFilePath(fileName));
             foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                if (string.Equals(f.Name, fi.Name, StringComparison.OrdinalIgnoreCase))
+                if (f.Name.Equals(fi.Name, StringComparison.OrdinalIgnoreCase))
                     yield return f;
             }
         }

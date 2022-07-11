@@ -106,13 +106,12 @@ namespace QtVsTools.Core
             if (qtDir == null)
                 return null;
 
-            qtDir = qtDir.ToLower();
             var versions = GetVersions();
             foreach (var version in versions) {
                 var installPath = GetInstallPath(version);
                 if (installPath == null)
                     continue;
-                if (installPath.ToLower() == qtDir)
+                if (installPath.Equals(qtDir, StringComparison.OrdinalIgnoreCase))
                     return version;
             }
 

@@ -133,7 +133,7 @@ namespace QtVsTools.Legacy
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldMocDir.ToLower())
+                if (tmp.Equals(oldMocDir, StringComparison.OrdinalIgnoreCase))
                     return;
 
                 string badMacros = IncompatibleMacros(tmp);
@@ -166,7 +166,7 @@ namespace QtVsTools.Legacy
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldUicDir.ToLower())
+                if (tmp.Equals(oldUicDir, StringComparison.OrdinalIgnoreCase))
                     return;
 
                 string badMacros = IncompatibleMacros(tmp);
@@ -186,7 +186,7 @@ namespace QtVsTools.Legacy
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
-                if (tmp.ToLower() == oldRccDir.ToLower())
+                if (tmp.Equals(oldRccDir, StringComparison.OrdinalIgnoreCase))
                     return;
 
                 string badMacros = IncompatibleMacros(tmp);

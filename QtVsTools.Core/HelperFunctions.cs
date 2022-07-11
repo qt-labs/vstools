@@ -1074,9 +1074,9 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var fi = new FileInfo(fileName);
+            fileName = new FileInfo(fileName).FullName;
             foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
-                if (vcfile.FullPath.ToLower() == fi.FullName.ToLower()) {
+                if (vcfile.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase)) {
                     vcpro.RemoveFile(vcfile);
                     QtProject.Create(vcpro)?.MoveFileToDeletedFolder(vcfile);
                 }

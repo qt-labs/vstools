@@ -621,7 +621,7 @@ namespace QtVsTools
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
         {
             foreach (VCFile f in (IVCCollection)project.Files) {
-                if (f.Name.ToLower() == absFileName.ToLower())
+                if (f.Name.Equals(absFileName, StringComparison.OrdinalIgnoreCase))
                     return f;
             }
             return null;
