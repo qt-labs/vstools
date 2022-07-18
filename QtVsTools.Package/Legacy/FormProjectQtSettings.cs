@@ -42,6 +42,7 @@ namespace QtVsTools.Legacy
         private Project project;
         private QtProject qtProject;
         private ProjectQtSettings qtSettings;
+        private string majorVersion;
 
         private struct ModuleMapItem
         {
@@ -67,6 +68,7 @@ namespace QtVsTools.Legacy
             tabControl1.TabPages[0].Text = "Properties";
             tabControl1.TabPages[1].Text = "Qt Modules";
 
+            majorVersion = qtMajor.ToString();
             var modules = QtModules.Instance.GetAvailableModules(qtMajor)
                 .Where(x => x.Selectable)
                 .OrderBy(x => x.Name);
@@ -148,7 +150,7 @@ namespace QtVsTools.Legacy
                 if (info != null && versionInfo != null) {
                     var libraryPrefix = info.LibraryPrefix;
                     if (libraryPrefix.StartsWith("Qt", StringComparison.Ordinal))
-                        libraryPrefix = "Qt5" + libraryPrefix.Substring(2);
+                        libraryPrefix = "Qt" + majorVersion + libraryPrefix.Substring(2);
                     var full_path = Path.Combine(install_path, "lib",
                         string.Format("{0}{1}.lib", libraryPrefix, versionInfo.LibInfix()));
                     var fi = new System.IO.FileInfo(full_path);

@@ -42,6 +42,7 @@ namespace QtVsTools.Core
         public List<string> IncludePath = new List<string>();
         public string proVarQT;
         public string proVarCONFIG;
+        private string majorVersion;
 
         public string LibRelease
         {
@@ -49,7 +50,7 @@ namespace QtVsTools.Core
             {
                 return
                     LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
-                        ? "Qt5" + LibraryPrefix.Substring(2) + ".lib"
+                        ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + ".lib"
                         : LibraryPrefix + ".lib";
             }
         }
@@ -60,14 +61,15 @@ namespace QtVsTools.Core
             {
                 return
                     LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
-                        ? "Qt5" + LibraryPrefix.Substring(2) + "d.lib"
+                        ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + "d.lib"
                         : LibraryPrefix + "d.lib";
             }
         }
 
-        public QtModule(int id)
+        public QtModule(int id, string major)
         {
             Id = id;
+            majorVersion = major;
         }
 
         public int Id { get; } = -1;
@@ -88,7 +90,7 @@ namespace QtVsTools.Core
             var libs = new List<string>();
             var libName = LibraryPrefix;
             if (libName.StartsWith("Qt", StringComparison.Ordinal))
-                libName = "Qt5" + libName.Substring(2);
+                libName = "Qt" + majorVersion + libName.Substring(2);
             libName += libInfix;
             if (isDebugCfg)
                 libName += "d";

@@ -84,11 +84,11 @@ namespace QtVsTools.Core
             var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             var pkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath));
 
-            FillModules(Path.Combine(pkgInstallPath, "qtmodules.xml"), ref qt5modules);
-            FillModules(Path.Combine(pkgInstallPath, "qt6modules.xml"), ref qt6modules);
+            FillModules(Path.Combine(pkgInstallPath, "qtmodules.xml"), "5", ref qt5modules);
+            FillModules(Path.Combine(pkgInstallPath, "qt6modules.xml"), "6", ref qt6modules);
         }
 
-        private void FillModules(string modulesFile, ref Dictionary<int, QtModule> dict)
+        private void FillModules(string modulesFile, string major, ref Dictionary<int, QtModule> dict)
         {
             if (!File.Exists(modulesFile))
                 return;
@@ -106,7 +106,7 @@ namespace QtVsTools.Core
 
             foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
                 int id = (int)xModule.Attribute("Id");
-                QtModule module = new QtModule(id);
+                QtModule module = new QtModule(id, major);
                 module.Name = (string)xModule.Element("Name");
                 module.Selectable = ((string)xModule.Element("Selectable") == "true");
                 module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
