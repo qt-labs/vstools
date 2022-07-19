@@ -584,6 +584,11 @@ namespace QtVsTools.Core
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "Link");
 
+            var resourceCompiler = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Elements(ns + "ResourceCompile");
+
             // Qt module names, to copy to QtModules property
             var moduleNames = new HashSet<string>();
 
@@ -599,7 +604,7 @@ namespace QtVsTools.Core
             // Go through all known Qt modules and check which ones are currently being used
             foreach (var module in QtModules.Instance.GetAvailableModules(defaultVersion.qtMajor)) {
 
-                if (IsModuleUsed(module, compiler, linker)) {
+                if (IsModuleUsed(module, compiler, linker, resourceCompiler)) {
 
                     // Qt module names, to copy to QtModules property
                     if (!string.IsNullOrEmpty(module.proVarQT))
@@ -654,6 +659,12 @@ namespace QtVsTools.Core
                     .Select(x => Unquote(x))
                     // Exclude paths rooted on $(QTDIR)
                     .Where(x => !x.StartsWith("$(QTDIR)", IGNORE_CASE))));
+            }
+
+            // Remove Qt module macros from resource compiler properties
+            foreach (var defines in resourceCompiler.Elements(ns + "PreprocessorDefinitions")) {
+                defines.SetValue(string.Join(";", defines.Value.Split(';')
+                    .Where(x => !moduleDefines.Contains(x))));
             }
 
             // Add Qt module names to QtModules project property
@@ -762,7 +773,8 @@ namespace QtVsTools.Core
         bool IsModuleUsed(
             QtModule module,
             IEnumerable<XElement> compiler,
-            IEnumerable<XElement> linker)
+            IEnumerable<XElement> linker,
+            IEnumerable<XElement> resourceCompiler)
         {
             // Module .lib is present in linker additional dependencies
             if (linker.Elements(ns + "AdditionalDependencies")
@@ -772,8 +784,15 @@ namespace QtVsTools.Core
                 return true;
             }
 
-            // Module macro is present in pre-processor definitions
+            // Module macro is present in the compiler pre-processor definitions
             if (compiler.Elements(ns + "PreprocessorDefinitions")
+                .SelectMany(x => x.Value.Split(';'))
+                .Any(x => module.Defines.Contains(x))) {
+                return true;
+            }
+
+            // Module macro is present in resource compiler pre-processor definitions
+            if (resourceCompiler.Elements(ns + "PreprocessorDefinitions")
                 .SelectMany(x => x.Value.Split(';'))
                 .Any(x => module.Defines.Contains(x))) {
                 return true;
