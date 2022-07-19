@@ -174,7 +174,10 @@ namespace QtVsTools
             var qtToolsPath = QtProject.GetPropertyValue(project, "QtToolsPath");
             if (string.IsNullOrEmpty(qtToolsPath)) {
                 var qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
-                qtToolsPath = Path.Combine(QtVersionManager.The().GetInstallPath(qtVersion), "bin");
+                var qtInstallPath = QtVersionManager.The().GetInstallPath(qtVersion);
+                if (string.IsNullOrEmpty(qtInstallPath))
+                    return false;
+                qtToolsPath = Path.Combine(qtInstallPath, "bin");
             }
             return File.Exists(Path.Combine(qtToolsPath, "lupdate.exe"))
                 && File.Exists(Path.Combine(qtToolsPath, "lrelease.exe"));
