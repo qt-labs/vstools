@@ -264,6 +264,8 @@
         >%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_)</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
         >$(Qt_STDCPP_)</LanguageStandard>
+      <RuntimeLibrary Condition="'$(Qt_RUNTIME_)' != ''"
+        >$(Qt_RUNTIME_)</RuntimeLibrary>
     </ClCompile>
 
     <!--// Linker (.obj files) -->

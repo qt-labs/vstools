@@ -92,6 +92,7 @@
       DEFINES=/Project/ItemDefinitionGroup/ClCompile/PreprocessorDefinitions;
       INCLUDEPATH=/Project/ItemDefinitionGroup/ClCompile/AdditionalIncludeDirectories;
       STDCPP=/Project/ItemDefinitionGroup/ClCompile/LanguageStandard;
+      RUNTIME=/Project/ItemDefinitionGroup/ClCompile/RuntimeLibrary;
       CL_OPTIONS=/Project/ItemDefinitionGroup/ClCompile/AdditionalOptions;
       LIBS=/Project/ItemDefinitionGroup/Link/AdditionalDependencies;
       LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions;

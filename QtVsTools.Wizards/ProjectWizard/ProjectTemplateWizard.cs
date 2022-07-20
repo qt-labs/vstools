@@ -513,13 +513,11 @@ namespace QtVsTools.Wizards.ProjectWizard
                     if (c.IsDebug) {
                         xml.AppendLine(@"
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>");
+      <Optimization>Disabled</Optimization>");
                     } else {
                         xml.AppendLine(@"
       <DebugInformationFormat>None</DebugInformationFormat>
-      <Optimization>MaxSpeed</Optimization>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>");
+      <Optimization>MaxSpeed</Optimization>");
                     }
                     if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
                         xml.AppendLine(@"
