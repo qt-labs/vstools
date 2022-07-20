@@ -81,11 +81,19 @@ namespace QtVsTools.Options
             public string Value { get; set; }
             public Control Control { get; set; }
             public DataGridCell Cell { get; set; }
-            public string ValidationError { get; set; }
+            private string error;
+            public string ValidationError {
+                set {
+                    UpdateUi = value != error;
+                    error = value;
+                }
+                get { return error; }
+            }
             public bool IsValid => string.IsNullOrEmpty(ValidationError);
             public ToolTip ToolTip
                 => IsValid ? null : new ToolTip() { Content = ValidationError };
             public int SelectionStart { get; set; }
+            public bool UpdateUi { get; private set; } = false;
         }
 
         public class Row
@@ -162,8 +170,6 @@ namespace QtVsTools.Options
             public bool RowVisible => State != State.Removed;
         }
 
-        private bool IsValid { get; set; }
-
         Field FocusedField { get; set; }
 
         List<Row> Rows => Lazy.Get(() => Rows, () => new List<Row>());
@@ -175,7 +181,6 @@ namespace QtVsTools.Options
             Rows.AddRange(versions);
             Rows.Add(new Row { LastRow = true });
             DataGrid.ItemsSource = Rows;
-            IsValid = true;
             FocusedField = null;
             Validate(true);
             Rows.ForEach(item => item.State = State.Existing);
@@ -195,9 +200,6 @@ namespace QtVsTools.Options
         {
             ////////////////////////
             // Validate cell values
-            string previousValidation;
-            bool wasValid = IsValid;
-            IsValid = true;
             foreach (var version in Versions) {
                 if (!version.State.HasFlag(State.Modified))
                     continue;
@@ -205,59 +207,44 @@ namespace QtVsTools.Options
                 //////////////////////
                 // Default validation
                 if (version.State.HasFlag((State)Column.IsDefault)) {
-                    previousValidation = version.FieldDefault.ValidationError;
                     version.FieldDefault.ValidationError = null;
-                    if (version.IsDefault && version.Host != BuildHost.Windows) {
+                    if (version.IsDefault && version.Host != BuildHost.Windows)
                         version.FieldDefault.ValidationError = "Default version: Host must be Windows";
-                        IsValid = false;
-                    }
-                    if (previousValidation != version.FieldDefault.ValidationError)
-                        mustRefresh = true;
+                    mustRefresh |= version.FieldDefault.UpdateUi;
                 }
 
                 ///////////////////
                 // Name validation
                 if (version.State.HasFlag((State)Column.VersionName)) {
-                    previousValidation = version.FieldVersionName.ValidationError;
                     version.FieldVersionName.ValidationError = null;
                     if (string.IsNullOrEmpty(version.VersionName)) {
                         version.FieldVersionName.ValidationError = "Name cannot be empty";
-                        IsValid = false;
                     } else if (Versions.Where(otherVersion => otherVersion != version
                         && otherVersion.VersionName == version.VersionName).Any()) {
                         version.FieldVersionName.ValidationError = "Duplicate version names";
-                        IsValid = false;
                     }
-                    if (previousValidation != version.FieldVersionName.ValidationError)
-                        mustRefresh = true;
+                    mustRefresh |= version.FieldVersionName.UpdateUi;
                 }
 
                 ///////////////////
                 // Host validation
                 if (version.State.HasFlag((State)Column.Host)) {
-                    previousValidation = version.FieldHost.ValidationError;
                     version.FieldHost.ValidationError = null;
-                    if (version.IsDefault && version.Host != BuildHost.Windows) {
+                    if (version.IsDefault && version.Host != BuildHost.Windows)
                         version.FieldHost.ValidationError = "Default version: Host must be Windows";
-                        IsValid = false;
-                    }
-                    if (previousValidation != version.FieldHost.ValidationError)
-                        mustRefresh = true;
+                    mustRefresh |= version.FieldHost.UpdateUi;
                 }
 
                 ///////////////////
                 // Path validation
                 if (version.State.HasFlag((State)Column.Path)) {
-                    previousValidation = version.FieldPath.ValidationError;
                     version.FieldPath.ValidationError = null;
                     if (string.IsNullOrEmpty(version.Path)) {
                         version.FieldPath.ValidationError = "Path cannot be empty";
-                        IsValid = false;
                     } else if (version.Host == BuildHost.Windows) {
                         string path = NormalizePath(version.Path);
                         if (path == null) {
                             version.FieldPath.ValidationError = "Invalid path format";
-                            IsValid = false;
                         } else {
                             var possibleQMakePaths = new[] {
                                 // Path points to qmake.exe
@@ -274,31 +261,24 @@ namespace QtVsTools.Options
                                 .Any();
                             if (!qmakeExists) {
                                 version.FieldPath.ValidationError = "Cannot find qmake.exe";
-                                IsValid = false;
                             }
                         }
                     }
-                    if (previousValidation != version.FieldPath.ValidationError)
-                        mustRefresh = true;
+                    mustRefresh |= version.FieldPath.UpdateUi;
                 }
 
                 ///////////////////////
                 // Compiler validation
                 if (version.State.HasFlag((State)Column.Compiler)) {
-                    previousValidation = version.FieldCompiler.ValidationError;
                     version.FieldCompiler.ValidationError = null;
-                    if (string.IsNullOrEmpty(version.Compiler)) {
+                    if (string.IsNullOrEmpty(version.Compiler))
                         version.FieldCompiler.ValidationError = "Compiler cannot be empty";
-                        IsValid = false;
-                    }
-                    if (previousValidation != version.FieldCompiler.ValidationError)
-                        mustRefresh = true;
+                    mustRefresh |= version.FieldCompiler.UpdateUi;
                 }
             }
 
             //////////////////////////////////////
             // Refresh versions table if required
-            mustRefresh |= (wasValid != IsValid);
             if (mustRefresh) {
                 // Reset bindings
                 foreach (var version in Versions) {

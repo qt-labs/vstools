@@ -138,6 +138,7 @@ namespace QtVsTools.Options
 
                     if (version.State.HasFlag((State)Column.VersionName)) {
                         try {
+                            VersionManager.SaveVersion(version.VersionName, version.Path);
                             if (!string.IsNullOrEmpty(version.InitialVersionName))
                                 VersionManager.RemoveVersion(version.InitialVersionName);
                         } catch (Exception exception) {
