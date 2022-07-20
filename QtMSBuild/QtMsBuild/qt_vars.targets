@@ -281,7 +281,32 @@
         $(QtVarsProFileInput)
         DEFINES -= UNICODE _UNICODE
       </QtVarsProFileInput>
+      <!--
+# Add dummy QML object if needed -->
+      <QtVarsProFileInput Condition="$(QtModules.Contains('quick'))">
+        $(QtVarsProFileInput)
+        RESOURCES += qml.qrc
+      </QtVarsProFileInput>
     </PropertyGroup>
+
+    <!--// Write dummy QML and QRC files -->
+    <WriteLinesToFile
+      Condition="$(QtModules.Contains('quick'))"
+      File="$(QtVarsWorkDir)\main.qml"
+      Lines="
+import QtQuick
+DummyQmlObject { }
+"/>
+    <WriteLinesToFile
+      Condition="$(QtModules.Contains('quick'))"
+      File="$(QtVarsWorkDir)\qml.qrc"
+      Lines="
+&lt;RCC&gt;
+    &lt;qresource prefix=&quot;/&quot;&gt;
+        &lt;file&gt;main.qml&lt;/file&gt;
+    &lt;/qresource&gt;
+&lt;/RCC&gt;
+"/>
 
     <!--// Write .pro file to temp path -->
     <WriteLinesToFile
