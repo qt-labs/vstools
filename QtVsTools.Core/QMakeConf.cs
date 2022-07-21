@@ -65,6 +65,17 @@ namespace QtVsTools.Core
 
                 qmakeConf = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec, "qmake.conf");
 
+                if (!File.Exists(qmakeConf)) {
+                    // Check if this is a shadow build of Qt.
+                    qtPrefix = qmakeQuery["QT_INSTALL_PREFIX/src"];
+                    if (string.IsNullOrEmpty(qtPrefix))
+                        throw new QtVSException("qmake error: no value for QT_INSTALL_PREFIX/src");
+                    qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA/src"];
+                    if (string.IsNullOrEmpty(qtArchData))
+                        throw new QtVSException("qmake error: no value for QT_INSTALL_ARCHDATA/src");
+
+                    qmakeConf = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec, "qmake.conf");
+                }
                 if (!File.Exists(qmakeConf))
                     throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
             }
