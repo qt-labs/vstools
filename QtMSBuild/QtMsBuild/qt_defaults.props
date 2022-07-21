@@ -107,6 +107,9 @@
     <!--// Qt build config -->
     <QtBuildConfig Condition="'$(Configuration)' == 'Debug'">debug</QtBuildConfig>
     <QtBuildConfig Condition="'$(Configuration)' != 'Debug'">release</QtBuildConfig>
+
+    <!--// Qt Plugin default-->
+    <QtPlugin>false</QtPlugin>
   </PropertyGroup>
 
   <!--

@@ -219,10 +219,12 @@ namespace QtVsTools.Core
                 }
             }
 
-            if (qtPro.IsDesignerPluginProject()) {
-                option.List.Add("designer");
+            var legacyDesigner = Legacy.QtProject.IsDesignerPluginProject(qtPro);
+            var plugin = legacyDesigner | Core.QtProject.IsQtPlugin(qtPro);
+            if (plugin)
                 option.List.Add("plugin");
-            }
+            if (legacyDesigner)
+                option.List.Add("designer");
 
             // add defines
             option = new ProFileOption("DEFINES");
@@ -329,12 +331,18 @@ namespace QtVsTools.Core
                 option.List.Add(project.Name + ".rc");
             }
 
-            if (qtPro.IsDesignerPluginProject()) {
+            if (plugin) {
                 option = new ProFileOption("target.path");
-                option.ShortComment = "Install the plugin in the designer plugins directory.";
+                if (legacyDesigner)
+                    option.ShortComment = "Installs the plugin in the designer plugins directory.";
+                else
+                    option.ShortComment = "Installs the plugin in the plugins directory.";
                 option.IncludeComment = true;
                 option.AssignSymbol = ProFileOption.AssignType.AT_Equals;
-                option.List.Add("$$[QT_INSTALL_PLUGINS]/designer");
+                if (legacyDesigner)
+                    option.List.Add("$$[QT_INSTALL_PLUGINS]/designer");
+                else
+                    option.List.Add("$$[QT_INSTALL_PLUGINS]");
                 content.Options.Add(option);
 
                 option = new ProFileOption("INSTALLS");

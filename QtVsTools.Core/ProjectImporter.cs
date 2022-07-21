@@ -32,6 +32,7 @@ using System.IO;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using EnvDTE;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
@@ -152,8 +153,16 @@ namespace QtVsTools.Core
                                 Messages.Print("Can't select the platform " + platformName + ".");
                         }
 
-                        if (HelperFunctions.IsDesignerPlugin(qtPro))
-                            qtPro.MarkAsDesignerPluginProject();
+                        // figure out if the imported project is a plugin project
+                        var tmp = qtPro.Project.ConfigurationManager.ActiveConfiguration
+                            .ConfigurationName;
+                        var vcConfig = (qtPro.VCProject.Configurations as IVCCollection).Item(tmp)
+                            as VCConfiguration;
+                        var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
+                        if (!string.IsNullOrEmpty(def)
+                            && def.IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1) {
+                            QtProject.MarkAsQtPlugin(qtPro);
+                        }
 
                         qtPro.SetQtEnvironment();
                         ApplyPostImportSteps(qtPro);

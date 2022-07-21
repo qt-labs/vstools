@@ -200,6 +200,7 @@
       <QMakeArgsList Condition="'$(QMakeOptionEarly)' == 'true'" Include="-early"/>
       <QMakeArgsList Include="CONFIG -= debug release debug_and_release"/>
       <QMakeArgsList Include="CONFIG += $(QtBuildConfig) warn_off"/>
+      <QMakeArgsList Condition="'$(QtPlugin)' == 'true'" Include="CONFIG += plugin"/>
       <QMakeArgsList Include="$(QMakeExtraArgs)"/>
     </ItemGroup>
     <ItemGroup>

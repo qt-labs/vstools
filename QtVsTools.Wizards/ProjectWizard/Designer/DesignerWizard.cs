@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell;
 using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -69,15 +68,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             WizardData, () => new WizardData
             {
                 DefaultModules = new List<string> {
-                    "QtCore", "QtGui", "QtWidgets", "QtXml"
+                    "QtCore", "QtGui", "QtWidgets", "QtDesigner"
                 }
             });
-
-        protected override IEnumerable<string> ExtraModules => Lazy.Get(() =>
-            ExtraModules, () => new[] { "designer" });
-
-        protected override IEnumerable<string> ExtraDefines => Lazy.Get(() =>
-            ExtraDefines, () => new[] { "QT_PLUGIN" });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>
             WizardWindow, () => new WizardWindow(title: "Qt Custom Designer Widget")
@@ -174,11 +167,11 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            project.Globals["IsDesignerPlugin"] = true.ToString();
-            if (!project.Globals.get_VariablePersists("IsDesignerPlugin"))
-                project.Globals.set_VariablePersists("IsDesignerPlugin", true);
+            var qtPro = Core.QtProject.Create(project);
+            if (qtPro != null) {
+                Core.QtProject.MarkAsQtPlugin(qtPro);
+                Core.Legacy.QtProject.MarkAsDesignerPluginProject(qtPro);
+            }
         }
     }
 }

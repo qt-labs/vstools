@@ -541,15 +541,6 @@ namespace QtVsTools.Core
             return foundInIncludes || foundInLibs;
         }
 
-        public void MarkAsDesignerPluginProject()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Project.Globals["IsDesignerPlugin"] = true.ToString();
-            if (!Project.Globals.get_VariablePersists("IsDesignerPlugin"))
-                Project.Globals.set_VariablePersists("IsDesignerPlugin", true);
-        }
-
         public void AddUic4BuildStepMsBuild(
             VCFileConfiguration config,
             string description,
@@ -2013,18 +2004,28 @@ namespace QtVsTools.Core
             }
         }
 
-        public bool IsDesignerPluginProject()
+        public static bool IsQtPlugin(Core.QtProject qtPro)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var b = false;
-            if (Project.Globals.get_VariablePersists("IsDesignerPlugin")) {
-                var s = (string)Project.Globals["IsDesignerPlugin"];
-                try {
-                    b = bool.Parse(s);
-                } catch { }
+            if (qtPro.FormatVersion < Resources.qtMinFormatVersion_Settings)
+                return false;
+
+            foreach (VCConfiguration config in qtPro.VCProject.Configurations as IVCCollection) {
+                if ((config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage)
+                        .GetEvaluatedPropertyValue("QtPlugin") == "true") {
+                    return true;
+                }
             }
-            return b;
+            return false;
+        }
+
+        public static void MarkAsQtPlugin(Core.QtProject qtPro)
+        {
+            foreach (VCConfiguration config in qtPro.VCProject.Configurations as IVCCollection) {
+                (config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage)
+                    .SetPropertyValue("QtPlugin", "true");
+            }
         }
 
         /// <summary>

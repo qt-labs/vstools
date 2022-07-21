@@ -87,7 +87,6 @@
     <LibraryPrefix>QtDesigner</LibraryPrefix>
     <proVarQT>designer</proVarQT>
     <IncludePath>$(QTDIR)\include\QtDesigner</IncludePath>
-    <Defines>QDESIGNER_EXPORT_WIDGETS</Defines>
     <Defines>QT_DESIGNER_LIB</Defines>
   </Module>
   <Module Id="15">
@@ -420,6 +419,7 @@
     <proVarQT>uiplugin</proVarQT>
     <IncludePath>$(QTDIR)\include\QtUiPlugin</IncludePath>
     <Defines>QT_UIPLUGIN_LIB</Defines>
+    <Defines>QDESIGNER_EXPORT_WIDGETS</Defines>
   </Module>
   <Module Id="111">
     <Name>WebEngine</Name>

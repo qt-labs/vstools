@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -522,34 +522,6 @@ namespace QtVsTools.Core
                 return false;
             return keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal)
                 || keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal);
-        }
-
-        public static bool IsDesignerPlugin(QtProject qtPro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try { // try to figure out if the project is a designer plug-in project
-                var tmp = qtPro.Project.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-                var vcConfig = (qtPro.VCProject.Configurations as IVCCollection).Item(tmp)
-                    as VCConfiguration;
-                if (vcConfig.ConfigurationType != ConfigurationTypes.typeDynamicLibrary)
-                    return false;
-
-                var hayStack = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
-                if (string.IsNullOrEmpty(hayStack))
-                    return false;
-
-                bool found = hayStack.IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1
-                    && hayStack.IndexOf("QDESIGNER_EXPORT_WIDGETS", StringComparison.Ordinal) > -1
-                    && hayStack.IndexOf("QtDesigner", StringComparison.Ordinal) > -1;
-
-                var linker = (vcConfig.Tools as IVCCollection).Item("VCLinkerTool") as VCLinkerTool;
-                hayStack = linker?.AdditionalDependencies;
-                if (!found || string.IsNullOrEmpty(hayStack))
-                    return false;
-                return hayStack.IndexOf("QtDesigner", StringComparison.Ordinal) > -1;
-            } catch { }
-            return false;
         }
 
         /// <summary>

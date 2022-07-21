@@ -87,6 +87,12 @@
       <ValueEditor EditorType="QtModulesEditor" DisplayName="&lt;Select Modules...&gt;" />
     </StringListProperty.ValueEditors>
   </StringListProperty>
+  <BoolProperty
+    Name="QtPlugin"
+    Category="QtSettings_01_General"
+    DisplayName="Qt Plugin"
+    Description="Select whether this project is used to generate a Qt plugin.">
+  </BoolProperty>
   <EnumProperty
     Name="QtBuildConfig"
     Category="QtSettings_01_General"

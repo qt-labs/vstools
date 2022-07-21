@@ -184,12 +184,12 @@ namespace QtVsTools.Core.Legacy
 
         public static bool GetQmlDebug(EnvDTE.Project project)
         {
-            return QtProject.Create(project).QmlDebug;
+            return Core.QtProject.Create(project).QmlDebug;
         }
 
         public static void SaveQmlDebug(EnvDTE.Project project, bool enabled)
         {
-            QtProject.Create(project).QmlDebug = enabled;
+            Core.QtProject.Create(project).QmlDebug = enabled;
         }
         #endregion
 
