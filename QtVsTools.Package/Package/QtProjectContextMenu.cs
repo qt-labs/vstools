@@ -77,8 +77,6 @@ namespace QtVsTools
             lReleaseOnProjectId = 0x0119,
             ProjectConvertToQtMsBuild = 0x0130,
             ProjectRefreshIntelliSense = 0x0131,
-            ConvertToQtProjectId = 0x0120,
-            ConvertToQmakeProjectId = 0x0121,
             QtProjectSettingsProjectId = 0x0122,
             ChangeProjectQtVersionProjectId = 0x0123
         }
@@ -126,16 +124,6 @@ namespace QtVsTools
             case CommandId.lReleaseOnProjectId:
                 Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
-            case CommandId.ConvertToQtProjectId:
-            case CommandId.ConvertToQmakeProjectId: {
-                    var caption = SR.GetString("ConvertTitle");
-                    var text = SR.GetString("ConvertConfirmation");
-                    if (MessageBox.Show(text, caption, MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                        HelperFunctions.ToggleProjectKind(HelperFunctions.GetSelectedProject(QtVsToolsPackage
-                            .Instance.Dte));
-                    }
-                }
-                break;
             case CommandId.QtProjectSettingsProjectId: {
                     var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                     int projectVersion = QtProject.GetFormatVersion(pro);
@@ -182,12 +170,6 @@ namespace QtVsTools
             }
 
             switch ((CommandId)command.CommandID.ID) {
-            // TODO: Fix these functionality and re-enable the menu items
-            case CommandId.ConvertToQtProjectId:
-            case CommandId.ConvertToQmakeProjectId: {
-                    command.Visible = false;
-                }
-                break;
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:
             case CommandId.ExportProFileProjectId:
@@ -200,7 +182,6 @@ namespace QtVsTools
                 command.Visible = true;
                 command.Enabled = Translation.ToolsAvailable(project);
                 break;
-            //case CommandId.ConvertToQmakeProjectId:
             case CommandId.QtProjectSettingsProjectId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if (project != null) {
@@ -213,7 +194,6 @@ namespace QtVsTools
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }
                 break;
-            //case CommandId.ConvertToQtProjectId:
             case CommandId.ChangeProjectQtVersionProjectId: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if ((project == null) || isQtProject)

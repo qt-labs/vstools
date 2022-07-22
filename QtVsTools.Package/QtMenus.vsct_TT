@@ -287,24 +287,6 @@
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="ConvertToQtId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Convert Project to Qt VS Tools Project</ButtonText>
-                </Strings>
-            </Button>
-            <Button guid="MainMenuGuid" id="ConvertToQmakeId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <Strings>
-                    <ButtonText>Convert Project to QMake Generated Project</ButtonText>
-                </Strings>
-            </Button>
             <Button guid="MainMenuGuid" id="QtProjectSettingsId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -473,23 +455,6 @@
                     <ButtonText>Refresh IntelliSense</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="ConvertToQtProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Convert Project to Qt VS Tools Project</ButtonText>
-                </Strings>
-            </Button>
-            <Button guid="ProjectContextMenuGuid" id="ConvertToQmakeProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Convert Project to QMake Generated Project</ButtonText>
-                </Strings>
-            </Button>
             <Button guid="ProjectContextMenuGuid" id="QtProjectSettingsProjectId" priority="0x0100" type="Button">
                 <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
@@ -582,8 +547,6 @@
 
             <IDSymbol name="OthersMenuGroup" value="0x1023" />
             <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
-            <IDSymbol name="ConvertToQtId" value="0x0124" />
-            <IDSymbol name="ConvertToQmakeId" value="0x0108" />
             <IDSymbol name="QtProjectSettingsId" value="0x0109" />
             <IDSymbol name="ChangeProjectQtVersionId" value="0x0126" />
 
@@ -634,8 +597,6 @@
             <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1029" />
             <IDSymbol name="ProjectConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="ProjectRefreshIntelliSense" value="0x0131" />
-            <IDSymbol name="ConvertToQtProjectId" value="0x0120" />
-            <IDSymbol name="ConvertToQmakeProjectId" value="0x0121" />
             <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
             <IDSymbol name="ChangeProjectQtVersionProjectId" value="0x0123" />
 
