@@ -1866,13 +1866,6 @@ namespace QtVsTools.Core
                     if (!subfilterFound) {
                         if (!vfilt.CanAddFilter(subfilterName))
                             throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
-
-#if !(VS2017 || VS2019 || VS2022)
-                        // TODO: Enable once the freeze gets fixed in VS.
-                        vfilt = (VCFilter)vfilt.AddFilter(subfilterName);
-                        vfilt.Filter = "cpp;moc";
-                        vfilt.SourceControlFiles = false;
-#endif
                     }
                 }
 
