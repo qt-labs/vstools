@@ -29,6 +29,7 @@
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,24 +69,28 @@ namespace QtVsTools.QtMsBuild
                 })
                 .ToList();
 
-            var allQT = modules.SelectMany(x => x.QT).ToHashSet();
-            var selectedQT = currentValue.ToString().Split(';').ToHashSet();
-            var extraQT = selectedQT.Except(allQT);
+            HashSet<string> selectedQt = null;
+            IEnumerable<string> extraQt = null;
+            if (currentValue != null) {
+                var allQt = modules.SelectMany(x => x.QT).ToHashSet();
+                selectedQt = currentValue.ToString().Split(';').ToHashSet();
+                extraQt = selectedQt.Except(allQt);
 
-            foreach (var module in modules)
-                module.IsSelected = module.QT.Intersect(selectedQT).Count() == module.QT.Count;
+                foreach (var module in modules)
+                    module.IsSelected = module.QT.Intersect(selectedQt).Count() == module.QT.Count;
+            }
 
             var popup = new QtModulesPopup();
             popup.SetModules(modules.OrderBy(module => module.Name));
 
             if (popup.ShowModal().GetValueOrDefault()) {
-                selectedQT = modules
+                selectedQt = modules
                     .Where(x => x.IsSelected)
                     .SelectMany(x => x.QT)
-                    .Union(extraQT)
+                    .Union(extraQt ?? Enumerable.Empty<string>())
                     .ToHashSet();
             }
-            return string.Join(";", selectedQT);
+            return selectedQt == null ? "" : string.Join(";", selectedQt);
         }
     }
 }
