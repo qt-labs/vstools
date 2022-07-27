@@ -209,12 +209,6 @@ To solve this problem:
   <data name="QtProject_CannotRemoveMocStep" xml:space="preserve">
     <value>Cannot remove a moc step from file {0}</value>
   </data>
-  <data name="QtProject_CannotAddFilter" xml:space="preserve">
-    <value>Project cannot add filter {0}</value>
-  </data>
-  <data name="QtProject_CannotAddFile" xml:space="preserve">
-    <value>Cannot add file {0} to filter.</value>
-  </data>
   <data name="QtProject_CannotRemoveFile" xml:space="preserve">
     <value>Cannot remove file {0} from filter.</value>
   </data>

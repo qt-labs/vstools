@@ -1823,7 +1823,8 @@ namespace QtVsTools.Core
             return AddFileInSubfilter(filter, subfilterName, fileName, false);
         }
 
-        public VCFile AddFileInSubfilter(FakeFilter filter, string subfilterName, string fileName, bool checkForDuplicates)
+        public VCFile AddFileInSubfilter(FakeFilter filter, string subfilterName, string fileName,
+            bool checkForDuplicates)
         {
             try {
                 var vfilt = FindFilterFromGuid(filter.UniqueIdentifier);
@@ -1832,7 +1833,7 @@ namespace QtVsTools.Core
                         // check if user already created this filter... then add guid
                         vfilt = FindFilterFromName(filter.Name);
                         if (vfilt == null)
-                            throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
+                            throw new QtVSException($"Project cannot add filter {filter.Name}");
                     } else {
                         vfilt = (VCFilter)vcPro.AddFilter(filter.Name);
                     }
@@ -1865,7 +1866,7 @@ namespace QtVsTools.Core
                     }
                     if (!subfilterFound) {
                         if (!vfilt.CanAddFilter(subfilterName))
-                            throw new QtVSException(SR.GetString("QtProject_CannotAddFilter", filter.Name));
+                            throw new QtVSException($"Project cannot add filter {filter.Name}");
                     }
                 }
 
@@ -1878,10 +1879,13 @@ namespace QtVsTools.Core
 
                 if (vfilt.CanAddFile(fileName))
                     return (VCFile)(vfilt.AddFile(fileName));
-                throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
-            } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotAddFile", fileName));
+                throw new QtVSException($"Cannot add file {fileName} to filter.");
+            } catch (QtVSException) {
+                throw;
+            } catch (Exception e){
+                throw new QtVSException($"Cannot add file {fileName} to filter.", e);
             }
+
         }
 
         /// <summary>
