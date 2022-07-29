@@ -338,6 +338,7 @@ DummyQmlObject { }
       <Cmd><![CDATA["$(QtToolsPath)/qmake" $(QMakeArgs) qtvars.pro]]></Cmd>
     </PropertyGroup>
     <HostExec
+      Condition="'$(ApplicationType)' == 'Linux'"
       Command="$(Cmd)" RedirectStdOut="qtvars.log" RedirectStdErr="STDOUT"
       WorkingDirectory="@(WorkDir->'%(HostPath)')"
       Inputs="@(QMakeProj)"
@@ -347,6 +348,45 @@ DummyQmlObject { }
       IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
     </HostExec>
+
+    <!--// Run qmake in Windows: set %CD% to subfolder of %TEMP% -->
+    <PropertyGroup
+      Condition="'$(ApplicationType)' != 'Linux'">
+      <QMakeTempDir>$(Temp)\$([System.IO.Path]::GetRandomFileName())</QMakeTempDir>
+    </PropertyGroup>
+    <MakeDir
+      Condition="'$(ApplicationType)' != 'Linux'"
+      Directories="$(QMakeTempDir)" />
+    <Copy
+      Condition="'$(ApplicationType)' != 'Linux'"
+      SourceFiles="$(QtVarsWorkDir)\qtvars.pro"
+      DestinationFolder="$(QMakeTempDir)" />
+    <Copy
+      Condition="'$(ApplicationType)' != 'Linux' AND Exists('$(QtVarsWorkDir)\main.qml')"
+      SourceFiles="$(QtVarsWorkDir)\main.qml"
+      DestinationFolder="$(QMakeTempDir)" />
+    <Copy
+      Condition="'$(ApplicationType)' != 'Linux' AND Exists('$(QtVarsWorkDir)\qml.qrc')"
+      SourceFiles="$(QtVarsWorkDir)\qml.qrc"
+      DestinationFolder="$(QMakeTempDir)" />
+    <HostExec
+      Condition="'$(ApplicationType)' != 'Linux'"
+      Command="$(Cmd)" RedirectStdOut="qtvars.log" RedirectStdErr="STDOUT"
+      WorkingDirectory="$(QMakeTempDir)"
+      IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorLevel"/>
+    </HostExec>
+    <ItemGroup>
+      <QMakeGeneratedFiles Include="$(QMakeTempDir)\*" />
+    </ItemGroup>
+    <Copy
+      Condition="'$(ApplicationType)' != 'Linux'"
+      SkipUnchangedFiles="true"
+      SourceFiles="@(QMakeGeneratedFiles)"
+      DestinationFolder="$(QtVarsWorkDir)" />
+    <RemoveDir
+      Condition="'$(ApplicationType)' != 'Linux'"
+      Directories="$(QMakeTempDir)" />
 
     <!--// Check qmake result -->
     <PropertyGroup
