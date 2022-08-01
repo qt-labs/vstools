@@ -144,24 +144,18 @@ namespace QtVsTools.Core
                 if (v == "$(DefaultQtVersion)")
                     continue;
 
-                var vPath = GetInstallPath(v);
-                if (string.IsNullOrEmpty(vPath)) {
+                var path = GetInstallPath(v);
+                if (string.IsNullOrEmpty(path)) {
                     invalidVersions.Add(v);
                     continue;
                 }
 
-                if (vPath.StartsWith("SSH:") || vPath.StartsWith("WSL:"))
+                if (path.StartsWith("SSH:") || path.StartsWith("WSL:"))
                     continue;
 
-                var qmakePath = Path.Combine(vPath, "bin", "qmake.exe");
-                if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(vPath, "qmake.exe");
-                if (!File.Exists(qmakePath)) {
-                    invalidVersions.Add(v);
+                if (QMake.Exists(path))
                     continue;
-                }
-
-                validVersions[v] = new QtConfig(vPath);
+                validVersions[v] = new QtConfig(path);
             }
 
             if (invalidVersions.Count > 0) {

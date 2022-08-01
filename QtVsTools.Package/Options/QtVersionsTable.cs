@@ -41,6 +41,7 @@ using Microsoft.Win32;
 namespace QtVsTools.Options
 {
     using Common;
+    using QtVsTools.Core;
     using static Common.EnumExt;
 
     public enum BuildHost
@@ -246,22 +247,8 @@ namespace QtVsTools.Options
                         if (path == null) {
                             version.FieldPath.ValidationError = "Invalid path format";
                         } else {
-                            var possibleQMakePaths = new[] {
-                                // Path points to qmake.exe
-                                path,
-                                // Path points to folder containing qmake.exe
-                                Path.Combine(path, "qmake.exe"),
-                                // Path points to folder containing bin\qmake.exe
-                                Path.Combine(path, "bin", "qmake.exe"),
-                            };
-                            bool qmakeExists = possibleQMakePaths
-                                .Where(p => File.Exists(p)
-                                    && Path.GetFileName(p).Equals("qmake.exe",
-                                        StringComparison.OrdinalIgnoreCase))
-                                .Any();
-                            if (!qmakeExists) {
+                            if (!QMake.Exists(path))
                                 version.FieldPath.ValidationError = "Cannot find qmake.exe";
-                            }
                         }
                     }
                     mustRefresh |= version.FieldPath.UpdateUi;

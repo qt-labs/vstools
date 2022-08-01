@@ -30,8 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -204,6 +204,21 @@ namespace QtVsTools.Core
                 }
             }
             return exitCode;
+        }
+
+        public static bool Exists(string path)
+        {
+            var possibleQMakePaths = new[] {
+                // Path points to qmake.exe
+                path,
+                // Path points to folder containing qmake.exe
+                Path.Combine(path, "qmake.exe"),
+                // Path points to folder containing bin\qmake.exe
+                Path.Combine(path, "bin", "qmake.exe"),
+            };
+            return possibleQMakePaths.Where(p => File.Exists(p)
+                && Path.GetFileName(p).Equals("qmake.exe", StringComparison.OrdinalIgnoreCase))
+                .Any();
         }
     }
 
