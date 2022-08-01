@@ -132,78 +132,61 @@ namespace QtVsTools.Core
         /// <summary>
         /// Check if all Qt versions are valid and readable.
         /// </summary>
-        /// Also sets the default Qt version to the newest version, if needed.
         /// <param name="errorMessage"></param>
-        /// <returns>true, if we found an invalid version</returns>
-        public bool HasInvalidVersions(out string errorMessage)
+        /// <returns>true, if there are one or more invalid Qt version</returns>
+        public bool HasInvalidVersions(out string errorMessage, out bool defaultVersionInvalid)
         {
-            var validVersions = new Dictionary<string, QtConfig>();
-            var invalidVersions = new List<string>();
+            var defaultVersion = GetDefaultVersionString();
+            defaultVersionInvalid = string.IsNullOrEmpty(defaultVersion);
 
-            foreach (var v in GetVersions()) {
-                if (v == "$(DefaultQtVersion)")
-                    continue;
-
-                var path = GetInstallPath(v);
-                if (string.IsNullOrEmpty(path)) {
-                    invalidVersions.Add(v);
-                    continue;
-                }
-
-                if (path.StartsWith("SSH:") || path.StartsWith("WSL:"))
-                    continue;
-
-                if (QMake.Exists(path))
-                    continue;
-                validVersions[v] = new QtConfig(path);
-            }
-
-            if (invalidVersions.Count > 0) {
-                errorMessage = "These Qt version are inaccessible:\n";
-                foreach (var invalidVersion in invalidVersions)
-                    errorMessage += invalidVersion + " in " + GetInstallPath(invalidVersion) + "\n";
-                errorMessage += "Make sure that you have read access to all files in your Qt directories.";
-
-                // Is the default Qt version invalid?
-                var isDefaultQtVersionInvalid = false;
-                var defaultQtVersionName = GetDefaultVersion();
-                if (string.IsNullOrEmpty(defaultQtVersionName)) {
-                    isDefaultQtVersionInvalid = true;
-                } else {
-                    foreach (var name in invalidVersions) {
-                        if (name == defaultQtVersionName) {
-                            isDefaultQtVersionInvalid = true;
-                            break;
-                        }
-                    }
-                }
-
-                // find the newest valid Qt version that can be used as default version
-                if (isDefaultQtVersionInvalid && validVersions.Count > 0) {
-                    QtConfig defaultQtVersionConfig = null;
-                    foreach (var vNameConfig in validVersions) {
-                        var vName = vNameConfig.Key;
-                        var v = vNameConfig.Value;
-                        if (defaultQtVersionConfig == null) {
-                            defaultQtVersionConfig = v;
-                            defaultQtVersionName = vName;
-                            continue;
-                        }
-                        if (defaultQtVersionConfig.VersionMajor < v.VersionMajor ||
-                               (defaultQtVersionConfig.VersionMajor == v.VersionMajor && (defaultQtVersionConfig.VersionMinor < v.VersionMinor ||
-                                   (defaultQtVersionConfig.VersionMinor == v.VersionMinor && defaultQtVersionConfig.VersionPatch < v.VersionPatch)))) {
-                            defaultQtVersionConfig = v;
-                            defaultQtVersionName = vName;
-                        }
-                    }
-                    if (defaultQtVersionConfig != null)
-                        SaveDefaultVersion(defaultQtVersionName);
-                }
-
-                return true;
-            }
             errorMessage = null;
-            return false;
+            foreach (var version in GetVersions()) {
+                if (version == "$(DefaultQtVersion)")
+                    continue;
+
+                var path = GetInstallPath(version);
+                if (path != null && (path.StartsWith("SSH:") || path.StartsWith("WSL:")))
+                    continue;
+
+                if (string.IsNullOrEmpty(path) || !QMake.Exists(path)) {
+                    errorMessage += version + " in " + path + "\n";
+                    defaultVersionInvalid |= version == defaultVersion;
+                }
+
+                if (!string.IsNullOrEmpty(errorMessage)) {
+                    errorMessage = "These Qt version are inaccessible:\n"
+                        + errorMessage
+                        + "Make sure that you have read access to all files in your Qt directories.";
+                }
+            }
+            return errorMessage != null;
+        }
+
+        public void SetLatestQtVersionAsDefault()
+        {
+            var validVersions = new Dictionary<string, Version>();
+            foreach (var version in GetVersions()) {
+                if (version == "$(DefaultQtVersion)")
+                    continue;
+
+                var path = GetInstallPath(version);
+                if (!string.IsNullOrEmpty(path) && QMake.Exists(path))
+                    validVersions[version] = new Version(new QtConfig(path).VersionString);
+            }
+
+            if (validVersions.Count <= 0)
+                return;
+
+            var defaultName = "";
+            Version defaultVersion = null;
+            foreach (var tmp in validVersions) {
+                var version = tmp.Value;
+                if (defaultVersion == null || defaultVersion < version) {
+                    defaultName = tmp.Key;
+                    defaultVersion = version;
+                }
+            }
+            SaveDefaultVersion(defaultName);
         }
 
         public string GetInstallPath(string version)
@@ -221,12 +204,8 @@ namespace QtVsTools.Core
                 return Environment.GetEnvironmentVariable("QTDIR");
 
             var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
-            if (key == null)
-                return null;
-            var versionKey = key.OpenSubKey(strVersionKey + "\\" + version, false);
-            if (versionKey == null)
-                return null;
-            return (string)versionKey.GetValue("InstallDir");
+            var versionKey = key?.OpenSubKey(strVersionKey + "\\" + version, false);
+            return versionKey?.GetValue("InstallDir") as string;
         }
 
         public string GetInstallPath(EnvDTE.Project project)
@@ -445,6 +424,25 @@ namespace QtVsTools.Core
                 }
             }
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
+        }
+
+        public string GetDefaultVersionString()
+        {
+            string defaultVersion = null;
+            try {
+                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                if (key != null)
+                    defaultVersion = key.GetValue("DefaultQtVersion") as string;
+            } catch {
+                Messages.Print("Cannot read the default Qt version from registry.");
+            }
+
+            if (defaultVersion == null) {
+                var qtDir = Environment.GetEnvironmentVariable("QTDIR");
+                if (string.IsNullOrEmpty(qtDir))
+                    return defaultVersion;
+            }
+            return defaultVersion;
         }
 
         public bool SaveDefaultVersion(string version)

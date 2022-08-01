@@ -204,8 +204,11 @@ namespace QtVsTools
                 var timeUiThreadEnd = initTimer.Elapsed;
 
                 var vm = QtVersionManager.The(initDone);
-                if (vm.HasInvalidVersions(out string error))
+                if (vm.HasInvalidVersions(out string error, out bool defaultInvalid)) {
+                    if (defaultInvalid)
+                        vm.SetLatestQtVersionAsDefault();
                     Messages.Print(error);
+                }
 
                 ///////////
                 // Install Qt/MSBuild files from package folder to standard location

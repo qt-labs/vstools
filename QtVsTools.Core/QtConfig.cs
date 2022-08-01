@@ -55,6 +55,7 @@ namespace QtVsTools.Core
         public uint VersionMajor { get; }
         public uint VersionMinor { get; }
         public uint VersionPatch { get; }
+        public string VersionString { get; }
 
         public QtConfig(string qtdir)
         {
@@ -110,6 +111,8 @@ namespace QtVsTools.Core
                         Is64Bit = (data == "x86_64");
                     } else if (name == "QT_NAMESPACE") {
                         Namespace = data;
+                    } else if (name == "QT_VERSION") {
+                        VersionString = data;
                     } else if (name == "QT_MAJOR_VERSION") {
                         if (uint.TryParse(data, out uint versionMajor))
                             VersionMajor = versionMajor;
