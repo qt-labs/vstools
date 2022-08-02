@@ -625,6 +625,30 @@ namespace QtVsTools.Core
             }
         }
 
+        /// <summary>
+        /// Converts all directory separators of the path to the alternate character
+        /// directory separator. For instance, FromNativeSeparators("c:\\winnt\\system32")
+        /// returns "c:/winnt/system32".
+        /// </summary>
+        /// <param name="path">The path to convert.</param>
+        /// <returns>Returns path using '/' as file separator.</returns>
+        public static string FromNativeSeparators(string path)
+        {
+            return path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
+
+        /// <summary>
+        /// Converts all alternate directory separators characters of the path to the native
+        /// directory separator. For instance, ToNativeSeparators("c:/winnt/system32")
+        /// returns "c:\\winnt\\system32".
+        /// </summary>
+        /// <param name="path">The path to convert.</param>
+        /// <returns>Returns path using '\' as file separator.</returns>
+        public static string ToNativeSeparator(string path)
+        {
+            return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
+
         public static string ChangePathFormat(string path)
         {
             return path.Replace('\\', '/');
