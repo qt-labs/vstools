@@ -118,10 +118,13 @@ namespace QtVsTools
         void F1QtHelpEventHandler(object sender, EventArgs args)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            QueryEditorContextHelp(true);
+            if (!ShowEditorContextHelp()) {
+                Messages.Print("No help match was found. You can still try to search online at "
+                    + "https://doc.qt.io" + ".", false, true);
+            }
         }
 
-        public static bool QueryEditorContextHelp(bool defaultTryOnline = false)
+        public static bool ShowEditorContextHelp()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -177,7 +180,7 @@ namespace QtVsTools
 
                 var qchFiles = Directory.GetFiles(docPath, "*?.qch");
                 if (qchFiles.Length == 0)
-                    return false;
+                    return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
 
                 var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
 
@@ -223,15 +226,7 @@ namespace QtVsTools
                 var uri = string.Empty;
                 switch (links.Values.Count) {
                 case 0:
-                    if (!offline && defaultTryOnline) {
-                        uri = new UriBuilder($"https://doc.qt.io/qt-{info.qtMajor}/search-results.html")
-                        {
-                            Query = "q=" + keyword
-                        }.ToString();
-                    } else {
-                        return false;
-                    }
-                    break;
+                    return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
                 case 1:
                     uri = links.First().Value;
                     break;
@@ -244,33 +239,39 @@ namespace QtVsTools
                     };
                     if (!dialog.ShowModal().GetValueOrDefault())
                         return false;
-                    uri = dialog.Link
-                        .Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    uri = dialog.Link;
                     break;
                 }
 
-                if (string.IsNullOrEmpty(uri)) { // offline mode without a single search hit
+                uri = HelperFunctions.FromNativeSeparators(uri);
+                var helpUri = new Uri(uri);
+                if (helpUri.IsFile && !File.Exists(helpUri.LocalPath)) {
                     VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
-                        "Your search - " + keyword + " - did not match any documents.",
+                        "Your search - " + keyword + " - did match a document, but it could "
+                        + "not be found on disk. To use the online help, select: "
+                        + "Tools | Options | Qt | Preferred source | Online",
                         string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
                         OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 } else {
-                    var helpUri = new Uri(uri.Replace('\\', '/'));
-                    if (helpUri.IsFile && !File.Exists(helpUri.LocalPath)) {
-                        VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
-                            "Your search - " + keyword + " - did match a document, but it could "
-                            + "not be found on disk. To use the online help, select: "
-                            + "Help | Set Qt Help Preference | Use Online Documentation",
-                            string.Empty, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                            OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-                    } else {
-                        VsShellUtilities.OpenSystemBrowser(HelperFunctions.ChangePathFormat(uri));
-                    }
+                    VsShellUtilities.OpenSystemBrowser(uri);
                 }
             } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
             }
+            return true;
+        }
+
+        private static bool TryShowGenericSearchResultsOnline(string keyword, uint version)
+        {
+            if (QtVsToolsPackage.Instance.Options.HelpPreference != SourcePreference.Online)
+                return false;
+
+            VsShellUtilities.OpenSystemBrowser(HelperFunctions.FromNativeSeparators(
+                new UriBuilder($"https://doc.qt.io/qt-{version}/search-results.html")
+                {
+                    Query = "q=" + keyword
+                }.ToString())
+            );
             return true;
         }
     }

@@ -123,8 +123,13 @@ namespace QtVsTools
             string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed && QtHelp.QueryEditorContextHelp())
+            if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed) {
+                if (!QtHelp.ShowEditorContextHelp()) {
+                    Messages.Print("No help match was found. You can still try to search online at "
+                        + "https://doc.qt.io" + ".", false, true);
+                }
                 CancelDefault = true;
+            }
         }
 
         void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
