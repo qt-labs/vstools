@@ -36,8 +36,16 @@ namespace QtVsTools.Legacy
     using Core;
     using Legacy = Core.Legacy;
 
-    public class ProjectQtSettings
+    public class ProjectQtSettings : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var eventHandler = PropertyChanged;
+            if (eventHandler != null)
+                eventHandler.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public ProjectQtSettings(EnvDTE.Project proj)
         {
             versionManager = QtVersionManager.The();
@@ -290,7 +298,10 @@ namespace QtVsTools.Legacy
             }
             set
             {
-                newQtVersion = value;
+                if (newQtVersion != value) {
+                    newQtVersion = value;
+                    OnPropertyChanged("Version");
+                }
             }
         }
 

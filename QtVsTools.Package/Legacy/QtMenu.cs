@@ -38,19 +38,13 @@ namespace QtVsTools.Legacy
 
     internal static class QtMenu
     {
-        internal static void ShowFormProjectQtSettings(Project pro)
+        internal static void ShowFormProjectQtSettings(Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(pro);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-            using (var form = new FormProjectQtSettings(versionInfo.qtMajor)) {
-                form.SetProject(pro);
+            using (var form = new FormProjectQtSettings(project)) {
                 form.StartPosition = FormStartPosition.CenterParent;
-                var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
-                form.ShowDialog(ww);
+                form.ShowDialog(new MainWinWrapper(QtVsToolsPackage.Instance.Dte));
             }
         }
 

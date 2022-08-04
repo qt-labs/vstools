@@ -77,7 +77,7 @@ namespace QtVsTools.Core.Legacy
                 == DialogResult.Yes;
         }
 
-        public static bool HasModule(Project project, int id)
+        public static bool HasModule(Project project, int id, string qtVersion = null)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -85,7 +85,8 @@ namespace QtVsTools.Core.Legacy
             var foundInLibs = false;
 
             var vm = Core.QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(project);
+            var versionInfo = qtVersion != null ? vm.GetVersionInfo(qtVersion)
+                : vm.GetVersionInfo(project);
             if (versionInfo == null)
                 versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
             if (versionInfo == null)

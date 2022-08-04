@@ -58,6 +58,7 @@ namespace QtVsTools.Legacy
             this.okButton.Size = new System.Drawing.Size(150, 44);
             this.okButton.TabIndex = 0;
             this.okButton.Click += new System.EventHandler(this.OkButton_Click);
+            this.okButton.Text = "&OK";
             //
             // cancelButton
             //
@@ -67,6 +68,7 @@ namespace QtVsTools.Legacy
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(150, 44);
             this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
             //
             // tabControl1
             //
@@ -92,7 +94,7 @@ namespace QtVsTools.Legacy
             this.tabPage1.Padding = new System.Windows.Forms.Padding(6);
             this.tabPage1.Size = new System.Drawing.Size(910, 615);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "General Settings";
+            this.tabPage1.Text = "Properties";
             //
             // tabPage2
             //
@@ -104,7 +106,7 @@ namespace QtVsTools.Legacy
             this.tabPage2.Padding = new System.Windows.Forms.Padding(6);
             this.tabPage2.Size = new System.Drawing.Size(910, 615);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Add/Remove Qt Modules";
+            this.tabPage2.Text = "Qt Modules";
             //
             // flowLayoutPanel1
             //
@@ -134,7 +136,7 @@ namespace QtVsTools.Legacy
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            this.Text = "FormAddinSettings";
+            this.Text = "Qt Project Settings";
             this.panel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

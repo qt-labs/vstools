@@ -73,10 +73,10 @@ namespace QtVsTools.Core
 
         public VersionInformation GetVersionInfo(string name)
         {
-            if (name == "$(DefaultQtVersion)")
-                name = GetDefaultVersion();
             if (name == null)
                 return null;
+            if (name == "$(DefaultQtVersion)")
+                name = GetDefaultVersion();
             if (versionCache == null)
                 versionCache = new Hashtable();
 
