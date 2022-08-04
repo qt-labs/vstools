@@ -114,7 +114,7 @@ namespace QtVsTools.Legacy
                 Legacy.QtVSIPSettings.SaveQmlDebug(project, QmlDebug);
 
             if (oldQtVersion != newQtVersion) {
-                if (qtPro.PromptChangeQtVersion(oldQtVersion, newQtVersion)) {
+                if (Legacy.QtProject.PromptChangeQtVersion(project, oldQtVersion, newQtVersion)) {
                     var newProjectCreated = false;
                     var versionChanged = qtPro.ChangeQtVersion(
                         oldQtVersion, newQtVersion, ref newProjectCreated);

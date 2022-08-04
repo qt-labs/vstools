@@ -36,6 +36,7 @@ using EnvDTE;
 namespace QtVsTools.Legacy
 {
     using Core;
+    using Legacy = Core.Legacy;
 
     public partial class FormProjectQtSettings : Form
     {
@@ -168,15 +169,14 @@ namespace QtVsTools.Legacy
 
         private void SaveModules()
         {
-            qtProject = QtProject.Create(project);
             for (var i = 0; i < moduleMap.Count; ++i) {
                 var item = moduleMap[i];
                 var isModuleChecked = item.checkbox.Checked;
                 if (isModuleChecked != item.initialValue) {
                     if (isModuleChecked)
-                        qtProject.AddModule(item.moduleId);
+                        Legacy.QtProject.AddModule(project, item.moduleId);
                     else
-                        qtProject.RemoveModule(item.moduleId);
+                        Legacy.QtProject.RemoveModule(project, item.moduleId);
                 }
             }
         }

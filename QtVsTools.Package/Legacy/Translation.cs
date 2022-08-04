@@ -35,10 +35,10 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools.Legacy
 {
     using Core;
+    using Legacy = Core.Legacy;
 
     using static Core.HelperFunctions;
     using BuildAction = QtVsTools.Translation.BuildAction;
-    using Legacy = Core.Legacy;
 
     internal static class Translation
     {

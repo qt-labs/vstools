@@ -34,6 +34,8 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Core;
+    using Legacy = Core.Legacy;
     using QtVsTools.Common;
     using Wizards.Common;
 
@@ -169,8 +171,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             var qtPro = Core.QtProject.Create(project);
             if (qtPro != null) {
-                Core.QtProject.MarkAsQtPlugin(qtPro);
-                Core.Legacy.QtProject.MarkAsDesignerPluginProject(qtPro);
+                QtProject.MarkAsQtPlugin(qtPro);
+                Legacy.QtProject.MarkAsDesignerPluginProject(qtPro);
             }
         }
     }

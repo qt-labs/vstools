@@ -32,6 +32,9 @@ using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Legacy
 {
+    using Core;
+    using Legacy = Core.Legacy;
+
     public partial class FormChangeQtVersion : Form
     {
         public FormChangeQtVersion()
@@ -69,13 +72,13 @@ namespace QtVsTools.Legacy
             ThreadHelper.ThrowIfNotOnUIThread();
 
             lbQtVersions.Items.Clear();
-            var vm = Core.QtVersionManager.The();
+            var vm = QtVersionManager.The();
             foreach (var versionName in vm.GetVersions())
                 lbQtVersions.Items.Add(versionName);
 
             lbQtVersions.Items.Add("$(DefaultQtVersion)");
             if (change == ChangeFor.Solution) {
-                var qtVer = Core.Legacy.QtVersionManager
+                var qtVer = Legacy.QtVersionManager
                     .GetSolutionQtVersion(QtVsToolsPackage.Instance.Dte.Solution);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();

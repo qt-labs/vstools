@@ -30,10 +30,12 @@ using System.Windows.Forms;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using QtVsTools.Core;
 
 namespace QtVsTools.Legacy
 {
+    using Core;
+    using Legacy = Core.Legacy;
+
     internal static class QtMenu
     {
         internal static void ShowFormProjectQtSettings(Project pro)
@@ -61,7 +63,7 @@ namespace QtVsTools.Legacy
                 return;
 
             using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Project);
+                formChangeQtVersion.UpdateContent(ChangeFor.Project);
                 var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
                 if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                     var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
@@ -77,7 +79,7 @@ namespace QtVsTools.Legacy
 
             string newQtVersion = null;
             using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                formChangeQtVersion.UpdateContent(Legacy.ChangeFor.Solution);
+                formChangeQtVersion.UpdateContent(ChangeFor.Solution);
                 if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
                     return;
                 newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
@@ -103,11 +105,11 @@ namespace QtVsTools.Legacy
 
                     var created = false;
                     var qtProject = QtProject.Create(project);
-                    if (qtProject.PromptChangeQtVersion(OldQtVersion, newQtVersion))
+                    if (Legacy.QtProject.PromptChangeQtVersion(project, OldQtVersion, newQtVersion))
                         qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
                 }
             }
-            Core.Legacy.QtVersionManager.SaveSolutionQtVersion(dte.Solution, newQtVersion);
+            Legacy.QtVersionManager.SaveSolutionQtVersion(dte.Solution, newQtVersion);
         }
     }
 }

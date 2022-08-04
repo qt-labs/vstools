@@ -329,113 +329,6 @@ namespace QtVsTools.Core
             return vcConfig.GetEvaluatedPropertyValue(propName);
         }
 
-        public void AddModule(int id)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (HasModule(id))
-                return;
-
-            var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(Project);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-
-                var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
-                if (FormatVersion >= Resources.qtMinFormatVersion_Settings) {
-                    var config3 = config as VCConfiguration3;
-                    if (config3 == null)
-                        continue;
-                    if (!string.IsNullOrEmpty(info.proVarQT)) {
-                        var qtModulesValue = config.GetUnevaluatedPropertyValue("QtModules");
-                        var qtModules = new HashSet<string>(
-                            !string.IsNullOrEmpty(qtModulesValue)
-                                ? qtModulesValue.Split(';')
-                                : new string[] { });
-                        qtModules.UnionWith(info.proVarQT.Split(' '));
-                        config3.SetPropertyValue(Resources.projLabelQtSettings, true,
-                            "QtModules", string.Join(";", qtModules));
-                    }
-                    // In V3 project format, compiler and linker options
-                    // required by modules are set by Qt/MSBuild.
-                    continue;
-                }
-
-                var compiler = CompilerToolWrapper.Create(config);
-                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-
-                if (compiler != null) {
-                    foreach (var define in info.Defines)
-                        compiler.AddPreprocessorDefinition(define);
-
-                    var incPathList = info.GetIncludePath();
-                    foreach (var incPath in incPathList)
-                        compiler.AddAdditionalIncludeDirectories(incPath);
-                }
-                if (linker != null) {
-                    var moduleLibs = info.GetLibs(IsDebugConfiguration(config), versionInfo);
-                    var linkerWrapper = new LinkerToolWrapper(linker);
-                    var additionalDeps = linkerWrapper.AdditionalDependencies;
-                    var dependenciesChanged = false;
-                    if (additionalDeps == null || additionalDeps.Count == 0) {
-                        additionalDeps = moduleLibs;
-                        dependenciesChanged = true;
-                    } else {
-                        foreach (var moduleLib in moduleLibs) {
-                            if (!additionalDeps.Contains(moduleLib)) {
-                                additionalDeps.Add(moduleLib);
-                                dependenciesChanged = true;
-                            }
-                        }
-                    }
-                    if (dependenciesChanged)
-                        linkerWrapper.AdditionalDependencies = additionalDeps;
-                }
-            }
-        }
-
-        public void RemoveModule(int id)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(Project);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var compiler = CompilerToolWrapper.Create(config);
-                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-
-                var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
-                if (compiler != null) {
-                    foreach (var define in info.Defines)
-                        compiler.RemovePreprocessorDefinition(define);
-                    var additionalIncludeDirs = compiler.AdditionalIncludeDirectories;
-                    if (additionalIncludeDirs != null) {
-                        var lst = new List<string>(additionalIncludeDirs);
-                        foreach (var includePath in info.IncludePath) {
-                            lst.Remove(includePath);
-                            lst.Remove('\"' + includePath + '\"');
-                        }
-                        compiler.AdditionalIncludeDirectories = lst;
-                    }
-                }
-                if (linker != null && linker.AdditionalDependencies != null) {
-                    var linkerWrapper = new LinkerToolWrapper(linker);
-                    var moduleLibs = info.GetLibs(IsDebugConfiguration(config), versionInfo);
-                    var additionalDependencies = linkerWrapper.AdditionalDependencies;
-                    var dependenciesChanged = false;
-                    foreach (var moduleLib in moduleLibs)
-                        dependenciesChanged |= additionalDependencies.Remove(moduleLib);
-                    if (dependenciesChanged)
-                        linkerWrapper.AdditionalDependencies = additionalDependencies;
-                }
-            }
-        }
-
         public void UpdateModules(VersionInformation oldVersion, VersionInformation newVersion)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -487,58 +380,11 @@ namespace QtVsTools.Core
             }
         }
 
+        // TODO: remove once all callers are moved into Legacy namespace
         public bool HasModule(int id)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            var foundInIncludes = false;
-            var foundInLibs = false;
-
-            var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(Project);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
-            if (versionInfo == null)
-                return false; // neither a default or project Qt version
-            var info = QtModules.Instance.Module(id, versionInfo.qtMajor);
-            if (info == null)
-                return false;
-
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var compiler = CompilerToolWrapper.Create(config);
-                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-
-                if (compiler != null) {
-                    if (compiler.GetAdditionalIncludeDirectories() == null)
-                        continue;
-                    var incPathList = info.GetIncludePath();
-                    var includeDirs = compiler.GetAdditionalIncludeDirectoriesList();
-                    foundInIncludes = (incPathList.Count > 0);
-                    foreach (var incPath in incPathList) {
-                        var fixedIncludeDir = FixFilePathForComparison(incPath);
-                        if (!includeDirs.Any(dir =>
-                            FixFilePathForComparison(dir) == fixedIncludeDir)) {
-                            foundInIncludes = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (foundInIncludes)
-                    break;
-
-                List<string> libs = null;
-                if (linker != null) {
-                    var linkerWrapper = new LinkerToolWrapper(linker);
-                    libs = linkerWrapper.AdditionalDependencies;
-                }
-
-                if (libs != null) {
-                    var moduleLibs = info.GetLibs(IsDebugConfiguration(config), versionInfo);
-                    foundInLibs = moduleLibs.All(moduleLib => libs.Contains(moduleLib));
-                }
-            }
-            return foundInIncludes || foundInLibs;
+            return Legacy.QtProject.HasModule(envPro, id);
         }
 
         public void AddUic4BuildStepMsBuild(
@@ -758,16 +604,6 @@ namespace QtVsTools.Core
                 }
             } catch { }
             return new List<string>();
-        }
-
-        private static bool IsDebugConfiguration(VCConfiguration conf)
-        {
-            var tool = CompilerToolWrapper.Create(conf);
-            if (tool != null) {
-                return tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebug
-                    || tool.RuntimeLibrary == runtimeLibraryOption.rtMultiThreadedDebugDLL;
-            }
-            return false;
         }
 
         private string GetPCHMocOptions(VCFile file, CompilerToolWrapper compiler)
@@ -2751,51 +2587,6 @@ namespace QtVsTools.Core
                 if (!filterOrFileFound)
                     filter.RemoveFilter(subFilter);
             }
-        }
-
-        public bool isWinRT()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try {
-                var vcProject = Project.Object as VCProject;
-                var vcConfigs = vcProject.Configurations as IVCCollection;
-                var vcConfig = vcConfigs.Item(1) as VCConfiguration;
-                var appType = vcConfig.GetEvaluatedPropertyValue("ApplicationType");
-                if (appType == "Windows Store")
-                    return true;
-            } catch { }
-            return false;
-        }
-
-        public bool PromptChangeQtVersion(string oldVersion, string newVersion)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var versionManager = QtVersionManager.The();
-            var viOld = versionManager.GetVersionInfo(oldVersion);
-            var viNew = versionManager.GetVersionInfo(newVersion);
-
-            if (viOld == null || viNew == null)
-                return true;
-
-            var oldIsWinRt = viOld.isWinRT();
-            var newIsWinRt = viNew.isWinRT();
-
-            if (newIsWinRt == oldIsWinRt || newIsWinRt == isWinRT())
-                return true;
-
-            var promptCaption = string.Format("Change Qt Version ({0})", Project.Name);
-            var promptText = string.Format(
-                "Changing Qt version from {0} to {1}.\r\n" +
-                "Project might not build. Are you sure?",
-                newIsWinRt ? "Win32" : "WinRT",
-                newIsWinRt ? "WinRT" : "Win32"
-                );
-
-            return (MessageBox.Show(
-                promptText, promptCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                == DialogResult.Yes);
         }
 
         /// <summary>
