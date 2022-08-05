@@ -37,16 +37,13 @@ namespace QtVsTools.VisualStudio
 {
     using Common;
 
-    internal static class InfoBar
+    public abstract class InfoBarMessage
     {
-        public interface IMessage
-        {
-            void Show();
-            void Close();
-            bool IsOpen { get; }
-        }
+        protected abstract ImageMoniker Icon { get; }
+        protected abstract TextSpan[] Text { get; }
+        protected abstract Hyperlink[] Hyperlinks { get; }
 
-        public class TextSpan
+        protected class TextSpan
         {
             public string Text { get; set; }
             public bool Bold { get; set; }
@@ -55,7 +52,7 @@ namespace QtVsTools.VisualStudio
             public static implicit operator TextSpan(string text) => new TextSpan { Text = text };
         }
 
-        public class TextSpacer : TextSpan
+        protected class TextSpacer : TextSpan
         {
             public TextSpacer(int spaces)
             {
@@ -63,29 +60,50 @@ namespace QtVsTools.VisualStudio
             }
         }
 
-        public class Hyperlink
+        protected class Hyperlink
         {
             public string Text { get; set; }
             public bool CloseInfoBar { get; set; }
             public Action OnClicked { get; set; }
         }
 
-        public class Message : IMessage, IVsInfoBarUIEvents
+        private MessageUI UI { get; set; }
+
+        public InfoBarMessage()
+        {
+            UI = new MessageUI { Message = this };
+        }
+
+        public virtual void Show()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            UI.Show();
+        }
+
+        public virtual void Close()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            UI.Close();
+        }
+
+        public bool IsOpen => UI.IsOpen;
+
+        protected virtual void OnClosed()
+        { }
+
+        private class MessageUI : IVsInfoBarUIEvents
         {
             static LazyFactory StaticLazy { get; } = new LazyFactory();
-
-            public ImageMoniker Icon { get; set; }
-            public TextSpan[] Text { get; set; }
-            public Hyperlink[] Hyperlinks { get; set; }
-
             static IVsInfoBarUIFactory Factory => StaticLazy.Get(() =>
                 Factory, () => VsServiceProvider
                     .GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>());
 
             private IVsInfoBarUIElement UIElement { get; set; }
-            private uint cookie;
+            private uint eventNotificationCookie;
 
             public bool IsOpen => UIElement != null;
+
+            public InfoBarMessage Message { get; set; }
 
             public void Show()
             {
@@ -95,19 +113,19 @@ namespace QtVsTools.VisualStudio
                 if (UIElement != null) // Message already shown
                     return;
                 var textSpans = Enumerable.Empty<InfoBarTextSpan>();
-                if (Text != null) {
-                    textSpans = Text
+                if (Message.Text != null) {
+                    textSpans = Message.Text
                         .Select(x => new InfoBarTextSpan(x.Text, x.Bold, x.Italic, x.Underline));
                 }
                 var hyperlinks = Enumerable.Empty<InfoBarHyperlink>();
-                if (Hyperlinks != null) {
-                    hyperlinks = Hyperlinks
+                if (Message.Hyperlinks != null) {
+                    hyperlinks = Message.Hyperlinks
                         .Select(x => new InfoBarHyperlink(x.Text, x));
                 }
-                var model = new InfoBarModel(textSpans, hyperlinks, Icon, true);
+                var model = new InfoBarModel(textSpans, hyperlinks, Message.Icon, true);
                 UIElement = Factory.CreateInfoBar(model);
                 if (UIElement != null) {
-                    UIElement.Advise(this, out cookie);
+                    UIElement.Advise(this, out eventNotificationCookie);
                     VsShell.InfoBarHost?.AddInfoBar(UIElement);
                 }
             }
@@ -115,13 +133,10 @@ namespace QtVsTools.VisualStudio
             public void Close()
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-
-                if (UIElement == null)
-                    return;
                 UIElement?.Close();
             }
 
-            public void OnActionItemClicked(
+            void IVsInfoBarUIEvents.OnActionItemClicked(
                 IVsInfoBarUIElement infoBarUIElement,
                 IVsInfoBarActionItem actionItem)
             {
@@ -132,17 +147,18 @@ namespace QtVsTools.VisualStudio
                     return;
                 if (hyperlink.CloseInfoBar)
                     Close();
-                hyperlink.OnClicked?.Invoke();
+                hyperlink.OnClicked();
             }
 
-            public void OnClosed(IVsInfoBarUIElement infoBarUIElement)
+            void IVsInfoBarUIEvents.OnClosed(IVsInfoBarUIElement infoBarUIElement)
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
                 Debug.Assert(infoBarUIElement == UIElement);
                 if (UIElement != null) {
-                    UIElement.Unadvise(cookie);
+                    UIElement.Unadvise(eventNotificationCookie);
                     UIElement = null;
-                    cookie = 0;
+                    eventNotificationCookie = 0;
+                    Message.OnClosed();
                 }
             }
         }

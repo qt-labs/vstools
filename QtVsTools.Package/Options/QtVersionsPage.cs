@@ -164,8 +164,8 @@ namespace QtVsTools.Options
                     exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
             }
 
-            if (InfoBarMessages.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)
-                InfoBarMessages.NoQtVersion.Close();
+            if (Notifications.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)
+                Notifications.NoQtVersion.Close();
         }
 
         protected override void OnApply(PageApplyEventArgs e)

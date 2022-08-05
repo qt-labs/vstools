@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.VisualStudio
 {
-    static class VsShell
+    public static class VsShell
     {
         public static string InstallRootDir
         {

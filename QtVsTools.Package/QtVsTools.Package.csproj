@@ -442,9 +442,7 @@
     <Compile Include="Package\QtSolutionContextMenu.cs" />
     <Compile Include="Package\SR.cs" />
     <Compile Include="Package\Translation.cs" />
-    <Compile Include="VisualStudio\InfoBar.cs" />
-    <Compile Include="Package\InfoBarMessages.cs" />
-    <Compile Include="VisualStudio\VsShell.cs" />
+    <Compile Include="Package\Notifications.cs" />
     <Content Include="..\Changelog">
       <Link>Changelog</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

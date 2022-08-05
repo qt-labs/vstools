@@ -341,9 +341,9 @@ namespace QtVsTools
         public void VsMainWindowActivated()
         {
             if (QtVersionManager.The().GetVersions()?.Length == 0)
-                InfoBarMessages.NoQtVersion.Show();
+                Notifications.NoQtVersion.Show();
             if (Options.NotifyInstalled && TestVersionInstalled())
-                InfoBarMessages.NotifyInstall.Show();
+                Notifications.NotifyInstall.Show();
         }
 
         protected override int QueryClose(out bool canClose)
