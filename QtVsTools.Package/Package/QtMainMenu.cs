@@ -71,6 +71,7 @@ namespace QtVsTools
         {
             QtVersionId = 0x0500,
             ViewQtHelpId = 0x0501,
+            ViewGettingStartedId = 0x0503,
             LaunchDesignerId = 0x0100,
             LaunchLinguistId = 0x0101,
             OpenProFileId = 0x0102,
@@ -115,6 +116,9 @@ namespace QtVsTools
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
                 VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
+                break;
+            case CommandId.ViewGettingStartedId:
+                VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/qtvstools-getting-started.html");
                 break;
             case CommandId.LaunchDesignerId:
                 QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
@@ -173,6 +177,7 @@ namespace QtVsTools
 
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
+            case CommandId.ViewGettingStartedId:
                 command.Visible = command.Enabled = true;
                 break;
             case CommandId.QtVersionId:

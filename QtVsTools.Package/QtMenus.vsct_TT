@@ -2,7 +2,7 @@
 <!--
     *****************************************************************************
     **
-    ** Copyright (C) 2016 The Qt Company Ltd.
+    ** Copyright (C) 2022 The Qt Company Ltd.
     ** Contact: https://www.qt.io/licensing/
     **
     ** This file is part of the Qt VS Tools.
@@ -202,6 +202,15 @@
                     <ButtonText>qt.io</ButtonText>
                 </Strings>
             </Button>
+          <Button guid="MainMenuGuid" id="ViewGettingStartedId" priority="0x0100" type="Button">
+            <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
+            <Icon guid="MenuImages" id="QtLogoBitmap" />
+            <CommandFlag>DynamicVisibility</CommandFlag>
+            <CommandFlag>DefaultInvisible</CommandFlag>
+            <Strings>
+              <ButtonText>Getting Started</ButtonText>
+            </Strings>
+          </Button>
 
             <Button guid="MainMenuGuid" id="F1QtHelpId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
@@ -534,6 +543,7 @@
             <IDSymbol name="QtVersionId" value="0x0500" />
             <IDSymbol name="ViewQtHelpId" value="0x0501" />
             <IDSymbol name="F1QtHelpId" value="0x0502" />
+            <IDSymbol name="ViewGettingStartedId" value="0x0503" />
 
             <IDSymbol name="LaunchMenuGroup" value="0x1021" />
             <IDSymbol name="LaunchDesignerId" value="0x0100" />

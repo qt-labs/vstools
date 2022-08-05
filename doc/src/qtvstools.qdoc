@@ -904,6 +904,7 @@
     \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt:
 
     \list
+        \li \uicontrol {Qt Class} adds a Qt class to an Application project.
         \li \uicontrol {Qt Dialog Form File (Button Bottom)} adds a dialog with
             \uicontrol OK and \uicontrol Cancel buttons at its bottom to a
             Qt Widgets Application project.
@@ -917,9 +918,13 @@
             specifies the custom QML types used in a Qt Quick Application
             project.
         \li \uicontrol {Qt Resource File} adds a Qt resource file (.qrc) to
-            an application project.
+            an Application project.
+        \li \uicontrol {Qt Translation File} adds a Qt translation file (.ts)
+            to an Application project.
         \li \uicontrol {Qt Widget Class} adds a Qt Widgets class to a
-            Qt Widgets application project.
+            Qt Widgets Application project.
+        \li \uicontrol {Qt Widget Form File} adds a Qt Widgets form file (.ui)
+            to an Application project.
     \endlist
 
     The following sections describe how to add different types of files to
@@ -1254,8 +1259,8 @@
     more information about using \QD, see the \l{Qt Designer Manual}.
 
     To add a new \c .ui file to the project, select \uicontrol Project >
-    \uicontrol {Add Qt Class} > \uicontrol Installed > \uicontrol {Visual C++} >
-    \uicontrol Qt > \uicontrol {Qt Widget Class}.
+    \uicontrol {Add New Item} > \uicontrol Installed > \uicontrol {Visual C++} >
+    \uicontrol Qt > \uicontrol {Qt Widgets Form File}.
 
     \image qtvstools-qt-widget-class-wizard.png
 
@@ -1318,14 +1323,16 @@
 
     To add a new translation file to the project:
 
+    \image qtvstools-qt-translation-file-wizard.png
+
     \list 1
-        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Create New Translation File}.
-        \li In the \uicontrol Language field, select a language from the list of
-            supported languages.
-        \li In the \uicontrol Filename field, enter a filename for the
-            translation file.
-        \li Select \uicontrol OK to create the file and have it listed in
+        \li Select \uicontrol Project > \uicontrol {Add New Item} > \uicontrol Installed >
+            \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt Translation File}.
+        \li In \uicontrol {Select a Language}, you can choose a language from the list
+            of supported languages. You can use \uicontrol Search to filter for a specific
+            language.
+        \li In the \uicontrol {Save as} field, enter a filename for the translation file.
+        \li Select \uicontrol Finish to create the file and have it listed in
             \uicontrol {Translation Files} in Visual Studio's Solution Explorer.
         \li Right-click a translation file to open a context menu with options
             for running \c lupdate and \c lrelease.
