@@ -92,9 +92,8 @@ namespace QtVsTools.Qml.Debug
                 using (var reader = XmlReader.Create(new StringReader(xmlText), settings)) {
                     rccXml = XDocument.Load(reader);
                 }
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
                 return;
             }
 

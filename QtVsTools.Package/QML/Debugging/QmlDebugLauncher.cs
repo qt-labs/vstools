@@ -314,8 +314,8 @@ namespace QtVsTools.Qml.Debug
             try {
                 debugger4.LaunchDebugTargets4((uint)targets.Length, targets, processInfo);
 
-            } catch (System.Exception e) {
-                OutputWriteLine(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
             }
         }
     }

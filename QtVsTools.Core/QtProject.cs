@@ -108,9 +108,8 @@ namespace QtVsTools.Core
                 return string.Empty;
             try {
                 return config.GetEvaluatedPropertyValue(itemType + "RuleName");
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
                 return string.Empty;
             }
         }
@@ -2515,8 +2514,8 @@ namespace QtVsTools.Core
                 try {
                     RemoveMocStep(file);
                     AddMocStep(file);
-                } catch (QtVSException e) {
-                    Messages.Print(e.Message);
+                } catch (QtVSException exception) {
+                    exception.Log();
                     continue;
                 }
                 Messages.Print("Moc step updated successfully for " + file.Name + ".");
@@ -3062,9 +3061,8 @@ namespace QtVsTools.Core
                 var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
                     return projProps.GetPropertyValue(pszPropName, Config.Name, "UserFile");
-                } catch (Exception e) {
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                     return string.Empty;
                 }
             }
@@ -3075,9 +3073,8 @@ namespace QtVsTools.Core
                 var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
                     projProps.SetPropertyValue(pszPropName, Config.Name, "UserFile", pszPropValue);
-                } catch (Exception e) {
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                 }
             }
 
@@ -3087,9 +3084,8 @@ namespace QtVsTools.Core
                 var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
                     projProps.RemoveProperty(pszPropName, Config.Name, "UserFile");
-                } catch (Exception e) {
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                 }
             }
         }

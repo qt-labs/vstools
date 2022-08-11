@@ -240,7 +240,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 iVsUIShell.GetDialogOwnerHwnd(out IntPtr hwnd);
                 WindowHelper.ShowModal(WizardWindow, hwnd);
             } catch (QtVSException exception) {
-                Messages.DisplayErrorMessage(exception.Message);
+                exception.Log(false, true);
                 throw;
             } finally {
                 iVsUIShell.EnableModeless(1);

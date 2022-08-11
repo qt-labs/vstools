@@ -213,13 +213,12 @@ namespace QtVsTools.Editors
             var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
             try {
                 return Process.Start(st);
-            } catch (Exception e) {
-                Messages.Print("\r\n" + e.Message);
+            } catch (Exception exception) {
+                exception.Log();
                 if (!File.Exists(st.Arguments))
                     Messages.Print("The system cannot find the file: " + st.Arguments);
                 if (!File.Exists(st.FileName))
                     Messages.Print("The system cannot find the file: " + st.FileName);
-                Messages.Print("\r\nStacktrace:\r\n" + e.StackTrace);
                 return null;
             }
         }

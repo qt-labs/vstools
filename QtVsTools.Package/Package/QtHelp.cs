@@ -255,8 +255,8 @@ namespace QtVsTools
                 } else {
                     VsShellUtilities.OpenSystemBrowser(uri);
                 }
-            } catch (Exception e) {
-                Messages.Print(e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
             }
             return true;
         }

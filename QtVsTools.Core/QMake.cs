@@ -197,10 +197,8 @@ namespace QtVsTools.Core
                         exitCode = qmakeProc.ExitCode;
                         InfoExit(qmakeProc);
                     }
-                } catch (Exception e) {
-                    ErrMsg(string.Format("Exception \"{0}\":\r\n{1}",
-                        e.Message,
-                        e.StackTrace));
+                } catch (Exception exception) {
+                    exception.Log();
                 }
             }
             return exitCode;

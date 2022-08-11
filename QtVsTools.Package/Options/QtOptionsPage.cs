@@ -306,8 +306,7 @@ namespace QtVsTools.Options
                     Load(() => LinkNatvis, key, Natvis.Link);
                 }
             } catch (Exception exception) {
-                Messages.Print(
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                exception.Log();
             }
         }
 
@@ -341,8 +340,7 @@ namespace QtVsTools.Options
                     Save(LinkNatvis, key, Natvis.Link);
                 }
             } catch (Exception exception) {
-                Messages.Print(
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                exception.Log();
             }
         }
 

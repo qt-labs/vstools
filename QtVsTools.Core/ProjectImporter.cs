@@ -105,7 +105,7 @@ namespace QtVsTools.Core
 
                 Messages.Print("--- (Import): Finished opening " + VCInfo.Name);
             } catch (Exception e) {
-                Messages.DisplayCriticalErrorMessage(e);
+                Messages.DisplayErrorMessage(e);
             }
         }
 

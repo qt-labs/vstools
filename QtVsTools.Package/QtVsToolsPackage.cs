@@ -303,9 +303,8 @@ namespace QtVsTools
     ================================================================",
                         urlDownloadQtIo, devRelease));
                 }
-            } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
             } finally {
                 initDone.Set();
                 initTimer.Stop();
@@ -402,9 +401,8 @@ namespace QtVsTools
 
                 File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
                     natvis, System.Text.Encoding.UTF8);
-            } catch (Exception e) {
-                Messages.Print(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
             }
         }
 

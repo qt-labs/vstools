@@ -94,8 +94,7 @@ namespace QtVsTools.Options
                 try {
                     VersionManager.RemoveVersion(versionName);
                 } catch (Exception exception) {
-                    Messages.Print(exception.Message + "\r\n\r\nStacktrace:\r\n"
-                        + exception.StackTrace);
+                    exception.Log();
                 }
             }
 
@@ -142,13 +141,11 @@ namespace QtVsTools.Options
                             if (!string.IsNullOrEmpty(version.InitialVersionName))
                                 VersionManager.RemoveVersion(version.InitialVersionName);
                         } catch (Exception exception) {
-                            Messages.Print(exception.Message + "\r\n\r\nStacktrace:\r\n"
-                                + exception.StackTrace);
+                            exception.Log();
                         }
                     }
                 } catch (Exception exception) {
-                    Messages.Print(
-                        exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                    exception.Log();
                     version.State = State.Removed;
                     RemoveVersion(version.VersionName);
                 }
@@ -160,8 +157,7 @@ namespace QtVsTools.Options
                         ?? versions.FirstOrDefault(v => v.State != State.Removed);
                 VersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
             } catch (Exception exception) {
-                Messages.Print(
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                exception.Log();
             }
 
             if (Notifications.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)

@@ -130,8 +130,7 @@ namespace QtVsTools.Legacy
                         PreBuildSetup = (preBuild != 0);
                 }
             } catch (Exception exception) {
-                Messages.Print(
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                exception.Log();
             }
         }
 
@@ -155,8 +154,7 @@ namespace QtVsTools.Legacy
                     key.SetValue(VALUENAME_LegacyPreBuild, PreBuildSetup ? 1 : 0);
                 }
             } catch (Exception exception) {
-                Messages.Print(
-                    exception.Message + "\r\n\r\nStacktrace:\r\n" + exception.StackTrace);
+                exception.Log();
             }
         }
     }

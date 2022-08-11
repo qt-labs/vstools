@@ -36,6 +36,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
+using QtVsTools.Core;
 
 /// <summary>
 /// The classes in this namespace provide support to the serialization and deserialization of
@@ -127,11 +128,10 @@ namespace QtVsTools.Json
                     serializer.WriteObject(writer, obj);
                     writer.Close();
                     return new JsonData() { Stream = stream };
-                } catch (Exception e) {
+                } catch (Exception exception) {
+                    exception.Log();
                     if (stream != null && stream.CanRead && stream.Length > 0)
                         stream.Dispose();
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
                     return null;
                 }
             }
@@ -157,9 +157,8 @@ namespace QtVsTools.Json
                         return obj;
                     }
 
-                } catch (Exception e) {
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                     return null;
 
                 } finally {
@@ -205,9 +204,8 @@ namespace QtVsTools.Json
                     data.XmlStream = new MemoryStream(xmlData);
                 }
                 return true;
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
                 return false;
             }
         }
@@ -259,9 +257,8 @@ namespace QtVsTools.Json
                 root.Append("</root>");
                 var xmlData = Encoding.UTF8.GetBytes(root.ToString());
                 return new JsonData { XmlStream = new MemoryStream(xmlData) };
-            } catch (Exception e) {
-                System.Diagnostics.Debug.WriteLine(
-                    e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+            } catch (Exception exception) {
+                exception.Log();
                 return null;
             }
         }

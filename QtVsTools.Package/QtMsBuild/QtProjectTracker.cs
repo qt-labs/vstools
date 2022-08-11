@@ -237,9 +237,8 @@ namespace QtVsTools.QtMsBuild
                             PercentComplete = 0
                         })
                         as ITaskHandler2;
-                } catch (Exception e) {
-                    Messages.Print(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                 }
                 InitStatus.RegisterTask(new Task(() => throw new InvalidOperationException()));
             }
@@ -258,9 +257,8 @@ namespace QtVsTools.QtMsBuild
                         CanBeCanceled = true,
                         PercentComplete = percentComplete
                     });
-                } catch (Exception e) {
-                    Messages.Print(
-                        e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                } catch (Exception exception) {
+                    exception.Log();
                 }
             }
         }

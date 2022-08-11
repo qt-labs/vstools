@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -29,11 +29,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
-using EnvDTE;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -62,6 +60,17 @@ namespace QtVsTools.Core
             FlushMessages();
         }
 
+        public static void Log(this Exception exception, bool clear = false, bool activate = false)
+        {
+            msgQueue.Enqueue(new Msg()
+            {
+                Clear = clear,
+                Text = ExceptionToString(exception),
+                Activate = activate
+            });
+            FlushMessages();
+        }
+
         /// <summary>
         /// Activates the message pane of the Qt VS Tools extension.
         /// </summary>
@@ -80,21 +89,16 @@ namespace QtVsTools.Core
             await Pane?.ActivateAsync();
         }
 
-        private static string ExceptionToString(System.Exception e)
+        private static string ExceptionToString(System.Exception exception)
         {
-            return e.Message + "\r\n" + "(" + e.StackTrace.Trim() + ")";
+            return $"An exception ({exception.GetType().Name}) occurred.\r\n"
+                   + $"Message:\r\n   {exception.Message}\r\n"
+                   + $"Stack Trace:\r\n   {exception.StackTrace.Trim()}\r\n";
         }
 
         private static readonly string ErrorString = SR.GetString("Messages_ErrorOccured");
         private static readonly string WarningString = SR.GetString("Messages_Warning");
         private static readonly string SolutionString = SR.GetString("Messages_SolveProblem");
-
-        public static void DisplayCriticalErrorMessage(System.Exception e)
-        {
-            MessageBox.Show(ErrorString +
-                ExceptionToString(e),
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
 
         public static void DisplayCriticalErrorMessage(string msg)
         {
@@ -105,8 +109,7 @@ namespace QtVsTools.Core
 
         public static void DisplayErrorMessage(System.Exception e)
         {
-            MessageBox.Show(ErrorString +
-                ExceptionToString(e),
+            MessageBox.Show(ExceptionToString(e),
                 SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 

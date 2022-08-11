@@ -119,9 +119,8 @@ namespace QtVsTools
                     Messages.Print("translation: Legacy project format");
                     try {
                         Legacy.Translation.Run(buildAction, qtPro, selectedFiles);
-                    } catch (Exception e) {
-                        Messages.Print(
-                            e.Message + "\r\n\r\nStacktrace:\r\n" + e.StackTrace);
+                    } catch (Exception exception) {
+                        exception.Log();
                     }
                     return;
                 }
