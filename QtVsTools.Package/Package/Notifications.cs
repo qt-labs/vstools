@@ -44,6 +44,9 @@ namespace QtVsTools
 
         public static NotifyInstall NotifyInstall
             => StaticLazy.Get(() => NotifyInstall, () => new NotifyInstall());
+
+        public static UpdateProjectFormat UpdateProjectFormat
+            => StaticLazy.Get(() => UpdateProjectFormat, () => new UpdateProjectFormat());
     }
 
     public class NoQtVersion : InfoBarMessage
@@ -103,6 +106,44 @@ namespace QtVsTools
                 OnClicked = () =>
                 {
                     QtVsToolsPackage.Instance.Options.NotifyInstalled = false;
+                    QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
+                }
+            }
+        };
+    }
+
+    public class UpdateProjectFormat : InfoBarMessage
+    {
+        protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
+
+        protected override TextSpan[] Text => new TextSpan[]
+        {
+                new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+                new TextSpacer(2),
+                "\u2014", // Em dash
+                new TextSpacer(2),
+                "You are using some legacy code path of the Qt Visual Studio Tools. We strongly "
+                    + "recommend updating your code base to use our latest development version."
+        };
+
+        protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+        {
+            new Hyperlink
+            {
+                Text = "Update",
+                CloseInfoBar = true,
+                OnClicked = () => {
+                    ThreadHelper.ThrowIfNotOnUIThread();
+                    QtMsBuildConverter.SolutionToQtMsBuild();
+                }
+            },
+            new Hyperlink
+            {
+                Text = "Don't show again",
+                CloseInfoBar = true,
+                OnClicked = () =>
+                {
+                    QtVsToolsPackage.Instance.Options.UpdateProjectFormat = false;
                     QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
                 }
             }

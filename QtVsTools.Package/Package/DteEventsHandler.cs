@@ -446,7 +446,8 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (HelperFunctions.IsQtProject(project)) {
+            var formatVersion = QtProject.GetFormatVersion(project);
+            if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
                 var vcpro = project.Object as VCProject;
@@ -482,6 +483,10 @@ namespace QtVsTools
                 }
                 QtProjectIntellisense.Refresh(project);
             }
+            if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
+                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                    Notifications.UpdateProjectFormat.Show();
+            }
         }
 
         void SolutionEvents_ProjectRemoved(Project project)
@@ -494,9 +499,14 @@ namespace QtVsTools
 
             QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
-                if (HelperFunctions.IsVsToolsProject(p)) {
+                var formatVersion = QtProject.GetFormatVersion(p);
+                if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);
+                }
+                if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
+                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                        Notifications.UpdateProjectFormat.Show();
                 }
             }
         }

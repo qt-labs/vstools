@@ -251,12 +251,26 @@ namespace QtVsTools.Core
 
         public static int GetFormatVersion(VCProject vcPro)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (vcPro == null)
                 return 0;
+
             if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
                 return Convert.ToInt32(vcPro.keyword.Substring(6));
-            if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal))
-                return 200;
+
+            if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal)) {
+                var envPro = vcPro.Object as Project;
+                if (envPro.Globals != null && envPro.Globals.VariableNames != null) {
+                    foreach (var global in envPro.Globals.VariableNames as string[]) {
+                        if (global.StartsWith("Qt5Version", StringComparison.Ordinal)
+                            && envPro.Globals.get_VariablePersists(global)) {
+                            return 200;
+                        }
+                    }
+                }
+                return 100;
+            }
             return 0;
         }
 

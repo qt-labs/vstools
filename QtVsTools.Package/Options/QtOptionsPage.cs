@@ -90,6 +90,7 @@ namespace QtVsTools.Options
         public enum Notifications
         {
             [String("Notifications_Installed")] Installed,
+            [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat
         }
 
         public enum Natvis
@@ -238,6 +239,13 @@ namespace QtVsTools.Options
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool NotifyInstalled { get; set; }
 
+        [Category("Notifications")]
+        [DisplayName("Update project format")]
+        [Description("Show notification when a project uses some legacy code path of the Qt "
+            + "Visual Studio Tools.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool UpdateProjectFormat { get; set; }
+
         [Category("Natvis")]
         [DisplayName("Embed .natvis file into PDB")]
         [Description("Embeds the debugger visualizations (.natvis file) into the PDB file"
@@ -262,6 +270,7 @@ namespace QtVsTools.Options
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
             NotifyInstalled = true;
+            UpdateProjectFormat = true;
             LinkNatvis = true;
 
             ////////
@@ -303,6 +312,7 @@ namespace QtVsTools.Options
                     Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                     Load(() => NotifyInstalled, key, Notifications.Installed);
+                    Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                     Load(() => LinkNatvis, key, Natvis.Link);
                 }
             } catch (Exception exception) {
@@ -337,6 +347,7 @@ namespace QtVsTools.Options
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                     Save(NotifyInstalled, key, Notifications.Installed);
+                    Save(NotifyInstalled, key, Notifications.UpdateProjectFormat);
                     Save(LinkNatvis, key, Natvis.Link);
                 }
             } catch (Exception exception) {
