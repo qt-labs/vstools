@@ -30,12 +30,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
 namespace QtVsTools.Options
@@ -99,7 +96,6 @@ namespace QtVsTools.Options
 
         public class Row
         {
-            static LazyFactory StaticLazy { get; } = new LazyFactory();
             LazyFactory Lazy { get; } = new LazyFactory();
 
             public Dictionary<Column, Field> Fields => Lazy.Get(() =>
@@ -160,12 +156,9 @@ namespace QtVsTools.Options
             public Visibility ButtonBrowseVisibility
                 => (!LastRow && Host == BuildHost.Windows) ? Visibility.Visible : Visibility.Hidden;
             public Thickness PathMargin
-                => new Thickness(((Host == BuildHost.Windows) ? 22 : 2), 0, 2, 0);
+                => new Thickness(((Host == BuildHost.Windows) ? 24 : 2), 4, 4, 4);
             public FontWeight FontWeight
                 => IsDefault ? FontWeights.Bold : FontWeights.Normal;
-
-            public static ImageSource ExplorerIcon => StaticLazy.Get(() =>
-                ExplorerIcon, () => GetExplorerIcon());
 
             public State State { get; set; } = State.Unknown;
             public bool RowVisible => State != State.Removed;
@@ -534,26 +527,6 @@ namespace QtVsTools.Options
                     Validate(true);
                 }
             }
-        }
-
-        static ImageSource GetExplorerIcon()
-        {
-            var pathWindowsExplorer = string.Format(@"{0}\explorer.exe",
-                Environment.GetFolderPath(Environment.SpecialFolder.Windows));
-
-            NativeAPI.SHFILEINFO shellFileInfo = new NativeAPI.SHFILEINFO();
-            NativeAPI.SHGetFileInfo(pathWindowsExplorer,
-                0, ref shellFileInfo, Marshal.SizeOf(shellFileInfo),
-                NativeAPI.SHGFI.Icon | NativeAPI.SHGFI.SmallIcon);
-            if (shellFileInfo.hIcon == IntPtr.Zero)
-                return null;
-
-            var iconImageSource = Imaging.CreateBitmapSourceFromHIcon(
-                shellFileInfo.hIcon, Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-
-            NativeAPI.DestroyIcon(shellFileInfo.hIcon);
-            return iconImageSource;
         }
 
         static object GetBinding(FrameworkElement control)
