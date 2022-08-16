@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -36,6 +36,8 @@ using System.Xml.Linq;
 
 namespace QtVsTools.Qml.Debug
 {
+    using QtVsTools.Core;
+
     struct QmlFile
     {
         public string QrcPath;
