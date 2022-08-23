@@ -343,7 +343,6 @@
     <Compile Include="Common\ConcurrentStopwatch.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\PriorityQueue.cs" />
-    <Compile Include="Common\NativeAPI.cs" />
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\Json\DeferredObject.cs" />
     <Compile Include="Common\Json\Serializable.cs" />

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -33,7 +33,7 @@ using System.Windows.Navigation;
 
 namespace QtVsTools.Wizards.Common
 {
-    using Wizards.Util;
+    using Core;
 
     public partial class WizardWindow : NavigationWindow, IEnumerable<WizardPage>
     {
@@ -96,12 +96,12 @@ namespace QtVsTools.Wizards.Common
         private void OnSourceInitialized(object sender, EventArgs e)
         {
             try {
-                var STYLE = -16; // see winuser.h
                 var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-                UnsafeNativeMethods.SetWindowLong(hwnd, STYLE,
-                    NativeMethods.GetWindowLong(hwnd, STYLE) & ~(0x10000 | 0x20000));
+                var windowStyles = NativeAPI.GetWindowLong(hwnd, NativeAPI.GWL_STYLE);
+                NativeAPI.SetWindowLong(hwnd, NativeAPI.GWL_STYLE,
+                    windowStyles & ~(NativeAPI.WS_MAXIMIZEBOX | NativeAPI.WS_MINIMIZEBOX));
             } catch {
-                // Ignore if we can't remove the buttons.
+                // Ignore if we can't remove the minimize and maximize buttons.
                 SourceInitialized -= OnSourceInitialized;
             }
         }

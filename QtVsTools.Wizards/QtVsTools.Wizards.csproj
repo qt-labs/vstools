@@ -161,7 +161,6 @@
       <DependentUpon>LibraryClassPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectWizard\Library\LibraryWizard.cs" />
-    <Compile Include="Util\NativeMethods.cs" />
     <Compile Include="ItemWizard\QtClass\QtClassWizard.cs" />
     <Compile Include="ItemWizard\WidgetsClass\WidgetsClassWizard.cs" />
     <Compile Include="Util\VCRulePropertyStorageHelper.cs" />
@@ -182,7 +181,6 @@
     <Compile Include="ProjectWizard\Server\ServerWizard.cs" />
     <Compile Include="Util\UiClassInclusionConverter.cs" />
     <Compile Include="Common\UiClassInclusion.cs" />
-    <Compile Include="Util\UnsafeNativeMethods.cs" />
     <Compile Include="Util\VCLanguageManagerValidationRule.cs" />
     <Compile Include="Common\WizardData.cs" />
     <Compile Include="Common\WizardPage.cs" />
