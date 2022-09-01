@@ -35,7 +35,7 @@ namespace QtVsTools.Json
     /// <summary>
     /// Provide serialization/deserialization of enum values marked with the [EnumString] attribute
     /// </summary>
-    static class SerializableEnum
+    public static class SerializableEnum
     {
         public static string Serialize<TEnum>(TEnum enumValue)
             where TEnum : struct
@@ -103,7 +103,7 @@ namespace QtVsTools.Json
 
     }
 
-    class EnumStringAttribute : Attribute
+    public class EnumStringAttribute : Attribute
     {
         public string ValueString { get; }
 

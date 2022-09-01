@@ -49,7 +49,7 @@ namespace QtVsTools
     /// </summary>
     ///
     [DataContract]
-    abstract class Disposable : Concurrent, IDisposable
+    public abstract class Disposable : Concurrent, IDisposable
     {
         protected const bool DisposingFrom_ObjectFinalizer = false;
         protected const bool DisposingFrom_DisposeInterface = true;
@@ -139,7 +139,7 @@ namespace QtVsTools
     /// </summary>
     ///
     [DataContract]
-    abstract class Finalizable : Disposable
+    public abstract class Finalizable : Disposable
     {
         ~Finalizable()
         {

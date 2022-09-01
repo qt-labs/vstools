@@ -47,7 +47,7 @@ namespace QtVsTools.Json
     /// <typeparam name="TBase">Base of deferrable class hierarchy</typeparam>
     ///
     [DataContract]
-    class DeferredObject<TBase> : Disposable, IDeferredObject
+    public class DeferredObject<TBase> : Disposable, IDeferredObject
         where TBase : Prototyped<TBase>, IDeferrable<TBase>
     {
         private IJsonData jsonData;

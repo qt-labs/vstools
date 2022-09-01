@@ -45,7 +45,7 @@ namespace QtVsTools
     /// <typeparam name="TBase">Base class of the prototyped class hierarchy</typeparam>
     ///
     [DataContract]
-    abstract class Prototyped<TBase> : Concurrent
+    public abstract class Prototyped<TBase> : Concurrent
         where TBase : Prototyped<TBase>
     {
         protected bool IsPrototype { get; private set; }
@@ -138,7 +138,7 @@ namespace QtVsTools
 
             static Dictionary<Type, List<Type>> GetTypeHierarchy(Type baseType)
             {
-                var subTypes = Assembly.GetExecutingAssembly().GetTypes()
+                var subTypes = baseType.Assembly.GetTypes()
                     .Where(x => baseType.IsAssignableFrom(x)
                         && x.IsAbstract == false
                         && x.ContainsGenericParameters == false)

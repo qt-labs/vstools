@@ -92,6 +92,10 @@
       <Project>{671C3821-7BD9-4C16-9A8D-EC1470EDBC9B}</Project>
       <Name>QtVsTools.Package</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QtVsTools.Core\QtVsTools.Core.csproj">
+      <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
+      <Name>QtVsTools.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

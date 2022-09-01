@@ -90,7 +90,7 @@ namespace QtVsTools.Json
     /// format, by extending the services provided by the DataContractJsonSerializer class.
     /// </summary>
     ///
-    class Serializer : Concurrent
+    public class Serializer : Concurrent
     {
         private DataContractJsonSerializer serializer;
 

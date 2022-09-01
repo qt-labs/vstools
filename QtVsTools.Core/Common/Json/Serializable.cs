@@ -40,7 +40,7 @@ namespace QtVsTools.Json
     /// </summary>
     /// <typeparam name="TBase">Base of the class hierarchy</typeparam>
     [DataContract]
-    abstract class Serializable<TBase> :
+    public abstract class Serializable<TBase> :
         Prototyped<TBase>,
         IDeferrable<TBase>,
         IDeferredObjectContainer
@@ -336,6 +336,6 @@ namespace QtVsTools.Json
         }
     }
 
-    class SkipDeserializationAttribute : Attribute
+    public class SkipDeserializationAttribute : Attribute
     { }
 }

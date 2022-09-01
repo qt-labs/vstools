@@ -173,7 +173,7 @@ namespace QtVsTools
     /// </summary>
     /// <typeparam name="T">Type of wrapped variable</typeparam>
     ///
-    class Exclusive<T> : Concurrent
+    public class Exclusive<T> : Concurrent
     {
         private T value;
 

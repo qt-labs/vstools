@@ -72,6 +72,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Windows.Forms" />
@@ -125,10 +126,21 @@
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
     <Compile Include="CommandLineParser.cs" />
+    <Compile Include="Common\Concurrent.cs" />
+    <Compile Include="Common\ConcurrentStopwatch.cs" />
+    <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\EnumExt.cs" />
+    <Compile Include="Common\Json\DeferredObject.cs" />
+    <Compile Include="Common\Json\Serializable.cs" />
+    <Compile Include="Common\Json\SerializableEnum.cs" />
+    <Compile Include="Common\Json\Serializer.cs" />
     <Compile Include="Common\LazyFactory.cs" />
     <Compile Include="Common\NativeAPI.cs" />
+    <Compile Include="Common\PriorityQueue.cs" />
+    <Compile Include="Common\Prototyped.cs" />
+    <Compile Include="Common\PunisherQueue.cs" />
     <Compile Include="Common\QtVSIPSettingsShared.cs" />
+    <Compile Include="Common\Timestamp.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
     <Compile Include="ExportProjectDialog.cs">
