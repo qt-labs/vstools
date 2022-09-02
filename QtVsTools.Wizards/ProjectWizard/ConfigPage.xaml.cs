@@ -136,6 +136,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         bool initialNextButtonIsEnabled;
         bool initialFinishButtonIsEnabled;
 
+        public bool ProjectModelEnabled { get; set; } = true;
+
         public ConfigPage()
         {
             InitializeComponent();
@@ -440,12 +442,14 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
         {
+            Data.ProjectModel = (WizardData.ProjectModels)ProjectModel.SelectedIndex;
             Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
             base.OnNextButtonClick(sender, e);
         }
 
         protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
         {
+            Data.ProjectModel = (WizardData.ProjectModels)ProjectModel.SelectedIndex;
             Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
             base.OnFinishButtonClick(sender, e);
         }

@@ -80,7 +80,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         ARM,
     }
 
-    public abstract class ProjectTemplateWizard : IWizard
+    public abstract partial class ProjectTemplateWizard : IWizard
     {
         LazyFactory Lazy { get; } = new LazyFactory();
 
@@ -209,8 +209,55 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         public virtual void ProjectItemFinishedGenerating(ProjectItem projectItem) { }
         public virtual void BeforeOpeningFile(ProjectItem projectItem) { }
-        public virtual void RunFinished() { }
-        public virtual bool ShouldAddProjectItem(string filePath) => true;
+
+        private void CleanupVcxProj()
+        {
+            var solutionDir = Parameter[NewProject.SolutionDirectory];
+            var slnFiles = Directory.GetFiles(solutionDir, "*.sln");
+            foreach (var slnFile in slnFiles) {
+                if (File.Exists(slnFile))
+                    File.Delete(slnFile);
+            }
+
+            var dotVsDir = Path.Combine(solutionDir, ".vs");
+            if (Directory.Exists(dotVsDir))
+                Directory.Delete(dotVsDir, recursive: true);
+
+            var projectDir = Parameter[NewProject.DestinationDirectory];
+            var vcxProjFiles = Directory.GetFiles(projectDir, "*.vcxproj*");
+            foreach (var vcxProjFile in vcxProjFiles) {
+                if (File.Exists(vcxProjFile))
+                    File.Delete(vcxProjFile);
+            }
+
+            var qtVarsProFiles = Directory.GetFiles(projectDir, "qtvars.pro",
+                SearchOption.AllDirectories);
+            foreach (string qtVarProFile in qtVarsProFiles) {
+                var projDirUri = new Uri(projectDir);
+                var proFileDirInfo = new DirectoryInfo(Path.GetDirectoryName(qtVarProFile));
+                while (new Uri(proFileDirInfo.Parent.FullName) != projDirUri)
+                    proFileDirInfo = proFileDirInfo.Parent;
+                proFileDirInfo.Delete(recursive: true);
+            }
+        }
+
+        public virtual void RunFinished()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (WizardData.ProjectModel == WizardData.ProjectModels.CMake) {
+                Dte.Solution.Close();
+                CleanupVcxProj();
+                Dte.ExecuteCommand("File.OpenFolder", Parameter[NewProject.DestinationDirectory]);
+            }
+        }
+
+        public virtual bool ShouldAddProjectItem(string filePath)
+        {
+            var fileName = Path.GetFileName(filePath);
+            if (IsCMakeFile(fileName))
+                return WizardData.ProjectModel == WizardData.ProjectModels.CMake;
+            return true;
+        }
 
         protected virtual void BeforeWizardRun() { }
         protected virtual void BeforeTemplateExpansion() { }
@@ -288,6 +335,15 @@ namespace QtVsTools.Wizards.ProjectWizard
             Debug.Assert(Dte != null);
             Debug.Assert(Configurations != null);
             Debug.Assert(ExtraItems != null);
+
+            ExpandMSBuild();
+            if (WizardData.ProjectModel == WizardData.ProjectModels.CMake)
+                ExpandCMake();
+        }
+
+        private void ExpandMSBuild()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             StringBuilder xml;
 

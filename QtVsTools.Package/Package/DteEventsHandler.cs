@@ -446,6 +446,10 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            // Ignore temp projects created by Qt/CMake wizard
+            if (QtProject.GetPropertyValue(project, "QT_CMAKE_TEMPLATE") == "true")
+                return;
+
             var formatVersion = QtProject.GetFormatVersion(project);
             if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
                 InitializeVCProject(project);

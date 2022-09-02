@@ -73,6 +73,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="Microsoft.VisualStudio.VCCodeModel" />
@@ -136,6 +137,7 @@
     <Compile Include="ProjectWizard\ConfigPage.xaml.cs">
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProjectWizard\ProjectTemplateWizard.CMake.cs" />
     <Compile Include="ProjectWizard\ProjectTemplateWizard.cs" />
     <Compile Include="ProjectWizard\Quick\QuickWizard.cs" />
     <Compile Include="Util\ClassNameValidationRule.cs" />

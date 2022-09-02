@@ -63,6 +63,14 @@ namespace QtVsTools.Wizards.Common
         public bool LowerCaseFileNames { get; set; }
         public UiClassInclusion UiClassInclusion { get; set; }
 
+        public enum ProjectModels
+        {
+            MsBuild = 0,
+            CMake = 1
+        }
+
+        public ProjectModels ProjectModel { get; set;}
+
         public IEnumerable<IWizardConfiguration> Configs { get; set; }
     }
 }

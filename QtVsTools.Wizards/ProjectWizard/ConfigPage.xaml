@@ -72,15 +72,22 @@
         </Grid.Resources>
         <Grid>
           <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
-          <DataGrid Margin="0,20,0,0" Name="ConfigTable" AutoGenerateColumns="False"
+          <ComboBox Name="ProjectModel" Grid.Row="0" Margin="0, 15, 0, 0"
+                    IsEnabled="{Binding Path=ProjectModelEnabled}">
+            <ComboBoxItem Content="Qt Visual Studio Project (Qt/MSBuild)"
+                          IsSelected="True" Selector.IsSelected="True"/>
+            <ComboBoxItem Content="CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"/>
+          </ComboBox>
+          <DataGrid Margin="0,5,0,0" Name="ConfigTable" AutoGenerateColumns="False"
               IsReadOnly="True" BorderThickness="1" BorderBrush="LightGray"
               GridLinesVisibility="All" HorizontalGridLinesBrush="LightGray"
               VerticalGridLinesBrush="LightGray" CanUserReorderColumns="False"
               CanUserSortColumns="False" CanUserResizeRows="False" RowHeaderWidth="0"
-              FrozenColumnCount="1" Grid.Row="0">
+              FrozenColumnCount="1" Grid.Row="1">
             <DataGrid.Resources>
               <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
               <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
@@ -274,7 +281,7 @@
               </DataGridTemplateColumn>
             </DataGrid.Columns>
           </DataGrid>
-          <StackPanel Name="ErrorPanel" Orientation="Horizontal" Grid.Row="1" Margin="0,10"
+          <StackPanel Name="ErrorPanel" Orientation="Horizontal" Grid.Row="2" Margin="0,10"
               Visibility="Hidden">
             <Image Name="ErrorIcon" Height="16" Width="16" Margin="5,0" />
             <Label Name="ErrorMsg" Foreground="Red" />
