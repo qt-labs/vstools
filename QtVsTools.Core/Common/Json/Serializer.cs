@@ -62,6 +62,7 @@ namespace QtVsTools.Json
     {
         bool IsEmpty();
         byte[] GetBytes();
+        string GetString();
     }
 
     /// <summary>
@@ -221,6 +222,11 @@ namespace QtVsTools.Json
             byte[] IJsonData.GetBytes()
             {
                 return Stream.ToArray();
+            }
+
+            string IJsonData.GetString()
+            {
+                return Encoding.UTF8.GetString(((IJsonData)this).GetBytes());
             }
 
             bool IJsonData.IsEmpty()

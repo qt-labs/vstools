@@ -170,6 +170,16 @@ namespace QtVsTools.Json
         }
 
         /// <summary>
+        /// Serialize object.
+        /// </summary>
+        /// <returns>JSON string</returns>
+        ///
+        public string ToJsonString(bool indent = true)
+        {
+            return ThreadSafe(() => Prototype.Serializer.Serialize(this, indent).GetString());
+        }
+
+        /// <summary>
         /// Deserialize object using this class hierarchy. After selecting the most suitable derived
         /// class as target type and deserializing an instance of that class, any deferred objects
         /// are also deserialized using their respective class hierarchies.
