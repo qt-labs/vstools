@@ -120,10 +120,11 @@ namespace QtVsTools.Json
             return true;
         }
 
-        public IJsonData Serialize(object obj)
+        public IJsonData Serialize(object obj, bool indent = false)
         {
             var stream = new MemoryStream();
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(stream)) {
+            using (var writer = JsonReaderWriterFactory
+                .CreateJsonWriter(stream, Encoding.UTF8, true, indent)) {
                 try {
                     serializer.WriteObject(writer, obj);
                     writer.Close();

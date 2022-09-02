@@ -164,9 +164,9 @@ namespace QtVsTools.Json
         /// </summary>
         /// <returns>Raw JSON data</returns>
         ///
-        public byte[] Serialize()
+        public byte[] Serialize(bool indent = false)
         {
-            return ThreadSafe(() => Prototype.Serializer.Serialize(this).GetBytes());
+            return ThreadSafe(() => Prototype.Serializer.Serialize(this, indent).GetBytes());
         }
 
         /// <summary>
