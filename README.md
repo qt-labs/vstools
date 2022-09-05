@@ -4,6 +4,20 @@ The Qt Visual Studio Tools integrate the Qt development tools into Microsoft Vis
 enables developers to use the standard Windows development environment without having to worry
 about Qt-related build steps or tools.
 
+<!--TOC-->
+  - [Sources](#sources)
+  - [Qt installation](#qt-installation)
+    - [Building Qt from sources](#building-qt-from-sources)
+    - [32-bit or 64-bit](#32-bit-or-64-bit)
+  - [Build](#build)
+    - [Requirements](#requirements)
+    - [Environment variables](#environment-variables)
+    - [Initialization](#initialization)
+    - [Target platform](#target-platform)
+  - [Debug](#debug)
+  - [Documentation](#documentation)
+<!--/TOC-->
+
 ## Sources
 
 Use Git to check out the
