@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
@@ -111,9 +112,9 @@ namespace QtVsTools.Common
                     return GetDirectory(type); // - fall-back on hard-coded directory
 
                 var dir = ".";
-                var lastindex = tool.Outputs.LastIndexOf('\\');
-                if (tool.Outputs.LastIndexOf('/') > lastindex)
-                    lastindex = tool.Outputs.LastIndexOf('/');
+                var lastindex = tool.Outputs.LastIndexOf(Path.DirectorySeparatorChar);
+                if (tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar) > lastindex)
+                    lastindex = tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar);
 
                 if (lastindex != -1)
                     dir = tool.Outputs.Substring(0, lastindex);

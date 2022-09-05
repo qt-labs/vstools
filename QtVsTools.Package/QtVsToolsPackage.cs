@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -217,9 +217,9 @@ namespace QtVsTools
                 var QtMsBuildDefault = Path.Combine(
                     Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
                 try {
-                    var qtMsBuildDefaultUri = new Uri(QtMsBuildDefault + "\\");
+                    var qtMsBuildDefaultUri = new Uri(QtMsBuildDefault + Path.DirectorySeparatorChar);
                     var qtMsBuildVsixPath = Path.Combine(PkgInstallPath, "QtMsBuild");
-                    var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + "\\");
+                    var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + Path.DirectorySeparatorChar);
                     if (qtMsBuildVsixUri != qtMsBuildDefaultUri) {
                         var qtMsBuildVsixFiles = Directory
                             .GetFiles(qtMsBuildVsixPath, "*", SearchOption.AllDirectories)

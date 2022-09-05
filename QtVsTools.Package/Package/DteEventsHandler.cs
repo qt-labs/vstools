@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -471,8 +471,8 @@ namespace QtVsTools
                                     qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
                                 } else {
                                     qtDir = matches[0].ToString().Trim('"');
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf('\\'));
+                                    qtDir = qtDir.Remove(qtDir.LastIndexOf(Path.DirectorySeparatorChar));
+                                    qtDir = qtDir.Remove(qtDir.LastIndexOf(Path.DirectorySeparatorChar));
                                 }
                                 qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
                                 HelperFunctions.SetDebuggingEnvironment(project, "PATH="

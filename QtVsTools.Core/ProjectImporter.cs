@@ -251,7 +251,8 @@ namespace QtVsTools.Core
 
             var name = mainInfo.Name.Remove(mainInfo.Name.IndexOf('.'));
 
-            var vcxproj = new FileInfo(mainInfo.DirectoryName + "\\" + name + ext);
+            var vcxproj = new FileInfo(mainInfo.DirectoryName + Path.DirectorySeparatorChar
+                + name + ext);
             if (vcxproj.Exists) {
                 var result = MessageBox.Show($@"{vcxproj.Name} already exists. Select 'OK' to " +
                     "regenerate the file or 'Cancel' to quit importing the project.",

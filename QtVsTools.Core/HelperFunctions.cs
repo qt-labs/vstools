@@ -207,7 +207,7 @@ namespace QtVsTools.Core
                 return ".\\";
 
             path = path.Trim();
-            path = path.Replace("/", "\\");
+            path = HelperFunctions.ToNativeSeparator(path);
 
             var tmp = string.Empty;
             while (tmp != path) {
@@ -217,11 +217,12 @@ namespace QtVsTools.Core
 
             path = path.Replace("\"", "");
 
-            if (path != "." && !IsAbsoluteFilePath(path) && !path.StartsWith(".\\", StringComparison.Ordinal)
-                 && !path.StartsWith("$", StringComparison.Ordinal))
+            if (path != "." && !IsAbsoluteFilePath(path)
+                && !path.StartsWith(".\\", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("$", StringComparison.OrdinalIgnoreCase)) {
                 path = ".\\" + path;
-
-            if (path.EndsWith("\\", StringComparison.Ordinal))
+            }
+            if (path.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
                 path = path.Substring(0, path.Length - 1);
 
             return path;
@@ -232,10 +233,8 @@ namespace QtVsTools.Core
             path = path.Trim();
             if (path.Length >= 2 && path[1] == ':')
                 return true;
-            if (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal))
-                return true;
-
-            return false;
+            return path.StartsWith("\\", StringComparison.OrdinalIgnoreCase)
+                || path.StartsWith("/", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -251,7 +250,7 @@ namespace QtVsTools.Core
                 return null;
 
             line = line.TrimEnd(' ', '\t');
-            while (line.EndsWith("\\", StringComparison.Ordinal)) {
+            while (line.EndsWith("\\", StringComparison.OrdinalIgnoreCase)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
                 if (appendix != null)
@@ -298,12 +297,11 @@ namespace QtVsTools.Core
             var fi = new FileInfo(file);
             var di = new DirectoryInfo(path);
 
-            char[] separator = { '\\' };
-            var fiArray = fi.FullName.Split(separator);
+            var fiArray = fi.FullName.Split(Path.DirectorySeparatorChar);
             var dir = di.FullName;
-            while (dir.EndsWith("\\", StringComparison.Ordinal))
+            while (dir.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
                 dir = dir.Remove(dir.Length - 1, 1);
-            var diArray = dir.Split(separator);
+            var diArray = dir.Split(Path.DirectorySeparatorChar);
 
             var minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
             int i = 0, j = 0, commonParts = 0;
@@ -322,7 +320,7 @@ namespace QtVsTools.Core
                 if (j == i)
                     result = fiArray[j];
                 else
-                    result += "\\" + fiArray[j];
+                    result += Path.DirectorySeparatorChar + fiArray[j];
             }
             while (i < diArray.Length) {
                 result = "..\\" + result;
@@ -775,40 +773,40 @@ namespace QtVsTools.Core
 
                 // can be in any filter
                 if (IsTranslationFile(vcfile.Name) && (filter == FilesToList.FL_Translation))
-                    fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                    fileList.Add(FromNativeSeparators(vcfile.RelativePath));
 
                 // can also be in any filter
                 if (IsWinRCFile(vcfile.Name) && (filter == FilesToList.FL_WinResource))
-                    fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                    fileList.Add(FromNativeSeparators(vcfile.RelativePath));
 
                 if (IsGenerated(vcfile)) {
                     if (filter == FilesToList.FL_Generated)
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     continue;
                 }
 
                 if (IsResource(vcfile)) {
                     if (filter == FilesToList.FL_Resources)
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     continue;
                 }
 
                 switch (filter) {
                 case FilesToList.FL_UiFiles: // form files
                     if (IsUicFile(vcfile.Name))
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_HFiles:
                     if (IsHeaderFile(vcfile.Name))
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_CppFiles:
                     if (IsSourceFile(vcfile.Name))
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     break;
                 case FilesToList.FL_QmlFiles:
                     if (IsQmlFile(vcfile.Name))
-                        fileList.Add(ChangePathFormat(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
                     break;
                 }
             }
@@ -1606,7 +1604,7 @@ namespace QtVsTools.Core
             if (!path.Contains(' '))
                 return path;
             if (path.EndsWith("\\"))
-                path += "\\";
+                path += Path.DirectorySeparatorChar;
             return string.Format("\"{0}\"", path);
         }
     }

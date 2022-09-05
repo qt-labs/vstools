@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -81,12 +81,9 @@ namespace QtVsTools.Core
         {
             var workDir = new Uri(Path.GetDirectoryName(ProFile) + Path.DirectorySeparatorChar);
             var path = new Uri(absolutePath);
-            if (workDir.IsBaseOf(path)) {
-                return workDir.MakeRelativeUri(path).OriginalString
-                    .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            } else {
-                return absolutePath;
-            }
+            if (workDir.IsBaseOf(path))
+                return HelperFunctions.ToNativeSeparator(workDir.MakeRelativeUri(path).OriginalString);
+            return absolutePath;
         }
 
         protected virtual string QMakeArgs

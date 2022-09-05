@@ -204,7 +204,8 @@ namespace QtVsTools.Core
                 return Environment.GetEnvironmentVariable("QTDIR");
 
             var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
-            var versionKey = key?.OpenSubKey(strVersionKey + "\\" + version, false);
+            var versionKey = key?
+                .OpenSubKey(strVersionKey + Path.DirectorySeparatorChar + version, false);
             return versionKey?.GetValue("InstallDir") as string;
         }
 
@@ -242,14 +243,14 @@ namespace QtVsTools.Core
                 }
             }
 
-            string rootKeyPath = "SOFTWARE\\" + Resources.registryRootPath;
-            string versionKeyPath = strVersionKey + "\\" + verName;
+            var rootKeyPath = "SOFTWARE" + Path.DirectorySeparatorChar + Resources.registryRootPath;
             using (var key = Registry.CurrentUser.CreateSubKey(rootKeyPath)) {
                 if (key == null) {
                     Messages.Print(
                         "ERROR: root registry key creation failed");
                     return false;
                 }
+                var versionKeyPath = strVersionKey + Path.DirectorySeparatorChar + verName;
                 using (var versionKey = key.CreateSubKey(versionKeyPath)) {
                     if (versionKey == null) {
                         Messages.Print(
@@ -264,7 +265,8 @@ namespace QtVsTools.Core
 
         public void RemoveVersion(string versionName)
         {
-            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, true);
+            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE" + Path.DirectorySeparatorChar
+                + regVersionPath, true);
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);

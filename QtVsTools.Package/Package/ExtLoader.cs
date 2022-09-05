@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -152,7 +152,7 @@ namespace QtVsTools
                     Messages.Print(SR.GetString("ImportPriFileNotResolved", file));
                 } else {
                     if (!HelperFunctions.IsAbsoluteFilePath(s))
-                        s = path + "\\" + s;
+                        s = path + Path.DirectorySeparatorChar + s;
                     lst.Add(s);
                 }
             }

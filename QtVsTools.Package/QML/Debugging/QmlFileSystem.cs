@@ -36,7 +36,7 @@ using System.Xml.Linq;
 
 namespace QtVsTools.Qml.Debug
 {
-    using QtVsTools.Core;
+    using Core;
 
     struct QmlFile
     {
@@ -74,9 +74,9 @@ namespace QtVsTools.Qml.Debug
         string QrcPath(string prefix, string filePath)
         {
             if (!string.IsNullOrEmpty(prefix) && !prefix.EndsWith("/"))
-                prefix += "/";
+                prefix += Path.AltDirectorySeparatorChar;
 
-            while (!string.IsNullOrEmpty(prefix) && prefix[0] == '/')
+            while (!string.IsNullOrEmpty(prefix) && prefix[0] == Path.AltDirectorySeparatorChar)
                 prefix = prefix.Substring(1);
 
             return string.Format("qrc:///{0}{1}", prefix, filePath);
@@ -107,26 +107,25 @@ namespace QtVsTools.Qml.Debug
                     {
                         Prefix = x.Attribute("prefix"),
                         Alias = y.Attribute("alias"),
-                        Path = ((string)y)
-                            .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                        Path = HelperFunctions.ToNativeSeparator((string)y)
                     })
                     .Where(z => KNOWN_EXTENSIONS.Contains(
-                        Path.GetExtension(z.Path), StringComparer.InvariantCultureIgnoreCase)));
+                        Path.GetExtension(z.Path), StringComparer.InvariantCultureIgnoreCase)));;
 
             foreach (var file in files) {
                 string qrcPath;
                 if (file.Alias != null)
                     qrcPath = (string)file.Alias;
                 else if (!Path.IsPathRooted(file.Path))
-                    qrcPath = file.Path.Replace(@"\", "/");
+                    qrcPath = HelperFunctions.FromNativeSeparators(file.Path);
                 else
                     continue;
 
                 string qrcPathPrefix = (file.Prefix != null) ? ((string)file.Prefix) : "";
                 if (!string.IsNullOrEmpty(qrcPathPrefix) && !qrcPathPrefix.EndsWith("/"))
-                    qrcPathPrefix += "/";
+                    qrcPathPrefix += Path.AltDirectorySeparatorChar;
 
-                while (!string.IsNullOrEmpty(qrcPathPrefix) && qrcPathPrefix[0] == '/')
+                while (!string.IsNullOrEmpty(qrcPathPrefix) && qrcPathPrefix[0] == Path.AltDirectorySeparatorChar)
                     qrcPathPrefix = qrcPathPrefix.Substring(1);
 
                 var qmlFile = new QmlFile
@@ -152,7 +151,7 @@ namespace QtVsTools.Qml.Debug
                 return default(QmlFile);
             qrcPath = qrcPath.Substring("qrc:".Length);
 
-            while (!string.IsNullOrEmpty(qrcPath) && qrcPath[0] == '/')
+            while (!string.IsNullOrEmpty(qrcPath) && qrcPath[0] == Path.AltDirectorySeparatorChar)
                 qrcPath = qrcPath.Substring(1);
 
             qrcPath = string.Format("qrc:///{0}", qrcPath);
@@ -167,7 +166,7 @@ namespace QtVsTools.Qml.Debug
         {
             string filePath = fileUrl.Substring("file://".Length);
 
-            while (!string.IsNullOrEmpty(filePath) && filePath[0] == '/')
+            while (!string.IsNullOrEmpty(filePath) && filePath[0] == Path.AltDirectorySeparatorChar)
                 filePath = filePath.Substring(1);
 
             if (!File.Exists(filePath))
@@ -176,8 +175,7 @@ namespace QtVsTools.Qml.Debug
             return new QmlFile
             {
                 QrcPath = fileUrl,
-                FilePath = filePath
-                    .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                FilePath = HelperFunctions.ToNativeSeparator(filePath)
             };
         }
 

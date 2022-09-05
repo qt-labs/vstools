@@ -57,11 +57,11 @@ namespace QtVsTools.Core
                 var relPath = string.Empty;
                 if (files[i].IndexOf(':') != 1) {
                     relPath = HelperFunctions.GetRelativePath(path,
-                        vcproj.ProjectDirectory + "\\" + files[i]);
+                        vcproj.ProjectDirectory + Path.DirectorySeparatorChar + files[i]);
                 } else {
                     relPath = HelperFunctions.GetRelativePath(path, files[i]);
                 }
-                files[i] = HelperFunctions.ChangePathFormat(relPath);
+                files[i] = HelperFunctions.FromNativeSeparators(relPath);
             }
         }
 
@@ -81,7 +81,7 @@ namespace QtVsTools.Core
             foreach (var file in files) {
                 FileInfo fi;
                 if (file.IndexOf(':') != 1)
-                    fi = new FileInfo(path + "\\" + file);
+                    fi = new FileInfo(path + Path.DirectorySeparatorChar + file);
                 else
                     fi = new FileInfo(file);
 
@@ -148,7 +148,7 @@ namespace QtVsTools.Core
             var outPut = config.PrimaryOutput;
             var fi = new FileInfo(outPut);
             var destdir = HelperFunctions.GetRelativePath(qtPro.VCProject.ProjectDirectory, fi.DirectoryName);
-            destdir = HelperFunctions.ChangePathFormat(destdir);
+            destdir = HelperFunctions.FromNativeSeparators(destdir);
             var target = qtPro.VCProject.Name;
 
             option = new ProFileOption("TEMPLATE");
@@ -271,7 +271,7 @@ namespace QtVsTools.Core
             option.List.Add(".");
 
             var mocDir = QtVSIPSettings.GetMocDirectory(project, activeConfig.ToLower(), activePlatform.ToLower());
-            mocDir = mocDir.Replace('\\', '/');
+            mocDir = HelperFunctions.FromNativeSeparators(mocDir);
             option = new ProFileOption("MOC_DIR");
             option.Comment = Resources.ec_MocDir;
             option.ShortComment = "Moc Directory";
@@ -287,7 +287,7 @@ namespace QtVsTools.Core
             option.List.Add(config.ConfigurationName.ToLower());
 
             var uiDir = QtVSIPSettings.GetUicDirectory(project);
-            uiDir = uiDir.Replace('\\', '/');
+            uiDir = HelperFunctions.FromNativeSeparators(uiDir);
             option = new ProFileOption("UI_DIR");
             option.Comment = Resources.ec_UiDir;
             option.ShortComment = "UI Directory";
@@ -296,7 +296,7 @@ namespace QtVsTools.Core
             option.List.Add(uiDir);
 
             var rccDir = QtVSIPSettings.GetRccDirectory(project);
-            rccDir = rccDir.Replace('\\', '/');
+            rccDir = HelperFunctions.FromNativeSeparators(rccDir);
             option = new ProFileOption("RCC_DIR");
             option.Comment = Resources.ec_RccDir;
             option.ShortComment = "RCC Directory";
@@ -321,7 +321,7 @@ namespace QtVsTools.Core
             option.List.AddRange(HelperFunctions.GetProjectFiles(project, FilesToList.FL_Translation));
 
             // add the rc file
-            if (File.Exists(qtPro.VCProject.ProjectDirectory + "\\" + project.Name + ".rc")) {
+            if (File.Exists(qtPro.VCProject.ProjectDirectory + Path.DirectorySeparatorChar + project.Name + ".rc")) {
                 option = new ProFileOption("win32:RC_FILE");
                 option.Comment = Resources.ec_rcFile;
                 option.ShortComment = "Windows resource file";
@@ -409,7 +409,7 @@ namespace QtVsTools.Core
             content.Options.Add(option);
 
             foreach (var resFile in qtPro.GetResourceFiles())
-                option.List.Add(resFile.RelativePath.Replace('\\', '/'));
+                option.List.Add(HelperFunctions.FromNativeSeparators(resFile.RelativePath));
 
             if (hasSpaces)
                 Messages.DisplayWarningMessage(SR.GetString("ExportProject_PriFileContainsSpaces"));
@@ -460,7 +460,7 @@ namespace QtVsTools.Core
                     if (HelperFunctions.IsAbsoluteFilePath(d))
                         d = HelperFunctions.GetRelativePath(project.FullName, d);
                     if (!HelperFunctions.IsAbsoluteFilePath(d))
-                        option.List.Add(HelperFunctions.ChangePathFormat(d));
+                        option.List.Add(HelperFunctions.FromNativeSeparators(d));
                 }
             }
         }
@@ -488,7 +488,7 @@ namespace QtVsTools.Core
                         if (HelperFunctions.IsAbsoluteFilePath(d))
                             d = HelperFunctions.GetRelativePath(project.FullName, d);
                         if (!HelperFunctions.IsAbsoluteFilePath(d))
-                            option.List.Add("-L\"" + HelperFunctions.ChangePathFormat(d) + "\"");
+                            option.List.Add("-L\"" + HelperFunctions.FromNativeSeparators(d) + "\"");
                     }
                 }
             }
@@ -500,7 +500,7 @@ namespace QtVsTools.Core
                         !d.StartsWith(qtDir + "\\lib", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith("qt", StringComparison.OrdinalIgnoreCase) &&
                         !d.StartsWith(".\\qt", StringComparison.OrdinalIgnoreCase) && d != ".")
-                        option.List.Add("-l" + HelperFunctions.ChangePathFormat(d).Replace(".lib", ""));
+                        option.List.Add("-l" + HelperFunctions.FromNativeSeparators(d).Replace(".lib", ""));
                 }
             }
         }
@@ -546,7 +546,7 @@ namespace QtVsTools.Core
             if (createSlnFile) {
                 StreamWriter sw;
                 var slnName = HelperFunctions.RemoveFileNameExtension(fi);
-                var slnFileName = slnDir.FullName + "\\" + slnName + ".pro";
+                var slnFileName = slnDir.FullName + Path.DirectorySeparatorChar + slnName + ".pro";
 
                 if (File.Exists(slnFileName)) {
                     if (MessageBox.Show(SR.GetString("ExportProject_ExistsOverwriteQuestion", slnFileName),
@@ -574,14 +574,13 @@ namespace QtVsTools.Core
                 content.Options.Add(option);
 
                 string proFullName, relativePath;
-                char[] trimChars = { '\\' };
                 foreach (var profile in prosln.ProFiles) {
                     var fiProject = new FileInfo(profile.Project.ProjectFile);
                     var projectBaseName = HelperFunctions.RemoveFileNameExtension(fiProject);
                     proFullName = profile.Project.ProjectDirectory + projectBaseName + ".pro";
                     relativePath = HelperFunctions.GetRelativePath(slnDir.FullName, proFullName);
-                    relativePath = relativePath.TrimEnd(trimChars);
-                    relativePath = HelperFunctions.ChangePathFormat(relativePath.Remove(0, 2));
+                    relativePath = relativePath.TrimEnd(Path.DirectorySeparatorChar);
+                    relativePath = HelperFunctions.FromNativeSeparators(relativePath.Remove(0, 2));
                     option.List.Add(relativePath);
                 }
 
@@ -621,7 +620,7 @@ namespace QtVsTools.Core
                         var relativePriPath = HelperFunctions.GetRelativePath(Path.GetDirectoryName(proFile), priFileToInclude);
                         if (relativePriPath.StartsWith(".\\", StringComparison.Ordinal))
                             relativePriPath = relativePriPath.Substring(2);
-                        relativePriPath = HelperFunctions.ChangePathFormat(relativePriPath);
+                        relativePriPath = HelperFunctions.FromNativeSeparators(relativePriPath);
                         option.List.Add(relativePriPath);
                         break;
                     }
@@ -716,7 +715,7 @@ namespace QtVsTools.Core
         {
             var newPath = ".";
             if (path != null)
-                newPath = path + "\\" + filter.Name;
+                newPath = path + Path.DirectorySeparatorChar + filter.Name;
             newPath = newPath.ToLower().Trim();
             newPath = Regex.Replace(newPath, @"\\+\.?\\+", "\\");
             newPath = Regex.Replace(newPath, @"\\\.?$", "");
@@ -765,7 +764,7 @@ namespace QtVsTools.Core
                     if (path.StartsWith(".\\", StringComparison.Ordinal))
                         path = path.Substring(2);
 
-                    var i = path.LastIndexOf('\\');
+                    var i = path.LastIndexOf(Path.DirectorySeparatorChar);
                     if (i > -1)
                         path = path.Substring(0, i);
                     else

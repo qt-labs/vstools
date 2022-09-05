@@ -243,7 +243,7 @@ namespace QtVsTools.Core
             if (fileName == null)
                 return null;
             var mocDir = QtVSIPSettings.GetMocDirectory(envPro, configName, platformName, file)
-                + "\\" + fileName;
+                + Path.DirectorySeparatorChar + fileName;
             if (HelperFunctions.IsAbsoluteFilePath(mocDir))
                 mocDir = HelperFunctions.GetRelativePath(vcPro.ProjectDirectory, mocDir);
             return mocDir;
@@ -515,9 +515,10 @@ namespace QtVsTools.Core
                 quotedArg.Append(part);
 
                 // Duplicate backslashes immediately preceding quotation mark character
-                if (part.EndsWith("\\"))
-                    quotedArg.Append(part.Reverse().TakeWhile(c => c == '\\').ToArray());
-
+                if (part.EndsWith("\\")) {
+                    quotedArg.Append(part.Reverse().TakeWhile(c => c == Path.DirectorySeparatorChar)
+                        .ToArray());
+                }
                 // Escape all quotation mark characters in argument
                 if (i < argParts.Length - 1)
                     quotedArg.Append("\\\"");
@@ -627,7 +628,8 @@ namespace QtVsTools.Core
             if (!HelperFunctions.IsHeaderFile(file.Name))
                 return string.Empty;
 
-            var additionalMocOptions = "\"-f" + compiler.GetPrecompiledHeaderThrough().Replace('\\', '/') + "\" ";
+            var additionalMocOptions = "\"-f" + HelperFunctions.FromNativeSeparators(compiler
+                .GetPrecompiledHeaderThrough()) + "\" ";
             //Get mocDir without .\\ at the beginning of it
             var mocDir = QtVSIPSettings.GetMocDirectory(envPro);
             if (mocDir.StartsWith(".\\", StringComparison.Ordinal))
@@ -637,8 +639,8 @@ namespace QtVsTools.Core
             mocDir = vcPro.ProjectDirectory + mocDir;
             var fullPathGeneric = Path.Combine(
                 Path.GetDirectoryName(file.FullPath), "%(Filename)%(Extension)");
-            var relPathToFile = HelperFunctions.GetRelativePath(
-                mocDir, fullPathGeneric).Replace('\\', '/');
+            var relPathToFile = HelperFunctions.FromNativeSeparators(HelperFunctions
+                .GetRelativePath(mocDir, fullPathGeneric));
             additionalMocOptions += "\"-f" + relPathToFile + "\"";
             return additionalMocOptions;
         }
@@ -794,7 +796,7 @@ namespace QtVsTools.Core
                 var stringToReplace = Path.GetFileName(outputMocFile);
                 outputMocMacro =
                     outputMocPath
-                    + "\\"
+                    + Path.DirectorySeparatorChar
                     + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
             } else {
                 outputMocFile = GetRelativeMocFilePath(sourceFile.FullPath);
@@ -802,7 +804,7 @@ namespace QtVsTools.Core
                 var stringToReplace = Path.GetFileName(outputMocFile);
                 outputMocMacro =
                     outputMocPath
-                    + "\\"
+                    + Path.DirectorySeparatorChar
                     + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
                 if (output.Length > 0 && !output.EndsWith(";", StringComparison.Ordinal))
                     output += ";";
@@ -920,7 +922,7 @@ namespace QtVsTools.Core
             var outputMocFile = GetRelativeMocFilePath(sourceFile.FullPath);
             var outputMocPath = Path.GetDirectoryName(outputMocFile);
             var stringToReplace = Path.GetFileName(outputMocFile);
-            var outputMocMacro = outputMocPath + "\\"
+            var outputMocMacro = outputMocPath + Path.DirectorySeparatorChar
                 + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
 
             sourceFile.ItemType = QtMoc.ItemTypeName;
@@ -972,7 +974,8 @@ namespace QtVsTools.Core
             if (toolSettings == CustomTool.CustomBuildStep) {
                 mocFile = GetFileFromProject(mocRelPath);
                 if (mocFile == null) {
-                    var fi = new FileInfo(VCProject.ProjectDirectory + "\\" + mocRelPath);
+                    var fi = new FileInfo(VCProject.ProjectDirectory + Path.DirectorySeparatorChar
+                        + mocRelPath);
                     if (!fi.Directory.Exists)
                         fi.Directory.Create();
                     mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
@@ -1276,7 +1279,7 @@ namespace QtVsTools.Core
 
             if (parser.parse()) {
                 var fi = new FileInfo(qrcFile.FullPath);
-                var qrcDir = fi.Directory.FullName + "\\";
+                var qrcDir = fi.Directory.FullName + Path.DirectorySeparatorChar;
 
                 foreach (var prfx in parser.Prefixes) {
                     foreach (var itm in prfx.Items) {
@@ -1296,7 +1299,7 @@ namespace QtVsTools.Core
 
             var nameOnly = HelperFunctions.RemoveFileNameExtension(new FileInfo(qrcFile.FullPath));
             var qrcCppFile = QtVSIPSettings.GetRccDirectory(envPro)
-                + "\\" + "qrc_" + nameOnly + ".cpp";
+                + Path.DirectorySeparatorChar + "qrc_" + nameOnly + ".cpp";
 
             try {
                 foreach (VCFileConfiguration vfc in (IVCCollection)qrcFile.FileConfigurations) {
@@ -1593,7 +1596,7 @@ namespace QtVsTools.Core
                 if (Path.IsPathRooted(fileName))
                     fi = new FileInfo(fileName);
                 else
-                    fi = new FileInfo(ProjectDir + "\\" + fileName);
+                    fi = new FileInfo(ProjectDir + Path.DirectorySeparatorChar + fileName);
 
                 foreach (VCFile file in (IVCCollection)vcfilter.Files) {
                     if (file.MatchName(fi.FullName, true))
@@ -1612,9 +1615,10 @@ namespace QtVsTools.Core
         public VCFile GetFileFromProject(string fileName)
         {
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
-            if (!HelperFunctions.IsAbsoluteFilePath(fileName))
-                fileName = HelperFunctions.NormalizeFilePath(vcPro.ProjectDirectory + "\\" + fileName);
-
+            if (!HelperFunctions.IsAbsoluteFilePath(fileName)) {
+                fileName = HelperFunctions.NormalizeFilePath(vcPro.ProjectDirectory
+                    + Path.DirectorySeparatorChar + fileName);
+            }
             foreach (VCFile f in (IVCCollection)vcPro.Files) {
                 if (f.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                     return f;
@@ -2183,7 +2187,7 @@ namespace QtVsTools.Core
                     configName,
                     platformName,
                     fileConfig.File as VCFile)
-                    + '\\' + fileName;
+                    + Path.DirectorySeparatorChar + fileName;
                 //Remove .\ at the beginning of the mocPath
                 if (relativeMocPath.StartsWith(".\\", StringComparison.Ordinal))
                     relativeMocPath = relativeMocPath.Remove(0, 2);
@@ -2363,7 +2367,8 @@ namespace QtVsTools.Core
                     if (compiler != null && compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
                         pchParameters = GetPCHMocOptions(srcMocFile, compiler);
 
-                    var outputFileName = QtVSIPSettings.GetMocDirectory(envPro) + "\\";
+                    var outputFileName = QtVSIPSettings.GetMocDirectory(envPro)
+                        + Path.DirectorySeparatorChar;
                     if (mocableIsCPP) {
                         outputFileName += ProjectMacros.Name;
                         outputFileName += ".moc";
@@ -2393,7 +2398,8 @@ namespace QtVsTools.Core
                         // We have to delete the old moc file in order to trigger custom build step.
                         var configName = config.Name.Remove(config.Name.IndexOf('|'));
                         var platformName = config.Name.Substring(config.Name.IndexOf('|') + 1);
-                        var projectPath = envPro.FullName.Remove(envPro.FullName.LastIndexOf('\\'));
+                        var projectPath =envPro.FullName.Remove(envPro.FullName.LastIndexOf(Path
+                            .DirectorySeparatorChar));
                         var mocRelPath = GetRelativeMocFilePath(srcMocFile.FullPath, configName, platformName);
                         var mocPath = Path.Combine(projectPath, mocRelPath);
                         if (File.Exists(mocPath))
@@ -2454,7 +2460,7 @@ namespace QtVsTools.Core
                 fileName = fileName.Substring(0, fileName.Length - 4) + ".cpp";
                 if (fileName.Length > 0) {
                     foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                        if (f.FullPath.EndsWith("\\" + fileName, StringComparison.Ordinal))
+                        if (f.FullPath.EndsWith(Path.DirectorySeparatorChar + fileName, StringComparison.OrdinalIgnoreCase))
                             return f;
                     }
                 }
@@ -2475,7 +2481,7 @@ namespace QtVsTools.Core
             if (HelperFunctions.IsHeaderFile(fileName) || HelperFunctions.IsMocFile(fileName)) {
                 fileName = fileName.Remove(fileName.LastIndexOf('.')) + ".cpp";
                 foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                    if (f.FullPath.EndsWith("\\" + fileName, StringComparison.Ordinal))
+                    if (f.FullPath.EndsWith(Path.DirectorySeparatorChar + fileName, StringComparison.OrdinalIgnoreCase))
                         return f;
                 }
             }
@@ -2503,7 +2509,7 @@ namespace QtVsTools.Core
                     if (fileName != null) {
                         var found = false;
                         foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                            if (f.FullPath.EndsWith("\\" + fileName, StringComparison.OrdinalIgnoreCase)) {
+                            if (f.FullPath.EndsWith(Path.DirectorySeparatorChar + fileName, StringComparison.OrdinalIgnoreCase)) {
                                 if (!orgFiles.Contains(f) && HasMocStep(f, oldMocDir))
                                     orgFiles.Add(f);
                                 found = true;

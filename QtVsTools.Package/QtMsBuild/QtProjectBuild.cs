@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -258,7 +258,8 @@ namespace QtVsTools.QtMsBuild
                     { "SolutionFileName", Path.GetFileName(solutionPath) },
                     { "SolutionName", Path.GetFileNameWithoutExtension(solutionPath) },
                     { "SolutionExt", Path.GetExtension(solutionPath) },
-                    { "SolutionDir", Path.GetDirectoryName(solutionPath).TrimEnd('\\') + '\\'  }
+                    { "SolutionDir", Path.GetDirectoryName(solutionPath).TrimEnd(Path.
+                                        DirectorySeparatorChar) + Path.DirectorySeparatorChar }
                 };
 
             foreach (var property in Properties)
