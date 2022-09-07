@@ -438,13 +438,7 @@ namespace QtVsTools.Core
             } catch {
                 Messages.Print("Cannot read the default Qt version from registry.");
             }
-
-            if (defaultVersion == null) {
-                var qtDir = Environment.GetEnvironmentVariable("QTDIR");
-                if (string.IsNullOrEmpty(qtDir))
-                    return defaultVersion;
-            }
-            return defaultVersion;
+            return defaultVersion ?? Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
         }
 
         public bool SaveDefaultVersion(string version)
