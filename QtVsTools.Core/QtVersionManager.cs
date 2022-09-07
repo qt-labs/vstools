@@ -417,12 +417,12 @@ namespace QtVsTools.Core
                 if (defaultVersion == null) {
                     // last fallback... try QTDIR
                     var qtDir = Environment.GetEnvironmentVariable("QTDIR");
-                    if (qtDir == null)
+                    if (string.IsNullOrEmpty(qtDir))
                         return null;
-                    var d = new DirectoryInfo(qtDir);
-                    SaveVersion(d.Name, d.FullName);
-                    if (SaveDefaultVersion(d.Name))
-                        defaultVersion = d.Name;
+                    var name = Path.GetFileName(qtDir);
+                    SaveVersion(name, Path.GetFullPath(qtDir));
+                    if (SaveDefaultVersion(name))
+                        defaultVersion = name;
                 }
             }
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
