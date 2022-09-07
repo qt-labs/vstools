@@ -162,10 +162,9 @@ namespace QtVsTools.Qml.Classification
 
         protected override ClassificationTag GetClassification(TrackingTag tag)
         {
-            var debugTag = tag as ExprTrackingTag;
-            if (debugTag == null)
-                return null;
-            return new ExprTag(debugTag.Exprs, QmlClassificationType.Get(ClassificationType));
+            if (tag is ExprTrackingTag debugTag)
+                return new ExprTag(debugTag.Exprs, QmlClassificationType.Get(ClassificationType));
+            return null;
         }
 
         int IVsTextViewFilter.GetDataTipText(TextSpan[] pSpan, out string pbstrText)

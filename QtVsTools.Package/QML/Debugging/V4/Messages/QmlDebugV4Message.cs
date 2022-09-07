@@ -60,8 +60,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         protected sealed override void InitializeObject(object initArgs)
         {
-            if (initArgs is string)
-                Type = initArgs as string;
+            if (initArgs is string args)
+                Type = args;
         }
 
         protected override bool? IsCompatible(Message that)
@@ -116,17 +116,11 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(msg) == false)
                 return false;
 
-            var that = msg as Request;
-            if (that == null)
+            if (string.IsNullOrEmpty(SubType) || string.IsNullOrEmpty(Command))
                 return null;
-
-            if (string.IsNullOrEmpty(SubType))
-                return null;
-
-            if (string.IsNullOrEmpty(Command))
-                return null;
-
-            return this.SubType == that.SubType && this.Command == that.Command;
+            if (msg is Request that)
+                return this.SubType == that.SubType && this.Command == that.Command;
+            return null;
         }
 
         Response response = null;
@@ -227,14 +221,9 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(msg) == false)
                 return false;
 
-            var that = msg as ServerMessage;
-            if (that == null)
-                return null;
-
-            if (string.IsNullOrEmpty(SubType))
-                return null;
-
-            return this.SubType == that.SubType;
+            if (!string.IsNullOrEmpty(SubType) && msg is ServerMessage that)
+                return this.SubType == that.SubType;
+            return null;
         }
     }
 
@@ -279,19 +268,18 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(msg) == false)
                 return false;
 
-            var that = msg as Response;
-            if (that == null)
-                return null;
+            if (msg is Response that) {
+                // If response is unsuccessful, no need to continue searching, just use this class,
+                // it already has all the data needed for error processing (i.e. the error message)
+                if (!that.Success)
+                    return true;
 
-            // If response is unsuccessful, no need to continue searching, just use this class,
-            // it already has all the data needed for error processing (i.e. the error message)
-            if (!that.Success)
-                return true;
+                if (string.IsNullOrEmpty(Command))
+                    return null;
 
-            if (string.IsNullOrEmpty(Command))
-                return null;
-
-            return this.Command == that.Command;
+                return this.Command == that.Command;
+            }
+            return null;
         }
     }
 
@@ -335,14 +323,9 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(msg) == false)
                 return false;
 
-            var that = msg as Event;
-            if (that == null)
-                return null;
-
-            if (string.IsNullOrEmpty(EventType))
-                return null;
-
-            return this.EventType == that.EventType;
+            if (!string.IsNullOrEmpty(EventType) && msg is Event that)
+                return this.EventType == that.EventType;
+            return null;
         }
     }
 

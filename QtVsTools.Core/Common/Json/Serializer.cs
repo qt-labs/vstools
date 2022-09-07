@@ -297,11 +297,11 @@ namespace QtVsTools.Json
 
             object IDataContractSurrogate.GetObjectToSerialize(object obj, Type targetType)
             {
-                if (obj is IDeferredObject) {
+                if (obj is IDeferredObject deferredObject) {
                     // Deferred object serialized: release shared serializer
                     sharedInstance.Release();
 
-                    return (obj as IDeferredObject).Object;
+                    return deferredObject.Object;
                 }
                 return obj;
             }

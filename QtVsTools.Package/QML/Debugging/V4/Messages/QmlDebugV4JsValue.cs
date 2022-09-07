@@ -173,6 +173,8 @@ namespace QtVsTools.Qml.Debug.V4
     [DataContract]
     class JsNumberSymbolic : JsPrimitive
     {
+        private static readonly string[] SymbolicValues = {"NaN", "Infinity", "+Infinity", "-Infinity"};
+
         //  {"handle":<handle>,"type":"null"}
         public JsNumberSymbolic()
         {
@@ -189,12 +191,9 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(obj) == false)
                 return false;
 
-            var that = obj as JsNumberSymbolic;
-            if (that == null)
-                return null;
-
-            var symbolicValues = new[] { "NaN", "Infinity", "+Infinity", "-Infinity" };
-            return symbolicValues.Contains(that.Value);
+            if (obj is JsNumberSymbolic that)
+                return SymbolicValues.Contains(that.Value);
+            return null;
         }
 
         public override string ToString()
@@ -222,11 +221,11 @@ namespace QtVsTools.Qml.Debug.V4
             foreach (var subType in SubClass.Get(typeof(JsPrimitive<T>)).SubTypes) {
                 var valueType = subType.GetGenericArguments().FirstOrDefault();
                 if (valueType.IsAssignableFrom(typeof(T))) {
-                    var _this = CreateInstance(subType) as JsPrimitive<T>;
-                    if (_this == null)
-                        return null;
-                    _this.Value = value;
-                    return _this;
+                    if (CreateInstance(subType) is JsPrimitive<T> _this) {
+                        _this.Value = value;
+                        return _this;
+                    }
+                    return null;
                 }
             }
             return null;

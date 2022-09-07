@@ -53,8 +53,8 @@ namespace QtVsTools.SyntaxAnalysis
         {
             return new RegExprSequence
             {
-                Exprs = rxs.SelectMany(rx => rx is RegExprSequence
-                    ? ((RegExprSequence)rx).Exprs
+                Exprs = rxs.SelectMany(rx => rx is RegExprSequence sequence
+                    ? sequence.Exprs
                     : Items(rx))
             };
         }

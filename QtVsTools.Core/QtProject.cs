@@ -116,21 +116,18 @@ namespace QtVsTools.Core
 
         public static bool IsQtMsBuildEnabled(VCProject project)
         {
-            if (project == null)
-                return false;
             try {
-                var configs = project.Configurations as IVCCollection;
-                if (configs.Count == 0)
-                    return false;
-                var firstConfig = configs.Item(1) as VCConfiguration;
-                var ruleName = GetRuleName(firstConfig, QtMoc.ItemTypeName);
-                var qtMoc = firstConfig.Rules.Item(ruleName) as IVCRulePropertyStorage;
-                if (qtMoc == null)
-                    return false;
+                if (project?.Configurations is IVCCollection configs) {
+                    if (configs.Count == 0)
+                        return false;
+                    var firstConfig = configs.Item(1) as VCConfiguration;
+                    var ruleName = GetRuleName(firstConfig, QtMoc.ItemTypeName);
+                    return firstConfig?.Rules.Item(ruleName) is IVCRulePropertyStorage;
+                }
             } catch (Exception) {
                 return false;
             }
-            return true;
+            return false;
         }
 
         public static bool IsQtMsBuildEnabled(Project project)
@@ -324,15 +321,12 @@ namespace QtVsTools.Core
             string platformName,
             string propName)
         {
-            var vcConfigs = vcProject.Configurations as IVCCollection;
-            if (vcConfigs == null)
-                return null;
-            var configId = string.Format("{0}|{1}",
-                configName, platformName);
-            var vcConfig = vcConfigs.Item(configId) as VCConfiguration;
-            if (vcConfig == null)
-                return null;
-            return GetPropertyValue(vcConfig, propName);
+            if (vcProject.Configurations is IVCCollection vcConfigs) {
+                var configId = $"{configName}|{platformName}";
+                if (vcConfigs.Item(configId) is VCConfiguration vcConfig)
+                    return GetPropertyValue(vcConfig, propName);
+            }
+            return null;
         }
 
         public static string GetPropertyValue(
@@ -3274,17 +3268,15 @@ namespace QtVsTools.Core
 
         public string GetProperty(object propertyStorage, string itemType, string propertyName)
         {
-            if (propertyStorage == null)
-                return "";
-            if (propertyStorage is VCFileConfiguration) {
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
                 return GetProperty(
-                    (propertyStorage as VCFileConfiguration).Tool
+                    vcFileConfiguration.Tool
                     as IVCRulePropertyStorage,
                     propertyName);
-            } else if (propertyStorage is VCConfiguration) {
-                var config = propertyStorage as VCConfiguration;
-                var ruleName = QtProject.GetRuleName(config, itemType);
-                return GetProperty(config.Rules.Item(ruleName)
+            }
+            if (propertyStorage is VCConfiguration vcConfiguration) {
+                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
+                return GetProperty(vcConfiguration.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName);
             }
@@ -3309,19 +3301,17 @@ namespace QtVsTools.Core
             string propertyName,
             string propertyValue)
         {
-            if (propertyStorage == null)
-                return false;
-            if (propertyStorage is VCFileConfiguration) {
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
                 return SetProperty(
-                    (propertyStorage as VCFileConfiguration).Tool
+                    vcFileConfiguration.Tool
                     as IVCRulePropertyStorage,
                     propertyName,
                     propertyValue);
-            } else if (propertyStorage is VCConfiguration) {
-                var config = propertyStorage as VCConfiguration;
-                var ruleName = QtProject.GetRuleName(config, itemType);
+            }
+            if (propertyStorage is VCConfiguration vcConfiguration) {
+                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
                 return SetProperty(
-                    config.Rules.Item(ruleName)
+                    vcConfiguration.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName,
                     propertyValue);
@@ -3339,18 +3329,16 @@ namespace QtVsTools.Core
 
         public bool DeleteProperty(object propertyStorage, string itemType, string propertyName)
         {
-            if (propertyStorage == null)
-                return false;
-            if (propertyStorage is VCFileConfiguration) {
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
                 return DeleteProperty(
-                    (propertyStorage as VCFileConfiguration).Tool
+                    vcFileConfiguration.Tool
                     as IVCRulePropertyStorage,
                     propertyName);
-            } else if (propertyStorage is VCConfiguration) {
-                var config = propertyStorage as VCConfiguration;
-                var ruleName = QtProject.GetRuleName(config, itemType);
+            }
+            if (propertyStorage is VCConfiguration vcConfiguration) {
+                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
                 return DeleteProperty(
-                    config.Rules.Item(ruleName)
+                    vcConfiguration.Rules.Item(ruleName)
                     as IVCRulePropertyStorage,
                     propertyName);
             }
@@ -3359,50 +3347,38 @@ namespace QtVsTools.Core
 
         public string GetConfigName(object propertyStorage)
         {
-            if (propertyStorage == null)
-                return "";
-            if (propertyStorage is VCFileConfiguration)
-                return (propertyStorage as VCFileConfiguration).Name;
-            else if (propertyStorage is VCConfiguration)
-                return (propertyStorage as VCConfiguration).Name;
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
+                return vcFileConfiguration.Name;
+            if (propertyStorage is VCConfiguration vcConfiguration)
+                return vcConfiguration.Name;
             return "";
         }
 
         string GetItemType(VCFileConfiguration propertyStorage)
         {
-            if (propertyStorage == null)
-                return "";
-            VCFile file = propertyStorage.File as VCFile;
-            if (file == null)
-                return "";
-            return file.ItemType;
+            if (propertyStorage?.File is VCFile vcFile)
+                return vcFile.ItemType;
+            return "";
         }
 
         public string GetItemType(object propertyStorage)
         {
-            if (propertyStorage == null)
-                return "";
-            if (propertyStorage is VCFileConfiguration)
-                return GetItemType(propertyStorage as VCFileConfiguration);
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
+                return GetItemType(vcFileConfiguration);
             return "";
         }
 
         string GetItemName(VCFileConfiguration propertyStorage)
         {
-            if (propertyStorage == null)
-                return "";
-            VCFile file = propertyStorage.File as VCFile;
-            if (file == null)
-                return "";
-            return file.Name;
+            if (propertyStorage?.File is VCFile vcFile)
+                return vcFile.Name;
+            return "";
         }
 
         public string GetItemName(object propertyStorage)
         {
-            if (propertyStorage == null)
-                return "";
-            if (propertyStorage is VCFileConfiguration)
-                return GetItemName(propertyStorage as VCFileConfiguration);
+            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
+                return GetItemName(vcFileConfiguration);
             return "";
         }
 

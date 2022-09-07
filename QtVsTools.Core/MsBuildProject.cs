@@ -1654,21 +1654,16 @@ namespace QtVsTools.Core
         {
             public string GetProperty(object propertyStorage, string itemType, string propertyName)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return "";
-                XElement item;
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                    item = xmlPropertyStorage.Element(ns + itemType);
-                    if (item == null)
-                        return "";
-                } else {
-                    item = xmlPropertyStorage;
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    XElement item = xmlPropertyStorage;
+                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                        item = xmlPropertyStorage.Element(ns + itemType);
+                        if (item == null)
+                            return "";
+                    }
+                    return item.Element(ns + propertyName)?.Value;
                 }
-                var prop = item.Element(ns + propertyName);
-                if (prop == null)
-                    return "";
-                return prop.Value;
+                return "";
             }
 
             public bool SetProperty(
@@ -1677,23 +1672,22 @@ namespace QtVsTools.Core
                 string propertyName,
                 string propertyValue)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return false;
-                XElement item;
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                    item = xmlPropertyStorage.Element(ns + itemType);
-                    if (item == null)
-                        xmlPropertyStorage.Add(item = new XElement(ns + itemType));
-                } else {
-                    item = xmlPropertyStorage;
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    XElement item = xmlPropertyStorage;
+                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                        item = xmlPropertyStorage.Element(ns + itemType);
+                        if (item == null)
+                            xmlPropertyStorage.Add(item = new XElement(ns + itemType));
+                    }
+
+                    var prop = item.Element(ns + propertyName);
+                    if (prop != null)
+                        prop.Value = propertyValue;
+                    else
+                        item.Add(new XElement(ns + propertyName, propertyValue));
+                    return true;
                 }
-                var prop = item.Element(ns + propertyName);
-                if (prop != null)
-                    prop.Value = propertyValue;
-                else
-                    item.Add(new XElement(ns + propertyName, propertyValue));
-                return true;
+                return false;
             }
 
             public bool DeleteProperty(
@@ -1701,77 +1695,68 @@ namespace QtVsTools.Core
                 string itemType,
                 string propertyName)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return false;
-                XElement item;
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                    item = xmlPropertyStorage.Element(ns + itemType);
-                    if (item == null)
-                        return true;
-                } else {
-                    item = xmlPropertyStorage;
-                }
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    XElement item = xmlPropertyStorage;
+                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                        item = xmlPropertyStorage.Element(ns + itemType);
+                        if (item == null)
+                            return true;
+                    }
 
-                var prop = item.Element(ns + propertyName);
-                if (prop != null)
-                    prop.Remove();
-                return true;
+                    item.Element(ns + propertyName)?.Remove();
+                    return true;
+                }
+                return false;
             }
 
             public string GetConfigName(object propertyStorage)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return "";
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    if (xmlPropertyStorage.Name.LocalName != "ItemDefinitionGroup")
+                        return xmlPropertyStorage.Attribute("ConfigName")?.Value;
+
                     var configName = ConditionParser
-                        .Match(xmlPropertyStorage.Attribute("Condition").Value);
                     if (!configName.Success || configName.Groups.Count <= 1)
                         return "";
                     return configName.Groups[1].Value;
                 }
-                return xmlPropertyStorage.Attribute("ConfigName").Value;
+                return "";
             }
 
             public string GetItemType(object propertyStorage)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return "";
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
-                    return "";
-                return xmlPropertyStorage.Name.LocalName;
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
+                        return "";
+                    return xmlPropertyStorage.Name.LocalName;
+                }
+                return "";
             }
 
             public string GetItemName(object propertyStorage)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return "";
-                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
-                    return "";
-                return xmlPropertyStorage.Attribute("Include").Value;
+                if (propertyStorage is XElement xmlPropertyStorage) {
+                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
+                        return "";
+                    return xmlPropertyStorage.Attribute("Include")?.Value;
+                }
+                return "";
             }
 
             public object GetParentProject(object propertyStorage)
             {
-                XElement xmlPropertyStorage = propertyStorage as XElement;
-                if (xmlPropertyStorage == null)
-                    return "";
-                if (xmlPropertyStorage.Document == null)
-                    return null;
-                return xmlPropertyStorage.Document.Root;
+                if (propertyStorage is XElement xmlPropertyStorage)
+                    return xmlPropertyStorage.Document?.Root;
+                return "";
             }
 
             public object GetProjectConfiguration(object project, string configName)
             {
-                XElement xmlProject = project as XElement;
-                if (xmlProject == null)
-                    return null;
-                return xmlProject.Elements(ns + "ItemDefinitionGroup")
-                    .Where(config => config.Attribute("Condition").Value.Contains(configName))
-                    .FirstOrDefault();
+                if (project is XElement xmlProject) {
+                    return xmlProject.Elements(ns + "ItemDefinitionGroup")
+                        .FirstOrDefault(config => config.Attribute("Condition").Value.Contains(configName));
+                }
+                return null;
             }
 
             public IEnumerable<object> GetItems(
@@ -1779,18 +1764,17 @@ namespace QtVsTools.Core
                 string itemType,
                 string configName = "")
             {
-                XElement xmlProject = project as XElement;
-                if (xmlProject == null)
-                    return new List<object>();
-                return
-                    xmlProject.Elements(ns + "ItemGroup")
-                    .Elements(ns + "CustomBuild")
-                    .Elements(ns + itemType)
-                    .Where(item => (
-                        configName == ""
-                        || item.Attribute("ConfigName").Value == configName))
-                    .GroupBy(item => item.Attribute("Include").Value)
-                    .Select(item => item.First());
+                if (project is XElement xmlProject) {
+                    return xmlProject.Elements(ns + "ItemGroup")
+                        .Elements(ns + "CustomBuild")
+                        .Elements(ns + itemType)
+                        .Where(item =>
+                            configName == "" || item.Attribute("ConfigName").Value == configName)
+                        .GroupBy(item => item.Attribute("Include").Value)
+                        .Select(item => item.First());
+                }
+
+                return new List<object>();
             }
         }
 

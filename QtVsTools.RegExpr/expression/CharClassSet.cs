@@ -271,8 +271,8 @@ namespace QtVsTools.SyntaxAnalysis
 
                         classSet = null;
                         if (expr.Operator == Op.Term) {
-                            if (expr.Term is CharClassSet)
-                                classSet = expr.Term as CharClassSet;
+                            if (expr.Term is CharClassSet charClassSet)
+                                classSet = charClassSet;
                             else
                                 classSet = new CharClassSet(expr.Term as Element);
                         } else if (context.SubSets != null && context.SubSets.Any()) {

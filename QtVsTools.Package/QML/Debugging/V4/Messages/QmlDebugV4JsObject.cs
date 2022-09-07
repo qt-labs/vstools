@@ -57,11 +57,10 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(obj) == false)
                 return false;
 
-            var _that = obj as JsRef<TJsObject>;
-            if (_that == null)
-                return null;
+            if (obj is JsRef<TJsObject>)
+                return true;
+            return null;
 
-            return true;
         }
     }
 
@@ -78,11 +77,9 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(obj) == false)
                 return false;
 
-            var _that = obj as JsObjectRef;
-            if (_that == null)
-                return null;
-
-            return ((JsRef<JsObjectRef>)_that).Ref.HasValue;
+            if (obj is JsObjectRef that)
+                return ((JsRef<JsObjectRef>) that).Ref.HasValue;
+            return null;
         }
 
         public new int Ref
@@ -117,11 +114,10 @@ namespace QtVsTools.Qml.Debug.V4
             if (base.IsCompatible(obj) == false)
                 return false;
 
-            var _that = obj as JsObject;
-            if (_that == null)
-                return null;
+            if (obj is JsObject that)
+                return !that.Ref.HasValue;
+            return null;
 
-            return !_that.Ref.HasValue;
         }
 
         [DataMember(Name = "className")]

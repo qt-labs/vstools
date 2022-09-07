@@ -130,39 +130,30 @@ namespace QtVsTools.Qml.Classification
         {
             var tags = new List<QmlSyntaxTag>();
 
-            if (element is KeywordToken) {
-                var token = element as KeywordToken;
+            switch (element) {
+            case KeywordToken token:
                 tags.Add(new QmlSyntaxTag(snapshot, token, Keyword, token.Location));
-
-            } else if (element is NumberToken) {
-                var token = element as NumberToken;
+                break;
+            case NumberToken token:
                 tags.Add(new QmlSyntaxTag(snapshot, token, Numeric, token.Location));
-
-            } else if (element is StringToken) {
-                var token = element as StringToken;
+                break;
+            case StringToken token:
                 tags.Add(new QmlSyntaxTag(snapshot, token, String, token.Location));
-
-            } else if (element is CommentToken) {
-                var token = element as CommentToken;
-                // QML parser does not report the initial/final tokens of comments
-                var commentStart = snapshot.GetText(token.Location.Offset - 2, 2);
-                var commentLocation = token.Location;
-                if (commentStart == "//") {
+                break;
+            case CommentToken token: {
+                    // QML parser does not report the initial/final tokens of comments
+                    var commentStart = snapshot.GetText(token.Location.Offset - 2, 2);
+                    var commentLocation = token.Location;
                     commentLocation.Offset -= 2;
-                    commentLocation.Length += 2;
-                } else {
-                    commentLocation.Offset -= 2;
-                    commentLocation.Length += 4;
+                    commentLocation.Length += commentStart == "//" ? 2 : 4;
+                    tags.Add(new QmlSyntaxTag(snapshot, token, Comment, commentLocation));
+                    break;
                 }
-                tags.Add(new QmlSyntaxTag(snapshot, token, Comment, commentLocation));
-
-            } else if (element is UiImport) {
-                var node = element as UiImport;
+            case UiImport node:
                 if (node.ImportIdToken.Length > 0)
                     tags.Add(new QmlSyntaxTag(snapshot, node, TypeName, node.ImportIdToken));
-
-            } else if (element is UiObjectDefinition) {
-                var node = element as UiObjectDefinition;
+                break;
+            case UiObjectDefinition node:
                 if (node.QualifiedTypeNameId != null) {
                     var name = snapshot.GetText(node.QualifiedTypeNameId.IdentifierToken);
                     // an UiObjectDefinition may be used to group property bindings
@@ -176,9 +167,8 @@ namespace QtVsTools.Qml.Classification
                             snapshot, node, Binding, node.QualifiedTypeNameId));
                     }
                 }
-
-            } else if (element is UiObjectBinding) {
-                var node = element as UiObjectBinding;
+                break;
+            case UiObjectBinding node:
                 if (node.QualifiedId != null) {
                     tags.Add(GetClassificationTag(
                         snapshot, node, Binding, node.QualifiedId));
@@ -187,25 +177,24 @@ namespace QtVsTools.Qml.Classification
                     tags.Add(GetClassificationTag(
                         snapshot, node, TypeName, node.QualifiedTypeNameId));
                 }
-
-            } else if (element is UiScriptBinding) {
-                var node = element as UiScriptBinding;
-                var qualifiedId = node.QualifiedId;
-                while (qualifiedId != null) {
-                    tags.Add(GetClassificationTag(snapshot, node, Binding, qualifiedId));
-                    qualifiedId = qualifiedId.Next;
+                break;
+            case UiScriptBinding node: {
+                    var qualifiedId = node.QualifiedId;
+                    while (qualifiedId != null) {
+                        tags.Add(GetClassificationTag(snapshot, node, Binding, qualifiedId));
+                        qualifiedId = qualifiedId.Next;
+                    }
+                    break;
                 }
-
-            } else if (element is UiArrayBinding) {
-                var node = element as UiArrayBinding;
-                var qualifiedId = node.QualifiedId;
-                while (qualifiedId != null) {
-                    tags.Add(GetClassificationTag(snapshot, node, Binding, qualifiedId));
-                    qualifiedId = qualifiedId.Next;
+            case UiArrayBinding node: {
+                    var qualifiedId = node.QualifiedId;
+                    while (qualifiedId != null) {
+                        tags.Add(GetClassificationTag(snapshot, node, Binding, qualifiedId));
+                        qualifiedId = qualifiedId.Next;
+                    }
+                    break;
                 }
-
-            } else if (element is UiPublicMember) {
-                var node = element as UiPublicMember;
+            case UiPublicMember node:
                 if (node.Type == UiPublicMemberType.Property && node.TypeToken.Length > 0) {
                     var typeName = snapshot.GetText(node.TypeToken);
                     if (QmlBasicTypes.Contains(typeName))
@@ -215,8 +204,9 @@ namespace QtVsTools.Qml.Classification
                 }
                 if (node.IdentifierToken.Length > 0)
                     tags.Add(new QmlSyntaxTag(snapshot, node, Binding, node.IdentifierToken));
-
+                break;
             }
+
             return tags;
         }
     }

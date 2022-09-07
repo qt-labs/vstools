@@ -126,10 +126,11 @@ namespace QtVsTools.SyntaxAnalysis
                 if (operands.Length <= idx)
                     return false;
                 object operandObj = operands[idx++];
-                if (!(operandObj is TOperand))
-                    return false;
-                x = (TOperand)operandObj;
-                return true;
+                if (operandObj is TOperand operand) {
+                    x = operand;
+                    return true;
+                }
+                return false;
             }
 
             public bool Execute(ref T prod, string value, params object[] operands)

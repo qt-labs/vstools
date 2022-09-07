@@ -89,10 +89,16 @@ namespace QtVsTools.Qml.Debug.AD7
             Parent = parent;
             JsValue = value;
 
-            if (Parent != null && Parent.JsValue is JsObject && ((JsObject)Parent.JsValue).IsArray)
-                Name = string.Format("[{0}]", JsValue.Name);
-            else
+            Children = new SortedDictionary<string, Property>();
+            if (Parent?.JsValue is JsObject jsObject && jsObject.IsArray) {
+                Name = $"[{JsValue.Name}]";
+                foreach (JsValue objProp in jsObject.Properties.Where(x => x.HasData)) {
+                    Children[GetChildKey(objProp.Name)]
+                        = Create(StackFrame, ScopeNumber, objProp, this);
+                }
+            } else {
                 Name = JsValue.Name;
+            }
 
             var nameParts = new Stack<string>(new[] { Name });
             for (var p = Parent; p != null && !string.IsNullOrEmpty(p.Name); p = p.Parent) {
@@ -104,15 +110,6 @@ namespace QtVsTools.Qml.Debug.AD7
 
             Type = JsValue.Type.ToString();
             Value = JsValue.ToString();
-
-            Children = new SortedDictionary<string, Property>();
-            if (JsValue is JsObject) {
-                var obj = JsValue as JsObject;
-                foreach (JsValue objProp in obj.Properties.Where(x => x.HasData)) {
-                    Children[GetChildKey(objProp.Name)]
-                        = Create(StackFrame, ScopeNumber, objProp, this);
-                }
-            }
 
             return true;
         }
@@ -149,8 +146,8 @@ namespace QtVsTools.Qml.Debug.AD7
             if (guidFilter != Guid.Empty && !Filter.LocalsSelected(ref guidFilter))
                 return VSConstants.S_OK;
 
-            if (JsValue is JsObjectRef) {
-                var obj = Debugger.Lookup(FrameNumber, ScopeNumber, JsValue as JsObjectRef);
+            if (JsValue is JsObjectRef jsObjectRef) {
+                var obj = Debugger.Lookup(FrameNumber, ScopeNumber, jsObjectRef);
                 if (obj == null)
                     return VSConstants.S_OK;
 

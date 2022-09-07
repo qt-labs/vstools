@@ -87,21 +87,23 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeWizardRun()
         {
-            var tmp = WizardData as TsWizardData;
-            tmp.TsFile = Parameter[NewTranslationItem.SafeItemName];
-            tmp.CultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures)
-                .ToDictionary(
-                    mc => mc.Name.Replace("-", "_"),
-                    mc => mc.EnglishName,
-                    StringComparer.OrdinalIgnoreCase
-                ).OrderBy(item => item.Value).ToList();
+            if (WizardData is TsWizardData tmp) {
+                tmp.TsFile = Parameter[NewTranslationItem.SafeItemName];
+                tmp.CultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures)
+                    .ToDictionary(
+                        mc => mc.Name.Replace("-", "_"),
+                        mc => mc.EnglishName,
+                        StringComparer.OrdinalIgnoreCase
+                    ).OrderBy(item => item.Value).ToList();
+            }
         }
 
         protected override void BeforeTemplateExpansion()
         {
-            var tmp = WizardData as TsWizardData;
-            Parameter[NewTranslationItem.CultureInfoName] = tmp.CultureInfoName;
-            Parameter[NewTranslationItem.TsFileName] = tmp.TsFile + "_" + tmp.CultureInfoName + ".ts";
+            if (WizardData is TsWizardData ts) {
+                Parameter[NewTranslationItem.CultureInfoName] = ts.CultureInfoName;
+                Parameter[NewTranslationItem.TsFileName] = $"{ts.TsFile}_{ts.CultureInfoName}.ts";
+            }
         }
 
         protected override void Expand()

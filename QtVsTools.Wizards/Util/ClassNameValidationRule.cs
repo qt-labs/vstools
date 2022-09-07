@@ -42,8 +42,7 @@ namespace QtVsTools.Wizards.Util
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is string) {
-                var identifier = value as string;
+            if (value is string identifier) {
                 if (AllowEmptyIdentifier && string.IsNullOrEmpty(identifier))
                     return ValidationResult.ValidResult;
 

@@ -92,15 +92,12 @@ namespace QtVsTools.Editors
 
                 var activeConfigId = string.Format("{0}|{1}",
                     activeConfig.ConfigurationName, activeConfig.PlatformName);
-                var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
-                if (vcConfig == null)
-                    return null;
+                if (vcConfigs.Item(activeConfigId) is VCConfiguration vcConfig) {
+                    var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
+                    return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
+                }
 
-                var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
-                if (string.IsNullOrEmpty(qtToolsPath))
-                    return null;
-
-                return qtToolsPath;
+                return null;
             });
         }
 

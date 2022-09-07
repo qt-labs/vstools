@@ -142,12 +142,11 @@ namespace QtVsTools.VisualStudio
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
                 Debug.Assert(infoBarUIElement == UIElement);
-                var hyperlink = actionItem.ActionContext as Hyperlink;
-                if (hyperlink == null)
-                    return;
-                if (hyperlink.CloseInfoBar)
-                    Close();
-                hyperlink.OnClicked?.Invoke();
+                if (actionItem.ActionContext is Hyperlink hyperlink) {
+                    if (hyperlink.CloseInfoBar)
+                        Close();
+                    hyperlink.OnClicked?.Invoke();
+                }
             }
 
             void IVsInfoBarUIEvents.OnClosed(IVsInfoBarUIElement infoBarUIElement)

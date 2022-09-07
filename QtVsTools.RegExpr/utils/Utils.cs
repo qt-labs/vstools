@@ -65,10 +65,9 @@ namespace QtVsTools.SyntaxAnalysis
         internal T As<T>()
             where T : RegExpr
         {
-            if (this is T)
-                return this as T;
-            else
-                throw new InvalidCastException();
+            if (this is T expr)
+                return expr;
+            throw new InvalidCastException();
         }
 
         internal static IEnumerable<T> Empty<T>()

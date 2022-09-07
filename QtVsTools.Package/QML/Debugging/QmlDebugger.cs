@@ -376,11 +376,11 @@ namespace QtVsTools.Qml.Debug
                 return null;
 
             JsValue obj = defObj;
-            if (!(obj is JsObject))
-                return null;
-
-            obj.Name = objRef.Name;
-            return obj as JsObject;
+            if (obj is JsObject jsObject) {
+                jsObject.Name = objRef.Name;
+                return jsObject;
+            }
+            return null;
         }
 
         public JsValue Evaluate(int frameNumber, string expression)

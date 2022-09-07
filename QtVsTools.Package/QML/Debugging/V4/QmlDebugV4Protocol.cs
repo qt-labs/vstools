@@ -180,8 +180,7 @@ namespace QtVsTools.Qml.Debug.V4
             if (msg == null)
                 return;
 
-            if (msg is Response) {
-                var msgResponse = msg as Response;
+            if (msg is Response msgResponse) {
                 EnterCriticalSection();
                 PendingRequest pendingRequest = null;
                 if (pendingRequests.TryGetValue(msgResponse.RequestSeq, out pendingRequest)) {
@@ -192,11 +191,10 @@ namespace QtVsTools.Qml.Debug.V4
                     pendingRequest.Dispose();
                 } else {
                     LeaveCriticalSection();
-                    sink.NotifyMessage(msg);
+                    sink.NotifyMessage(msgResponse);
                 }
 
-            } else if (msg is Event) {
-                var msgEvent = msg as Event;
+            } else if (msg is Event msgEvent) {
                 eventQueue.Enqueue(msgEvent);
                 eventReceived.Set();
 

@@ -80,13 +80,13 @@ namespace QtVsTools.Core
             if (versionCache == null)
                 versionCache = new Hashtable();
 
-            var vi = versionCache[name] as VersionInformation;
-            if (vi == null) {
-                var qtdir = GetInstallPath(name);
-                versionCache[name] = vi = VersionInformation.Get(qtdir);
-                if (vi != null)
-                    vi.name = name;
-            }
+            if (versionCache[name] is VersionInformation vi)
+                return vi;
+
+            var qtdir = GetInstallPath(name);
+            versionCache[name] = vi = VersionInformation.Get(qtdir);
+            if (vi != null)
+                vi.name = name;
             return vi;
         }
 
@@ -300,14 +300,14 @@ namespace QtVsTools.Core
                 return false;
 
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings) {
-                var vcPro = project.Object as VCProject;
-                if (vcPro == null)
-                    return false;
-                foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
-                    config.SetPropertyValue(Resources.projLabelQtSettings, true,
-                        "QtInstall", version);
+                if (project.Object is VCProject vcPro) {
+                    foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
+                        config.SetPropertyValue(Resources.projLabelQtSettings, true,
+                            "QtInstall", version);
+                    }
+                    return true;
                 }
-                return true;
+                return false;
             }
             var key = "Qt5Version " + platform;
             if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)

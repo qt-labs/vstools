@@ -29,7 +29,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using EnvDTE;
 
@@ -42,7 +41,7 @@ namespace QtVsTools.Wizards.Util
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is string) {
+            if (value is string @string) {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
                 if (dte == null)
                     return ValidationResult.ValidResult;
@@ -55,7 +54,7 @@ namespace QtVsTools.Wizards.Util
                 if (files.Count == 0)
                     return ValidationResult.ValidResult;
 
-                var fileName = (value as string).ToUpperInvariant();
+                var fileName = @string.ToUpperInvariant();
                 if (files.FirstOrDefault(x => x.ToUpperInvariant() == fileName) != null)
                     return new ValidationResult(false, @"File already exists.");
                 return ValidationResult.ValidResult;

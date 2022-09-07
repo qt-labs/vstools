@@ -52,14 +52,10 @@ namespace QtVsTools.Json
             if (attribs == null || attribs.Length == 0)
                 return enumValue.ToString();
 
-            var attrib = attribs
-                .Where(x => x is EnumStringAttribute)
-                .FirstOrDefault()
-                as EnumStringAttribute;
-            if (attrib == null)
-                return enumValue.ToString();
+            if (attribs.FirstOrDefault(x => x is EnumStringAttribute) is EnumStringAttribute a)
+                return a.ValueString;
 
-            return attrib.ValueString;
+            return enumValue.ToString();
         }
 
         public static TEnum Deserialize<TEnum>(string stringValue)
@@ -72,23 +68,17 @@ namespace QtVsTools.Json
             if (members == null || members.Length == 0)
                 return default(TEnum);
 
-            var member = members
-                .Where(x =>
-                {
-                    var attribs = x.GetCustomAttributes(typeof(EnumStringAttribute), false);
-                    if (attribs == null || attribs.Length == 0)
-                        return false;
+            var member = members.Where(x =>
+            {
+                var attribs = x.GetCustomAttributes(typeof(EnumStringAttribute), false);
+                if (attribs == null || attribs.Length == 0)
+                    return false;
 
-                    var attrib = attribs
-                        .Where(y => y is EnumStringAttribute)
-                        .FirstOrDefault()
-                        as EnumStringAttribute;
-                    if (attrib == null)
-                        return false;
+                if (attribs.FirstOrDefault(y => y is EnumStringAttribute) is EnumStringAttribute a)
+                    return a.ValueString == stringValue;
 
-                    return attrib.ValueString == stringValue;
-                })
-                .FirstOrDefault();
+                return false;
+            }).FirstOrDefault();
 
             var field = member as FieldInfo;
             if (field == null)

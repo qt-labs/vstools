@@ -72,8 +72,8 @@ namespace QtVsTools.SyntaxAnalysis
         {
             return new RegExprChoice
             {
-                Exprs = rxs.SelectMany(rx => rx is RegExprChoice
-                    ? ((RegExprChoice)rx).Exprs
+                Exprs = rxs.SelectMany(rx => rx is RegExprChoice choice
+                    ? choice.Exprs
                     : Items(rx))
             };
 

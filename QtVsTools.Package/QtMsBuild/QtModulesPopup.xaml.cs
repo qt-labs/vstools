@@ -65,18 +65,20 @@ namespace QtVsTools.QtMsBuild
 
         private void CheckBox_Loaded(object sender, RoutedEventArgs e)
         {
-            var checkBox = sender as CheckBox;
-            var module = GetCheckBoxModule(checkBox);
-            if (module != null)
-                module.CheckBox = checkBox;
+            if (sender is CheckBox checkBox) {
+                var module = GetCheckBoxModule(checkBox);
+                if (module != null)
+                    module.CheckBox = checkBox;
+            }
         }
 
         private void Module_Click(object sender, RoutedEventArgs e)
         {
-            var checkBox = sender as CheckBox;
-            var module = GetCheckBoxModule(checkBox);
-            if (module != null)
-                module.IsSelected = (checkBox.IsChecked == true);
+            if (sender is CheckBox check) {
+                var module = GetCheckBoxModule(check);
+                if (module != null)
+                    module.IsSelected = check.IsChecked == true;
+            }
         }
 
         private void PopupListBox_KeyDown(object sender, KeyEventArgs e)

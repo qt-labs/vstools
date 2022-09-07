@@ -199,21 +199,22 @@ namespace QtVsTools.QtMsBuild
 
         async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
-            var project = sender as ConfiguredProject;
-            if (project == null || project.Services == null)
-                return;
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
-                    DateTime.Now,
-                    project.ProjectConfiguration.Name,
-                    project.UnconfiguredProject.FullPath));
+            if (sender is ConfiguredProject project) {
+                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                    Messages.Print(string.Format(
+                        "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
+                        DateTime.Now,
+                        project.ProjectConfiguration.Name,
+                        project.UnconfiguredProject.FullPath));
+                }
+
+                lock (CriticalSection) {
+                    project.ProjectUnloading -= OnProjectUnloadingAsync;
+                    Instances.TryRemove(project.UnconfiguredProject.FullPath, out var _);
+                }
+
+                await Task.Yield();
             }
-            lock (CriticalSection) {
-                project.ProjectUnloading -= OnProjectUnloadingAsync;
-                Instances.TryRemove(project.UnconfiguredProject.FullPath, out QtProjectTracker _);
-            }
-            await Task.Yield();
         }
 
         void BeginInitStatus()

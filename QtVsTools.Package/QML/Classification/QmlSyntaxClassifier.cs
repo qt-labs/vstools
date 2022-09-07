@@ -102,11 +102,10 @@ namespace QtVsTools.Qml.Classification
 
         protected override ClassificationTag GetClassification(TrackingTag tag)
         {
-            var syntaxTag = tag as QmlSyntaxTag;
-            if (syntaxTag == null || syntaxTag.ClassificationType == null)
-                return null;
+            if (tag is QmlSyntaxTag syntaxTag && syntaxTag.ClassificationType != null)
+                return new ClassificationTag(syntaxTag.ClassificationType);
+            return null;
 
-            return new ClassificationTag(syntaxTag.ClassificationType);
         }
     }
 }

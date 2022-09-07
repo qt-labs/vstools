@@ -37,8 +37,7 @@ namespace QtVsTools.Wizards.Util
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is string) {
-                var filename = value as string;
+            if (value is string filename) {
                 if (FileExt == @".ui" || FileExt == @".qrc") {
                     filename = filename.ToLower().Replace(@".h", @".x");
                     filename = filename.Replace(FileExt, @".h");

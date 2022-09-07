@@ -551,10 +551,9 @@ namespace QtVsTools.Qml
         /// <returns>Reference to the class member</returns>
         public static MemberInfo GetMemberRef<T>(Expression<Func<T>> memberLambda)
         {
-            var me = memberLambda.Body as MemberExpression;
-            if (me == null)
-                return null;
-            return me.Member;
+            if (memberLambda.Body is MemberExpression me)
+                return me.Member;
+            return null;
         }
 
         public static PropertyInfo GetPropertyRef<T>(Expression<Func<T>> memberLambda)

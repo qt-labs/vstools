@@ -292,8 +292,7 @@ namespace QtVsTest.Macros
                 if (QuitWhenDone)
                     return ErrorMsg("No code allowed after #quit");
 
-                if (line is CodeLine) {
-                    var codeLine = line as CodeLine;
+                if (line is CodeLine codeLine) {
                     csharp.Append(codeLine.Code + "\r\n");
                     continue;
                 }
