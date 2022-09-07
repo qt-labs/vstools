@@ -129,6 +129,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CMakeLists.txt" />
+    <Content Include="CMakePresets.json" />
+    <Content Include="CMakeUserPresets.json" />
     <None Include="gui.ico" />
     <None Include="gui.vcxproj">
       <SubType>Designer</SubType>

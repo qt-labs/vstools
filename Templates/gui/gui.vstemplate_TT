@@ -73,6 +73,9 @@
             <ProjectItem ReplaceParameters="false">gui.ico</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$qrcfilename$">widget.qrc</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakePresets.json</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
