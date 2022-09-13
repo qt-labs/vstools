@@ -68,10 +68,10 @@ namespace QtVsTools.SyntaxAnalysis
                 }
 
                 static readonly NodeComparer _Comparer = new NodeComparer();
-                public static IComparer<Node> Comparer { get { return _Comparer; } }
+                public static IComparer<Node> Comparer => _Comparer;
 
                 public Token Token { get; set; }
-                public string TokenId { get { return Token.Id; } }
+                public string TokenId => Token.Id;
 
                 public object Production { get; set; }
 
@@ -136,9 +136,9 @@ namespace QtVsTools.SyntaxAnalysis
                     }
                 }
 
-                public bool IsFirst { get { return SiblingIdx == 0; } }
+                public bool IsFirst => SiblingIdx == 0;
 
-                public bool IsLast { get { return SiblingIdx == SiblingCount - 1; } }
+                public bool IsLast => SiblingIdx == SiblingCount - 1;
 
                 public IEnumerable<ITokenCapture> LookAhead(params TokenGroup[] ids)
                 {
@@ -215,20 +215,11 @@ namespace QtVsTools.SyntaxAnalysis
                     }
                 }
 
-                public bool HasOperand
-                {
-                    get { return Operand != EndOfList; }
-                }
+                public bool HasOperand => Operand != EndOfList;
 
-                public bool HasLeftOperand
-                {
-                    get { return LeftOperand != EndOfList; }
-                }
+                public bool HasLeftOperand => LeftOperand != EndOfList;
 
-                public bool HasRightOperand
-                {
-                    get { return RightOperand != EndOfList; }
-                }
+                public bool HasRightOperand => RightOperand != EndOfList;
             }
         }
     }

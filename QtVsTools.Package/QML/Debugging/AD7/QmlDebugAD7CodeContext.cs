@@ -83,16 +83,11 @@ namespace QtVsTools.Qml.Debug.AD7
             public string Address { get; set; }
         }
 
-        CodeContextInfo Info
-        {
-            get
+        CodeContextInfo Info =>
+            new CodeContextInfo
             {
-                return new CodeContextInfo
-                {
-                    Address = FileLine.ToString()
-                };
-            }
-        }
+                Address = FileLine.ToString()
+            };
 
         static readonly CodeContextInfo.Mapping MappingToCONTEXT_INFO =
 

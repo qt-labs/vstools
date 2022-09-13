@@ -47,8 +47,8 @@ namespace QtVsTools.SyntaxAnalysis
             public Delegate Assert { get; set; }
             public Delegate Action { get; set; }
 
-            public MethodInfo AssertInfo { get { return Assert != null ? Assert.Method : null; } }
-            public MethodInfo ActionInfo { get { return Action != null ? Action.Method : null; } }
+            public MethodInfo AssertInfo => Assert?.Method;
+            public MethodInfo ActionInfo => Action?.Method;
 
             public string SourceTokenId { get; set; }
 
@@ -56,7 +56,7 @@ namespace QtVsTools.SyntaxAnalysis
                 = (typeof(T1) != typeof(Void) ? 1 : 0)
                 + (typeof(T2) != typeof(Void) ? 1 : 0);
 
-            public int NumOperands { get { return _NumOperands; } }
+            public int NumOperands => _NumOperands;
 
             bool TestAssert(T prod, string value, T1 x, T2 y)
             {

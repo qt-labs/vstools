@@ -423,14 +423,8 @@ namespace QtVsTools.Core
                 projListBox.SetItemChecked(i, true);
         }
 
-        public bool OpenFiles
-        {
-            get { return openCheckBox.Checked; }
-        }
+        public bool OpenFiles => openCheckBox.Checked;
 
-        public bool CreatePriFile
-        {
-            get { return createPriFileCheckBox.Checked; }
-        }
+        public bool CreatePriFile => createPriFileCheckBox.Checked;
     }
 }

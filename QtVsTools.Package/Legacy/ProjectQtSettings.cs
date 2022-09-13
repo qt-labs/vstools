@@ -51,12 +51,12 @@ namespace QtVsTools.Legacy
             versionManager = QtVersionManager.The();
             project = proj;
             newMocDir = oldMocDir = Legacy.QtVSIPSettings.GetMocDirectory(project);
-            newMocOptions = oldMocOptions = Legacy.QtVSIPSettings.GetMocOptions(project);
+            MocOptions = oldMocOptions = Legacy.QtVSIPSettings.GetMocOptions(project);
             newRccDir = oldRccDir = Legacy.QtVSIPSettings.GetRccDirectory(project);
             newUicDir = oldUicDir = Legacy.QtVSIPSettings.GetUicDirectory(project);
-            newLUpdateOnBuild = oldLUpdateOnBuild = Legacy.QtVSIPSettings.GetLUpdateOnBuild(project);
-            newLUpdateOptions = oldLUpdateOptions = Legacy.QtVSIPSettings.GetLUpdateOptions(project);
-            newLReleaseOptions = oldLReleaseOptions = Legacy.QtVSIPSettings.GetLReleaseOptions(project);
+            lupdateOnBuild = oldLUpdateOnBuild = Legacy.QtVSIPSettings.GetLUpdateOnBuild(project);
+            LUpdateOptions = oldLUpdateOptions = Legacy.QtVSIPSettings.GetLUpdateOptions(project);
+            LReleaseOptions = oldLReleaseOptions = Legacy.QtVSIPSettings.GetLReleaseOptions(project);
             newQtVersion = oldQtVersion = versionManager.GetProjectQtVersion(project);
             QmlDebug = oldQmlDebug = Legacy.QtVSIPSettings.GetQmlDebug(project);
         }
@@ -75,13 +75,9 @@ namespace QtVsTools.Legacy
         private readonly bool oldQmlDebug;
 
         private string newMocDir;
-        private string newMocOptions;
         private string newRccDir;
         private string newUicDir;
         private string newQtVersion;
-        private bool newLUpdateOnBuild;
-        private string newLUpdateOptions;
-        private string newLReleaseOptions;
 
         public void SaveSettings()
         {
@@ -92,8 +88,8 @@ namespace QtVsTools.Legacy
                 Legacy.QtVSIPSettings.SaveMocDirectory(project, newMocDir);
                 updateMoc = true;
             }
-            if (oldMocOptions != newMocOptions) {
-                Legacy.QtVSIPSettings.SaveMocOptions(project, newMocOptions);
+            if (oldMocOptions != MocOptions) {
+                Legacy.QtVSIPSettings.SaveMocOptions(project, MocOptions);
                 updateMoc = true;
             }
             if (updateMoc)
@@ -109,14 +105,14 @@ namespace QtVsTools.Legacy
                 qtPro.RefreshRccSteps(oldRccDir);
             }
 
-            if (oldLUpdateOnBuild != newLUpdateOnBuild)
-                Legacy.QtVSIPSettings.SaveLUpdateOnBuild(project, newLUpdateOnBuild);
+            if (oldLUpdateOnBuild != lupdateOnBuild)
+                Legacy.QtVSIPSettings.SaveLUpdateOnBuild(project, lupdateOnBuild);
 
-            if (oldLUpdateOptions != newLUpdateOptions)
-                Legacy.QtVSIPSettings.SaveLUpdateOptions(project, newLUpdateOptions);
+            if (oldLUpdateOptions != LUpdateOptions)
+                Legacy.QtVSIPSettings.SaveLUpdateOptions(project, LUpdateOptions);
 
-            if (oldLReleaseOptions != newLReleaseOptions)
-                Legacy.QtVSIPSettings.SaveLReleaseOptions(project, newLReleaseOptions);
+            if (oldLReleaseOptions != LReleaseOptions)
+                Legacy.QtVSIPSettings.SaveLReleaseOptions(project, LReleaseOptions);
 
             if (oldQmlDebug != QmlDebug)
                 Legacy.QtVSIPSettings.SaveQmlDebug(project, QmlDebug);
@@ -134,10 +130,7 @@ namespace QtVsTools.Legacy
 
         public string MocDirectory
         {
-            get
-            {
-                return newMocDir;
-            }
+            get => newMocDir;
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
@@ -152,25 +145,11 @@ namespace QtVsTools.Legacy
             }
         }
 
-        public string MocOptions
-        {
-            get
-            {
-                return newMocOptions;
-            }
-
-            set
-            {
-                newMocOptions = value;
-            }
-        }
+        public string MocOptions { get; set; }
 
         public string UicDirectory
         {
-            get
-            {
-                return newUicDir;
-            }
+            get => newUicDir;
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
@@ -187,10 +166,7 @@ namespace QtVsTools.Legacy
 
         public string RccDirectory
         {
-            get
-            {
-                return newRccDir;
-            }
+            get => newRccDir;
             set
             {
                 var tmp = HelperFunctions.NormalizeRelativeFilePath(value);
@@ -205,44 +181,11 @@ namespace QtVsTools.Legacy
             }
         }
 
-        public bool lupdateOnBuild
-        {
-            get
-            {
-                return newLUpdateOnBuild;
-            }
+        public bool lupdateOnBuild { get; set; }
 
-            set
-            {
-                newLUpdateOnBuild = value;
-            }
-        }
+        public string LUpdateOptions { get; set; }
 
-        public string LUpdateOptions
-        {
-            get
-            {
-                return newLUpdateOptions;
-            }
-
-            set
-            {
-                newLUpdateOptions = value;
-            }
-        }
-
-        public string LReleaseOptions
-        {
-            get
-            {
-                return newLReleaseOptions;
-            }
-
-            set
-            {
-                newLReleaseOptions = value;
-            }
-        }
+        public string LReleaseOptions { get; set; }
 
         [DisplayName("QML Debug")]
         [TypeConverter(typeof(QmlDebugConverter))]
@@ -292,10 +235,7 @@ namespace QtVsTools.Legacy
         [TypeConverter(typeof(VersionConverter))]
         public string Version
         {
-            get
-            {
-                return newQtVersion;
-            }
+            get => newQtVersion;
             set
             {
                 if (newQtVersion != value) {

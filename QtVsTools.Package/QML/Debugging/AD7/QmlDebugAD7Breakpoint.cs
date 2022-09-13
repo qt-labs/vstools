@@ -207,10 +207,7 @@ namespace QtVsTools.Qml.Debug.AD7
             }
         }
 
-        uint IBreakpoint.Line
-        {
-            get { return Parent.BeginPosition.dwLine; }
-        }
+        uint IBreakpoint.Line => Parent.BeginPosition.dwLine;
 
         public static Breakpoint Create(PendingBreakpoint parent, Program program)
         {

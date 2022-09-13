@@ -44,27 +44,15 @@ namespace QtVsTools.Core
         public string proVarCONFIG;
         private string majorVersion;
 
-        public string LibRelease
-        {
-            get
-            {
-                return
-                    LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
-                        ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + ".lib"
-                        : LibraryPrefix + ".lib";
-            }
-        }
+        public string LibRelease =>
+            LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
+                ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + ".lib"
+                : LibraryPrefix + ".lib";
 
-        public string LibDebug
-        {
-            get
-            {
-                return
-                    LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
-                        ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + "d.lib"
-                        : LibraryPrefix + "d.lib";
-            }
-        }
+        public string LibDebug =>
+            LibraryPrefix.StartsWith("Qt", StringComparison.Ordinal)
+                ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + "d.lib"
+                : LibraryPrefix + "d.lib";
 
         public QtModule(int id, string major)
         {

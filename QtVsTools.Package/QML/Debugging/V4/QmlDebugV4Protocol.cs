@@ -58,7 +58,7 @@ namespace QtVsTools.Qml.Debug.V4
         readonly EventWaitHandle eventReceived = new EventWaitHandle(false, EventResetMode.AutoReset);
         readonly ConcurrentQueue<Event> eventQueue = new ConcurrentQueue<Event>();
 
-        public uint? ThreadId { get { return client.ThreadId; } }
+        public uint? ThreadId => client.ThreadId;
 
         public static ProtocolDriver Create(IMessageEventSink sink)
         {
@@ -106,10 +106,7 @@ namespace QtVsTools.Qml.Debug.V4
             }
         }
 
-        public DebugClientState ConnectionState
-        {
-            get { return client.State; }
-        }
+        public DebugClientState ConnectionState => client.State;
 
         bool IConnectionEventSink.QueryRuntimeFrozen()
         {
@@ -222,15 +219,9 @@ namespace QtVsTools.Qml.Debug.V4
                 Request = req;
             }
 
-            public bool RequestSent
-            {
-                get { return Request != null; }
-            }
+            public bool RequestSent => Request != null;
 
-            public bool ResponseReceived
-            {
-                get { return Request != null && Request.Response != null; }
-            }
+            public bool ResponseReceived => Request?.Response != null;
 
             public Response WaitForResponse()
             {

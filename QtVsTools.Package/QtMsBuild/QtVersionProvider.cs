@@ -53,7 +53,7 @@ namespace QtVsTools.QtMsBuild
             return await Task.FromResult(this);
         }
 
-        public bool AllowCustomValues { get { return true; } }
+        public bool AllowCustomValues => true;
 
         public async Task<ICollection<IEnumValue>> GetListedValuesAsync()
         {

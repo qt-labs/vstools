@@ -63,10 +63,7 @@ namespace QtVsTools.Core
 
                 return canceled;
             }
-            private set
-            {
-                vsDialogCanceled = value;
-            }
+            private set => vsDialogCanceled = value;
         }
 
         private WaitDialog() { }

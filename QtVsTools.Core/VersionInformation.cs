@@ -196,10 +196,7 @@ namespace QtVsTools.Core
             get;
         }
 
-        public string QMakeSpecDirectory
-        {
-            get { return qmakeConf.QMakeSpecDirectory; }
-        }
+        public string QMakeSpecDirectory => qmakeConf.QMakeSpecDirectory;
 
         public bool IsStaticBuild()
         {

@@ -43,10 +43,7 @@ namespace QtVsTools.Core
             dimg = dimage;
         }
 
-        public sealed override Color BackColor
-        {
-            get { return SystemColors.Control; }
-        }
+        public sealed override Color BackColor => SystemColors.Control;
 
         protected override void OnPaint(PaintEventArgs pevent)
         {

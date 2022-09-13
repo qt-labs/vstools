@@ -91,8 +91,8 @@ namespace QtVsTools.SyntaxAnalysis
 
         public partial class CharExprBuilder
         {
-            public CharClassRange this[char lBound, char uBound]
-            { get { return CharRange(lBound.ToString(), uBound.ToString()); } }
+            public CharClassRange this[char lBound, char uBound] =>
+                CharRange(lBound.ToString(), uBound.ToString());
         }
     }
 }

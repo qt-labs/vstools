@@ -184,22 +184,16 @@ namespace QtVsTools.Qml.Debug.AD7
             public IDebugProperty2 Property { get; set; }
         }
 
-        PropertyInfo Info
+        PropertyInfo Info => new PropertyInfo
         {
-            get
-            {
-                return new PropertyInfo
-                {
-                    Name = Name,
-                    FullName = FullName,
-                    Type = Type,
-                    Value = Value,
-                    Property = this,
-                    Attribs = ((Children.Any() || JsValue.Type == JsValue.DataType.Object)
-                        ? enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE : 0),
-                };
-            }
-        }
+            Name = Name,
+            FullName = FullName,
+            Type = Type,
+            Value = Value,
+            Property = this,
+            Attribs = Children.Any() || JsValue.Type == JsValue.DataType.Object
+                ? enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE : 0,
+        };
 
         static readonly PropertyInfo.Mapping MappingToDEBUG_PROPERTY_INFO =
 

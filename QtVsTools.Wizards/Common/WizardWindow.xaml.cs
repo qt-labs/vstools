@@ -68,13 +68,7 @@ namespace QtVsTools.Wizards.Common
             }
         }
 
-        public WizardPage NextPage
-        {
-            get
-            {
-                return Pages[currentPage];
-            }
-        }
+        public WizardPage NextPage => Pages[currentPage];
 
         private List<WizardPage> Pages
         {

@@ -51,8 +51,8 @@ namespace QtVsTools.SyntaxAnalysis
         private IEnumerable<Element> Negatives { get; set; }
 
         bool IsSubSet { get; set; }
-        bool HasPositive { get { return Positives != null && Positives.Any(); } }
-        bool HasNegative { get { return Negatives != null && Negatives.Any(); } }
+        bool HasPositive => Positives?.Any() == true;
+        bool HasNegative => Negatives?.Any() == true;
 
         protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
             StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
@@ -235,13 +235,7 @@ namespace QtVsTools.SyntaxAnalysis
                 { return new Expr(Op.Minus, x, y); }
             }
 
-            public CharClassSet this[params Expr[] exprs]
-            {
-                get
-                {
-                    return this[new PositiveSet(Op.Plus, exprs)];
-                }
-            }
+            public CharClassSet this[params Expr[] exprs] => this[new PositiveSet(Op.Plus, exprs)];
 
             public CharClassSet this[Expr expr]
             {
@@ -312,13 +306,8 @@ namespace QtVsTools.SyntaxAnalysis
                 }
             }
 
-            public CharClassSet this[IEnumerable<char> chars]
-            {
-                get
-                {
-                    return this[chars.Select(c => (Expr)c).ToArray()];
-                }
-            }
+            public CharClassSet this[IEnumerable<char> chars] =>
+                this[chars.Select(c => (Expr)c).ToArray()];
 
             class StackFrame
             {
@@ -340,7 +329,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public partial class CharSetRawExprBuilder
         {
-            public CharClassLiteral this[string s] { get { return CharRawLiteral(s); } }
+            public CharClassLiteral this[string s] => CharRawLiteral(s);
         }
 
         public class CharClassEvalException : RegExprException

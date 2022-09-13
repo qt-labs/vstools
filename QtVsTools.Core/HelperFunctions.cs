@@ -1379,7 +1379,7 @@ namespace QtVsTools.Core
         static string _VCPath;
         public static string VCPath
         {
-            set { _VCPath = value; }
+            set => _VCPath = value;
             get
             {
                 if (!string.IsNullOrEmpty(_VCPath))

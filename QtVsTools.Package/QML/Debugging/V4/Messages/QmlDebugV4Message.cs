@@ -126,15 +126,15 @@ namespace QtVsTools.Qml.Debug.V4
         Response response = null;
         public Response Response
         {
-            get { return response; }
-            set { Atomic(() => response == null, () => response = value); }
+            get => response;
+            set => Atomic(() => response == null, () => response = value);
         }
 
         object tag = null;
         public object Tag
         {
-            get { return tag; }
-            set { Atomic(() => tag == null, () => tag = value); }
+            get => tag;
+            set => Atomic(() => tag == null, () => tag = value);
         }
 
         public virtual ProtocolDriver.PendingRequest SendRequest()
@@ -162,8 +162,7 @@ namespace QtVsTools.Qml.Debug.V4
     class Request<TResponse> : Request
         where TResponse : Response
     {
-        public new TResponse Response
-        { get { return base.Response as TResponse; } }
+        public new TResponse Response => base.Response as TResponse;
 
         public new virtual TResponse Send()
         {
@@ -189,8 +188,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public virtual TArgs Arguments
         {
-            get { return ThreadSafe(() => (args != null) ? args : (args = new TArgs())); }
-            set { args = value; }
+            get => ThreadSafe(() => (args != null) ? args : (args = new TArgs()));
+            set => args = value;
         }
     }
 
@@ -293,8 +292,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public TBody Body
         {
-            get { return ThreadSafe(() => (body != null) ? body : (body = new TBody())); }
-            set { body = value; }
+            get => ThreadSafe(() => (body != null) ? body : (body = new TBody()));
+            set => body = value;
         }
     }
 
@@ -339,8 +338,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public TBody Body
         {
-            get { return ThreadSafe(() => (body != null) ? body : (body = new TBody())); }
-            set { body = value; }
+            get => ThreadSafe(() => body ?? (body = new TBody()));
+            set => body = value;
         }
     }
 }

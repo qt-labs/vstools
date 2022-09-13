@@ -362,20 +362,11 @@ namespace QtVsTools.SyntaxAnalysis
                 return true;
             }
 
-            public IOperandCapture Operand
-            {
-                get { return this; }
-            }
+            public IOperandCapture Operand => this;
 
-            public IOperandCapture LeftOperand
-            {
-                get { return this; }
-            }
+            public IOperandCapture LeftOperand => this;
 
-            public IOperandCapture RightOperand
-            {
-                get { return this; }
-            }
+            public IOperandCapture RightOperand => this;
 
             public bool HasOperand { get; }
             public bool HasLeftOperand { get; }

@@ -89,7 +89,7 @@ namespace QtVsTools.Qml.Debug
 
         private string Version { get; set; }
 
-        public uint? ThreadId { get { return driver.ThreadId; } }
+        public uint? ThreadId => driver.ThreadId;
 
         public static QmlDebugger Create(IDebuggerEventSink sink, string execPath, string args)
         {

@@ -72,21 +72,9 @@ namespace QtVsTools.Core.CommandLine
             set;
         }
 
-        public string ErrorText
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string ErrorText => throw new NotImplementedException();
 
-        public string HelpText
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string HelpText => throw new NotImplementedException();
 
         public IEnumerable<string> PositionalArguments
         {

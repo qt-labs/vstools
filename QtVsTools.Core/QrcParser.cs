@@ -35,18 +35,14 @@ namespace QtVsTools.Core
     {
         private readonly string qrcFileName;
         private readonly Stack<QrcPrefix> prefixes;
-        private readonly List<QrcPrefix> prefxs;
 
-        public List<QrcPrefix> Prefixes
-        {
-            get { return prefxs; }
-        }
+        public List<QrcPrefix> Prefixes { get; }
 
         public QrcParser(string fileName)
         {
             qrcFileName = fileName;
             prefixes = new Stack<QrcPrefix>();
-            prefxs = new List<QrcPrefix>();
+            Prefixes = new List<QrcPrefix>();
         }
 
         public bool parse()
@@ -73,7 +69,7 @@ namespace QtVsTools.Core
                         break;
                     case XmlNodeType.EndElement:
                         if (reader.LocalName.ToLower() == "qresource") {
-                            prefxs.Add(prefixes.Pop());
+                            Prefixes.Add(prefixes.Pop());
                         } else if (reader.LocalName.ToLower() == "file"
                               && prefixes.Peek() != null && currentItem != null) {
                             prefixes.Peek().AddQrcItem(currentItem);

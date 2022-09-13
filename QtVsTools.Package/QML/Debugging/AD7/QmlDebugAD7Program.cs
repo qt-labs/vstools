@@ -133,13 +133,7 @@ namespace QtVsTools.Qml.Debug.AD7
             return true;
         }
 
-        public override bool CanDispose
-        {
-            get
-            {
-                return !Engine.ProgramIsRunning(this);
-            }
-        }
+        public override bool CanDispose => !Engine.ProgramIsRunning(this);
 
         protected override void DisposeManaged()
         {
@@ -304,27 +298,22 @@ namespace QtVsTools.Qml.Debug.AD7
 
         static bool BreakAllProcesses
         {
-            get
+            get => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                return ThreadHelper.JoinableTaskFactory.Run(async () => {
-                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    return ((bool)QtVsToolsPackage.Instance.Dte
-                        .Properties["Debugging", "General"]
-                        .Item("BreakAllProcesses")
-                        .Value);
-                });
-            }
-            set
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                return ((bool)QtVsToolsPackage.Instance.Dte
+                    .Properties["Debugging", "General"]
+                    .Item("BreakAllProcesses")
+                    .Value);
+            });
+            set => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                ThreadHelper.JoinableTaskFactory.Run(async () =>
-                {
-                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    QtVsToolsPackage.Instance.Dte
-                        .Properties["Debugging", "General"]
-                        .Item("BreakAllProcesses")
-                        .let_Value(value ? "True" : "False");
-                });
-            }
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                QtVsToolsPackage.Instance.Dte
+                    .Properties["Debugging", "General"]
+                    .Item("BreakAllProcesses")
+                    .let_Value(value ? "True" : "False");
+            });
         }
 
         #endregion //////////////////// Breakpoints ///////////////////////////////////////////////
@@ -392,31 +381,25 @@ namespace QtVsTools.Qml.Debug.AD7
             public string ModuleUrl { get; set; }
         }
 
-        ProgramInfo Info
+        ProgramInfo Info => new ProgramInfo
         {
-            get
-            {
-                return new ProgramInfo
-                {
-                    ThreadId = Debugger.ThreadId,
-                    SuspendCount = 0,
-                    ThreadCategory = 0,
-                    AffinityMask = 0,
-                    PriorityId = 0,
-                    ThreadState = (uint)enum_THREADSTATE.THREADSTATE_RUNNING,
-                    Priority = "Normal",
-                    Location = "",
-                    Name = Name,
-                    DisplayName = Name,
-                    DisplayNamePriority = 10, // Give this display name a higher priority
-                                              // than the default (0) so that it will
-                                              // actually be displayed
-                    ModuleName = Path.GetFileName(ExecPath),
-                    ModuleUrl = ExecPath
+            ThreadId = Debugger.ThreadId,
+            SuspendCount = 0,
+            ThreadCategory = 0,
+            AffinityMask = 0,
+            PriorityId = 0,
+            ThreadState = (uint)enum_THREADSTATE.THREADSTATE_RUNNING,
+            Priority = "Normal",
+            Location = "",
+            Name = Name,
+            DisplayName = Name,
+            DisplayNamePriority = 10, // Give this display name a higher priority
+                                      // than the default (0) so that it will
+                                      // actually be displayed
+            ModuleName = Path.GetFileName(ExecPath),
+            ModuleUrl = ExecPath
 
-                };
-            }
-        }
+        };
 
         static readonly ProgramInfo.Mapping MappingToTHREADPROPERTIES =
 

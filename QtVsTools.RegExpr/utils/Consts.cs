@@ -35,150 +35,126 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: [\w]
         /// ]]></summary>
-        public static CharClassLiteral CharWord
-        { get { return new CharClassLiteral { LiteralChars = @"\w" }; } }
+        public static CharClassLiteral CharWord => new CharClassLiteral { LiteralChars = @"\w" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\w]*
         /// ]]></summary>
-        public static RegExpr Word
-        { get { return CharWord.Repeat(); } }
+        public static RegExpr Word => CharWord.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [\d]
         /// ]]></summary>
-        public static CharClassLiteral CharDigit
-        { get { return new CharClassLiteral { LiteralChars = @"\d" }; } }
+        public static CharClassLiteral CharDigit => new CharClassLiteral { LiteralChars = @"\d" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\d]*
         /// ]]></summary>
-        public static RegExpr Number
-        { get { return CharDigit.Repeat(); } }
+        public static RegExpr Number => CharDigit.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [\r]
         /// ]]></summary>
-        public static CharClassLiteral CharCr
-        { get { return new CharClassLiteral { LiteralChars = @"\r" }; } }
+        public static CharClassLiteral CharCr => new CharClassLiteral { LiteralChars = @"\r" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\n]
         /// ]]></summary>
-        public static CharClassLiteral CharLf
-        { get { return new CharClassLiteral { LiteralChars = @"\n" }; } }
+        public static CharClassLiteral CharLf => new CharClassLiteral { LiteralChars = @"\n" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\s]
         /// ]]></summary>
-        public static CharClassLiteral CharSpace
-        { get { return new CharClassLiteral { LiteralChars = @"\s" }; } }
+        public static CharClassLiteral CharSpace => new CharClassLiteral { LiteralChars = @"\s" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\S]
         /// ]]></summary>
-        private static CharClassLiteral CharNonSpace
-        { get { return new CharClassLiteral { LiteralChars = @"\S" }; } }
+        private static CharClassLiteral CharNonSpace => new CharClassLiteral { LiteralChars = @"\S" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\r\n]
         /// ]]></summary>
-        public static CharClassSet CharVertSpace
-        { get { return CharSet[CharCr + CharLf]; } }
+        public static CharClassSet CharVertSpace => CharSet[CharCr + CharLf];
 
         /// <summary><![CDATA[
         /// Equivalent to: [^\S\r\n]
         /// ]]></summary>
-        public static CharClassSet CharHorizSpace
-        { get { return CharSet[~(CharNonSpace + CharVertSpace)]; } }
+        public static CharClassSet CharHorizSpace => CharSet[~(CharNonSpace + CharVertSpace)];
 
         /// <summary><![CDATA[
         /// Equivalent to: .
         /// ]]></summary>
-        public static RegExprLiteral AnyChar
-        { get { return new RegExprLiteral { LiteralExpr = "." }; } }
+        public static RegExprLiteral AnyChar => new RegExprLiteral { LiteralExpr = "." };
 
         /// <summary><![CDATA[
         /// Equivalent to: ^
         /// ]]></summary>
-        public static RegExprLiteral StartOfLine
-        { get { return new RegExprLiteral { LiteralExpr = "^" }; } }
+        public static RegExprLiteral StartOfLine => new RegExprLiteral { LiteralExpr = "^" };
 
         /// <summary><![CDATA[
         /// Equivalent to: $
         /// ]]></summary>
-        public static RegExprLiteral EndOfLine
-        { get { return new RegExprLiteral { LiteralExpr = "$" }; } }
+        public static RegExprLiteral EndOfLine => new RegExprLiteral { LiteralExpr = "$" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \A
         /// ]]></summary>
-        public static RegExprLiteral StartOfFile
-        { get { return new RegExprLiteral { LiteralExpr = @"\A" }; } }
+        public static RegExprLiteral StartOfFile => new RegExprLiteral { LiteralExpr = @"\A" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \z
         /// ]]></summary>
-        public static RegExprLiteral EndOfFile
-        { get { return new RegExprLiteral { LiteralExpr = @"\z" }; } }
+        public static RegExprLiteral EndOfFile => new RegExprLiteral { LiteralExpr = @"\z" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \r?\n
         /// ]]></summary>
-        public static RegExprSequence LineBreak
-        { get { return CharCr.Optional() & CharLf; } }
+        public static RegExprSequence LineBreak => CharCr.Optional() & CharLf;
 
         /// <summary><![CDATA[
         /// Equivalent to: [\s]*
         /// ]]></summary>
-        public static RegExpr Space
-        { get { return CharSpace.Repeat(); } }
+        public static RegExpr Space => CharSpace.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [\S]*
         /// ]]></summary>
-        public static RegExpr NonSpace
-        { get { return CharNonSpace.Repeat(); } }
+        public static RegExpr NonSpace => CharNonSpace.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [\r\n]*
         /// ]]></summary>
-        public static RegExpr VertSpace
-        { get { return CharVertSpace.Repeat(); } }
+        public static RegExpr VertSpace => CharVertSpace.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [^\S\r\n]*
         /// ]]></summary>
-        public static RegExpr HorizSpace
-        { get { return CharHorizSpace.Repeat(); } }
+        public static RegExpr HorizSpace => CharHorizSpace.Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: [^\r\n]*
         /// ]]></summary>
-        public static RegExpr Line
-        { get { return CharSet[~CharVertSpace].Repeat(); } }
+        public static RegExpr Line => CharSet[~CharVertSpace].Repeat();
 
         /// <summary><![CDATA[
         /// Equivalent to: (?i)
         /// ]]></summary>
-        public static RegExprLiteral IgnoreCase
-        { get { return new RegExprLiteral { LiteralExpr = @"(?i)" }; } }
+        public static RegExprLiteral IgnoreCase => new RegExprLiteral { LiteralExpr = @"(?i)" };
 
         /// <summary><![CDATA[
         /// Equivalent to: (?-i)
         /// ]]></summary>
-        public static RegExprLiteral SenseCase
-        { get { return new RegExprLiteral { LiteralExpr = @"(?-i)" }; } }
+        public static RegExprLiteral SenseCase => new RegExprLiteral { LiteralExpr = @"(?-i)" };
 
         /// <summary>
         /// Applies the same whitespace skipping rules as tokens, but does not any capture text.
         /// </summary>
-        public static RegExpr SkipWs
-        { get { return new Token(); } }
+        public static RegExpr SkipWs => new Token();
 
-        static readonly CharExprBuilder _Char = new CharExprBuilder();
-        public static CharExprBuilder Char { get { return _Char; } }
-        public static CharExprBuilder Chars { get { return _Char; } }
+        public static CharExprBuilder Char { get; } = new CharExprBuilder();
+
+        public static CharExprBuilder Chars => Char;
 
         public static CharSetExprBuilder CharSet { get; } = new CharSetExprBuilder();
 

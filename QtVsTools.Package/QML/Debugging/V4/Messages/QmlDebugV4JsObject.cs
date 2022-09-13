@@ -84,8 +84,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public new int Ref
         {
-            get { return base.Ref.HasValue ? base.Ref.Value : 0; }
-            set { base.Ref = value; }
+            get => base.Ref.HasValue ? base.Ref.Value : 0;
+            set => base.Ref = value;
         }
     }
 
@@ -135,30 +135,14 @@ namespace QtVsTools.Qml.Debug.V4
         [DataMember(Name = "properties")]
         public List<DeferredObject<JsValue>> Properties { get; set; }
 
-        public IDictionary<string, JsValue> PropertiesByName
-        {
-            get
-            {
-                if (Properties == null)
-                    return null;
+        public IDictionary<string, JsValue> PropertiesByName =>
+            Properties?.Where(x => x.Object != null && !string.IsNullOrEmpty(x.Object.Name))
+                .Select(x => x.Object)
+                .GroupBy(x => x.Name)
+                .ToDictionary(x => x.Key, x => x.First());
 
-                return Properties
-                    .Where(x => x.Object != null
-                        && !string.IsNullOrEmpty(x.Object.Name))
-                    .Select(x => x.Object)
-                    .GroupBy(x => x.Name)
-                    .ToDictionary(x => x.Key, x => x.First());
-            }
-        }
-
-        public bool IsArray
-        {
-            get
-            {
-                return !Properties.Where((x, i) => x.HasData
-                    && ((JsValue)x).Name != i.ToString()).Any();
-            }
-        }
+        public bool IsArray =>
+            !Properties.Where((x, i) => x.HasData && ((JsValue)x).Name != i.ToString()).Any();
     }
 
     [DataContract]

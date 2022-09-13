@@ -55,14 +55,8 @@ namespace QtVsTools
         protected const bool DisposingFrom_DisposeInterface = true;
 
         private HashSet<IDisposableEventSink> eventSinks = null;
-        private HashSet<IDisposableEventSink> EventSinks
-        {
-            get
-            {
-                return ThreadSafe(() => eventSinks != null ? eventSinks
-                        : eventSinks = new HashSet<IDisposableEventSink>());
-            }
-        }
+        private HashSet<IDisposableEventSink> EventSinks =>
+            ThreadSafe(() => eventSinks ?? (eventSinks = new HashSet<IDisposableEventSink>()));
 
         public bool Disposed { get; private set; }
 
@@ -109,7 +103,7 @@ namespace QtVsTools
         /// Override to block disposal
         /// </summary>
         ///
-        public virtual bool CanDispose { get { return true; } }
+        public virtual bool CanDispose => true;
 
         protected virtual void Dispose(bool disposingFrom)
         {

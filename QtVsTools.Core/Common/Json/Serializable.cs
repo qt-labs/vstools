@@ -130,13 +130,7 @@ namespace QtVsTools.Json
             }
         }
 
-        public IEnumerable<IDeferredObject> PendingObjects
-        {
-            get
-            {
-                return DeferredObjects.Where(x => !x.HasData);
-            }
-        }
+        public IEnumerable<IDeferredObject> PendingObjects => DeferredObjects.Where(x => !x.HasData);
 
         void IDeferredObjectContainer.Add(IDeferredObject item)
         {

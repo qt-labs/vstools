@@ -178,26 +178,20 @@ namespace QtVsTools.Qml.Debug.AD7
             public int? StaleCode { get; set; }
         }
 
-        StackFrameInfo Info
+        StackFrameInfo Info => new StackFrameInfo
         {
-            get
-            {
-                return new StackFrameInfo
-                {
-                    FunctionName = Name,
-                    ReturnType = "",
-                    Arguments = "",
-                    Language = Context.FileType.ToString(),
-                    ModuleName = "",
-                    MinAddress = 0,
-                    MaxAddress = 9999,
-                    Frame = this,
-                    Module = Program,
-                    HasDebugInfo = 1,
-                    StaleCode = 0,
-                };
-            }
-        }
+            FunctionName = Name,
+            ReturnType = "",
+            Arguments = "",
+            Language = Context.FileType.ToString(),
+            ModuleName = "",
+            MinAddress = 0,
+            MaxAddress = 9999,
+            Frame = this,
+            Module = Program,
+            HasDebugInfo = 1,
+            StaleCode = 0,
+        };
 
         static readonly StackFrameInfo.Mapping MappingToFRAMEINFO =
 

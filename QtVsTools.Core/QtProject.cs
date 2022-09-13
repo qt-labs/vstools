@@ -92,15 +92,9 @@ namespace QtVsTools.Core
             qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
         }
 
-        public VCProject VCProject
-        {
-            get { return vcPro; }
-        }
+        public VCProject VCProject => vcPro;
 
-        public Project Project
-        {
-            get { return envPro; }
-        }
+        public Project Project => envPro;
 
         public static string GetRuleName(VCConfiguration config, string itemType)
         {
@@ -155,13 +149,7 @@ namespace QtVsTools.Core
             return isQtMsBuildEnabled.Value;
         }
 
-        public string ProjectDir
-        {
-            get
-            {
-                return vcPro.ProjectDirectory;
-            }
-        }
+        public string ProjectDir => vcPro.ProjectDirectory;
 
         /// <summary>
         /// Returns true if the ConfigurationRowNames have changed
@@ -3236,10 +3224,7 @@ namespace QtVsTools.Core
 
         public bool QmlDebug
         {
-            get
-            {
-                return IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
-            }
+            get => IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
             set
             {
                 bool enabled = (IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro));

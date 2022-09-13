@@ -40,15 +40,8 @@ namespace QtVsTools.SyntaxAnalysis
         public int AtMost { get; set; }
         public RegExpr Expr { get; set; }
 
-        bool ExprNeedsGroup
-        {
-            get
-            {
-                return (Expr is RegExprSequence)
-                    || (Expr is RegExprLiteral
-                    && NeedsGroup(Expr.As<RegExprLiteral>().LiteralExpr));
-            }
-        }
+        bool ExprNeedsGroup => Expr is RegExprSequence
+            || (Expr is RegExprLiteral && NeedsGroup(Expr.As<RegExprLiteral>().LiteralExpr));
 
         protected override IEnumerable<RegExpr> OnRender(RegExpr defaultTokenWs, RegExpr parent,
             StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)

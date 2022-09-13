@@ -85,7 +85,7 @@ namespace QtVsTools.Options
                     UpdateUi = value != error;
                     error = value;
                 }
-                get { return error; }
+                get => error;
             }
             public bool IsValid => string.IsNullOrEmpty(ValidationError);
             public ToolTip ToolTip

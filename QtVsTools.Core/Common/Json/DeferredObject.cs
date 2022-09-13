@@ -54,15 +54,9 @@ namespace QtVsTools.Json
 
         public TBase Object { get; private set; }
 
-        object IDeferredObject.Object
-        {
-            get { return Object; }
-        }
+        object IDeferredObject.Object => Object;
 
-        public bool HasData
-        {
-            get { return Object != null; }
-        }
+        public bool HasData => Object != null;
 
         /// <summary>
         /// This constructor is used when serializing, to directly wrap an existing object.

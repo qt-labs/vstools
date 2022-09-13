@@ -137,35 +137,14 @@ namespace QtVsTools.Core.QtMsBuild
                 PropertyStorage = change.PropertyStorage;
             }
 
-            public bool IsMocSource
-            {
-                get
-                {
-                    return ItemTypeName == QtMoc.ItemTypeName
-                        && !HelperFunctions.IsHeaderFile(ItemName);
-                }
-            }
+            public bool IsMocSource => ItemTypeName == QtMoc.ItemTypeName
+                && !HelperFunctions.IsHeaderFile(ItemName);
 
-            public string GroupKey
-            {
-                get
-                {
-                    return string.Join(",", new string[] {
-                        ConfigName, ItemTypeName, PropertyName, PropertyValue,
-                        IsMocSource.ToString()
-                    });
-                }
-            }
+            public string GroupKey => string.Join(
+                ",", ConfigName, ItemTypeName, PropertyName, PropertyValue, IsMocSource.ToString()
+            );
 
-            public string Key
-            {
-                get
-                {
-                    return string.Join(",", new string[] {
-                        ConfigName, ItemTypeName, PropertyName, ItemName
-                    });
-                }
-            }
+            public string Key => string.Join(",", ConfigName, ItemTypeName, PropertyName, ItemName);
         }
 
         public IEnumerable<object> GetItems(string itemType, string configName = "")

@@ -67,8 +67,8 @@ namespace QtVsTools.Qml.Debug.V4
 
         public DataType Type
         {
-            get { return SerializableEnum.Deserialize<DataType>(TypeString); }
-            set { TypeString = SerializableEnum.Serialize<DataType>(value); }
+            get => SerializableEnum.Deserialize<DataType>(TypeString);
+            set => TypeString = SerializableEnum.Serialize(value);
         }
 
         [DataMember(Name = "name")]

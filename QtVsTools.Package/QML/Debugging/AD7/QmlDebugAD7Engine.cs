@@ -79,16 +79,10 @@ namespace QtVsTools.Qml.Debug.AD7
         }
 
         readonly Dictionary<Guid, Program> programs = new Dictionary<Guid, Program>();
-        public IEnumerable<Program> Programs
-        {
-            get { return ThreadSafe(() => programs.Values.ToList()); }
-        }
+        public IEnumerable<Program> Programs => ThreadSafe(() => programs.Values.ToList());
 
         readonly HashSet<PendingBreakpoint> pendingBreakpoints = new HashSet<PendingBreakpoint>();
-        public IEnumerable<PendingBreakpoint> PendingBreakpoints
-        {
-            get { return ThreadSafe(() => pendingBreakpoints.ToList()); }
-        }
+        public IEnumerable<PendingBreakpoint> PendingBreakpoints => ThreadSafe(() => pendingBreakpoints.ToList());
 
         int IDebugEngine2.GetEngineId(out Guid pguidEngine)
         {

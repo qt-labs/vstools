@@ -60,8 +60,8 @@ namespace QtVsTools.SyntaxAnalysis
             public RuleCallback.PreCondition PreCondition { get; set; }
 
             public Token Token { get; set; }
-            public virtual Delimiter Delimiters { get { return Delimiter.None; } }
-            public virtual Operand Operands { get { return Operand.None; } }
+            public virtual Delimiter Delimiters => Delimiter.None;
+            public virtual Operand Operands => Operand.None;
 
             private readonly List<IRuleAction<T>> Actions = new List<IRuleAction<T>>();
 
@@ -263,7 +263,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class PrefixRule<TOperand, T> : ProductionRule<T>
         {
-            public override Operand Operands { get { return Operand.Right; } }
+            public override Operand Operands => Operand.Right;
 
             public PrefixRule(
                 int priority = 0,
@@ -288,7 +288,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class PostfixRule<TOperand, T> : ProductionRule<T>
         {
-            public override Operand Operands { get { return Operand.Left; } }
+            public override Operand Operands => Operand.Left;
 
             public PostfixRule(
                 int priority = 0,
@@ -313,7 +313,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class InfixRule<TLeftOperand, TRightOperand, T> : ProductionRule<T>
         {
-            public override Operand Operands { get { return Operand.Left | Operand.Right; } }
+            public override Operand Operands => Operand.Left | Operand.Right;
 
             public InfixRule(
                 int priority = 0,
@@ -342,7 +342,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class LeftDelimiterRule<T> : ProductionRule<T>
         {
-            public override Delimiter Delimiters { get { return Delimiter.Left; } }
+            public override Delimiter Delimiters => Delimiter.Left;
 
             public LeftDelimiterRule(
                 int priority = int.MinValue,
@@ -360,7 +360,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public class RightDelimiterRule<TLeftDelim, TExpr, T> : ProductionRule<T>
         {
-            public override Delimiter Delimiters { get { return Delimiter.Right; } }
+            public override Delimiter Delimiters => Delimiter.Right;
 
             public RightDelimiterRule(
                 int priority = int.MaxValue,

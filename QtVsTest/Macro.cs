@@ -695,7 +695,7 @@ namespace QtVsTest.Macros
 
         const string SERVICETYPE_PREFIX = "_ServiceType_";
         const string INIT_PREFIX = "_Init_";
-        string MethodName { get { return string.Format("_Run_{0}_Async", Name); } }
+        string MethodName => string.Format("_Run_{0}_Async", Name);
 
         bool GenerateClass()
         {
@@ -1035,11 +1035,11 @@ namespace QtVsTest.Macros
             return true;
         }
 
-        string MACRO_OK { get { return "(ok)"; } }
-        string MACRO_ERROR { get { return "(error)"; } }
-        string MACRO_WARN { get { return "(warn)"; } }
-        string MACRO_ERROR_MSG(string msg) { return string.Format("{0}\r\n{1}", MACRO_ERROR, msg); }
-        string MACRO_WARN_MSG(string msg) { return string.Format("{0}\r\n{1}", MACRO_WARN, msg); }
+        string MACRO_OK => "(ok)";
+        string MACRO_ERROR => "(error)";
+        string MACRO_WARN => "(warn)";
+        string MACRO_ERROR_MSG(string msg) => $"{MACRO_ERROR}\r\n{msg}";
+        string MACRO_WARN_MSG(string msg) => $"{MACRO_WARN}\r\n{msg}";
 
         bool NoError()
         {

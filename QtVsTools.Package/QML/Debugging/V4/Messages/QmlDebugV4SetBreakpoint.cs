@@ -74,8 +74,8 @@ namespace QtVsTools.Qml.Debug.V4
 
             public TargetType TargetType
             {
-                get { return SerializableEnum.Deserialize<TargetType>(TargetTypeString); }
-                set { TargetTypeString = SerializableEnum.Serialize<TargetType>(value); }
+                get => SerializableEnum.Deserialize<TargetType>(TargetTypeString);
+                set => TargetTypeString = SerializableEnum.Serialize(value);
             }
 
             [DataMember(Name = "target")]

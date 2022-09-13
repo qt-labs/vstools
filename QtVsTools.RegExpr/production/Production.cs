@@ -276,21 +276,10 @@ namespace QtVsTools.SyntaxAnalysis
                 return GetValues<object>(production.Token.Id);
             }
 
-            public object this[string tokenId, int index = 0]
-            {
-                get
-                {
-                    return GetValues(tokenId).ElementAtOrDefault(index);
-                }
-            }
+            public object this[string tokenId, int index = 0] =>
+                GetValues(tokenId).ElementAtOrDefault(index);
 
-            public object this[Enum tokenId, int index = 0]
-            {
-                get
-                {
-                    return this[tokenId.ToString(), index];
-                }
-            }
+            public object this[Enum tokenId, int index = 0] => this[tokenId.ToString(), index];
 
             public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
             {

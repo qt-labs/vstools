@@ -61,15 +61,7 @@ namespace QtVsTools.Qml.Debug
         private FileSystem()
         { }
 
-        public IEnumerable<string> QrcPaths
-        {
-            get
-            {
-                return files.Values
-                    .GroupBy(x => x.QrcPath)
-                    .Select(x => x.Key);
-            }
-        }
+        public IEnumerable<string> QrcPaths => files.Values.GroupBy(x => x.QrcPath).Select(x => x.Key);
 
         string QrcPath(string prefix, string filePath)
         {

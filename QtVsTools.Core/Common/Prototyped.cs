@@ -87,10 +87,7 @@ namespace QtVsTools
             System.Diagnostics.Debug.Assert(IsPrototype);
         }
 
-        public TBase Prototype
-        {
-            get { return ThisClass.Prototype; }
-        }
+        public TBase Prototype => ThisClass.Prototype;
 
         SubClass thisClass = null;
         protected SubClass ThisClass
@@ -102,15 +99,9 @@ namespace QtVsTools
             }
         }
 
-        protected static SubClass BaseClass
-        {
-            get { return SubClass.baseClass; }
-        }
+        protected static SubClass BaseClass => SubClass.baseClass;
 
-        public static TBase BasePrototype
-        {
-            get { return BaseClass.Prototype; }
-        }
+        public static TBase BasePrototype => BaseClass.Prototype;
 
         #region //////////////////// SubClass /////////////////////////////////////////////////////
 
@@ -124,13 +115,7 @@ namespace QtVsTools
             public Type Type { get; set; }
             public TBase Prototype { get; set; }
             public IEnumerable<Type> SubTypes { get; set; }
-            public IEnumerable<SubClass> SubClasses
-            {
-                get
-                {
-                    return SubTypes.Select(x => Get(x)).Where(x => x != null);
-                }
-            }
+            public IEnumerable<SubClass> SubClasses => SubTypes.Select(Get).Where(x => x != null);
 
             static readonly object classCriticalSection = new object();
 

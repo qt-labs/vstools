@@ -81,13 +81,7 @@ namespace QtVsTools.Core
         }
 
         Dictionary<string, string> _Properties;
-        Dictionary<string, string> Properties
-        {
-            get
-            {
-                return _Properties ?? (_Properties = QueryAllValues());
-            }
-        }
+        Dictionary<string, string> Properties => _Properties ?? (_Properties = QueryAllValues());
 
         Parser _PropertyParser;
         Parser PropertyParser

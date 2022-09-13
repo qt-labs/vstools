@@ -69,13 +69,7 @@ namespace QtVsTools.Core
             }
         }
 
-        protected virtual string WorkingDirectory
-        {
-            get
-            {
-                return Path.GetDirectoryName(ProFile);
-            }
-        }
+        protected virtual string WorkingDirectory => Path.GetDirectoryName(ProFile);
 
         string MakeRelative(string absolutePath)
         {

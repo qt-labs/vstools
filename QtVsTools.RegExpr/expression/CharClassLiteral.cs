@@ -81,8 +81,8 @@ namespace QtVsTools.SyntaxAnalysis
 
         public partial class CharExprBuilder
         {
-            public CharClassLiteral this[string s] { get { return CharLiteral(s); } }
-            public CharClassLiteral this[char c] { get { return CharLiteral(c); } }
+            public CharClassLiteral this[string s] => CharLiteral(s);
+            public CharClassLiteral this[char c] => CharLiteral(c);
         }
     }
 }
