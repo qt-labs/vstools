@@ -86,6 +86,16 @@
     <PackageReference Include="$(Name_Newtonsoft_Json)" Version="$(Version_Newtonsoft_Json)" />
     <PackageReference Include="$(Name_Stub_System_Data_SQLite_Core_NetFramework)" Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" GeneratePathProperty="true" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Shell_15)" Version="$(Version_Microsoft_VisualStudio_Shell_15)" />
+    <PackageReference Include="Community.VisualStudio.SourceGenerators">
+      <Version>1.0.3</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Community.VisualStudio.VSCT">
+      <Version>16.0.29.6</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -299,6 +309,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>QtMenus.vsct_TT</DependentUpon>
+      <Namespace>QtVsTools</Namespace>
     </VSCTCompile>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>

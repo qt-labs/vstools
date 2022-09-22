@@ -35,6 +35,8 @@
     <!-- This header contains the command ids for the menus provided by the shell. -->
     <Extern href="vsshlids.h"/>
 
+    <Include href="VSGlobals.vsct" />
+
     <!--
         The Commands section is where commands, menus, and menu groups are defined.
         This section uses a Guid to identify the package that provides the command defined inside it.
