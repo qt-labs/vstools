@@ -18,7 +18,7 @@
     <Commands package="PackageGuid">
         <Menus>
             <Menu guid="MainMenuGuid" id="QtMainMenu" priority="0x700" type="Menu">
-                <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS" />
+                <Parent guid="VSMainMenu" id="IDG_VS_MM_TOOLSADDINS" />
                 <Strings>
                     <ButtonText>Qt VS Tools</ButtonText>
                 </Strings>
@@ -63,7 +63,7 @@
             <!-- Region Solution context menu groups -->
 
             <Group guid="SolutionContextMenuGuid" id="QtSolutionSubMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
+                <Parent guid="VSMainMenu" id="SolutionNode" />
             </Group>
             <Group guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" priority="0x0600">
                 <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenu"/>
@@ -77,7 +77,7 @@
             <!-- Region Project context menu groups -->
 
             <Group guid="ProjectContextMenuGuid" id="QtProjectSubMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+                <Parent guid="VSMainMenu" id="ProjectNode" />
             </Group>
             <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
                 <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
@@ -92,7 +92,7 @@
             <!-- Endregion Project context menu groups -->
 
             <Group guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" priority="0x0600">
-                <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+                <Parent guid="VSMainMenu" id="ItemNode" />
             </Group>
         </Groups>
 
