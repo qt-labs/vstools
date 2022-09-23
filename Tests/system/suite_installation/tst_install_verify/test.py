@@ -28,10 +28,9 @@
 
 # -*- coding: utf-8 -*-
 
+source("../../shared/utils.py")
+
 import names
-import os
-import subprocess
-from xml.dom import minidom
 
 
 def main():
@@ -42,23 +41,6 @@ def main():
     openExtensionManager(version)
     checkVsToolsVersion(version)
     closeAllWindows()
-
-
-def startAppGetVersion():
-    appContext = startApplication("devenv /LCID 1033")
-    try:
-        vsDirectory = appContext.commandLine.strip('"').partition("\\Common7")[0]
-        programFilesDir = os.getenv("ProgramFiles(x86)")
-        plv = subprocess.check_output('"%s/Microsoft Visual Studio/Installer/vswhere.exe" '
-                                      '-path "%s" -property catalog_productLineVersion'
-                                      % (programFilesDir, vsDirectory))
-        version = str(plv).strip("b'\\rn\r\n")
-    except:
-        test.fatal("Cannot determine used VS version")
-        version = ""
-    if version != "2017":
-        mouseClick(waitForObject(names.continueWithoutCode_Label))
-    return version
 
 
 def checkVSVersion(version):
@@ -73,24 +55,6 @@ def checkVSVersion(version):
     clickButton(waitForObject(names.o_Microsoft_Visual_Studio_OK_Button))
 
 
-def openExtensionManager(version):
-    if version == "2017":
-        mouseClick(waitForObject(names.tools_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Extensions_and_Updates_MenuItem))
-    else:
-        mouseClick(waitForObject(names.extensions_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
-
-
-def readVsToolsVersionFromSource():
-    try:
-        versionXml = minidom.parse("../../../../version.targets")
-        return versionXml.getElementsByTagName("QtVSToolsVersion")[0].firstChild.data
-    except:
-        test.fatal("Can't read expected VS Tools version from sources.")
-        return ""
-
-
 def checkVsToolsVersion(version):
     if version == "2017":
         vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
@@ -101,14 +65,9 @@ def checkVsToolsVersion(version):
     test.verify(vsToolsLabel.text.startswith("The Qt VS Tools for Visual Studio " + version),
                 "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
                 % (version, vsToolsLabel.text))
-    displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label).text
-    expectedVersion = readVsToolsVersionFromSource()
-    test.verify(expectedVersion and displayedVersion.startswith(expectedVersion),
-                "Expected version of VS Tools is displayed? Displayed: %s, Expected: %s"
-                % (displayedVersion, expectedVersion))
+    verifyVsToolsVersion()
 
 
 def closeAllWindows():
     clickButton(waitForObject(names.manage_Extensions_Close_Button))
-    mouseClick(waitForObject(names.file_MenuItem))
-    mouseClick(waitForObject(names.pART_Popup_Exit_MenuItem))
+    closeMainWindow()
