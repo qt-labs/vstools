@@ -56,7 +56,7 @@ def startAppGetVersion():
     except:
         test.fatal("Cannot determine used VS version")
         version = ""
-    if version == "2019":
+    if version != "2017":
         mouseClick(waitForObject(names.continueWithoutCode_Label))
     return version
 
@@ -66,7 +66,7 @@ def checkVSVersion(version):
     mouseClick(waitForObject(names.pART_Popup_About_Microsoft_Visual_Studio_MenuItem))
     if version == "2017":
         vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Microsoft_Visual_Studio_Community_2017_Label).text
-    elif version == "2019":
+    else:
         vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
     test.verify(version in vsVersionText,
                 "Is this VS %s as expected? Found:\n%s" % (version, vsVersionText))
@@ -77,7 +77,7 @@ def openExtensionManager(version):
     if version == "2017":
         mouseClick(waitForObject(names.tools_MenuItem))
         mouseClick(waitForObject(names.pART_Popup_Extensions_and_Updates_MenuItem))
-    elif version == "2019":
+    else:
         mouseClick(waitForObject(names.extensions_MenuItem))
         mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
 
@@ -94,7 +94,7 @@ def readVsToolsVersionFromSource():
 def checkVsToolsVersion(version):
     if version == "2017":
         vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
-    elif version == "2019":
+    else:
         mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
         vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label)
     mouseClick(vsToolsLabel)
