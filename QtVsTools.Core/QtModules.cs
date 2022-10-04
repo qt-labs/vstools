@@ -58,25 +58,24 @@ namespace QtVsTools.Core
 
         public List<QtModule> GetAvailableModules(uint major)
         {
-            if (major < 6) {
+            switch (major) {
+            case var _ when major < 6:
                 if (qt5list == null) {
                     qt5list = new List<QtModule>(qt5modules.Count);
                     foreach (var entry in qt5modules)
                         qt5list.Add(entry.Value);
                 }
                 return qt5list;
-            }
-            if (major == 6) {
+            case var _ when major == 6:
                 if (qt6list == null) {
                     qt6list = new List<QtModule>(qt6modules.Count);
                     foreach (var entry in qt6modules)
                         qt6list.Add(entry.Value);
                 }
                 return qt6list;
-            }
-            if (major > 6)
+            default:
                 throw new QtVSException("Unsupported Qt version.");
-            return null;
+            }
         }
 
         private QtModules()

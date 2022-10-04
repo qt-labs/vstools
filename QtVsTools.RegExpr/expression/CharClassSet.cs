@@ -248,7 +248,7 @@ namespace QtVsTools.SyntaxAnalysis
                     while (stack.Any()) {
                         var context = stack.Pop();
                         expr = context.Expr;
-                        if (context == null || expr == null) {
+                        if (expr == null) {
                             continue;
                         } else if (context.Children == null) {
                             context.Children = new Queue<Expr>();

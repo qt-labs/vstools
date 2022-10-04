@@ -531,13 +531,9 @@ namespace QtVsTools.Options
 
         static object GetBinding(FrameworkElement control)
         {
-            if (control == null
-                || control.BindingGroup == null
-                || control.BindingGroup.Items == null
-                || control.BindingGroup.Items.Count == 0) {
+            if (control?.BindingGroup == null)
                 return null;
-            }
-            return control.BindingGroup.Items[0];
+            return control.BindingGroup.Items.Count == 0 ? null : control.BindingGroup.Items[0];
         }
 
         static DataGridCell FindContainingCell(DependencyObject control)

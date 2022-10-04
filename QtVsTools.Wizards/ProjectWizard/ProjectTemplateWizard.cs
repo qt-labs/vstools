@@ -322,9 +322,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             if (string.IsNullOrEmpty(wizConfig.QtVersionPath))
                 return string.Empty;
             string[] linuxPaths = wizConfig.QtVersionPath.Split(':');
-            if (linuxPaths == null || linuxPaths.Length <= 2)
-                return string.Empty;
-            return linuxPaths[2];
+            return linuxPaths.Length <= 2 ? string.Empty : linuxPaths[2];
         }
 
         protected virtual void Expand()

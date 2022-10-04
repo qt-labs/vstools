@@ -168,10 +168,9 @@ namespace QtVsTools.QtMsBuild
             UpdateInitStatus(p += 10);
 
             UnconfiguredProject = context.UnconfiguredProject;
-            if (UnconfiguredProject == null
-                || UnconfiguredProject.ProjectService == null
-                || UnconfiguredProject.ProjectService.Services == null)
+            if (UnconfiguredProject?.ProjectService.Services == null)
                 return;
+
             await TaskScheduler.Default;
             UpdateInitStatus(p += 10);
 

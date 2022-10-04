@@ -1412,24 +1412,25 @@ namespace QtVsTools.Core
                 VersionInfo = QtVersionManager.The().GetVersionInfo(
                     QtVersionManager.The().GetDefaultVersion());
             }
-            bool isOS64Bit = System.Environment.Is64BitOperatingSystem;
-            bool isQt64Bit = VersionInfo.is64Bit();
 
             string vcPath = VCPath;
             if (vcPath == "")
                 return false;
 
+            bool osIs64Bit = System.Environment.Is64BitOperatingSystem;
+            bool qtIs64Bit = VersionInfo.is64Bit();
+
             string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
             string vcVarsCmd = "";
             string vcVarsArg = "";
-            if (isOS64Bit && isQt64Bit)
+            if (osIs64Bit && qtIs64Bit)
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars64.bat");
-            else if (!isOS64Bit && !isQt64Bit)
-                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars32.bat");
-            else if (isOS64Bit && !isQt64Bit)
+            else if (osIs64Bit /* && !QtIs64Bit */)
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsamd64_x86.bat");
-            else if (!isOS64Bit && isQt64Bit)
+            else if (/* !OsIs64Bit && */ qtIs64Bit)
                 vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
+            else /* !OsIs64Bit && !QtIs64Bit */
+                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars32.bat");
 
             Messages.Print($"vcvars: {vcVarsCmd}");
 

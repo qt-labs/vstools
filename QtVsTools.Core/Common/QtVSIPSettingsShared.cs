@@ -93,8 +93,6 @@ namespace QtVsTools.Common
 
                     foreach (VCFileConfiguration config in vcfile?.FileConfigurations as IVCCollection) {
                         tool = new QtCustomBuildTool(config);
-                        if (tool == null)
-                            continue;
                         configName = config.Name.Remove(config.Name.IndexOf('|'));
                         var vcConfig = config.ProjectConfiguration as VCConfiguration;
                         platformName = (vcConfig.Platform as VCPlatform).Name;

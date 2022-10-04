@@ -107,9 +107,6 @@ namespace QtVsTools.Json
         private bool Initialize(Type type)
         {
             var settings = new DataContractJsonSerializerSettings();
-            if (settings == null)
-                return false;
-
             settings.DataContractSurrogate = new DataContractSurrogate { Serializer = this };
             settings.EmitTypeInformation = EmitTypeInformation.Never;
             settings.UseSimpleDictionaryFormat = true;
@@ -132,7 +129,7 @@ namespace QtVsTools.Json
                     return new JsonData() { Stream = stream };
                 } catch (Exception exception) {
                     exception.Log();
-                    if (stream != null && stream.CanRead && stream.Length > 0)
+                    if (stream.CanRead && stream.Length > 0)
                         stream.Dispose();
                     return null;
                 }

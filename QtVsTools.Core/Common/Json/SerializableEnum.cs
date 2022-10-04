@@ -45,11 +45,11 @@ namespace QtVsTools.Json
                 return enumValue.ToString();
 
             var member = type.GetMember(enumValue.ToString());
-            if (member == null || member.Length == 0)
+            if (member.Length == 0)
                 return enumValue.ToString();
 
             var attribs = member[0].GetCustomAttributes(typeof(EnumStringAttribute), false);
-            if (attribs == null || attribs.Length == 0)
+            if (attribs.Length == 0)
                 return enumValue.ToString();
 
             if (attribs.FirstOrDefault(x => x is EnumStringAttribute) is EnumStringAttribute a)
@@ -65,13 +65,13 @@ namespace QtVsTools.Json
                 return default(TEnum);
 
             var members = typeof(TEnum).GetMembers();
-            if (members == null || members.Length == 0)
+            if (members.Length == 0)
                 return default(TEnum);
 
             var member = members.Where(x =>
             {
                 var attribs = x.GetCustomAttributes(typeof(EnumStringAttribute), false);
-                if (attribs == null || attribs.Length == 0)
+                if (attribs.Length == 0)
                     return false;
 
                 if (attribs.FirstOrDefault(y => y is EnumStringAttribute) is EnumStringAttribute a)

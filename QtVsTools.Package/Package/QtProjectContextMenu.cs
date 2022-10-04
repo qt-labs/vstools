@@ -162,13 +162,14 @@ namespace QtVsTools
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
             var isQtProject = HelperFunctions.IsVsToolsProject(project);
             var isQMakeProject = HelperFunctions.IsQtProject(project);
-            var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
-
             if (!isQtProject && !isQMakeProject) {
                 command.Enabled = command.Visible = false;
                 return;
             }
 
+            var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
+
+            var status = vsCommandStatus.vsCommandStatusSupported;
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
             case CommandId.ExportPriFileProjectId:
@@ -182,50 +183,32 @@ namespace QtVsTools
                 command.Visible = true;
                 command.Enabled = Translation.ToolsAvailable(project);
                 break;
-            case CommandId.QtProjectSettingsProjectId: {
-                    var status = vsCommandStatus.vsCommandStatusSupported;
-                    if (project != null) {
-                        if (isQtProject)
-                            status |= vsCommandStatus.vsCommandStatusEnabled;
-                        else if (isQMakeProject)
-                            status |= vsCommandStatus.vsCommandStatusInvisible;
-                    }
-                    command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                    command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
-                }
+            case CommandId.QtProjectSettingsProjectId:
+                if (isQtProject)
+                    status |= vsCommandStatus.vsCommandStatusEnabled;
+                else
+                    status |= vsCommandStatus.vsCommandStatusInvisible;
+                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
+                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 break;
-            case CommandId.ChangeProjectQtVersionProjectId: {
-                    var status = vsCommandStatus.vsCommandStatusSupported;
-                    if ((project == null) || isQtProject)
-                        status |= vsCommandStatus.vsCommandStatusInvisible;
-                    else if (isQMakeProject)
-                        status |= vsCommandStatus.vsCommandStatusEnabled;
-                    else
-                        status |= vsCommandStatus.vsCommandStatusInvisible;
-                    command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                    command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
-                }
+            case CommandId.ChangeProjectQtVersionProjectId:
+                if (isQMakeProject)
+                    status |= vsCommandStatus.vsCommandStatusEnabled;
+                else
+                    status |= vsCommandStatus.vsCommandStatusInvisible;
+                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
+                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 break;
-            case CommandId.ProjectConvertToQtMsBuild: {
-                    if (project == null || (!isQtProject && !isQMakeProject)) {
-                        command.Visible = false;
-                        command.Enabled = false;
-                    } else if (isQtMsBuildEnabled) {
-                        command.Visible = true;
-                        command.Enabled = false;
-                    } else {
-                        command.Visible = true;
-                        command.Enabled = true;
-                    }
-                }
+            case CommandId.ProjectConvertToQtMsBuild:
+                command.Visible = true;
+                command.Enabled = !isQtMsBuildEnabled;
                 break;
-            case CommandId.ProjectRefreshIntelliSense: {
-                    command.Visible = command.Enabled = isQtMsBuildEnabled;
-                }
+            case CommandId.ProjectRefreshIntelliSense:
+                command.Visible = command.Enabled = isQtMsBuildEnabled;
                 break;
             }
 
-            if (project != null && isQtProject) {
+            if (isQtProject) {
                 int projectVersion = QtProject.GetFormatVersion(project);
                 switch ((CommandId)command.CommandID.ID) {
                 case CommandId.ChangeProjectQtVersionProjectId:

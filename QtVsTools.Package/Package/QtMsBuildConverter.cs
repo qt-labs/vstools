@@ -110,8 +110,10 @@ namespace QtVsTools
                         projCount + 1, projectPaths.Count,
                         Path.GetFileNameWithoutExtension(projectPath)),
                         projectPaths.Count, projCount);
-                    if (waitDialog.Canceled)
+                    if (waitDialog.Canceled) {
+                        canceled = true;
                         break;
+                    }
                 }
                 if (!ConvertProject(projectPath)) {
                     if (waitDialog != null)

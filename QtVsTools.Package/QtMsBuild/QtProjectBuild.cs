@@ -320,45 +320,40 @@ namespace QtVsTools.QtMsBuild
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 string resMsg;
                 StringBuilder resInfo = new StringBuilder();
-                if (result?.OverallResult == BuildResultCode.Success) {
+                if (result.OverallResult == BuildResultCode.Success) {
                     resMsg = "Build ok";
                 } else {
                     resMsg = "Build FAIL";
-                    if (result == null) {
-                        resInfo.AppendLine("####### Build returned 'null'");
-                    } else {
-                        resInfo.AppendLine("####### Build returned 'Failure' code");
-                        if (result.ResultsByTarget != null) {
-                            foreach (var tr in result.ResultsByTarget) {
-                                var res = tr.Value;
-                                if (res.ResultCode != TargetResultCode.Failure)
-                                    continue;
-                                resInfo.AppendFormat("### Target '{0}' FAIL\r\n", tr.Key);
-                                if (res.Items != null && res.Items.Length > 0) {
-                                    resInfo.AppendFormat(
-                                        "Items: {0}\r\n", string.Join(", ", res.Items
-                                            .Select(it => it.ItemSpec)));
-                                }
-                                var e = tr.Value?.Exception;
-                                if (e != null) {
-                                    resInfo.AppendFormat(
-                                        "Exception: {0}\r\nStacktrace:\r\n{1}\r\n",
-                                        e.Message, e.StackTrace);
-                                }
+                    resInfo.AppendLine("####### Build returned 'Failure' code");
+                    if (result.ResultsByTarget != null) {
+                        foreach (var tr in result.ResultsByTarget) {
+                            var res = tr.Value;
+                            if (res.ResultCode != TargetResultCode.Failure)
+                                continue;
+                            resInfo.AppendFormat("### Target '{0}' FAIL\r\n", tr.Key);
+                            if (res.Items != null && res.Items.Length > 0) {
+                                resInfo.AppendFormat(
+                                    "Items: {0}\r\n", string.Join(", ", res.Items
+                                        .Select(it => it.ItemSpec)));
+                            }
+                            var e = tr.Value?.Exception;
+                            if (e != null) {
+                                resInfo.AppendFormat(
+                                    "Exception: {0}\r\nStacktrace:\r\n{1}\r\n",
+                                    e.Message, e.StackTrace);
                             }
                         }
                     }
                 }
                 Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] {3}\r\n{4}",
-                    DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                    ConfiguredProject.ProjectConfiguration.Name,
-                    resMsg, resInfo.ToString()));
+                        "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] {3}\r\n{4}",
+                        DateTime.Now, Thread.CurrentThread.ManagedThreadId,
+                        ConfiguredProject.ProjectConfiguration.Name,
+                        resMsg, resInfo.ToString()));
             }
 
             bool ok = false;
-            if (result == null
-                || result.ResultsByTarget == null
+            if (result.ResultsByTarget == null
                 || result.OverallResult != BuildResultCode.Success) {
                 Messages.Print(string.Format("{0}: background build FAILED!",
                         Path.GetFileName(UnconfiguredProject.FullPath)));

@@ -52,10 +52,11 @@ namespace QtVsTools.Legacy
             }
 
             if (tsFiles == null) {
-                tsFiles = (qtProject.VCProject
-                    .GetFilesEndingWith(".ts") as IVCCollection)
-                    .Cast<VCFile>()
-                    .Select(vcFile => vcFile.RelativePath);
+                if (qtProject.VCProject.GetFilesEndingWith(".ts") is IVCCollection collection) {
+                    tsFiles = collection
+                        .Cast<VCFile>()
+                        .Select(vcFile => vcFile.RelativePath);
+                }
             }
 
             if (tsFiles != null) {

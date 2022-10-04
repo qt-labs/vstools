@@ -456,12 +456,9 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         static object GetBinding(FrameworkElement control)
         {
-            if (control.BindingGroup == null
-                || control.BindingGroup.Items == null
-                || control.BindingGroup.Items.Count == 0) {
+            if (control?.BindingGroup == null)
                 return null;
-            }
-            return control.BindingGroup.Items[0];
+            return control.BindingGroup.Items.Count == 0 ? null : control.BindingGroup.Items[0];
         }
 
         static FrameworkElement FindAncestor(FrameworkElement control, string name)

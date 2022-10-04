@@ -69,8 +69,8 @@ namespace QtVsTest.Macros
         public async Task LoopAsync()
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(Loop.Token);
-            var DTE = await Package.GetServiceAsync(typeof(DTE)) as DTE2;
-            var mainWindowHWnd = new IntPtr((long)DTE.MainWindow.HWnd);
+            var dte = await Package.GetServiceAsync(typeof(DTE)) as DTE2;
+            var mainWindowHWnd = new IntPtr((long)dte.MainWindow.HWnd);
             await TaskScheduler.Default;
 
             var pipeName = string.Format("QtVSTest_{0}", Process.GetCurrentProcess().Id);
@@ -99,7 +99,7 @@ namespace QtVsTest.Macros
                                 break;
 
                             var macro = new Macro(
-                                Package, DTE, mainWindowHWnd, JoinableTaskFactory, Loop.Token);
+                                Package, dte, mainWindowHWnd, JoinableTaskFactory, Loop.Token);
                             await macro.CompileAsync(Encoding.UTF8.GetString(data));
                             if (macro.AutoRun)
                                 await macro.RunAsync();
@@ -121,12 +121,10 @@ namespace QtVsTest.Macros
 
                             pipe.WaitForPipeDrain();
 
-                            if (macro != null && macro.Ok && macro.AutoRun && macro.QuitWhenDone) {
+                            if (macro.Ok && macro.AutoRun && macro.QuitWhenDone) {
                                 await JoinableTaskFactory.SwitchToMainThreadAsync(Loop.Token);
-                                if (DTE != null) {
-                                    DTE.Solution.Close(false);
-                                    DTE.Quit();
-                                }
+                                dte.Solution.Close(false);
+                                dte.Quit();
                                 await TaskScheduler.Default;
                                 Loop.Cancel();
                             }
