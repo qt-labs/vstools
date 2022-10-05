@@ -1716,6 +1716,7 @@ namespace QtVsTools.Core
                         return xmlPropertyStorage.Attribute("ConfigName")?.Value;
 
                     var configName = ConditionParser
+                        .Match(xmlPropertyStorage.Attribute("Condition").Value);
                     if (!configName.Success || configName.Groups.Count <= 1)
                         return "";
                     return configName.Groups[1].Value;
