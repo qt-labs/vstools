@@ -59,6 +59,21 @@ def openExtensionManager(version):
         mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
 
 
+def selectInstalledVsTools(version):
+    openExtensionManager(version)
+    if version == "2017":
+        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
+    else:
+        mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
+        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label)
+    mouseClick(vsToolsLabel)
+    return vsToolsLabel.text
+
+
+def changesScheduledLabelExists():
+    return object.exists(names.changes_scheduled_Label)
+
+
 def readExpectedVsToolsVersion():
     try:
         versionXml = minidom.parse("../../../../version.targets")

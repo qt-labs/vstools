@@ -38,8 +38,11 @@ def main():
     if not version:
         return
     checkVSVersion(version)
-    openExtensionManager(version)
-    checkVsToolsVersion(version)
+    vsToolsLabelText = selectInstalledVsTools(version)
+    test.verify(vsToolsLabelText.startswith("The Qt VS Tools for Visual Studio " + version),
+                "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
+                % (version, vsToolsLabelText))
+    verifyVsToolsVersion()
     closeAllWindows()
 
 
@@ -53,19 +56,6 @@ def checkVSVersion(version):
     test.verify(version in vsVersionText,
                 "Is this VS %s as expected? Found:\n%s" % (version, vsVersionText))
     clickButton(waitForObject(names.o_Microsoft_Visual_Studio_OK_Button))
-
-
-def checkVsToolsVersion(version):
-    if version == "2017":
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
-    else:
-        mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label)
-    mouseClick(vsToolsLabel)
-    test.verify(vsToolsLabel.text.startswith("The Qt VS Tools for Visual Studio " + version),
-                "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
-                % (version, vsToolsLabel.text))
-    verifyVsToolsVersion()
 
 
 def closeAllWindows():
