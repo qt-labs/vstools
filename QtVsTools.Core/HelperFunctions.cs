@@ -47,10 +47,13 @@ using Process = System.Diagnostics.Process;
 
 namespace QtVsTools.Core
 {
-    using QtMsBuild;
+    using Common;
+    using static SyntaxAnalysis.RegExpr;
 
     public static class HelperFunctions
     {
+        static LazyFactory StaticLazy { get; } = new LazyFactory();
+
         static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },
             StringComparer.OrdinalIgnoreCase);
         public static bool IsSourceFile(string fileName)
@@ -1406,6 +1409,31 @@ namespace QtVsTools.Core
             return vcPath;
         }
 
+        static Parser EnvVarParser => StaticLazy.Get(() => EnvVarParser, () =>
+        {
+            Token tokenName = new Token("name", (~Chars["=\r\n"]).Repeat(atLeast: 1));
+            Token tokenValuePart = new Token("value_part", (~Chars[";\r\n"]).Repeat(atLeast: 1));
+            Token tokenValue = new Token("value", (tokenValuePart | Chars[';']).Repeat())
+            {
+                new Rule<List<string>>
+                {
+                    Capture(_ => new List<string>()),
+                    Update("value_part", (List<string> parts, string part) => parts.Add(part))
+                }
+            };
+            Token tokenEnvVar = new Token("env_var", tokenName & "=" & tokenValue & LineBreak)
+            {
+                new Rule<KeyValuePair<string, List<string>>>
+                {
+                    Create("name", (string name)
+                        => new KeyValuePair<string, List<string>>(name, null)),
+                    Transform("value", (KeyValuePair<string, List<string>> prop, List<string> value)
+                        => new KeyValuePair<string, List<string>>(prop.Key, value))
+                }
+            };
+            return tokenEnvVar.Render();
+        });
+
         public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
         {
             if (VersionInfo == null) {
@@ -1434,94 +1462,41 @@ namespace QtVsTools.Core
 
             Messages.Print($"vcvars: {vcVarsCmd}");
 
-            const string markSTX = ":@:@:@";
-            const string markEOL = ":#:#:#";
+            // Run vcvars and print environment variables
+            StringBuilder stdOut = new StringBuilder();
             string command =
-                string.Format("/c \"{0}\" {1} && echo {2} && set", vcVarsCmd, vcVarsArg, markSTX);
+                string.Format("/c \"{0}\" && set", vcVarsCmd);
             var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command);
             vcVarsStartInfo.CreateNoWindow = true;
             vcVarsStartInfo.UseShellExecute = false;
             vcVarsStartInfo.RedirectStandardError = true;
             vcVarsStartInfo.RedirectStandardOutput = true;
-
             var process = Process.Start(vcVarsStartInfo);
-            StringBuilder stdOut = new StringBuilder();
-
             process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
-                stdOut.AppendFormat("{0}\n{1}\n", e.Data, markEOL);
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+                e.Data.TrimEnd('\r', '\n');
+                if (!string.IsNullOrEmpty(e.Data))
+                    stdOut.Append($"{e.Data}\r\n");
+            };
             process.BeginOutputReadLine();
-
             process.WaitForExit();
             bool ok = (process.ExitCode == 0);
             process.Close();
             if (!ok)
                 return false;
 
-            SortedDictionary<string, List<string>> vcVars =
-                new SortedDictionary<string, List<string>>();
-            string[] split =
-                stdOut.ToString().Split(new string[] { "\n", "=", ";" }, StringSplitOptions.None);
-            int i = 0;
-            for (; i < split.Length && split[i].Trim() != markSTX; i++) {
-                //Skip to start of data
-            }
-            i++; //Advance to next item
-            for (; i < split.Length && split[i].Trim() != markEOL; i++) {
-                //Skip to end of line
-            }
-            i++; //Advance to next item
-            for (; i < split.Length; i++) {
-                //Process first item (variable name)
-                string key = split[i].ToUpper().Trim();
-                i++; //Advance to next item
-                List<string> vcVarValue = vcVars[key] = new List<string>();
-                for (; i < split.Length && split[i].Trim() != markEOL; i++) {
-                    //Process items up to end of line (variable value(s))
-                    vcVarValue.Add(split[i].Trim());
-                }
-            }
+            // Parse command output: copy environment variables to startInfo
+            var envVars = EnvVarParser.Parse(stdOut.ToString())
+                .GetValues<KeyValuePair<string, List<string>>>("env_var")
+                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value,
+                    StringComparer.InvariantCultureIgnoreCase);
+            foreach (var vcVar in envVars)
+                startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
 
-            foreach (var vcVar in vcVars) {
-                if (vcVar.Value.Count == 1) {
-                    startInfo.EnvironmentVariables[vcVar.Key] = vcVar.Value[0];
-                } else {
-                    if (!startInfo.EnvironmentVariables.ContainsKey(vcVar.Key)) {
-                        foreach (var vcVarValue in vcVar.Value) {
-                            if (!string.IsNullOrWhiteSpace(vcVarValue)) {
-                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
-                            }
-                        }
-                    } else {
-                        string[] startInfoVariableValues = startInfo.EnvironmentVariables[vcVar.Key]
-                            .Split(new string[] { ";" }, StringSplitOptions.None);
-                        foreach (var vcVarValue in vcVar.Value) {
-                            if (!string.IsNullOrWhiteSpace(vcVarValue)
-                                && !startInfoVariableValues.Any(s => s.Trim().Equals(
-                                    vcVarValue,
-                                    StringComparison.OrdinalIgnoreCase))) {
-                                if (!startInfo.EnvironmentVariables[vcVar.Key].EndsWith(";"))
-                                    startInfo.EnvironmentVariables[vcVar.Key] += ";";
-                                startInfo.EnvironmentVariables[vcVar.Key] += vcVarValue + ";";
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Get PATH
-            string envPath = startInfo.EnvironmentVariables["PATH"];
-
-            // Remove invalid chars
-            envPath = string.Join("", envPath.Split(Path.GetInvalidPathChars()));
-
-            // Split into list of paths
-            var paths = envPath
-                .Split(';')
-                .Where(x => !string.IsNullOrEmpty(x))
-                .Select(x => x.Trim());
-
-            // Check if cl.exe is in PATH
-            string clPath = paths
+            // Warn if cl.exe is not in PATH
+            string clPath = envVars["PATH"]
                 .Select(path => Path.Combine(path, "cl.exe"))
                 .Where(pathToCl => File.Exists(pathToCl))
                 .FirstOrDefault();
