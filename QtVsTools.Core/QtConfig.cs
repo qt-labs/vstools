@@ -39,6 +39,13 @@ namespace QtVsTools.Core
         Shared
     }
 
+    public enum Platform
+    {
+        x86,
+        x64,
+        arm64
+    }
+
     /// <summary>
     /// A very simple reader for the qconfig.pri file.
     /// </summary>
@@ -48,7 +55,7 @@ namespace QtVsTools.Core
 
         public string LibInfix { get; }
 
-        public bool Is64Bit { get; }
+        public Platform Platform { get; }
 
         public string Namespace { get; }
 
@@ -108,7 +115,17 @@ namespace QtVsTools.Core
                     } else if (name == "QT_LIBINFIX") {
                         LibInfix = data;
                     } else if (name == "QT_ARCH") {
-                        Is64Bit = (data == "x86_64");
+                        switch (data) {
+                        case "x86_64":
+                            Platform= Platform.x64;
+                            break;
+                        case "arm64":
+                            Platform = Platform.arm64;
+                            break;
+                        default:
+                            Platform = Platform.x86;
+                            break;
+                        }
                     } else if (name == "QT_NAMESPACE") {
                         Namespace = data;
                     } else if (name == "QT_VERSION") {

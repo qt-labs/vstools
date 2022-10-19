@@ -65,6 +65,10 @@ namespace QtVsTools.Core
                 var qmakePath = Path.Combine(QtVersion.qtDir, "bin", "qmake.exe");
                 if (!File.Exists(qmakePath))
                     qmakePath = Path.Combine(QtVersion.qtDir, "qmake.exe");
+                if (!File.Exists(qmakePath))
+                    qmakePath = Path.Combine(QtVersion.qtDir, "bin", "qmake.bat");
+                if (!File.Exists(qmakePath))
+                    qmakePath = Path.Combine(QtVersion.qtDir, "qmake.bat");
                 return qmakePath;
             }
         }
@@ -198,15 +202,18 @@ namespace QtVsTools.Core
         public static bool Exists(string path)
         {
             var possibleQMakePaths = new[] {
-                // Path points to qmake.exe
+                // Path points to qmake.exe or qmake.bat
                 path,
-                // Path points to folder containing qmake.exe
+                // Path points to folder containing qmake.exe or qmake.bat
                 Path.Combine(path, "qmake.exe"),
-                // Path points to folder containing bin\qmake.exe
+                Path.Combine(path, "qmake.bat"),
+                // Path points to folder containing bin\qmake.exe or bin\qmake.bat
                 Path.Combine(path, "bin", "qmake.exe"),
+                Path.Combine(path, "bin", "qmake.bat"),
             };
             return possibleQMakePaths.Where(p => File.Exists(p)
-                && Path.GetFileName(p).Equals("qmake.exe", StringComparison.OrdinalIgnoreCase))
+                && (Path.GetFileName(p).Equals("qmake.exe", StringComparison.OrdinalIgnoreCase)
+                || Path.GetFileName(p).Equals("qmake.bat", StringComparison.OrdinalIgnoreCase)))
                 .Any();
         }
     }

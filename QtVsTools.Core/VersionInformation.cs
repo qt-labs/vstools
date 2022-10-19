@@ -241,7 +241,17 @@ namespace QtVsTools.Core
         {
             if (qmakeConf == null)
                 qmakeConf = new QMakeConf(this, qmakeQuery);
-            vsPlatformName = (is64Bit()) ? @"x64" : @"Win32";
+            switch (platform()) {
+            case Platform.x86:
+                vsPlatformName = "Win32";
+                break;
+            case Platform.x64:
+                vsPlatformName = "x64";
+                break;
+            case Platform.arm64:
+                vsPlatformName = "ARM64";
+                break;
+            }
         }
 
         private string Locate_qglobal_h()
@@ -274,11 +284,11 @@ namespace QtVsTools.Core
             throw new QtVSException("qglobal.h not found");
         }
 
-        public bool is64Bit()
+        public Platform platform()
         {
             if (qtConfig == null)
                 qtConfig = new QtConfig(qtDir);
-            return qtConfig.Is64Bit;
+            return qtConfig.Platform;
         }
 
         public bool isWinRT()

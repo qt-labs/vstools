@@ -67,7 +67,9 @@
     <!--// Check if qmake is in the tools path -->
     <Error Condition="'$(QtToolsPath)' == ''" Text="There's no Qt version assigned to project $(MSBuildProjectFile) for configuration $(Configuration)/$(Platform).&#xA;Please set a Qt installation in 'Project|Properties|Configuration Properties|Qt Project Settings|Qt Installation'."/>
     <Error
-      Condition="'$(ApplicationType)' != 'Linux' AND !Exists('$(QtToolsPath)\qmake.exe')"
+      Condition="'$(ApplicationType)' != 'Linux'
+        AND !Exists('$(QtToolsPath)\qmake.exe')
+        AND !Exists('$(QtToolsPath)\qmake.bat')"
       Text="qmake not found in $(QtToolsPath) when building project $(MSBuildProjectFile)"/>
 
     <!--// Ensure C++ compiler in PATH -->

@@ -498,7 +498,7 @@ namespace QtVsTools.Options
                     AddExtension = false,
                     CheckFileExists = true,
                     CheckPathExists = true,
-                    Filter = "qmake Executable|qmake.exe",
+                    Filter = "qmake|qmake.exe;qmake.bat",
                     Title = "Qt VS Tools - Select qmake.exe"
                 };
                 if (openFileDialog.ShowDialog() == true) {

@@ -1441,26 +1441,41 @@ namespace QtVsTools.Core
                     QtVersionManager.The().GetDefaultVersion());
             }
 
-            string vcPath = VCPath;
-            if (vcPath == "")
+            if (string.IsNullOrEmpty(VCPath))
                 return false;
 
+            // Select vcvars script according to host and target platforms
             bool osIs64Bit = System.Environment.Is64BitOperatingSystem;
-            bool qtIs64Bit = VersionInfo.is64Bit();
-
             string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
             string vcVarsCmd = "";
-            string vcVarsArg = "";
-            if (osIs64Bit && qtIs64Bit)
-                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars64.bat");
-            else if (osIs64Bit /* && !QtIs64Bit */)
-                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsamd64_x86.bat");
-            else if (/* !OsIs64Bit && */ qtIs64Bit)
-                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvarsx86_amd64.bat");
-            else /* !OsIs64Bit && !QtIs64Bit */
-                vcVarsCmd = Path.Combine(vcPath, @"Auxiliary\Build\vcvars32.bat");
+            switch (VersionInfo.platform()) {
+            case Platform.x86:
+                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                        ? @"Auxiliary\Build\vcvarsamd64_x86.bat"
+                        : @"Auxiliary\Build\vcvars32.bat");
+                break;
+            case Platform.x64:
+                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                        ? @"Auxiliary\Build\vcvars64.bat"
+                        : @"Auxiliary\Build\vcvarsx86_amd64.bat");
+                break;
+            case Platform.arm64:
+                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                        ? @"Auxiliary\Build\vcvarsamd64_arm64.bat"
+                        : @"Auxiliary\Build\vcvarsx86_arm64.bat");
+                if (!File.Exists(vcVarsCmd)) {
+                    vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                            ? @"Auxiliary\Build\vcvars64.bat"
+                            : @"Auxiliary\Build\vcvarsx86_amd64.bat");
+                }
+                break;
+            }
 
             Messages.Print($"vcvars: {vcVarsCmd}");
+            if (!File.Exists(vcVarsCmd)) {
+                Messages.Print($"vcvars: NOT FOUND");
+                return false;
+            }
 
             // Run vcvars and print environment variables
             StringBuilder stdOut = new StringBuilder();

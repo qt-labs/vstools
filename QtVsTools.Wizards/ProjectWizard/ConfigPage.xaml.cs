@@ -184,9 +184,14 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
-                    Platform = defaultQtVersionInfo.is64Bit()
-                        ? ProjectPlatforms.X64.Cast<string>()
-                        : ProjectPlatforms.Win32.Cast<string>(),
+                    Platform
+                        = defaultQtVersionInfo.platform() == Platform.x86
+                            ? ProjectPlatforms.Win32.Cast<string>()
+                        : defaultQtVersionInfo.platform() == Platform.x64
+                            ? ProjectPlatforms.X64.Cast<string>()
+                        : defaultQtVersionInfo.platform() == Platform.arm64
+                            ? ProjectPlatforms.ARM64.Cast<string>()
+                        : string.Empty,
                     Modules = qtModules.ToDictionary((Module m) => m.Name),
                 },
                 new Config {
@@ -197,9 +202,14 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Target = defaultQtVersionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
-                    Platform = defaultQtVersionInfo.is64Bit()
-                        ? ProjectPlatforms.X64.Cast<string>()
-                        : ProjectPlatforms.Win32.Cast<string>(),
+                    Platform
+                        = defaultQtVersionInfo.platform() == Platform.x86
+                            ? ProjectPlatforms.Win32.Cast<string>()
+                        : defaultQtVersionInfo.platform() == Platform.x64
+                            ? ProjectPlatforms.X64.Cast<string>()
+                        : defaultQtVersionInfo.platform() == Platform.arm64
+                            ? ProjectPlatforms.ARM64.Cast<string>()
+                        : string.Empty,
                     Modules = qtModules.ToDictionary((Module m) => m.Name),
                 }
             };
@@ -307,7 +317,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 } else if (comboBoxQtVersion.Text == QT_VERSION_BROWSE) {
                     var openFileDialog = new OpenFileDialog
                     {
-                        Filter = "qmake (qmake.exe)|qmake.exe"
+                        Filter = "qmake|qmake.exe;qmake.bat"
                     };
                     if (openFileDialog.ShowDialog() == true) {
                         IEnumerable<string> binPath = Path.GetDirectoryName(openFileDialog.FileName)
@@ -341,9 +351,14 @@ namespace QtVsTools.Wizards.ProjectWizard
                         config.Target = config.QtVersion.isWinRT()
                             ? ProjectTargets.WindowsStore.Cast<string>()
                             : ProjectTargets.Windows.Cast<string>();
-                        config.Platform = config.QtVersion.is64Bit()
-                            ? ProjectPlatforms.X64.Cast<string>()
-                            : ProjectPlatforms.Win32.Cast<string>();
+                        config.Platform
+                            = config.QtVersion.platform() == Platform.x86
+                                ? ProjectPlatforms.Win32.Cast<string>()
+                            : config.QtVersion.platform() == Platform.x64
+                                ? ProjectPlatforms.X64.Cast<string>()
+                            : config.QtVersion.platform() == Platform.arm64
+                                ? ProjectPlatforms.ARM64.Cast<string>()
+                            : string.Empty;
                         config.Modules =
                             QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
                                 .Where((QtModule mi) => mi.Selectable)
