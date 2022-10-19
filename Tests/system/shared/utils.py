@@ -63,14 +63,14 @@ def selectInstalledVsTools(version):
     openExtensionManager(version)
     if version == "2017":
         try:
-            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label,
+            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_2017_Label,
                                          5000)
         except:
             return None
     else:
         mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
         try:
-            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label,
+            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_Label,
                                          5000)
         except:
             return None

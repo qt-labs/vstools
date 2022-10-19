@@ -53,7 +53,7 @@ def checkVSVersion(version):
     mouseClick(waitForObject(names.help_MenuItem))
     mouseClick(waitForObject(names.pART_Popup_About_Microsoft_Visual_Studio_MenuItem))
     if version == "2017":
-        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Microsoft_Visual_Studio_Community_2017_Label).text
+        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_2017_Label).text
     else:
         vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
     test.verify(version in vsVersionText,
