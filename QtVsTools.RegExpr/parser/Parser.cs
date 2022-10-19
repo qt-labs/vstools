@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -88,26 +89,36 @@ namespace QtVsTools.SyntaxAnalysis
             ParseTree GetParseTree(string text)
             {
                 // Match regex pattern
-                var match = Regex.Match(text);
-                if (!match.Success || match.Length == 0)
+                var nodes = new List<ParseTree.Node>();
+                var matches = Regex.Matches(text);
+                if (matches.Count == 0)
                     throw new ParseErrorException();
+                foreach (Match match in matches) {
+                    if (!match.Success || match.Length == 0) {
+                        if (nodes.Any())
+                            continue;
+                        else
+                            throw new ParseErrorException();
+                    }
 
-                // Flat list of parse-tree nodes, from Regex captures
-                var nodes = match.Groups.Cast<Group>()
-                    .SelectMany((group, groupIdx) => group.Captures.Cast<Capture>()
-                        .Where(capture => !string.IsNullOrEmpty(capture.Value))
-                        .Select((capture, captureIdx) => new ParseTree.Node
-                        {
-                            CaptureId = Regex.GroupNameFromNumber(groupIdx),
-                            Token = Pattern.Tokens[Regex.GroupNameFromNumber(groupIdx)],
-                            Value = capture.Value,
-                            Begin = capture.Index,
-                            End = capture.Index + capture.Length,
-                            GroupIdx = groupIdx,
-                            CaptureIdx = captureIdx,
-                        }))
-                    .OrderBy(c => c.Begin)
-                    .ToList();
+                    // Flat list of parse-tree nodes, from Regex captures
+                    var matchNodes = match.Groups.Cast<Group>()
+                        .SelectMany((group, groupIdx) => group.Captures.Cast<Capture>()
+                            .Where(capture => !string.IsNullOrEmpty(capture.Value))
+                            .Select((capture, captureIdx) => new ParseTree.Node
+                            {
+                                CaptureId = Regex.GroupNameFromNumber(groupIdx),
+                                Token = Pattern.Tokens[Regex.GroupNameFromNumber(groupIdx)],
+                                Value = capture.Value,
+                                Begin = capture.Index,
+                                End = capture.Index + capture.Length,
+                                GroupIdx = groupIdx,
+                                CaptureIdx = captureIdx,
+                            }))
+                        .OrderBy(c => c.Begin)
+                        .ToList();
+                    nodes.AddRange(matchNodes);
+                }
 
                 // Node list partitioned by token
                 var nodesByToken = nodes
@@ -131,8 +142,23 @@ namespace QtVsTools.SyntaxAnalysis
                     (node.Parent = parentNodes[idx]).ChildNodes.Add(node.Begin, node);
                 }
 
-                // Return parse tree root
-                return nodesByToken[Pattern.Root].FirstOrDefault();
+                var topNodes = nodesByToken[Pattern.Root];
+                if (topNodes.Length == 1)
+                    return topNodes[0];
+
+                var root = new ParseTree.Node()
+                {
+                    CaptureId = string.Empty,
+                    Token = null,
+                    Value = text,
+                    Begin = 0,
+                    End = text.Length,
+                    GroupIdx = -1,
+                    CaptureIdx = -1,
+                };
+                foreach (var node in nodesByToken[Pattern.Root])
+                    (node.Parent = root).ChildNodes.Add(node.Begin, node);
+                return root;
             }
         }
 
