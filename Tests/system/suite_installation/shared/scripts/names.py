@@ -62,3 +62,6 @@ changes_scheduled_Label = {"container": manage_Extensions_Window, "text": "Your 
 microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_Uninstall_Label = {"container": lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem, "text": "_Uninstall", "type": "Label"}
 microsoft_Visual_Studio_Dialog = {"text": "Microsoft Visual Studio", "type": "Dialog"}
 microsoft_Visual_Studio_Yes_Button= {"container": microsoft_Visual_Studio_Dialog, "text": RegularExpression("Yes|Ja"), "type": "Button"}
+pART_Popup_qt_io_MenuItem = {"text": "qt.io", "type": "MenuItem"}
+pART_Popup_Qt_VS_Tools_MenuItem = {"container": pART_Popup_Popup, "text": "Qt VS Tools", "type": "MenuItem"}
+qt_VS_Tools_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Qt VS Tools", "type": "MenuItem"}

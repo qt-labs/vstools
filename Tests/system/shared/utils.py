@@ -62,10 +62,18 @@ def openExtensionManager(version):
 def selectInstalledVsTools(version):
     openExtensionManager(version)
     if version == "2017":
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
+        try:
+            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label,
+                                         5000)
+        except:
+            return None
     else:
         mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label)
+        try:
+            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label,
+                                         5000)
+        except:
+            return None
     mouseClick(vsToolsLabel)
     return vsToolsLabel.text
 
@@ -89,6 +97,14 @@ def verifyVsToolsVersion():
     test.verify(expectedVersion and displayedVersion.startswith(expectedVersion),
                 "Expected version of VS Tools is displayed? Displayed: %s, Expected: %s"
                 % (displayedVersion, expectedVersion))
+
+
+def openVsToolsMenu(version):
+    if version == "2017":
+        mouseClick(waitForObject(names.qt_VS_Tools_MenuItem, 5000))
+    else:
+        mouseClick(waitForObject(names.extensions_MenuItem))
+        mouseClick(waitForObject(names.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
 
 
 def closeMainWindow():
