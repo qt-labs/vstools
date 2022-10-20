@@ -10,3 +10,6 @@ To run these tests:
 
 Please note: The tests will run in your normal working environment. Settings you made may influence
              the tests and vice versa.
+
+Some tests require the following environment variables to be set to the correct values:
+SQUISH_VSTOOLS_VERSION: The expected version of Qt VS Tools

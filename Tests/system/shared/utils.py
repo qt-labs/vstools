@@ -83,6 +83,12 @@ def changesScheduledLabelExists():
 
 
 def readExpectedVsToolsVersion():
+    expectedVersion = os.getenv("SQUISH_VSTOOLS_VERSION")
+    if expectedVersion:
+        return expectedVersion
+    test.warning("No expected Qt VS Tools version set.",
+                 "The environment variable SQUISH_VSTOOLS_VERSION is not set. Falling back to "
+                 "reading the expected version from version.targets")
     try:
         versionXml = minidom.parse("../../../../version.targets")
         return versionXml.getElementsByTagName("QtVSToolsVersion")[0].firstChild.data
@@ -94,9 +100,8 @@ def readExpectedVsToolsVersion():
 def verifyVsToolsVersion():
     displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label).text
     expectedVersion = readExpectedVsToolsVersion()
-    test.verify(expectedVersion and displayedVersion.startswith(expectedVersion),
-                "Expected version of VS Tools is displayed? Displayed: %s, Expected: %s"
-                % (displayedVersion, expectedVersion))
+    test.compare(displayedVersion, expectedVersion,
+                 "Expected version of VS Tools is displayed?")
 
 
 def openVsToolsMenu(version):
