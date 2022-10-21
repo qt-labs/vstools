@@ -29,6 +29,7 @@
 # -*- coding: utf-8 -*-
 
 source("../../shared/utils.py")
+source("../shared/scripts/install_utils.py")
 
 import names
 
