@@ -18,3 +18,6 @@ so, you will have to install Qt VS Tools again.
 
 Some tests require the following environment variables to be set to the correct values:
 SQUISH_VSTOOLS_VERSION: The expected version of Qt VS Tools
+SQUISH_VSTOOLS_QTDIRS:  A list of Qt installations to be used by the tests, i.e. the paths to the
+                        parent directories of the respective Qt versions' bin-directories,
+                        separated by semicola.
