@@ -28,13 +28,15 @@
 
 # -*- coding: utf-8 -*-
 
+import globalnames
+
 
 def openExtensionManager(version):
     if version == "2017":
         mouseClick(waitForObject(names.tools_MenuItem))
         mouseClick(waitForObject(names.pART_Popup_Extensions_and_Updates_MenuItem))
     else:
-        mouseClick(waitForObject(names.extensions_MenuItem))
+        mouseClick(waitForObject(globalnames.extensions_MenuItem))
         mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
 
 

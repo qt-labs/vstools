@@ -26,32 +26,15 @@
 #
 ############################################################################
 
-# -*- coding: utf-8 -*-
+# encoding: UTF-8
 
-source("../../shared/utils.py")
-source("../shared/scripts/install_utils.py")
-
-import names
-
-
-def main():
-    version = startAppGetVersion()
-    if not version:
-        return
-    vsToolsLabelText = selectInstalledVsTools(version)
-    test.compare(vsToolsLabelText, None,
-                "Are 'Qt VS Tools for Visual Studio %s' installed?" % version)
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
-    checkMenuItems(version)
-    closeMainWindow()
-
-
-def checkMenuItems(version):
-    try:
-        openVsToolsMenu(version)
-        test.fail("Surplus menu items", "Qt VS Tools show unexpected menu items.")
-        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
-    except:
-        if version != "2017":
-            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
-        test.passes("Qt VS Tools do not show unexpected menu items.")
+from objectmaphelper import *
+microsoft_Visual_Studio_Window = {"text": Wildcard("*Microsoft Visual Studio"), "type": "Window"}
+continueWithoutCode_Label = {"container": microsoft_Visual_Studio_Window, "text": "System.Windows.Controls.AccessText Microsoft.VisualStudio.Imaging.CrispImage", "type": "Label"}
+microsoft_Visual_Studio_MenuBar = {"container": microsoft_Visual_Studio_Window, "type": "MenuBar"}
+file_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "File", "type": "MenuItem"}
+pART_Popup_Popup = {"id": "", "name": "PART_Popup", "type": "Popup"}
+pART_Popup_Exit_MenuItem = {"container": pART_Popup_Popup, "text": "Exit", "type": "MenuItem"}
+pART_Popup_Qt_VS_Tools_MenuItem = {"container": pART_Popup_Popup, "text": "Qt VS Tools", "type": "MenuItem"}
+extensions_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Extensions", "type": "MenuItem"}
+qt_VS_Tools_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Qt VS Tools", "type": "MenuItem"}

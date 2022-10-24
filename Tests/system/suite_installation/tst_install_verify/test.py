@@ -67,8 +67,8 @@ def checkMenuItems(version):
         openVsToolsMenu(version)
         waitForObject(names.pART_Popup_qt_io_MenuItem, 5000)
         test.passes("Qt VS Tools show expected menu items.")
-        mouseClick(waitForObject(names.file_MenuItem))  # Close menu
+        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
     except:
         if version != "2017":
-            mouseClick(waitForObject(names.file_MenuItem))  # Close Extensions menu
+            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
         test.fail("Missing menu items", "Qt VS Tools do not show expected menu items.")

@@ -32,6 +32,7 @@ import os
 import subprocess
 from xml.dom import minidom
 
+import globalnames
 
 def startAppGetVersion():
     appContext = startApplication("devenv /LCID 1033")
@@ -46,18 +47,18 @@ def startAppGetVersion():
         test.fatal("Cannot determine used VS version")
         version = ""
     if version != "2017":
-        mouseClick(waitForObject(names.continueWithoutCode_Label))
+        mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
     return version
 
 
 def openVsToolsMenu(version):
     if version == "2017":
-        mouseClick(waitForObject(names.qt_VS_Tools_MenuItem, 5000))
+        mouseClick(waitForObject(globalnames.qt_VS_Tools_MenuItem, 5000))
     else:
-        mouseClick(waitForObject(names.extensions_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
+        mouseClick(waitForObject(globalnames.extensions_MenuItem))
+        mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
 
 
 def closeMainWindow():
-    mouseClick(waitForObject(names.file_MenuItem))
-    mouseClick(waitForObject(names.pART_Popup_Exit_MenuItem))
+    mouseClick(waitForObject(globalnames.file_MenuItem))
+    mouseClick(waitForObject(globalnames.pART_Popup_Exit_MenuItem))

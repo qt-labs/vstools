@@ -29,27 +29,21 @@
 # encoding: UTF-8
 
 from objectmaphelper import *
-microsoft_Visual_Studio_Window = {"text": Wildcard("*Microsoft Visual Studio"), "type": "Window"}
-continueWithoutCode_Label = {"container": microsoft_Visual_Studio_Window, "text": "System.Windows.Controls.AccessText Microsoft.VisualStudio.Imaging.CrispImage", "type": "Label"}
-microsoft_Visual_Studio_MenuBar = {"container": microsoft_Visual_Studio_Window, "type": "MenuBar"}
-extensions_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Extensions", "type": "MenuItem"}
-pART_Popup_Popup = {"id": "", "name": "PART_Popup", "type": "Popup"}
-pART_Popup_Manage_Extensions_MenuItem = {"container": pART_Popup_Popup, "text": "Manage Extensions", "type": "MenuItem"}
+import globalnames
+pART_Popup_Manage_Extensions_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "Manage Extensions", "type": "MenuItem"}
 manage_Extensions_Window = {"text": Wildcard("*Extensions*"), "type": "Window"}
 extensionManager_UI_InstalledExtItem_Qt_Label = {"text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
 manage_Extensions_Close_Button = {"container": manage_Extensions_Window, "text": "Close", "type": "Button"}
-file_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "File", "type": "MenuItem"}
-pART_Popup_Exit_MenuItem = {"container": pART_Popup_Popup, "text": "Exit", "type": "MenuItem"}
-tools_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Tools", "type": "MenuItem"}
-pART_Popup_Extensions_and_Updates_MenuItem = {"container": pART_Popup_Popup, "text": "Extensions and Updates...", "type": "MenuItem"}
+tools_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "Tools", "type": "MenuItem"}
+pART_Popup_Extensions_and_Updates_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "Extensions and Updates...", "type": "MenuItem"}
 extensions_and_Updates_lvw_Extensions_ListView = {"container": manage_Extensions_Window, "name": "lvw_Extensions", "type": "ListView"}
 lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem = {"container": extensions_and_Updates_lvw_Extensions_ListView, "text": "Microsoft.VisualStudio.ExtensionManager.UI.InstalledExtensionItem", "type": "ListViewItem"}
 extensionManager_UI_InstalledExtItem_Qt_2017_Label = {"container": lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem, "text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
 extensions_and_Updates_Version_Label = {"container": manage_Extensions_Window, "text": "Version:", "type": "Label"}
 manage_Extensions_Version_Label = {"leftObject": extensions_and_Updates_Version_Label, "type": "Label"}
-help_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Help", "type": "MenuItem"}
-pART_Popup_About_Microsoft_Visual_Studio_MenuItem = {"container": pART_Popup_Popup, "text": "About Microsoft Visual Studio", "type": "MenuItem"}
-o_Microsoft_Visual_Studio_OK_Button = {"container": microsoft_Visual_Studio_Window, "text": "OK", "type": "Button"}
+help_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "Help", "type": "MenuItem"}
+pART_Popup_About_Microsoft_Visual_Studio_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "About Microsoft Visual Studio", "type": "MenuItem"}
+o_Microsoft_Visual_Studio_OK_Button = {"container": globalnames.microsoft_Visual_Studio_Window, "text": "OK", "type": "Button"}
 about_Microsoft_Visual_Studio_Window = {"text": "About Microsoft Visual Studio", "type": "Window"}
 about_Microsoft_Visual_Studio_2017_Label = {"container": about_Microsoft_Visual_Studio_Window, "text": Wildcard("Microsoft Visual Studio *"), "type": "Label"}
 about_Microsoft_Visual_Studio_Edit = {"container": about_Microsoft_Visual_Studio_Window, "type": "Edit"}
@@ -63,5 +57,3 @@ msvs_ExtensionManager_UI_InstalledExtItem_Uninstall_Label= {"container": lvw_Ext
 microsoft_Visual_Studio_Dialog = {"text": "Microsoft Visual Studio", "type": "Dialog"}
 microsoft_Visual_Studio_Yes_Button= {"container": microsoft_Visual_Studio_Dialog, "text": RegularExpression("Yes|Ja"), "type": "Button"}
 pART_Popup_qt_io_MenuItem = {"text": "qt.io", "type": "MenuItem"}
-pART_Popup_Qt_VS_Tools_MenuItem = {"container": pART_Popup_Popup, "text": "Qt VS Tools", "type": "MenuItem"}
-qt_VS_Tools_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Qt VS Tools", "type": "MenuItem"}
