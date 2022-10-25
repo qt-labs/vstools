@@ -154,7 +154,7 @@
   // -->
   <PropertyGroup>
     <LocalDebuggerEnvironment  Condition="'$(QtDllPath)' != ''"
-      >PATH=%PATH%;$(QtDllPath)&#xD;&#xA;$(LocalDebuggerEnvironment)
+      >PATH=$(QtDllPath);%PATH%&#xD;&#xA;$(LocalDebuggerEnvironment)
     </LocalDebuggerEnvironment>
   </PropertyGroup>
 
