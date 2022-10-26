@@ -2,21 +2,21 @@
 
 ## Contents
 
-* [Project format v1.0](#project-format-v1.0)
-* [Project format v2.0](#project-format-v2.0)
-* [Project format v3.0](#project-format-v3.0)
-* [Project format v3.1](#project-format-v3.1)
-* [Project format v3.2](#project-format-v3.2)
-* [Project format v3.3](#project-format-v3.3)
-* [Project format v3.4](#project-format-v3.4)
+* [Project format v1.0](#project-format-v10)
+* [Project format v2.0](#project-format-v20)
+* [Project format v3.0](#project-format-v30)
+* [Project format v3.1](#project-format-v31)
+* [Project format v3.2](#project-format-v32)
+* [Project format v3.3](#project-format-v33)
+* [Project format v3.4](#project-format-v34)
 * [Example projects](#example-projects)
-    * [v1.0](#v1.0)
-    * [v2.0](#v2.0)
-    * [v3.0](#v3.0)
-    * [v3.1](#v3.1)
-    * [v3.2](#v3.2)
-    * [v3.3](#v3.3)
-    * [v3.4](#v3.4)
+    * [v1.0](#v10)
+    * [v2.0](#v20)
+    * [v3.0](#v30)
+    * [v3.1](#v31)
+    * [v3.2](#v32)
+    * [v3.3](#v33)
+    * [v3.4](#v34)
 
 ## Project format v1.0
 
