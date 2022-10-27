@@ -35,24 +35,23 @@ import names
 
 
 def main():
-    test.warning("This is a semi-manual test.",
-                 "It is designed to run on VS with Qt VS Tools installed "
-                 "and requires manual steps.")
     version = startAppGetVersion()
     if not version:
         return
-    if uninstallQtVsTools(version):
-        test.warning("If the test succeeded so far, it now requires manual steps.",
-                     "Please finish the steps of the VSIX Installer wizard which should have "
-                     "appeared. After this, you can run tst_uninstall_verify to check the result.")
+    vsToolsLabelText = selectInstalledVsTools(version)
+    test.compare(vsToolsLabelText, None,
+                "Are 'Qt VS Tools for Visual Studio %s' installed?" % version)
+    clickButton(waitForObject(names.manage_Extensions_Close_Button))
+    checkMenuItems(version)
     closeMainWindow()
 
 
-def uninstallQtVsTools(version):
-    selectInstalledVsTools(version)
-    mouseClick(waitForObject(names.msvs_ExtensionManager_UI_InstalledExtItem_Uninstall_Label))
-    clickButton(waitForObject(names.microsoft_Visual_Studio_Yes_Button))
-    test.verify(waitFor(changesScheduledLabelExists, 5000),
-                "Were changes to the installation scheduled?")
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
-    return True
+def checkMenuItems(version):
+    try:
+        openVsToolsMenu(version)
+        test.fail("Surplus menu items", "Qt VS Tools show unexpected menu items.")
+        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
+    except:
+        if version != "2017":
+            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
+        test.passes("Qt VS Tools do not show unexpected menu items.")

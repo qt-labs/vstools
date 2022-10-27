@@ -29,6 +29,7 @@
 # -*- coding: utf-8 -*-
 
 source("../../shared/utils.py")
+source("../shared/scripts/install_utils.py")
 
 import names
 
@@ -39,18 +40,21 @@ def main():
         return
     checkVSVersion(version)
     vsToolsLabelText = selectInstalledVsTools(version)
-    test.verify(vsToolsLabelText.startswith("The Qt VS Tools for Visual Studio " + version),
-                "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
-                % (version, vsToolsLabelText))
-    verifyVsToolsVersion()
-    closeAllWindows()
+    if test.verify(vsToolsLabelText, "Are Qt VS Tools found in extension manager?"):
+        test.verify(vsToolsLabelText.startswith("The Qt VS Tools for Visual Studio " + version),
+                    "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
+                    % (version, vsToolsLabelText))
+        verifyVsToolsVersion()
+    clickButton(waitForObject(names.manage_Extensions_Close_Button))
+    checkMenuItems(version)
+    closeMainWindow()
 
 
 def checkVSVersion(version):
     mouseClick(waitForObject(names.help_MenuItem))
     mouseClick(waitForObject(names.pART_Popup_About_Microsoft_Visual_Studio_MenuItem))
     if version == "2017":
-        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Microsoft_Visual_Studio_Community_2017_Label).text
+        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_2017_Label).text
     else:
         vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
     test.verify(version in vsVersionText,
@@ -58,6 +62,13 @@ def checkVSVersion(version):
     clickButton(waitForObject(names.o_Microsoft_Visual_Studio_OK_Button))
 
 
-def closeAllWindows():
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
-    closeMainWindow()
+def checkMenuItems(version):
+    try:
+        openVsToolsMenu(version)
+        waitForObject(names.pART_Popup_qt_io_MenuItem, 5000)
+        test.passes("Qt VS Tools show expected menu items.")
+        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
+    except:
+        if version != "2017":
+            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
+        test.fail("Missing menu items", "Qt VS Tools do not show expected menu items.")

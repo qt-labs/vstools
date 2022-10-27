@@ -29,6 +29,7 @@
 # -*- coding: utf-8 -*-
 
 source("../../shared/utils.py")
+source("../shared/scripts/install_utils.py")
 
 import names
 
@@ -54,7 +55,7 @@ def downloadQtVsTools(version):
     mouseClick(waitForObject(names.o_Extensions_Edit))
     type(waitForObject(names.o_Extensions_Edit), "qt")
     type(waitForObject(names.o_Extensions_Edit), "<Return>")
-    mouseClick(waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label))
+    mouseClick(waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_Label))
     verifyVsToolsVersion()
     try:
         downloadButton = waitForObject(names.OnlineExtensionItem_Download_Button)

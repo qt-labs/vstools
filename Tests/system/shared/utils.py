@@ -32,6 +32,7 @@ import os
 import subprocess
 from xml.dom import minidom
 
+import globalnames
 
 def startAppGetVersion():
     appContext = startApplication("devenv /LCID 1033")
@@ -46,51 +47,18 @@ def startAppGetVersion():
         test.fatal("Cannot determine used VS version")
         version = ""
     if version != "2017":
-        mouseClick(waitForObject(names.continueWithoutCode_Label))
+        mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
     return version
 
 
-def openExtensionManager(version):
+def openVsToolsMenu(version):
     if version == "2017":
-        mouseClick(waitForObject(names.tools_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Extensions_and_Updates_MenuItem))
+        mouseClick(waitForObject(globalnames.qt_VS_Tools_MenuItem, 5000))
     else:
-        mouseClick(waitForObject(names.extensions_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
-
-
-def selectInstalledVsTools(version):
-    openExtensionManager(version)
-    if version == "2017":
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2017_Label)
-    else:
-        mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
-        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtensionItem_The_Qt_VS_Tools_for_Visual_Studio_2019_Label)
-    mouseClick(vsToolsLabel)
-    return vsToolsLabel.text
-
-
-def changesScheduledLabelExists():
-    return object.exists(names.changes_scheduled_Label)
-
-
-def readExpectedVsToolsVersion():
-    try:
-        versionXml = minidom.parse("../../../../version.targets")
-        return versionXml.getElementsByTagName("QtVSToolsVersion")[0].firstChild.data
-    except:
-        test.fatal("Can't read expected VS Tools version from sources.")
-        return ""
-
-
-def verifyVsToolsVersion():
-    displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label).text
-    expectedVersion = readExpectedVsToolsVersion()
-    test.verify(expectedVersion and displayedVersion.startswith(expectedVersion),
-                "Expected version of VS Tools is displayed? Displayed: %s, Expected: %s"
-                % (displayedVersion, expectedVersion))
+        mouseClick(waitForObject(globalnames.extensions_MenuItem))
+        mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
 
 
 def closeMainWindow():
-    mouseClick(waitForObject(names.file_MenuItem))
-    mouseClick(waitForObject(names.pART_Popup_Exit_MenuItem))
+    mouseClick(waitForObject(globalnames.file_MenuItem))
+    mouseClick(waitForObject(globalnames.pART_Popup_Exit_MenuItem))
