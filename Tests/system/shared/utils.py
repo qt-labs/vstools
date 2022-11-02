@@ -34,7 +34,7 @@ import subprocess
 import globalnames
 
 def startAppGetVersion():
-    appContext = startApplication("devenv /LCID 1033")
+    appContext = startApplication("devenv /LCID 1033 /RootSuffix SquishTestInstance")
     try:
         vsDirectory = appContext.commandLine.strip('"').partition("\\Common7")[0]
         programFilesDir = os.getenv("ProgramFiles(x86)")

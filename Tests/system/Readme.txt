@@ -8,8 +8,8 @@ To run these tests:
 5. In "Test Suite Settings", select devenv.exe as AUT.
 6. Run individual tests or the entire test suite.
 
-Please note: The tests will run in your normal working environment. Settings you made may influence
-             the tests and vice versa.
+The tests will run in the experimental environment which you get when starting devenv.exe with
+parameters "/RootSuffix SquishTestInstance".
 
 Some tests require the following environment variables to be set to the correct values:
 SQUISH_VSTOOLS_VERSION: The expected version of Qt VS Tools
