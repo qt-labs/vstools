@@ -485,7 +485,7 @@ namespace QtVsTools.Options
                 return Path.GetFullPath(new Uri(path).LocalPath)
                     .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                     .ToUpperInvariant();
-            } catch (UriFormatException) {
+            } catch (Exception) {
                 return null;
             }
         }
@@ -505,7 +505,7 @@ namespace QtVsTools.Options
                     var qmakePath = openFileDialog.FileName;
                     var qmakeDir = Path.GetDirectoryName(qmakePath);
                     var previousPath = NormalizePath(version.Path);
-                    if (Path.GetFileName(qmakeDir)
+                    if (Path.GetFileName(qmakeDir ?? "")
                         .Equals("bin", StringComparison.InvariantCultureIgnoreCase)) {
                         qmakeDir = Path.GetDirectoryName(qmakeDir);
                         version.Path = qmakeDir;
