@@ -34,7 +34,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -49,6 +48,7 @@ namespace QtVsTools.Core
         public uint qtPatch; // Z in version x.y.z
         private QtConfig qtConfig;
         private QMakeConf qmakeConf;
+        private readonly QMakeQuery qmakeQuery;
         private string vsPlatformName;
         private static readonly Hashtable _cache = new Hashtable();
 
@@ -97,8 +97,8 @@ namespace QtVsTools.Core
             qtDir = qtDirIn;
 
             try {
-                var qmakeQuery = new QMakeQuery(this);
-                SetupPlatformSpecificData(qmakeQuery);
+                qmakeQuery = new QMakeQuery(qtDirIn);
+                SetupPlatformSpecificData();
 
                 // Find version number
                 var strVersion = qmakeQuery["QT_VERSION"];
@@ -157,8 +157,7 @@ namespace QtVsTools.Core
                 var tempPro = Path.Combine(tempDir, string.Format("{0}.pro", randomName));
                 File.WriteAllText(tempPro, tempProData.ToString());
 
-                var qmake = new QMakeImport(this, tempPro);
-                qmake.DisableWarnings = true;
+                var qmake = new QMakeImport(this, tempPro, disableWarnings: true);
                 qmake.Run(setVCVars: true);
 
                 var tempVcxproj = Path.Combine(tempDir, string.Format("{0}.vcxproj", randomName));
@@ -222,7 +221,7 @@ namespace QtVsTools.Core
         public string GetQMakeConfEntry(string entryName)
         {
             if (qmakeConf == null)
-                qmakeConf = new QMakeConf(this);
+                qmakeConf = new QMakeConf(qtDir, qmakeQuery);
             return qmakeConf.Entries[entryName].ToString();
         }
 
@@ -237,10 +236,10 @@ namespace QtVsTools.Core
         /// <summary>
         /// Read platform name from qmake.conf.
         /// </summary>
-        private void SetupPlatformSpecificData(QMakeQuery qmakeQuery)
+        private void SetupPlatformSpecificData()
         {
             if (qmakeConf == null)
-                qmakeConf = new QMakeConf(this, qmakeQuery);
+                qmakeConf = new QMakeConf(qtDir, qmakeQuery);
             switch (platform()) {
             case Platform.x86:
                 vsPlatformName = "Win32";
@@ -293,18 +292,12 @@ namespace QtVsTools.Core
 
         public bool isWinRT()
         {
-            var qmakeQuery = new QMakeQuery(this);
-            string qmakeXSpec;
             try {
-                qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
+                var qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
+                return qmakeXSpec.StartsWith("winrt");
             } catch {
-                throw new QtVSException("Error starting qmake process");
-            }
-
-            if (string.IsNullOrEmpty(qmakeXSpec))
                 throw new QtVSException("Error: unexpected result of qmake query");
-
-            return qmakeXSpec.StartsWith("winrt");
+            }
         }
     }
 }

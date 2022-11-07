@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -29,7 +29,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -38,10 +37,10 @@ namespace QtVsTools.Core
         public Hashtable Entries { get; }
         public string QMakeSpecDirectory { get; }
 
-        public QMakeConf(VersionInformation versionInfo, QMakeQuery qmakeQuery = null)
+        public QMakeConf(string qtVersionDir, QMakeQuery qmakeQuery = null)
         {
             Entries = new Hashtable();
-            QMakeSpecDirectory = Path.Combine(versionInfo.qtDir, "mkspecs", "default");
+            QMakeSpecDirectory = Path.Combine(qtVersionDir, "mkspecs", "default");
             var qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
 
             // Starting from Qt5 beta2 there is no more "\\mkspecs\\default" folder available
@@ -49,7 +48,7 @@ namespace QtVsTools.Core
             // This is what happens below.
             if (!File.Exists(qmakeConf)) {
                 if (qmakeQuery == null)
-                    qmakeQuery = new QMakeQuery(versionInfo);
+                    qmakeQuery = new QMakeQuery(qtVersionDir);
 
                 string qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
                 if (string.IsNullOrEmpty(qtPrefix))

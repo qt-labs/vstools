@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt VS Tools.
@@ -30,44 +30,55 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
     using static SyntaxAnalysis.RegExpr;
 
-    public class QMakeQuery : QMake
+    public class QMakeQuery
     {
-        public QMakeQuery(VersionInformation vi) : base(vi)
-        { }
+        private readonly string qtDir;
 
-        StringBuilder stdOutput;
-        protected override void OutMsg(string msg)
+        private class QMakeProcess : QMake
         {
-            stdOutput.AppendLine(msg);
+            public readonly StringBuilder StdOutput;
+
+            public QMakeProcess(string qtDir, EnvDTE.DTE dte = null)
+                : base(qtDir, dte)
+            {
+                Query = " ";
+                StdOutput = new StringBuilder();
+            }
+
+            protected override void OutMsg(string msg)
+            {
+                StdOutput.AppendLine(msg);
+            }
+
+            protected override void InfoStart(Process qmakeProc)
+            {
+                base.InfoStart(qmakeProc);
+                InfoMsg("--- qmake: Querying persistent _Properties");
+            }
         }
 
-        protected override void InfoStart(Process qmakeProc)
+        public QMakeQuery(string qtDir)
         {
-            base.InfoStart(qmakeProc);
-            InfoMsg("--- qmake: Querying persistent properties");
+            this.qtDir = qtDir;
         }
 
         public Dictionary<string, string> QueryAllValues()
         {
-            stdOutput = new StringBuilder();
-            Query = " ";
-
-            if (Run() == 0 && stdOutput.Length > 0) {
+            var qmake = new QMakeProcess(qtDir);
+            if (qmake.Run() == 0 && qmake.StdOutput.Length > 0) {
                 return PropertyParser
-                    .Parse(stdOutput.ToString())
+                    .Parse(qmake.StdOutput.ToString())
                     .GetValues<KeyValuePair<string, string>>("PROP")
                     .GroupBy(x => x.Key)
                     .Select(x => new { x.Key, x.Last().Value })
                     .ToDictionary(property => property.Key, property => property.Value);
-            } else {
-                return new Dictionary<string, string>();
             }
+            return new Dictionary<string, string>();
         }
 
         public string this[string name]

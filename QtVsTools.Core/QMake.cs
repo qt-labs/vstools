@@ -39,22 +39,23 @@ namespace QtVsTools.Core
 
     public abstract class QMake
     {
-        public Dictionary<string, string> Vars { get; protected set; }
-        public string OutputFile { get; protected set; }
+        public Dictionary<string, string> Vars { get; set; }
+        public string OutputFile { get; set; }
         private uint DebugLevel { get; set; }
-        public string TemplatePrefix { get; protected set; }
-        public bool Recursive { get; protected set; }
-        public string ProFile { get; protected set; }
+        public string TemplatePrefix { get; set; }
+        public bool Recursive { get; set; }
+        public string ProFile { get; set; }
         public string Query { get; protected set; }
         public bool DisableWarnings { get; set; }
 
-        protected VersionInformation QtVersion { get; }
+        private readonly string qtDir;
+
         private EnvDTE.DTE Dte { get; }
 
-        public QMake(VersionInformation qtVersion, EnvDTE.DTE dte = null)
+        protected QMake(string qtDir, EnvDTE.DTE dte = null)
         {
-            Debug.Assert(qtVersion != null);
-            QtVersion = qtVersion;
+            Debug.Assert(!string.IsNullOrEmpty(qtDir));
+            this.qtDir = qtDir;
             Dte = dte ?? VsServiceProvider.GetService<EnvDTE.DTE>();
         }
 
@@ -62,13 +63,13 @@ namespace QtVsTools.Core
         {
             get
             {
-                var qmakePath = Path.Combine(QtVersion.qtDir, "bin", "qmake.exe");
+                var qmakePath = Path.Combine(qtDir, "bin", "qmake.exe");
                 if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(QtVersion.qtDir, "qmake.exe");
+                    qmakePath = Path.Combine(qtDir, "qmake.exe");
                 if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(QtVersion.qtDir, "bin", "qmake.bat");
+                    qmakePath = Path.Combine(qtDir, "bin", "qmake.bat");
                 if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(QtVersion.qtDir, "qmake.bat");
+                    qmakePath = Path.Combine(qtDir, "qmake.bat");
                 return qmakePath;
             }
         }
@@ -132,7 +133,7 @@ namespace QtVsTools.Core
                 Arguments = QMakeArgs,
                 WorkingDirectory = WorkingDirectory,
             };
-            qmakeStartInfo.EnvironmentVariables["QTDIR"] = QtVersion.qtDir;
+            qmakeStartInfo.EnvironmentVariables["QTDIR"] = qtDir;
 
             var qmakeProc = new Process
             {
@@ -175,15 +176,11 @@ namespace QtVsTools.Core
                 (qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds));
         }
 
-        public virtual int Run(bool setVCVars = false)
+        public virtual int Run()
         {
             int exitCode = -1;
             using (var qmakeProc = CreateProcess()) {
                 try {
-                    if (setVCVars
-                        && !HelperFunctions.SetVCVars(QtVersion, qmakeProc.StartInfo)) {
-                        OutMsg("Error setting VC vars");
-                    }
                     if (qmakeProc.Start()) {
                         InfoStart(qmakeProc);
                         qmakeProc.BeginOutputReadLine();
@@ -214,49 +211,6 @@ namespace QtVsTools.Core
             return possibleQMakePaths.Where(File.Exists).Select(Path.GetFileName)
                 .Any(file => file.Equals("qmake.exe", StringComparison.OrdinalIgnoreCase)
                   || file.Equals("qmake.bat", StringComparison.OrdinalIgnoreCase));
-        }
-    }
-
-    public class QMakeImport : QMake
-    {
-        public QMakeImport(
-            VersionInformation qtVersion,
-            string proFilePath,
-            bool recursiveRun = false,
-            EnvDTE.DTE dte = null)
-        : base(qtVersion, dte)
-        {
-            ProFile = proFilePath;
-            TemplatePrefix = "vc";
-            if (recursiveRun)
-                Recursive = true;
-            else
-                OutputFile = Path.ChangeExtension(proFilePath, ".vcxproj");
-            Vars = new Dictionary<string, string>
-            {
-                { "QMAKE_INCDIR_QT", @"$(QTDIR)\include" },
-                { "QMAKE_LIBDIR", @"$(QTDIR)\lib" },
-                { "QMAKE_MOC", @"$(QTDIR)\bin\moc.exe" },
-                { "QMAKE_QMAKE", @"$(QTDIR)\bin\qmake.exe" },
-            };
-        }
-
-        protected override void InfoStart(Process qmakeProc)
-        {
-            base.InfoStart(qmakeProc);
-            InfoMsg("--- qmake: Working Directory: " + qmakeProc.StartInfo.WorkingDirectory);
-            InfoMsg("--- qmake: Arguments: " + qmakeProc.StartInfo.Arguments);
-            if (qmakeProc.StartInfo.EnvironmentVariables.ContainsKey("QMAKESPEC")) {
-                var qmakeSpec = qmakeProc.StartInfo.EnvironmentVariables["QMAKESPEC"];
-                if (qmakeSpec != QtVersion.QMakeSpecDirectory) {
-                    InfoMsg("--- qmake: Environment "
-                        + "variable QMAKESPEC overwriting Qt version QMAKESPEC.");
-                    InfoMsg("--- qmake: Qt version "
-                        + "QMAKESPEC: " + QtVersion.QMakeSpecDirectory);
-                    InfoMsg("--- qmake: Environment "
-                        + "variable QMAKESPEC: " + qmakeSpec);
-                }
-            }
         }
     }
 }

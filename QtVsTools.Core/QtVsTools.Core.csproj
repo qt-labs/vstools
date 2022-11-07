@@ -183,6 +183,7 @@
     <Compile Include="ProSolution.cs" />
     <Compile Include="QMake.cs" />
     <Compile Include="QMakeConf.cs" />
+    <Compile Include="QMakeImport.cs" />
     <Compile Include="QMakeQuery.cs" />
     <Compile Include="QrcItem.cs" />
     <Compile Include="QrcParser.cs" />
