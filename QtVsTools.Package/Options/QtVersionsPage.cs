@@ -92,13 +92,14 @@ namespace QtVsTools.Options
             void RemoveVersion(string versionName)
             {
                 try {
-                    VersionManager.RemoveVersion(versionName);
+                    if (VersionManager.HasVersion(versionName))
+                        VersionManager.RemoveVersion(versionName);
                 } catch (Exception exception) {
                     exception.Log();
                 }
             }
 
-            var versions = VersionsTable.Versions;
+            var versions = VersionsTable.Versions.ToList();
             foreach (var version in versions) {
                 if (version.State.HasFlag(State.Removed))
                     RemoveVersion(version.VersionName);
@@ -107,42 +108,27 @@ namespace QtVsTools.Options
                     continue;
 
                 try {
-                    if (version.Host == BuildHost.Windows) {
-                        if (version.State.HasFlag((State)Column.Path)) {
-                            var versionPath = version.Path;
-                            var ignoreCase = StringComparison.CurrentCultureIgnoreCase;
-                            if (Path.GetFileName(versionPath).Equals("qmake.exe", ignoreCase))
-                                versionPath = Path.GetDirectoryName(versionPath);
-                            if (Path.GetFileName(versionPath).Equals("bin", ignoreCase))
-                                versionPath = Path.GetDirectoryName(versionPath);
-                            var versionInfo = VersionInformation.Get(versionPath);
-                            var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-                            if (generator != "MSVC.NET" && generator != "MSBUILD")
-                                throw new Exception(string.Format(
-                                    "This Qt version uses an unsupported makefile generator (used: "
-                                    + "{0}, supported: MSVC.NET, MSBUILD)", generator));
-                            VersionManager.SaveVersion(version.VersionName, versionPath);
-                        }
-                    } else {
+                    if (version.Host != BuildHost.Windows) {
                         string name = version.VersionName;
-                        string access =
-                            (version.Host == BuildHost.LinuxSSH) ? "SSH" : "WSL";
+                        string access = version.Host == BuildHost.LinuxSSH ? "SSH" : "WSL";
                         string path = version.Path;
                         string compiler = version.Compiler;
                         if (compiler == "g++")
                             compiler = string.Empty;
-                        path = string.Format("{0}:{1}:{2}", access, path, compiler);
-                        VersionManager.SaveVersion(name, path, checkPath: false);
+                        VersionManager.SaveVersion(name, $"{access}:{path}:{compiler}",
+                            checkPath: false);
+                    } else {
+                        if (version.State.HasFlag((State)Column.Path))
+                            VersionManager.SaveVersion(version.VersionName, version.Path);
                     }
 
                     if (version.State.HasFlag((State)Column.VersionName)) {
                         try {
                             VersionManager.SaveVersion(version.VersionName, version.Path);
-                            if (!string.IsNullOrEmpty(version.InitialVersionName))
-                                VersionManager.RemoveVersion(version.InitialVersionName);
                         } catch (Exception exception) {
                             exception.Log();
                         }
+                        RemoveVersion(version.InitialVersionName);
                     }
                 } catch (Exception exception) {
                     exception.Log();
@@ -166,18 +152,47 @@ namespace QtVsTools.Options
 
         protected override void OnApply(PageApplyEventArgs e)
         {
-            var errorMessages = VersionsTable.GetErrorMessages();
-            if (errorMessages == null || !errorMessages.Any()) {
-                base.OnApply(e);
-                return;
+            var errorMessages = VersionsTable.GetErrorMessages().ToList();
+
+            try {
+                var versions = VersionsTable.Versions;
+                foreach (var version in versions) {
+                    if (!version.State.HasFlag(State.Modified) || version.Host != BuildHost.Windows)
+                        continue;
+                    if (version.State.HasFlag((State)Column.Path)) {
+                        var versionPath = version.Path;
+                        var ignoreCase = StringComparison.OrdinalIgnoreCase;
+                        if (Path.GetFileName(versionPath).Equals("qmake.exe", ignoreCase))
+                            versionPath = Path.GetDirectoryName(versionPath);
+                        if (Path.GetFileName(versionPath ?? "").Equals("bin", ignoreCase))
+                            versionPath = Path.GetDirectoryName(versionPath);
+
+                        QMakeConf qtConfiguration = new QMakeConf(versionPath);
+                        var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
+
+                        if (generator != "MSVC.NET" && generator != "MSBUILD")
+                            errorMessages.Add($"Unsupported makefile generator used: {generator}");
+                    }
+                }
+            } catch (Exception exception) {
+                errorMessages.Add(exception.Message);
             }
-            e.ApplyBehavior = ApplyKind.Cancel;
-            VersionsTable.Focus();
-            string errorMessage = string.Format("Invalid Qt versions:\r\n{0}",
-                    string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg)));
-            VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
-                errorMessage, "Qt VS Tools", OLEMSGICON.OLEMSGICON_WARNING,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+
+            if (errorMessages.Any()) {
+                VersionsTable.Focus();
+                var errorMessage = "Invalid Qt versions:\r\n"
+                    + $"{string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg))}";
+                VsShellUtilities.ShowMessageBox(
+                    QtVsToolsPackage.Instance,
+                    errorMessage,
+                    "Qt VS Tools",
+                    OLEMSGICON.OLEMSGICON_WARNING,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                e.ApplyBehavior = ApplyKind.CancelNoNavigate;
+            } else {
+                base.OnApply(e);
+            }
         }
     }
 }

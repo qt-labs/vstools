@@ -263,6 +263,14 @@ namespace QtVsTools.Core
             return true;
         }
 
+        public bool HasVersion(string versionName)
+        {
+            if (string.IsNullOrEmpty(versionName))
+                return false;
+            return Registry.CurrentUser.OpenSubKey(Path.Combine("SOFTWARE", regVersionPath,
+                versionName), false) != null;
+        }
+
         public void RemoveVersion(string versionName)
         {
             var key = Registry.CurrentUser.OpenSubKey("SOFTWARE" + Path.DirectorySeparatorChar
