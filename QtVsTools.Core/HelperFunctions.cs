@@ -1513,8 +1513,7 @@ namespace QtVsTools.Core
             // Warn if cl.exe is not in PATH
             string clPath = envVars["PATH"]
                 .Select(path => Path.Combine(path, "cl.exe"))
-                .Where(pathToCl => File.Exists(pathToCl))
-                .FirstOrDefault();
+                .FirstOrDefault(File.Exists);
             Messages.Print($"cl: {clPath ?? "NOT FOUND"}");
 
             return true;

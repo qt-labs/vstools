@@ -213,8 +213,8 @@ namespace QtVsTools.Options
                     version.FieldVersionName.ValidationError = null;
                     if (string.IsNullOrEmpty(version.VersionName)) {
                         version.FieldVersionName.ValidationError = "Name cannot be empty";
-                    } else if (Versions.Where(otherVersion => otherVersion != version
-                        && otherVersion.VersionName == version.VersionName).Any()) {
+                    } else if (Versions.Any(otherVersion => otherVersion != version
+                        && otherVersion.VersionName == version.VersionName)) {
                         version.FieldVersionName.ValidationError = "Duplicate version names";
                     }
                     mustRefresh |= version.FieldVersionName.UpdateUi;
@@ -449,7 +449,7 @@ namespace QtVsTools.Options
         {
             var version = new Row()
             {
-                IsDefault = !Versions.Any(x => x.State != State.Removed),
+                IsDefault = Versions.All(x => x.State == State.Removed),
                 Host = BuildHost.Windows,
                 Path = "",
                 Compiler = "msvc",

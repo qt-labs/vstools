@@ -166,14 +166,14 @@ namespace QtVsTools.Wizards.ProjectWizard
             }
 
             var qtModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
-                .Where((QtModule mi) => mi.Selectable)
-                .Select((QtModule mi) => new Module()
+                .Where(mi => mi.Selectable)
+                .Select(mi => new Module()
                 {
                     Name = mi.Name,
                     Id = mi.proVarQT,
                     IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
                     IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
-                });
+                }).ToList();
 
             defaultConfigs = new CloneableList<Config> {
                 new Config {
@@ -192,7 +192,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         : defaultQtVersionInfo.platform() == Platform.arm64
                             ? ProjectPlatforms.ARM64.Cast<string>()
                         : string.Empty,
-                    Modules = qtModules.ToDictionary((Module m) => m.Name),
+                    Modules = qtModules.ToDictionary(m => m.Name)
                 },
                 new Config {
                     Name = "Release",
@@ -210,7 +210,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         : defaultQtVersionInfo.platform() == Platform.arm64
                             ? ProjectPlatforms.ARM64.Cast<string>()
                         : string.Empty,
-                    Modules = qtModules.ToDictionary((Module m) => m.Name),
+                    Modules = qtModules.ToDictionary(m => m.Name)
                 }
             };
             currentConfigs = defaultConfigs.Clone();

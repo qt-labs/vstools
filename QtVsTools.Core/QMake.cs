@@ -211,10 +211,9 @@ namespace QtVsTools.Core
                 Path.Combine(path, "bin", "qmake.exe"),
                 Path.Combine(path, "bin", "qmake.bat"),
             };
-            return possibleQMakePaths.Where(p => File.Exists(p)
-                && (Path.GetFileName(p).Equals("qmake.exe", StringComparison.OrdinalIgnoreCase)
-                || Path.GetFileName(p).Equals("qmake.bat", StringComparison.OrdinalIgnoreCase)))
-                .Any();
+            return possibleQMakePaths.Where(File.Exists).Select(Path.GetFileName)
+                .Any(file => file.Equals("qmake.exe", StringComparison.OrdinalIgnoreCase)
+                  || file.Equals("qmake.bat", StringComparison.OrdinalIgnoreCase));
         }
     }
 

@@ -143,7 +143,7 @@ namespace QtVsTools.Core
                 tempProData.AppendLine("SOURCES = main.cpp");
 
                 var modules = QtModules.Instance.GetAvailableModules(qtMajor)
-                    .Where((QtModule mi) => mi.Selectable);
+                    .Where(mi => mi.Selectable).ToList();
 
                 foreach (QtModule mi in modules) {
                     tempProData.AppendLine(string.Format(
@@ -167,11 +167,11 @@ namespace QtVsTools.Core
                 Directory.Delete(tempDir, recursive: true);
 
                 var availableModules = msbuildProj.GetItems("ClInclude")
-                    .Select((string s) => Path.GetFileNameWithoutExtension(s));
+                    .Select(Path.GetFileNameWithoutExtension);
 
                 _IsModuleAvailable = modules.ToDictionary(
-                    (QtModule mi) => mi.proVarQT,
-                    (QtModule mi) => availableModules.Contains(mi.proVarQT));
+                    mi => mi.proVarQT,
+                    mi => availableModules.Contains(mi.proVarQT));
 
                 VC_MinimumVisualStudioVersion =
                     msbuildProj.GetProperty("MinimumVisualStudioVersion");
