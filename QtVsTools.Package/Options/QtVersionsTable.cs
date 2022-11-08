@@ -243,6 +243,9 @@ namespace QtVsTools.Options
                             if (!QMake.Exists(path))
                                 version.FieldPath.ValidationError = "Cannot find qmake.exe";
                         }
+                    } else if (version.Host != BuildHost.Windows) {
+                        if (version.Path.Contains(':'))
+                            version.FieldPath.ValidationError = "Invalid character in path";
                     }
                     mustRefresh |= version.FieldPath.UpdateUi;
                 }
@@ -251,8 +254,12 @@ namespace QtVsTools.Options
                 // Compiler validation
                 if (version.State.HasFlag((State)Column.Compiler)) {
                     version.FieldCompiler.ValidationError = null;
-                    if (string.IsNullOrEmpty(version.Compiler))
+                    if (string.IsNullOrEmpty(version.Compiler)) {
                         version.FieldCompiler.ValidationError = "Compiler cannot be empty";
+                    } else if (version.Host != BuildHost.Windows) {
+                        if (version.Compiler.Contains(':'))
+                            version.FieldCompiler.ValidationError = "Invalid character in name";
+                    }
                     mustRefresh |= version.FieldCompiler.UpdateUi;
                 }
             }
