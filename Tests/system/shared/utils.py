@@ -30,7 +30,6 @@
 
 import os
 import subprocess
-from xml.dom import minidom
 
 import globalnames
 
