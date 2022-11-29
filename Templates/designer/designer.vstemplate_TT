@@ -55,7 +55,7 @@
         <ProjectTypeTag>Library</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="designer.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
@@ -72,7 +72,7 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$headerfilename$">widget.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">designer.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">designer.vcxproj.filters</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

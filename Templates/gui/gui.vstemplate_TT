@@ -55,7 +55,7 @@
         <ProjectTypeTag>Desktop</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="gui.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true">main.cpp</ProjectItem>
@@ -69,7 +69,7 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$uifilename$">widget.ui</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">gui.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">gui.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">gui.ico</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$qrcfilename$">widget.qrc</ProjectItem>

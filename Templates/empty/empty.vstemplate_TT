@@ -54,11 +54,11 @@
         <ProjectTypeTag>Qt</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="empty.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">empty.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">empty.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">empty.ico</ProjectItem>
         </Project>
     </TemplateContent>

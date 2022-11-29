@@ -57,11 +57,11 @@
         <ProjectTypeTag>IoT</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="quick.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">quick.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">quick.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">quick.ico</ProjectItem>
             <ProjectItem ReplaceParameters="true">main.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="true">main.qml</ProjectItem>

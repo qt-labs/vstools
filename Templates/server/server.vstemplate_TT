@@ -55,7 +55,7 @@
         <ProjectTypeTag>Desktop</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="server.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
@@ -67,7 +67,7 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$pro_name$.rc">server.rc</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">server.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">server.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          OpenInEditor="true"
                          TargetFileName="$sourcefilename$">source.cpp</ProjectItem>

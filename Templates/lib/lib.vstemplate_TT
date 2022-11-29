@@ -57,7 +57,7 @@
         <ProjectTypeTag>IoT</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="lib.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="true"
@@ -70,7 +70,7 @@
             <ProjectItem ReplaceParameters="false">stdafx.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">lib.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">lib.vcxproj.filters</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

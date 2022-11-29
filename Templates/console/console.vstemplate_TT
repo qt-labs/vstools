@@ -56,13 +56,13 @@
         <ProjectTypeTag>IoT</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <Project TargetFileName="$safeprojectname$.vcxproj"
+        <Project TargetFileName="$projectname$.vcxproj"
                  File="console.vcxproj"
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="false"
                          OpenInEditor="true">main.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false"
-                         TargetFileName="$safeprojectname$.vcxproj.filters">console.vcxproj.filters</ProjectItem>
+                         TargetFileName="$projectname$.vcxproj.filters">console.vcxproj.filters</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

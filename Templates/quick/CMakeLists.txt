@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project($safeprojectname$ LANGUAGES CXX)
+project($projectname$ LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -23,27 +23,27 @@ set(PROJECT_SOURCES
 )
 
 if(Qt6)
-    qt_add_executable($safeprojectname$ MANUAL_FINALIZATION ${PROJECT_SOURCES})
+    qt_add_executable($projectname$ MANUAL_FINALIZATION ${PROJECT_SOURCES})
 else()
-    add_executable($safeprojectname$ ${PROJECT_SOURCES})
+    add_executable($projectname$ ${PROJECT_SOURCES})
 endif()
 
-set_target_properties($safeprojectname$
+set_target_properties($projectname$
     PROPERTIES
         WIN32_EXECUTABLE TRUE
 )
 
-target_compile_definitions($safeprojectname$
+target_compile_definitions($projectname$
   PRIVATE
     $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
 )
 
-target_link_libraries($safeprojectname$
+target_link_libraries($projectname$
     PUBLIC
         ${QT_LIBS}
 )
 
 if(Qt6)
-    qt_import_qml_plugins($safeprojectname$)
-    qt_finalize_executable($safeprojectname$)
+    qt_import_qml_plugins($projectname$)
+    qt_finalize_executable($projectname$)
 endif()
