@@ -31,6 +31,45 @@
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
+    <Type Name="##NAMESPACE##::QPropertyData&lt;*&gt;">
+        <DisplayString>{val}</DisplayString>
+        <Expand>
+            <Item Name="[value]">val</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="##NAMESPACE##::QQuickItemPrivate">
+        <Intrinsic Name="_hasExtraData" Expression="extra.d.d != 0" />
+        <Intrinsic Name="_extraData" Expression="(*(ExtraData*)extra.d.d)" />
+        <Intrinsic Name="_objectName" Expression="(extraData-&gt;objectName).val.d.ptr" />
+        <DisplayString Condition="_hasExtraData()">{{ x = {x,g}, y = {y,g}, z = {_extraData().z,g}, width = {width,g}, height = {height,g} }}</DisplayString>
+        <DisplayString>{{ x = {x,g}, y = {y,g}, width = {width,g}, height = {height,g} }}</DisplayString>
+        <Expand>
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="z" Condition="_hasExtraData()">_extraData().z</Item>
+            <Item Name="scale" Condition="_hasExtraData()">_extraData().scale</Item>
+            <Item Name="rotation" Condition="_hasExtraData()">_extraData().rotation</Item>
+            <Item Name="opacity" Condition="_hasExtraData()">_extraData().opacity</Item>
+            <Item Name="width">width</Item>
+            <Item Name="height">height</Item>
+            <Item Name="implicitWidth">implicitWidth</Item>
+            <Item Name="implicitHeight">implicitHeight</Item>
+            <Item Name="visible">effectiveVisible</Item>
+            <Item Name="enabled">explicitEnable</Item>
+            <Item Name="objectName" Condition="_objectName() != 0">_objectName(),na</Item>
+            <Item Name="parentItem">parentItem</Item>
+            <Item Name="childItems">childItems, nr</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="##NAMESPACE##::QQuickItem">
+      <DisplayString>{d_ptr.d,na}</DisplayString>
+      <Expand>
+        <ExpandedItem>d_ptr.d</ExpandedItem>
+      </Expand>
+    </Type>
+
     <Type Name="##NAMESPACE##::QUuid">
         <DisplayString>{{{data1,Xb}-{data2,Xb}-{data3,Xb}-{(data4[0]),nvoXb}{(data4[1]),nvoXb}-{(data4[2]),nvoXb}{(data4[3]),nvoXb}{(data4[4]),nvoXb}{(data4[5]),nvoXb}{(data4[6]),nvoXb}{(data4[7]),nvoXb}}}</DisplayString>
     </Type>
