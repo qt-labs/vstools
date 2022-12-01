@@ -170,8 +170,10 @@ namespace QtVsTools.Options
                         QMakeConf qtConfiguration = new QMakeConf(versionPath);
                         var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
 
-                        if (generator != "MSVC.NET" && generator != "MSBUILD")
-                            errorMessages.Add($"Unsupported makefile generator used: {generator}");
+                        if (generator != "MSVC.NET" && generator != "MSBUILD") {
+                            errorMessages.Add($"{version.VersionName} - Unsupported makefile "
+                              + $"generator: {generator}");
+                        }
                     }
                 }
             } catch (Exception exception) {

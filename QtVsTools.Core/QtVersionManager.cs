@@ -149,16 +149,17 @@ namespace QtVsTools.Core
                     continue;
 
                 if (string.IsNullOrEmpty(path) || !QMake.Exists(path)) {
-                    errorMessage += version + " in " + path + "\n";
+                    errorMessage += $" * {version} in {path}\n";
                     defaultVersionInvalid |= version == defaultVersion;
                 }
-
-                if (!string.IsNullOrEmpty(errorMessage)) {
-                    errorMessage = "These Qt version are inaccessible:\n"
-                        + errorMessage
-                        + "Make sure that you have read access to all files in your Qt directories.";
-                }
             }
+
+            if (!string.IsNullOrEmpty(errorMessage)) {
+                errorMessage = "These Qt version are inaccessible:\n"
+                    + errorMessage
+                    + "Make sure that you have read access to all files in your Qt directories.";
+            }
+
             return errorMessage != null;
         }
 
