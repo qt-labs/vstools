@@ -139,20 +139,23 @@ namespace QtVsTools
             var debugger = dte.Debugger;
             if (debugger != null && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
                 return;
-            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
-            if (selectedProject != null) {
-                if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
-                    return;
-                var qtProject = QtProject.Create(selectedProject);
-                if (qtProject != null) {
-                    qtProject.SetQtEnvironment();
 
-                    var qtVersion = qtProject.GetQtVersion();
-                    var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-                    if (!string.IsNullOrEmpty(versionInfo.Namespace()))
-                        QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
-                }
-            }
+            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
+            if (selectedProject == null)
+                return;
+
+            // Copy the natvis files if we use a namespaced Qt (even for never
+            // project types), as linking into the pdb file might be disabled by
+            // the user and he might end up with not namespaced visualizers in
+            // the global Visualizers directory.
+            var qtProject = QtProject.Create(selectedProject);
+            var qtVersion = qtProject?.GetQtVersion();
+            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
+                QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
+
+            if (QtProject.GetFormatVersion(selectedProject) < Resources.qtMinFormatVersion_Settings)
+                qtProject?.SetQtEnvironment();
         }
 
         void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
