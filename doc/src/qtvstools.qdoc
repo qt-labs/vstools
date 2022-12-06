@@ -48,6 +48,7 @@
                 \list
                     \li \l {Tutorial: Qt Widgets Application}
                     \li \l {Tutorial: Qt Quick Application}
+                    \li \l {Tutorial: Qt Quick Debugging}
                 \endlist
             \li \b {\l {Configuring Builds}}
                 \list
@@ -85,6 +86,7 @@
             \list
                 \li \l {Tutorial: Qt Widgets Application}
                 \li \l {Tutorial: Qt Quick Application}
+                \li \l {Tutorial: Qt Quick Debugging}
             \endlist
         \li \l {Configuring Builds}
             \list
@@ -497,7 +499,7 @@
 /*!
     \page qtvstools-qt-quick-application.html
     \previouspage Tutorial: Qt Widgets Application
-    \nextpage Configuring Builds
+    \nextpage Tutorial: Qt Quick Debugging
     \title Tutorial: Qt Quick Application
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Quick}
@@ -826,7 +828,106 @@
 
     To build the application on other platforms, you need to create a \c .pro
     file for the project, as instructed in \l{Create Qt Project Files}.
+*/
 
+/*!
+    \page qtvstools-tutorial-debug-qt-quick.html
+    \previouspage Tutorial: Qt Quick Application
+    \nextpage Configuring Builds
+    \title Tutorial: Qt Quick Debugging
+
+    This tutorial illustrates how to use Qt VS Tools to debug the
+    \l {Tutorial: Qt Quick Application}{Qt Quick tutorial application},
+    \e QuickAddressBook. After you enable QML debugging for the project,
+    you can set breakpoints in QML files and step through the execution
+    of code. While in break mode, you can watch variables and change their
+    values, as well as evaluate arbitrary expressions.
+
+    For more information about all the options you have, see
+    \l {Debugging Qt Quick Applications}.
+
+    \section1 Before You Start
+
+    Before you start, you have to:
+
+    \list
+        \li \l {Install Qt VS Tools}
+        \li \l {Add a Qt Version}
+        \li \l {Tutorial: Qt Quick Application}{Create a Qt Quick Application}
+    \endlist
+
+    \section1 Enable QML Debugging
+
+    To enable QML debugging for the project:
+
+    \list 1
+        \li Select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
+            \uicontrol {Qt Project Settings} > \uicontrol {QML}.
+        \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
+            \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
+        \li Select \uicontrol {OK} to save the project settings.
+        \li Select \uicontrol {Build} > \uicontrol {Rebuild Solution} to rebuild
+        the project.
+    \endlist
+
+    \section1 Set a Breakpoint
+
+    Select \uicontrol File > \uicontrol Open > \uicontrol {File or Solution} to
+    open the \e QuickAddressBook solution.
+
+    To look at the code that adds a new contact, add a breakpoint in
+    \e {NewAddressPopup.qml} by clicking the line that implements the
+    \c onClicked signal handler and selecting \uicontrol {Debug} >
+    \uicontrol {Toggle Breakpoint} (or pressing \key F9).
+
+    \image qtvstools-quick-addressbook-breakpoint.webp {Setting a breakpoint}
+
+    The red circle indicates that a breakpoint is now set on that line.
+
+    \section1 Start Debugging
+
+    Select \uicontrol Debug > \uicontrol {Start Debugging} or press \key F5.
+
+    Once the application starts, select \uicontrol {Add} to create a new
+    address book entry. Enter a name and email address, and select
+    \uicontrol {Add} again to add the entry to the address book.
+
+    When the debugger hits the breakpoint, it interrupts the application.
+    Qt VS Tools displays the nested function calls leading to the current
+    position as a call stack trace. You can view and modify the values of
+    local variables.
+
+    \image qtvstools-quick-addressbook-breakpoint-hit.webp {Viewing a variable}
+
+    \section1 Step Through Code
+
+    Select \uicontrol {Debug} > \uicontrol {Step Into} or press \key F11 to step
+    into the code in the stack. The \e {NewAddressPopup.qml} file opens in the
+    code editor at the function that creates a new address book entry.
+
+    \image qtvstools-quick-addressbook-step-into.webp {Stepping into code}
+
+    \section1 Watch Variable Values
+
+    The \uicontrol {Autos} and \uicontrol {Locals} windows show a subset of
+    local variables that Visual Studio considers possibly interesting based
+    on the location of the breakpoint. To watch a particular variable or
+    expression, set a watch in the \uicontrol {Watch 1} view.
+
+    \image qtvstools-quick-addressbook-watch.webp {Watching a variable}
+
+    Step through the code to see how the information changes in the view.
+
+    \section1 Evaluate Expressions
+
+    To execute JavaSript commands in the context of the current stack frame, open
+    the \uicontrol {Immediate Commands} window and type the expression to
+    evaluate.
+
+    \section1 Remove the Breakpoint
+
+    To remove the breakpoint, select \uicontrol {Debug} >
+    \uicontrol {Toggle Breakpoint} (or press \key F9).
 */
 
 /*!
@@ -947,7 +1048,7 @@
 
 /*!
     \page qtvstools-configuring-builds.html
-    \previouspage Tutorial: Qt Quick Application
+    \previouspage Tutorial: Qt Quick Debugging
     \nextpage Managing Qt Versions
     \title Configuring Builds
 
@@ -1471,13 +1572,13 @@
 
     If a Qt project contains QML resource files, starting a debugging session
     (for example, by pressing \key F5) launches the native application and
-    connects to the QML debugging infrastructure of that application. This can
-    be seen in the Processes window of the Visual Studio debugger. Two processes
-    are listed: a native process that corresponds to the actual physical
-    process created for the C++ debugging session and a QML process that does
-    not correspond to any physical process that is running on the machine, but
-    rather represents the connection to the QML debugging runtime within the
-    native process.
+    connects to the QML debugging infrastructure of that application. You can see
+    this in the \uicontrol {Processes} window of the Visual Studio debugger. It
+    lists two processes: a native process and a QML process. The native process
+    corresponds to the actual physical process created for the C++ debugging
+    session. The QML process does not correspond to any physical process that is
+    running on the machine, but represents the connection to the QML debugging
+    runtime within the native process.
 
     The presence of both a native process and a QML process enables setting
     breakpoints both in C++ or QML code. The Visual Studio debugger forwards
@@ -1508,7 +1609,14 @@
 
     \section1 Enabling QML Debugging
 
-    QML debugging is enabled by default. To disable processing of all QML
+    To enable QML debugging for a project, select \uicontrol {Extensions} >
+    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
+    \uicontrol {QML} > \uicontrol {Enable QML Debugging} > \uicontrol {Yes}.
+    Select \uicontrol {OK} to save the project settings.
+
+    \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
+
+    To disable processing of all QML
     debug events by the QML debug engine, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol Qt
     \uicontrol General > \uicontrol {QML Debugging}, and set
