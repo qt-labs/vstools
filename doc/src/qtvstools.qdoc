@@ -1041,7 +1041,8 @@
 
     Qt VS Tools provide you with basic Qt version management that enables you to
     use multiple Qt versions in parallel. For example, Qt 5.15.4 and 6.2.0.
-    You have to add at least one Qt version to be able to create Qt projects.
+    You have to add at least one Qt version that was built for MSVC to be able
+    to create Qt projects.
 
     \image qtvstools-qt-versions.png Qt Versions
 
