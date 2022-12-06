@@ -1090,7 +1090,7 @@
     compilation during the build process, so that generated files do not
     need to be included in projects.
 
-    The options for each Qt tool can be set either globally at project level
+    You can set options for each Qt tool either globally at project level
     or for specific files. To set global options for handling files at project
     level:
 
@@ -1107,11 +1107,21 @@
     listed. For example, moc options are available for C++ source and header
     files, whereas uic options are available for UI forms (.ui).
 
+    \section1 Project File Format
+
     When importing .pro files, \e {custom build steps} are automatically
     converted into Qt/MSBuild steps. To convert custom build steps into
     Qt/MSBuild steps for a solution, select \uicontrol Qt >
     \uicontrol {Convert custom build steps to Qt/MSBuild} in the context
     menu of the solution.
+
+    The Qt/MSBuild project format has changed between Qt VS Tools versions, and
+    therefore you might have to manually update project files of imported
+    projects. For more information about Qt/MSBuild project format versions, see
+    \l {https://github.com/qt-labs/vstools/blob/dev/Tests/ProjectFormats/ProjectFormats.md}
+    {Qt VS Tools - Project format versions}.
+
+    \section1 Path to Build Files
 
     To set the path to the Qt/MSBuild files, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}.
