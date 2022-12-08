@@ -255,6 +255,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="QtMSBuild\rcc\qtrcc_v3.xml">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>qtrcc_v3.xml_TT</DependentUpon>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild rcc property pages and targets
@@ -278,16 +283,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>rcc\qtrcc_v3.xml</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <SubType>Designer</SubType>
       <LastGenOutput>qtrcc_v3.xml</LastGenOutput>
-      <SubType>Designer</SubType>
     </T4Template>
-    <Content Include="QtMSBuild\rcc\qtrcc_v3.xml">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>qtrcc_v3.xml_TT</DependentUpon>
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <T4Template Include="QtMSBuild\rcc\qtrcc_cl.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>rcc\qtrcc_cl.targets</OutputFile>
@@ -387,7 +385,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-  <!--
+    <!--
   ///////////////////////////////////////////////////////////////////////////////////////////////
   // Qt/MSBuild translation tools property pages and targets
   // -->

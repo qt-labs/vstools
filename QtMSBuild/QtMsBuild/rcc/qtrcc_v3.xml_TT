@@ -201,6 +201,12 @@
       DisplayName="Binary Output"
       Description="Output a binary file for use as a dynamic resource. (--binary)"
       Switch="--binary"/>
+    <BoolProperty
+      Name="NoZstd"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="No Zstd"
+      Description="Output a binary file for use as a dynamic resource. (--no-zstd)"
+      Switch="--no-zstd"/>
     <StringProperty
       Name="PassNumber"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"

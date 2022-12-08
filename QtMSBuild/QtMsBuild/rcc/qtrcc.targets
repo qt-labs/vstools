@@ -259,6 +259,7 @@
                 NoCompression;
                 CompressThreshold;
                 BinaryOutput;
+                NoZstd;
                 PassNumber;
                 NoNamespace;
                 Verbose;
@@ -407,6 +408,14 @@
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--binary</Value>
       </options>
 
+      <!--//   -no-zstd                 Disable usage of zstd compression -->
+      <options>
+        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' == 'true'">--no-zstd</Value>
+      </options>      
+      
       <!--//   -pass <number>            Pass number for big resources -->
       <options>
         <Value Condition="'%(Name)' == 'PassNumber'">--pass %(Value)</Value>

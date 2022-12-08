@@ -1044,6 +1044,7 @@ namespace QtVsTools.Core.QtMsBuild
             NoCompression,
             CompressThreshold,
             BinaryOutput,
+            NoZstd,
             PassNumber,
             NoNamespace,
             Verbose,
@@ -1082,6 +1083,9 @@ namespace QtVsTools.Core.QtMsBuild
 
             parser.AddOption(options[Property.BinaryOutput] =
                 new CommandLineOption("binary"));
+
+            parser.AddOption(options[Property.NoZstd] =
+                new CommandLineOption("no-zstd"));
 
             parser.AddOption(options[Property.PassNumber] =
                 new CommandLineOption("pass", "number"));
@@ -1155,6 +1159,9 @@ namespace QtVsTools.Core.QtMsBuild
             if (parser.IsSet(options[Property.BinaryOutput]))
                 properties[Property.BinaryOutput] = "true";
 
+            if (parser.IsSet(options[Property.NoZstd]))
+                properties[Property.NoZstd] = "true";
+
             if (parser.IsSet(options[Property.PassNumber]))
                 properties[Property.PassNumber] = parser.Value(options[Property.PassNumber]);
 
@@ -1209,6 +1216,9 @@ namespace QtVsTools.Core.QtMsBuild
 
             if (container.GetPropertyValue(propertyStorage, Property.BinaryOutput) == "true")
                 GenerateCommandLineOption(cmd, options[Property.BinaryOutput]);
+
+            if (container.GetPropertyValue(propertyStorage, Property.NoZstd) == "true")
+                GenerateCommandLineOption(cmd, options[Property.NoZstd]);
 
             value = container.GetPropertyValue(propertyStorage, Property.PassNumber);
             if (!string.IsNullOrEmpty(value))
