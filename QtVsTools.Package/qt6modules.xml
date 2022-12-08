@@ -221,6 +221,14 @@
     <Defines>QT_OPENGL_LIB</Defines>
   </Module>
   <Module Id="22">
+    <Name>Qt OpenGLWidgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtOpenGLWidgets</LibraryPrefix>
+    <proVarQT>openglwidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtOpenGLWidgets</IncludePath>
+    <Defines>QT_OPENGLWIDGETS_LIB</Defines>
+  </Module>
+  <Module Id="23">
     <Name>Qt Multimedia</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimedia</LibraryPrefix>
@@ -228,7 +236,7 @@
     <IncludePath>$(QTDIR)\include\QtMultimedia</IncludePath>
     <Defines>QT_MULTIMEDIA_LIB</Defines>
   </Module>
-  <Module Id="23">
+  <Module Id="24">
     <Name>Qt Print Support</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
@@ -236,7 +244,7 @@
     <IncludePath>$(QTDIR)\include\QtPrintSupport</IncludePath>
     <Defines>QT_PRINTSUPPORT_LIB</Defines>
   </Module>
-  <Module Id="24">
+  <Module Id="25">
     <Name>Qt Quick Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickWidgets</LibraryPrefix>
@@ -244,7 +252,7 @@
     <IncludePath>$(QTDIR)\include\QtQuickWidgets</IncludePath>
     <Defines>QT_QUICKWIDGETS_LIB</Defines>
   </Module>
-  <Module Id="25">
+  <Module Id="26">
     <Name>Qt Remote Objects</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtRemoteObjects</LibraryPrefix>
@@ -252,7 +260,7 @@
     <IncludePath>$(QTDIR)\include\QtRemoteObjects</IncludePath>
     <Defines>QT_REMOTEOBJECTS_LIB</Defines>
   </Module>
-  <Module Id="26">
+  <Module Id="27">
     <Name>Qt SCXML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtScxml</LibraryPrefix>
@@ -260,7 +268,7 @@
     <IncludePath>$(QTDIR)\include\QtScxml</IncludePath>
     <Defines>QT_SCXML_LIB</Defines>
   </Module>
-  <Module Id="27">
+  <Module Id="28">
     <Name>Qt Sensors</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSensors</LibraryPrefix>
@@ -268,7 +276,7 @@
     <IncludePath>$(QTDIR)\include\QtSensors</IncludePath>
     <Defines>QT_SENSORS_LIB</Defines>
   </Module>
-  <Module Id="28">
+  <Module Id="29">
     <Name>Qt Serial Bus</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialBus</LibraryPrefix>
@@ -276,7 +284,7 @@
     <IncludePath>$(QTDIR)\include\QtSerialBus</IncludePath>
     <Defines>QT_SERIALBUS_LIB</Defines>
   </Module>
-  <Module Id="29">
+  <Module Id="30">
     <Name>Qt Serial Port</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialPort</LibraryPrefix>
@@ -284,7 +292,7 @@
     <IncludePath>$(QTDIR)\include\QtSerialPort</IncludePath>
     <Defines>QT_SERIALPORT_LIB</Defines>
   </Module>
-  <Module Id="30">
+  <Module Id="31">
     <Name>Qt SQL</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSql</LibraryPrefix>
@@ -292,7 +300,7 @@
     <IncludePath>$(QTDIR)\include\QtSql</IncludePath>
     <Defines>QT_SQL_LIB</Defines>
   </Module>
-  <Module Id="31">
+  <Module Id="32">
     <Name>Qt State Machine</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtStateMachine</LibraryPrefix>
@@ -300,7 +308,7 @@
     <IncludePath>$(QTDIR)\include\QtStateMachine</IncludePath>
     <Defines>QT_STATEMACHINE_LIB</Defines>
   </Module>
-  <Module Id="32">
+  <Module Id="33">
     <Name>Qt SVG</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSvg</LibraryPrefix>
