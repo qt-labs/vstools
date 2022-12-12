@@ -200,11 +200,11 @@
             \uicontrol Next.
         \li Set up the \uicontrol Debug build configuration and select the
             modules to include in the project:
-            \image qtvstools-widgets-app-modules.png "Selecting Qt modules in Qt Widgets Application Wizard"
+            \image qtvstools-widgets-app-modules.webp "Selecting Qt modules in Qt Widgets Application Wizard"
             The modules that are typically needed in widget application projects
             are selected by default.
         \li Select \uicontrol Next to continue to the class creation page:
-            \image qtvstools-widgets-app-class.png "Creating a class in Qt Widgets Application Wizard"
+            \image qtvstools-widgets-app-class.webp "Creating a class in Qt Widgets Application Wizard"
         \li In the \uicontrol {Base class} field, enter \uicontrol QWidget as
             the base class type.
         \li Select the \uicontrol {Lower case filenames} check box to
@@ -218,15 +218,15 @@
 
     You now have a small working Qt application. Select \uicontrol Build >
     \uicontrol {Build Solution} to build it, and then select \uicontrol Debug >
-    \uicontrol {Start Debugging} to run it. For now, the result is an empty
-    window.
+    \uicontrol {Start Without Debugging} (or press \key {Ctrl+F5}) to run it.
+    For now, the result is an empty window.
 
     \section1 Design the Main Window
 
     You can use \QD to design the application's main window, which contains
     some widgets placed in layouts:
 
-    \image qtvstools-addressbook-mainwindow.png AddressBook's main dialog
+    \image qtvstools-addressbook-mainwindow.webp AddressBook's main dialog
 
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
@@ -244,7 +244,7 @@
     \list 1
         \li In Visual Studio's Solution Explorer, double-click the
             \c addressbook.ui file to open it in \QD.
-        \li In \QD's \uicontrol Widgetbox, select \uicontrol {List Widget} and
+        \li In \QD's \uicontrol {Widget Box}, select \uicontrol {List Widget} and
             drag and drop it to the form to add a \l QListWidget.
         \li In the \uicontrol {Property Editor}, set the \c ObjectName property
             to \e addressList.
@@ -314,13 +314,13 @@
 
     \list 1
         \li In Visual Studio, select \uicontrol Project >
-            \uicontrol {Add Qt Class} > \uicontrol Installed >
+            \uicontrol {Add New Item} > \uicontrol Installed >
             \uicontrol {Visual C++} > \uicontrol Qt >
             \uicontrol {Qt Widgets Class}.
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
         \li In the \uicontrol Name field, enter \e AddDialog.
-            \image qtvstools-qt-widget-class-wizard.png "Creating a class in Qt Widgets Class Wizard"
+            \image qtvstools-qt-widget-class-wizard.webp "Creating a class in Qt Widgets Class Wizard"
         \li In the \uicontrol {Base class} field, enter \uicontrol QDialog as
             the base class type.
         \li Select the \uicontrol {Multiple inheritance} radio button.
@@ -1023,10 +1023,10 @@
             an Application project.
         \li \uicontrol {Qt Translation File} adds a Qt translation file (.ts)
             to an Application project.
-        \li \uicontrol {Qt Widget Class} adds a Qt Widgets class to a
-            Qt Widgets Application project.
         \li \uicontrol {Qt Widget Form File} adds a Qt Widgets form file (.ui)
             to an Application project.
+        \li \uicontrol {Qt Widgets Class} adds a Qt Widgets class to a
+            Qt Widgets Application project.
     \endlist
 
     The following sections describe how to add different types of files to
@@ -1375,7 +1375,7 @@
     \uicontrol {Add New Item} > \uicontrol Installed > \uicontrol {Visual C++} >
     \uicontrol Qt > \uicontrol {Qt Widgets Form File}.
 
-    \image qtvstools-qt-widget-class-wizard.png
+    \image qtvstools-qt-widget-class-wizard.webp {Qt Widgets Class Wizard}
 
     Typically, you need to wrap the code generated for the form file into a
     QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
