@@ -531,16 +531,16 @@
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
         \li To set up debug and release build configurations, click in
-            \uicontrol {Quick Modules}, and select the \uicontrol {Quick} and
-            \uicontrol {Quick Controls2} modules to include in the project:
-            \image qtvstools-qtquick-app-modules.png "Selecting Qt modules in Qt Quick Application Wizard"
+            \uicontrol {Qt Modules}, and select the \uicontrol {Qt Quick} and
+            \uicontrol {Qt Quick Controls} modules to include in the project:
+            \image qtvstools-qtquick-app-modules.webp "Selecting Qt modules in Qt Quick Application Wizard"
         \li Select \uicontrol Finish to create the project.
     \endlist
 
     You now have a small working Qt Quick application. Select \uicontrol Build >
     \uicontrol {Build Solution} to build it, and then select \uicontrol Debug >
-    \uicontrol {Start Debugging} to run it. For now, the result is an empty
-    window.
+    \uicontrol {Start Without Debugging} (or press \key {Ctrl+F5}) to run it.
+    For now, the result is an empty window.
 
     \section1 Design the Main Window
 
@@ -674,8 +674,8 @@
     corresponding source file.
 
     To add a QML module definition, select \uicontrol Project >
-    \uicontrol {Add New Item} > \uicontrol Qt >
-    \uicontrol {Qt QML Module Definition} > \uicontrol Add.
+    \uicontrol {Add New Item} > \uicontrol {Installed} > \uicontrol {Visual C++}
+    > \uicontrol Qt > \uicontrol {Qt QML Module Definition} > \uicontrol Add.
 
     In the \c qmldir file, add QML type definitions for \e AddressBookItem and
     \e NewAddressPopup:
@@ -689,8 +689,9 @@
     To add a custom QML type to the project:
 
     \list 1
-        \li Select \uicontrol Project > \uicontrol {Add New File} >
-            \uicontrol Qt > \uicontrol {Qt QML File} > \uicontrol Add.
+        \li Select \uicontrol Project > \uicontrol {Add New Item} >
+            \uicontrol {Installed} > \uicontrol {Visual C++} > \uicontrol {Qt} >
+            \uicontrol {Qt QML File} > \uicontrol Add.
         \li In the \uicontrol Name field, enter \e NewAddressPopup.
         \li Select \uicontrol Finish to create a custom QML type.
     \endlist
@@ -775,9 +776,9 @@
     Address book entries are presented in the main window as specified by a
     custom \c AddressBookItem type.
 
-    Select \uicontrol Project > \uicontrol {Add New File} > \uicontrol Qt >
-    \uicontrol {Qt QML File} > \uicontrol Add, to create a new QML file
-    called \e AddressBookItem.qml.
+    Select \uicontrol Project > \uicontrol {Add New Item} > \uicontrol Installed
+    > \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt QML File} >
+    \uicontrol Add, to create a new QML file called \e AddressBookItem.qml.
 
     \section2 Design the Entry
 
