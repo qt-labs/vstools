@@ -47,7 +47,7 @@ and steps to build Qt from sources.
 
 Recommended options for the `configure` tool:
 
-    configure -static -opensource -confirm-license -nomake examples -nomake tests -opengl desktop
+    configure -static -opensource -confirm-license -nomake examples -nomake tests -no-opengl
 
 Recommended options for [jom](https://wiki.qt.io/Jom):
 
