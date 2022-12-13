@@ -110,6 +110,9 @@
 
     <!--// Qt Plugin default-->
     <QtPlugin>false</QtPlugin>
+
+    <!--// QML debug disabled by default -->
+    <QtQMLDebugEnable>false</QtQMLDebugEnable>
   </PropertyGroup>
 
   <!--

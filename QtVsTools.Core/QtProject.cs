@@ -1708,7 +1708,7 @@ namespace QtVsTools.Core
                 throw new QtVSException($"Cannot add file {fileName} to filter.");
             } catch (QtVSException) {
                 throw;
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new QtVSException($"Cannot add file {fileName} to filter.", e);
             }
 
@@ -2380,7 +2380,7 @@ namespace QtVsTools.Core
                         // We have to delete the old moc file in order to trigger custom build step.
                         var configName = config.Name.Remove(config.Name.IndexOf('|'));
                         var platformName = config.Name.Substring(config.Name.IndexOf('|') + 1);
-                        var projectPath =envPro.FullName.Remove(envPro.FullName.LastIndexOf(Path
+                        var projectPath = envPro.FullName.Remove(envPro.FullName.LastIndexOf(Path
                             .DirectorySeparatorChar));
                         var mocRelPath = GetRelativeMocFilePath(srcMocFile.FullPath, configName, platformName);
                         var mocPath = Path.Combine(projectPath, mocRelPath);
@@ -3106,17 +3106,34 @@ namespace QtVsTools.Core
 
         public static IEnumerable<CppConfig> GetCppDebugConfigs(VCProject vcPro)
         {
-            return GetCppConfigs(vcPro).Where(x => x.Cpp
-                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
-                .Contains("QT_NO_DEBUG") == false);
+            var cppConfigs = GetCppConfigs(vcPro)
+                .Select(x => new { Self = x, x.Cpp });
+            var cppConfigMacros = cppConfigs
+                .Select(x => new
+                {
+                    x.Self,
+                    Macros = x.Cpp.GetEvaluatedPropertyValue("PreprocessorDefinitions")
+                })
+                .Where(x => !string.IsNullOrEmpty(x.Macros));
+            var cppDebugConfigs = cppConfigMacros
+                .Where(x => !x.Macros.Split(';').Contains("QT_NO_DEBUG"))
+                .Select(x => x.Self);
+            return cppDebugConfigs;
         }
 
         public static bool IsQtQmlDebugDefined(VCProject vcPro)
         {
-            return (GetCppDebugConfigs(vcPro).Where(x => x.Cpp
-                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
-                .Contains("QT_QML_DEBUG") == false)
-                .Any() == false);
+            var cppConfigs = GetCppConfigs(vcPro)
+                .Select(x => new { Self = x, x.Cpp });
+            var cppConfigMacros = cppConfigs
+                .Select(x => new
+                {
+                    x.Self,
+                    Macros = x.Cpp.GetEvaluatedPropertyValue("PreprocessorDefinitions")
+                })
+                .Where(x => !string.IsNullOrEmpty(x.Macros));
+            return cppConfigMacros
+                .Any(x => x.Macros.Split(';').Contains("QT_QML_DEBUG"));
         }
 
         public static void DefineQtQmlDebug(VCProject vcPro)
