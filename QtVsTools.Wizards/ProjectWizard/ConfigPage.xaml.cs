@@ -136,7 +136,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         bool initialNextButtonIsEnabled;
         bool initialFinishButtonIsEnabled;
 
-        public bool ProjectModelEnabled { get; set; } = true;
+        public bool ProjectModelEnabled { get; set; } = false;
 
         public ConfigPage()
         {
