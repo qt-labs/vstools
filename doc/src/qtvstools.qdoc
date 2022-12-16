@@ -1617,6 +1617,9 @@
 
     \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
 
+    \note Before launching the debugger, select \uicontrol {Build} >
+    \uicontrol {Rebuild Solution} to rebuild the project.
+
     To disable processing of all QML
     debug events by the QML debug engine, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol Qt
