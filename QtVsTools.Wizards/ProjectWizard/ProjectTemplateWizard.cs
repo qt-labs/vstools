@@ -687,11 +687,11 @@ namespace QtVsTools.Wizards.ProjectWizard
             // Project items
             //
             IEnumerable<ItemDef> projectItems = ExtraItems
-                .Where((ItemDef item) => item.WhereConfig == null
+                .Where(item => item.WhereConfig == null
                     || Configurations.Where(item.WhereConfig).Any())
                 .Union(UsePrecompiledHeaders
                     ? new[] { PrecompiledHeader, PrecompiledHeaderSource }
-                    : Enumerable.Empty<ItemDef>());
+                    : Enumerable.Empty<ItemDef>()).ToList();
 
             xml = new StringBuilder();
             foreach (ItemDef item in projectItems) {
