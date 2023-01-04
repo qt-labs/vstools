@@ -1,3 +1,32 @@
+Qt Visual Studio Tools version 2.10.0:
+
+Changes
+-------
+ - Show notification when a project with old format is loaded
+ - Unify online help search behavior
+ - Add support for shadow builds of Qt
+ - Fixed QTVSADDINBUG-938: Can't add Qt Version for MSVC_ARM
+ - Fixed QTVSADDINBUG-999: LNK2019 for Qt Quick application with static Qt builds
+ - Fixed QTVSADDINBUG-1005: Issues with "Remove Qt Version" button
+ - Fixed QTVSADDINBUG-1008: Build failed in projects with non-default Intermediate Directory
+ - Fixed QTVSADDINBUG-1012: Importing .pro files fails
+ - Fixed QTVSADDINBUG-1014: Missing QtVersionMajor macro
+ - Fixed QTVSADDINBUG-1015: The VS Plugin is ignoring webenginewidgets
+ - Fixed QTVSADDINBUG-1017: v2.9.1.1 Prevents ability to see contents of QString during debugging
+ - Fixed QTVSADDINBUG-1027: RuntimeLibrary metadata of ClCompile not flowing from qmake
+ - Fixed QTVSADDINBUG-1031: Start debugging but application window does not appear
+ - Fixed QTVSADDINBUG-1058: Options dialog changes to unrelated page on error
+ - Fixed QTVSADDINBUG-1059: Qt Versions page crashes Visual Studio
+ - Fixed QTVSADDINBUG-1061: QtDllPath conflicts with Qt binaries in other applications
+ - Fixed QTVSADDINBUG-1064: Add a visual confirmation that mingw build of Qt is not supported
+ - Fixed QTVSADDINBUG-1065: QUuid does not have a natvis in Qt5 or Qt6
+ - Fixed QTVSADDINBUG-1067: Projectnames with Space(s) have no Filters
+ - Fixed QTVSADDINBUG-1068: natvis support for QQuickItem
+ - Fixed QTVSADDINBUG-1071: Opening the attached .pro file in VS 2022 fails to convert to solution
+ - Fixed QTVSADDINBUG-1072: Module openglwidgets ignored
+ - Fixed QTVSADDINBUG-1073: QML debugger fails to connect
+
+
 Qt Visual Studio Tools version 2.9.0:
 
 Changes
