@@ -347,7 +347,7 @@ namespace QtVsTools.Options
                     Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                     Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                     Save(NotifyInstalled, key, Notifications.Installed);
-                    Save(NotifyInstalled, key, Notifications.UpdateProjectFormat);
+                    Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                     Save(LinkNatvis, key, Natvis.Link);
                 }
             } catch (Exception exception) {
