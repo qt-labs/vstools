@@ -47,21 +47,17 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var solution = QtVsToolsPackage.Instance.Dte.Solution;
-            if (solution == null)
-                return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"), ""));
-
-            List<EnvDTE.Project> projects = new List<EnvDTE.Project>();
-            var allProjects = solution.Projects;
+            var allProjects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
             if (allProjects.Count == 0)
                 return WarningMessage(SR.GetString("NoProjectsToConvert"));
 
-            foreach (EnvDTE.Project project in allProjects) {
-                if ((HelperFunctions.IsVsToolsProject(project)
-                    || HelperFunctions.IsQtProject(project))
-                    && !QtProject.IsQtMsBuildEnabled(project)) {
-                    projects.Add(project);
+            var projects = new List<EnvDTE.Project>();
+            foreach (var project in allProjects.Where(HelperFunctions.IsQtProject)) {
+                if (QtProject.IsQtMsBuildEnabled(project)) {
+                    if (QtProject.GetFormatVersion(project) >= Resources.qtProjectFormatVersion)
+                        continue;
                 }
+                projects.Add(project);
             }
             if (projects.Count == 0)
                 return WarningMessage(SR.GetString("NoProjectsToConvert"));
@@ -95,6 +91,7 @@ namespace QtVsTools
                 })
                 .ToList();
 
+            var solution = QtVsToolsPackage.Instance.Dte.Solution;
             string solutionPath = solution.FileName;
             solution.Close(true);
 
@@ -116,8 +113,7 @@ namespace QtVsTools
                     }
                 }
                 if (!ConvertProject(projectPath)) {
-                    if (waitDialog != null)
-                        waitDialog.Stop();
+                    waitDialog?.Stop();
                     QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
                     return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"),
                         Path.GetFileName(projectPath)));
@@ -125,8 +121,7 @@ namespace QtVsTools
                 ++projCount;
             }
 
-            if (waitDialog != null)
-                waitDialog.Stop();
+            waitDialog?.Stop();
 
             QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
