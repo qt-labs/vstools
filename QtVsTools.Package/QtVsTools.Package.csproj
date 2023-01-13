@@ -554,56 +554,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <Target Name="QtVsTools_PostBuild" AfterTargets="Build">
-    <Error Condition="!Exists('$(TargetPath)')" Text="Build failed." />
-    <PropertyGroup>
-      <MsvcVersion Condition="'$(VisualStudioVersion)'=='15.0'">2017</MsvcVersion>
-      <MsvcVersion Condition="'$(VisualStudioVersion)'=='16.0'">2019</MsvcVersion>
-      <MsvcVersion Condition="'$(VisualStudioVersion)'=='17.0'">2022</MsvcVersion>
-    </PropertyGroup>
-    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-      <Output TaskParameter="Assemblies" ItemName="QtVsToolsDll" />
-    </GetAssemblyIdentity>
-    <CreateProperty Value="$([System.Version]::Parse(%(QtVsToolsDll.Version)).Revision.ToString('D2'))">
-      <Output TaskParameter="ValueSetByTask" PropertyName="QtVSToolsRevision" />
-    </CreateProperty>
-    <CreateProperty Condition="'$(QtVSToolsRevision)' != '' AND '$(QtVSToolsRevision)' != '-1'" Value="msvc$(MsvcVersion)-$(QtVSToolsVersion)-rev.$(QtVSToolsRevision)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="PackageName" />
-    </CreateProperty>
-    <CreateProperty Condition="'$(QtVSToolsRevision)' == '' OR '$(QtVSToolsRevision)' == '-1'" Value="msvc$(MsvcVersion)-$(QtVSToolsVersion)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="PackageName" />
-    </CreateProperty>
-    <CreateProperty Value="qt-vsaddin-$(PackageName).vsix">
-      <Output TaskParameter="ValueSetByTask" PropertyName="ReleasePackage" />
-    </CreateProperty>
-    <Message Importance="High" Text="$(MSBuildProjectName) -&gt; $(PackageName)" />
-    <CombinePath Condition="'$(QtVSToolsDeployTarget)' != ''" BasePath="$(QtVSToolsDeployTarget)" Paths="%(QtVsToolsDll.Version)">
-      <Output TaskParameter="CombinedPaths" ItemName="DeployTargetPath" />
-    </CombinePath>
-    <ConvertToAbsolutePath Condition="'$(QtVSToolsDeployTarget)' != ''" Paths="@(DeployTargetPath)">
-      <Output TaskParameter="AbsolutePaths" ItemName="DeployTargetFullPath" />
-    </ConvertToAbsolutePath>
-    <CreateProperty Condition="'$(QtVSToolsDeployTarget)' != ''" Value="%(DeployTargetFullPath.Identity)">
-      <Output TaskParameter="ValueSetByTask" PropertyName="DeployTargetFullPath" />
-    </CreateProperty>
-    <Message Importance="High" Condition="'$(QtVSToolsDeployTarget)' != ''" Text="Deploying to $(DeployTargetFullPath)" />
-    <MakeDir Condition="'$(QtVSToolsDeployTarget)' != ''" Directories="$(QtVSToolsDeployTarget)" />
-    <Copy Condition="'$(QtVSToolsDeployTarget)' != ''" SourceFiles="$(TargetVsixContainer)" DestinationFiles="$(DeployTargetFullPath)\$(ReleasePackage)" />
-    <PropertyGroup>
-      <!-- Clean up properties -->
-      <MsvcVersion />
-      <QtVSToolsRevision />
-      <PackageName />
-      <ReleasePackage />
-      <DeployTargetFullPath />
-    </PropertyGroup>
-    <ItemGroup>
-      <!-- Clean up items -->
-      <QtVsToolsDll Remove="@(QtVsToolsDll)" />
-      <DeployTargetPath Remove="@(DeployTargetPath)" />
-      <DeployTargetFullPath Remove="@(DeployTargetFullPath)" />
-    </ItemGroup>
-  </Target>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // NuGet native libs
