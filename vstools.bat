@@ -37,6 +37,7 @@ SET CLEAN=%FALSE%
 SET BINARYLOG=%FALSE%
 SET CONFIGURATION=Release
 SET DO_INSTALL=%FALSE%
+SET DEPLOY=%FALSE%
 SET TRANSFORM_INCREMENTAL=true
 SET START_VS=%FALSE%
 SET LIST_VERSIONS=%FALSE%
@@ -71,7 +72,8 @@ IF NOT "%1"=="" (
             SHIFT
         )
     ) ELSE IF "%1"=="-deploy" (
-        SET QtVSToolsDeployTarget=%~f2
+        SET DEPLOY=%TRUE%
+        SET DEPLOY_DIR=%~f2
         SHIFT
     ) ELSE IF "%1"=="-install" (
         SET DO_INSTALL=%TRUE%
@@ -191,6 +193,11 @@ IF NOT %VSWHERE_OK% (
     EXIT /B 1
 )
 
+WHERE /Q git.exe || (
+    ECHO Error: could not find git.
+    EXIT /B 1
+)
+
 REM ///////////////////////////////////////////////////////////////////////////////////////////////
 REM // Cycle through installed VS products
 
@@ -227,6 +234,10 @@ FOR %%v IN (%VS_VERSIONS%) DO (
     FOR /F %ALL% %%f IN (`CMD /C "ECHO %%PLATFORM_VS%%e%%"`) DO (
     IF %VERBOSE% ECHO ## platform: %%f
 
+    IF %VERBOSE% ECHO ##   git describe --tags
+    FOR /F "tokens=1,2,3,4 delims=v.- usebackq" %%q IN (`git describe --tags`) DO (
+    IF %VERBOSE% ECHO ## ^( %%q, %%r, %%s, %%t ^)
+
     IF %LIST_VERSIONS% (
         IF %VERBOSE% ECHO ## listVersion
         ECHO %%n ^(%%i^)
@@ -251,7 +262,12 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             ECHO Error: msbuild not found
             EXIT /B 3
         )
-        IF NOT "%QtVSToolsDeployTarget%"=="" ECHO ## Deploy to: %QtVSToolsDeployTarget%
+        IF "%%t"=="" (
+            ECHO ## Qt VSTools version: %%q.%%r.%%s
+        ) ELSE (
+            ECHO ## Qt VSTools version: %%q.%%r.%%s ^(rev.%%t^)
+        )
+        IF NOT "%DEPLOY_DIR%"=="" ECHO ## Deploy to: %DEPLOY_DIR%
         ECHO ################################################################################
         ECHO.
 
@@ -280,6 +296,16 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             ECHO.
 
             ECHO ###############################################################################
+            ECHO ## Logging extension version
+            ECHO ###############################################################################
+            IF "%%t"=="" (
+                ECHO %%q.%%r.%%s.0 > version.log
+            ) ELSE (
+                ECHO %%q.%%r.%%s.%%t > version.log
+            )
+            ECHO.
+
+            ECHO ###############################################################################
             ECHO ## Restoring packages...
             ECHO ###############################################################################
             msbuild ^
@@ -293,6 +319,17 @@ FOR %%v IN (%VS_VERSIONS%) DO (
                 ECHO ## ERROR restoring packages! 1>&2
                 ECHO ###############################################################################
                 EXIT /B %ERRORLEVEL%
+            )
+        )
+
+        IF NOT EXIST version.log (
+            ECHO ###############################################################################
+            ECHO ## Logging extension version
+            ECHO ###############################################################################
+            IF "%%t"=="" (
+                ECHO %%q.%%r.%%s.0 > version.log
+            ) ELSE (
+                ECHO %%q.%%r.%%s.%%t > version.log
             )
         )
 
@@ -352,6 +389,11 @@ FOR %%v IN (%VS_VERSIONS%) DO (
         && (
             ECHO ################################################################################
             ECHO ## %%n ^(%%i^)
+            IF "%%t"=="" (
+                ECHO ## Qt VSTools version: %%q.%%r.%%s
+            ) ELSE (
+                ECHO ## Qt VSTools version: %%q.%%r.%%s ^(rev.%%t^)
+            )
             ECHO ## Solution build successful.
             ECHO ################################################################################
             ECHO.
@@ -363,9 +405,27 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             EXIT /B %ERRORLEVEL%
         )
 
+        IF %DEPLOY% (
+            ECHO ################################################################################
+            ECHO ## Deploying to %DEPLOY_DIR%...
+            ECHO ################################################################################
+            IF "%%t"=="" (
+                ECHO   QtVsTools.vsix -^> qt-vsaddin-msvc%%e-%%q.%%r.%%s.vsix
+                MD "%DEPLOY_DIR%\%%q.%%r.%%s.0" > NUL 2>&1
+                COPY /Y QtVsTools.Package\bin\Release\QtVsTools.vsix ^
+                    "%DEPLOY_DIR%\%%q.%%r.%%s.0\qt-vsaddin-msvc%%e-%%q.%%r.%%s.vsix"
+            ) ELSE (
+                ECHO   QtVsTools.vsix -^> qt-vsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix
+                MD "%DEPLOY_DIR%\%%q.%%r.%%s.%%t" > NUL 2>&1
+                COPY /Y QtVsTools.Package\bin\Release\QtVsTools.vsix ^
+                    "%DEPLOY_DIR%\%%q.%%r.%%s.%%t\qt-vsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix"
+            )
+            ECHO.
+        )
+
         IF %DO_INSTALL% (
             ECHO ################################################################################
-            ECHO ## Installing VSIX package
+            ECHO ## Installing extension package
             ECHO ################################################################################
             ECHO Removing previous installation...
             IF "%%e"=="2022" (
@@ -390,7 +450,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
 
         )
         ECHO.
-    )))))))
+    ))))))))
     ENDLOCAL
 )
 
