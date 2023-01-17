@@ -244,8 +244,14 @@ namespace QtVsTools.Options
         [Description("Show notification when a project uses some legacy code path of the Qt "
             + "Visual Studio Tools.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool UpdateProjectFormat { get; set; }
-
+        public bool UpdateProjectFormat
+        {
+#if DISABLE_UPDATEPROJECTFORMAT
+            get => false; set { }
+#else
+            get; set;
+#endif
+        }
         [Category("Natvis")]
         [DisplayName("Embed .natvis file into PDB")]
         [Description("Embeds the debugger visualizations (.natvis file) into the PDB file"
