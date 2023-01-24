@@ -61,6 +61,7 @@
                 \list
                     \li \l {Creating Projects}
                     \li \l {Creating Files}
+                    \li \l {Loading Qt Projects}
                 \endlist
         \row
             \li \inlineimage front-coding.png
@@ -104,6 +105,7 @@
                         \li \l {Managing Resources}
                         \li \l {Creating Qt Translation Files}
                     \endlist
+                \li \l {Loading Qt Projects}
             \endlist
         \li \l {Updating IntelliSense Info}
         \li \l {Debugging}
@@ -941,6 +943,9 @@
     projects and files that you can add to the projects, such as classes, form
     files, or custom QML types.
 
+    You can also load existing Qt projects into Visual Studio for further
+    development.
+
     You can use the integrated Qt Resource editor to manage the resources in
     Qt projects.
 
@@ -950,6 +955,7 @@
     \list
         \li \l {Creating Projects}
         \li \l {Creating Files}
+        \li \l {Loading Qt Projects}
     \endlist
 */
 
@@ -1045,6 +1051,18 @@
         \li \l {Tutorial: Qt Widgets Application}
         \li \l {Tutorial: Qt Quick Application}
     \endlist
+*/
+
+/*!
+    \page qtvstools-loading-qt-projects.html
+    \previouspage Creating Qt Translation Files
+    \nextpage Updating IntelliSense Info
+    \title Loading Qt Projects
+
+    To open Qt projects (.pro) in Visual Studio, select \uicontrol Extensions >
+    \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)}.
+
+    Opening CMakeLists.txt files is currently not supported.
 */
 
 /*!
@@ -1352,14 +1370,6 @@
         \li A \c .pri file (a \c qmake include file) listing the files in the
             project.
     \endlist
-
-    If you already have a \c .pro file but no \c .vcproj file, select
-    \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol {Open Qt Project File (.pro)} to
-    convert your \c .pro file to a \c .vcproj file. The generated \c .vcproj
-    only contains Windows-specific settings. Also, there is no other way to
-    convert a \c .vcproj file back to the \c .pro file format than using the
-    \uicontrol {Create Basic .pro File} function.
 */
 
 /*!
@@ -1431,7 +1441,7 @@
 /*!
     \page qtvstools-translation-files.html
     \previouspage Managing Resources
-    \nextpage Updating IntelliSense Info
+    \nextpage Loading Qt Projects
     \title Creating Qt Translation Files
 
     To add a new translation file to the project:
@@ -1497,7 +1507,7 @@
 
 /*!
     \page qtvstools-intellisense-info.html
-    \previouspage Creating Qt Translation Files
+    \previouspage Loading Qt Projects
     \nextpage Debugging
     \title Updating IntelliSense Info
 
