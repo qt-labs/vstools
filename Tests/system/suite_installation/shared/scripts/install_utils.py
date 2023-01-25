@@ -5,8 +5,6 @@
 
 # -*- coding: utf-8 -*-
 
-from xml.dom import minidom
-
 import globalnames
 
 
@@ -42,6 +40,11 @@ def changesScheduledLabelExists():
     return object.exists(names.changes_scheduled_Label)
 
 
+def readFile(filename):
+    with open(filename, "r") as f:
+        return f.read()
+
+
 def readExpectedVsToolsVersion():
     expectedVersion = os.getenv("SQUISH_VSTOOLS_VERSION")
     if expectedVersion:
@@ -50,8 +53,7 @@ def readExpectedVsToolsVersion():
                  "The environment variable SQUISH_VSTOOLS_VERSION is not set. Falling back to "
                  "reading the expected version from version.targets")
     try:
-        versionXml = minidom.parse("../../../../version.targets")
-        return versionXml.getElementsByTagName("QtVSToolsVersion")[0].firstChild.data
+        return readFile("../../../../version.log")
     except:
         test.fatal("Can't read expected VS Tools version from sources.")
         return ""
@@ -60,5 +62,6 @@ def readExpectedVsToolsVersion():
 def verifyVsToolsVersion():
     displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label).text
     expectedVersion = readExpectedVsToolsVersion()
-    test.compare(displayedVersion, expectedVersion,
-                 "Expected version of VS Tools is displayed?")
+    if expectedVersion:
+        test.compare(displayedVersion, expectedVersion,
+                     "Expected version of VS Tools is displayed?")
