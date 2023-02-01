@@ -76,8 +76,6 @@ namespace QtVsTools
             LaunchLinguistId = 0x0101,
             OpenProFileId = 0x0102,
             ImportPriFileId = 0x0103,
-            ExportPriFileId = 0x0104,
-            ExportProFileId = 0x0105,
             ConvertToQtMsBuild = 0x0130,
             QtProjectSettingsId = 0x0109,
             ChangeProjectQtVersionId = 0x0126,
@@ -131,12 +129,6 @@ namespace QtVsTools
                 break;
             case CommandId.ImportPriFileId:
                 ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
-                break;
-            case CommandId.ExportPriFileId:
-                ExtLoader.ExportPriFile();
-                break;
-            case CommandId.ExportProFileId:
-                ExtLoader.ExportProFile();
                 break;
             case CommandId.ConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
@@ -194,8 +186,6 @@ namespace QtVsTools
                 command.Enabled = true;
                 break;
             case CommandId.ImportPriFileId:
-            case CommandId.ExportPriFileId:
-            case CommandId.ExportProFileId:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsVsToolsProject(project);
                 break;

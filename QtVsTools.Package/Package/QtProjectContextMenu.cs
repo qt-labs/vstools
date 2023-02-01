@@ -71,8 +71,6 @@ namespace QtVsTools
         private enum CommandId
         {
             ImportPriFileProjectId = 0x0114,
-            ExportPriFileProjectId = 0x0115,
-            ExportProFileProjectId = 0x0116,
             lUpdateOnProjectId = 0x0118,
             lReleaseOnProjectId = 0x0119,
             ProjectConvertToQtMsBuild = 0x0130,
@@ -111,12 +109,6 @@ namespace QtVsTools
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
                 ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
-                break;
-            case CommandId.ExportPriFileProjectId:
-                ExtLoader.ExportPriFile();
-                break;
-            case CommandId.ExportProFileProjectId:
-                ExtLoader.ExportProFile();
                 break;
             case CommandId.lUpdateOnProjectId:
                 Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
@@ -172,8 +164,6 @@ namespace QtVsTools
             var status = vsCommandStatus.vsCommandStatusSupported;
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
-            case CommandId.ExportPriFileProjectId:
-            case CommandId.ExportProFileProjectId:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsVsToolsProject(HelperFunctions
                     .GetSelectedProject(QtVsToolsPackage.Instance.Dte));

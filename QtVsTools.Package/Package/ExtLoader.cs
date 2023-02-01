@@ -181,23 +181,5 @@ namespace QtVsTools
             }
             return str;
         }
-
-        public static void ExportProFile()
-        {
-            if (QtVsToolsPackage.Instance.Dte != null) {
-                var proFileExporter = new ProjectExporter(QtVsToolsPackage.Instance.Dte);
-                proFileExporter.ExportToProFile();
-            }
-        }
-
-        public static void ExportPriFile()
-        {
-            var dte = QtVsToolsPackage.Instance.Dte;
-            if (dte != null) {
-                var proFileExporter = new ProjectExporter(dte);
-                proFileExporter.ExportToPriFile(HelperFunctions.GetSelectedQtProject
-                    (dte));
-            }
-        }
     }
 }

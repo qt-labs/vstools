@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExportSolution" xml:space="preserve">
-    <value>Export Solution</value>
-  </data>
   <data name="OpenSolution" xml:space="preserve">
     <value>Open Solution</value>
   </data>
@@ -128,23 +125,6 @@
 To do this you must open the .vcproj file manually.
 (Reason: qmake in Qt3 does not support generation of Visual Studio 2005 .vcproj files)</value>
   </data>
-  <data name="ExportProject_ExistsOverwriteQuestion" xml:space="preserve">
-    <value>{0} already exists.
-
-Do you want to overwrite it?</value>
-  </data>
-  <data name="ExportProject_ExportPriFile" xml:space="preserve">
-    <value>Export to .pri File</value>
-  </data>
-  <data name="ExportProject_NoProjectsToExport" xml:space="preserve">
-    <value>Cannot find any Qt projects to export.</value>
-  </data>
-  <data name="ExportProject_PriFileContainsSpaces" xml:space="preserve">
-    <value>The generated .pri file contains paths with spaces. You will not be able to import from this file.
-1. Manually edit the generated .pri file.
-2. Move your project to a location without spaces in the path.
-3. Place the .pri file in another directory.</value>
-  </data>
   <data name="ExportProject_ProjectOrSolutionCorrupt" xml:space="preserve">
     <value>{0}
 (Maybe the .vcproj or .sln file is corrupt?)</value>
@@ -152,33 +132,9 @@ Do you want to overwrite it?</value>
   <data name="ExportProject_SelectQtProjectToAdd" xml:space="preserve">
     <value>Select a Qt Project to Add to the Solution</value>
   </data>
-  <data name="ExportProject_SolutionProFileBuildIn" xml:space="preserve">
-    <value>Do you want a solution .pro file to be built in {0}?</value>
-  </data>
   <data name="ExportProject_SubdirsProfileSolutionClose" xml:space="preserve">
     <value>This seems to be a SUBDIRS .pro file. To open this file, the existing
     solution needs to be closed (pending changes will be saved).</value>
-  </data>
-  <data name="ExportProjectDialog_Cancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
-  </data>
-  <data name="ExportProjectDialog_OK" xml:space="preserve">
-    <value>&amp;OK</value>
-  </data>
-  <data name="ExportProjectDialog_CreatePro" xml:space="preserve">
-    <value>Create .pro files for:</value>
-  </data>
-  <data name="ExportProjectDialog_Project" xml:space="preserve">
-    <value>Project &amp;tag:</value>
-  </data>
-  <data name="ExportProjectDialog_Open" xml:space="preserve">
-    <value>Open Created Files</value>
-  </data>
-  <data name="ExportProjectDialog_CreatePri" xml:space="preserve">
-    <value>Create .pri File</value>
-  </data>
-  <data name="ExportProjectDialog_Title" xml:space="preserve">
-    <value>Export Project</value>
   </data>
   <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
     <value>Cannot write environment variable QTDIR.</value>

@@ -264,28 +264,6 @@
                     <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="ExportPriFileId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
-                <Icon guid="MenuImages" id="ExportProFileBitmap" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <Strings>
-                    <ButtonText>Export Project to .pri File...</ButtonText>
-                    <ToolTipText>Export the current project to a .pri file</ToolTipText>
-                </Strings>
-            </Button>
-            <Button guid="MainMenuGuid" id="ExportProFileId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
-                <Icon guid="MenuImages" id="CreateProFileBitmap" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <Strings>
-                    <ButtonText>Create Basic .pro File...</ButtonText>
-                    <ToolTipText>Export the current project to a Qt project file (.pro)</ToolTipText>
-                </Strings>
-            </Button>
 
             <Button guid="MainMenuGuid" id="ConvertToQtMsBuild" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
@@ -402,26 +380,6 @@
                 <Strings>
                     <ButtonText>Import .pri File to Project...</ButtonText>
                     <ToolTipText>Import a .pri file and create a Qt project from it</ToolTipText>
-                </Strings>
-            </Button>
-            <Button guid="ProjectContextMenuGuid" id="ExportPriFileProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
-                <Icon guid="MenuImages" id="ExportProFileBitmap" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Export Project to .pri File...</ButtonText>
-                    <ToolTipText>Export the current project to a .pri file</ToolTipText>
-                </Strings>
-            </Button>
-            <Button guid="ProjectContextMenuGuid" id="ExportProFileProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
-                <Icon guid="MenuImages" id="CreateProFileBitmap" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Create Basic .pro File...</ButtonText>
-                    <ToolTipText>Export the current project to a Qt Project file (.pro)</ToolTipText>
                 </Strings>
             </Button>
 
@@ -552,8 +510,6 @@
             <IDSymbol name="ProjectMenuGroup" value="0x1022" />
             <IDSymbol name="OpenProFileId" value="0x0102" />
             <IDSymbol name="ImportPriFileId" value="0x0103" />
-            <IDSymbol name="ExportPriFileId" value="0x0104" />
-            <IDSymbol name="ExportProFileId" value="0x0105" />
 
             <IDSymbol name="OthersMenuGroup" value="0x1023" />
             <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
@@ -597,8 +553,6 @@
 
             <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
             <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
-            <IDSymbol name="ExportPriFileProjectId" value="0x0115" />
-            <IDSymbol name="ExportProFileProjectId" value="0x0116" />
 
             <IDSymbol name="ProjectContextTsMenuGroup" value="0x1028" />
             <IDSymbol name="lUpdateOnProjectId" value="0x0118" />
@@ -629,7 +583,7 @@
             <IDSymbol name="LaunchLinguistBitmap" value="2" />
             <IDSymbol name="OpenProFileBitmap" value="3" />
             <IDSymbol name="ImportPriFileBitmap" value="4" />
-            <IDSymbol name="ExportProFileBitmap" value="5" />
+            <IDSymbol name="ExportProFileBitmap" value="5" /> <!-- TODO: remove -->
             <IDSymbol name="CreateProFileBitmap" value="6" />
             <IDSymbol name="QtLogoBitmap" value="7" />
         </GuidSymbol>
