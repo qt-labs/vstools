@@ -627,7 +627,6 @@ namespace QtVsTools.Core
             return additionalMocOptions;
         }
 
-
         void AddMocStepSetBuildExclusions(
             VCFile sourceFile,
             VCFileConfiguration workFileConfig,
@@ -1761,33 +1760,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public void MoveFileToDeletedFolder(VCFile vcfile)
-        {
-            var srcFile = new FileInfo(vcfile.FullPath);
-
-            if (!srcFile.Exists)
-                return;
-
-            var destFolder = vcPro.ProjectDirectory + "\\Deleted\\";
-            var destName = destFolder + vcfile.Name.Replace(".", "_") + ".bak";
-            var fileNr = 0;
-
-            try {
-                if (!Directory.Exists(destFolder))
-                    Directory.CreateDirectory(destFolder);
-
-                while (File.Exists(destName)) {
-                    fileNr++;
-                    destName = destName.Substring(0, destName.LastIndexOf('.')) + ".b";
-                    destName += fileNr.ToString("00");
-                }
-
-                srcFile.MoveTo(destName);
-            } catch (Exception e) {
-                Messages.DisplayWarningMessage(e, SR.GetString("QtProject_DeletedFolderFullOrProteced"));
-            }
-        }
-
         public VCFilter FindFilterFromName(string filtername)
         {
             try {
@@ -1814,45 +1786,6 @@ namespace QtVsTools.Core
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
             }
-        }
-
-        public VCFilter AddFilterToProject(FakeFilter filter)
-        {
-            try {
-                var vfilt = FindFilterFromGuid(filter.UniqueIdentifier);
-                if (vfilt == null) {
-                    if (!vcPro.CanAddFilter(filter.Name)) {
-                        vfilt = FindFilterFromName(filter.Name);
-                        if (vfilt == null)
-                            throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddFilter", filter.Name));
-                    } else {
-                        vfilt = (VCFilter)vcPro.AddFilter(filter.Name);
-                    }
-
-                    vfilt.UniqueIdentifier = filter.UniqueIdentifier;
-                    vfilt.Filter = filter.Filter;
-                    vfilt.ParseFiles = filter.ParseFiles;
-                }
-                return vfilt;
-            } catch {
-                throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddResourceFilter"));
-            }
-        }
-
-        public static bool IsQtPlugin(Core.QtProject qtPro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (qtPro.FormatVersion < Resources.qtMinFormatVersion_Settings)
-                return false;
-
-            foreach (VCConfiguration config in qtPro.VCProject.Configurations as IVCCollection) {
-                if ((config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage)
-                        .GetEvaluatedPropertyValue("QtPlugin") == "true") {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public static void MarkAsQtPlugin(Core.QtProject qtPro)
@@ -1915,26 +1848,6 @@ namespace QtVsTools.Core
             for (long i = 0; i < size; ++i)
                 whitespaces += " ";
             return whitespaces;
-        }
-
-        public void TranslateFilterNames()
-        {
-            var filters = vcPro.Filters as IVCCollection;
-            if (filters == null)
-                return;
-
-            foreach (VCFilter filter in filters) {
-                if (filter.Name == "Form Files")
-                    filter.Name = Filters.FormFiles().Name;
-                if (filter.Name == "Generated Files")
-                    filter.Name = Filters.GeneratedFiles().Name;
-                if (filter.Name == "Header Files")
-                    filter.Name = Filters.HeaderFiles().Name;
-                if (filter.Name == "Resource Files")
-                    filter.Name = Filters.ResourceFiles().Name;
-                if (filter.Name == "Source Files")
-                    filter.Name = Filters.SourceFiles().Name;
-            }
         }
 
         public void AddActiveQtBuildStep(string version, string defFile = null)
@@ -2802,21 +2715,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public void RemoveResFilesFromGeneratedFilesFilter()
-        {
-            var generatedFiles = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (generatedFiles == null)
-                return;
-
-            var filesToRemove = new List<VCFile>();
-            foreach (VCFile filtFile in (IVCCollection)generatedFiles.Files) {
-                if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
-                    filesToRemove.Add(filtFile);
-            }
-            foreach (var resFile in filesToRemove)
-                resFile.Remove();
-        }
-
         private static void AddPlatformToVCProj(string projectFileName, string oldPlatformName, string newPlatformName)
         {
             var tempFileName = Path.GetTempFileName();
@@ -2900,57 +2798,6 @@ namespace QtVsTools.Core
                 linkerOptions += subsystemOption;
             }
             linker.AdditionalOptions = linkerOptions;
-        }
-
-        public void CollapseFilter(string filterName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var solutionExplorer = (UIHierarchy)dte.Windows.Item(Constants.vsext_wk_SProjectWindow).Object;
-            if (solutionExplorer.UIHierarchyItems.Count == 0)
-                return;
-
-            dte.SuppressUI = true;
-            var projectItem = FindProjectHierarchyItem(solutionExplorer);
-            if (projectItem != null)
-                HelperFunctions.CollapseFilter(projectItem, solutionExplorer, filterName);
-            dte.SuppressUI = false;
-        }
-
-        private UIHierarchyItem FindProjectHierarchyItem(UIHierarchy hierarchy)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (hierarchy.UIHierarchyItems.Count == 0)
-                return null;
-
-            var solution = hierarchy.UIHierarchyItems.Item(1);
-            UIHierarchyItem projectItem = null;
-            foreach (UIHierarchyItem solutionItem in solution.UIHierarchyItems) {
-                projectItem = FindProjectHierarchyItem(solutionItem);
-                if (projectItem != null)
-                    break;
-            }
-            return projectItem;
-        }
-
-        private UIHierarchyItem FindProjectHierarchyItem(UIHierarchyItem root)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            UIHierarchyItem projectItem = null;
-            try {
-                if (root.Name == envPro.Name)
-                    return root;
-
-                foreach (UIHierarchyItem childItem in root.UIHierarchyItems) {
-                    projectItem = FindProjectHierarchyItem(childItem);
-                    if (projectItem != null)
-                        break;
-                }
-            } catch {
-            }
-            return projectItem;
         }
 
         /// <summary>

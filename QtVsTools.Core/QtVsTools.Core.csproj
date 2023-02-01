@@ -139,7 +139,6 @@
     <Compile Include="MsBuildProject.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="OutputWindowPane.cs" />
-    <Compile Include="ProjectExporter.cs" />
     <Compile Include="ProjectImporter.cs" />
     <Compile Include="ProjectMacros.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">

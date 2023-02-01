@@ -182,18 +182,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public static Project ProjectFromSolution(DTE dteObject, string fullName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            fullName = new FileInfo(fullName).FullName;
-            foreach (var p in ProjectsInSolution(dteObject)) {
-                if (p.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
-                    return p;
-            }
-            return null;
-        }
-
         /// <summary>
         /// Returns the normalized file path of a given file.
         /// </summary>
@@ -238,54 +226,6 @@ namespace QtVsTools.Core
                 return true;
             return path.StartsWith("\\", StringComparison.OrdinalIgnoreCase)
                 || path.StartsWith("/", StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Reads lines from a .pro file that is opened with a StreamReader
-        /// and concatenates strings that end with a backslash.
-        /// </summary>
-        /// <param name="streamReader"></param>
-        /// <returns>the composite string</returns>
-        private static string ReadProFileLine(StreamReader streamReader)
-        {
-            var line = streamReader.ReadLine();
-            if (line == null)
-                return null;
-
-            line = line.TrimEnd(' ', '\t');
-            while (line.EndsWith("\\", StringComparison.OrdinalIgnoreCase)) {
-                line = line.Remove(line.Length - 1);
-                var appendix = streamReader.ReadLine();
-                if (appendix != null)
-                    line += appendix.TrimEnd(' ', '\t');
-            }
-            return line;
-        }
-
-        /// <summary>
-        /// Reads a .pro file and returns true if it is a subdirs template.
-        /// </summary>
-        /// <param name="profile">full name of .pro file to read</param>
-        /// <returns>true if this is a subdirs file</returns>
-        public static bool IsSubDirsFile(string profile)
-        {
-            StreamReader sr = null;
-            try {
-                sr = new StreamReader(profile);
-
-                var line = string.Empty;
-                while ((line = ReadProFileLine(sr)) != null) {
-                    line = line.Replace(" ", string.Empty).Replace("\t", string.Empty);
-                    if (line.StartsWith("TEMPLATE", StringComparison.Ordinal))
-                        return line.StartsWith("TEMPLATE=subdirs", StringComparison.Ordinal);
-                }
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(e);
-            } finally {
-                if (sr != null)
-                    sr.Dispose();
-            }
-            return false;
         }
 
         /// <summary>
@@ -678,50 +618,6 @@ namespace QtVsTools.Core
             return false;
         }
 
-        public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy, string nodeToCollapseFilter)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (string.IsNullOrEmpty(nodeToCollapseFilter))
-                return;
-
-            foreach (UIHierarchyItem innerItem in item.UIHierarchyItems) {
-                if (innerItem.Name == nodeToCollapseFilter)
-                    CollapseFilter(innerItem, hierarchy);
-                else if (innerItem.UIHierarchyItems.Count > 0)
-                    CollapseFilter(innerItem, hierarchy, nodeToCollapseFilter);
-            }
-        }
-
-        public static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var subItems = item.UIHierarchyItems;
-            if (subItems != null) {
-                foreach (UIHierarchyItem innerItem in subItems) {
-                    if (innerItem.UIHierarchyItems.Count > 0) {
-                        CollapseFilter(innerItem, hierarchy);
-
-                        if (innerItem.UIHierarchyItems.Expanded) {
-                            innerItem.UIHierarchyItems.Expanded = false;
-                            if (innerItem.UIHierarchyItems.Expanded) {
-                                innerItem.Select(vsUISelectionType.vsUISelectionTypeSelect);
-                                hierarchy.DoDefaultAction();
-                            }
-                        }
-                    }
-                }
-            }
-            if (item.UIHierarchyItems.Expanded) {
-                item.UIHierarchyItems.Expanded = false;
-                if (item.UIHierarchyItems.Expanded) {
-                    item.Select(vsUISelectionType.vsUISelectionTypeSelect);
-                    hierarchy.DoDefaultAction();
-                }
-            }
-        }
-
         // returns true if some exception occurs
         public static bool IsGenerated(VCFile vcfile)
         {
@@ -815,24 +711,6 @@ namespace QtVsTools.Core
             }
 
             return fileList;
-        }
-
-        /// <summary>
-        /// Removes a file reference from the project and moves the file to the "Deleted" folder.
-        /// </summary>
-        /// <param name="vcpro"></param>
-        /// <param name="fileName"></param>
-        public static void RemoveFileInProject(VCProject vcpro, string fileName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            fileName = new FileInfo(fileName).FullName;
-            foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
-                if (vcfile.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase)) {
-                    vcpro.RemoveFile(vcfile);
-                    QtProject.Create(vcpro)?.MoveFileToDeletedFolder(vcfile);
-                }
-            }
         }
 
         public static Project GetSelectedProject(DTE dteObject)

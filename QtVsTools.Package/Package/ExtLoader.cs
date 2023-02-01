@@ -118,23 +118,23 @@ namespace QtVsTools
             if (qmake.ReadFile(priFileInfo.FullName)) {
                 var priFiles = ResolveFilesFromQMake(qmake.SourceFiles, project, priFileInfo.DirectoryName);
                 var projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles);
-                projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-                ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.SourceFiles());
+                projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
+                ProjectImporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.SourceFiles());
 
                 priFiles = ResolveFilesFromQMake(qmake.HeaderFiles, project, priFileInfo.DirectoryName);
                 projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles);
-                projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-                ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.HeaderFiles());
+                projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
+                ProjectImporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.HeaderFiles());
 
                 priFiles = ResolveFilesFromQMake(qmake.FormFiles, project, priFileInfo.DirectoryName);
                 projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles);
-                projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-                ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.FormFiles());
+                projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
+                ProjectImporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.FormFiles());
 
                 priFiles = ResolveFilesFromQMake(qmake.ResourceFiles, project, priFileInfo.DirectoryName);
                 projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_Resources);
-                projFiles = ProjectExporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
-                ProjectExporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.ResourceFiles());
+                projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, vcproj.ProjectDirectory);
+                ProjectImporter.SyncIncludeFiles(vcproj, priFiles, projFiles, project.DTE, qmake.IsFlat, Filters.ResourceFiles());
             } else {
                 Messages.Print("--- (Importing .pri file) file: "
                     + priFileInfo + " could not be read.");
