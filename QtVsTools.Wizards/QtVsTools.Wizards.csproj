@@ -7,13 +7,14 @@
 -->
 <Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Sets property TargetFrameworkVersion and LangVersion -->
+  <Import Project="$(SolutionDir)\targetframework.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTools.Wizards</RootNamespace>
     <AssemblyName>QtVsTools.Wizards</AssemblyName>
     <ProjectGuid>{8DF0A4C4-A32D-44A4-9DA4-41A6BCA80B44}</ProjectGuid>

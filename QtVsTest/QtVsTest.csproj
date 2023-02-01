@@ -16,13 +16,14 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Sets property TargetFrameworkVersion and LangVersion -->
+  <Import Project="$(SolutionDir)\targetframework.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTest</RootNamespace>
     <AssemblyName>QtVsTest</AssemblyName>
     <ProjectGuid>{48A50432-6BDF-4DE2-A3AD-3A237D31E49D}</ProjectGuid>

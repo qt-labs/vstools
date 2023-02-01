@@ -14,6 +14,8 @@
     <ApplicationIcon>dialogbuttonbottom.ico</ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Sets property TargetFrameworkVersion and LangVersion -->
+  <Import Project="$(SolutionDir)\targetframework.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -23,7 +25,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DialogButtonBottom</RootNamespace>
     <AssemblyName>DialogButtonBottom</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
