@@ -74,17 +74,6 @@ namespace QtVsTools.Core
             return versionInfo;
         }
 
-        public static void Clear()
-        {
-            _cache.Clear();
-        }
-
-        readonly Dictionary<string, bool> _IsModuleAvailable;
-        public bool IsModuleAvailable(string module)
-        {
-            return _IsModuleAvailable?[module] ?? false;
-        }
-
         public string VC_MinimumVisualStudioVersion { get; }
         public string VC_ApplicationTypeRevision { get; }
         public string VC_WindowsTargetPlatformMinVersion { get; }
@@ -168,10 +157,6 @@ namespace QtVsTools.Core
                 var availableModules = msbuildProj.GetItems("ClInclude")
                     .Select(Path.GetFileNameWithoutExtension);
 
-                _IsModuleAvailable = modules.ToDictionary(
-                    mi => mi.proVarQT,
-                    mi => availableModules.Contains(mi.proVarQT));
-
                 VC_MinimumVisualStudioVersion =
                     msbuildProj.GetProperty("MinimumVisualStudioVersion");
                 VC_ApplicationTypeRevision =
@@ -196,20 +181,6 @@ namespace QtVsTools.Core
         }
 
         public string QMakeSpecDirectory => qmakeConf.QMakeSpecDirectory;
-
-        public bool IsStaticBuild()
-        {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
-            return qtConfig.BuildType == BuildType.Static;
-        }
-
-        public string LibInfix()
-        {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
-            return qtConfig.LibInfix;
-        }
 
         public string Namespace()
         {

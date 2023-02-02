@@ -41,7 +41,6 @@ namespace QtVsTools.Core
         public List<string> AdditionalLibrariesDebug = new List<string>();
         public List<string> IncludePath = new List<string>();
         public string proVarQT;
-        public string proVarCONFIG;
         private string majorVersion;
 
         public string LibRelease =>
@@ -61,38 +60,5 @@ namespace QtVsTools.Core
         }
 
         public int Id { get; } = -1;
-
-        public List<string> GetIncludePath()
-        {
-            return IncludePath;
-        }
-
-        public List<string> GetLibs(bool isDebugCfg, VersionInformation vi)
-        {
-            return GetLibs(isDebugCfg, vi.IsStaticBuild(), vi.LibInfix());
-        }
-
-        public List<string> GetLibs(bool isDebugCfg, bool isStaticBuild, string libInfix)
-        {
-            // TODO: isStaticBuild is never used.
-            var libs = new List<string>();
-            var libName = LibraryPrefix;
-            if (libName.StartsWith("Qt", StringComparison.Ordinal))
-                libName = "Qt" + majorVersion + libName.Substring(2);
-            libName += libInfix;
-            if (isDebugCfg)
-                libName += "d";
-            libName += ".lib";
-            libs.Add(libName);
-            libs.AddRange(GetAdditionalLibs(isDebugCfg));
-            return libs;
-        }
-
-        private List<string> GetAdditionalLibs(bool isDebugCfg)
-        {
-            if (isDebugCfg && AdditionalLibrariesDebug.Count > 0)
-                return AdditionalLibrariesDebug;
-            return AdditionalLibraries;
-        }
     }
 }

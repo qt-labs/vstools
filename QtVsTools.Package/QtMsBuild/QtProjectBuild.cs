@@ -155,20 +155,6 @@ namespace QtVsTools.QtMsBuild
                 .Forget();
         }
 
-        public static void SetOutdated(
-            EnvDTE.Project project,
-            string projectPath,
-            string configName,
-            LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
-        {
-            if (project == null)
-                throw new ArgumentException("Project cannot be null.");
-            if (configName == null)
-                throw new ArgumentException("Configuration name cannot be null.");
-
-            _ = Task.Run(() => SetOutdatedAsync(project, projectPath, configName, verbosity));
-        }
-
         public static async Task SetOutdatedAsync(
             EnvDTE.Project project,
             string projectPath,

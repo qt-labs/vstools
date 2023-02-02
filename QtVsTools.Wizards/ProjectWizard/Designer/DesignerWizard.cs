@@ -35,7 +35,6 @@ using EnvDTE;
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Core;
-    using Legacy = Core.Legacy;
     using QtVsTools.Common;
     using Wizards.Common;
 

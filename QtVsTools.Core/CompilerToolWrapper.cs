@@ -176,73 +176,6 @@ namespace QtVsTools.Core
             }
         }
 
-        /// <summary>
-        /// Adds a single preprocessor definition.
-        /// </summary>
-        /// <param name="value"></param>
-        public void AddPreprocessorDefinition(string value)
-        {
-            var preprocessorDefs = GetPreprocessorDefinitions();
-            if (preprocessorDefs != null) {
-                var definesArray = preprocessorDefs.Split(new[] { ';', ',' },
-                    StringSplitOptions.RemoveEmptyEntries);
-                var definesList = new List<string>(definesArray);
-                if (definesList.Contains(value))
-                    return;
-                if (preprocessorDefs.Length > 0
-                    && !preprocessorDefs.EndsWith(";", StringComparison.Ordinal)
-                    && !value.StartsWith(";", StringComparison.Ordinal)) {
-                    preprocessorDefs += ";";
-                }
-            }
-            preprocessorDefs += value;
-            SetPreprocessorDefinitions(preprocessorDefs);
-        }
-
-        /// <summary>
-        /// Removes a single preprocessor definition.
-        /// </summary>
-        /// <param name="value"></param>
-        public void RemovePreprocessorDefinition(string value)
-        {
-            var preprocessorDefs = GetPreprocessorDefinitions();
-            if (preprocessorDefs == null)
-                return;
-
-            var definesArray = preprocessorDefs.Split(new[] { ';', ',' },
-                StringSplitOptions.RemoveEmptyEntries);
-            var definesList = new List<string>(definesArray);
-            if (!definesList.Remove(value))
-                return;
-            preprocessorDefs = "";
-            var firstIteration = true;
-            foreach (var define in definesList) {
-                if (firstIteration)
-                    firstIteration = false;
-                else
-                    preprocessorDefs += ';';
-                preprocessorDefs += define;
-            }
-            NormalizePreprocessorDefinitions(ref preprocessorDefs);
-            SetPreprocessorDefinitions(preprocessorDefs);
-        }
-
-        private static void NormalizePreprocessorDefinitions(ref string preprocessorDefs)
-        {
-            var idx = 0;
-            while ((idx = preprocessorDefs.IndexOf(' ', idx)) != -1)
-                preprocessorDefs = preprocessorDefs.Remove(idx, 1);
-
-            preprocessorDefs = preprocessorDefs.Replace(',', ';');
-
-            idx = 0;
-            while ((idx = preprocessorDefs.IndexOf(";;", idx, StringComparison.Ordinal)) != -1)
-                preprocessorDefs = preprocessorDefs.Remove(idx, 1);
-
-            if (preprocessorDefs.EndsWith(";", StringComparison.Ordinal))
-                preprocessorDefs = preprocessorDefs.Remove(preprocessorDefs.Length - 1);
-        }
-
         public void SetPreprocessorDefinitions(string value)
         {
             if (compilerTool != null)
@@ -319,31 +252,6 @@ namespace QtVsTools.Core
             if (obj == null)
                 return pchOption.pchNone;
             return (pchOption)obj;
-        }
-
-        public runtimeLibraryOption RuntimeLibrary
-        {
-            get
-            {
-                if (compilerTool != null)
-                    return compilerTool.RuntimeLibrary;
-
-                var obj = compilerType.InvokeMember("RuntimeLibrary", BindingFlags.GetProperty,
-                    null, compilerObj, null);
-                if (obj == null)
-                    return runtimeLibraryOption.rtMultiThreaded;
-                return (runtimeLibraryOption)obj;
-            }
-
-            set
-            {
-                if (compilerTool == null) {
-                    compilerType.InvokeMember("RuntimeLibrary", BindingFlags.SetProperty,
-                        null, compilerObj, new object[] { value });
-                } else {
-                    compilerTool.RuntimeLibrary = value;
-                }
-            }
         }
 
         public void SetUsePrecompiledHeader(pchOption value)

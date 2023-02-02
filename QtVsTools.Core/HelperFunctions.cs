@@ -584,11 +584,6 @@ namespace QtVsTools.Core
             return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
         }
 
-        public static string ChangePathFormat(string path)
-        {
-            return path.Replace('\\', '/');
-        }
-
         public static string RemoveFileNameExtension(FileInfo fi)
         {
             var lastIndex = fi.Name.LastIndexOf(fi.Extension, StringComparison.Ordinal);
@@ -798,17 +793,6 @@ namespace QtVsTools.Core
             }
             files[items.Count] = null;
             return files;
-        }
-
-        public static Image GetSharedImage(string name)
-        {
-            Image image = null;
-            var a = Assembly.GetExecutingAssembly();
-            using (var imgStream = a.GetManifestResourceStream(name)) {
-                if (imgStream != null)
-                    image = Image.FromStream(imgStream);
-            }
-            return image;
         }
 
         public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)

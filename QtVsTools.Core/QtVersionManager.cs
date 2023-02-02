@@ -90,12 +90,6 @@ namespace QtVsTools.Core
             return vi;
         }
 
-        public VersionInformation GetVersionInfo(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetVersionInfo(GetProjectQtVersion(project));
-        }
-
         public string[] GetVersions()
         {
             return GetVersions(Registry.CurrentUser);

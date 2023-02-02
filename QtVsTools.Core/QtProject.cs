@@ -32,7 +32,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Xml;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -322,64 +321,6 @@ namespace QtVsTools.Core
             string propName)
         {
             return vcConfig.GetEvaluatedPropertyValue(propName);
-        }
-
-        public void UpdateModules(VersionInformation oldVersion, VersionInformation newVersion)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-
-                if (linker != null) {
-                    if (oldVersion == null) {
-                        var linkerWrapper = new LinkerToolWrapper(linker);
-                        var additionalDependencies = linkerWrapper.AdditionalDependencies;
-
-                        var libsDesktop = new List<string>();
-                        foreach (var module in QtModules.Instance.GetAvailableModules(newVersion.qtMajor)) {
-                            if (HasModule(module.Id))
-                                libsDesktop.AddRange(module.AdditionalLibraries);
-                        }
-                        var libsToAdd = libsDesktop;
-
-                        var changed = false;
-                        foreach (var libToAdd in libsToAdd) {
-                            if (!additionalDependencies.Contains(libToAdd)) {
-                                additionalDependencies.Add(libToAdd);
-                                changed = true;
-                            }
-                        }
-                        if (changed)
-                            linkerWrapper.AdditionalDependencies = additionalDependencies;
-                    }
-
-                    if (newVersion.qtMajor >= 5) {
-                        var compiler = CompilerToolWrapper.Create(config);
-                        if (compiler != null)
-                            compiler.RemovePreprocessorDefinition("QT_DLL");
-                        continue;
-                    }
-
-                    if (oldVersion == null || newVersion.IsStaticBuild() != oldVersion.IsStaticBuild()) {
-                        var compiler = CompilerToolWrapper.Create(config);
-                        if (newVersion.IsStaticBuild()) {
-                            if (compiler != null)
-                                compiler.RemovePreprocessorDefinition("QT_DLL");
-                        } else {
-                            if (compiler != null)
-                                compiler.AddPreprocessorDefinition("QT_DLL");
-                        }
-                    }
-                }
-            }
-        }
-
-        // TODO: remove once all callers are moved into Legacy namespace
-        public bool HasModule(int id)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return Legacy.QtProject.HasModule(envPro, id);
         }
 
         public void AddUic4BuildStepMsBuild(
@@ -1152,46 +1093,6 @@ namespace QtVsTools.Core
             return false;
         }
 
-        public void RefreshRccSteps()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Messages.Print("\r\n=== Update rcc steps ===");
-            var files = GetResourceFiles();
-
-            var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (vcFilter != null) {
-                var filterFiles = GetAllFilesFromFilter(vcFilter);
-                var filesToDelete = new List<VCFile>();
-                foreach (VCFile rmFile in filterFiles) {
-                    if (rmFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase))
-                        filesToDelete.Add(rmFile);
-                }
-                foreach (var rmFile in filesToDelete) {
-                    RemoveFileFromFilter(rmFile, vcFilter);
-                    HelperFunctions.DeleteEmptyParentDirs(rmFile);
-                }
-            }
-
-            qtMsBuild.BeginSetItemProperties();
-            foreach (var file in files) {
-                Messages.Print("Update rcc step for " + file.Name + ".");
-                var options = new RccOptions(envPro, file);
-                UpdateRccStep(file, options);
-            }
-            qtMsBuild.EndSetItemProperties();
-
-            Messages.Print("\r\n=== " + files.Count + " rcc steps updated. ===\r\n");
-        }
-
-        public void RefreshRccSteps(string oldRccDir)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            RefreshRccSteps();
-            UpdateCompilerIncludePaths(oldRccDir, QtVSIPSettings.GetRccDirectory(envPro));
-        }
-
         public void UpdateRccStepMsBuild(
             VCFileConfiguration vfc,
             RccOptions rccOpts,
@@ -1542,17 +1443,6 @@ namespace QtVsTools.Core
             } catch {
                 throw new QtVSException(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
             }
-        }
-
-        public List<VCFile> GetResourceFiles()
-        {
-            var qrcFiles = new List<VCFile>();
-
-            foreach (VCFile f in (IVCCollection)VCProject.Files) {
-                if (HelperFunctions.IsQrcFile(f.Name))
-                    qrcFiles.Add(f);
-            }
-            return qrcFiles;
         }
 
         /// <summary>
@@ -1935,45 +1825,6 @@ namespace QtVsTools.Core
         {
             path = HelperFunctions.NormalizeRelativeFilePath(path);
             return path.ToLower();
-        }
-
-        public void UpdateUicSteps(string oldUicDir, bool update_inc_path)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Messages.Print("\r\n=== Update uic steps ===");
-            var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (vcFilter != null) {
-                var filterFiles = (IVCCollection)vcFilter.Files;
-                for (var i = filterFiles.Count; i > 0; i--) {
-                    var file = (VCFile)filterFiles.Item(i);
-                    if (file.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase)) {
-                        RemoveFileFromFilter(file, vcFilter);
-                        HelperFunctions.DeleteEmptyParentDirs(file);
-                    }
-                }
-            }
-
-            var updatedFiles = 0;
-            var j = 0;
-
-            var files = new VCFile[((IVCCollection)vcPro.Files).Count];
-            foreach (VCFile file in (IVCCollection)vcPro.Files)
-                files[j++] = file;
-
-            qtMsBuild.BeginSetItemProperties();
-            foreach (var file in files) {
-                if (HelperFunctions.IsUicFile(file.Name)) {
-                    AddUic4BuildStep(file);
-                    Messages.Print("Update uic step for " + file.Name + ".");
-                    ++updatedFiles;
-                }
-            }
-            qtMsBuild.EndSetItemProperties();
-            if (update_inc_path)
-                UpdateCompilerIncludePaths(oldUicDir, QtVSIPSettings.GetUicDirectory(envPro));
-
-            Messages.Print("\r\n=== " + updatedFiles + " uic steps updated. ===\r\n");
         }
 
         public bool UsesPrecompiledHeaders()
@@ -2447,36 +2298,6 @@ namespace QtVsTools.Core
             CleanupFilter(vcFilter);
         }
 
-        private void Clean()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var solutionConfigs = envPro.DTE.Solution.SolutionBuild.SolutionConfigurations;
-            var backup = new List<KeyValuePair<SolutionContext, bool>>();
-            foreach (SolutionConfiguration config in solutionConfigs) {
-                var solutionContexts = config.SolutionContexts;
-                if (solutionContexts == null)
-                    continue;
-
-                foreach (SolutionContext context in solutionContexts) {
-                    backup.Add(new KeyValuePair<SolutionContext, bool>(context, context.ShouldBuild));
-                    if (envPro.FullName.Contains(context.ProjectName)
-                        && context.PlatformName == envPro.ConfigurationManager.ActiveConfiguration.PlatformName)
-                        context.ShouldBuild = true;
-                    else
-                        context.ShouldBuild = false;
-                }
-            }
-            try {
-                envPro.DTE.Solution.SolutionBuild.Clean(true);
-            } catch (System.Runtime.InteropServices.COMException) {
-                // TODO: Implement some logging mechanism for exceptions.
-            }
-
-            foreach (var item in backup)
-                item.Key.ShouldBuild = item.Value;
-        }
-
         private void CleanupFilter(VCFilter filter)
         {
             var subFilters = filter.Filters as IVCCollection;
@@ -2501,73 +2322,6 @@ namespace QtVsTools.Core
                 if (!filterOrFileFound)
                     filter.RemoveFilter(subFilter);
             }
-        }
-
-        /// <summary>
-        /// Changes the Qt version of this project.
-        /// </summary>
-        /// <param name="oldVersion">the current Qt version</param>
-        /// <param name="newVersion">the new Qt version we want to change to</param>
-        /// <param name="newProjectCreated">is set to true if a new Project object has been created</param>
-        /// <returns>true, if the operation performed successfully</returns>
-        public bool ChangeQtVersion(string oldVersion, string newVersion, ref bool newProjectCreated)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            newProjectCreated = false;
-            var versionManager = QtVersionManager.The();
-            var viNew = versionManager.GetVersionInfo(newVersion);
-            if (viNew == null) {
-                Messages.DisplayErrorMessage(SR.GetString("CannotChangeQtVersion"));
-                return false;
-            }
-            string vsPlatformNameNew = viNew.GetVSPlatformName();
-
-            var viOld = versionManager.GetVersionInfo(oldVersion);
-            string vsPlatformNameOld = null;
-            if (viOld != null)
-                vsPlatformNameOld = viOld.GetVSPlatformName();
-
-            var refreshMocSteps = (vsPlatformNameNew != vsPlatformNameOld);
-            var platformChanged = (vsPlatformNameNew != vsPlatformNameOld);
-
-            try {
-                if (platformChanged) {
-                    if (!SelectSolutionPlatform(vsPlatformNameNew) || !HasPlatform(vsPlatformNameNew)) {
-                        CreatePlatform(vsPlatformNameOld, vsPlatformNameNew, viOld, viNew, ref newProjectCreated);
-                        refreshMocSteps = false;
-                        UpdateMocSteps(QtVSIPSettings.GetMocDirectory(envPro));
-                    }
-                }
-                var configManager = envPro.ConfigurationManager;
-                if (configManager.ActiveConfiguration.PlatformName != vsPlatformNameNew) {
-                    var projectName = envPro.FullName;
-                    envPro.Save(null);
-                    dte.Solution.Remove(envPro);
-                    envPro = dte.Solution.AddFromFile(projectName, false);
-                    dte = envPro.DTE;
-                    vcPro = envPro.Object as VCProject;
-                }
-            } catch {
-                Messages.DisplayErrorMessage(SR.GetString("CannotChangeQtVersion"));
-                return false;
-            }
-
-            // We have to delete the generated files because of major
-            // differences between the platforms or Qt-Versions.
-            if (platformChanged || viOld.qtPatch != viNew.qtPatch
-                || viOld.qtMinor != viNew.qtMinor || viOld.qtMajor != viNew.qtMajor) {
-                DeleteGeneratedFiles();
-                Clean();
-            }
-
-            if (refreshMocSteps)
-                RefreshMocSteps();
-
-            SetQtEnvironment(newVersion);
-            UpdateModules(viOld, viNew);
-            versionManager.SaveProjectQtVersion(envPro, newVersion, vsPlatformNameNew);
-            return true;
         }
 
         public bool HasPlatform(string platformName)
@@ -2663,35 +2417,6 @@ namespace QtVsTools.Core
 
             linker.SubSystem = subSystemOption.subSystemWindows;
             SetTargetMachine(linker, viNew);
-        }
-
-        private void DeleteGeneratedFiles()
-        {
-            var genFilter = Filters.GeneratedFiles();
-            var genVCFilter = FindFilterFromGuid(genFilter.UniqueIdentifier);
-            if (genVCFilter == null)
-                return;
-
-            if (DeleteFilesFromFilter(genVCFilter))
-                Messages.Print(SR.GetString("DeleteGeneratedFilesError"));
-        }
-
-        private bool DeleteFilesFromFilter(VCFilter filter)
-        {
-            var error = false;
-            foreach (VCFile f in filter.Files as IVCCollection) {
-                try {
-                    var fi = new FileInfo(f.FullPath);
-                    if (fi.Exists && fi.Extension != ".cbt")
-                        fi.Delete();
-                    HelperFunctions.DeleteEmptyParentDirs(fi.Directory.ToString());
-                } catch {
-                    error = true;
-                }
-            }
-            foreach (VCFilter filt in filter.Filters as IVCCollection)
-                error |= DeleteFilesFromFilter(filt);
-            return error;
         }
 
         public void RemoveGeneratedFiles(string fileName)

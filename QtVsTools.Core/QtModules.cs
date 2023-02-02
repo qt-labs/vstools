@@ -44,18 +44,6 @@ namespace QtVsTools.Core
         private readonly Dictionary<int, QtModule> qt5modules = new Dictionary<int, QtModule>();
         private readonly Dictionary<int, QtModule> qt6modules = new Dictionary<int, QtModule>();
 
-        public QtModule Module(int id, uint major)
-        {
-            QtModule module = null;
-            if (major < 6)
-                qt5modules.TryGetValue(id, out module);
-            if (major == 6)
-                qt6modules.TryGetValue(id, out module);
-            if (major > 6)
-                throw new QtVSException("Unsupported Qt version.");
-            return module;
-        }
-
         public List<QtModule> GetAvailableModules(uint major)
         {
             switch (major) {
@@ -110,7 +98,6 @@ namespace QtVsTools.Core
                 module.Selectable = ((string)xModule.Element("Selectable") == "true");
                 module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
                 module.proVarQT = (string)xModule.Element("proVarQT");
-                module.proVarCONFIG = (string)xModule.Element("proVarCONFIG");
                 module.IncludePath = xModule.Elements("IncludePath")
                     .Select(x => x.Value).ToList();
                 module.Defines = xModule.Elements("Defines")
