@@ -26,7 +26,6 @@
 **
 ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -116,12 +115,8 @@ namespace QtVsTools
                 }
 
                 if (qtPro.FormatVersion < Resources.qtMinFormatVersion_Settings) {
-                    Messages.Print("translation: Legacy project format");
-                    try {
-                        Legacy.Translation.Run(buildAction, qtPro, selectedFiles);
-                    } catch (Exception exception) {
-                        exception.Log();
-                    }
+                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                        Notifications.UpdateProjectFormat.Show();
                     return;
                 }
 
