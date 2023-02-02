@@ -71,8 +71,7 @@ namespace QtVsTools
             lUpdateOnSolutionId = 0x0111,
             lReleaseOnSolutionId = 0x0112,
             SolutionConvertToQtMsBuild = 0x0130,
-            SolutionEnableProjectTracking = 0x1130,
-            ChangeSolutionQtVersionId = 0x0113
+            SolutionEnableProjectTracking = 0x1130
         }
 
         /// <summary>
@@ -101,17 +100,6 @@ namespace QtVsTools
                 return;
 
             switch (command.CommandID.ID) {
-            case (int)CommandId.ChangeSolutionQtVersionId:
-                var projects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
-                foreach (var project in projects) {
-                    if (!HelperFunctions.IsVsToolsProject(project)
-                        && HelperFunctions.IsQtProject(project)) {
-                        command.Enabled = command.Visible = true;
-                        return;
-                    }
-                }
-                command.Enabled = command.Visible = false;
-                break;
             default:
                 command.Enabled = command.Visible = true;
                 break;
@@ -133,9 +121,6 @@ namespace QtVsTools
                 break;
             case CommandId.lReleaseOnSolutionId:
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
-                break;
-            case CommandId.ChangeSolutionQtVersionId:
-                Legacy.QtMenu.ShowFormChangeSolutionQtVersion();
                 break;
             case CommandId.SolutionConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();

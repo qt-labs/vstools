@@ -28,13 +28,11 @@
 
 using System.Windows.Forms;
 using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Legacy
 {
     using Core;
-    using Legacy = Core.Legacy;
 
     internal static class QtMenu
     {
@@ -46,64 +44,6 @@ namespace QtVsTools.Legacy
                 form.StartPosition = FormStartPosition.CenterParent;
                 form.ShowDialog(new MainWinWrapper(QtVsToolsPackage.Instance.Dte));
             }
-        }
-
-        internal static void ShowFormChangeProjectQtVersion()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-            if (!HelperFunctions.IsQtProject(pro))
-                return;
-
-            using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
-                if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
-                    var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
-                    HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
-                        .The().GetInstallPath(qtVersion) + @"\bin;$(PATH)", true);
-                }
-            }
-        }
-
-        internal static void ShowFormChangeSolutionQtVersion()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            string newQtVersion = null;
-            using (var formChangeQtVersion = new FormChangeQtVersion()) {
-                formChangeQtVersion.UpdateContent(ChangeFor.Solution);
-                if (formChangeQtVersion.ShowDialog() != DialogResult.OK)
-                    return;
-                newQtVersion = formChangeQtVersion.GetSelectedQtVersion();
-            }
-            if (newQtVersion == null)
-                return;
-
-            string platform = null;
-            var dte = QtVsToolsPackage.Instance.Dte;
-            try {
-                platform = (dte.Solution.SolutionBuild.ActiveConfiguration as SolutionConfiguration2)
-                    .PlatformName;
-            } catch { }
-            if (string.IsNullOrEmpty(platform))
-                return;
-
-            var vm = QtVersionManager.The();
-            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                if (HelperFunctions.IsVsToolsProject(project)) {
-                    var OldQtVersion = vm.GetProjectQtVersion(project, platform);
-                    if (OldQtVersion == null)
-                        OldQtVersion = vm.GetDefaultVersion();
-
-                    var created = false;
-                    var qtProject = QtProject.Create(project);
-                    if (Legacy.QtProject.PromptChangeQtVersion(project, OldQtVersion, newQtVersion))
-                        qtProject.ChangeQtVersion(OldQtVersion, newQtVersion, ref created);
-                }
-            }
-            Legacy.QtVersionManager.SaveSolutionQtVersion(dte.Solution, newQtVersion);
         }
     }
 }

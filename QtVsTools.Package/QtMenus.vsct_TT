@@ -284,15 +284,6 @@
                     <ToolTipText>Edit Qt settings of the current project</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="ChangeProjectQtVersionId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Change Project's Qt Version</ButtonText>
-                </Strings>
-            </Button>
 
             <Button guid="MainMenuGuid" id="QtOptionsId" priority="0x0100" type="Button">
                 <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
@@ -339,16 +330,6 @@
                 </Strings>
             </Button>
 
-            <Button guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId" priority="0x0100" type="Button">
-                <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Change Solution's Qt Version</ButtonText>
-                    <ToolTipText>Change the Qt version for this solution and all contained projects</ToolTipText>
-                </Strings>
-            </Button>
             <Button guid="SolutionContextMenuGuid" id="SolutionConvertToQtMsBuild" priority="0x0100" type="Button">
               <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
               <CommandFlag>DefaultDisabled</CommandFlag>
@@ -431,15 +412,6 @@
                     <ToolTipText>Edit Qt settings of the current project</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="ChangeProjectQtVersionProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
-                <CommandFlag>DefaultDisabled</CommandFlag>
-                <CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>
-                <Strings>
-                    <ButtonText>Change Project's Qt Version</ButtonText>
-                </Strings>
-            </Button>
 
             <!-- Endregion Project context menu button -->
 
@@ -514,7 +486,6 @@
             <IDSymbol name="OthersMenuGroup" value="0x1023" />
             <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="QtProjectSettingsId" value="0x0109" />
-            <IDSymbol name="ChangeProjectQtVersionId" value="0x0126" />
 
             <IDSymbol name="OptionsMenuGroup" value="0x1024" />
             <IDSymbol name="QtOptionsId" value="0x0110" />
@@ -536,7 +507,6 @@
             <IDSymbol name="lReleaseOnSolutionId" value="0x0112" />
 
             <IDSymbol name="SolutionContextQtMenuGroup" value="0x1126" />
-            <IDSymbol name="ChangeSolutionQtVersionId" value="0x0113" />
             <IDSymbol name="SolutionConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="SolutionEnableProjectTracking" value="0x1130" />
 
@@ -562,7 +532,6 @@
             <IDSymbol name="ProjectConvertToQtMsBuild" value="0x0130" />
             <IDSymbol name="ProjectRefreshIntelliSense" value="0x0131" />
             <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
-            <IDSymbol name="ChangeProjectQtVersionProjectId" value="0x0123" />
 
             <IDSymbol name="ProjectContextAddNewQtClassMenuGroup" value="0x1031" />
 
@@ -597,10 +566,6 @@
         <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
             context="UICONTEXT_SolutionHasSingleProject" />
         <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
-            context="UICONTEXT_SolutionHasMultipleProjects" />
-        <VisibilityItem guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId"
-            context="UICONTEXT_SolutionHasSingleProject" />
-        <VisibilityItem guid="SolutionContextMenuGuid" id="ChangeSolutionQtVersionId"
             context="UICONTEXT_SolutionHasMultipleProjects" />
     </VisibilityConstraints>
 

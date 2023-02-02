@@ -110,12 +110,6 @@ namespace QtVsTools.Core
             SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
         }
 
-        public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            SetDebuggingEnvironment(prj, envpath, overwrite, string.Empty);
-        }
-
         public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

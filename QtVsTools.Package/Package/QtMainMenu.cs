@@ -78,9 +78,8 @@ namespace QtVsTools
             ImportPriFileId = 0x0103,
             ConvertToQtMsBuild = 0x0130,
             QtProjectSettingsId = 0x0109,
-            ChangeProjectQtVersionId = 0x0126,
             QtOptionsId = 0x0110,
-            QtVersionsId = 0x0111,
+            QtVersionsId = 0x0111
         }
 
         /// <summary>
@@ -145,9 +144,6 @@ namespace QtVsTools
                     }
                 }
                 break;
-            case CommandId.ChangeProjectQtVersionId:
-                Legacy.QtMenu.ShowFormChangeProjectQtVersion();
-                break;
             case CommandId.QtOptionsId:
                 QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
                 break;
@@ -197,18 +193,6 @@ namespace QtVsTools
                         else if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusInvisible;
                     }
-                    command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                    command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
-                }
-                break;
-            case CommandId.ChangeProjectQtVersionId: {
-                    var status = vsCommandStatus.vsCommandStatusSupported;
-                    if ((project == null) || HelperFunctions.IsVsToolsProject(project))
-                        status |= vsCommandStatus.vsCommandStatusInvisible;
-                    else if (HelperFunctions.IsQtProject(project))
-                        status |= vsCommandStatus.vsCommandStatusEnabled;
-                    else
-                        status |= vsCommandStatus.vsCommandStatusInvisible;
                     command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
                     command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 }

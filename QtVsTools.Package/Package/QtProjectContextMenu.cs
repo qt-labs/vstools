@@ -75,8 +75,7 @@ namespace QtVsTools
             lReleaseOnProjectId = 0x0119,
             ProjectConvertToQtMsBuild = 0x0130,
             ProjectRefreshIntelliSense = 0x0131,
-            QtProjectSettingsProjectId = 0x0122,
-            ChangeProjectQtVersionProjectId = 0x0123
+            QtProjectSettingsProjectId = 0x0122
         }
 
         /// <summary>
@@ -128,9 +127,6 @@ namespace QtVsTools
                     }
                 }
                 break;
-            case CommandId.ChangeProjectQtVersionProjectId:
-                Legacy.QtMenu.ShowFormChangeProjectQtVersion();
-                break;
             case CommandId.ProjectConvertToQtMsBuild: {
                     QtMsBuildConverter.ProjectToQtMsBuild(
                         HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
@@ -181,14 +177,6 @@ namespace QtVsTools
                 command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
                 command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
                 break;
-            case CommandId.ChangeProjectQtVersionProjectId:
-                if (isQMakeProject)
-                    status |= vsCommandStatus.vsCommandStatusEnabled;
-                else
-                    status |= vsCommandStatus.vsCommandStatusInvisible;
-                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
-                break;
             case CommandId.ProjectConvertToQtMsBuild:
                 command.Visible = true;
                 command.Enabled = !isQtMsBuildEnabled;
@@ -201,10 +189,6 @@ namespace QtVsTools
             if (isQtProject) {
                 int projectVersion = QtProject.GetFormatVersion(project);
                 switch ((CommandId)command.CommandID.ID) {
-                case CommandId.ChangeProjectQtVersionProjectId:
-                    if (projectVersion >= Resources.qtMinFormatVersion_Settings)
-                        command.Visible = command.Enabled = false;
-                    break;
                 case CommandId.ProjectConvertToQtMsBuild:
                     if (projectVersion >= Resources.qtProjectFormatVersion) {
                         command.Visible = command.Enabled = false;

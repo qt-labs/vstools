@@ -316,19 +316,12 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
-    <Compile Include="Legacy\ChangeFor.cs" />
     <Compile Include="Package\DteEventsHandler.cs" />
     <Compile Include="Editors\Editor.cs" />
     <Compile Include="Editors\Editor.QtDesigner.cs" />
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
     <Compile Include="Package\ExtLoader.cs" />
-    <Compile Include="Legacy\FormChangeQtVersion.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Legacy\FormChangeQtVersion.Designer.cs">
-      <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
-    </Compile>
     <Compile Include="Legacy\FormProjectQtSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -495,9 +488,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <EmbeddedResource Include="Legacy\FormChangeQtVersion.resx">
-      <DependentUpon>FormChangeQtVersion.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Legacy\FormProjectQtSettings.resx">
       <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
