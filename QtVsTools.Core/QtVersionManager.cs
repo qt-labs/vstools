@@ -345,10 +345,6 @@ namespace QtVsTools.Core
                 ExpandEnvironmentVariablesInQtVersion(ref version);
                 return VerifyIfQtVersionExists(version) ? version : null;
             }
-
-            if (version == null)
-                version = Legacy.QtVersionManager.GetSolutionQtVersion(project.DTE.Solution);
-
             return version;
         }
 

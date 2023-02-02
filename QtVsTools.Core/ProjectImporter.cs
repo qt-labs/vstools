@@ -78,7 +78,6 @@ namespace QtVsTools.Core
                 if (CheckQtVersion(versionInfo)) {
                     dteObject.Solution.Open(vcInfo.FullName);
                     if (qtVersion is not null) {
-                        Legacy.QtVersionManager.SaveSolutionQtVersion(dteObject.Solution, qtVersion);
                         foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
                             var qtPro = QtProject.Create(prj);
