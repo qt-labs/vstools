@@ -117,24 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="OpenSolution" xml:space="preserve">
-    <value>Open Solution</value>
-  </data>
   <data name="ExportProject_EditProjectFileManually" xml:space="preserve">
     <value>qmake has generated a .vcproj file, but it needs to be converted.
 To do this you must open the .vcproj file manually.
 (Reason: qmake in Qt3 does not support generation of Visual Studio 2005 .vcproj files)</value>
-  </data>
-  <data name="ExportProject_ProjectOrSolutionCorrupt" xml:space="preserve">
-    <value>{0}
-(Maybe the .vcproj or .sln file is corrupt?)</value>
-  </data>
-  <data name="ExportProject_SelectQtProjectToAdd" xml:space="preserve">
-    <value>Select a Qt Project to Add to the Solution</value>
-  </data>
-  <data name="ExportProject_SubdirsProfileSolutionClose" xml:space="preserve">
-    <value>This seems to be a SUBDIRS .pro file. To open this file, the existing
-    solution needs to be closed (pending changes will be saved).</value>
   </data>
   <data name="HelperFunctions_CannotWriteEnvQTDIR" xml:space="preserve">
     <value>Cannot write environment variable QTDIR.</value>
@@ -168,18 +154,8 @@ To solve this problem:
   <data name="QtProject_CannotRemoveFile" xml:space="preserve">
     <value>Cannot remove file {0} from filter.</value>
   </data>
-  <data name="QtProject_DeletedFolderFullOrProteced" xml:space="preserve">
-    <value>1. Maybe your deleted folder is full.
-2. Or maybe it's write protected.</value>
-  </data>
   <data name="QtProject_CannotFindFilter" xml:space="preserve">
     <value>Cannot find filter.</value>
-  </data>
-  <data name="QtProject_ProjectCannotAddFilter" xml:space="preserve">
-    <value>Project cannot add filter {0}</value>
-  </data>
-  <data name="QtProject_ProjectCannotAddResourceFilter" xml:space="preserve">
-    <value>Cannot add a resource filter.</value>
   </data>
   <data name="QtProject_CannotAdjustWhitespaces" xml:space="preserve">
     <value>Cannot adjust whitespace or tabs in file (write).

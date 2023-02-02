@@ -1,39 +1,17 @@
-/****************************************************************************
-**
-** Copyright (C) 2022 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the Qt VS Tools.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************/
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Microsoft.VisualStudio.Shell;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
@@ -41,7 +19,9 @@ namespace QtVsTools.Core
     public class ProjectImporter
     {
         private readonly DTE dteObject;
-        const string projectFileExtension = ".vcxproj";
+
+        private const string ProjectFileExtension = ".vcxproj";
+        private const StringComparison OrdinalIgnoreCase = StringComparison.OrdinalIgnoreCase;
 
         public ProjectImporter(DTE dte)
         {
@@ -52,11 +32,13 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            FileDialog toOpen = new OpenFileDialog();
-            toOpen.FilterIndex = 1;
-            toOpen.CheckFileExists = true;
-            toOpen.Title = SR.GetString("ExportProject_SelectQtProjectToAdd");
-            toOpen.Filter = "Qt Project files (*.pro)|*.pro|All files (*.*)|*.*";
+            var toOpen = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                Filter = "Qt Project files (*.pro)|*.pro|All files (*.*)|*.*",
+                FilterIndex = 1,
+                Title = "Select a Qt Project to Add to the Solution"
+            };
 
             if (DialogResult.OK != toOpen.ShowDialog())
                 return;
@@ -64,10 +46,11 @@ namespace QtVsTools.Core
             var mainInfo = new FileInfo(toOpen.FileName);
             if (IsSubDirsFile(mainInfo.FullName)) {
                 // we use the safe way. Make the user close the existing solution manually
-                if ((!string.IsNullOrEmpty(dteObject.Solution.FullName))
-                    || (HelperFunctions.ProjectsInSolution(dteObject).Count > 0)) {
-                    if (MessageBox.Show(SR.GetString("ExportProject_SubdirsProfileSolutionClose"),
-                        SR.GetString("OpenSolution"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
+                if (!string.IsNullOrEmpty(dteObject.Solution.FullName)
+                    || HelperFunctions.ProjectsInSolution(dteObject).Count > 0) {
+                    if (MessageBox.Show("This seems to be a SUBDIRS .pro file. To open this file, "
+                        + "the existing solution needs to be closed (pending changes will be saved).",
+                        "Open Solution", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
                         == DialogResult.OK) {
                         dteObject.Solution.Close(true);
                     } else {
@@ -86,15 +69,15 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            var VCInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
-            if (null == VCInfo)
+            var vcInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
+            if (null == vcInfo)
                 return;
-            ImportQMakeSolution(VCInfo, versionInfo);
+            ImportQMakeSolution(vcInfo, versionInfo);
 
             try {
                 if (CheckQtVersion(versionInfo)) {
-                    dteObject.Solution.Open(VCInfo.FullName);
-                    if (qtVersion != null) {
+                    dteObject.Solution.Open(vcInfo.FullName);
+                    if (qtVersion is not null) {
                         Legacy.QtVersionManager.SaveSolutionQtVersion(dteObject.Solution, qtVersion);
                         foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
@@ -105,118 +88,118 @@ namespace QtVsTools.Core
                     }
                 }
 
-                Messages.Print("--- (Import): Finished opening " + VCInfo.Name);
+                Messages.Print($"--- (Import): Finished opening {vcInfo.Name}");
             } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
             }
         }
 
-        public void ImportProject(FileInfo mainInfo, string qtVersion)
+        private void ImportProject(FileInfo mainInfo, string qtVersion)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            var VCInfo = RunQmake(mainInfo, projectFileExtension, false, versionInfo);
-            if (null == VCInfo)
+            var vcInfo = RunQmake(mainInfo, ProjectFileExtension, false, versionInfo);
+            if (null == vcInfo)
                 return;
 
-            ImportQMakeProject(VCInfo, versionInfo);
+            ImportQMakeProject(vcInfo, versionInfo);
 
             try {
-                if (CheckQtVersion(versionInfo)) {
-                    // no need to add the project again if it's already there...
-                    var fullName = VCInfo.FullName;
-                    var pro = ProjectFromSolution(dteObject, fullName);
-                    if (pro == null) {
-                        try {
-                            pro = dteObject.Solution.AddFromFile(fullName, false);
-                        } catch (Exception /*exception*/) {
-                            Messages.Print("--- (Import): Generated project could not be loaded.");
-                            Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
-                            return;
-                        }
-                        Messages.Print("--- (Import): Added " + VCInfo.Name + " to Solution");
-                    } else {
-                        Messages.Print("Project already in Solution");
+                if (!CheckQtVersion(versionInfo))
+                    return;
+                // no need to add the project again if it's already there...
+                var fullName = vcInfo.FullName;
+                var pro = ProjectFromSolution(dteObject, fullName);
+                if (pro is null) {
+                    try {
+                        pro = dteObject.Solution.AddFromFile(fullName);
+                    } catch (Exception /*exception*/) {
+                        Messages.Print("--- (Import): Generated project could not be loaded.");
+                        Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
+                        return;
                     }
-
-                    if (pro != null) {
-                        var qtPro = QtProject.Create(pro);
-                        qtPro.SetQtEnvironment();
-                        var platformName = versionInfo.GetVSPlatformName();
-
-                        if (qtVersion != null)
-                            QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
-
-                        if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
-                            var newProject = false;
-                            qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
-                            if (!qtPro.SelectSolutionPlatform(platformName))
-                                Messages.Print("Can't select the platform " + platformName + ".");
-                        }
-
-                        // figure out if the imported project is a plugin project
-                        var tmp = qtPro.Project.ConfigurationManager.ActiveConfiguration
-                            .ConfigurationName;
-                        var vcConfig = (qtPro.VCProject.Configurations as IVCCollection).Item(tmp)
-                            as VCConfiguration;
-                        var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
-                        if (!string.IsNullOrEmpty(def)
-                            && def.IndexOf("QT_PLUGIN", StringComparison.Ordinal) > -1) {
-                            QtProject.MarkAsQtPlugin(qtPro);
-                        }
-
-                        qtPro.SetQtEnvironment();
-                        ApplyPostImportSteps(dteObject, qtPro);
-                    }
+                    Messages.Print($"--- (Import): Added {vcInfo.Name} to Solution");
+                } else {
+                    Messages.Print("Project already in Solution");
                 }
+
+                if (pro is null)
+                    return;
+                var qtPro = QtProject.Create(pro);
+                qtPro.SetQtEnvironment();
+                var platformName = versionInfo.GetVSPlatformName();
+
+                if (qtVersion is not null)
+                    QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
+
+                if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
+                    var newProject = false;
+                    qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
+                    if (!qtPro.SelectSolutionPlatform(platformName))
+                        Messages.Print($"Can't select the platform {platformName}.");
+                }
+
+                // figure out if the imported project is a plugin project
+                var tmp = qtPro.Project.ConfigurationManager.ActiveConfiguration
+                    .ConfigurationName;
+                var vcConfig = (qtPro.VCProject.Configurations as IVCCollection)?.Item(tmp)
+                    as VCConfiguration;
+                var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
+                if (!string.IsNullOrEmpty(def)
+                    && def.IndexOf("QT_PLUGIN", OrdinalIgnoreCase) > -1) {
+                    QtProject.MarkAsQtPlugin(qtPro);
+                }
+
+                qtPro.SetQtEnvironment();
+                ApplyPostImportSteps(dteObject, qtPro);
             } catch (Exception e) {
-                Messages.DisplayCriticalErrorMessage(SR.GetString("ExportProject_ProjectOrSolutionCorrupt", e.ToString()));
+                Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
             }
         }
 
-        private void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
+        private static void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
-            foreach (var project in projects) {
-                var projectInfo = new FileInfo(project);
+            foreach (var projectInfo in projects.Select(project => new FileInfo(project)))
                 ImportQMakeProject(projectInfo, vi);
-            }
         }
 
-        private static List<string> ParseProjectsFromSolution(FileInfo solutionFile)
+        private static IEnumerable<string> ParseProjectsFromSolution(FileInfo solutionFile)
         {
-            var sr = solutionFile.OpenText();
-            var content = sr.ReadToEnd();
-            sr.Close();
+            string content;
+            using (var sr = solutionFile.OpenText()) {
+                content = sr.ReadToEnd();
+                sr.Close();
+            }
 
             var projects = new List<string>();
-            var index = content.IndexOf(projectFileExtension, StringComparison.Ordinal);
+            var index = content.IndexOf(ProjectFileExtension, OrdinalIgnoreCase);
             while (index != -1) {
                 var startIndex = content.LastIndexOf('\"', index, index) + 1;
                 var endIndex = content.IndexOf('\"', index);
                 projects.Add(content.Substring(startIndex, endIndex - startIndex));
                 content = content.Substring(endIndex);
-                index = content.IndexOf(projectFileExtension, StringComparison.Ordinal);
+                index = content.IndexOf(ProjectFileExtension, OrdinalIgnoreCase);
             }
             return projects;
         }
 
-        private void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
+        private static void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
             var xmlProject = MsBuildProject.Load(projectFile.FullName);
             xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
 
-            bool ok = xmlProject.AddQtMsBuildReferences();
+            var ok = xmlProject.AddQtMsBuildReferences();
             if (ok)
                 ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok) {
-                string versionWin10SDK = HelperFunctions.GetWindows10SDKVersion();
-                if (!string.IsNullOrEmpty(versionWin10SDK))
-                    ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10SDK);
+                var versionWin10Sdk = HelperFunctions.GetWindows10SDKVersion();
+                if (!string.IsNullOrEmpty(versionWin10Sdk))
+                    ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
             }
             if (ok)
                 ok = xmlProject.UpdateProjectFormatVersion();
@@ -256,36 +239,36 @@ namespace QtVsTools.Core
             var vcxproj = new FileInfo(mainInfo.DirectoryName + Path.DirectorySeparatorChar
                 + name + ext);
             if (vcxproj.Exists) {
-                var result = MessageBox.Show($@"{vcxproj.Name} already exists. Select 'OK' to " +
-                    "regenerate the file or 'Cancel' to quit importing the project.",
+                var result = MessageBox.Show($"{vcxproj.Name} already exists. Select 'OK' to "
+                    + "regenerate the file or 'Cancel' to quit importing the project.",
                     "Project file already exists.",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Cancel)
                     return null;
             }
 
-            Messages.Print("--- (Import): Generating new project of " + mainInfo.Name + " file");
+            Messages.Print($"--- (Import): Generating new project of {mainInfo.Name} file");
 
             var waitDialog = WaitDialog.Start("Open Qt Project File",
                 "Generating Visual Studio project...", delay: 2);
 
             var qmake = new QMakeImport(vi, mainInfo.FullName, recursiveRun: recursive, dte: dteObject);
-            int exitCode = qmake.Run(setVCVars: true);
+            var exitCode = qmake.Run(setVCVars: true);
 
             waitDialog.Stop();
 
-            if (exitCode == 0)
-                return vcxproj;
-            return null;
+            return exitCode == 0 ? vcxproj : null;
         }
 
         private static bool CheckQtVersion(VersionInformation vi)
         {
-            if (vi.qtMajor < 5) {
-                Messages.DisplayWarningMessage(SR.GetString("ExportProject_EditProjectFileManually"));
-                return false;
-            }
-            return true;
+            if (vi.qtMajor >= 5)
+                return true;
+            Messages.DisplayWarningMessage("QMake has generated a .vcproj file, but it needs "
+                + "to be converted. To do this you must open and edit the.vcproj file manually. "
+                + "(Reason: QMake in Qt versions prior Qt5 does not support proper generation of "
+                + "Visual Studio .vcxproj files)");
+            return false;
         }
 
         #region ProjectExporter
@@ -294,27 +277,21 @@ namespace QtVsTools.Core
         {
             var ret = new List<string>(files.Count);
             foreach (var file in files) {
-                FileInfo fi;
-                if (file.IndexOf(':') != 1)
-                    fi = new FileInfo(path + Path.DirectorySeparatorChar + file);
-                else
-                    fi = new FileInfo(file);
-
+                var fi = new FileInfo(file.IndexOf(':') != 1 ? Path.Combine(path ?? "", file) : file);
                 ret.Add(fi.FullName);
             }
             return ret;
         }
 
-        private static VCFilter BestMatch(string path, Hashtable pathFilterTable)
+        private static VCFilter BestMatch(string path, IDictionary pathFilterTable)
         {
             var bestMatch = ".";
-            var inPath = path;
-            if (inPath.StartsWith(".\\", StringComparison.Ordinal))
-                inPath = inPath.Substring(2);
+            if (path.StartsWith(".\\", OrdinalIgnoreCase))
+                path = path.Substring(2);
             foreach (string p in pathFilterTable.Keys) {
                 var best = 0;
-                for (var i = 0; i < inPath.Length; ++i) {
-                    if (i < p.Length && inPath[i] == p[i])
+                for (var i = 0; i < path.Length; ++i) {
+                    if (i < p.Length && path[i] == p[i])
                         ++best;
                     else
                         break;
@@ -325,97 +302,91 @@ namespace QtVsTools.Core
             return pathFilterTable[bestMatch] as VCFilter;
         }
 
-        private static void CollectFilters(VCFilter filter, string path, ref Hashtable filterPathTable,
-            ref Hashtable pathFilterTable)
+        private static void CollectFilters(VCFilter filter, string path,
+            ref Dictionary<VCFilter, string> filterPathTable,
+            ref Dictionary<string, VCFilter> pathFilterTable)
         {
-            var newPath = ".";
-            if (path != null)
-                newPath = path + Path.DirectorySeparatorChar + filter.Name;
-            newPath = newPath.ToLower().Trim();
-            newPath = Regex.Replace(newPath, @"\\+\.?\\+", "\\");
-            newPath = Regex.Replace(newPath, @"\\\.?$", "");
-            if (newPath.StartsWith(".\\", StringComparison.Ordinal))
-                newPath = newPath.Substring(2);
-            filterPathTable.Add(filter, newPath);
-            pathFilterTable.Add(newPath, filter);
+            path = path is null ? "." : Path.Combine(path, filter.Name);
+
+            path = path.ToUpperInvariant().Trim();
+            path = Regex.Replace(path, @"\\+\.?\\+", "\\");
+            path = Regex.Replace(path, @"\\\.?$", "");
+            if (path.StartsWith(".\\", OrdinalIgnoreCase))
+                path = path.Substring(2);
+            filterPathTable.Add(filter, path);
+            pathFilterTable.Add(path, filter);
             foreach (VCFilter f in (IVCCollection)filter.Filters)
-                CollectFilters(f, newPath, ref filterPathTable, ref pathFilterTable);
+                CollectFilters(f, path, ref filterPathTable, ref pathFilterTable);
         }
 
-        public static void SyncIncludeFiles(VCProject vcproj, List<string> priFiles,
-            List<string> projFiles, DTE dte, bool flat, FakeFilter fakeFilter)
+        public static void SyncIncludeFiles(VCProject vcProject, List<string> priFiles,
+            List<string> projFiles, bool flat, FakeFilter fakeFilter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var cmpPriFiles = new List<string>(priFiles.Count);
-            foreach (var s in priFiles)
-                cmpPriFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
+            cmpPriFiles.AddRange(priFiles.Select(s => HelperFunctions.NormalizeFilePath(s).ToUpperInvariant()));
             cmpPriFiles.Sort();
 
             var cmpProjFiles = new List<string>(projFiles.Count);
-            foreach (var s in projFiles)
-                cmpProjFiles.Add(HelperFunctions.NormalizeFilePath(s).ToLower());
+            cmpProjFiles.AddRange(projFiles.Select(s => HelperFunctions.NormalizeFilePath(s).ToUpperInvariant()));
 
-            var qtPro = QtProject.Create(vcproj);
-            var filterPathTable = new Hashtable(17);
-            var pathFilterTable = new Hashtable(17);
-            if (!flat && fakeFilter != null) {
+            var qtPro = QtProject.Create(vcProject);
+            var filterPathTable = new Dictionary<VCFilter, string>(17);
+            var pathFilterTable = new Dictionary<string, VCFilter>(17);
+            if (!flat && fakeFilter is not null) {
                 var rootFilter = qtPro.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
-                if (rootFilter == null)
+                if (rootFilter is null)
                     AddFilterToProject(qtPro, Filters.SourceFiles());
 
                 CollectFilters(rootFilter, null, ref filterPathTable, ref pathFilterTable);
             }
 
             // first check for new files
-            foreach (var file in cmpPriFiles) {
-                if (cmpProjFiles.IndexOf(file) > -1)
+            foreach (var file in cmpPriFiles.Where(file => cmpProjFiles.IndexOf(file) <= -1)) {
+                if (flat) {
+                    vcProject.AddFile(file);
+                    continue; // the file is not in the project
+                }
+
+                var path = HelperFunctions.GetRelativePath(vcProject.ProjectDirectory, file);
+                if (path.StartsWith(".\\", OrdinalIgnoreCase))
+                    path = path.Substring(2);
+
+                var i = path.LastIndexOf(Path.DirectorySeparatorChar);
+                path = i > -1 ? path.Substring(0, i) : ".";
+
+                if (pathFilterTable.ContainsKey(path)) {
+                    if (pathFilterTable[path] is { } vcFilter)
+                        vcFilter.AddFile(file);
+                    continue;
+                }
+
+                var filter = BestMatch(path, pathFilterTable);
+
+                var filterDir = filterPathTable[filter];
+                var name = path;
+                if (!name.StartsWith("..", OrdinalIgnoreCase) && name.StartsWith(filterDir, OrdinalIgnoreCase))
+                    name = name.Substring(filterDir.Length + 1);
+
+                if (filter.AddFilter(name) is not VCFilter newFilter)
                     continue;
 
-                if (flat) {
-                    vcproj.AddFile(file); // the file is not in the project
-                } else {
-                    var path = HelperFunctions.GetRelativePath(vcproj.ProjectDirectory, file);
-                    if (path.StartsWith(".\\", StringComparison.Ordinal))
-                        path = path.Substring(2);
-
-                    var i = path.LastIndexOf(Path.DirectorySeparatorChar);
-                    if (i > -1)
-                        path = path.Substring(0, i);
-                    else
-                        path = ".";
-
-                    if (pathFilterTable.Contains(path)) {
-                        var f = pathFilterTable[path] as VCFilter;
-                        f.AddFile(file);
-                        continue;
-                    }
-
-                    var filter = BestMatch(path, pathFilterTable);
-
-                    var filterDir = filterPathTable[filter] as string;
-                    var name = path;
-                    if (!name.StartsWith("..", StringComparison.Ordinal) && name.StartsWith(filterDir, StringComparison.Ordinal))
-                        name = name.Substring(filterDir.Length + 1);
-
-                    var newFilter = filter.AddFilter(name) as VCFilter;
-                    newFilter.AddFile(file);
-
-                    filterPathTable.Add(newFilter, path);
-                    pathFilterTable.Add(path, newFilter);
-                }
+                newFilter.AddFile(file);
+                filterPathTable.Add(newFilter, path);
+                pathFilterTable.Add(path, newFilter);
             }
 
             // then check for deleted files
             foreach (var file in cmpProjFiles) {
-                if (cmpPriFiles.IndexOf(file) == -1) {
-                    // the file is not in the pri file
-                    // (only removes it from the project, does not del. the file)
-                    var info = new FileInfo(file);
-                    RemoveFileInProject(qtPro, file);
-                    Messages.Print("--- (Importing .pri file) file: " + info.Name +
-                        " does not exist in .pri file, move to " + vcproj.ProjectDirectory + "Deleted");
-                }
+                if (cmpPriFiles.IndexOf(file) != -1)
+                    continue;
+                // the file is not in the pri file
+                // (only removes it from the project, does not del. the file)
+                var info = new FileInfo(file);
+                RemoveFileInProject(qtPro, file);
+                Messages.Print($"--- (Importing .pri file) file: {info.Name} does not exist in "
+                    + $".pri file, move to {vcProject.ProjectDirectory} Deleted");
             }
         }
 
@@ -429,7 +400,7 @@ namespace QtVsTools.Core
 
             fullName = new FileInfo(fullName).FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(dteObject)) {
-                if (p.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+                if (p.FullName.Equals(fullName, OrdinalIgnoreCase))
                     return p;
             }
             return null;
@@ -441,17 +412,17 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="streamReader"></param>
         /// <returns>the composite string</returns>
-        private static string ReadProFileLine(StreamReader streamReader)
+        private static string ReadProFileLine(TextReader streamReader)
         {
             var line = streamReader.ReadLine();
-            if (line == null)
+            if (line is null)
                 return null;
 
             line = line.TrimEnd(' ', '\t');
-            while (line.EndsWith("\\", StringComparison.OrdinalIgnoreCase)) {
+            while (line.EndsWith("\\", OrdinalIgnoreCase)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
-                if (appendix != null)
+                if (appendix is not null)
                     line += appendix.TrimEnd(' ', '\t');
             }
             return line;
@@ -468,8 +439,7 @@ namespace QtVsTools.Core
             try {
                 sr = new StreamReader(profile);
 
-                var line = string.Empty;
-                while ((line = ReadProFileLine(sr)) != null) {
+                while (ReadProFileLine(sr) is {} line) {
                     line = line.Replace(" ", string.Empty).Replace("\t", string.Empty);
                     if (line.StartsWith("TEMPLATE", StringComparison.Ordinal))
                         return line.StartsWith("TEMPLATE=subdirs", StringComparison.Ordinal);
@@ -477,8 +447,7 @@ namespace QtVsTools.Core
             } catch (Exception e) {
                 Messages.DisplayErrorMessage(e);
             } finally {
-                if (sr != null)
-                    sr.Dispose();
+                sr?.Dispose();
             }
             return false;
         }
@@ -503,28 +472,33 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var subItems = item.UIHierarchyItems;
-            if (subItems != null) {
+            if (subItems is not null) {
                 foreach (UIHierarchyItem innerItem in subItems) {
-                    if (innerItem.UIHierarchyItems.Count > 0) {
-                        CollapseFilter(innerItem, hierarchy);
+                    if (innerItem.UIHierarchyItems.Count <= 0)
+                        continue;
 
-                        if (innerItem.UIHierarchyItems.Expanded) {
-                            innerItem.UIHierarchyItems.Expanded = false;
-                            if (innerItem.UIHierarchyItems.Expanded) {
-                                innerItem.Select(vsUISelectionType.vsUISelectionTypeSelect);
-                                hierarchy.DoDefaultAction();
-                            }
-                        }
-                    }
-                }
-            }
-            if (item.UIHierarchyItems.Expanded) {
-                item.UIHierarchyItems.Expanded = false;
-                if (item.UIHierarchyItems.Expanded) {
-                    item.Select(vsUISelectionType.vsUISelectionTypeSelect);
+                    CollapseFilter(innerItem, hierarchy);
+                    if (!innerItem.UIHierarchyItems.Expanded)
+                        continue;
+
+                    innerItem.UIHierarchyItems.Expanded = false;
+                    if (!innerItem.UIHierarchyItems.Expanded)
+                        continue;
+
+                    innerItem.Select(vsUISelectionType.vsUISelectionTypeSelect);
                     hierarchy.DoDefaultAction();
                 }
             }
+
+            if (!item.UIHierarchyItems.Expanded)
+                return;
+
+            item.UIHierarchyItems.Expanded = false;
+            if (!item.UIHierarchyItems.Expanded)
+                return;
+
+            item.Select(vsUISelectionType.vsUISelectionTypeSelect);
+            hierarchy.DoDefaultAction();
         }
 
         /// <summary>
@@ -538,10 +512,10 @@ namespace QtVsTools.Core
 
             fileName = new FileInfo(fileName).FullName;
             foreach (VCFile vcFile in (IVCCollection)qtPro.VCProject.Files) {
-                if (vcFile.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase)) {
-                    qtPro.VCProject.RemoveFile(vcFile);
-                    MoveFileToDeletedFolder(qtPro.VCProject, vcFile);
-                }
+                if (!vcFile.FullPath.Equals(fileName, OrdinalIgnoreCase))
+                    continue;
+                qtPro.VCProject.RemoveFile(vcFile);
+                MoveFileToDeletedFolder(qtPro.VCProject, vcFile);
             }
         }
 
@@ -549,15 +523,15 @@ namespace QtVsTools.Core
 
         #region QtProject
 
-        private static void MoveFileToDeletedFolder(VCProject vcPro, VCFile vcfile)
+        private static void MoveFileToDeletedFolder(VCProject vcPro, VCFile vcFile)
         {
-            var srcFile = new FileInfo(vcfile.FullPath);
+            var srcFile = new FileInfo(vcFile.FullPath);
 
             if (!srcFile.Exists)
                 return;
 
             var destFolder = vcPro.ProjectDirectory + "\\Deleted\\";
-            var destName = destFolder + vcfile.Name.Replace(".", "_") + ".bak";
+            var destName = destFolder + vcFile.Name.Replace(".", "_") + ".bak";
             var fileNr = 0;
 
             try {
@@ -572,37 +546,37 @@ namespace QtVsTools.Core
 
                 srcFile.MoveTo(destName);
             } catch (Exception e) {
-                Messages.DisplayWarningMessage(e, SR.GetString("QtProject_DeletedFolderFullOrProteced"));
+                Messages.DisplayWarningMessage(e, "1. Maybe your deleted folder is full."
+                    + Environment.NewLine + "2. Or maybe it's write protected.");
             }
         }
 
-        private static VCFilter AddFilterToProject(QtProject project, FakeFilter filter)
+        private static void AddFilterToProject(QtProject project, FakeFilter fakeFilter)
         {
             try {
-                var vfilt = project.FindFilterFromGuid(filter.UniqueIdentifier);
-                if (vfilt == null) {
-                    if (!project.VCProject.CanAddFilter(filter.Name)) {
-                        vfilt = project.FindFilterFromName(filter.Name);
-                        if (vfilt == null)
-                            throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddFilter", filter.Name));
-                    } else {
-                        vfilt = (VCFilter)project.VCProject.AddFilter(filter.Name);
-                    }
+                var vcFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                if (vcFilter is not null)
+                    return;
 
-                    vfilt.UniqueIdentifier = filter.UniqueIdentifier;
-                    vfilt.Filter = filter.Filter;
-                    vfilt.ParseFiles = filter.ParseFiles;
+                if (!project.VCProject.CanAddFilter(fakeFilter.Name)) {
+                    vcFilter = project.FindFilterFromName(fakeFilter.Name);
+                    if (vcFilter is null)
+                        throw new QtVSException($"Project cannot add filter {fakeFilter.Name}.");
+                } else {
+                    vcFilter = (VCFilter)project.VCProject.AddFilter(fakeFilter.Name);
                 }
-                return vfilt;
+
+                vcFilter.UniqueIdentifier = fakeFilter.UniqueIdentifier;
+                vcFilter.Filter = fakeFilter.Filter;
+                vcFilter.ParseFiles = fakeFilter.ParseFiles;
             } catch {
-                throw new QtVSException(SR.GetString("QtProject_ProjectCannotAddResourceFilter"));
+                throw new QtVSException("Cannot add a resource filter.");
             }
         }
 
-        private static void TranslateFilterNames(VCProject vcPro)
+        private static void TranslateFilterNames(VCProject vcProject)
         {
-            var filters = vcPro.Filters as IVCCollection;
-            if (filters == null)
+            if (vcProject.Filters is not IVCCollection filters)
                 return;
 
             foreach (VCFilter filter in filters) {
@@ -622,13 +596,13 @@ namespace QtVsTools.Core
         private static void RemoveResFilesFromGeneratedFilesFilter(QtProject pro)
         {
             var generatedFiles = pro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (generatedFiles == null)
+            if (generatedFiles is null)
                 return;
 
             var filesToRemove = new List<VCFile>();
-            foreach (VCFile filtFile in (IVCCollection)generatedFiles.Files) {
-                if (filtFile.FullPath.EndsWith(".res", StringComparison.OrdinalIgnoreCase))
-                    filesToRemove.Add(filtFile);
+            foreach (VCFile vcFile in (IVCCollection)generatedFiles.Files) {
+                if (vcFile.FullPath.EndsWith(".res", OrdinalIgnoreCase))
+                    filesToRemove.Add(vcFile);
             }
             foreach (var resFile in filesToRemove)
                 resFile.Remove();
@@ -644,7 +618,7 @@ namespace QtVsTools.Core
 
             dte.SuppressUI = true;
             var projectItem = FindProjectHierarchyItem(project, solutionExplorer);
-            if (projectItem != null)
+            if (projectItem is not null)
                 CollapseFilter(projectItem, solutionExplorer, filterName);
             dte.SuppressUI = false;
         }
@@ -660,7 +634,7 @@ namespace QtVsTools.Core
             UIHierarchyItem projectItem = null;
             foreach (UIHierarchyItem solutionItem in solution.UIHierarchyItems) {
                 projectItem = FindProjectHierarchyItem(project, solutionItem);
-                if (projectItem != null)
+                if (projectItem is not null)
                     break;
             }
             return projectItem;
@@ -677,11 +651,10 @@ namespace QtVsTools.Core
 
                 foreach (UIHierarchyItem childItem in root.UIHierarchyItems) {
                     projectItem = FindProjectHierarchyItem(project, childItem);
-                    if (projectItem != null)
+                    if (projectItem is not null)
                         break;
                 }
-            } catch {
-            }
+            } catch {}
             return projectItem;
         }
 
