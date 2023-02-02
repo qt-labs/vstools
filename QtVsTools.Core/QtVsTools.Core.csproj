@@ -126,9 +126,6 @@
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="HelperFunctions.cs" />
-    <Compile Include="ImageButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Legacy\QtProject.cs" />
     <Compile Include="Legacy\QtVSIPSettings.cs" />
     <Compile Include="LinkerToolWrapper.cs" />
