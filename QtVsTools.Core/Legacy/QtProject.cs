@@ -39,15 +39,6 @@ namespace QtVsTools.Core.Legacy
 
     public static class QtProject
     {
-        public static void MarkAsDesignerPluginProject(Core.QtProject qtPro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            qtPro.Project.Globals["IsDesignerPlugin"] = true.ToString();
-            if (!qtPro.Project.Globals.get_VariablePersists("IsDesignerPlugin"))
-                qtPro.Project.Globals.set_VariablePersists("IsDesignerPlugin", true);
-        }
-
         public static bool PromptChangeQtVersion(Project project, string oldVersion, string newVersion)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -241,21 +232,6 @@ namespace QtVsTools.Core.Legacy
                 }
             }
         }
-        
-        internal static bool IsDesignerPluginProject(Core.QtProject qtPro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var b = false;
-            if (qtPro.Project.Globals.get_VariablePersists("IsDesignerPlugin")) {
-                var s = qtPro.Project.Globals["IsDesignerPlugin"] as string;
-                try {
-                    b = bool.Parse(s);
-                } catch { }
-            }
-            return b;
-        }
-
 
         private static bool IsWinRT(Project project)
         {

@@ -169,11 +169,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            var qtPro = Core.QtProject.Create(project);
-            if (qtPro != null) {
+            if (Core.QtProject.Create(project) is {} qtPro)
                 QtProject.MarkAsQtPlugin(qtPro);
-                Legacy.QtProject.MarkAsDesignerPluginProject(qtPro);
-            }
         }
     }
 }
