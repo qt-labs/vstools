@@ -288,11 +288,6 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
-    <Compile Include="Legacy\ProjectQtSettings.cs" />
-    <Compile Include="Legacy\QtMenu.cs" />
-    <Compile Include="Legacy\QtOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Legacy\Translation.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">
       <AutoGen>True</AutoGen>
@@ -322,12 +317,6 @@
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
     <Compile Include="Package\ExtLoader.cs" />
-    <Compile Include="Legacy\FormProjectQtSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Legacy\FormProjectQtSettings.Designer.cs">
-      <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -488,10 +477,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <EmbeddedResource Include="Legacy\FormProjectQtSettings.resx">
-      <DependentUpon>FormProjectQtSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

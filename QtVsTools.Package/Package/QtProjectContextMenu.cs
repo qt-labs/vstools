@@ -115,16 +115,15 @@ namespace QtVsTools
             case CommandId.lReleaseOnProjectId:
                 Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
-            case CommandId.QtProjectSettingsProjectId: {
-                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                    int projectVersion = QtProject.GetFormatVersion(pro);
-                    if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
-                        QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
-                    } else if (pro != null) {
-                        Legacy.QtMenu.ShowFormProjectQtSettings(pro);
-                    } else {
-                        MessageBox.Show(SR.GetString("NoProjectOpened"));
-                    }
+            case CommandId.QtProjectSettingsProjectId:
+                var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                if (QtProject.GetFormatVersion(pro) >= Resources.qtMinFormatVersion_Settings) {
+                    QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
+                } else if (pro != null) {
+                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                        Notifications.UpdateProjectFormat.Show();
+                } else {
+                    MessageBox.Show(SR.GetString("NoProjectOpened"));
                 }
                 break;
             case CommandId.ProjectConvertToQtMsBuild: {

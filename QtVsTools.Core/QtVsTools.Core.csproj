@@ -127,7 +127,6 @@
     <Compile Include="Filters.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Legacy\QtProject.cs" />
-    <Compile Include="Legacy\QtVSIPSettings.cs" />
     <Compile Include="LinkerToolWrapper.cs" />
     <Compile Include="MainWinWrapper.cs" />
     <Compile Include="Messages.cs" />

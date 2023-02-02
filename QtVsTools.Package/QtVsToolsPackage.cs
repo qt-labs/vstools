@@ -92,10 +92,6 @@ namespace QtVsTools
     [ProvideOptionPage(typeof(Options.QtVersionsPage),
         "Qt", "Versions", 0, 0, true, Sort = 1)]
 
-    // Legacy options page
-    [ProvideOptionPage(typeof(Legacy.QtOptionsPage),
-        "Qt", "Legacy Project Format", 0, 0, true, Sort = 2)]
-
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
         public const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
@@ -105,8 +101,6 @@ namespace QtVsTools
         public string PkgInstallPath { get; private set; }
         public Options.QtOptionsPage Options
             => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
-        public Legacy.QtOptionsPage LegacyOptions
-            => GetDialogPage(typeof(Legacy.QtOptionsPage)) as Legacy.QtOptionsPage;
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }

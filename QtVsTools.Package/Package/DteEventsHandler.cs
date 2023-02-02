@@ -214,9 +214,6 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup)
-                return;
-
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
