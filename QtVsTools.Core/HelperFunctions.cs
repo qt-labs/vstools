@@ -459,33 +459,6 @@ namespace QtVsTools.Core
                 || keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal);
         }
 
-        /// <summary>
-        /// Deletes the file's directory if it is empty (not deleting the file itself so it must
-        /// have been deleted before) and every empty parent directory until the first, non-empty
-        /// directory is found.
-        /// </summary>
-        /// <param term='file'>Start point of the deletion</param>
-        public static void DeleteEmptyParentDirs(VCFile file)
-        {
-            var dir = file.FullPath.Remove(file.FullPath.LastIndexOf(Path.DirectorySeparatorChar));
-            DeleteEmptyParentDirs(dir);
-        }
-
-        /// <summary>
-        /// Deletes the directory if it is empty and every empty parent directory until the first,
-        /// non-empty directory is found.
-        /// </summary>
-        /// <param term='file'>Start point of the deletion</param>
-        public static void DeleteEmptyParentDirs(string directory)
-        {
-            var dirInfo = new DirectoryInfo(directory);
-            while (dirInfo.Exists && dirInfo.GetFileSystemInfos().Length == 0) {
-                var tmp = dirInfo;
-                dirInfo = dirInfo.Parent;
-                tmp.Delete();
-            }
-        }
-
         public static bool HasQObjectDeclaration(VCFile file)
         {
             return CxxFileContainsNotCommented(file,
@@ -943,24 +916,6 @@ namespace QtVsTools.Core
             default:
                 return machineTypeOption.machineNotSet;
             }
-        }
-
-        public static bool ArraysEqual(Array array1, Array array2)
-        {
-            if (array1 == array2)
-                return true;
-
-            if (array1 == null || array2 == null)
-                return false;
-
-            if (array1.Length != array2.Length)
-                return false;
-
-            for (var i = 0; i < array1.Length; i++) {
-                if (!Equals(array1.GetValue(i), array2.GetValue(i)))
-                    return false;
-            }
-            return true;
         }
 
         /// <summary>

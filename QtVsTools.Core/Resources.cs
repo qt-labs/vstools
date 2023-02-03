@@ -70,8 +70,6 @@ namespace QtVsTools.Core
         public const string mocOptionsKeyword = "MocOptions";
         public const string uicDirKeyword = "UicDir";
         public const string rccDirKeyword = "RccDir";
-        public const string lupdateKeyword = "lupdateOnBuild";
-        public const string disableAutoMocStepsUpdateKeyword = "disableAutoMocStepsUpdate";
 
         public const string registryRootPath = "Digia";
 

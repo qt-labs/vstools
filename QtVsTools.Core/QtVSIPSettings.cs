@@ -44,11 +44,6 @@ namespace QtVsTools.Core
     {
         public static IQtVsToolsOptions Options { get; set; }
 
-        public static bool GetDisableAutoMocStepsUpdate()
-        {
-            return QtVSIPSettingsShared.GetBoolValue(Resources.disableAutoMocStepsUpdateKeyword, false);
-        }
-
         public static string GetUicDirectory(EnvDTE.Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -114,15 +109,6 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             return QtVSIPSettingsShared.GetOption(project, Resources.mocOptionsKeyword);
-        }
-
-        public static bool GetLUpdateOnBuild(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (QtVSIPSettingsShared.GetProjectQtSetting(project, "QtRunLUpdateOnBuild") == "true")
-                return true;
-            return QtVSIPSettingsShared.GetBoolValue(project, Resources.lupdateKeyword);
         }
 
         public static string GetRccDirectory(EnvDTE.Project project)

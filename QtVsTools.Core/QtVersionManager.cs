@@ -357,21 +357,6 @@ namespace QtVsTools.Core
             return VerifyIfQtVersionExists(version) ? version : null;
         }
 
-        public string GetProjectQtVersion(EnvDTE.Project project, string platform)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
-                return GetProjectQtVersion(project);
-
-            var key = "Qt5Version " + platform;
-            if (!project.Globals.get_VariablePersists(key))
-                return null;
-            var version = (string)project.Globals[key];
-            ExpandEnvironmentVariablesInQtVersion(ref version);
-            return VerifyIfQtVersionExists(version) ? version : null;
-        }
-
         private static void ExpandEnvironmentVariablesInQtVersion(ref string version)
         {
             if (version != "$(QTDIR)" && version != "$(DefaultQtVersion)") {

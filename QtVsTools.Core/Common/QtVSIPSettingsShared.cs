@@ -186,19 +186,6 @@ namespace QtVsTools.Common
             return null;
         }
 
-        public static bool GetBoolValue(EnvDTE.Project project, string type)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            // check for directory in following order:
-            // - stored in project
-            // - globally defined default option
-            // - empty options
-            if (project != null && project.Globals.get_VariablePersists(type))
-                return Convert.ToInt32(project.Globals[type] as string) > 0;
-            return GetBoolValue(type, false);
-        }
-
         public static bool GetBoolValue(string key, bool defaultValue)
         {
             var regKey = Registry.CurrentUser.OpenSubKey(registryPath);
@@ -217,23 +204,6 @@ namespace QtVsTools.Common
                 }
             }
             return false;
-        }
-
-        public static string GetProjectQtSetting(EnvDTE.Project project, string propertyName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var activeConfig = project?.ConfigurationManager?.ActiveConfiguration;
-            if (activeConfig == null)
-                return null;
-            var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
-
-            try {
-                var props = project.Object as VCProject as IVCBuildPropertyStorage;
-                return props?.GetPropertyValue(propertyName, activeConfigId, "ProjectFile");
-            } catch {
-                return null;
-            }
         }
 
         public static void CleanUpCache(EnvDTE.Project project)

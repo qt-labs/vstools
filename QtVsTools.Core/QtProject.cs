@@ -52,7 +52,6 @@ namespace QtVsTools.Core
         private Project envPro;
         private VCProject vcPro;
         private MocCmdChecker mocCmdChecker;
-        private Array lastConfigurationRowNames;
         private static readonly Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
         private readonly QtMsBuildContainer qtMsBuild;
 
@@ -149,30 +148,6 @@ namespace QtVsTools.Core
         }
 
         public string ProjectDir => vcPro.ProjectDirectory;
-
-        /// <summary>
-        /// Returns true if the ConfigurationRowNames have changed
-        /// since the last evaluation of this property.
-        /// </summary>
-        public bool ConfigurationRowNamesChanged
-        {
-            get
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-
-                var ret = false;
-                if (lastConfigurationRowNames == null) {
-                    lastConfigurationRowNames = envPro.ConfigurationManager.ConfigurationRowNames as Array;
-                } else {
-                    var currentConfigurationRowNames = envPro.ConfigurationManager.ConfigurationRowNames as Array;
-                    if (!HelperFunctions.ArraysEqual(lastConfigurationRowNames, currentConfigurationRowNames)) {
-                        lastConfigurationRowNames = currentConfigurationRowNames;
-                        ret = true;
-                    }
-                }
-                return ret;
-            }
-        }
 
         /// <summary>
         /// Returns the file name of the generated ui header file relative to
@@ -1512,14 +1487,6 @@ namespace QtVsTools.Core
             }
         }
 
-        private static List<VCFile> GetAllFilesFromFilter(VCFilter filter)
-        {
-            var tmpList = ((IVCCollection)filter.Files).Cast<VCFile>().ToList();
-            foreach (VCFilter subfilter in (IVCCollection)filter.Filters)
-                tmpList.AddRange(GetAllFilesFromFilter(subfilter));
-            return tmpList;
-        }
-
         /// <summary>
         /// Adds a file to a filter. If the filter doesn't exist yet, it
         /// will be created.
@@ -1770,61 +1737,6 @@ namespace QtVsTools.Core
                     librarian.ModuleDefinitionFile = defFile ?? envPro.Name + ".def";
                 }
             }
-        }
-
-        private void UpdateCompilerIncludePaths(string oldDir, string newDir)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var fixedOldDir = FixFilePathForComparison(oldDir);
-            var dirs = new[] {
-                FixFilePathForComparison(QtVSIPSettings.GetUicDirectory(envPro)),
-                FixFilePathForComparison(QtVSIPSettings.GetMocDirectory(envPro)),
-                FixFilePathForComparison(QtVSIPSettings.GetRccDirectory(envPro))
-            };
-
-            var oldDirIsUsed = dirs.Any(dir => dir == fixedOldDir);
-
-            var incList = new List<string>();
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var compiler = CompilerToolWrapper.Create(config);
-                if (compiler == null)
-                    continue;
-                var paths = compiler.AdditionalIncludeDirectories;
-                if (paths.Count == 0)
-                    continue;
-
-                if (!oldDirIsUsed) {
-                    for (var i = paths.Count - 1; i >= 0; --i) {
-                        if (FixFilePathForComparison(paths[i]) == fixedOldDir)
-                            paths.RemoveAt(i);
-                    }
-                }
-                incList.Clear();
-                foreach (var path in paths) {
-                    var tmp = HelperFunctions.NormalizeRelativeFilePath(path);
-                    if (tmp.Length > 0 && !incList.Contains(tmp))
-                        incList.Add(tmp);
-                }
-                var alreadyThere = false;
-                var fixedNewDir = FixFilePathForComparison(newDir);
-                foreach (var include in incList) {
-                    if (FixFilePathForComparison(include) == fixedNewDir) {
-                        alreadyThere = true;
-                        break;
-                    }
-                }
-                if (!alreadyThere)
-                    incList.Add(HelperFunctions.NormalizeRelativeFilePath(newDir));
-
-                compiler.AdditionalIncludeDirectories = incList;
-            }
-        }
-
-        private static string FixFilePathForComparison(string path)
-        {
-            path = HelperFunctions.NormalizeRelativeFilePath(path);
-            return path.ToLower();
         }
 
         public bool UsesPrecompiledHeaders()
@@ -2232,96 +2144,6 @@ namespace QtVsTools.Core
                 }
             }
             return null;
-        }
-
-        public void UpdateMocSteps(string oldMocDir)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Messages.Print("\r\n=== Update moc steps ===");
-            var orgFiles = new List<VCFile>();
-            var abandonedMocFiles = new List<string>();
-            var vcFilter = FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (vcFilter != null) {
-                var generatedFiles = GetAllFilesFromFilter(vcFilter);
-                for (var i = generatedFiles.Count - 1; i >= 0; i--) {
-                    var file = generatedFiles[i];
-                    string fileName = null;
-                    if (file.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
-                        fileName = file.Name.Substring(4, file.Name.Length - 8) + ".h";
-                    else if (HelperFunctions.IsMocFile(file.Name))
-                        fileName = file.Name.Substring(0, file.Name.Length - 4) + ".cpp";
-
-                    if (fileName != null) {
-                        var found = false;
-                        foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                            if (f.FullPath.EndsWith(Path.DirectorySeparatorChar + fileName, StringComparison.OrdinalIgnoreCase)) {
-                                if (!orgFiles.Contains(f) && HasMocStep(f, oldMocDir))
-                                    orgFiles.Add(f);
-                                found = true;
-                            }
-                        }
-                        if (found) {
-                            RemoveFileFromFilter(file, vcFilter);
-                            HelperFunctions.DeleteEmptyParentDirs(file);
-                        } else {
-                            // We can't find foo.h for moc_foo.cpp or
-                            // we can't find foo.cpp for foo.moc, thus we put the
-                            // filename moc_foo.cpp / foo.moc into an error list.
-                            abandonedMocFiles.Add(file.Name);
-                        }
-                    }
-                }
-            }
-
-            UpdateCompilerIncludePaths(oldMocDir, QtVSIPSettings.GetMocDirectory(envPro));
-            qtMsBuild.BeginSetItemProperties();
-            foreach (var file in orgFiles) {
-                try {
-                    RemoveMocStep(file);
-                    AddMocStep(file);
-                } catch (QtVSException exception) {
-                    exception.Log();
-                    continue;
-                }
-                Messages.Print("Moc step updated successfully for " + file.Name + ".");
-            }
-            qtMsBuild.EndSetItemProperties();
-
-            foreach (var s in abandonedMocFiles) {
-                Messages.Print("Moc step update failed for " + s +
-                    ". Reason: Could not determine source file for moccing.");
-            }
-            Messages.Print("\r\n=== Moc steps updated. Successful: " + orgFiles.Count
-                + "   Failed: " + abandonedMocFiles.Count + " ===\r\n");
-
-            CleanupFilter(vcFilter);
-        }
-
-        private void CleanupFilter(VCFilter filter)
-        {
-            var subFilters = filter.Filters as IVCCollection;
-            if (subFilters == null)
-                return;
-
-            for (var i = subFilters.Count; i > 0; i--) {
-                var subFilter = subFilters.Item(i) as VCFilter;
-                var subFilterFilters = subFilter.Filters as IVCCollection;
-                if (subFilterFilters == null)
-                    continue;
-
-                CleanupFilter(subFilter);
-
-                var filterOrFileFound = false;
-                foreach (var itemObject in subFilter.Items as IVCCollection) {
-                    if (itemObject is VCFilter || itemObject is VCFile) {
-                        filterOrFileFound = true;
-                        break;
-                    }
-                }
-                if (!filterOrFileFound)
-                    filter.RemoveFilter(subFilter);
-            }
         }
 
         public bool HasPlatform(string platformName)
