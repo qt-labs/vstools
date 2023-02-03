@@ -91,10 +91,10 @@ namespace QtVsTools
 
             var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
             debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
-            debugStartEvents.BeforeExecute += debugStartEvents_BeforeExecute;
+            debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
 
             debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368);
-            debugStartWithoutDebuggingEvents.BeforeExecute += debugStartWithoutDebuggingEvents_BeforeExecute;
+            debugStartWithoutDebuggingEvents.BeforeExecute += DebugStartWithoutDebuggingEvents_BeforeExecute;
 
             f1HelpEvents = events.get_CommandEvents(
                 typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
@@ -132,42 +132,40 @@ namespace QtVsTools
             }
         }
 
-        void debugStartEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
+        private void DebugStartEvents_BeforeExecute(string guid, int iD, object customIn,
+            object customOut, ref bool cancelDefault)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var debugger = dte.Debugger;
-            if (debugger != null && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
+            if (dte.Debugger is {} debugger && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
+                return;
+            if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
 
-            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
-            if (selectedProject == null)
+            if (QtProject.Create(project) is {} qtProject) {
+                var versionInfo = QtVersionManager.The().GetVersionInfo(qtProject.GetQtVersion());
+                if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
+                    QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
+            }
+
+            // Notify about old project format and offer upgrade option.
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return;
-
-            // Copy the natvis files if we use a namespaced Qt (even for never
-            // project types), as linking into the pdb file might be disabled by
-            // the user and he might end up with not namespaced visualizers in
-            // the global Visualizers directory.
-            var qtProject = QtProject.Create(selectedProject);
-            var qtVersion = qtProject?.GetQtVersion();
-            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
-            if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
-
-            if (QtProject.GetFormatVersion(selectedProject) < Resources.qtMinFormatVersion_Settings)
-                qtProject?.SetQtEnvironment();
+            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                Notifications.UpdateProjectFormat.Show();
         }
 
-        void debugStartWithoutDebuggingEvents_BeforeExecute(string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
+        private void DebugStartWithoutDebuggingEvents_BeforeExecute(string guid, int id,
+            object customIn, object customOut, ref bool cancelDefault)
         {
-            var selectedProject = HelperFunctions.GetSelectedQtProject(dte);
-            if (selectedProject != null) {
-                if (QtProject.GetFormatVersion(selectedProject) >= Resources.qtMinFormatVersion_Settings)
-                    return;
-                var qtProject = QtProject.Create(selectedProject);
-                if (qtProject != null)
-                    qtProject.SetQtEnvironment();
-            }
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+                return;
+
+            // Notify about old project format and offer upgrade option.
+            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+                return;
+            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                Notifications.UpdateProjectFormat.Show();
         }
 
         public void Disconnect()
@@ -196,10 +194,10 @@ namespace QtVsTools
             }
 
             if (debugStartEvents != null)
-                debugStartEvents.BeforeExecute -= debugStartEvents_BeforeExecute;
+                debugStartEvents.BeforeExecute -= DebugStartEvents_BeforeExecute;
 
             if (debugStartWithoutDebuggingEvents != null)
-                debugStartWithoutDebuggingEvents.BeforeExecute -= debugStartWithoutDebuggingEvents_BeforeExecute;
+                debugStartWithoutDebuggingEvents.BeforeExecute -= DebugStartWithoutDebuggingEvents_BeforeExecute;
 
             if (vcProjectEngineEvents != null) {
                 vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
@@ -210,47 +208,30 @@ namespace QtVsTools
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
         }
 
-        public void OnBuildProjConfigBegin(string projectName, string projectConfig, string platform, string solutionConfig)
+        private void OnBuildProjConfigBegin(string projectName, string projectConfig,
+            string platform, string solutionConfig)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
                 currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
             }
 
-            Project project = null;
-            foreach (var p in HelperFunctions.ProjectsInSolution(dte)) {
-                if (p.UniqueName == projectName) {
-                    project = p;
-                    break;
-                }
+            bool Predicate(Project p)
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return p.UniqueName == projectName;
             }
-            if (project == null || !HelperFunctions.IsVsToolsProject(project))
+            if (HelperFunctions.ProjectsInSolution(dte).FirstOrDefault(Predicate) is not {} project)
                 return;
 
+            if (!HelperFunctions.IsVsToolsProject(project))
+                return;
+
+            // Notify about old project format and offer upgrade option.
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
                 return;
-
-            var qtpro = QtProject.Create(project);
-            var versionManager = QtVersionManager.The();
-            var qtVersion = versionManager.GetProjectQtVersion(project, platform);
-            if (qtVersion == null) {
-                Messages.DisplayCriticalErrorMessage(SR.GetString("ProjectQtVersionNotFoundError", projectName, projectConfig, platform));
-                dte.ExecuteCommand("Build.Cancel", "");
-                return;
-            }
-
-            if (!QtVSIPSettings.GetDisableAutoMocStepsUpdate()) {
-                if (qtpro.ConfigurationRowNamesChanged)
-                    qtpro.UpdateMocSteps(QtVSIPSettings.GetMocDirectory(project));
-            }
-
-            // Solution config is given to function to get QTDIR property
-            // set correctly also during batch build
-            qtpro.SetQtEnvironment(qtVersion, solutionConfig, true);
-            if (QtVSIPSettings.GetLUpdateOnBuild(project))
-                Translation.RunlUpdate(project);
+            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                Notifications.UpdateProjectFormat.Show();
         }
 
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
