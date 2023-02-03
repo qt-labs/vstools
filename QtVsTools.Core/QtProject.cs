@@ -147,9 +147,6 @@ namespace QtVsTools.Core
             return isQtMsBuildEnabled.Value;
         }
 
-        public string ProjectDir => vcPro.ProjectDirectory;
-
-
         /// <summary>
         /// Returns the moc-generated file name for the given source or header file.
         /// </summary>
@@ -467,388 +464,6 @@ namespace QtVsTools.Core
             return additionalMocOptions;
         }
 
-        void AddMocStepSetBuildExclusions(
-            VCFile sourceFile,
-            VCFileConfiguration workFileConfig,
-            VCFile mocFile)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var hasDifferentMocFilePerConfig =
-                QtVSIPSettings.HasDifferentMocFilePerConfig(envPro);
-            var hasDifferentMocFilePerPlatform =
-                QtVSIPSettings.HasDifferentMocFilePerPlatform(envPro);
-
-            var mocFileName = GetMocFileName(sourceFile.FullPath);
-            var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
-            var vcConfig = workFileConfig.ProjectConfiguration as VCConfiguration;
-            var platform = vcConfig.Platform as VCPlatform;
-            var platformName = platform.Name;
-
-            if (hasDifferentMocFilePerPlatform && hasDifferentMocFilePerConfig) {
-                foreach (VCFileConfiguration mocConf
-                    in (IVCCollection)mocFile.FileConfigurations) {
-                    var projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
-                    if (projectCfg.Name != vcConfig.Name
-                        || (IsMoccedFileIncluded(sourceFile) && !mocableIsCPP)) {
-                        if (!mocConf.ExcludedFromBuild)
-                            mocConf.ExcludedFromBuild = true;
-                    } else {
-                        if (mocConf.ExcludedFromBuild != workFileConfig.ExcludedFromBuild)
-                            mocConf.ExcludedFromBuild = workFileConfig.ExcludedFromBuild;
-                    }
-                }
-            } else if (hasDifferentMocFilePerPlatform) {
-                foreach (VCFileConfiguration mocConf
-                    in (IVCCollection)mocFile.FileConfigurations) {
-                    var projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
-                    var mocConfPlatform = projectCfg.Platform as VCPlatform;
-                    if (projectCfg.ConfigurationName != vcConfig.ConfigurationName)
-                        continue;
-
-                    var exclude = mocConfPlatform.Name != platformName
-                        || (IsMoccedFileIncluded(sourceFile) && !mocableIsCPP);
-                    if (exclude) {
-                        if (mocConf.ExcludedFromBuild != exclude)
-                            mocConf.ExcludedFromBuild = exclude;
-                    } else {
-                        if (mocConf.ExcludedFromBuild != workFileConfig.ExcludedFromBuild)
-                            mocConf.ExcludedFromBuild = workFileConfig.ExcludedFromBuild;
-                    }
-                }
-            } else if (hasDifferentMocFilePerConfig) {
-                foreach (VCFileConfiguration mocConf
-                    in (IVCCollection)mocFile.FileConfigurations) {
-                    var projectCfg = mocConf.ProjectConfiguration as VCConfiguration;
-                    var mocConfPlatform = projectCfg.Platform as VCPlatform;
-                    if (platformName != mocConfPlatform.Name)
-                        continue;
-                    if (projectCfg.Name != vcConfig.Name
-                        || (IsMoccedFileIncluded(sourceFile))) {
-                        if (!mocConf.ExcludedFromBuild)
-                            mocConf.ExcludedFromBuild = true;
-                    } else {
-                        if (mocConf.ExcludedFromBuild != workFileConfig.ExcludedFromBuild)
-                            mocConf.ExcludedFromBuild = workFileConfig.ExcludedFromBuild;
-                    }
-                }
-            } else {
-                var moccedFileConfig = GetVCFileConfigurationByName(
-                    mocFile,
-                    workFileConfig.Name);
-                if (moccedFileConfig != null) {
-                    var cppFile = GetCppFileForMocStep(sourceFile);
-                    if (cppFile != null && IsMoccedFileIncluded(cppFile)) {
-                        if (!moccedFileConfig.ExcludedFromBuild)
-                            moccedFileConfig.ExcludedFromBuild = true;
-                    } else if (moccedFileConfig.ExcludedFromBuild
-                        != workFileConfig.ExcludedFromBuild) {
-                        moccedFileConfig.ExcludedFromBuild = workFileConfig.ExcludedFromBuild;
-                    }
-                }
-            }
-        }
-
-        void AddMocStepCustomBuild(
-            VCFile sourceFile,
-            VCFileConfiguration workFileConfig,
-            VCFile mocFile,
-            string defines,
-            string includes,
-            string description)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var workFile = workFileConfig.File as VCFile;
-            var mocFileName = GetMocFileName(sourceFile.FullPath);
-            var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
-            var vcConfig = workFileConfig.ProjectConfiguration as VCConfiguration;
-
-            workFile.ItemType = "CustomBuild";
-
-            VCCustomBuildTool tool = HelperFunctions.GetCustomBuildTool(workFileConfig);
-            string fileToMoc = null;
-            if (mocableIsCPP) {
-                fileToMoc = HelperFunctions.GetRelativePath(
-                    vcPro.ProjectDirectory,
-                    sourceFile.FullPath);
-            } else {
-                fileToMoc = ProjectMacros.Path;
-            }
-            if (tool == null)
-                throw new QtVSException(
-                    SR.GetString("QtProject_CannotFindCustomBuildTool",
-                    workFile.FullPath));
-
-            var dps = tool.AdditionalDependencies;
-            if (dps.IndexOf("\"" + Resources.moc4Command + "\"", StringComparison.Ordinal) < 0) {
-                if (dps.Length > 0 && !dps.EndsWith(";", StringComparison.Ordinal))
-                    dps += ";";
-                tool.AdditionalDependencies = dps + "\""
-                    + Resources.moc4Command + "\";" + fileToMoc;
-            }
-
-            tool.Description = description;
-
-            var baseFileName = sourceFile.Name.Remove(sourceFile.Name.LastIndexOf('.'));
-            var outputMocFile = string.Empty;
-            var outputMocMacro = string.Empty;
-
-            var inputMocFile = ProjectMacros.Path;
-            if (mocableIsCPP)
-                inputMocFile = sourceFile.RelativePath;
-            var output = tool.Outputs;
-            var pattern = "(\"(.*\\\\" + mocFileName + ")\"|(\\S*"
-                + mocFileName + "))";
-            var regExp = new Regex(pattern);
-            var matchList = regExp.Matches(tool.Outputs.Replace(ProjectMacros.Name, baseFileName));
-
-            if (matchList.Count > 0) {
-                if (matchList[0].Length > 0)
-                    outputMocFile = matchList[0].ToString();
-                else if (matchList[1].Length > 1)
-                    outputMocFile = matchList[1].ToString();
-
-                if (outputMocFile.StartsWith("\"", StringComparison.Ordinal))
-                    outputMocFile = outputMocFile.Substring(1);
-                if (outputMocFile.EndsWith("\"", StringComparison.Ordinal))
-                    outputMocFile = outputMocFile.Substring(0, outputMocFile.Length - 1);
-                var outputMocPath = Path.GetDirectoryName(outputMocFile);
-                var stringToReplace = Path.GetFileName(outputMocFile);
-                outputMocMacro =
-                    outputMocPath
-                    + Path.DirectorySeparatorChar
-                    + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
-            } else {
-                outputMocFile = GetRelativeMocFilePath(sourceFile.FullPath);
-                var outputMocPath = Path.GetDirectoryName(outputMocFile);
-                var stringToReplace = Path.GetFileName(outputMocFile);
-                outputMocMacro =
-                    outputMocPath
-                    + Path.DirectorySeparatorChar
-                    + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
-                if (output.Length > 0 && !output.EndsWith(";", StringComparison.Ordinal))
-                    output += ";";
-                tool.Outputs = output + "\"" + outputMocMacro + "\"";
-            }
-
-            var newCmdLine = "\"" + Resources.moc4Command + "\" "
-                + QtVSIPSettings.GetMocOptions(envPro)
-                + " \"" + inputMocFile + "\" -o \""
-                + outputMocMacro + "\"";
-
-            //Tell moc to include the PCH header if we are using precompiled headers in the project
-            var compiler = CompilerToolWrapper.Create(vcConfig);
-            if (compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
-                newCmdLine += " " + GetPCHMocOptions(sourceFile, compiler);
-
-            var versionManager = QtVersionManager.The();
-            var versionInfo = VersionInformation.Get(versionManager.GetInstallPath(envPro));
-            var mocSupportsIncludes = (versionInfo.qtMajor == 4 && versionInfo.qtMinor >= 2)
-                || versionInfo.qtMajor >= 5;
-
-            var strDefinesIncludes = defines + includes;
-            var cmdLineLength = newCmdLine.Length + strDefinesIncludes.Length + 1;
-
-            if (cmdLineLength > HelperFunctions.GetMaximumCommandLineLength()
-                && mocSupportsIncludes) {
-                // Command line is too long. We must use an options file.
-                var mocIncludeCommands = string.Empty;
-                var mocIncludeFile = "\"" + outputMocFile + ".inc\"";
-                var redirectOp = " > ";
-                var maxCmdLineLength =
-                    HelperFunctions.GetMaximumCommandLineLength()
-                    - (mocIncludeFile.Length + 1);
-
-                var options = defines.Split(
-                    new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                var matches = Regex.Matches(includes, "([\"])(?:(?=(\\\\?))\\2.)*?\\1");
-                foreach (Match match in matches) {
-                    options.Add(match.Value);
-                    includes = includes.Replace(
-                        match.Value, string.Empty, StringComparison.Ordinal);
-                }
-                options.AddRange(
-                    includes.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-
-                // Since 5.2.0, MOC uses QCommandLineParser and parses the content of
-                // the moc_*.inc file differently. For example, "-I.\foo\bar" results
-                // in an error message, because the parser thinks it got an additional
-                // positional argument. Change the option into a format MOC understands.
-                if (versionInfo.qtMajor == 5 && versionInfo.qtMinor >= 2) {
-                    for (var o = 0; o < options.Count; ++o)
-                        options[o] = Regex.Replace(options[o], "\"(-I|-D)", "$1=\"");
-                }
-
-                var i = options.Count - 1;
-                for (; i >= 0; --i) {
-                    if (options[i].Length == 0)
-                        continue;
-                    mocIncludeCommands +=
-                        "echo " + options[i] + redirectOp + mocIncludeFile + "\r\n";
-                    cmdLineLength -= options[i].Length + 1;
-                    if (cmdLineLength < maxCmdLineLength)
-                        break;
-                    if (i == options.Count - 1)    // first loop
-                        redirectOp = " >> ";
-                }
-                strDefinesIncludes = "@" + mocIncludeFile;
-                for (var k = 0; k < i; ++k) {
-                    if (options[k].Length > 0)
-                        strDefinesIncludes += " " + options[k];
-                }
-                newCmdLine = mocIncludeCommands + newCmdLine + " " + strDefinesIncludes;
-            } else {
-                newCmdLine = newCmdLine + " " + strDefinesIncludes;
-            }
-
-            if (tool.CommandLine.Trim().Length > 0) {
-                var cmdLine = tool.CommandLine;
-
-                // remove the moc option file commands
-                {
-                    var rex = new Regex("^echo.+[.](moc|cpp)[.]inc\"\r\n", RegexOptions.Multiline);
-                    cmdLine = rex.Replace(cmdLine, string.Empty);
-                }
-
-                var m = Regex.Match(cmdLine, @"(\S*moc.exe|""\S+:\\\.*moc.exe"")");
-                if (m.Success) {
-                    var start = m.Index;
-                    var end = cmdLine.IndexOf("&&", start, StringComparison.Ordinal);
-                    var a = cmdLine.IndexOf("\r\n", start, StringComparison.Ordinal);
-                    if (a > -1 && (a < end || end < 0))
-                        end = a;
-                    if (end < 0)
-                        end = cmdLine.Length;
-                    tool.CommandLine = cmdLine.Replace(
-                        cmdLine.Substring(start, end - start), newCmdLine);
-                } else {
-                    tool.CommandLine = cmdLine + "\r\n" + newCmdLine;
-                }
-            } else {
-                tool.CommandLine = newCmdLine;
-            }
-        }
-
-        void AddMocStepMsBuildTarget(
-            VCFile sourceFile,
-            VCFileConfiguration workConfig,
-            string defines,
-            string includes,
-            string description)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var baseFileName = sourceFile.Name.Remove(sourceFile.Name.LastIndexOf('.'));
-            var outputMocFile = GetRelativeMocFilePath(sourceFile.FullPath);
-            var outputMocPath = Path.GetDirectoryName(outputMocFile);
-            var stringToReplace = Path.GetFileName(outputMocFile);
-            var outputMocMacro = outputMocPath + Path.DirectorySeparatorChar
-                + stringToReplace.Replace(baseFileName, ProjectMacros.Name);
-
-            sourceFile.ItemType = QtMoc.ItemTypeName;
-            qtMsBuild.SetItemProperty(workConfig,
-                QtMoc.Property.InputFile, ProjectMacros.Path);
-            qtMsBuild.SetItemProperty(workConfig,
-                QtMoc.Property.OutputFile, outputMocMacro);
-            if (!HelperFunctions.IsSourceFile(sourceFile.FullPath)) {
-                qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.DynamicSource, "output");
-            } else {
-                qtMsBuild.SetItemProperty(workConfig,
-                    QtMoc.Property.DynamicSource, "input");
-            }
-            qtMsBuild.SetItemProperty(workConfig,
-                QtMoc.Property.ExecutionDescription, description);
-            qtMsBuild.SetQtMocCommandLine(workConfig,
-                QtMoc.ToolExecName + " " + defines + " " + includes,
-                new VCMacroExpander(workConfig));
-        }
-
-        void AddMocStepToConfiguration(
-            VCFile sourceFile,
-            VCFileConfiguration workConfig,
-            CustomTool toolSettings)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var mocFileName = GetMocFileName(sourceFile.FullPath);
-            var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
-            var vcConfig = workConfig.ProjectConfiguration as VCConfiguration;
-            var platform = vcConfig.Platform as VCPlatform;
-            var platformName = platform.Name;
-
-            var mocRelPath = GetRelativeMocFilePath(
-                sourceFile.FullPath,
-                vcConfig.ConfigurationName,
-                platformName);
-            string subfilterName = null;
-            if (mocRelPath.Contains(vcConfig.ConfigurationName))
-                subfilterName = vcConfig.ConfigurationName;
-            if (mocRelPath.Contains(platformName)) {
-                if (subfilterName != null)
-                    subfilterName += '_';
-                subfilterName += platformName;
-            }
-
-            VCFile mocFile = null;
-            if (toolSettings == CustomTool.CustomBuildStep) {
-                mocFile = GetFileFromProject(mocRelPath);
-                if (mocFile == null) {
-                    var fi = new FileInfo(VCProject.ProjectDirectory + Path.DirectorySeparatorChar
-                        + mocRelPath);
-                    if (!fi.Directory.Exists)
-                        fi.Directory.Create();
-                    mocFile = AddFileInSubfilter(Filters.GeneratedFiles(), subfilterName,
-                        mocRelPath);
-                }
-                if (mocFile != null) {
-                    if (mocableIsCPP)
-                        mocFile.ItemType = "None";
-                    else
-                        AddMocStepSetBuildExclusions(sourceFile, workConfig, mocFile);
-                }
-            }
-
-            VCFile cppPropertyFile = null;
-            if (mocableIsCPP)
-                cppPropertyFile = sourceFile;
-            else if (mocFile != null)
-                cppPropertyFile = GetCppFileForMocStep(sourceFile);
-            VCFileConfiguration defineIncludeConfig;
-            if (cppPropertyFile != null) {
-                defineIncludeConfig = GetVCFileConfigurationByName(
-                    cppPropertyFile,
-                    workConfig.Name);
-            } else {
-                // No file specific defines/includes
-                // but at least the project defines/includes are added
-                defineIncludeConfig = workConfig;
-            }
-            var defines = GetDefines(defineIncludeConfig);
-            var includes = GetIncludes(defineIncludeConfig);
-            var description = "Moc'ing %(Identity)...";
-
-            if (toolSettings == CustomTool.MSBuildTarget) {
-                AddMocStepMsBuildTarget(
-                    sourceFile,
-                    workConfig,
-                    defines,
-                    includes,
-                    description);
-            } else {
-                AddMocStepCustomBuild(
-                    sourceFile,
-                    workConfig,
-                    mocFile,
-                    defines,
-                    includes,
-                    description);
-            }
-        }
-
-        public enum CustomTool { CustomBuildStep, MSBuildTarget };
-
         /// <summary>
         /// Adds a moc step to a given file for this project.
         /// </summary>
@@ -859,40 +474,16 @@ namespace QtVsTools.Core
 
             if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
                 file.ItemType = QtMoc.ItemTypeName;
-                if (HelperFunctions.IsSourceFile(file.FullPath)) {
-                    foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
-                        qtMsBuild.SetItemProperty(config, QtMoc.Property.DynamicSource, "input");
-                        qtMsBuild.SetItemPropertyByName(config, "QtMocFileName", "%(Filename).moc");
-                    }
-                }
-                return;
-            }
-
-            CustomTool toolSettings =
-                IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
-
-            try {
-                var mocFileName = GetMocFileName(file.FullPath);
-                if (mocFileName == null)
+                if (!HelperFunctions.IsSourceFile(file.FullPath))
                     return;
-
-                var mocableIsCPP = HelperFunctions.IsMocFile(mocFileName);
-
-                VCFile sourceFile = file;
-                if (mocableIsCPP && toolSettings != CustomTool.MSBuildTarget) {
-                    string cbtFullPath = Path.ChangeExtension(file.FullPath, ".cbt");
-                    File.WriteAllText(cbtFullPath, string.Format(
-                        "This is a dummy file needed to create {0}", mocFileName));
-                    file = AddFileInSubfilter(Filters.GeneratedFiles(), null, cbtFullPath, true);
-                    if (file.Object is ProjectItem mocFileItem)
-                        HelperFunctions.EnsureCustomBuildToolAvailable(mocFileItem);
+                foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
+                    qtMsBuild.SetItemProperty(config, QtMoc.Property.DynamicSource, "input");
+                    qtMsBuild.SetItemPropertyByName(config, "QtMocFileName", "%(Filename).moc");
                 }
-
-                foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations)
-                    AddMocStepToConfiguration(sourceFile, config, toolSettings);
-
-            } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotAddMocStep", file.FullPath));
+            } else {
+                // TODO: It would be nice if we can inform the user he's on an old project.
+                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                //    Notifications.UpdateProjectFormat.Show();
             }
         }
 
@@ -955,7 +546,7 @@ namespace QtVsTools.Core
             return false;
         }
 
-        public bool HasMocStep(VCFile file, string mocOutDir = null)
+        public bool HasMocStep(VCFile file)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -1015,7 +606,7 @@ namespace QtVsTools.Core
             }
         }
 
-        bool IsCppMocFileCustomBuild(VCProject vcProj, VCFile vcFile, VCFile cppFile)
+        bool IsCppMocFileCustomBuild(VCFile vcFile, VCFile cppFile)
         {
             var mocFilePath = vcFile.FullPath;
             var cppFilePath = cppFile.FullPath;
@@ -1075,14 +666,14 @@ namespace QtVsTools.Core
                 mocFiles.AddRange(from VCFile vcFile
                                   in (IVCCollection)vcProj.Files
                                   where vcFile.ItemType == "CustomBuild"
-                                  && IsCppMocFileCustomBuild(vcProj, vcFile, cppFile)
+                                  && IsCppMocFileCustomBuild(vcFile, cppFile)
                                   select vcFile);
                 mocFiles.AddRange(GetCppMocOutputs(mocFiles));
             }
             return mocFiles;
         }
 
-        bool IsCppMocFileQtMsBuild(VCProject vcProj, VCFile vcFile, VCFile cppFile)
+        bool IsCppMocFileQtMsBuild(VCFile vcFile, VCFile cppFile)
         {
             foreach (VCFileConfiguration fileConfig in (IVCCollection)vcFile.FileConfigurations) {
                 string inputFile = qtMsBuild.GetPropertyValue(fileConfig, QtMoc.Property.InputFile);
@@ -1103,10 +694,10 @@ namespace QtVsTools.Core
             if (cppFile.project is VCProject vcProj) {
                 foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
                     if (vcFile.ItemType == "CustomBuild") {
-                        if (IsCppMocFileCustomBuild(vcProj, vcFile, cppFile))
+                        if (IsCppMocFileCustomBuild(vcFile, cppFile))
                             return true;
                     } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                        if (IsCppMocFileQtMsBuild(vcProj, vcFile, cppFile))
+                        if (IsCppMocFileQtMsBuild(vcFile, cppFile))
                             return true;
                     }
                 }
@@ -1126,11 +717,11 @@ namespace QtVsTools.Core
             } else {
                 foreach (VCFile vcFile in (IVCCollection)vcPro.Files) {
                     if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                        if (IsCppMocFileQtMsBuild(vcPro, vcFile, file)) {
+                        if (IsCppMocFileQtMsBuild(vcFile, file)) {
                             RemoveMocStepQtMsBuild(vcFile);
                         }
                     } else if (vcFile.ItemType == "CustomBuild") {
-                        if (IsCppMocFileCustomBuild(vcPro, vcFile, file)) {
+                        if (IsCppMocFileCustomBuild(vcFile, file)) {
                             RemoveMocStepCustomBuild(file);
                             return;
                         }
@@ -1240,38 +831,6 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Returns the file if it can be found, otherwise null.
-        /// </summary>
-        /// <param name="filter">filter name</param>
-        /// <param name="fileName">relative file path to the project</param>
-        /// <returns></returns>
-        public VCFile GetFileFromFilter(FakeFilter filter, string fileName)
-        {
-            var vcfilter = FindFilterFromGuid(filter.UniqueIdentifier);
-
-            // try with name as well
-            if (vcfilter == null)
-                vcfilter = FindFilterFromName(filter.Name);
-
-            if (vcfilter == null)
-                return null;
-
-            try {
-                FileInfo fi = null;
-                if (Path.IsPathRooted(fileName))
-                    fi = new FileInfo(fileName);
-                else
-                    fi = new FileInfo(ProjectDir + Path.DirectorySeparatorChar + fileName);
-
-                foreach (VCFile file in (IVCCollection)vcfilter.Files) {
-                    if (file.MatchName(fi.FullName, true))
-                        return file;
-                }
-            } catch { }
-            return null;
-        }
-
-        /// <summary>
         /// Returns the file (VCFile) specified by the file name from a given
         /// project.
         /// </summary>
@@ -1304,76 +863,6 @@ namespace QtVsTools.Core
                 if (f.Name.Equals(fi.Name, StringComparison.OrdinalIgnoreCase))
                     yield return f;
             }
-        }
-
-        public VCFile AddFileInSubfilter(FakeFilter filter, string subfilterName, string fileName)
-        {
-            return AddFileInSubfilter(filter, subfilterName, fileName, false);
-        }
-
-        public VCFile AddFileInSubfilter(FakeFilter filter, string subfilterName, string fileName,
-            bool checkForDuplicates)
-        {
-            try {
-                var vfilt = FindFilterFromGuid(filter.UniqueIdentifier);
-                if (vfilt == null) {
-                    if (!vcPro.CanAddFilter(filter.Name)) {
-                        // check if user already created this filter... then add guid
-                        vfilt = FindFilterFromName(filter.Name);
-                        if (vfilt == null)
-                            throw new QtVSException($"Project cannot add filter {filter.Name}");
-                    } else {
-                        vfilt = (VCFilter)vcPro.AddFilter(filter.Name);
-                    }
-
-                    vfilt.UniqueIdentifier = filter.UniqueIdentifier;
-                    vfilt.Filter = filter.Filter;
-                    vfilt.ParseFiles = filter.ParseFiles;
-                }
-
-                if (!string.IsNullOrEmpty(subfilterName)) {
-                    var lowerSubFilterName = subfilterName.ToLower();
-                    var subfilterFound = false;
-                    foreach (VCFilter subfilt in vfilt.Filters as IVCCollection) {
-                        if (subfilt.Name.ToLower() == lowerSubFilterName) {
-                            vfilt = subfilt;
-                            subfilterFound = true;
-                            break;
-                        }
-                    }
-                    if (subfilterFound) {
-                        // Do filter names differ in upper/lower case?
-                        if (subfilterName != vfilt.Name) {
-                            try {
-                                // Try to rename the filter for aesthetic reasons.
-                                vfilt.Name = subfilterName;
-                            } catch {
-                                // Renaming didn't work. We don't care.
-                            }
-                        }
-                    }
-                    if (!subfilterFound) {
-                        if (!vfilt.CanAddFilter(subfilterName))
-                            throw new QtVSException($"Project cannot add filter {filter.Name}");
-                    }
-                }
-
-                if (checkForDuplicates) {
-                    // check if file exists in filter already
-                    var vcFile = GetFileFromFilter(filter, fileName);
-                    if (vcFile != null)
-                        return vcFile;
-                }
-
-                if (vfilt.CanAddFile(fileName))
-                    return (VCFile)(vfilt.AddFile(fileName));
-                throw new QtVSException($"Cannot add file {fileName} to filter.");
-            } catch (QtVSException) {
-                throw;
-            } catch (Exception e) {
-                throw new QtVSException($"Cannot add file {fileName} to filter.", e);
-            }
-
         }
 
         /// <summary>
@@ -1700,28 +1189,11 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Ignore when using shared compiler properties
-            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_ClProperties)
-                return;
-
-            var filesCollection = vcPro.Files as IVCCollection;
-            if (filesCollection == null)
-                return;
-
-            int progress = 0;
-            int progressTotal = filesCollection.Count;
-            var waitDialog = WaitDialog.StartWithProgress(SR.GetString("Resources_QtVsTools"),
-                SR.GetString("WaitDialogRefreshMoc"), progressTotal, progress++, delay: 5);
-            qtMsBuild.BeginSetItemProperties();
-            foreach (VCFile vcfile in filesCollection) {
-                RefreshMocStep(vcfile, false);
-                waitDialog.Update(SR.GetString("WaitDialogRefreshMoc"), progressTotal, progress++);
+            if (GetFormatVersion(vcPro) < Resources.qtMinFormatVersion_ClProperties) {
+                // TODO: It would be nice if we can inform the user he's on an old project.
+                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                //    Notifications.UpdateProjectFormat.Show();
             }
-            waitDialog.Stop();
-
-            waitDialog = WaitDialog.Start(SR.GetString("Resources_QtVsTools"),
-                SR.GetString("WaitDialogRefreshMoc"), delay: 2);
-            qtMsBuild.EndSetItemProperties();
-            waitDialog.Stop();
         }
 
         public void RefreshMocStep(VCFile vcfile)
