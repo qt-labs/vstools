@@ -1190,7 +1190,7 @@ namespace QtVsTools.Core
         }
 
 #if VS2017
-        private static string GetRegistrySoftwareString(string subKeyName, string valueName)
+        public static string GetRegistrySoftwareString(string subKeyName, string valueName)
         {
             var keyName = new StringBuilder();
             keyName.Append(@"SOFTWARE\");
@@ -1216,24 +1216,6 @@ namespace QtVsTools.Core
             }
         }
 #endif
-
-        public static string GetWindows10SDKVersion()
-        {
-#if VS2019 || VS2022
-            // In Visual Studio 2019: WindowsTargetPlatformVersion=10.0
-            // will be treated as "use latest installed Windows 10 SDK".
-            // https://developercommunity.visualstudio.com/comments/407752/view.html
-            return "10.0";
-#else
-            string versionWin10SDK = HelperFunctions.GetRegistrySoftwareString(
-                @"Microsoft\Microsoft SDKs\Windows\v10.0", "ProductVersion");
-            if (string.IsNullOrEmpty(versionWin10SDK))
-                return versionWin10SDK;
-            while (versionWin10SDK.Split(new char[] { '.' }).Length < 4)
-                versionWin10SDK = versionWin10SDK + ".0";
-            return versionWin10SDK;
-#endif
-        }
 
         static string _VCPath;
         public static string VCPath

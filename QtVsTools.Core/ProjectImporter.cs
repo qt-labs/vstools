@@ -196,7 +196,7 @@ namespace QtVsTools.Core
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok) {
-                var versionWin10Sdk = HelperFunctions.GetWindows10SDKVersion();
+                var versionWin10Sdk = GetWindows10SDKVersion();
                 if (!string.IsNullOrEmpty(versionWin10Sdk))
                     ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
             }
@@ -516,6 +516,24 @@ namespace QtVsTools.Core
                 qtPro.VCProject.RemoveFile(vcFile);
                 MoveFileToDeletedFolder(qtPro.VCProject, vcFile);
             }
+        }
+
+        private static string GetWindows10SDKVersion()
+        {
+#if VS2019 || VS2022
+            // In Visual Studio 2019: WindowsTargetPlatformVersion=10.0
+            // will be treated as "use latest installed Windows 10 SDK".
+            // https://developercommunity.visualstudio.com/comments/407752/view.html
+            return "10.0";
+#else
+            string versionWin10SDK = HelperFunctions.GetRegistrySoftwareString(
+                @"Microsoft\Microsoft SDKs\Windows\v10.0", "ProductVersion");
+            if (string.IsNullOrEmpty(versionWin10SDK))
+                return versionWin10SDK;
+            while (versionWin10SDK.Split(new char[] { '.' }).Length < 4)
+                versionWin10SDK = versionWin10SDK + ".0";
+            return versionWin10SDK;
+#endif
         }
 
         #endregion
