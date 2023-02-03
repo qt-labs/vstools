@@ -149,23 +149,6 @@ namespace QtVsTools.Core
 
         public string ProjectDir => vcPro.ProjectDirectory;
 
-        /// <summary>
-        /// Returns the file name of the generated ui header file relative to
-        /// the project directory.
-        /// </summary>
-        /// <param name="uiFile">name of the ui file</param>
-        public string GetUiGeneratedFileName(string uiFile)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var fi = new FileInfo(uiFile);
-            var file = fi.Name;
-            if (HelperFunctions.IsUicFile(file)) {
-                return QtVSIPSettings.GetUicDirectory(envPro)
-                    + "\\ui_" + file.Remove(file.Length - 3, 3) + ".h";
-            }
-            return null;
-        }
 
         /// <summary>
         /// Returns the moc-generated file name for the given source or header file.
@@ -298,33 +281,6 @@ namespace QtVsTools.Core
             return vcConfig.GetEvaluatedPropertyValue(propName);
         }
 
-        public void AddUic4BuildStepMsBuild(
-            VCFileConfiguration config,
-            string description,
-            string outputFile)
-        {
-            if (config.File is VCFile file)
-                file.ItemType = QtUic.ItemTypeName;
-            qtMsBuild.SetItemProperty(config, QtUic.Property.ExecutionDescription, description);
-            qtMsBuild.SetItemProperty(config, QtUic.Property.OutputFile, outputFile);
-        }
-
-        public void AddUic4BuildStepCustomBuild(
-            VCFileConfiguration config,
-            string description,
-            string outputFile)
-        {
-            //SetItemType(config, ItemType.CustomBuild);
-            var tool = HelperFunctions.GetCustomBuildTool(config);
-            if (tool != null) {
-                tool.AdditionalDependencies = Resources.uic4Command;
-                tool.Description = description;
-                tool.Outputs = "\"" + outputFile + "\"";
-                tool.CommandLine = "\"" + Resources.uic4Command + "\" -o \""
-                    + outputFile + "\" \"" + ProjectMacros.Path + "\"";
-            }
-        }
-
         /// <summary>
         /// This function adds a uic4 build step to a given file.
         /// </summary>
@@ -335,42 +291,10 @@ namespace QtVsTools.Core
 
             if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
                 file.ItemType = QtUic.ItemTypeName;
-                return;
-            }
-
-            CustomTool toolSettings =
-                IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
-
-            try {
-                var uiFile = GetUiGeneratedFileName(file.FullPath);
-                var uiBaseName = file.Name.Remove(file.Name.LastIndexOf('.'));
-                var uiFileMacro = uiFile.Replace(uiBaseName, ProjectMacros.Name);
-                var uiFileExists = GetFileFromProject(uiFile) != null;
-                string description = "Uic'ing " + ProjectMacros.FileName + "...";
-
-                foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
-
-                    switch (toolSettings) {
-                    case CustomTool.MSBuildTarget:
-                        AddUic4BuildStepMsBuild(config, description, uiFileMacro);
-                        break;
-                    default:
-                        AddUic4BuildStepCustomBuild(config, description, uiFileMacro);
-                        break;
-                    }
-
-                    var conf = config.ProjectConfiguration as VCConfiguration;
-                    var compiler = CompilerToolWrapper.Create(conf);
-                    if (compiler != null && !uiFileExists) {
-                        var uiDir = QtVSIPSettings.GetUicDirectory(envPro);
-                        if (compiler.GetAdditionalIncludeDirectories().IndexOf(uiDir, StringComparison.Ordinal) < 0)
-                            compiler.AddAdditionalIncludeDirectories(uiDir);
-                    }
-                }
-                if (toolSettings == CustomTool.CustomBuildStep && !uiFileExists)
-                    AddFileInFilter(Filters.GeneratedFiles(), uiFile, false);
-            } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotAddUicStep", file.FullPath));
+            } else {
+                // TODO: It would be nice if we can inform the user he's on an old project.
+                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                //    Notifications.UpdateProjectFormat.Show();
             }
         }
 

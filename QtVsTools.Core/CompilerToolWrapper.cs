@@ -191,27 +191,6 @@ namespace QtVsTools.Core
             return GetStringProperty("PreprocessorDefinitions");
         }
 
-        public void AddAdditionalIncludeDirectories(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                return;
-
-            var directoryAdded = false;
-            var directories = value.Split(new[] { ';', ',' }, StringSplitOptions
-                .RemoveEmptyEntries);
-            var lst = AdditionalIncludeDirectories;
-            foreach (var directory in directories) {
-                if (lst.Contains(directory))
-                    continue;
-
-                lst.Add(directory);
-                directoryAdded = true;
-            }
-
-            if (directoryAdded)
-                AdditionalIncludeDirectories = lst;
-        }
-
         public string[] GetAdditionalIncludeDirectoriesList()
         {
             var includes = GetAdditionalIncludeDirectories().Split(',', ';');
