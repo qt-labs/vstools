@@ -388,7 +388,7 @@ namespace QtVsTools
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-                    qtPro.UpdateRccStep(vcFile, null);
+                    qtPro.UpdateRccStep(vcFile);
                 } else if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
                     Translation.RunlUpdate(vcFile);
                 }

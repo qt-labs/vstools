@@ -59,7 +59,6 @@ namespace QtVsTools.Core
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
         public const string moc4Command = "$(QTDIR)\\bin\\moc.exe";
-        public const string rcc4Command = "$(QTDIR)\\bin\\rcc.exe";
 
         // If those directories do not equal to the project directory
         // they have to be added to the include directories for

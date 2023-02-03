@@ -470,12 +470,6 @@ namespace QtVsTools.Core
             return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
         }
 
-        public static string RemoveFileNameExtension(FileInfo fi)
-        {
-            var lastIndex = fi.Name.LastIndexOf(fi.Extension, StringComparison.Ordinal);
-            return fi.Name.Remove(lastIndex, fi.Extension.Length);
-        }
-
         public static bool IsInFilter(VCFile vcfile, FakeFilter filter)
         {
             var item = (VCProjectItem)vcfile;
@@ -679,36 +673,6 @@ namespace QtVsTools.Core
             }
             files[items.Count] = null;
             return files;
-        }
-
-        public static RccOptions ParseRccOptions(string cmdLine, VCFile qrcFile)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var pro = VCProjectToProject((VCProject)qrcFile.project);
-
-            var rccOpts = new RccOptions(pro, qrcFile);
-
-            if (cmdLine.Length > 0) {
-                var cmdSplit = cmdLine.Split(' ', '\t');
-                for (var i = 0; i < cmdSplit.Length; ++i) {
-                    var lowercmdSplit = cmdSplit[i].ToLower();
-                    if (lowercmdSplit.Equals("-threshold")) {
-                        rccOpts.CompressFiles = true;
-                        rccOpts.CompressThreshold = int.Parse(cmdSplit[i + 1]);
-                    } else if (lowercmdSplit.Equals("-compress")) {
-                        rccOpts.CompressFiles = true;
-                        rccOpts.CompressLevel = int.Parse(cmdSplit[i + 1]);
-                    }
-                }
-            }
-            return rccOpts;
-        }
-
-        public static Project VCProjectToProject(VCProject vcproj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return (Project)vcproj.Object;
         }
 
         public static List<Project> ProjectsInSolution(DTE dteObject)

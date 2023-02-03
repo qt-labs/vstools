@@ -44,12 +44,6 @@ namespace QtVsTools.Core
     {
         public static IQtVsToolsOptions Options { get; set; }
 
-        public static string GetUicDirectory(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return QtVSIPSettingsShared.GetDirectory(project, Resources.uicDirKeyword);
-        }
-
         public static string GetMocDirectory()
         {
             return QtVSIPSettingsShared.GetDirectory(Resources.mocDirKeyword);
@@ -109,12 +103,6 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             return QtVSIPSettingsShared.GetOption(project, Resources.mocOptionsKeyword);
-        }
-
-        public static string GetRccDirectory(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return QtVSIPSettingsShared.GetDirectory(project, Resources.rccDirKeyword);
         }
 
         public static string GetRccDirectory()

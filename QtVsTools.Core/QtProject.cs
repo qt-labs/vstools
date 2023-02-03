@@ -992,121 +992,16 @@ namespace QtVsTools.Core
             return false;
         }
 
-        public void UpdateRccStepMsBuild(
-            VCFileConfiguration vfc,
-            RccOptions rccOpts,
-            string filesInQrcFile,
-            string nameOnly,
-            string qrcCppFile)
-        {
-            if (vfc.File is VCFile file)
-                file.ItemType = QtRcc.ItemTypeName;
-            qtMsBuild.SetItemProperty(vfc,
-                QtRcc.Property.ExecutionDescription, "Rcc'ing " + ProjectMacros.FileName + "...");
-            qtMsBuild.SetItemProperty(vfc,
-                QtRcc.Property.OutputFile, qrcCppFile.Replace(nameOnly, ProjectMacros.Name));
-        }
-
-        public void UpdateRccStepCustomBuild(
-            VCFileConfiguration vfc,
-            RccOptions rccOpts,
-            string filesInQrcFile,
-            string nameOnly,
-            string qrcCppFile)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var qrcFile = vfc.File as VCFile;
-            var rccOptsCfg = rccOpts;
-            var cmdLine = string.Empty;
-
-            var cbt = HelperFunctions.GetCustomBuildTool(vfc);
-            cbt.AdditionalDependencies = filesInQrcFile;
-            cbt.Description = "Rcc'ing " + ProjectMacros.FileName + "...";
-            cbt.Outputs = qrcCppFile.Replace(nameOnly, ProjectMacros.Name);
-
-            cmdLine += "\"" + Resources.rcc4Command + "\""
-                + " -name \"" + ProjectMacros.Name + "\"";
-
-            if (rccOptsCfg == null)
-                rccOptsCfg = HelperFunctions.ParseRccOptions(cbt.CommandLine, qrcFile);
-
-            if (rccOptsCfg.CompressFiles) {
-                cmdLine += " -threshold " + rccOptsCfg.CompressThreshold;
-                cmdLine += " -compress " + rccOptsCfg.CompressLevel;
-            } else {
-                cmdLine += " -no-compress";
-            }
-
-            cbt.CommandLine = cmdLine + " \"" + ProjectMacros.Path + "\" -o " + cbt.Outputs;
-        }
-
-        public void UpdateRccStep(VCFile qrcFile, RccOptions rccOpts)
+        public void UpdateRccStep(VCFile qrcFile)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
                 qrcFile.ItemType = QtRcc.ItemTypeName;
-                return;
-            }
-
-            CustomTool toolSettings =
-                IsQtMsBuildEnabled() ? CustomTool.MSBuildTarget : CustomTool.CustomBuildStep;
-
-            var vcpro = (VCProject)qrcFile.project;
-            var qtPro = Create(vcpro);
-            var parser = new QrcParser(qrcFile.FullPath);
-            var filesInQrcFile = ProjectMacros.Path;
-
-            if (parser.parse()) {
-                var fi = new FileInfo(qrcFile.FullPath);
-                var qrcDir = fi.Directory.FullName + Path.DirectorySeparatorChar;
-
-                foreach (var prfx in parser.Prefixes) {
-                    foreach (var itm in prfx.Items) {
-                        var relativeQrcItemPath = HelperFunctions.GetRelativePath(
-                            vcPro.ProjectDirectory,
-                            qrcDir + itm.Path);
-                        filesInQrcFile += ";" + relativeQrcItemPath;
-                        try {
-                            var addedFile = qtPro.AddFileInFilter(
-                                Filters.ResourceFiles(),
-                                relativeQrcItemPath, true);
-                            ExcludeFromAllBuilds(addedFile);
-                        } catch { /* it's not possible to add all kinds of files */ }
-                    }
-                }
-            }
-
-            var nameOnly = HelperFunctions.RemoveFileNameExtension(new FileInfo(qrcFile.FullPath));
-            var qrcCppFile = QtVSIPSettings.GetRccDirectory(envPro)
-                + Path.DirectorySeparatorChar + "qrc_" + nameOnly + ".cpp";
-
-            try {
-                foreach (VCFileConfiguration vfc in (IVCCollection)qrcFile.FileConfigurations) {
-                    switch (toolSettings) {
-                    case CustomTool.MSBuildTarget:
-                        UpdateRccStepMsBuild(
-                            vfc,
-                            rccOpts,
-                            filesInQrcFile,
-                            nameOnly,
-                            qrcCppFile);
-                        break;
-                    default:
-                        UpdateRccStepCustomBuild(
-                            vfc,
-                            rccOpts,
-                            filesInQrcFile,
-                            nameOnly,
-                            qrcCppFile);
-                        break;
-                    }
-                }
-                if (toolSettings == CustomTool.CustomBuildStep)
-                    AddFileInFilter(Filters.GeneratedFiles(), qrcCppFile, true);
-            } catch (Exception /*e*/) {
-                Messages.Print("*** WARNING (RCC): Couldn't add rcc step");
+            } else {
+                // TODO: It would be nice if we can inform the user he's on an old project.
+                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                //    Notifications.UpdateProjectFormat.Show();
             }
         }
 
@@ -1409,19 +1304,6 @@ namespace QtVsTools.Core
                 if (f.Name.Equals(fi.Name, StringComparison.OrdinalIgnoreCase))
                     yield return f;
             }
-        }
-
-        /// <summary>
-        /// Adds a file to a filter. If the filter doesn't exist yet, it
-        /// will be created.
-        /// </summary>
-        /// <param name="filter">fake filter</param>
-        /// <param name="fileName">relative file name</param>
-        /// <param name="checkForDuplicates">true if we don't want duplicated files</param>
-        /// <returns>A VCFile object of the added file.</returns>
-        public VCFile AddFileInFilter(FakeFilter filter, string fileName, bool checkForDuplicates)
-        {
-            return AddFileInSubfilter(filter, null, fileName, checkForDuplicates);
         }
 
         public VCFile AddFileInSubfilter(FakeFilter filter, string subfilterName, string fileName)
