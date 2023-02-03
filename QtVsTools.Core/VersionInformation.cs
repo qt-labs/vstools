@@ -154,9 +154,6 @@ namespace QtVsTools.Core
 
                 Directory.Delete(tempDir, recursive: true);
 
-                var availableModules = msbuildProj.GetItems("ClInclude")
-                    .Select(Path.GetFileNameWithoutExtension);
-
                 VC_MinimumVisualStudioVersion =
                     msbuildProj.GetProperty("MinimumVisualStudioVersion");
                 VC_ApplicationTypeRevision =

@@ -30,9 +30,6 @@ namespace QtVsTools.Core
 {
     public struct BuildConfig
     {
-        public const uint Release = 0x01;
-        public const uint Debug = 0x02;
-
         public static string PlatformToolset =>
             // TODO: Find a proper way to return the PlatformToolset version.
 #if VS2017

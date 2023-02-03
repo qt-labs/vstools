@@ -34,7 +34,6 @@ namespace QtVsTools.Core
 {
     enum BuildType
     {
-        Unknown,
         Static,
         Shared
     }
@@ -83,7 +82,7 @@ namespace QtVsTools.Core
                 var block = match.Groups[1].Value;
                 var blockEnd = match.Groups[2].Value;
                 var name = match.Groups[3].Value;
-                var oper = match.Groups[4].Value;
+                //var oper = match.Groups[4].Value;
                 var data = match.Groups[5].Value;
 
                 if (!string.IsNullOrEmpty(block)) {

@@ -739,16 +739,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public static int GetMaximumCommandLineLength()
-        {
-            var epsilon = 10;       // just to be sure :)
-            var os = Environment.OSVersion;
-            if (os.Version.Major >= 6 ||
-                (os.Version.Major == 5 && os.Version.Minor >= 1))
-                return 8191 - epsilon;    // Windows XP and above
-            return 2047 - epsilon;
-        }
-
         /// <summary>
         /// Translates the machine type given as command line argument to the linker
         /// to the internal enum type VCProjectEngine.machineTypeOption.
@@ -1157,7 +1147,7 @@ namespace QtVsTools.Core
             vcVarsStartInfo.RedirectStandardError = true;
             vcVarsStartInfo.RedirectStandardOutput = true;
             var process = Process.Start(vcVarsStartInfo);
-            process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            process.OutputDataReceived += (_, e) =>
             {
                 if (string.IsNullOrEmpty(e.Data))
                     return;
