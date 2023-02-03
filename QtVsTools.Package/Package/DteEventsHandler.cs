@@ -437,37 +437,6 @@ namespace QtVsTools
             if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
-                var vcpro = project.Object as VCProject;
-                VCFilter filter = null;
-                foreach (VCFilter f in vcpro.Filters as IVCCollection) {
-                    if (f.Name == Filters.HeaderFiles().Name) {
-                        filter = f;
-                        break;
-                    }
-                }
-                if (filter != null) {
-                    foreach (VCFile file in filter.Files as IVCCollection) {
-                        foreach (VCFileConfiguration config in file.FileConfigurations as IVCCollection) {
-                            var tool = new QtCustomBuildTool(config);
-                            var commandLine = tool.CommandLine;
-                            if (!string.IsNullOrEmpty(commandLine) && commandLine.Contains("moc.exe")) {
-                                var matches = Regex.Matches(commandLine, "[^ ^\n]+moc\\.(exe\"|exe)");
-                                string qtDir;
-                                if (matches.Count != 1) {
-                                    var vm = QtVersionManager.The();
-                                    qtDir = vm.GetInstallPath(vm.GetDefaultVersion());
-                                } else {
-                                    qtDir = matches[0].ToString().Trim('"');
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf(Path.DirectorySeparatorChar));
-                                    qtDir = qtDir.Remove(qtDir.LastIndexOf(Path.DirectorySeparatorChar));
-                                }
-                                qtDir = qtDir.Replace("_(QTDIR)", "$(QTDIR)");
-                                HelperFunctions.SetDebuggingEnvironment(project, "PATH="
-                                    + Path.Combine(qtDir, "bin") + ";$(PATH)", false, config.Name);
-                            }
-                        }
-                    }
-                }
                 QtProjectIntellisense.Refresh(project);
             }
             if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {

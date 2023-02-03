@@ -98,84 +98,6 @@ namespace QtVsTools.Core
             return ".qml".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
         }
 
-        public static void SetDebuggingEnvironment(Project prj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            SetDebuggingEnvironment(prj, string.Empty);
-        }
-
-        public static void SetDebuggingEnvironment(Project prj, string solutionConfig)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            SetDebuggingEnvironment(prj, "PATH=$(QTDIR)\\bin;$(PATH)", false, solutionConfig);
-        }
-
-        public static void SetDebuggingEnvironment(Project prj, string envpath, bool overwrite, string solutionConfig)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (QtProject.GetFormatVersion(prj) >= Resources.qtMinFormatVersion_Settings)
-                return;
-
-            // Get platform name from given solution configuration
-            // or if not available take the active configuration
-            var activePlatformName = string.Empty;
-            if (string.IsNullOrEmpty(solutionConfig)) {
-                // First get active configuration cause not given as parameter
-                try {
-                    var activeConf = prj.ConfigurationManager.ActiveConfiguration;
-                    activePlatformName = activeConf.PlatformName;
-                } catch {
-                    Messages.Print("Could not get the active platform name.");
-                }
-            } else {
-                activePlatformName = solutionConfig.Split('|')[1];
-            }
-
-            var vcprj = prj.Object as VCProject;
-            foreach (VCConfiguration conf in vcprj.Configurations as IVCCollection) {
-                // Set environment only for active (or given) platform
-                var currentPlatform = conf.Platform as VCPlatform;
-                if (currentPlatform == null || currentPlatform.Name != activePlatformName)
-                    continue;
-
-                var de = conf.DebugSettings as VCDebugSettings;
-                if (de == null)
-                    continue;
-
-                // See: https://connect.microsoft.com/VisualStudio/feedback/details/619702
-                // Project | Properties | Configuration Properties | Debugging | Environment
-                //
-                // Issue: Substitution of ";" to "%3b"
-                // Answer: This behavior currently is by design as ';' is a special MSBuild
-                // character and needs to be escaped. In the Project Properties we show this
-                // escaped value, but it should be the original when we use it.
-                envpath = envpath.Replace("%3b", ";");
-                de.Environment = de.Environment.Replace("%3b", ";");
-
-                var index = envpath.LastIndexOf(";$(PATH)", StringComparison.Ordinal);
-                var withoutPath = (index >= 0 ? envpath.Remove(index) : envpath);
-
-                if (overwrite || string.IsNullOrEmpty(de.Environment))
-                    de.Environment = envpath;
-                else if (!de.Environment.Contains(envpath) && !de.Environment.Contains(withoutPath)) {
-                    var m = Regex.Match(de.Environment, "PATH\\s*=\\s*");
-                    if (m.Success) {
-                        de.Environment = Regex.Replace(de.Environment, "PATH\\s*=\\s*", withoutPath + ";");
-                        if (!de.Environment.Contains("$(PATH)") && !de.Environment.Contains("%PATH%")) {
-                            if (!de.Environment.EndsWith(";", StringComparison.Ordinal))
-                                de.Environment = de.Environment + ";";
-                            de.Environment += "$(PATH)";
-                        }
-                    } else {
-                        if (!string.IsNullOrEmpty(de.Environment))
-                            de.Environment += "\n";
-                        de.Environment += envpath;
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Returns the normalized file path of a given file.
         /// </summary>
@@ -522,15 +444,6 @@ namespace QtVsTools.Core
                     cxxSr.Close();
             }
             return found;
-        }
-
-        public static void SetEnvironmentVariableEx(string environmentVariable, string variableValue)
-        {
-            try {
-                Environment.SetEnvironmentVariable(environmentVariable, variableValue);
-            } catch {
-                throw new QtVSException(SR.GetString("HelperFunctions_CannotWriteEnvQTDIR"));
-            }
         }
 
         /// <summary>

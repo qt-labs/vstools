@@ -81,7 +81,6 @@ namespace QtVsTools.Core
                         foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
                             var qtPro = QtProject.Create(prj);
-                            qtPro.SetQtEnvironment();
                             ApplyPostImportSteps(dteObject, qtPro);
                         }
                     }
@@ -126,7 +125,6 @@ namespace QtVsTools.Core
                 if (pro is null)
                     return;
                 var qtPro = QtProject.Create(pro);
-                qtPro.SetQtEnvironment();
                 var platformName = versionInfo.GetVSPlatformName();
 
                 if (qtVersion is not null)
@@ -150,7 +148,6 @@ namespace QtVsTools.Core
                     QtProject.MarkAsQtPlugin(qtPro);
                 }
 
-                qtPro.SetQtEnvironment();
                 ApplyPostImportSteps(dteObject, qtPro);
             } catch (Exception e) {
                 Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
