@@ -163,15 +163,8 @@ namespace QtVsTools
 
                 var qtVersion = "$(DefaultQtVersion)";
                 var project = HelperFunctions.GetSelectedQtProject(dte);
-                if (project == null) {
-                    project = HelperFunctions.GetSelectedProject(dte);
-                    if (project != null && HelperFunctions.IsQtProject(project)) {
-                        var qmakeQtDir = HelperFunctions.GetQtDirFromQMakeProject(project);
-                        qtVersion = QtVersionManager.The().GetQtVersionFromInstallDir(qmakeQtDir);
-                    }
-                } else {
+                if (project != null)
                     qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
-                }
 
                 var info = QtVersionManager.The().GetVersionInfo(qtVersion);
                 var docPath = info?.QtInstallDocs;

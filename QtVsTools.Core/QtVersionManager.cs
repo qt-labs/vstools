@@ -95,23 +95,6 @@ namespace QtVsTools.Core
             return GetVersions(Registry.CurrentUser);
         }
 
-        public string GetQtVersionFromInstallDir(string qtDir)
-        {
-            if (qtDir == null)
-                return null;
-
-            var versions = GetVersions();
-            foreach (var version in versions) {
-                var installPath = GetInstallPath(version);
-                if (installPath == null)
-                    continue;
-                if (installPath.Equals(qtDir, StringComparison.OrdinalIgnoreCase))
-                    return version;
-            }
-
-            return null;
-        }
-
         public string[] GetVersions(RegistryKey root)
         {
             var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);

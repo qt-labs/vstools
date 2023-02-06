@@ -126,7 +126,6 @@
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="HelperFunctions.cs" />
-    <Compile Include="LinkerToolWrapper.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MocCmdChecker.cs" />
     <Compile Include="MsBuildProject.cs" />

@@ -28,7 +28,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.VCProjectEngine;
 
@@ -98,69 +97,6 @@ namespace QtVsTools.Core
         protected bool IsNull()
         {
             return compilerTool == null && compilerObj == null;
-        }
-
-        public List<string> AdditionalIncludeDirectories
-        {
-            get
-            {
-                var directories = GetAdditionalIncludeDirectories();
-                if (directories == null)
-                    return new List<string>();
-                // double quotes are escaped
-                directories = directories.Replace("\\\"", "\"");
-                var dirArray = directories.Split(new[] { ';', ',' }, StringSplitOptions
-                    .RemoveEmptyEntries);
-                var lst = new List<string>(dirArray);
-                var i = 0;
-                while (i < lst.Count) {
-                    var item = lst[i];
-                    if (item.StartsWith("\"", StringComparison.Ordinal) && item.EndsWith("\"", StringComparison.Ordinal)) {
-                        item = item.Remove(0, 1);
-                        item = item.Remove(item.Length - 1, 1);
-                        lst[i] = item;
-                    }
-
-                    if (lst[i].Length > 0)
-                        ++i;
-                    else
-                        lst.RemoveAt(i);
-                }
-                return lst;
-            }
-
-            set
-            {
-                if (value == null) {
-                    SetAdditionalIncludeDirectories(null);
-                    return;
-                }
-                var newDirectories = string.Empty;
-                var firstLoop = true;
-                foreach (var dir in value) {
-                    if (firstLoop)
-                        firstLoop = false;
-                    else
-                        newDirectories += ";";
-
-                    if (dir.IndexOfAny(new[] { ' ', '\t' }) > 0 || !Path.IsPathRooted(dir))
-                        newDirectories += "\"" + dir + "\"";
-                    else
-                        newDirectories += dir;
-                }
-                if (newDirectories != GetAdditionalIncludeDirectories())
-                    SetAdditionalIncludeDirectories(newDirectories);
-            }
-        }
-
-        public void SetAdditionalIncludeDirectories(string value)
-        {
-            // Prevent setting of empty substring, as they break the build
-            value = value.Replace("\"\",", string.Empty);
-            if (compilerTool != null)
-                compilerTool.AdditionalIncludeDirectories = value;
-            else
-                SetStringProperty("AdditionalIncludeDirectories", value);
         }
 
         public List<string> PreprocessorDefinitions
