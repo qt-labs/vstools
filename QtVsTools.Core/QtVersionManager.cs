@@ -385,7 +385,7 @@ namespace QtVsTools.Core
                 if (key != null)
                     defaultVersion = (string)key.GetValue("DefaultQtVersion");
             } catch {
-                Messages.DisplayWarningMessage(SR.GetString("QtVersionManager_CannotLoadQtVersion"));
+                Messages.DisplayWarningMessage("Cannot load the default Qt version.");
             }
 
             if (defaultVersion == null) {

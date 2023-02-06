@@ -387,7 +387,6 @@
     <Compile Include="QtMsBuild\QtProjectTracker.cs" />
     <Compile Include="Package\QtProjectContextMenu.cs" />
     <Compile Include="Package\QtSolutionContextMenu.cs" />
-    <Compile Include="Package\SR.cs" />
     <Compile Include="Package\Translation.cs" />
     <Compile Include="Package\Notifications.cs" />
     <Content Include="..\Changelog">
@@ -476,9 +475,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <EmbeddedResource Include="Resources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <T4Template Include="Package\Version.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Version.tt.cs</OutputFile>

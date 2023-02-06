@@ -123,7 +123,7 @@ namespace QtVsTools
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                         Notifications.UpdateProjectFormat.Show();
                 } else {
-                    MessageBox.Show(SR.GetString("NoProjectOpened"));
+                    MessageBox.Show("No Project Opened");
                 }
                 break;
             case CommandId.ProjectConvertToQtMsBuild: {

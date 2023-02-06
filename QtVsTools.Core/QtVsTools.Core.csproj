@@ -158,7 +158,6 @@
     <Compile Include="QtVSException.cs" />
     <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="Resources.cs" />
-    <Compile Include="SR.cs" />
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
     <Compile Include="VisualStudio\IProjectTracker.cs" />
@@ -167,8 +166,6 @@
     <Compile Include="VisualStudio\VsShell.cs" />
     <Compile Include="WaitDialog.cs" />
     <Content Include="QtVsTools.Core.ico" />
-    <EmbeddedResource Include="Resources.resx">
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\delete.png" />
     <EmbeddedResource Include="Resources\delete_d.png" />
     <EmbeddedResource Include="Resources\newitem.png" />

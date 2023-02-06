@@ -35,7 +35,7 @@ namespace QtVsTools.Core
             return new FakeFilter
             {
                 UniqueIdentifier = "{4FC737F1-C7A5-4376-A066-2A32D752A2FF}",
-                Name = SR.GetString("Resources_SourceFiles"),
+                Name = "Source Files",
                 Filter = "cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
             };
         }
@@ -45,7 +45,7 @@ namespace QtVsTools.Core
             return new FakeFilter
             {
                 UniqueIdentifier = "{93995380-89BD-4b04-88EB-625FBE52EBFB}",
-                Name = SR.GetString("Resources_HeaderFiles"),
+                Name = "Header Files",
                 Filter = "h;hh;hpp;hxx;hm;inl;inc;xsd"
             };
         }
@@ -55,7 +55,7 @@ namespace QtVsTools.Core
             return new FakeFilter
             {
                 UniqueIdentifier = "{99349809-55BA-4b9d-BF79-8FDBB0286EB3}",
-                Name = SR.GetString("Resources_FormFiles"),
+                Name = "Form Files",
                 Filter = "ui"
             };
         }
@@ -65,7 +65,7 @@ namespace QtVsTools.Core
             return new FakeFilter
             {
                 UniqueIdentifier = "{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}",
-                Name = SR.GetString("Resources_ResourceFiles"),
+                Name = "Resource Files",
                 ParseFiles = false,
                 Filter = "qrc;*"
             };
@@ -76,7 +76,7 @@ namespace QtVsTools.Core
             return new FakeFilter
             {
                 UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}",
-                Name = SR.GetString("Resources_GeneratedFiles"),
+                Name = "Generated Files",
                 Filter = "moc;h;cpp",
             };
         }

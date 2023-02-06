@@ -83,7 +83,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (project == null)
-                throw new QtVSException(SR.GetString("QtProject_CannotConstructWithoutValidProject"));
+                throw new QtVSException("Cannot construct a QtProject object without a valid project.");
             envPro = project;
             dte = envPro.DTE;
             vcPro = envPro.Object as VCProject;
@@ -826,7 +826,7 @@ namespace QtVsTools.Core
                     }
                 }
             } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotRemoveMocStep", file.FullPath));
+                throw new QtVSException($"Cannot remove a moc step from file {file.FullPath}");
             }
         }
 
@@ -883,7 +883,7 @@ namespace QtVsTools.Core
 
                 RemoveFileFromFilter(file, vfilt);
             } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotRemoveFile", file.Name));
+                throw new QtVSException($"Cannot remove file {file.Name} from filter.");
             }
         }
 
@@ -921,7 +921,7 @@ namespace QtVsTools.Core
                 }
                 return null;
             } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
+                throw new QtVSException("Cannot find filter.");
             }
         }
 
@@ -936,7 +936,7 @@ namespace QtVsTools.Core
                 }
                 return null;
             } catch {
-                throw new QtVSException(SR.GetString("QtProject_CannotFindFilter"));
+                throw new QtVSException("Cannot find filter.");
             }
         }
 
@@ -989,8 +989,8 @@ namespace QtVsTools.Core
                     writer.WriteLine(l);
                 writer.Close();
             } catch (Exception e) {
-                Messages.Print(SR.GetString("QtProject_CannotAdjustWhitespaces",
-                    e.ToString()));
+                Messages.Print("Cannot adjust whitespace or tabs in file (write)."
+                    + Environment.NewLine + $"({e})");
             }
         }
 

@@ -32,7 +32,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
-
+using static System.Environment;
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core
@@ -43,7 +43,7 @@ namespace QtVsTools.Core
     {
         private static OutputWindowPane Pane { get; set; }
 
-        private static readonly string PaneName = "Qt VS Tools";
+        private const string Name = "Qt VS Tools";
         private static readonly Guid PaneGuid = new Guid("8f6a1e44-fa0b-49e5-9934-1c050555350e");
 
         /// <summary>
@@ -96,44 +96,41 @@ namespace QtVsTools.Core
                    + $"Stack Trace:\r\n   {exception.StackTrace.Trim()}\r\n";
         }
 
-        private static readonly string ErrorString = SR.GetString("Messages_ErrorOccured");
-        private static readonly string WarningString = SR.GetString("Messages_Warning");
-        private static readonly string SolutionString = SR.GetString("Messages_SolveProblem");
+        private const string ErrorString = "The following error occurred:";
+        private static readonly string WarningString = "Warning:" + NewLine;
 
         public static void DisplayCriticalErrorMessage(string msg)
         {
-            MessageBox.Show(ErrorString +
-                msg,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ErrorString + NewLine + msg,
+                Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void DisplayErrorMessage(System.Exception e)
         {
             MessageBox.Show(ExceptionToString(e),
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void DisplayErrorMessage(string msg)
         {
-            MessageBox.Show(ErrorString +
-                msg,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ErrorString + NewLine + msg,
+                Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void DisplayWarningMessage(System.Exception e, string solution)
         {
-            MessageBox.Show(WarningString +
-                ExceptionToString(e) +
-                SolutionString +
-                solution,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(WarningString
+                + ExceptionToString(e)
+                + NewLine + NewLine + "To solve this problem:" + NewLine
+                + solution,
+                Name, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         public static void DisplayWarningMessage(string msg)
         {
             MessageBox.Show(WarningString +
                 msg,
-                SR.GetString("Resources_QtVsTools"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Name, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         public static void ClearPane()
@@ -164,7 +161,7 @@ namespace QtVsTools.Core
         {
             try {
                 if (Pane == null)
-                    Pane = await OutputWindowPane.CreateAsync(PaneName, PaneGuid);
+                    Pane = await OutputWindowPane.CreateAsync(Name, PaneGuid);
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex);
             }
