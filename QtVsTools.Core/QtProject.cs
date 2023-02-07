@@ -599,7 +599,7 @@ namespace QtVsTools.Core
                             + ")\"|(\\S*" + GetMocFileName(file.FullPath) + "))";
                         string outputMocFile = null;
                         var regExp = new Regex(pattern);
-                        tool.Outputs = tool.Outputs.Replace(ProjectMacros.Name, baseFileName);
+                        tool.Outputs = tool.Outputs.Replace("%(Filename)", baseFileName);
                         var matchList = regExp.Matches(tool.Outputs);
                         if (matchList.Count > 0) {
                             if (matchList[0].Length > 0)

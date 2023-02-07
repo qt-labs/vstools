@@ -130,7 +130,6 @@
     <Compile Include="Observable.cs" />
     <Compile Include="OutputWindowPane.cs" />
     <Compile Include="ProjectImporter.cs" />
-    <Compile Include="ProjectMacros.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
