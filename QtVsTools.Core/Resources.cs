@@ -57,8 +57,6 @@ namespace QtVsTools.Core
         // Project properties labels
         public const string projLabelQtSettings = "QtSettings";
 
-        public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
-
         // If those directories do not equal to the project directory
         // they have to be added to the include directories for
         // compiling!

@@ -371,7 +371,7 @@ namespace QtVsTools.Core
         {
             if (file.ItemType == QtUic.ItemTypeName)
                 return true;
-            return CheckForCommand(file, Resources.uic4Command);
+            return CheckForCommand(file, "uic.exe");
         }
 
         private static bool CheckForCommand(VCFile file, string cmd)
