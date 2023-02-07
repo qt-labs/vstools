@@ -262,7 +262,7 @@ namespace QtVsTools.Core
 
             foreach (var global in envPro.Globals.VariableNames as string[]) {
                 if (global.StartsWith("Qt5Version", StringComparison.Ordinal)
-                    && envPro.Globals.get_VariablePersists(global)) {
+                    && envPro.Globals.VariablePersists[global]) {
                     return true;
                 }
             }

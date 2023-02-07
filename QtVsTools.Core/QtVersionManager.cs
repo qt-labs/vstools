@@ -296,10 +296,10 @@ namespace QtVsTools.Core
                 return false;
             }
             var key = "Qt5Version " + platform;
-            if (!project.Globals.get_VariableExists(key) || project.Globals[key].ToString() != version)
+            if (!project.Globals.VariableExists[key] || project.Globals[key].ToString() != version)
                 project.Globals[key] = version;
-            if (!project.Globals.get_VariablePersists(key))
-                project.Globals.set_VariablePersists(key, true);
+            if (!project.Globals.VariablePersists[key])
+                project.Globals.VariablePersists[key] = true;
             return true;
         }
 
@@ -317,7 +317,7 @@ namespace QtVsTools.Core
             }
             var version = GetProjectQtVersion(project, config);
 
-            if (version == null && project.Globals.get_VariablePersists("Qt5Version")) {
+            if (version == null && project.Globals.VariablePersists["Qt5Version"]) {
                 version = (string)project.Globals["Qt5Version"];
                 ExpandEnvironmentVariablesInQtVersion(ref version);
                 return VerifyIfQtVersionExists(version) ? version : null;
@@ -333,7 +333,7 @@ namespace QtVsTools.Core
                 return QtProject.GetPropertyValue(project, config, "QtInstall");
 
             var key = "Qt5Version " + config.PlatformName;
-            if (!project.Globals.get_VariablePersists(key))
+            if (!project.Globals.VariablePersists[key])
                 return null;
             var version = (string)project.Globals[key];
             ExpandEnvironmentVariablesInQtVersion(ref version);

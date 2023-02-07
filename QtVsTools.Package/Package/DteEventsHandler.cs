@@ -64,7 +64,7 @@ namespace QtVsTools
             buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
             buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
 
-            documentEvents = events.get_DocumentEvents(null);
+            documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += DocumentSaved;
 
             projectItemsEvents = events.ProjectItemsEvents;
@@ -82,15 +82,14 @@ namespace QtVsTools
             windowEvents.WindowActivated += WindowEvents_WindowActivated;
 
             var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
-            debugStartEvents = events.get_CommandEvents(debugCommandsGUID, 295);
+            debugStartEvents = events.CommandEvents[debugCommandsGUID, 295];
             debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
 
-            debugStartWithoutDebuggingEvents = events.get_CommandEvents(debugCommandsGUID, 368);
+            debugStartWithoutDebuggingEvents = events.CommandEvents[debugCommandsGUID, 368];
             debugStartWithoutDebuggingEvents.BeforeExecute += DebugStartWithoutDebuggingEvents_BeforeExecute;
 
-            f1HelpEvents = events.get_CommandEvents(
-                typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
-                (int)VSConstants.VSStd97CmdID.F1Help);
+            f1HelpEvents = events.CommandEvents[typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
+                (int)VSConstants.VSStd97CmdID.F1Help];
             f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
             InitializeVCProjects();
