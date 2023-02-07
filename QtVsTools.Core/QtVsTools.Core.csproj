@@ -117,7 +117,6 @@
     <Compile Include="Common\PriorityQueue.cs" />
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\PunisherQueue.cs" />
-    <Compile Include="Common\QtVSIPSettingsShared.cs" />
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStreamReader.cs" />
