@@ -155,20 +155,16 @@ namespace QtVsTools.Core.QtMsBuild
         int GetItemCount(string itemType, bool? isMocSource = null, string configName = "")
         {
             var items = GetItems(itemType, configName);
-            if (!isMocSource.HasValue) {
-                return items
-                .Count();
-            } else if (!isMocSource.Value) {
-                return items.Where(x =>
-                provider.GetItemType(x) != QtMoc.ItemTypeName
-                || HelperFunctions.IsHeaderFile(provider.GetItemName(x)))
-                .Count();
-            } else {
-                return items.Where(x =>
-                provider.GetItemType(x) == QtMoc.ItemTypeName
-                && !HelperFunctions.IsHeaderFile(provider.GetItemName(x)))
-                .Count();
+            if (!isMocSource.HasValue)
+                return items.Count();
+
+            if (!isMocSource.Value) {
+                return items.Count(x => provider.GetItemType(x) != QtMoc.ItemTypeName
+                    || HelperFunctions.IsHeaderFile(provider.GetItemName(x)));
             }
+
+            return items.Count(x => provider.GetItemType(x) == QtMoc.ItemTypeName
+                && !HelperFunctions.IsHeaderFile(provider.GetItemName(x)));
         }
 
         object GetProjectConfiguration(string configName)
@@ -667,9 +663,8 @@ namespace QtVsTools.Core.QtMsBuild
         {
             inputPath = outputPath = "";
 
-            string filePath = parser.PositionalArguments.Where(
-                arg => !arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase))
-                .FirstOrDefault();
+            string filePath = parser.PositionalArguments
+                .FirstOrDefault(arg => !arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase));
             if (!string.IsNullOrEmpty(filePath))
                 inputPath = filePath;
 
@@ -689,9 +684,8 @@ namespace QtVsTools.Core.QtMsBuild
             if (!parser.Parse(commandLine, macros, toolExecName))
                 return false;
 
-            string execPath = parser.PositionalArguments.Where(
-                arg => arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase))
-                .FirstOrDefault();
+            string execPath = parser.PositionalArguments
+                .FirstOrDefault(arg => arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase));
             if (!string.IsNullOrEmpty(execPath)) {
                 var execDir = Path.GetDirectoryName(execPath);
                 if (!string.IsNullOrEmpty(execDir))

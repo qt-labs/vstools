@@ -65,8 +65,7 @@ namespace QtVsTools
                 throw new NotSupportedException("Generic class: " + type.Name);
 
             var ctorInfo = ((TypeInfo)type).DeclaredConstructors
-                .Where(x => x.GetParameters().Length == 0)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.GetParameters().Length == 0);
 
             if (ctorInfo == null)
                 throw new NotSupportedException("No default constructor: " + type.Name);

@@ -173,8 +173,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Elements()
-                .Where(x => x.Name.LocalName == property_name)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Name.LocalName == property_name);
             if (xProperty == null)
                 return string.Empty;
             return xProperty.Value;
@@ -187,8 +186,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + item_type)
                 .Elements()
-                .Where(x => x.Name.LocalName == property_name)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Name.LocalName == property_name);
             if (xProperty == null)
                 return string.Empty;
             return xProperty.Value;
@@ -200,7 +198,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + item_type)
-                .Select((XElement x) => (string)x.Attribute("Include"));
+                .Select(x => (string)x.Attribute("Include"));
         }
 
         public bool EnableMultiProcessorCompilation()
@@ -307,17 +305,15 @@ namespace QtVsTools.Core
             var globals = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == "Globals")
-                .FirstOrDefault();
+                .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
             if (globals == null)
                 return false;
 
             // Set Qt project format version
             var projKeyword = globals
                 .Elements(ns + "Keyword")
-                .Where(x => x.Value.StartsWith(Resources.qtProjectKeyword)
-                    || x.Value.StartsWith(Resources.qtProjectV2Keyword))
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Value.StartsWith(Resources.qtProjectKeyword)
+                    || x.Value.StartsWith(Resources.qtProjectV2Keyword));
             if (projKeyword == null)
                 return false;
             var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
@@ -331,8 +327,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
-                .Where(x => (string)x.Attribute("Project") == @"$(QtMsBuild)\qt.props")
-                .FirstOrDefault();
+                .FirstOrDefault(x => (string)x.Attribute("Project") == @"$(QtMsBuild)\qt.props");
             if (qtPropsImport == null)
                 return false;
 
@@ -440,15 +435,13 @@ namespace QtVsTools.Core
             insertionPoint = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == "UserMacros")
-                .LastOrDefault();
+                .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros");
 
             // * After the last PropertySheets import group
             insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
-                .Where(x => (string)x.Attribute("Label") == "PropertySheets")
-                .LastOrDefault();
+                .LastOrDefault(x => (string)x.Attribute("Label") == "PropertySheets");
 
             // * Before the first ItemDefinitionGroup
             insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
@@ -825,8 +818,7 @@ namespace QtVsTools.Core
             var xGlobals = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == "Globals")
-                .FirstOrDefault();
+                .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
             if (xGlobals == null)
                 return false;
             if (xGlobals.Element(ns + "WindowsTargetPlatformVersion") != null)
@@ -841,31 +833,26 @@ namespace QtVsTools.Core
 
         public bool AddQtMsBuildReferences()
         {
-            var isQtMsBuildEnabled = this[Files.Project].xml
+            bool isQtMsBuildEnabled;
+            isQtMsBuildEnabled = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
-                .Where(x =>
-                    x.Attribute("Project").Value == @"$(QtMsBuild)\qt.props")
-                .Any();
+                .Any(x => x.Attribute("Project").Value == @"$(QtMsBuild)\qt.props");
             if (isQtMsBuildEnabled)
                 return true;
 
             var xImportCppProps = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
-                .Where(x =>
-                    x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.props")
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.props");
             if (xImportCppProps == null)
                 return false;
 
             var xImportCppTargets = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
-                .Where(x =>
-                    x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets")
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets");
             if (xImportCppTargets == null)
                 return false;
 
@@ -996,7 +983,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "CustomBuild")
                 .Where(x => x.Elements(ns + "Command")
-                    .Where(y => (y.Value.Contains(toolExecName))).Any());
+                    .Any(y => (y.Value.Contains(toolExecName))));
         }
 
         void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
@@ -1021,14 +1008,13 @@ namespace QtVsTools.Core
 
             customBuilds.ForEach(customBuild =>
             {
-                var filterCustomBuild = this[Files.Filters]?.xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "ItemGroup")
-                    .Elements(ns + "CustomBuild")
-                    .Where(filterItem =>
-                        filterItem.Attribute("Include").Value
-                        == customBuild.Attribute("Include").Value)
-                    .FirstOrDefault();
+                var filterCustomBuild = (this[Files.Filters]?.xml
+                        .Elements(ns + "Project")
+                        .Elements(ns + "ItemGroup")
+                        .Elements(ns + "CustomBuild"))
+                    .FirstOrDefault(
+                        filterItem => filterItem.Attribute("Include").Value
+                         == customBuild.Attribute("Include").Value);
                 if (filterCustomBuild != null) {
                     filterCustomBuild.Name = ns + itemTypeName;
                     this[Files.Filters].isDirty = true;
@@ -1077,8 +1063,7 @@ namespace QtVsTools.Core
             //remove items with generated files
             bool hasGeneratedFiles = false;
             var cbEval = cbEvals
-                .Where(x => x.ProjectConfig == configName && x.Identity == itemName)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.ProjectConfig == configName && x.Identity == itemName);
             if (cbEval != null) {
                 var outputFiles = cbEval.Outputs
                     .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
@@ -1088,14 +1073,10 @@ namespace QtVsTools.Core
                 foreach (var outputFile in outputFiles) {
                     if (projItemsByPath.TryGetValue(outputFile, out List<XElement> mocOutput)) {
                         outputItems.AddRange(mocOutput);
-                        hasGeneratedFiles |= hasGeneratedFiles ? true : mocOutput
-                            .Where(x => !x.Elements(ns + "ExcludedFromBuild")
-                                .Where(y =>
-                                    (string)y.Attribute("Condition") == string.Format(
-                                        "'$(Configuration)|$(Platform)'=='{0}'", configName)
-                                    && y.Value == "true")
-                                .Any())
-                            .Any();
+                        hasGeneratedFiles |= hasGeneratedFiles || mocOutput
+                            .Any(x => !x.Elements(ns + "ExcludedFromBuild")
+                                .Any(y => (string)y.Attribute("Condition") == $"'$(Configuration)|$(Platform)'=='{configName}'"
+                                 && y.Value == "true"));
                     }
                     if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
                         outputItems.AddRange(mocOutput);
@@ -1182,9 +1163,8 @@ namespace QtVsTools.Core
                 foreach (var cbt in cbtGroup) {
                     var enabledProperties = cbt.Elements().Where(x =>
                         cbtPropertyNames.Contains(x.Name.LocalName)
-                        && !x.Parent.Elements(ns + "ExcludedFromBuild").Where(y =>
-                        (string)x.Attribute("Condition") == (string)y.Attribute("Condition"))
-                        .Any());
+                        && x.Parent.Elements(ns + "ExcludedFromBuild")
+                            .All(y => (string)x.Attribute("Condition") != (string)y.Attribute("Condition")));
                     foreach (var property in enabledProperties)
                         newCbt.Add(new XElement(property));
                     cbtToRemove.Add(cbt);
