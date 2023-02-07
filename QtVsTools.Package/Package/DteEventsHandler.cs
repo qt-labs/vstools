@@ -27,15 +27,13 @@
 ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
-using EnvDTE;
-using EnvDTE80;
 
 namespace QtVsTools
 {
@@ -511,65 +509,21 @@ namespace QtVsTools
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
         {
-            var vcFileCfg = item as VCFileConfiguration;
-            if (vcFileCfg == null) {
-                // A global or project specific property has changed.
-
-                var vcCfg = item as VCConfiguration;
-                if (vcCfg == null)
-                    return;
-                var vcPrj = vcCfg.project as VCProject;
-                if (vcPrj == null)
-                    return;
-                if (!HelperFunctions.IsVsToolsProject(vcPrj))
-                    return;
-                // Ignore property events when using shared compiler properties
-                if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
-                    return;
-
-                if (dispid == dispId_VCCLCompilerTool_UsePrecompiledHeader
-                    || dispid == dispId_VCCLCompilerTool_PrecompiledHeaderThrough
-                    || dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories
-                    || dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
-                    var qtPrj = QtProject.Create(vcPrj);
-                    if (qtPrj.IsQtMsBuildEnabled()
-                        && dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories) {
-                        qtPrj.RefreshQtMocIncludePath();
-
-                    } else if (qtPrj.IsQtMsBuildEnabled()
-                        && dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
-                        qtPrj.RefreshQtMocDefine();
-
-                    } else {
-                        qtPrj.RefreshMocSteps();
-                    }
-                }
-            } else {
-                // A file specific property has changed.
-
-                var vcFile = vcFileCfg.File as VCFile;
-                if (vcFile == null)
-                    return;
-                var vcPrj = vcFile.project as VCProject;
-                if (vcPrj == null)
-                    return;
-                if (!HelperFunctions.IsVsToolsProject(vcPrj))
-                    return;
-                // Ignore property events when using shared compiler properties
-                if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
-                    return;
-
-                if (dispid == dispId_VCFileConfiguration_ExcludedFromBuild) {
-                    var qtPrj = QtProject.Create(vcPrj);
-                    qtPrj.OnExcludedFromBuildChanged(vcFile, vcFileCfg);
-                } else if (dispid == dispId_VCCLCompilerTool_UsePrecompiledHeader
-                      || dispid == dispId_VCCLCompilerTool_PrecompiledHeaderThrough
-                      || dispid == dispId_VCCLCompilerTool_AdditionalIncludeDirectories
-                      || dispid == dispId_VCCLCompilerTool_PreprocessorDefinitions) {
-                    var qtPrj = QtProject.Create(vcPrj);
-                    qtPrj.RefreshMocStep(vcFile);
-                }
+            VCProject vcPrj = null;
+            if (item is VCFileConfiguration vcFileCfg) {
+                if (vcFileCfg.File is VCFile vcFile)
+                    vcPrj = vcFile.project as VCProject;
+            } else if (item is VCConfiguration vcCfg) {
+                vcPrj = vcCfg.project as VCProject;
             }
+
+            if (vcPrj is not null && !HelperFunctions.IsVsToolsProject(vcPrj))
+                return;
+
+            if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
+                return; // Ignore property events when using shared compiler properties
+            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                Notifications.UpdateProjectFormat.Show();
         }
 
         private void OnVCProjectEngineItemPropertyChange2(
@@ -581,9 +535,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
-            if (item is VCConfiguration vcConfig
-                && vcConfig.project is VCProject vcProject
-                && vcProject.Object is Project project) {
+            if (item is VCConfiguration {project: VCProject {Object: Project project}} vcConfig) {
                 QtProjectIntellisense.Refresh(
                     QtProjectTracker.Get(project, project.FullName).Project, vcConfig.Name);
             }
@@ -603,8 +555,7 @@ namespace QtVsTools
         /// </summary>
         private static int GetPropertyDispId(Type type, string propertyName)
         {
-            var pi = type.GetProperty(propertyName);
-            if (pi != null) {
+            if (type.GetProperty(propertyName) is {} pi) {
                 foreach (Attribute attribute in pi.GetCustomAttributes(true)) {
                     if (attribute is DispIdAttribute dispIdAttribute)
                         return dispIdAttribute.Value;
@@ -612,6 +563,5 @@ namespace QtVsTools
             }
             return 0;
         }
-
     }
 }
