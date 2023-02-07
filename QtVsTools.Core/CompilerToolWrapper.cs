@@ -70,18 +70,6 @@ namespace QtVsTools.Core
             return wrapper.IsNull() ? null : wrapper;
         }
 
-        public static CompilerToolWrapper Create(VCPropertySheet sheet)
-        {
-            CompilerToolWrapper wrapper = null;
-            try {
-                wrapper = new CompilerToolWrapper(((IVCCollection)sheet.Tools)
-                    .Item("VCCLCompilerTool"));
-            } catch {
-            }
-
-            return wrapper.IsNull() ? null : wrapper;
-        }
-
         protected CompilerToolWrapper(object tool)
         {
             if (tool == null)
@@ -125,29 +113,6 @@ namespace QtVsTools.Core
             if (compilerTool != null)
                 return compilerTool.PreprocessorDefinitions;
             return GetStringProperty("PreprocessorDefinitions");
-        }
-
-        public string[] GetAdditionalIncludeDirectoriesList()
-        {
-            var includes = GetAdditionalIncludeDirectories().Split(',', ';');
-            var fixedincludes = new string[includes.Length];
-            var i = 0;
-            foreach (var include in includes) {
-                var incl = include;
-                if (incl.StartsWith("\\\"", StringComparison.Ordinal) && incl.EndsWith("\\\"", StringComparison.Ordinal)) {
-                    incl = incl.Remove(0, 2);
-                    incl = incl.Remove(incl.Length - 2, 2);
-                }
-                fixedincludes[i++] = incl;
-            }
-            return fixedincludes;
-        }
-
-        public string GetAdditionalIncludeDirectories()
-        {
-            if (compilerTool != null)
-                return compilerTool.AdditionalIncludeDirectories;
-            return GetStringProperty("AdditionalIncludeDirectories");
         }
 
         public string GetPrecompiledHeaderThrough()

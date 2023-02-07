@@ -126,7 +126,6 @@
     <Compile Include="Filters.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="MocCmdChecker.cs" />
     <Compile Include="MsBuildProject.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="OutputWindowPane.cs" />

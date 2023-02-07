@@ -58,7 +58,6 @@ namespace QtVsTools.Core
         public const string projLabelQtSettings = "QtSettings";
 
         public const string uic4Command = "$(QTDIR)\\bin\\uic.exe";
-        public const string moc4Command = "$(QTDIR)\\bin\\moc.exe";
 
         // If those directories do not equal to the project directory
         // they have to be added to the include directories for
@@ -66,7 +65,6 @@ namespace QtVsTools.Core
         public const string generatedFilesDir = "GeneratedFiles";
 
         public const string mocDirKeyword = "MocDir";
-        public const string mocOptionsKeyword = "MocOptions";
         public const string uicDirKeyword = "UicDir";
         public const string rccDirKeyword = "RccDir";
 

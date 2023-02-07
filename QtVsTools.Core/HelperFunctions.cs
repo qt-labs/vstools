@@ -29,10 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -727,53 +725,6 @@ namespace QtVsTools.Core
             var subDirs = sourceDir.GetDirectories();
             foreach (var subDir in subDirs)
                 CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
-        }
-
-        /// <summary>
-        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
-        /// and project item metadata in the form %(MetadataName).<para/>
-        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
-        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
-        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
-        /// <paramref name="project"/>: Current project.<para/>
-        /// <paramref name="configName"/>: Name of selected configuration (e.g. "Debug").<para/>
-        /// <paramref name="platformName"/>: Name of selected platform (e.g. "x64").<para/>
-        /// <paramref name="filePath"/>(optional): Evaluation context.<para/>
-        /// </summary>
-        public static bool ExpandString(
-            ref string stringToExpand,
-            EnvDTE.Project project,
-            string configName,
-            string platformName,
-            string filePath = null)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (project == null
-                || string.IsNullOrEmpty(configName)
-                || string.IsNullOrEmpty(platformName))
-                return false;
-
-            var vcProject = project.Object as VCProject;
-            if (filePath == null) {
-                var vcConfig = (from VCConfiguration _config
-                                in (IVCCollection)vcProject.Configurations
-                                where _config.Name == configName + "|" + platformName
-                                select _config).FirstOrDefault();
-                return ExpandString(ref stringToExpand, vcConfig);
-            } else {
-                var vcFile = (from VCFile _file in (IVCCollection)vcProject.Files
-                              where _file.FullPath == filePath
-                              select _file).FirstOrDefault();
-                if (vcFile == null)
-                    return false;
-
-                var vcFileConfig = (from VCFileConfiguration _config
-                                    in (IVCCollection)vcFile.FileConfigurations
-                                    where _config.Name == configName + "|" + platformName
-                                    select _config).FirstOrDefault();
-                return ExpandString(ref stringToExpand, vcFileConfig);
-            }
         }
 
         /// <summary>

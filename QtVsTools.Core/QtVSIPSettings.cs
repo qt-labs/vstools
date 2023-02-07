@@ -43,33 +43,6 @@ namespace QtVsTools.Core
             return GetDirectory(project, Resources.mocDirKeyword);
         }
 
-        public static string GetMocDirectory(
-            EnvDTE.Project project,
-            string configName,
-            string platformName, VCFile vCFile)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            string filePath = null;
-            if (vCFile != null)
-                filePath = vCFile.FullPath;
-            return GetMocDirectory(project, configName, platformName, filePath);
-        }
-
-        public static string GetMocDirectory(
-            EnvDTE.Project project,
-            string configName,
-            string platformName,
-            string filePath = null)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var dir = GetDirectory(project, Resources.mocDirKeyword);
-            if (!string.IsNullOrEmpty(configName) && !string.IsNullOrEmpty(platformName))
-                HelperFunctions.ExpandString(ref dir, project, configName, platformName, filePath);
-            return dir;
-        }
-
         public static bool HasDifferentMocFilePerConfig(EnvDTE.Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -84,12 +57,6 @@ namespace QtVsTools.Core
 
             var mocDir = GetMocDirectory(project);
             return mocDir.Contains("$(PlatformName)");
-        }
-
-        public static string GetMocOptions(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetOption(project, Resources.mocOptionsKeyword);
         }
 
         public static string GetRccDirectory()
@@ -229,30 +196,6 @@ namespace QtVsTools.Core
             if (type == Resources.mocDirKeyword)
                 return Resources.generatedFilesDir + "\\$(ConfigurationName)";
             return Resources.generatedFilesDir;
-        }
-
-        private static string GetOption(EnvDTE.Project project, string type)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            // check for directory in following order:
-            // - stored in project
-            // - globally defined default option
-            // - empty options
-            if (project != null && project.Globals.VariablePersists[type])
-                return project.Globals[type] as string;
-            return GetOption(type);
-        }
-
-        private static string GetOption(string type)
-        {
-            try {
-                if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} key) {
-                    if (key.GetValue(type, null) is string opt)
-                        return opt;
-                }
-            } catch { }
-            return null;
         }
 
         private static bool GetBoolValue(string key, bool defaultValue)
