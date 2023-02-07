@@ -1,38 +1,15 @@
-/****************************************************************************
-**
-** Copyright (C) 2022 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the Qt VS Tools.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************/
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
-using QtVsTools.Common;
 
 namespace QtVsTools.Core
 {
@@ -46,13 +23,12 @@ namespace QtVsTools.Core
 
     public static class QtVSIPSettings
     {
-        private static readonly Dictionary<string, string> mocDirCache
-            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, string> uicDirCache
-            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, string> rccDirCache
-            = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
+        private static readonly Dictionary<string, string> MocDirCache
+            = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> UicDirCache
+            = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> RccDirCache
+            = new(StringComparer.OrdinalIgnoreCase);
 
         public static IQtVsToolsOptions Options { get; set; }
 
@@ -89,8 +65,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var dir = GetDirectory(project, Resources.mocDirKeyword);
-            if (!string.IsNullOrEmpty(configName)
-                && !string.IsNullOrEmpty(platformName))
+            if (!string.IsNullOrEmpty(configName) && !string.IsNullOrEmpty(platformName))
                 HelperFunctions.ExpandString(ref dir, project, configName, platformName, filePath);
             return dir;
         }
@@ -129,12 +104,13 @@ namespace QtVsTools.Core
 
         public static bool AutoUpdateUicSteps()
         {
-            if (ValueExists("AutoUpdateUicSteps"))
-                return GetBoolValue("AutoUpdateUicSteps", true);
-            return GetBoolValue("AutoUpdateBuildSteps", true);
+            return GetBoolValue(ValueExists("AutoUpdateUicSteps")
+                    ? "AutoUpdateUicSteps"
+                    : "AutoUpdateBuildSteps",
+                true);
         }
 
-        public static string GetDirectory(EnvDTE.Project project, string type)
+        private static string GetDirectory(EnvDTE.Project project, string type)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -148,21 +124,21 @@ namespace QtVsTools.Core
             if (string.IsNullOrEmpty(fullName))
                 return GetDirectory(type); // - fall-back on hard-coded directory
 
-            if (project.Globals.get_VariablePersists(type)) // - stored in project
+            if (project.Globals.VariablePersists[type]) // - stored in project
                 return HelperFunctions.NormalizeRelativeFilePath(project.Globals[type] as string);
 
             switch (type) { // - stored in cache
             case Resources.mocDirKeyword:
-                if (mocDirCache.ContainsKey(fullName))
-                    return mocDirCache[fullName];
+                if (MocDirCache.ContainsKey(fullName))
+                    return MocDirCache[fullName];
                 break;
             case Resources.uicDirKeyword:
-                if (uicDirCache.ContainsKey(fullName))
-                    return uicDirCache[fullName];
+                if (UicDirCache.ContainsKey(fullName))
+                    return UicDirCache[fullName];
                 break;
             case Resources.rccDirKeyword:
-                if (rccDirCache.ContainsKey(fullName))
-                    return rccDirCache[fullName];
+                if (RccDirCache.ContainsKey(fullName))
+                    return RccDirCache[fullName];
                 break;
             default:
                 return GetDirectory(type); // - fall-back on hard-coded directory
@@ -172,15 +148,15 @@ namespace QtVsTools.Core
                 string configName = null;
                 string platformName = null;
                 QtCustomBuildTool tool = null;
-                foreach (VCFile vcfile in (project.Object as VCProject).Files as IVCCollection) {
-                    var name = vcfile?.Name;
+                foreach (VCFile vcFile in (project.Object as VCProject).Files as IVCCollection) {
+                    var name = vcFile?.Name;
                     if (string.IsNullOrEmpty(name))
                         continue;
                     if (!(HelperFunctions.IsHeaderFile(name) || HelperFunctions.IsMocFile(name)
                         || HelperFunctions.IsUicFile(name) || HelperFunctions.IsQrcFile(name)))
                         continue;
 
-                    foreach (VCFileConfiguration config in vcfile?.FileConfigurations as IVCCollection) {
+                    foreach (VCFileConfiguration config in vcFile.FileConfigurations as IVCCollection) {
                         tool = new QtCustomBuildTool(config);
                         configName = config.Name.Remove(config.Name.IndexOf('|'));
                         var vcConfig = config.ProjectConfiguration as VCConfiguration;
@@ -199,16 +175,17 @@ namespace QtVsTools.Core
                     return GetDirectory(type); // - fall-back on hard-coded directory
 
                 var dir = ".";
-                var lastindex = tool.Outputs.LastIndexOf(Path.DirectorySeparatorChar);
-                if (tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar) > lastindex)
-                    lastindex = tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar);
+                var lastIndex = tool.Outputs.LastIndexOf(Path.DirectorySeparatorChar);
+                if (tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar) > lastIndex)
+                    lastIndex = tool.Outputs.LastIndexOf(Path.AltDirectorySeparatorChar);
 
-                if (lastindex != -1)
-                    dir = tool.Outputs.Substring(0, lastindex);
+                if (lastIndex != -1)
+                    dir = tool.Outputs.Substring(0, lastIndex);
                 dir = dir.Replace("\"", "");
 
-                if (type == Resources.mocDirKeyword) {
-                    int index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase);
+                switch (type) {
+                case Resources.mocDirKeyword: {
+                    var index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase);
                     if (index != -1)
                         dir = dir.Replace(dir.Substring(index, configName.Length), "$(ConfigurationName)");
 
@@ -217,15 +194,20 @@ namespace QtVsTools.Core
                         dir = dir.Replace(dir.Substring(index, platformName.Length), "$(PlatformName)");
                     dir = HelperFunctions.NormalizeRelativeFilePath(dir);
 
-                    mocDirCache.Add(fullName, dir);
-                } else if (type == Resources.uicDirKeyword) {
+                    MocDirCache.Add(fullName, dir);
+                    break;
+                }
+                case Resources.uicDirKeyword:
                     dir = HelperFunctions.NormalizeRelativeFilePath(dir);
-                    uicDirCache.Add(fullName, dir);
-                } else if (type == Resources.rccDirKeyword) {
+                    UicDirCache.Add(fullName, dir);
+                    break;
+                case Resources.rccDirKeyword:
                     dir = HelperFunctions.NormalizeRelativeFilePath(dir);
-                    rccDirCache.Add(fullName, dir);
-                } else {
+                    RccDirCache.Add(fullName, dir);
+                    break;
+                default:
                     dir = HelperFunctions.NormalizeRelativeFilePath(dir);
+                    break;
                 }
 
                 CleanUpCache(project);
@@ -234,13 +216,12 @@ namespace QtVsTools.Core
             return GetDirectory(type); // - fall-back on hard-coded directory
         }
 
-        private const string registryPath = "SOFTWARE\\" + Resources.registryPackagePath;
+        private const string RegistryPath = "SOFTWARE\\" + Resources.registryPackagePath;
 
-        public static string GetDirectory(string type)
+        private static string GetDirectory(string type)
         {
             try {
-                var key = Registry.CurrentUser.OpenSubKey(registryPath);
-                if (key != null) {
+                if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} key) {
                     if (key.GetValue(type, null) is string path)
                         return HelperFunctions.NormalizeRelativeFilePath(path);
                 }
@@ -250,7 +231,7 @@ namespace QtVsTools.Core
             return Resources.generatedFilesDir;
         }
 
-        public static string GetOption(EnvDTE.Project project, string type)
+        private static string GetOption(EnvDTE.Project project, string type)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -258,16 +239,15 @@ namespace QtVsTools.Core
             // - stored in project
             // - globally defined default option
             // - empty options
-            if (project != null && project.Globals.get_VariablePersists(type))
+            if (project != null && project.Globals.VariablePersists[type])
                 return project.Globals[type] as string;
             return GetOption(type);
         }
 
-        public static string GetOption(string type)
+        private static string GetOption(string type)
         {
             try {
-                var key = Registry.CurrentUser.OpenSubKey(registryPath);
-                if (key != null) {
+                if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} key) {
                     if (key.GetValue(type, null) is string opt)
                         return opt;
                 }
@@ -275,27 +255,21 @@ namespace QtVsTools.Core
             return null;
         }
 
-        public static bool GetBoolValue(string key, bool defaultValue)
+        private static bool GetBoolValue(string key, bool defaultValue)
         {
-            var regKey = Registry.CurrentUser.OpenSubKey(registryPath);
-            if (regKey == null)
-                return defaultValue;
-            return ((int)regKey.GetValue(key, defaultValue ? 1 : 0)) > 0;
+            if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} regKey)
+                return (int)regKey.GetValue(key, defaultValue ? 1 : 0) > 0;
+            return defaultValue;
         }
 
-        public static bool ValueExists(string key)
+        private static bool ValueExists(string key)
         {
-            var regKey = Registry.CurrentUser.OpenSubKey(registryPath);
-            if (regKey != null) {
-                foreach (var s in regKey.GetValueNames()) {
-                    if (s == key)
-                        return true;
-                }
-            }
+            if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} regKey)
+                return regKey.GetValueNames().Any(s => s == key);
             return false;
         }
 
-        public static void CleanUpCache(EnvDTE.Project project)
+        private static void CleanUpCache(EnvDTE.Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -303,17 +277,16 @@ namespace QtVsTools.Core
             foreach (var p in HelperFunctions.ProjectsInSolution(project.DTE))
                 projects.Add(p.FullName);
 
-            mocDirCache.RemoveValues(projects);
-            uicDirCache.RemoveValues(projects);
-            rccDirCache.RemoveValues(projects);
+            MocDirCache.RemoveValues(projects);
+            UicDirCache.RemoveValues(projects);
+            RccDirCache.RemoveValues(projects);
         }
 
-        static void RemoveValues(this Dictionary<string, string> cache, HashSet<string> projects)
+        private static void RemoveValues(this Dictionary<string, string> cache,
+            ICollection<string> projects)
         {
-            foreach (var key in cache.Keys) {
-                if (projects.Contains(key))
-                    cache.Remove(key);
-            }
+            foreach (var key in cache.Keys.Where(projects.Contains))
+                cache.Remove(key);
         }
     }
 }
