@@ -1204,7 +1204,7 @@ namespace QtVsTools.Core
 
             foreach (var config in configs) {
                 config.Cpp.SetPropertyValue("PreprocessorDefinitions",
-                    string.Format("QT_QML_DEBUG;{0}", config.Macros));
+                    $"QT_QML_DEBUG;{config.Macros}");
             }
         }
 

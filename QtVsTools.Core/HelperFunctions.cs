@@ -794,7 +794,7 @@ namespace QtVsTools.Core
                 default:
                     return false;
                 }
-                expanded = expanded.Replace(string.Format("$({0})", propName), propValue);
+                expanded = expanded.Replace($"$({propName})", propValue);
             }
 
             /* because item metadata is not expanded in Evaluate() */
@@ -872,7 +872,7 @@ namespace QtVsTools.Core
                     }
                     break;
                 }
-                expanded = expanded.Replace(string.Format("%({0})", metaName), metaValue);
+                expanded = expanded.Replace($"%({metaName})", metaValue);
             }
 
             stringToExpand = expanded;
@@ -1001,14 +1001,13 @@ namespace QtVsTools.Core
 
             Messages.Print($"vcvars: {vcVarsCmd}");
             if (!File.Exists(vcVarsCmd)) {
-                Messages.Print($"vcvars: NOT FOUND");
+                Messages.Print("vcvars: NOT FOUND");
                 return false;
             }
 
             // Run vcvars and print environment variables
             StringBuilder stdOut = new StringBuilder();
-            string command =
-                string.Format("/c \"{0}\" && set", vcVarsCmd);
+            string command = $"/c \"{vcVarsCmd}\" && set";
             var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command);
             vcVarsStartInfo.CreateNoWindow = true;
             vcVarsStartInfo.UseShellExecute = false;
@@ -1111,7 +1110,7 @@ namespace QtVsTools.Core
 
         public static string NewProjectGuid()
         {
-            return string.Format("{{{0}}}", Guid.NewGuid().ToString().ToUpper());
+            return $"{{{Guid.NewGuid().ToString().ToUpper()}}}";
         }
 
         public static string SafePath(string path)
@@ -1123,7 +1122,7 @@ namespace QtVsTools.Core
                 return path;
             if (path.EndsWith("\\"))
                 path += Path.DirectorySeparatorChar;
-            return string.Format("\"{0}\"", path);
+            return $"\"{path}\"";
         }
     }
 }

@@ -320,7 +320,7 @@ namespace QtVsTools.Core
             if (oldVersion.HasValue && oldVersion.Value == Resources.qtProjectFormatVersion)
                 return true; // nothing to do!
 
-            projKeyword.SetValue(string.Format("QtVS_v{0}", Resources.qtProjectFormatVersion));
+            projKeyword.SetValue($"QtVS_v{Resources.qtProjectFormatVersion}");
 
             // Find import of qt.props
             var qtPropsImport = this[Files.Project].xml
@@ -355,8 +355,8 @@ namespace QtVsTools.Core
 
                 // Create uncategorized property groups
                 foreach (var config in configs) {
-                    string condition = string.Format("'$(Configuration)|$(Platform)'=='{0}'",
-                        (string)config.Attribute("Include"));
+                    string condition =
+                        $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'";
                     var group = new XElement(ns + "PropertyGroup",
                                     new XAttribute("Condition", condition));
                     propertyGroups[condition] = group;
@@ -490,10 +490,9 @@ namespace QtVsTools.Core
             var qtSettings = new List<XElement>();
             foreach (var config in configs) {
                 var configQtSettings = new XElement(ns + "PropertyGroup",
-                        new XAttribute("Label", "QtSettings"),
-                        new XAttribute("Condition",
-                            string.Format("'$(Configuration)|$(Platform)'=='{0}'",
-                            (string)config.Attribute("Include"))));
+                    new XAttribute("Label", "QtSettings"),
+                    new XAttribute("Condition",
+                        $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"));
                 insertionPoint.AddAfterSelf(configQtSettings);
                 qtSettings.Add(configQtSettings);
             }
@@ -557,7 +556,7 @@ namespace QtVsTools.Core
                         } catch { }
 
                         if (!string.IsNullOrEmpty(platform)) {
-                            var qtInstallName = string.Format("Qt5Version_x0020_{0}", platform);
+                            var qtInstallName = $"Qt5Version_x0020_{platform}";
                             qtInstallValue = (string)userProps.Attribute(qtInstallName);
                         }
                     }
@@ -621,7 +620,7 @@ namespace QtVsTools.Core
                     if (IsPrivateIncludePathUsed(module, compiler)) {
                         // Qt private module names, to copy to QtModules property
                         moduleNames.UnionWith(module.proVarQT.Split(' ')
-                            .Select(x => string.Format("{0}-private", x)));
+                            .Select(x => $"{x}-private"));
                     }
                 }
             }
@@ -800,9 +799,8 @@ namespace QtVsTools.Core
             IEnumerable<XElement> compiler)
         {
             // Module private header path is present in compiler include dirs
-            var privateIncludePattern = new Regex(string.Format(
-                @"^\$\(QTDIR\)[\\\/]include[\\\/]{0}[\\\/]\d+\.\d+\.\d+",
-                module.LibraryPrefix));
+            var privateIncludePattern = new Regex(
+                $@"^\$\(QTDIR\)[\\\/]include[\\\/]{module.LibraryPrefix}[\\\/]\d+\.\d+\.\d+");
             if (compiler.Elements(ns + "AdditionalIncludeDirectories")
                 .SelectMany(x => x.Value.Split(';'))
                 .Any(x => privateIncludePattern.IsMatch(x))) {
@@ -908,9 +906,7 @@ namespace QtVsTools.Core
                         from config in configurations
                         from command in customBuild.Elements(ns + "Command")
                         where command.Attribute("Condition").Value
-                            == string.Format(
-                                "'$(Configuration)|$(Platform)'=='{0}'",
-                                (string)config.Attribute("Include"))
+                            == $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"
                         select new { customBuild, itemName, config, command };
 
             var projPath = this[Files.Project].filePath;
@@ -920,10 +916,9 @@ namespace QtVsTools.Core
 
                     var configId = (string)row.config.Attribute("Include");
                     if (!row.command.Value.Contains(toolExec)) {
-                        Messages.Print(string.Format(
-                            "{0}: warning: [{1}] converting \"{2}\", configuration \"{3}\": " +
-                            "tool not found: \"{4}\"; applying default options",
-                            projPath, itemType, row.itemName, configId, toolExec));
+                        Messages.Print($"{projPath}: warning: [{itemType}] converting "
+                            + $"\"{row.itemName}\", configuration \"{configId}\": "
+                            + $"tool not found: \"{toolExec}\"; applying default options");
                         continue;
                     }
 
@@ -962,10 +957,9 @@ namespace QtVsTools.Core
                         if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
                             lineNumber = errorLine.LineNumber;
 
-                        Messages.Print(string.Format(
-                            "{0}({1}): error: [{2}] converting \"{3}\", configuration \"{4}\": " +
-                            "failed to convert custom build command",
-                            projPath, lineNumber, itemType, row.itemName, configId));
+                        Messages.Print($"{projPath}({lineNumber}): error: [{itemType}] "
+                            + $"converting \"{row.itemName}\", configuration \"{configId}\": "
+                            + "failed to convert custom build command");
 
                         item.Remove();
                         error = true;
@@ -999,7 +993,7 @@ namespace QtVsTools.Core
                 {
                     string configName = prop.Parent.Attribute("ConfigName").Value;
                     prop.SetAttributeValue("Condition",
-                        string.Format("'$(Configuration)|$(Platform)'=='{0}'", configName));
+                        $"'$(Configuration)|$(Platform)'=='{configName}'");
                     prop.Remove();
                     item.Parent.Add(prop);
                 });
@@ -1205,18 +1199,16 @@ namespace QtVsTools.Core
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
-                        string.Format(@"\moc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                            $@"\moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
                         @"\moc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
-                    .Replace(
-                        string.Format(" -o moc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                    .Replace($" -o moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
                         @" -o $(ProjectDir)\moc_%(Filename).cpp",
                             StringComparison.InvariantCultureIgnoreCase),
 
                     (item, cmdLine) => cmdLine.Replace(
-                        string.Format(@"\{0}.moc", Path.GetFileNameWithoutExtension(item)),
+                            $@"\{Path.GetFileNameWithoutExtension(item)}.moc",
                         @"\%(Filename).moc", StringComparison.InvariantCultureIgnoreCase)
-                    .Replace(
-                        string.Format(" -o {0}.moc", Path.GetFileNameWithoutExtension(item)),
+                    .Replace($" -o {Path.GetFileNameWithoutExtension(item)}.moc",
                         @" -o $(ProjectDir)\%(Filename).moc",
                             StringComparison.InvariantCultureIgnoreCase),
                 })) {
@@ -1263,10 +1255,10 @@ namespace QtVsTools.Core
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
-                        string.Format(@"\qrc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        $@"\qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
                         @"\qrc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
                     .Replace(
-                        string.Format(" -o qrc_{0}.cpp", Path.GetFileNameWithoutExtension(item)),
+                        $" -o qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
                         @" -o $(ProjectDir)\qrc_%(Filename).cpp",
                             StringComparison.InvariantCultureIgnoreCase),
                 })) {
@@ -1321,10 +1313,10 @@ namespace QtVsTools.Core
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
-                        string.Format(@"\ui_{0}.h", Path.GetFileNameWithoutExtension(item)),
+                        $@"\ui_{Path.GetFileNameWithoutExtension(item)}.h",
                         @"\ui_%(Filename).h", StringComparison.InvariantCultureIgnoreCase)
                     .Replace(
-                        string.Format(" -o ui_{0}.h", Path.GetFileNameWithoutExtension(item)),
+                        $" -o ui_{Path.GetFileNameWithoutExtension(item)}.h",
                         @" -o $(ProjectDir)\ui_%(Filename).h",
                             StringComparison.InvariantCultureIgnoreCase),
                 })) {

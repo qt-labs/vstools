@@ -143,13 +143,13 @@ namespace QtVsTools.Core
                 var tempDir = Path.Combine(Path.GetTempPath(), randomName);
                 Directory.CreateDirectory(tempDir);
 
-                var tempPro = Path.Combine(tempDir, string.Format("{0}.pro", randomName));
+                var tempPro = Path.Combine(tempDir, $"{randomName}.pro");
                 File.WriteAllText(tempPro, tempProData.ToString());
 
                 var qmake = new QMakeImport(this, tempPro, disableWarnings: true);
                 qmake.Run(setVCVars: true);
 
-                var tempVcxproj = Path.Combine(tempDir, string.Format("{0}.vcxproj", randomName));
+                var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
                 var msbuildProj = MsBuildProject.Load(tempVcxproj);
 
                 Directory.Delete(tempDir, recursive: true);

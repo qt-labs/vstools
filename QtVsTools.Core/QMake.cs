@@ -165,15 +165,13 @@ namespace QtVsTools.Core
 
         protected virtual void InfoStart(Process qmakeProc)
         {
-            InfoMsg(string.Format("--- qmake({0}): started {1}",
-                qmakeProc.Id, qmakeProc.StartInfo.FileName));
+            InfoMsg($"--- qmake({qmakeProc.Id}): started {qmakeProc.StartInfo.FileName}");
         }
 
         protected virtual void InfoExit(Process qmakeProc)
         {
-            InfoMsg(string.Format("--- qmake({0}): exit code {1} ({2:0.##} msecs)\r\n",
-                qmakeProc.Id, qmakeProc.ExitCode,
-                (qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds));
+            InfoMsg($"--- qmake({qmakeProc.Id}): exit code {qmakeProc.ExitCode} "
+                + $"({(qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds:0.##} msecs)\r\n");
         }
 
         public virtual int Run()

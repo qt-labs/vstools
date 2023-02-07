@@ -1137,7 +1137,7 @@ namespace QtVsTools.Core.QtMsBuild
                     return false;
                 if (level < 1 || 9 < level)
                     return false;
-                properties[Property.Compression] = string.Format("level{0}", level);
+                properties[Property.Compression] = $"level{level}";
             } else {
                 properties[Property.Compression] = "default";
             }
