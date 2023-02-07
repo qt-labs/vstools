@@ -28,7 +28,6 @@
 
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
@@ -53,11 +52,6 @@ namespace QtVsTools
         private readonly CommandEvents debugStartWithoutDebuggingEvents;
         private readonly CommandEvents f1HelpEvents;
         private WindowEvents windowEvents;
-        private readonly int dispId_VCFileConfiguration_ExcludedFromBuild;
-        private readonly int dispId_VCCLCompilerTool_UsePrecompiledHeader;
-        private readonly int dispId_VCCLCompilerTool_PrecompiledHeaderThrough;
-        private readonly int dispId_VCCLCompilerTool_PreprocessorDefinitions;
-        private readonly int dispId_VCCLCompilerTool_AdditionalIncludeDirectories;
 
         public DteEventsHandler(DTE _dte)
         {
@@ -99,11 +93,6 @@ namespace QtVsTools
                 (int)VSConstants.VSStd97CmdID.F1Help);
             f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
-            dispId_VCFileConfiguration_ExcludedFromBuild = GetPropertyDispId(typeof(VCFileConfiguration), "ExcludedFromBuild");
-            dispId_VCCLCompilerTool_UsePrecompiledHeader = GetPropertyDispId(typeof(VCCLCompilerTool), "UsePrecompiledHeader");
-            dispId_VCCLCompilerTool_PrecompiledHeaderThrough = GetPropertyDispId(typeof(VCCLCompilerTool), "PrecompiledHeaderThrough");
-            dispId_VCCLCompilerTool_PreprocessorDefinitions = GetPropertyDispId(typeof(VCCLCompilerTool), "PreprocessorDefinitions");
-            dispId_VCCLCompilerTool_AdditionalIncludeDirectories = GetPropertyDispId(typeof(VCCLCompilerTool), "AdditionalIncludeDirectories");
             InitializeVCProjects();
         }
 
@@ -548,20 +537,6 @@ namespace QtVsTools
                     return f;
             }
             return null;
-        }
-
-        /// <summary>
-        /// Returns the COM DISPID of the given property.
-        /// </summary>
-        private static int GetPropertyDispId(Type type, string propertyName)
-        {
-            if (type.GetProperty(propertyName) is {} pi) {
-                foreach (Attribute attribute in pi.GetCustomAttributes(true)) {
-                    if (attribute is DispIdAttribute dispIdAttribute)
-                        return dispIdAttribute.Value;
-                }
-            }
-            return 0;
         }
     }
 }
