@@ -444,7 +444,7 @@ namespace QtVsTools.Options
         void Default_Click(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox && GetBinding(checkBox) is Row version) {
-                var defaultVersion = Rows.FirstOrDefault(row => row.IsDefault);
+                var defaultVersion = Rows.FirstOrDefault(row => row.IsDefault && row.RowVisible);
                 if (defaultVersion != null)
                     SetDefaultState(ref defaultVersion, false);
                 SetDefaultState(ref version, true);
