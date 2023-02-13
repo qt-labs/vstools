@@ -163,12 +163,7 @@ namespace QtVsTools.Core
             ThreadHelper.JoinableTaskFactory.Run(async () => { await PrintAsync(value); });
         }
 
-        public Task PrintAsync()
-        {
-            return PrintAsync("");
-        }
-
-        public async Task PrintAsync(string value)
+        public async Task PrintAsync(string value = "")
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             if (Pane is IVsOutputWindowPaneNoPump noPumpPane)

@@ -86,12 +86,7 @@ namespace QtVsTools.Core
             disposed = true;
         }
 
-        public string ReadLine()
-        {
-            return ReadLine(false);
-        }
-
-        public string ReadLine(bool removeStrings)
+        public string ReadLine(bool removeStrings = false)
         {
             var line = string.Empty;
             if (sr != null) {
