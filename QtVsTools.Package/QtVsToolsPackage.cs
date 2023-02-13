@@ -172,8 +172,6 @@ namespace QtVsTools
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
 
-                QtVSIPSettings.Options = Options;
-
                 eventHandler = new DteEventsHandler(Dte);
 
                 Qml.Debug.Launcher.Initialize();

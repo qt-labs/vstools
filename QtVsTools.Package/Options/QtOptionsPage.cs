@@ -45,7 +45,7 @@ namespace QtVsTools.Options
 
     using static Common.EnumExt;
 
-    public class QtOptionsPage : DialogPage, IQtVsToolsOptions
+    public class QtOptionsPage : DialogPage
     {
         public enum QtMsBuild
         {
@@ -175,7 +175,6 @@ namespace QtVsTools.Options
         [DisplayName("Runtime connection timeout (msecs)")]
         [TypeConverter(typeof(TimeoutConverter))]
         public Timeout QmlDebuggerTimeout { get; set; }
-        int IQtVsToolsOptions.QmlDebuggerTimeout => (int)QmlDebuggerTimeout;
 
         [Category("Help")]
         [DisplayName("Keyboard shortcut")]
@@ -186,8 +185,6 @@ namespace QtVsTools.Options
         [Category("Help")]
         [DisplayName("Preferred source")]
         public QtHelp.SourcePreference HelpPreference { get; set; }
-        bool IQtVsToolsOptions.HelpPreferenceOnline
-            => (HelpPreference == QtHelp.SourcePreference.Online);
 
         [Category("Help")]
         [DisplayName("Try Qt documentation when F1 is pressed")]

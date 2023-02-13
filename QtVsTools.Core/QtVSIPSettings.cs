@@ -13,14 +13,6 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
-    public interface IQtVsToolsOptions
-    {
-        string QtMsBuildPath { get; }
-        bool QmlDebuggerEnabled { get; }
-        int QmlDebuggerTimeout { get; }
-        bool HelpPreferenceOnline { get; }
-    }
-
     public static class QtVSIPSettings
     {
         private static readonly Dictionary<string, string> MocDirCache
@@ -30,7 +22,6 @@ namespace QtVsTools.Core
         private static readonly Dictionary<string, string> RccDirCache
             = new(StringComparer.OrdinalIgnoreCase);
 
-        public static IQtVsToolsOptions Options { get; set; }
 
         public static string GetMocDirectory()
         {
