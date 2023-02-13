@@ -127,7 +127,6 @@
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuildProject.cs" />
-    <Compile Include="Observable.cs" />
     <Compile Include="OutputWindowPane.cs" />
     <Compile Include="ProjectImporter.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
