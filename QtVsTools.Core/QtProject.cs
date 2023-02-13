@@ -1532,7 +1532,6 @@ namespace QtVsTools.Core
         readonly VCFileConfiguration vcConfig;
         readonly VCFile vcFile;
         readonly VCCustomBuildTool tool;
-        readonly VCMacroExpander macros;
 
         enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic };
         readonly FileItemType itemType = FileItemType.Other;
@@ -1560,7 +1559,6 @@ namespace QtVsTools.Core
             }
             if (itemType == FileItemType.CustomBuild)
                 tool = HelperFunctions.GetCustomBuildTool(vcConfig);
-            macros = new VCMacroExpander(vcConfig);
         }
 
         public string CommandLine
@@ -1580,27 +1578,6 @@ namespace QtVsTools.Core
                     return qtMsBuild.GenerateQtUicCommandLine(vcConfig);
                 }
                 return "";
-            }
-            set
-            {
-                switch (itemType) {
-                case FileItemType.CustomBuild:
-                    if (tool != null)
-                        tool.CommandLine = value;
-                    break;
-                case FileItemType.QtMoc:
-                    qtMsBuild.SetQtMocCommandLine(vcConfig, value, macros);
-                    break;
-                case FileItemType.QtRcc:
-                    qtMsBuild.SetQtRccCommandLine(vcConfig, value, macros);
-                    break;
-                case FileItemType.QtRepc:
-                    qtMsBuild.SetQtRepcCommandLine(vcConfig, value, macros);
-                    break;
-                case FileItemType.QtUic:
-                    qtMsBuild.SetQtUicCommandLine(vcConfig, value, macros);
-                    break;
-                }
             }
         }
 
