@@ -138,7 +138,7 @@ namespace QtVsTools
         const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
         private DteEventsHandler eventHandler;
-        private string visualizersPath;
+        private string VisualizersPath { get; set; }
 
 
         protected override async Task InitializeAsync(
@@ -179,7 +179,7 @@ namespace QtVsTools
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
-                GetNatvisPath();
+                SetVisualizersPathProperty();
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
@@ -265,7 +265,7 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                CopyNatvisFiles();
+                CopyVisualizersFiles();
 
                 Messages.Print(string.Format("\r\n"
                     + "== Qt Visual Studio Tools version {0}\r\n"
@@ -351,44 +351,19 @@ namespace QtVsTools
             } catch {}
         }
 
-        private void CopyNatvisFile(string filename, string qtNamespace)
-        {
-            try {
-                string natvis = File.ReadAllText(Path.Combine(PkgInstallPath, filename));
-
-                string natvisFile;
-                if (string.IsNullOrEmpty(qtNamespace)) {
-                    natvis = natvis.Replace("##NAMESPACE##::", string.Empty);
-                    natvisFile = Path.GetFileNameWithoutExtension(filename);
-                } else {
-                    natvis = natvis.Replace("##NAMESPACE##", qtNamespace);
-                    natvisFile = string.Format(filename.Substring(0, filename.IndexOf('.'))
-                        + "_{0}.natvis", qtNamespace.Replace("::", "_"));
-                }
-
-                if (!Directory.Exists(visualizersPath))
-                    Directory.CreateDirectory(visualizersPath);
-
-                File.WriteAllText(Path.Combine(visualizersPath, natvisFile),
-                    natvis, System.Text.Encoding.UTF8);
-            } catch (Exception exception) {
-                exception.Log();
-            }
-        }
-
-        public string GetNatvisPath()
+        private void SetVisualizersPathProperty()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             try {
-                using (var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot)) {
-                    if (vsRootKey.GetValue("VisualStudioLocation") is string vsLocation)
-                        visualizersPath = Path.Combine(vsLocation, "Visualizers");
-                }
+                using var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot);
+                if (vsRootKey?.GetValue("VisualStudioLocation") is string vsLocation)
+                    VisualizersPath = Path.Combine(vsLocation, "Visualizers");
             } catch {
             }
-            if (string.IsNullOrEmpty(visualizersPath)) {
-                visualizersPath = Path.Combine(
+
+            if (string.IsNullOrEmpty(VisualizersPath)) {
+                VisualizersPath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 #if VS2022
                     @"Visual Studio 2022\Visualizers\");
@@ -398,14 +373,38 @@ namespace QtVsTools
                     @"Visual Studio 2017\Visualizers\");
 #endif
             }
-            return visualizersPath;
         }
 
-        public void CopyNatvisFiles(string qtNamespace = null)
+        public void CopyVisualizersFiles(string qtNamespace = null)
         {
             string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
             foreach (var file in files)
-                CopyNatvisFile(file, qtNamespace);
+                CopyVisualizersFile(file, qtNamespace);
+        }
+
+        private void CopyVisualizersFile(string filename, string qtNamespace)
+        {
+            try {
+                var text = File.ReadAllText(Path.Combine(PkgInstallPath, filename));
+
+                string visualizerFile;
+                if (string.IsNullOrEmpty(qtNamespace)) {
+                    text = text.Replace("##NAMESPACE##::", string.Empty);
+                    visualizerFile = Path.GetFileNameWithoutExtension(filename);
+                } else {
+                    text = text.Replace("##NAMESPACE##", qtNamespace);
+                    visualizerFile = filename.Substring(0, filename.IndexOf('.'))
+                        + $"_{qtNamespace.Replace("::", "_")}.natvis";
+                }
+
+                if (!Directory.Exists(VisualizersPath))
+                    Directory.CreateDirectory(VisualizersPath);
+
+                File.WriteAllText(Path.Combine(VisualizersPath, visualizerFile),
+                    text, System.Text.Encoding.UTF8);
+            } catch (Exception exception) {
+                exception.Log();
+            }
         }
 
         public I GetService<T, I>()

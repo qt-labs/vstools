@@ -131,7 +131,7 @@ namespace QtVsTools
             if (QtProject.Create(project) is {} qtProject) {
                 var versionInfo = QtVersionManager.The().GetVersionInfo(qtProject.GetQtVersion());
                 if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                    QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
+                    QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
             }
 
             // Notify about old project format and offer upgrade option.
