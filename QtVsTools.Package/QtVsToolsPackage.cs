@@ -35,10 +35,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 using EnvDTE;
@@ -140,14 +138,8 @@ namespace QtVsTools
         const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
         private DteEventsHandler eventHandler;
-        private bool useQtTmLanguage;
-        private string qtTmLanguagePath;
         private string visualizersPath;
 
-
-        public QtVsToolsPackage()
-        {
-        }
 
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
@@ -187,7 +179,6 @@ namespace QtVsTools
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     HelperFunctions.VCPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
-                GetTextMateLanguagePath();
                 GetNatvisPath();
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -346,31 +337,18 @@ namespace QtVsTools
             return base.QueryClose(out canClose);
         }
 
-        private void GetTextMateLanguagePath()
-        {
-            var settingsManager = new ShellSettingsManager(this as System.IServiceProvider);
-            var store = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
-            useQtTmLanguage = store.GetBoolean(@"QtVsTools\Qml\TextMate", @"Enable", true);
-            qtTmLanguagePath = Environment.
-                ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
-        }
-
         private void CopyTextMateLanguageFiles()
         {
-            if (useQtTmLanguage) {
-                HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
-                    qtTmLanguagePath);
-            } else {
-                Directory.Delete(qtTmLanguagePath, true);
-            }
+            var qtTmLanguagePath = Environment.
+                ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
+            HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
+                qtTmLanguagePath); // always copy .pri/.pro TextMate Language Grammar file
 
-            //Remove textmate-based QML syntax highlighting
-            var qmlTextmate = Path.Combine(qtTmLanguagePath, "qml");
-            if (Directory.Exists(qmlTextmate)) {
-                try {
-                    Directory.Delete(qmlTextmate, true);
-                } catch { }
-            }
+            try { //Remove TextMate-based QML syntax highlighting
+                var qmlTextMate = Path.Combine(qtTmLanguagePath, "qml");
+                if (Directory.Exists(qmlTextMate))
+                    Directory.Delete(qmlTextMate, true);
+            } catch {}
         }
 
         private void CopyNatvisFile(string filename, string qtNamespace)
