@@ -28,6 +28,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Xml;
 
 namespace QtVsTools
@@ -44,11 +45,23 @@ namespace QtVsTools
         public string[] ResourceFiles { get; private set; }
         public string[] FormFiles { get; private set; }
 
+        private static string LocateHelperExecutable(string exeName)
+        {
+            var path = QtVsToolsPackage.Instance.PkgInstallPath;
+            if (!string.IsNullOrEmpty(path) && File.Exists(path + exeName))
+                return path + exeName;
+            return null;
+        }
+
+        private string qMakeFileReaderPath;
+        private string QMakeFileReaderPath
+            => qMakeFileReaderPath ??= LocateHelperExecutable("QMakeFileReader.exe");
+
         public bool ReadFile(string filePath)
         {
             string output;
             try {
-                var exeFilePath = QtVsToolsPackage.Instance.QMakeFileReaderPath;
+                var exeFilePath = QMakeFileReaderPath;
                 if (!System.IO.File.Exists(exeFilePath))
                     return false;
 

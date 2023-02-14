@@ -1,30 +1,7 @@
-/****************************************************************************
-**
-** Copyright (C) 2022 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the Qt VS Tools.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************/
 
 using System;
 using System.Diagnostics;
@@ -92,8 +69,7 @@ namespace QtVsTools
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
-        public const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
-        const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
+        private const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
 
         public DTE Dte { get; private set; }
         public string PkgInstallPath { get; private set; }
@@ -103,39 +79,21 @@ namespace QtVsTools
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
 
-        static readonly EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private static readonly EventWaitHandle InitDone = new(false, EventResetMode.ManualReset);
 
-        static QtVsToolsPackage instance = null;
+        private static QtVsToolsPackage _instance;
         public static QtVsToolsPackage Instance
         {
             get
             {
-                initDone.WaitOne();
-                return instance;
+                InitDone.WaitOne();
+                return _instance;
             }
         }
 
-        private string locateHelperExecutable(string exeName)
-        {
-            if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
-                return PkgInstallPath + exeName;
-            return null;
-        }
-
-        private string _QMakeFileReaderPath;
-        public string QMakeFileReaderPath
-        {
-            get
-            {
-                if (_QMakeFileReaderPath == null)
-                    _QMakeFileReaderPath = locateHelperExecutable("QMakeFileReader.exe");
-                return _QMakeFileReaderPath;
-            }
-        }
-
-        static readonly Stopwatch initTimer = Stopwatch.StartNew();
-        static readonly HttpClient http = new HttpClient();
-        const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
+        private static readonly Stopwatch initTimer = Stopwatch.StartNew();
+        private static readonly HttpClient http = new();
+        private const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
         private DteEventsHandler eventHandler;
         private string VisualizersPath { get; set; }
@@ -147,7 +105,7 @@ namespace QtVsTools
         {
             try {
                 var timeInitBegin = initTimer.Elapsed;
-                VsServiceProvider.Instance = instance = this;
+                VsServiceProvider.Instance = _instance = this;
                 QtProject.ProjectTracker = this;
 
                 // determine the package installation directory
@@ -186,8 +144,8 @@ namespace QtVsTools
                 await TaskScheduler.Default;
                 var timeUiThreadEnd = initTimer.Elapsed;
 
-                var vm = QtVersionManager.The(initDone);
-                if (vm.HasInvalidVersions(out string error, out bool defaultInvalid)) {
+                var vm = QtVersionManager.The(InitDone);
+                if (vm.HasInvalidVersions(out var error, out var defaultInvalid)) {
                     if (defaultInvalid)
                         vm.SetLatestQtVersionAsDefault();
                     Messages.Print(error);
@@ -197,10 +155,10 @@ namespace QtVsTools
                 // Install Qt/MSBuild files from package folder to standard location
                 //  -> %LOCALAPPDATA%\QtMsBuild
                 //
-                var QtMsBuildDefault = Path.Combine(
-                    Environment.GetEnvironmentVariable("LocalAppData"), "QtMsBuild");
+                var qtMsBuildDefault = Path.Combine(
+                    Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
                 try {
-                    var qtMsBuildDefaultUri = new Uri(QtMsBuildDefault + Path.DirectorySeparatorChar);
+                    var qtMsBuildDefaultUri = new Uri(qtMsBuildDefault + Path.DirectorySeparatorChar);
                     var qtMsBuildVsixPath = Path.Combine(PkgInstallPath, "QtMsBuild");
                     var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + Path.DirectorySeparatorChar);
                     if (qtMsBuildVsixUri != qtMsBuildDefaultUri) {
@@ -211,7 +169,7 @@ namespace QtVsTools
                             var sourcePath = new Uri(qtMsBuildVsixUri, qtMsBuildFile).LocalPath;
                             var targetPath = new Uri(qtMsBuildDefaultUri, qtMsBuildFile).LocalPath;
                             var targetPathTemp = targetPath + ".tmp";
-                            Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                            Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
                             File.Copy(sourcePath, targetPathTemp, overwrite: true);
                             ////////
                             // Copy Qt/MSBuild files to standard location, taking care not to
@@ -220,13 +178,12 @@ namespace QtVsTools
                             // recognized as being named "Qt.props" and containing the import
                             // statement for qt_private.props.
                             //
-                            string qtPrivateImport =
-                                @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
-                            Func<string, bool> isUpdateQtProps = _ =>
-                            {
-                                return Path.GetFileName(targetPath).Equals("Qt.props", IGNORE_CASE)
-                                    && File.ReadAllText(targetPath).Contains(qtPrivateImport);
-                            };
+                            const string qtPrivateImport
+                                = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
+                            Func<string, bool> isUpdateQtProps = _ => Path.GetFileName(targetPath)
+                                    .Equals("Qt.props", StringComparison.OrdinalIgnoreCase)
+                                && File.ReadAllText(targetPath).Contains(qtPrivateImport);
+
                             if (!File.Exists(targetPath)) {
                                 // Target file does not exist
                                 //  -> Create new
@@ -246,7 +203,7 @@ namespace QtVsTools
                     /////////
                     // Error copying files to standard location.
                     //  -> FAIL-SAFE: use source folder (within package) as the standard location
-                    QtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
+                    qtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
                 }
 
                 ///////
@@ -256,40 +213,35 @@ namespace QtVsTools
                 if (string.IsNullOrEmpty(QtMsBuildPath)) {
 
                     Environment.SetEnvironmentVariable(
-                        "QtMsBuild", QtMsBuildDefault,
+                        "QtMsBuild", qtMsBuildDefault,
                         EnvironmentVariableTarget.User);
 
                     Environment.SetEnvironmentVariable(
-                        "QtMsBuild", QtMsBuildDefault,
+                        "QtMsBuild", qtMsBuildDefault,
                         EnvironmentVariableTarget.Process);
                 }
 
                 CopyTextMateLanguageFiles();
                 CopyVisualizersFiles();
 
-                Messages.Print(string.Format("\r\n"
-                    + "== Qt Visual Studio Tools version {0}\r\n"
-                    + "\r\n"
-                    + "   Initialized in: {1:0.##} msecs\r\n"
-                    + "   Main (UI) thread: {2:0.##} msecs\r\n"
-                    , Version.USER_VERSION
-                    , (initTimer.Elapsed - timeInitBegin).TotalMilliseconds
-                    , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds
-                    ));
+                Messages.Print($"\r\n== Qt Visual Studio Tools version {Version.USER_VERSION}\r\n"
+                    + "\r\n   Initialized in: "
+                    + $"{(initTimer.Elapsed - timeInitBegin).TotalMilliseconds:0.##} msecs"
+                    + "\r\n   Main (UI) thread: "
+                    + $"{(timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds:0.##} msecs\r\n");
 
                 var devRelease = await GetLatestDevelopmentReleaseAsync();
                 if (devRelease != null) {
-                    Messages.Print(string.Format(@"
+                    Messages.Print($@"
     ================================================================
-      Qt Visual Studio Tools version {1} PREVIEW available at:
-      {0}{1}/
-    ================================================================",
-                        urlDownloadQtIo, devRelease));
+      Qt Visual Studio Tools version {devRelease} PREVIEW available at:
+      {urlDownloadQtIo}{devRelease}/
+    ================================================================");
                 }
             } catch (Exception exception) {
                 exception.Log();
             } finally {
-                initDone.Set();
+                InitDone.Set();
                 initTimer.Stop();
             }
 
@@ -305,15 +257,13 @@ namespace QtVsTools
                 eventHandler.SolutionEvents_Opened();
         }
 
-        bool TestVersionInstalled()
+        private bool TestVersionInstalled()
         {
-            bool newVersion = false;
-            string versionFile = Path.Combine(PkgInstallPath, "lastversion.txt");
+            var newVersion = true;
+            var versionFile = Path.Combine(PkgInstallPath, "lastversion.txt");
             if (File.Exists(versionFile)) {
-                string lastVersion = File.ReadAllText(versionFile);
-                newVersion = (lastVersion!= Version.PRODUCT_VERSION);
-            } else {
-                newVersion = true;
+                var lastVersion = File.ReadAllText(versionFile);
+                newVersion = lastVersion!= Version.PRODUCT_VERSION;
             }
             if (newVersion)
                 File.WriteAllText(versionFile, Version.PRODUCT_VERSION);
@@ -332,8 +282,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (eventHandler != null)
-                eventHandler.Disconnect();
+            eventHandler?.Disconnect();
             return base.QueryClose(out canClose);
         }
 
@@ -427,7 +376,7 @@ namespace QtVsTools
             QtProjectTracker.Add(project);
         }
 
-        async Task<string> GetLatestDevelopmentReleaseAsync()
+        private static async Task<string> GetLatestDevelopmentReleaseAsync()
         {
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
             try {
@@ -451,11 +400,8 @@ namespace QtVsTools
                 if (devVersion == null)
                     return null;
 
-                response = await http.GetAsync(
-                    string.Format("{0}{1}/", urlDownloadQtIo, devVersion));
-                if (!response.IsSuccessStatusCode)
-                    return null;
-                return devVersion.ToString();
+                response = await http.GetAsync($"{urlDownloadQtIo}{devVersion}/");
+                return response.IsSuccessStatusCode ? devVersion.ToString() : null;
             } catch {
                 return null;
             }
