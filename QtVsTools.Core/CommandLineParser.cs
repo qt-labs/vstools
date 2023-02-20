@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 namespace QtVsTools.Core.CommandLine
 {
     using IVSMacroExpander = QtMsBuild.IVSMacroExpander;
+    using static Utils;
 
     public class Parser
     {
@@ -208,11 +209,8 @@ namespace QtVsTools.Core.CommandLine
                 // Additional " " ensures loop will always end with whitespace processing
 
                 if (!foundExec) {
-                    if (!token.TokenText()
-                        .EndsWith(execName,
-                        StringComparison.InvariantCultureIgnoreCase)) {
+                    if (!token.TokenText().EndsWith(execName, IgnoreCase))
                         continue;
-                    }
 
                     foundExec = true;
                 }

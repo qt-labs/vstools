@@ -15,6 +15,7 @@ namespace QtVsTools.Options
 {
     using Common;
     using Core;
+    using static Utils;
     using static QtVsTools.Options.QtVersionsTable;
 
     public class QtVersionsPage : UIElementDialogPage
@@ -135,10 +136,9 @@ namespace QtVsTools.Options
                         continue;
                     if (version.State.HasFlag((State)Column.Path)) {
                         var versionPath = version.Path;
-                        var ignoreCase = StringComparison.OrdinalIgnoreCase;
-                        if (Path.GetFileName(versionPath).Equals("qmake.exe", ignoreCase))
+                        if (Path.GetFileName(versionPath).Equals("qmake.exe", IgnoreCase))
                             versionPath = Path.GetDirectoryName(versionPath);
-                        if (Path.GetFileName(versionPath ?? "").Equals("bin", ignoreCase))
+                        if (Path.GetFileName(versionPath ?? "").Equals("bin", IgnoreCase))
                             versionPath = Path.GetDirectoryName(versionPath);
 
                         QMakeConf qtConfiguration = new QMakeConf(versionPath);

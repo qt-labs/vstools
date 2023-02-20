@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.Debugger.Interop;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
+    using static Utils;
+
     sealed partial class CodeContext :
 
         IDebugDocumentContext2, // "This interface represents a position in a source file document."
@@ -31,9 +33,9 @@ namespace QtVsTools.Qml.Debug.AD7
             get
             {
                 var ext = Path.GetExtension(FilePath);
-                if (string.Equals(ext, ".qml", StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(ext, ".qml", IgnoreCase))
                     return Language.QML;
-                if (string.Equals(ext, ".js", StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(ext, ".js", IgnoreCase))
                     return Language.JavaScript;
                 return Language.Other;
             }
@@ -110,9 +112,8 @@ namespace QtVsTools.Qml.Debug.AD7
                     continue;
                 if (this.Program != that.Program)
                     continue;
-                if (!string.Equals(
-                    Path.GetFullPath(this.FilePath), Path.GetFullPath(that.FilePath),
-                    StringComparison.InvariantCultureIgnoreCase)) {
+                if (!string.Equals(Path.GetFullPath(this.FilePath),
+                    Path.GetFullPath(that.FilePath), IgnoreCase)) {
                     continue;
                 }
                 if (this.FileLine != that.FileLine)

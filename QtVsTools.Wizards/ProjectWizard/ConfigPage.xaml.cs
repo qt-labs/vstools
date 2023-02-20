@@ -20,6 +20,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using QtVsTools.Common;
     using Wizards.Common;
+    using static Utils;
 
     public partial class ConfigPage : WizardPage
     {
@@ -300,7 +301,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         IEnumerable<string> binPath = Path.GetDirectoryName(openFileDialog.FileName)
                             .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                         string lastDirName = binPath.LastOrDefault();
-                        if ("bin".Equals(lastDirName, StringComparison.InvariantCultureIgnoreCase))
+                        if ("bin".Equals(lastDirName, IgnoreCase))
                             binPath = binPath.Take(binPath.Count() - 1);
 
                         var qtVersion = string.Join(

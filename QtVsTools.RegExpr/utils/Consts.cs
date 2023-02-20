@@ -117,12 +117,12 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: (?i)
         /// ]]></summary>
-        public static RegExprLiteral IgnoreCase => new RegExprLiteral { LiteralExpr = @"(?i)" };
+        public static RegExprLiteral CaseInsensitive => new() { LiteralExpr = @"(?i)" };
 
         /// <summary><![CDATA[
         /// Equivalent to: (?-i)
         /// ]]></summary>
-        public static RegExprLiteral SenseCase => new RegExprLiteral { LiteralExpr = @"(?-i)" };
+        public static RegExprLiteral CaseSensitive => new() { LiteralExpr = @"(?-i)" };
 
         /// <summary>
         /// Applies the same whitespace skipping rules as tokens, but does not any capture text.

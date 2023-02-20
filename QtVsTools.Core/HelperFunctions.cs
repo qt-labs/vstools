@@ -23,21 +23,20 @@ using Process = System.Diagnostics.Process;
 namespace QtVsTools.Core
 {
     using Common;
+    using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
     public static class HelperFunctions
     {
         static LazyFactory StaticLazy { get; } = new LazyFactory();
 
-        static readonly HashSet<string> _sources = new HashSet<string>(new[] { ".c", ".cpp", ".cxx" },
-            StringComparer.OrdinalIgnoreCase);
+        static readonly HashSet<string> _sources = new(new[] { ".c", ".cpp", ".cxx" }, CaseIgnorer);
         public static bool IsSourceFile(string fileName)
         {
             return _sources.Contains(Path.GetExtension(fileName));
         }
 
-        static readonly HashSet<string> _headers = new HashSet<string>(new[] { ".h", ".hpp", ".hxx" },
-            StringComparer.OrdinalIgnoreCase);
+        static readonly HashSet<string> _headers = new(new[] { ".h", ".hpp", ".hxx" }, CaseIgnorer);
         public static bool IsHeaderFile(string fileName)
         {
             return _headers.Contains(Path.GetExtension(fileName));
@@ -45,32 +44,32 @@ namespace QtVsTools.Core
 
         public static bool IsUicFile(string fileName)
         {
-            return ".ui".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".ui".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsMocFile(string fileName)
         {
-            return ".moc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".moc".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsQrcFile(string fileName)
         {
-            return ".qrc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".qrc".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsWinRCFile(string fileName)
         {
-            return ".rc".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".rc".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsTranslationFile(string fileName)
         {
-            return ".ts".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".ts".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsQmlFile(string fileName)
         {
-            return ".qml".Equals(Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
+            return ".qml".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         /// <summary>
@@ -100,11 +99,11 @@ namespace QtVsTools.Core
             path = path.Replace("\"", "");
 
             if (path != "." && !IsAbsoluteFilePath(path)
-                && !path.StartsWith(".\\", StringComparison.OrdinalIgnoreCase)
-                && !path.StartsWith("$", StringComparison.OrdinalIgnoreCase)) {
+                && !path.StartsWith(".\\", IgnoreCase)
+                && !path.StartsWith("$", IgnoreCase)) {
                 path = ".\\" + path;
             }
-            if (path.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
+            if (path.EndsWith("\\", IgnoreCase))
                 path = path.Substring(0, path.Length - 1);
 
             return path;
@@ -115,8 +114,8 @@ namespace QtVsTools.Core
             path = path.Trim();
             if (path.Length >= 2 && path[1] == ':')
                 return true;
-            return path.StartsWith("\\", StringComparison.OrdinalIgnoreCase)
-                || path.StartsWith("/", StringComparison.OrdinalIgnoreCase);
+            return path.StartsWith("\\", IgnoreCase)
+                || path.StartsWith("/", IgnoreCase);
         }
 
         /// <summary>
@@ -133,7 +132,7 @@ namespace QtVsTools.Core
 
             var fiArray = fi.FullName.Split(Path.DirectorySeparatorChar);
             var dir = di.FullName;
-            while (dir.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
+            while (dir.EndsWith("\\", IgnoreCase))
                 dir = dir.Remove(dir.Length - 1, 1);
             var diArray = dir.Split(Path.DirectorySeparatorChar);
 
@@ -1007,8 +1006,7 @@ namespace QtVsTools.Core
             // Parse command output: copy environment variables to startInfo
             var envVars = EnvVarParser.Parse(stdOut.ToString())
                 .GetValues<KeyValuePair<string, List<string>>>("env_var")
-                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value,
-                    StringComparer.InvariantCultureIgnoreCase);
+                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value, CaseIgnorer);
             foreach (var vcVar in envVars)
                 startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
 
@@ -1049,8 +1047,7 @@ namespace QtVsTools.Core
             string canonicalPath = RootedCanonicalPath(path);
             if (!Path.IsPathRooted(path)) {
                 string currentCanonical = RootedCanonicalPath(".");
-                if (canonicalPath.StartsWith(currentCanonical,
-                    StringComparison.InvariantCultureIgnoreCase)) {
+                if (canonicalPath.StartsWith(currentCanonical, IgnoreCase)) {
                     return canonicalPath
                     .Substring(currentCanonical.Length)
                     .TrimStart(new char[] {
@@ -1067,8 +1064,7 @@ namespace QtVsTools.Core
 
         public static bool PathIsRelativeTo(string path, string subPath)
         {
-            return CanonicalPath(path).EndsWith(CanonicalPath(subPath),
-                StringComparison.InvariantCultureIgnoreCase);
+            return CanonicalPath(path).EndsWith(CanonicalPath(subPath), IgnoreCase);
         }
 
         public static string Unquote(string text)

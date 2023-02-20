@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools.Core
 {
     using QtMsBuild;
+    using static Utils;
 
     /// <summary>
     /// QtProject holds the Qt specific properties for a Visual Studio project.
@@ -402,10 +403,8 @@ namespace QtVsTools.Core
                 return false;
             }
 
-            if (!string.Equals(Path.GetExtension(mocFilePath), ".cbt",
-                StringComparison.InvariantCultureIgnoreCase)) {
+            if (!string.Equals(Path.GetExtension(mocFilePath), ".cbt", IgnoreCase))
                 return false;
-            }
 
             return true;
         }
@@ -626,7 +625,7 @@ namespace QtVsTools.Core
                     + Path.DirectorySeparatorChar + fileName);
             }
             foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                if (f.FullPath.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                if (f.FullPath.Equals(fileName, IgnoreCase))
                     return f;
             }
             return null;
@@ -642,7 +641,7 @@ namespace QtVsTools.Core
         {
             var fi = new FileInfo(HelperFunctions.NormalizeRelativeFilePath(fileName));
             foreach (VCFile f in (IVCCollection)vcPro.Files) {
-                if (f.Name.Equals(fi.Name, StringComparison.OrdinalIgnoreCase))
+                if (f.Name.Equals(fi.Name, IgnoreCase))
                     yield return f;
             }
         }
@@ -977,7 +976,7 @@ namespace QtVsTools.Core
             string delName = null;
             if (HelperFunctions.IsHeaderFile(fileName))
                 delName = "moc_" + baseName + ".cpp";
-            else if (HelperFunctions.IsSourceFile(fileName) && !fileName.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
+            else if (HelperFunctions.IsSourceFile(fileName) && !fileName.StartsWith("moc_", IgnoreCase))
                 delName = baseName + ".moc";
             else if (HelperFunctions.IsUicFile(fileName))
                 delName = "ui_" + baseName + ".h";

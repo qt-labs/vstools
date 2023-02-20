@@ -15,6 +15,7 @@ namespace QtVsTools
 {
     using Core;
     using QtMsBuild;
+    using static Utils;
 
     class DteEventsHandler
     {
@@ -313,9 +314,9 @@ namespace QtVsTools
 
             try {
                 if (HelperFunctions.IsSourceFile(vcFile.Name)) {
-                    if (vcFile.Name.StartsWith("moc_", StringComparison.OrdinalIgnoreCase))
+                    if (vcFile.Name.StartsWith("moc_", IgnoreCase))
                         return;
-                    if (vcFile.Name.StartsWith("qrc_", StringComparison.OrdinalIgnoreCase)) {
+                    if (vcFile.Name.StartsWith("qrc_", IgnoreCase)) {
                         // Do not use precompiled headers with these files
                         QtProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
@@ -323,8 +324,9 @@ namespace QtVsTools
                     var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
                     if (pcHeaderThrough != null) {
                         var pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
-                        if (vcFile.Name.EndsWith(pcHeaderCreator, StringComparison.OrdinalIgnoreCase)
-                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \"" + pcHeaderThrough + "\"", StringComparison.OrdinalIgnoreCase, false)) {
+                        if (vcFile.Name.EndsWith(pcHeaderCreator, IgnoreCase)
+                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \""
+                            + pcHeaderThrough + "\"", IgnoreCase, false)) {
                             //File is used to create precompiled headers
                             QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
                             return;
@@ -336,7 +338,7 @@ namespace QtVsTools
                         qtPro.AddMocStep(vcFile);
                     }
                 } else if (HelperFunctions.IsHeaderFile(vcFile.Name)) {
-                    if (vcFile.Name.StartsWith("ui_", StringComparison.OrdinalIgnoreCase))
+                    if (vcFile.Name.StartsWith("ui_", IgnoreCase))
                         return;
                     if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
                         if (!qtPro.IsQtMsBuildEnabled())
@@ -509,7 +511,7 @@ namespace QtVsTools
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
         {
             foreach (VCFile f in (IVCCollection)project.Files) {
-                if (f.Name.Equals(absFileName, StringComparison.OrdinalIgnoreCase))
+                if (f.Name.Equals(absFileName, IgnoreCase))
                     return f;
             }
             return null;

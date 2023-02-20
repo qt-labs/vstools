@@ -19,7 +19,7 @@ namespace QtVsTools.Options
 {
     using Core;
     using VisualStudio;
-
+    using static Utils;
     using static Common.EnumExt;
 
     public class QtOptionsPage : DialogPage
@@ -122,8 +122,7 @@ namespace QtVsTools.Options
                 CultureInfo culture,
                 object value)
             {
-                return string
-                    .Equals(value as string, "Enable", StringComparison.InvariantCultureIgnoreCase);
+                return string.Equals(value as string, "Enable", IgnoreCase);
             }
 
             public override object ConvertTo(

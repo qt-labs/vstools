@@ -13,14 +13,13 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
+    using static Utils;
+
     public static class QtVSIPSettings
     {
-        private static readonly Dictionary<string, string> MocDirCache
-            = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, string> UicDirCache
-            = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, string> RccDirCache
-            = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> MocDirCache = new(CaseIgnorer);
+        private static readonly Dictionary<string, string> UicDirCache = new(CaseIgnorer);
+        private static readonly Dictionary<string, string> RccDirCache = new(CaseIgnorer);
 
 
         public static string GetMocDirectory()
@@ -143,11 +142,11 @@ namespace QtVsTools.Core
 
                 switch (type) {
                 case Resources.mocDirKeyword: {
-                    var index = dir.IndexOf(configName, StringComparison.OrdinalIgnoreCase);
+                    var index = dir.IndexOf(configName, IgnoreCase);
                     if (index != -1)
                         dir = dir.Replace(dir.Substring(index, configName.Length), "$(ConfigurationName)");
 
-                    index = dir.IndexOf(platformName, StringComparison.OrdinalIgnoreCase);
+                    index = dir.IndexOf(platformName, IgnoreCase);
                     if (index != -1)
                         dir = dir.Replace(dir.Substring(index, platformName.Length), "$(PlatformName)");
                     dir = HelperFunctions.NormalizeRelativeFilePath(dir);
@@ -207,7 +206,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var projects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var projects = new HashSet<string>(CaseIgnorer);
             foreach (var p in HelperFunctions.ProjectsInSolution(project.DTE))
                 projects.Add(p.FullName);
 

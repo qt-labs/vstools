@@ -16,6 +16,8 @@ using QtVsTools.VisualStudio;
 
 namespace QtVsTools
 {
+    using static Utils;
+
     partial class QtHelpLinkChooser : DialogWindow
     {
         public QtHelpLinkChooser()
@@ -43,7 +45,7 @@ namespace QtVsTools
                     return true;
 
                 var item = (KeyValuePair<string, string>)obj;
-                return item.Key.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                return item.Key.IndexOf(SearchText, IgnoreCase) >= 0;
             };
             linkListBox.SelectedIndex = 0;
 

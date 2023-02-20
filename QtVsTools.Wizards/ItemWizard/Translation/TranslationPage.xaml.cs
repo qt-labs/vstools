@@ -15,6 +15,7 @@ namespace QtVsTools.Wizards.ItemWizard
 {
     using QtVsTools.VisualStudio;
     using Wizards.Common;
+    using static Utils;
 
     public partial class TranslationPage : WizardPage
     {
@@ -38,7 +39,7 @@ namespace QtVsTools.Wizards.ItemWizard
                     return true;
 
                 var item = (KeyValuePair<string, string>)obj;
-                return item.Value.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                return item.Value.IndexOf(SearchText, IgnoreCase) >= 0;
             };
             LanguageListBox.SelectedIndex = 0;
 

@@ -16,6 +16,7 @@ namespace QtVsTools.Options
 {
     using Common;
     using QtVsTools.Core;
+    using static Utils;
     using static Common.EnumExt;
 
     public enum BuildHost
@@ -489,8 +490,7 @@ namespace QtVsTools.Options
                     var qmakePath = openFileDialog.FileName;
                     var qmakeDir = Path.GetDirectoryName(qmakePath);
                     var previousPath = NormalizePath(version.Path);
-                    if (Path.GetFileName(qmakeDir ?? "")
-                        .Equals("bin", StringComparison.InvariantCultureIgnoreCase)) {
+                    if (Path.GetFileName(qmakeDir ?? "").Equals("bin", IgnoreCase)) {
                         qmakeDir = Path.GetDirectoryName(qmakeDir);
                         version.Path = qmakeDir;
                     } else {

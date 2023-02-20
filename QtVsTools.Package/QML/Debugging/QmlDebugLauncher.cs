@@ -21,7 +21,7 @@ namespace QtVsTools.Qml.Debug
     using Core.QtMsBuild;
     using SyntaxAnalysis;
     using VisualStudio;
-
+    using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
     class Launcher : Disposable, IDebugEventCallback2
@@ -205,8 +205,7 @@ namespace QtVsTools.Qml.Debug
                 string debugCommand = (native || string.IsNullOrEmpty(remoteDebugCommand))
                     ? localDebugCommand : remoteDebugCommand;
 
-                bool sameFile = string.Equals(execPath, Path.GetFullPath(debugCommand),
-                    StringComparison.InvariantCultureIgnoreCase);
+                bool sameFile = string.Equals(execPath, Path.GetFullPath(debugCommand), IgnoreCase);
 
                 if (!sameFile)
                     continue;

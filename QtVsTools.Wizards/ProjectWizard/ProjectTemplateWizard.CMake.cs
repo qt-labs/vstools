@@ -15,8 +15,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 {
     using Core;
     using Json;
-
-    using static StringComparer;
+    using static Utils;
     using static QtVsTools.Common.EnumExt;
 
     public abstract partial class ProjectTemplateWizard : IWizard
@@ -122,7 +121,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var modules = QtModules.Instance
                     .GetAvailableModules(config.QtVersion.qtMajor)
                     .Join(config.Modules,
-                        x => x.proVarQT, y => y, comparer: InvariantCultureIgnoreCase,
+                        x => x.proVarQT, y => y, comparer: CaseIgnorer,
                         resultSelector: (x, y) => x.LibraryPrefix.Substring(2));
 
                 var configPreset = new CMakeConfigPreset

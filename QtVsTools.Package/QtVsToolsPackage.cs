@@ -25,7 +25,7 @@ namespace QtVsTools
     using Core;
     using QtMsBuild;
     using VisualStudio;
-
+    using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
     [Guid(QtVsToolsPackage.PackageGuidString)]
@@ -181,7 +181,7 @@ namespace QtVsTools
                             const string qtPrivateImport
                                 = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
                             Func<string, bool> isUpdateQtProps = _ => Path.GetFileName(targetPath)
-                                    .Equals("Qt.props", StringComparison.OrdinalIgnoreCase)
+                                    .Equals("Qt.props", IgnoreCase)
                                 && File.ReadAllText(targetPath).Contains(qtPrivateImport);
 
                             if (!File.Exists(targetPath)) {

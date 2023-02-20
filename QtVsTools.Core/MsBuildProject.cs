@@ -22,6 +22,7 @@ namespace QtVsTools.Core
     using SyntaxAnalysis;
 
     using static HelperFunctions;
+    using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
     public class MsBuildProject
@@ -252,9 +253,6 @@ namespace QtVsTools.Core
             }
         }
 
-        const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
-        readonly StringComparer IGNORE_CASE_ = StringComparer.InvariantCultureIgnoreCase;
-
         /// <summary>
         /// Converts project format version to the latest version:
         ///  * Set latest project version;
@@ -326,7 +324,7 @@ namespace QtVsTools.Core
                     .Elements(ns + "ImportGroup")
                     .Elements(ns + "Import")
                     .Where(pg => Path.GetFileName((string)pg.Attribute("Project"))
-                        .Equals("qt_defaults.props", StringComparison.InvariantCultureIgnoreCase))
+                        .Equals("qt_defaults.props", IgnoreCase))
                     .Select(pg => pg.Parent)
                     .FirstOrDefault();
 
@@ -613,13 +611,13 @@ namespace QtVsTools.Core
                 inclPath.SetValue(string.Join(";", inclPath.Value.Split(';')
                     .Select(x => Unquote(x))
                     // Exclude paths rooted on $(QTDIR)
-                    .Where(x => !x.StartsWith("$(QTDIR)", IGNORE_CASE))));
+                    .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
 
             // Remove Qt module libraries from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x)), IGNORE_CASE_))));
+                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x)), CaseIgnorer))));
             }
 
             // Remove Qt lib path from linker properties
@@ -627,7 +625,7 @@ namespace QtVsTools.Core
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
                     .Select(x => Unquote(x))
                     // Exclude paths rooted on $(QTDIR)
-                    .Where(x => !x.StartsWith("$(QTDIR)", IGNORE_CASE))));
+                    .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
 
             // Remove Qt module macros from resource compiler properties
@@ -748,8 +746,8 @@ namespace QtVsTools.Core
             // Module .lib is present in linker additional dependencies
             if (linker.Elements(ns + "AdditionalDependencies")
                 .SelectMany(x => x.Value.Split(';'))
-                .Any(x => Path.GetFileName(Unquote(x)).Equals(module.LibRelease, IGNORE_CASE)
-                    || Path.GetFileName(Unquote(x)).Equals(module.LibDebug, IGNORE_CASE))) {
+                .Any(x => Path.GetFileName(Unquote(x)).Equals(module.LibRelease, IgnoreCase)
+                    || Path.GetFileName(Unquote(x)).Equals(module.LibDebug, IgnoreCase))) {
                 return true;
             }
 
@@ -911,9 +909,8 @@ namespace QtVsTools.Core
                     // Replace fixed values with VS macros
                     //
                     //   * Filename, e.g. foo.ui --> %(Filename)%(Extension)
-                    var commandLine = row.command.Value
-                        .Replace(Path.GetFileName(row.itemName), "%(Filename)%(Extension)",
-                            StringComparison.InvariantCultureIgnoreCase);
+                    var commandLine = row.command.Value.Replace(Path.GetFileName(row.itemName),
+                        "%(Filename)%(Extension)", IgnoreCase);
                     //
                     //   * Context specific, e.g. ui_foo.h --> ui_%(FileName).h
                     foreach (var replace in extraReplacements)
@@ -923,8 +920,7 @@ namespace QtVsTools.Core
                     //   * ignore any word other than the expected configuration, e.g. lrelease.exe
                     commandLine = Regex.Replace(commandLine, @"\b" + configName + @"\b",
                             "$(Configuration)", RegexOptions.IgnoreCase)
-                        .Replace(platformName, "$(Platform)",
-                            StringComparison.InvariantCultureIgnoreCase);
+                        .Replace(platformName, "$(Platform)", IgnoreCase);
 
                     evaluator.Properties.Clear();
                     foreach (var configProp in row.config.Elements())
@@ -1079,8 +1075,7 @@ namespace QtVsTools.Core
                 .Where(x => ((string)x.Attribute("Include"))
                     .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                 .GroupBy(x => HelperFunctions.CanonicalPath(
-                    Path.Combine(projDir, (string)x.Attribute("Include"))),
-                    StringComparer.InvariantCultureIgnoreCase)
+                    Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
             var filterItemsByPath = (this[Files.Filters].xml != null)
@@ -1091,8 +1086,7 @@ namespace QtVsTools.Core
                     .Where(x => ((string)x.Attribute("Include"))
                         .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                     .GroupBy(x => HelperFunctions.CanonicalPath(
-                        Path.Combine(projDir, (string)x.Attribute("Include"))),
-                        StringComparer.InvariantCultureIgnoreCase)
+                        Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
                     .ToDictionary(x => x.Key, x => new List<XElement>(x))
                 : new Dictionary<string, List<XElement>>();
 
@@ -1110,10 +1104,8 @@ namespace QtVsTools.Core
             // with a single .cpp custom build step
             var mocCbtCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName)
                 .Where(x =>
-                ((string)x.Attribute("Include")).EndsWith(".cbt",
-                StringComparison.InvariantCultureIgnoreCase)
-                || ((string)x.Attribute("Include")).EndsWith(".moc",
-                StringComparison.InvariantCultureIgnoreCase))
+                ((string)x.Attribute("Include")).EndsWith(".cbt", IgnoreCase)
+                || ((string)x.Attribute("Include")).EndsWith(".moc", IgnoreCase))
                 .GroupBy(cbt => CustomBuildMocInput(cbt));
 
             List<XElement> cbtToRemove = new List<XElement>();
@@ -1148,8 +1140,7 @@ namespace QtVsTools.Core
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
                     .Where(x =>
-                        cbtGroup.Key.Equals((string)x.Attribute("Include"),
-                        StringComparison.InvariantCultureIgnoreCase));
+                        cbtGroup.Key.Equals((string)x.Attribute("Include"), IgnoreCase));
                 foreach (var cppMocItem in cppMocItems)
                     cppMocItem.Remove();
 
@@ -1159,8 +1150,7 @@ namespace QtVsTools.Core
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
                     .Where(x =>
-                        cbtGroup.Key.Equals((string)x.Attribute("Include"),
-                        StringComparison.InvariantCultureIgnoreCase));
+                        cbtGroup.Key.Equals((string)x.Attribute("Include"), IgnoreCase));
                 foreach (var cppMocItem in cppMocItems)
                     cppMocItem.Name = ns + "CustomBuild";
             }
@@ -1177,17 +1167,15 @@ namespace QtVsTools.Core
                 {
                     (item, cmdLine) => cmdLine.Replace(
                             $@"\moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @"\moc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
+                        @"\moc_%(Filename).cpp", IgnoreCase)
                     .Replace($" -o moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @" -o $(ProjectDir)\moc_%(Filename).cpp",
-                            StringComparison.InvariantCultureIgnoreCase),
+                        @" -o $(ProjectDir)\moc_%(Filename).cpp", IgnoreCase),
 
                     (item, cmdLine) => cmdLine.Replace(
                             $@"\{Path.GetFileNameWithoutExtension(item)}.moc",
-                        @"\%(Filename).moc", StringComparison.InvariantCultureIgnoreCase)
+                        @"\%(Filename).moc", IgnoreCase)
                     .Replace($" -o {Path.GetFileNameWithoutExtension(item)}.moc",
-                        @" -o $(ProjectDir)\%(Filename).moc",
-                            StringComparison.InvariantCultureIgnoreCase),
+                        @" -o $(ProjectDir)\%(Filename).moc", IgnoreCase),
                 })) {
                 Rollback();
                 return false;
@@ -1233,11 +1221,10 @@ namespace QtVsTools.Core
                 {
                     (item, cmdLine) => cmdLine.Replace(
                         $@"\qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @"\qrc_%(Filename).cpp", StringComparison.InvariantCultureIgnoreCase)
+                        @"\qrc_%(Filename).cpp", IgnoreCase)
                     .Replace(
                         $" -o qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @" -o $(ProjectDir)\qrc_%(Filename).cpp",
-                            StringComparison.InvariantCultureIgnoreCase),
+                        @" -o $(ProjectDir)\qrc_%(Filename).cpp", IgnoreCase),
                 })) {
                 Rollback();
                 return false;
@@ -1291,11 +1278,10 @@ namespace QtVsTools.Core
                 {
                     (item, cmdLine) => cmdLine.Replace(
                         $@"\ui_{Path.GetFileNameWithoutExtension(item)}.h",
-                        @"\ui_%(Filename).h", StringComparison.InvariantCultureIgnoreCase)
+                        @"\ui_%(Filename).h", IgnoreCase)
                     .Replace(
                         $" -o ui_{Path.GetFileNameWithoutExtension(item)}.h",
-                        @" -o $(ProjectDir)\ui_%(Filename).h",
-                            StringComparison.InvariantCultureIgnoreCase),
+                        @" -o $(ProjectDir)\ui_%(Filename).h", IgnoreCase),
                 })) {
                 Rollback();
                 return false;
@@ -1387,7 +1373,7 @@ namespace QtVsTools.Core
         {
             return
                 // Make pattern case-insensitive
-                IgnoreCase &
+                CaseInsensitive &
                 // Split path string by directory separators
                 findWhatPath.Split(slashChars, StringSplitOptions.RemoveEmptyEntries)
                 // Convert path parts to RegExpr (escapes regex special chars)

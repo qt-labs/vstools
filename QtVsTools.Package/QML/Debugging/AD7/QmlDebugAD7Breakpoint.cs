@@ -13,6 +13,8 @@ using Microsoft.VisualStudio.Debugger.Interop;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
+    using static Utils;
+
     sealed partial class PendingBreakpoint : Disposable,
 
         IDebugPendingBreakpoint2 // "This interface represents a breakpoint that is ready to bind
@@ -178,7 +180,7 @@ namespace QtVsTools.Qml.Debug.AD7
                 var qrcPath = Engine.FileSystem[Parent.FileName].QrcPath;
                 if (qrcPath == null)
                     return string.Empty;
-                if (qrcPath.StartsWith("qrc:///", StringComparison.InvariantCultureIgnoreCase))
+                if (qrcPath.StartsWith("qrc:///", IgnoreCase))
                     qrcPath = qrcPath.Substring("qrc:///".Length);
                 return qrcPath;
             }

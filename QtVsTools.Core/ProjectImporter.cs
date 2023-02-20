@@ -16,12 +16,13 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
+    using static Utils;
+
     public class ProjectImporter
     {
         private readonly DTE dteObject;
 
         private const string ProjectFileExtension = ".vcxproj";
-        private const StringComparison OrdinalIgnoreCase = StringComparison.OrdinalIgnoreCase;
 
         public ProjectImporter(DTE dte)
         {
@@ -144,7 +145,7 @@ namespace QtVsTools.Core
                     as VCConfiguration;
                 var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
                 if (!string.IsNullOrEmpty(def)
-                    && def.IndexOf("QT_PLUGIN", OrdinalIgnoreCase) > -1) {
+                    && def.IndexOf("QT_PLUGIN", IgnoreCase) > -1) {
                     QtProject.MarkAsQtPlugin(qtPro);
                 }
 
@@ -170,13 +171,13 @@ namespace QtVsTools.Core
             }
 
             var projects = new List<string>();
-            var index = content.IndexOf(ProjectFileExtension, OrdinalIgnoreCase);
+            var index = content.IndexOf(ProjectFileExtension, IgnoreCase);
             while (index != -1) {
                 var startIndex = content.LastIndexOf('\"', index, index) + 1;
                 var endIndex = content.IndexOf('\"', index);
                 projects.Add(content.Substring(startIndex, endIndex - startIndex));
                 content = content.Substring(endIndex);
-                index = content.IndexOf(ProjectFileExtension, OrdinalIgnoreCase);
+                index = content.IndexOf(ProjectFileExtension, IgnoreCase);
             }
             return projects;
         }
@@ -282,7 +283,7 @@ namespace QtVsTools.Core
         private static VCFilter BestMatch(string path, IDictionary pathFilterTable)
         {
             var bestMatch = ".";
-            if (path.StartsWith(".\\", OrdinalIgnoreCase))
+            if (path.StartsWith(".\\", IgnoreCase))
                 path = path.Substring(2);
             foreach (string p in pathFilterTable.Keys) {
                 var best = 0;
@@ -307,7 +308,7 @@ namespace QtVsTools.Core
             path = path.ToUpperInvariant().Trim();
             path = Regex.Replace(path, @"\\+\.?\\+", "\\");
             path = Regex.Replace(path, @"\\\.?$", "");
-            if (path.StartsWith(".\\", OrdinalIgnoreCase))
+            if (path.StartsWith(".\\", IgnoreCase))
                 path = path.Substring(2);
             filterPathTable.Add(filter, path);
             pathFilterTable.Add(path, filter);
@@ -346,7 +347,7 @@ namespace QtVsTools.Core
                 }
 
                 var path = HelperFunctions.GetRelativePath(vcProject.ProjectDirectory, file);
-                if (path.StartsWith(".\\", OrdinalIgnoreCase))
+                if (path.StartsWith(".\\", IgnoreCase))
                     path = path.Substring(2);
 
                 var i = path.LastIndexOf(Path.DirectorySeparatorChar);
@@ -362,7 +363,7 @@ namespace QtVsTools.Core
 
                 var filterDir = filterPathTable[filter];
                 var name = path;
-                if (!name.StartsWith("..", OrdinalIgnoreCase) && name.StartsWith(filterDir, OrdinalIgnoreCase))
+                if (!name.StartsWith("..", IgnoreCase) && name.StartsWith(filterDir, IgnoreCase))
                     name = name.Substring(filterDir.Length + 1);
 
                 if (filter.AddFilter(name) is not VCFilter newFilter)
@@ -396,7 +397,7 @@ namespace QtVsTools.Core
 
             fullName = new FileInfo(fullName).FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(dteObject)) {
-                if (p.FullName.Equals(fullName, OrdinalIgnoreCase))
+                if (p.FullName.Equals(fullName, IgnoreCase))
                     return p;
             }
             return null;
@@ -415,7 +416,7 @@ namespace QtVsTools.Core
                 return null;
 
             line = line.TrimEnd(' ', '\t');
-            while (line.EndsWith("\\", OrdinalIgnoreCase)) {
+            while (line.EndsWith("\\", IgnoreCase)) {
                 line = line.Remove(line.Length - 1);
                 var appendix = streamReader.ReadLine();
                 if (appendix is not null)
@@ -508,7 +509,7 @@ namespace QtVsTools.Core
 
             fileName = new FileInfo(fileName).FullName;
             foreach (VCFile vcFile in (IVCCollection)qtPro.VCProject.Files) {
-                if (!vcFile.FullPath.Equals(fileName, OrdinalIgnoreCase))
+                if (!vcFile.FullPath.Equals(fileName, IgnoreCase))
                     continue;
                 qtPro.VCProject.RemoveFile(vcFile);
                 MoveFileToDeletedFolder(qtPro.VCProject, vcFile);
@@ -615,7 +616,7 @@ namespace QtVsTools.Core
 
             var filesToRemove = new List<VCFile>();
             foreach (VCFile vcFile in (IVCCollection)generatedFiles.Files) {
-                if (vcFile.FullPath.EndsWith(".res", OrdinalIgnoreCase))
+                if (vcFile.FullPath.EndsWith(".res", IgnoreCase))
                     filesToRemove.Add(vcFile);
             }
             foreach (var resFile in filesToRemove)

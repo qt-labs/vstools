@@ -11,6 +11,7 @@ using System.Text;
 
 namespace QtVsTools.Core.QtMsBuild
 {
+    using static Utils;
     using CommandLineParser = CommandLine.Parser;
     using CommandLineOption = CommandLine.Option;
 
@@ -579,7 +580,7 @@ namespace QtVsTools.Core.QtMsBuild
             inputPath = outputPath = "";
 
             string filePath = parser.PositionalArguments
-                .FirstOrDefault(arg => !arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(arg => !arg.EndsWith(toolExecName, IgnoreCase));
             if (!string.IsNullOrEmpty(filePath))
                 inputPath = filePath;
 
@@ -600,7 +601,7 @@ namespace QtVsTools.Core.QtMsBuild
                 return false;
 
             string execPath = parser.PositionalArguments
-                .FirstOrDefault(arg => arg.EndsWith(toolExecName, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(arg => arg.EndsWith(toolExecName, IgnoreCase));
             if (!string.IsNullOrEmpty(execPath)) {
                 var execDir = Path.GetDirectoryName(execPath);
                 if (!string.IsNullOrEmpty(execDir))
@@ -1207,8 +1208,7 @@ namespace QtVsTools.Core.QtMsBuild
             inputPath = outputPath = "";
 
             var args = new Queue<string>(parser.PositionalArguments
-                .Where(arg => !arg.EndsWith(toolExecName,
-                    StringComparison.InvariantCultureIgnoreCase)));
+                .Where(arg => !arg.EndsWith(toolExecName, IgnoreCase)));
 
             if (args.Any())
                 inputPath = args.Dequeue();

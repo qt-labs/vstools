@@ -13,6 +13,7 @@ using System.Text;
 namespace QtVsTools.Core
 {
     using VisualStudio;
+    using static Utils;
 
     public abstract class QMake
     {
@@ -184,8 +185,8 @@ namespace QtVsTools.Core
                 Path.Combine(path, "bin", "qmake.bat"),
             };
             return possibleQMakePaths.Where(File.Exists).Select(Path.GetFileName)
-                .Any(file => file.Equals("qmake.exe", StringComparison.OrdinalIgnoreCase)
-                  || file.Equals("qmake.bat", StringComparison.OrdinalIgnoreCase));
+                .Any(file => file.Equals("qmake.exe", IgnoreCase)
+                  || file.Equals("qmake.bat", IgnoreCase));
         }
     }
 }

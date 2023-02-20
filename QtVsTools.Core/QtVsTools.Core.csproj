@@ -112,6 +112,7 @@
     <Compile Include="Common\Json\Serializable.cs" />
     <Compile Include="Common\Json\SerializableEnum.cs" />
     <Compile Include="Common\Json\Serializer.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\LazyFactory.cs" />
     <Compile Include="Common\NativeAPI.cs" />
     <Compile Include="Common\PriorityQueue.cs" />

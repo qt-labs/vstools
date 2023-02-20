@@ -14,6 +14,7 @@ using System.Xml.Linq;
 namespace QtVsTools.Qml.Debug
 {
     using Core;
+    using static Utils;
 
     struct QmlFile
     {
@@ -78,8 +79,7 @@ namespace QtVsTools.Qml.Debug
                         Alias = y.Attribute("alias"),
                         Path = HelperFunctions.ToNativeSeparator((string)y)
                     })
-                    .Where(z => KNOWN_EXTENSIONS.Contains(
-                        Path.GetExtension(z.Path), StringComparer.InvariantCultureIgnoreCase)));;
+                    .Where(z => KNOWN_EXTENSIONS.Contains(Path.GetExtension(z.Path), CaseIgnorer)));
 
             foreach (var file in files) {
                 string qrcPath;
@@ -171,9 +171,9 @@ namespace QtVsTools.Qml.Debug
         {
             get
             {
-                if (path.StartsWith("qrc:", StringComparison.InvariantCultureIgnoreCase))
+                if (path.StartsWith("qrc:", IgnoreCase))
                     return FromQrcPath(path.ToLower());
-                else if (path.StartsWith("file:", StringComparison.InvariantCultureIgnoreCase))
+                else if (path.StartsWith("file:", IgnoreCase))
                     return FromFileUrl(path);
                 else
                     return FromFilePath(path.ToUpper());
