@@ -353,42 +353,6 @@ namespace QtVsTools.Core.QtMsBuild
                 property.ToString());
         }
 
-        public string GetPropertyChangedValue(
-            QtRcc.Property property,
-            string itemName,
-            string configName)
-        {
-            return GetPropertyChangedValue(
-                configName,
-                QtRcc.ItemTypeName,
-                itemName,
-                property.ToString());
-        }
-
-        public string GetPropertyChangedValue(
-            QtRepc.Property property,
-            string itemName,
-            string configName)
-        {
-            return GetPropertyChangedValue(
-                configName,
-                QtRepc.ItemTypeName,
-                itemName,
-                property.ToString());
-        }
-
-        public string GetPropertyChangedValue(
-            QtUic.Property property,
-            string itemName,
-            string configName)
-        {
-            return GetPropertyChangedValue(
-                configName,
-                QtUic.ItemTypeName,
-                itemName,
-                property.ToString());
-        }
-
         public bool SetCommandLine(
             string itemType,
             object propertyStorage,

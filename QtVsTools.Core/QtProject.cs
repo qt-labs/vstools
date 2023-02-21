@@ -1488,21 +1488,6 @@ namespace QtVsTools.Core
 
     }
 
-    public class VCMacroExpander : IVSMacroExpander
-    {
-        readonly object config;
-        public VCMacroExpander(object config)
-        {
-            this.config = config;
-        }
-
-        public string ExpandString(string stringToExpand)
-        {
-            HelperFunctions.ExpandString(ref stringToExpand, config);
-            return stringToExpand;
-        }
-    }
-
     public class QtCustomBuildTool
     {
         readonly QtMsBuildContainer qtMsBuild;
