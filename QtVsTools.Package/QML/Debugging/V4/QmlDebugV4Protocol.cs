@@ -156,8 +156,7 @@ namespace QtVsTools.Qml.Debug.V4
 
             if (msg is Response msgResponse) {
                 EnterCriticalSection();
-                PendingRequest pendingRequest = null;
-                if (pendingRequests.TryGetValue(msgResponse.RequestSeq, out pendingRequest)) {
+                if (pendingRequests.TryGetValue(msgResponse.RequestSeq, out var pendingRequest)) {
                     pendingRequests.Remove(msgResponse.RequestSeq);
                     LeaveCriticalSection();
                     pendingRequest.SetResponse(msgResponse);

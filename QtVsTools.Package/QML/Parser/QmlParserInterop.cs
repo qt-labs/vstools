@@ -289,8 +289,7 @@ namespace QtVsTools.Qml
             if (nodesBytPtr.TryGetValue(ptrRef, out AstNode nodeRef)) {
                 nodeProperty.SetValue(node, nodeRef);
             } else {
-                List<KeyValuePair<AstNode, PropertyInfo>> pendingRefList;
-                if (!pendingDereferences.TryGetValue(ptrRef, out pendingRefList)) {
+                if (!pendingDereferences.TryGetValue(ptrRef, out var pendingRefList)) {
                     pendingDereferences[ptrRef] = pendingRefList =
                         new List<KeyValuePair<AstNode, PropertyInfo>>();
                 }

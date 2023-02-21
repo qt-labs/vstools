@@ -166,8 +166,7 @@ namespace QtVsTools.Core.QtMsBuild
                 }
             }
 
-            List<ItemPropertyChange> changeGroup;
-            if (!itemPropertyChangesGrouped.TryGetValue(newChange.GroupKey, out changeGroup)) {
+            if (!itemPropertyChangesGrouped.TryGetValue(newChange.GroupKey, out var changeGroup)) {
                 itemPropertyChangesGrouped.Add(
                     newChange.GroupKey,
                     changeGroup = new List<ItemPropertyChange>());
@@ -178,8 +177,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         void RemoveChange(ItemPropertyChange change)
         {
-            List<ItemPropertyChange> changeGroup;
-            if (itemPropertyChangesGrouped.TryGetValue(change.GroupKey, out changeGroup)) {
+            if (itemPropertyChangesGrouped.TryGetValue(change.GroupKey, out var changeGroup)) {
                 changeGroup.Remove(change);
                 if (changeGroup.Count == 0)
                     itemPropertyChangesGrouped.Remove(change.GroupKey);
@@ -405,8 +403,7 @@ namespace QtVsTools.Core.QtMsBuild
             string commandLine,
             IVSMacroExpander macros)
         {
-            Dictionary<QtMoc.Property, string> properties;
-            if (!QtMocInstance.ParseCommandLine(commandLine, macros, out properties))
+            if (!QtMocInstance.ParseCommandLine(commandLine, macros, out var properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -455,8 +452,7 @@ namespace QtVsTools.Core.QtMsBuild
             string commandLine,
             IVSMacroExpander macros)
         {
-            Dictionary<QtRcc.Property, string> properties;
-            if (!QtRccInstance.ParseCommandLine(commandLine, macros, out properties))
+            if (!QtRccInstance.ParseCommandLine(commandLine, macros, out var properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -505,8 +501,7 @@ namespace QtVsTools.Core.QtMsBuild
             string commandLine,
             IVSMacroExpander macros)
         {
-            Dictionary<QtRepc.Property, string> properties;
-            if (!QtRepcInstance.ParseCommandLine(commandLine, macros, out properties))
+            if (!QtRepcInstance.ParseCommandLine(commandLine, macros, out var properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))
@@ -555,8 +550,7 @@ namespace QtVsTools.Core.QtMsBuild
             string commandLine,
             IVSMacroExpander macros)
         {
-            Dictionary<QtUic.Property, string> properties;
-            if (!QtUicInstance.ParseCommandLine(commandLine, macros, out properties))
+            if (!QtUicInstance.ParseCommandLine(commandLine, macros, out var properties))
                 return false;
             foreach (var property in properties) {
                 if (!SetItemProperty(propertyStorage, property.Key, property.Value))

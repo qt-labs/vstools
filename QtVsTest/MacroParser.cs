@@ -177,8 +177,7 @@ namespace QtVsTest.Macros
                         Capture(value => new Statement { Args = new List<string>() }),
                         Update(TokenId.StatementType, (Statement s, string typeStr) =>
                         {
-                            StatementType type;
-                            if (Enum.TryParse(typeStr, ignoreCase: true, result: out type))
+                            if (Enum.TryParse(typeStr, ignoreCase: true, result: out StatementType type))
                                 s.Type = type;
                             else
                                 s.Type = StatementType.Unknown;
