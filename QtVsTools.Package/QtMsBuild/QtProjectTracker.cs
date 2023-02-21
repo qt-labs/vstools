@@ -84,8 +84,7 @@ namespace QtVsTools.QtMsBuild
                 };
                 Instances[projectPath] = tracker;
                 InitQueue.Enqueue(tracker);
-                if (InitDispatcher == null)
-                    InitDispatcher = Task.Run(InitDispatcherLoopAsync);
+                InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
                 return tracker;
             }
         }

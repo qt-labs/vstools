@@ -65,12 +65,7 @@ namespace QtVsTools.SyntaxAnalysis
                 IProductionRule _Rule = null;
                 public IProductionRule Rule
                 {
-                    get
-                    {
-                        if (_Rule == null)
-                            _Rule = Token.SelectRule(this);
-                        return _Rule;
-                    }
+                    get { return _Rule ??= Token.SelectRule(this); }
                 }
 
                 public string Key

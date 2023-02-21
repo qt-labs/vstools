@@ -24,8 +24,7 @@ namespace QtVsTools.Core
             // To find location of "qmake.conf" there is a need to run "qmake -query" command
             // This is what happens below.
             if (!File.Exists(qmakeConf)) {
-                if (qmakeQuery == null)
-                    qmakeQuery = new QMakeQuery(qtVersionDir);
+                qmakeQuery ??= new QMakeQuery(qtVersionDir);
 
                 string qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
                 if (string.IsNullOrEmpty(qtPrefix))

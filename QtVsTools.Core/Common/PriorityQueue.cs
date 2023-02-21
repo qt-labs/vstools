@@ -119,12 +119,8 @@ namespace QtVsTools
                 ItemsByPriority.Remove(ItemPriority[key]);
                 ItemPriority.Remove(key);
                 --Count;
-                if (key == GetItemKey(Head)) {
-                    if (IsEmpty)
-                        Head = default(T);
-                    else
-                        Head = ItemsByPriority.First().Value;
-                }
+                if (key == GetItemKey(Head))
+                    Head = IsEmpty ? default(T) : ItemsByPriority.First().Value;
             }
         }
 

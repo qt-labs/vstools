@@ -137,8 +137,7 @@ namespace QtVsTools.Core
         private static async Task OutputWindowPane_InitAsync()
         {
             try {
-                if (Pane == null)
-                    Pane = await OutputWindowPane.CreateAsync(Name, PaneGuid);
+                Pane ??= await OutputWindowPane.CreateAsync(Name, PaneGuid);
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine(ex);
             }

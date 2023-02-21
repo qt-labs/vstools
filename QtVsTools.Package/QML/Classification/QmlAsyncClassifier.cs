@@ -535,10 +535,7 @@ namespace QtVsTools.Qml.Classification
                 get
                 {
                     lock (staticCriticalSection) {
-                        if (instance == null) {
-                            instance = new TInstance();
-                        }
-                        return instance;
+                        return instance ??= new TInstance();
                     }
                 }
             }

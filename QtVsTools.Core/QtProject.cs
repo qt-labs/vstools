@@ -1500,10 +1500,7 @@ namespace QtVsTools.Core
 
         public QtCustomBuildTool(VCFileConfiguration vcConfig, QtMsBuildContainer container = null)
         {
-            if (container != null)
-                qtMsBuild = container;
-            else
-                qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
+            qtMsBuild = container ?? new QtMsBuildContainer(new VCPropertyStorageProvider());
             this.vcConfig = vcConfig;
             if (vcConfig != null)
                 vcFile = vcConfig.File as VCFile;

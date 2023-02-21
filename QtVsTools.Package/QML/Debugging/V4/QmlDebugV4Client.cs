@@ -264,8 +264,7 @@ namespace QtVsTools.Qml.Debug.V4
             if (State != DebugClientState.Connected)
                 return false;
             var messageTypeData = Encoding.UTF8.GetBytes(messageType);
-            if (messageParams == null)
-                messageParams = new byte[0];
+            messageParams ??= new byte[0];
 
             System.Diagnostics.Debug.WriteLine(
                 $">> {messageType} {Encoding.UTF8.GetString(messageParams)}");

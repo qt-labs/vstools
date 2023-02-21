@@ -153,8 +153,7 @@ namespace QtVsTools.Json
         ///
         public static IJsonData Parse(byte[] rawJsonData)
         {
-            if (rawJsonData == null)
-                rawJsonData = new byte[0];
+            rawJsonData ??= new byte[0];
 
             var data = new JsonData()
             {

@@ -39,12 +39,8 @@ namespace QtVsTools.SyntaxAnalysis
             if (!HasPositive && !HasNegative)
                 return null;
 
-            if (!IsSubSet) {
-                if (HasPositive)
-                    pattern.Append("[");
-                else
-                    pattern.Append("[^");
-            }
+            if (!IsSubSet)
+                pattern.Append(HasPositive ? "[" : "[^");
 
             IEnumerable<RegExpr> children = null;
             if (HasPositive && HasNegative) {

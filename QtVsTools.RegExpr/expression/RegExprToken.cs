@@ -173,9 +173,7 @@ namespace QtVsTools.SyntaxAnalysis
             {
                 if (!SkipLeadingWhitespace)
                     return null;
-                var tokenWs = LeadingWhitespace;
-                if (tokenWs == null)
-                    tokenWs = defaultTokenWs;
+                var tokenWs = LeadingWhitespace ?? defaultTokenWs;
                 return tokenWs;
             }
 

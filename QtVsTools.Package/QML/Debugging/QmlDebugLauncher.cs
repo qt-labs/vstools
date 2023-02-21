@@ -163,10 +163,7 @@ namespace QtVsTools.Qml.Debug
             } else {
                 var wslPath = wslPathParser.Parse(fileName)
                     .GetValues<WslPath>("WSLPATH").FirstOrDefault();
-                if (wslPath != null)
-                    execPath = Path.GetFullPath(wslPath);
-                else
-                    execPath = fileName;
+                execPath = wslPath != null ? Path.GetFullPath(wslPath) : fileName;
             }
 
             procId = pProcessId[0].dwProcessId;

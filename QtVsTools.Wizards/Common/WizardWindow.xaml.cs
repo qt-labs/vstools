@@ -89,8 +89,7 @@ namespace QtVsTools.Wizards.Common
 
         private void OnPageReturn(object sender, ReturnEventArgs<WizardResult> e)
         {
-            if (DialogResult == null)
-                DialogResult = (e.Result == WizardResult.Finished);
+            DialogResult ??= e.Result == WizardResult.Finished;
         }
 
         private void OnNavigatedBackwards(object sender, EventArgs e)

@@ -37,16 +37,10 @@ namespace QtVsTools.SyntaxAnalysis
 
             switch (Context) {
             case AssertLook.Ahead:
-                if (Negative)
-                    pattern.Append("(?!");
-                else
-                    pattern.Append("(?=");
+                pattern.Append(Negative ? "(?!" : "(?=");
                 break;
             case AssertLook.Behind:
-                if (Negative)
-                    pattern.Append("(?<!");
-                else
-                    pattern.Append("(?<=");
+                pattern.Append(Negative ? "(?<!" : "(?<=");
                 break;
             }
 

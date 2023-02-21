@@ -374,12 +374,7 @@ namespace QtVsTools.Core.QtMsBuild
         static QtMoc qtMocInstance;
         public static QtMoc QtMocInstance
         {
-            get
-            {
-                if (qtMocInstance == null)
-                    qtMocInstance = new QtMoc();
-                return qtMocInstance;
-            }
+            get { return qtMocInstance ??= new QtMoc(); }
         }
 
         public string GetPropertyValue(object propertyStorage, QtMoc.Property property)
@@ -423,12 +418,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         private static QtRcc QtRccInstance
         {
-            get
-            {
-                if (qtRccInstance == null)
-                    qtRccInstance = new QtRcc();
-                return qtRccInstance;
-            }
+            get { return qtRccInstance ??= new QtRcc(); }
         }
 
         public string GetPropertyValue(object propertyStorage, QtRcc.Property property)
@@ -472,12 +462,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         private static QtRepc QtRepcInstance
         {
-            get
-            {
-                if (qtRepcInstance == null)
-                    qtRepcInstance = new QtRepc();
-                return qtRepcInstance;
-            }
+            get { return qtRepcInstance ??= new QtRepc(); }
         }
 
         public string GetPropertyValue(object propertyStorage, QtRepc.Property property)
@@ -521,12 +506,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         private static QtUic QtUicInstance
         {
-            get
-            {
-                if (qtUicInstance == null)
-                    qtUicInstance = new QtUic();
-                return qtUicInstance;
-            }
+            get { return qtUicInstance ??= new QtUic(); }
         }
 
         public string GetPropertyValue(object propertyStorage, QtUic.Property property)
@@ -642,10 +622,8 @@ namespace QtVsTools.Core.QtMsBuild
 
             if (!string.IsNullOrEmpty(option.ValueName)) {
                 foreach (var value in values.Split(new char[] { ';' })) {
-                    if (useQuotes)
-                        commandLine.AppendFormat(" {0}{1} \"{2}\"", escape, name, value);
-                    else
-                        commandLine.AppendFormat(" {0}{1} {2}", escape, name, value);
+                    commandLine.AppendFormat(
+                        useQuotes ? " {0}{1} \"{2}\"" : " {0}{1} {2}", escape, name, value);
                 }
             } else {
                 commandLine.AppendFormat(" {0}{1}", escape, name);

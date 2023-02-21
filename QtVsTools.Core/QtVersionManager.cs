@@ -43,9 +43,7 @@ namespace QtVsTools.Core
                 packageInit.Set();
             }
 
-            if (instance == null)
-                instance = new QtVersionManager();
-            return instance;
+            return instance ??= new QtVersionManager();
         }
 
         public VersionInformation GetVersionInfo(string name)
@@ -54,8 +52,7 @@ namespace QtVsTools.Core
                 return null;
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
-            if (versionCache == null)
-                versionCache = new Hashtable();
+            versionCache ??= new Hashtable();
 
             if (versionCache[name] is VersionInformation vi)
                 return vi;

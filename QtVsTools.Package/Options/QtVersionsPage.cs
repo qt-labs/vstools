@@ -41,10 +41,7 @@ namespace QtVsTools.Options
                 if (versionPath.StartsWith("SSH:") || versionPath.StartsWith("WSL:")) {
                     var linuxPaths = versionPath.Split(':');
                     versionPath = linuxPaths[1];
-                    if (linuxPaths[0] == "SSH")
-                        host = BuildHost.LinuxSSH;
-                    else
-                        host = BuildHost.LinuxWSL;
+                    host = linuxPaths[0] == "SSH" ? BuildHost.LinuxSSH : BuildHost.LinuxWSL;
                     compiler = "g++";
                     if (linuxPaths.Length > 2 && !string.IsNullOrEmpty(linuxPaths[2]))
                         compiler = linuxPaths[2];

@@ -158,15 +158,13 @@ namespace QtVsTools.Core
 
         public string Namespace()
         {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
+            qtConfig ??= new QtConfig(qtDir);
             return qtConfig.Namespace;
         }
 
         public string GetQMakeConfEntry(string entryName)
         {
-            if (qmakeConf == null)
-                qmakeConf = new QMakeConf(qtDir, qmakeQuery);
+            qmakeConf ??= new QMakeConf(qtDir, qmakeQuery);
             return qmakeConf.Entries[entryName].ToString();
         }
 
@@ -183,8 +181,7 @@ namespace QtVsTools.Core
         /// </summary>
         private void SetupPlatformSpecificData()
         {
-            if (qmakeConf == null)
-                qmakeConf = new QMakeConf(qtDir, qmakeQuery);
+            qmakeConf ??= new QMakeConf(qtDir, qmakeQuery);
             switch (platform()) {
             case Platform.x86:
                 vsPlatformName = "Win32";
@@ -230,8 +227,7 @@ namespace QtVsTools.Core
 
         public Platform platform()
         {
-            if (qtConfig == null)
-                qtConfig = new QtConfig(qtDir);
+            qtConfig ??= new QtConfig(qtDir);
             return qtConfig.Platform;
         }
 

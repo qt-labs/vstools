@@ -262,10 +262,7 @@ namespace QtVsTools.Options
                 .Select(x => x.Split(new[] { "::" }, StringSplitOptions.None))
                 .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
                 .FirstOrDefault();
-            if (binding != null)
-                QtHelpKeyBinding = $"[{binding.Scope}] {binding.Shortcut}";
-            else
-                QtHelpKeyBinding = "";
+            QtHelpKeyBinding = binding != null ? $"[{binding.Scope}] {binding.Shortcut}" : "";
         }
 
         public override void LoadSettingsFromStorage()
