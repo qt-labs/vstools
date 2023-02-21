@@ -131,7 +131,7 @@ namespace QtVsTools.Qml.Debug
             public string Path;
             public static implicit operator string(WslPath wslPath)
             {
-                return string.Format(@"{0}:\{1}", wslPath.Drive, wslPath.Path);
+                return $@"{wslPath.Drive}:\{wslPath.Path}";
             }
         }
 
@@ -192,8 +192,7 @@ namespace QtVsTools.Qml.Debug
                 var activeConfig = project.ConfigurationManager.ActiveConfiguration;
                 if (activeConfig == null)
                     continue;
-                var activeConfigId = string.Format("{0}|{1}",
-                    activeConfig.ConfigurationName, activeConfig.PlatformName);
+                var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
                 var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
                 if (vcConfig == null)
                     continue;
@@ -215,7 +214,7 @@ namespace QtVsTools.Qml.Debug
                 if (!sameFile)
                     continue;
 
-                OutputWriteLine(string.Format("Debugging project '{0}'...", vcProject.Name));
+                OutputWriteLine($"Debugging project '{vcProject.Name}'...");
 
                 var qtProject = QtProject.Create(vcProject);
                 if (qtProject == null) {

@@ -48,7 +48,7 @@ namespace QtVsTools.Qml.Debug
             while (!string.IsNullOrEmpty(prefix) && prefix[0] == Path.AltDirectorySeparatorChar)
                 prefix = prefix.Substring(1);
 
-            return string.Format("qrc:///{0}{1}", prefix, filePath);
+            return $"qrc:///{prefix}{filePath}";
         }
 
         public void RegisterRccFile(string rccFilePath)
@@ -100,7 +100,7 @@ namespace QtVsTools.Qml.Debug
                 var qmlFile = new QmlFile
                 {
                     FilePath = Path.Combine(Path.GetDirectoryName(rccFilePath), file.Path),
-                    QrcPath = string.Format("qrc:///{0}{1}", qrcPathPrefix, qrcPath)
+                    QrcPath = $"qrc:///{qrcPathPrefix}{qrcPath}"
                 };
 
                 this.files[qmlFile.QrcPath.ToLower()] = qmlFile;
@@ -123,7 +123,7 @@ namespace QtVsTools.Qml.Debug
             while (!string.IsNullOrEmpty(qrcPath) && qrcPath[0] == Path.AltDirectorySeparatorChar)
                 qrcPath = qrcPath.Substring(1);
 
-            qrcPath = string.Format("qrc:///{0}", qrcPath);
+            qrcPath = $"qrc:///{qrcPath}";
 
             if (!files.TryGetValue(qrcPath, out QmlFile file))
                 return default(QmlFile);

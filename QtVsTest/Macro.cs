@@ -509,8 +509,7 @@ namespace QtVsTest.Macros
                         Condition.FalseCondition).ToArray()));
                 }
                 if (uiIterator == null)
-                    throw new Exception(
-                        string.Format("Could not find UI element \"{0}\"", item));
+                    throw new Exception($"Could not find UI element \"{item}\"");
             }
             return uiIterator;
         }
@@ -570,13 +569,13 @@ namespace QtVsTest.Macros
 
                 string context;
                 if (uiVsRoot)
-                    context = string.Format("UiFind(UiVsRoot, new object[] {{ {0} }})", s.Code);
+                    context = $"UiFind(UiVsRoot, new object[] {{ {s.Code} }})";
                 else if (uiDesktop)
-                    context = string.Format("UiFind(UiRoot, new object[] {{ {0} }})", s.Code);
+                    context = $"UiFind(UiRoot, new object[] {{ {s.Code} }})";
                 else if (uiHwnd)
-                    context = string.Format("AutomationElement.FromHandle((IntPtr)({0}))", s.Code);
+                    context = $"AutomationElement.FromHandle((IntPtr)({s.Code}))";
                 else
-                    context = string.Format("UiFind(UiContext, new object[] {{ {0} }})", s.Code);
+                    context = $"UiFind(UiContext, new object[] {{ {s.Code} }})";
 
                 int timeout = 3000;
                 if (s.Args.Count > 1 && !uiVsRoot && !uiDesktop && !uiHwnd)
@@ -634,12 +633,12 @@ namespace QtVsTest.Macros
 
                 string uiElement;
                 if (!string.IsNullOrEmpty(s.Code))
-                    uiElement = string.Format("UiFind(UiContext, new object[] {{ {0} }})", s.Code);
+                    uiElement = $"UiFind(UiContext, new object[] {{ {s.Code} }})";
                 else
                     uiElement = "UiContext";
 
-                string patternTypeId = string.Format("{0}PatternIdentifiers.Pattern", typeName);
-                string patternType = string.Format("{0}Pattern", typeName);
+                string patternTypeId = $"{typeName}PatternIdentifiers.Pattern";
+                string patternType = $"{typeName}Pattern";
 
                 if (!string.IsNullOrEmpty(varName)) {
 
@@ -672,7 +671,7 @@ namespace QtVsTest.Macros
 
         const string SERVICETYPE_PREFIX = "_ServiceType_";
         const string INIT_PREFIX = "_Init_";
-        string MethodName => string.Format("_Run_{0}_Async", Name);
+        string MethodName => $"_Run_{Name}_Async";
 
         bool GenerateClass()
         {
@@ -717,7 +716,7 @@ namespace QtVsTest.Macros
                             globalVar.Name,
                             !string.IsNullOrEmpty(globalVar.InitialValueExpr)
                                 ? globalVar.InitialValueExpr
-                                : string.Format("default({0})", globalVar.Type));
+                                : $"default({globalVar.Type})");
             }
 
             csharp.Append(
@@ -799,7 +798,7 @@ namespace QtVsTest.Macros
             }
 
             MacroAssembly = AppDomain.CurrentDomain.Load(File.ReadAllBytes(macroDllPath));
-            MacroClass = MacroAssembly.GetType(string.Format("QtVsTest.Macros.{0}", Name));
+            MacroClass = MacroAssembly.GetType($"QtVsTest.Macros.{Name}");
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             if (File.Exists(macroDllPath))
@@ -935,9 +934,8 @@ namespace QtVsTest.Macros
                 if (Globals.TryGetValue(varName, out object value)) {
                     Type valueType = value.GetType();
                     if (!varType.IsAssignableFrom(valueType)) {
-                        throw new InvalidCastException(string.Format(
-                            "Global variable '{0}': cannot assign '{1}' from '{2}'",
-                            varName, varType.Name, valueType.Name));
+                        throw new InvalidCastException($"Global variable '{varName}': "
+                            + $"cannot assign '{varType.Name}' from '{valueType.Name}'");
                     }
                     globalVar.FieldInfo.SetValue(null, value);
                 } else {
@@ -1038,8 +1036,7 @@ namespace QtVsTest.Macros
 
         bool ErrorException(Exception e)
         {
-            Result = MACRO_ERROR_MSG(string.Format("{0}\r\n\"{1}\"\r\n{2}",
-                e.GetType().Name, e.Message, e.StackTrace));
+            Result = MACRO_ERROR_MSG($"{e.GetType().Name}\r\n\"{e.Message}\"\r\n{e.StackTrace}");
             return (Ok = false);
         }
 

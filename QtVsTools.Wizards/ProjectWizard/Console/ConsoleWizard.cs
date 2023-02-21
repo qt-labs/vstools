@@ -55,9 +55,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             foreach (var config in configs) {
                 if (config.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    return string.Format(
-                        "Console Application project not available for the '{0}' target.",
-                        config.Target);
+                    return "Console Application project not available for the "
+                        + $"'{config.Target}' target.";
                 }
             }
             return string.Empty;

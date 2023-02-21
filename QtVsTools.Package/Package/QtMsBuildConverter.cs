@@ -79,10 +79,10 @@ namespace QtVsTools
             bool canceled = false;
             foreach (var projectPath in projectPaths) {
                 if (waitDialog != null) {
-                    waitDialog.Update("Converting solution to Qt/MSBuild..." + Environment.NewLine
-                      + string.Format("Converting project {0}/{1}: {2}...", projCount + 1,
-                            projectPaths.Count, Path.GetFileNameWithoutExtension(projectPath)
-                        ),
+                    waitDialog.Update("Converting solution to Qt/MSBuild..."
+                            + Environment.NewLine
+                            + $"Converting project {projCount + 1}/{projectPaths.Count}: "
+                            + $"{Path.GetFileNameWithoutExtension(projectPath)}...",
                         projectPaths.Count, projCount);
                     if (waitDialog.Canceled) {
                         canceled = true;

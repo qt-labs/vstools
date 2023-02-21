@@ -263,7 +263,7 @@ namespace QtVsTools.Options
                 .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
                 .FirstOrDefault();
             if (binding != null)
-                QtHelpKeyBinding = string.Format("[{0}] {1}", binding.Scope, binding.Shortcut);
+                QtHelpKeyBinding = $"[{binding.Scope}] {binding.Shortcut}";
             else
                 QtHelpKeyBinding = "";
         }

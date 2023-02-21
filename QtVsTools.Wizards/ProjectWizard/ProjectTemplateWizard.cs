@@ -146,7 +146,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             string ParamKey(Enum param)
             {
-                return string.Format("${0}$", param.Cast<string>());
+                return $"${param.Cast<string>()}$";
             }
 
             public string this[Enum param]

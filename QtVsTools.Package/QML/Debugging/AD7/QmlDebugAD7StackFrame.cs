@@ -60,7 +60,7 @@ namespace QtVsTools.Qml.Debug.AD7
             Engine = context.Engine;
             Program = context.Program;
             Debugger = Program.Debugger;
-            Name = string.Format("{0}@{1}:{2}", name, context.FilePath, context.FileLine + 1);
+            Name = $"{name}@{context.FilePath}:{context.FileLine + 1}";
             FrameNumber = number;
             Scopes = scopes;
             InitThread = QtVsToolsPackage.Instance.JoinableTaskFactory.RunAsync(async () =>

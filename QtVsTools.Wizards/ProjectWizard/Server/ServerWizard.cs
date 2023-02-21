@@ -88,11 +88,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         string ValidateConfigsForActiveQtServer(IEnumerable<IWizardConfiguration> configs)
         {
             foreach (var config in configs) {
-                if (config.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    return string.Format(
-                        "ActiveQt Server project not available for the '{0}' target.",
-                        config.Target);
-                }
+                if (config.Target.EqualTo(ProjectTargets.WindowsStore))
+                    return $"ActiveQt Server project not available for the '{config.Target}' target.";
             }
             return string.Empty;
         }
@@ -126,12 +123,12 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)
-                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewClass.Include] = FormatParam(include);
 
-            Parameter[NewActiveQtProject.UiHeaderName] = string.Format("ui_{0}.h",
-                Path.GetFileNameWithoutExtension(WizardData.UiFile));
+            Parameter[NewActiveQtProject.UiHeaderName] =
+                $"ui_{Path.GetFileNameWithoutExtension(WizardData.UiFile)}.h";
 
             Parameter[NewActiveQtProject.Name] = WizardData.LowerCaseFileNames
                 ? Parameter[NewProject.SafeName].ToLower()

@@ -198,12 +198,12 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)
-                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewClass.Include] = FormatParam(include);
 
-            Parameter[NewGuiProject.UiHeaderName] = string.Format("ui_{0}.h",
-                Path.GetFileNameWithoutExtension(WizardData.UiFile));
+            Parameter[NewGuiProject.UiHeaderName] =
+                $"ui_{Path.GetFileNameWithoutExtension(WizardData.UiFile)}.h";
             Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
 
             if (WizardData.BaseClass == "QMainWindow") {
@@ -247,8 +247,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         Filter = "Resource Files"
                     });
                     winRcFile.AppendLine(
-                        string.Format("IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"{0}.ico\"",
-                            /*{0}*/ Parameter[NewProject.SafeName]));
+                        $"IDI_ICON1\t\tICON\t\tDISCARDABLE\t\"{Parameter[NewProject.SafeName]}.ico\"");
                 }
             }
 
@@ -268,25 +267,19 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             switch (WizardData.UiClassInclusion) {
             case UiClassInclusion.MemberPointer:
-                Parameter[NewGuiProject.ForwardDeclClass] =
-                    string.Format(
-                          "\r\nQT_BEGIN_NAMESPACE\r\n"
-                        + "namespace Ui {{ class {0}Class; }};\r\n"
-                        + "QT_END_NAMESPACE\r\n", className
-                    );
+                Parameter[NewGuiProject.ForwardDeclClass] = "\r\nQT_BEGIN_NAMESPACE\r\n"
+                    + $"namespace Ui {{ class {className}Class; }};\r\n" + "QT_END_NAMESPACE\r\n";
                 Parameter[Meta.Asterisk] = "*";
                 Parameter[Meta.Operator] = "->";
-                Parameter[Meta.New] = string.Format("\r\n    , {0}(new Ui::{1}Class())",
-                                                    Parameter[NewGuiProject.Member], className);
-                Parameter[Meta.Delete] = string.Format("\r\n    delete {0};\r\n",
-                                                       Parameter[NewGuiProject.Member]);
+                Parameter[Meta.New] =
+                    $"\r\n    , {Parameter[NewGuiProject.Member]}(new Ui::{className}Class())";
+                Parameter[Meta.Delete] = $"\r\n    delete {Parameter[NewGuiProject.Member]};\r\n";
                 goto case UiClassInclusion.Member;
             case UiClassInclusion.Member:
-                Parameter[NewGuiProject.UiClassName] = string.Format("Ui::{0}Class", className);
+                Parameter[NewGuiProject.UiClassName] = $"Ui::{className}Class";
                 break;
             case UiClassInclusion.MultipleInheritance:
-                Parameter[NewGuiProject.MultipleInheritance] =
-                    string.Format(", public Ui::{0}Class", className);
+                Parameter[NewGuiProject.MultipleInheritance] = $", public Ui::{className}Class";
                 Parameter[NewGuiProject.Member] = "";
                 Parameter[Meta.Operator] = "";
                 Parameter[Meta.Semicolon] = "";
@@ -315,8 +308,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var qmakeTmpDir = Path.Combine(projDir, "qmake_tmp");
                 Directory.CreateDirectory(qmakeTmpDir);
 
-                var dummyPro = Path.Combine(qmakeTmpDir,
-                    string.Format("{0}.pro", Parameter[NewProject.SafeName]));
+                var dummyPro = Path.Combine(qmakeTmpDir, $"{Parameter[NewProject.SafeName]}.pro");
                 File.WriteAllText(dummyPro, "SOURCES = main.cpp\r\n");
 
                 var qmake = new QMakeImport(configWinRT.QtVersion, dummyPro);

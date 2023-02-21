@@ -171,7 +171,7 @@ namespace QtVsTools.Test.RegExpr
                     Create(IdTagName, (string name) => name),
                     Error(
                         (string tag, string tagName) => tagName != tag,
-                        (tag, tagName) => string.Format("Expected {0}, found {1}", tagName, tag)),
+                        (tag, tagName) => $"Expected {tagName}, found {tag}"),
                     Create(
                         (string tag, string value) => value.StartsWith("="),
                         (tag, value) => tag + value),

@@ -94,9 +94,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             foreach (var config in configs) {
                 if (config.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    return string.Format(
-                        "Custom Designer Widget project not available for the '{0}' target.",
-                        config.Target);
+                    return "Custom Designer Widget project not available for the "
+                        + $"'{config.Target}' target.";
                 }
             }
             return string.Empty;
@@ -130,17 +129,16 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)
-                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewClass.Include] = FormatParam(include);
 
             Parameter[NewDesignerPlugin.ClassName] = WizardData.PluginClass;
             Parameter[NewDesignerPlugin.HeaderFileName] = WizardData.PluginHeaderFile;
             Parameter[NewDesignerPlugin.SourceFileName] = WizardData.PluginSourceFile;
             Parameter[NewDesignerPlugin.JsonFileName] = WizardData.PluginClass.ToLower() + ".json";
-            Parameter[NewDesignerPlugin.ObjectName] = string.Format("{0}{1}",
-                WizardData.ClassName[0],
-                WizardData.ClassName.Substring(1));
+            Parameter[NewDesignerPlugin.ObjectName] =
+                $"{WizardData.ClassName[0]}{WizardData.ClassName.Substring(1)}";
         }
 
         protected override void OnProjectGenerated(Project project)

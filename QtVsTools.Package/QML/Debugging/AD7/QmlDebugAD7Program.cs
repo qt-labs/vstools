@@ -133,7 +133,7 @@ namespace QtVsTools.Qml.Debug.AD7
         public void OutputWriteLine(string msg)
         {
             var execFileName = Path.GetFileName(ExecPath);
-            Engine.OutputWriteLine(string.Format("'{0}' (QML): {1}", execFileName, msg));
+            Engine.OutputWriteLine($"'{execFileName}' (QML): {msg}");
         }
 
         bool IDebuggerEventSink.QueryRuntimeFrozen()

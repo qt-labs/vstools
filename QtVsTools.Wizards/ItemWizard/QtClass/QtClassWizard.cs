@@ -128,12 +128,10 @@ namespace QtVsTools.Wizards.ItemWizard
             var pro = HelperFunctions.GetSelectedQtProject(Dte);
             if (pro != null) {
                 var qtProject = QtProject.Create(pro);
-                if (qtProject != null && qtProject.UsesPrecompiledHeaders()) {
-                    include.AppendLine(string.Format("#include \"{0}\"", qtProject
-                        .GetPrecompiledHeaderThrough()));
-                }
+                if (qtProject != null && qtProject.UsesPrecompiledHeaders())
+                    include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
             }
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewQtItem.Include] = FormatParam(include);
 
             if (!string.IsNullOrEmpty(baseClass)) {

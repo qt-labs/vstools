@@ -102,8 +102,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)
-                include.AppendLine(string.Format("#include \"{0}\"", PrecompiledHeader.Include));
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewLibClass.Include] = FormatParam(include);
 
             var safeprojectname = Parameter[NewProject.SafeName];

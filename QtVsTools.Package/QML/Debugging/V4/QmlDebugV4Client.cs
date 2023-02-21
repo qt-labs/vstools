@@ -267,8 +267,8 @@ namespace QtVsTools.Qml.Debug.V4
             if (messageParams == null)
                 messageParams = new byte[0];
 
-            System.Diagnostics.Debug.WriteLine(string.Format(">> {0} {1}",
-                messageType, Encoding.UTF8.GetString(messageParams)));
+            System.Diagnostics.Debug.WriteLine(
+                $">> {messageType} {Encoding.UTF8.GetString(messageParams)}");
 
             return NativeMethods.DebugClientSendMessage(client,
                 messageTypeData, messageTypeData.Length,
@@ -320,8 +320,8 @@ namespace QtVsTools.Qml.Debug.V4
                 return;
             var messageType = Encoding.UTF8.GetString(messageTypeData);
 
-            System.Diagnostics.Debug.WriteLine(string.Format("<< {0} {1}",
-                messageType, Encoding.UTF8.GetString(messageParamsData)));
+            System.Diagnostics.Debug.WriteLine(
+                $"<< {messageType} {Encoding.UTF8.GetString(messageParamsData)}");
 
             sink.NotifyMessageReceived(this, messageType, messageParamsData);
         }

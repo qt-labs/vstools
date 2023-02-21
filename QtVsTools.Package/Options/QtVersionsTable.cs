@@ -501,10 +501,8 @@ namespace QtVsTools.Options
                         version.State |= State.Modified | (State)Column.Path;
 
                     if (string.IsNullOrEmpty(version.VersionName)) {
-                        version.VersionName = string.Format("{0}_{1}",
-                            Path.GetFileName(Path.GetDirectoryName(qmakeDir)),
-                            Path.GetFileName(qmakeDir))
-                            .Replace(" ", "_");
+                        version.VersionName = $"{Path.GetFileName(Path.GetDirectoryName(qmakeDir))}"
+                          + $"_{Path.GetFileName(qmakeDir)}".Replace(" ", "_");
                         version.State |= State.Modified | (State)Column.VersionName;
                     }
 

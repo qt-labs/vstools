@@ -154,10 +154,10 @@ namespace QtVsTools
 
                 var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
 
-                var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "
+                var linksForKeyword = "SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
                     + "NamespaceTable f WHERE a.FileId=d.FileId AND d.FolderId=e.Id AND "
-                    + "a.NamespaceId=f.Id AND a.Name='{0}'", keyword);
+                    + $"a.NamespaceId=f.Id AND a.Name='{keyword}'";
 
                 var links = new Dictionary<string, string>();
                 var builder = new SQLiteConnectionStringBuilder

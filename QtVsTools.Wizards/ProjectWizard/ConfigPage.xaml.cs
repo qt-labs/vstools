@@ -215,7 +215,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 NextButton.IsEnabled = false;
                 FinishButton.IsEnabled = false;
             } else if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
-                .GroupBy((Config c) => string.Format("{0}|{1}", c.Name, c.Platform))
+                .GroupBy((Config c) => $"{c.Name}|{c.Platform}")
                 .Where((IGrouping<string, Config> g) => g.Count() > 1)
                 .Any()) {
                 ErrorMsg.Content = "(Configuration, Platform) must be unique";
@@ -408,12 +408,12 @@ namespace QtVsTools.Wizards.ProjectWizard
             if (sender is CheckBox checkBox && GetBinding(checkBox) is Config config) {
                 config.IsDebug = checkBox.IsChecked ?? false;
                 if (config.IsDebug && config.Name.EndsWith("Release")) {
-                    config.Name = string.Format("{0}Debug",
-                        config.Name.Substring(0, config.Name.Length - "Release".Length));
+                    config.Name =
+                        $"{config.Name.Substring(0, config.Name.Length - "Release".Length)}Debug";
                     ConfigTable.Items.Refresh();
                 } else if (!config.IsDebug && config.Name.EndsWith("Debug")) {
-                    config.Name = string.Format("{0}Release",
-                        config.Name.Substring(0, config.Name.Length - "Debug".Length));
+                    config.Name =
+                        $"{config.Name.Substring(0, config.Name.Length - "Debug".Length)}Release";
                     ConfigTable.Items.Refresh();
                 }
                 Validate();

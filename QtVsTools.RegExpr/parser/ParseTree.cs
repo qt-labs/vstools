@@ -79,13 +79,13 @@ namespace QtVsTools.SyntaxAnalysis
                     {
                         if (CaptureId == KeyRoot)
                             return KeyRoot;
-                        return string.Format("{0}:{1}:{2}", CaptureId, Begin, End);
+                        return $"{CaptureId}:{Begin}:{End}";
                     }
                 }
 
                 public override string ToString()
                 {
-                    return string.Format("{0}[{1}]", TokenId, Value);
+                    return $"{TokenId}[{Value}]";
                 }
 
                 public static implicit operator ParseTree(Node node)

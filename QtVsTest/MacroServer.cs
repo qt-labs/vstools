@@ -50,7 +50,7 @@ namespace QtVsTest.Macros
             var mainWindowHWnd = new IntPtr((long)dte.MainWindow.HWnd);
             await TaskScheduler.Default;
 
-            var pipeName = string.Format("QtVSTest_{0}", Process.GetCurrentProcess().Id);
+            var pipeName = $"QtVSTest_{Process.GetCurrentProcess().Id}";
             while (!Loop.Token.IsCancellationRequested) {
                 using (var pipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut)) {
 

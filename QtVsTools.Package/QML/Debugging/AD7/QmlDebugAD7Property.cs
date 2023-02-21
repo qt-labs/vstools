@@ -94,13 +94,13 @@ namespace QtVsTools.Qml.Debug.AD7
         static string GetChildKey(string childName)
         {
             if (int.TryParse(childName, out int childIndex))
-                return string.Format("{0:D9}", childIndex);
+                return $"{childIndex:D9}";
             return childName;
         }
 
         int IDebugProperty2.SetValueAsString(string pszValue, uint dwRadix, uint dwTimeout)
         {
-            string expr = string.Format("{0}=({1})", FullName, pszValue);
+            string expr = $"{FullName}=({pszValue})";
 
             var value = Debugger.Evaluate(FrameNumber, expr);
             if (value == null || value is JsError)

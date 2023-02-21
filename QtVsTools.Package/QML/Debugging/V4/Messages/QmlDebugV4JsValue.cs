@@ -244,7 +244,7 @@ namespace QtVsTools.Qml.Debug.V4
         public override string ToString()
         {
             if (Value - Math.Floor(Value) == 0)
-                return string.Format("{0:0}", Value);
+                return $"{Value:0}";
             return Format(Value);
         }
     }

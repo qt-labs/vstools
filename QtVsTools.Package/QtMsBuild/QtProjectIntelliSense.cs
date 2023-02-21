@@ -31,10 +31,9 @@ namespace QtVsTools.QtMsBuild
                 return;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectIntellisense({1}): Refreshing: [{2}] {3}",
-                    DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                    (configId != null) ? configId : "(all configs)", project.FullName));
+                Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                    + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
+                    + $"Refreshing: [{configId ?? "(all configs)"}] {project.FullName}");
             }
             string projectPath = project.FullName;
             _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles, false));

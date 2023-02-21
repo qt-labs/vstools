@@ -148,19 +148,17 @@ namespace QtVsTools.Wizards.ItemWizard
             var pro = HelperFunctions.GetSelectedQtProject(Dte);
             if (pro != null) {
                 var qtProject = QtProject.Create(pro);
-                if (qtProject != null && qtProject.UsesPrecompiledHeaders()) {
-                    include.AppendLine(string.Format("#include \"{0}\"", qtProject
-                        .GetPrecompiledHeaderThrough()));
-                }
+                if (qtProject != null && qtProject.UsesPrecompiledHeaders())
+                    include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
             }
-            include.AppendLine(string.Format("#include \"{0}\"", WizardData.ClassHeaderFile));
+            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
             Parameter[NewWidgetsItem.Include] = FormatParam(include);
 
             Parameter[NewWidgetsItem.QObject] = WizardData.InsertQObjectMacro
                                                     ? "\r\n    Q_OBJECT\r\n" : "";
 
-            Parameter[NewWidgetsItem.UiHeaderName] = string.Format("ui_{0}.h",
-                Path.GetFileNameWithoutExtension(WizardData.UiFile));
+            Parameter[NewWidgetsItem.UiHeaderName] =
+                $"ui_{Path.GetFileNameWithoutExtension(WizardData.UiFile)}.h";
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewWidgetsItem.CentralWidget] = FormatParam(
@@ -173,25 +171,19 @@ namespace QtVsTools.Wizards.ItemWizard
 
             switch (WizardData.UiClassInclusion) {
             case UiClassInclusion.MemberPointer:
-                Parameter[NewWidgetsItem.ForwardDeclClass] =
-                    string.Format(
-                          "\r\nQT_BEGIN_NAMESPACE\r\n"
-                        + "namespace Ui {{ class {0}Class; }};\r\n"
-                        + "QT_END_NAMESPACE\r\n", className
-                    );
+                Parameter[NewWidgetsItem.ForwardDeclClass] = "\r\nQT_BEGIN_NAMESPACE\r\n"
+                    + $"namespace Ui {{ class {className}Class; }};\r\n" + "QT_END_NAMESPACE\r\n";
                 Parameter[Meta.Asterisk] = "*";
                 Parameter[Meta.Operator] = "->";
-                Parameter[Meta.New] = string.Format("\r\n    , {0}(new Ui::{1}Class())",
-                                                    Parameter[NewWidgetsItem.Member], className);
-                Parameter[Meta.Delete] = string.Format("\r\n    delete {0};\r\n",
-                                                       Parameter[NewWidgetsItem.Member]);
+                Parameter[Meta.New] =
+                    $"\r\n    , {Parameter[NewWidgetsItem.Member]}(new Ui::{className}Class())";
+                Parameter[Meta.Delete] = $"\r\n    delete {Parameter[NewWidgetsItem.Member]};\r\n";
                 goto case UiClassInclusion.Member;
             case UiClassInclusion.Member:
-                Parameter[NewWidgetsItem.UiClassName] = string.Format("Ui::{0}Class", className);
+                Parameter[NewWidgetsItem.UiClassName] = $"Ui::{className}Class";
                 break;
             case UiClassInclusion.MultipleInheritance:
-                Parameter[NewWidgetsItem.MultipleInheritance] =
-                    string.Format(", public Ui::{0}Class", className);
+                Parameter[NewWidgetsItem.MultipleInheritance] = $", public Ui::{className}Class";
                 Parameter[NewWidgetsItem.Member] = "";
                 Parameter[Meta.Operator] = "";
                 Parameter[Meta.Semicolon] = "";

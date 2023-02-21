@@ -164,10 +164,9 @@ namespace QtVsTools.QtMsBuild
                 UpdateInitStatus(p += d);
                 configProject.ProjectUnloading += OnProjectUnloadingAsync;
                 if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                    Messages.Print(string.Format(
-                        "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
-                        DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                        config.Name, ProjectPath));
+                    Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                        + $"QtProjectTracker({Thread.CurrentThread.ManagedThreadId}): "
+                        + $"Started tracking [{config.Name}] {ProjectPath}");
                 }
                 UpdateInitStatus(p += d);
             }
@@ -177,11 +176,9 @@ namespace QtVsTools.QtMsBuild
         {
             if (sender is ConfiguredProject project) {
                 if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                    Messages.Print(string.Format(
-                        "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
-                        DateTime.Now,
-                        project.ProjectConfiguration.Name,
-                        project.UnconfiguredProject.FullPath));
+                    Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} QtProjectTracker: "
+                        + $"Stopped tracking [{project.ProjectConfiguration.Name}] "
+                        + $"{project.UnconfiguredProject.FullPath}");
                 }
 
                 lock (CriticalSection) {
@@ -208,8 +205,7 @@ namespace QtVsTools.QtMsBuild
                         },
                         new TaskProgressData
                         {
-                            ProgressText = string.Format("{0} ({1} projects remaining)",
-                                Project.Name, InitQueue.Count),
+                            ProgressText = $"{Project.Name} ({InitQueue.Count} projects remaining)",
                             CanBeCanceled = true,
                             PercentComplete = 0
                         })
@@ -229,8 +225,8 @@ namespace QtVsTools.QtMsBuild
                 try {
                     InitStatus.Progress.Report(new TaskProgressData
                     {
-                        ProgressText = string.Format("{0} ({1} project(s) remaining)",
-                            Path.GetFileNameWithoutExtension(ProjectPath), InitQueue.Count),
+                        ProgressText = $"{Path.GetFileNameWithoutExtension(ProjectPath)} "
+                            + $"({InitQueue.Count} project(s) remaining)",
                         CanBeCanceled = true,
                         PercentComplete = percentComplete
                     });

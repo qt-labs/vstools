@@ -67,8 +67,7 @@ namespace QtVsTools.Editors
                 if (activeConfig == null)
                     return null;
 
-                var activeConfigId = string.Format("{0}|{1}",
-                    activeConfig.ConfigurationName, activeConfig.PlatformName);
+                var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
                 if (vcConfigs.Item(activeConfigId) is VCConfiguration vcConfig) {
                     var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
                     return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
