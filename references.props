@@ -34,14 +34,14 @@
 
   <!-- // Visual Studio 2022 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <Version_Microsoft_Build>17.0.0</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Tasks_Core>17.0.0</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VSSDK_BuildTools>17.0.5234</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_Bcl_AsyncInterfaces>6.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
-    <Version_Microsoft_VisualStudio_SDK>17.0.32112.339</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VisualStudio_ProjectSystem>17.0.1313-pre</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface>17.0.31902.203</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_Shell_15>17.0.32112.339</Version_Microsoft_VisualStudio_Shell_15>
+    <Version_Microsoft_Build>17.4.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build_Tasks_Core>17.4.0</Version_Microsoft_Build_Tasks_Core>
+    <Version_Microsoft_VSSDK_BuildTools>17.4.2120</Version_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_Bcl_AsyncInterfaces>7.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
+    <Version_Microsoft_VisualStudio_SDK>17.4.33103.184</Version_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_VisualStudio_ProjectSystem>17.2.402-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_TemplateWizardInterface>17.4.33103.184</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Version_Microsoft_VisualStudio_Shell_15>17.4.33103.184</Version_Microsoft_VisualStudio_Shell_15>
   </PropertyGroup>
 
   <!-- // Visual Studio 2019 -->
