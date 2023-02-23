@@ -100,12 +100,6 @@
       <ItemGroup>
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='15.0'">
-      <ItemGroup>
-        <Reference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" />
-        <PackageReference Include="$(Name_Microsoft_VisualStudio_Shell_Framework)" Version="$(Version_Microsoft_VisualStudio_Shell_Framework)" />
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -55,14 +55,12 @@ Recommended options for [jom](https://wiki.qt.io/Jom):
 
 ### 32-bit or 64-bit
 
-Visual Studio 2022 is a 64-bit application, whereas VS 2019 and 2017 are 32-bit applications. The
+Visual Studio 2022 is a 64-bit application, whereas VS 2019 is a 32-bit application. The
 target platform for which Qt is built must reflect this:
 
 - For Visual Studio 2022, use Qt built for the x64 platform.
 
 - For Visual Studio 2019, use Qt built for the x86 platform.
-
-- For Visual Studio 2017, use Qt built for the x86 platform.
 
 ## Build
 
@@ -72,7 +70,7 @@ After cloning the repository, follow the instructions below to build the Qt Visu
 
 The following is required in order to build the Qt Visual Studio solution:
 
-- Visual Studio 2017, 2019 or 2022, with the following workloads (A .vsconfig file per VS version can be found in the source tree):
+- Visual Studio 2019 or 2022, with the following workloads (a .vsconfig file per VS version can be found in the source tree):
     - Desktop development with C++
     - .NET desktop development
     - [Visual Studio extension development](https://docs.microsoft.com/en-us/visualstudio/extensibility/installing-the-visual-studio-sdk)
@@ -86,7 +84,6 @@ The following is required in order to build the Qt Visual Studio solution:
 ### Environment variables
 
 Set environment variables `QTBUILD_STATIC_VS`_`nnnn`_ according to the installed VS versions, i.e.:
-- `QTBUILD_STATIC_VS2017` = _path to Qt installation built with msvc2017_
 - `QTBUILD_STATIC_VS2019` = _path to Qt installation built with msvc2019_
 - `QTBUILD_STATIC_VS2022` = _path to Qt installation built with msvc2022_
 
@@ -137,7 +134,7 @@ By default, if no VS version is specified, the most recent version is selected.
 ### Target platform
 
 The solution platform must be set to `'x64'` for VS 2022, and `'x86'`
-or `'Any CPU'` for VS 2019 and VS 2017.
+or `'Any CPU'` for VS 2019.
 
 ## Debug
 

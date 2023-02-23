@@ -29,6 +29,5 @@ def checkMenuItems(version):
         test.fail("Surplus menu items", "Qt VS Tools show unexpected menu items.")
         mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
     except:
-        if version != "2017":
-            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
+        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
         test.passes("Qt VS Tools do not show unexpected menu items.")

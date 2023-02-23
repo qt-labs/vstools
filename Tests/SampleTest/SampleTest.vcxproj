@@ -20,14 +20,12 @@
     <ProjectGuid>{12857847-9877-466C-B056-DD286A219093}</ProjectGuid>
     <Keyword>QtVS_v303</Keyword>
     <ProjectName>SampleTest</ProjectName>
-    <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='15.0'">10.0.17763.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='16.0'">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(VisualStudioVersion)'=='17.0'">10.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="Exists('$(SolutionDir)\qtmsbuild\QtMsBuild')">$(SolutionDir)\qtmsbuild\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
-    <PlatformToolset Condition="'$(VisualStudioVersion)'=='15.0'">v141</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)'=='16.0'">v142</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)'=='17.0'">v143</PlatformToolset>
   </PropertyGroup>

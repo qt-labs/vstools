@@ -24,8 +24,7 @@ SET DEPENDENCIES=QtVsTools_RegExpr;QtMsBuild:TransformAll
 
 SET VS2022="-version [17.0^,18.0^)"
 SET VS2019="-version [16.0^,17.0^)"
-SET VS2017="-version [15.0^,16.0^)"
-SET VS_ALL=%VS2022%,%VS2019%,%VS2017%
+SET VS_ALL=%VS2022%,%VS2019%
 SET VS_LATEST="-all"
 
 SET VS_VERSIONS=
@@ -42,13 +41,11 @@ SET TRANSFORM_INCREMENTAL=true
 SET START_VS=%FALSE%
 SET LIST_VERSIONS=%FALSE%
 
-SET PLATFORM_VS2017="Any CPU"
 SET PLATFORM_VS2019="Any CPU"
 SET PLATFORM_VS2022="x64"
 
 SET FLAG_VS2022=-vs2022
 SET FLAG_VS2019=-vs2019
-SET FLAG_VS2017=-vs2017
 
 REM ///////////////////////////////////////////////////////////////////////////////////////////////
 REM // Process command line arguments
@@ -101,11 +98,6 @@ IF NOT "%1"=="" (
         SET VS_LATEST=%VS2019%
         SET VS_VERSIONS_DEFAULT=%FALSE%
         SET FLAG_VS2019=
-    ) ELSE IF "%1"=="%FLAG_VS2017%" (
-        SET VS_VERSIONS=%VS_VERSIONS%,%VS2017%
-        SET VS_LATEST=%VS2017%
-        SET VS_VERSIONS_DEFAULT=%FALSE%
-        SET FLAG_VS2017=
     ) ELSE IF "%1"=="-list" (
         SET LIST_VERSIONS=%TRUE%
     ) ELSE IF "%1"=="-all" (
@@ -432,8 +424,6 @@ FOR %%v IN (%VS_VERSIONS%) DO (
                 VSIXInstaller /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
             ) ELSE IF "%%e"=="2019" (
                 VSIXInstaller /uninstall:QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5
-            ) ELSE IF "%%e"=="2017" (
-                VSIXInstaller /uninstall:QtVsTools.13121978-cd02-4fd0-89bd-e36f85abe16a
             )
             ECHO Installing...
             VSIXInstaller QtVsTools.Package\bin\Release\QtVsTools.vsix
@@ -465,7 +455,6 @@ ECHO.
 ECHO == 'VS Versions' can be one or more of the following:
 ECHO  -vs2022 ................ Select the latest version of Visual Studio 2022
 ECHO  -vs2019 ................ Select the latest version of Visual Studio 2019
-ECHO  -vs2017 ................ Select the latest version of Visual Studio 2017
 ECHO  -version ^<X^>.^<Y^> ....... Select version X.Y of Visual Studio
 ECHO                           Can be specified several times
 ECHO.

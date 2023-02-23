@@ -9,9 +9,7 @@ namespace QtVsTools.Core
     {
         public static string PlatformToolset =>
             // TODO: Find a proper way to return the PlatformToolset version.
-#if VS2017
-            "141";
-#elif VS2019
+#if VS2019
             "142";
 #elif VS2022
             "143";

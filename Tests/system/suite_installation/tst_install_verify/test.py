@@ -30,10 +30,7 @@ def main():
 def checkVSVersion(version):
     mouseClick(waitForObject(names.help_MenuItem))
     mouseClick(waitForObject(names.pART_Popup_About_Microsoft_Visual_Studio_MenuItem))
-    if version == "2017":
-        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_2017_Label).text
-    else:
-        vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
+    vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
     test.verify(version in vsVersionText,
                 "Is this VS %s as expected? Found:\n%s" % (version, vsVersionText))
     clickButton(waitForObject(names.o_Microsoft_Visual_Studio_OK_Button))
@@ -46,6 +43,5 @@ def checkMenuItems(version):
         test.passes("Qt VS Tools show expected menu items.")
         mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
     except:
-        if version != "2017":
-            mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
+        mouseClick(waitForObject(globalnames.file_MenuItem))  # Close Extensions menu
         test.fail("Missing menu items", "Qt VS Tools do not show expected menu items.")

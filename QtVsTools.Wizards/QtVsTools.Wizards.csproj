@@ -80,12 +80,6 @@
         <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='15.0'">
-      <ItemGroup>
-        <Reference Include="$(Name_Microsoft_VisualStudio_VCProjectEngine)" />
-        <Reference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" />
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

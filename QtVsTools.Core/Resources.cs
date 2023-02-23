@@ -45,7 +45,7 @@ namespace QtVsTools.Core
 
         public const string registryRootPath = "Digia";
 
-#if (VS2017 || VS2019 || VS2022)
+#if (VS2019 || VS2022)
         public const string registryPackagePath = registryRootPath + "\\Qt5VS2017";
 #else
 #error Unknown Visual Studio version!

@@ -21,9 +21,4 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
 
-  <!-- // Visual Studio 2017 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-
 </Project>

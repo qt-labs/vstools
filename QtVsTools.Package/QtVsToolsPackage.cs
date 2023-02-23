@@ -318,8 +318,6 @@ namespace QtVsTools
                     @"Visual Studio 2022\Visualizers\");
 #elif VS2019
                     @"Visual Studio 2019\Visualizers\");
-#elif VS2017
-                    @"Visual Studio 2017\Visualizers\");
 #endif
             }
         }

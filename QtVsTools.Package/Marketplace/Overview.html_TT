@@ -42,14 +42,6 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
                 </a>
             </li>
         <#}#>
-        <#if (VS_NAME !="2017" ) {#>
-            <li>
-                <a title="Qt VS Tools for Visual Studio 2017"
-href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools-19123">
-                Qt VS Tools for Visual Studio 2017
-                </a>
-            </li>
-        <#}#>
     </ul>
 </p>
 <p><h3>Documentation</h3></p>

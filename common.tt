@@ -61,8 +61,7 @@
     }
 
     string VS_NAME = VS_VERSION.StartsWith("17.") ? "2022" :
-                        VS_VERSION.StartsWith("16.") ? "2019" :
-                        VS_VERSION.StartsWith("15.") ? "2017" : "????";
+                        VS_VERSION.StartsWith("16.") ? "2019" : "????";
 
     string VC_TARGETS_PATH = Host?.ResolveParameterValue("-", "-", "VCTargetsPath");
 
@@ -73,8 +72,7 @@
                 @"Microsoft Visual Studio\Installer\vswhere.exe"),
             Arguments = string.Format(@"-property installationPath -latest -Version [{0})",
                 VS_VERSION.StartsWith("17.") ? "17.0,18.0" :
-                VS_VERSION.StartsWith("16.") ? "16.0,17.0" :
-                VS_VERSION.StartsWith("15.") ? "15.0,16.0" : string.Empty),
+                VS_VERSION.StartsWith("16.") ? "16.0,17.0" : string.Empty),
             WorkingDirectory = Directory.GetParent(SolutionDir).FullName,
             CreateNoWindow = true,
             UseShellExecute = false,
@@ -91,8 +89,7 @@
                 VS_VERSION.StartsWith("17.") ? "ProgramFiles" : "ProgramFiles(x86)"),
                 $"Microsoft Visual Studio\\{VS_NAME}\\{Dte.Edition}",
                 VS_VERSION.StartsWith("17.") ? @"MSBuild\Microsoft\VC\v170"
-                    : VS_VERSION.StartsWith("16.") ? @"MSBuild\Microsoft\VC\v160"
-                        : VS_VERSION.StartsWith("15.") ? @"Common7\IDE\VC\VCTargets" : null);
+                    : VS_VERSION.StartsWith("16.") ? @"MSBuild\Microsoft\VC\v160" : null);
         } else {
             throw new Exception("Unable to obtain 'VCTargetsPath' parameter.");
         }

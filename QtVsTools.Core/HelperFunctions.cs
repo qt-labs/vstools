@@ -13,9 +13,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
-#if VS2017
-using Microsoft.Win32;
-#endif
 using EnvDTE;
 
 using Process = System.Diagnostics.Process;
@@ -855,34 +852,6 @@ namespace QtVsTools.Core
             return true;
         }
 
-#if VS2017
-        public static string GetRegistrySoftwareString(string subKeyName, string valueName)
-        {
-            var keyName = new StringBuilder();
-            keyName.Append(@"SOFTWARE\");
-            if (System.Environment.Is64BitOperatingSystem && IntPtr.Size == 4)
-                keyName.Append(@"WOW6432Node\");
-            keyName.Append(subKeyName);
-            try {
-                using (var key = Registry.LocalMachine.OpenSubKey(keyName.ToString(), false)) {
-                    if (key == null)
-                        return ""; //key not found
-                    RegistryValueKind valueKind = key.GetValueKind(valueName);
-                    if (valueKind != RegistryValueKind.String
-                        && valueKind != RegistryValueKind.ExpandString) {
-                        return ""; //wrong value kind
-                    }
-                    Object objValue = key.GetValue(valueName);
-                    if (objValue == null)
-                        return ""; //error getting value
-                    return objValue.ToString();
-                }
-            } catch {
-                return "";
-            }
-        }
-#endif
-
         static string _VCPath;
         public static string VCPath
         {
@@ -904,11 +873,6 @@ namespace QtVsTools.Core
 #elif VS2019
             Debug.Assert(false, "VCPath for VS2019 is not available through the registry");
             string vcPath = string.Empty;
-#elif VS2017
-            string vsPath = GetRegistrySoftwareString(@"Microsoft\VisualStudio\SxS\VS7", "15.0");
-            if (string.IsNullOrEmpty(vsPath))
-                return "";
-            string vcPath = Path.Combine(vsPath, "VC");
 #endif
             return vcPath;
         }

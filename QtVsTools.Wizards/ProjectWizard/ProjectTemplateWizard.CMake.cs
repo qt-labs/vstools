@@ -29,9 +29,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected enum CMakeGenerators
         {
-            [String("Visual Studio 15 2017")] VS2017,
             [String("Visual Studio 16 2019")] VS2019,
-            [String("Visual Studio 17 2022")] VS2022,
+            [String("Visual Studio 17 2022")] VS2022
         }
 
         [DataContract]
@@ -131,7 +130,6 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Generator
                         = Dte.Version.StartsWith("17.") ? CMakeGenerators.VS2022.Cast<string>()
                         : Dte.Version.StartsWith("16.") ? CMakeGenerators.VS2019.Cast<string>()
-                        : Dte.Version.StartsWith("15.") ? CMakeGenerators.VS2017.Cast<string>()
                         : null,
                     Architecture = config.Platform,
                     CacheVariables = new CMakeConfigPreset.ConfigCacheVariables

@@ -92,10 +92,6 @@
         <PackageReference Include="$(Name_Microsoft_VisualStudio_Validation)" Version="$(Version_Microsoft_VisualStudio_Validation)" />
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='15.0'">
-      <ItemGroup>
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

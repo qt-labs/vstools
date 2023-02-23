@@ -54,8 +54,6 @@
   <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'" />
   <!-- // Visual Studio 2019 -->
   <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'" />
-  <!-- // Visual Studio 2017 -->
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='15.0'" />
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references

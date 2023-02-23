@@ -78,10 +78,6 @@
         <PackageReference Include="$(Name_Microsoft_VisualStudio_RpcContracts)" Version="$(Version_Microsoft_VisualStudio_RpcContracts)" />
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='15.0'">
-      <ItemGroup>
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

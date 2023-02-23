@@ -10,13 +10,11 @@
     <Name_Microsoft_Build_Tasks_Core>Microsoft.Build.Tasks.Core</Name_Microsoft_Build_Tasks_Core>
     <Name_Microsoft_VSSDK_BuildTools>Microsoft.VSSDK.BuildTools</Name_Microsoft_VSSDK_BuildTools>
     <Name_Microsoft_VisualStudio_SDK>Microsoft.VisualStudio.SDK</Name_Microsoft_VisualStudio_SDK>
-    <Name_Microsoft_Bcl_AsyncInterfaces>Microsoft.Bcl.AsyncInterfaces</Name_Microsoft_Bcl_AsyncInterfaces>
     <Name_Microsoft_VisualStudio_Validation>Microsoft.VisualStudio.Validation</Name_Microsoft_VisualStudio_Validation>
     <Name_Microsoft_VisualStudio_RpcContracts>Microsoft.VisualStudio.RpcContracts</Name_Microsoft_VisualStudio_RpcContracts>
     <Name_Microsoft_VisualStudio_ProjectSystem>Microsoft.VisualStudio.ProjectSystem</Name_Microsoft_VisualStudio_ProjectSystem>
     <Name_Microsoft_VisualStudio_VCProjectEngine>Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
     <Name_Microsoft_VisualStudio_Shell_15>Microsoft.VisualStudio.Shell.15.0</Name_Microsoft_VisualStudio_Shell_15>
-    <Name_Microsoft_VisualStudio_Shell_Framework>Microsoft.VisualStudio.Shell.Framework</Name_Microsoft_VisualStudio_Shell_Framework>
     <Name_Microsoft_VisualStudio_TemplateWizardInterface>Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
 
     <Name_MSTest_TestAdapter>MSTest.TestAdapter</Name_MSTest_TestAdapter>
@@ -57,18 +55,6 @@
     <Version_Microsoft_VisualStudio_VCProjectEngine>16.10.31320.204</Version_Microsoft_VisualStudio_VCProjectEngine>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface>16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_Shell_15>16.10.31321.278</Version_Microsoft_VisualStudio_Shell_15>
-  </PropertyGroup>
-
-  <!-- // Visual Studio 2017 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
-    <Version_Microsoft_Build>15.9.20</Version_Microsoft_Build>
-    <Version_Microsoft_VisualStudio_SDK>15.0.1</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_Build_Tasks_Core>15.9.20</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VSSDK_BuildTools>15.9.3039</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_Bcl_AsyncInterfaces>5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
-    <Version_Microsoft_VisualStudio_ProjectSystem>15.8.243</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_Shell_Framework>15.9.28307</Version_Microsoft_VisualStudio_Shell_Framework>
-    <Version_Microsoft_VisualStudio_Shell_15>15.9.28307</Version_Microsoft_VisualStudio_Shell_15>
   </PropertyGroup>
 
 </Project>

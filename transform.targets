@@ -4,8 +4,6 @@
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='16.0'"
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\TextTemplating\Microsoft.TextTemplating.targets" />
-  <Import Condition="'$(VisualStudioVersion)'=='15.0'"
-    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v15.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
@@ -67,9 +65,6 @@
   </Target>
   <PropertyGroup>
     <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)' == '15.0'">
-    <DefineConstants>$(DefineConstants);VS2017</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '16.0'">
     <DefineConstants>$(DefineConstants);VS2019</DefineConstants>

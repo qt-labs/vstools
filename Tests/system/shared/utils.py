@@ -22,17 +22,13 @@ def startAppGetVersion():
     except:
         test.fatal("Cannot determine used VS version")
         version = ""
-    if version != "2017":
-        mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
+    mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
     return version
 
 
 def openVsToolsMenu(version):
-    if version == "2017":
-        mouseClick(waitForObject(globalnames.qt_VS_Tools_MenuItem, 5000))
-    else:
-        mouseClick(waitForObject(globalnames.extensions_MenuItem))
-        mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
+    mouseClick(waitForObject(globalnames.extensions_MenuItem))
+    mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
 
 
 def closeMainWindow():

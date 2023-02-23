@@ -9,29 +9,18 @@ import globalnames
 
 
 def openExtensionManager(version):
-    if version == "2017":
-        mouseClick(waitForObject(names.tools_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Extensions_and_Updates_MenuItem))
-    else:
-        mouseClick(waitForObject(globalnames.extensions_MenuItem))
-        mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
+    mouseClick(waitForObject(globalnames.extensions_MenuItem))
+    mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
 
 
 def selectInstalledVsTools(version):
     openExtensionManager(version)
-    if version == "2017":
-        try:
-            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_2017_Label,
-                                         5000)
-        except:
-            return None
-    else:
-        mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
-        try:
-            vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_Label,
-                                         5000)
-        except:
-            return None
+    mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
+    try:
+        vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_Label,
+                                     5000)
+    except:
+        return None
     mouseClick(vsToolsLabel)
     return vsToolsLabel.text
 

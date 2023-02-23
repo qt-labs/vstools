@@ -356,30 +356,20 @@ namespace QtVsTools.QtMsBuild
                 var timer = ConcurrentStopwatch.StartNew();
                 while (timer.IsRunning) {
                     try {
-#if VS2017
-                        using (var writeAccess = await lockService.WriteLockAsync())
-                            ok = await BuildProjectAsync(writeAccess);
-#else
                         await lockService.WriteLockAsync(
                             async (ProjectWriteLockReleaser writeAccess) =>
                             {
                                 ok = await BuildProjectAsync(writeAccess);
                             });
-#endif
                         timer.Stop();
                     } catch (InvalidOperationException) {
                         if (timer.ElapsedMilliseconds >= 5000)
                             throw;
-#if VS2017
-                        using (var readAccess = await lockService.ReadLockAsync())
-                            await readAccess.ReleaseAsync();
-#else
                         await lockService.ReadLockAsync(
                             async (ProjectLockReleaser readAccess) =>
                             {
                                 await readAccess.ReleaseAsync();
                             });
-#endif
                     }
                 }
 
