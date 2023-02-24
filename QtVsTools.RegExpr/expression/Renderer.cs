@@ -100,7 +100,7 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public static implicit operator RegExpr(StackFrame frame)
                 {
-                    return (frame != null) ? frame.Expr : null;
+                    return frame?.Expr;
                 }
             }
         }

@@ -43,7 +43,7 @@ namespace QtVsTools.Qml.Debug.AD7
             Engine = engine;
             Program = program;
             Thread = thread;
-            Callback = (callback != null) ? callback : engine;
+            Callback = callback ?? engine;
         }
 
         protected void Send()

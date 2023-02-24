@@ -165,7 +165,7 @@ namespace QtVsTools.Qml.Debug.V4
 
         public virtual TArgs Arguments
         {
-            get => ThreadSafe(() => (args != null) ? args : (args = new TArgs()));
+            get => ThreadSafe(() => args ??= new TArgs());
             set => args = value;
         }
     }
@@ -269,7 +269,7 @@ namespace QtVsTools.Qml.Debug.V4
 
         public TBody Body
         {
-            get => ThreadSafe(() => (body != null) ? body : (body = new TBody()));
+            get => ThreadSafe(() => body ??= new TBody());
             set => body = value;
         }
     }

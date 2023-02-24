@@ -413,27 +413,27 @@ namespace QtVsTools.Core
                 .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros");
 
             // * After the last PropertySheets import group
-            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .LastOrDefault(x => (string)x.Attribute("Label") == "PropertySheets");
 
             // * Before the first ItemDefinitionGroup
-            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Select(x => x.ElementsBeforeSelf().Last())
                 .FirstOrDefault();
 
             // * Before the first ItemGroup
-            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Select(x => x.ElementsBeforeSelf().Last())
                 .FirstOrDefault();
 
             // * Before the import of Microsoft.Cpp.targets
-            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
                 .Where(x =>
@@ -442,7 +442,7 @@ namespace QtVsTools.Core
                 .FirstOrDefault();
 
             // * At the end of the file
-            insertionPoint = (insertionPoint != null) ? insertionPoint : this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements()
                 .LastOrDefault();

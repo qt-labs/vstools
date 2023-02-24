@@ -84,8 +84,8 @@ namespace QtVsTools.SyntaxAnalysis
             IEnumerable<Element> positives = null,
             IEnumerable<Element> negatives = null)
         {
-            Positives = positives != null ? positives : Empty<Element>();
-            Negatives = negatives != null ? negatives : Empty<Element>();
+            Positives = positives ?? Empty<Element>();
+            Negatives = negatives ?? Empty<Element>();
         }
 
         public CharClassSet(Element element, bool negative = false) : this()

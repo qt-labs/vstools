@@ -109,8 +109,8 @@ namespace QtVsTools.Qml.Debug.AD7
                     FieldMaskBitUpdate = fieldMaskBitUpdate,
                     FieldValue = fieldValue,
                     MapToStruct = mapToStruct,
-                    IsNull = (x => x == null),
-                    Convert = (x => (x.HasValue ? x.Value : default(T)))
+                    IsNull = x => x == null,
+                    Convert = x => x ?? default
                 });
             }
 
