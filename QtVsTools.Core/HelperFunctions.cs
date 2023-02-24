@@ -878,19 +878,18 @@ namespace QtVsTools.Core
         });
 
         public static string VcPath { get; set; }
-        public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
+        public static bool SetVcVars(VersionInformation versionInfo, ProcessStartInfo startInfo)
         {
             var vm = QtVersionManager.The();
-            VersionInfo ??= vm.GetVersionInfo(vm.GetDefaultVersion());
+            versionInfo ??= vm.GetVersionInfo(vm.GetDefaultVersion());
 
             if (string.IsNullOrEmpty(VcPath))
                 return false;
 
             // Select vcvars script according to host and target platforms
-            bool osIs64Bit = System.Environment.Is64BitOperatingSystem;
-            string comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
-            string vcVarsCmd = "";
-            switch (VersionInfo.platform()) {
+            var osIs64Bit = System.Environment.Is64BitOperatingSystem;
+            var vcVarsCmd = "";
+            switch (versionInfo.platform()) {
             case Platform.x86:
                 vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                         ? @"Auxiliary\Build\vcvarsamd64_x86.bat"
@@ -920,25 +919,32 @@ namespace QtVsTools.Core
             }
 
             // Run vcvars and print environment variables
-            StringBuilder stdOut = new StringBuilder();
-            string command = $"/c \"{vcVarsCmd}\" && set";
-            var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command);
-            vcVarsStartInfo.CreateNoWindow = true;
-            vcVarsStartInfo.UseShellExecute = false;
-            vcVarsStartInfo.RedirectStandardError = true;
-            vcVarsStartInfo.RedirectStandardOutput = true;
+            var stdOut = new StringBuilder();
+            var command = $"/c \"{vcVarsCmd}\" && set";
+            var comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
+            var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true
+            };
+
             var process = Process.Start(vcVarsStartInfo);
+            if (process == null)
+                return false;
+
             process.OutputDataReceived += (_, e) =>
             {
                 if (string.IsNullOrEmpty(e.Data))
                     return;
-                e.Data.TrimEnd('\r', '\n');
-                if (!string.IsNullOrEmpty(e.Data))
-                    stdOut.Append($"{e.Data}\r\n");
+                var data = e.Data.TrimEnd('\r', '\n');
+                if (!string.IsNullOrEmpty(data))
+                    stdOut.Append($"{data}\r\n");
             };
             process.BeginOutputReadLine();
             process.WaitForExit();
-            bool ok = (process.ExitCode == 0);
+            var ok = (process.ExitCode == 0);
             process.Close();
             if (!ok)
                 return false;
@@ -951,7 +957,7 @@ namespace QtVsTools.Core
                 startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
 
             // Warn if cl.exe is not in PATH
-            string clPath = envVars["PATH"]
+            var clPath = envVars["PATH"]
                 .Select(path => Path.Combine(path, "cl.exe"))
                 .FirstOrDefault(File.Exists);
             Messages.Print($"cl: {clPath ?? "NOT FOUND"}");

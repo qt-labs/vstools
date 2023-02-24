@@ -53,7 +53,7 @@ namespace QtVsTools.Core
                         if (setVcVars) {
                             if (qtVersion is null)
                                 OutMsg("Error setting VC vars, Qt version may not be null");
-                            if (!HelperFunctions.SetVCVars(qtVersion, qmakeProc.StartInfo))
+                            if (!HelperFunctions.SetVcVars(qtVersion, qmakeProc.StartInfo))
                                 OutMsg("Error setting VC vars");
                         }
                         if (qmakeProc.Start()) {
