@@ -78,8 +78,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             switch ((CommandId)command.CommandID.ID) {
@@ -119,8 +118,7 @@ namespace QtVsTools
 
         private void beforeQueryStatus(object sender, EventArgs e)
         {
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);

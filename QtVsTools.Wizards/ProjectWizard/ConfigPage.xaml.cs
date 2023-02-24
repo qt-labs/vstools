@@ -242,8 +242,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 ErrorPanel.Visibility = Visibility.Visible;
                 NextButton.IsEnabled = false;
                 FinishButton.IsEnabled = false;
-            } else if (ValidateConfigs != null
-                && ValidateConfigs(currentConfigs) is string errorMsg
+            } else if (ValidateConfigs?.Invoke(currentConfigs) is {} errorMsg
                 && !string.IsNullOrEmpty(errorMsg)) {
                 ErrorMsg.Content = errorMsg;
                 ErrorPanel.Visibility = Visibility.Visible;
@@ -301,8 +300,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void QtVersion_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox comboBoxQtVersion
-                && comboBoxQtVersion.IsEnabled
+            if (sender is ComboBox {IsEnabled: true} comboBoxQtVersion
                 && GetBinding(comboBoxQtVersion) is Config config
                 && config.QtVersionName != comboBoxQtVersion.Text) {
                 var oldQtVersion = config.QtVersion;
@@ -390,8 +388,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Target_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox comboBoxTarget
-                && comboBoxTarget.IsEnabled
+            if (sender is ComboBox {IsEnabled: true} comboBoxTarget
                 && GetBinding(comboBoxTarget) is Config config
                 && config.Target != comboBoxTarget.Text) {
                 config.Target = comboBoxTarget.Text;
@@ -413,8 +410,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Platform_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox comboBoxPlatform
-                && comboBoxPlatform.IsEnabled
+            if (sender is ComboBox {IsEnabled: true} comboBoxPlatform
                 && GetBinding(comboBoxPlatform) is Config config
                 && config.Platform != comboBoxPlatform.Text) {
                 config.Platform = comboBoxPlatform.Text;
@@ -425,19 +421,20 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Debug_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is CheckBox checkBox && GetBinding(checkBox) is Config config) {
-                config.IsDebug = checkBox.IsChecked ?? false;
-                if (config.IsDebug && config.Name.EndsWith("Release")) {
-                    config.Name =
-                        $"{config.Name.Substring(0, config.Name.Length - "Release".Length)}Debug";
-                    ConfigTable.Items.Refresh();
-                } else if (!config.IsDebug && config.Name.EndsWith("Debug")) {
-                    config.Name =
-                        $"{config.Name.Substring(0, config.Name.Length - "Debug".Length)}Release";
-                    ConfigTable.Items.Refresh();
-                }
-                Validate();
+            if (sender is not CheckBox checkBox || GetBinding(checkBox) is not Config config)
+                return;
+
+            config.IsDebug = checkBox.IsChecked ?? false;
+            if (config.IsDebug && config.Name.EndsWith("Release")) {
+                config.Name =
+                    $"{config.Name.Substring(0, config.Name.Length - "Release".Length)}Debug";
+                ConfigTable.Items.Refresh();
+            } else if (!config.IsDebug && config.Name.EndsWith("Debug")) {
+                config.Name =
+                    $"{config.Name.Substring(0, config.Name.Length - "Debug".Length)}Release";
+                ConfigTable.Items.Refresh();
             }
+            Validate();
         }
 
         void Module_Click(object sender, RoutedEventArgs e)
@@ -489,7 +486,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             var stack = new Stack<FrameworkElement>(new[] { control });
             while (stack.Any()) {
                 control = stack.Pop();
-                if (control?.Name == name && control is FrameworkElement result)
+                if (control?.Name == name && control is {} result)
                     return result;
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(control); ++i) {
                     if (VisualTreeHelper.GetChild(control, i) is FrameworkElement child)

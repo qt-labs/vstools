@@ -279,7 +279,7 @@ namespace QtVsTools.Core
             if (projKeyword == null)
                 return false;
             var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
-            if (oldVersion.HasValue && oldVersion.Value == Resources.qtProjectFormatVersion)
+            if (oldVersion is Resources.qtProjectFormatVersion)
                 return true; // nothing to do!
 
             projKeyword.SetValue($"QtVS_v{Resources.qtProjectFormatVersion}");
@@ -302,8 +302,7 @@ namespace QtVsTools.Core
             var propertyGroups = new Dictionary<string, XElement>();
 
             // Upgrading from <= v3.2?
-            if (!oldVersion.HasValue
-                || oldVersion.Value < Resources.qtMinFormatVersion_PropertyEval) {
+            if (oldVersion is null or < Resources.qtMinFormatVersion_PropertyEval) {
 
                 // Find import of default Qt properties
                 var qtDefaultProps = this[Files.Project].xml
@@ -343,8 +342,7 @@ namespace QtVsTools.Core
             }
 
             // Upgrading from <= v3.1?
-            if (!oldVersion.HasValue
-                || oldVersion.Value < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
+            if (oldVersion is null or < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
 
                 // Move Qt/MSBuild path to global property
                 var qtMsBuildProperty = globals
@@ -360,8 +358,7 @@ namespace QtVsTools.Core
                     qtMsBuildPropertyGroup.Remove();
                 }
             }
-            if (oldVersion.HasValue
-                && oldVersion.Value > Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion is > Resources.qtMinFormatVersion_Settings) {
                 this[Files.Project].isDirty = true;
                 Commit();
                 return true;
@@ -370,7 +367,7 @@ namespace QtVsTools.Core
             // Upgrading from v3.0?
             Dictionary<string, XElement> oldQtInstall = null;
             Dictionary<string, XElement> oldQtSettings = null;
-            if (oldVersion.HasValue && oldVersion.Value == Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion is Resources.qtMinFormatVersion_Settings) {
                 oldQtInstall = this[Files.Project].xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
@@ -470,7 +467,7 @@ namespace QtVsTools.Core
                         new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
 
             //// Upgrading from v3.0: move Qt settings to newly created import groups
-            if (oldVersion.HasValue && oldVersion.Value == Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion is Resources.qtMinFormatVersion_Settings) {
                 foreach (var configQtSettings in qtSettings) {
                     var configCondition = (string)configQtSettings.Attribute("Condition");
 
@@ -632,21 +629,15 @@ namespace QtVsTools.Core
                 .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
 
             // Remove project user properties (old format)
-            if (userProps != null) {
-                userProps.Attributes().ToList().ForEach(userProp =>
-                {
-                    if (userProp.Name.LocalName == "lupdateOptions"
-                        || userProp.Name.LocalName == "lupdateOnBuild"
-                        || userProp.Name.LocalName == "lreleaseOptions"
-                        || userProp.Name.LocalName == "MocDir"
-                        || userProp.Name.LocalName == "MocOptions"
-                        || userProp.Name.LocalName == "RccDir"
-                        || userProp.Name.LocalName == "UicDir"
-                        || userProp.Name.LocalName.StartsWith("Qt5Version_x0020_")) {
-                        userProp.Remove();
-                    }
-                });
-            }
+            userProps?.Attributes().ToList().ForEach(userProp =>
+            {
+                if (userProp.Name.LocalName.StartsWith("Qt5Version_x0020_")
+                    || userProp.Name.LocalName is "lupdateOptions" or "lupdateOnBuild"
+                        or "lreleaseOptions" or "MocDir" or "MocOptions" or "RccDir"
+                        or "UicDir") {
+                    userProp.Remove();
+                }
+            });
 
             // Remove old properties from .user file
             if (this[Files.User].xml != null) {
@@ -657,16 +648,11 @@ namespace QtVsTools.Core
                     .ToList()
                     .ForEach(userProp =>
                     {
-                        if (userProp.Name.LocalName == "QTDIR"
-                            || userProp.Name.LocalName == "QmlDebug"
-                            || userProp.Name.LocalName == "QmlDebugSettings"
+                        if (userProp.Name.LocalName is "QTDIR" or "QmlDebug" or "QmlDebugSettings"
                             || (userProp.Name.LocalName == "LocalDebuggerCommandArguments"
-                                && (string)userProp == "$(QmlDebug)"
-                            )
+                                && (string)userProp == "$(QmlDebug)")
                             || (userProp.Name.LocalName == "LocalDebuggerEnvironment"
-                                && (string)userProp == "PATH=$(QTDIR)\\bin%3b$(PATH)"
-                            )
-                        ) {
+                                && (string)userProp == "PATH=$(QTDIR)\\bin%3b$(PATH)")) {
                             userProp.Remove();
                         }
                     });

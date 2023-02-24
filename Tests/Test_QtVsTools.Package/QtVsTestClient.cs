@@ -64,7 +64,7 @@ namespace QtVsTools.Test
                 int c = Stream.ReadByte();
                 if (c == -1)
                     return Error("Disconnected");
-                if (c < Byte.MinValue || c > Byte.MaxValue)
+                if (c is < byte.MinValue or > byte.MaxValue)
                     return Error("Pipe error");
                 sizeData[i] = (byte)c;
             }

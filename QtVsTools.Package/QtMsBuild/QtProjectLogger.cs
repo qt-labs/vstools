@@ -86,13 +86,9 @@ namespace QtVsTools.QtMsBuild
         private void AnyEventRaised(object sender, BuildEventArgs e)
         {
             if (Verbosity < LoggerVerbosity.Diagnostic
-                || e is BuildMessageEventArgs
-                || e is BuildErrorEventArgs
-                || e is BuildWarningEventArgs
-                || e is TargetStartedEventArgs
-                || e is TargetFinishedEventArgs
-                || e is TaskStartedEventArgs
-                || e is TaskFinishedEventArgs) {
+                || e is BuildMessageEventArgs or BuildErrorEventArgs or BuildWarningEventArgs
+                    or TargetStartedEventArgs or TargetFinishedEventArgs or TaskStartedEventArgs
+                    or TaskFinishedEventArgs) {
                 return;
             }
             Messages.Print(e.Message);

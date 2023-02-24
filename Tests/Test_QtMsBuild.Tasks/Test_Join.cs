@@ -69,7 +69,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             var criteria = new string[] { "Y" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result != null && result.Length == 3);
+            Assert.IsTrue(result is {Length: 3});
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");
             Assert.IsTrue(result[0].GetMetadata("Y") == "42");
@@ -102,7 +102,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             var criteria = new string[] { "ROW_NUMBER" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result != null && result.Length == 3);
+            Assert.IsTrue(result is {Length: 3});
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");
             Assert.IsTrue(result[0].GetMetadata("Y") == "42");
@@ -135,7 +135,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             var criteria = new string[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result != null && result.Length == 0);
+            Assert.IsTrue(result is {Length: 0});
         }
 
         [TestMethod]
@@ -163,7 +163,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             var criteria = new string[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
                 Join.Execute(newLeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result != null && result.Length == 1);
+            Assert.IsTrue(result is {Length: 1});
 
             Assert.IsTrue(result[0].GetMetadata("X") == "zzz");
             Assert.IsTrue(result[0].GetMetadata("Y") == "99");
@@ -187,7 +187,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result));
-            Assert.IsTrue(result != null && result.Length == 4);
+            Assert.IsTrue(result is {Length: 4});
 
             Assert.IsTrue(result[0].GetMetadata("X") == "foo");
             Assert.IsTrue(result[0].GetMetadata("Y") == "42");

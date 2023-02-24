@@ -67,7 +67,7 @@ namespace QtVsTools.Qml.Debug.AD7
             JsValue = value;
 
             Children = new SortedDictionary<string, Property>();
-            if (Parent?.JsValue is JsObject jsObject && jsObject.IsArray) {
+            if (Parent?.JsValue is JsObject {IsArray: true} jsObject) {
                 Name = $"[{JsValue.Name}]";
                 foreach (JsValue objProp in jsObject.Properties.Where(x => x.HasData)) {
                     Children[GetChildKey(objProp.Name)]
@@ -101,7 +101,7 @@ namespace QtVsTools.Qml.Debug.AD7
             string expr = $"{FullName}=({pszValue})";
 
             var value = Debugger.Evaluate(FrameNumber, expr);
-            if (value == null || value is JsError)
+            if (value is null or JsError)
                 return VSConstants.S_FALSE;
 
             Program.Refresh();

@@ -320,7 +320,7 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             ppEnum = null;
 
-            if (CurrentFrames == null || CurrentFrames.Count == 0) {
+            if (CurrentFrames is not { Count: not 0 }) {
                 ppEnum = FrameInfoEnum.Create();
                 return VSConstants.S_OK;
             }

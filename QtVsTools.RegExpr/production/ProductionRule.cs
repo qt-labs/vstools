@@ -253,7 +253,7 @@ namespace QtVsTools.SyntaxAnalysis
                     throw new ParseErrorException();
 
                 var operand = operandStack.Pop();
-                if (!(operand.Production is TOperand))
+                if (operand.Production is not TOperand)
                     throw new ParseErrorException();
 
                 return new object[] { operand.Production };
@@ -278,7 +278,7 @@ namespace QtVsTools.SyntaxAnalysis
                     throw new ParseErrorException();
 
                 var operand = operandStack.Pop();
-                if (!(operand.Production is TOperand))
+                if (operand.Production is not TOperand)
                     throw new ParseErrorException();
 
                 return new object[] { operand.Production };
@@ -303,11 +303,11 @@ namespace QtVsTools.SyntaxAnalysis
                     throw new ParseErrorException();
 
                 var rightOperand = operandStack.Pop();
-                if (!(rightOperand.Production is TRightOperand))
+                if (rightOperand.Production is not TRightOperand)
                     throw new ParseErrorException();
 
                 var leftOperand = operandStack.Pop();
-                if (!(leftOperand.Production is TLeftOperand))
+                if (leftOperand.Production is not TLeftOperand)
                     throw new ParseErrorException();
 
                 return new object[] { leftOperand.Production, rightOperand.Production };
@@ -358,11 +358,11 @@ namespace QtVsTools.SyntaxAnalysis
                     throw new ParseErrorException();
 
                 var delimitedExpr = operandStack.Pop();
-                if (!(delimitedExpr.Production is TExpr))
+                if (delimitedExpr.Production is not TExpr)
                     throw new ParseErrorException();
 
                 var leftDelimiter = operandStack.Pop();
-                if (!(leftDelimiter.Production is TLeftDelim))
+                if (leftDelimiter.Production is not TLeftDelim)
                     throw new ParseErrorException();
 
                 return new object[] { leftDelimiter.Production, delimitedExpr.Production };

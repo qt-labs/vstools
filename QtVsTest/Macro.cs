@@ -649,7 +649,7 @@ namespace QtVsTest.Macros
                         patternTypeId,
                         patternType);
 
-                } else if (typeName == "Invoke" || typeName == "Toggle") {
+                } else if (typeName is "Invoke" or "Toggle") {
 
                     csharp.AppendFormat(@"
                             ({0}.GetCurrentPattern({1}) as {2}).{3}();",

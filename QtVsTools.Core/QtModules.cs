@@ -24,14 +24,14 @@ namespace QtVsTools.Core
         public List<QtModule> GetAvailableModules(uint major)
         {
             switch (major) {
-            case var _ when major < 6:
+            case < 6:
                 if (qt5list == null) {
                     qt5list = new List<QtModule>(qt5modules.Count);
                     foreach (var entry in qt5modules)
                         qt5list.Add(entry.Value);
                 }
                 return qt5list;
-            case var _ when major == 6:
+            case 6:
                 if (qt6list == null) {
                     qt6list = new List<QtModule>(qt6modules.Count);
                     foreach (var entry in qt6modules)

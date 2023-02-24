@@ -75,7 +75,7 @@ namespace QtVsTools.Qml.Classification
 
         protected override ClassificationTag GetClassification(TrackingTag tag)
         {
-            if (tag is QmlSyntaxTag syntaxTag && syntaxTag.ClassificationType != null)
+            if (tag is QmlSyntaxTag {ClassificationType: {}} syntaxTag)
                 return new ClassificationTag(syntaxTag.ClassificationType);
             return null;
 

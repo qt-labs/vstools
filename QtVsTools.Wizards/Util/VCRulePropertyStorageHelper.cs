@@ -24,17 +24,14 @@ namespace QtVsTools.Wizards.Util
                 return;
 
             var project = HelperFunctions.GetSelectedQtProject(dte);
-            if (project == null)
-                return;
-
-            var vcproject = project.Object as VCProject;
-            if (vcproject == null)
+            if (project is not {Object: VCProject {Configurations: IVCCollection collection}})
                 return;
 
             // TODO: There is already code providing such functionality, though it seems overly
             // complicated to use compared to this simple for loop (see VCPropertyStorageProvider).
-            foreach (VCConfiguration config in vcproject.Configurations as IVCCollection) {
-                var props = config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage;
+            foreach (VCConfiguration config in collection) {
+                if (config.Rules.Item("QtRule10_Settings") is not IVCRulePropertyStorage props)
+                    continue;
                 var updatedModules = props.GetUnevaluatedPropertyValue("QtModules")
                     .Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries)
                     .ToHashSet()

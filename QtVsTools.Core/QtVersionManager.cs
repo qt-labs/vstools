@@ -317,7 +317,7 @@ namespace QtVsTools.Core
 
         private static void ExpandEnvironmentVariablesInQtVersion(ref string version)
         {
-            if (version != "$(QTDIR)" && version != "$(DefaultQtVersion)") {
+            if (version is not "$(QTDIR)" and not "$(DefaultQtVersion)") {
                 // Make it possible to specify the version name
                 // via an environment variable
                 var regExp =
@@ -351,7 +351,7 @@ namespace QtVsTools.Core
                 var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
                 if (key != null) {
                     var versions = GetVersions();
-                    if (versions != null && versions.Length > 0)
+                    if (versions is {Length: > 0})
                         defaultVersion = versions[versions.Length - 1];
                     if (defaultVersion != null)
                         SaveDefaultVersion(defaultVersion);

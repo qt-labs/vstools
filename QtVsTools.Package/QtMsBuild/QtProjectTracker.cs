@@ -138,8 +138,7 @@ namespace QtVsTools.QtMsBuild
                 return;
             UpdateInitStatus(p += 10);
 
-            var context = Project.Object as IVsBrowseObjectContext;
-            if (context == null)
+            if (Project.Object is not IVsBrowseObjectContext context)
                 return;
             UpdateInitStatus(p += 10);
 

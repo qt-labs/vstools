@@ -159,10 +159,9 @@ namespace QtVsTools
                 }
             }
 
-            var vcProject = project.Object as VCProject;
-            if (vcProject == null)
-                return ErrorMessage(
-                    string.Format(ErrorConversion, project.Name));
+            if (project.Object is not VCProject vcProject)
+                return ErrorMessage(string.Format(ErrorConversion, project.Name));
+
             var solution = VsServiceProvider.GetService<SVsSolution, IVsSolution4>();
             if (solution == null)
                 return ErrorMessage(

@@ -105,8 +105,7 @@ namespace QtVsTools
 
             try {
                 var dte = VsServiceProvider.GetService<SDTE, DTE>();
-                var objTextDocument = dte?.ActiveDocument?.Object() as TextDocument;
-                if (objTextDocument == null)
+                if (dte?.ActiveDocument?.Object() is not TextDocument objTextDocument)
                     return false;
 
                 var keyword = string.Empty;

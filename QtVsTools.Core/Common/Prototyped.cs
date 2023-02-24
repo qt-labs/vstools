@@ -101,8 +101,7 @@ namespace QtVsTools
             {
                 var subTypes = baseType.Assembly.GetTypes()
                     .Where(x => baseType.IsAssignableFrom(x)
-                        && x.IsAbstract == false
-                        && x.ContainsGenericParameters == false)
+                        && x is { IsAbstract: false, ContainsGenericParameters: false })
                     .ToDictionary(x => x, x => new List<Type>());
 
                 var toDo = new Queue<Type>(subTypes.Keys);

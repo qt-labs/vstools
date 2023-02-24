@@ -40,8 +40,8 @@ namespace QtVsTools.Core
             } catch {
                 return null;
             }
-            var versionInfo = _cache[qtDir] as VersionInformation;
-            if (versionInfo == null) {
+
+            if (_cache[qtDir] is not VersionInformation versionInfo) {
                 versionInfo = new VersionInformation(qtDir);
                 _cache.Add(qtDir, versionInfo);
             } else if (versionInfo.qtDir == null) {

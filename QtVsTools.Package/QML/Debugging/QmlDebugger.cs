@@ -221,7 +221,7 @@ namespace QtVsTools.Qml.Debug
 
             var reqBacktrace = Message.Create<BacktraceRequest>(driver);
             var resBacktrace = reqBacktrace.Send();
-            if (resBacktrace != null && resBacktrace.Success) {
+            if (resBacktrace is {Success: true}) {
 
                 foreach (var frameRef in resBacktrace.Body.Frames) {
                     var reqFrame = Message.Create<FrameRequest>(driver);
@@ -261,7 +261,7 @@ namespace QtVsTools.Qml.Debug
 
             RefreshFrames();
 
-            if (evtBreak.Body.Breakpoints == null || evtBreak.Body.Breakpoints.Count == 0) {
+            if (evtBreak.Body.Breakpoints is not { Count: not 0 }) {
                 sink.NotifyBreak();
 
             } else {
@@ -311,8 +311,7 @@ namespace QtVsTools.Qml.Debug
                 if (scope == null)
                     return null;
 
-                var scopeObj = ((JsValue)scope.Object) as JsObject;
-                if (scopeObj == null)
+                if ((JsValue)scope.Object is not JsObject scopeObj)
                     return null;
 
                 scopeObj.Properties

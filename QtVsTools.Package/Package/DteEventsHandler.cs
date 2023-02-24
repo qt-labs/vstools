@@ -129,7 +129,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (dte.Debugger is {} debugger && debugger.CurrentMode != dbgDebugMode.dbgDesignMode)
+            if (dte.Debugger is { CurrentMode: not dbgDebugMode.dbgDesignMode })
                 return;
             if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
@@ -202,8 +202,8 @@ namespace QtVsTools
         private void OnBuildProjConfigBegin(string projectName, string projectConfig,
             string platform, string solutionConfig)
         {
-            if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
-                currentBuildAction != vsBuildAction.vsBuildActionRebuildAll) {
+            if (currentBuildAction is not vsBuildAction.vsBuildActionBuild
+                and not vsBuildAction.vsBuildActionRebuildAll) {
                 return;     // Don't do anything, if we're not building.
             }
 
@@ -442,10 +442,11 @@ namespace QtVsTools
                 QtProjectTracker.Add(project);
                 QtProjectIntellisense.Refresh(project);
             }
-            if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
-                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                    Notifications.UpdateProjectFormat.Show();
-            }
+
+            if (formatVersion is < 100 or >= Resources.qtProjectFormatVersion)
+                return;
+            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                Notifications.UpdateProjectFormat.Show();
         }
 
         void SolutionEvents_ProjectRemoved(Project project)
@@ -463,10 +464,11 @@ namespace QtVsTools
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);
                 }
-                if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
-                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                        Notifications.UpdateProjectFormat.Show();
-                }
+
+                if (formatVersion is < 100 or >= Resources.qtProjectFormatVersion)
+                    continue;
+                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                    Notifications.UpdateProjectFormat.Show();
             }
         }
 
@@ -494,21 +496,19 @@ namespace QtVsTools
             if (vcProjectEngineEvents != null)
                 return;
 
-            var vcPrj = p.Object as VCProject;
-            if (vcPrj == null)
+            if (p.Object is not VCProject {VCProjectEngine: VCProjectEngine prjEngine})
                 return;
 
-            // Retrieves the VCProjectEngine from the given project and registers the handlers for VCProjectEngineEvents.
-            if (vcPrj.VCProjectEngine is VCProjectEngine prjEngine) {
-                vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
-                if (vcProjectEngineEvents != null) {
-                    try {
-                        vcProjectEngineEvents.ItemPropertyChange += OnVCProjectEngineItemPropertyChange;
-                        vcProjectEngineEvents.ItemPropertyChange2 += OnVCProjectEngineItemPropertyChange2;
-                    } catch {
-                        Messages.DisplayErrorMessage("VCProjectEngine events could not be registered.");
-                    }
-                }
+            // Retrieves the VCProjectEngine from the given project and
+            // registers the handlers for VCProjectEngineEvents.
+            vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
+            if (vcProjectEngineEvents == null)
+                return;
+            try {
+                vcProjectEngineEvents.ItemPropertyChange += OnVCProjectEngineItemPropertyChange;
+                vcProjectEngineEvents.ItemPropertyChange2 += OnVCProjectEngineItemPropertyChange2;
+            } catch {
+                Messages.DisplayErrorMessage("VCProjectEngine events could not be registered.");
             }
         }
 

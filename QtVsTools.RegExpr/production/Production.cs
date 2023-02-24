@@ -111,7 +111,7 @@ namespace QtVsTools.SyntaxAnalysis
                         foreach (var operand in operandStack.Reverse()) {
 
                             // check if it's a dangling left delimiter
-                            if (operand.Rule != null && operand.Rule.Delimiters == Delimiter.Left)
+                            if (operand.Rule is {Delimiters: Delimiter.Left})
                                 throw new ParseErrorException();
 
                             // add production to parent context
@@ -214,7 +214,7 @@ namespace QtVsTools.SyntaxAnalysis
                     return Empty<T>();
 
                 return tokenProds
-                    .Where(x => x != null && x is T)
+                    .Where(x => x is T)
                     .Select(x => (T)x);
             }
 

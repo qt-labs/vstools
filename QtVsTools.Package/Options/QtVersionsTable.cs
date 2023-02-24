@@ -180,7 +180,7 @@ namespace QtVsTools.Options
                 // Default validation
                 if (version.State.HasFlag((State)Column.IsDefault)) {
                     version.FieldDefault.ValidationError = null;
-                    if (version.IsDefault && version.Host != BuildHost.Windows)
+                    if (version is { IsDefault: true, Host: not BuildHost.Windows })
                         version.FieldDefault.ValidationError = "Default version: Host must be Windows";
                     mustRefresh |= version.FieldDefault.UpdateUi;
                 }
@@ -202,7 +202,7 @@ namespace QtVsTools.Options
                 // Host validation
                 if (version.State.HasFlag((State)Column.Host)) {
                     version.FieldHost.ValidationError = null;
-                    if (version.IsDefault && version.Host != BuildHost.Windows)
+                    if (version is { IsDefault: true, Host: not BuildHost.Windows })
                         version.FieldHost.ValidationError = "Default version: Host must be Windows";
                     mustRefresh |= version.FieldHost.UpdateUi;
                 }
@@ -402,7 +402,7 @@ namespace QtVsTools.Options
                     version.FieldCompiler.SelectionStart = version.Compiler.Length;
                     version.State |= (State)Column.Compiler;
                     mustRefresh = true;
-                } else if (version.Host == BuildHost.Windows && version.Compiler != "msvc") {
+                } else if (version is { Host: BuildHost.Windows, Compiler: not "msvc" }) {
                     version.Compiler = "msvc";
                     version.FieldCompiler.SelectionStart = version.Compiler.Length;
                     version.State |= (State)Column.Compiler;
@@ -422,7 +422,8 @@ namespace QtVsTools.Options
         void Default_Click(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox && GetBinding(checkBox) is Row version) {
-                var defaultVersion = Rows.FirstOrDefault(row => row.IsDefault && row.RowVisible);
+                var defaultVersion =
+                    Rows.FirstOrDefault(row => row is { IsDefault: true, RowVisible: true });
                 if (defaultVersion != null)
                     SetDefaultState(ref defaultVersion, false);
                 SetDefaultState(ref version, true);
@@ -521,10 +522,8 @@ namespace QtVsTools.Options
         static DataGridCell FindContainingCell(DependencyObject control)
         {
             while (control != null) {
-                if (control is ContentPresenter contentPresenter
-                    && contentPresenter.Parent is DataGridCell cell) {
+                if (control is ContentPresenter {Parent: DataGridCell cell})
                     return cell;
-                }
                 control = VisualTreeHelper.GetParent(control);
             }
             return null;

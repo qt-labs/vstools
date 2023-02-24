@@ -116,8 +116,7 @@ namespace QtVsTools.Qml.Classification
         {
             if (writeAccess) {
                 var expressions = parseResult.AstNodes
-                    .Where(x => x.Kind == AstNodeKind.FieldMemberExpression
-                             || x.Kind == AstNodeKind.IdentifierExpression)
+                    .Where(x => x.Kind is AstNodeKind.FieldMemberExpression or AstNodeKind.IdentifierExpression)
                     .GroupBy(x => x.FirstSourceLocation.Offset)
                     .Select(x => new
                     {

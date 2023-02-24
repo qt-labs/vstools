@@ -150,19 +150,13 @@ namespace QtVsTools.Core
             if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
                 return Convert.ToInt32(vcPro.keyword.Substring(6));
 
-            if (vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal)) {
-                var envPro = vcPro.Object as Project;
-                if (envPro.Globals != null && envPro.Globals.VariableNames != null) {
-                    foreach (var global in envPro.Globals.VariableNames as string[]) {
-                        if (global.StartsWith("Qt5Version", StringComparison.Ordinal)
-                            && envPro.Globals.VariablePersists[global]) {
-                            return 200;
-                        }
-                    }
-                }
+            if (!vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal))
+                return 0;
+
+            if (vcPro.Object is not Project { Globals: { VariableNames: string[] variables }} envPro)
                 return 100;
-            }
-            return 0;
+
+            return variables.Any(var => HelperFunctions.HasQt5Version(var, envPro)) ? 200 : 100;
         }
 
         public static int GetFormatVersion(Project pro)

@@ -20,7 +20,7 @@ namespace QtVsTools.SyntaxAnalysis
             StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
             base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
-            if (!(parent is Token))
+            if (parent is not Token)
                 pattern.Append("(?:");
             pattern.Append("(?:");
             return Exprs;
@@ -38,7 +38,7 @@ namespace QtVsTools.SyntaxAnalysis
         {
             base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode, tokenStack);
             pattern.Append(")");
-            if (!(parent is Token))
+            if (parent is not Token)
                 pattern.Append(")");
         }
     }

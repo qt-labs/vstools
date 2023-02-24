@@ -98,7 +98,7 @@ namespace QtVsTest.Macros
 
                             pipe.WaitForPipeDrain();
 
-                            if (macro.Ok && macro.AutoRun && macro.QuitWhenDone) {
+                            if (macro is { Ok: true, AutoRun: true, QuitWhenDone: true }) {
                                 await JoinableTaskFactory.SwitchToMainThreadAsync(Loop.Token);
                                 dte.Solution.Close(false);
                                 dte.Quit();

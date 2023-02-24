@@ -216,7 +216,7 @@ namespace QtVsTools.Core.CommandLine
                 }
 
                 var tokenType = token.TokenType();
-                if (tokenType == Token.Whitespace || tokenType == Token.Newline) {
+                if (tokenType is Token.Whitespace or Token.Newline) {
                     // This will always run at the end of the loop
 
                     if (arg.Length > 0) {

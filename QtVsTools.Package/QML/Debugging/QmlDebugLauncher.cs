@@ -43,7 +43,7 @@ namespace QtVsTools.Qml.Debug
             Instance.debugger = VsServiceProvider.GetService<IVsDebugger>();
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
 
-            if (Instance.debugger != null && Instance.debugger4 != null)
+            if (Instance is { debugger: {}, debugger4: {} })
                 Instance.debugger.AdviseDebugEventCallback(Instance);
         }
 
@@ -93,7 +93,7 @@ namespace QtVsTools.Qml.Debug
                 ExcludedProcesses.Add(procGuid);
             }
 
-            if (!(pEvent is IDebugLoadCompleteEvent2 || pEvent is IDebugThreadCreateEvent2))
+            if (pEvent is not (IDebugLoadCompleteEvent2 or IDebugThreadCreateEvent2))
                 return VSConstants.S_OK;
 
             if (pProgram == null)
@@ -178,23 +178,18 @@ namespace QtVsTools.Qml.Debug
             rccItems = null;
 
             foreach (var project in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
-
-                var vcProject = project.Object as VCProject;
-                if (vcProject == null)
+                if (project.Object is not VCProject {Configurations: IVCCollection configs} vcProject)
                     continue;
 
-                var vcConfigs = vcProject.Configurations as IVCCollection;
-                if (vcConfigs == null)
+                if (project.ConfigurationManager.ActiveConfiguration is not {} activeConfig)
                     continue;
-                var activeConfig = project.ConfigurationManager.ActiveConfiguration;
-                if (activeConfig == null)
-                    continue;
+
                 var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
-                var vcConfig = vcConfigs.Item(activeConfigId) as VCConfiguration;
-                if (vcConfig == null)
+                if (configs.Item(activeConfigId) is not VCConfiguration vcConfig)
                     continue;
 
-                var props = vcProject as IVCBuildPropertyStorage;
+                if (vcProject is not IVCBuildPropertyStorage props)
+                    continue;
 
                 var localDebugCommand = props.GetPropertyValue("LocalDebuggerCommand",
                     vcConfig.Name, "UserFile");

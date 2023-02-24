@@ -1047,7 +1047,7 @@ namespace QtVsTools.Core.QtMsBuild
             if (parser.IsSet(options[Property.Compression])) {
                 if (!int.TryParse(parser.Value(options[Property.Compression]), out int level))
                     return false;
-                if (level < 1 || 9 < level)
+                if (level is < 1 or > 9)
                     return false;
                 properties[Property.Compression] = $"level{level}";
             } else {

@@ -51,29 +51,21 @@ namespace QtVsTools.Editors
             return ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                 var project = VsShell.GetProject(Context);
-                if (project == null)
+                var vcProject = project?.Object as VCProject;
+                if (vcProject?.Configurations is not IVCCollection vcConfigs)
                     return null;
 
-                var vcProject = project.Object as VCProject;
-                if (vcProject == null)
-                    return null;
-
-                var vcConfigs = vcProject.Configurations as IVCCollection;
-                if (vcConfigs == null)
-                    return null;
-
-                var activeConfig = project.ConfigurationManager?.ActiveConfiguration;
-                if (activeConfig == null)
+                if (project.ConfigurationManager?.ActiveConfiguration is not {} activeConfig)
                     return null;
 
                 var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
-                if (vcConfigs.Item(activeConfigId) is VCConfiguration vcConfig) {
-                    var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
-                    return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
-                }
+                if (vcConfigs.Item(activeConfigId) is not VCConfiguration vcConfig)
+                    return null;
 
-                return null;
+                var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
+                return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
             });
         }
 

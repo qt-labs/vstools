@@ -134,9 +134,7 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     get
                     {
-                        if (Parent == null)
-                            return EndOfList;
-                        if (Parent.OperandStack == null)
+                        if (Parent is not { OperandStack: {} })
                             return EndOfList;
                         if (!Parent.OperandStack.Any())
                             return EndOfList;
@@ -148,9 +146,7 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     get
                     {
-                        if (Parent == null)
-                            return EndOfList;
-                        if (Parent.OperandStack == null)
+                        if (Parent is not { OperandStack: {} })
                             return EndOfList;
                         if (Parent.OperandStack.Count() < 2)
                             return EndOfList;
@@ -162,9 +158,7 @@ namespace QtVsTools.SyntaxAnalysis
                 {
                     get
                     {
-                        if (Parent == null)
-                            return EndOfList;
-                        if (Parent.OperandStack == null)
+                        if (Parent is not { OperandStack: {} })
                             return EndOfList;
                         if (Parent.OperandStack.Count() < 2)
                             return EndOfList;

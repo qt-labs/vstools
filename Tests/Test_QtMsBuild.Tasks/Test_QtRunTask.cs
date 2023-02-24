@@ -58,7 +58,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                     out ITaskItem[] result,
                     "CommandLines",
                     "CommandLine"));
-            Assert.IsTrue(result != null && result.Length == 1);
+            Assert.IsTrue(result is {Length: 1});
             Assert.IsTrue(result[0].GetMetadata("CommandLine").Contains("/Zc:rvalueCast-"));
         }
     }

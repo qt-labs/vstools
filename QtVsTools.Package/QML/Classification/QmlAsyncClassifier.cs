@@ -343,7 +343,7 @@ namespace QtVsTools.Qml.Classification
 
         public IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (currentTagList == null || !currentTagList.Ready)
+            if (currentTagList is not {Ready: true})
                 yield break;
 
             var firstTag = currentTagList.Values.FirstOrDefault();
@@ -545,8 +545,7 @@ namespace QtVsTools.Qml.Classification
 
             public override bool Equals(object obj)
             {
-                var that = obj as TagListKey;
-                if (that == null)
+                if (obj is not TagListKey that)
                     return false;
                 if (Classification != that.Classification)
                     return false;
@@ -582,8 +581,7 @@ namespace QtVsTools.Qml.Classification
 
             public override bool Equals(object obj)
             {
-                var that = obj as ParserKey;
-                if (that == null)
+                if (obj is not ParserKey that)
                     return false;
                 if (Snapshot.TextBuffer != that.Snapshot.TextBuffer)
                     return false;

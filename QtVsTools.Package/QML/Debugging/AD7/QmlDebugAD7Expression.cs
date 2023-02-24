@@ -48,7 +48,7 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             ppResult = null;
             var value = Debugger.Evaluate(StackFrame.FrameNumber, ExpressionString);
-            if (value == null || value is JsError)
+            if (value is null or JsError)
                 return VSConstants.S_FALSE;
 
             Program.Refresh();

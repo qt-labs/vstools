@@ -71,10 +71,9 @@ namespace QtVsTools.Common
         /// </example>
         public static T Cast<T>(this Enum value)
         {
-            if (FindCastAttrib<T>(value) is ICast<T> cast)
+            if (FindCastAttrib<T>(value) is {} cast)
                 return cast.Value;
-            else
-                return Default<T>(value);
+            return Default<T>(value);
         }
 
         /// <summary>

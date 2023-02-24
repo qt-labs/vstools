@@ -83,8 +83,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             switch ((CommandId)command.CommandID.ID) {
@@ -133,8 +132,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
@@ -175,9 +173,7 @@ namespace QtVsTools
                 break;
             case CommandId.ConvertToQtMsBuild: {
                     command.Visible = true;
-                    command.Enabled = (QtVsToolsPackage.Instance.Dte.Solution != null
-                        && QtVsToolsPackage.Instance.Dte.Solution.Projects != null
-                        && QtVsToolsPackage.Instance.Dte.Solution.Projects.Count > 0);
+                    command.Enabled = QtVsToolsPackage.Instance.Dte.Solution is { Projects: { Count: > 0 } };
                 }
                 break;
             }

@@ -44,9 +44,8 @@ namespace QtVsTools.Qml.Debug.V4
         {
             get
             {
-                if (clientThread == null || clientThread.Status != TaskStatus.Running)
+                if (clientThread is not {Status: TaskStatus.Running})
                     return DebugClientState.Unavailable;
-
                 return state;
             }
             set

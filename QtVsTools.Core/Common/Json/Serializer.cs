@@ -103,7 +103,7 @@ namespace QtVsTools.Json
                     return new JsonData() { Stream = stream };
                 } catch (Exception exception) {
                     exception.Log();
-                    if (stream.CanRead && stream.Length > 0)
+                    if (stream is { CanRead: true, Length: > 0 })
                         stream.Dispose();
                     return null;
                 }
@@ -112,11 +112,12 @@ namespace QtVsTools.Json
 
         public object Deserialize(IJsonData jsonData)
         {
-            var data = jsonData as JsonData;
-            if (data == null)
+            if (jsonData is not JsonData data)
                 return null;
 
             if (data.XmlStream == null && !Parse(data))
+                return null;
+            if (data.XmlStream == null)
                 return null;
 
             lock (CriticalSection) {
@@ -201,8 +202,8 @@ namespace QtVsTools.Json
 
             bool IJsonData.IsEmpty()
             {
-                return (Stream == null || !Stream.CanRead || Stream.Length == 0)
-                    && (XmlStream == null || !XmlStream.CanRead || XmlStream.Length == 0);
+                return Stream is not {CanRead: true, Length: not 0}
+                    && XmlStream is not {CanRead: true, Length: not 0};
             }
 
             protected override void DisposeManaged()

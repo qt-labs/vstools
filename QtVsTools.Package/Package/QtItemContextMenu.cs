@@ -72,8 +72,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             switch (command.CommandID.ID) {
@@ -90,8 +89,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var command = sender as OleMenuCommand;
-            if (command == null)
+            if (sender is not OleMenuCommand command)
                 return;
 
             command.Enabled = false;

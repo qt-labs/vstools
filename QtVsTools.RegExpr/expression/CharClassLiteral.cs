@@ -25,7 +25,7 @@ namespace QtVsTools.SyntaxAnalysis
             StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         {
             base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
-            if ((parent == null || !(parent is CharClass)) && NeedsGroup(LiteralChars))
+            if (parent is not CharClass && NeedsGroup(LiteralChars))
                 pattern.AppendFormat("[{0}]", LiteralChars);
             else
                 pattern.Append(LiteralChars);

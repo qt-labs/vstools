@@ -114,7 +114,7 @@ namespace QtVsTools.Options
 
             try {
                 var defaultVersion =
-                    versions.FirstOrDefault(v => v.IsDefault && v.State != State.Removed)
+                    versions.FirstOrDefault(v => v is { IsDefault: true, State: not State.Removed })
                         ?? versions.FirstOrDefault(v => v.State != State.Removed);
                 VersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
             } catch (Exception exception) {
@@ -144,7 +144,7 @@ namespace QtVsTools.Options
                         QMakeConf qtConfiguration = new QMakeConf(versionPath);
                         var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
 
-                        if (generator != "MSVC.NET" && generator != "MSBUILD") {
+                        if (generator is not "MSVC.NET" and not "MSBUILD") {
                             errorMessages.Add($"{version.VersionName} - Unsupported makefile "
                               + $"generator: {generator}");
                         }

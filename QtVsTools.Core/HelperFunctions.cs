@@ -172,17 +172,15 @@ namespace QtVsTools.Core
         /// <returns></returns>
         public static VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
         {
-            if (config.File is VCFile file
-                && file.ItemType == "CustomBuild"
-                && config.Tool is VCCustomBuildTool tool) {
-                    try {
-                        _ = tool.CommandLine;
-                    } catch {
-                        return null;
-                    }
-                    return tool;
+            if (config is not { File: VCFile {ItemType: "CustomBuild"}, Tool: VCCustomBuildTool tool })
+                return null;
+
+            try {
+                _ = tool.CommandLine;
+            } catch {
+                return null;
             }
-            return null;
+            return tool;
         }
 
         /// <summary>
@@ -211,10 +209,17 @@ namespace QtVsTools.Core
         public static bool IsVsToolsProject(Project proj)
         {
             ThreadHelper.ThrowIfNotOnUIThread(); // C++ Project Type GUID
-            if (proj == null || proj.Kind != "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
+            if (proj is not {Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"})
                 return false;
             return IsVsToolsProject(proj.Object as VCProject);
         }
+
+        public static readonly Func<string, Project, bool> HasQt5Version = (global, project) =>
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return global.StartsWith("Qt5Version", StringComparison.Ordinal)
+                && project.Globals.VariablePersists[global];
+        };
 
         /// <summary>
         /// Return true if the project is a VS tools project; false otherwise.
@@ -229,17 +234,10 @@ namespace QtVsTools.Core
             if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
                 return true;
 
-            var envPro = proj.Object as Project;
-            if (envPro.Globals == null || envPro.Globals.VariableNames == null)
+            if (proj.Object is not Project {Globals: {VariableNames: string[] variables}} envPro)
                 return false;
 
-            foreach (var global in envPro.Globals.VariableNames as string[]) {
-                if (global.StartsWith("Qt5Version", StringComparison.Ordinal)
-                    && envPro.Globals.VariablePersists[global]) {
-                    return true;
-                }
-            }
-            return false;
+            return variables.Any(var => HasQt5Version(var, envPro));
         }
 
         /// <summary>
@@ -249,7 +247,7 @@ namespace QtVsTools.Core
         public static bool IsQtProject(Project proj)
         {
             ThreadHelper.ThrowIfNotOnUIThread(); //C++ Project Type GUID
-            if (proj == null || proj.Kind != "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}")
+            if (proj is not {Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"})
                 return false;
             return IsQtProject(proj.Object as VCProject);
         }
@@ -362,7 +360,7 @@ namespace QtVsTools.Core
         {
             var item = (VCProjectItem)vcfile;
 
-            while ((item.Parent != null) && (item.Kind != "VCProject")) {
+            while (item is { Parent: {}, Kind: not "VCProject" }) {
                 item = (VCProjectItem)item.Parent;
 
                 if (item.Kind == "VCFilter") {
@@ -484,7 +482,7 @@ namespace QtVsTools.Core
                 // When VS2010 is started from the command line,
                 // we may catch a "Unspecified error" here.
             }
-            if (prjs == null || prjs.Length < 1)
+            if (prjs is not { Length: >= 1 })
                 return null;
 
             // don't handle multiple selection... use the first one
@@ -594,14 +592,11 @@ namespace QtVsTools.Core
             if (prj.Object == null)
                 return;
 
-            if (prj.ConfigurationManager != null &&
-                // Is this a Visual C++ project?
-                prj.Kind == "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") {
+            // Is this a Visual C++ project?
+            if (prj is { ConfigurationManager: {}, Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}" })
                 projects.Add(prj);
-            } else {
-                // In this case, prj is a solution folder
+            else // In this case, prj is a solution folder
                 addSubProjects(prj.ProjectItems, ref projects);
-            }
         }
 
         private static void addSubProjects(ProjectItems subItems, ref List<Project> projects)
@@ -728,8 +723,7 @@ namespace QtVsTools.Core
                     expanded = vcConfig.Evaluate(expanded);
                 } catch { }
             } else {
-                var vcFileConfig = config as VCFileConfiguration;
-                if (vcFileConfig == null)
+                if (config is not VCFileConfiguration vcFileConfig)
                     return false;
                 vcFile = vcFileConfig.File as VCFile;
                 if (vcFile != null)
@@ -829,14 +823,10 @@ namespace QtVsTools.Core
                 case "AccessedTime":
                     return false;
                 default:
-                    var vcFileConfig = config as VCFileConfiguration;
-                    if (vcFileConfig == null)
-                        return false;
-                    var propStoreTool = vcFileConfig.Tool as IVCRulePropertyStorage;
-                    if (propStoreTool == null)
+                    if (config is not VCFileConfiguration {Tool: IVCRulePropertyStorage store})
                         return false;
                     try {
-                        metaValue = propStoreTool.GetEvaluatedPropertyValue(metaName);
+                        metaValue = store.GetEvaluatedPropertyValue(metaName);
                     } catch {
                         return false;
                     }

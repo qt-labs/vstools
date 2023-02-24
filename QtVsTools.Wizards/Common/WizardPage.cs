@@ -33,7 +33,7 @@ namespace QtVsTools.Wizards.Common
 
         protected virtual void OnPreviousButtonClick(object sender, RoutedEventArgs e)
         {
-            if (NavigationService == null || !NavigationService.CanGoBack)
+            if (NavigationService is not {CanGoBack: true})
                 return;
 
             NavigationService.GoBack();

@@ -183,8 +183,8 @@ namespace QtVsTools.SyntaxAnalysis
 
             bool NeedsWhitespaceGroup(RegExpr tokenWs, RenderMode mode)
             {
-                return tokenWs != null && !mode.HasFlag(RenderMode.Assert)
-                    && (tokenWs is RegExprLiteral || tokenWs is RegExprSequence);
+                return tokenWs is RegExprLiteral or RegExprSequence
+                    && !mode.HasFlag(RenderMode.Assert);
             }
 
             public IEnumerator<IProductionRule> GetEnumerator()

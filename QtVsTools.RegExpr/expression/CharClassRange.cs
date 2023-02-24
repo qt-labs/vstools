@@ -27,7 +27,7 @@ namespace QtVsTools.SyntaxAnalysis
         {
             base.OnRender(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
-            if (parent == null || !(parent is CharClass))
+            if (parent is not CharClass)
                 pattern.Append("[");
 
             return Items(LowerBound, UpperBound);
@@ -45,7 +45,7 @@ namespace QtVsTools.SyntaxAnalysis
         {
             base.OnRenderEnd(defaultTokenWs, parent, pattern, ref mode, tokenStack);
 
-            if (parent == null || !(parent is CharClass))
+            if (parent is not CharClass)
                 pattern.Append("]");
         }
     }

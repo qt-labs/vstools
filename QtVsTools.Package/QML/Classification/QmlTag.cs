@@ -172,7 +172,7 @@ namespace QtVsTools.Qml.Classification
                     break;
                 }
             case UiPublicMember node:
-                if (node.Type == UiPublicMemberType.Property && node.TypeToken.Length > 0) {
+                if (node is { Type: UiPublicMemberType.Property, TypeToken: { Length: > 0 } }) {
                     var typeName = snapshot.GetText(node.TypeToken);
                     if (QmlBasicTypes.Contains(typeName))
                         tags.Add(new QmlSyntaxTag(snapshot, node, Keyword, node.TypeToken));

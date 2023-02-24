@@ -109,8 +109,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugEngineLaunch2.ResumeProcess(IDebugProcess2 process)
         {
-            var program = process as Program;
-            if (program == null)
+            if (process is not Program program)
                 return VSConstants.E_FAIL;
 
             if (process.GetPort(out IDebugPort2 port) != VSConstants.S_OK)
@@ -133,8 +132,7 @@ namespace QtVsTools.Qml.Debug.AD7
             IDebugEventCallback2 pCallback,
             enum_ATTACH_REASON dwReason)
         {
-            var program = rgpProgramNodes[0] as Program;
-            if (program == null)
+            if (rgpProgramNodes[0] is not Program program)
                 return VSConstants.E_FAIL;
 
             Callback = pCallback;
