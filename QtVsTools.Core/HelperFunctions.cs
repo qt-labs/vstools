@@ -852,31 +852,6 @@ namespace QtVsTools.Core
             return true;
         }
 
-        static string _VCPath;
-        public static string VCPath
-        {
-            set => _VCPath = value;
-            get
-            {
-                if (!string.IsNullOrEmpty(_VCPath))
-                    return _VCPath;
-                else
-                    return GetVCPathFromRegistry();
-            }
-        }
-
-        private static string GetVCPathFromRegistry()
-        {
-#if VS2022
-            Debug.Assert(false, "VCPath for VS2022 is not available through the registry");
-            string vcPath = string.Empty;
-#elif VS2019
-            Debug.Assert(false, "VCPath for VS2019 is not available through the registry");
-            string vcPath = string.Empty;
-#endif
-            return vcPath;
-        }
-
         static Parser EnvVarParser => StaticLazy.Get(() => EnvVarParser, () =>
         {
             Token tokenName = new Token("name", (~Chars["=\r\n"]).Repeat(atLeast: 1));
@@ -902,12 +877,13 @@ namespace QtVsTools.Core
             return tokenEnvVar.Render();
         });
 
+        public static string VcPath { get; set; }
         public static bool SetVCVars(VersionInformation VersionInfo, ProcessStartInfo startInfo)
         {
             var vm = QtVersionManager.The();
             VersionInfo ??= vm.GetVersionInfo(vm.GetDefaultVersion());
 
-            if (string.IsNullOrEmpty(VCPath))
+            if (string.IsNullOrEmpty(VcPath))
                 return false;
 
             // Select vcvars script according to host and target platforms
@@ -916,21 +892,21 @@ namespace QtVsTools.Core
             string vcVarsCmd = "";
             switch (VersionInfo.platform()) {
             case Platform.x86:
-                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                         ? @"Auxiliary\Build\vcvarsamd64_x86.bat"
                         : @"Auxiliary\Build\vcvars32.bat");
                 break;
             case Platform.x64:
-                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                         ? @"Auxiliary\Build\vcvars64.bat"
                         : @"Auxiliary\Build\vcvarsx86_amd64.bat");
                 break;
             case Platform.arm64:
-                vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                         ? @"Auxiliary\Build\vcvarsamd64_arm64.bat"
                         : @"Auxiliary\Build\vcvarsx86_arm64.bat");
                 if (!File.Exists(vcVarsCmd)) {
-                    vcVarsCmd = Path.Combine(VCPath, osIs64Bit
+                    vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                             ? @"Auxiliary\Build\vcvars64.bat"
                             : @"Auxiliary\Build\vcvarsx86_amd64.bat");
                 }
