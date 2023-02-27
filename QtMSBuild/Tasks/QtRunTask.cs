@@ -115,8 +115,7 @@ namespace QtVsTools.QtMsBuild.Tasks
             if (taskType.ContainsGenericParameters)
                 throw new NotSupportedException("Generic class");
             var ctorInfo = ((TypeInfo)taskType).DeclaredConstructors
-                .Where(x => x.GetParameters().Length == 0)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.GetParameters().Length == 0);
             if (ctorInfo == null)
                 throw new NotSupportedException("No default constructor");
 

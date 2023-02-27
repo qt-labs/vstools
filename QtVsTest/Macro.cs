@@ -389,7 +389,7 @@ namespace QtVsTest.Macros
                     varName = s.Args[1];
                 }
                 var initValue = s.Code;
-                if (varName.Where(c => char.IsWhiteSpace(c)).Any())
+                if (varName.Any(char.IsWhiteSpace))
                     return ErrorMsg("Wrong var name");
                 GlobalVars[varName] = new GlobalVar
                 {
@@ -403,7 +403,7 @@ namespace QtVsTest.Macros
                 if (s.Args.Count <= 1)
                     return ErrorMsg("Missing args for #service");
                 var serviceVarName = s.Args[0];
-                if (serviceVarName.Where(c => char.IsWhiteSpace(c)).Any())
+                if (serviceVarName.Any(char.IsWhiteSpace))
                     return ErrorMsg("Invalid service var name");
                 if (ServiceRefs.ContainsKey(serviceVarName))
                     return ErrorMsg("Duplicate service var name");
@@ -849,8 +849,7 @@ namespace QtVsTest.Macros
                 return null;
             var fullName = new AssemblyName(args.Name);
             var assemblyPath = RefAssemblies
-                .Where(x => Path.GetFileNameWithoutExtension(x).Equals(fullName.Name, IGNORE_CASE))
-                .FirstOrDefault();
+                .FirstOrDefault(x => Path.GetFileNameWithoutExtension(x).Equals(fullName.Name, IGNORE_CASE));
             if (string.IsNullOrEmpty(assemblyPath))
                 return null;
             if (!File.Exists(assemblyPath))

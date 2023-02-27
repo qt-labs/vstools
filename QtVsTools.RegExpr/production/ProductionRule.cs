@@ -212,8 +212,7 @@ namespace QtVsTools.SyntaxAnalysis
                     throw new InvalidOperationException("Generic class: " + type.Name);
 
                 var ctorInfo = ((TypeInfo)type).DeclaredConstructors
-                    .Where(x => x.GetParameters().Length == 0)
-                    .FirstOrDefault();
+                    .FirstOrDefault(x => x.GetParameters().Length == 0);
 
                 if (ctorInfo == null)
                     throw new InvalidOperationException("No default constructor: " + type.Name);

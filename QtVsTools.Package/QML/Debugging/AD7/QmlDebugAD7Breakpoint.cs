@@ -67,7 +67,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (docPosition.GetFileName(out string fileName) != VSConstants.S_OK)
                 return false;
 
-            if (!ValidExtensions.Where(x => string.Equals(x, Path.GetExtension(fileName))).Any())
+            if (!ValidExtensions.Any(x => string.Equals(x, Path.GetExtension(fileName))))
                 return false;
 
             TEXT_POSITION[] beginPosition = new TEXT_POSITION[1];

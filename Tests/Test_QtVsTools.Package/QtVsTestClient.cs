@@ -26,9 +26,8 @@ namespace QtVsTools.Test
             if (vsProcId == null) {
                 var procs = Process.GetProcessesByName("devenv");
                 var vsProc = procs
-                    .Where(p => p.Id != Process.GetCurrentProcess().Id
-                        && !p.MainWindowTitle.StartsWith("vstools"))
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => p.Id != Process.GetCurrentProcess().Id
+                        && !p.MainWindowTitle.StartsWith("vstools"));
                 if (vsProc == null)
                     throw new InvalidOperationException("VS process not found");
                 vsProcId = vsProc.Id;

@@ -216,9 +216,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 NextButton.IsEnabled = false;
                 FinishButton.IsEnabled = false;
             } else if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
-                .GroupBy((Config c) => $"{c.Name}|{c.Platform}")
-                .Where((IGrouping<string, Config> g) => g.Count() > 1)
-                .Any()) {
+                .GroupBy(c => $"{c.Name}|{c.Platform}")
+                .Any(g => g.Count() > 1)) {
                 ErrorMsg.Content = "(Configuration, Platform) must be unique";
                 ErrorPanel.Visibility = Visibility.Visible;
                 NextButton.IsEnabled = false;

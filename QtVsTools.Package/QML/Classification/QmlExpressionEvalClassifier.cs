@@ -164,8 +164,7 @@ namespace QtVsTools.Qml.Classification
             var tags = GetTags(spans).Select(x => x.Tag).Cast<ExprTag>();
 
             var expr = tags.SelectMany(x => x.Exprs)
-                .Where(x => offset < x.LastSourceLocation.Offset + x.LastSourceLocation.Length)
-                .FirstOrDefault();
+                .FirstOrDefault(x => offset < x.LastSourceLocation.Offset + x.LastSourceLocation.Length);
 
             if (expr == null)
                 return VSConstants.S_FALSE;
