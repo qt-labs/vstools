@@ -96,7 +96,8 @@ namespace QtVsTools.Common
         {
             value = default(TEnum);
             IEnumerable<Enum> enumValues = Enum.GetValues(typeof(TEnum)).OfType<Enum>()
-                .Where((Enum valueEnum) => valueEnum.Cast<T>().Equals(valueT));
+                .Where(valueEnum => valueEnum.Cast<T>().Equals(valueT))
+                .ToList();
             if (enumValues.Any())
                 value = (TEnum)Enum.ToObject(typeof(TEnum), enumValues.FirstOrDefault());
             return enumValues.Any();

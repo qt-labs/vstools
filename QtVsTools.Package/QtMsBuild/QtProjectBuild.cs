@@ -323,7 +323,7 @@ namespace QtVsTools.QtMsBuild
             } else {
                 var checkResults = result.ResultsByTarget
                     .Where(x => Targets.Contains(x.Key))
-                    .Select(x => x.Value);
+                    .Select(x => x.Value).ToList();
                 ok = checkResults.Any()
                     && checkResults.All(x => x.ResultCode == TargetResultCode.Success);
                 if (ok)

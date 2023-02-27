@@ -64,8 +64,9 @@ namespace QtVsTools.QtMsBuild.Tasks
                     itemXml.AppendFormat("<{0} Include=\"{1}\"", ItemType, item.ItemSpec);
                     var names = item.MetadataNames.Cast<string>()
                         .Where(x => (DumpReserved || !reserved.Contains(x))
-                        && (!requestedNames.Any() || requestedNames.Contains(x)))
-                        .OrderBy(x => x);
+                            && (!requestedNames.Any() || requestedNames.Contains(x)))
+                        .OrderBy(x => x)
+                        .ToList();
                     if (names.Any()) {
                         itemXml.Append(">\r\n");
                         foreach (string name in names) {

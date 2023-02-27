@@ -257,7 +257,7 @@ namespace QtVsTools.Core.CommandLine
             return Parse(args);
         }
 
-        public bool Parse(IEnumerable<string> args)
+        public bool Parse(List<string> args)
         {
             needsParsing = false;
 
@@ -404,12 +404,8 @@ namespace QtVsTools.Core.CommandLine
             CheckParsed("IsSet");
             if (optionNames.Contains(name))
                 return true;
-            var aliases = Aliases(name);
-            foreach (var optionName in optionNames) {
-                if (aliases.Contains(optionName))
-                    return true;
-            }
-            return false;
+            var aliases = Aliases(name).ToHashSet();
+            return optionNames.Any(optionName => aliases.Contains(optionName));
         }
 
         public string Value(string optionName)

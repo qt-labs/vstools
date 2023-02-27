@@ -274,7 +274,8 @@ namespace QtVsTools.Core
             var configs = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + "ProjectConfiguration");
+                .Elements(ns + "ProjectConfiguration")
+                .ToList();
 
             // Get project global properties
             var globals = this[Files.Project].xml
@@ -543,18 +544,21 @@ namespace QtVsTools.Core
             var compiler = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "ClCompile");
+                .Elements(ns + "ClCompile")
+                .ToList();
 
             // Get linker properties
             var linker = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "Link");
+                .Elements(ns + "Link")
+                .ToList();
 
             var resourceCompiler = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "ResourceCompile");
+                .Elements(ns + "ResourceCompile")
+                .ToList();
 
             // Qt module names, to copy to QtModules property
             var moduleNames = new HashSet<string>();
@@ -722,12 +726,13 @@ namespace QtVsTools.Core
                     item.Elements().ToList().ForEach(itemProp =>
                     {
                         var propName = itemProp.Name.LocalName;
-                        if ((itemName == "QtMoc" && oldPropsAny.Contains(propName))
-                            || (itemName == "QtRcc" && oldQtProps.Contains(propName))
-                            || (itemName == "QtUic" && oldQtProps.Contains(propName))
-                            || (itemName == "QtRepc" && oldPropsAny.Contains(propName))
-                        ) {
+                        switch (itemName) {
+                        case "QtMoc" when oldPropsAny.Contains(propName):
+                        case "QtRcc" when oldQtProps.Contains(propName):
+                        case "QtUic" when oldQtProps.Contains(propName):
+                        case "QtRepc" when oldPropsAny.Contains(propName):
                             itemProp.Remove();
+                            break;
                         }
                     });
                 });
@@ -874,7 +879,7 @@ namespace QtVsTools.Core
             string toolExec,
             string itemType,
             string workingDir,
-            IEnumerable<ItemCommandLineReplacement> extraReplacements)
+            IList<ItemCommandLineReplacement> extraReplacements)
         {
             var query = from customBuild in customBuilds
                         let itemName = customBuild.Attribute("Include").Value
@@ -943,14 +948,15 @@ namespace QtVsTools.Core
             return !error;
         }
 
-        IEnumerable<XElement> GetCustomBuilds(string toolExecName)
+        private List<XElement> GetCustomBuilds(string toolExecName)
         {
             return this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "CustomBuild")
                 .Where(x => x.Elements(ns + "Command")
-                    .Any(y => (y.Value.Contains(toolExecName))));
+                    .Any(y => y.Value.Contains(toolExecName)))
+                .ToList();
         }
 
         void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
@@ -1066,7 +1072,8 @@ namespace QtVsTools.Core
             var configurations = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + "ProjectConfiguration");
+                .Elements(ns + "ProjectConfiguration")
+                .ToList();
 
             var projItemsByPath = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -1310,10 +1317,10 @@ namespace QtVsTools.Core
                     QtMoc.Property.DynamicSource, "false");
             }
 
-            FinalizeProjectChanges(mocCustomBuilds.ToList(), QtMoc.ItemTypeName);
-            FinalizeProjectChanges(rccCustomBuilds.ToList(), QtRcc.ItemTypeName);
-            FinalizeProjectChanges(repcCustomBuilds.ToList(), QtRepc.ItemTypeName);
-            FinalizeProjectChanges(uicCustomBuilds.ToList(), QtUic.ItemTypeName);
+            FinalizeProjectChanges(mocCustomBuilds, QtMoc.ItemTypeName);
+            FinalizeProjectChanges(rccCustomBuilds, QtRcc.ItemTypeName);
+            FinalizeProjectChanges(repcCustomBuilds, QtRepc.ItemTypeName);
+            FinalizeProjectChanges(uicCustomBuilds, QtUic.ItemTypeName);
 
             this[Files.Project].isDirty = this[Files.Filters].isDirty = true;
             Commit();

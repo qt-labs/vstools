@@ -214,8 +214,8 @@ namespace QtVsTools.QtMsBuild.Tasks
                                 // ...that have not yet been queued...
                                 .Where(x => postponedItems.Contains(x)
                                     // ...and whose dependending items have all terminated.
-                                    && workItems[x].DependsOn.All(y => terminated.Contains(y)));
-
+                                    && workItems[x].DependsOn.All(y => terminated.Contains(y)))
+                                .ToList();
                             if (QtDebug && readyDependents.Any()) {
                                 Log.LogMessage(MessageImportance.High,
                                 string.Format("## QtRunWork queueing\r\n##    {0}",

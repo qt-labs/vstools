@@ -517,12 +517,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             ///////////////////////////////////////////////////////////////////////////////////////
             // Build settings
             //
-            IEnumerable<ItemProperty> mocProperties
-                = ItemGlobals?[QtMoc.ItemTypeName]?.Properties ?? Enumerable.Empty<ItemProperty>();
-            IEnumerable<ItemProperty> clProperties
-                = ItemGlobals?["ClCompile"]?.Properties ?? Enumerable.Empty<ItemProperty>();
-            IEnumerable<ItemProperty> linkProperties
-                = ItemGlobals?["Link"]?.Properties ?? Enumerable.Empty<ItemProperty>();
+            var mocProperties = ItemGlobals?[QtMoc.ItemTypeName]?.Properties ?? new ItemProperty[] { };
+            var clProperties = ItemGlobals?["ClCompile"]?.Properties ?? new ItemProperty[] { };
+            var linkProperties = ItemGlobals?["Link"]?.Properties ?? new ItemProperty[] { };
 
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
