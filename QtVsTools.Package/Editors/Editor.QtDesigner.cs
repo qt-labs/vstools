@@ -23,8 +23,8 @@ namespace QtVsTools.Editors
         public const string GuidString = "96FE523D-6182-49F5-8992-3BEA5F7E6FF6";
         public const string Title = "Qt Designer";
 
-        Guid? _Guid;
-        public override Guid Guid => (_Guid ?? (_Guid = new Guid(GuidString))).Value;
+        private Guid? guid;
+        public override Guid Guid => guid ??= new Guid(GuidString);
 
         public override string ExecutableName => "designer.exe";
 

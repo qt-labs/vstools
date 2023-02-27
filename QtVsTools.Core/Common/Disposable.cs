@@ -33,7 +33,7 @@ namespace QtVsTools
 
         private HashSet<IDisposableEventSink> eventSinks = null;
         private HashSet<IDisposableEventSink> EventSinks =>
-            ThreadSafe(() => eventSinks ?? (eventSinks = new HashSet<IDisposableEventSink>()));
+            ThreadSafe(() => eventSinks ??= new HashSet<IDisposableEventSink>());
 
         public bool Disposed { get; private set; }
 

@@ -16,8 +16,8 @@ namespace QtVsTools.Editors
         public const string GuidString = "D0FFB6E6-5829-4DD9-835E-2965449AC6BF";
         public const string Title = "Qt Resource Editor";
 
-        Guid? _Guid;
-        public override Guid Guid => (_Guid ?? (_Guid = new Guid(GuidString))).Value;
+        private Guid? guid;
+        public override Guid Guid => (guid ??= new Guid(GuidString));
 
         public override string ExecutableName => "QrcEditor.exe";
 

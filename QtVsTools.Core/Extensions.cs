@@ -12,7 +12,7 @@ namespace QtVsTools.Core
         public static string Replace(this string original, string oldValue, string newValue,
             StringComparison comparison)
         {
-            newValue = newValue ?? string.Empty;
+            newValue ??= "";
             if (string.IsNullOrEmpty(original) || string.IsNullOrEmpty(oldValue)
                 || string.Equals(oldValue, newValue, comparison)) {
                 return original;

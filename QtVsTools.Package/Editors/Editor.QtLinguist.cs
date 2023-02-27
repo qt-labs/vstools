@@ -15,8 +15,8 @@ namespace QtVsTools.Editors
         public const string GuidString = "4A1333DC-5C94-4F14-A7BF-DC3D96092234";
         public const string Title = "Qt Linguist";
 
-        Guid? _Guid;
-        public override Guid Guid => (_Guid ?? (_Guid = new Guid(GuidString))).Value;
+        private Guid? guid;
+        public override Guid Guid => (guid ??= new Guid(GuidString));
 
         public override string ExecutableName => "linguist.exe";
 

@@ -31,7 +31,7 @@ namespace QtVsTools.Core
 
         public static VersionInformation Get(string qtDir)
         {
-            qtDir = qtDir ?? Environment.GetEnvironmentVariable("QTDIR");
+            qtDir ??= Environment.GetEnvironmentVariable("QTDIR");
             if (qtDir == null)
                 return null;
 

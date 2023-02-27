@@ -311,11 +311,11 @@ namespace QtVsTools.Qml.Debug.V4
         where TBody : class, new()
     {
         [DataMember(Name = "body", EmitDefaultValue = false)]
-        TBody body = null;
+        private TBody body;
 
         public TBody Body
         {
-            get => ThreadSafe(() => body ?? (body = new TBody()));
+            get => ThreadSafe(() => body ??= new TBody());
             set => body = value;
         }
     }
