@@ -595,10 +595,14 @@ DummyQmlObject { }
   // Force QtVars target to run when Qt settings have changed
   // -->
   <Target Name="QtVarsPrepare" BeforeTargets="QtVars" Condition="Exists('$(QtVarsFilePath)')">
+    <PropertyGroup>
+      <CleanQtModules
+        >$([System.String]::Join(';',$(QtModules.Split(';',StringSplitOptions.RemoveEmptyEntries))))</CleanQtModules>
+    </PropertyGroup>
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
         AND '$(QtBkup_QtInstall)' != '$(QtInstall)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtModules)' != '$(QtModules)'" />
+        AND '$(QtBkup_QtModules)' != '$(CleanQtModules)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
         AND '$(QtBkup_QtPathBinaries)' != '$(QtPathBinaries)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')

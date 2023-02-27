@@ -48,9 +48,10 @@ namespace QtVsTools.QtMsBuild
 
             HashSet<string> selectedQt = null;
             IEnumerable<string> extraQt = null;
-            if (currentValue != null) {
+            if (currentValue is string currentModules) {
                 var allQt = modules.SelectMany(x => x.QT).ToHashSet();
-                selectedQt = currentValue.ToString().Split(';').ToHashSet();
+                selectedQt = currentModules
+                    .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToHashSet();
                 extraQt = selectedQt.Except(allQt);
 
                 foreach (var module in modules)
