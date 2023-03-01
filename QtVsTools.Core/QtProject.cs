@@ -1452,78 +1452,53 @@ namespace QtVsTools.Core
 
     }
 
-    public class QtCustomBuildTool
+    internal class QtCustomBuildTool
     {
-        readonly QtMsBuildContainer qtMsBuild;
-        readonly VCFileConfiguration vcConfig;
-        readonly VCFile vcFile;
-        readonly VCCustomBuildTool tool;
+        private readonly QtMsBuildContainer qtMsBuild;
+        private readonly VCFileConfiguration vcConfig;
+        private readonly VCCustomBuildTool tool;
 
-        enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic }
-        readonly FileItemType itemType = FileItemType.Other;
+        private enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic }
+        private readonly FileItemType itemType = FileItemType.Other;
 
-        public QtCustomBuildTool(VCFileConfiguration vcConfig, QtMsBuildContainer container = null)
+        public QtCustomBuildTool(VCFileConfiguration config, QtMsBuildContainer container = null)
         {
+            vcConfig = config;
             qtMsBuild = container ?? new QtMsBuildContainer(new VCPropertyStorageProvider());
-            this.vcConfig = vcConfig;
-            if (vcConfig != null)
-                vcFile = vcConfig.File as VCFile;
-            if (vcFile != null) {
-                if (vcFile.ItemType == "CustomBuild")
-                    itemType = FileItemType.CustomBuild;
-                else if (vcFile.ItemType == QtMoc.ItemTypeName)
-                    itemType = FileItemType.QtMoc;
-                else if (vcFile.ItemType == QtRcc.ItemTypeName)
-                    itemType = FileItemType.QtRcc;
-                else if (vcFile.ItemType == QtRepc.ItemTypeName)
-                    itemType = FileItemType.QtRepc;
-                else if (vcFile.ItemType == QtUic.ItemTypeName)
-                    itemType = FileItemType.QtUic;
+
+            if (vcConfig?.File is VCFile vcFile) {
+                itemType = vcFile.ItemType switch
+                {
+                    "CustomBuild" => FileItemType.CustomBuild,
+                    QtMoc.ItemTypeName => FileItemType.QtMoc,
+                    QtRcc.ItemTypeName => FileItemType.QtRcc,
+                    QtRepc.ItemTypeName => FileItemType.QtRepc,
+                    QtUic.ItemTypeName => FileItemType.QtUic,
+                    _ => itemType
+                };
             }
             if (itemType == FileItemType.CustomBuild)
                 tool = HelperFunctions.GetCustomBuildTool(vcConfig);
         }
 
-        public string CommandLine
+        public string CommandLine => itemType switch
         {
-            get
-            {
-                switch (itemType) {
-                case FileItemType.CustomBuild:
-                    return tool != null ? tool.CommandLine : "";
-                case FileItemType.QtMoc:
-                    return qtMsBuild.GenerateQtMocCommandLine(vcConfig);
-                case FileItemType.QtRcc:
-                    return qtMsBuild.GenerateQtRccCommandLine(vcConfig);
-                case FileItemType.QtRepc:
-                    return qtMsBuild.GenerateQtRepcCommandLine(vcConfig);
-                case FileItemType.QtUic:
-                    return qtMsBuild.GenerateQtUicCommandLine(vcConfig);
-                }
-                return "";
-            }
-        }
+            FileItemType.CustomBuild => tool?.CommandLine ?? "",
+            FileItemType.QtMoc => qtMsBuild.GenerateQtMocCommandLine(vcConfig),
+            FileItemType.QtRcc => qtMsBuild.GenerateQtRccCommandLine(vcConfig),
+            FileItemType.QtRepc => qtMsBuild.GenerateQtRepcCommandLine(vcConfig),
+            FileItemType.QtUic => qtMsBuild.GenerateQtUicCommandLine(vcConfig),
+            _ => ""
+        };
 
-        public string Outputs
+        public string Outputs => itemType switch
         {
-            get
-            {
-                switch (itemType) {
-                case FileItemType.CustomBuild:
-                    return tool != null ? tool.Outputs : "";
-                case FileItemType.QtMoc:
-                    return qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile);
-                case FileItemType.QtRcc:
-                    return qtMsBuild.GetPropertyValue(vcConfig, QtRcc.Property.OutputFile);
-                case FileItemType.QtRepc:
-                    return qtMsBuild.GetPropertyValue(vcConfig, QtRepc.Property.OutputFile);
-                case FileItemType.QtUic:
-                    return qtMsBuild.GetPropertyValue(vcConfig, QtUic.Property.OutputFile);
-                }
-                return "";
-            }
-        }
-
+            FileItemType.CustomBuild => tool?.Outputs ?? "",
+            FileItemType.QtMoc => qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile),
+            FileItemType.QtRcc => qtMsBuild.GetPropertyValue(vcConfig, QtRcc.Property.OutputFile),
+            FileItemType.QtRepc => qtMsBuild.GetPropertyValue(vcConfig, QtRepc.Property.OutputFile),
+            FileItemType.QtUic => qtMsBuild.GetPropertyValue(vcConfig, QtUic.Property.OutputFile),
+            _ => ""
+        };
     }
-
 }
