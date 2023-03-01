@@ -217,7 +217,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (ctorInfo == null)
                     throw new InvalidOperationException("No default constructor: " + type.Name);
 
-                return (T)ctorInfo.Invoke(new object[0]);
+                return (T)ctorInfo.Invoke(Array.Empty<object>());
             }
         }
 

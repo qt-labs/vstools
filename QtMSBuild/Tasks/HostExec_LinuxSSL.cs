@@ -10,6 +10,8 @@
 #endregion
 
 #region Using
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
@@ -70,7 +72,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 string.Format("{0}/{1}", RemoteProjectDir, WorkingDirectory)
             };
 
-            var localFilesToCopyRemotelyMapping = new string[0];
+            var localFilesToCopyRemotelyMapping = Array.Empty<string>();
             if (Inputs != null) {
                 localFilesToCopyRemotelyMapping = Inputs
                     .Select(x => string.Format(@"{0}:={1}/{2}",
@@ -82,7 +84,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                     .Select(x => string.Format("\x24(dirname {0})", x.GetMetadata("Value"))));
             }
 
-            var remoteFilesToCopyLocallyMapping = new string[0];
+            var remoteFilesToCopyLocallyMapping = Array.Empty<string>();
             if (Outputs != null) {
                 remoteFilesToCopyLocallyMapping = Outputs
                   .Select(x => string.Format(@"{0}/{1}:={2}",

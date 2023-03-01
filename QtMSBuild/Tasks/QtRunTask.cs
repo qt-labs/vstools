@@ -148,7 +148,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 // For each source item ...
 
                 // Instantiate task
-                var task = ctorInfo.Invoke(new object[0]) as ToolTask;
+                var task = ctorInfo.Invoke(Array.Empty<object>()) as ToolTask;
                 task.BuildEngine = BuildEngine;
                 task.HostObject = HostObject;
 

@@ -142,7 +142,7 @@ namespace QtVsTools.Qml.Debug.AD7
             {
                 var info = new DEBUG_PROPERTY_INFO[1];
                 (x.Value as IDebugProperty2).GetPropertyInfo(dwFields, dwRadix, 0,
-                    new IDebugReference2[0], 0, info);
+                    Array.Empty<IDebugReference2>(), 0, info);
                 return info[0];
             }));
             return VSConstants.S_OK;

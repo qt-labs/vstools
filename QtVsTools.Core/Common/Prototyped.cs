@@ -47,7 +47,7 @@ namespace QtVsTools
             if (ctorInfo == null)
                 throw new NotSupportedException("No default constructor: " + type.Name);
 
-            return ctorInfo.Invoke(new object[0]) as TBase;
+            return ctorInfo.Invoke(Array.Empty<object>()) as TBase;
         }
 
         private static TBase CreatePrototype(Type type)

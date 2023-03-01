@@ -6,6 +6,8 @@
 #region Task TaskName="Flatten"
 
 #region Using
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
@@ -65,7 +67,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 "RecursiveDir", "RelativeDir", "RootDir",
             };
             if (Metadata == null)
-                Metadata = new string[0];
+                Metadata = Array.Empty<string>();
             var requestedNames = new HashSet<string>(Metadata.Where(x => !string.IsNullOrEmpty(x)));
             var newItems = new List<ITaskItem>();
             foreach (var item in Items) {
