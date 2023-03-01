@@ -618,52 +618,6 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// Translates the machine type given as command line argument to the linker
-        /// to the internal enum type VCProjectEngine.machineTypeOption.
-        /// </summary>
-        public static machineTypeOption TranslateMachineType(string cmdLineMachine)
-        {
-            switch (cmdLineMachine.ToUpper()) {
-            case "AM33":
-                return machineTypeOption.machineAM33;
-            case "X64":
-                return machineTypeOption.machineAMD64;
-            case "ARM":
-                return machineTypeOption.machineARM;
-            case "EBC":
-                return machineTypeOption.machineEBC;
-            case "IA-64":
-                return machineTypeOption.machineIA64;
-            case "M32R":
-                return machineTypeOption.machineM32R;
-            case "MIPS":
-                return machineTypeOption.machineMIPS;
-            case "MIPS16":
-                return machineTypeOption.machineMIPS16;
-            case "MIPSFPU":
-                return machineTypeOption.machineMIPSFPU;
-            case "MIPSFPU16":
-                return machineTypeOption.machineMIPSFPU16;
-            case "MIPS41XX":
-                return machineTypeOption.machineMIPSR41XX;
-            case "SH3":
-                return machineTypeOption.machineSH3;
-            case "SH3DSP":
-                return machineTypeOption.machineSH3DSP;
-            case "SH4":
-                return machineTypeOption.machineSH4;
-            case "SH5":
-                return machineTypeOption.machineSH5;
-            case "THUMB":
-                return machineTypeOption.machineTHUMB;
-            case "X86":
-                return machineTypeOption.machineX86;
-            default:
-                return machineTypeOption.machineNotSet;
-            }
-        }
-
-        /// <summary>
         /// This method copies the specified directory and all its child directories and files to
         /// the specified destination. The destination directory is created if it does not exist.
         /// </summary>

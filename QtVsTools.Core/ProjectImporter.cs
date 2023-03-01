@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -131,16 +132,17 @@ namespace QtVsTools.Core
                 if (qtVersion is not null)
                     QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
 
-                if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
-                    qtPro.CreatePlatform("Win32", platformName, null, versionInfo);
-                    if (!qtPro.SelectSolutionPlatform(platformName))
+                var vcPro = qtPro.VCProject;
+                if (!SelectSolutionPlatform(dteObject, platformName)
+                    || !HasPlatform(vcPro, platformName)) {
+                    CreatePlatform(pro, vcPro, dteObject, "Win32", platformName, null, versionInfo);
+                    if (!SelectSolutionPlatform(dteObject, platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
 
                 // figure out if the imported project is a plugin project
-                var tmp = qtPro.Project.ConfigurationManager.ActiveConfiguration
-                    .ConfigurationName;
-                var vcConfig = (qtPro.VCProject.Configurations as IVCCollection)?.Item(tmp)
+                var tmp = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+                var vcConfig = (vcPro.Configurations as IVCCollection)?.Item(tmp)
                     as VCConfiguration;
                 var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
                 if (!string.IsNullOrEmpty(def)
@@ -523,6 +525,35 @@ namespace QtVsTools.Core
             return "10.0";
         }
 
+        /// <summary>
+        /// Translates the machine type given as command line argument to the linker
+        /// to the internal enum type VCProjectEngine.machineTypeOption.
+        /// </summary>
+        private static machineTypeOption TranslateMachineType(string cmdLineMachine)
+        {
+            return cmdLineMachine.ToUpper() switch
+            {
+                "AM33" => machineTypeOption.machineAM33,
+                "X64" => machineTypeOption.machineAMD64,
+                "ARM" => machineTypeOption.machineARM,
+                "EBC" => machineTypeOption.machineEBC,
+                "IA-64" => machineTypeOption.machineIA64,
+                "M32R" => machineTypeOption.machineM32R,
+                "MIPS" => machineTypeOption.machineMIPS,
+                "MIPS16" => machineTypeOption.machineMIPS16,
+                "MIPSFPU" => machineTypeOption.machineMIPSFPU,
+                "MIPSFPU16" => machineTypeOption.machineMIPSFPU16,
+                "MIPS41XX" => machineTypeOption.machineMIPSR41XX,
+                "SH3" => machineTypeOption.machineSH3,
+                "SH3DSP" => machineTypeOption.machineSH3DSP,
+                "SH4" => machineTypeOption.machineSH4,
+                "SH5" => machineTypeOption.machineSH5,
+                "THUMB" => machineTypeOption.machineTHUMB,
+                "X86" => machineTypeOption.machineX86,
+                _ => machineTypeOption.machineNotSet
+            };
+        }
+
         #endregion
 
         #region QtProject
@@ -660,6 +691,188 @@ namespace QtVsTools.Core
                 }
             } catch {}
             return projectItem;
+        }
+
+        private static bool HasPlatform(VCProject vcPro, string platformName)
+        {
+            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
+                var platform = (VCPlatform)config.Platform;
+                if (platform.Name == platformName)
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool SelectSolutionPlatform(DTE dte, string platformName)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var solutionBuild = dte.Solution.SolutionBuild;
+            foreach (SolutionConfiguration solutionCfg in solutionBuild.SolutionConfigurations) {
+                if (solutionCfg.Name != solutionBuild.ActiveConfiguration.Name)
+                    continue;
+
+                var contexts = solutionCfg.SolutionContexts;
+                for (var i = 1; i <= contexts.Count; ++i) {
+                    try {
+                        if (contexts.Item(i).PlatformName != platformName)
+                            continue;
+                        solutionCfg.Activate();
+                        return true;
+                    } catch {
+                        // This may happen if we encounter an unloaded project.
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static void CreatePlatform(Project envPro, VCProject vcPro, DTE dte,
+            string oldPlatform, string newPlatform, VersionInformation viOld, VersionInformation viNew)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try {
+                var cfgMgr = envPro.ConfigurationManager;
+                cfgMgr.AddPlatform(newPlatform, oldPlatform, true);
+                vcPro.AddPlatform(newPlatform);
+            } catch {
+                // That stupid ConfigurationManager can't handle platform names
+                // containing dots (e.g. "Windows Mobile 5.0 Pocket PC SDK (ARMV4I)")
+                // So we have to do it the nasty way...
+                var projectFileName = envPro.FullName;
+                envPro.Save(null);
+                dte.Solution.Remove(envPro);
+                AddPlatformToVCProj(projectFileName, oldPlatform, newPlatform);
+                envPro = dte.Solution.AddFromFile(projectFileName);
+                vcPro = (VCProject)envPro.Object;
+            }
+
+            // update the platform settings
+            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
+                var vcplatform = (VCPlatform)config.Platform;
+                if (vcplatform.Name == newPlatform) {
+                    if (viOld != null)
+                        RemovePlatformDependencies(config, viOld);
+                    SetupConfiguration(config, viNew);
+                }
+            }
+
+            SelectSolutionPlatform(dte, newPlatform);
+        }
+
+        private static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
+        {
+            var compiler = CompilerToolWrapper.Create(config);
+            var minuend = new HashSet<string>(compiler.PreprocessorDefinitions);
+            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
+            compiler.SetPreprocessorDefinitions(string.Join(",", minuend));
+        }
+
+        private static void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
+        {
+            var compiler = CompilerToolWrapper.Create(config);
+            var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
+            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
+            compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
+
+            var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
+            if (linker == null)
+                return;
+
+            linker.SubSystem = subSystemOption.subSystemWindows;
+            SetTargetMachine(linker, viNew);
+        }
+
+        private static void AddPlatformToVCProj(string projectFileName, string oldPlatformName,
+            string newPlatformName)
+        {
+            var tempFileName = Path.GetTempFileName();
+            var fi = new FileInfo(projectFileName);
+            fi.CopyTo(tempFileName, true);
+
+            var myXmlDocument = new XmlDocument();
+            myXmlDocument.Load(tempFileName);
+            AddPlatformToVCProj(myXmlDocument, oldPlatformName, newPlatformName);
+            myXmlDocument.Save(projectFileName);
+
+            fi = new FileInfo(tempFileName);
+            fi.Delete();
+        }
+
+        private static void AddPlatformToVCProj(XmlDocument doc, string oldPlatformName,
+            string newPlatformName)
+        {
+            var vsProj = doc.DocumentElement.SelectSingleNode("/VisualStudioProject");
+            var platforms = vsProj.SelectSingleNode("Platforms");
+            if (platforms == null) {
+                platforms = doc.CreateElement("Platforms");
+                vsProj.AppendChild(platforms);
+            }
+            var platform = platforms.SelectSingleNode("Platform[@Name='" + newPlatformName + "']");
+            if (platform == null) {
+                platform = doc.CreateElement("Platform");
+                ((XmlElement)platform).SetAttribute("Name", newPlatformName);
+                platforms.AppendChild(platform);
+            }
+
+            var configurations = vsProj.SelectSingleNode("Configurations");
+            var cfgList = configurations.SelectNodes("Configuration[@Name='Debug|"
+                + oldPlatformName + "'] | " + "Configuration[@Name='Release|"
+                + oldPlatformName + "']");
+            foreach (XmlNode oldCfg in cfgList) {
+                var newCfg = (XmlElement)oldCfg.Clone();
+                newCfg.SetAttribute("Name",
+                    oldCfg.Attributes["Name"].Value.Replace(oldPlatformName, newPlatformName));
+                configurations.AppendChild(newCfg);
+            }
+
+            var fileCfgPath = "Files/Filter/File/FileConfiguration";
+            var fileCfgList = vsProj.SelectNodes(fileCfgPath + "[@Name='Debug|"
+                + oldPlatformName + "'] | " + fileCfgPath + "[@Name='Release|"
+                + oldPlatformName + "']");
+            foreach (XmlNode oldCfg in fileCfgList) {
+                var newCfg = (XmlElement)oldCfg.Clone();
+                newCfg.SetAttribute("Name", oldCfg.Attributes["Name"].Value
+                    .Replace(oldPlatformName, newPlatformName));
+                oldCfg.ParentNode.AppendChild(newCfg);
+            }
+        }
+
+        private static void SetTargetMachine(VCLinkerTool linker, VersionInformation versionInfo)
+        {
+            var qMakeLFlagsWindows = versionInfo.GetQMakeConfEntry("QMAKE_LFLAGS_WINDOWS");
+            var rex = new Regex("/MACHINE:(\\S+)");
+            var match = rex.Match(qMakeLFlagsWindows);
+            if (match.Success) {
+                linker.TargetMachine = TranslateMachineType(match.Groups[1].Value);
+            } else {
+                var platformName = versionInfo.GetVSPlatformName();
+                if (platformName == "Win32")
+                    linker.TargetMachine = machineTypeOption.machineX86;
+                else if (platformName == "x64")
+                    linker.TargetMachine = machineTypeOption.machineAMD64;
+                else
+                    linker.TargetMachine = machineTypeOption.machineNotSet;
+            }
+
+            var subsystemOption = string.Empty;
+            var linkerOptions = linker.AdditionalOptions ?? string.Empty;
+
+            rex = new Regex("(/SUBSYSTEM:\\S+)");
+            match = rex.Match(qMakeLFlagsWindows);
+            if (match.Success)
+                subsystemOption = match.Groups[1].Value;
+
+            match = rex.Match(linkerOptions);
+            if (match.Success) {
+                linkerOptions = rex.Replace(linkerOptions, subsystemOption);
+            } else {
+                if (linkerOptions.Length > 0)
+                    linkerOptions += " ";
+                linkerOptions += subsystemOption;
+            }
+            linker.AdditionalOptions = linkerOptions;
         }
 
         #endregion

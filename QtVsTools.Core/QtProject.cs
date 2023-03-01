@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -853,97 +852,6 @@ namespace QtVsTools.Core
             }
         }
 
-        public bool HasPlatform(string platformName)
-        {
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var platform = (VCPlatform)config.Platform;
-                if (platform.Name == platformName)
-                    return true;
-            }
-            return false;
-        }
-
-        public bool SelectSolutionPlatform(string platformName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var solutionBuild = dte.Solution.SolutionBuild;
-            foreach (SolutionConfiguration solutionCfg in solutionBuild.SolutionConfigurations) {
-                if (solutionCfg.Name != solutionBuild.ActiveConfiguration.Name)
-                    continue;
-
-                var contexts = solutionCfg.SolutionContexts;
-                for (var i = 1; i <= contexts.Count; ++i) {
-                    try {
-                        if (contexts.Item(i).PlatformName != platformName)
-                            continue;
-                        solutionCfg.Activate();
-                        return true;
-                    } catch {
-                        // This may happen if we encounter an unloaded project.
-                    }
-                }
-            }
-            return false;
-        }
-
-        public void CreatePlatform(string oldPlatform, string newPlatform,
-            VersionInformation viOld, VersionInformation viNew)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try {
-                var cfgMgr = envPro.ConfigurationManager;
-                cfgMgr.AddPlatform(newPlatform, oldPlatform, true);
-                vcPro.AddPlatform(newPlatform);
-            } catch {
-                // That stupid ConfigurationManager can't handle platform names
-                // containing dots (e.g. "Windows Mobile 5.0 Pocket PC SDK (ARMV4I)")
-                // So we have to do it the nasty way...
-                var projectFileName = envPro.FullName;
-                envPro.Save(null);
-                dte.Solution.Remove(envPro);
-                AddPlatformToVCProj(projectFileName, oldPlatform, newPlatform);
-                envPro = dte.Solution.AddFromFile(projectFileName);
-                vcPro = (VCProject)envPro.Object;
-            }
-
-            // update the platform settings
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var vcplatform = (VCPlatform)config.Platform;
-                if (vcplatform.Name == newPlatform) {
-                    if (viOld != null)
-                        RemovePlatformDependencies(config, viOld);
-                    SetupConfiguration(config, viNew);
-                }
-            }
-
-            SelectSolutionPlatform(newPlatform);
-        }
-
-        public static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            var minuend = new HashSet<string>(compiler.PreprocessorDefinitions);
-            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
-            compiler.SetPreprocessorDefinitions(string.Join(",", minuend));
-        }
-
-        public void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
-            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
-            compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
-
-            var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-            if (linker == null)
-                return;
-
-            linker.SubSystem = subSystemOption.subSystemWindows;
-            SetTargetMachine(linker, viNew);
-        }
-
         public void RemoveGeneratedFiles(string fileName)
         {
             var fi = new FileInfo(fileName);
@@ -965,91 +873,6 @@ namespace QtVsTools.Core
             }
         }
 
-        private static void AddPlatformToVCProj(string projectFileName, string oldPlatformName, string newPlatformName)
-        {
-            var tempFileName = Path.GetTempFileName();
-            var fi = new FileInfo(projectFileName);
-            fi.CopyTo(tempFileName, true);
-
-            var myXmlDocument = new XmlDocument();
-            myXmlDocument.Load(tempFileName);
-            AddPlatformToVCProj(myXmlDocument, oldPlatformName, newPlatformName);
-            myXmlDocument.Save(projectFileName);
-
-            fi = new FileInfo(tempFileName);
-            fi.Delete();
-        }
-
-        private static void AddPlatformToVCProj(XmlDocument doc, string oldPlatformName, string newPlatformName)
-        {
-            var vsProj = doc.DocumentElement.SelectSingleNode("/VisualStudioProject");
-            var platforms = vsProj.SelectSingleNode("Platforms");
-            if (platforms == null) {
-                platforms = doc.CreateElement("Platforms");
-                vsProj.AppendChild(platforms);
-            }
-            var platform = platforms.SelectSingleNode("Platform[@Name='" + newPlatformName + "']");
-            if (platform == null) {
-                platform = doc.CreateElement("Platform");
-                ((XmlElement)platform).SetAttribute("Name", newPlatformName);
-                platforms.AppendChild(platform);
-            }
-
-            var configurations = vsProj.SelectSingleNode("Configurations");
-            var cfgList = configurations.SelectNodes("Configuration[@Name='Debug|" + oldPlatformName + "'] | " +
-                                                             "Configuration[@Name='Release|" + oldPlatformName + "']");
-            foreach (XmlNode oldCfg in cfgList) {
-                var newCfg = (XmlElement)oldCfg.Clone();
-                newCfg.SetAttribute("Name", oldCfg.Attributes["Name"].Value.Replace(oldPlatformName, newPlatformName));
-                configurations.AppendChild(newCfg);
-            }
-
-            var fileCfgPath = "Files/Filter/File/FileConfiguration";
-            var fileCfgList = vsProj.SelectNodes(fileCfgPath + "[@Name='Debug|" + oldPlatformName + "'] | " +
-                                                         fileCfgPath + "[@Name='Release|" + oldPlatformName + "']");
-            foreach (XmlNode oldCfg in fileCfgList) {
-                var newCfg = (XmlElement)oldCfg.Clone();
-                newCfg.SetAttribute("Name", oldCfg.Attributes["Name"].Value.Replace(oldPlatformName, newPlatformName));
-                oldCfg.ParentNode.AppendChild(newCfg);
-            }
-        }
-
-        private static void SetTargetMachine(VCLinkerTool linker, VersionInformation versionInfo)
-        {
-            var qMakeLFlagsWindows = versionInfo.GetQMakeConfEntry("QMAKE_LFLAGS_WINDOWS");
-            var rex = new Regex("/MACHINE:(\\S+)");
-            var match = rex.Match(qMakeLFlagsWindows);
-            if (match.Success) {
-                linker.TargetMachine = HelperFunctions.TranslateMachineType(match.Groups[1].Value);
-            } else {
-                var platformName = versionInfo.GetVSPlatformName();
-                if (platformName == "Win32")
-                    linker.TargetMachine = machineTypeOption.machineX86;
-                else if (platformName == "x64")
-                    linker.TargetMachine = machineTypeOption.machineAMD64;
-                else
-                    linker.TargetMachine = machineTypeOption.machineNotSet;
-            }
-
-            var subsystemOption = string.Empty;
-            var linkerOptions = linker.AdditionalOptions ?? string.Empty;
-
-            rex = new Regex("(/SUBSYSTEM:\\S+)");
-            match = rex.Match(qMakeLFlagsWindows);
-            if (match.Success)
-                subsystemOption = match.Groups[1].Value;
-
-            match = rex.Match(linkerOptions);
-            if (match.Success) {
-                linkerOptions = rex.Replace(linkerOptions, subsystemOption);
-            } else {
-                if (linkerOptions.Length > 0)
-                    linkerOptions += " ";
-                linkerOptions += subsystemOption;
-            }
-            linker.AdditionalOptions = linkerOptions;
-        }
-
         public class CppConfig
         {
             public VCConfiguration Config;
@@ -1057,10 +880,9 @@ namespace QtVsTools.Core
 
             public string GetUserPropertyValue(string pszPropName)
             {
-                var vcProj = Config.project as VCProject;
-                var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
-                    return projProps.GetPropertyValue(pszPropName, Config.Name, "UserFile");
+                    var storage = (Config.project as VCProject) as IVCBuildPropertyStorage;
+                    return storage.GetPropertyValue(pszPropName, Config.Name, "UserFile");
                 } catch (Exception exception) {
                     exception.Log();
                     return string.Empty;
@@ -1069,10 +891,9 @@ namespace QtVsTools.Core
 
             public void SetUserPropertyValue(string pszPropName, string pszPropValue)
             {
-                var vcProj = Config.project as VCProject;
-                var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
-                    projProps.SetPropertyValue(pszPropName, Config.Name, "UserFile", pszPropValue);
+                    var storage = (Config.project as VCProject) as IVCBuildPropertyStorage;
+                    storage.SetPropertyValue(pszPropName, Config.Name, "UserFile", pszPropValue);
                 } catch (Exception exception) {
                     exception.Log();
                 }
@@ -1080,10 +901,9 @@ namespace QtVsTools.Core
 
             public void RemoveUserProperty(string pszPropName)
             {
-                var vcProj = Config.project as VCProject;
-                var projProps = vcProj as IVCBuildPropertyStorage;
                 try {
-                    projProps.RemoveProperty(pszPropName, Config.Name, "UserFile");
+                    var storage = (Config.project as VCProject) as IVCBuildPropertyStorage;
+                    storage.RemoveProperty(pszPropName, Config.Name, "UserFile");
                 } catch (Exception exception) {
                     exception.Log();
                 }
