@@ -886,25 +886,23 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            foreach (SolutionConfiguration solutionCfg in dte.Solution.SolutionBuild.SolutionConfigurations) {
+            var solutionBuild = dte.Solution.SolutionBuild;
+            foreach (SolutionConfiguration solutionCfg in solutionBuild.SolutionConfigurations) {
+                if (solutionCfg.Name != solutionBuild.ActiveConfiguration.Name)
+                    continue;
+
                 var contexts = solutionCfg.SolutionContexts;
                 for (var i = 1; i <= contexts.Count; ++i) {
-                    SolutionContext ctx = null;
                     try {
-                        ctx = contexts.Item(i);
-                    } catch (ArgumentException) {
-                        // This may happen if we encounter an unloaded project.
-                        continue;
-                    }
-
-                    if (ctx.PlatformName == platformName
-                        && solutionCfg.Name == dte.Solution.SolutionBuild.ActiveConfiguration.Name) {
+                        if (contexts.Item(i).PlatformName != platformName)
+                            continue;
                         solutionCfg.Activate();
                         return true;
+                    } catch {
+                        // This may happen if we encounter an unloaded project.
                     }
                 }
             }
-
             return false;
         }
 
