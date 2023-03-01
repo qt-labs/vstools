@@ -322,8 +322,7 @@ namespace QtVsTools.Core
                             return true;
                     }
                 } catch { } finally {
-                    if (cxxStream != null)
-                        cxxStream.Dispose();
+                    cxxStream?.Dispose();
                 }
             }
             return false;

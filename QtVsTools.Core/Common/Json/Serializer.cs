@@ -210,10 +210,8 @@ namespace QtVsTools.Json
 
             protected override void DisposeManaged()
             {
-                if (Stream != null)
-                    Stream.Dispose();
-                if (XmlStream != null)
-                    XmlStream.Dispose();
+                Stream?.Dispose();
+                XmlStream?.Dispose();
             }
         }
 

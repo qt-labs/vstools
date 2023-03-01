@@ -28,8 +28,7 @@ namespace QtVsTools.Wizards.Common
         public event ReturnEventHandler<WizardResult> ReturnEx;
         public void OnReturnEx(ReturnEventArgs<WizardResult> e)
         {
-            if (ReturnEx != null)
-                ReturnEx.Invoke(this, e);
+            ReturnEx?.Invoke(this, e);
         }
 
         protected virtual void OnPreviousButtonClick(object sender, RoutedEventArgs e)
@@ -38,7 +37,7 @@ namespace QtVsTools.Wizards.Common
                 return;
 
             NavigationService.GoBack();
-            OnNavigatedBackward(new EventArgs());
+            OnNavigatedBackward(EventArgs.Empty);
         }
 
         protected virtual void OnNextButtonClick(object sender, RoutedEventArgs e)
@@ -47,7 +46,7 @@ namespace QtVsTools.Wizards.Common
                 return;
 
             try {
-                OnNavigateForward(new EventArgs());
+                OnNavigateForward(EventArgs.Empty);
             } catch (InvalidOperationException) {
                 return; // we can't navigate any further
             }
@@ -73,14 +72,12 @@ namespace QtVsTools.Wizards.Common
 
         protected virtual void OnNavigateForward(EventArgs e)
         {
-            if (NavigateForward != null)
-                NavigateForward.Invoke(this, e);
+            NavigateForward?.Invoke(this, e);
         }
 
         protected virtual void OnNavigatedBackward(EventArgs e)
         {
-            if (NavigatedBackward != null)
-                NavigatedBackward.Invoke(this, e);
+            NavigatedBackward?.Invoke(this, e);
         }
 
         private void OnPageReturn(object sender, ReturnEventArgs<WizardResult> e)

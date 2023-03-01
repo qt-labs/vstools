@@ -71,8 +71,7 @@ namespace QtVsTools.Json
 
         protected override void DisposeManaged()
         {
-            if (jsonData != null)
-                jsonData.Dispose();
+            jsonData?.Dispose();
         }
 
         public static implicit operator TBase(DeferredObject<TBase> _this)

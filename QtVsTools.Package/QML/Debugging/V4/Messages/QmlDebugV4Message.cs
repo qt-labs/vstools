@@ -28,8 +28,7 @@ namespace QtVsTools.Qml.Debug.V4
             where T : Message, new()
         {
             T _this = Create<T>(driver);
-            if (initMsg != null)
-                initMsg(_this);
+            initMsg?.Invoke(_this);
             return _this.Send();
         }
 
@@ -128,8 +127,7 @@ namespace QtVsTools.Qml.Debug.V4
             where T : Request, new()
         {
             T _this = Create<T>(driver);
-            if (initMsg != null)
-                initMsg(_this);
+            initMsg?.Invoke(_this);
             return _this.Send();
         }
     }

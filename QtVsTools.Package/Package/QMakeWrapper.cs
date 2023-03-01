@@ -68,8 +68,7 @@ namespace QtVsTools
                         FormFiles = ReadFileElements(reader, "FORMS");
                     }
                 } finally {
-                    if (stringReader != null)
-                        stringReader.Dispose();
+                    stringReader?.Dispose();
                 }
             } catch {
                 return false;

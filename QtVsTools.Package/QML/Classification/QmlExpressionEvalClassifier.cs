@@ -83,12 +83,8 @@ namespace QtVsTools.Qml.Classification
             if (debugger == null)
                 return false;
 
-            var componentModel = VsServiceProvider
-                .GetService<SComponentModel, IComponentModel>();
-            if (componentModel == null)
-                return false;
-
-            var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+            var componentModel = VsServiceProvider.GetService<SComponentModel, IComponentModel>();
+            var editorFactory = componentModel?.GetService<IVsEditorAdaptersFactoryService>();
             if (editorFactory == null)
                 return false;
 

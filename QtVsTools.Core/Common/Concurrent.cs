@@ -125,8 +125,9 @@ namespace QtVsTools
                 success = test();
                 if (success)
                     action();
-                else if (actionElse != null)
-                    actionElse();
+                else {
+                    actionElse?.Invoke();
+                }
             }
             return success;
         }

@@ -282,12 +282,9 @@ namespace QtVsTools.Core
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
-            if (globals == null)
-                return false;
 
             // Set Qt project format version
-            var projKeyword = globals
-                .Elements(ns + "Keyword")
+            var projKeyword = globals?.Elements(ns + "Keyword")
                 .FirstOrDefault(x => x.Value.StartsWith(Resources.qtProjectKeyword)
                     || x.Value.StartsWith(Resources.qtProjectV2Keyword));
             if (projKeyword == null)
@@ -337,8 +334,7 @@ namespace QtVsTools.Core
                                     new XAttribute("Condition", condition));
                     propertyGroups[condition] = group;
                     // Insert uncategorized groups after Qt defaults, if found
-                    if (qtDefaultProps != null)
-                        qtDefaultProps.AddAfterSelf(group);
+                    qtDefaultProps?.AddAfterSelf(group);
                 }
 
                 // Move uncategorized properties to newly created groups

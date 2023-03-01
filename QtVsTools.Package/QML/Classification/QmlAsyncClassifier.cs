@@ -337,13 +337,11 @@ namespace QtVsTools.Qml.Classification
             if (refresh == ClassificationRefresh.FullText) {
                 var span = new SnapshotSpan(Buffer.CurrentSnapshot,
                     0, Buffer.CurrentSnapshot.Length);
-                if (tagsChangedHandler != null)
-                    tagsChangedHandler.Invoke(this, new SnapshotSpanEventArgs(span));
+                tagsChangedHandler?.Invoke(this, new SnapshotSpanEventArgs(span));
             } else {
                 foreach (var tag in tagList.Values) {
                     var tagMapped = tag.MapToSnapshot(snapshot);
-                    if (tagsChangedHandler != null)
-                        tagsChangedHandler.Invoke(this, new SnapshotSpanEventArgs(tagMapped.Span));
+                    tagsChangedHandler?.Invoke(this, new SnapshotSpanEventArgs(tagMapped.Span));
                 }
             }
         }
@@ -525,8 +523,7 @@ namespace QtVsTools.Qml.Classification
                         }
                     }
                 }
-                if (disposable != null)
-                    disposable.Dispose();
+                disposable?.Dispose();
             }
 
             private static TInstance instance = null;

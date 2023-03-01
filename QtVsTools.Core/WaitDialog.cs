@@ -80,11 +80,8 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var dialog = Create(dialogFactory);
-            if (dialog == null)
-                return null;
-
-            var res = dialog.VsWaitDialog.StartWaitDialog(caption, message, progressText,
-                    null, statusBarText, delay, isCancelable, showMarqueeProgress);
+            var res = dialog?.VsWaitDialog.StartWaitDialog(caption, message, progressText,
+                null, statusBarText, delay, isCancelable, showMarqueeProgress);
 
             if (res != VSConstants.S_OK)
                 return null;
@@ -106,10 +103,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var dialog = Create(dialogFactory);
-            if (dialog == null)
-                return null;
-
-            var res = dialog.VsWaitDialog.StartWaitDialogWithPercentageProgress(
+            var res = dialog?.VsWaitDialog.StartWaitDialogWithPercentageProgress(
                 caption, message, progressText, null, statusBarText,
                 isCancelable, delay, totalSteps, currentStep);
 

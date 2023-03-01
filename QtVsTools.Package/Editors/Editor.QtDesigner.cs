@@ -42,10 +42,8 @@ namespace QtVsTools.Editors
 
             base.OnStart(process);
             var document = VsShell.GetDocument(Context, ItemId);
-            if (document == null)
-                return;
 
-            var project = document.ProjectItem?.ContainingProject;
+            var project = document?.ProjectItem?.ContainingProject;
             if (project == null || !QtProjectTracker.IsTracked(project.FullName))
                 return;
             string projectPath = project.FullName;

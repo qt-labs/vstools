@@ -203,8 +203,7 @@ namespace QtVsTools.Qml.Debug.V4
             {
                 if (Request == null)
                     return null;
-                if (responded != null)
-                    responded.WaitOne();
+                responded?.WaitOne();
                 return Request.Response;
             }
 
@@ -212,9 +211,7 @@ namespace QtVsTools.Qml.Debug.V4
             {
                 if (Request == null)
                     return;
-
-                if (responded != null)
-                    responded.Dispose();
+                responded?.Dispose();
             }
 
             public void SetResponse(Response res)
@@ -223,8 +220,7 @@ namespace QtVsTools.Qml.Debug.V4
                     return;
 
                 Request.Response = res;
-                if (responded != null)
-                    responded.Set();
+                responded?.Set();
             }
         }
 
