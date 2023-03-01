@@ -909,7 +909,7 @@ namespace QtVsTools.Core
         }
 
         public void CreatePlatform(string oldPlatform, string newPlatform,
-                                   VersionInformation viOld, VersionInformation viNew, ref bool newProjectCreated)
+            VersionInformation viOld, VersionInformation viNew)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -917,7 +917,6 @@ namespace QtVsTools.Core
                 var cfgMgr = envPro.ConfigurationManager;
                 cfgMgr.AddPlatform(newPlatform, oldPlatform, true);
                 vcPro.AddPlatform(newPlatform);
-                newProjectCreated = false;
             } catch {
                 // That stupid ConfigurationManager can't handle platform names
                 // containing dots (e.g. "Windows Mobile 5.0 Pocket PC SDK (ARMV4I)")
@@ -928,7 +927,6 @@ namespace QtVsTools.Core
                 AddPlatformToVCProj(projectFileName, oldPlatform, newPlatform);
                 envPro = dte.Solution.AddFromFile(projectFileName, false);
                 vcPro = (VCProject)envPro.Object;
-                newProjectCreated = true;
             }
 
             // update the platform settings

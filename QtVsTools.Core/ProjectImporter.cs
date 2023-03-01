@@ -132,8 +132,7 @@ namespace QtVsTools.Core
                     QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
 
                 if (!qtPro.SelectSolutionPlatform(platformName) || !qtPro.HasPlatform(platformName)) {
-                    var newProject = false;
-                    qtPro.CreatePlatform("Win32", platformName, null, versionInfo, ref newProject);
+                    qtPro.CreatePlatform("Win32", platformName, null, versionInfo);
                     if (!qtPro.SelectSolutionPlatform(platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
