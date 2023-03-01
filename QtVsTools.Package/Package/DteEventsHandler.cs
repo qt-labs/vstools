@@ -106,11 +106,10 @@ namespace QtVsTools
             if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
 
-            if (QtProject.Create(project) is {} qtProject) {
-                var versionInfo = QtVersionManager.The().GetVersionInfo(qtProject.GetQtVersion());
-                if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                    QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
-            }
+            var version = QtVersionManager.The().GetProjectQtVersion(project);
+            var versionInfo = QtVersionManager.The().GetVersionInfo(version);
+            if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
+                QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
 
             // Notify about old project format and offer upgrade option.
             if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)

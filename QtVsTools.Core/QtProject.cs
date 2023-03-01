@@ -1073,15 +1073,6 @@ namespace QtVsTools.Core
             linker.AdditionalOptions = linkerOptions;
         }
 
-        /// <summary>
-        /// Gets the Qt version of the project
-        /// </summary>
-        public string GetQtVersion()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return QtVersionManager.The().GetProjectQtVersion(envPro);
-        }
-
         public class CppConfig
         {
             public VCConfiguration Config;
