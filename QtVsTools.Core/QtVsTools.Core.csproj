@@ -150,6 +150,7 @@
     <Compile Include="QMakeImport.cs" />
     <Compile Include="QMakeQuery.cs" />
     <Compile Include="QtConfig.cs" />
+    <Compile Include="QtCustomBuildTool.cs" />
     <Compile Include="QtModule.cs" />
     <Compile Include="QtModules.cs" />
     <Compile Include="QtMsBuild.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="QtVSException.cs" />
     <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="VcPropertyStorageProvider.cs" />
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
     <Compile Include="VisualStudio\IProjectTracker.cs" />
