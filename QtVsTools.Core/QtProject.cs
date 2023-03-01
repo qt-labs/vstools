@@ -63,7 +63,7 @@ namespace QtVsTools.Core
             envPro = project;
             dte = envPro.DTE;
             vcPro = envPro.Object as VCProject;
-            qtMsBuild = new QtMsBuildContainer(new VCPropertyStorageProvider());
+            qtMsBuild = new QtMsBuildContainer(new VcPropertyStorageProvider());
         }
 
         public VCProject VCProject => vcPro;
@@ -1257,89 +1257,63 @@ namespace QtVsTools.Core
         }
     }
 
-    public class VCPropertyStorageProvider : IPropertyStorageProvider
+    internal class VcPropertyStorageProvider : IPropertyStorageProvider
     {
-        string GetProperty(IVCRulePropertyStorage propertyStorage, string propertyName)
+        private string GetProperty(IVCRulePropertyStorage propertyStorage, string propertyName)
         {
-            if (propertyStorage == null)
+            return propertyStorage?.GetUnevaluatedPropertyValue(propertyName) ?? "";
+        }
+
+        public string GetProperty(object obj, string itemType, string propertyName)
+        {
+            switch (obj) {
+            case VCFileConfiguration { Tool: IVCRulePropertyStorage propertyStorage }:
+                return GetProperty(propertyStorage, propertyName);
+            case VCConfiguration vcConfiguration: {
+                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
+                return GetProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
+                    propertyName);
+            }
+            default:
                 return "";
-            return propertyStorage.GetUnevaluatedPropertyValue(propertyName);
+            }
         }
 
-        public string GetProperty(object propertyStorage, string itemType, string propertyName)
+        private static bool SetProperty(IVCRulePropertyStorage storage, string name, string value)
         {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
-                return GetProperty(
-                    vcFileConfiguration.Tool
-                    as IVCRulePropertyStorage,
-                    propertyName);
-            }
-            if (propertyStorage is VCConfiguration vcConfiguration) {
-                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
-                return GetProperty(vcConfiguration.Rules.Item(ruleName)
-                    as IVCRulePropertyStorage,
-                    propertyName);
-            }
-            return "";
+            if (storage?.GetUnevaluatedPropertyValue(name) != value)
+                storage?.SetPropertyValue(name, value);
+            return storage != null;
         }
 
-        static bool SetProperty(
-            IVCRulePropertyStorage propertyStorage,
-            string propertyName,
+        public bool SetProperty(object propertyStorage, string itemType, string propertyName,
             string propertyValue)
         {
-            if (propertyStorage == null)
-                return false;
-            if (propertyStorage.GetUnevaluatedPropertyValue(propertyName) != propertyValue)
-                propertyStorage.SetPropertyValue(propertyName, propertyValue);
-            return true;
-        }
-
-        public bool SetProperty(
-            object propertyStorage,
-            string itemType,
-            string propertyName,
-            string propertyValue)
-        {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
-                return SetProperty(
-                    vcFileConfiguration.Tool
-                    as IVCRulePropertyStorage,
-                    propertyName,
-                    propertyValue);
-            }
-            if (propertyStorage is VCConfiguration vcConfiguration) {
+            switch (propertyStorage) {
+            case VCFileConfiguration { Tool: IVCRulePropertyStorage storage }:
+                return SetProperty(storage, propertyName, propertyValue);
+            case VCConfiguration vcConfiguration:
                 var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
-                return SetProperty(
-                    vcConfiguration.Rules.Item(ruleName)
-                    as IVCRulePropertyStorage,
-                    propertyName,
-                    propertyValue);
+                return SetProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
+                    propertyName, propertyValue);
             }
             return false;
         }
 
-        static bool DeleteProperty(IVCRulePropertyStorage propertyStorage, string propertyName)
+        private static bool DeleteProperty(IVCRulePropertyStorage propertyStorage, string name)
         {
-            if (propertyStorage == null)
-                return false;
-            propertyStorage.DeleteProperty(propertyName);
-            return true;
+            propertyStorage?.DeleteProperty(name);
+            return propertyStorage != null;
         }
 
         public bool DeleteProperty(object propertyStorage, string itemType, string propertyName)
         {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration) {
-                return DeleteProperty(
-                    vcFileConfiguration.Tool
-                    as IVCRulePropertyStorage,
-                    propertyName);
-            }
-            if (propertyStorage is VCConfiguration vcConfiguration) {
+            switch (propertyStorage) {
+            case VCFileConfiguration { Tool: IVCRulePropertyStorage storage }:
+                return DeleteProperty(storage, propertyName);
+            case VCConfiguration vcConfiguration:
                 var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
-                return DeleteProperty(
-                    vcConfiguration.Rules.Item(ruleName)
-                    as IVCRulePropertyStorage,
+                return DeleteProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
                     propertyName);
             }
             return false;
@@ -1347,109 +1321,68 @@ namespace QtVsTools.Core
 
         public string GetConfigName(object propertyStorage)
         {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
-                return vcFileConfiguration.Name;
-            if (propertyStorage is VCConfiguration vcConfiguration)
-                return vcConfiguration.Name;
-            return "";
-        }
-
-        string GetItemType(VCFileConfiguration propertyStorage)
-        {
-            if (propertyStorage?.File is VCFile vcFile)
-                return vcFile.ItemType;
-            return "";
+            return propertyStorage switch
+            {
+                VCFileConfiguration vcFileConfiguration => vcFileConfiguration.Name,
+                VCConfiguration vcConfiguration => vcConfiguration.Name,
+                _ => ""
+            };
         }
 
         public string GetItemType(object propertyStorage)
         {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
-                return GetItemType(vcFileConfiguration);
-            return "";
-        }
-
-        string GetItemName(VCFileConfiguration propertyStorage)
-        {
-            if (propertyStorage?.File is VCFile vcFile)
-                return vcFile.Name;
-            return "";
+            return propertyStorage is VCFileConfiguration { File: VCFile vcFile }
+                ? vcFile.ItemType : "";
         }
 
         public string GetItemName(object propertyStorage)
         {
-            if (propertyStorage is VCFileConfiguration vcFileConfiguration)
-                return GetItemName(vcFileConfiguration);
-            return "";
-        }
-
-        object GetParentProject(VCConfiguration propertyStorage)
-        {
-            return propertyStorage?.project as VCProject;
-        }
-
-        object GetParentProject(VCFileConfiguration propertyStorage)
-        {
-            if (propertyStorage == null)
-                return null;
-            return GetParentProject(propertyStorage.ProjectConfiguration as VCConfiguration);
+            return propertyStorage is VCFileConfiguration { File: VCFile vcFile }
+                ? vcFile.Name : "";
         }
 
         public object GetParentProject(object propertyStorage)
         {
-            if (propertyStorage == null)
-                return null;
-            if (propertyStorage is VCFileConfiguration configuration)
-                return GetParentProject(configuration);
-            if (propertyStorage is VCConfiguration storage)
-                return GetParentProject(storage);
-            return null;
+            return propertyStorage switch
+            {
+                VCFileConfiguration { ProjectConfiguration: VCConfiguration projectConfiguration }
+                    => projectConfiguration.project as VCProject,
+                VCConfiguration storage => storage.project as VCProject,
+                _ => null
+            };
         }
 
-        object GetProjectConfiguration(VCProject project, string configName)
+        public object GetProjectConfiguration(object project, string configName)
         {
-            if (project == null)
+            var vcProject = project as VCProject;
+            if (vcProject?.Configurations is not IVCCollection configurations)
                 return null;
-            foreach (VCConfiguration projConfig in (IVCCollection)project.Configurations) {
+
+            foreach (VCConfiguration projConfig in configurations) {
                 if (projConfig.Name == configName)
                     return projConfig;
             }
             return null;
         }
 
-        public object GetProjectConfiguration(object project, string configName)
+        public IEnumerable<object> GetItems(object project, string itemType, string configName = "")
         {
-            if (project == null)
-                return null;
-            return GetProjectConfiguration(project as VCProject, configName);
-        }
-
-        IEnumerable<object> GetItems(VCProject project, string itemType, string configName = "")
-        {
-            if (project == null)
-                return new List<object>();
-            var allItems = project.GetFilesWithItemType(itemType) as IVCCollection;
             var items = new List<VCFileConfiguration>();
+            var vcProject = project as VCProject;
+            if (vcProject?.GetFilesWithItemType(itemType) is not IVCCollection allItems)
+                return items;
+
             foreach (VCFile vcFile in allItems) {
-                foreach (VCFileConfiguration vcFileConfig
-                    in vcFile.FileConfigurations as IVCCollection) {
-                    if (!string.IsNullOrEmpty(configName) && vcFileConfig.Name != configName)
+                if (vcFile.FileConfigurations is not IVCCollection fileConfigurations)
+                    continue;
+                foreach (VCFileConfiguration fileConfiguration in fileConfigurations) {
+                    if (!string.IsNullOrEmpty(configName) && fileConfiguration.Name != configName)
                         continue;
-                    items.Add(vcFileConfig);
+                    items.Add(fileConfiguration);
                 }
             }
             return items;
         }
-
-        public IEnumerable<object> GetItems(
-            object project,
-            string itemType,
-            string configName = "")
-        {
-            if (project == null)
-                return null;
-            return GetItems(project as VCProject, itemType, configName);
-        }
-
     }
 
     internal class QtCustomBuildTool
@@ -1464,7 +1397,7 @@ namespace QtVsTools.Core
         public QtCustomBuildTool(VCFileConfiguration config, QtMsBuildContainer container = null)
         {
             vcConfig = config;
-            qtMsBuild = container ?? new QtMsBuildContainer(new VCPropertyStorageProvider());
+            qtMsBuild = container ?? new QtMsBuildContainer(new VcPropertyStorageProvider());
 
             if (vcConfig?.File is VCFile vcFile) {
                 itemType = vcFile.ItemType switch
