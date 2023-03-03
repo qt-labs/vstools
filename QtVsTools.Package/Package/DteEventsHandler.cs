@@ -230,68 +230,79 @@ namespace QtVsTools
                     qtPro.RemoveMocStep(file);
             }
 
-            if (HelperFunctions.IsSourceFile(file.Name)) {
-                var moccedFileName = "moc_" + file.Name;
+            if (!HelperFunctions.IsSourceFile(file.Name))
+                return;
 
-                if (qtPro.IsMoccedFileIncluded(file)) {
-                    foreach (var moccedFile in qtPro.GetFilesFromProject(moccedFileName))
-                        QtProject.ExcludeFromAllBuilds(moccedFile);
-                } else {
-                    var moccedFiles = qtPro.GetFilesFromProject(moccedFileName);
-                    if (moccedFiles.Any()) {
-                        var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
-                        var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
-                        var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-                        foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files) {
-                            if (fileInFilter.Name == moccedFileName) {
-                                foreach (VCFileConfiguration config in (IVCCollection)fileInFilter.FileConfigurations) {
-                                    var exclude = true;
-                                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                    if (hasDifferentMocFilesPerConfig && hasDifferentMocFilesPerPlatform) {
-                                        var platform = vcConfig.Platform as VCPlatform;
-                                        if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower())
-                                            && fileInFilter.RelativePath.ToLower().Contains(platform.Name.ToLower()))
-                                            exclude = false;
-                                    } else if (hasDifferentMocFilesPerConfig) {
-                                        if (fileInFilter.RelativePath.ToLower().Contains(vcConfig.ConfigurationName.ToLower()))
-                                            exclude = false;
-                                    } else if (hasDifferentMocFilesPerPlatform) {
-                                        var platform = vcConfig.Platform as VCPlatform;
-                                        var platformName = platform.Name;
-                                        if (fileInFilter.RelativePath.ToLower().Contains(platformName.ToLower()))
-                                            exclude = false;
-                                    } else {
-                                        exclude = false;
-                                    }
-                                    if (config.ExcludedFromBuild != exclude)
-                                        config.ExcludedFromBuild = exclude;
-                                }
-                            }
+            var moccedFileName = "moc_" + file.Name;
+            var moccedFiles = qtPro.GetFilesFromProject(moccedFileName).ToList();
+            if (!moccedFiles.Any())
+                return;
+
+            if (qtPro.IsMoccedFileIncluded(file)) {
+                foreach (var moccedFile in moccedFiles)
+                    QtProject.ExcludeFromAllBuilds(moccedFile);
+                return;
+            }
+
+            var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
+            var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
+            var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
+            foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files) {
+                if (fileInFilter.Name != moccedFileName)
+                    continue;
+
+                foreach (VCFileConfiguration config in (IVCCollection)fileInFilter.FileConfigurations) {
+                    var exclude = true;
+                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
+                    var platform = vcConfig.Platform as VCPlatform;
+                    var fileInFilterLowered = fileInFilter.RelativePath.ToLower();
+
+                    switch (hasDifferentMocFilesPerConfig) {
+                    case true when hasDifferentMocFilesPerPlatform:
+                        if (fileInFilterLowered.Contains(vcConfig.ConfigurationName.ToLower())
+                            && fileInFilterLowered.Contains(platform.Name.ToLower()))
+                            exclude = false;
+                        break;
+                    case true:
+                        if (fileInFilterLowered.Contains(vcConfig.ConfigurationName.ToLower()))
+                            exclude = false;
+                        break;
+                    default:
+                        if (hasDifferentMocFilesPerPlatform) {
+                            var platformName = platform.Name;
+                            if (fileInFilterLowered.Contains(platformName.ToLower()))
+                                exclude = false;
+                        } else {
+                            exclude = false;
                         }
-                        foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters) {
-                            foreach (VCFile f in (IVCCollection)filt.Files) {
-                                if (f.Name == moccedFileName) {
-                                    foreach (VCFileConfiguration config in (IVCCollection)f.FileConfigurations) {
-                                        var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                                        var filterToLookFor = string.Empty;
-                                        if (hasDifferentMocFilesPerConfig)
-                                            filterToLookFor = vcConfig.ConfigurationName;
-                                        if (hasDifferentMocFilesPerPlatform) {
-                                            var platform = vcConfig.Platform as VCPlatform;
-                                            if (!string.IsNullOrEmpty(filterToLookFor))
-                                                filterToLookFor += '_';
-                                            filterToLookFor += platform.Name;
-                                        }
-                                        if (filt.Name == filterToLookFor) {
-                                            if (config.ExcludedFromBuild)
-                                                config.ExcludedFromBuild = false;
-                                        } else {
-                                            if (!config.ExcludedFromBuild)
-                                                config.ExcludedFromBuild = true;
-                                        }
-                                    }
-                                }
-                            }
+                        break;
+                    }
+                    if (config.ExcludedFromBuild != exclude)
+                        config.ExcludedFromBuild = exclude;
+                }
+            }
+
+            foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters) {
+                foreach (VCFile f in (IVCCollection)filt.Files) {
+                    if (f.Name != moccedFileName)
+                        continue;
+                    foreach (VCFileConfiguration config in (IVCCollection)f.FileConfigurations) {
+                        var vcConfig = config.ProjectConfiguration as VCConfiguration;
+                        var filterToLookFor = string.Empty;
+                        if (hasDifferentMocFilesPerConfig)
+                            filterToLookFor = vcConfig.ConfigurationName;
+                        if (hasDifferentMocFilesPerPlatform) {
+                            var platform = vcConfig.Platform as VCPlatform;
+                            if (!string.IsNullOrEmpty(filterToLookFor))
+                                filterToLookFor += '_';
+                            filterToLookFor += platform.Name;
+                        }
+                        if (filt.Name == filterToLookFor) {
+                            if (config.ExcludedFromBuild)
+                                config.ExcludedFromBuild = false;
+                        } else {
+                            if (!config.ExcludedFromBuild)
+                                config.ExcludedFromBuild = true;
                         }
                     }
                 }
