@@ -94,10 +94,9 @@ namespace QtVsTools.QtMsBuild
             await tracker.Initialized;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Request [{2}] {3}",
-                DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                configName, tracker.UnconfiguredProject.FullPath));
+                Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                    + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
+                    + $"Request [{configName}] {tracker.UnconfiguredProject.FullPath}");
             }
 
             var knownConfigs = await tracker.UnconfiguredProject.Services
@@ -113,7 +112,7 @@ namespace QtVsTools.QtMsBuild
                 }
             }
             if (configuredProject == null)
-                throw new ArgumentException(string.Format("Unknown configuration '{0}'.", configName));
+                throw new ArgumentException($"Unknown configuration '{configName}'.");
 
             BuildQueue.Enqueue(new QtProjectBuild
             {
@@ -162,31 +161,24 @@ namespace QtVsTools.QtMsBuild
                     await Task.Delay(100);
                 }
                 if (BuildQueue.TryDequeue(out QtProjectBuild buildRequest)) {
+                    var progressData = new TaskProgressData
+                    {
+                        ProgressText = "Refreshing IntelliSense data, "
+                            + $"{BuildQueue.Count} project(s) remaining...",
+                        CanBeCanceled = true
+                    };
                     if (dispatchStatus == null) {
                         dispatchStatus = StatusCenter.PreRegister(
                             new TaskHandlerOptions
                             {
                                 Title = "Qt VS Tools"
                             },
-                            new TaskProgressData
-                            {
-                                ProgressText = string.Format(
-                                    "Refreshing IntelliSense data, {0} project(s) remaining...",
-                                    BuildQueue.Count),
-                                CanBeCanceled = true
-                            })
-                            as ITaskHandler2;
+                            progressData
+                        ) as ITaskHandler2;
                         dispatchStatus.RegisterTask(new Task(() =>
                             throw new InvalidOperationException()));
                     } else {
-                        dispatchStatus.Progress.Report(
-                            new TaskProgressData
-                            {
-                                ProgressText = string.Format(
-                                    "Refreshing IntelliSense data, {0} project(s) remaining...",
-                                    BuildQueue.Count),
-                                CanBeCanceled = true
-                            });
+                        dispatchStatus.Progress.Report(progressData);
                     }
                     await buildRequest.BuildAsync();
                 }
@@ -245,19 +237,16 @@ namespace QtVsTools.QtMsBuild
                 flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                Messages.Print(string.Format(
-                    "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Build [{2}] {3}",
-                    DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                    ConfiguredProject.ProjectConfiguration.Name,
-                    UnconfiguredProject.FullPath));
+                Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                    + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
+                    + $"Build [{ConfiguredProject.ProjectConfiguration.Name}] "
+                    + $"{UnconfiguredProject.FullPath}");
                 Messages.Print("=== Targets");
                 foreach (var target in buildRequest.TargetNames)
-                    Messages.Print(string.Format("    {0}", target));
+                    Messages.Print($"    {target}");
                 Messages.Print("=== Properties");
-                foreach (var property in Properties) {
-                    Messages.Print(string.Format("    {0}={1}",
-                        property.Key, property.Value));
-                }
+                foreach (var property in Properties)
+                    Messages.Print($"    {property.Key}={property.Value}");
             }
 
             BuildResult result = null;
@@ -267,12 +256,10 @@ namespace QtVsTools.QtMsBuild
                         buildParams, buildRequest);
                 } catch (InvalidOperationException) {
                     if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
-                        Messages.Print(string.Format(
-                            "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] "
-                            + "Warning: Another build is in progress; waiting...",
-                            DateTime.Now,
-                            Thread.CurrentThread.ManagedThreadId,
-                            ConfiguredProject.ProjectConfiguration.Name));
+                        Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                        + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
+                        + $"[{ConfiguredProject.ProjectConfiguration.Name}] "
+                        + "Warning: Another build is in progress; waiting...");
                     }
                     await Task.Delay(3000);
                 }
@@ -306,16 +293,15 @@ namespace QtVsTools.QtMsBuild
                         }
                     }
                 }
-                Messages.Print(string.Format(
-                        "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] {3}\r\n{4}",
-                        DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                        ConfiguredProject.ProjectConfiguration.Name, resMsg, resInfo));
+                Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
+                    + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
+                    + $"[{ConfiguredProject.ProjectConfiguration.Name}] {resMsg}\r\n{resInfo}");
             }
 
             bool ok = false;
             if (result is { ResultsByTarget: null, OverallResult: BuildResultCode.Success }) {
-                Messages.Print(string.Format("{0}: background build FAILED!",
-                        Path.GetFileName(UnconfiguredProject.FullPath)));
+                Messages.Print($"== {Path.GetFileName(UnconfiguredProject.FullPath)}: "
+                    + "background build FAILED!");
             } else {
                 var checkResults = result.ResultsByTarget
                     .Where(x => Targets.Contains(x.Key))
@@ -331,18 +317,17 @@ namespace QtVsTools.QtMsBuild
 
         async Task BuildAsync()
         {
+            var path = Path.GetFileNameWithoutExtension(UnconfiguredProject.FullPath);
+
             if (LoggerVerbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(clear: !QtVsToolsPackage.Instance.Options.BuildDebugInformation, activate: true,
-                    text: string.Format(
-@"== {0}: starting build...
-  * Properties: {1}
-  * Targets: {2}
-",
-                    /*{0}*/ Path.GetFileNameWithoutExtension(UnconfiguredProject.FullPath),
-                    /*{1}*/ string.Join("", Properties
-                        .Select(property => string.Format(@"
-        {0} = {1}",     /*{0}*/ property.Key, /*{1}*/ property.Value))),
-                    /*{2}*/ string.Join(";", Targets)));
+                var properties = string.Join("", Properties.Select(property =>
+                    $"{Environment.NewLine}        {property.Key} = {property.Value}"));
+                Messages.Print(
+                      $"== {path}: starting build...{Environment.NewLine}"
+                    + $"  * Properties: {properties}{Environment.NewLine}"
+                    + $"  * Targets: {string.Join(";", Targets)}{Environment.NewLine}",
+                    clear: !QtVsToolsPackage.Instance.Options.BuildDebugInformation,
+                    activate: true);
             }
 
             var lockService = UnconfiguredProject.ProjectService.Services.ProjectLockService;
@@ -376,16 +361,14 @@ namespace QtVsTools.QtMsBuild
                     props?.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));
                 }
             } catch (Exception e) {
-                Messages.Print(string.Format("{0}: background build ERROR: {1}",
-                        Path.GetFileName(UnconfiguredProject.FullPath), e.Message));
+                Messages.Print($"{Path.GetFileName(UnconfiguredProject.FullPath)}: "
+                    + $"background build ERROR: {e.Message}");
             }
 
             if (LoggerVerbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(string.Format(
-@"
-== {0}: build {1}",
-                    Path.GetFileNameWithoutExtension(UnconfiguredProject.FullPath),
-                    ok ? "successful" : "ERROR"));
+                Messages.Print(
+                    $"{Environment.NewLine}== {path}: build {(ok ? "successful" : "ERROR")}"
+                );
             }
         }
     }
