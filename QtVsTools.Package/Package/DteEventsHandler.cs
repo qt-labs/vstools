@@ -38,37 +38,49 @@ namespace QtVsTools
             dte = _dte;
             var events = dte.Events as Events2;
 
-            buildEvents = events.BuildEvents;
-            buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
-            buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
+            buildEvents = events?.BuildEvents;
+            if (buildEvents != null) {
+                buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
+                buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
+            }
 
-            documentEvents = events.DocumentEvents;
-            documentEvents.DocumentSaved += DocumentSaved;
+            documentEvents = events?.DocumentEvents;
+            if (documentEvents != null)
+                documentEvents.DocumentSaved += DocumentSaved;
 
-            projectItemsEvents = events.ProjectItemsEvents;
-            projectItemsEvents.ItemAdded += ProjectItemsEvents_ItemAdded;
-            projectItemsEvents.ItemRemoved += ProjectItemsEvents_ItemRemoved;
-            projectItemsEvents.ItemRenamed += ProjectItemsEvents_ItemRenamed;
+            projectItemsEvents = events?.ProjectItemsEvents;
+            if (projectItemsEvents != null) {
+                projectItemsEvents.ItemAdded += ProjectItemsEvents_ItemAdded;
+                projectItemsEvents.ItemRemoved += ProjectItemsEvents_ItemRemoved;
+                projectItemsEvents.ItemRenamed += ProjectItemsEvents_ItemRenamed;
+            }
 
-            solutionEvents = events.SolutionEvents;
-            solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
-            solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
-            solutionEvents.Opened += SolutionEvents_Opened;
-            solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
+            solutionEvents = events?.SolutionEvents;
+            if (solutionEvents != null) {
+                solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
+                solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
+                solutionEvents.Opened += SolutionEvents_Opened;
+                solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
+            }
 
-            windowEvents = events.WindowEvents;
-            windowEvents.WindowActivated += WindowEvents_WindowActivated;
+            windowEvents = events?.WindowEvents;
+            if (windowEvents != null)
+                windowEvents.WindowActivated += WindowEvents_WindowActivated;
 
             var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
-            debugStartEvents = events.CommandEvents[debugCommandsGUID, 295];
-            debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
+            debugStartEvents = events?.CommandEvents[debugCommandsGUID, 295];
+            if (debugStartEvents != null)
+                debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
 
-            debugStartWithoutDebuggingEvents = events.CommandEvents[debugCommandsGUID, 368];
-            debugStartWithoutDebuggingEvents.BeforeExecute += DebugStartWithoutDebuggingEvents_BeforeExecute;
+            debugStartWithoutDebuggingEvents = events?.CommandEvents[debugCommandsGUID, 368];
+            if (debugStartWithoutDebuggingEvents != null)
+                debugStartWithoutDebuggingEvents.BeforeExecute +=
+                    DebugStartWithoutDebuggingEvents_BeforeExecute;
 
-            f1HelpEvents = events.CommandEvents[typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
+            f1HelpEvents = events?.CommandEvents[typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
                 (int)VSConstants.VSStd97CmdID.F1Help];
-            f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
+            if (f1HelpEvents != null)
+                f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
             InitializeVCProjects();
         }
