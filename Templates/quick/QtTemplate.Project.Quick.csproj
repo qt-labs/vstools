@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="qml.qrc" />
+    <Content Include="qt.cmake" />
     <None Include="quick.ico" />
     <None Include="quick.vcxproj">
       <SubType>Designer</SubType>
@@ -132,7 +133,6 @@
     <Content Include="main.cpp" />
     <Content Include="main.qml" />
     <Content Include="CMakeLists.txt" />
-    <Content Include="CMakePresets.json" />
     <Content Include="CMakeUserPresets.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

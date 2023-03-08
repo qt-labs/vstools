@@ -9,12 +9,18 @@ namespace QtVsTools.Wizards.ProjectWizard
 {
     using QtVsTools.Common;
     using Wizards.Common;
+    using static QtVsTools.Common.EnumExt;
 
     public class QuickWizard : ProjectTemplateWizard
     {
         LazyFactory Lazy { get; } = new LazyFactory();
 
         protected override Options TemplateType => Options.Application | Options.GUISystem;
+
+        protected enum Qml
+        {
+            [String("qml_prefix")] Prefix
+        }
 
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new WizardData
@@ -48,5 +54,10 @@ namespace QtVsTools.Wizards.ProjectWizard
                     CancelButtonEnabled = true,
                 }
             });
+
+        protected override void BeforeTemplateExpansion()
+        {
+            Parameter[Qml.Prefix] = Parameter[NewProject.SafeName].ToLower();
+        }
     }
 }

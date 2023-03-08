@@ -5,5 +5,13 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: "$projectname$"
+    Text {
+        anchors.fill: parent
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        font.bold: true
+        font.pointSize: 42
+        text: "Hello World!"
+    }
 }
