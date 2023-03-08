@@ -4,8 +4,10 @@
 ***************************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace QtVsTools
 {
@@ -20,6 +22,47 @@ namespace QtVsTools
         protected static object StaticCriticalSection { get; } = new object();
 
         protected object CriticalSection { get; } = new object();
+
+        protected static ConcurrentDictionary<string, SemaphoreSlim> Resources { get; } = new();
+
+        protected static SemaphoreSlim Alloc(string resourceName, int n = 1)
+        {
+            return Resources.GetOrAdd(resourceName, _ => new SemaphoreSlim(n, n));
+        }
+
+        protected static void Free(string resourceName)
+        {
+            if (!Resources.TryRemove(resourceName, out var resource))
+                return;
+            resource.Dispose();
+        }
+
+        protected static bool Get(string resourceName, int timeout = -1, int n = 1)
+        {
+            if (!Resources.TryGetValue(resourceName, out var resource))
+                resource = Alloc(resourceName, n);
+            if (timeout >= 0)
+                return resource.Wait(timeout);
+            resource.Wait();
+            return true;
+        }
+
+        protected static async Task<bool> GetAsync(string resourceName, int timeout = -1, int n = 1)
+        {
+            if (!Resources.TryGetValue(resourceName, out var resource))
+                resource = Alloc(resourceName, n);
+            if (timeout >= 0)
+                return await resource.WaitAsync(timeout);
+            await resource.WaitAsync();
+            return true;
+        }
+
+        protected static void Release(string resourceName)
+        {
+            if (!Resources.TryGetValue(resourceName, out var resource))
+                return;
+            resource.Release();
+        }
 
         protected T ThreadSafeInit<T>(Func<T> getValue, Action init)
             where T : class
@@ -50,20 +93,30 @@ namespace QtVsTools
 
         protected void EnterCriticalSection()
         {
-            StaticEnterCriticalSection(this);
+            EnterStaticCriticalSection(this);
         }
 
-        protected static void StaticEnterCriticalSection(Concurrent<TSubClass> _this = null)
+        protected bool TryEnterCriticalSection()
+        {
+            return TryEnterStaticCriticalSection(this);
+        }
+
+        protected static void EnterStaticCriticalSection(Concurrent<TSubClass> _this = null)
         {
             Monitor.Enter(_this?.CriticalSection ?? StaticCriticalSection);
         }
 
-        protected void LeaveCriticalSection()
+        protected static bool TryEnterStaticCriticalSection(Concurrent<TSubClass> _this = null)
         {
-            StaticLeaveCriticalSection(this);
+            return Monitor.TryEnter(_this?.CriticalSection ?? StaticCriticalSection);
         }
 
-        protected static void StaticLeaveCriticalSection(Concurrent<TSubClass> _this = null)
+        protected void LeaveCriticalSection()
+        {
+            LeaveStaticCriticalSection(this);
+        }
+
+        protected static void LeaveStaticCriticalSection(Concurrent<TSubClass> _this = null)
         {
             if (Monitor.IsEntered(_this?.CriticalSection ?? StaticCriticalSection))
                 Monitor.Exit(_this?.CriticalSection ?? StaticCriticalSection);
@@ -71,10 +124,10 @@ namespace QtVsTools
 
         protected void AbortCriticalSection()
         {
-            StaticAbortCriticalSection(this);
+            AbortStaticCriticalSection(this);
         }
 
-        protected static void StaticAbortCriticalSection(Concurrent<TSubClass> _this = null)
+        protected static void AbortStaticCriticalSection(Concurrent<TSubClass> _this = null)
         {
             while (Monitor.IsEntered(_this?.CriticalSection ?? StaticCriticalSection))
                 Monitor.Exit(_this?.CriticalSection ?? StaticCriticalSection);
@@ -141,6 +194,60 @@ namespace QtVsTools
     [DataContract]
     public class Concurrent : Concurrent<Concurrent>
     {
+    }
+
+    /// <summary>
+    /// Simplify use of synchronization features in classes that are not Concurrent-based.
+    /// </summary>
+    ///
+    public sealed class Synchronized : Concurrent<Synchronized>
+    {
+        private Synchronized() { }
+
+        public static new bool Atomic(Func<bool> test, Action action)
+        {
+            return StaticAtomic(test, action);
+        }
+
+        public static new bool Atomic(Func<bool> test, Action action, Action actionElse)
+        {
+            return StaticAtomic(test, action, actionElse);
+        }
+
+        public static new void ThreadSafe(Action action)
+        {
+            StaticThreadSafe(action);
+        }
+
+        public static new T ThreadSafe<T>(Func<T> func)
+        {
+            return StaticThreadSafe(func);
+        }
+
+        public static new SemaphoreSlim Alloc(string resourceName, int n = 1)
+        {
+            return Concurrent.Alloc(resourceName, n);
+        }
+
+        public static new void Free(string resourceName)
+        {
+            Concurrent.Free(resourceName);
+        }
+
+        public static new bool Get(string resourceName, int timeout = -1, int n = 1)
+        {
+            return Concurrent.Get(resourceName, timeout, n);
+        }
+
+        public static new async Task<bool> GetAsync(string resName, int timeout = -1, int n = 1)
+        {
+            return await Concurrent.GetAsync(resName, timeout, n);
+        }
+
+        public static new void Release(string resourceName)
+        {
+            Concurrent.Release(resourceName);
+        }
     }
 
     /// <summary>
