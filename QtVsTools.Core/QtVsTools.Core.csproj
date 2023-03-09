@@ -65,6 +65,7 @@
     <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="$(Name_Newtonsoft_Json)" Version="$(Version_Newtonsoft_Json)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
   </ItemGroup>
@@ -100,6 +101,12 @@
   // -->
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
+    <Compile Include="CMake\CMakeProject.Presets.cs" />
+    <Compile Include="CMake\CMakeProject.Records.cs" />
+    <Compile Include="CMake\CMakeProject.Events.cs" />
+    <Compile Include="CMake\CMakeProject.Format.cs" />
+    <Compile Include="CMake\CMakeProject.Messages.cs" />
+    <Compile Include="CMake\CMakeProject.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />

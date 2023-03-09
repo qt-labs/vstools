@@ -10,11 +10,14 @@ using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
     using Core;
+    using Core.CMake;
     using QtMsBuild;
+    using VisualStudio;
     using static Utils;
 
     class DteEventsHandler
@@ -67,6 +70,9 @@ namespace QtVsTools
             if (windowEvents != null)
                 windowEvents.WindowActivated += WindowEvents_WindowActivated;
 
+            if (VsShell.FolderWorkspace.OnActiveWorkspaceChanged != null)
+                VsShell.FolderWorkspace.OnActiveWorkspaceChanged += OnActiveWorkspaceChangedAsync;
+
             var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
             debugStartEvents = events?.CommandEvents[debugCommandsGUID, 295];
             if (debugStartEvents != null)
@@ -83,6 +89,16 @@ namespace QtVsTools
                 f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
             InitializeVCProjects();
+        }
+
+        private async Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            var workspace = VsShell.FolderWorkspace?.CurrentWorkspace;
+            if (workspace != null)
+                CMakeProject.Load(workspace);
+            else
+                CMakeProject.Unload();
         }
 
         private void WindowEvents_WindowActivated(Window gotFocus, Window lostFocus)
