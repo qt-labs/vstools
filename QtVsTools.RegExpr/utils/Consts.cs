@@ -20,6 +20,11 @@ namespace QtVsTools.SyntaxAnalysis
         public static RegExpr Word => CharWord.Repeat();
 
         /// <summary><![CDATA[
+        /// Equivalent to: [\b]
+        /// ]]></summary>
+        public static RegExprLiteral WordBoundary => new() { LiteralExpr = @"\b" };
+
+        /// <summary><![CDATA[
         /// Equivalent to: [\d]
         /// ]]></summary>
         public static CharClassLiteral CharDigit => new CharClassLiteral { LiteralChars = @"\d" };
@@ -125,7 +130,7 @@ namespace QtVsTools.SyntaxAnalysis
         public static RegExprLiteral CaseSensitive => new() { LiteralExpr = @"(?-i)" };
 
         /// <summary>
-        /// Applies the same whitespace skipping rules as tokens, but does not any capture text.
+        /// Applies the same whitespace skipping rules as tokens, but does not capture any text.
         /// </summary>
         public static RegExpr SkipWs => new Token();
 

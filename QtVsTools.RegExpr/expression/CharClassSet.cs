@@ -251,11 +251,8 @@ namespace QtVsTools.SyntaxAnalysis
                                     };
                                 break;
                             case Op.Plus:
-                                classSet = new CharClassSet
-                                    {
-                                        { context.SubSets.First() },
-                                        { context.SubSets.Last() }
-                                    };
+                                classSet = new CharClassSet();
+                                context.SubSets.ForEach(x => classSet.Add(x));
                                 break;
                             case Op.Minus:
                                 classSet = new CharClassSet

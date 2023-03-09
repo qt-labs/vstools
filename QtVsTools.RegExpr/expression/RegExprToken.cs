@@ -64,6 +64,10 @@ namespace QtVsTools.SyntaxAnalysis
                 Parents = new Dictionary<string, Token>();
             }
 
+            public Token(string id, bool skipWs, RegExpr expr)
+                : this(id, skipWs ? SkipWhitespace.Enable : SkipWhitespace.Disable, expr)
+            { }
+
             public Token(Enum id, RegExpr expr)
                 : this(id.ToString(), SkipWhitespace.Enable, expr)
             { }
