@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 using EnvDTE;
@@ -245,6 +246,8 @@ namespace QtVsTools
                 initTimer.Stop();
             }
 
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(CheckVersionsAsync);
+
             ///////////////////////////////////////////////////////////////////////////////////
             // Switch to main (UI) thread
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -255,6 +258,38 @@ namespace QtVsTools
             //
             if (Dte?.Solution?.IsOpen == true)
                 eventHandler.SolutionEvents_Opened();
+        }
+
+        private async Task CheckVersionsAsync()
+        {
+            Messages.Enabled = false;
+            var versions = Core.Instances.VersionManager.GetVersions();
+            var statusCenter = await VsServiceProvider
+                .GetServiceAsync<SVsTaskStatusCenterService, IVsTaskStatusCenterService>();
+            var status = statusCenter?.PreRegister(
+                    new TaskHandlerOptions
+                    {
+                        Title = "Qt VS Tools: Checking installed Qt versions..."
+                    },
+                    new TaskProgressData
+                    {
+                        ProgressText = $"{versions.Length} version(s)",
+                        CanBeCanceled = false,
+                        PercentComplete = 0
+                    })
+                    as ITaskHandler2;
+            status?.RegisterTask(new (() => throw new InvalidOperationException()));
+            for (int i = 0; i < versions.Length; ++i) {
+                status?.Progress.Report(new TaskProgressData
+                {
+                    ProgressText = $"{versions[i]} ({versions.Length - i - 1} remaining)",
+                    CanBeCanceled = false,
+                    PercentComplete = (100 * (i + 1)) / versions.Length
+                });
+                _ = Core.Instances.VersionManager.GetVersionInfo(versions[i]);
+            }
+            status?.Dismiss();
+            Messages.Enabled = true;
         }
 
         private bool TestVersionInstalled()
