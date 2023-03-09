@@ -29,6 +29,11 @@ namespace QtVsTools
     using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
+    public static partial class Instances
+    {
+        public static QtVsToolsPackage Package => QtVsToolsPackage.Instance;
+    }
+
     [Guid(QtVsToolsPackage.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -332,7 +337,7 @@ namespace QtVsTools
                 var qmlTextMate = Path.Combine(qtTmLanguagePath, "qml");
                 if (Directory.Exists(qmlTextMate))
                     Directory.Delete(qmlTextMate, true);
-            } catch {}
+            } catch { }
         }
 
         private void SetVisualizersPathProperty()

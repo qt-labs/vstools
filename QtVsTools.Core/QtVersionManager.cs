@@ -14,6 +14,11 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
+    public static partial class Instances
+    {
+        public static QtVersionManager VersionManager => QtVersionManager.The();
+    }
+
     /// <summary>
     /// Summary description for QtVersionManager.
     /// </summary>
