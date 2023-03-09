@@ -34,7 +34,7 @@ namespace QtVsTools
         {
             new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
             new TextSpacer(2),
-            "\u2014", // Em dash
+            Utils.EmDash,
             new TextSpacer(2),
             "You must select a Qt version to use for development."
         };
@@ -59,7 +59,7 @@ namespace QtVsTools
         {
             new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
             new TextSpacer(2),
-            "\u2014", // Em dash
+            Utils.EmDash,
             new TextSpacer(2),
             $"Version {Version.USER_VERSION} was recently installed."
         };
@@ -97,7 +97,7 @@ namespace QtVsTools
         {
                 new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2),
-                "\u2014", // Em dash
+                Utils.EmDash,
                 new TextSpacer(2),
                 "You are using some legacy code path of the Qt Visual Studio Tools. We strongly "
                     + "recommend updating your code base to use our latest development version."

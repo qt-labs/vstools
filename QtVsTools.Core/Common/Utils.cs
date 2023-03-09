@@ -11,5 +11,6 @@ namespace QtVsTools
     {
         public static StringComparison IgnoreCase => StringComparison.OrdinalIgnoreCase;
         public static StringComparer CaseIgnorer => StringComparer.OrdinalIgnoreCase;
+        public static string EmDash => "\u2014";
     }
 }

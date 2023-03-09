@@ -18,7 +18,7 @@ namespace QtVsTools.VisualStudio
     {
         protected abstract ImageMoniker Icon { get; }
         protected abstract TextSpan[] Text { get; }
-        protected abstract Hyperlink[] Hyperlinks { get; }
+        protected virtual Hyperlink[] Hyperlinks => Array.Empty<Hyperlink>();
 
         protected class TextSpan
         {
