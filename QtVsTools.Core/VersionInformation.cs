@@ -240,5 +240,7 @@ namespace QtVsTools.Core
                 throw new QtVSException("Error: unexpected result of qmake query");
             }
         }
+
+        public string InstallPrefix => qmakeQuery["QT_INSTALL_PREFIX"];
     }
 }
