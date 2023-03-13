@@ -21,25 +21,9 @@ def main():
         return
     test.verify(checkSelectQtLabel(),
                 "Warning about having to select a Qt version is being shown?")
-    # Add the Qt versions
-    openVsToolsMenu(version)
-    mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
-    if not test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 1,
-                        "The table should have exactly one line before adding Qt versions."):
-        test.fatal("Unexpected table shown. Probably there is either an unexpected configuration "
-                   "or the UI changed.")
-        clickButton(waitForObject(names.options_Cancel_Button))
+    if not configureQtVersions(version, qtDirs, True):
         closeMainWindow()
         return
-    for i, qtDir in enumerate(qtDirs):
-        mouseClick(waitForObject(tableCell(1, i)))
-        typeToEdit(tableCellEdit(3, i), qtDir["path"])
-        typeToEdit(tableCellEdit(1, i), qtDir["name"])
-        test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, i + 2,
-                     "The table should have %d lines after adding %d Qt versions."
-                     % (i + 2, i + 1))
-    clickButton(waitForObject(names.options_OK_Button))
-    waitFor("not object.exists(names.options_Dialog)")
     test.verify(not checkSelectQtLabel(),
                 "Warning about having to select a Qt version disappeared?")
     # Sort qtDirs by name because that's the order in which they'll be displayed
@@ -77,18 +61,3 @@ def checkSelectQtLabel():
         return True
     except:
         return False
-
-
-def tableCell(col, row):
-    return {"column": col, "container": names.dataGrid_Table, "row": row, "type": "TableCell"}
-
-
-def tableCellEdit(col, row):
-    return {"container": tableCell(col, row), "type": "Edit"}
-
-
-def typeToEdit(editId, text):
-    edit = waitForObject(editId)
-    mouseClick(edit)
-    type(edit, text)
-    waitFor("waitForObject(editId).text == text")
