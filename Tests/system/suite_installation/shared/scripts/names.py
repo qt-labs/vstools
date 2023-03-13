@@ -11,7 +11,6 @@ pART_Popup_Manage_Extensions_MenuItem = {"container": globalnames.pART_Popup_Pop
 manage_Extensions_Window = {"text": Wildcard("*Extensions*"), "type": "Window"}
 extensionManager_UI_InstalledExtItem_Qt_Label = {"text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
 manage_Extensions_Close_Button = {"container": manage_Extensions_Window, "text": "Close", "type": "Button"}
-tools_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "Tools", "type": "MenuItem"}
 pART_Popup_Extensions_and_Updates_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "Extensions and Updates...", "type": "MenuItem"}
 extensions_and_Updates_lvw_Extensions_ListView = {"container": manage_Extensions_Window, "name": "lvw_Extensions", "type": "ListView"}
 lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem = {"container": extensions_and_Updates_lvw_Extensions_ListView, "text": "Microsoft.VisualStudio.ExtensionManager.UI.InstalledExtensionItem", "type": "ListViewItem"}
