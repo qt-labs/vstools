@@ -30,6 +30,7 @@ def typeToEdit(editId, text):
     edit = waitForObject(editId)
     mouseClick(edit)
     type(edit, text)
+    snooze(1)
     waitFor("waitForObject(editId).text == text")
 
 
