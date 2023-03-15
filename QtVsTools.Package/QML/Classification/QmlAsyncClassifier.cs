@@ -40,10 +40,9 @@ namespace QtVsTools.Qml.Classification
             if (owner == null) {
                 owner = client;
                 return AccessType.ReadWrite;
-            } else {
-                LeaveCriticalSection();
-                return AccessType.ReadOnly;
             }
+            LeaveCriticalSection();
+            return AccessType.ReadOnly;
         }
 
         public void WriteComplete(object client)
@@ -436,7 +435,7 @@ namespace QtVsTools.Qml.Classification
                     int comparison = comparer.Compare(list[adjustedIndex], value);
                     if (comparison == 0)
                         return adjustedIndex;
-                    else if (comparison < 0)
+                    if (comparison < 0)
                         lower = adjustedIndex + 1;
                     else
                         upper = adjustedIndex - 1;

@@ -142,23 +142,19 @@ namespace QtVsTools.QtMsBuild.Tasks
 
                 try {
                     var proc = Process.Start(workItem.ProcessStartInfo);
-                    proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+                    proc.OutputDataReceived += (sender, e) =>
                     {
-                        if (!string.IsNullOrEmpty(e.Data))
-                            Log.LogMessage(MessageImportance.High, string.Join(" ", new[]
-                            {
-                                (QtDebug ? "[" + (((Process)sender).Id.ToString()) + "]" : ""),
-                                e.Data
-                            }));
+                        if (!string.IsNullOrEmpty(e.Data)) {
+                            Log.LogMessage(MessageImportance.High, string.Join(" ",
+                                QtDebug ? "[" + ((Process)sender).Id + "]" : "", e.Data));
+                        }
                     };
-                    proc.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+                    proc.ErrorDataReceived += (sender, e) =>
                     {
-                        if (!string.IsNullOrEmpty(e.Data))
-                            Log.LogMessage(MessageImportance.High, string.Join(" ", new[]
-                            {
-                                (QtDebug ? "[" + (((Process)sender).Id.ToString()) + "]" : ""),
-                                e.Data
-                            }));
+                        if (!string.IsNullOrEmpty(e.Data)) {
+                            Log.LogMessage(MessageImportance.High, string.Join(" ",
+                                QtDebug ? "[" + ((Process)sender).Id + "]" : "", e.Data));
+                        }
                     };
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();

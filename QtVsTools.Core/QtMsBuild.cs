@@ -162,9 +162,8 @@ namespace QtVsTools.Core.QtMsBuild
                 if (oldChange.GroupKey == newChange.GroupKey) {
                     oldChange.CopyFrom(newChange);
                     return;
-                } else {
-                    RemoveChange(oldChange);
                 }
+                RemoveChange(oldChange);
             }
 
             if (!itemPropertyChangesGrouped.TryGetValue(newChange.GroupKey, out var changeGroup)) {
@@ -620,7 +619,7 @@ namespace QtVsTools.Core.QtMsBuild
             var escape = (name.Length == 1) ? "-" : "--";
 
             if (!string.IsNullOrEmpty(option.ValueName)) {
-                foreach (var value in values.Split(new char[] { ';' })) {
+                foreach (var value in values.Split(';')) {
                     commandLine.AppendFormat(
                         useQuotes ? " {0}{1} \"{2}\"" : " {0}{1} {2}", escape, name, value);
                 }

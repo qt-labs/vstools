@@ -287,13 +287,12 @@ namespace QtVsTools
         {
             if (typeof(T).IsValueType)
                 return value.Equals(default(T));
-            else
-                return value == null;
+            return value == null;
         }
 
         public void Release()
         {
-            Set(default(T));
+            Set(default);
         }
 
         public static implicit operator T(Exclusive<T> _this)

@@ -221,15 +221,16 @@ namespace QtVsTools.SyntaxAnalysis
                     while (stack.Any()) {
                         var context = stack.Pop();
                         expr = context.Expr;
-                        if (expr == null) {
+                        if (expr == null)
                             continue;
-                        } else if (context.Children == null) {
+                        if (context.Children == null) {
                             context.Children = new Queue<Expr>();
                             if (expr.Factors != null && expr.Factors.Any())
                                 expr.Factors.ForEach(x => context.Children.Enqueue(x));
                             stack.Push(context);
                             continue;
-                        } else if (context.Children.Any()) {
+                        }
+                        if (context.Children.Any()) {
                             expr = context.Children.Dequeue();
                             stack.Push(context);
                             stack.Push(expr);

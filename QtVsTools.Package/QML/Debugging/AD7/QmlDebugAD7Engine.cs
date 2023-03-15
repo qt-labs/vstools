@@ -81,9 +81,9 @@ namespace QtVsTools.Qml.Debug.AD7
                 return VSConstants.E_FAIL;
 
             var env = bstrEnv.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => x.Split(new[] { '=' }))
+                .Select(x => x.Split('='))
                 .Where(x => x.Length >= 2)
-                .ToDictionary(x => x[0], x => x[1].Split(new[] { ';' }));
+                .ToDictionary(x => x[0], x => x[1].Split(';'));
 
             if (env.ContainsKey("QTRCC")) {
                 foreach (var rccFile in env["QTRCC"])

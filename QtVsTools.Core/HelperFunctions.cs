@@ -961,10 +961,7 @@ namespace QtVsTools.Core
             try {
                 return Path
                 .GetFullPath(path)
-                .TrimEnd(new char[] {
-                    Path.DirectorySeparatorChar,
-                    Path.AltDirectorySeparatorChar
-                });
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             } catch {
                 return "";
             }
@@ -983,16 +980,11 @@ namespace QtVsTools.Core
                 if (canonicalPath.StartsWith(currentCanonical, IgnoreCase)) {
                     return canonicalPath
                     .Substring(currentCanonical.Length)
-                    .TrimStart(new char[] {
-                        Path.DirectorySeparatorChar,
-                        Path.AltDirectorySeparatorChar
-                    });
-                } else {
-                    return canonicalPath;
+                    .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 }
-            } else {
                 return canonicalPath;
             }
+            return canonicalPath;
         }
 
         public static bool PathIsRelativeTo(string path, string subPath)

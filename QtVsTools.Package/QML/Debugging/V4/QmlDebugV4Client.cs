@@ -73,15 +73,13 @@ namespace QtVsTools.Qml.Debug.V4
 
             QtVsToolsPackage.Instance.JoinableTaskFactory.Run(async () =>
             {
-                await Task.WhenAny(new[]
-                {
+                await Task.WhenAny(
                     // Try to start client thread
                     // Unblock if thread was abruptly terminated (e.g. DLL not found)
                     clientThread = Task.Run(ClientThread),
 
                     // Unblock if client was created (i.e. client thread is running)
-                    Task.Run(() => clientCreated.WaitOne())
-                });
+                    Task.Run(() => clientCreated.WaitOne()));
             });
 
             if (State == DebugClientState.Unavailable) {

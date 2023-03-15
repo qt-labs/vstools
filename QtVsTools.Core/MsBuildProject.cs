@@ -965,7 +965,7 @@ namespace QtVsTools.Core
                     QtVSIPSettings.GetRccDirectory(),
                     QtVSIPSettings.GetUicDirectory(),
                 };
-            foreach (var includePath in includePathList.Split(new char[] { ';' }))
+            foreach (var includePath in includePathList.Split(';'))
                 includes.Add(includePath);
             return string.Join<string>(";", includes);
         }

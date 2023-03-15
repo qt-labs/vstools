@@ -244,14 +244,13 @@ namespace QtVsTools.Json
 
                     tryObj.InitializeObject(initArgs);
 
-                    // Test compatbility
+                    // Test compatibility
                     var isCompatible = subClass.Prototype.IsCompatible(tryObj);
 
-                    if (isCompatible == false) {
-                        // Incompatible
-                        continue;
+                    if (isCompatible == false)
+                        continue; // Incompatible
 
-                    } else if (isCompatible == true) {
+                    if (isCompatible == true) {
                         // Compatible
 
                         if (!subClass.SubTypes.Any())
@@ -263,15 +262,13 @@ namespace QtVsTools.Json
                             .ForEach(x => toDo.Enqueue(x));
                         continue;
 
-                    } else {
-                        // Maybe has compatible derived class
+                    }
 
-                        if (subClass.SubTypes.Any()) {
-                            // Non-leaf node; continue searching
-                            PotentialSubClasses(subClass, tryObj)
-                                .ForEach(x => toDo.Enqueue(x));
-                        }
-                        continue;
+                    // Maybe has compatible derived class
+                    if (subClass.SubTypes.Any()) {
+                        // Non-leaf node; continue searching
+                        PotentialSubClasses(subClass, tryObj)
+                            .ForEach(x => toDo.Enqueue(x));
                     }
                 }
 

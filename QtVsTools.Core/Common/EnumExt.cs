@@ -125,7 +125,7 @@ namespace QtVsTools.Common
         public static IEnumerable<T> GetValues<T>(Type enumType)
         {
             return Enum.GetValues(enumType).OfType<Enum>()
-                .Select((Enum value) => value.Cast<T>());
+                .Select(value => value.Cast<T>());
         }
 
         /// <summary>
@@ -146,10 +146,9 @@ namespace QtVsTools.Common
             Type outputType = typeof(T);
             if (outputType.IsAssignableFrom(enumType) || outputType.IsAssignableFrom(baseType))
                 return (T)(object)value;
-            else if (outputType == typeof(string))
+            if (outputType == typeof(string))
                 return (T)(object)Enum.GetName(value.GetType(), value);
-            else
-                return default(T);
+            return default;
         }
 
         /// <summary>

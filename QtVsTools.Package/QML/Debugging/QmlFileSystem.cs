@@ -117,7 +117,7 @@ namespace QtVsTools.Qml.Debug
             //  - to enforce this, the "qrc:" prefix is removed, as well as any leading '/'
             //  - then the "normalized" prefix "qrc:///" is added
             if (!qrcPath.StartsWith("qrc:"))
-                return default(QmlFile);
+                return default;
             qrcPath = qrcPath.Substring("qrc:".Length);
 
             while (!string.IsNullOrEmpty(qrcPath) && qrcPath[0] == Path.AltDirectorySeparatorChar)
@@ -136,7 +136,7 @@ namespace QtVsTools.Qml.Debug
                 filePath = filePath.Substring(1);
 
             if (!File.Exists(filePath))
-                return default(QmlFile);
+                return default;
 
             return new QmlFile
             {
@@ -151,7 +151,7 @@ namespace QtVsTools.Qml.Debug
             try {
                 fullPath = Path.GetFullPath(filePath).ToUpper();
             } catch {
-                return default(QmlFile);
+                return default;
             }
 
             if (files.TryGetValue(fullPath, out QmlFile file))
@@ -170,10 +170,9 @@ namespace QtVsTools.Qml.Debug
             {
                 if (path.StartsWith("qrc:", IgnoreCase))
                     return FromQrcPath(path.ToLower());
-                else if (path.StartsWith("file:", IgnoreCase))
+                if (path.StartsWith("file:", IgnoreCase))
                     return FromFileUrl(path);
-                else
-                    return FromFilePath(path.ToUpper());
+                return FromFilePath(path.ToUpper());
             }
         }
     }

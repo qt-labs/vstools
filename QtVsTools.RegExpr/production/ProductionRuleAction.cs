@@ -40,23 +40,22 @@ namespace QtVsTools.SyntaxAnalysis
                 if (Assert == null)
                     return true;
 
-                else if (Assert is CaptureCallback.Predicate)
+                if (Assert is CaptureCallback.Predicate)
                     return ((CaptureCallback.Predicate)Assert)(value);
 
-                else if (Assert is UnaryCallback.Predicate<T1>)
+                if (Assert is UnaryCallback.Predicate<T1>)
                     return ((UnaryCallback.Predicate<T1>)Assert)(x);
 
-                else if (Assert is UnaryCallback.Predicate<T, T1>)
+                if (Assert is UnaryCallback.Predicate<T, T1>)
                     return ((UnaryCallback.Predicate<T, T1>)Assert)(prod, x);
 
-                else if (Assert is BinaryCallback.Predicate<T1, T2>)
+                if (Assert is BinaryCallback.Predicate<T1, T2>)
                     return ((BinaryCallback.Predicate<T1, T2>)Assert)(x, y);
 
-                else if (Assert is BinaryCallback.Predicate<T, T1, T2>)
+                if (Assert is BinaryCallback.Predicate<T, T1, T2>)
                     return ((BinaryCallback.Predicate<T, T1, T2>)Assert)(prod, x, y);
 
-                else
-                    throw new InvalidOperationException("Incompatible assert callback.");
+                throw new InvalidOperationException("Incompatible assert callback.");
             }
 
             void RunAction(ref T prod, string value, T1 x, T2 y)
@@ -64,7 +63,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (Action == null)
                     throw new InvalidOperationException("Missing action callback.");
 
-                else if (Action is CaptureCallback.Create<T>)
+                if (Action is CaptureCallback.Create<T>)
                     prod = ((CaptureCallback.Create<T>)Action)(value);
 
                 else if (Action is UnaryCallback.Create<T, T1>)
@@ -97,7 +96,7 @@ namespace QtVsTools.SyntaxAnalysis
 
             bool GetOperand<TOperand>(out TOperand x, object[] operands, ref int idx)
             {
-                x = default(TOperand);
+                x = default;
                 if (typeof(TOperand) == typeof(Void))
                     return true;
                 if (operands.Length <= idx)

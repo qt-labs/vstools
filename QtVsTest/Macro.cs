@@ -913,10 +913,9 @@ namespace QtVsTest.Macros
         {
             if (obj == null)
                 return true;
-            else if (obj.GetType().IsValueType)
+            if (obj.GetType().IsValueType)
                 return obj.Equals(Activator.CreateInstance(obj.GetType()));
-            else
-                return false;
+            return false;
         }
 
         void InitGlobals()

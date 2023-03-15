@@ -74,8 +74,7 @@ namespace QtVsTools.SyntaxAnalysis
                     if (!match.Success || match.Length == 0) {
                         if (nodes.Any())
                             continue;
-                        else
-                            throw new ParseErrorException();
+                        throw new ParseErrorException();
                     }
 
                     // Flat list of parse-tree nodes, from Regex captures

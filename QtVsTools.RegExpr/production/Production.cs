@@ -43,7 +43,8 @@ namespace QtVsTools.SyntaxAnalysis
                         node.OperatorStack = new Stack<ParseTree.Node>();
                         stack.Push(node);
                         continue;
-                    } else if (node.TokenStream.Any()) {
+                    }
+                    if (node.TokenStream.Any()) {
                         var nextNode = node.TokenStream.Dequeue();
                         stack.Push(node);
                         stack.Push(nextNode);

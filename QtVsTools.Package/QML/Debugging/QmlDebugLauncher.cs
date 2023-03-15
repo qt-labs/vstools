@@ -87,11 +87,10 @@ namespace QtVsTools.Qml.Debug
             if (riidEvent == typeof(IDebugProgramDestroyEvent2).GUID) {
                 ExcludedProcesses.Remove(procGuid);
                 return VSConstants.S_OK;
-            } else if (ExcludedProcesses.Contains(procGuid)) {
-                return VSConstants.S_OK;
-            } else {
-                ExcludedProcesses.Add(procGuid);
             }
+            if (ExcludedProcesses.Contains(procGuid))
+                return VSConstants.S_OK;
+            ExcludedProcesses.Add(procGuid);
 
             if (pEvent is not (IDebugLoadCompleteEvent2 or IDebugThreadCreateEvent2))
                 return VSConstants.S_OK;

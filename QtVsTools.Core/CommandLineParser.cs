@@ -158,10 +158,10 @@ namespace QtVsTools.Core.CommandLine
             if (nameHash.ContainsKey(optionName)) {
                 optionNames.Add(optionName);
                 return true;
-            } else {
-                unknownOptionNames.Add(optionName);
-                return false;
             }
+
+            unknownOptionNames.Add(optionName);
+            return false;
         }
 
         bool ParseOptionValue(string optionName, string argument,
@@ -286,7 +286,7 @@ namespace QtVsTools.Core.CommandLine
                     positionalArgumentList.Add(argument);
                 } else if (argument.StartsWith(doubleDashString)) {
                     if (argument.Length > 2) {
-                        var optionName = argument.Substring(2).Split(new char[] { assignChar })[0];
+                        var optionName = argument.Substring(2).Split(assignChar)[0];
                         if (RegisterFoundOption(optionName)) {
                             if (!ParseOptionValue(
                                 optionName,
@@ -373,7 +373,7 @@ namespace QtVsTools.Core.CommandLine
                                 }
                             }
                         }
-                        optionName = argument.Substring(1).Split(new char[] { assignChar })[0];
+                        optionName = argument.Substring(1).Split(assignChar)[0];
                         if (RegisterFoundOption(optionName)) {
                             if (!ParseOptionValue(
                                 optionName,

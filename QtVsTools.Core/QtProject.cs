@@ -404,7 +404,7 @@ namespace QtVsTools.Core
                     var cbtTool = HelperFunctions.GetCustomBuildTool(mocConfig);
                     if (cbtTool == null)
                         continue;
-                    foreach (var output in cbtTool.Outputs.Split(new char[] { ';' })) {
+                    foreach (var output in cbtTool.Outputs.Split(';')) {
                         string outputExpanded = output;
                         if (!HelperFunctions.ExpandString(ref outputExpanded, mocConfig))
                             continue;
@@ -1140,7 +1140,7 @@ namespace QtVsTools.Core
         public static void DefineQtQmlDebug(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
-                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
                 .Contains("QT_QML_DEBUG") == false)
                 .Select(x => new
                 {
@@ -1157,13 +1157,13 @@ namespace QtVsTools.Core
         public static void UndefineQtQmlDebug(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
-                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(new char[] { ';' })
+                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
                 .Contains("QT_QML_DEBUG") == true)
                 .Select(x => new
                 {
                     x.Cpp,
                     Macros = x.Cpp.GetUnevaluatedPropertyValue("PreprocessorDefinitions")
-                        .Split(new char[] { ';' }).ToList()
+                        .Split(';').ToList()
                 });
 
             foreach (var config in configs) {
@@ -1209,7 +1209,7 @@ namespace QtVsTools.Core
                 config.Self.SetUserPropertyValue("QmlDebug", "-qmljsdebugger=$(QmlDebugSettings)");
 
                 config.Self.SetUserPropertyValue("LocalDebuggerCommandArguments",
-                    string.Join(" ", new[] { config.Args, "$(QmlDebug)" }).Trim());
+                    string.Join(" ", config.Args, "$(QmlDebug)").Trim());
             }
         }
 
@@ -1403,7 +1403,7 @@ namespace QtVsTools.Core
                 return null;
             if (propertyStorage is VCFileConfiguration configuration)
                 return GetParentProject(configuration);
-            else if (propertyStorage is VCConfiguration storage)
+            if (propertyStorage is VCConfiguration storage)
                 return GetParentProject(storage);
             return null;
         }
