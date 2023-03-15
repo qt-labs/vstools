@@ -49,7 +49,7 @@ namespace QtVsTools.Qml.Debug.V4
         private bool Initialize(IMessageEventSink sink)
         {
             this.sink = sink;
-            eventHandlingThread = Task.Run(() => EventHandlingThread());
+            eventHandlingThread = Task.Run(EventHandlingThread);
             client = DebugClient.Create(this);
             return client != null;
         }

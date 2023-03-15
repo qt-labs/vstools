@@ -72,8 +72,7 @@ namespace QtVsTools.VisualStudio
         {
             static LazyFactory StaticLazy { get; } = new LazyFactory();
             static IVsInfoBarUIFactory Factory => StaticLazy.Get(() =>
-                Factory, () => VsServiceProvider
-                    .GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>());
+                Factory, VsServiceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>);
 
             private IVsInfoBarUIElement UIElement { get; set; }
             private uint eventNotificationCookie;

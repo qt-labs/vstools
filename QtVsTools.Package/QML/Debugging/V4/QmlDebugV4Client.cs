@@ -77,7 +77,7 @@ namespace QtVsTools.Qml.Debug.V4
                 {
                     // Try to start client thread
                     // Unblock if thread was abruptly terminated (e.g. DLL not found)
-                    clientThread = Task.Run(() => ClientThread()),
+                    clientThread = Task.Run(ClientThread),
 
                     // Unblock if client was created (i.e. client thread is running)
                     Task.Run(() => clientCreated.WaitOne())

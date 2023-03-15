@@ -27,7 +27,7 @@ namespace QtVsTools.Common
             var lazyProperty = lazyPropertyExpr?.Member as PropertyInfo;
             if (lazyProperty == null)
                 throw new ArgumentException("Invalid property reference", "propertyRef");
-            var lazyObj = Objs.GetOrAdd(lazyProperty, (_) => new Lazy<object>(() => initFunc()));
+            var lazyObj = Objs.GetOrAdd(lazyProperty, _ => new Lazy<object>(initFunc));
             return lazyObj.Value as T;
         }
     }

@@ -140,7 +140,7 @@ namespace QtVsTools.Qml.Debug
             if (!Started) {
                 Running = Started = true;
                 LeaveCriticalSection();
-                _ = Task.Run(() => ConnectToDebugger());
+                _ = Task.Run(ConnectToDebugger);
 
             } else if (!Running) {
                 Running = true;
@@ -455,12 +455,12 @@ namespace QtVsTools.Qml.Debug
         static RegExpr RxPort =>
             "port:" & new Token(TokenId.Port, CharDigit.Repeat(atLeast: 1))
             {
-                new Rule<ushort> { Capture(token => ushort.Parse(token)) }
+                new Rule<ushort> { Capture(ushort.Parse) }
             }
             & (
                 "," & new Token(TokenId.MaxPort, CharDigit.Repeat(atLeast: 1))
                 {
-                    new Rule<ushort> { Capture(token => ushort.Parse(token)) }
+                    new Rule<ushort> { Capture(ushort.Parse) }
                 }
             ).Optional();
 

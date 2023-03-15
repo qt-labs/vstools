@@ -416,7 +416,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             ///////////////////////////////////////////////////////////////////////////////////////
             // Globals: Linux
             //
-            foreach (IWizardConfiguration c in Configurations.Where(c => IsLinux(c))) {
+            foreach (IWizardConfiguration c in Configurations.Where(IsLinux)) {
                 xml.AppendLine(string.Format(@"
     <ApplicationType Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">Linux</ApplicationType>
     <ApplicationTypeRevision Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">1.0</ApplicationTypeRevision>

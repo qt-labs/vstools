@@ -889,7 +889,7 @@ namespace QtVsTest.Macros
             var t = Stopwatch.StartNew();
             object value;
             try {
-                value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+                value = await Task.Run(expr).WithTimeout(tRemaining);
             } catch {
                 value = null;
             }
@@ -898,7 +898,7 @@ namespace QtVsTest.Macros
             while (!ok && (tRemaining = (tMax - t.Elapsed)) > TimeSpan.Zero) {
                 await Task.Delay(10);
                 try {
-                    value = await Task.Run(() => expr()).WithTimeout(tRemaining);
+                    value = await Task.Run(expr).WithTimeout(tRemaining);
                 } catch {
                     value = null;
                 }

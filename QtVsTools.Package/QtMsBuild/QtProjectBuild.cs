@@ -48,8 +48,8 @@ namespace QtVsTools.QtMsBuild
             RequestTimer, () => new ConcurrentStopwatch());
 
         static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
-            StatusCenter, () => VsServiceProvider
-                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+            StatusCenter, VsServiceProvider
+                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
         EnvDTE.Project Project { get; set; }
         VCProject VcProject { get; set; }

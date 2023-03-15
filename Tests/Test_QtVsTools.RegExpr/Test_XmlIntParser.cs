@@ -52,7 +52,7 @@ namespace QtVsTools.Test.RegExpr
             {
                 new Rule<int>
                 {
-                    Capture(value => int.Parse(value))
+                    Capture(int.Parse)
                 }
             };
 

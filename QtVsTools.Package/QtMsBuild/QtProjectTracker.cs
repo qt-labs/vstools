@@ -39,8 +39,8 @@ namespace QtVsTools.QtMsBuild
             InitQueue, () => new PunisherQueue<QtProjectTracker>());
 
         static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
-            StatusCenter, () => VsServiceProvider
-                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>());
+            StatusCenter, VsServiceProvider
+                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
         static Task InitDispatcher { get; set; }
         static ITaskHandler2 InitStatus { get; set; }

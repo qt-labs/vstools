@@ -65,7 +65,7 @@ namespace QtVsTools.SyntaxAnalysis
             if (count < 2 || stack.Count < count)
                 return;
             var items = Enumerable.Repeat(stack, count).Select(s => s.Pop()).ToList();
-            items.ForEach(item => stack.Push(item));
+            items.ForEach(stack.Push);
         }
     }
 }

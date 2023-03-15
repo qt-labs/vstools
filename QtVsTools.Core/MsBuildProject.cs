@@ -219,7 +219,7 @@ namespace QtVsTools.Core
                 if (_ProjectFormatVersion == null) {
                     var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
                     {
-                        new Rule<int> { Capture(value => int.Parse(value)) }
+                        new Rule<int> { Capture(int.Parse) }
                     };
                     try {
                         _ProjectFormatVersion = expr.Render();
@@ -568,13 +568,13 @@ namespace QtVsTools.Core
 
                     // Qt module includes, to remove from compiler include directories property
                     moduleIncludePaths.UnionWith(
-                        module.IncludePath.Select(x => Path.GetFileName(x)));
+                        module.IncludePath.Select(Path.GetFileName));
 
                     // Qt module link libraries, to remove from liker dependencies property
                     moduleLibs.UnionWith(
-                        module.AdditionalLibraries.Select(x => Path.GetFileName(x)));
+                        module.AdditionalLibraries.Select(Path.GetFileName));
                     moduleLibs.UnionWith(
-                        module.AdditionalLibrariesDebug.Select(x => Path.GetFileName(x)));
+                        module.AdditionalLibrariesDebug.Select(Path.GetFileName));
                     moduleLibs.Add(module.LibRelease);
                     moduleLibs.Add(module.LibDebug);
 
@@ -595,7 +595,7 @@ namespace QtVsTools.Core
             // Remove Qt module include paths from compiler properties
             foreach (var inclPath in compiler.Elements(ns + "AdditionalIncludeDirectories")) {
                 inclPath.SetValue(string.Join(";", inclPath.Value.Split(';')
-                    .Select(x => Unquote(x))
+                    .Select(Unquote)
                     // Exclude paths rooted on $(QTDIR)
                     .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
@@ -609,7 +609,7 @@ namespace QtVsTools.Core
             // Remove Qt lib path from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Select(x => Unquote(x))
+                    .Select(Unquote)
                     // Exclude paths rooted on $(QTDIR)
                     .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
@@ -1073,7 +1073,7 @@ namespace QtVsTools.Core
                 .Where(x =>
                 ((string)x.Attribute("Include")).EndsWith(".cbt", IgnoreCase)
                 || ((string)x.Attribute("Include")).EndsWith(".moc", IgnoreCase))
-                .GroupBy(cbt => CustomBuildMocInput(cbt));
+                .GroupBy(CustomBuildMocInput);
 
             List<XElement> cbtToRemove = new List<XElement>();
             foreach (var cbtGroup in mocCbtCustomBuilds) {
