@@ -34,11 +34,8 @@ namespace QtVsTools.Core
                 if (VsWaitDialog == null)
                     return false;
 
-                int res = VsWaitDialog.HasCanceled(out bool canceled);
-                if (res != VSConstants.S_OK)
-                    return false;
-
-                return canceled;
+                var res = VsWaitDialog.HasCanceled(out bool canceled);
+                return res == VSConstants.S_OK && canceled;
             }
             private set => vsDialogCanceled = value;
         }
@@ -83,10 +80,7 @@ namespace QtVsTools.Core
             var res = dialog?.VsWaitDialog.StartWaitDialog(caption, message, progressText,
                 null, statusBarText, delay, isCancelable, showMarqueeProgress);
 
-            if (res != VSConstants.S_OK)
-                return null;
-
-            return dialog;
+            return res == VSConstants.S_OK ? dialog : null;
         }
 
         public static WaitDialog StartWithProgress(
@@ -107,10 +101,7 @@ namespace QtVsTools.Core
                 caption, message, progressText, null, statusBarText,
                 isCancelable, delay, totalSteps, currentStep);
 
-            if (res != VSConstants.S_OK)
-                return null;
-
-            return dialog;
+            return res == VSConstants.S_OK ? dialog : null;
         }
 
         public void Update(

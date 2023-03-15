@@ -89,9 +89,7 @@ namespace QtVsTools.Qml.Debug.AD7
             var next = Next(numElems).ToArray();
             Array.Copy(next, elems, next.Length);
             numElemsFetched = (uint)next.Length;
-            if (numElemsFetched < numElems)
-                return VSConstants.S_FALSE;
-            return VSConstants.S_OK;
+            return numElemsFetched < numElems ? VSConstants.S_FALSE : VSConstants.S_OK;
         }
 
         /// <summary>

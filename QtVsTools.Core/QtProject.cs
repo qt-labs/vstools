@@ -338,17 +338,12 @@ namespace QtVsTools.Core
             if (HelperFunctions.IsHeaderFile(file.Name))
                 return CheckForCommand(file, "moc.exe");
 
-            if (HelperFunctions.IsSourceFile(file.Name)) {
-                return (HasCppMocFiles(file));
-            }
-            return false;
+            return HelperFunctions.IsSourceFile(file.Name) && HasCppMocFiles(file);
         }
 
         public static bool HasUicStep(VCFile file)
         {
-            if (file.ItemType == QtUic.ItemTypeName)
-                return true;
-            return CheckForCommand(file, "uic.exe");
+            return file.ItemType == QtUic.ItemTypeName || CheckForCommand(file, "uic.exe");
         }
 
         private static bool CheckForCommand(VCFile file, string cmd)
@@ -402,10 +397,7 @@ namespace QtVsTools.Core
                 return false;
             }
 
-            if (!string.Equals(Path.GetExtension(mocFilePath), ".cbt", IgnoreCase))
-                return false;
-
-            return true;
+            return string.Equals(Path.GetExtension(mocFilePath), ".cbt", IgnoreCase);
         }
 
         List<VCFile> GetCppMocOutputs(List<VCFile> mocFiles)
@@ -653,10 +645,8 @@ namespace QtVsTools.Core
         public void RemoveFileFromFilter(VCFile file, FakeFilter filter)
         {
             try {
-                var vfilt = FindFilterFromGuid(filter.UniqueIdentifier);
-
-                if (vfilt == null)
-                    vfilt = FindFilterFromName(filter.Name);
+                var vfilt = FindFilterFromGuid(filter.UniqueIdentifier)
+                          ?? FindFilterFromName(filter.Name);
 
                 if (vfilt == null)
                     return;
@@ -1403,9 +1393,7 @@ namespace QtVsTools.Core
 
         object GetParentProject(VCConfiguration propertyStorage)
         {
-            if (propertyStorage == null)
-                return null;
-            return propertyStorage.project as VCProject;
+            return propertyStorage?.project as VCProject;
         }
 
         object GetParentProject(VCFileConfiguration propertyStorage)

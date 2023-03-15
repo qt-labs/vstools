@@ -54,12 +54,7 @@ namespace QtVsTools.Core
 
         MsBuildXmlFile this[Files file]
         {
-            get
-            {
-                if ((int)file >= (int)Files.Count)
-                    return files[0];
-                return files[(int)file];
-            }
+            get => (int)file >= (int)Files.Count ? files[0] : files[(int)file];
         }
 
         public string ProjectXml
@@ -67,9 +62,7 @@ namespace QtVsTools.Core
             get
             {
                 var xml = this[Files.Project].xml;
-                if (xml == null)
-                    return "";
-                return xml.ToString(SaveOptions.None);
+                return xml?.ToString(SaveOptions.None) ?? "";
             }
         }
 
@@ -152,9 +145,7 @@ namespace QtVsTools.Core
                 .Elements(ns + "PropertyGroup")
                 .Elements()
                 .FirstOrDefault(x => x.Name.LocalName == property_name);
-            if (xProperty == null)
-                return string.Empty;
-            return xProperty.Value;
+            return xProperty?.Value ?? "";
         }
 
         public string GetProperty(string item_type, string property_name)
@@ -165,9 +156,7 @@ namespace QtVsTools.Core
                 .Elements(ns + item_type)
                 .Elements()
                 .FirstOrDefault(x => x.Name.LocalName == property_name);
-            if (xProperty == null)
-                return string.Empty;
-            return xProperty.Value;
+            return xProperty?.Value ?? "";
         }
 
         public IEnumerable<string> GetItems(string item_type)
@@ -698,10 +687,8 @@ namespace QtVsTools.Core
                     var qtTool = qtItem.Name.LocalName;
                     var outDir = Path.GetDirectoryName(outputFile.Value);
                     var outFileName = Path.GetFileName(outputFile.Value);
-                    if (!string.IsNullOrEmpty(outDir))
-                        qtItem.Add(new XElement(ns + qtTool + "Dir", outDir));
-                    else
-                        qtItem.Add(new XElement(ns + qtTool + "Dir", "$(ProjectDir)"));
+                    qtItem.Add(new XElement(ns + qtTool + "Dir",
+                        string.IsNullOrEmpty(outDir) ? "$(ProjectDir)" : outDir));
                     qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
                 }
             }
@@ -759,32 +746,23 @@ namespace QtVsTools.Core
                 return true;
             }
 
-            // Module macro is present in resource compiler pre-processor definitions
-            if (resourceCompiler.Elements(ns + "PreprocessorDefinitions")
+            // true if Module macro is present in resource compiler pre-processor definitions
+            return resourceCompiler.Elements(ns + "PreprocessorDefinitions")
                 .SelectMany(x => x.Value.Split(';'))
-                .Any(x => module.Defines.Contains(x))) {
-                return true;
-            }
-
-            // Module is not present
-            return false;
+                .Any(x => module.Defines.Contains(x));
         }
 
         bool IsPrivateIncludePathUsed(
             QtModule module,
             IEnumerable<XElement> compiler)
         {
-            // Module private header path is present in compiler include dirs
             var privateIncludePattern = new Regex(
                 $@"^\$\(QTDIR\)[\\\/]include[\\\/]{module.LibraryPrefix}[\\\/]\d+\.\d+\.\d+");
-            if (compiler.Elements(ns + "AdditionalIncludeDirectories")
-                .SelectMany(x => x.Value.Split(';'))
-                .Any(x => privateIncludePattern.IsMatch(x))) {
-                return true;
-            }
 
-            // Private header path is not present
-            return false;
+            // true if Module private header path is present in compiler include dirs
+            return compiler.Elements(ns + "AdditionalIncludeDirectories")
+                .SelectMany(x => x.Value.Split(';'))
+                .Any(x => privateIncludePattern.IsMatch(x));
         }
 
         public bool SetDefaultWindowsSDKVersion(string winSDKVersion)

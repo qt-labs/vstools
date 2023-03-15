@@ -71,9 +71,7 @@ namespace QtVsTools.SyntaxAnalysis
                 Stack<ParseTree.Node> operandStack,
                 ProductionObjects productions)
             {
-                if (PreCondition == null)
-                    return true;
-                return PreCondition(node);
+                return PreCondition == null || PreCondition(node);
             }
 
             public object Execute(ParseTree.Node node)

@@ -89,10 +89,7 @@ namespace QtVsTools.Json
             settings.UseSimpleDictionaryFormat = true;
 
             serializer = new DataContractJsonSerializer(type, settings);
-            if (serializer == null)
-                return false;
-
-            return true;
+            return serializer != null;
         }
 
         public IJsonData Serialize(object obj, bool indent = false)

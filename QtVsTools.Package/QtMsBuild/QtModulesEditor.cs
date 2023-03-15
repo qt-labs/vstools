@@ -31,9 +31,8 @@ namespace QtVsTools.QtMsBuild
             var qtVersion = await qtSettings.GetPropertyValueAsync("QtInstall");
 
             var vm = QtVersionManager.The();
-            var versionInfo = vm.GetVersionInfo(qtVersion);
-            if (versionInfo == null)
-                versionInfo = vm.GetVersionInfo(vm.GetDefaultVersion());
+            var versionInfo = vm.GetVersionInfo(qtVersion)
+                            ?? vm.GetVersionInfo(vm.GetDefaultVersion());
 
             var modules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))

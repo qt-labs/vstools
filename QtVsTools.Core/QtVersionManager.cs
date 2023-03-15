@@ -80,9 +80,7 @@ namespace QtVsTools.Core
             if (key == null)
                 return new string[] { };
             var versionKey = key.OpenSubKey(strVersionKey, false);
-            if (versionKey == null)
-                return new string[] { };
-            return versionKey.GetSubKeyNames();
+            return versionKey?.GetSubKeyNames() ?? new string[] { };
         }
 
         /// <summary>
@@ -173,9 +171,7 @@ namespace QtVsTools.Core
             var version = GetProjectQtVersion(project);
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
-            if (version == null)
-                return null;
-            return GetInstallPath(version);
+            return version == null ? null : GetInstallPath(version);
         }
 
         public bool SaveVersion(string versionName, string path, bool checkPath = true)
@@ -440,15 +436,12 @@ namespace QtVsTools.Core
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
-            if (!string.IsNullOrEmpty(version)) {
-                var regExp =
-                    new System.Text.RegularExpressions.Regex("\\$\\(.*\\)");
-                if (regExp.IsMatch(version))
-                    return true;
-                return Directory.Exists(GetInstallPath(version));
-            }
+            if (string.IsNullOrEmpty(version))
+                return false;
 
-            return false;
+            var regExp = new System.Text.RegularExpressions.Regex("\\$\\(.*\\)");
+            return regExp.IsMatch(version) || Directory.Exists(GetInstallPath(version));
+
         }
     }
 }

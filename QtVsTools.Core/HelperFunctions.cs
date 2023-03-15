@@ -504,10 +504,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var projectList = ProjectsInSolution(dteObject);
-            if (projectList.Count != 1)
-                return null; // no way to know which one to select
-
-            return projectList[0];
+            return projectList.Count == 1 ? projectList[0] : null; // no way to know which one to select
         }
 
         /// <summary>

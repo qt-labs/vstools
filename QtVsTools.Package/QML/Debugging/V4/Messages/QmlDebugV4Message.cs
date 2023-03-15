@@ -145,10 +145,7 @@ namespace QtVsTools.Qml.Debug.V4
             if (!pendingRequest.RequestSent)
                 return null;
 
-            if (pendingRequest.WaitForResponse() == null)
-                return null;
-
-            return Response;
+            return pendingRequest.WaitForResponse() == null ? null : Response;
         }
     }
 

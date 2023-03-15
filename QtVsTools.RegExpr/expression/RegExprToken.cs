@@ -264,9 +264,7 @@ namespace QtVsTools.SyntaxAnalysis
                 var rule = pairSelectorRule.Value;
                 if (rule == null)
                     return false;
-                if (selector != null && !selector(tokenCapture))
-                    return false;
-                return true;
+                return selector == null || selector(tokenCapture);
             }
 
             public IProductionRule Select(ITokenCapture tokenCapture)

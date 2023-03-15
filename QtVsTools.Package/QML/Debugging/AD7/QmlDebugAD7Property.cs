@@ -93,9 +93,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         static string GetChildKey(string childName)
         {
-            if (int.TryParse(childName, out int childIndex))
-                return $"{childIndex:D9}";
-            return childName;
+            return int.TryParse(childName, out var childIndex) ? $"{childIndex:D9}" : childName;
         }
 
         int IDebugProperty2.SetValueAsString(string pszValue, uint dwRadix, uint dwTimeout)

@@ -70,12 +70,7 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public string Key
                 {
-                    get
-                    {
-                        if (CaptureId == KeyRoot)
-                            return KeyRoot;
-                        return $"{CaptureId}:{Begin}:{End}";
-                    }
+                    get => CaptureId == KeyRoot ? KeyRoot : $"{CaptureId}:{Begin}:{End}";
                 }
 
                 public override string ToString()
@@ -90,22 +85,12 @@ namespace QtVsTools.SyntaxAnalysis
 
                 int SiblingIdx
                 {
-                    get
-                    {
-                        if (Parent == null)
-                            return 0;
-                        return Parent.ChildNodes.IndexOfKey(Begin);
-                    }
+                    get => Parent?.ChildNodes.IndexOfKey(Begin) ?? 0;
                 }
 
                 int SiblingCount
                 {
-                    get
-                    {
-                        if (Parent == null)
-                            return 1;
-                        return Parent.ChildNodes.Count;
-                    }
+                    get => Parent?.ChildNodes.Count ?? 1;
                 }
 
                 public bool IsFirst => SiblingIdx == 0;

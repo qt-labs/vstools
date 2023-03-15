@@ -51,10 +51,7 @@ namespace QtVsTools.Qml.Debug.V4
             this.sink = sink;
             eventHandlingThread = Task.Run(() => EventHandlingThread());
             client = DebugClient.Create(this);
-            if (client == null)
-                return false;
-
-            return true;
+            return client != null;
         }
 
         protected override void DisposeManaged()

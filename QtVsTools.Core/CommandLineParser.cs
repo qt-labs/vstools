@@ -411,10 +411,8 @@ namespace QtVsTools.Core.CommandLine
         public string Value(string optionName)
         {
             CheckParsed("Value");
-            var valueList = Values(optionName);
-            if (valueList.Any())
-                return valueList.Last();
-            return "";
+            var valueList = Values(optionName).ToList();
+            return valueList.Any() ? valueList.Last() : "";
         }
 
         public IEnumerable<string> Values(string optionName)

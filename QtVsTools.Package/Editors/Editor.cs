@@ -154,13 +154,9 @@ namespace QtVsTools.Editors
             pbstrPhysicalView = null;   // initialize out parameter
 
             // we support only a single physical view
-            if (VSConstants.LOGVIEWID_Primary == rguidLogicalView) {
-                // primary view uses NULL as pbstrPhysicalView
-                return VSConstants.S_OK;
-            } else {
-                // you must return E_NOTIMPL for any unrecognized rguidLogicalView values
-                return VSConstants.E_NOTIMPL;
-            }
+            if (VSConstants.LOGVIEWID_Primary == rguidLogicalView)
+                return VSConstants.S_OK; // primary view uses NULL as pbstrPhysicalView
+            return VSConstants.E_NOTIMPL; // return E_NOTIMPL for any unrecognized rguidLogicalView
         }
 
         protected virtual ProcessStartInfo GetStartInfo(

@@ -26,17 +26,15 @@ namespace QtVsTools.SyntaxAnalysis
 
         public static bool NeedsGroup(string literal)
         {
-            if (literal.Length == 1)
-                return false;
-            if (literal.Length == 2 && literal.StartsWith(@"\"))
-                return false;
-            if (literal.Length == 3 && literal.StartsWith(@"\c"))
-                return false;
-            if (literal.Length == 4 && literal.StartsWith(@"\x"))
-                return false;
-            if (literal.Length == 6 && literal.StartsWith(@"\u"))
-                return false;
-            return true;
+            return literal.Length switch
+            {
+                1 => false,
+                2 when literal.StartsWith(@"\") => false,
+                3 when literal.StartsWith(@"\c") => false,
+                4 when literal.StartsWith(@"\x") => false,
+                6 when literal.StartsWith(@"\u") => false,
+                _ => true
+            };
         }
 
         internal T As<T>()

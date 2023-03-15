@@ -189,9 +189,7 @@ namespace QtVsTools.Core.QtMsBuild
         object GetProject()
         {
             var change = itemPropertyChanges.Values.FirstOrDefault();
-            if (change == null)
-                return null;
-            return provider.GetParentProject(change.PropertyStorage);
+            return change == null ? null : provider.GetParentProject(change.PropertyStorage);
         }
 
         public bool BeginSetItemProperties()

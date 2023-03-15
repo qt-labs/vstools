@@ -30,15 +30,12 @@ namespace QtVsTools.Qml.Debug.AD7
         public enum Language { QML, JavaScript, Other }
         public Language FileType
         {
-            get
+            get => Path.GetExtension(FilePath) switch
             {
-                var ext = Path.GetExtension(FilePath);
-                if (string.Equals(ext, ".qml", IgnoreCase))
-                    return Language.QML;
-                if (string.Equals(ext, ".js", IgnoreCase))
-                    return Language.JavaScript;
-                return Language.Other;
-            }
+                {} path when path.Equals(".qml", IgnoreCase) => Language.QML,
+                {} path when path.Equals(".js", IgnoreCase) => Language.JavaScript,
+                _ => Language.Other
+            };
         }
 
         public static CodeContext Create(

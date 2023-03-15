@@ -837,10 +837,7 @@ namespace QtVsTest.Macros
             MacroClass.GetField("WaitExpr", PUBLIC_STATIC)
                 .SetValue(null, new Func<int, Func<object>, Task>(WaitExprAsync));
 
-            if (!InitializeUiGlobals())
-                return false;
-
-            return NoError();
+            return InitializeUiGlobals() && NoError();
         }
 
         Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -852,16 +849,13 @@ namespace QtVsTest.Macros
                 .FirstOrDefault(x => Path.GetFileNameWithoutExtension(x).Equals(fullName.Name, IGNORE_CASE));
             if (string.IsNullOrEmpty(assemblyPath))
                 return null;
-            if (!File.Exists(assemblyPath))
-                return null;
-            return Assembly.LoadFrom(assemblyPath);
+            return File.Exists(assemblyPath) ? Assembly.LoadFrom(assemblyPath) : null;
         }
 
         public static Assembly GetAssembly(string name)
         {
             return AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.GetName().Name == name)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.GetName().Name == name);
         }
 
         public async Task SwitchToUIThreadAsync()

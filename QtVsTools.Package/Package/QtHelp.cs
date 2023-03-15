@@ -87,9 +87,7 @@ namespace QtVsTools
 
         static string GetString(DbDataReader reader, int index)
         {
-            if (!reader.IsDBNull(index))
-                return reader.GetString(index);
-            return string.Empty;
+            return reader.IsDBNull(index) ? "" : reader.GetString(index);
         }
 
         void F1QtHelpEventHandler(object sender, EventArgs args)

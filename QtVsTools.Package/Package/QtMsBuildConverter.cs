@@ -187,10 +187,7 @@ namespace QtVsTools
                 return ErrorMessage(
                     string.Format(ErrorConversion, $"{projectName}\r\n{e.Message}"));
             }
-            if (!ok) {
-                return ErrorMessage(string.Format(ErrorConversion, projectName));
-            }
-            return true;
+            return ok || ErrorMessage(string.Format(ErrorConversion, projectName));
         }
 
         static bool ErrorMessage(string msg)

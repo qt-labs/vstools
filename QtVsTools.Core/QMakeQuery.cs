@@ -60,12 +60,7 @@ namespace QtVsTools.Core
 
         public string this[string name]
         {
-            get
-            {
-                if (Properties.TryGetValue(name, out string value))
-                    return value;
-                return null;
-            }
+            get => Properties.TryGetValue(name, out var value) ? value : null;
         }
 
         Dictionary<string, string> _Properties;

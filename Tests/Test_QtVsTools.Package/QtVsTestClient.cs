@@ -107,8 +107,7 @@ namespace QtVsTools.Test
                 return Error("Macro load failed");
             if (!string.IsNullOrEmpty(macroHeader))
                 return RunMacro($"{macroHeader}\r\n{macroCode}");
-            else
-                return RunMacro(macroCode);
+            return RunMacro(macroCode);
         }
 
         public const string MacroOk = "(ok)";

@@ -144,12 +144,7 @@ namespace QtVsTools.Qml.Classification
 
         public IList<TrackingTag> Values
         {
-            get
-            {
-                if (!Ready)
-                    return new List<TrackingTag>();
-                return data.Values;
-            }
+            get => Ready ? data.Values : new List<TrackingTag>();
         }
     }
 
@@ -557,9 +552,7 @@ namespace QtVsTools.Qml.Classification
                     return false;
                 if (Snapshot.TextBuffer != that.Snapshot.TextBuffer)
                     return false;
-                if (Snapshot.Version.VersionNumber != that.Snapshot.Version.VersionNumber)
-                    return false;
-                return true;
+                return Snapshot.Version.VersionNumber == that.Snapshot.Version.VersionNumber;
             }
 
             public override int GetHashCode()
@@ -594,9 +587,7 @@ namespace QtVsTools.Qml.Classification
                     return false;
                 if (Snapshot.TextBuffer != that.Snapshot.TextBuffer)
                     return false;
-                if (Snapshot.Version.VersionNumber != that.Snapshot.Version.VersionNumber)
-                    return false;
-                return true;
+                return Snapshot.Version.VersionNumber == that.Snapshot.Version.VersionNumber;
             }
 
             public override int GetHashCode()

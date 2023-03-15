@@ -253,9 +253,7 @@ namespace QtVsTools.Qml.Classification
         }
         public static IClassificationType Get(string classificationType)
         {
-            if (ClassificationTypes == null)
-                return null;
-            return ClassificationTypes[classificationType];
+            return ClassificationTypes?[classificationType];
         }
     }
 

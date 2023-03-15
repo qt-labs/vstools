@@ -125,10 +125,7 @@ namespace QtVsTools.Qml.Debug
 
             qrcPath = $"qrc:///{qrcPath}";
 
-            if (!files.TryGetValue(qrcPath, out QmlFile file))
-                return default(QmlFile);
-
-            return file;
+            return files.TryGetValue(qrcPath, out var file) ? file : default;
         }
 
         QmlFile FromFileUrl(string fileUrl)

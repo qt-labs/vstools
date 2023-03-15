@@ -42,10 +42,7 @@ namespace QtVsTools.Core
         public static string GetWindowCaption(IntPtr hwnd)
         {
             var caption = new StringBuilder(256);
-            if (GetWindowText(hwnd, caption, caption.Capacity) > 0)
-                return caption.ToString();
-            else
-                return string.Empty;
+            return GetWindowText(hwnd, caption, caption.Capacity) > 0 ? caption.ToString() : "";
         }
 
         [DllImport("user32.dll")]

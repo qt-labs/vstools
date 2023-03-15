@@ -60,8 +60,6 @@ namespace QtVsTools.Qml.Classification
             SharedTagList tagList,
             bool writeAccess)
         {
-            bool parsedCorrectly = parseResult.ParsedCorrectly;
-
             if (writeAccess) {
                 foreach (var token in parseResult.Tokens) {
                     tagList.AddRange(this, QmlSyntaxTag.GetClassification(snapshot, token));
@@ -71,10 +69,8 @@ namespace QtVsTools.Qml.Classification
                 }
             }
 
-            if (parsedCorrectly)
-                return ClassificationRefresh.FullText;
-            else
-                return ClassificationRefresh.TagsOnly;
+            var parsedCorrectly = parseResult.ParsedCorrectly;
+            return parsedCorrectly ? ClassificationRefresh.FullText : ClassificationRefresh.TagsOnly;
         }
 
         protected override ClassificationTag GetClassification(TrackingTag tag)
