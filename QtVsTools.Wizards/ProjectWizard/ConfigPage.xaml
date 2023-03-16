@@ -51,11 +51,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
-          <ComboBox Name="ProjectModel" Grid.Row="0" Margin="0, 15, 0, 0"
+          <ComboBox Name="ProjectModelSelection" Grid.Row="0" Margin="0, 15, 0, 0"
                     IsEnabled="{Binding Path=ProjectModelEnabled}">
-            <ComboBoxItem Content="Qt Visual Studio Project (Qt/MSBuild)"
-                          IsSelected="True" Selector.IsSelected="True"/>
-            <ComboBoxItem Content="CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"/>
+            <ComboBoxItem Content="Qt Visual Studio Project (Qt/MSBuild)" IsSelected="True"
+                          Selector.IsSelected="True" Selected="QtMSBuild_Selected"/>
+            <ComboBoxItem Content="CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"
+                          Selected="QtCMake_Selected"/>
           </ComboBox>
           <DataGrid Margin="0,5,0,0" Name="ConfigTable" AutoGenerateColumns="False"
               IsReadOnly="True" BorderThickness="1" BorderBrush="LightGray"

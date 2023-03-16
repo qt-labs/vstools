@@ -16,13 +16,12 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
 using EnvDTE;
 
-
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using QtVsTools.Common;
     using Core;
     using Core.QtMsBuild;
     using VisualStudio;
+    using QtVsTools.Common;
     using Wizards.Common;
 
     using WhereConfig = Func<IWizardConfiguration, bool>;
@@ -187,34 +186,41 @@ namespace QtVsTools.Wizards.ProjectWizard
         public virtual void ProjectItemFinishedGenerating(ProjectItem projectItem) { }
         public virtual void BeforeOpeningFile(ProjectItem projectItem) { }
 
-        private void CleanupVcxProj()
+        private void CleanupVcxProject()
         {
-            var solutionDir = Parameter[NewProject.SolutionDirectory];
-            var slnFiles = Directory.GetFiles(solutionDir, "*.sln");
-            foreach (var slnFile in slnFiles) {
-                if (File.Exists(slnFile))
-                    File.Delete(slnFile);
-            }
+            try {
+                var solutionDir = Path.GetFullPath(Parameter[NewProject.SolutionDirectory]);
+                var projectDir = Path.GetFullPath(Parameter[NewProject.DestinationDirectory]);
+                if (!Directory.Exists(solutionDir))
+                    solutionDir = projectDir;
 
-            var dotVsDir = Path.Combine(solutionDir, ".vs");
-            if (Directory.Exists(dotVsDir))
-                Directory.Delete(dotVsDir, recursive: true);
+                var slnFiles = Directory.GetFiles(solutionDir, "*.sln");
+                foreach (var slnFile in slnFiles) {
+                    if (File.Exists(slnFile))
+                        File.Delete(slnFile);
+                }
 
-            var projectDir = Parameter[NewProject.DestinationDirectory];
-            var vcxProjFiles = Directory.GetFiles(projectDir, "*.vcxproj*");
-            foreach (var vcxProjFile in vcxProjFiles) {
-                if (File.Exists(vcxProjFile))
-                    File.Delete(vcxProjFile);
-            }
+                var dotVsDir = Path.Combine(solutionDir, ".vs");
+                if (Directory.Exists(dotVsDir))
+                    Directory.Delete(dotVsDir, recursive: true);
 
-            var qtVarsProFiles = Directory.GetFiles(projectDir, "qtvars.pro",
-                SearchOption.AllDirectories);
-            foreach (string qtVarProFile in qtVarsProFiles) {
-                var projDirUri = new Uri(projectDir);
-                var proFileDirInfo = new DirectoryInfo(Path.GetDirectoryName(qtVarProFile));
-                while (new Uri(proFileDirInfo.Parent.FullName) != projDirUri)
-                    proFileDirInfo = proFileDirInfo.Parent;
-                proFileDirInfo.Delete(recursive: true);
+                var vcxProjFiles = Directory.GetFiles(projectDir, "*.vcxproj*");
+                foreach (var vcxProjFile in vcxProjFiles) {
+                    if (File.Exists(vcxProjFile))
+                        File.Delete(vcxProjFile);
+                }
+
+                var qtVarsProFiles = Directory.GetFiles(projectDir, "qtvars.pro",
+                    SearchOption.AllDirectories);
+                foreach (string qtVarProFile in qtVarsProFiles) {
+                    var projDirUri = new Uri(projectDir);
+                    var proFileDirInfo = new DirectoryInfo(Path.GetDirectoryName(qtVarProFile));
+                    while (new Uri(proFileDirInfo.Parent.FullName) != projDirUri)
+                        proFileDirInfo = proFileDirInfo.Parent;
+                    proFileDirInfo.Delete(recursive: true);
+                }
+            } catch (Exception e) {
+                Messages.Log(e);
             }
         }
 
@@ -223,8 +229,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             ThreadHelper.ThrowIfNotOnUIThread();
             if (WizardData.ProjectModel == WizardData.ProjectModels.CMake) {
                 Dte.Solution.Close();
-                CleanupVcxProj();
-                Dte.ExecuteCommand("File.OpenFolder", Parameter[NewProject.DestinationDirectory]);
+                CleanupVcxProject();
+                OpenCMakeProject();
             }
         }
 

@@ -20,6 +20,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using QtVsTools.Common;
     using Wizards.Common;
+    using static Wizards.Common.WizardData;
     using static Utils;
 
     public partial class ConfigPage : WizardPage
@@ -51,6 +52,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         class Config : ICloneable<Config>, IWizardConfiguration
         {
+            public ConfigPage ConfigPage { get; set; }
             public string Name { get; set; }
             public VersionInformation QtVersion { get; set; }
             public string QtVersionName { get; set; }
@@ -58,6 +60,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             public string Target { get; set; }
             public string Platform { get; set; }
             public bool IsDebug { get; set; }
+            public bool IsEnabled { get; set; }
 
             public Dictionary<string, Module> Modules { get; set; }
 
@@ -67,12 +70,24 @@ namespace QtVsTools.Wizards.ProjectWizard
                 => Modules.Values.Where((Module m) => m.IsSelected);
 
             IEnumerable<string> IWizardConfiguration.Modules
-                => SelectedModules.SelectMany((Module m) => m.Id.Split(' '));
+            {
+                get
+                {
+                    if (ConfigPage.ProjectModel == ProjectModels.CMake) {
+                        return ConfigPage.DefaultModules
+                            .Where(module => module.IsSelected)
+                            .Select(module => module.Id)
+                            .ToList();
+                    }
+                    return SelectedModules.SelectMany((Module m) => m.Id.Split(' '));
+                }
+            }
 
             public Config Clone()
             {
                 return new Config
                 {
+                    ConfigPage = ConfigPage,
                     Name = Name,
                     QtVersion = QtVersion,
                     QtVersionName = QtVersionName,
@@ -114,7 +129,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         bool initialNextButtonIsEnabled;
         bool initialFinishButtonIsEnabled;
 
-        public bool ProjectModelEnabled { get; set; } = false;
+        public bool ProjectModelEnabled { get; set; } = true;
+        public ProjectModels ProjectModel => (ProjectModels)ProjectModelSelection.SelectedIndex;
 
         public ConfigPage()
         {
@@ -131,6 +147,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             Loaded += OnLoaded;
         }
 
+        private List<Module> DefaultModules { get; set; } = new();
+
         void OnLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnLoaded;
@@ -143,7 +161,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 return;
             }
 
-            var qtModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
+            DefaultModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
                 .Where(mi => mi.Selectable)
                 .Select(mi => new Module()
                 {
@@ -155,6 +173,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             defaultConfigs = new CloneableList<Config> {
                 new Config {
+                    ConfigPage = this,
                     Name = "Debug",
                     IsDebug = true,
                     QtVersion = defaultQtVersionInfo,
@@ -170,9 +189,10 @@ namespace QtVsTools.Wizards.ProjectWizard
                         : defaultQtVersionInfo.platform() == Platform.arm64
                             ? ProjectPlatforms.ARM64.Cast<string>()
                         : string.Empty,
-                    Modules = qtModules.ToDictionary(m => m.Name)
+                    Modules = DefaultModules.ToDictionary(m => m.Name)
                 },
                 new Config {
+                    ConfigPage = this,
                     Name = "Release",
                     IsDebug = false,
                     QtVersion = defaultQtVersionInfo,
@@ -188,7 +208,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         : defaultQtVersionInfo.platform() == Platform.arm64
                             ? ProjectPlatforms.ARM64.Cast<string>()
                         : string.Empty,
-                    Modules = qtModules.ToDictionary(m => m.Name)
+                    Modules = DefaultModules.ToDictionary(m => m.Name)
                 }
             };
             currentConfigs = defaultConfigs.Clone();
@@ -434,14 +454,14 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
         {
-            Data.ProjectModel = (WizardData.ProjectModels)ProjectModel.SelectedIndex;
+            Data.ProjectModel = ProjectModel;
             Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
             base.OnNextButtonClick(sender, e);
         }
 
         protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
         {
-            Data.ProjectModel = (WizardData.ProjectModels)ProjectModel.SelectedIndex;
+            Data.ProjectModel = ProjectModel;
             Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
             base.OnFinishButtonClick(sender, e);
         }
@@ -477,6 +497,18 @@ namespace QtVsTools.Wizards.ProjectWizard
                 }
             }
             return null;
+        }
+
+        private void QtMSBuild_Selected(object sender, RoutedEventArgs e)
+        {
+            if (ConfigTable != null)
+                ConfigTable.Columns.Last().Visibility = Visibility.Visible;
+        }
+
+        private void QtCMake_Selected(object sender, RoutedEventArgs e)
+        {
+            if (ConfigTable != null)
+                ConfigTable.Columns.Last().Visibility = Visibility.Hidden;
         }
     }
 }

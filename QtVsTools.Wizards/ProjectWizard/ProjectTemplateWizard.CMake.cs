@@ -5,15 +5,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TemplateWizard;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Core;
+    using Core.CMake;
     using Json;
     using static Utils;
     using static QtVsTools.Common.EnumExt;
@@ -23,14 +24,10 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected enum CMake
         {
             // Parameters for expanding CMake project files
-            [String("cmake_presets")] Presets,
             [String("cmake_user_presets")] UserPresets,
-        }
-
-        protected enum CMakeGenerators
-        {
-            [String("Visual Studio 16 2019")] VS2019,
-            [String("Visual Studio 17 2022")] VS2022
+            [String("cmake_qt_modules")] Modules,
+            [String("cmake_qt_libs")] Libs,
+            [String("cmake_qt_helper")] Helper
         }
 
         [DataContract]
@@ -44,15 +41,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             [DataMember(Name = "inherits", EmitDefaultValue = false, Order = 2)]
             public List<string> Inherits { get; set; }
-
-            [DataMember(Name = "hidden", EmitDefaultValue = false, Order = 3)]
-            public bool? Hidden { get; set; }
-
-            [DataMember(Name = "generator", EmitDefaultValue = false, Order = 4)]
-            public string Generator { get; set; }
-
-            [DataMember(Name = "architecture", EmitDefaultValue = false, Order = 5)]
-            public string Architecture { get; set; }
 
             [DataContract]
             public class ConfigCacheVariables
@@ -74,7 +62,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 public string QtDir { get; set; }
 
                 [DataMember(Name = "PATH", EmitDefaultValue = false, Order = 1)]
-                public string Path { get; set; } = "$penv{PATH};$env{QTDIR}\\bin";
+                public string Path { get; set; }
             }
 
             [DataMember(Name = "environment", EmitDefaultValue = false, Order = 7)]
@@ -96,68 +84,99 @@ namespace QtVsTools.Wizards.ProjectWizard
             }
         }
 
-        private Regex[] CMakeFilenamePatterns => Lazy.Get(() =>
-            CMakeFilenamePatterns, () => new[] { new Regex(@"CMake.*") });
+        protected bool UseQtCMakeHelper { get; set; } = true;
 
         private bool IsCMakeFile(string fileName)
         {
-            return CMakeFilenamePatterns.Any(p => p.IsMatch(fileName));
+            return fileName.Equals("CMakeLists.txt", IgnoreCase)
+                || fileName.Equals("CMakeUserPresets.json", IgnoreCase)
+                || !UseQtCMakeHelper || fileName.Equals("qt.cmake", IgnoreCase);
         }
 
         private void ExpandCMake()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            Parameter[NewProject.ProjectItems] += @"
-    <None Include=""CMakeLists.txt"" />
-    <None Include=""CMakePresets.json"" />
-    <None Include=""CMakeUserPresets.json"" />
-";
+            Parameter[NewProject.ProjectItems] += string.Join(string.Empty,
+                "<None Include=\"CMakeLists.txt\" />\r\n",
+                "<None Include=\"CMakeUserPresets.json\" />\r\n",
+                UseQtCMakeHelper ? "<None Include=\"qt.cmake\" />\r\n" : "");
 
-            var presets = new CMakePresets();
             var userPresets = new CMakePresets();
+            var qtModules = new SortedSet<string>();
             foreach (IWizardConfiguration config in Configurations) {
                 var modules = QtModules.Instance
                     .GetAvailableModules(config.QtVersion.qtMajor)
                     .Join(config.Modules,
                         x => x.proVarQT, y => y, comparer: CaseIgnorer,
                         resultSelector: (x, y) => x.LibraryPrefix.Substring(2));
+                foreach (var module in modules)
+                    qtModules.Add(module);
 
                 var configPreset = new CMakeConfigPreset
                 {
                     Name = $"{config.Name}-{config.Platform}",
-                    Hidden = true,
-                    Generator
-                        = Dte.Version.StartsWith("17.") ? CMakeGenerators.VS2022.Cast<string>()
-                        : Dte.Version.StartsWith("16.") ? CMakeGenerators.VS2019.Cast<string>()
-                        : null,
-                    Architecture = config.Platform,
+                    DisplayName = $"{config.Name} ({config.Platform})",
                     CacheVariables = new CMakeConfigPreset.ConfigCacheVariables
                     {
-                        QtModules = string.Join(";", modules),
                         CMakeBuildType = config.IsDebug ? "Debug" : "Release"
-                    }
-                };
-                presets.ConfigurePresets.Add(configPreset);
-
-                configPreset = new CMakeConfigPreset
-                {
-                    Name = $"Qt-{config.Name}-{config.Platform}",
-                    Inherits = new List<string>
-                    {
-                        $"{config.Name}-{config.Platform}"
-                    },
-                    DisplayName= $"{config.Name} ({config.Platform})",
-                    Environment = new CMakeConfigPreset.ConfigEnvironment
-                    {
-                        QtDir = config.QtVersion.qtDir,
                     }
                 };
                 userPresets.ConfigurePresets.Add(configPreset);
             }
-            Parameter[CMake.Presets] = presets.ToJsonString();
             Parameter[CMake.UserPresets] = userPresets.ToJsonString();
+            Parameter[CMake.Modules] = string.Join("\r\n        ", qtModules);
+            Parameter[CMake.Libs] = string.Join("\r\n        ",
+                qtModules.Select(module => $"Qt::{module}"));
+            Parameter[CMake.Helper] = QtCMakeHelper;
             Parameter[NewProject.Globals] += @"<QT_CMAKE_TEMPLATE>true</QT_CMAKE_TEMPLATE>";
         }
+
+        protected virtual void OpenCMakeProject()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var solutionDir = new Uri(
+                Path.Combine(Path.GetFullPath(Parameter[NewProject.SolutionDirectory]), "."));
+            var projectDir = new Uri(
+                Path.Combine(Path.GetFullPath(Parameter[NewProject.DestinationDirectory]), "."));
+            if (!Directory.Exists(solutionDir.LocalPath) || !solutionDir.IsBaseOf(projectDir))
+                solutionDir = projectDir;
+
+            if (solutionDir != projectDir) {
+                File.Move(
+                    Path.Combine(projectDir.LocalPath, "CMakeUserPresets.json"),
+                    Path.Combine(solutionDir.LocalPath, "CMakeUserPresets.json"));
+                File.WriteAllText(Path.Combine(solutionDir.LocalPath, "CMakeLists.txt"), $@"
+cmake_minimum_required(VERSION 3.16)
+
+project(""{Path.GetFileName(solutionDir.LocalPath)}"")
+
+add_subdirectory(""{Path.GetFileName(solutionDir.MakeRelativeUri(projectDir).ToString())}"")
+".Trim('\r', '\n'));
+            }
+            CMakeProject.Convert(solutionDir.LocalPath);
+            Dte.ExecuteCommand("File.OpenFolder", solutionDir.LocalPath);
+        }
+
+        private static string QtCMakeHelper { get; } = @"
+if(QT_VERSION VERSION_LESS 6.3)
+    macro(qt_standard_project_setup)
+        set(CMAKE_AUTOMOC ON)
+        set(CMAKE_AUTORCC ON)
+        set(CMAKE_AUTOUIC ON)
+    endmacro()
+endif()
+
+if(QT_VERSION VERSION_LESS 6.0)
+    macro(qt_add_executable name)
+         if(ANDROID)
+            add_library(name SHARED ${ARGN})
+        else()
+            add_executable(${ARGV})
+        endif()
+    endmacro()
+endif()
+".Trim('\r', '\n');
     }
 }
