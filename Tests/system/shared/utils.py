@@ -39,8 +39,13 @@ def startAppGetVersion(waitForInitialDialogs=False):
 
 
 def openVsToolsMenu(version):
-    mouseClick(waitForObject(globalnames.extensions_MenuItem))
-    mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
+    while True:
+        mouseClick(waitForObject(globalnames.extensions_MenuItem))
+        mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
+        if not object.exists(globalnames.Initializing_MenuItem):
+            break
+        mouseClick(waitForObject(globalnames.extensions_MenuItem))  # close menu
+        snooze(4)
 
 
 def closeMainWindow():

@@ -17,3 +17,4 @@ extensions_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "Ex
 msvs_Skip_this_for_now_Button = {"container": microsoft_Visual_Studio_Window, "text": "Skip this for now.", "type": "Button"}
 msvs_Start_Visual_Studio_Button = {"container": microsoft_Visual_Studio_Window, "text": "Start Visual Studio", "type": "Button"}
 msvs_Not_now_maybe_later_Label = {"container": microsoft_Visual_Studio_Window, "text": "Not now, maybe later.", "type": "Label"}
+Initializing_MenuItem = {"text": RegularExpression(".*Initializing...$"), "type": "MenuItem"}
