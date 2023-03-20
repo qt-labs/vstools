@@ -37,6 +37,7 @@ $Properties$
 $BuildSettings$
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+$ProjectItems$
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

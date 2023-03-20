@@ -30,6 +30,7 @@
         <ProjectTypeTag>Qt</ProjectTypeTag>
         <ProjectTypeTag>Console</ProjectTypeTag>
         <ProjectTypeTag>IoT</ProjectTypeTag>
+        <ProjectTypeTag>CMake</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$projectname$.vcxproj"
@@ -39,6 +40,9 @@
                          OpenInEditor="true">main.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="false"
                          TargetFileName="$projectname$.vcxproj.filters">console.vcxproj.filters</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
