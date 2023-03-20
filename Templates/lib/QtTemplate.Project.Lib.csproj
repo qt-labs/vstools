@@ -105,6 +105,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CMakeLists.txt" />
+    <Content Include="qt.cmake" />
+    <Content Include="CMakeUserPresets.json" />
     <None Include="lib.ico" />
     <None Include="lib.vcxproj">
       <SubType>Designer</SubType>

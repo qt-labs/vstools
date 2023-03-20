@@ -31,6 +31,7 @@
         <ProjectTypeTag>Library</ProjectTypeTag>
         <ProjectTypeTag>Desktop</ProjectTypeTag>
         <ProjectTypeTag>IoT</ProjectTypeTag>
+        <ProjectTypeTag>CMake</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$projectname$.vcxproj"
@@ -47,6 +48,9 @@
             <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$projectname$.vcxproj.filters">lib.vcxproj.filters</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

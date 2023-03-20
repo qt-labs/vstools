@@ -31,6 +31,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("saveglobal")] GlobalHeader,
             [String("pro_lib_define")] LibDefine,
             [String("pro_lib_export")] LibExport,
+            [String("cmake_static")] CMakeStatic
         }
 
         protected override WizardData WizardData => Lazy.Get(() =>
@@ -112,8 +113,12 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewLibClass.LibExport] = safeprojectname.ToUpper() + "_EXPORT";
 
             LibExtraDefines.Add(Parameter[NewLibClass.LibDefine]);
-            if (WizardData.CreateStaticLibrary)
+            if (WizardData.CreateStaticLibrary) {
                 LibExtraDefines.Add("BUILD_STATIC");
+                Parameter[NewLibClass.CMakeStatic] = "STATIC";
+            } else {
+                Parameter[NewLibClass.CMakeStatic] = "SHARED";
+            }
         }
     }
 }
