@@ -1,0 +1,153 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "Debug",
+      "inherits": "Qt-Default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "hidden": true,
+      "name": "Qt-Default",
+      "inherits": "6.5.0_msvc2019_64",
+      "vendor": {
+        "qt-project.org/Default": {
+          "checksum": "HCkCABVvro7tbbxSmBdcUBOgrWo="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.12.9_msvc2017_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/LIB/QT/5.12.9/MSVC2017_64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "e7H01/BJaRHXcBica7wgVKzo73A="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "5.15.10_msvc2019_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/LIB/QT/5.15.10/MSVC2019_64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "otBCt25AmKMgWJbNjlxKT7kgHRY="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "6.2.4_msvc2019_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/LIB/QT/6.2.4/MSVC2019_64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "/3+Tv6CTo7Mq8D/92nW7nyutdaE="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "6.2.4_msvc2019_64_static",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/lib/Qt/6.2.4/msvc2019_64_static"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "N76bWl9QeuUv8l4iDjXrtdbGC2U="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "6.2.4_msvc2019_arm64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/lib/Qt/6.2.4/msvc2019_arm64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "arm64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "4bnnS6rBBi3C7v65qBxJ2Z0djWM="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "6.4.1_msvc2019_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/LIB/QT/6.4.1/MSVC2019_64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "ZqKguTRsTRdyeH1DRoP96J+22a0="
+        }
+      }
+    },
+    {
+      "hidden": true,
+      "name": "6.5.0_msvc2019_64",
+      "inherits": "Qt",
+      "environment": {
+        "QTDIR": "C:/LIB/QT/6.5.0/MSVC2019_64"
+      },
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "generator": "Visual Studio 16 2019",
+      "vendor": {
+        "qt-project.org/Version": {
+          "checksum": "mnaCF4BQDtxSKsntDe9ZOCApD6Y="
+        }
+      }
+    }
+  ],
+  "vendor": {
+    "qt-project.org/Presets": {
+      "checksum": "Ms7p3WllguvceTpM+16UPefkcho="
+    }
+  }
+}
