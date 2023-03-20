@@ -29,6 +29,7 @@
         <PlatformTag>Linux</PlatformTag>
         <ProjectTypeTag>Qt</ProjectTypeTag>
         <ProjectTypeTag>Desktop</ProjectTypeTag>
+        <ProjectTypeTag>CMake</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
         <Project TargetFileName="$projectname$.vcxproj"
@@ -50,7 +51,7 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$qrcfilename$">widget.qrc</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
-            <ProjectItem ReplaceParameters="true">CMakePresets.json</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>

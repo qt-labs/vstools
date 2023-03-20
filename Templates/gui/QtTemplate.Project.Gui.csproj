@@ -104,7 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CMakeLists.txt" />
-    <Content Include="CMakePresets.json" />
+    <Content Include="qt.cmake" />
     <Content Include="CMakeUserPresets.json" />
     <None Include="gui.ico" />
     <None Include="gui.vcxproj">
