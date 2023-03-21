@@ -952,7 +952,7 @@ namespace QtVsTools.Core
             // Parse command output: copy environment variables to startInfo
             var envVars = EnvVarParser.Parse(stdOut.ToString())
                 .GetValues<KeyValuePair<string, List<string>>>("env_var")
-                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value, CaseIgnorer);
+                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value ?? new(), CaseIgnorer);
             foreach (var vcVar in envVars)
                 startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
 
