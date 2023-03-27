@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.VisualStudio
 {
@@ -64,6 +65,13 @@ namespace QtVsTools.VisualStudio
             var serviceInterface = await Instance.GetServiceAsync<T, I>();
             services.TryAdd(new ServiceType(typeof(T), typeof(I)), serviceInterface);
             return serviceInterface;
+        }
+
+        public static I GetGlobalService<T, I>()
+            where T : class
+            where I : class
+        {
+            return Package.GetGlobalService(typeof(T)) as I;
         }
     }
 }

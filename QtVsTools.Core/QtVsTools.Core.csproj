@@ -65,6 +65,8 @@
     <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

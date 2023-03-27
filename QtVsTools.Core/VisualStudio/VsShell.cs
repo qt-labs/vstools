@@ -3,14 +3,32 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Workspace.VSIntegration.Contracts;
 
 namespace QtVsTools.VisualStudio
 {
+    using Common;
+
     public static class VsShell
     {
+        static LazyFactory Lazy { get; } = new LazyFactory();
+
+        static IComponentModel ComponentModel => Lazy.Get(() => ComponentModel,
+            () => VsServiceProvider.GetGlobalService<SComponentModel, IComponentModel>());
+
+        public static I GetComponentService<I>() where I : class
+        {
+            return ComponentModel.GetService<I>();
+        }
+
+        public static IVsFolderWorkspaceService FolderWorkspace => Lazy.Get(() => FolderWorkspace,
+            () => GetComponentService<IVsFolderWorkspaceService>());
+
         public static string InstallRootDir
         {
             get

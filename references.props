@@ -16,6 +16,9 @@
     <Name_Microsoft_VisualStudio_VCProjectEngine>Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
     <Name_Microsoft_VisualStudio_Shell_15>Microsoft.VisualStudio.Shell.15.0</Name_Microsoft_VisualStudio_Shell_15>
     <Name_Microsoft_VisualStudio_TemplateWizardInterface>Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Name_Microsoft_VisualStudio_Composition>Microsoft.VisualStudio.Composition</Name_Microsoft_VisualStudio_Composition>
+    <Name_Microsoft_VisualStudio_Workspace>Microsoft.VisualStudio.Workspace</Name_Microsoft_VisualStudio_Workspace>
+    <Name_Microsoft_VisualStudio_Workspace_VSIntegration>Microsoft.VisualStudio.Workspace.VSIntegration</Name_Microsoft_VisualStudio_Workspace_VSIntegration>
 
     <Name_MSTest_TestAdapter>MSTest.TestAdapter</Name_MSTest_TestAdapter>
     <Version_MSTest_TestAdapter>2.2.8</Version_MSTest_TestAdapter>
@@ -40,6 +43,9 @@
     <Version_Microsoft_VisualStudio_ProjectSystem>17.2.402-pre</Version_Microsoft_VisualStudio_ProjectSystem>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface>17.4.33103.184</Version_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_Shell_15>17.4.33103.184</Version_Microsoft_VisualStudio_Shell_15>
+    <Version_Microsoft_VisualStudio_Composition>17.4.16</Version_Microsoft_VisualStudio_Composition>
+    <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
+    <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
   </PropertyGroup>
 
   <!-- // Visual Studio 2019 -->
@@ -55,6 +61,9 @@
     <Version_Microsoft_VisualStudio_VCProjectEngine>16.10.31320.204</Version_Microsoft_VisualStudio_VCProjectEngine>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface>16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_Shell_15>16.10.31321.278</Version_Microsoft_VisualStudio_Shell_15>
+    <Version_Microsoft_VisualStudio_Composition>16.9.20</Version_Microsoft_VisualStudio_Composition>
+    <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
+    <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
   </PropertyGroup>
 
 </Project>
