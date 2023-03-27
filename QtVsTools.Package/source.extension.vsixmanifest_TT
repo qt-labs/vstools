@@ -22,7 +22,7 @@
                 "Microsoft.VisualStudio.Community",
                 "Microsoft.VisualStudio.Enterprise"
             };
-            VersionRange = "[17.0, 18.0)";
+            VersionRange = "[17.4, 18.0)";
             break;
         case "2019":
             PackageId = "QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5";
@@ -34,7 +34,7 @@
                 "Microsoft.VisualStudio.Community",
                 "Microsoft.VisualStudio.Enterprise"
             };
-            VersionRange = "[16.0, 17.0)";
+            VersionRange = "[16.11, 17.0)";
             break;
     }
 #>
