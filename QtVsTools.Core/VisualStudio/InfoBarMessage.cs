@@ -20,7 +20,7 @@ namespace QtVsTools.VisualStudio
         protected abstract TextSpan[] Text { get; }
         protected virtual Hyperlink[] Hyperlinks => Array.Empty<Hyperlink>();
 
-        protected class TextSpan
+        public class TextSpan
         {
             public string Text { get; set; }
             public bool Bold { get; set; }
@@ -29,7 +29,7 @@ namespace QtVsTools.VisualStudio
             public static implicit operator TextSpan(string text) => new() { Text = text };
         }
 
-        protected class TextSpacer : TextSpan
+        public class TextSpacer : TextSpan
         {
             public TextSpacer(int spaces)
             {
@@ -37,7 +37,7 @@ namespace QtVsTools.VisualStudio
             }
         }
 
-        protected class Hyperlink
+        public class Hyperlink
         {
             public string Text { get; set; }
             public bool CloseInfoBar { get; set; }

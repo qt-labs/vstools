@@ -3,13 +3,16 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
     using Common;
-    using Microsoft.VisualStudio.Imaging.Interop;
     using VisualStudio;
 
     public static class Notifications
@@ -24,6 +27,9 @@ namespace QtVsTools
 
         public static UpdateProjectFormat UpdateProjectFormat
             => StaticLazy.Get(() => UpdateProjectFormat, () => new UpdateProjectFormat());
+
+        public static NotifyMessage NotifyMessage
+            => StaticLazy.Get(() => NotifyMessage, () => new NotifyMessage());
     }
 
     public class NoQtVersion : InfoBarMessage
@@ -125,5 +131,80 @@ namespace QtVsTools
                 }
             }
         };
+    }
+
+    public class NotifyMessage : InfoBarMessage
+    {
+        public void Show(Message message)
+        {
+            message.Setup(this);
+            Close();
+            base.Show();
+        }
+
+        public void Show(string text)
+        {
+            Show(new Message { text });
+        }
+
+        public new void Show()
+        {
+            throw new NotSupportedException();
+        }
+
+        public class Message : IEnumerable
+        {
+            private ImageMoniker MessageIcon { get; set; } = KnownMonikers.StatusInformation;
+
+            public void Add(ImageMoniker icon)
+            {
+                MessageIcon = icon;
+            }
+
+            public void Add(TextSpan text)
+            {
+                MessageText.Add(text);
+            }
+
+            public void Add(string text)
+            {
+                MessageText.Add(text);
+            }
+
+            public void Add(Hyperlink hyperlink)
+            {
+                MessageHyperlinks.Add(hyperlink);
+            }
+
+            public void Setup(NotifyMessage notifyMessage)
+            {
+                notifyMessage.MessageIcon = MessageIcon;
+                notifyMessage.MessageText = MessageText;
+                notifyMessage.MessageHyperlinks = MessageHyperlinks;
+            }
+
+            private List<TextSpan> MessageText { get; set; } = new()
+            {
+                new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+                new TextSpacer(2),
+                Utils.EmDash,
+                new TextSpacer(2),
+            };
+            private List<Hyperlink> MessageHyperlinks { get; set; } = new();
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        private ImageMoniker MessageIcon { get; set; } = KnownMonikers.StatusInformation;
+        protected override ImageMoniker Icon => MessageIcon;
+
+        private List<TextSpan> MessageText { get; set; } = new();
+        protected override TextSpan[] Text => MessageText.ToArray();
+
+        private List<Hyperlink> MessageHyperlinks { get; set; } = new();
+        protected override Hyperlink[] Hyperlinks => MessageHyperlinks.ToArray();
     }
 }
