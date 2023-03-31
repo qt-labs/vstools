@@ -94,6 +94,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="$(Name_System_Management)" Version="$(Version_System_Management)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

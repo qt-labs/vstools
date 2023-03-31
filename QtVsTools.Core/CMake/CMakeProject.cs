@@ -12,6 +12,16 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Task = System.Threading.Tasks.Task;
 
+namespace QtVsTools.Core
+{
+    using CMake;
+    public static partial class Instances
+    {
+        public static (CMakeProject ActiveProject, string RootPath)
+            CMake => new(CMakeProject.ActiveProject, CMakeProject.ActiveProject.RootPath);
+    }
+}
+
 namespace QtVsTools.Core.CMake
 {
     using Common;
@@ -20,6 +30,7 @@ namespace QtVsTools.Core.CMake
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         public static CMakeProject ActiveProject { get; private set; }
+        public string RootPath { get; private set; }
 
         public static CMakeProject Load(IWorkspace projectFolder)
         {
@@ -92,7 +103,6 @@ namespace QtVsTools.Core.CMake
         private IIndexWorkspaceService3 Index { get; set; }
         private IFileWatcherService FileWatcher { get; set; }
 
-        private string RootPath { get; set; }
         private string RootListsPath => Path.Combine(RootPath, "CMakeLists.txt");
         private string PresetsPath => Path.Combine(RootPath, "CMakePresets.json");
         private string UserPresetsPath => Path.Combine(RootPath, "CMakeUserPresets.json");

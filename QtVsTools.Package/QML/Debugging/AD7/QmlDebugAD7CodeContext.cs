@@ -109,7 +109,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     continue;
                 if (this.Program != that.Program)
                     continue;
-                if (!string.Equals(Path.GetFullPath(this.FilePath),
+                if (this.FilePath is not null && !string.Equals(Path.GetFullPath(this.FilePath),
                     Path.GetFullPath(that.FilePath), IgnoreCase)) {
                     continue;
                 }

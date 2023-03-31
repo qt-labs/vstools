@@ -24,8 +24,8 @@ namespace QtVsTools.Qml.Debug.V4
         [DataMember(Name = "ref")]
         public int? Ref { get; set; }
 
-        [DataMember(Name = "value")]
-        public int PropertyCount { get; set; }
+        [DataMember(Name = "value", IsRequired = false)]
+        public int? PropertyCount { get; set; }
 
         protected override bool? IsCompatible(JsValue obj)
         {

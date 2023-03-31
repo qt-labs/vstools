@@ -31,6 +31,9 @@
 
     <Name_Stub_System_Data_SQLite_Core_NetFramework>Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
     <Version_Stub_System_Data_SQLite_Core_NetFramework>1.0.115.5</Version_Stub_System_Data_SQLite_Core_NetFramework>
+
+    <Name_System_Management>System.Management</Name_System_Management>
+    <Version_System_Management>7.0.0</Version_System_Management>
   </PropertyGroup>
 
   <!-- // Visual Studio 2022 -->

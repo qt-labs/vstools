@@ -495,10 +495,15 @@ namespace QtVsTools.Qml.Debug
             hostName = fileName = "";
             block = false;
 
-            ConnectParams connParams = ConnectParamsParser
-                .Parse(args)
-                .GetValues<ConnectParams>(TokenId.ConnectParams)
-                .FirstOrDefault();
+            ConnectParams connParams;
+            try {
+                connParams = ConnectParamsParser
+                    .Parse(args)
+                    .GetValues<ConnectParams>(TokenId.ConnectParams)
+                    .FirstOrDefault();
+            } catch (ParseErrorException) {
+                return false;
+            }
 
             if (connParams == null)
                 return false;
