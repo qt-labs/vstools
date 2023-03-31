@@ -17,30 +17,17 @@ namespace QtVsTools.Core
     {
         public static QtModules Instance { get; } = new();
 
-        private List<QtModule> qt5list, qt6list;
-        private readonly Dictionary<int, QtModule> qt5modules = new();
-        private readonly Dictionary<int, QtModule> qt6modules = new();
+        private readonly Dictionary<int, QtModule> qt5modules = new Dictionary<int, QtModule>();
+        private readonly Dictionary<int, QtModule> qt6modules = new Dictionary<int, QtModule>();
 
-        public List<QtModule> GetAvailableModules(uint major)
+        public IReadOnlyCollection<QtModule> GetAvailableModules(uint major)
         {
-            switch (major) {
-            case < 6:
-                if (qt5list == null) {
-                    qt5list = new List<QtModule>(qt5modules.Count);
-                    foreach (var entry in qt5modules)
-                        qt5list.Add(entry.Value);
-                }
-                return qt5list;
-            case 6:
-                if (qt6list == null) {
-                    qt6list = new List<QtModule>(qt6modules.Count);
-                    foreach (var entry in qt6modules)
-                        qt6list.Add(entry.Value);
-                }
-                return qt6list;
-            default:
-                throw new QtVSException("Unsupported Qt version.");
-            }
+            return major switch
+            {
+                < 6 => qt5modules.Values,
+                6 => qt6modules.Values,
+                _ => throw new QtVSException("Unsupported Qt version.")
+            };
         }
 
         private QtModules()
