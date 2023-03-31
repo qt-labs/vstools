@@ -10,24 +10,21 @@ using System.Reflection;
 
 namespace QtVsTools.Common
 {
-    public class LazyFactory
+    public class LazyFactory : Concurrent
     {
-        private Lazy<ConcurrentDictionary<PropertyInfo, Lazy<object>>> LazyObjs { get; }
-        private ConcurrentDictionary<PropertyInfo, Lazy<object>> Objs => LazyObjs.Value;
-
-        public LazyFactory()
-        {
-            LazyObjs = new Lazy<ConcurrentDictionary<PropertyInfo, Lazy<object>>>();
-        }
+        private ConcurrentDictionary<PropertyInfo, object> Objs { get; } = new();
 
         public T Get<T>(Expression<Func<T>> propertyRef, Func<T> initFunc) where T : class
         {
-            var lazyPropertyExpr = propertyRef?.Body as MemberExpression;
-            var lazyProperty = lazyPropertyExpr?.Member as PropertyInfo;
-            if (lazyProperty == null)
+            if (propertyRef?.Body is not MemberExpression lazyPropertyExpr)
+                throw new ArgumentException("Expected lambda member expression", "propertyRef");
+            if (lazyPropertyExpr?.Member is not PropertyInfo lazyProperty)
                 throw new ArgumentException("Invalid property reference", "propertyRef");
-            var lazyObj = Objs.GetOrAdd(lazyProperty, _ => new Lazy<object>(initFunc));
-            return lazyObj.Value as T;
+            lock (CriticalSection) {
+                if (!Objs.TryGetValue(lazyProperty, out var lazyObject))
+                    Objs[lazyProperty] = lazyObject = initFunc();
+                return lazyObject as T;
+            }
         }
     }
 }
