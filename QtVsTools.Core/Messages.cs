@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
@@ -18,6 +19,8 @@ namespace QtVsTools.Core
 
     public static class Messages
     {
+        public static bool Initialized { get; set; } = false;
+
         private static OutputWindowPane Pane { get; set; }
 
         private const string Name = "Qt VS Tools";
@@ -26,12 +29,13 @@ namespace QtVsTools.Core
         /// <summary>
         /// Show a message on the output pane.
         /// </summary>
-        public static void Print(string text, bool clear = false, bool activate = false)
+        public static void Print(string text,
+            bool clear = false, bool activate = false, bool trim = true)
         {
             msgQueue.Enqueue(new Msg
             {
                 Clear = clear,
-                Text = text,
+                Text = trim ? text.Trim(' ', '\t', '\r', '\n') : text,
                 Activate = activate
             });
             FlushMessages();
@@ -156,22 +160,34 @@ namespace QtVsTools.Core
                     MessageReady = new EventWaitHandle(false, EventResetMode.AutoReset);
                     FlushTask = Task.Run(async () =>
                     {
-                        var package = VsServiceProvider.Instance as Package;
+                        Package package;
+                        while ((package = VsServiceProvider.Instance as Package) is null)
+                            await Task.Delay(1000);
                         while (!package.Zombied) {
+                            await Task.Delay(Initialized ? 100 : 1000);
                             if (!await MessageReady.ToTask(3000))
                                 continue;
+                            bool clear = false;
+                            bool activate = false;
+                            var msgText = new StringBuilder();
                             while (!msgQueue.IsEmpty) {
-                                if (!msgQueue.TryDequeue(out Msg msg)) {
+                                if (!msgQueue.TryDequeue(out var msg)) {
                                     await Task.Yield();
                                     continue;
                                 }
-                                if (msg.Clear)
-                                    await OutputWindowPane_ClearAsync();
-                                if (msg.Text != null)
-                                    await OutputWindowPane_PrintAsync(msg.Text);
-                                if (msg.Activate)
-                                    await OutputWindowPane_ActivateAsync();
+                                if (msg is null)
+                                    continue;
+                                clear |= msg.Clear;
+                                activate |= msg.Activate;
+                                if (!string.IsNullOrEmpty(msg.Text))
+                                    msgText.AppendLine(msg.Text);
                             }
+                            if (clear)
+                                await OutputWindowPane_ClearAsync();
+                            if (msgText.Length > 0)
+                                await OutputWindowPane_PrintAsync(msgText.ToString());
+                            if (activate)
+                                await OutputWindowPane_ActivateAsync();
                         }
                     });
                 }
@@ -181,12 +197,8 @@ namespace QtVsTools.Core
 
         static async Task OutputWindowPane_PrintAsync(string text)
         {
-            var active = await OutputWindowPane.GetActiveAsync();
-
             await OutputWindowPane_InitAsync();
             await Pane.PrintAsync(text);
-
-            (active?.ActivateAsync()).Forget();
         }
     }
 }
