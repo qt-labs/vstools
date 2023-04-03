@@ -27,7 +27,7 @@ namespace QtVsTools.Core
                 StdOutput = new StringBuilder();
             }
 
-            protected override void OutMsg(string msg)
+            protected override void OutMsg(Process qmakeProc, string msg)
             {
                 StdOutput.AppendLine(msg);
             }
@@ -35,7 +35,7 @@ namespace QtVsTools.Core
             protected override void InfoStart(Process qmakeProc)
             {
                 base.InfoStart(qmakeProc);
-                InfoMsg("--- qmake: Querying persistent _Properties");
+                InfoMsg(qmakeProc, "Querying persistent properties");
             }
         }
 

@@ -117,39 +117,39 @@ namespace QtVsTools.Core
             {
                 StartInfo = qmakeStartInfo
             };
-            qmakeProc.OutputDataReceived += (sender, ev) => OutMsg(ev.Data);
-            qmakeProc.ErrorDataReceived += (sender, ev) => ErrMsg(ev.Data);
+            qmakeProc.OutputDataReceived += (sender, ev) => OutMsg(qmakeProc, ev.Data);
+            qmakeProc.ErrorDataReceived += (sender, ev) => ErrMsg(qmakeProc, ev.Data);
 
             return qmakeProc;
         }
 
-        protected virtual void OutMsg(string msg)
+        protected virtual void OutMsg(Process qmakeProc, string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print(msg);
+                Messages.Print($"+++ qmake({qmakeProc.Id}): {msg}");
         }
 
-        protected virtual void ErrMsg(string msg)
+        protected virtual void ErrMsg(Process qmakeProc, string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print(msg);
+                Messages.Print($">>> qmake({qmakeProc.Id}): {msg}");
         }
 
-        protected virtual void InfoMsg(string msg)
+        protected virtual void InfoMsg(Process qmakeProc, string msg)
         {
             if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print(msg);
+                Messages.Print($"--- qmake({qmakeProc.Id}): {msg}");
         }
 
         protected virtual void InfoStart(Process qmakeProc)
         {
-            InfoMsg($"--- qmake({qmakeProc.Id}): started {qmakeProc.StartInfo.FileName}");
+            InfoMsg(qmakeProc, $"Started {qmakeProc.StartInfo.FileName}");
         }
 
         protected virtual void InfoExit(Process qmakeProc)
         {
-            InfoMsg($"--- qmake({qmakeProc.Id}): exit code {qmakeProc.ExitCode} "
-                + $"({(qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds:0.##} msecs)\r\n");
+            InfoMsg(qmakeProc, $"Exit code {qmakeProc.ExitCode} "
+                + $"({(qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds:0.##} msecs)");
         }
 
         public virtual int Run()

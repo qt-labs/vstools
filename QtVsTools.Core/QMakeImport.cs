@@ -26,15 +26,14 @@ namespace QtVsTools.Core
             protected override void InfoStart(Process qmakeProc)
             {
                 base.InfoStart(qmakeProc);
-                InfoMsg("--- qmake: Working Directory: " + qmakeProc.StartInfo.WorkingDirectory);
-                InfoMsg("--- qmake: Arguments: " + qmakeProc.StartInfo.Arguments);
+                InfoMsg(qmakeProc, $"Working Directory: {qmakeProc.StartInfo.WorkingDirectory}");
+                InfoMsg(qmakeProc, qmakeProc.StartInfo.Arguments);
                 if (qmakeProc.StartInfo.EnvironmentVariables.ContainsKey("QMAKESPEC")) {
                     var qmakeSpec = qmakeProc.StartInfo.EnvironmentVariables["QMAKESPEC"];
                     if (qmakeSpec != qtVersion.QMakeSpecDirectory) {
-                        InfoMsg("--- qmake: Environment "
-                          + "variable QMAKESPEC overwriting Qt version QMAKESPEC.");
-                        InfoMsg($"--- qmake: Qt version QMAKESPEC: {qtVersion.QMakeSpecDirectory}");
-                        InfoMsg($"--- qmake: Environment variable QMAKESPEC: {qmakeSpec}");
+                        InfoMsg(qmakeProc, "Variable QMAKESPEC overwriting Qt version QMAKESPEC.");
+                        InfoMsg(qmakeProc, $"Qt version QMAKESPEC: {qtVersion.QMakeSpecDirectory}");
+                        InfoMsg(qmakeProc, $"Environment variable QMAKESPEC: {qmakeSpec}");
                     }
                 }
             }
@@ -52,9 +51,9 @@ namespace QtVsTools.Core
                     try {
                         if (setVcVars) {
                             if (qtVersion is null)
-                                OutMsg("Error setting VC vars, Qt version may not be null");
+                                OutMsg(qmakeProc, "vcvars: Qt version may not be null");
                             if (!HelperFunctions.SetVcVars(qtVersion, qmakeProc.StartInfo))
-                                OutMsg("Error setting VC vars");
+                                OutMsg(qmakeProc, "Error setting VC vars");
                         }
                         if (qmakeProc.Start()) {
                             InfoStart(qmakeProc);

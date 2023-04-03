@@ -851,9 +851,8 @@ namespace QtVsTools.Core
                 break;
             }
 
-            Messages.Print($"vcvars: {vcVarsCmd}");
             if (!File.Exists(vcVarsCmd)) {
-                Messages.Print("vcvars: NOT FOUND");
+                Messages.Print(">>> vcvars: NOT FOUND");
                 return false;
             }
 
@@ -873,6 +872,8 @@ namespace QtVsTools.Core
             if (process == null)
                 return false;
 
+            var vcVarsProcId = process.Id;
+            Messages.Print($"--- vcvars({vcVarsProcId}): {vcVarsCmd}");
             process.OutputDataReceived += (_, e) =>
             {
                 if (string.IsNullOrEmpty(e.Data))
@@ -899,7 +900,10 @@ namespace QtVsTools.Core
             var clPath = envVars["PATH"]
                 .Select(path => Path.Combine(path, "cl.exe"))
                 .FirstOrDefault(File.Exists);
-            Messages.Print($"cl: {clPath ?? "NOT FOUND"}");
+            if (!string.IsNullOrEmpty(clPath))
+                Messages.Print($"--- vcvars({vcVarsProcId}): cl path: {clPath}");
+            else
+                Messages.Print($">>> vcvars({vcVarsProcId}): cl path NOT FOUND");
 
             return true;
         }
