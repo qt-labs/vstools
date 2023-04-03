@@ -19,7 +19,7 @@ namespace QtVsTools.Core.CMake
         {
             protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
 
-            protected override TextSpan[] Text => new TextSpan[]
+            protected override TextSpan[] Text => new []
             {
                 new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2), EmDash, new TextSpacer(2),
@@ -31,7 +31,7 @@ namespace QtVsTools.Core.CMake
         private static AlertIncompatibleProject IncompatibleProjectMessage => StaticLazy.Get(
             () => IncompatibleProjectMessage, () => new AlertIncompatibleProject());
 
-        private async Task ShowIncomptabileProjectAsync()
+        private async Task ShowIncompatibleProjectAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             IncompatibleProjectMessage.Show();
@@ -44,11 +44,11 @@ namespace QtVsTools.Core.CMake
                 Project = project;
             }
 
-            private CMakeProject Project { get; set; }
+            private CMakeProject Project { get; }
 
             protected override ImageMoniker Icon => KnownMonikers.StatusAlert;
 
-            protected override TextSpan[] Text => new TextSpan[]
+            protected override TextSpan[] Text => new []
             {
                 new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2), EmDash, new TextSpacer(2),
@@ -62,7 +62,7 @@ namespace QtVsTools.Core.CMake
                     Text = "Convert project to Qt/CMake",
                     CloseInfoBar = true,
                     OnClicked = Project.ConfirmConversion
-                },
+                }
             };
         }
 

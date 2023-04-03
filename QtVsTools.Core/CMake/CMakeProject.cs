@@ -30,24 +30,23 @@ namespace QtVsTools.Core.CMake
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         public static CMakeProject ActiveProject { get; private set; }
-        public string RootPath { get; private set; }
+        public string RootPath { get; }
 
-        public static CMakeProject Load(IWorkspace projectFolder)
+        public static void Load(IWorkspace projectFolder)
         {
             if (projectFolder == null)
-                return null;
+                return;
             var self = new CMakeProject(projectFolder);
             if (!File.Exists(self.RootListsPath))
-                return null;
+                return;
             if (!StaticAtomic(() => ActiveProject == null, () => ActiveProject = self))
-                return null;
+                return;
             if (!File.Exists(self.PresetsPath) && !File.Exists(self.UserPresetsPath)) {
                 File.WriteAllText(self.PresetsPath, NullPresetsText);
                 File.WriteAllText(self.UserPresetsPath, NullPresetsText);
                 self.Status = QtStatus.NullPresets;
             }
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(self.LoadAsync);
-            return self;
         }
 
         public static void Unload()
@@ -96,10 +95,10 @@ namespace QtVsTools.Core.CMake
             await CloseMessagesAsync();
         }
 
-        private static LazyFactory StaticLazy { get; } = new LazyFactory();
-        private LazyFactory Lazy { get; } = new LazyFactory();
+        private static LazyFactory StaticLazy { get; } = new();
+        private LazyFactory Lazy { get; } = new();
 
-        private IWorkspace Project { get; set; }
+        private IWorkspace Project { get; }
         private IIndexWorkspaceService3 Index { get; set; }
         private IFileWatcherService FileWatcher { get; set; }
 
@@ -108,7 +107,7 @@ namespace QtVsTools.Core.CMake
         private string UserPresetsPath => Path.Combine(RootPath, "CMakeUserPresets.json");
         private string SettingsPath => Path.Combine(RootPath, "CMakeSettings.json");
 
-        private static HashSet<string> ProjectFileNames { get; } = new()
+        private static HashSet<string> ProjectFileNames { get; } = new(Utils.CaseIgnorer)
         {
             "CMakeLists.txt",
             "CMakePresets.json",
@@ -116,7 +115,7 @@ namespace QtVsTools.Core.CMake
             "CMakeSettings.json"
         };
 
-        private static JObject NullPresets { get; } = new JObject { ["version"] = 3 };
+        private static JObject NullPresets { get; } = new() { ["version"] = 3 };
         private static string NullPresetsText { get; } = NullPresets.ToString(Formatting.Indented);
 
         private JObject Presets { get; set; }

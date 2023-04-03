@@ -3,7 +3,6 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -41,17 +40,17 @@ namespace QtVsTools.Core.CMake
                     },
                     ["vendor"] = new JObject
                     {
-                        ["qt-project.org/Qt"] = new JObject { }
+                        ["qt-project.org/Qt"] = new JObject()
                     }
                 };
-                (Presets["configurePresets"] as JArray).Add(pathPreset);
+                (Presets["configurePresets"] as JArray)?.Add(pathPreset);
             }
 
-            var versionNames = VersionManager.GetVersions().ToHashSet();
             var versionPresets = UserPresets["configurePresets"]
-                .Where(x => x["vendor"]?["qt-project.org/Version"] != null);
-            foreach (var versionPreset in versionPresets.ToList()) {
-                if (VersionManager.GetVersionInfo((string)versionPreset["name"]) is var version) {
+                .Where(x => x["vendor"]?["qt-project.org/Version"] != null)
+                .ToList();
+            foreach (var versionPreset in versionPresets) {
+                if (VersionManager.GetVersionInfo((string)versionPreset["name"]) is { } version) {
                     var qtDir = version.InstallPrefix.Replace('\\', '/');
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
                     if (qtDir.Equals(presetQtDir, IgnoreCase))
@@ -62,23 +61,23 @@ namespace QtVsTools.Core.CMake
                 }
             }
 
-            var defaultVersionName = VersionManager.GetDefaultVersion();
-            var defaultVersionPreset = UserPresets["configurePresets"]
-                .Where(x => x["vendor"]?["qt-project.org/Default"] != null).FirstOrDefault();
-            if (defaultVersionPreset == null
-                || (
-                    defaultVersionPreset["name"].Value<string>() is string name
-                    && name != "Qt-Default"
-                ) || (
-                    defaultVersionPreset["inherits"].Value<string>() is string inherits
-                    && inherits != defaultVersionName
-                )) {
-                defaultVersionPreset?.Remove();
-                (UserPresets["configurePresets"] as JArray).Add(new JObject
+            var defaultVersion = VersionManager.GetDefaultVersion();
+            var defaultPreset = UserPresets["configurePresets"]
+                .Select(x => new
+                {
+                    Self = x,
+                    IsDefault = x["vendor"]?["qt-project.org/Default"] is not null,
+                    Name = x?["name"]?.Value<string>(),
+                    InheritsDefault = x?["inherits"]?.Value<string>() == defaultVersion
+                })
+                .FirstOrDefault(x => x.IsDefault);
+            if (defaultPreset is not { Name: "Qt-Default", InheritsDefault: true }) {
+                defaultPreset?.Self.Remove();
+                (UserPresets["configurePresets"] as JArray)?.Add(new JObject
                 {
                     ["hidden"] = true,
                     ["name"] = "Qt-Default",
-                    ["inherits"] = defaultVersionName,
+                    ["inherits"] = defaultVersion,
                     ["vendor"] = new JObject
                     {
                         ["qt-project.org/Default"] = new JObject()
@@ -102,7 +101,7 @@ namespace QtVsTools.Core.CMake
             foreach (var missingVersion in missingVersions) {
                 var platform = missingVersion.platform();
                 var qtDir = missingVersion.InstallPrefix;
-                (UserPresets["configurePresets"] as JArray).Add(new JObject
+                (UserPresets["configurePresets"] as JArray)?.Add(new JObject
                 {
                     ["hidden"] = true,
                     ["name"] = missingVersion.name,
@@ -114,11 +113,12 @@ namespace QtVsTools.Core.CMake
                     ["architecture"] = new JObject
                     {
                         ["strategy"] = "set",
-                        ["value"]
-                            = platform == Platform.x86 ? "x86"
-                            : platform == Platform.x64 ? "x64"
-                            : platform == Platform.arm64 ? "arm64"
-                            : null
+                        ["value"] = platform switch {
+                            Platform.x86 => "x86",
+                            Platform.x64 => "x64",
+                            Platform.arm64 => "arm64",
+                            _ => null
+                        }
                     },
                     ["generator"] = "Visual Studio 16 2019",
                     ["vendor"] = new JObject
@@ -154,9 +154,9 @@ namespace QtVsTools.Core.CMake
                         preset["inherits"] = new JArray();
                     else if (preset["inherits"] is not JArray)
                         preset["inherits"] = new JArray { (string)preset["inherits"] };
-                    (preset["inherits"] as JArray).Add("Qt-Default");
+                    (preset["inherits"] as JArray)?.Add("Qt-Default");
 
-                    (UserPresets["configurePresets"] as JArray).AddFirst(new JObject
+                    (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                     {
                         ["name"] = presetName,
                         ["inherits"] = userPresetInherits
@@ -169,10 +169,11 @@ namespace QtVsTools.Core.CMake
 
             visiblePresets = UserPresets["configurePresets"]?
                 .Children<JObject>()
-                .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"]);
+                .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"])
+                .ToList();
 
             if (visiblePresets == null || visiblePresets.Count() == 0) {
-                (UserPresets["configurePresets"] as JArray).AddFirst(new JObject
+                (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                 {
                     ["name"] = "Debug",
                     ["inherits"] = "Qt-Default",
@@ -187,19 +188,16 @@ namespace QtVsTools.Core.CMake
             var versionNames = VersionManager.GetVersions().Prepend("Qt-Default");
 
             // All visible presets must have a reference to a Qt version
-            var presetsMissingQtRef = visiblePresets.Where(preset =>
-                !preset.ContainsKey("inherits")
-                || (preset["inherits"] is JArray inherits
-                    && !inherits.Any(presetName => versionNames.Contains((string)presetName)))
-                || (preset["inherits"] is JValue
-                    && preset["inherits"].Value<string>() is var presetName
-                    && !versionNames.Contains(presetName)));
+            var isQtVersion = (JToken presetName) =>  versionNames.Contains(presetName.ToString());
+            var presetsMissingQtRef = visiblePresets.Where(preset => !preset.ContainsKey("inherits")
+                || (preset["inherits"] is JArray inherits && !inherits.Any(isQtVersion))
+                || (preset["inherits"] is JValue presetName && !isQtVersion(presetName)));
             foreach (var preset in presetsMissingQtRef) {
                 if (!preset.ContainsKey("inherits"))
                     preset["inherits"] = new JArray();
                 else if (preset["inherits"] is not JArray)
                     preset["inherits"] = new JArray { (string)preset["inherits"] };
-                (preset["inherits"] as JArray).Add("Qt-Default");
+                (preset["inherits"] as JArray)?.Add("Qt-Default");
             }
         }
     }

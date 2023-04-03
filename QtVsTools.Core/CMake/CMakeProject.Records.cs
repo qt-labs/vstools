@@ -14,7 +14,7 @@ namespace QtVsTools.Core.CMake
 {
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
-        private JProperty RecordInfo(JObject record)
+        private static JProperty RecordInfo(JObject record)
         {
             return record?["vendor"]?
                 .Children<JProperty>()
@@ -37,9 +37,9 @@ namespace QtVsTools.Core.CMake
 
         private string EvalChecksum(JObject record)
         {
-            record = record.DeepClone() as JObject;
-            var info = RecordInfo(record)?.Value as JObject;
-            info?.Remove("checksum");
+            if (RecordInfo(record?.DeepClone() as JObject)?.Value is not JObject info)
+                return string.Empty;
+            info.Remove("checksum");
             var json = record.ToString(Formatting.Indented);
             var jsonUtf8 = Encoding.UTF8.GetBytes(json);
             using var sha1 = SHA1.Create();
@@ -47,12 +47,11 @@ namespace QtVsTools.Core.CMake
             return System.Convert.ToBase64String(sha1Data);
         }
 
-        private bool VerifyChecksums()
+        private void VerifyChecksums()
         {
             Presets ??= new JObject();
             UserPresets ??= new JObject();
 
-            var checksumFailed = false;
             var records = Presets.Descendants()
                 .Union(UserPresets.Descendants())
                 .Append(Presets)
@@ -71,14 +70,11 @@ namespace QtVsTools.Core.CMake
                 .Where(x => x.Info != null)
                 .ToList();
             foreach (var record in records) {
-                var checksum = record.Checksum?.Value<string>();
-                if (checksum != EvalChecksum(record.Self)) {
-                    checksumFailed = true;
-                    if (record.Self != Presets && record.Self != UserPresets)
-                        record.Self.Remove();
-                }
+                if (record.Checksum?.Value<string>() == EvalChecksum(record.Self))
+                    continue;
+                if (record.Self != Presets && record.Self != UserPresets)
+                    record.Self.Remove();
             }
-            return !checksumFailed;
         }
     }
 }

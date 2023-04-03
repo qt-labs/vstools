@@ -4,6 +4,7 @@
 ***************************************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.Shell;
@@ -13,8 +14,6 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.CMake
 {
-    using Common;
-    using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
@@ -31,7 +30,7 @@ namespace QtVsTools.Core.CMake
             try {
                 await StateMachineAsync();
             } catch (Exception ex) {
-                Messages.Log(ex);
+                ex.Log();
             }
             Release("CheckQtStatus");
         }
@@ -41,20 +40,16 @@ namespace QtVsTools.Core.CMake
             string[] lists;
             try {
                 lists = Directory.GetFiles(RootPath, "CMakeLists.txt", SearchOption.AllDirectories);
-            } catch (Exception e) {
-                Messages.Log(e);
+            } catch (Exception ex) {
+                ex.Log();
                 return;
             }
 
             switch (Status) {
             case QtStatus.False:
             case QtStatus.NullPresets:
-                if (HasQtReference(lists)) {
-                    if (!TryLoadQtConfig())
-                        Status = QtStatus.ConversionPending;
-                    else
-                        Status = QtStatus.True;
-                }
+                if (HasQtReference(lists))
+                    Status = TryLoadQtConfig() ? QtStatus.True : QtStatus.ConversionPending;
                 break;
             case QtStatus.ConversionPending:
                 return;
@@ -75,8 +70,8 @@ namespace QtVsTools.Core.CMake
                         File.Delete(PresetsPath);
                     if (File.ReadAllText(UserPresetsPath) == NullPresetsText)
                         File.Delete(UserPresetsPath);
-                } catch (Exception e) {
-                    Messages.Log(e);
+                } catch (Exception ex) {
+                    ex.Log();
                 }
                 Status = QtStatus.False;
                 return;
@@ -104,7 +99,7 @@ namespace QtVsTools.Core.CMake
                 await Index.InvalidateFileScannerCache();
         }
 
-        private bool HasQtReference(string[] listFiles)
+        private bool HasQtReference(IEnumerable<string> listFiles)
         {
             foreach (var listFile in listFiles) {
                 var listFilePath = Path.Combine(RootPath, listFile);
@@ -113,13 +108,11 @@ namespace QtVsTools.Core.CMake
                 try {
                     if (!CMakeListsParser.Parse(File.ReadAllText(listFilePath)).Any())
                         continue;
-                    if (!IsCompatible()) {
-                        _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncomptabileProjectAsync);
+                    if (IsCompatible())
                         return false;
-                    }
+                    _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncompatibleProjectAsync);
                     return true;
                 } catch (ParseErrorException) {
-                    continue;
                 }
             }
             return false;
@@ -171,9 +164,8 @@ namespace QtVsTools.Core.CMake
             if (isDirty) {
                 File.WriteAllText(PresetsPath, Presets.ToString(Formatting.Indented));
                 File.WriteAllText(UserPresetsPath, UserPresets.ToString(Formatting.Indented));
-                return true;
             }
-            return false;
+            return isDirty;
         }
 
         private bool IsCompatible()
@@ -183,7 +175,7 @@ namespace QtVsTools.Core.CMake
 
         private static bool IsProjectFile(string path)
         {
-            return ProjectFileNames.Contains(Path.GetFileName(path), CaseIgnorer);
+            return ProjectFileNames.Contains(Path.GetFileName(path));
         }
 
         private bool IsAutoConfigurable()
