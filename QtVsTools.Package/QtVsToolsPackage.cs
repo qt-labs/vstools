@@ -267,7 +267,6 @@ namespace QtVsTools
 
         private async Task CheckVersionsAsync()
         {
-            Messages.Enabled = false;
             var versions = Core.Instances.VersionManager.GetVersions();
             var statusCenter = await VsServiceProvider
                 .GetServiceAsync<SVsTaskStatusCenterService, IVsTaskStatusCenterService>();
@@ -294,7 +293,6 @@ namespace QtVsTools
                 _ = Core.Instances.VersionManager.GetVersionInfo(versions[i]);
             }
             status?.Dismiss();
-            Messages.Enabled = true;
         }
 
         private bool TestVersionInstalled()
