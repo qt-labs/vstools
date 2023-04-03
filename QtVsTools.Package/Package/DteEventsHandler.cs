@@ -94,6 +94,12 @@ namespace QtVsTools
         private async Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            OnActiveWorkspaceChanged();
+        }
+
+        public void OnActiveWorkspaceChanged()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var workspace = VsShell.FolderWorkspace?.CurrentWorkspace;
             if (workspace != null)
                 CMakeProject.Load(workspace);

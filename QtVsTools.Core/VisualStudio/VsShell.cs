@@ -4,11 +4,13 @@
 ***************************************************************************************************/
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Workspace.VSIntegration.Contracts;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.VisualStudio
 {
@@ -97,6 +99,12 @@ namespace QtVsTools.VisualStudio
                 vsShell?.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out host);
                 return _InfoBarHost = host as IVsInfoBarHost;
             }
+        }
+
+        public static async Task UiThreadAsync(Action action)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            action();
         }
     }
 }

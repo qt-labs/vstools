@@ -85,33 +85,33 @@ namespace QtVsTools
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
 
-        private static readonly EventWaitHandle InitDone = new(false, EventResetMode.ManualReset);
+        private EventWaitHandle Ready { get; } = new(false, EventResetMode.ManualReset);
+        public EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
+        private bool InitializationAwaited { get; set; } = false;
 
-        private static QtVsToolsPackage _instance;
+        private static QtVsToolsPackage instance;
         public static QtVsToolsPackage Instance
         {
             get
             {
-                InitDone.WaitOne();
-                return _instance;
+                instance.Ready.WaitOne();
+                return instance;
             }
         }
 
-        private static readonly Stopwatch initTimer = Stopwatch.StartNew();
         private static readonly HttpClient http = new();
         private const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
-        private DteEventsHandler eventHandler;
+        private DteEventsHandler EventHandler { get; set; }
         private string VisualizersPath { get; set; }
-
 
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
         {
             try {
-                var timeInitBegin = initTimer.Elapsed;
-                VsServiceProvider.Instance = _instance = this;
+                var initTimer = Stopwatch.StartNew();
+                VsServiceProvider.Instance = instance = this;
                 QtProject.ProjectTracker = this;
 
                 // determine the package installation directory
@@ -122,13 +122,11 @@ namespace QtVsTools
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
-                await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-                var timeUiThreadBegin = initTimer.Elapsed;
+                await JoinableTaskFactory.SwitchToMainThreadAsync();
+                var uiTimer = Stopwatch.StartNew();
 
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
-
-                eventHandler = new DteEventsHandler(Dte);
 
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize();
@@ -148,9 +146,9 @@ namespace QtVsTools
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
                 await TaskScheduler.Default;
-                var timeUiThreadEnd = initTimer.Elapsed;
+                uiTimer.Stop();
 
-                var vm = QtVersionManager.The(InitDone);
+                var vm = QtVersionManager.The(Ready);
                 if (vm.HasInvalidVersions(out var error, out var defaultInvalid)) {
                     if (defaultInvalid)
                         vm.SetLatestQtVersionAsDefault();
@@ -229,44 +227,100 @@ namespace QtVsTools
 
                 CopyTextMateLanguageFiles();
                 CopyVisualizersFiles();
+                initTimer.Stop();
+                Ready.Set();
+                var initMsecs = initTimer.Elapsed.TotalMilliseconds;
+                var uiMsecs = uiTimer.Elapsed.TotalMilliseconds;
 
-                Messages.Print($"\r\n== Qt Visual Studio Tools version {Version.USER_VERSION}\r\n"
-                    + "\r\n   Initialized in: "
-                    + $"{(initTimer.Elapsed - timeInitBegin).TotalMilliseconds:0.##} msecs"
-                    + "\r\n   Main (UI) thread: "
-                    + $"{(timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds:0.##} msecs\r\n");
+                /////////
+                // Continue initialization in background task
+                //
+                await Task.WhenAny(Task.Run(Task.Yield), Task.Run(
+                    async () => await FinalizeInitializationAsync(initMsecs, uiMsecs)));
 
-                var devRelease = await GetLatestDevelopmentReleaseAsync();
-                if (devRelease != null) {
-                    Messages.Print($@"
-    ================================================================
+            } catch (Exception exception) {
+                Ready.Set();
+                exception.Log();
+            }
+        }
+
+        private async Task FinalizeInitializationAsync(double initMsecs, double uiMsecs)
+        {
+            /////////
+            // Initialize Qt versions information
+            //
+            await CheckVersionsAsync();
+
+            /////////
+            // Show banner
+            //
+            Messages.Print(trim: false, text: @$"
+
+
+    ################################################################
+        == Qt Visual Studio Tools version {Version.USER_VERSION} ==
+            Extension package initialized in:
+             * Total: {initMsecs:0.##} msecs
+             * UI thread: {uiMsecs:0.##} msecs
+    ################################################################");
+
+            /////////
+            // Show link to dev release, if any
+            //
+            var devRelease = await GetLatestDevelopmentReleaseAsync();
+            if (devRelease != null) {
+                Messages.Print(trim: false, text: $@"
+
+    ################################################################
       Qt Visual Studio Tools version {devRelease} PREVIEW available at:
       {urlDownloadQtIo}{devRelease}/
-    ================================================================");
-                }
-            } catch (Exception exception) {
-                exception.Log();
-            } finally {
-                InitDone.Set();
-                initTimer.Stop();
+    ################################################################");
             }
 
-            _ = ThreadHelper.JoinableTaskFactory.RunAsync(CheckVersionsAsync);
-
-            ///////////////////////////////////////////////////////////////////////////////////
+            /////////
             // Switch to main (UI) thread
-            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            //
+            await JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            /////////
+            // Initialize DTE event handlers.
+            //
+            EventHandler = new DteEventsHandler(Dte);
 
             /////////
             // Check if a solution was opened during initialization.
             // If so, fire solution open event.
             //
-            if (Dte?.Solution?.IsOpen == true)
-                eventHandler.SolutionEvents_Opened();
+            if (VsShell.FolderWorkspace?.CurrentWorkspace is not null)
+                EventHandler.OnActiveWorkspaceChanged();
+            else if (Dte?.Solution?.IsOpen == true)
+                EventHandler.SolutionEvents_Opened();
+
+            /////////
+            // Eable output messages and activate output pane.
+            //
+            Messages.Initialized = true;
+            Messages.ActivateMessagePane();
+
+            /////////
+            // Signal package initialization complete.
+            //
+            Initialized.Set();
         }
+
+        public bool WaitUntilInitialized(int timeout = -1)
+        {
+            InitializationAwaited = true;
+            return Initialized.WaitOne(timeout);
+        }
+
+        public bool IsInitialized => WaitUntilInitialized(0);
 
         private async Task CheckVersionsAsync()
         {
+            await VsShell.UiThreadAsync(() =>
+                StatusBar.SetText("Checking installed Qt versions..."));
+
             var versions = Core.Instances.VersionManager.GetVersions();
             var statusCenter = await VsServiceProvider
                 .GetServiceAsync<SVsTaskStatusCenterService, IVsTaskStatusCenterService>();
@@ -283,15 +337,44 @@ namespace QtVsTools
                     })
                     as ITaskHandler2;
             status?.RegisterTask(new (() => throw new InvalidOperationException()));
-            for (int i = 0; i < versions.Length; ++i) {
+            status?.Progress.Report(new TaskProgressData
+            {
+                ProgressText = $"{versions.Length} version(s)",
+                CanBeCanceled = false,
+                PercentComplete = 0
+            });
+
+            var tasks = versions.Select((version, idx) => ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await Task.Yield();
+                Messages.Print($@"
+--- Checking {version} ...");
+                var timer = Stopwatch.StartNew();
+                var qt = Core.Instances.VersionManager.GetVersionInfo(version);
+                if (Directory.Exists(qt?.InstallPrefix ?? string.Empty)) {
+                    Messages.Print($@"
+--- {version} check OK ({timer.Elapsed.TotalSeconds:0.##} secs)");
+                } else {
+                    Messages.Print($@"
+--> {version} Missing or cross-platform installation; skipped.");
+                }
+                if (InitializationAwaited) {
+                    await VsShell.UiThreadAsync(() => StatusBar.Progress(
+                        $"Checking Qt version: {version}", versions.Length, idx));
+                }
                 status?.Progress.Report(new TaskProgressData
                 {
-                    ProgressText = $"{versions[i]} ({versions.Length - i - 1} remaining)",
+                    ProgressText = $"{version} ({versions.Length - idx - 1} remaining)",
                     CanBeCanceled = false,
-                    PercentComplete = (100 * (i + 1)) / versions.Length
+                    PercentComplete = (100 * (idx + 1)) / versions.Length
                 });
-                _ = Core.Instances.VersionManager.GetVersionInfo(versions[i]);
-            }
+            }).Task);
+
+            await Task.WhenAll(tasks.ToArray());
+
+            if (InitializationAwaited)
+                await VsShell.UiThreadAsync(StatusBar.ResetProgress);
+            await VsShell.UiThreadAsync(StatusBar.Clear);
             status?.Dismiss();
         }
 
@@ -320,7 +403,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            eventHandler?.Disconnect();
+            EventHandler?.Disconnect();
             return base.QueryClose(out canClose);
         }
 
