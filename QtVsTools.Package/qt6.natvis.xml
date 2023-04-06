@@ -409,8 +409,18 @@
         <AlternativeType Name="##NAMESPACE##::QMultiMap&lt;*,*&gt;"/>
         <DisplayString>{{ size={d.d-&gt;m._Mypair._Myval2._Myval2._Mysize} }}</DisplayString>
         <Expand>
-            <Item Name="[std::map]">d.d-&gt;m</Item>
+            <TreeItems>
+                <Size>d.d-&gt;m._Mypair._Myval2._Myval2._Mysize</Size>
+                <HeadPointer>d.d-&gt;m._Mypair._Myval2._Myval2._Myhead-&gt;_Parent</HeadPointer>
+                <LeftPointer>_Left</LeftPointer>
+                <RightPointer>_Right</RightPointer>
+                <ValueNode Condition="_Isnil == 0" Name="[{_Myval.first}]">_Myval,view(MapHelper)</ValueNode>
+            </TreeItems>
         </Expand>
+    </Type>
+
+   <Type Name="std::pair&lt;*, *&gt;" IncludeView="MapHelper">
+        <DisplayString>{second}</DisplayString>
     </Type>
 
    <Type Name="##NAMESPACE##::QHash&lt;*,*&gt;">
