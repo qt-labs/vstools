@@ -602,4 +602,11 @@
         </Expand>
     </Type>
 
+   <Type Name="##NAMESPACE##::QSet&lt;*&gt;">
+        <DisplayString>{{ size={q_hash.d-&gt;size} }}</DisplayString>
+        <Expand>
+            <ExpandedItem>q_hash</ExpandedItem>
+        </Expand>
+    </Type>
+
 </AutoVisualizer>
