@@ -609,4 +609,127 @@
         </Expand>
     </Type>
 
+   <Type Name="##NAMESPACE##::QVariant">
+        <Intrinsic Name="typeId" Expression="*(int*)(&amp;((const ##NAMESPACE##::QtPrivate::QMetaTypeInterface *)(d.packedType &lt;&lt; 2))->typeId)">
+        </Intrinsic>
+        <Intrinsic Name="dataStar" Expression="(&amp;(d.data.data))">
+        </Intrinsic>
+        <Intrinsic Name="sharedDataStar" Expression="(d.is_shared ? reinterpret_cast&lt;const void *&gt;((size_t)(d.data.shared) + d.data.shared-&gt;offset) : (&amp;(d.data.data)))">
+        </Intrinsic>
+
+        <DisplayString Condition="d.is_null">(null)</DisplayString>
+
+        <!-- Static core pointers -->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QObjectStar">QObject*</DisplayString>
+
+        <!-- Static core template classes -->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantMap">{*(QMap&lt;QString,QVariant&gt;*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantList">{*(QList&lt;QVariant&gt;*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantHash">{*(QHash&lt;QString,QVariant&gt;*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantPair">QVariantPair</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QByteArrayList">{*(QList&lt;QByteArray&gt;*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QStringList">{*(QList&lt;QString&gt;*) sharedDataStar()}</DisplayString>
+
+       <!-- Static primitives-->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Bool">{*(bool*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Int">{*(int*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::UInt">{*(unsigned int*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::LongLong">{*(long long*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::ULongLong">{*(unsigned long long*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Double">{*(double*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::VoidStar">{*(void**) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Long">{*(long*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Short">{*(short*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Char">{*(char*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Char16">{*(char16_t*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Char32">{*(char32_t*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::ULong">{*(unsigned long*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::UShort">{*(unsigned short*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::UChar">{*(unsigned char*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::Float">{*(float*) dataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::SChar">{*(signed char*) dataStar()}</DisplayString>
+
+        <!-- Static core classes -->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QChar">{*(QChar*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QString">{*(QString*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QByteArray">{*(QByteArray*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QDate">{*(QDate*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QTime">{*(QTime*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QDateTime">QDateTime</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QUrl">QUrl</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QLocale">QLocale</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QRect">{*(QRect*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QRectF">{*(QRectF*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QSize">{*(QSize*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QSizeF">{*(QSizeF*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QLine">{*(QLine*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QLineF">{*(QLineF*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPoint">{*(QPoint*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPointF">{*(QPointF*) sharedDataStar()}</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QEasingCurve">EasingCurve</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QUuid">Uuid</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QRegularExpression">RegularExpression</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QJsonValue">QJsonValue</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QJsonObject">QJsonObject</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QJsonArray">QJsonArray</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QJsonDocument">QJsonDocument</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QCborValue">QCborValue</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QCborArray">QCborArray</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QCborMap">QCborMap</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QModelIndex">ModelIndex</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPersistentModelIndex">QPersistentModelIndex</DisplayString>
+
+         <!-- Static gui classes -->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QFont">QFont</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPixmap">QPixmap</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QBrush">QBrush</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QColor">QColor</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPalette">QPalette</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QIcon">QIcon</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QImage">QImage</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPolygon">QPolygon</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QRegion">QRegion</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QBitmap">QBitmap</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QCursor">QCursor</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QKeySequence">QKeySequence</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPen">QPen</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QTextLength">QTextLength</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QTextFormat">QTextFormat</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QTransform">QTransform</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QMatrix4x4">QMatrix4x4</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVector2D">QVector2D</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVector3D">QVector3D</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QVector4D">QVector4D</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QQuaternion">QQuaternion</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QPolygonF">QPolygonF</DisplayString>
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QColorSpace">QColorSpace</DisplayString>
+
+        <!-- Static widget classes -->
+        <DisplayString Condition="typeId() == ##NAMESPACE##::QMetaType::QSizePolicy">QSizePolicy</DisplayString>
+
+        <!-- Unhandled : display the typeId-->
+        <DisplayString>##NAMESPACE##::QMetaType::Type ({typeId()})</DisplayString>
+
+        <Expand>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QString">*(QString*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QByteArray">*(QByteArray*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QDate">*(QDate*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QTime">*(QTime*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QRect">*(QRect*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QRectF">*(QRectF*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QSize">*(QSize*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QSizeF">*(QSizeF*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QLine">*(QLine*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QLineF">*(QLineF*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QPoint">*(QPoint*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QPointF">*(QPointF*) sharedDataStar()</ExpandedItem>
+
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantMap">*(QMap&lt;QString,QVariant&gt;*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantList">*(QList&lt;QVariant&gt;*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QVariantHash">*(QHash&lt;QString,QVariant&gt;*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QByteArrayList">*(QList&lt;QByteArray&gt;*) sharedDataStar()</ExpandedItem>
+            <ExpandedItem Condition="typeId() == ##NAMESPACE##::QMetaType::QStringList">*(QList&lt;QString&gt;*) sharedDataStar()</ExpandedItem>
+        </Expand>
+   </Type>
+
 </AutoVisualizer>
