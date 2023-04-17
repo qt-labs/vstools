@@ -33,7 +33,7 @@ namespace QtVsTools.Wizards.Util
                 if (config.Rules.Item("QtRule10_Settings") is not IVCRulePropertyStorage props)
                     continue;
                 var updatedModules = props.GetUnevaluatedPropertyValue("QtModules")
-                    .Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries)
+                    .Split(new[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries)
                     .ToHashSet()
                     .Union(newModules);
                 props.SetPropertyValue("QtModules", string.Join(";", updatedModules));

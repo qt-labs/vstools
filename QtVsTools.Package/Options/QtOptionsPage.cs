@@ -89,7 +89,7 @@ namespace QtVsTools.Options
                 => false;
 
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext c)
-                => new StandardValuesCollection(new[] { Timeout.Disabled });
+                => new(new[] { Timeout.Disabled });
 
             public override object ConvertFrom(
                 ITypeDescriptorContext context,

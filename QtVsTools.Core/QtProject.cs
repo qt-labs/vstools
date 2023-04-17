@@ -28,7 +28,7 @@ namespace QtVsTools.Core
         private DTE dte;
         private Project envPro;
         private VCProject vcPro;
-        private static readonly Dictionary<Project, QtProject> instances = new Dictionary<Project, QtProject>();
+        private static readonly Dictionary<Project, QtProject> instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
         public static QtVsTools.VisualStudio.IProjectTracker ProjectTracker { get; set; }

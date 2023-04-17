@@ -999,7 +999,7 @@ namespace QtVsTools.Core
                 .FirstOrDefault(x => x.ProjectConfig == configName && x.Identity == itemName);
             if (cbEval != null) {
                 var outputFiles = cbEval.Outputs
-                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => HelperFunctions.CanonicalPath(
                         Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
                 var outputItems = new List<XElement>();
@@ -1321,8 +1321,7 @@ namespace QtVsTools.Core
         /// <summary>
         /// All path separators
         /// </summary>
-        static readonly char[] slashChars = new[]
-        {
+        static readonly char[] slashChars = {
             Path.DirectorySeparatorChar,
             Path.AltDirectorySeparatorChar
         };
@@ -1447,7 +1446,7 @@ namespace QtVsTools.Core
                 var projInst = new ProjectInstance(projRoot, Properties,
                     null, new ProjectCollection());
                 var buildRequest = new BuildRequestData(
-                    projInst, new string[] { "MSBuildEvaluatorTarget" },
+                    projInst, new[] { "MSBuildEvaluatorTarget" },
                     null, BuildRequestDataFlags.ProvideProjectStateAfterBuild);
                 var buildResult = BuildManager.DefaultBuildManager.Build(
                     new BuildParameters(), buildRequest);
@@ -1550,7 +1549,7 @@ namespace QtVsTools.Core
         }
 
         static readonly Regex ConditionParser =
-            new Regex(@"\'\$\(Configuration[^\)]*\)\|\$\(Platform[^\)]*\)\'\=\=\'([^\']+)\'");
+            new(@"\'\$\(Configuration[^\)]*\)\|\$\(Platform[^\)]*\)\'\=\=\'([^\']+)\'");
 
         class MsBuildConverterProvider : IPropertyStorageProvider
         {

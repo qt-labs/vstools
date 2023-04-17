@@ -11,7 +11,7 @@ namespace QtVsTools
 
     public class Timestamp : Concurrent<Timestamp>
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         long LastTimestamp { get; set; }
         long GetStrictMonotonicTimestamp()

@@ -60,7 +60,7 @@ namespace QtVsTools.Qml.Debug.AD7
         }
 
         CodeContextInfo Info =>
-            new CodeContextInfo
+            new()
             {
                 Address = FileLine.ToString()
             };

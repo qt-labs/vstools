@@ -22,8 +22,7 @@ namespace QtVsTools.VisualStudio
     {
         public static IVsServiceProvider Instance { get; set; }
 
-        static readonly ConcurrentDictionary<ServiceType, object> services
-            = new ConcurrentDictionary<ServiceType, object>();
+        static readonly ConcurrentDictionary<ServiceType, object> services = new();
 
         public static I GetService<I>()
             where I : class

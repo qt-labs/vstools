@@ -26,10 +26,10 @@ namespace QtVsTools.Qml.Debug.AD7
                              //  events to the session debug manager (SDM)."
     {
         const string CLSID_ENGINE = "fa2993e3-8b2a-40a6-8853-ac2db2daed5a";
-        public static readonly Guid ClassId = new Guid(CLSID_ENGINE);
+        public static readonly Guid ClassId = new(CLSID_ENGINE);
 
         const string ID_ENGINE = "86102a1b-4378-4964-a7ed-21852a8afb7f";
-        public static readonly Guid Id = new Guid(ID_ENGINE);
+        public static readonly Guid Id = new(ID_ENGINE);
 
         public IDebugEventCallback2 Callback { get; private set; }
 
@@ -55,10 +55,10 @@ namespace QtVsTools.Qml.Debug.AD7
             FileSystem = FileSystem.Create();
         }
 
-        readonly Dictionary<Guid, Program> programs = new Dictionary<Guid, Program>();
+        readonly Dictionary<Guid, Program> programs = new();
         public IEnumerable<Program> Programs => ThreadSafe(() => programs.Values.ToList());
 
-        readonly HashSet<PendingBreakpoint> pendingBreakpoints = new HashSet<PendingBreakpoint>();
+        readonly HashSet<PendingBreakpoint> pendingBreakpoints = new();
         public IEnumerable<PendingBreakpoint> PendingBreakpoints => ThreadSafe(() => pendingBreakpoints.ToList());
 
         int IDebugEngine2.GetEngineId(out Guid pguidEngine)
@@ -220,7 +220,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         #region //////////////////// Concurrent ///////////////////////////////////////////////////
 
-        readonly LocalConcurrent concurrent = new LocalConcurrent();
+        readonly LocalConcurrent concurrent = new();
         class LocalConcurrent : Concurrent
         {
             public void LocalThreadSafe(Action action)
@@ -260,7 +260,7 @@ namespace QtVsTools.Qml.Debug.AD7
                                //  through the IDebugProgramPublisher2 interface."
     {
         public const string CLSID_PROGRAMPROVIDER = "f2ff34e2-7fa5-461b-9e59-b5997ee0a637";
-        public static readonly Guid ClassId = new Guid(CLSID_PROGRAMPROVIDER);
+        public static readonly Guid ClassId = new(CLSID_PROGRAMPROVIDER);
 
         public ProgramProvider()
         { }
@@ -269,15 +269,15 @@ namespace QtVsTools.Qml.Debug.AD7
     public static class NativeEngine
     {
         const string ID_NATIVEENGINE = "3b476d35-a401-11d2-aad4-00c04f990171";
-        public static readonly Guid Id = new Guid(ID_NATIVEENGINE);
+        public static readonly Guid Id = new(ID_NATIVEENGINE);
 
         const string ID_LANGUAGE_CPP = "3a12d0b7-c26c-11d0-b442-00a0244a1dd2";
-        public static Guid IdLanguageCpp = new Guid(ID_LANGUAGE_CPP);
+        public static Guid IdLanguageCpp = new(ID_LANGUAGE_CPP);
     }
 
     public static class GdbEngine
     {
         const string ID_GDBENGINE = "ea6637c6-17df-45b5-a183-0951c54243bc";
-        public static readonly Guid Id = new Guid(ID_GDBENGINE);
+        public static readonly Guid Id = new(ID_GDBENGINE);
     }
 }

@@ -155,7 +155,7 @@ namespace QtVsTools.Qml.Debug.AD7
             public int? StaleCode { get; set; }
         }
 
-        StackFrameInfo Info => new StackFrameInfo
+        StackFrameInfo Info => new()
         {
             FunctionName = Name,
             ReturnType = "",

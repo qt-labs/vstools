@@ -12,11 +12,11 @@ namespace QtVsTools.Core
     {
         public string Name;
         public bool Selectable;
-        public List<string> Defines = new List<string>();
+        public List<string> Defines = new();
         public string LibraryPrefix = string.Empty;
-        public List<string> AdditionalLibraries = new List<string>();
-        public List<string> AdditionalLibrariesDebug = new List<string>();
-        public List<string> IncludePath = new List<string>();
+        public List<string> AdditionalLibraries = new();
+        public List<string> AdditionalLibrariesDebug = new();
+        public List<string> IncludePath = new();
         public string proVarQT;
         private string majorVersion;
 

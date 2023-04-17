@@ -17,7 +17,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class LibraryWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.GUISystem
             | (WizardData.CreateStaticLibrary ? Options.StaticLibrary : Options.DynamicLibrary);
@@ -40,7 +40,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 DefaultModules = new List<string> { "QtCore" }
             });
 
-        readonly List<string> LibExtraDefines = new List<string>();
+        readonly List<string> LibExtraDefines = new();
         protected override IEnumerable<string> ExtraDefines => LibExtraDefines;
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>

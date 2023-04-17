@@ -22,7 +22,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class GuiWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
@@ -117,35 +117,35 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             GuiExtraItems = new List<ItemDef>
             {
-                new ItemDef
+                new()
                 {
                     ItemType = "AppxManifest",
                     Include = "Package.appxmanifest",
                     Filter = "Resource Files",
                     WhereConfig = whereConfigTargetIsWindowsStore
                 },
-                new ItemDef
+                new()
                 {
                     ItemType = "Image",
                     Include = "assets/logo_store.png",
                     Filter = "Resource Files",
                     WhereConfig = whereConfigTargetIsWindowsStore
                 },
-                new ItemDef
+                new()
                 {
                     ItemType = "Image",
                     Include = "assets/logo_620x300.png",
                     Filter = "Resource Files",
                     WhereConfig = whereConfigTargetIsWindowsStore
                 },
-                new ItemDef
+                new()
                 {
                     ItemType = "Image",
                     Include = "assets/logo_150x150.png",
                     Filter = "Resource Files",
                     WhereConfig = whereConfigTargetIsWindowsStore
                 },
-                new ItemDef
+                new()
                 {
                     ItemType = "Image",
                     Include = "assets/logo_44x44.png",

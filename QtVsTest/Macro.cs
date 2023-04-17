@@ -106,7 +106,7 @@ namespace QtVsTest.Macros
         static MacroParser Parser { get; set; }
         MacroLines MacroLines { get; set; }
 
-        private List<string> SelectedAssemblies { get; } = new List<string>
+        private List<string> SelectedAssemblies { get; } = new()
         {
             typeof(Macro).Assembly.FullName,
             typeof(EnvDTE.DTE).Assembly.FullName,
@@ -116,7 +116,7 @@ namespace QtVsTest.Macros
 
         IEnumerable<string> RefAssemblies { get; set; }
 
-        private List<string> Namespaces { get; } = new List<string>
+        private List<string> Namespaces { get; } = new()
         {
             "System",
             "System.Linq",
@@ -127,7 +127,7 @@ namespace QtVsTest.Macros
             "EnvDTE80",
         };
 
-        private Dictionary<string, VSServiceRef> ServiceRefs { get; } = new Dictionary<string, VSServiceRef>
+        private Dictionary<string, VSServiceRef> ServiceRefs { get; } = new()
         {
             {
                 "Dte", new VSServiceRef
@@ -135,7 +135,7 @@ namespace QtVsTest.Macros
             },
         };
 
-        private Dictionary<string, GlobalVar> GlobalVars { get; } = new Dictionary<string, GlobalVar>
+        private Dictionary<string, GlobalVar> GlobalVars { get; } = new()
         {
             {
                 "Result", new GlobalVar
@@ -155,11 +155,8 @@ namespace QtVsTest.Macros
         const BindingFlags PUBLIC_STATIC = BindingFlags.Public | BindingFlags.Static;
         const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
-        static readonly ConcurrentDictionary<string, Macro> Macros
-            = new ConcurrentDictionary<string, Macro>();
-
-        static readonly ConcurrentDictionary<string, object> Globals
-            = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, Macro> Macros = new();
+        private static readonly ConcurrentDictionary<string, object> Globals = new();
 
         /// <summary>
         /// Macro constructor

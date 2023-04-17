@@ -29,7 +29,7 @@ namespace QtVsTools.QtMsBuild
 
     class QtProjectBuild : Concurrent<QtProjectBuild>
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         public enum Target
         {

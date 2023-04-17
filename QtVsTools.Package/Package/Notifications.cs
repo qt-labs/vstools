@@ -14,7 +14,7 @@ namespace QtVsTools
 
     public static class Notifications
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         public static NoQtVersion NoQtVersion
             => StaticLazy.Get(() => NoQtVersion, () => new NoQtVersion());
@@ -32,7 +32,7 @@ namespace QtVsTools
 
         protected override TextSpan[] Text => new TextSpan[]
         {
-            new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+            new() { Bold = true, Text = "Qt Visual Studio Tools" },
             new TextSpacer(2),
             Utils.EmDash,
             new TextSpacer(2),
@@ -41,7 +41,7 @@ namespace QtVsTools
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]
         {
-            new Hyperlink
+            new()
             {
                 Text = "Select Qt version...",
                 CloseInfoBar = false,
@@ -57,7 +57,7 @@ namespace QtVsTools
 
         protected override TextSpan[] Text => new TextSpan[]
         {
-            new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+            new() { Bold = true, Text = "Qt Visual Studio Tools" },
             new TextSpacer(2),
             Utils.EmDash,
             new TextSpacer(2),
@@ -66,7 +66,7 @@ namespace QtVsTools
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]
         {
-            new Hyperlink
+            new()
             {
                 Text = "Release Notes",
                 CloseInfoBar = false,
@@ -76,7 +76,7 @@ namespace QtVsTools
                         "https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog");
                 }
             },
-            new Hyperlink
+            new()
             {
                 Text = "Don't show again",
                 CloseInfoBar = true,
@@ -95,7 +95,7 @@ namespace QtVsTools
 
         protected override TextSpan[] Text => new TextSpan[]
         {
-                new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+                new() { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2),
                 Utils.EmDash,
                 new TextSpacer(2),
@@ -105,7 +105,7 @@ namespace QtVsTools
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]
         {
-            new Hyperlink
+            new()
             {
                 Text = "Update",
                 CloseInfoBar = true,
@@ -114,7 +114,7 @@ namespace QtVsTools
                     QtMsBuildConverter.SolutionToQtMsBuild();
                 }
             },
-            new Hyperlink
+            new()
             {
                 Text = "Don't show again",
                 CloseInfoBar = true,

@@ -17,7 +17,7 @@ namespace QtVsTools.Common
     /// </summary>
     public static class EnumExt
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         /// <summary>
         /// Wrapper for enum cast values.

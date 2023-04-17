@@ -40,7 +40,7 @@ namespace QtVsTools.SyntaxAnalysis
             public virtual Delimiter Delimiters => Delimiter.None;
             public virtual Operand Operands => Operand.None;
 
-            private readonly List<IRuleAction<T>> Actions = new List<IRuleAction<T>>();
+            private readonly List<IRuleAction<T>> Actions = new();
 
             protected void Init(
                 int priority, RuleCallback.Selector select, RuleCallback.PreCondition pre)
@@ -256,7 +256,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (operand.Production is not TOperand)
                     throw new ParseErrorException();
 
-                return new object[] { operand.Production };
+                return new[] { operand.Production };
             }
         }
 
@@ -281,7 +281,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (operand.Production is not TOperand)
                     throw new ParseErrorException();
 
-                return new object[] { operand.Production };
+                return new[] { operand.Production };
             }
         }
 
@@ -310,7 +310,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (leftOperand.Production is not TLeftOperand)
                     throw new ParseErrorException();
 
-                return new object[] { leftOperand.Production, rightOperand.Production };
+                return new[] { leftOperand.Production, rightOperand.Production };
             }
         }
 
@@ -365,7 +365,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (leftDelimiter.Production is not TLeftDelim)
                     throw new ParseErrorException();
 
-                return new object[] { leftDelimiter.Production, delimitedExpr.Production };
+                return new[] { leftDelimiter.Production, delimitedExpr.Production };
             }
         }
 

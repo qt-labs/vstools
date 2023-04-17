@@ -12,7 +12,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class EmptyWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 

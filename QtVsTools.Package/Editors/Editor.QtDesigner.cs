@@ -48,7 +48,7 @@ namespace QtVsTools.Editors
                 return;
             string projectPath = project.FullName;
             string filePath = document.FullName;
-            string[] itemId = new[] { document.ProjectItem?.Name };
+            string[] itemId = { document.ProjectItem?.Name };
             var lastWriteTime = File.GetLastWriteTime(filePath);
             _ = Task.Run(async () =>
             {

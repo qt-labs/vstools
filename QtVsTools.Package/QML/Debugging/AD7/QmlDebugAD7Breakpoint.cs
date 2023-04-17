@@ -20,7 +20,7 @@ namespace QtVsTools.Qml.Debug.AD7
         IDebugPendingBreakpoint2 // "This interface represents a breakpoint that is ready to bind
                                  //  to a code location."
     {
-        static readonly string[] ValidExtensions = new string[] { ".qml", ".js" };
+        static readonly string[] ValidExtensions = { ".qml", ".js" };
 
         public QmlEngine Engine { get; private set; }
         private IDebugBreakpointRequest2 Request { get; set; }

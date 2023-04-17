@@ -30,10 +30,10 @@ namespace QtVsTools.Qml.Debug.V4
         IMessageEventSink sink;
         DebugClient client;
         int nextRequestSeq = 0;
-        readonly Dictionary<int, PendingRequest> pendingRequests = new Dictionary<int, PendingRequest>();
+        readonly Dictionary<int, PendingRequest> pendingRequests = new();
         Task eventHandlingThread;
-        readonly EventWaitHandle eventReceived = new EventWaitHandle(false, EventResetMode.AutoReset);
-        readonly ConcurrentQueue<Event> eventQueue = new ConcurrentQueue<Event>();
+        readonly EventWaitHandle eventReceived = new(false, EventResetMode.AutoReset);
+        readonly ConcurrentQueue<Event> eventQueue = new();
 
         public uint? ThreadId => client.ThreadId;
 

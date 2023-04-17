@@ -93,7 +93,7 @@ namespace QtVsTools
             public IEnumerable<Type> SubTypes { get; set; }
             public IEnumerable<SubClass> SubClasses => SubTypes.Select(Get).Where(x => x != null);
 
-            static readonly object classCriticalSection = new object();
+            static readonly object classCriticalSection = new();
 
             static readonly Dictionary<Type, List<Type>> types = GetTypeHierarchy(typeof(TBase));
 

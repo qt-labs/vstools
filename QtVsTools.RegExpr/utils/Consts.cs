@@ -12,7 +12,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: [\w]
         /// ]]></summary>
-        public static CharClassLiteral CharWord => new CharClassLiteral { LiteralChars = @"\w" };
+        public static CharClassLiteral CharWord => new() { LiteralChars = @"\w" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\w]*
@@ -27,7 +27,7 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: [\d]
         /// ]]></summary>
-        public static CharClassLiteral CharDigit => new CharClassLiteral { LiteralChars = @"\d" };
+        public static CharClassLiteral CharDigit => new() { LiteralChars = @"\d" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\d]*
@@ -37,22 +37,22 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: [\r]
         /// ]]></summary>
-        public static CharClassLiteral CharCr => new CharClassLiteral { LiteralChars = @"\r" };
+        public static CharClassLiteral CharCr => new() { LiteralChars = @"\r" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\n]
         /// ]]></summary>
-        public static CharClassLiteral CharLf => new CharClassLiteral { LiteralChars = @"\n" };
+        public static CharClassLiteral CharLf => new() { LiteralChars = @"\n" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\s]
         /// ]]></summary>
-        public static CharClassLiteral CharSpace => new CharClassLiteral { LiteralChars = @"\s" };
+        public static CharClassLiteral CharSpace => new() { LiteralChars = @"\s" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\S]
         /// ]]></summary>
-        private static CharClassLiteral CharNonSpace => new CharClassLiteral { LiteralChars = @"\S" };
+        private static CharClassLiteral CharNonSpace => new() { LiteralChars = @"\S" };
 
         /// <summary><![CDATA[
         /// Equivalent to: [\r\n]
@@ -67,27 +67,27 @@ namespace QtVsTools.SyntaxAnalysis
         /// <summary><![CDATA[
         /// Equivalent to: .
         /// ]]></summary>
-        public static RegExprLiteral AnyChar => new RegExprLiteral { LiteralExpr = "." };
+        public static RegExprLiteral AnyChar => new() { LiteralExpr = "." };
 
         /// <summary><![CDATA[
         /// Equivalent to: ^
         /// ]]></summary>
-        public static RegExprLiteral StartOfLine => new RegExprLiteral { LiteralExpr = "^" };
+        public static RegExprLiteral StartOfLine => new() { LiteralExpr = "^" };
 
         /// <summary><![CDATA[
         /// Equivalent to: $
         /// ]]></summary>
-        public static RegExprLiteral EndOfLine => new RegExprLiteral { LiteralExpr = "$" };
+        public static RegExprLiteral EndOfLine => new() { LiteralExpr = "$" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \A
         /// ]]></summary>
-        public static RegExprLiteral StartOfFile => new RegExprLiteral { LiteralExpr = @"\A" };
+        public static RegExprLiteral StartOfFile => new() { LiteralExpr = @"\A" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \z
         /// ]]></summary>
-        public static RegExprLiteral EndOfFile => new RegExprLiteral { LiteralExpr = @"\z" };
+        public static RegExprLiteral EndOfFile => new() { LiteralExpr = @"\z" };
 
         /// <summary><![CDATA[
         /// Equivalent to: \r?\n
@@ -134,17 +134,17 @@ namespace QtVsTools.SyntaxAnalysis
         /// </summary>
         public static RegExpr SkipWs => new Token();
 
-        public static CharExprBuilder Char { get; } = new CharExprBuilder();
+        public static CharExprBuilder Char { get; } = new();
 
         public static CharExprBuilder Chars => Char;
 
-        public static CharSetExprBuilder CharSet { get; } = new CharSetExprBuilder();
+        public static CharSetExprBuilder CharSet { get; } = new();
 
-        public static CharSetRawExprBuilder CharSetRaw { get; } = new CharSetRawExprBuilder();
+        public static CharSetRawExprBuilder CharSetRaw { get; } = new();
 
-        public static AssertExprBuilder LookAhead { get; } = new AssertExprBuilder(AssertLookAhead);
+        public static AssertExprBuilder LookAhead { get; } = new(AssertLookAhead);
 
-        public static AssertExprBuilder LookBehind { get; } = new AssertExprBuilder(AssertLookBehind);
+        public static AssertExprBuilder LookBehind { get; } = new(AssertLookBehind);
 
         public const SkipWhitespace SkipWs_Disable = SkipWhitespace.Disable;
     }

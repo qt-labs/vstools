@@ -24,7 +24,7 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class QtClassWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.ConsoleSystem;
 

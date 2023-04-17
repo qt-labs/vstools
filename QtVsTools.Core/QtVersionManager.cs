@@ -35,7 +35,7 @@ namespace QtVsTools.Core
             regVersionPath = Resources.registryVersionPath;
         }
 
-        private static readonly EventWaitHandle packageInit = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private static readonly EventWaitHandle packageInit = new(false, EventResetMode.ManualReset);
         private static EventWaitHandle packageInitDone = null;
 
         public static QtVersionManager The(EventWaitHandle initDone = null)

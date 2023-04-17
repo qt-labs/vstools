@@ -23,7 +23,7 @@ namespace QtVsTools
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        private static readonly Guid ProjectContextMenuGuid = new Guid("5732faa9-6074-4e07-b035-2816e809f50e");
+        private static readonly Guid ProjectContextMenuGuid = new("5732faa9-6074-4e07-b035-2816e809f50e");
 
         /// <summary>
         /// Gets the instance of the command.

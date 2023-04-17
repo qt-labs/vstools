@@ -19,7 +19,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class DesignerWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType =>
             Options.PluginProject | Options.DynamicLibrary | Options.GUISystem;

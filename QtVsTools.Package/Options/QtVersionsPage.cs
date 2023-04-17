@@ -20,7 +20,7 @@ namespace QtVsTools.Options
 
     public class QtVersionsPage : UIElementDialogPage
     {
-        static LazyFactory Lazy { get; } = new LazyFactory();
+        static LazyFactory Lazy { get; } = new();
 
         QtVersionManager VersionManager => QtVersionManager.The();
 

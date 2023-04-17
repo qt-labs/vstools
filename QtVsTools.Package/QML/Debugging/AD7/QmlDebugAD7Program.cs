@@ -51,7 +51,7 @@ namespace QtVsTools.Qml.Debug.AD7
         private IVsDebugger VsDebugger { get; set; }
         private Dispatcher vsDebuggerThreadDispatcher;
 
-        private static readonly object criticalSectionGlobal = new object();
+        private static readonly object criticalSectionGlobal = new();
         private static bool originalBreakAllProcesses = BreakAllProcesses;
         private static int runningPrograms = 0;
 
@@ -358,7 +358,7 @@ namespace QtVsTools.Qml.Debug.AD7
             public string ModuleUrl { get; set; }
         }
 
-        ProgramInfo Info => new ProgramInfo
+        ProgramInfo Info => new()
         {
             ThreadId = Debugger.ThreadId,
             SuspendCount = 0,

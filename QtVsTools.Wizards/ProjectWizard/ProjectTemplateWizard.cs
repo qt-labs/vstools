@@ -58,7 +58,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public abstract partial class ProjectTemplateWizard : IWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         private readonly WhereConfig WhereConfig_SelectAll = (x => true);
 
@@ -737,7 +737,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         // Matches empty lines; captures first newline
         static readonly Regex patternEmptyLines
-            = new Regex(@"(?:^|(?<FIRST_NL>\r\n))(?:\r\n)+(?![\r\n]|$)|(?:\r\n)+$");
+            = new(@"(?:^|(?<FIRST_NL>\r\n))(?:\r\n)+(?![\r\n]|$)|(?:\r\n)+$");
 
         protected static string FormatParam(StringBuilder paramValue)
         {

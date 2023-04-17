@@ -26,7 +26,7 @@ namespace QtVsTools.VisualStudio
             public bool Bold { get; set; }
             public bool Italic { get; set; }
             public bool Underline { get; set; }
-            public static implicit operator TextSpan(string text) => new TextSpan { Text = text };
+            public static implicit operator TextSpan(string text) => new() { Text = text };
         }
 
         protected class TextSpacer : TextSpan
@@ -70,7 +70,7 @@ namespace QtVsTools.VisualStudio
 
         private class MessageUI : IVsInfoBarUIEvents
         {
-            static LazyFactory StaticLazy { get; } = new LazyFactory();
+            static LazyFactory StaticLazy { get; } = new();
             static IVsInfoBarUIFactory Factory => StaticLazy.Get(() =>
                 Factory, VsServiceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>);
 

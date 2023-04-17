@@ -18,34 +18,34 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
     {
         readonly ITaskItem[] LeftItems = new TaskItem[]
         {
-                new TaskItem("A", new Dictionary<string, string> {
+                new("A", new Dictionary<string, string> {
                     { "X", "foo" },
                     { "Y", "42" },
                 }),
-                new TaskItem("B", new Dictionary<string, string> {
+                new("B", new Dictionary<string, string> {
                     { "X", "sna" },
                     { "Y", "99" },
                 }),
-                new TaskItem("C", new Dictionary<string, string> {
+                new("C", new Dictionary<string, string> {
                     { "X", "bar" },
                     { "Y", "3.14159" },
                 }),
         };
         readonly ITaskItem[] RightItems = new TaskItem[]
         {
-                new TaskItem("A", new Dictionary<string, string> {
+                new("A", new Dictionary<string, string> {
                     { "Z", "foo" },
                     { "Y", "99" },
                 }),
-                new TaskItem("B", new Dictionary<string, string> {
+                new("B", new Dictionary<string, string> {
                     { "Z", "sna" },
                     { "Y", "2.71828" },
                 }),
-                new TaskItem("B", new Dictionary<string, string> {
+                new("B", new Dictionary<string, string> {
                     { "Z", "bar" },
                     { "Y", "42" },
                 }),
-                new TaskItem("A", new Dictionary<string, string> {
+                new("A", new Dictionary<string, string> {
                     { "Z", "bar" },
                     { "Y", "99" },
                 }),
@@ -66,7 +66,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             // ---------------   bar | 99        ---------------
             //                  ---------------
 
-            var criteria = new string[] { "Y" };
+            var criteria = new[] { "Y" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result is {Length: 3});
@@ -99,7 +99,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             // -------------------   3 | bar | 99        ------------------------
             //                      -------------------
 
-            var criteria = new string[] { "ROW_NUMBER" };
+            var criteria = new[] { "ROW_NUMBER" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result is {Length: 3});
@@ -132,7 +132,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             // -------------------   3 | bar | 99
             //                      -------------------
 
-            var criteria = new string[] { "ROW_NUMBER", "Y" };
+            var criteria = new[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
                 Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result is {Length: 0});
@@ -160,7 +160,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                 }))
                 .ToArray();
 
-            var criteria = new string[] { "ROW_NUMBER", "Y" };
+            var criteria = new[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
                 Join.Execute(newLeftItems, RightItems, out ITaskItem[] result, criteria));
             Assert.IsTrue(result is {Length: 1});

@@ -19,9 +19,9 @@ namespace QtVsTools
     public abstract class Concurrent<TSubClass>
         where TSubClass : Concurrent<TSubClass>
     {
-        protected static object StaticCriticalSection { get; } = new object();
+        protected static object StaticCriticalSection { get; } = new();
 
-        protected object CriticalSection { get; } = new object();
+        protected object CriticalSection { get; } = new();
 
         protected static ConcurrentDictionary<string, SemaphoreSlim> Resources { get; } = new();
 

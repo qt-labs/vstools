@@ -29,7 +29,7 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class TranslationWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.ConsoleSystem | Options.GUISystem;
 

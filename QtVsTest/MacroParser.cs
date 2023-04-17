@@ -15,7 +15,7 @@ namespace QtVsTest.Macros
 
     class MacroLines : IEnumerable<MacroLine>
     {
-        readonly List<MacroLine> Lines = new List<MacroLine>();
+        readonly List<MacroLine> Lines = new();
 
         public void Add(MacroLine line) { Lines.Add(line); }
 

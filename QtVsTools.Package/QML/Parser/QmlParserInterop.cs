@@ -110,7 +110,8 @@ namespace QtVsTools.Qml
         /// during AST traversal, only these node types will be reported.
         /// </summary>
         static readonly List<AstNodeKind> CallbackFilters =
-            new List<AstNodeKind> {
+            new()
+            {
                 AstNodeKind.UiImport,
                 AstNodeKind.UiQualifiedId,
                 AstNodeKind.UiObjectDefinition,

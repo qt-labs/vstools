@@ -26,7 +26,7 @@ namespace QtVsTools.Qml.Debug
 
     class Launcher : Disposable, IDebugEventCallback2
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         private static Launcher Instance { get; set; }
         IVsDebugger debugger;

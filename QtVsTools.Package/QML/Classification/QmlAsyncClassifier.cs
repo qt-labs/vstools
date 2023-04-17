@@ -28,7 +28,7 @@ namespace QtVsTools.Qml.Classification
     /// </summary>
     class SharedTagList : Concurrent
     {
-        readonly SortedList<int, TrackingTag> data = new SortedList<int, TrackingTag>();
+        readonly SortedList<int, TrackingTag> data = new();
         object owner;
 
         public bool Ready { get; private set; }
@@ -205,7 +205,7 @@ namespace QtVsTools.Qml.Classification
         private ITextView TextView { get; }
         private ITextBuffer Buffer { get; }
 
-        readonly object criticalSection = new object();
+        readonly object criticalSection = new();
         readonly string classificationType;
         ParserKey currentParserKey;
         TagListKey currentTagListKey;
@@ -478,10 +478,10 @@ namespace QtVsTools.Qml.Classification
                 public TValue Value { get; set; }
                 public HashSet<object> ClientObjects { get; set; }
             }
-            readonly Dictionary<TKey, ValueRef> data = new Dictionary<TKey, ValueRef>();
+            readonly Dictionary<TKey, ValueRef> data = new();
 
-            static readonly object staticCriticalSection = new object();
-            readonly object criticalSection = new object();
+            static readonly object staticCriticalSection = new();
+            readonly object criticalSection = new();
 
             protected SharedDataStore()
             {

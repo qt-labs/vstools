@@ -27,7 +27,7 @@ namespace QtVsTools.Core
         private QMakeConf qmakeConf;
         private readonly QMakeQuery qmakeQuery;
         private string vsPlatformName;
-        private static readonly Hashtable _cache = new Hashtable();
+        private static readonly Hashtable _cache = new();
 
         public static VersionInformation Get(string qtDir)
         {

@@ -172,7 +172,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 }).ToList();
 
             defaultConfigs = new CloneableList<Config> {
-                new Config {
+                new() {
                     ConfigPage = this,
                     Name = "Debug",
                     IsDebug = true,
@@ -191,7 +191,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         : string.Empty,
                     Modules = DefaultModules.ToDictionary(m => m.Name)
                 },
-                new Config {
+                new() {
                     ConfigPage = this,
                     Name = "Release",
                     IsDebug = false,

@@ -147,7 +147,7 @@ namespace QtVsTools.SyntaxAnalysis
                 }
             }
 
-            public NegateableExpr this[RegExpr expr] => new NegateableExpr(Template(expr));
+            public NegateableExpr this[RegExpr expr] => new(Template(expr));
         }
 
         public class NestedAssertException : RegExprException

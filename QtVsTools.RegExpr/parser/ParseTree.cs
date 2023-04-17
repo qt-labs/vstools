@@ -44,7 +44,7 @@ namespace QtVsTools.SyntaxAnalysis
                     }
                 }
 
-                static readonly NodeComparer _Comparer = new NodeComparer();
+                static readonly NodeComparer _Comparer = new();
                 public static IComparer<Node> Comparer => _Comparer;
 
                 public Token Token { get; set; }
@@ -54,9 +54,9 @@ namespace QtVsTools.SyntaxAnalysis
 
                 public Node Parent { get; set; }
 
-                public SortedList<int, Node> ChildNodes { get; } = new SortedList<int, Node>();
+                public SortedList<int, Node> ChildNodes { get; } = new();
 
-                public ProductionObjects ChildProductions { get; } = new ProductionObjects();
+                public ProductionObjects ChildProductions { get; } = new();
 
                 public Queue<Node> TokenStream { get; set; }
                 public Stack<Node> OperatorStack { get; set; }

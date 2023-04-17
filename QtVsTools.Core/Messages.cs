@@ -21,7 +21,7 @@ namespace QtVsTools.Core
         private static OutputWindowPane Pane { get; set; }
 
         private const string Name = "Qt VS Tools";
-        private static readonly Guid PaneGuid = new Guid("8f6a1e44-fa0b-49e5-9934-1c050555350e");
+        private static readonly Guid PaneGuid = new("8f6a1e44-fa0b-49e5-9934-1c050555350e");
 
         /// <summary>
         /// Show a message on the output pane.
@@ -132,7 +132,7 @@ namespace QtVsTools.Core
             public bool Activate { get; set; } = false;
         }
 
-        static readonly ConcurrentQueue<Msg> msgQueue = new ConcurrentQueue<Msg>();
+        static readonly ConcurrentQueue<Msg> msgQueue = new();
 
         private static async Task OutputWindowPane_InitAsync()
         {
@@ -145,7 +145,7 @@ namespace QtVsTools.Core
 
         public static JoinableTaskFactory JoinableTaskFactory { get; set; }
 
-        static readonly object staticCriticalSection = new object();
+        static readonly object staticCriticalSection = new();
         static Task FlushTask { get; set; }
         static EventWaitHandle MessageReady { get; set; }
 

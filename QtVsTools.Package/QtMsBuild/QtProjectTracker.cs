@@ -30,7 +30,7 @@ namespace QtVsTools.QtMsBuild
 
     class QtProjectTracker : Concurrent<QtProjectTracker>
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         static ConcurrentDictionary<string, QtProjectTracker> Instances => StaticLazy.Get(() =>
             Instances, () => new ConcurrentDictionary<string, QtProjectTracker>());

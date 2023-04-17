@@ -150,10 +150,8 @@ namespace QtVsTools.Core.QtMsBuild
             return provider.GetProjectConfiguration(GetProject(), configName);
         }
 
-        readonly Dictionary<string, ItemPropertyChange> itemPropertyChanges
-            = new Dictionary<string, ItemPropertyChange>();
-        readonly Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped
-            = new Dictionary<string, List<ItemPropertyChange>>();
+        readonly Dictionary<string, ItemPropertyChange> itemPropertyChanges = new();
+        readonly Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped = new();
         bool pendingChanges = false;
 
         void AddChange(ItemPropertyChange newChange)
@@ -664,8 +662,7 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        readonly Dictionary<Property, CommandLineOption> options
-            = new Dictionary<Property, CommandLineOption>();
+        readonly Dictionary<Property, CommandLineOption> options = new();
 
         public QtMoc() : base()
         {
@@ -963,13 +960,12 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        readonly Dictionary<Property, CommandLineOption> options
-            = new Dictionary<Property, CommandLineOption>();
+        readonly Dictionary<Property, CommandLineOption> options = new();
 
         public QtRcc() : base()
         {
             parser.AddOption(options[Property.TempFile] =
-                new CommandLineOption(new string[] { "t", "temp" }, "file"));
+                new CommandLineOption(new[] { "t", "temp" }, "file"));
 
             parser.AddOption(options[Property.InitFuncName] =
                 new CommandLineOption("name", "name"));
@@ -1164,8 +1160,7 @@ namespace QtVsTools.Core.QtMsBuild
             PrintDebug,
         }
 
-        readonly Dictionary<Property, CommandLineOption> options
-            = new Dictionary<Property, CommandLineOption>();
+        readonly Dictionary<Property, CommandLineOption> options = new();
 
         public QtRepc() : base(defaultInputOutput: false)
         {
@@ -1326,31 +1321,30 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalDependencies,
         }
 
-        readonly Dictionary<Property, CommandLineOption> options
-            = new Dictionary<Property, CommandLineOption>();
+        readonly Dictionary<Property, CommandLineOption> options = new();
 
         public QtUic() : base()
         {
             parser.AddOption(options[Property.DisplayDependencies] =
-                new CommandLineOption(new string[] { "d", "dependencies" }));
+                new CommandLineOption(new[] { "d", "dependencies" }));
 
             parser.AddOption(options[Property.NoProtection] =
-                new CommandLineOption(new string[] { "p", "no-protection" }));
+                new CommandLineOption(new[] { "p", "no-protection" }));
 
             parser.AddOption(options[Property.NoImplicitIncludes] =
-                new CommandLineOption(new string[] { "n", "no-implicit-includes" }));
+                new CommandLineOption(new[] { "n", "no-implicit-includes" }));
 
             parser.AddOption(options[Property.Postfix] =
                 new CommandLineOption("postfix", "postfix"));
 
             parser.AddOption(options[Property.Translate] =
-                new CommandLineOption(new string[] { "tr", "translate" }, "function"));
+                new CommandLineOption(new[] { "tr", "translate" }, "function"));
 
             parser.AddOption(options[Property.Include] =
                 new CommandLineOption("include", "include-file"));
 
             parser.AddOption(options[Property.Generator] =
-                new CommandLineOption(new string[] { "g", "generator" }, "java|cpp"));
+                new CommandLineOption(new[] { "g", "generator" }, "java|cpp"));
 
             parser.AddOption(options[Property.IdBased] =
                 new CommandLineOption("idbased"));

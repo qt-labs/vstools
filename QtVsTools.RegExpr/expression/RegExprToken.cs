@@ -351,6 +351,6 @@ namespace QtVsTools.SyntaxAnalysis
             public object Production { get; }
         }
 
-        static readonly TokenEndOfList EndOfList = new TokenEndOfList();
+        static readonly TokenEndOfList EndOfList = new();
     }
 }

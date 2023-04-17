@@ -34,7 +34,7 @@ namespace QtVsTools.Qml.Debug
             };
         }
 
-        static readonly string[] KNOWN_EXTENSIONS = new string[] { ".qml", ".js" };
+        static readonly string[] KNOWN_EXTENSIONS = { ".qml", ".js" };
 
         private FileSystem()
         { }

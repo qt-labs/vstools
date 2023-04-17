@@ -47,7 +47,7 @@ namespace QtVsTools.Qml.Debug
 
     class QmlDebugger : Disposable, IMessageEventSink
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         IDebuggerEventSink sink;
         ProtocolDriver driver;

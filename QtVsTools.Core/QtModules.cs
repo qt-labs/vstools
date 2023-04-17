@@ -15,11 +15,11 @@ namespace QtVsTools.Core
 {
     public class QtModules
     {
-        public static QtModules Instance { get; } = new QtModules();
+        public static QtModules Instance { get; } = new();
 
         private List<QtModule> qt5list = null, qt6list = null;
-        private readonly Dictionary<int, QtModule> qt5modules = new Dictionary<int, QtModule>();
-        private readonly Dictionary<int, QtModule> qt6modules = new Dictionary<int, QtModule>();
+        private readonly Dictionary<int, QtModule> qt5modules = new();
+        private readonly Dictionary<int, QtModule> qt6modules = new();
 
         public List<QtModule> GetAvailableModules(uint major)
         {

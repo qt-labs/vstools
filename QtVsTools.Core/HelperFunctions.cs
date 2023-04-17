@@ -25,7 +25,7 @@ namespace QtVsTools.Core
 
     public static class HelperFunctions
     {
-        static LazyFactory StaticLazy { get; } = new LazyFactory();
+        static LazyFactory StaticLazy { get; } = new();
 
         static readonly HashSet<string> _sources = new(new[] { ".c", ".cpp", ".cxx" }, CaseIgnorer);
         public static bool IsSourceFile(string fileName)

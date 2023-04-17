@@ -18,9 +18,9 @@ namespace QtVsTools.Test.Core
     {
         class LazyClass
         {
-            LazyFactory Lazy { get; } = new LazyFactory();
+            LazyFactory Lazy { get; } = new();
 
-            public ConcurrentBag<int> InitThread { get; } = new ConcurrentBag<int>();
+            public ConcurrentBag<int> InitThread { get; } = new();
             public string LazyProperty => Lazy.Get(() =>
                 LazyProperty, () =>
                 {

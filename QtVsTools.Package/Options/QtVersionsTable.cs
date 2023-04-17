@@ -28,7 +28,7 @@ namespace QtVsTools.Options
 
     public partial class QtVersionsTable : UserControl
     {
-        LazyFactory Lazy { get; } = new LazyFactory();
+        LazyFactory Lazy { get; } = new();
 
         public QtVersionsTable()
         {
@@ -74,7 +74,7 @@ namespace QtVsTools.Options
 
         public class Row
         {
-            LazyFactory Lazy { get; } = new LazyFactory();
+            LazyFactory Lazy { get; } = new();
 
             public Dictionary<Column, Field> Fields => Lazy.Get(() =>
                 Fields, () => GetValues<Column>()
@@ -133,8 +133,7 @@ namespace QtVsTools.Options
                 => LastRow ? Visibility.Visible : Visibility.Hidden;
             public Visibility ButtonBrowseVisibility
                 => (!LastRow && Host == BuildHost.Windows) ? Visibility.Visible : Visibility.Hidden;
-            public Thickness PathMargin
-                => new Thickness(((Host == BuildHost.Windows) ? 24 : 2), 4, 4, 4);
+            public Thickness PathMargin => new(((Host == BuildHost.Windows) ? 24 : 2), 4, 4, 4);
             public FontWeight FontWeight
                 => IsDefault ? FontWeights.Bold : FontWeights.Normal;
 
