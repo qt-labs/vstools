@@ -457,12 +457,10 @@ namespace QtVsTools.Core
 
             if (cppFile.project is VCProject vcProj) {
                 foreach (VCFile vcFile in (IVCCollection)vcProj.Files) {
-                    if (vcFile.ItemType == "CustomBuild") {
-                        if (IsCppMocFileCustomBuild(vcFile, cppFile))
-                            return true;
-                    } else if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                        if (IsCppMocFileQtMsBuild(vcFile, cppFile))
-                            return true;
+                    switch (vcFile.ItemType) {
+                    case "CustomBuild" when IsCppMocFileCustomBuild(vcFile, cppFile):
+                    case QtMoc.ItemTypeName when IsCppMocFileQtMsBuild(vcFile, cppFile):
+                        return true;
                     }
                 }
             }
@@ -480,15 +478,13 @@ namespace QtVsTools.Core
                     RemoveMocStepCustomBuild(file);
             } else {
                 foreach (VCFile vcFile in (IVCCollection)vcPro.Files) {
-                    if (vcFile.ItemType == QtMoc.ItemTypeName) {
-                        if (IsCppMocFileQtMsBuild(vcFile, file)) {
-                            RemoveMocStepQtMsBuild(vcFile);
-                        }
-                    } else if (vcFile.ItemType == "CustomBuild") {
-                        if (IsCppMocFileCustomBuild(vcFile, file)) {
-                            RemoveMocStepCustomBuild(file);
-                            return;
-                        }
+                    switch (vcFile.ItemType) {
+                    case QtMoc.ItemTypeName when IsCppMocFileQtMsBuild(vcFile, file):
+                        RemoveMocStepQtMsBuild(vcFile);
+                        break;
+                    case "CustomBuild" when IsCppMocFileCustomBuild(vcFile, file):
+                        RemoveMocStepCustomBuild(file);
+                        return;
                     }
                 }
             }

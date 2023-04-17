@@ -181,17 +181,13 @@ namespace QtVsTools.Core
         private void SetupPlatformSpecificData()
         {
             qmakeConf ??= new QMakeConf(qtDir, qmakeQuery);
-            switch (platform()) {
-            case Platform.x86:
-                vsPlatformName = "Win32";
-                break;
-            case Platform.x64:
-                vsPlatformName = "x64";
-                break;
-            case Platform.arm64:
-                vsPlatformName = "ARM64";
-                break;
-            }
+            vsPlatformName = platform() switch
+            {
+                Platform.x86 => "Win32",
+                Platform.x64 => "x64",
+                Platform.arm64 => "ARM64",
+                _ => vsPlatformName
+            };
         }
 
         private string Locate_qglobal_h()

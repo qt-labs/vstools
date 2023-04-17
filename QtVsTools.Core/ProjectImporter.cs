@@ -848,12 +848,12 @@ namespace QtVsTools.Core
                 linker.TargetMachine = TranslateMachineType(match.Groups[1].Value);
             } else {
                 var platformName = versionInfo.GetVSPlatformName();
-                if (platformName == "Win32")
-                    linker.TargetMachine = machineTypeOption.machineX86;
-                else if (platformName == "x64")
-                    linker.TargetMachine = machineTypeOption.machineAMD64;
-                else
-                    linker.TargetMachine = machineTypeOption.machineNotSet;
+                linker.TargetMachine = platformName switch
+                {
+                    "Win32" => machineTypeOption.machineX86,
+                    "x64" => machineTypeOption.machineAMD64,
+                    _ => machineTypeOption.machineNotSet
+                };
             }
 
             var subsystemOption = string.Empty;

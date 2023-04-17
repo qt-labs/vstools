@@ -422,32 +422,17 @@ namespace QtVsTools.Qml
             var nodeData = new byte[nodeDataLength];
             Marshal.Copy(nodeDataPtr, nodeData, 0, nodeDataLength);
             using (var rdr = new BinaryReader(new MemoryStream(nodeData))) {
-                switch ((AstNodeKind)nodeKind) {
-                case AstNodeKind.UiImport:
-                    node = UnmarshalUiImport(rdr);
-                    break;
-                case AstNodeKind.UiQualifiedId:
-                    node = UnmarshalUiQualifiedId(rdr);
-                    break;
-                case AstNodeKind.UiObjectDefinition:
-                    node = UnmarshalUiObjectDefinition(rdr);
-                    break;
-                case AstNodeKind.UiObjectBinding:
-                    node = UnmarshalUiObjectBinding(rdr);
-                    break;
-                case AstNodeKind.UiScriptBinding:
-                    node = UnmarshalUiScriptBinding(rdr);
-                    break;
-                case AstNodeKind.UiArrayBinding:
-                    node = UnmarshalUiArrayBinding(rdr);
-                    break;
-                case AstNodeKind.UiPublicMember:
-                    node = UnmarshalUiPublicMember(rdr);
-                    break;
-                default:
-                    node = UnmarshalNode(rdr, (AstNodeKind)nodeKind);
-                    break;
-                }
+                node = (AstNodeKind)nodeKind switch
+                {
+                    AstNodeKind.UiImport => UnmarshalUiImport(rdr),
+                    AstNodeKind.UiQualifiedId => UnmarshalUiQualifiedId(rdr),
+                    AstNodeKind.UiObjectDefinition => UnmarshalUiObjectDefinition(rdr),
+                    AstNodeKind.UiObjectBinding => UnmarshalUiObjectBinding(rdr),
+                    AstNodeKind.UiScriptBinding => UnmarshalUiScriptBinding(rdr),
+                    AstNodeKind.UiArrayBinding => UnmarshalUiArrayBinding(rdr),
+                    AstNodeKind.UiPublicMember => UnmarshalUiPublicMember(rdr),
+                    _ => UnmarshalNode(rdr, (AstNodeKind)nodeKind)
+                };
             }
             if (node == null)
                 return true;

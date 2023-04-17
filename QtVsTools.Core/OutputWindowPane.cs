@@ -26,16 +26,16 @@ namespace QtVsTools.Core
 
         public static Task<OutputWindowPane> GetVSOutputWindowPaneAsync(VSOutputWindowPane pane)
         {
-            switch (pane) {
-            case VSOutputWindowPane.General:
-                return GetAsync(VSConstants.OutputWindowPaneGuid.GeneralPane_guid);
-            case VSOutputWindowPane.Build:
-                return GetAsync(VSConstants.OutputWindowPaneGuid.BuildOutputPane_guid);
-            case VSOutputWindowPane.Debug:
-                return GetAsync(VSConstants.OutputWindowPaneGuid.DebugPane_guid);
-            default:
-                throw new InvalidOperationException("Unsupported Visual Studio output pane");
-            }
+            return pane switch
+            {
+                VSOutputWindowPane.General => GetAsync(
+                    VSConstants.OutputWindowPaneGuid.GeneralPane_guid),
+                VSOutputWindowPane.Build => GetAsync(
+                    VSConstants.OutputWindowPaneGuid.BuildOutputPane_guid),
+                VSOutputWindowPane.Debug => GetAsync(
+                    VSConstants.OutputWindowPaneGuid.DebugPane_guid),
+                _ => throw new InvalidOperationException("Unsupported Visual Studio output pane")
+            };
         }
 
         public static async Task<OutputWindowPane> GetAsync(Guid guid)

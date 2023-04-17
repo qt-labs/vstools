@@ -353,17 +353,14 @@ namespace QtVsTools.Core.QtMsBuild
             string commandLine,
             IVSMacroExpander macros)
         {
-            switch (itemType) {
-            case QtMoc.ItemTypeName:
-                return SetQtMocCommandLine(propertyStorage, commandLine, macros);
-            case QtRcc.ItemTypeName:
-                return SetQtRccCommandLine(propertyStorage, commandLine, macros);
-            case QtRepc.ItemTypeName:
-                return SetQtRepcCommandLine(propertyStorage, commandLine, macros);
-            case QtUic.ItemTypeName:
-                return SetQtUicCommandLine(propertyStorage, commandLine, macros);
-            }
-            return false;
+            return itemType switch
+            {
+                QtMoc.ItemTypeName => SetQtMocCommandLine(propertyStorage, commandLine, macros),
+                QtRcc.ItemTypeName => SetQtRccCommandLine(propertyStorage, commandLine, macros),
+                QtRepc.ItemTypeName => SetQtRepcCommandLine(propertyStorage, commandLine, macros),
+                QtUic.ItemTypeName => SetQtUicCommandLine(propertyStorage, commandLine, macros),
+                _ => false
+            };
         }
 
         #region QtMoc

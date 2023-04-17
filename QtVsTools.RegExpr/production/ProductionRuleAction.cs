@@ -37,61 +37,51 @@ namespace QtVsTools.SyntaxAnalysis
 
             bool TestAssert(T prod, string value, T1 x, T2 y)
             {
-                if (Assert == null)
-                    return true;
-
-                if (Assert is CaptureCallback.Predicate)
-                    return ((CaptureCallback.Predicate)Assert)(value);
-
-                if (Assert is UnaryCallback.Predicate<T1>)
-                    return ((UnaryCallback.Predicate<T1>)Assert)(x);
-
-                if (Assert is UnaryCallback.Predicate<T, T1>)
-                    return ((UnaryCallback.Predicate<T, T1>)Assert)(prod, x);
-
-                if (Assert is BinaryCallback.Predicate<T1, T2>)
-                    return ((BinaryCallback.Predicate<T1, T2>)Assert)(x, y);
-
-                if (Assert is BinaryCallback.Predicate<T, T1, T2>)
-                    return ((BinaryCallback.Predicate<T, T1, T2>)Assert)(prod, x, y);
-
-                throw new InvalidOperationException("Incompatible assert callback.");
+                return Assert switch
+                {
+                    null => true,
+                    CaptureCallback.Predicate predicate => predicate(value),
+                    UnaryCallback.Predicate<T1> assert => assert(x),
+                    UnaryCallback.Predicate<T, T1> predicate1 => predicate1(prod, x),
+                    BinaryCallback.Predicate<T1, T2> assert1 => assert1(x, y),
+                    BinaryCallback.Predicate<T, T1, T2> predicate2 => predicate2(prod, x, y),
+                    _ => throw new InvalidOperationException("Incompatible assert callback.")
+                };
             }
 
             void RunAction(ref T prod, string value, T1 x, T2 y)
             {
-                if (Action == null)
+                switch (Action) {
+                case null:
                     throw new InvalidOperationException("Missing action callback.");
-
-                if (Action is CaptureCallback.Create<T>)
-                    prod = ((CaptureCallback.Create<T>)Action)(value);
-
-                else if (Action is UnaryCallback.Create<T, T1>)
-                    prod = ((UnaryCallback.Create<T, T1>)Action)(x);
-
-                else if (Action is BinaryCallback.Create<T, T1, T2>)
-                    prod = ((BinaryCallback.Create<T, T1, T2>)Action)(x, y);
-
-                else if (Action is UnaryCallback.Transform<T, T1>)
-                    prod = ((UnaryCallback.Transform<T, T1>)Action)(prod, x);
-
-                else if (Action is BinaryCallback.Transform<T, T1, T2>)
-                    prod = ((BinaryCallback.Transform<T, T1, T2>)Action)(prod, x, y);
-
-                else if (Action is UnaryCallback.Update<T, T1>)
-                    ((UnaryCallback.Update<T, T1>)Action)(prod, x);
-
-                else if (Action is BinaryCallback.Update<T, T1, T2>)
-                    ((BinaryCallback.Update<T, T1, T2>)Action)(prod, x, y);
-
-                else if (Action is UnaryCallback.Error<T, T1>)
-                    throw new ErrorException(((UnaryCallback.Error<T, T1>)Action)(prod, x));
-
-                else if (Action is BinaryCallback.Error<T, T1, T2>)
-                    throw new ErrorException(((BinaryCallback.Error<T, T1, T2>)Action)(prod, x, y));
-
-                else
+                case CaptureCallback.Create<T> create:
+                    prod = create(value);
+                    break;
+                case UnaryCallback.Create<T, T1> action:
+                    prod = action(x);
+                    break;
+                case BinaryCallback.Create<T, T1, T2> create1:
+                    prod = create1(x, y);
+                    break;
+                case UnaryCallback.Transform<T, T1> transform:
+                    prod = transform(prod, x);
+                    break;
+                case BinaryCallback.Transform<T, T1, T2> transform1:
+                    prod = transform1(prod, x, y);
+                    break;
+                case UnaryCallback.Update<T, T1> update:
+                    update(prod, x);
+                    break;
+                case BinaryCallback.Update<T, T1, T2> update1:
+                    update1(prod, x, y);
+                    break;
+                case UnaryCallback.Error<T, T1> error:
+                    throw new ErrorException(error(prod, x));
+                case BinaryCallback.Error<T, T1, T2> error1:
+                    throw new ErrorException(error1(prod, x, y));
+                default:
                     throw new InvalidOperationException("Incompatible action callback.");
+                }
             }
 
             bool GetOperand<TOperand>(out TOperand x, object[] operands, ref int idx)
