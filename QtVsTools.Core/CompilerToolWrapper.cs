@@ -13,15 +13,15 @@ namespace QtVsTools.Core
     /// <summary>
     /// Wrapper for the VCCLCompilerTool class.
     /// </summary>
-    /// For platforms other than Win32 the type VCCLCompilerTool is not available.
-    /// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=220646&SiteID=1
-    /// So we have to use the reflection system to get and set the desired properties.
-    /// This class should be the only place where VCCLCompilerTool is used.
-    /// Using VCCLCompilerTool directly will break the VS integration for Win CE.
-    class CompilerToolWrapper
+    /// For platforms other than Win32 the type VCCLCompilerTool is not
+    /// available. So we have to use the reflection system to get and set the
+    /// desired properties. This class should be the only place where
+    /// VCCLCompilerTool is used. Using VCCLCompilerTool directly will break the
+    /// VS integration for Win CE.
+    internal class CompilerToolWrapper
     {
         private readonly VCCLCompilerTool compilerTool;
-        private readonly Object compilerObj;
+        private readonly object compilerObj;
         private readonly Type compilerType;
 
         public static CompilerToolWrapper Create(VCConfiguration config)
@@ -30,10 +30,10 @@ namespace QtVsTools.Core
             try {
                 wrapper = new CompilerToolWrapper(((IVCCollection)config.Tools)
                     .Item("VCCLCompilerTool"));
-            } catch {
+            } catch (Exception e) {
+                e.Log();
             }
-
-            return wrapper.IsNull() ? null : wrapper;
+            return wrapper?.IsNull() == true ? null : wrapper;
         }
 
         public static CompilerToolWrapper Create(VCFileConfiguration config)
@@ -41,113 +41,86 @@ namespace QtVsTools.Core
             CompilerToolWrapper wrapper = null;
             try {
                 wrapper = new CompilerToolWrapper(config.Tool);
-            } catch {
+            } catch (Exception e) {
+                e.Log();
             }
-
-            return wrapper.IsNull() ? null : wrapper;
+            return wrapper?.IsNull() == true ? null : wrapper;
         }
 
-        protected CompilerToolWrapper(object tool)
+        private CompilerToolWrapper(object tool)
         {
-            if (tool == null)
-                return;
-
             compilerTool = tool as VCCLCompilerTool;
-            if (compilerTool == null) {
-                compilerObj = tool;
-                compilerType = compilerObj.GetType();
-            }
+            if (compilerTool != null)
+                return;
+            compilerObj = tool;
+            compilerType = compilerObj.GetType();
         }
 
-        protected bool IsNull()
-        {
-            return compilerTool == null && compilerObj == null;
-        }
+        private bool IsNull() => compilerTool == null && compilerObj == null;
 
-        public List<string> PreprocessorDefinitions
+        public IEnumerable<string> PreprocessorDefinitions
         {
             get
             {
-                var ppdefsstr = GetPreprocessorDefinitions();
-                if (string.IsNullOrEmpty(ppdefsstr))
-                    return new List<string>();
-
-                var ppdefs = ppdefsstr.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                return new List<string>(ppdefs);
+                var defines = GetPreprocessorDefinitions();
+                return string.IsNullOrEmpty(defines)
+                    ? Array.Empty<string>()
+                    : defines.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
         public void SetPreprocessorDefinitions(string value)
         {
-            if (compilerTool != null)
-                compilerTool.PreprocessorDefinitions = value;
+            if (compilerTool == null)
+                SetProperty("PreprocessorDefinitions", value);
             else
-                SetStringProperty("PreprocessorDefinitions", value);
+                compilerTool.PreprocessorDefinitions = value;
         }
 
         public string GetPreprocessorDefinitions()
         {
-            if (compilerTool != null)
-                return compilerTool.PreprocessorDefinitions;
-            return GetStringProperty("PreprocessorDefinitions");
+            return compilerTool?.PreprocessorDefinitions
+                ?? GetProperty<string>("PreprocessorDefinitions");
         }
 
         public string GetPrecompiledHeaderThrough()
         {
-            if (compilerTool != null)
-                return compilerTool.PrecompiledHeaderThrough;
-            return GetStringProperty("PrecompiledHeaderThrough");
+            return compilerTool?.PrecompiledHeaderThrough
+                ?? GetProperty<string>("PrecompiledHeaderThrough");
         }
 
         public pchOption GetUsePrecompiledHeader()
         {
-            if (compilerTool != null)
-                return compilerTool.UsePrecompiledHeader;
-
-            var obj = compilerType.InvokeMember("UsePrecompiledHeader",
-                BindingFlags.GetProperty, null, compilerObj, null);
-            if (obj == null)
-                return pchOption.pchNone;
-            return (pchOption)obj;
+            return compilerTool?.UsePrecompiledHeader
+                ?? GetProperty("UsePrecompiledHeader", pchOption.pchNone);
         }
 
         public void SetUsePrecompiledHeader(pchOption value)
         {
-            if (compilerTool != null) {
+            if (compilerTool == null)
+                SetProperty("UsePrecompiledHeader", value);
+            else
                 compilerTool.UsePrecompiledHeader = value;
-            } else {
-                compilerType.InvokeMember(
-                    "UsePrecompiledHeader",
-                    BindingFlags.SetProperty,
-                    null,
-                    compilerObj,
-                    new object[] { value });
-            }
         }
 
-        private void SetStringProperty(string name, string value)
+        private void SetProperty<T>(string name, T value)
         {
-            compilerType.InvokeMember(
-                name,
-                BindingFlags.SetProperty,
-                null,
-                compilerObj,
-                new object[] { value });
+            compilerType.InvokeMember(name, BindingFlags.SetProperty, null, compilerObj,
+                new object[] { value }
+             );
         }
 
-        private string GetStringProperty(string name)
+        private T GetProperty<T>(string name, T defaultValue = default)
         {
-            object obj;
             try {
-                obj = compilerType.InvokeMember(name, BindingFlags.GetProperty,
-                    null, compilerObj, null);
-            } catch {
-                obj = null;
+                var value = compilerType.InvokeMember(name, BindingFlags.GetProperty, null,
+                    compilerObj, null);
+                if (value != null)
+                    return (T)value;
+            } catch (Exception e) {
+                e.Log();
             }
-            if (obj == null)
-                return string.Empty;
-            return (string)obj;
+            return defaultValue;
         }
-
     }
 }

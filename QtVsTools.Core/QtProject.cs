@@ -792,60 +792,35 @@ namespace QtVsTools.Core
 
         public bool UsesPrecompiledHeaders()
         {
-            foreach (VCConfiguration config in vcPro.Configurations as IVCCollection) {
-                if (!UsesPrecompiledHeaders(config))
-                    return false;
-            }
-            return true;
-        }
+            if (vcPro.Configurations is not IVCCollection configurations)
+                return false;
 
-        public static bool UsesPrecompiledHeaders(VCConfiguration config)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            return UsesPrecompiledHeaders(compiler);
-        }
-
-        private static bool UsesPrecompiledHeaders(CompilerToolWrapper compiler)
-        {
-            try {
-                if (compiler.GetUsePrecompiledHeader() != pchOption.pchNone)
-                    return true;
-            } catch { }
-            return false;
+            const pchOption pchNone = pchOption.pchNone;
+            return configurations.Cast<VCConfiguration>()
+                .Select(CompilerToolWrapper.Create)
+                .All(compiler => (compiler?.GetUsePrecompiledHeader() ?? pchNone) != pchNone);
         }
 
         public string GetPrecompiledHeaderThrough()
         {
-            foreach (VCConfiguration config in vcPro.Configurations as IVCCollection) {
-                var header = GetPrecompiledHeaderThrough(config);
-                if (header != null)
-                    return header;
-            }
-            return null;
-        }
+            if (vcPro.Configurations is not IVCCollection configurations)
+                return null;
 
-        public static string GetPrecompiledHeaderThrough(VCConfiguration config)
-        {
-            var compiler = CompilerToolWrapper.Create(config);
-            return GetPrecompiledHeaderThrough(compiler);
-        }
-
-        private static string GetPrecompiledHeaderThrough(CompilerToolWrapper compiler)
-        {
-            try {
-                var header = compiler.GetPrecompiledHeaderThrough();
-                if (!string.IsNullOrEmpty(header))
-                    return header.ToLower();
-            } catch { }
-            return null;
+            return configurations.Cast<VCConfiguration>()
+                .Select(CompilerToolWrapper.Create)
+                .Select(compiler => compiler?.GetPrecompiledHeaderThrough() ?? "")
+                .Where(header => !string.IsNullOrEmpty(header))
+                .Select(header => header.ToLower())
+                .FirstOrDefault();
         }
 
         public static void SetPCHOption(VCFile vcFile, pchOption option)
         {
-            foreach (VCFileConfiguration config in vcFile.FileConfigurations as IVCCollection) {
-                var compiler = CompilerToolWrapper.Create(config);
-                compiler.SetUsePrecompiledHeader(option);
-            }
+            if (vcFile.FileConfigurations is not IVCCollection fileConfigurations)
+                return;
+
+            foreach (VCFileConfiguration config in fileConfigurations)
+                CompilerToolWrapper.Create(config)?.SetUsePrecompiledHeader(option);
         }
 
         public void RemoveGeneratedFiles(string fileName)

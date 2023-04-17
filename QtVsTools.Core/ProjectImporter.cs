@@ -763,23 +763,25 @@ namespace QtVsTools.Core
 
         private static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
         {
-            var compiler = CompilerToolWrapper.Create(config);
-            var minuend = new HashSet<string>(compiler.PreprocessorDefinitions);
-            minuend.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
-            compiler.SetPreprocessorDefinitions(string.Join(",", minuend));
+            if (CompilerToolWrapper.Create(config) is not {} compiler)
+                return;
+
+            var defines = new HashSet<string>(compiler.PreprocessorDefinitions);
+            defines.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
+            compiler.SetPreprocessorDefinitions(string.Join(",", defines));
+
         }
 
         private static void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
         {
-            var compiler = CompilerToolWrapper.Create(config);
-            var ppdefs = new HashSet<string>(compiler.PreprocessorDefinitions);
-            ppdefs.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
-            compiler.SetPreprocessorDefinitions(string.Join(",", ppdefs));
+            if (CompilerToolWrapper.Create(config) is {} compiler) {
+                var defines = new HashSet<string>(compiler.PreprocessorDefinitions);
+                defines.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
+                compiler.SetPreprocessorDefinitions(string.Join(",", defines));
+            }
 
-            var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
-            if (linker == null)
+            if ((config?.Tools as IVCCollection)?.Item("VCLinkerTool") is not VCLinkerTool linker)
                 return;
-
             linker.SubSystem = subSystemOption.subSystemWindows;
             SetTargetMachine(linker, viNew);
         }
