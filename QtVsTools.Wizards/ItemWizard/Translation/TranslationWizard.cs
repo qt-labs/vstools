@@ -12,11 +12,11 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
-    using QtVsTools.Common;
+    using Common;
     using Core;
-    using Wizards.Common;
-    using Wizards.ProjectWizard;
-    using Wizards.Util;
+    using ProjectWizard;
+    using QtVsTools.Common;
+    using Util;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -59,7 +59,7 @@ namespace QtVsTools.Wizards.ItemWizard
                     NextButtonEnabled = false,
                     FinishButtonEnabled = true,
                     CancelButtonEnabled = true
-                },
+                }
             });
 
         protected override void BeforeWizardRun()

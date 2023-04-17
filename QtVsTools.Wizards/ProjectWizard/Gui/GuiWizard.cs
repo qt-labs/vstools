@@ -14,9 +14,9 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using QtVsTools.Common;
+    using Common;
     using Core;
-    using Wizards.Common;
+    using QtVsTools.Common;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -27,7 +27,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
         readonly Func<IWizardConfiguration, bool> whereConfigTargetIsWindowsStore
-            = (IWizardConfiguration config) => config.Target.EqualTo(ProjectTargets.WindowsStore);
+            = config => config.Target.EqualTo(ProjectTargets.WindowsStore);
 
         enum NewClass
         {
@@ -35,7 +35,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("baseclass")] BaseClass,
             [String("sourcefilename")] SourceFileName,
             [String("headerfilename")] HeaderFileName,
-            [String("include")] Include,
+            [String("include")] Include
         }
 
         enum NewGuiProject
@@ -47,7 +47,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("forward_declare_class")] ForwardDeclClass,
             [String("multiple_inheritance")] MultipleInheritance,
             [String("ui_classname")] UiClassName,
-            [String("member")] Member,
+            [String("member")] Member
         }
 
         enum Meta
@@ -77,8 +77,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Header = @"Welcome to the Qt Widgets Application Wizard",
                     Message = @"This wizard generates a Qt Widgets application project. The "
                         + @"application derives from QApplication and includes an empty "
-                        + @"widget." + System.Environment.NewLine
-                        + System.Environment.NewLine + "To continue, click Next.",
+                        + @"widget." + Environment.NewLine
+                        + Environment.NewLine + "To continue, click Next.",
                     PreviousButtonEnabled = false,
                     NextButtonEnabled = true,
                     FinishButtonEnabled = false,
@@ -151,7 +151,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Include = "assets/logo_44x44.png",
                     Filter = "Resource Files",
                     WhereConfig = whereConfigTargetIsWindowsStore
-                },
+                }
             };
         }
 
@@ -231,7 +231,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                             = Path.Combine(pkgInstallPath, @"ProjectTemplates\VC\Qt\1033\gui\gui.ico");
                         File.Copy(templateIcon, projectIcon);
                         File.SetAttributes(projectIcon,
-                            File.GetAttributes(projectIcon) & (~FileAttributes.ReadOnly));
+                            File.GetAttributes(projectIcon) & ~FileAttributes.ReadOnly);
                         iconExists = true;
                     }  catch (Exception /*ex*/) {
                         // Silently ignore any error, the project is working

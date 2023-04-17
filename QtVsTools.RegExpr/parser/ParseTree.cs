@@ -62,7 +62,7 @@ namespace QtVsTools.SyntaxAnalysis
                 public Stack<Node> OperatorStack { get; set; }
                 public Stack<Node> OperandStack { get; set; }
 
-                IProductionRule _Rule = null;
+                IProductionRule _Rule;
                 public IProductionRule Rule
                 {
                     get { return _Rule ??= Token.SelectRule(this); }

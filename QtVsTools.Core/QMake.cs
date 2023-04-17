@@ -109,13 +109,13 @@ namespace QtVsTools.Core
                 RedirectStandardOutput = true,
                 FileName = QMakeExe,
                 Arguments = QMakeArgs,
-                WorkingDirectory = WorkingDirectory,
+                WorkingDirectory = WorkingDirectory
             };
             qmakeStartInfo.EnvironmentVariables["QTDIR"] = qtDir;
 
             var qmakeProc = new Process
             {
-                StartInfo = qmakeStartInfo,
+                StartInfo = qmakeStartInfo
             };
             qmakeProc.OutputDataReceived += (sender, ev) => OutMsg(ev.Data);
             qmakeProc.ErrorDataReceived += (sender, ev) => ErrMsg(ev.Data);
@@ -182,7 +182,7 @@ namespace QtVsTools.Core
                 Path.Combine(path, "qmake.bat"),
                 // Path points to folder containing bin\qmake.exe or bin\qmake.bat
                 Path.Combine(path, "bin", "qmake.exe"),
-                Path.Combine(path, "bin", "qmake.bat"),
+                Path.Combine(path, "bin", "qmake.bat")
             };
             return possibleQMakePaths.Where(File.Exists).Select(Path.GetFileName)
                 .Any(file => file.Equals("qmake.exe", IgnoreCase)

@@ -15,7 +15,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "namesAsObjects" : <bool>
         //  }
         public const string MSG_TYPE = "connect";
-        public ConnectMessage() : base()
+        public ConnectMessage()
         {
             Type = MSG_TYPE;
         }

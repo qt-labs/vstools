@@ -74,13 +74,13 @@ namespace QtVsTools.QtMsBuild.Tasks
             else if (!string.IsNullOrEmpty(RedirectStdErr))
                 Command += " 2> " + RedirectStdErr;
 
-            var taskExec = new Microsoft.Build.Tasks.Exec()
+            var taskExec = new Microsoft.Build.Tasks.Exec
             {
                 BuildEngine = BuildEngine,
                 HostObject = HostObject,
                 WorkingDirectory = WorkingDirectory,
                 Command = Command,
-                IgnoreExitCode = IgnoreExitCode,
+                IgnoreExitCode = IgnoreExitCode
             };
 
             Log.LogMessage("\r\n==== HostExec: Microsoft.Build.Tasks.Exec");

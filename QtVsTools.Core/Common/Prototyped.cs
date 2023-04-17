@@ -65,7 +65,7 @@ namespace QtVsTools
 
         public TBase Prototype => ThisClass.Prototype;
 
-        SubClass thisClass = null;
+        SubClass thisClass;
         protected SubClass ThisClass
         {
             get
@@ -139,11 +139,11 @@ namespace QtVsTools
 
             static SubClass Create(Type type, IEnumerable<Type> subTypes)
             {
-                return new SubClass()
+                return new SubClass
                 {
                     Type = type,
                     SubTypes = subTypes,
-                    Prototype = CreatePrototype(type),
+                    Prototype = CreatePrototype(type)
                 };
             }
 

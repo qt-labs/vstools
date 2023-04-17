@@ -11,9 +11,9 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using Core;
     using QtVsTools.Common;
-    using Wizards.Common;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -30,7 +30,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("baseclass")] BaseClass,
             [String("sourcefilename")] SourceFileName,
             [String("headerfilename")] HeaderFileName,
-            [String("include")] Include,
+            [String("include")] Include
         }
 
         enum NewDesignerPlugin
@@ -39,7 +39,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("objname")] ObjectName,
             [String("pluginsourcefilename")] SourceFileName,
             [String("pluginheaderfilename")] HeaderFileName,
-            [String("plugin_json")] JsonFileName,
+            [String("plugin_json")] JsonFileName
         }
 
         protected override WizardData WizardData => Lazy.Get(() =>
@@ -143,7 +143,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            if (Core.QtProject.Create(project) is {} qtPro)
+            if (QtProject.Create(project) is {} qtPro)
                 QtProject.MarkAsQtPlugin(qtPro);
         }
     }

@@ -125,8 +125,8 @@ namespace QtVsTest.Macros
             StatementArg,
             StatementArgValue,
             StatementCode,
-            StatementCodeValue,
-        };
+            StatementCodeValue
+        }
 
         bool Initialize()
         {
@@ -194,7 +194,7 @@ namespace QtVsTest.Macros
                 {
                     new Rule<CodeLine>
                     {
-                        Capture((string value) => new CodeLine(value))
+                        Capture(value => new CodeLine(value))
                     }
                 }
                 & (LineBreak | EndOfFile);

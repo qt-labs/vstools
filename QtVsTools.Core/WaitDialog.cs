@@ -14,13 +14,13 @@ namespace QtVsTools.Core
 
     public class WaitDialog : IDisposable
     {
-        static IVsThreadedWaitDialogFactory factory = null;
+        static IVsThreadedWaitDialogFactory factory;
 
         private IVsThreadedWaitDialog2 VsWaitDialog { get; set; }
 
         private bool Running { get; set; }
 
-        bool? vsDialogCanceled = null;
+        bool? vsDialogCanceled;
 
         public bool Canceled
         {
@@ -60,7 +60,7 @@ namespace QtVsTools.Core
             return new WaitDialog
             {
                 VsWaitDialog = vsWaitDialog,
-                Running = true,
+                Running = true
             };
         }
 
@@ -136,7 +136,7 @@ namespace QtVsTools.Core
 
             Running = false;
             VsWaitDialog.EndWaitDialog(out int canceled);
-            Canceled = (canceled != 0);
+            Canceled = canceled != 0;
         }
 
         void IDisposable.Dispose()

@@ -18,7 +18,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "clearbreakpoint";
-        public ClearBreakpointRequest() : base()
+        public ClearBreakpointRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -35,7 +35,7 @@ namespace QtVsTools.Qml.Debug.V4
     sealed class ClearBreakpointResponse : Response
     {
         public const string REQ_COMMAND = ClearBreakpointRequest.REQ_COMMAND;
-        public ClearBreakpointResponse() : base()
+        public ClearBreakpointResponse()
         {
             Command = REQ_COMMAND;
         }

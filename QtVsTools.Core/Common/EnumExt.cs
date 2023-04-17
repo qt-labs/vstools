@@ -93,7 +93,7 @@ namespace QtVsTools.Common
         /// </summary>
         public static bool TryCast<T, TEnum>(this T valueT, out TEnum value) where TEnum : struct
         {
-            value = default(TEnum);
+            value = default;
             IEnumerable<Enum> enumValues = Enum.GetValues(typeof(TEnum)).OfType<Enum>()
                 .Where(valueEnum => valueEnum.Cast<T>().Equals(valueT))
                 .ToList();

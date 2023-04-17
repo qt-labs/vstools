@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using QtVsTools.Common;
-    using Wizards.Common;
 
     public class ConsoleWizard : ProjectTemplateWizard
     {

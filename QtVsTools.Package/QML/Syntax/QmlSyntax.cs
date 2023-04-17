@@ -177,7 +177,7 @@ namespace QtVsTools.Qml.Syntax
             return Create(kind, new SourceLocation
             {
                 Offset = offset,
-                Length = length,
+                Length = length
             });
         }
 

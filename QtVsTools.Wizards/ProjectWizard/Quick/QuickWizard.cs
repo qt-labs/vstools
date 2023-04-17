@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using QtVsTools.Common;
-    using Wizards.Common;
     using static QtVsTools.Common.EnumExt;
 
     public class QuickWizard : ProjectTemplateWizard
@@ -51,7 +51,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     PreviousButtonEnabled = true,
                     NextButtonEnabled = false,
                     FinishButtonEnabled = true,
-                    CancelButtonEnabled = true,
+                    CancelButtonEnabled = true
                 }
             });
 

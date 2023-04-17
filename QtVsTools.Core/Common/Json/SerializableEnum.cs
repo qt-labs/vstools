@@ -39,11 +39,11 @@ namespace QtVsTools.Json
             where TEnum : struct
         {
             if (!typeof(TEnum).IsEnum)
-                return default(TEnum);
+                return default;
 
             var members = typeof(TEnum).GetMembers();
             if (members.Length == 0)
-                return default(TEnum);
+                return default;
 
             var member = members.Where(x =>
             {
@@ -59,13 +59,10 @@ namespace QtVsTools.Json
 
             var field = member as FieldInfo;
             if (field == null)
-                return default(TEnum);
+                return default;
 
             var objValue = field.GetValue(null);
-            if (!(objValue is TEnum))
-                return default(TEnum);
-
-            return (TEnum)objValue;
+            return objValue is not TEnum value ? default : value;
         }
 
     }

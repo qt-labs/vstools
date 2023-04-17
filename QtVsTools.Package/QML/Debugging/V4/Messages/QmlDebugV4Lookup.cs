@@ -23,7 +23,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "lookup";
-        public LookupRequest() : base()
+        public LookupRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -51,7 +51,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = LookupRequest.REQ_COMMAND;
-        public LookupResponse() : base()
+        public LookupResponse()
         {
             Command = REQ_COMMAND;
         }

@@ -14,11 +14,11 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
-    using QtVsTools.Common;
+    using Common;
     using Core;
-    using Wizards.Common;
-    using Wizards.ProjectWizard;
-    using Wizards.Util;
+    using ProjectWizard;
+    using QtVsTools.Common;
+    using Util;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -70,8 +70,8 @@ namespace QtVsTools.Wizards.ItemWizard
                     Data = WizardData,
                     Header = @"Welcome to the Qt Class Wizard",
                     Message = @"This wizard will add a new Qt class to your project. The "
-                        + @"wizard creates a .h and .cpp file." + System.Environment.NewLine
-                        + System.Environment.NewLine + "To continue, click Next.",
+                        + @"wizard creates a .h and .cpp file." + Environment.NewLine
+                        + Environment.NewLine + "To continue, click Next.",
                     PreviousButtonEnabled = false,
                     NextButtonEnabled = true,
                     FinishButtonEnabled = false,
@@ -94,7 +94,7 @@ namespace QtVsTools.Wizards.ItemWizard
             var className = Parameter[NewClass.SafeItemName];
             className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
             className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-            var result = new Util.ClassNameValidationRule().Validate(className, null);
+            var result = new ClassNameValidationRule().Validate(className, null);
             if (result != ValidationResult.ValidResult)
                 className = @"QtClass";
 

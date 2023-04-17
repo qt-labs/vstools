@@ -5,9 +5,7 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -181,7 +179,7 @@ namespace QtVsTools.QtMsBuild
 
                 lock (CriticalSection) {
                     project.ProjectUnloading -= OnProjectUnloadingAsync;
-                    Instances.TryRemove(project.UnconfiguredProject.FullPath, out var _);
+                    Instances.TryRemove(project.UnconfiguredProject.FullPath, out _);
                 }
 
                 await Task.Yield();

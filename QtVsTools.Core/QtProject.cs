@@ -31,7 +31,7 @@ namespace QtVsTools.Core
         private static readonly Dictionary<Project, QtProject> instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
-        public static QtVsTools.VisualStudio.IProjectTracker ProjectTracker { get; set; }
+        public static VisualStudio.IProjectTracker ProjectTracker { get; set; }
 
         public static QtProject Create(VCProject vcProject)
         {
@@ -107,7 +107,7 @@ namespace QtVsTools.Core
             return IsQtMsBuildEnabled(project.Object as VCProject);
         }
 
-        private bool? isQtMsBuildEnabled = null;
+        private bool? isQtMsBuildEnabled;
         public bool IsQtMsBuildEnabled()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -175,7 +175,7 @@ namespace QtVsTools.Core
         }
 
         public static string GetPropertyValue(
-            EnvDTE.Project dteProject,
+            Project dteProject,
             string propName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -188,8 +188,8 @@ namespace QtVsTools.Core
         }
 
         public static string GetPropertyValue(
-            EnvDTE.Project dteProject,
-            EnvDTE.Configuration dteConfig,
+            Project dteProject,
+            Configuration dteConfig,
             string propName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -309,9 +309,8 @@ namespace QtVsTools.Core
 #endif
                 CxxStreamReader cxxStream = null;
                 try {
-                    var line = string.Empty;
                     cxxStream = new CxxStreamReader(fullPath);
-                    while ((line = cxxStream.ReadLine()) != null) {
+                    while (cxxStream.ReadLine() is {} line) {
                         if (Regex.IsMatch(line, "#include *(<|\")" + mocFile + "(\"|>)"))
                             return true;
                     }
@@ -405,10 +404,10 @@ namespace QtVsTools.Core
                     if (cbtTool == null)
                         continue;
                     foreach (var output in cbtTool.Outputs.Split(';')) {
-                        string outputExpanded = output;
+                        var outputExpanded = output;
                         if (!HelperFunctions.ExpandString(ref outputExpanded, mocConfig))
                             continue;
-                        string outputFullPath = "";
+                        string outputFullPath;
                         try {
                             outputFullPath = Path.GetFullPath(Path.Combine(
                                 Path.GetDirectoryName(mocFile.FullPath),
@@ -704,7 +703,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public static void MarkAsQtPlugin(Core.QtProject qtPro)
+        public static void MarkAsQtPlugin(QtProject qtPro)
         {
             foreach (VCConfiguration config in qtPro.VCProject.Configurations as IVCCollection) {
                 (config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage)
@@ -739,12 +738,10 @@ namespace QtVsTools.Core
 
                 var list = new List<string>();
                 var reader = new StreamReader(file);
-                var line = reader.ReadLine();
-                while (line != null) {
+                while (reader.ReadLine() is {} line) {
                     if (line.StartsWith(oldValue, StringComparison.Ordinal))
                         line = line.Replace(oldValue, newValue);
                     list.Add(line);
-                    line = reader.ReadLine();
                 }
                 reader.Close();
 
@@ -907,7 +904,7 @@ namespace QtVsTools.Core
                 envPro.Save(null);
                 dte.Solution.Remove(envPro);
                 AddPlatformToVCProj(projectFileName, oldPlatform, newPlatform);
-                envPro = dte.Solution.AddFromFile(projectFileName, false);
+                envPro = dte.Solution.AddFromFile(projectFileName);
                 vcPro = (VCProject)envPro.Object;
             }
 
@@ -1099,7 +1096,7 @@ namespace QtVsTools.Core
                 .Select(x => new CppConfig
                 {
                     Config = x,
-                    Cpp = x.Rules.Item("CL") as IVCRulePropertyStorage,
+                    Cpp = x.Rules.Item("CL") as IVCRulePropertyStorage
                 })
                 .Where(x => x.Cpp != null
                     && x.Config.GetEvaluatedPropertyValue("ApplicationType") != "Linux");
@@ -1156,9 +1153,9 @@ namespace QtVsTools.Core
 
         public static void UndefineQtQmlDebug(VCProject vcPro)
         {
-            var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
-                .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
-                .Contains("QT_QML_DEBUG") == true)
+            var configs = GetCppDebugConfigs(vcPro)
+                .Where(x => x.Cpp.GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
+                    .Contains("QT_QML_DEBUG"))
                 .Select(x => new
                 {
                     x.Cpp,
@@ -1245,7 +1242,7 @@ namespace QtVsTools.Core
             get => IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
             set
             {
-                bool enabled = (IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro));
+                bool enabled = IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
                 if (value == enabled)
                     return;
 
@@ -1462,7 +1459,7 @@ namespace QtVsTools.Core
         readonly VCFile vcFile;
         readonly VCCustomBuildTool tool;
 
-        enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic };
+        enum FileItemType { Other = 0, CustomBuild, QtMoc, QtRcc, QtRepc, QtUic }
         readonly FileItemType itemType = FileItemType.Other;
 
         public QtCustomBuildTool(VCFileConfiguration vcConfig, QtMsBuildContainer container = null)
@@ -1493,7 +1490,7 @@ namespace QtVsTools.Core
             {
                 switch (itemType) {
                 case FileItemType.CustomBuild:
-                    return (tool != null) ? tool.CommandLine : "";
+                    return tool != null ? tool.CommandLine : "";
                 case FileItemType.QtMoc:
                     return qtMsBuild.GenerateQtMocCommandLine(vcConfig);
                 case FileItemType.QtRcc:
@@ -1513,7 +1510,7 @@ namespace QtVsTools.Core
             {
                 switch (itemType) {
                 case FileItemType.CustomBuild:
-                    return (tool != null) ? tool.Outputs : "";
+                    return tool != null ? tool.Outputs : "";
                 case FileItemType.QtMoc:
                     return qtMsBuild.GetPropertyValue(vcConfig, QtMoc.Property.OutputFile);
                 case FileItemType.QtRcc:

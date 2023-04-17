@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
@@ -36,7 +35,7 @@ namespace QtVsTools.QtMsBuild
                     + $"Refreshing: [{configId ?? "(all configs)"}] {project.FullName}");
             }
             string projectPath = project.FullName;
-            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles, false));
+            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles));
         }
 
         public static async Task RefreshAsync(
@@ -74,8 +73,7 @@ namespace QtVsTools.QtMsBuild
                         project, projectPath, config, properties, targets,
                         LoggerVerbosity.Quiet);
                 } else {
-                    await QtProjectBuild.SetOutdatedAsync(
-                        project, projectPath, config, LoggerVerbosity.Quiet);
+                    await QtProjectBuild.SetOutdatedAsync(project, projectPath, config);
                 }
             }
         }

@@ -15,8 +15,8 @@ namespace QtVsTools.Options
 {
     using Common;
     using Core;
+    using static QtVersionsTable;
     using static Utils;
-    using static QtVsTools.Options.QtVersionsTable;
 
     public class QtVersionsPage : UIElementDialogPage
     {
@@ -48,9 +48,9 @@ namespace QtVsTools.Options
                         compiler = linuxPaths[2];
                 }
                 var defaultVersion = VersionManager.GetDefaultVersion();
-                versions.Add(new Row()
+                versions.Add(new Row
                 {
-                    IsDefault = (versionName == defaultVersion),
+                    IsDefault = versionName == defaultVersion,
                     VersionName = versionName,
                     InitialVersionName = versionName,
                     Path = versionPath,

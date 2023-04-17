@@ -100,7 +100,7 @@ namespace QtVsTest.Macros
 
                             if (macro is { Ok: true, AutoRun: true, QuitWhenDone: true }) {
                                 await JoinableTaskFactory.SwitchToMainThreadAsync(Loop.Token);
-                                dte.Solution.Close(false);
+                                dte.Solution.Close();
                                 dte.Quit();
                                 await TaskScheduler.Default;
                                 Loop.Cancel();

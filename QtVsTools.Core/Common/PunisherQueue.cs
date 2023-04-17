@@ -9,7 +9,7 @@ namespace QtVsTools
 {
     public class PunisherQueue<T> : BasePriorityQueue<T, long>
     {
-        public PunisherQueue() : base()
+        public PunisherQueue()
         { }
 
         public PunisherQueue(Func<T, object> getItemKey) : base(getItemKey)

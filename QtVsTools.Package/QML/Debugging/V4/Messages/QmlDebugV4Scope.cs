@@ -61,7 +61,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "scope";
-        public ScopeRequest() : base()
+        public ScopeRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -105,7 +105,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = ScopeRequest.REQ_COMMAND;
-        public ScopeResponse() : base()
+        public ScopeResponse()
         {
             Command = REQ_COMMAND;
         }

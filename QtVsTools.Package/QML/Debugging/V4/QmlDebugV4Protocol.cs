@@ -29,7 +29,7 @@ namespace QtVsTools.Qml.Debug.V4
     {
         IMessageEventSink sink;
         DebugClient client;
-        int nextRequestSeq = 0;
+        int nextRequestSeq;
         readonly Dictionary<int, PendingRequest> pendingRequests = new();
         Task eventHandlingThread;
         readonly EventWaitHandle eventReceived = new(false, EventResetMode.AutoReset);

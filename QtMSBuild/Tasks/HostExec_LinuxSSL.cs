@@ -109,7 +109,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 Command += " 2> " + RedirectStdErr;
             Command = string.Format("cd {0}/{1}; {2}", RemoteProjectDir, WorkingDirectory, Command);
 
-            var taskCopyFiles = new Microsoft.Build.Linux.Tasks.Execute()
+            var taskCopyFiles = new Microsoft.Build.Linux.Tasks.Execute
             {
                 BuildEngine = BuildEngine,
                 HostObject = HostObject,
@@ -118,9 +118,9 @@ namespace QtVsTools.QtMsBuild.Tasks
                 RemoteTarget = RemoteTarget,
                 RemoteProjectDir = RemoteProjectDir,
                 Command = string.Join("; ", createDirs.Select(x => string.Format("mkdir -p {0}", x))),
-                LocalFilesToCopyRemotelyMapping = localFilesToCopyRemotelyMapping,
+                LocalFilesToCopyRemotelyMapping = localFilesToCopyRemotelyMapping
             };
-            var taskExec = new Microsoft.Build.Linux.Tasks.Execute()
+            var taskExec = new Microsoft.Build.Linux.Tasks.Execute
             {
                 BuildEngine = BuildEngine,
                 HostObject = HostObject,
@@ -129,7 +129,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 RemoteTarget = RemoteTarget,
                 RemoteProjectDir = RemoteProjectDir,
                 Command = Command,
-                RemoteFilesToCopyLocallyMapping = remoteFilesToCopyLocallyMapping,
+                RemoteFilesToCopyLocallyMapping = remoteFilesToCopyLocallyMapping
             };
 
             Log.LogMessage("\r\n==== HostExec: Microsoft.Build.Linux.Tasks.Execute");

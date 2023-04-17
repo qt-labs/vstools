@@ -44,9 +44,6 @@ namespace QtVsTools.Qml.Debug.V4
     [DataContract]
     class JsObjectRef : JsRef<JsObjectRef>
     {
-        public JsObjectRef()
-        { }
-
         protected override bool? IsCompatible(JsValue obj)
         {
             System.Diagnostics.Debug.Assert(IsPrototype);
@@ -81,9 +78,6 @@ namespace QtVsTools.Qml.Debug.V4
         //                     ...
         //                   ]
         //  }
-        public JsObject()
-        { }
-
         protected override bool? IsCompatible(JsValue obj)
         {
             System.Diagnostics.Debug.Assert(IsPrototype);

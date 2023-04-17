@@ -33,7 +33,7 @@ namespace QtVsTools.Qml.Debug.AD7
                 Engine = frame.Engine,
                 Program = frame.Program,
                 Debugger = frame.Debugger,
-                CodeContext = frame.Context,
+                CodeContext = frame.Context
             };
         }
 

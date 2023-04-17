@@ -113,7 +113,7 @@ namespace QtVsTools
         static bool ConvertProject(string pathToProject)
         {
             var xmlProject = MsBuildProject.Load(pathToProject);
-            bool ok = (xmlProject != null);
+            bool ok = xmlProject != null;
             if (ok)
                 ok = xmlProject.AddQtMsBuildReferences();
             if (ok)

@@ -261,9 +261,6 @@ namespace QtVsTools.Qml.Debug.AD7
     {
         public const string CLSID_PROGRAMPROVIDER = "f2ff34e2-7fa5-461b-9e59-b5997ee0a637";
         public static readonly Guid ClassId = new(CLSID_PROGRAMPROVIDER);
-
-        public ProgramProvider()
-        { }
     }
 
     public static class NativeEngine

@@ -191,7 +191,7 @@ namespace QtVsTools.Qml.Syntax
         public SourceLocation RBracketToken { get; set; }
     }
 
-    public enum UiPublicMemberType { Signal, Property };
+    public enum UiPublicMemberType { Signal, Property }
 
     public class UiPublicMember : AstNode
     {

@@ -87,7 +87,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 "AccessedTime", "CreatedTime", "DefiningProjectDirectory",
                 "DefiningProjectExtension", "DefiningProjectFullPath", "DefiningProjectName",
                 "Directory", "Extension", "Filename", "FullPath", "Identity", "ModifiedTime",
-                "RecursiveDir", "RelativeDir", "RootDir",
+                "RecursiveDir", "RelativeDir", "RootDir"
             };
 
             // Output default values

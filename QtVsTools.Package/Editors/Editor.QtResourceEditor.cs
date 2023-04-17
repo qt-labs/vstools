@@ -6,7 +6,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Editors
 {
@@ -17,7 +16,7 @@ namespace QtVsTools.Editors
         public const string Title = "Qt Resource Editor";
 
         private Guid? guid;
-        public override Guid Guid => (guid ??= new Guid(GuidString));
+        public override Guid Guid => guid ??= new Guid(GuidString);
 
         public override string ExecutableName => "QrcEditor.exe";
 

@@ -64,7 +64,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 "AccessedTime", "CreatedTime", "DefiningProjectDirectory",
                 "DefiningProjectExtension", "DefiningProjectFullPath", "DefiningProjectName",
                 "Directory", "Extension", "Filename", "FullPath", "Identity", "ModifiedTime",
-                "RecursiveDir", "RelativeDir", "RootDir",
+                "RecursiveDir", "RelativeDir", "RootDir"
             };
             if (Metadata == null)
                 Metadata = Array.Empty<string>();
@@ -82,7 +82,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                             {
                                 { "Item",  itemName },
                                 { "Name",  name },
-                                { "Value", value },
+                                { "Value", value }
                             }));
                     }
                 }

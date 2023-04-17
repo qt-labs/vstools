@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
-    using Wizards.Common;
+    using Common;
 
     public partial class QtClassPage : WizardPage
     {

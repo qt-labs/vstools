@@ -45,7 +45,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             ITaskItem[] sourceItems = new TaskItem[]
             {
                 new("main.cpp", new Dictionary<string, string> {
-                    { "EnforceTypeConversionRules", "false" },
+                    { "EnforceTypeConversionRules", "false" }
                 })
             };
 

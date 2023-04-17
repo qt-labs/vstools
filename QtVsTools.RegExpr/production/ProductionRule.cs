@@ -160,7 +160,7 @@ namespace QtVsTools.SyntaxAnalysis
                         Action = a.Self,
                         ActionIndex = a.Index,
                         Production = p.Self,
-                        ProductionIndex = p.Index,
+                        ProductionIndex = p.Index
                     })
                     .OrderByDescending(ap => ap.ProductionIndex)
                     .ThenByDescending(ap => ap.ActionIndex);
@@ -195,7 +195,7 @@ namespace QtVsTools.SyntaxAnalysis
                 var type = typeof(T);
 
                 if (type.IsValueType)
-                    return default(T);
+                    return default;
 
                 if (type == typeof(string))
                     return (T)(object)string.Empty;

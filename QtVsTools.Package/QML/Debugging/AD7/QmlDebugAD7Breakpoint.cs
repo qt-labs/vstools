@@ -114,7 +114,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugPendingBreakpoint2.Enable(int fEnable)
         {
-            bool enable = (fEnable != 0);
+            bool enable = fEnable != 0;
             if (Atomic(() => Enabled != enable, () => Enabled = enable)) {
                 foreach (var breakpoint in ThreadSafe(() => breakpoints.ToList()))
                     (breakpoint as IDebugBoundBreakpoint2).Enable(fEnable);
@@ -138,10 +138,8 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             if (Disposed) {
                 pState[0].state = (enum_PENDING_BP_STATE)enum_BP_STATE.BPS_DELETED;
-
             } else if (Enabled) {
                 pState[0].state = (enum_PENDING_BP_STATE)enum_BP_STATE.BPS_ENABLED;
-
             } else {
                 pState[0].state = (enum_PENDING_BP_STATE)enum_BP_STATE.BPS_DISABLED;
             }
@@ -201,7 +199,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     parent.Engine,
                     program,
                     parent.FileName,
-                    parent.BeginPosition.dwLine),
+                    parent.BeginPosition.dwLine)
             };
         }
 
@@ -215,7 +213,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         int IDebugBoundBreakpoint2.Enable(int fEnable)
         {
-            bool enable = (fEnable != 0);
+            bool enable = fEnable != 0;
             if (Atomic(() => Enabled != enable,
                        () => { Enabled = enable; supressNotify = true; })) {
 

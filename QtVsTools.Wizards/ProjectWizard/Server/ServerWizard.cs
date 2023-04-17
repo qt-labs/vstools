@@ -8,14 +8,13 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell;
 using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using QtVsTools.Common;
+    using Common;
     using Core;
-    using Wizards.Common;
+    using QtVsTools.Common;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -30,14 +29,14 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("classname")] ClassName,
             [String("sourcefilename")] SourceFileName,
             [String("headerfilename")] HeaderFileName,
-            [String("include")] Include,
+            [String("include")] Include
         }
 
         enum NewActiveQtProject
         {
             [String("pro_name")] Name,
             [String("uifilename")] UiFileName,
-            [String("ui_hdr")] UiHeaderName,
+            [String("ui_hdr")] UiHeaderName
         }
 
         protected override WizardData WizardData => Lazy.Get(() =>

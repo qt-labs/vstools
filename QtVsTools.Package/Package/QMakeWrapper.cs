@@ -39,7 +39,7 @@ namespace QtVsTools
             string output;
             try {
                 var exeFilePath = QMakeFileReaderPath;
-                if (!System.IO.File.Exists(exeFilePath))
+                if (!File.Exists(exeFilePath))
                     return false;
 
                 using (var process = new Process()) {
@@ -54,9 +54,9 @@ namespace QtVsTools
                     process.WaitForExit();
                 }
 
-                System.IO.StringReader stringReader = null;
+                StringReader stringReader = null;
                 try {
-                    stringReader = new System.IO.StringReader(output);
+                    stringReader = new StringReader(output);
                     using (var reader = new XmlTextReader(stringReader)) {
                         stringReader = null;
                         reader.ReadToFollowing("content");

@@ -111,7 +111,7 @@ namespace QtVsTest.Macros
             typeof(Macro).Assembly.FullName,
             typeof(EnvDTE.DTE).Assembly.FullName,
             typeof(AutomationElement).Assembly.FullName,
-            "System.Core",
+            "System.Core"
         };
 
         IEnumerable<string> RefAssemblies { get; set; }
@@ -124,7 +124,7 @@ namespace QtVsTest.Macros
             "Task = System.Threading.Tasks.Task",
             "System.Windows.Automation",
             "EnvDTE",
-            "EnvDTE80",
+            "EnvDTE80"
         };
 
         private Dictionary<string, VSServiceRef> ServiceRefs { get; } = new()
@@ -132,7 +132,7 @@ namespace QtVsTest.Macros
             {
                 "Dte", new VSServiceRef
                     { Name = "Dte", Interface = "DTE2", Type = "DTE" }
-            },
+            }
         };
 
         private Dictionary<string, GlobalVar> GlobalVars { get; } = new()
@@ -140,7 +140,7 @@ namespace QtVsTest.Macros
             {
                 "Result", new GlobalVar
                     { Type = "string", Name = "Result", InitialValueExpr = "string.Empty" }
-            },
+            }
         };
 
         string CSharpMethodCode { get; set; }
@@ -486,7 +486,7 @@ namespace QtVsTest.Macros
             var uiIterator = uiContext;
             foreach (var item in path) {
                 var itemType = item.GetType();
-                var scope = (uiIterator == UiRoot) ? TreeScope.Children : TreeScope.Subtree;
+                var scope = uiIterator == UiRoot ? TreeScope.Children : TreeScope.Subtree;
                 if (itemType.IsAssignableFrom(typeof(string))) {
                     // Find element by name
                     var name = (string)item;
@@ -496,14 +496,14 @@ namespace QtVsTest.Macros
                     // Find element by name and type
                     var itemParams = (string[])item;
                     uiIterator = uiIterator.FindFirst(scope,
-                        new AndCondition(itemParams.Select((x, i) =>
-                        (i == 0) ? new PropertyCondition(
-                            AutomationElement.NameProperty, x) :
-                        (i == 1) ? new PropertyCondition(
-                            AutomationElement.LocalizedControlTypeProperty, x) :
-                        (i == 2) ? new PropertyCondition(
-                            AutomationElement.AutomationIdProperty, x) :
-                        Condition.FalseCondition).ToArray()));
+                        new AndCondition(itemParams.Select((x, i) => i switch
+                        {
+                            0 => new PropertyCondition(AutomationElement.NameProperty, x),
+                            1 => new PropertyCondition(
+                                AutomationElement.LocalizedControlTypeProperty, x),
+                            2 => new PropertyCondition(AutomationElement.AutomationIdProperty, x),
+                            _ => Condition.FalseCondition
+                        }).ToArray()));
                 }
                 if (uiIterator == null)
                     throw new Exception($"Could not find UI element \"{item}\"");
@@ -560,9 +560,9 @@ namespace QtVsTest.Macros
                 if (s.Args.Count > 3 || string.IsNullOrEmpty(s.Code))
                     return ErrorMsg("Invalid #ui statement");
 
-                bool uiVsRoot = (s.Args.Count > 1 && s.Args[1] == "VSROOT");
-                bool uiDesktop = (s.Args.Count > 1 && s.Args[1] == "DESKTOP");
-                bool uiHwnd = (s.Args.Count > 1 && s.Args[1] == "HWND");
+                bool uiVsRoot = s.Args.Count > 1 && s.Args[1] == "VSROOT";
+                bool uiDesktop = s.Args.Count > 1 && s.Args[1] == "DESKTOP";
+                bool uiHwnd = s.Args.Count > 1 && s.Args[1] == "HWND";
 
                 string context;
                 if (uiVsRoot)
@@ -624,7 +624,7 @@ namespace QtVsTest.Macros
                     return ErrorMsg("Invalid #ui statement");
 
                 string typeName = s.Args[1];
-                string varName = (s.Args.Count > 2) ? s.Args[2] : string.Empty;
+                string varName = s.Args.Count > 2 ? s.Args[2] : string.Empty;
                 if (!UI_TYPES.Contains(typeName))
                     return ErrorMsg("Invalid #ui statement");
 
@@ -774,7 +774,7 @@ namespace QtVsTest.Macros
             if (File.Exists(macroDllPath))
                 File.Delete(macroDllPath);
 
-            var cscParams = new CompilerParameters()
+            var cscParams = new CompilerParameters
             {
                 GenerateInMemory = false,
                 OutputAssembly = macroDllPath
@@ -892,7 +892,7 @@ namespace QtVsTest.Macros
             }
             bool ok = !IsDefaultValue(value);
 
-            while (!ok && (tRemaining = (tMax - t.Elapsed)) > TimeSpan.Zero) {
+            while (!ok && (tRemaining = tMax - t.Elapsed) > TimeSpan.Zero) {
                 await Task.Delay(10);
                 try {
                     value = await Task.Run(expr).WithTimeout(tRemaining);
@@ -1008,31 +1008,31 @@ namespace QtVsTest.Macros
         bool NoError()
         {
             Result = MACRO_OK;
-            return (Ok = true);
+            return Ok = true;
         }
 
         bool Error()
         {
             Result = MACRO_ERROR;
-            return (Ok = false);
+            return Ok = false;
         }
 
         bool ErrorMsg(string errorMsg)
         {
             Result = MACRO_ERROR_MSG(errorMsg);
-            return (Ok = false);
+            return Ok = false;
         }
 
         bool ErrorException(Exception e)
         {
             Result = MACRO_ERROR_MSG($"{e.GetType().Name}\r\n\"{e.Message}\"\r\n{e.StackTrace}");
-            return (Ok = false);
+            return Ok = false;
         }
 
         bool Warning(string warnMsg)
         {
             Result = MACRO_WARN_MSG(warnMsg);
-            return (Ok = true);
+            return Ok = true;
         }
     }
 }

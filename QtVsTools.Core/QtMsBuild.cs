@@ -152,7 +152,7 @@ namespace QtVsTools.Core.QtMsBuild
 
         readonly Dictionary<string, ItemPropertyChange> itemPropertyChanges = new();
         readonly Dictionary<string, List<ItemPropertyChange>> itemPropertyChangesGrouped = new();
-        bool pendingChanges = false;
+        bool pendingChanges;
 
         void AddChange(ItemPropertyChange newChange)
         {
@@ -218,7 +218,7 @@ namespace QtVsTools.Core.QtMsBuild
                 ItemName = itemName,
                 PropertyName = propertyName,
                 PropertyValue = propertyValue,
-                PropertyStorage = propertyStorage,
+                PropertyStorage = propertyStorage
             };
 
             if (!pendingChanges) {
@@ -614,7 +614,7 @@ namespace QtVsTools.Core.QtMsBuild
             bool useQuotes = false)
         {
             var name = option.Names.First();
-            var escape = (name.Length == 1) ? "-" : "--";
+            var escape = name.Length == 1 ? "-" : "--";
 
             if (!string.IsNullOrEmpty(option.ValueName)) {
                 foreach (var value in values.Split(';')) {
@@ -659,12 +659,12 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalOptions,
             DynamicSource,
             ParallelProcess,
-            AdditionalDependencies,
+            AdditionalDependencies
         }
 
         readonly Dictionary<Property, CommandLineOption> options = new();
 
-        public QtMoc() : base()
+        public QtMoc()
         {
             parser.AddOption(options[Property.IncludePath] =
                 new CommandLineOption("I")
@@ -693,7 +693,7 @@ namespace QtVsTools.Core.QtMsBuild
             parser.AddOption(options[Property.Undefine] =
                 new CommandLineOption("U")
                 {
-                    ValueName = ("macro"),
+                    ValueName = "macro",
                     Flags = CommandLineOption.Flag.ShortOptionStyle
                 });
 
@@ -957,12 +957,12 @@ namespace QtVsTools.Core.QtMsBuild
             AdditionalOptions,
             DynamicSource,
             ParallelProcess,
-            AdditionalDependencies,
+            AdditionalDependencies
         }
 
         readonly Dictionary<Property, CommandLineOption> options = new();
 
-        public QtRcc() : base()
+        public QtRcc()
         {
             parser.AddOption(options[Property.TempFile] =
                 new CommandLineOption(new[] { "t", "temp" }, "file"));
@@ -1157,7 +1157,7 @@ namespace QtVsTools.Core.QtMsBuild
             OutputFile,
             IncludePath,
             AlwaysClass,
-            PrintDebug,
+            PrintDebug
         }
 
         readonly Dictionary<Property, CommandLineOption> options = new();
@@ -1318,12 +1318,12 @@ namespace QtVsTools.Core.QtMsBuild
             CommandLineTemplate,
             AdditionalOptions,
             ParallelProcess,
-            AdditionalDependencies,
+            AdditionalDependencies
         }
 
         readonly Dictionary<Property, CommandLineOption> options = new();
 
-        public QtUic() : base()
+        public QtUic()
         {
             parser.AddOption(options[Property.DisplayDependencies] =
                 new CommandLineOption(new[] { "d", "dependencies" }));

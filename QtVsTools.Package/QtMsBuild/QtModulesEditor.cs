@@ -41,7 +41,7 @@ namespace QtVsTools.QtMsBuild
                     Id = x.Id,
                     Name = x.Name,
                     IsReadOnly = !x.Selectable,
-                    QT = x.proVarQT.Split(' ').ToHashSet(),
+                    QT = x.proVarQT.Split(' ').ToHashSet()
                 })
                 .ToList();
 

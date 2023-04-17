@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.RegExpr
 {
-    using SyntaxAnalysis;
     using static SyntaxAnalysis.RegExpr;
 
     using Property = KeyValuePair<string, string>;

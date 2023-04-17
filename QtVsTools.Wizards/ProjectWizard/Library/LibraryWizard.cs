@@ -10,8 +10,8 @@ using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using QtVsTools.Common;
-    using Wizards.Common;
 
     using static QtVsTools.Common.EnumExt;
 

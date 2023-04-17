@@ -45,7 +45,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 "AccessedTime", "CreatedTime", "DefiningProjectDirectory",
                 "DefiningProjectExtension", "DefiningProjectFullPath", "DefiningProjectName",
                 "Directory", "Extension", "Filename", "FullPath", "Identity", "ModifiedTime",
-                "RecursiveDir", "RelativeDir", "RootDir",
+                "RecursiveDir", "RelativeDir", "RootDir"
             };
             var newItems = new List<ITaskItem>();
             foreach (var item in Items) {

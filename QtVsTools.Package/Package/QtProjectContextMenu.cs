@@ -148,8 +148,8 @@ namespace QtVsTools
                     status |= vsCommandStatus.vsCommandStatusEnabled;
                 else
                     status |= vsCommandStatus.vsCommandStatusInvisible;
-                command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+                command.Enabled = (status & vsCommandStatus.vsCommandStatusEnabled) != 0;
+                command.Visible = (status & vsCommandStatus.vsCommandStatusInvisible) == 0;
                 break;
             case CommandId.ProjectConvertToQtMsBuild:
                 command.Visible = true;

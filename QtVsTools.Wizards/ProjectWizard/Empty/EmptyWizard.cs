@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using QtVsTools.Common;
-    using Wizards.Common;
 
     public class EmptyWizard : ProjectTemplateWizard
     {
@@ -19,7 +19,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new WizardData
             {
-                DefaultModules = new List<string> { }
+                DefaultModules = new List<string>()
             });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>
@@ -45,7 +45,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     PreviousButtonEnabled = true,
                     NextButtonEnabled = false,
                     FinishButtonEnabled = true,
-                    CancelButtonEnabled = true,
+                    CancelButtonEnabled = true
                 }
             });
     }

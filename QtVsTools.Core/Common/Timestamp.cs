@@ -20,7 +20,7 @@ namespace QtVsTools
                 long t = Stopwatch.GetTimestamp();
                 if (t <= LastTimestamp)
                     t = LastTimestamp + 1;
-                return (LastTimestamp = t);
+                return LastTimestamp = t;
             }
         }
 

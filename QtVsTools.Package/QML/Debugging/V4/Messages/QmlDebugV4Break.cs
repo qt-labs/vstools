@@ -26,7 +26,7 @@ namespace QtVsTools.Qml.Debug.V4
         //             }
         //  }
         public const string EV_TYPE = "break";
-        public BreakEvent() : base()
+        public BreakEvent()
         {
             EventType = EV_TYPE;
         }

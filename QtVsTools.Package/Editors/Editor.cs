@@ -30,7 +30,7 @@ namespace QtVsTools.Editors
         public abstract Guid Guid { get; }
         public abstract string ExecutableName { get; }
 
-        public virtual Func<string, bool> WindowFilter => (caption => true);
+        public virtual Func<string, bool> WindowFilter => caption => true;
 
         protected virtual string GetTitle(Process editorProcess)
         {
@@ -220,7 +220,7 @@ namespace QtVsTools.Editors
                 {
                     AutoSize = true,
                     Dock = DockStyle.Fill,
-                    BackColor = Color.FromArgb(201, 221, 201),
+                    BackColor = Color.FromArgb(201, 221, 201)
                 };
                 titleBar.Controls.Add(EditorTitle = new Label
                 {
@@ -228,14 +228,14 @@ namespace QtVsTools.Editors
                     ForeColor = Color.FromArgb(9, 16, 43),
                     Font = new Font("Segoe UI", 8F, FontStyle.Bold, GraphicsUnit.Point),
                     AutoSize = true,
-                    Margin = new Padding(8),
+                    Margin = new Padding(8)
                 });
                 titleBar.Controls.Add(EditorDetachButton = new LinkLabel
                 {
                     Text = "Detach",
                     Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
                     AutoSize = true,
-                    Margin = new Padding(0, 8, 8, 8),
+                    Margin = new Padding(0, 8, 8, 8)
                 });
                 EditorDetachButton.Click += EditorDetachButton_Click;
 
@@ -249,7 +249,7 @@ namespace QtVsTools.Editors
                 EditorContainer = new TableLayoutPanel
                 {
                     ColumnCount = 1,
-                    RowCount = 2,
+                    RowCount = 2
                 };
                 EditorContainer.ColumnStyles.Add(new ColumnStyle());
                 EditorContainer.RowStyles.Add(new RowStyle());

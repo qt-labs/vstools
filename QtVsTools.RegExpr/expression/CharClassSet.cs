@@ -117,7 +117,7 @@ namespace QtVsTools.SyntaxAnalysis
 
         public IEnumerator<IEnumerable<Element>> GetEnumerator()
         {
-            return (new[] { Positives, Negatives }).AsEnumerable().GetEnumerator();
+            return new[] { Positives, Negatives }.AsEnumerable().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -258,7 +258,7 @@ namespace QtVsTools.SyntaxAnalysis
                             case Op.Minus:
                                 classSet = new CharClassSet
                                     {
-                                        { context.SubSets.First() },
+                                        context.SubSets.First(),
                                         { context.SubSets.Last(), Invert }
                                     };
                                 break;

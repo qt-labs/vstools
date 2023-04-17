@@ -20,35 +20,35 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
         {
                 new("A", new Dictionary<string, string> {
                     { "X", "foo" },
-                    { "Y", "42" },
+                    { "Y", "42" }
                 }),
                 new("B", new Dictionary<string, string> {
                     { "X", "sna" },
-                    { "Y", "99" },
+                    { "Y", "99" }
                 }),
                 new("C", new Dictionary<string, string> {
                     { "X", "bar" },
-                    { "Y", "3.14159" },
-                }),
+                    { "Y", "3.14159" }
+                })
         };
         readonly ITaskItem[] RightItems = new TaskItem[]
         {
                 new("A", new Dictionary<string, string> {
                     { "Z", "foo" },
-                    { "Y", "99" },
+                    { "Y", "99" }
                 }),
                 new("B", new Dictionary<string, string> {
                     { "Z", "sna" },
-                    { "Y", "2.71828" },
+                    { "Y", "2.71828" }
                 }),
                 new("B", new Dictionary<string, string> {
                     { "Z", "bar" },
-                    { "Y", "42" },
+                    { "Y", "42" }
                 }),
                 new("A", new Dictionary<string, string> {
                     { "Z", "bar" },
-                    { "Y", "99" },
-                }),
+                    { "Y", "99" }
+                })
         };
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             var newLeftItems = LeftItems
                 .Append(new TaskItem("D", new Dictionary<string, string> {
                     { "X", "zzz" },
-                    { "Y", "99" },
+                    { "Y", "99" }
                 }))
                 .ToArray();
 

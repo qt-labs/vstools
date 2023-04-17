@@ -18,8 +18,8 @@ namespace QtVsTools.VisualStudio
 {
     public class SearchTask : VsSearchTask
     {
-        private readonly Action _clearCallback = null;
-        private readonly Func<IEnumerable<string>, uint> _searchCallBack = null;
+        private readonly Action _clearCallback;
+        private readonly Func<IEnumerable<string>, uint> _searchCallBack;
 
         public SearchTask(uint cookie, IVsSearchQuery query, IVsSearchCallback callback,
                 Action clearCallback, Func<IEnumerable<string>, uint> searchCallBack)
@@ -89,8 +89,8 @@ namespace QtVsTools.VisualStudio
 
     public class ListBoxSearch : VsWindowSearch
     {
-        private readonly ListBox _listBox = null;
-        private Action<string> _setSearchText = null;
+        private readonly ListBox _listBox;
+        private Action<string> _setSearchText;
 
         public ListBoxSearch(ListBox listBox, Action<string> action)
         {
@@ -102,7 +102,7 @@ namespace QtVsTools.VisualStudio
                                                    IVsSearchCallback callback)
         {
             return new SearchTask(cookie, query, callback, ClearSearch,
-                searchCallBack: (IEnumerable<string> tokens) =>
+                searchCallBack: tokens =>
                 {
                     _setSearchText(string.Join(" ", tokens));
                     var view = CollectionViewSource.GetDefaultView(_listBox.ItemsSource);

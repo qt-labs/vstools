@@ -42,7 +42,7 @@ namespace QtVsTools.Qml.Debug.AD7
             QmlEngine engine, Program program,
             string filePath, uint fileLine)
         {
-            return new CodeContext()
+            return new CodeContext
             {
                 Engine = engine,
                 Program = program,

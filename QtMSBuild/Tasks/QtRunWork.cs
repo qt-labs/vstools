@@ -52,7 +52,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 
             // Work item key = "%(WorkType)(%(Identity))"
             Func<string, string, string> KeyString = (x, y) => string.Format("{0}{{{1}}}", x, y);
-            Func<ITaskItem, string> Key = (item) =>
+            Func<ITaskItem, string> Key = item =>
                 KeyString(item.GetMetadata("WorkType"), item.ItemSpec);
             var workItemKeys = new HashSet<string>(QtWork.Select(x => Key(x)), Comparer);
 
@@ -86,8 +86,8 @@ namespace QtVsTools.QtMsBuild.Tasks
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                },
+                    RedirectStandardOutput = true
+                }
             })
             // In case of items with duplicate keys, use only the first one
             .GroupBy(x => x.Key, Comparer)
@@ -200,7 +200,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                         // Process terminated; check exit code and close
                         terminated.Add(workItem.Key);
                         result[workItem.Key].SetMetadata("ExitCode", proc.ExitCode.ToString());
-                        ok &= (proc.ExitCode == 0);
+                        ok &= proc.ExitCode == 0;
                         proc.Close();
 
                         // Add postponed dependent items to work queue
@@ -268,7 +268,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                     }
                     // Process terminated; check exit code and close
                     result[workItem.Key].SetMetadata("ExitCode", proc.ExitCode.ToString());
-                    ok &= (proc.ExitCode == 0);
+                    ok &= proc.ExitCode == 0;
                     proc.Close();
                 } else {
                     // Process is still running; feed it back into the running queue
@@ -278,7 +278,7 @@ namespace QtVsTools.QtMsBuild.Tasks
 
             if (QtDebug) {
                 Log.LogMessage(MessageImportance.High,
-                    string.Format("## QtRunWork result {0}", (ok ? "ok" : "FAILED!")));
+                    string.Format("## QtRunWork result {0}", ok ? "ok" : "FAILED!"));
             }
 
             Result = result.Values.ToArray();

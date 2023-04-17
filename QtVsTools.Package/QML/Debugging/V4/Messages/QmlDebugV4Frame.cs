@@ -96,7 +96,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "arguments" : { "number" : <frame number> }
         //  }
         public const string REQ_COMMAND = "frame";
-        public FrameRequest() : base()
+        public FrameRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -146,7 +146,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = FrameRequest.REQ_COMMAND;
-        public FrameResponse() : base()
+        public FrameResponse()
         {
             Command = REQ_COMMAND;
         }

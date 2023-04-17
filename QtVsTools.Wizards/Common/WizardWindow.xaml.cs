@@ -33,7 +33,7 @@ namespace QtVsTools.Wizards.Common
 
         public void Add(WizardPage page)
         {
-            bool isFirstPage = (Pages.Count == 0);
+            bool isFirstPage = Pages.Count == 0;
             page.Wizard = this;
             page.NavigateForward += OnNavigateForward;
             page.NavigatedBackward += OnNavigatedBackwards;

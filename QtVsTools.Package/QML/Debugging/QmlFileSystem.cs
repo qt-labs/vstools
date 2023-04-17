@@ -90,7 +90,7 @@ namespace QtVsTools.Qml.Debug
                 else
                     continue;
 
-                string qrcPathPrefix = (file.Prefix != null) ? ((string)file.Prefix) : "";
+                var qrcPathPrefix = file.Prefix != null ? (string)file.Prefix : "";
                 if (!string.IsNullOrEmpty(qrcPathPrefix) && !qrcPathPrefix.EndsWith("/"))
                     qrcPathPrefix += Path.AltDirectorySeparatorChar;
 

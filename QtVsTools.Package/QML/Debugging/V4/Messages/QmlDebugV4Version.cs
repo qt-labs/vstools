@@ -16,7 +16,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "command" : "version"
         //  }
         public const string REQ_COMMAND = "version";
-        public VersionRequest() : base()
+        public VersionRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -38,7 +38,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = VersionRequest.REQ_COMMAND;
-        public VersionResponse() : base()
+        public VersionResponse()
         {
             Command = REQ_COMMAND;
         }

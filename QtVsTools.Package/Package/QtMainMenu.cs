@@ -167,8 +167,8 @@ namespace QtVsTools
                         else if (HelperFunctions.IsQtProject(project))
                             status |= vsCommandStatus.vsCommandStatusInvisible;
                     }
-                    command.Enabled = ((status & vsCommandStatus.vsCommandStatusEnabled) != 0);
-                    command.Visible = ((status & vsCommandStatus.vsCommandStatusInvisible) == 0);
+                    command.Enabled = (status & vsCommandStatus.vsCommandStatusEnabled) != 0;
+                    command.Visible = (status & vsCommandStatus.vsCommandStatusInvisible) == 0;
                 }
                 break;
             case CommandId.ConvertToQtMsBuild: {

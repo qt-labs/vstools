@@ -54,7 +54,7 @@ namespace QtVsTools.Core
             {
                 UniqueIdentifier = "{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}",
                 Name = "Generated Files",
-                Filter = "moc;h;cpp",
+                Filter = "moc;h;cpp"
             };
         }
     }

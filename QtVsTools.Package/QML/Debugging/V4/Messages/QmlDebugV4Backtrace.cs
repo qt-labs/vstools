@@ -21,7 +21,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "backtrace";
-        public BacktraceRequest() : base()
+        public BacktraceRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -56,7 +56,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = BacktraceRequest.REQ_COMMAND;
-        public BacktraceResponse() : base()
+        public BacktraceResponse()
         {
             Command = REQ_COMMAND;
         }

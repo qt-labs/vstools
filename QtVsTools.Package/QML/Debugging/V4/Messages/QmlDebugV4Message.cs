@@ -48,7 +48,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return false;
             if (string.IsNullOrEmpty(Type))
                 return null;
-            return (this.Type == that.Type);
+            return this.Type == that.Type;
         }
 
         protected ProtocolDriver Driver { get; private set; }
@@ -70,7 +70,7 @@ namespace QtVsTools.Qml.Debug.V4
         //  }
         public const string MSG_TYPE = "v8request";
         public const string MSG_SUBTYPE = "request";
-        protected Request() : base()
+        protected Request()
         {
             Type = MSG_TYPE;
             SubType = MSG_SUBTYPE;
@@ -99,14 +99,14 @@ namespace QtVsTools.Qml.Debug.V4
             return null;
         }
 
-        Response response = null;
+        Response response;
         public Response Response
         {
             get => response;
             set => Atomic(() => response == null, () => response = value);
         }
 
-        object tag = null;
+        object tag;
         public object Tag
         {
             get => tag;
@@ -156,7 +156,7 @@ namespace QtVsTools.Qml.Debug.V4
         where TArgs : class, new()
     {
         [DataMember(Name = "arguments", EmitDefaultValue = false)]
-        TArgs args = null;
+        TArgs args;
 
         public virtual TArgs Arguments
         {
@@ -174,7 +174,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    ...
         //  }
         public const string MSG_TYPE = "v8message";
-        protected ServerMessage() : base()
+        protected ServerMessage()
         {
             Type = MSG_TYPE;
         }
@@ -212,7 +212,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    ...
         //  }
         public const string MSG_SUBTYPE = "response";
-        protected Response() : base()
+        protected Response()
         {
             SubType = MSG_SUBTYPE;
         }
@@ -260,7 +260,7 @@ namespace QtVsTools.Qml.Debug.V4
         where TBody : class, new()
     {
         [DataMember(Name = "body", EmitDefaultValue = false)]
-        TBody body = null;
+        TBody body;
 
         public TBody Body
         {
@@ -279,7 +279,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    ...
         //  }
         public const string MSG_SUBTYPE = "event";
-        protected Event() : base()
+        protected Event()
         {
             SubType = MSG_SUBTYPE;
         }

@@ -68,7 +68,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                 "AccessedTime", "CreatedTime", "DefiningProjectDirectory",
                 "DefiningProjectExtension", "DefiningProjectFullPath", "DefiningProjectName",
                 "Directory", "Extension", "Filename", "FullPath", "Identity", "ModifiedTime",
-                "RecursiveDir", "RelativeDir", "RootDir",
+                "RecursiveDir", "RelativeDir", "RootDir"
             };
 
             for (int leftRowNum = 0; leftRowNum < LeftItems.Length; leftRowNum++) {
@@ -78,7 +78,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                     bool match = true;
                     foreach (string field in matchFields) {
                         if (field.Equals("ROW_NUMBER", StringComparison.OrdinalIgnoreCase)) {
-                            match = (leftRowNum == rightRowNum);
+                            match = leftRowNum == rightRowNum;
                         } else {
                             string leftField = leftItem.GetMetadata(field);
                             string rightField = rightItem.GetMetadata(field);

@@ -30,7 +30,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "setbreakpoint";
-        public SetBreakpointRequest() : base()
+        public SetBreakpointRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -95,7 +95,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = SetBreakpointRequest.REQ_COMMAND;
-        public SetBreakpointResponse() : base()
+        public SetBreakpointResponse()
         {
             Command = REQ_COMMAND;
         }

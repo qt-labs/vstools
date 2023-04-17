@@ -63,7 +63,7 @@ namespace QtVsTools.QtMsBuild
             if (e.Key is not Key.Enter and not Key.Space)
                 return;
             if (PopupListBox.SelectedItem is Module {IsEnabled: true} module)
-                module.CheckBox.IsChecked = (module.CheckBox.IsChecked != true);
+                module.CheckBox.IsChecked = module.CheckBox.IsChecked != true;
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

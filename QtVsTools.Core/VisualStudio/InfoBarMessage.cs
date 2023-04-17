@@ -98,7 +98,7 @@ namespace QtVsTools.VisualStudio
                     hyperlinks = Message.Hyperlinks
                         .Select(x => new InfoBarHyperlink(x.Text, x));
                 }
-                var model = new InfoBarModel(textSpans, hyperlinks, Message.Icon, true);
+                var model = new InfoBarModel(textSpans, hyperlinks, Message.Icon);
                 UIElement = Factory.CreateInfoBar(model);
                 if (UIElement != null) {
                     UIElement.Advise(this, out eventNotificationCookie);

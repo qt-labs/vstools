@@ -57,7 +57,7 @@ namespace QtVsTools.SyntaxAnalysis
             public Token(string id, SkipWhitespace skipWs, RegExpr expr)
             {
                 Id = id;
-                SkipLeadingWhitespace = (skipWs == SkipWhitespace.Enable);
+                SkipLeadingWhitespace = skipWs == SkipWhitespace.Enable;
                 Expr = expr;
                 Rules = new TokenRules();
                 Children = new HashSet<Token>();

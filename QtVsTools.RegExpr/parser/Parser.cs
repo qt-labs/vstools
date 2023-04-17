@@ -89,7 +89,7 @@ namespace QtVsTools.SyntaxAnalysis
                                 Begin = capture.Index,
                                 End = capture.Index + capture.Length,
                                 GroupIdx = groupIdx,
-                                CaptureIdx = captureIdx,
+                                CaptureIdx = captureIdx
                             }))
                         .OrderBy(c => c.Begin)
                         .ToList();
@@ -122,7 +122,7 @@ namespace QtVsTools.SyntaxAnalysis
                 if (topNodes.Length == 1)
                     return topNodes[0];
 
-                var root = new ParseTree.Node()
+                var root = new ParseTree.Node
                 {
                     CaptureId = string.Empty,
                     Token = null,
@@ -130,7 +130,7 @@ namespace QtVsTools.SyntaxAnalysis
                     Begin = 0,
                     End = text.Length,
                     GroupIdx = -1,
-                    CaptureIdx = -1,
+                    CaptureIdx = -1
                 };
                 foreach (var node in nodesByToken[Pattern.Root])
                     (node.Parent = root).ChildNodes.Add(node.Begin, node);

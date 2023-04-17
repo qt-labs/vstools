@@ -17,10 +17,10 @@ namespace QtVsTools.SyntaxAnalysis
         {
             return new string(s.SelectMany(c =>
                 MetaChars.Contains(c) ? Items('\\', c) :
-                (c == ' ') ? "\\x20".Cast<char>() :
-                (c == '\t') ? "\\t".Cast<char>() :
-                (c == '\r') ? "\\r".Cast<char>() :
-                (c == '\n') ? "\\n".Cast<char>() :
+                c == ' ' ? "\\x20" :
+                c == '\t' ? "\\t" :
+                c == '\r' ? "\\r" :
+                c == '\n' ? "\\n" :
                 Items(c)).ToArray());
         }
 

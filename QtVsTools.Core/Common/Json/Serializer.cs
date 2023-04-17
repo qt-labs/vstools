@@ -100,7 +100,7 @@ namespace QtVsTools.Json
                 try {
                     serializer.WriteObject(writer, obj);
                     writer.Close();
-                    return new JsonData() { Stream = stream };
+                    return new JsonData { Stream = stream };
                 } catch (Exception exception) {
                     exception.Log();
                     if (stream is { CanRead: true, Length: > 0 })
@@ -153,7 +153,7 @@ namespace QtVsTools.Json
         {
             rawJsonData ??= Array.Empty<byte>();
 
-            var data = new JsonData()
+            var data = new JsonData
             {
                 Stream = new MemoryStream(rawJsonData)
             };
@@ -219,7 +219,7 @@ namespace QtVsTools.Json
         #region //////////////////// Data Contract Surrogate //////////////////////////////////////
 
         static readonly Exclusive<Serializer> sharedInstance = new();
-        private XmlReader reader = null;
+        private XmlReader reader;
         private readonly List<IDeferredObject> deferredObjects = new();
 
         public static IJsonData GetCurrentJsonData()

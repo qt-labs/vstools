@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
-    using Wizards.Common;
+    using Common;
 
     public partial class LibraryClassPage : WizardPage
     {

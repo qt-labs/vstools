@@ -40,10 +40,6 @@ namespace QtVsTools.Core.CommandLine
         }
         OptionsAfterPositionalArgumentsMode optionsAfterPositionalArgumentsMode = 0;
 
-        public Parser()
-        {
-        }
-
         public string ApplicationDescription
         {
             get;
@@ -97,7 +93,7 @@ namespace QtVsTools.Core.CommandLine
         public void SetOptionsAfterPositionalArgumentsMode(
             OptionsAfterPositionalArgumentsMode parsingMode)
         {
-            this.optionsAfterPositionalArgumentsMode = parsingMode;
+            optionsAfterPositionalArgumentsMode = parsingMode;
         }
 
         public bool AddOption(Option option)
@@ -504,7 +500,7 @@ namespace QtVsTools.Core.CommandLine
         Unquoted = 2,
         Quoted = 3,
         Whitespace = 4
-    };
+    }
 
     static class Lexer
     {

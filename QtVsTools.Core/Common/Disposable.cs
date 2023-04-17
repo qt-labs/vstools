@@ -31,7 +31,7 @@ namespace QtVsTools
         protected const bool DisposingFrom_ObjectFinalizer = false;
         protected const bool DisposingFrom_DisposeInterface = true;
 
-        private HashSet<IDisposableEventSink> eventSinks = null;
+        private HashSet<IDisposableEventSink> eventSinks;
         private HashSet<IDisposableEventSink> EventSinks =>
             ThreadSafe(() => eventSinks ??= new HashSet<IDisposableEventSink>());
 

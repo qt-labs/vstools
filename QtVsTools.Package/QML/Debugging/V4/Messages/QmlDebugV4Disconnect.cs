@@ -16,7 +16,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "command" : "disconnect"
         //  }
         public const string REQ_COMMAND = "disconnect";
-        public DisconnectRequest() : base()
+        public DisconnectRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -34,7 +34,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = DisconnectRequest.REQ_COMMAND;
-        public DisconnectResponse() : base()
+        public DisconnectResponse()
         {
             Command = REQ_COMMAND;
         }

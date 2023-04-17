@@ -167,7 +167,7 @@ namespace QtVsTools.Qml.Debug.AD7
             Frame = this,
             Module = Program,
             HasDebugInfo = 1,
-            StaleCode = 0,
+            StaleCode = 0
         };
 
         static readonly StackFrameInfo.Mapping MappingToFRAMEINFO =
@@ -212,7 +212,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     (r, v) => r.s.m_fHasDebugInfo = v, i => i.HasDebugInfo },
 
                 { enum_FRAMEINFO_FLAGS.FIF_STALECODE,
-                    (r, v) => r.s.m_fStaleCode = v, i => i.StaleCode },
+                    (r, v) => r.s.m_fStaleCode = v, i => i.StaleCode }
             };
 
         #endregion //////////////////// FRAMEINFO <-- StackFrameInfo //////////////////////////////

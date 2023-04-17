@@ -28,12 +28,12 @@ namespace QtVsTools.SyntaxAnalysis
     {
         public static RegExprLiteral RegX(string s)
         {
-            return new RegExprLiteral() { LiteralExpr = Escape(s) };
+            return new RegExprLiteral { LiteralExpr = Escape(s) };
         }
 
         public static RegExprLiteral RegXRaw(string s)
         {
-            return new RegExprLiteral() { LiteralExpr = s };
+            return new RegExprLiteral { LiteralExpr = s };
         }
 
         public static implicit operator RegExpr(string s)

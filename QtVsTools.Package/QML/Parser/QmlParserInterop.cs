@@ -263,7 +263,7 @@ namespace QtVsTools.Qml
                 return new SourceLocation
                 {
                     Offset = nodeData.ReadInt32(),
-                    Length = nodeData.ReadInt32(),
+                    Length = nodeData.ReadInt32()
                 };
             } catch (Exception) {
                 return new SourceLocation();
@@ -383,8 +383,8 @@ namespace QtVsTools.Qml
             UnmarshalPointer(nodeData, node, GetPropertyRef(() => node.MemberType));
             UnmarshalPointer(nodeData, node, GetPropertyRef(() => node.Statement));
             UnmarshalPointer(nodeData, node, GetPropertyRef(() => node.Binding));
-            node.IsDefaultMember = (nodeData.ReadInt32() != 0);
-            node.IsReadonlyMember = (nodeData.ReadInt32() != 0);
+            node.IsDefaultMember = nodeData.ReadInt32() != 0;
+            node.IsReadonlyMember = nodeData.ReadInt32() != 0;
             UnmarshalPointer(nodeData, node, GetPropertyRef(() => node.Parameters));
             node.DefaultToken = UnmarshalLocation(nodeData);
             node.ReadonlyToken = UnmarshalLocation(nodeData);
@@ -485,7 +485,7 @@ namespace QtVsTools.Qml
         }
 
         #region IDisposable
-        bool disposed = false;
+        bool disposed;
 
         public void Dispose()
         {

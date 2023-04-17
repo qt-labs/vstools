@@ -43,17 +43,17 @@ namespace QtVsTools.Options
 
         public enum Designer
         {
-            [String("Designer_Detached")] Detached,
+            [String("Designer_Detached")] Detached
         }
 
         public enum Linguist
         {
-            [String("Linguist_Detached")] Detached,
+            [String("Linguist_Detached")] Detached
         }
 
         public enum ResEditor
         {
-            [String("ResourceEditor_Detached")] Detached,
+            [String("ResourceEditor_Detached")] Detached
         }
 
         public enum BkgBuild
@@ -61,7 +61,7 @@ namespace QtVsTools.Options
             [String("BkgBuild_ProjectTracking")] ProjectTracking,
             [String("BkgBuild_RunQtTools")] RunQtTools,
             [String("BkgBuild_DebugInfo")] DebugInfo,
-            [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity,
+            [String("BkgBuild_LoggerVerbosity")] LoggerVerbosity
         }
 
         public enum Notifications
@@ -72,7 +72,7 @@ namespace QtVsTools.Options
 
         public enum Natvis
         {
-            [String("LinkNatvis")] Link,
+            [String("LinkNatvis")] Link
         }
 
         public enum Timeout : uint { Disabled = 0 }
@@ -335,7 +335,7 @@ namespace QtVsTools.Options
         {
             object value = property;
             if (Equals<T, bool>())
-                value = ((bool)(object)property) ? 1 : 0;
+                value = (bool)(object)property ? 1 : 0;
             else if (Equals<T, Timeout>())
                 value = Convert.ToInt32(property);
             else if (typeof(T).IsEnum)

@@ -18,7 +18,7 @@ namespace QtVsTools.Core
                 return original;
             }
 
-            int pos = 0, index = 0;
+            int pos = 0, index;
             var result = new System.Text.StringBuilder();
             while ((index = original.IndexOf(oldValue, pos, comparison)) >= 0) {
                 result.Append(original, pos, index - pos).Append(newValue);

@@ -17,10 +17,11 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using Core;
     using QtVsTools.Common;
-    using Wizards.Common;
-    using static Wizards.Common.WizardData;
+
+    using static Common.WizardData;
     using static Utils;
 
     public partial class ConfigPage : WizardPage
@@ -67,7 +68,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             public IEnumerable<Module> AllModules
                 => Modules.Values.OrderBy(module => module.Name);
             public IEnumerable<Module> SelectedModules
-                => Modules.Values.Where((Module m) => m.IsSelected);
+                => Modules.Values.Where(m => m.IsSelected);
 
             IEnumerable<string> IWizardConfiguration.Modules
             {
@@ -79,7 +80,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                             .Select(module => module.Id)
                             .ToList();
                     }
-                    return SelectedModules.SelectMany((Module m) => m.Id.Split(' '));
+                    return SelectedModules.SelectMany(m => m.Id.Split(' '));
                 }
             }
 
@@ -95,15 +96,15 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Platform = Platform,
                     IsDebug = IsDebug,
                     Modules = AllModules
-                        .Select((Module m) => m.Clone())
-                        .ToDictionary((Module m) => m.Name)
+                        .Select(m => m.Clone())
+                        .ToDictionary(m => m.Name)
                 };
             }
         }
 
         class CloneableList<T> : List<T> where T : ICloneable<T>
         {
-            public CloneableList() : base()
+            public CloneableList()
             { }
 
             public CloneableList(IEnumerable<T> collection) : base(collection)
@@ -163,12 +164,12 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             DefaultModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
                 .Where(mi => mi.Selectable)
-                .Select(mi => new Module()
+                .Select(mi => new Module
                 {
                     Name = mi.Name,
                     Id = mi.proVarQT,
                     IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
-                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix)
                 }).ToList();
 
             defaultConfigs = new CloneableList<Config> {
@@ -356,14 +357,14 @@ namespace QtVsTools.Wizards.ProjectWizard
                             : string.Empty;
                         config.Modules =
                             QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
-                                .Where((QtModule mi) => mi.Selectable)
-                                .Select((QtModule mi) => new Module()
+                                .Where(mi => mi.Selectable)
+                                .Select(mi => new Module
                                 {
                                     Name = mi.Name,
                                     Id = mi.proVarQT,
                                     IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
-                                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix),
-                                }).ToDictionary((Module m) => m.Name);
+                                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix)
+                                }).ToDictionary(m => m.Name);
                     } else if (config.QtVersionPath.StartsWith("SSH:")) {
                         config.Target = ProjectTargets.LinuxSSH.Cast<string>();
                     } else if (config.QtVersionPath.StartsWith("WSL:")) {
@@ -452,14 +453,14 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override void OnNextButtonClick(object sender, RoutedEventArgs e)
         {
             Data.ProjectModel = ProjectModel;
-            Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
+            Data.Configs = currentConfigs;
             base.OnNextButtonClick(sender, e);
         }
 
         protected override void OnFinishButtonClick(object sender, RoutedEventArgs e)
         {
             Data.ProjectModel = ProjectModel;
-            Data.Configs = currentConfigs.Cast<IWizardConfiguration>();
+            Data.Configs = currentConfigs;
             base.OnFinishButtonClick(sender, e);
         }
 

@@ -15,7 +15,7 @@ using Microsoft.Win32;
 namespace QtVsTools.Options
 {
     using Common;
-    using QtVsTools.Core;
+    using Core;
     using static Utils;
     using static Common.EnumExt;
 
@@ -23,7 +23,7 @@ namespace QtVsTools.Options
     {
         [String("Windows")] Windows,
         [String("Linux SSH")] LinuxSSH,
-        [String("Linux WSL")] LinuxWSL,
+        [String("Linux WSL")] LinuxWSL
     }
 
     public partial class QtVersionsTable : UserControl
@@ -67,9 +67,9 @@ namespace QtVsTools.Options
             }
             public bool IsValid => string.IsNullOrEmpty(ValidationError);
             public ToolTip ToolTip
-                => IsValid ? null : new ToolTip() { Content = ValidationError };
+                => IsValid ? null : new ToolTip { Content = ValidationError };
             public int SelectionStart { get; set; }
-            public bool UpdateUi { get; private set; } = false;
+            public bool UpdateUi { get; private set; }
         }
 
         public class Row
@@ -85,7 +85,7 @@ namespace QtVsTools.Options
                 ?? (Fields[Column.IsDefault] = new Field());
             public bool IsDefault
             {
-                get => (FieldDefault.Value == true.ToString());
+                get => FieldDefault.Value == true.ToString();
                 set => FieldDefault.Value = value.ToString();
             }
 
@@ -126,14 +126,14 @@ namespace QtVsTools.Options
 
             public bool DefaultEnabled => !IsDefault && !LastRow;
             public bool NameEnabled => !LastRow;
-            public bool CompilerEnabled => (Host != BuildHost.Windows);
+            public bool CompilerEnabled => Host != BuildHost.Windows;
             public Visibility RowContentVisibility
                 => LastRow ? Visibility.Hidden : Visibility.Visible;
             public Visibility ButtonAddVisibility
                 => LastRow ? Visibility.Visible : Visibility.Hidden;
             public Visibility ButtonBrowseVisibility
-                => (!LastRow && Host == BuildHost.Windows) ? Visibility.Visible : Visibility.Hidden;
-            public Thickness PathMargin => new(((Host == BuildHost.Windows) ? 24 : 2), 4, 4, 4);
+                => !LastRow && Host == BuildHost.Windows ? Visibility.Visible : Visibility.Hidden;
+            public Thickness PathMargin => new(Host == BuildHost.Windows ? 24 : 2, 4, 4, 4);
             public FontWeight FontWeight
                 => IsDefault ? FontWeights.Bold : FontWeights.Normal;
 
@@ -432,7 +432,7 @@ namespace QtVsTools.Options
 
         void Add_Click(object sender, RoutedEventArgs e)
         {
-            var version = new Row()
+            var version = new Row
             {
                 IsDefault = Versions.All(x => x.State == State.Removed),
                 Host = BuildHost.Windows,
@@ -478,7 +478,7 @@ namespace QtVsTools.Options
         void Explorer_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && GetBinding(button) is Row version) {
-                var openFileDialog = new OpenFileDialog()
+                var openFileDialog = new OpenFileDialog
                 {
                     AddExtension = false,
                     CheckFileExists = true,

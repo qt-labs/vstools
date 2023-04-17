@@ -85,7 +85,7 @@ namespace QtVsTools.Core
                 return ".\\";
 
             path = path.Trim();
-            path = HelperFunctions.ToNativeSeparator(path);
+            path = ToNativeSeparator(path);
 
             var tmp = string.Empty;
             while (tmp != path) {
@@ -134,7 +134,7 @@ namespace QtVsTools.Core
             var diArray = dir.Split(Path.DirectorySeparatorChar);
 
             var minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
-            int i = 0, j = 0, commonParts = 0;
+            int i = 0, j, commonParts = 0;
 
             while (i < minLen && fiArray[i].ToLower() == diArray[i].ToLower()) {
                 commonParts++;
@@ -315,8 +315,7 @@ namespace QtVsTools.Core
             try {
                 cxxSr = new CxxStreamReader(content.Split(new[] { "\n", "\r\n" },
                     StringSplitOptions.RemoveEmptyEntries));
-                string strLine;
-                while (!found && (strLine = cxxSr.ReadLine(suppressStrings)) != null) {
+                while (!found && cxxSr.ReadLine(suppressStrings) is {} strLine) {
                     foreach (var str in searchStrings) {
                         if (strLine.IndexOf(str, comparisonType) != -1) {
                             found = true;
@@ -326,8 +325,7 @@ namespace QtVsTools.Core
                 }
                 cxxSr.Close();
             } catch (Exception) {
-                if (cxxSr != null)
-                    cxxSr.Close();
+                cxxSr?.Close();
             }
             return found;
         }
@@ -426,11 +424,11 @@ namespace QtVsTools.Core
                     continue;
 
                 // can be in any filter
-                if (IsTranslationFile(vcfile.Name) && (filter == FilesToList.FL_Translation))
+                if (IsTranslationFile(vcfile.Name) && filter == FilesToList.FL_Translation)
                     fileList.Add(FromNativeSeparators(vcfile.RelativePath));
 
                 // can also be in any filter
-                if (IsWinRCFile(vcfile.Name) && (filter == FilesToList.FL_WinResource))
+                if (IsWinRCFile(vcfile.Name) && filter == FilesToList.FL_WinResource)
                     fileList.Add(FromNativeSeparators(vcfile.RelativePath));
 
                 if (IsGenerated(vcfile)) {
@@ -741,7 +739,7 @@ namespace QtVsTools.Core
             /* fail-safe */
             foreach (Match propNameMatch in Regex.Matches(expanded, @"\$\(([^\)]+)\)")) {
                 string propName = propNameMatch.Groups[1].Value;
-                string propValue = "";
+                string propValue;
                 switch (propName) {
                 case "Configuration":
                 case "ConfigurationName":
@@ -764,7 +762,7 @@ namespace QtVsTools.Core
             /* because item metadata is not expanded in Evaluate() */
             foreach (Match metaNameMatch in Regex.Matches(expanded, @"\%\(([^\)]+)\)")) {
                 string metaName = metaNameMatch.Groups[1].Value;
-                string metaValue = "";
+                string metaValue;
                 switch (metaName) {
                 case "FullPath":
                     if (vcFile == null)
@@ -874,7 +872,7 @@ namespace QtVsTools.Core
                 return false;
 
             // Select vcvars script according to host and target platforms
-            var osIs64Bit = System.Environment.Is64BitOperatingSystem;
+            var osIs64Bit = Environment.Is64BitOperatingSystem;
             var vcVarsCmd = "";
             switch (versionInfo.platform()) {
             case Platform.x86:
@@ -931,7 +929,7 @@ namespace QtVsTools.Core
             };
             process.BeginOutputReadLine();
             process.WaitForExit();
-            var ok = (process.ExitCode == 0);
+            var ok = process.ExitCode == 0;
             process.Close();
             if (!ok)
                 return false;

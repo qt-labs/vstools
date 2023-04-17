@@ -24,7 +24,7 @@ namespace QtVsTools.Qml.Debug.V4
         //              }
         //  }
         public const string EV_TYPE = "exception";
-        public ExceptionEvent() : base()
+        public ExceptionEvent()
         {
             EventType = EV_TYPE;
         }

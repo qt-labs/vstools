@@ -21,14 +21,14 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "continue";
-        public ContinueRequest() : base()
+        public ContinueRequest()
         {
             Command = REQ_COMMAND;
         }
 
         public enum StepAction
         {
-            [EnumString(default(string))] Continue = 0,
+            [EnumString(default)] Continue = 0,
             [EnumString("in")] StepIn,
             [EnumString("next")] Next,
             [EnumString("out")] StepOut
@@ -63,7 +63,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = ContinueRequest.REQ_COMMAND;
-        public ContinueResponse() : base()
+        public ContinueResponse()
         {
             Command = REQ_COMMAND;
         }

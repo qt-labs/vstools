@@ -18,6 +18,7 @@ using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 
+using Project = EnvDTE.Project;
 using Thread = System.Threading.Thread;
 
 namespace QtVsTools.QtMsBuild
@@ -39,10 +40,7 @@ namespace QtVsTools.QtMsBuild
 
         static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
             BuildQueue, () => new PunisherQueue<QtProjectBuild>(
-                getItemKey: (QtProjectBuild build) =>
-                {
-                    return build.ConfiguredProject;
-                }));
+                getItemKey: build => build.ConfiguredProject));
 
         static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
             RequestTimer, () => new ConcurrentStopwatch());
@@ -51,7 +49,7 @@ namespace QtVsTools.QtMsBuild
             StatusCenter, VsServiceProvider
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
-        EnvDTE.Project Project { get; set; }
+        Project Project { get; set; }
         VCProject VcProject { get; set; }
         UnconfiguredProject UnconfiguredProject { get; set; }
         ConfiguredProject ConfiguredProject { get; set; }
@@ -62,7 +60,7 @@ namespace QtVsTools.QtMsBuild
         static Task BuildDispatcher { get; set; }
 
         public static void StartBuild(
-            EnvDTE.Project project,
+            Project project,
             string projectPath,
             string configName,
             Dictionary<string, string> properties,
@@ -79,7 +77,7 @@ namespace QtVsTools.QtMsBuild
         }
 
         public static async Task StartBuildAsync(
-            EnvDTE.Project project,
+            Project project,
             string projectPath,
             string configName,
             Dictionary<string, string> properties,
@@ -117,7 +115,7 @@ namespace QtVsTools.QtMsBuild
             if (configuredProject == null)
                 throw new ArgumentException(string.Format("Unknown configuration '{0}'.", configName));
 
-            BuildQueue.Enqueue(new QtProjectBuild()
+            BuildQueue.Enqueue(new QtProjectBuild
             {
                 Project = project,
                 VcProject = tracker.VcProject,
@@ -133,7 +131,7 @@ namespace QtVsTools.QtMsBuild
         }
 
         public static async Task SetOutdatedAsync(
-            EnvDTE.Project project,
+            Project project,
             string projectPath,
             string configName,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
@@ -168,7 +166,7 @@ namespace QtVsTools.QtMsBuild
                         dispatchStatus = StatusCenter.PreRegister(
                             new TaskHandlerOptions
                             {
-                                Title = "Qt VS Tools",
+                                Title = "Qt VS Tools"
                             },
                             new TaskProgressData
                             {
@@ -187,7 +185,7 @@ namespace QtVsTools.QtMsBuild
                                 ProgressText = string.Format(
                                     "Refreshing IntelliSense data, {0} project(s) remaining...",
                                     BuildQueue.Count),
-                                CanBeCanceled = true,
+                                CanBeCanceled = true
                             });
                     }
                     await buildRequest.BuildAsync();
@@ -234,10 +232,10 @@ namespace QtVsTools.QtMsBuild
             var loggerVerbosity = LoggerVerbosity;
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation)
                 loggerVerbosity = QtVsToolsPackage.Instance.Options.BuildLoggerVerbosity;
-            var buildParams = new BuildParameters()
+            var buildParams = new BuildParameters
             {
-                Loggers = (loggerVerbosity != LoggerVerbosity.Quiet)
-                        ? new[] { new QtProjectLogger() { Verbosity = loggerVerbosity } }
+                Loggers = loggerVerbosity != LoggerVerbosity.Quiet
+                        ? new[] { new QtProjectLogger { Verbosity = loggerVerbosity } }
                         : null
             };
 
@@ -311,8 +309,7 @@ namespace QtVsTools.QtMsBuild
                 Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] {3}\r\n{4}",
                         DateTime.Now, Thread.CurrentThread.ManagedThreadId,
-                        ConfiguredProject.ProjectConfiguration.Name,
-                        resMsg, resInfo.ToString()));
+                        ConfiguredProject.ProjectConfiguration.Name, resMsg, resInfo));
             }
 
             bool ok = false;
@@ -356,7 +353,7 @@ namespace QtVsTools.QtMsBuild
                 while (timer.IsRunning) {
                     try {
                         await lockService.WriteLockAsync(
-                            async (ProjectWriteLockReleaser writeAccess) =>
+                            async writeAccess =>
                             {
                                 ok = await BuildProjectAsync(writeAccess);
                             });
@@ -365,7 +362,7 @@ namespace QtVsTools.QtMsBuild
                         if (timer.ElapsedMilliseconds >= 5000)
                             throw;
                         await lockService.ReadLockAsync(
-                            async (ProjectLockReleaser readAccess) =>
+                            async readAccess =>
                             {
                                 await readAccess.ReleaseAsync();
                             });

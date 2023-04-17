@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Threading;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -22,7 +21,7 @@ namespace QtVsTools.Core
         {
             General,
             Build,
-            Debug,
+            Debug
         }
 
         public static Task<OutputWindowPane> GetVSOutputWindowPaneAsync(VSOutputWindowPane pane)
@@ -36,7 +35,7 @@ namespace QtVsTools.Core
                 return GetAsync(VSConstants.OutputWindowPaneGuid.DebugPane_guid);
             default:
                 throw new InvalidOperationException("Unsupported Visual Studio output pane");
-            };
+            }
         }
 
         public static async Task<OutputWindowPane> GetAsync(Guid guid)
@@ -98,7 +97,7 @@ namespace QtVsTools.Core
         }
 
         private Guid Guid { get; }
-        private IVsOutputWindowPane Pane { get; set; } = null;
+        private IVsOutputWindowPane Pane { get; set; }
 
         private OutputWindowPane(Guid guid, IVsOutputWindowPane pane)
         {
@@ -132,7 +131,7 @@ namespace QtVsTools.Core
 
         public void Print()
         {
-            ThreadHelper.JoinableTaskFactory.Run(async () => { await PrintAsync(""); });
+            ThreadHelper.JoinableTaskFactory.Run(async () => { await PrintAsync(); });
         }
 
         public void Print(string value)

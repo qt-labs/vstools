@@ -65,7 +65,7 @@ namespace QtVsTools.Core
 
         public string ReadLine(bool removeStrings = false)
         {
-            var line = string.Empty;
+            string line;
             if (sr != null) {
                 do {
                     line = sr.ReadLine();

@@ -84,7 +84,7 @@ namespace QtVsTools.VisualStudio
             return GetProjectItem(context, itemid)?.Document;
         }
 
-        private static IVsInfoBarHost _InfoBarHost = null;
+        private static IVsInfoBarHost _InfoBarHost;
         public static IVsInfoBarHost InfoBarHost
         {
             get

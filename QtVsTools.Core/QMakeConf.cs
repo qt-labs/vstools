@@ -63,8 +63,7 @@ namespace QtVsTools.Core
             var fileInfo = new FileInfo(filename);
             if (fileInfo.Exists) {
                 var streamReader = new StreamReader(filename);
-                var line = streamReader.ReadLine();
-                while (line != null) {
+                while (streamReader.ReadLine() is {} line) {
                     line = line.Trim();
                     var commentStartIndex = line.IndexOf('#');
                     if (commentStartIndex >= 0)
@@ -99,7 +98,6 @@ namespace QtVsTools.Core
                             Environment.CurrentDirectory = saveCurrentDir;
                         }
                     }
-                    line = streamReader.ReadLine();
                 }
                 streamReader.Close();
 

@@ -18,11 +18,11 @@ using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
+    using Common;
     using Core;
     using Core.QtMsBuild;
-    using VisualStudio;
     using QtVsTools.Common;
-    using Wizards.Common;
+    using VisualStudio;
 
     using WhereConfig = Func<IWizardConfiguration, bool>;
 
@@ -53,14 +53,14 @@ namespace QtVsTools.Wizards.ProjectWizard
         [String("x64")] X64,
         Win32,
         ARM64,
-        ARM,
+        ARM
     }
 
     public abstract partial class ProjectTemplateWizard : IWizard
     {
         LazyFactory Lazy { get; } = new();
 
-        private readonly WhereConfig WhereConfig_SelectAll = (x => true);
+        private readonly WhereConfig WhereConfig_SelectAll = x => true;
 
         protected struct ItemProperty
         {
@@ -120,7 +120,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected virtual bool UsePrecompiledHeaders => WizardData.UsePrecompiledHeader;
 
         private Dictionary<string, string> ParameterValues { get; set; }
-        protected EnvDTE.DTE Dte { get; private set; }
+        protected DTE Dte { get; private set; }
 
         protected virtual ItemDef PrecompiledHeader => Lazy.Get(() =>
             PrecompiledHeader, () => new ItemDef
@@ -136,7 +136,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 ItemType = "ClCompile",
                 Include = "stdafx.cpp",
                 Properties = new ItemProperty("PrecompiledHeader", "Create"),
-                Filter = "Source Files",
+                Filter = "Source Files"
             });
 
         protected class TemplateParameters
@@ -175,7 +175,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             QtSettings,
             BuildSettings,
             ProjectItems,
-            FilterItems,
+            FilterItems
         }
 
         protected TemplateParameters Parameter => Lazy.Get(() =>
@@ -675,7 +675,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             xml = new StringBuilder();
             foreach (ItemDef item in projectItems) {
-                bool itemHasProperties = (item.WhereConfig != null || item.Properties != null);
+                bool itemHasProperties = item.WhereConfig != null || item.Properties != null;
                 xml.Append(string.Format(@"
     <{0} Include=""{1}""{2}",
                     /*{0}*/ item.ItemType,
@@ -747,10 +747,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected static string FormatParam(string paramValue)
         {
             // Remove empty lines; replace with first newline (if any)
-            paramValue = patternEmptyLines.Replace(paramValue,
-                (Match m) => m.Groups["FIRST_NL"].Value);
-
-            return paramValue;
+            return patternEmptyLines.Replace(paramValue, m => m.Groups["FIRST_NL"].Value);
         }
     }
 }

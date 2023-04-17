@@ -17,7 +17,7 @@ namespace QtVsTools.Core
     {
         public static QtModules Instance { get; } = new();
 
-        private List<QtModule> qt5list = null, qt6list = null;
+        private List<QtModule> qt5list, qt6list;
         private readonly Dictionary<int, QtModule> qt5modules = new();
         private readonly Dictionary<int, QtModule> qt6modules = new();
 
@@ -72,7 +72,7 @@ namespace QtVsTools.Core
                 int id = (int)xModule.Attribute("Id");
                 QtModule module = new QtModule(id, major);
                 module.Name = (string)xModule.Element("Name");
-                module.Selectable = ((string)xModule.Element("Selectable") == "true");
+                module.Selectable = (string)xModule.Element("Selectable") == "true";
                 module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
                 module.proVarQT = (string)xModule.Element("proVarQT");
                 module.IncludePath = xModule.Elements("IncludePath")

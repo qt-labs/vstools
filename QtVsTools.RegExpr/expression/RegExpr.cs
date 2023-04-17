@@ -83,7 +83,7 @@ namespace QtVsTools.SyntaxAnalysis
             StringBuilder pattern, ref RenderMode mode, Stack<Token> tokenStack)
         { }
 
-        public class RegExprException : System.Exception
+        public class RegExprException : Exception
         {
             public RegExprException(string message = null) : base(message) { }
         }

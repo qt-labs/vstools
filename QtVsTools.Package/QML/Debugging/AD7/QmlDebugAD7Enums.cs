@@ -37,7 +37,7 @@ namespace QtVsTools.Qml.Debug.AD7
             return new TEnum
             {
                 index = 0,
-                list = new List<T>() { singleElement }
+                list = new List<T> { singleElement }
             };
         }
 

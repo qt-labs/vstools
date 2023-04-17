@@ -67,7 +67,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return false;
             if (string.IsNullOrEmpty(TypeString))
                 return null;
-            return (this.TypeString == that.TypeString);
+            return this.TypeString == that.TypeString;
         }
 
         public static JsValue Create<T>(T value)

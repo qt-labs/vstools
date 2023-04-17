@@ -13,7 +13,7 @@ namespace QtVsTools
     public class PriorityQueue<T, TPriority> : BasePriorityQueue<T, TPriority>
         where TPriority : IComparable<TPriority>
     {
-        public PriorityQueue() : base()
+        public PriorityQueue()
         { }
 
         public PriorityQueue(Func<T, object> getItemKey) : base(getItemKey)
@@ -32,7 +32,7 @@ namespace QtVsTools
         Dictionary<object, TPriority> ItemPriority { get; }
         T Head { get; set; }
         public int Count { get; private set; }
-        public bool IsEmpty => (Count == 0);
+        public bool IsEmpty => Count == 0;
 
         IEnumerable<T> Items => ThreadSafe(() => ItemsByPriority.Values.ToList());
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => Items.GetEnumerator();
@@ -47,7 +47,7 @@ namespace QtVsTools
         {
             ItemsByPriority = new SortedDictionary<TPriority, T>();
             ItemPriority = new Dictionary<object, TPriority>();
-            Head = default(T);
+            Head = default;
             Count = 0;
             GetItemKey = getItemKey;
         }
@@ -59,7 +59,7 @@ namespace QtVsTools
                     return;
                 ItemsByPriority.Clear();
                 ItemPriority.Clear();
-                Head = default(T);
+                Head = default;
                 Count = 0;
             }
         }
@@ -120,7 +120,7 @@ namespace QtVsTools
                 ItemPriority.Remove(key);
                 --Count;
                 if (key == GetItemKey(Head))
-                    Head = IsEmpty ? default(T) : ItemsByPriority.First().Value;
+                    Head = IsEmpty ? default : ItemsByPriority.First().Value;
             }
         }
 

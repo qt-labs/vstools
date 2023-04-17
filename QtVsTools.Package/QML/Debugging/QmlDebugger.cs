@@ -273,7 +273,7 @@ namespace QtVsTools.Qml.Debug
             }
         }
 
-        Scope currentScope = null;
+        Scope currentScope;
 
         Scope MoveToScope(int frameNumber, int scopeNumber)
         {

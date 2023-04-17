@@ -12,7 +12,7 @@ namespace QtVsTools.Qml.Debug.V4
     public enum ExceptionBreakType
     {
         [EnumString("all")] All = 0,
-        [EnumString("uncaught")] Uncaught,
+        [EnumString("uncaught")] Uncaught
     }
 
     [DataContract]
@@ -27,7 +27,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "setexceptionbreak";
-        public SetExceptionBreakRequest() : base()
+        public SetExceptionBreakRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -65,7 +65,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = SetExceptionBreakRequest.REQ_COMMAND;
-        public SetExceptionBreakResponse() : base()
+        public SetExceptionBreakResponse()
         {
             Command = REQ_COMMAND;
         }

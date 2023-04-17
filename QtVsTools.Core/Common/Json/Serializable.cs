@@ -27,9 +27,6 @@ namespace QtVsTools.Json
 
         private Serializer Serializer { get; set; }
 
-        protected Serializable()
-        { }
-
         protected sealed override void InitializePrototype()
         {
             System.Diagnostics.Debug.Assert(IsPrototype);
@@ -95,7 +92,7 @@ namespace QtVsTools.Json
 
         #region //////////////////// Deferred Objects /////////////////////////////////////////////
 
-        List<IDeferredObject> deferredObjects = null;
+        List<IDeferredObject> deferredObjects;
         List<IDeferredObject> DeferredObjects
         {
             get

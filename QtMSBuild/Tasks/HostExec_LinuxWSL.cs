@@ -97,14 +97,14 @@ namespace QtVsTools.QtMsBuild.Tasks
                     Command);
             }
 
-            var taskExec = new Microsoft.Build.Linux.WSL.Tasks.ExecuteCommand()
+            var taskExec = new Microsoft.Build.Linux.WSL.Tasks.ExecuteCommand
             {
                 BuildEngine = BuildEngine,
                 HostObject = HostObject,
                 ProjectDir = @"$(ProjectDir)",
                 IntermediateDir = @"$(IntDir)",
                 WSLPath = @"$(WSLPath)",
-                Command = Command,
+                Command = Command
             };
             Log.LogMessage("\r\n==== HostExec: Microsoft.Build.Linux.WSL.Tasks.ExecuteCommand");
             Log.LogMessage("ProjectDir: {0}", taskExec.ProjectDir);

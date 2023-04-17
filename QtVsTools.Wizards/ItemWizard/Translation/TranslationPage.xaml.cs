@@ -13,8 +13,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
-    using QtVsTools.VisualStudio;
-    using Wizards.Common;
+    using Common;
+    using VisualStudio;
     using static Utils;
 
     public partial class TranslationPage : WizardPage

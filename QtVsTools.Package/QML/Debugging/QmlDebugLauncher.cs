@@ -140,10 +140,10 @@ namespace QtVsTools.Qml.Debug
             new Rule<WslPath>
             {
                 Update("DRIVE", (WslPath wslPath, string drive) => wslPath.Drive = drive),
-                Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path),
+                Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path)
             }
         };
-        static readonly RegExpr.Parser wslPathParser = wslPathRegex.Render();
+        static readonly Parser wslPathParser = wslPathRegex.Render();
 
         bool GetProcessInfo(IDebugProcess2 pProcess, bool native, out string execPath, out uint procId)
         {
@@ -196,7 +196,7 @@ namespace QtVsTools.Qml.Debug
                 var remoteDebugCommand = props.GetPropertyValue("RemoteDebuggerCommand",
                     vcConfig.Name, "UserFile");
 
-                string debugCommand = (native || string.IsNullOrEmpty(remoteDebugCommand))
+                string debugCommand = native || string.IsNullOrEmpty(remoteDebugCommand)
                     ? localDebugCommand : remoteDebugCommand;
 
                 bool sameFile = string.Equals(execPath, Path.GetFullPath(debugCommand), IgnoreCase);
@@ -273,7 +273,7 @@ namespace QtVsTools.Qml.Debug
                 bstrOptions = procId.ToString(),
                 bstrEnv = "QTRCC=" + string.Join(";", rccItems),
                 guidLaunchDebugEngine = QmlEngine.Id,
-                LaunchFlags = (uint)__VSDBGLAUNCHFLAGS5.DBGLAUNCH_BreakOneProcess,
+                LaunchFlags = (uint)__VSDBGLAUNCHFLAGS5.DBGLAUNCH_BreakOneProcess
             }};
 
             var processInfo = new VsDebugTargetProcessInfo[targets.Length];

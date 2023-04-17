@@ -108,7 +108,7 @@ namespace QtVsTools
                 if (dte?.ActiveDocument?.Object() is not TextDocument objTextDocument)
                     return false;
 
-                var keyword = string.Empty;
+                string keyword;
                 var selection = objTextDocument.Selection;
                 if (selection.IsEmpty) { // no selection inside the document
                     var line = selection.ActivePoint.Line; // current line
@@ -173,7 +173,7 @@ namespace QtVsTools
                                     var title = GetString(reader, 0);
                                     if (string.IsNullOrWhiteSpace(title))
                                         title = keyword + ':' + GetString(reader, 3);
-                                    var path = string.Empty;
+                                    string path;
                                     if (offline) {
                                         path = "file:///" + Path.Combine(docPath,
                                             GetString(reader, 2), GetString(reader, 3));
@@ -190,7 +190,7 @@ namespace QtVsTools
                     }
                 }
 
-                var uri = string.Empty;
+                string uri;
                 switch (links.Values.Count) {
                 case 0:
                     return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);

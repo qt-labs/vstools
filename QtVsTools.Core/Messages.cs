@@ -28,7 +28,7 @@ namespace QtVsTools.Core
         /// </summary>
         public static void Print(string text, bool clear = false, bool activate = false)
         {
-            msgQueue.Enqueue(new Msg()
+            msgQueue.Enqueue(new Msg
             {
                 Clear = clear,
                 Text = text,
@@ -39,7 +39,7 @@ namespace QtVsTools.Core
 
         public static void Log(this Exception exception, bool clear = false, bool activate = false)
         {
-            msgQueue.Enqueue(new Msg()
+            msgQueue.Enqueue(new Msg
             {
                 Clear = clear,
                 Text = ExceptionToString(exception),
@@ -53,7 +53,7 @@ namespace QtVsTools.Core
         /// </summary>
         public static void ActivateMessagePane()
         {
-            msgQueue.Enqueue(new Msg()
+            msgQueue.Enqueue(new Msg
             {
                 Activate = true
             });
@@ -66,7 +66,7 @@ namespace QtVsTools.Core
             await Pane?.ActivateAsync();
         }
 
-        private static string ExceptionToString(System.Exception exception)
+        private static string ExceptionToString(Exception exception)
         {
             return $"An exception ({exception.GetType().Name}) occurred.\r\n"
                    + $"Message:\r\n   {exception.Message}\r\n"
@@ -82,7 +82,7 @@ namespace QtVsTools.Core
                 Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        public static void DisplayErrorMessage(System.Exception e)
+        public static void DisplayErrorMessage(Exception e)
         {
             MessageBox.Show(ExceptionToString(e),
                 Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -94,7 +94,7 @@ namespace QtVsTools.Core
                 Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        public static void DisplayWarningMessage(System.Exception e, string solution)
+        public static void DisplayWarningMessage(Exception e, string solution)
         {
             MessageBox.Show(WarningString
                 + ExceptionToString(e)
@@ -112,7 +112,7 @@ namespace QtVsTools.Core
 
         public static void ClearPane()
         {
-            msgQueue.Enqueue(new Msg()
+            msgQueue.Enqueue(new Msg
             {
                 Clear = true
             });
@@ -127,9 +127,9 @@ namespace QtVsTools.Core
 
         class Msg
         {
-            public bool Clear { get; set; } = false;
-            public string Text { get; set; } = null;
-            public bool Activate { get; set; } = false;
+            public bool Clear { get; set; }
+            public string Text { get; set; }
+            public bool Activate { get; set; }
         }
 
         static readonly ConcurrentQueue<Msg> msgQueue = new();

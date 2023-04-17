@@ -14,7 +14,6 @@ using System.Xml.Linq;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
-using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Core
 {
@@ -30,10 +29,10 @@ namespace QtVsTools.Core
         class MsBuildXmlFile
         {
             public string filePath = "";
-            public XDocument xml = null;
-            public bool isDirty = false;
-            public XDocument xmlCommitted = null;
-            public bool isCommittedDirty = false;
+            public XDocument xml;
+            public bool isDirty;
+            public XDocument xmlCommitted;
+            public bool isCommittedDirty;
         }
 
         enum Files
@@ -499,7 +498,7 @@ namespace QtVsTools.Core
             this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelQtSettings)
+                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
                 .ToList()
                 .ForEach(config =>
                 {
@@ -624,7 +623,7 @@ namespace QtVsTools.Core
             this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => ((string)x.Attribute("Label")) == Resources.projLabelQtSettings)
+                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
                 .ToList()
                 .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
 
@@ -963,8 +962,8 @@ namespace QtVsTools.Core
             HashSet<string> includes = new HashSet<string> {
                     QtVSIPSettings.GetMocDirectory(),
                     QtVSIPSettings.GetRccDirectory(),
-                    QtVSIPSettings.GetUicDirectory(),
-                };
+                    QtVSIPSettings.GetUicDirectory()
+            };
             foreach (var includePath in includePathList.Split(';'))
                 includes.Add(includePath);
             return string.Join<string>(";", includes);
@@ -1000,7 +999,7 @@ namespace QtVsTools.Core
             if (cbEval != null) {
                 var outputFiles = cbEval.Outputs
                     .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => HelperFunctions.CanonicalPath(
+                    .Select(x => CanonicalPath(
                         Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
                 var outputItems = new List<XElement>();
                 foreach (var outputFile in outputFiles) {
@@ -1041,11 +1040,11 @@ namespace QtVsTools.Core
                 .Elements()
                 .Where(x => ((string)x.Attribute("Include"))
                     .IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                .GroupBy(x => HelperFunctions.CanonicalPath(
+                .GroupBy(x => CanonicalPath(
                     Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
-            var filterItemsByPath = (this[Files.Filters].xml != null)
+            var filterItemsByPath = this[Files.Filters].xml != null
                 ? this[Files.Filters].xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
@@ -1088,7 +1087,7 @@ namespace QtVsTools.Core
                     "AdditionalInputs",
                     "Command",
                     "Message",
-                    "Outputs",
+                    "Outputs"
                 };
                 foreach (var cbt in cbtGroup) {
                     var enabledProperties = cbt.Elements().Where(x =>
@@ -1142,7 +1141,7 @@ namespace QtVsTools.Core
                             $@"\{Path.GetFileNameWithoutExtension(item)}.moc",
                         @"\%(Filename).moc", IgnoreCase)
                     .Replace($" -o {Path.GetFileNameWithoutExtension(item)}.moc",
-                        @" -o $(ProjectDir)\%(Filename).moc", IgnoreCase),
+                        @" -o $(ProjectDir)\%(Filename).moc", IgnoreCase)
                 })) {
                 Rollback();
                 return false;
@@ -1162,7 +1161,7 @@ namespace QtVsTools.Core
                     QtMoc.Property.ExecutionDescription, "Moc'ing %(Identity)...");
                 qtMsBuild.SetItemProperty(qtMoc,
                     QtMoc.Property.InputFile, "%(FullPath)");
-                if (!HelperFunctions.IsSourceFile(itemName)) {
+                if (!IsSourceFile(itemName)) {
                     qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.DynamicSource, "output");
                     if (!hasGeneratedFiles)
@@ -1191,7 +1190,7 @@ namespace QtVsTools.Core
                         @"\qrc_%(Filename).cpp", IgnoreCase)
                     .Replace(
                         $" -o qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @" -o $(ProjectDir)\qrc_%(Filename).cpp", IgnoreCase),
+                        @" -o $(ProjectDir)\qrc_%(Filename).cpp", IgnoreCase)
                 })) {
                 Rollback();
                 return false;
@@ -1248,7 +1247,7 @@ namespace QtVsTools.Core
                         @"\ui_%(Filename).h", IgnoreCase)
                     .Replace(
                         $" -o ui_{Path.GetFileNameWithoutExtension(item)}.h",
-                        @" -o $(ProjectDir)\ui_%(Filename).h", IgnoreCase),
+                        @" -o $(ProjectDir)\ui_%(Filename).h", IgnoreCase)
                 })) {
                 Rollback();
                 return false;
@@ -1503,7 +1502,7 @@ namespace QtVsTools.Core
                             AdditionalInputs = cbEval.Groups[2].Value,
                             Outputs = cbEval.Groups[3].Value,
                             Message = cbEval.Groups[4].Value,
-                            Command = cbEval.Groups[5].Value,
+                            Command = cbEval.Groups[5].Value
                         });
                     }
                 }

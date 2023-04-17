@@ -14,7 +14,7 @@ namespace QtVsTools.Qml.Debug.AD7
     {
         public class Ref<TStruct>
         {
-            public TStruct s = default(TStruct);
+            public TStruct s = default;
         }
 
         public abstract class MapField<TStruct, TFieldMask>
@@ -82,8 +82,8 @@ namespace QtVsTools.Qml.Debug.AD7
                     FieldMaskBitUpdate = fieldMaskBitUpdate,
                     FieldValue = fieldValue,
                     MapToStruct = mapToStruct,
-                    IsNull = (x => x == null),
-                    Convert = (x => x)
+                    IsNull = x => x == null,
+                    Convert = x => x
                 });
             }
 
@@ -126,7 +126,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
             public void Map(TDerived infoObj, TFieldMask fieldMask, out TStruct infoStruct)
             {
-                infoStruct = default(TStruct);
+                infoStruct = default;
                 var r = new Ref<TStruct>();
 
                 foreach (var mapping in this) {
@@ -165,7 +165,7 @@ namespace QtVsTools.Qml.Debug.AD7
             if (mapping is Mapping<TStruct, TFieldMask> mappingToStruct)
                 mappingToStruct.Map(this as TDerived, fieldMask, out infoStruct);
             else
-                infoStruct = default(TStruct);
+                infoStruct = default;
         }
     }
 }

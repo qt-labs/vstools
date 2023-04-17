@@ -34,17 +34,17 @@ namespace QtVsTools.QtMsBuild.Tasks
             OutVarDefs = Regex.Matches(QtVars,
                 @"\s*(\w+)\s*(?:;|=\s*(\w*)\s*(?:\/((?:\\.|[^;\/])*)\/((?:\\.|[^;\/])*)\/)?)?")
                 .Cast<Match>()
-                .Where((Match x) => x.Groups.Count > 4 && !string.IsNullOrEmpty(x.Groups[1].Value))
-                .Select((Match x) => x.Groups
+                .Where(x => x.Groups.Count > 4 && !string.IsNullOrEmpty(x.Groups[1].Value))
+                .Select(x => x.Groups
                       .Cast<Group>()
-                      .Select((Group y) => !string.IsNullOrEmpty(y.Value) ? y.Value : null)
+                      .Select(y => !string.IsNullOrEmpty(y.Value) ? y.Value : null)
                       .ToArray())
-                .Select((string[] x) => new TaskItem(x[1],
+                .Select(x => new TaskItem(x[1],
                     new Dictionary<string, string>
                     {
                         { "Name" ,    x[2] ?? x[1] },
                         { "Pattern" , x[3] ?? ".*" },
-                        { "Value" ,   x[4] ?? "$0" },
+                        { "Value" ,   x[4] ?? "$0" }
                     }))
                 .ToArray();
             #endregion

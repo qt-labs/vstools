@@ -167,7 +167,7 @@ namespace QtVsTools.Qml.Debug.AD7
             Value = Value,
             Property = this,
             Attribs = Children.Any() || JsValue.Type == JsValue.DataType.Object
-                ? enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE : 0,
+                ? enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE : 0
         };
 
         static readonly PropertyInfo.Mapping MappingToDEBUG_PROPERTY_INFO =
@@ -197,7 +197,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     (r, v) => r.s.dwAttrib |= v, i => i.Attribs },
 
                 { enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_PROP,
-                    (r, v) => r.s.pProperty = v, i => i.Property },
+                    (r, v) => r.s.pProperty = v, i => i.Property }
             };
 
         #endregion //////////////////// DEBUG_PROPERTY_INFO <-- PropertyInfo //////////////////////
@@ -224,7 +224,7 @@ namespace QtVsTools.Qml.Debug.AD7
         int IDebugProperty2.GetParent(out IDebugProperty2 ppParent)
         {
             ppParent = Parent;
-            return (Parent != null) ? VSConstants.S_OK : VSConstants.S_FALSE;
+            return Parent != null ? VSConstants.S_OK : VSConstants.S_FALSE;
         }
 
         #endregion //////////////////// Info //////////////////////////////////////////////////////

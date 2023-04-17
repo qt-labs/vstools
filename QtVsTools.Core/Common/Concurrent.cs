@@ -173,7 +173,7 @@ namespace QtVsTools
             Action actionElse = null,
             Concurrent<TSubClass> _this = null)
         {
-            bool success = false;
+            bool success;
             lock (_this?.CriticalSection ?? StaticCriticalSection) {
                 success = test();
                 if (success)
@@ -273,7 +273,7 @@ namespace QtVsTools
                 LeaveCriticalSection();
 
             } else if (!IsNull(value) && IsNull(newValue)) {
-                value = default(T);
+                value = default;
                 LeaveCriticalSection();
                 LeaveCriticalSection();
 

@@ -116,7 +116,7 @@ namespace QtVsTools.Test.RegExpr
             var exprLPar = new Token(IdExprLPar,
                 charLPar & !LookAhead[SkipWs & (charRPar | charLt)])
             {
-                new LeftDelimiterRule<string>()
+                new LeftDelimiterRule<string>
                 {
                     Capture(value => value)
                 }
@@ -147,8 +147,8 @@ namespace QtVsTools.Test.RegExpr
             {
                 new Rule<string>
                 {
-                    Create(IdNum, (int expr) => "=" + expr.ToString()),
-                    Create(IdExpr, (int expr) => "=" + expr.ToString())
+                    Create(IdNum, (int expr) => "=" + expr),
+                    Create(IdExpr, (int expr) => "=" + expr)
                 }
             };
 

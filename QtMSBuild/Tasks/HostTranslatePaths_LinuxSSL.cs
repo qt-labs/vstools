@@ -82,7 +82,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                     {
                       { "Item",  item.GetMetadata("Item") },
                       { "Name",  itemName },
-                      { "Value", itemValue },
+                      { "Value", itemValue }
                     }));
             }
             Result = newItems.ToArray();

@@ -23,7 +23,7 @@ namespace QtVsTools.Qml.Debug.V4
         //                  }
         //  }
         public const string REQ_COMMAND = "evaluate";
-        public EvaluateRequest() : base()
+        public EvaluateRequest()
         {
             Command = REQ_COMMAND;
         }
@@ -57,7 +57,7 @@ namespace QtVsTools.Qml.Debug.V4
         //    "success"     : true
         //  }
         public const string REQ_COMMAND = EvaluateRequest.REQ_COMMAND;
-        public EvaluateResponse() : base()
+        public EvaluateResponse()
         {
             Command = REQ_COMMAND;
         }

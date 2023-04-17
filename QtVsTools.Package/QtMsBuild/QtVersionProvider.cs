@@ -38,7 +38,7 @@ namespace QtVsTools.QtMsBuild
 
                 return await Task.FromResult(
                     qtVersions.GetSubKeyNames()
-                        .Select(x => new PageEnumValue(new EnumValue()
+                        .Select(x => new PageEnumValue(new EnumValue
                         {
                             Name = x,
                             DisplayName = x
@@ -50,7 +50,7 @@ namespace QtVsTools.QtMsBuild
 
         public async Task<IEnumValue> TryCreateEnumValueAsync(string userSuppliedValue)
         {
-            return await Task.FromResult(new PageEnumValue(new EnumValue()
+            return await Task.FromResult(new PageEnumValue(new EnumValue
             {
                 Name = userSuppliedValue,
                 DisplayName = userSuppliedValue

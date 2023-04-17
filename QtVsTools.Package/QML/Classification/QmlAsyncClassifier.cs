@@ -110,9 +110,9 @@ namespace QtVsTools.Qml.Classification
                 return -1;
 
             bool sameVersion =
-                (firstTag.Snapshot.Version.VersionNumber == snapshot.Version.VersionNumber);
+                firstTag.Snapshot.Version.VersionNumber == snapshot.Version.VersionNumber;
 
-            int? idx = null;
+            int? idx;
             if (sameVersion) {
                 idx = data.Keys.BinarySearch(location);
             } else {
@@ -212,7 +212,7 @@ namespace QtVsTools.Qml.Classification
         SharedTagList currentTagList;
         readonly Dispatcher dispatcher;
         readonly DispatcherTimer timer;
-        bool flag = false;
+        bool flag;
 
         protected QmlAsyncClassifier(
             string classificationType,
@@ -352,7 +352,7 @@ namespace QtVsTools.Qml.Classification
             var snapshot = spans[0].Snapshot;
 
             bool sameVersion =
-                (firstTag.Snapshot.Version.VersionNumber == snapshot.Version.VersionNumber);
+                firstTag.Snapshot.Version.VersionNumber == snapshot.Version.VersionNumber;
 
             foreach (var span in spans) {
 
@@ -428,7 +428,7 @@ namespace QtVsTools.Qml.Classification
                     return null;
 
                 int lower = index;
-                int upper = (index + length) - 1;
+                int upper = index + length - 1;
 
                 while (lower <= upper) {
                     int adjustedIndex = lower + ((upper - lower) >> 1);
@@ -520,7 +520,7 @@ namespace QtVsTools.Qml.Classification
                 disposable?.Dispose();
             }
 
-            private static TInstance instance = null;
+            private static TInstance instance;
             public static TInstance Instance
             {
                 get

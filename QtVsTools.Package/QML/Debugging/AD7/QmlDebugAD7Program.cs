@@ -53,7 +53,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         private static readonly object criticalSectionGlobal = new();
         private static bool originalBreakAllProcesses = BreakAllProcesses;
-        private static int runningPrograms = 0;
+        private static int runningPrograms;
 
         public static Program Create(
             QmlEngine engine,
@@ -149,7 +149,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
             if (res != VSConstants.S_OK)
                 return false;
-            return (debugMode[0] != DBGMODE.DBGMODE_Run);
+            return debugMode[0] != DBGMODE.DBGMODE_Run;
         }
 
         void IDebuggerEventSink.NotifyError(string errorMessage)
@@ -195,7 +195,7 @@ namespace QtVsTools.Qml.Debug.AD7
             TerminateProcess();
         }
 
-        bool terminated = false;
+        bool terminated;
         void TerminateProcess()
         {
             if (!terminated) {
@@ -278,10 +278,10 @@ namespace QtVsTools.Qml.Debug.AD7
             get => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                return ((bool)QtVsToolsPackage.Instance.Dte
+                return (bool)QtVsToolsPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
-                    .Value);
+                    .Value;
             });
             set => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
@@ -405,7 +405,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     (r, v) => r.s.bstrName = v, i => i.Name },
 
                 { enum_THREADPROPERTY_FIELDS.TPF_LOCATION,
-                    (r, v) => r.s.bstrLocation = v, i => i.Location },
+                    (r, v) => r.s.bstrLocation = v, i => i.Location }
             };
 
         #endregion //////////////////// THREADPROPERTIES <-- ProgramInfo //////////////////////////
@@ -454,7 +454,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     (r, v) => r.s.AffinityMask = v, i => i.AffinityMask },
 
                 { enum_THREADPROPERTY_FIELDS100.TPF100_PRIORITY_ID,
-                    (r, v) => r.s.priorityId = v, i => i.PriorityId },
+                    (r, v) => r.s.priorityId = v, i => i.PriorityId }
             };
 
         #endregion //////////////////// THREADPROPERTIES100 <-- ProgramInfo ///////////////////////
@@ -475,7 +475,7 @@ namespace QtVsTools.Qml.Debug.AD7
                     (r, v) => r.s.m_bstrName = v, i => i.ModuleName },
 
                 { enum_MODULE_INFO_FIELDS.MIF_URL,
-                    (r, v) => r.s.m_bstrUrl = v, i => i.ModuleUrl },
+                    (r, v) => r.s.m_bstrUrl = v, i => i.ModuleUrl }
             };
 
         #endregion //////////////////// MODULE_INFO <-- ProgramInfo ///////////////////////////////
@@ -483,7 +483,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         public int /*IDebugProgram3*/ GetName(out string pbstrName)
         {
-            pbstrName = Program.Name;
+            pbstrName = Name;
             return VSConstants.S_OK;
         }
 
