@@ -195,9 +195,11 @@ namespace QtVsTools.Core
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok) {
-                var versionWin10Sdk = GetWindows10SDKVersion();
-                if (!string.IsNullOrEmpty(versionWin10Sdk))
-                    ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
+                // Since Visual Studio 2019: WindowsTargetPlatformVersion=10.0
+                // will be treated as "use latest installed Windows 10 SDK".
+                // https://developercommunity.visualstudio.com/comments/407752/view.html
+                const string versionWin10Sdk = "10.0";
+                ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
             }
             if (ok)
                 ok = xmlProject.UpdateProjectFormatVersion();
@@ -271,14 +273,12 @@ namespace QtVsTools.Core
 
         #region ProjectExporter
 
-        public static List<string> ConvertFilesToFullPath(List<string> files, string path)
+        public static List<string> ConvertFilesToFullPath(IEnumerable<string> files, string path)
         {
-            var ret = new List<string>(files.Count);
-            foreach (var file in files) {
-                var fi = new FileInfo(file.IndexOf(':') != 1 ? Path.Combine(path ?? "", file) : file);
-                ret.Add(fi.FullName);
-            }
-            return ret;
+            return new List<string>(files.Select(file => new FileInfo(
+                    file.IndexOf(':') != 1 ? Path.Combine(path ?? "", file) : file)
+                ).Select(fi => fi.FullName)
+            );
         }
 
         private static VCFilter BestMatch(string path, IDictionary pathFilterTable)
@@ -392,16 +392,12 @@ namespace QtVsTools.Core
 
         #region HelperFunctions
 
-        private static Project ProjectFromSolution(DTE dteObject, string fullName)
+        private static Project ProjectFromSolution(DTE dte, string fullName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            fullName = new FileInfo(fullName).FullName;
-            foreach (var p in HelperFunctions.ProjectsInSolution(dteObject)) {
-                if (p.FullName.Equals(fullName, IgnoreCase))
-                    return p;
-            }
-            return null;
+            bool Func(Project p) => p.FullName.Equals(new FileInfo(fullName).FullName, IgnoreCase);
+            return HelperFunctions.ProjectsInSolution(dte).FirstOrDefault(Func);
         }
 
         /// <summary>
@@ -517,14 +513,6 @@ namespace QtVsTools.Core
             }
         }
 
-        private static string GetWindows10SDKVersion()
-        {
-            // Since Visual Studio 2019: WindowsTargetPlatformVersion=10.0
-            // will be treated as "use latest installed Windows 10 SDK".
-            // https://developercommunity.visualstudio.com/comments/407752/view.html
-            return "10.0";
-        }
-
         /// <summary>
         /// Translates the machine type given as command line argument to the linker
         /// to the internal enum type VCProjectEngine.machineTypeOption.
@@ -615,32 +603,27 @@ namespace QtVsTools.Core
                 return;
 
             foreach (VCFilter filter in filters) {
-                if (filter.Name == "Form Files")
-                    filter.Name = Filters.FormFiles().Name;
-                if (filter.Name == "Generated Files")
-                    filter.Name = Filters.GeneratedFiles().Name;
-                if (filter.Name == "Header Files")
-                    filter.Name = Filters.HeaderFiles().Name;
-                if (filter.Name == "Resource Files")
-                    filter.Name = Filters.ResourceFiles().Name;
-                if (filter.Name == "Source Files")
-                    filter.Name = Filters.SourceFiles().Name;
+                filter.Name = filter.Name switch
+                {
+                    "Form Files" => Filters.FormFiles().Name,
+                    "Generated Files" => Filters.GeneratedFiles().Name,
+                    "Header Files" => Filters.HeaderFiles().Name,
+                    "Resource Files" => Filters.ResourceFiles().Name,
+                    "Source Files" => Filters.SourceFiles().Name, _ => filter.Name
+                };
             }
         }
 
         private static void RemoveResFilesFromGeneratedFilesFilter(QtProject pro)
         {
             var generatedFiles = pro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            if (generatedFiles is null)
+            if (generatedFiles?.Files is not IVCCollection files)
                 return;
 
-            var filesToRemove = new List<VCFile>();
-            foreach (VCFile vcFile in (IVCCollection)generatedFiles.Files) {
-                if (vcFile.FullPath.EndsWith(".res", IgnoreCase))
-                    filesToRemove.Add(vcFile);
+            for (var i = files.Count - 1; i >= 0; --i) {
+                if (files.Item(i) is VCFile vcFile && vcFile.FullPath.EndsWith(".res", IgnoreCase))
+                    vcFile.Remove();
             }
-            foreach (var resFile in filesToRemove)
-                resFile.Remove();
         }
 
         private static void CollapseFilter(DTE dte, Project project, string filterName)
@@ -743,19 +726,19 @@ namespace QtVsTools.Core
                 var projectFileName = envPro.FullName;
                 envPro.Save(null);
                 dte.Solution.Remove(envPro);
-                AddPlatformToVCProj(projectFileName, oldPlatform, newPlatform);
+                AddPlatformToVcProj(projectFileName, oldPlatform, newPlatform);
                 envPro = dte.Solution.AddFromFile(projectFileName);
                 vcPro = (VCProject)envPro.Object;
             }
 
             // update the platform settings
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
-                var vcplatform = (VCPlatform)config.Platform;
-                if (vcplatform.Name == newPlatform) {
-                    if (viOld != null)
-                        RemovePlatformDependencies(config, viOld);
-                    SetupConfiguration(config, viNew);
-                }
+                var platform = (VCPlatform)config.Platform;
+                if (platform.Name != newPlatform)
+                    continue;
+                if (viOld != null)
+                    RemovePlatformDependencies(config, viOld);
+                SetupConfiguration(config, viNew);
             }
 
             SelectSolutionPlatform(dte, newPlatform);
@@ -786,7 +769,7 @@ namespace QtVsTools.Core
             SetTargetMachine(linker, viNew);
         }
 
-        private static void AddPlatformToVCProj(string projectFileName, string oldPlatformName,
+        private static void AddPlatformToVcProj(string projectFileName, string oldPlatformName,
             string newPlatformName)
         {
             var tempFileName = Path.GetTempFileName();
@@ -795,21 +778,21 @@ namespace QtVsTools.Core
 
             var myXmlDocument = new XmlDocument();
             myXmlDocument.Load(tempFileName);
-            AddPlatformToVCProj(myXmlDocument, oldPlatformName, newPlatformName);
+            AddPlatformToVcProj(myXmlDocument, oldPlatformName, newPlatformName);
             myXmlDocument.Save(projectFileName);
 
             fi = new FileInfo(tempFileName);
             fi.Delete();
         }
 
-        private static void AddPlatformToVCProj(XmlDocument doc, string oldPlatformName,
+        private static void AddPlatformToVcProj(XmlDocument doc, string oldPlatformName,
             string newPlatformName)
         {
-            var vsProj = doc.DocumentElement.SelectSingleNode("/VisualStudioProject");
-            var platforms = vsProj.SelectSingleNode("Platforms");
+            var vsProj = doc.DocumentElement?.SelectSingleNode("/VisualStudioProject");
+            var platforms = vsProj?.SelectSingleNode("Platforms");
             if (platforms == null) {
                 platforms = doc.CreateElement("Platforms");
-                vsProj.AppendChild(platforms);
+                vsProj?.AppendChild(platforms);
             }
             var platform = platforms.SelectSingleNode("Platform[@Name='" + newPlatformName + "']");
             if (platform == null) {
@@ -818,26 +801,30 @@ namespace QtVsTools.Core
                 platforms.AppendChild(platform);
             }
 
-            var configurations = vsProj.SelectSingleNode("Configurations");
-            var cfgList = configurations.SelectNodes("Configuration[@Name='Debug|"
+            var configurations = vsProj?.SelectSingleNode("Configurations");
+            var cfgList = configurations?.SelectNodes("Configuration[@Name='Debug|"
                 + oldPlatformName + "'] | " + "Configuration[@Name='Release|"
                 + oldPlatformName + "']");
-            foreach (XmlNode oldCfg in cfgList) {
-                var newCfg = (XmlElement)oldCfg.Clone();
-                newCfg.SetAttribute("Name",
-                    oldCfg.Attributes["Name"].Value.Replace(oldPlatformName, newPlatformName));
-                configurations.AppendChild(newCfg);
+            if (cfgList != null) {
+                foreach (XmlNode oldCfg in cfgList) {
+                    var newCfg = (XmlElement)oldCfg.Clone();
+                    newCfg.SetAttribute("Name",
+                        oldCfg.Attributes?["Name"].Value.Replace(oldPlatformName, newPlatformName));
+                    configurations.AppendChild(newCfg);
+                }
             }
 
-            var fileCfgPath = "Files/Filter/File/FileConfiguration";
-            var fileCfgList = vsProj.SelectNodes(fileCfgPath + "[@Name='Debug|"
+            const string fileCfgPath = "Files/Filter/File/FileConfiguration";
+            var fileCfgList = vsProj?.SelectNodes(fileCfgPath + "[@Name='Debug|"
                 + oldPlatformName + "'] | " + fileCfgPath + "[@Name='Release|"
                 + oldPlatformName + "']");
+            if (fileCfgList == null)
+                return;
             foreach (XmlNode oldCfg in fileCfgList) {
                 var newCfg = (XmlElement)oldCfg.Clone();
-                newCfg.SetAttribute("Name", oldCfg.Attributes["Name"].Value
-                    .Replace(oldPlatformName, newPlatformName));
-                oldCfg.ParentNode.AppendChild(newCfg);
+                newCfg.SetAttribute("Name",
+                    oldCfg.Attributes?["Name"].Value.Replace(oldPlatformName, newPlatformName));
+                oldCfg.ParentNode?.AppendChild(newCfg);
             }
         }
 
