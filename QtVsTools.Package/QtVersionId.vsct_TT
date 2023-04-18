@@ -14,13 +14,13 @@
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
               xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <Commands package="PackageGuid">
+  <Commands package="Package">
     <Buttons>
-      <Button guid="MainMenuGuid"
-              id="QtVersionId"
+      <Button guid="Package"
+              id="QtVersion"
               priority="0x0100"
               type="Button">
-        <Parent guid="MainMenuGuid"
+        <Parent guid="Package"
                 id="VersionMenuGroup" />
         <Icon guid="MenuImages"
               id="QtLogoBitmap" />

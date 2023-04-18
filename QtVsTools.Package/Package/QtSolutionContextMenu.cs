@@ -19,11 +19,6 @@ namespace QtVsTools
     internal sealed class QtSolutionContextMenu
     {
         /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        private static readonly Guid SolutionContextMenuGuid = new("6dcda34f-4d22-4d6a-a176-5507069c5a3e");
-
-        /// <summary>
         /// Gets the instance of the command.
         /// </summary>
         private static QtSolutionContextMenu Instance
@@ -42,13 +37,14 @@ namespace QtVsTools
 
         /// <summary>
         /// Command ID.
+        /// TODO: Remove, take form QtMenus.Package
         /// </summary>
         private enum CommandId
         {
-            lUpdateOnSolutionId = 0x0111,
-            lReleaseOnSolutionId = 0x0112,
-            SolutionConvertToQtMsBuild = 0x0130,
-            SolutionEnableProjectTracking = 0x1130
+            lUpdateOnSolution = QtMenus.Package.lUpdateOnSolution,
+            lReleaseOnSolution = QtMenus.Package.lReleaseOnSolution,
+            SolutionConvertToQtMsBuild = QtMenus.Package.SolutionConvertToQtMsBuild,
+            SolutionEnableProjectTracking = QtMenus.Package.SolutionEnableProjectTracking
         }
 
         /// <summary>
@@ -62,9 +58,9 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            foreach (var id in Enum.GetValues(typeof(CommandId))) {
+            foreach (int id in Enum.GetValues(typeof(CommandId))) {
                 var command = new OleMenuCommand(execHandler,
-                    new CommandID(SolutionContextMenuGuid, (int)id));
+                    new CommandID(QtMenus.Package.Guid, id));
                 command.BeforeQueryStatus += beforeQueryStatus;
                 commandService.AddCommand(command);
             }
@@ -90,17 +86,17 @@ namespace QtVsTools
                 return;
 
             var dte = QtVsToolsPackage.Instance.Dte;
-            switch ((CommandId)command.CommandID.ID) {
-            case CommandId.lUpdateOnSolutionId:
+            switch (command.CommandID.ID) {
+            case QtMenus.Package.lUpdateOnSolution:
                 Translation.RunlUpdate(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
-            case CommandId.lReleaseOnSolutionId:
+            case QtMenus.Package.lReleaseOnSolution:
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
-            case CommandId.SolutionConvertToQtMsBuild:
+            case QtMenus.Package.SolutionConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
-            case CommandId.SolutionEnableProjectTracking: {
+            case QtMenus.Package.SolutionEnableProjectTracking: {
                     foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                         if (HelperFunctions.IsVsToolsProject(project))
                             QtProjectTracker.Get(project, project.FullName);

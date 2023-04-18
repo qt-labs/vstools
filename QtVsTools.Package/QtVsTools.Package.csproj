@@ -111,6 +111,8 @@
     </When>
     <When Condition="'$(VisualStudioVersion)'=='16.0'">
       <ItemGroup>
+        <Compile Include="Vsix.cs" />
+        <Compile Include="QtMenus.cs" />
       </ItemGroup>
     </When>
   </Choose>
@@ -314,6 +316,7 @@
     </VSCTInclude>
     <VSCTCompile Include="QtMenus.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <Namespace>QtVsTools</Namespace>
     </VSCTCompile>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
@@ -480,10 +483,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\menuimages.png" />
-    <Content Include="Resources\qt.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <T4Template Include="Package\Version.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Version.tt.cs</OutputFile>

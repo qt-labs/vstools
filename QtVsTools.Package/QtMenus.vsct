@@ -15,24 +15,24 @@
     <Include href="VSGlobals.vsct" />
     <Include href="QtVersionId.vsct" />
 
-    <Commands package="PackageGuid">
-        <Menus>
-            <Menu guid="MainMenuGuid" id="QtMainMenu" priority="0x700" type="Menu">
-                <Parent guid="VSMainMenu" id="IDG_VS_MM_TOOLSADDINS" />
+    <Commands package="Package">
+      <Menus>
+            <Menu guid="Package" id="QtMainMenu" priority="0x0100" type="Menu">
+                <Parent guid="Package" id="ExtensionMenuGroup" />
                 <Strings>
                     <ButtonText>Qt VS Tools</ButtonText>
                 </Strings>
             </Menu>
 
-            <Menu guid="ProjectContextMenuGuid" id="QtProjectSubMenu" priority="0x0100" type="Menu">
-                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenuGroup" />
+            <Menu guid="Package" id="QtProjectSubMenu" priority="0x0100" type="Menu">
+                <Parent guid="Package" id="QtProjectSubMenuGroup" />
                 <Strings>
                     <ButtonText>Qt</ButtonText>
                 </Strings>
             </Menu>
 
-            <Menu guid="SolutionContextMenuGuid" id="QtSolutionSubMenu" priority="0x0100" type="Menu">
-                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenuGroup" />
+            <Menu guid="Package" id="QtSolutionSubMenu" priority="0x0100" type="Menu">
+                <Parent guid="Package" id="QtSolutionSubMenuGroup" />
                 <Strings>
                     <ButtonText>Qt</ButtonText>
                 </Strings>
@@ -40,70 +40,79 @@
         </Menus>
 
         <Groups>
+            <Group guid="Package" id="ExtensionMenuGroup" priority="0x0000">
+                <Parent guid="VSMainMenu" id="Extensions"/>
+            </Group>
+
             <!-- Region Main menu groups -->
 
-            <Group guid="MainMenuGuid" id="VersionMenuGroup" priority="0x0500">
-                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            <Group guid="Package" id="VersionMenuGroup" priority="0x0500">
+                <Parent guid="Package" id="QtMainMenu"/>
             </Group>
-            <Group guid="MainMenuGuid" id="LaunchMenuGroup" priority="0x0600">
-                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            <Group guid="Package" id="LaunchMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtMainMenu"/>
             </Group>
-            <Group guid="MainMenuGuid" id="ProjectMenuGroup" priority="0x0600">
-                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            <Group guid="Package" id="ProjectMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtMainMenu"/>
             </Group>
-            <Group guid="MainMenuGuid" id="OthersMenuGroup" priority="0x0600">
-                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            <Group guid="Package" id="OthersMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtMainMenu"/>
             </Group>
-            <Group guid="MainMenuGuid" id="OptionsMenuGroup" priority="0x0600">
-                <Parent guid="MainMenuGuid" id="QtMainMenu"/>
+            <Group guid="Package" id="OptionsMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtMainMenu"/>
             </Group>
 
             <!-- Endregion Main menu groups -->
 
             <!-- Region Solution context menu groups -->
 
-            <Group guid="SolutionContextMenuGuid" id="QtSolutionSubMenuGroup" priority="0x0600">
+            <Group guid="Package" id="QtSolutionSubMenuGroup" priority="0x0600">
                 <Parent guid="VSMainMenu" id="SolutionNode" />
             </Group>
-            <Group guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" priority="0x0600">
-                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenu"/>
+            <Group guid="Package" id="SolutionContextQtMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtSolutionSubMenu"/>
             </Group>
-            <Group guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" priority="0x0600">
-                <Parent guid="SolutionContextMenuGuid" id="QtSolutionSubMenu" />
+            <Group guid="Package" id="SolutionContextTsMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtSolutionSubMenu" />
             </Group>
 
             <!-- Endregion Solution context menu groups -->
 
             <!-- Region Project context menu groups -->
 
-            <Group guid="ProjectContextMenuGuid" id="QtProjectSubMenuGroup" priority="0x0600">
+            <Group guid="Package" id="QtProjectSubMenuGroup" priority="0x0600">
                 <Parent guid="VSMainMenu" id="ProjectNode" />
             </Group>
-            <Group guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
+            <Group guid="Package" id="ProjectContextProjectMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtProjectSubMenu"/>
             </Group>
-            <Group guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
+            <Group guid="Package" id="ProjectContextTsMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtProjectSubMenu"/>
             </Group>
-            <Group guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" priority="0x0600">
-                <Parent guid="ProjectContextMenuGuid" id="QtProjectSubMenu"/>
+            <Group guid="Package" id="ProjectContextOthersMenuGroup" priority="0x0600">
+                <Parent guid="Package" id="QtProjectSubMenu"/>
             </Group>
 
             <!-- Endregion Project context menu groups -->
 
-            <Group guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" priority="0x0600">
+            <!-- Region Item context menu groups -->
+
+            <Group guid="Package" id="ItemContextTsMenuGroup" priority="0x0600">
                 <Parent guid="VSMainMenu" id="ItemNode" />
             </Group>
+
+            <!-- Endregion Item context menu groups -->
         </Groups>
 
         <Buttons>
             <!-- Note: -->
             <!-- The QtVersionId button is auto-generated and included via QtVersionId.vsct -->
+            <!-- Endnote: -->
 
             <!-- Region Main menu buttons -->
 
-            <Button guid="MainMenuGuid" id="ViewQtHelpId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
+            <Button guid="Package" id="ViewQtHelp" priority="0x0100" type="Button">
+                <Parent guid="Package" id="VersionMenuGroup" />
                 <Icon guid="MenuImages" id="QtLogoBitmap" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -111,8 +120,8 @@
                     <ButtonText>qt.io</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="ViewGettingStartedId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
+            <Button guid="Package" id="ViewGettingStarted" priority="0x0100" type="Button">
+                <Parent guid="Package" id="VersionMenuGroup" />
                 <Icon guid="MenuImages" id="QtLogoBitmap" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -121,16 +130,16 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="F1QtHelpId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="VersionMenuGroup" />
+            <Button guid="Package" id="F1QtHelp" priority="0x0100" type="Button">
+                <Parent guid="Package" id="VersionMenuGroup" />
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>F1 Qt Help</ButtonText>
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="LaunchDesignerId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
+            <Button guid="Package" id="LaunchDesigner" priority="0x0100" type="Button">
+                <Parent guid="Package" id="LaunchMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchDesignerBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -140,8 +149,8 @@
                     <ToolTipText>Start Qt Designer</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="LaunchLinguistId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="LaunchMenuGroup" />
+            <Button guid="Package" id="LaunchLinguist" priority="0x0100" type="Button">
+                <Parent guid="Package" id="LaunchMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -152,8 +161,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="OpenProFileId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+            <Button guid="Package" id="OpenProFile" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="OpenProFileBitmap" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -162,8 +171,8 @@
                     <ToolTipText>Open a Qt Project File (.pro), create a new solution, and add a new project to it</ToolTipText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="ImportPriFileId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="ProjectMenuGroup" />
+            <Button guid="Package" id="ImportPriFile" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ImportPriFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -174,8 +183,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="ConvertToQtMsBuild" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+            <Button guid="Package" id="ConvertToQtMsBuild" priority="0x0100" type="Button">
+                <Parent guid="Package" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -183,8 +192,8 @@
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="MainMenuGuid" id="QtProjectSettingsId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OthersMenuGroup" />
+            <Button guid="Package" id="QtProjectSettings" priority="0x0100" type="Button">
+                <Parent guid="Package" id="OthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -194,8 +203,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="QtOptionsId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
+            <Button guid="Package" id="QtOptions" priority="0x0100" type="Button">
+                <Parent guid="Package" id="OptionsMenuGroup" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
@@ -204,8 +213,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="MainMenuGuid" id="QtVersionsId" priority="0x0100" type="Button">
-                <Parent guid="MainMenuGuid" id="OptionsMenuGroup" />
+            <Button guid="Package" id="QtVersions" priority="0x0100" type="Button">
+                <Parent guid="Package" id="OptionsMenuGroup" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
@@ -218,8 +227,8 @@
 
             <!-- Region Solution context menu button -->
 
-            <Button guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId" priority="0x0100" type="Button">
-                <Parent guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" />
+            <Button guid="Package" id="lUpdateOnSolution" priority="0x0100" type="Button">
+                <Parent guid="Package" id="SolutionContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -228,8 +237,8 @@
                     <ButtonText>lupdate All .ts Files in Solution</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId" priority="0x0100" type="Button">
-                <Parent guid="SolutionContextMenuGuid" id="SolutionContextTsMenuGroup" />
+            <Button guid="Package" id="lReleaseOnSolution" priority="0x0100" type="Button">
+                <Parent guid="Package" id="SolutionContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -239,8 +248,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="SolutionContextMenuGuid" id="SolutionConvertToQtMsBuild" priority="0x0100" type="Button">
-                <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
+            <Button guid="Package" id="SolutionConvertToQtMsBuild" priority="0x0100" type="Button">
+                <Parent guid="Package" id="SolutionContextQtMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -248,8 +257,8 @@
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="SolutionContextMenuGuid" id="SolutionEnableProjectTracking" priority="0x0100" type="Button">
-                <Parent guid="SolutionContextMenuGuid" id="SolutionContextQtMenuGroup" />
+            <Button guid="Package" id="SolutionEnableProjectTracking" priority="0x0100" type="Button">
+                <Parent guid="Package" id="SolutionContextQtMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -262,8 +271,8 @@
 
             <!-- Region Project context menu button -->
 
-            <Button guid="ProjectContextMenuGuid" id="ImportPriFileProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextProjectMenuGroup" />
+            <Button guid="Package" id="ImportPriFileProject" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextProjectMenuGroup" />
                 <Icon guid="MenuImages" id="ImportPriFileBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -273,8 +282,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="ProjectContextMenuGuid" id="lUpdateOnProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
+            <Button guid="Package" id="lUpdateOnProject" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -282,8 +291,8 @@
                     <ButtonText>lupdate All .ts Files in Project</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="lReleaseOnProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextTsMenuGroup" />
+            <Button guid="Package" id="lReleaseOnProject" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -292,8 +301,8 @@
                 </Strings>
             </Button>
 
-            <Button guid="ProjectContextMenuGuid" id="ProjectConvertToQtMsBuild" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+            <Button guid="Package" id="ProjectConvertToQtMsBuild" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextOthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -302,8 +311,8 @@
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="ProjectRefreshIntelliSense" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+            <Button guid="Package" id="ProjectRefreshIntelliSense" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextOthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
@@ -312,8 +321,8 @@
                     <ButtonText>Refresh IntelliSense</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="ProjectContextMenuGuid" id="QtProjectSettingsProjectId" priority="0x0100" type="Button">
-                <Parent guid="ProjectContextMenuGuid" id="ProjectContextOthersMenuGroup" />
+            <Button guid="Package" id="QtProjectSettingsProject" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ProjectContextOthersMenuGroup" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
@@ -326,8 +335,8 @@
 
             <!-- Region Item context menu buttons -->
 
-            <Button guid="ItemContextMenuGuid" id="lUpdateOnItemId" priority="0x0100" type="Button">
-                <Parent guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" />
+            <Button guid="Package" id="lUpdateOnItem" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ItemContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -336,8 +345,8 @@
                     <ButtonText>lupdate</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="ItemContextMenuGuid" id="lReleaseOnItemId" priority="0x0100" type="Button">
-                <Parent guid="ItemContextMenuGuid" id="ItemContextTsMenuGroup" />
+            <Button guid="Package" id="lReleaseOnItem" priority="0x0100" type="Button">
+                <Parent guid="Package" id="ItemContextTsMenuGroup" />
                 <Icon guid="MenuImages" id="LaunchLinguistBitmap" />
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -369,91 +378,78 @@
 
     <Symbols>
         <!-- This is the package guid. -->
-        <GuidSymbol name="PackageGuid" value="{15021976-647e-4876-9040-2507afde45d2}" />
-
-        <!-- This is the guid used to group the menu commands together -->
-        <GuidSymbol name="MainMenuGuid" value="{58f83fff-d39d-4c66-810b-2702e1f04e73}">
+        <GuidSymbol name="Package" value="{15021976-647e-4876-9040-2507afde45d2}">
+            <IDSymbol name="ExtensionMenuGroup" value="0x0001" />
 
             <!-- Region Main menu buttons Ids-->
 
-            <IDSymbol name="QtMainMenu" value="0x1020"/>
+            <IDSymbol name="QtMainMenu" value="0x0002"/>
 
-            <IDSymbol name="VersionMenuGroup" value="0x5021" />
-            <IDSymbol name="QtVersionId" value="0x0500" />
-            <IDSymbol name="ViewQtHelpId" value="0x0501" />
-            <IDSymbol name="F1QtHelpId" value="0x0502" />
-            <IDSymbol name="ViewGettingStartedId" value="0x0503" />
+            <IDSymbol name="VersionMenuGroup" value="0x0100" />
+            <IDSymbol name="QtVersion" value="0x0101" />
+            <IDSymbol name="ViewQtHelp" value="0x0102" />
+            <IDSymbol name="F1QtHelp" value="0x0103" />
+            <IDSymbol name="ViewGettingStarted" value="0x0104" />
 
-            <IDSymbol name="LaunchMenuGroup" value="0x1021" />
-            <IDSymbol name="LaunchDesignerId" value="0x0100" />
-            <IDSymbol name="LaunchLinguistId" value="0x0101" />
+            <IDSymbol name="LaunchMenuGroup" value="0x0200" />
+            <IDSymbol name="LaunchDesigner" value="0x0201" />
+            <IDSymbol name="LaunchLinguist" value="0x0202" />
 
-            <IDSymbol name="ProjectMenuGroup" value="0x1022" />
-            <IDSymbol name="OpenProFileId" value="0x0102" />
-            <IDSymbol name="ImportPriFileId" value="0x0103" />
+            <IDSymbol name="ProjectMenuGroup" value="0x0300" />
+            <IDSymbol name="OpenProFile" value="0x0301" />
+            <IDSymbol name="ImportPriFile" value="0x0302" />
 
-            <IDSymbol name="OthersMenuGroup" value="0x1023" />
-            <IDSymbol name="ConvertToQtMsBuild" value="0x0130" />
-            <IDSymbol name="QtProjectSettingsId" value="0x0109" />
+            <IDSymbol name="OthersMenuGroup" value="0x0400" />
+            <IDSymbol name="ConvertToQtMsBuild" value="0x0401" />
+            <IDSymbol name="QtProjectSettings" value="0x0402" />
 
-            <IDSymbol name="OptionsMenuGroup" value="0x1024" />
-            <IDSymbol name="QtOptionsId" value="0x0110" />
-            <IDSymbol name="QtVersionsId" value="0x0111" />
+            <IDSymbol name="OptionsMenuGroup" value="0x0500" />
+            <IDSymbol name="QtOptions" value="0x0501" />
+            <IDSymbol name="QtVersions" value="0x0502" />
 
             <!-- Endregion Main menu buttons Ids -->
 
-        </GuidSymbol>
-
-        <GuidSymbol  name="SolutionContextMenuGuid" value="{6dcda34f-4d22-4d6a-a176-5507069c5a3e}">
-
             <!-- Region Solution context menu button Ids -->
 
-            <IDSymbol name="QtSolutionSubMenuGroup" value="0x1026" />
-            <IDSymbol name="QtSolutionSubMenu" value="0x1127"/>
+            <IDSymbol name="QtSolutionSubMenuGroup" value="0x0003" />
+            <IDSymbol name="QtSolutionSubMenu" value="0x0004"/>
 
-            <IDSymbol name="SolutionContextTsMenuGroup" value="0x1025" />
-            <IDSymbol name="lUpdateOnSolutionId" value="0x0111" />
-            <IDSymbol name="lReleaseOnSolutionId" value="0x0112" />
+            <IDSymbol name="SolutionContextTsMenuGroup" value="0x0600" />
+            <IDSymbol name="lUpdateOnSolution" value="0x0601" />
+            <IDSymbol name="lReleaseOnSolution" value="0x0602" />
 
-            <IDSymbol name="SolutionContextQtMenuGroup" value="0x1126" />
-            <IDSymbol name="SolutionConvertToQtMsBuild" value="0x0130" />
-            <IDSymbol name="SolutionEnableProjectTracking" value="0x1130" />
+            <IDSymbol name="SolutionContextQtMenuGroup" value="0x0700" />
+            <IDSymbol name="SolutionConvertToQtMsBuild" value="0x0701" />
+            <IDSymbol name="SolutionEnableProjectTracking" value="0x0702" />
 
             <!-- Endregion Solution context menu button Ids -->
 
-        </GuidSymbol>
-
-        <GuidSymbol name="ProjectContextMenuGuid" value="{5732faa9-6074-4e07-b035-2816e809f50e}" >
-
             <!-- Region Project context menu button Ids -->
 
-            <IDSymbol name="QtProjectSubMenuGroup" value="0x1150"/>
-            <IDSymbol name="QtProjectSubMenu" value="0x1100"/>
+            <IDSymbol name="QtProjectSubMenuGroup" value="0x0005"/>
+            <IDSymbol name="QtProjectSubMenu" value="0x0006"/>
 
-            <IDSymbol name="ProjectContextProjectMenuGroup" value="0x1027" />
-            <IDSymbol name="ImportPriFileProjectId" value="0x0114" />
+            <IDSymbol name="ProjectContextProjectMenuGroup" value="0x0800" />
+            <IDSymbol name="ImportPriFileProject" value="0x0801" />
 
-            <IDSymbol name="ProjectContextTsMenuGroup" value="0x1028" />
-            <IDSymbol name="lUpdateOnProjectId" value="0x0118" />
-            <IDSymbol name="lReleaseOnProjectId" value="0x0119" />
+            <IDSymbol name="ProjectContextTsMenuGroup" value="0x0900" />
+            <IDSymbol name="lUpdateOnProject" value="0x0901" />
+            <IDSymbol name="lReleaseOnProject" value="0x0902" />
 
-            <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1029" />
-            <IDSymbol name="ProjectConvertToQtMsBuild" value="0x0130" />
-            <IDSymbol name="ProjectRefreshIntelliSense" value="0x0131" />
-            <IDSymbol name="QtProjectSettingsProjectId" value="0x0122" />
-
-            <IDSymbol name="ProjectContextAddNewQtClassMenuGroup" value="0x1031" />
+            <IDSymbol name="ProjectContextOthersMenuGroup" value="0x1000" />
+            <IDSymbol name="ProjectConvertToQtMsBuild" value="0x1001" />
+            <IDSymbol name="ProjectRefreshIntelliSense" value="0x1002" />
+            <IDSymbol name="QtProjectSettingsProject" value="0x1003" />
 
             <!-- Endregion Project context menu button Ids -->
 
-        </GuidSymbol>
+            <!-- Region Item context menu button Ids -->
 
-        <GuidSymbol name="ItemContextMenuGuid" value="{9f67a0bd-ee0a-47e3-b656-5efb12e3c770}">
+            <IDSymbol name="ItemContextTsMenuGroup" value="0x1100" />
+            <IDSymbol name="lUpdateOnItem" value="0x1101" />
+            <IDSymbol name="lReleaseOnItem" value="0x1102" />
 
-            <IDSymbol name="ItemContextTsMenuGroup" value="0x1030" />
-            <IDSymbol name="lUpdateOnItemId" value="0x0125" />
-            <IDSymbol name="lReleaseOnItemId" value="0x0126" />
-
+            <!-- Endregion Item context menu button Ids -->
         </GuidSymbol>
 
         <GuidSymbol name="MenuImages" value="{d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec}" >
@@ -468,17 +464,17 @@
     </Symbols>
 
     <VisibilityConstraints>
-        <VisibilityItem guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId"
+        <VisibilityItem guid="Package" id="lUpdateOnSolution"
             context="UICONTEXT_SolutionHasSingleProject" />
-        <VisibilityItem guid="SolutionContextMenuGuid" id="lUpdateOnSolutionId"
+        <VisibilityItem guid="Package" id="lUpdateOnSolution"
             context="UICONTEXT_SolutionHasMultipleProjects" />
-        <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
+        <VisibilityItem guid="Package" id="lReleaseOnSolution"
             context="UICONTEXT_SolutionHasSingleProject" />
-        <VisibilityItem guid="SolutionContextMenuGuid" id="lReleaseOnSolutionId"
+        <VisibilityItem guid="Package" id="lReleaseOnSolution"
             context="UICONTEXT_SolutionHasMultipleProjects" />
     </VisibilityConstraints>
 
     <KeyBindings>
-        <KeyBinding guid="MainMenuGuid" id="F1QtHelpId" key1="VK_F1" mod1="ALT" editor="guidVSStd97" />
+        <KeyBinding guid="Package" id="F1QtHelp" key1="VK_F1" mod1="ALT" editor="guidVSStd97" />
     </KeyBindings>
 </CommandTable>

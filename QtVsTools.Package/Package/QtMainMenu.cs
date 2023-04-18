@@ -20,11 +20,6 @@ namespace QtVsTools
     internal sealed class QtMainMenu
     {
         /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        private static readonly Guid MainMenuGuid = new("58f83fff-d39d-4c66-810b-2702e1f04e73");
-
-        /// <summary>
         /// Gets the instance of the command.
         /// </summary>
         private static QtMainMenu Instance
@@ -43,20 +38,21 @@ namespace QtVsTools
 
         /// <summary>
         /// Command ID.
+        /// TODO: Remove, take form QtMenus.Package
         /// </summary>
         private enum CommandId
         {
-            QtVersionId = 0x0500,
-            ViewQtHelpId = 0x0501,
-            ViewGettingStartedId = 0x0503,
-            LaunchDesignerId = 0x0100,
-            LaunchLinguistId = 0x0101,
-            OpenProFileId = 0x0102,
-            ImportPriFileId = 0x0103,
-            ConvertToQtMsBuild = 0x0130,
-            QtProjectSettingsId = 0x0109,
-            QtOptionsId = 0x0110,
-            QtVersionsId = 0x0111
+            QtVersion = QtMenus.Package.QtVersion,
+            ViewQtHelp = QtMenus.Package.ViewQtHelp,
+            ViewGettingStarted = QtMenus.Package.ViewGettingStarted,
+            LaunchDesigner = QtMenus.Package.LaunchDesigner,
+            LaunchLinguist = QtMenus.Package.LaunchLinguist,
+            OpenProFile = QtMenus.Package.OpenProFile,
+            ImportPriFile = QtMenus.Package.ImportPriFile,
+            ConvertToQtMsBuild = QtMenus.Package.ConvertToQtMsBuild,
+            QtProjectSettings = QtMenus.Package.QtProjectSettings,
+            QtOptions = QtMenus.Package.QtOptions,
+            QtVersions = QtMenus.Package.QtVersions
         }
 
         /// <summary>
@@ -71,9 +67,9 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            foreach (var id in Enum.GetValues(typeof(CommandId))) {
+            foreach (int id in Enum.GetValues(typeof(CommandId))) {
                 var command = new OleMenuCommand(execHandler,
-                    new CommandID(MainMenuGuid, (int)id));
+                    new CommandID(QtMenus.Package.Guid, id));
                 command.BeforeQueryStatus += beforeQueryStatus;
                 commandService.AddCommand(command);
             }
@@ -86,29 +82,29 @@ namespace QtVsTools
             if (sender is not OleMenuCommand command)
                 return;
 
-            switch ((CommandId)command.CommandID.ID) {
-            case CommandId.ViewQtHelpId:
+            switch (command.CommandID.ID) {
+            case QtMenus.Package.ViewQtHelp:
                 VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
                 break;
-            case CommandId.ViewGettingStartedId:
+            case QtMenus.Package.ViewGettingStarted:
                 VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/qtvstools-getting-started.html");
                 break;
-            case CommandId.LaunchDesignerId:
+            case QtMenus.Package.LaunchDesigner:
                 QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
                 break;
-            case CommandId.LaunchLinguistId:
+            case QtMenus.Package.LaunchLinguist:
                 QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
                 break;
-            case CommandId.OpenProFileId:
+            case QtMenus.Package.OpenProFile:
                 ExtLoader.ImportProFile();
                 break;
-            case CommandId.ImportPriFileId:
+            case QtMenus.Package.ImportPriFile:
                 ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
-            case CommandId.ConvertToQtMsBuild:
+            case QtMenus.Package.ConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
-            case CommandId.QtProjectSettingsId:
+            case QtMenus.Package.QtProjectSettings:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
                 if (QtProject.GetFormatVersion(pro) >= Resources.qtMinFormatVersion_Settings) {
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
@@ -119,10 +115,10 @@ namespace QtVsTools
                     MessageBox.Show("No Project Opened");
                 }
                 break;
-            case CommandId.QtOptionsId:
+            case QtMenus.Package.QtOptions:
                 QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
                 break;
-            case CommandId.QtVersionsId:
+            case QtMenus.Package.QtVersions:
                 QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
                 break;
             }
@@ -137,29 +133,29 @@ namespace QtVsTools
 
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
 
-            switch ((CommandId)command.CommandID.ID) {
-            case CommandId.ViewQtHelpId:
-            case CommandId.ViewGettingStartedId:
+            switch (command.CommandID.ID) {
+            case QtMenus.Package.ViewQtHelp:
+            case QtMenus.Package.ViewGettingStarted:
                 command.Visible = command.Enabled = true;
                 break;
-            case CommandId.QtVersionId:
+            case QtMenus.Package.QtVersion:
                 command.Text = "Qt Visual Studio Tools version " + Version.USER_VERSION;
                 command.Visible = true;
                 command.Enabled = false;
                 break;
-            case CommandId.LaunchDesignerId:
-            case CommandId.LaunchLinguistId:
-            case CommandId.OpenProFileId:
-            case CommandId.QtOptionsId:
-            case CommandId.QtVersionsId:
+            case QtMenus.Package.LaunchDesigner:
+            case QtMenus.Package.LaunchLinguist:
+            case QtMenus.Package.OpenProFile:
+            case QtMenus.Package.QtOptions:
+            case QtMenus.Package.QtVersions:
                 command.Visible = true;
                 command.Enabled = true;
                 break;
-            case CommandId.ImportPriFileId:
+            case QtMenus.Package.ImportPriFile:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsVsToolsProject(project);
                 break;
-            case CommandId.QtProjectSettingsId: {
+            case QtMenus.Package.QtProjectSettings: {
                     var status = vsCommandStatus.vsCommandStatusSupported;
                     if (project != null) {
                         if (HelperFunctions.IsVsToolsProject(project))
@@ -171,7 +167,7 @@ namespace QtVsTools
                     command.Visible = (status & vsCommandStatus.vsCommandStatusInvisible) == 0;
                 }
                 break;
-            case CommandId.ConvertToQtMsBuild: {
+            case QtMenus.Package.ConvertToQtMsBuild: {
                     command.Visible = true;
                     command.Enabled = QtVsToolsPackage.Instance.Dte.Solution is { Projects: { Count: > 0 } };
                 }

@@ -25,7 +25,9 @@ namespace QtVsTools
 {
     using Core;
     using QtMsBuild;
+    using Package;
     using VisualStudio;
+
     using static Utils;
     using static SyntaxAnalysis.RegExpr;
 
@@ -34,8 +36,8 @@ namespace QtVsTools
         public static QtVsToolsPackage Package => QtVsToolsPackage.Instance;
     }
 
-    [Guid(QtVsToolsPackage.PackageGuidString)]
-    [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]
+    [Guid(QtMenus.Package.GuidString)]
+    [InstalledProductRegistration(Vsix.Name, Vsix.Description, Version.PRODUCT_VERSION)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
@@ -75,8 +77,6 @@ namespace QtVsTools
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
-        private const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
-
         public DTE Dte { get; private set; }
         public string PkgInstallPath { get; private set; }
         public Options.QtOptionsPage Options

@@ -19,11 +19,6 @@ namespace QtVsTools
     internal sealed class QtItemContextMenu
     {
         /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        private static readonly Guid ItemContextMenuGuid = new("9f67a0bd-ee0a-47e3-b656-5efb12e3c770");
-
-        /// <summary>
         /// Gets the instance of the command.
         /// </summary>
         private static QtItemContextMenu Instance
@@ -41,12 +36,6 @@ namespace QtVsTools
         }
 
         /// <summary>
-        /// Command ID.
-        /// </summary>
-        private const int lUpdateOnItemId = 0x0125;
-        private const int lReleaseOnItemId = 0x0126;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="QtMainMenu"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
@@ -58,12 +47,12 @@ namespace QtVsTools
                 return;
 
             var command = new OleMenuCommand(execHandler,
-                new CommandID(ItemContextMenuGuid, lUpdateOnItemId));
+                new CommandID(QtMenus.Package.Guid, QtMenus.Package.lUpdateOnItem));
             command.BeforeQueryStatus += beforeQueryStatus;
             commandService.AddCommand(command);
 
             command = new OleMenuCommand(execHandler,
-                new CommandID(ItemContextMenuGuid, lReleaseOnItemId));
+                new CommandID(QtMenus.Package.Guid, QtMenus.Package.lReleaseOnItem));
             command.BeforeQueryStatus += beforeQueryStatus;
             commandService.AddCommand(command);
         }
@@ -76,10 +65,10 @@ namespace QtVsTools
                 return;
 
             switch (command.CommandID.ID) {
-            case lUpdateOnItemId:
+            case QtMenus.Package.lUpdateOnItem:
                 Translation.RunlUpdate(HelperFunctions.GetSelectedFiles(QtVsToolsPackage.Instance.Dte));
                 break;
-            case lReleaseOnItemId:
+            case QtMenus.Package.lReleaseOnItem:
                 Translation.RunlRelease(HelperFunctions.GetSelectedFiles(QtVsToolsPackage.Instance.Dte));
                 break;
             }

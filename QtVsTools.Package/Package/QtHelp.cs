@@ -34,19 +34,12 @@ namespace QtVsTools
             Instance = new QtHelp();
         }
 
-        const int F1QtHelpId = 0x0502;
-
-        private static readonly Guid MainMenuGuid = new("58f83fff-d39d-4c66-810b-2702e1f04e73");
-
         private QtHelp()
         {
             var commandService = VsServiceProvider
                 .GetService<IMenuCommandService, OleMenuCommandService>();
-            if (commandService == null)
-                return;
-
-            var menuCommandID = new CommandID(MainMenuGuid, F1QtHelpId);
-            commandService.AddCommand(new MenuCommand(F1QtHelpEventHandler, menuCommandID));
+            commandService?.AddCommand(new MenuCommand(F1QtHelpEventHandler,
+                new CommandID(QtMenus.Package.Guid, QtMenus.Package.F1QtHelp)));
         }
         static bool IsSuperfluousCharacter(string text)
         {
