@@ -274,7 +274,7 @@ ModelManifest.xml
 MSBuild.MetaInfo.cs
 qtvstools.package/package/Version.tt.cs
 qtvstools.package/Properties/AssemblyInfo.tt.cs
-qtvstools.package/QtMenus.vsct
+qtvstools.package/QtVersionId.vsct
 qtvstools.package/Marketplace/Overview.html
 qtvstools.core/Properties/AssemblyInfo.tt.cs
 qtvstools.wizards/Properties/AssemblyInfo.tt.cs

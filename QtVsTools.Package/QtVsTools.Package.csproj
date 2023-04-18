@@ -296,17 +296,19 @@
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="QtVsToolsPackage.cs" />
-    <T4Template Include="QtMenus.vsct_TT">
+    <T4Template Include="QtVersionId.vsct_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>QtMenus.vsct</OutputFile>
+      <OutputFile>QtVersionId.vsct</OutputFile>
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>QtMenus.vsct</LastGenOutput>
+      <LastGenOutput>QtVersionId.vsct</LastGenOutput>
     </T4Template>
-    <VSCTCompile Include="QtMenus.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
+    <VSCTInclude Include="QtVersionId.vsct">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>QtMenus.vsct_TT</DependentUpon>
+      <DependentUpon>QtVersionId.vsct_TT</DependentUpon>
+    </VSCTInclude>
+    <VSCTCompile Include="QtMenus.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>

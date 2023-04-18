@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************
+
+<#@output extension="vsct" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+    **          <#=WARNING_GENERATED_FILE#>
+    *****************************************************************************
+-->
+
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Commands package="PackageGuid">
+    <Buttons>
+      <Button guid="MainMenuGuid"
+              id="QtVersionId"
+              priority="0x0100"
+              type="Button">
+        <Parent guid="MainMenuGuid"
+                id="VersionMenuGroup" />
+        <Icon guid="MenuImages"
+              id="QtLogoBitmap" />
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <CommandFlag>NoCustomize</CommandFlag>
+        <CommandFlag>NoButtonCustomize</CommandFlag>
+        <CommandFlag>NoKeyCustomize</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>
+            <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+              Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION_USER#>: Initializing...
+            <#=XML_COMMENT_BEGIN#> END Generated Text -->
+          </ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+</CommandTable>
