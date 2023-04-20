@@ -31,6 +31,7 @@
 
 #include <QtQml/private/qqmljslexer_p.h>
 #include <QtQml/private/qqmljsparser_p.h>
+#include <QtQml/private/qqmljssourcelocation_p.h>
 
 class AstVisitorPrivate;
 
