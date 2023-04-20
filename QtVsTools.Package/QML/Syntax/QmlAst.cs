@@ -10,7 +10,7 @@ namespace QtVsTools.Qml.Syntax
 {
     public enum AstNodeKind
     {
-        #region Copied from qqmljsast_p.h
+        #region Copied from qqmljsast_p.h: enum Node::Kind
         Undefined,
 
         ArgumentList,
@@ -109,12 +109,15 @@ namespace QtVsTools.Qml.Syntax
         PatternElementList,
         PatternProperty,
         PatternPropertyList,
-
+        Type,
+        TypeArgumentList,
+        TypeAnnotation,
 
         UiArrayBinding,
         UiImport,
         UiObjectBinding,
         UiObjectDefinition,
+        UiInlineComponent,
         UiObjectInitializer,
         UiObjectMemberList,
         UiArrayMemberList,
@@ -127,7 +130,11 @@ namespace QtVsTools.Qml.Syntax
         UiSourceElement,
         UiHeaderItemList,
         UiEnumDeclaration,
-        UiEnumMemberList
+        UiEnumMemberList,
+        UiVersionSpecifier,
+        UiRequired,
+        UiAnnotation,
+        UiAnnotationList
         #endregion
     }
 
@@ -144,7 +151,6 @@ namespace QtVsTools.Qml.Syntax
         public UiImport() : base(AstNodeKind.UiImport) { }
         public SourceLocation ImportToken { get; set; }
         public SourceLocation FileNameToken { get; set; }
-        public SourceLocation VersionToken { get; set; }
         public SourceLocation AsToken { get; set; }
         public SourceLocation ImportIdToken { get; set; }
         public SourceLocation SemicolonToken { get; set; }

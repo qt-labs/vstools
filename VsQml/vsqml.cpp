@@ -125,8 +125,8 @@ bool qmlParse(
 
     if (diagnosticMessages && diagnosticMessagesLength) {
         QVector<int> diagValues;
-        for (auto diag : s->parser->diagnosticMessages()) {
-            diagValues.append(diag.kind);
+        for (auto &diag : s->parser->diagnosticMessages()) {
+            diagValues.append(diag.type >= QtCriticalMsg ? 1 : 0);
             diagValues.append(diag.loc.offset);
             diagValues.append(diag.loc.length);
         }

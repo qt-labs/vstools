@@ -317,7 +317,6 @@ namespace QtVsTools.Qml
             UnmarshalNode(nodeData, node);
             node.ImportToken = UnmarshalLocation(nodeData);
             node.FileNameToken = UnmarshalLocation(nodeData);
-            node.VersionToken = UnmarshalLocation(nodeData);
             node.AsToken = UnmarshalLocation(nodeData);
             node.ImportIdToken = UnmarshalLocation(nodeData);
             node.SemicolonToken = UnmarshalLocation(nodeData);

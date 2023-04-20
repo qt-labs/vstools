@@ -4,6 +4,7 @@
 ***************************************************************************************************/
 #include "astvisitor.h"
 
+using namespace QQmlJS;
 using namespace QQmlJS::AST;
 
 class AstVisitorPrivate : public QQmlJS::AST::Visitor
@@ -68,7 +69,6 @@ private:
         marshalNode(nodeData, node);
         marshalLocation(nodeData, node->importToken);
         marshalLocation(nodeData, node->fileNameToken);
-        marshalLocation(nodeData, node->versionToken);
         marshalLocation(nodeData, node->asToken);
         marshalLocation(nodeData, node->importIdToken);
         marshalLocation(nodeData, node->semicolonToken);
@@ -206,8 +206,9 @@ public:
         callbackFiltered[nodeKindFilter] = visitCallback;
     }
 
-    // Copied from qqmljsastvisitor_p.h
+    // Copied from qqmljsastvisitor_p.h: class QQmlJS::AST::Visitor
 
+    // Ui
     virtual bool visit(UiProgram *node) { return visitCallback(node, true); }
     virtual bool visit(UiHeaderItemList *node) { return visitCallback(node, true); }
     virtual bool visit(UiPragma *node) { return visitCallback(node, true); }
