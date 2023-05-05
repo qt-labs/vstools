@@ -87,7 +87,7 @@ namespace QtVsTools
                 return;
             }
 
-            if (qtPro.FormatVersion < Resources.qtMinFormatVersion_Settings) {
+            if (qtPro.FormatVersion < ProjectFormat.Version.V3) {
                 if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                     Notifications.UpdateProjectFormat.Show();
                 return;

@@ -34,7 +34,7 @@ namespace QtVsTools
             var projects = new List<EnvDTE.Project>();
             foreach (var project in allProjects.Where(HelperFunctions.IsQtProject)) {
                 if (QtProject.IsQtMsBuildEnabled(project)) {
-                    if (QtProject.GetFormatVersion(project) >= Resources.qtProjectFormatVersion)
+                    if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.Latest)
                         continue;
                 }
                 projects.Add(project);

@@ -228,16 +228,18 @@ namespace QtVsTools.Core
             }
         }
 
-        int? ParseProjectFormatVersion(string text)
+        ProjectFormat.Version ParseProjectFormatVersion(string text)
         {
             if (ProjectFormatVersion == null)
-                return null;
+                return ProjectFormat.Version.Unknown;
             try {
-                return ProjectFormatVersion.Parse(text)
+                return (ProjectFormat.Version) ProjectFormatVersion.Parse(text)
                     .GetValues<int>("VERSION")
                     .First();
             } catch {
-                return null;
+                return text.StartsWith(ProjectFormat.KeywordV2, StringComparison.Ordinal)
+                    ? ProjectFormat.Version.V1
+                    : ProjectFormat.Version.Unknown;
             }
         }
 
@@ -273,15 +275,15 @@ namespace QtVsTools.Core
 
             // Set Qt project format version
             var projKeyword = globals?.Elements(ns + "Keyword")
-                .FirstOrDefault(x => x.Value.StartsWith(Resources.qtProjectKeyword)
-                    || x.Value.StartsWith(Resources.qtProjectV2Keyword));
+                .FirstOrDefault(x => x.Value.StartsWith(ProjectFormat.KeywordLatest)
+                    || x.Value.StartsWith(ProjectFormat.KeywordV2));
             if (projKeyword == null)
                 return false;
             var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
-            if (oldVersion is Resources.qtProjectFormatVersion)
+            if (oldVersion is ProjectFormat.Version.Latest)
                 return true; // nothing to do!
 
-            projKeyword.SetValue($"QtVS_v{Resources.qtProjectFormatVersion}");
+            projKeyword.SetValue($"QtVS_v{(int)ProjectFormat.Version.Latest}");
 
             // Find import of qt.props
             var qtPropsImport = this[Files.Project].xml
@@ -301,7 +303,7 @@ namespace QtVsTools.Core
             var propertyGroups = new Dictionary<string, XElement>();
 
             // Upgrading from <= v3.2?
-            if (oldVersion is null or < Resources.qtMinFormatVersion_PropertyEval) {
+            if (oldVersion is ProjectFormat.Version.Unknown or < ProjectFormat.Version.V3PropertyEval) {
 
                 // Find import of default Qt properties
                 var qtDefaultProps = this[Files.Project].xml
@@ -341,7 +343,7 @@ namespace QtVsTools.Core
             }
 
             // Upgrading from <= v3.1?
-            if (oldVersion is null or < Resources.qtMinFormatVersion_GlobalQtMsBuildProperty) {
+            if (oldVersion is ProjectFormat.Version.Unknown or < ProjectFormat.Version.V3GlobalQtMsBuildProperty) {
 
                 // Move Qt/MSBuild path to global property
                 var qtMsBuildProperty = globals
@@ -357,7 +359,7 @@ namespace QtVsTools.Core
                     qtMsBuildPropertyGroup.Remove();
                 }
             }
-            if (oldVersion is > Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion > ProjectFormat.Version.V3) {
                 this[Files.Project].isDirty = true;
                 Commit();
                 return true;
@@ -366,7 +368,7 @@ namespace QtVsTools.Core
             // Upgrading from v3.0?
             Dictionary<string, XElement> oldQtInstall = null;
             Dictionary<string, XElement> oldQtSettings = null;
-            if (oldVersion is Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion is ProjectFormat.Version.V3) {
                 oldQtInstall = this[Files.Project].xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
@@ -466,7 +468,7 @@ namespace QtVsTools.Core
                         new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
 
             //// Upgrading from v3.0: move Qt settings to newly created import groups
-            if (oldVersion is Resources.qtMinFormatVersion_Settings) {
+            if (oldVersion is ProjectFormat.Version.V3) {
                 foreach (var configQtSettings in qtSettings) {
                     var configCondition = (string)configQtSettings.Attribute("Condition");
 

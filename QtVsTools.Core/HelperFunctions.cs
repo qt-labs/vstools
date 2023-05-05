@@ -231,7 +231,7 @@ namespace QtVsTools.Core
             if (!IsQtProject(proj))
                 return false;
 
-            if (QtProject.GetFormatVersion(proj) >= Resources.qtMinFormatVersion_Settings)
+            if (ProjectFormat.GetVersion(proj) >= ProjectFormat.Version.V3)
                 return true;
 
             if (proj.Object is not Project {Globals: {VariableNames: string[] variables}} envPro)
@@ -263,8 +263,8 @@ namespace QtVsTools.Core
             var keyword = proj.keyword;
             if (string.IsNullOrEmpty(keyword))
                 return false;
-            return keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal)
-                || keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal);
+            return keyword.StartsWith(ProjectFormat.KeywordLatest, StringComparison.Ordinal)
+                || keyword.StartsWith(ProjectFormat.KeywordV2, StringComparison.Ordinal);
         }
 
         public static bool HasQObjectDeclaration(VCFile file)

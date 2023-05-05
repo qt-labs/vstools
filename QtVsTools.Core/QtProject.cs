@@ -137,37 +137,12 @@ namespace QtVsTools.Core
             return null;
         }
 
-        public static int GetFormatVersion(VCProject vcPro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (vcPro == null)
-                return 0;
-
-            if (vcPro.keyword.StartsWith(Resources.qtProjectKeyword, StringComparison.Ordinal))
-                return Convert.ToInt32(vcPro.keyword.Substring(6));
-
-            if (!vcPro.keyword.StartsWith(Resources.qtProjectV2Keyword, StringComparison.Ordinal))
-                return 0;
-
-            if (vcPro.Object is not Project { Globals: { VariableNames: string[] variables }} envPro)
-                return 100;
-
-            return variables.Any(var => HelperFunctions.HasQt5Version(var, envPro)) ? 200 : 100;
-        }
-
-        public static int GetFormatVersion(Project pro)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetFormatVersion(pro?.Object as VCProject);
-        }
-
-        public int FormatVersion
+        public ProjectFormat.Version FormatVersion
         {
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return GetFormatVersion(Project);
+                return ProjectFormat.GetVersion(VCProject);
             }
         }
 
@@ -229,7 +204,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
                 file.ItemType = QtUic.ItemTypeName;
             } else {
                 // TODO: It would be nice if we can inform the user he's on an old project.
@@ -246,7 +221,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
                 file.ItemType = QtMoc.ItemTypeName;
                 if (!HelperFunctions.IsSourceFile(file.FullPath))
                     return;
@@ -354,7 +329,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (GetFormatVersion(vcPro) >= Resources.qtMinFormatVersion_Settings) {
+            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
                 qrcFile.ItemType = QtRcc.ItemTypeName;
             } else {
                 // TODO: It would be nice if we can inform the user he's on an old project.
@@ -760,7 +735,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (FormatVersion < Resources.qtMinFormatVersion_ClProperties)
+            if (FormatVersion < ProjectFormat.Version.V3ClProperties)
                 return;
 
             foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {

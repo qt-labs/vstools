@@ -146,7 +146,7 @@ namespace QtVsTools
                 QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
 
             // Notify about old project format and offer upgrade option.
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
@@ -159,7 +159,7 @@ namespace QtVsTools
                 return;
 
             // Notify about old project format and offer upgrade option.
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
@@ -225,7 +225,7 @@ namespace QtVsTools
                 return;
 
             // Notify about old project format and offer upgrade option.
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
@@ -442,14 +442,14 @@ namespace QtVsTools
                     return;
             }
 
-            var formatVersion = QtProject.GetFormatVersion(project);
-            if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
+            var formatVersion = ProjectFormat.GetVersion(project);
+            if (formatVersion >= ProjectFormat.Version.V3) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
                 QtProjectIntellisense.Refresh(project);
             }
 
-            if (formatVersion is < 100 or >= Resources.qtProjectFormatVersion)
+            if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
@@ -465,13 +465,13 @@ namespace QtVsTools
 
             QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
             foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
-                var formatVersion = QtProject.GetFormatVersion(p);
-                if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
+                var formatVersion = ProjectFormat.GetVersion(p);
+                if (formatVersion >= ProjectFormat.Version.V3) {
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);
                 }
 
-                if (formatVersion is < 100 or >= Resources.qtProjectFormatVersion)
+                if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
                     continue;
                 if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                     Notifications.UpdateProjectFormat.Show();
@@ -531,7 +531,7 @@ namespace QtVsTools
             if (vcPrj is not null && !HelperFunctions.IsVsToolsProject(vcPrj))
                 return;
 
-            if (QtProject.GetFormatVersion(vcPrj) >= Resources.qtMinFormatVersion_ClProperties)
+            if (ProjectFormat.GetVersion(vcPrj) >= ProjectFormat.Version.V3ClProperties)
                 return; // Ignore property events when using shared compiler properties
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();

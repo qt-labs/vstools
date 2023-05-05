@@ -376,7 +376,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             xml = new StringBuilder();
             Parameter[NewProject.ProjectGuid] = HelperFunctions.NewProjectGuid();
-            Parameter[NewProject.Keyword] = Resources.QtVSVersionTag;
+            Parameter[NewProject.Keyword] = ProjectFormat.QtVsVersionTag;
 
             ///////////////////////////////////////////////////////////////////////////////////////
             // Globals: Windows

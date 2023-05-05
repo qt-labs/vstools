@@ -129,6 +129,7 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
+    <Compile Include="ProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuildProject.cs" />

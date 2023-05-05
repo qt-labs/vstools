@@ -260,7 +260,7 @@ namespace QtVsTools.Core
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
 
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings) {
+            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3) {
                 if (project.Object is VCProject vcPro) {
                     foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
                         config.SetPropertyValue(Resources.projLabelQtSettings, true,
@@ -304,7 +304,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (QtProject.GetFormatVersion(project) >= Resources.qtMinFormatVersion_Settings)
+            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
                 return QtProject.GetPropertyValue(project, config, "QtInstall");
 
             var key = "Qt5Version " + config.PlatformName;

@@ -89,7 +89,7 @@ namespace QtVsTools
                 break;
             case QtMenus.Package.QtProjectSettingsProject:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                if (QtProject.GetFormatVersion(pro) >= Resources.qtMinFormatVersion_Settings) {
+                if (ProjectFormat.GetVersion(pro) >= ProjectFormat.Version.V3) {
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 } else if (pro != null) {
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
@@ -157,10 +157,10 @@ namespace QtVsTools
             }
 
             if (isQtProject) {
-                int projectVersion = QtProject.GetFormatVersion(project);
+                var projectVersion = ProjectFormat.GetVersion(project);
                 switch (command.CommandID.ID) {
                 case QtMenus.Package.ProjectConvertToQtMsBuild:
-                    if (projectVersion >= Resources.qtProjectFormatVersion) {
+                    if (projectVersion >= ProjectFormat.Version.Latest) {
                         command.Visible = command.Enabled = false;
                     } else {
                         command.Visible = command.Enabled = true;

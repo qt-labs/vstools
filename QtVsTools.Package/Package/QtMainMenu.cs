@@ -106,7 +106,7 @@ namespace QtVsTools
                 break;
             case QtMenus.Package.QtProjectSettings:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                if (QtProject.GetFormatVersion(pro) >= Resources.qtMinFormatVersion_Settings) {
+                if (ProjectFormat.GetVersion(pro) >= ProjectFormat.Version.V3) {
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 } else if (pro != null) {
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
