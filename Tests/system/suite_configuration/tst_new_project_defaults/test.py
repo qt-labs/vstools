@@ -149,7 +149,10 @@ def main():
                 test.fatal("Exception caught", "%s: %s" % (eInfo[0].__name__, eInfo[1]))
             finally:
                 # Cannot finish because of SQUISH-15876
-                clickButton(waitForObject(names.qt_Wizard_Cancel_Button))
+                try:
+                    clickButton(waitForObject(names.qt_Wizard_Cancel_Button, 2000))
+                except:
+                    nativeType("<Escape>")
 
         clickButton(waitForObject(names.microsoft_Visual_Studio_Back_Button))
     clickButton(waitForObject(names.microsoft_Visual_Studio_Close_Button))
