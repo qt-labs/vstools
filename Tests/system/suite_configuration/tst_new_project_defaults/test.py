@@ -28,6 +28,7 @@
 
 # -*- coding: utf-8 -*-
 
+source("../../shared/testsection.py")
 source("../../shared/utils.py")
 source("../shared/scripts/config_utils.py")
 
@@ -121,33 +122,34 @@ def main():
     listView = waitForObject(names.microsoft_VS_TemplateList_ListView)
     for i in range(1, listView.itemCount - 1):  # itemCount is number of shown items + 2
         listItem = names.templateList_ListViewItem | {"occurrence": i}
-        mouseClick(waitForObject(listItem))
         templateName = waitForObjectExists({"container": listItem, "type": "Label"}).text
-        expectedName = getExpectedName(templateName)
-        clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
-        projectName = testNewProjectDialog(version, templateName, expectedName)
-        clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
-        try:
-            expectedText = "Welcome to the %s Wizard" % templateName
-            # work around issue fixed in
-            # https://codereview.qt-project.org/c/qt-labs/vstools/+/473682
-            if templateName == "Qt Designer Custom Widget":
-                expectedText = "Welcome to the Qt Custom Designer Widget"
-            testWizardPage1(expectedText, templateName)
-            clickButton(waitForObject(names.qt_Wizard_Next_Button))
-            testWizardPage2(expectedText, qtDirs)
-            if templateName in ["Qt ActiveQt Server", "Qt Class Library",
-                                "Qt Designer Custom Widget", "Qt Widgets Application"]:
+        with TestSection(templateName):
+            mouseClick(waitForObject(listItem))
+            expectedName = getExpectedName(templateName)
+            clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
+            projectName = testNewProjectDialog(version, templateName, expectedName)
+            clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
+            try:
+                expectedText = "Welcome to the %s Wizard" % templateName
+                # work around issue fixed in
+                # https://codereview.qt-project.org/c/qt-labs/vstools/+/473682
+                if templateName == "Qt Designer Custom Widget":
+                    expectedText = "Welcome to the Qt Custom Designer Widget"
+                testWizardPage1(expectedText, templateName)
                 clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                testWizardPage3(expectedText, projectName)
-            else:
-                test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
-        except:
-            eInfo = sys.exc_info()
-            test.fatal("Exception caught", "%s: %s" % (eInfo[0].__name__, eInfo[1]))
-        finally:
-            # Cannot finish because of SQUISH-15876
-            clickButton(waitForObject(names.qt_Wizard_Cancel_Button))
+                testWizardPage2(expectedText, qtDirs)
+                if templateName in ["Qt ActiveQt Server", "Qt Class Library",
+                                    "Qt Designer Custom Widget", "Qt Widgets Application"]:
+                    clickButton(waitForObject(names.qt_Wizard_Next_Button))
+                    testWizardPage3(expectedText, projectName)
+                else:
+                    test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
+            except:
+                eInfo = sys.exc_info()
+                test.fatal("Exception caught", "%s: %s" % (eInfo[0].__name__, eInfo[1]))
+            finally:
+                # Cannot finish because of SQUISH-15876
+                clickButton(waitForObject(names.qt_Wizard_Cancel_Button))
 
         clickButton(waitForObject(names.microsoft_Visual_Studio_Back_Button))
     clickButton(waitForObject(names.microsoft_Visual_Studio_Close_Button))
