@@ -19,22 +19,18 @@ namespace QtVsTools.Core
 {
     using static Utils;
 
-    public class ProjectImporter
+    public static class ProjectImporter
     {
-        private readonly DTE dteObject;
+        private static DTE _dteObject;
 
         private const string ProjectFileExtension = ".vcxproj";
-
-        public ProjectImporter(DTE dte)
-        {
-            dteObject = dte;
-        }
 
         public static void ImportProFile(EnvDTE.DTE dte)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (dte is null || GetQtInstallPath() is not { } qtDir)
+            _dteObject = dte;
+            if (_dteObject is null || GetQtInstallPath() is not {} qtDir)
                 return;
 
             var vi = VersionInformation.Get(qtDir);
@@ -44,15 +40,44 @@ namespace QtVsTools.Core
                 return;
             }
 
-            var proFileImporter = new ProjectImporter(dte);
-            proFileImporter.ImportProFile(QtVersionManager.The().GetDefaultVersion());
+            var toOpen = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                Filter = "Qt Project files (*.pro)|*.pro|All files (*.*)|*.*",
+                FilterIndex = 1,
+                Title = "Select a Qt Project to Add to the Solution"
+            };
+
+            if (DialogResult.OK != toOpen.ShowDialog())
+                return;
+
+            var mainInfo = new FileInfo(toOpen.FileName);
+            if (IsSubDirsFile(mainInfo.FullName)) {
+                // we use the safe way. Make the user close the existing solution manually
+                if (!string.IsNullOrEmpty(_dteObject.Solution.FullName)
+                    || HelperFunctions.ProjectsInSolution(_dteObject).Count > 0) {
+                    if (MessageBox.Show("This seems to be a SUBDIRS .pro file. To open this file, "
+                            + "the existing solution needs to be closed (pending changes will be saved).",
+                            "Open Solution", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
+                        == DialogResult.OK) {
+                        _dteObject.Solution.Close(true);
+                    } else {
+                        return;
+                    }
+                }
+
+                ImportSolution(mainInfo, QtVersionManager.The().GetDefaultVersion());
+            } else {
+                ImportProject(mainInfo, QtVersionManager.The().GetDefaultVersion());
+            }
         }
 
         public static void ImportPriFile(EnvDTE.DTE dte, string pkgInstallPath)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (dte is null || HelperFunctions.GetSelectedQtProject(dte) is not { } qtProject)
+            _dteObject = dte;
+            if (dte is null || HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
                 return;
 
             using var fd = new OpenFileDialog
@@ -66,7 +91,7 @@ namespace QtVsTools.Core
             if (fd.ShowDialog() != DialogResult.OK)
                 return;
 
-            if (GetQtInstallPath() is not { } qtDir)
+            if (GetQtInstallPath() is not {} qtDir)
                 return;
 
             var qmake = new QMakeWrapper
@@ -83,66 +108,26 @@ namespace QtVsTools.Core
             var directoryName = priFileInfo.DirectoryName;
             var priFiles = ResolveFilesFromQMake(qmake.SourceFiles, qtProject, directoryName);
             var projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_CppFiles);
-            projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, qtProject);
-            ProjectImporter.SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat,
-                Filters.SourceFiles());
+            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
+            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.SourceFiles());
 
             priFiles = ResolveFilesFromQMake(qmake.HeaderFiles, qtProject, directoryName);
             projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_HFiles);
-            projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, qtProject);
-            ProjectImporter.SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat,
-                Filters.HeaderFiles());
+            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
+            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.HeaderFiles());
 
             priFiles = ResolveFilesFromQMake(qmake.FormFiles, qtProject, directoryName);
             projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_UiFiles);
-            projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, qtProject);
-            ProjectImporter.SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat,
-                Filters.FormFiles());
+            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
+            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.FormFiles());
 
             priFiles = ResolveFilesFromQMake(qmake.ResourceFiles, qtProject, directoryName);
             projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_Resources);
-            projFiles = ProjectImporter.ConvertFilesToFullPath(projFiles, qtProject);
-            ProjectImporter.SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat,
-                Filters.ResourceFiles());
+            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
+            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.ResourceFiles());
         }
 
-        public void ImportProFile(string qtVersion)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var toOpen = new OpenFileDialog
-            {
-                CheckFileExists = true,
-                Filter = "Qt Project files (*.pro)|*.pro|All files (*.*)|*.*",
-                FilterIndex = 1,
-                Title = "Select a Qt Project to Add to the Solution"
-            };
-
-            if (DialogResult.OK != toOpen.ShowDialog())
-                return;
-
-            var mainInfo = new FileInfo(toOpen.FileName);
-            if (IsSubDirsFile(mainInfo.FullName)) {
-                // we use the safe way. Make the user close the existing solution manually
-                if (!string.IsNullOrEmpty(dteObject.Solution.FullName)
-                    || HelperFunctions.ProjectsInSolution(dteObject).Count > 0) {
-                    if (MessageBox.Show("This seems to be a SUBDIRS .pro file. To open this file, "
-                        + "the existing solution needs to be closed (pending changes will be saved).",
-                        "Open Solution", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
-                        == DialogResult.OK) {
-                        dteObject.Solution.Close(true);
-                    } else {
-                        return;
-                    }
-                }
-
-                ImportSolution(mainInfo, qtVersion);
-            } else {
-                ImportProject(mainInfo, qtVersion);
-            }
-        }
-
-        private void ImportSolution(FileInfo mainInfo, string qtVersion)
+        private static void ImportSolution(FileInfo mainInfo, string qtVersion)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -154,11 +139,11 @@ namespace QtVsTools.Core
 
             try {
                 if (CheckQtVersion(versionInfo)) {
-                    dteObject.Solution.Open(vcInfo.FullName);
+                    _dteObject.Solution.Open(vcInfo.FullName);
                     if (qtVersion is not null) {
-                        foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
+                        foreach (var prj in HelperFunctions.ProjectsInSolution(_dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                            ApplyPostImportSteps(dteObject, QtProject.Create(prj));
+                            ApplyPostImportSteps(QtProject.Create(prj));
                         }
                     }
                 }
@@ -169,7 +154,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private void ImportProject(FileInfo mainInfo, string qtVersion)
+        private static void ImportProject(FileInfo mainInfo, string qtVersion)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -188,10 +173,10 @@ namespace QtVsTools.Core
                     return;
                 // no need to add the project again if it's already there...
                 var fullName = vcInfo.FullName;
-                var pro = ProjectFromSolution(dteObject, fullName);
+                var pro = ProjectFromSolution(fullName);
                 if (pro is null) {
                     try {
-                        pro = dteObject.Solution.AddFromFile(fullName);
+                        pro = _dteObject.Solution.AddFromFile(fullName);
                     } catch (Exception /*exception*/) {
                         Messages.Print("--- (Import): Generated project could not be loaded.");
                         Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
@@ -210,10 +195,10 @@ namespace QtVsTools.Core
                     QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
 
                 var vcPro = qtPro.VcProject;
-                if (!SelectSolutionPlatform(dteObject, platformName)
+                if (!SelectSolutionPlatform(platformName)
                     || !HasPlatform(vcPro, platformName)) {
-                    CreatePlatform(pro, vcPro, dteObject, "Win32", platformName, null, versionInfo);
-                    if (!SelectSolutionPlatform(dteObject, platformName))
+                    CreatePlatform(pro, vcPro, "Win32", platformName, null, versionInfo);
+                    if (!SelectSolutionPlatform(platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
 
@@ -227,7 +212,7 @@ namespace QtVsTools.Core
                     QtProject.MarkAsQtPlugin(qtPro);
                 }
 
-                ApplyPostImportSteps(dteObject, qtPro);
+                ApplyPostImportSteps(qtPro);
             } catch (Exception e) {
                 Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
             }
@@ -300,7 +285,7 @@ namespace QtVsTools.Core
             return ok;
         }
 
-        private static void ApplyPostImportSteps(DTE dte, QtProject qtProject)
+        private static void ApplyPostImportSteps(QtProject qtProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -308,8 +293,8 @@ namespace QtVsTools.Core
             TranslateFilterNames(qtProject.VcProject);
 
             // collapse the generated files/resources filters afterwards
-            CollapseFilter(dte, qtProject.VcProject, Filters.ResourceFiles().Name);
-            CollapseFilter(dte, qtProject.VcProject, Filters.GeneratedFiles().Name);
+            CollapseFilter(qtProject.VcProject, Filters.ResourceFiles().Name);
+            CollapseFilter(qtProject.VcProject, Filters.GeneratedFiles().Name);
 
             try {
                 // save the project after modification
@@ -317,7 +302,7 @@ namespace QtVsTools.Core
             } catch { /* ignore */ }
         }
 
-        private FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
+        private static FileInfo RunQmake(FileInfo mainInfo, string ext, bool recursive, VersionInformation vi)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -339,7 +324,7 @@ namespace QtVsTools.Core
             var waitDialog = WaitDialog.Start("Open Qt Project File",
                 "Generating Visual Studio project...", delay: 2);
 
-            var qmake = new QMakeImport(vi, mainInfo.FullName, recursiveRun: recursive, dte: dteObject);
+            var qmake = new QMakeImport(vi, mainInfo.FullName, recursiveRun: recursive, dte: _dteObject);
             var exitCode = qmake.Run(setVCVars: true);
 
             waitDialog.Stop();
@@ -360,7 +345,7 @@ namespace QtVsTools.Core
 
         #region ProjectExporter
 
-        public static List<string> ConvertFilesToFullPath(IEnumerable<string> files, QtProject qtProject)
+        private static List<string> ConvertFilesToFullPath(IEnumerable<string> files, QtProject qtProject)
         {
             return new List<string>(files.Select(file => new FileInfo(file.IndexOf(':') != 1
                     ? Path.Combine(qtProject?.VcProjectDirectory ?? "", file) : file)
@@ -404,8 +389,8 @@ namespace QtVsTools.Core
                 CollectFilters(f, path, ref filterPathTable, ref pathFilterTable);
         }
 
-        public static void SyncIncludeFiles(QtProject qtProject, List<string> priFiles,
-            List<string> projFiles, bool flat, FakeFilter fakeFilter)
+        private static void SyncIncludeFiles(QtProject qtProject, IReadOnlyCollection<string> priFiles,
+            IReadOnlyCollection<string> projFiles, bool flat, FakeFilter fakeFilter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -478,12 +463,12 @@ namespace QtVsTools.Core
 
         #region HelperFunctions
 
-        private static Project ProjectFromSolution(DTE dte, string fullName)
+        private static Project ProjectFromSolution(string fullName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             bool Func(Project p) => p.FullName.Equals(new FileInfo(fullName).FullName, IgnoreCase);
-            return HelperFunctions.ProjectsInSolution(dte).FirstOrDefault(Func);
+            return HelperFunctions.ProjectsInSolution(_dteObject).FirstOrDefault(Func);
         }
 
         /// <summary>
@@ -712,19 +697,19 @@ namespace QtVsTools.Core
             }
         }
 
-        private static void CollapseFilter(DTE dte, VCProject project, string filterName)
+        private static void CollapseFilter(VCProject project, string filterName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var solutionExplorer = (UIHierarchy)dte.Windows.Item(Constants.vsext_wk_SProjectWindow).Object;
+            var solutionExplorer = (UIHierarchy)_dteObject.Windows.Item(Constants.vsext_wk_SProjectWindow).Object;
             if (solutionExplorer.UIHierarchyItems.Count == 0)
                 return;
 
-            dte.SuppressUI = true;
+            _dteObject.SuppressUI = true;
             var projectItem = FindProjectHierarchyItem(project, solutionExplorer);
             if (projectItem is not null)
                 CollapseFilter(projectItem, solutionExplorer, filterName);
-            dte.SuppressUI = false;
+            _dteObject.SuppressUI = false;
         }
 
         private static UIHierarchyItem FindProjectHierarchyItem(VCProject project, UIHierarchy hierarchy)
@@ -772,11 +757,11 @@ namespace QtVsTools.Core
             return false;
         }
 
-        private static bool SelectSolutionPlatform(DTE dte, string platformName)
+        private static bool SelectSolutionPlatform(string platformName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var solutionBuild = dte.Solution.SolutionBuild;
+            var solutionBuild = _dteObject.Solution.SolutionBuild;
             foreach (SolutionConfiguration solutionCfg in solutionBuild.SolutionConfigurations) {
                 if (solutionCfg.Name != solutionBuild.ActiveConfiguration.Name)
                     continue;
@@ -796,8 +781,8 @@ namespace QtVsTools.Core
             return false;
         }
 
-        private static void CreatePlatform(Project envPro, VCProject vcPro, DTE dte,
-            string oldPlatform, string newPlatform, VersionInformation viOld, VersionInformation viNew)
+        private static void CreatePlatform(Project envPro, VCProject vcPro, string oldPlatform,
+            string newPlatform, VersionInformation viOld, VersionInformation viNew)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -811,9 +796,9 @@ namespace QtVsTools.Core
                 // So we have to do it the nasty way...
                 var projectFileName = envPro.FullName;
                 envPro.Save(null);
-                dte.Solution.Remove(envPro);
+                _dteObject.Solution.Remove(envPro);
                 AddPlatformToVcProj(projectFileName, oldPlatform, newPlatform);
-                envPro = dte.Solution.AddFromFile(projectFileName);
+                envPro = _dteObject.Solution.AddFromFile(projectFileName);
                 vcPro = (VCProject)envPro.Object;
             }
 
@@ -827,7 +812,7 @@ namespace QtVsTools.Core
                 SetupConfiguration(config, viNew);
             }
 
-            SelectSolutionPlatform(dte, newPlatform);
+            SelectSolutionPlatform(newPlatform);
         }
 
         private static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)

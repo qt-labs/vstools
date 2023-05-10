@@ -16,7 +16,6 @@ namespace QtVsTools.Core
         public string PkgInstallPath { get; set; }
 
         public bool IsFlat { get; private set; }
-        private bool IsValid { get; set; }
 
         public string[] SourceFiles { get; private set; }
         public string[] HeaderFiles { get; private set; }
@@ -36,12 +35,12 @@ namespace QtVsTools.Core
 
         public bool ReadFile(string filePath)
         {
-            string output;
             try {
                 var exeFilePath = QMakeFileReaderPath;
                 if (!File.Exists(exeFilePath))
                     return false;
 
+                string output;
                 using (var process = new Process()) {
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.FileName = exeFilePath;
@@ -57,16 +56,14 @@ namespace QtVsTools.Core
                 StringReader stringReader = null;
                 try {
                     stringReader = new StringReader(output);
-                    using (var reader = new XmlTextReader(stringReader)) {
-                        stringReader = null;
-                        reader.ReadToFollowing("content");
-                        IsFlat = reader.GetAttribute("flat") == "true";
-                        IsValid = reader.GetAttribute("valid") == "true";
-                        SourceFiles = ReadFileElements(reader, "SOURCES");
-                        HeaderFiles = ReadFileElements(reader, "HEADERS");
-                        ResourceFiles = ReadFileElements(reader, "RESOURCES");
-                        FormFiles = ReadFileElements(reader, "FORMS");
-                    }
+                    using var reader = new XmlTextReader(stringReader);
+                    stringReader = null;
+                    reader.ReadToFollowing("content");
+                    IsFlat = reader.GetAttribute("flat") == "true";
+                    SourceFiles = ReadFileElements(reader, "SOURCES");
+                    HeaderFiles = ReadFileElements(reader, "HEADERS");
+                    ResourceFiles = ReadFileElements(reader, "RESOURCES");
+                    FormFiles = ReadFileElements(reader, "FORMS");
                 } finally {
                     stringReader?.Dispose();
                 }
@@ -86,14 +83,15 @@ namespace QtVsTools.Core
         private static string[] ReadFileElements(XmlReader reader, string tag)
         {
             var fileNames = new List<string>();
-            if (reader.ReadToFollowing(tag)) {
-                if (reader.ReadToDescendant("file")) {
-                    do {
-                        var fname = reader.ReadString();
-                        fileNames.Add(fname);
-                    } while (reader.ReadToNextSibling("file"));
-                }
-            }
+            if (!reader.ReadToFollowing(tag))
+                return fileNames.ToArray();
+
+            if (!reader.ReadToDescendant("file"))
+                return fileNames.ToArray();
+
+            do {
+                fileNames.Add(reader.ReadString());
+            } while (reader.ReadToNextSibling("file"));
             return fileNames.ToArray();
         }
     }
