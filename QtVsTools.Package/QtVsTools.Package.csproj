@@ -328,7 +328,6 @@
     <Compile Include="Editors\Editor.QtDesigner.cs" />
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
-    <Compile Include="Package\ExtLoader.cs" />
     <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -338,7 +337,6 @@
     <Compile Include="Options\QtVersionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Package\QMakeWrapper.cs" />
     <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
     <Compile Include="QML\Classification\QmlExpressionEvalClassifier.cs" />

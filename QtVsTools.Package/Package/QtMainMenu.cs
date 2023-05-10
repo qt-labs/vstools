@@ -96,10 +96,11 @@ namespace QtVsTools
                 QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
                 break;
             case QtMenus.Package.OpenProFile:
-                ExtLoader.ImportProFile();
+                ProjectImporter.ImportProFile(QtVsToolsPackage.Instance.Dte);
                 break;
             case QtMenus.Package.ImportPriFile:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte,
+                    QtVsToolsPackage.Instance.PkgInstallPath);
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();

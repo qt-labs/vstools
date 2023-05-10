@@ -134,13 +134,14 @@
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuildProject.cs" />
     <Compile Include="OutputWindowPane.cs" />
-    <Compile Include="ProjectImporter.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
       <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
+    <Compile Include="ProjectImport\ProjectImporter.cs" />
+    <Compile Include="ProjectImport\QMakeWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

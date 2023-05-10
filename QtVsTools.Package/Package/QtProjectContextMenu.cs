@@ -79,7 +79,8 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte,
+                    QtVsToolsPackage.Instance.PkgInstallPath);
                 break;
             case QtMenus.Package.lUpdateOnProject:
                 Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));

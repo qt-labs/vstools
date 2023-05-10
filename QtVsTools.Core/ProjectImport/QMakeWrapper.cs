@@ -8,11 +8,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
-namespace QtVsTools
+namespace QtVsTools.Core
 {
     public class QMakeWrapper
     {
         public string QtDir { get; set; }
+        public string PkgInstallPath { get; set; }
 
         public bool IsFlat { get; private set; }
         private bool IsValid { get; set; }
@@ -22,11 +23,10 @@ namespace QtVsTools
         public string[] ResourceFiles { get; private set; }
         public string[] FormFiles { get; private set; }
 
-        private static string LocateHelperExecutable(string exeName)
+        private string LocateHelperExecutable(string exeName)
         {
-            var path = QtVsToolsPackage.Instance.PkgInstallPath;
-            if (!string.IsNullOrEmpty(path) && File.Exists(path + exeName))
-                return path + exeName;
+            if (!string.IsNullOrEmpty(PkgInstallPath) && File.Exists(PkgInstallPath + exeName))
+                return PkgInstallPath + exeName;
             return null;
         }
 
