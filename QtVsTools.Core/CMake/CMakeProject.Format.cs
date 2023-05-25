@@ -109,9 +109,9 @@ namespace QtVsTools.Core.CMake
                     if (!CMakeListsParser.Parse(File.ReadAllText(listFilePath)).Any())
                         continue;
                     if (IsCompatible())
-                        return false;
+                        return true;
                     _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncompatibleProjectAsync);
-                    return true;
+                    return false;
                 } catch (ParseErrorException) {
                 }
             }
