@@ -37,7 +37,8 @@ namespace QtVsTools.Core.CMake
 
         private string EvalChecksum(JObject record)
         {
-            if (RecordInfo(record?.DeepClone() as JObject)?.Value is not JObject info)
+            record = record?.DeepClone() as JObject;
+            if (RecordInfo(record)?.Value is not JObject info)
                 return string.Empty;
             info.Remove("checksum");
             var json = record.ToString(Formatting.Indented);
