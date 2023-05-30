@@ -3,8 +3,10 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Workspace;
 using Microsoft.VisualStudio.Workspace.Indexing;
@@ -65,10 +67,17 @@ namespace QtVsTools.Core.CMake
         public static async Task ConvertAsync(string projectFolder)
         {
             var project = new CMakeProject(projectFolder);
-            if (project.TryLoadQtConfig())
+            if (project.TryLoadPresets())
                 return;
             await project.RefreshAsync();
         }
+
+        private static LazyFactory StaticLazy { get; } = new();
+        private LazyFactory Lazy { get; } = new();
+
+        private IWorkspace Project { get; }
+        private IIndexWorkspaceService3 Index { get; set; }
+        private IFileWatcherService FileWatcher { get; set; }
 
         private CMakeProject(IWorkspace projectFolder)
         {
@@ -83,8 +92,8 @@ namespace QtVsTools.Core.CMake
 
         private async Task LoadAsync()
         {
-            Index = Project.GetIndexWorkspaceService() as IIndexWorkspaceService3;
-            FileWatcher = Project.GetFileWatcherService();
+            Index = await Project.GetServiceAsync<IIndexWorkspaceService3>();
+            FileWatcher = await Project.GetServiceAsync<IFileWatcherService>();
             SubscribeEvents();
             await CheckQtStatusAsync();
         }
@@ -94,13 +103,6 @@ namespace QtVsTools.Core.CMake
             UnsubscribeEvents();
             await CloseMessagesAsync();
         }
-
-        private static LazyFactory StaticLazy { get; } = new();
-        private LazyFactory Lazy { get; } = new();
-
-        private IWorkspace Project { get; }
-        private IIndexWorkspaceService3 Index { get; set; }
-        private IFileWatcherService FileWatcher { get; set; }
 
         private string RootListsPath => Path.Combine(RootPath, "CMakeLists.txt");
         private string PresetsPath => Path.Combine(RootPath, "CMakePresets.json");
@@ -121,6 +123,17 @@ namespace QtVsTools.Core.CMake
         private JObject Presets { get; set; }
         private JObject UserPresets { get; set; }
 
+        IEnumerable<string> ListFiles()
+        {
+            string[] lists = Array.Empty<string>();
+            try {
+                lists = Directory.GetFiles(RootPath, "CMakeLists.txt", SearchOption.AllDirectories);
+            } catch (Exception ex) {
+                ex.Log();
+            }
+            return lists;
+        }
+
         private Parser CMakeListsParser => Lazy.Get(() => CMakeListsParser, () =>
         {
             var cmakeListsParser
@@ -129,5 +142,40 @@ namespace QtVsTools.Core.CMake
                 & new Token("qt_version", "Qt" & CharSet['5', '6']) & ~CharWord;
             return cmakeListsParser.Render(HorizSpace);
         });
+
+        private bool HasQtReference(IEnumerable<string> listFiles)
+        {
+            foreach (var listFile in listFiles) {
+                var listFilePath = Path.Combine(RootPath, listFile);
+                if (!File.Exists(listFilePath))
+                    continue;
+                try {
+                    if (!CMakeListsParser.Parse(File.ReadAllText(listFilePath)).Any())
+                        continue;
+                    if (IsCompatible())
+                        return true;
+                    _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncompatibleProjectAsync);
+                    return false;
+                } catch (ParseErrorException) {
+                }
+            }
+            return false;
+        }
+
+        private bool IsCompatible()
+        {
+            return !File.Exists(SettingsPath);
+        }
+
+        private static bool IsProjectFile(string path)
+        {
+            return ProjectFileNames.Contains(Path.GetFileName(path));
+        }
+
+        private bool IsAutoConfigurable()
+        {
+            var configs = Presets?["configurePresets"]?.Cast<JObject>();
+            return configs == null || configs.All(x => x["hidden"] is JValue y && y.Value<bool>());
+        }
     }
 }

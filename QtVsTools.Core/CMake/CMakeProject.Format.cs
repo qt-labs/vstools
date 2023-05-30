@@ -4,18 +4,14 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.CMake
 {
-    using static SyntaxAnalysis.RegExpr;
-
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         private enum QtStatus { False, NullPresets, ConversionPending, True }
@@ -37,26 +33,20 @@ namespace QtVsTools.Core.CMake
 
         private async Task StateMachineAsync()
         {
-            string[] lists;
-            try {
-                lists = Directory.GetFiles(RootPath, "CMakeLists.txt", SearchOption.AllDirectories);
-            } catch (Exception ex) {
-                ex.Log();
-                return;
-            }
+            var lists = ListFiles();
 
             switch (Status) {
             case QtStatus.False:
             case QtStatus.NullPresets:
                 if (HasQtReference(lists))
-                    Status = TryLoadQtConfig() ? QtStatus.True : QtStatus.ConversionPending;
+                    Status = TryLoadPresets() ? QtStatus.True : QtStatus.ConversionPending;
                 break;
             case QtStatus.ConversionPending:
                 return;
             case QtStatus.True:
                 if (!HasQtReference(lists))
                     Status = QtStatus.False;
-                else if (!TryLoadQtConfig())
+                else if (!TryLoadPresets())
                     Status = QtStatus.ConversionPending;
                 break;
             }
@@ -99,40 +89,6 @@ namespace QtVsTools.Core.CMake
                 await Index.InvalidateFileScannerCache();
         }
 
-        private bool HasQtReference(IEnumerable<string> listFiles)
-        {
-            foreach (var listFile in listFiles) {
-                var listFilePath = Path.Combine(RootPath, listFile);
-                if (!File.Exists(listFilePath))
-                    continue;
-                try {
-                    if (!CMakeListsParser.Parse(File.ReadAllText(listFilePath)).Any())
-                        continue;
-                    if (IsCompatible())
-                        return true;
-                    _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncompatibleProjectAsync);
-                    return false;
-                } catch (ParseErrorException) {
-                }
-            }
-            return false;
-        }
-
-        private bool TryLoadQtConfig()
-        {
-            if (File.Exists(PresetsPath))
-                Presets = JObject.Parse(File.ReadAllText(PresetsPath));
-            else
-                Presets = NullPresets.DeepClone() as JObject;
-            if (File.Exists(UserPresetsPath))
-                UserPresets = JObject.Parse(File.ReadAllText(UserPresetsPath));
-            else
-                UserPresets = NullPresets.DeepClone() as JObject;
-
-            return Presets?["vendor"]?["qt-project.org/Presets"] != null
-                || UserPresets?["vendor"]?["qt-project.org/Presets"] != null;
-        }
-
         private bool SaveIfRequired()
         {
             var isDirty = false;
@@ -166,22 +122,6 @@ namespace QtVsTools.Core.CMake
                 File.WriteAllText(UserPresetsPath, UserPresets.ToString(Formatting.Indented));
             }
             return isDirty;
-        }
-
-        private bool IsCompatible()
-        {
-            return !File.Exists(SettingsPath);
-        }
-
-        private static bool IsProjectFile(string path)
-        {
-            return ProjectFileNames.Contains(Path.GetFileName(path));
-        }
-
-        private bool IsAutoConfigurable()
-        {
-            var configs = Presets?["configurePresets"]?.Cast<JObject>();
-            return configs == null || configs.All(x => x["hidden"] is JValue y && y.Value<bool>());
         }
     }
 }

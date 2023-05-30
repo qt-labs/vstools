@@ -3,6 +3,7 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -13,6 +14,21 @@ namespace QtVsTools.Core.CMake
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
+        private bool TryLoadPresets()
+        {
+            if (File.Exists(PresetsPath))
+                Presets = JObject.Parse(File.ReadAllText(PresetsPath));
+            else
+                Presets = NullPresets.DeepClone() as JObject;
+            if (File.Exists(UserPresetsPath))
+                UserPresets = JObject.Parse(File.ReadAllText(UserPresetsPath));
+            else
+                UserPresets = NullPresets.DeepClone() as JObject;
+
+            return Presets?["vendor"]?["qt-project.org/Presets"] != null
+                || UserPresets?["vendor"]?["qt-project.org/Presets"] != null;
+        }
+
         private void CheckQtPresets()
         {
             Presets["configurePresets"] ??= new JArray();
