@@ -111,6 +111,7 @@
     <Compile Include="CMake\CMakeProject.Format.cs" />
     <Compile Include="CMake\CMakeProject.Messages.cs" />
     <Compile Include="CMake\CMakeProject.cs" />
+    <Compile Include="CMake\CMakeProject.Variables.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />
