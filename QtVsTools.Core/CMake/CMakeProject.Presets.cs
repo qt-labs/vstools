@@ -3,6 +3,8 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -84,7 +86,7 @@ namespace QtVsTools.Core.CMake
                     Self = x,
                     IsDefault = x["vendor"]?["qt-project.org/Default"] is not null,
                     Name = x?["name"]?.Value<string>(),
-                    InheritsDefault = x?["inherits"]?.Value<string>() == defaultVersion
+                    InheritsDefault = PresetInherits(x).Any(y => y == defaultVersion)
                 })
                 .FirstOrDefault(x => x.IsDefault);
             if (defaultPreset is not { Name: "Qt-Default", InheritsDefault: true }) {
@@ -100,6 +102,19 @@ namespace QtVsTools.Core.CMake
                     }
                 });
             }
+        }
+
+        private IEnumerable<string> PresetInherits(JToken presetToken)
+        {
+            if (presetToken is not JObject preset)
+                return Array.Empty<string>();
+            if (preset["inherits"] is not { } inherits)
+                return Array.Empty<string>();
+            if (inherits is JValue inheritsValue)
+                return new[] { inheritsValue.Value<string>() };
+            if (inherits is JArray inheritsValues)
+                return inheritsValues.Values<string>();
+            return Array.Empty<string>();
         }
 
         private void CheckQtVersions()
