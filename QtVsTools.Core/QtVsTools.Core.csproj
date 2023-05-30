@@ -105,6 +105,7 @@
   // -->
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
+    <Compile Include="CMake\CMakeProject.Debug.cs" />
     <Compile Include="CMake\CMakeProject.Presets.cs" />
     <Compile Include="CMake\CMakeProject.Records.cs" />
     <Compile Include="CMake\CMakeProject.Events.cs" />

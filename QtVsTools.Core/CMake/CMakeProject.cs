@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Workspace;
+using Microsoft.VisualStudio.Workspace.Debug;
 using Microsoft.VisualStudio.Workspace.Indexing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -79,6 +80,8 @@ namespace QtVsTools.Core.CMake
         private IWorkspace Project { get; }
         private IIndexWorkspaceService3 Index { get; set; }
         private IFileWatcherService FileWatcher { get; set; }
+        private IProjectConfigurationService2 Config { get; set; }
+        private ILaunchDebugService2 Debug { get; set; }
 
         private CMakeProject(IWorkspace projectFolder)
         {
@@ -95,6 +98,8 @@ namespace QtVsTools.Core.CMake
         {
             Index = await Project.GetServiceAsync<IIndexWorkspaceService3>();
             FileWatcher = await Project.GetServiceAsync<IFileWatcherService>();
+            Config = await Project.GetServiceAsync<IProjectConfigurationService2>();
+            Debug = await Project.GetServiceAsync<ILaunchDebugService2>();
             SubscribeEvents();
             await CheckQtStatusAsync();
         }
@@ -161,6 +166,11 @@ namespace QtVsTools.Core.CMake
                 }
             }
             return false;
+        }
+
+        private bool HasQmlReference()
+        {
+            return !string.IsNullOrEmpty(this[Cache.QtDir, "Qml"]);
         }
 
         private bool IsCompatible()

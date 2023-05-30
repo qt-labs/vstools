@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Workspace.Debug;
 using Microsoft.VisualStudio.Workspace.Indexing;
 
 namespace QtVsTools.Core.CMake
@@ -17,12 +18,14 @@ namespace QtVsTools.Core.CMake
         {
             FileWatcher.OnFileSystemChanged += OnFileSystemChangedAsync;
             Index.OnFileScannerCompleted += OnFileScannerCompletedAsync;
+            Index.OnFileEntityChanged += OnFileEntityChangedAsync;
         }
 
         private void UnsubscribeEvents()
         {
             FileWatcher.OnFileSystemChanged -= OnFileSystemChangedAsync;
             Index.OnFileScannerCompleted -= OnFileScannerCompletedAsync;
+            Index.OnFileEntityChanged -= OnFileEntityChangedAsync;
         }
 
         private async Task OnFileSystemChangedAsync(object sender, FileSystemEventArgs args)
@@ -33,7 +36,6 @@ namespace QtVsTools.Core.CMake
 
         private async Task OnFileScannerCompletedAsync(object sender, FileScannerEventArgs args)
         {
-            await Task.Yield();
             if (Status != QtStatus.True)
                 return;
             if (!args.TryGetContent<IReadOnlyCollection<FileDataValue>>(out var values))
@@ -42,6 +44,22 @@ namespace QtVsTools.Core.CMake
                 return;
 
             RefreshVariables(values);
+            if (!Variables.Any())
+                return;
+
+            if (values.FirstOrDefault(item => item.Type == DebugLaunchActionContext.ContextTypeGuid
+                && item.Name.Equals("IsDefaultStartupProject")) is not { } defaultStartup) {
+                return;
+            }
+            await AddLaunchSettingsAsync(defaultStartup.Target);
+        }
+
+        private async Task OnFileEntityChangedAsync(object sender, FileEntityChangedEventArgs args)
+        {
+            if (Status != QtStatus.True)
+                return;
+            if (args.Path.Equals(@".vs\launch.vs.json", Utils.IgnoreCase))
+                await SelectLaunchSettingsAsync();
         }
     }
 }
