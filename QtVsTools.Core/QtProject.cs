@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools.Core
 {
     using QtMsBuild;
+    using static Instances;
     using static Utils;
 
     /// <summary>
@@ -129,12 +130,39 @@ namespace QtVsTools.Core
             return null;
         }
 
+        public string QtVersion
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return VersionManager.GetProjectQtVersion(VcProject.Object as Project);
+            }
+        }
+
         public ProjectFormat.Version FormatVersion
         {
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
                 return ProjectFormat.GetVersion(VcProject);
+            }
+        }
+
+        public string InstallPath
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return VersionManager.GetInstallPath(VcProject.Object as Project);
+            }
+        }
+
+        public VersionInformation VersionInfo
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return VersionManager.GetVersionInfo(QtVersion);
             }
         }
 
