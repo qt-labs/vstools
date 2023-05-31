@@ -30,8 +30,6 @@ namespace QtVsTools.Core
         private static readonly Dictionary<Project, QtProject> instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
-        public static VisualStudio.IProjectTracker ProjectTracker { get; set; }
-
         public static QtProject Create(VCProject vcProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

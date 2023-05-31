@@ -162,7 +162,6 @@
     <Compile Include="VcPropertyStorageProvider.cs" />
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
-    <Compile Include="VisualStudio\IProjectTracker.cs" />
     <Compile Include="VisualStudio\StatusBar.cs" />
     <Compile Include="VisualStudio\VsSearch.cs" />
     <Compile Include="VisualStudio\VsServiceProvider.cs" />

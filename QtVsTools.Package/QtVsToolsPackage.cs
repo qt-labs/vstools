@@ -75,7 +75,7 @@ namespace QtVsTools
     [ProvideOptionPage(typeof(Options.QtVersionsPage),
         "Qt", "Versions", 0, 0, true, Sort = 1)]
 
-    public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
+    public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {
         public DTE Dte { get; private set; }
         public string PkgInstallPath { get; private set; }
@@ -112,7 +112,6 @@ namespace QtVsTools
             try {
                 var initTimer = Stopwatch.StartNew();
                 VsServiceProvider.Instance = instance = this;
-                QtProject.ProjectTracker = this;
 
                 // determine the package installation directory
                 var uri = new Uri(System.Reflection.Assembly
@@ -487,12 +486,6 @@ namespace QtVsTools
             where I : class
         {
             return await GetServiceAsync(typeof(T)) as I;
-        }
-
-        void IProjectTracker.AddProject(Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            QtProjectTracker.Add(project);
         }
 
         private static async Task<string> GetLatestDevelopmentReleaseAsync()
