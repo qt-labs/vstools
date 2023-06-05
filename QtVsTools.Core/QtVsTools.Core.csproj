@@ -128,7 +128,7 @@
     <Compile Include="Common\PunisherQueue.cs" />
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
-    <Compile Include="CxxStreamReader.cs" />
+    <Compile Include="CxxStream.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />

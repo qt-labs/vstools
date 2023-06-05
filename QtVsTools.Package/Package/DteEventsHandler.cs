@@ -232,8 +232,8 @@ namespace QtVsTools
                     if (pcHeaderThrough != null) {
                         var pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
                         if (vcFileName.EndsWith(pcHeaderCreator, IgnoreCase)
-                            && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \""
-                            + pcHeaderThrough + "\"", IgnoreCase, false)) {
+                            && CxxStream.ContainsNotCommented(vcFile,
+                                $"#include \"{pcHeaderThrough}\"", IgnoreCase, false)) {
                             //File is used to create precompiled headers
                             QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
                             return;

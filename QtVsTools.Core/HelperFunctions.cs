@@ -159,7 +159,7 @@ namespace QtVsTools.Core
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxFileContainsNotCommented(file,
+            return CxxStream.ContainsNotCommented(file,
                 new[]
                 {
                     "Q_OBJECT",
@@ -167,55 +167,6 @@ namespace QtVsTools.Core
                     "Q_NAMESPACE"
                 },
                 StringComparison.Ordinal, true);
-        }
-
-        public static bool CxxFileContainsNotCommented(VCFile file, string str,
-            StringComparison comparisonType, bool suppressStrings)
-        {
-            return CxxFileContainsNotCommented(file, new[] { str }, comparisonType, suppressStrings);
-        }
-
-        public static bool CxxFileContainsNotCommented(VCFile file, string[] searchStrings,
-            StringComparison comparisonType, bool suppressStrings)
-        {
-            // Small optimization, we first read the whole content as a string and look for the
-            // search strings. Once we found at least one, ...
-            bool found = false;
-            var content = string.Empty;
-            try {
-                using (StreamReader sr = new StreamReader(file.FullPath))
-                    content = sr.ReadToEnd();
-
-                foreach (var key in searchStrings) {
-                    if (content.IndexOf(key, comparisonType) >= 0) {
-                        found = true;
-                        break;
-                    }
-                }
-            } catch { }
-
-            if (!found)
-                return false;
-
-            // ... we will start parsing the file again to see if the actual string is commented
-            // or not. The combination of string.IndexOf(...) and string.Split(...) seems to be
-            // way faster then reading the file line by line.
-            found = false;
-            try {
-                var cxxSr = new CxxStreamReader(content.Split(new[] { "\n", "\r\n" },
-                    StringSplitOptions.RemoveEmptyEntries));
-                while (!found && cxxSr.ReadLine(suppressStrings) is {} strLine) {
-                    foreach (var str in searchStrings) {
-                        if (strLine.IndexOf(str, comparisonType) != -1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception exception) {
-                exception.Log();
-            }
-            return found;
         }
 
         /// <summary>
