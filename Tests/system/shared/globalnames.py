@@ -20,3 +20,5 @@ msvs_Not_now_maybe_later_Label = {"container": microsoft_Visual_Studio_Window, "
 Initializing_MenuItem = {"text": RegularExpression(".*Initializing...$"), "type": "MenuItem"}
 pART_Popup_New_MenuItem = {"text": "New", "type": "MenuItem"}
 pART_Popup_Project_MenuItem = {"text": "Project...", "type": "MenuItem"}
+msvs_Account_Settings_Window = {"text": "Microsoft Visual Studio Account Settings", "type": "Window"}
+msvs_Account_Close_Button = {"container": msvs_Account_Settings_Window, "text": "Close", "type": "Button"}

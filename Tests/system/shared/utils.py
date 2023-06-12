@@ -35,6 +35,12 @@ def startAppGetVersion(waitForInitialDialogs=False):
         except:
             pass
     mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
+    try:
+        if version == "2022":
+            # If it appears, close the "Sign in" nagscreen.
+            clickButton(waitForObject(globalnames.msvs_Account_Close_Button, 10000))
+    except:
+        pass
     return version
 
 
