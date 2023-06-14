@@ -221,12 +221,12 @@ namespace QtVsTools.Core
             TranslateFilterNames(qtProject.VCProject);
 
             // collapse the generated files/resources filters afterwards
-            CollapseFilter(dte, qtProject.Project, Filters.ResourceFiles().Name);
-            CollapseFilter(dte, qtProject.Project, Filters.GeneratedFiles().Name);
+            CollapseFilter(dte, qtProject.VcProject, Filters.ResourceFiles().Name);
+            CollapseFilter(dte, qtProject.VcProject, Filters.GeneratedFiles().Name);
 
             try {
                 // save the project after modification
-                qtProject.Project.Save(null);
+                qtProject.VcProject.Save();
             } catch { /* ignore */ }
         }
 
@@ -626,7 +626,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private static void CollapseFilter(DTE dte, Project project, string filterName)
+        private static void CollapseFilter(DTE dte, VCProject project, string filterName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -641,7 +641,7 @@ namespace QtVsTools.Core
             dte.SuppressUI = false;
         }
 
-        private static UIHierarchyItem FindProjectHierarchyItem(Project project, UIHierarchy hierarchy)
+        private static UIHierarchyItem FindProjectHierarchyItem(VCProject project, UIHierarchy hierarchy)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -658,7 +658,7 @@ namespace QtVsTools.Core
             return projectItem;
         }
 
-        private static UIHierarchyItem FindProjectHierarchyItem(Project project, UIHierarchyItem root)
+        private static UIHierarchyItem FindProjectHierarchyItem(VCProject project, UIHierarchyItem root)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
