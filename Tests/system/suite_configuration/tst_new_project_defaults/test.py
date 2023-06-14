@@ -28,26 +28,12 @@
 
 # -*- coding: utf-8 -*-
 
-source("../../shared/testsection.py")
 source("../../shared/utils.py")
 source("../shared/scripts/config_utils.py")
 
 import os
-import sys
 
-from newprojectdialog import NewProjectDialog
 import names
-
-
-def getExpectedName(templateName):
-    if templateName == "Qt ActiveQt Server":
-        return "ActiveQtServer"
-    elif templateName == "Qt Designer Custom Widget":
-        return "QtDesignerWidget"
-    elif templateName == "Qt Empty Application":
-        return "QtApplication"
-    else:
-        return templateName.replace(" ", "")
 
 
 def testNewProjectDialog(version, templateName, expectedName):
@@ -65,7 +51,6 @@ def testNewProjectDialog(version, templateName, expectedName):
         test.compare(waitForObjectExists(names.outputPathTextBlock_Label).text,
                      'Project will be created in "%s"'
                      % os.path.join(projectLocation, solutionName, projectName, ""))
-    return projectName
 
 
 def testWizardPage1(expectedText, templateName):
@@ -104,53 +89,4 @@ def testWizardPage3(expectedText, projectName):
 
 
 def main():
-    qtDirs = readQtDirs()
-    if not qtDirs:
-        test.fatal("No Qt versions known", "Did you set SQUISH_VSTOOLS_QTDIRS correctly?")
-        return
-    version = startAppGetVersion()
-    if not version:
-        return
-    if not configureQtVersions(version, qtDirs):
-        closeMainWindow()
-        return
-
-    with NewProjectDialog() as dialog:
-        dialog.filterForQtProjects()
-        for listItem, templateName in dialog.getListedTemplates():
-            with TestSection(templateName):
-                mouseClick(waitForObject(listItem))
-                expectedName = getExpectedName(templateName)
-                clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
-                projectName = testNewProjectDialog(version, templateName, expectedName)
-                clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
-                try:
-                    expectedText = "Welcome to the %s Wizard" % templateName
-                    # work around issue fixed in
-                    # https://codereview.qt-project.org/c/qt-labs/vstools/+/473682
-                    if templateName == "Qt Designer Custom Widget":
-                        expectedText = "Welcome to the Qt Custom Designer Widget"
-                    testWizardPage1(expectedText, templateName)
-                    clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                    testWizardPage2(expectedText, qtDirs)
-                    if templateName in ["Qt ActiveQt Server", "Qt Class Library",
-                                        "Qt Designer Custom Widget", "Qt Widgets Application"]:
-                        clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                        testWizardPage3(expectedText, projectName)
-                    else:
-                        test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
-                except:
-                    eInfo = sys.exc_info()
-                    test.fatal("Exception caught", "%s: %s" % (eInfo[0].__name__, eInfo[1]))
-                finally:
-                    # Cannot finish because of SQUISH-15876
-                    try:
-                        clickButton(waitForObject(names.qt_Wizard_Cancel_Button, 2000))
-                    except:
-                        test.warning("Could not click wizard's 'Cancel' button. "
-                                     "Falling back to using Escape key.")
-                        nativeType("<Escape>")
-            dialog.goBack()
-
-    clearQtVersions(version)
-    closeMainWindow()
+    testAllQtWizards(testNewProjectDialog, testWizardPage1, testWizardPage2, testWizardPage3)
