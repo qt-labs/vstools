@@ -147,6 +147,8 @@ def main():
                     try:
                         clickButton(waitForObject(names.qt_Wizard_Cancel_Button, 2000))
                     except:
+                        test.warning("Could not click wizard's 'Cancel' button. "
+                                     "Falling back to using Escape key.")
                         nativeType("<Escape>")
             dialog.goBack()
 
