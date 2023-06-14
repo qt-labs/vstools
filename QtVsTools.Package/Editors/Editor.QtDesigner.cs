@@ -55,11 +55,11 @@ namespace QtVsTools.Editors
                     var latestWriteTime = File.GetLastWriteTime(filePath);
                     if (lastWriteTime != latestWriteTime) {
                         lastWriteTime = latestWriteTime;
-                        await QtProjectIntellisense.RefreshAsync(project, projectPath);
+                        await QtProjectIntellisense.RefreshAsync(projectPath);
                     }
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
-                    await QtProjectIntellisense.RefreshAsync(project, projectPath);
+                    await QtProjectIntellisense.RefreshAsync(projectPath);
                 }
             });
         }

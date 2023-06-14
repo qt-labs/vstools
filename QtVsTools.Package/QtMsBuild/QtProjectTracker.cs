@@ -58,24 +58,20 @@ namespace QtVsTools.QtMsBuild
 
         public static bool IsTracked(string projectPath)
         {
-            return Instances.ContainsKey(projectPath);
+            return !string.IsNullOrEmpty(projectPath) && Instances.ContainsKey(projectPath);
         }
 
         public static void Add(EnvDTE.Project project)
         {
-            if (!QtVsToolsPackage.Instance.Options.ProjectTracking)
+            if (project == null || !QtVsToolsPackage.Instance.Options.ProjectTracking)
                 return;
 
             ThreadHelper.ThrowIfNotOnUIThread();
-            Get(project, project.FullName);
-        }
-
-        public static QtProjectTracker Get(EnvDTE.Project project, string projectPath)
-        {
             lock (StaticCriticalSection) {
-                if (Instances.TryGetValue(projectPath, out QtProjectTracker tracker))
-                    return tracker;
-                tracker = new QtProjectTracker
+                var projectPath = project.FullName;
+                if (IsTracked(projectPath))
+                    return;
+                var tracker = new QtProjectTracker
                 {
                     Project = project,
                     ProjectPath = projectPath
@@ -83,8 +79,22 @@ namespace QtVsTools.QtMsBuild
                 Instances[projectPath] = tracker;
                 InitQueue.Enqueue(tracker);
                 InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
-                return tracker;
             }
+        }
+
+        /// <summary>
+        /// Tries to return the Qt project tracker the project belongs to.
+        /// </summary>
+        /// <param name="projectPath">The tracked project.</param>
+        /// <returns><see langword="null" /> if the project is not tracked or project
+        /// tracking is disabled by the user (via settings).</returns>
+        public static QtProjectTracker Get(string projectPath)
+        {
+            if (string.IsNullOrEmpty(projectPath))
+                return null;
+            if (!QtVsToolsPackage.Instance.Options.ProjectTracking)
+                return null;
+            return Instances.TryGetValue(projectPath, out var tracker) ? tracker : null;
         }
 
         public static void Reset()

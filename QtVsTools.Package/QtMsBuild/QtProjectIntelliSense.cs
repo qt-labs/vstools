@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 
 using Task = System.Threading.Tasks.Task;
@@ -20,34 +19,30 @@ namespace QtVsTools.QtMsBuild
     static class QtProjectIntellisense
     {
         public static void Refresh(
-            EnvDTE.Project project,
+            string projectPath,
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (project == null || !QtProjectTracker.IsTracked(project.FullName))
+            if (!QtProjectTracker.IsTracked(projectPath))
                 return;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Refreshing: [{configId ?? "(all configs)"}] {project.FullName}");
+                    + $"Refreshing: [{configId ?? "(all configs)"}] {projectPath}");
             }
-            string projectPath = project.FullName;
-            _ = Task.Run(() => RefreshAsync(project, projectPath, configId, selectedFiles));
+            _ = Task.Run(() => RefreshAsync(projectPath, configId, selectedFiles));
         }
 
         public static async Task RefreshAsync(
-            EnvDTE.Project project,
             string projectPath,
             string configId = null,
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            if (project == null || !QtProjectTracker.IsTracked(projectPath))
+            if (!QtProjectTracker.IsTracked(projectPath))
                 return;
-            var tracker = QtProjectTracker.Get(project, projectPath);
+            var tracker = QtProjectTracker.Get(projectPath);
             await tracker.Initialized;
 
             var properties = new Dictionary<string, string>();
@@ -70,10 +65,10 @@ namespace QtVsTools.QtMsBuild
             foreach (var config in configs) {
                 if (refreshQtVars) {
                     await QtProjectBuild.StartBuildAsync(
-                        project, projectPath, config, properties, targets,
+                        projectPath, config, properties, targets,
                         LoggerVerbosity.Quiet);
                 } else {
-                    await QtProjectBuild.SetOutdatedAsync(project, projectPath, config);
+                    await QtProjectBuild.SetOutdatedAsync(projectPath, config);
                 }
             }
         }

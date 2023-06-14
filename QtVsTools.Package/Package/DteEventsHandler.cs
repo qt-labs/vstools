@@ -394,7 +394,8 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    QtProjectIntellisense.Refresh(project);
+                    QtProjectTracker.Add(project);
+                    QtProjectIntellisense.Refresh(project.FullName);
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
@@ -447,7 +448,7 @@ namespace QtVsTools
             if (formatVersion >= ProjectFormat.Version.V3) {
                 InitializeVCProject(project);
                 QtProjectTracker.Add(project);
-                QtProjectIntellisense.Refresh(project);
+                QtProjectIntellisense.Refresh(project.FullName);
             }
 
             if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
@@ -548,8 +549,8 @@ namespace QtVsTools
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
             if (item is VCConfiguration {project: VCProject {Object: Project project}} vcConfig) {
-                QtProjectIntellisense.Refresh(
-                    QtProjectTracker.Get(project, project.FullName).Project, vcConfig.Name);
+                QtProjectTracker.Add(project);
+                QtProjectIntellisense.Refresh(project.FullName, vcConfig.Name);
             }
         }
 

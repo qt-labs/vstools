@@ -18,7 +18,6 @@ using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 
-using Project = EnvDTE.Project;
 using Thread = System.Threading.Thread;
 
 namespace QtVsTools.QtMsBuild
@@ -49,7 +48,6 @@ namespace QtVsTools.QtMsBuild
             StatusCenter, VsServiceProvider
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
-        Project Project { get; set; }
         VCProject VcProject { get; set; }
         UnconfiguredProject UnconfiguredProject { get; set; }
         ConfiguredProject ConfiguredProject { get; set; }
@@ -60,37 +58,31 @@ namespace QtVsTools.QtMsBuild
         static Task BuildDispatcher { get; set; }
 
         public static void StartBuild(
-            Project project,
             string projectPath,
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
-            if (project == null)
-                throw new ArgumentException("Project cannot be null.");
-            if (configName == null)
-                throw new ArgumentException("Configuration name cannot be null.");
-
             _ = Task.Run(() => StartBuildAsync(
-                project, projectPath, configName, properties, targets, verbosity));
+                projectPath, configName, properties, targets, verbosity));
         }
 
         public static async Task StartBuildAsync(
-            Project project,
             string projectPath,
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity)
         {
-            if (project == null)
+            if (string.IsNullOrEmpty(projectPath))
                 throw new ArgumentException("Project cannot be null.");
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
-
+            if (!QtProjectTracker.IsTracked(projectPath))
+                return;
             RequestTimer.Restart();
-            var tracker = QtProjectTracker.Get(project, projectPath);
+            var tracker = QtProjectTracker.Get(projectPath);
             await tracker.Initialized;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
@@ -116,7 +108,6 @@ namespace QtVsTools.QtMsBuild
 
             BuildQueue.Enqueue(new QtProjectBuild
             {
-                Project = project,
                 VcProject = tracker.VcProject,
                 UnconfiguredProject = tracker.UnconfiguredProject,
                 ConfiguredProject = configuredProject,
@@ -130,13 +121,11 @@ namespace QtVsTools.QtMsBuild
         }
 
         public static async Task SetOutdatedAsync(
-            Project project,
             string projectPath,
             string configName,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             await StartBuildAsync(
-                project,
                 projectPath,
                 configName,
                 null,

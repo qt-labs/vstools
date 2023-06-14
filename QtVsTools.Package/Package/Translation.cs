@@ -117,7 +117,7 @@ namespace QtVsTools
 
             var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
             QtProjectBuild.StartBuild(
-                project, project.FullName, activeConfigId, properties, new[] { "QtTranslation" });
+                project.FullName, activeConfigId, properties, new[] { "QtTranslation" });
         }
 
         public static void RunlUpdate(EnvDTE.Solution solution)
