@@ -24,7 +24,7 @@ namespace QtVsTools.Core
     /// </summary>
     public class QtProject
     {
-        private static readonly Dictionary<Project, QtProject> instances = new();
+        private static readonly Dictionary<Project, QtProject> Instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
         public static QtProject Create(VCProject vcProject)
@@ -36,16 +36,16 @@ namespace QtVsTools.Core
         public static QtProject Create(Project project)
         {
             QtProject qtProject = null;
-            if (project != null && !instances.TryGetValue(project, out qtProject)) {
+            if (project != null && !Instances.TryGetValue(project, out qtProject)) {
                 qtProject = new QtProject(project);
-                instances.Add(project, qtProject);
+                Instances.Add(project, qtProject);
             }
             return qtProject;
         }
 
         public static void ClearInstances()
         {
-            instances.Clear();
+            Instances.Clear();
         }
 
         private QtProject(Project project)
