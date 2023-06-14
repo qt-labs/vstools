@@ -26,7 +26,6 @@ namespace QtVsTools.Core
     {
         private DTE dte;
         private Project envPro;
-        private VCProject vcPro;
         private static readonly Dictionary<Project, QtProject> instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
@@ -59,11 +58,11 @@ namespace QtVsTools.Core
                 throw new QtVSException("Cannot construct a QtProject object without a valid project.");
             envPro = project;
             dte = envPro.DTE;
-            vcPro = envPro.Object as VCProject;
+            VcProject = envPro.Object as VCProject;
             qtMsBuild = new QtMsBuildContainer(new VcPropertyStorageProvider());
         }
 
-        public VCProject VCProject => vcPro;
+        public VCProject VcProject { get; }
 
         public Project Project => envPro;
 
@@ -110,8 +109,8 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!isQtMsBuildEnabled.HasValue) {
-                if (vcPro != null)
-                    isQtMsBuildEnabled = IsQtMsBuildEnabled(vcPro);
+                if (VcProject != null)
+                    isQtMsBuildEnabled = IsQtMsBuildEnabled(VcProject);
                 else if (envPro != null)
                     isQtMsBuildEnabled = IsQtMsBuildEnabled(envPro);
                 else
@@ -142,7 +141,7 @@ namespace QtVsTools.Core
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return ProjectFormat.GetVersion(VCProject);
+                return ProjectFormat.GetVersion(VcProject);
             }
         }
 
@@ -204,7 +203,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
+            if (ProjectFormat.GetVersion(VcProject) >= ProjectFormat.Version.V3) {
                 file.ItemType = QtUic.ItemTypeName;
             } else {
                 // TODO: It would be nice if we can inform the user he's on an old project.
@@ -221,7 +220,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
+            if (ProjectFormat.GetVersion(VcProject) >= ProjectFormat.Version.V3) {
                 file.ItemType = QtMoc.ItemTypeName;
                 if (!HelperFunctions.IsSourceFile(file.FullPath))
                     return;
@@ -329,7 +328,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (ProjectFormat.GetVersion(VCProject) >= ProjectFormat.Version.V3) {
+            if (ProjectFormat.GetVersion(VcProject) >= ProjectFormat.Version.V3) {
                 qrcFile.ItemType = QtRcc.ItemTypeName;
             } else {
                 // TODO: It would be nice if we can inform the user he's on an old project.
@@ -450,7 +449,7 @@ namespace QtVsTools.Core
                 if (file.ItemType == "CustomBuild")
                     RemoveMocStepCustomBuild(file);
             } else {
-                foreach (VCFile vcFile in (IVCCollection)vcPro.Files) {
+                foreach (VCFile vcFile in (IVCCollection)VcProject.Files) {
                     switch (vcFile.ItemType) {
                     case QtMoc.ItemTypeName when IsCppMocFileQtMsBuild(vcFile, file):
                         RemoveMocStepQtMsBuild(vcFile);
@@ -573,10 +572,10 @@ namespace QtVsTools.Core
         {
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
             if (!HelperFunctions.IsAbsoluteFilePath(fileName)) {
-                fileName = HelperFunctions.NormalizeFilePath(vcPro.ProjectDirectory
+                fileName = HelperFunctions.NormalizeFilePath(VcProject.ProjectDirectory
                     + Path.DirectorySeparatorChar + fileName);
             }
-            foreach (VCFile f in (IVCCollection)vcPro.Files) {
+            foreach (VCFile f in (IVCCollection)VcProject.Files) {
                 if (f.FullPath.Equals(fileName, IgnoreCase))
                     return f;
             }
@@ -592,7 +591,7 @@ namespace QtVsTools.Core
         public IEnumerable<VCFile> GetFilesFromProject(string fileName)
         {
             var fi = new FileInfo(HelperFunctions.NormalizeRelativeFilePath(fileName));
-            foreach (VCFile f in (IVCCollection)vcPro.Files) {
+            foreach (VCFile f in (IVCCollection)VcProject.Files) {
                 if (f.Name.Equals(fi.Name, IgnoreCase))
                     yield return f;
             }
@@ -646,7 +645,7 @@ namespace QtVsTools.Core
         public VCFilter FindFilterFromName(string filtername)
         {
             try {
-                foreach (VCFilter vcfilt in (IVCCollection)vcPro.Filters) {
+                foreach (VCFilter vcfilt in (IVCCollection)VcProject.Filters) {
                     if (vcfilt.Name.ToLower() == filtername.ToLower())
                         return vcfilt;
                 }
@@ -659,7 +658,7 @@ namespace QtVsTools.Core
         public VCFilter FindFilterFromGuid(string filterguid)
         {
             try {
-                foreach (VCFilter vcfilt in (IVCCollection)vcPro.Filters) {
+                foreach (VCFilter vcfilt in (IVCCollection)VcProject.Filters) {
                     if (vcfilt.UniqueIdentifier != null
                         && vcfilt.UniqueIdentifier.ToLower() == filterguid.ToLower()) {
                         return vcfilt;
@@ -673,7 +672,7 @@ namespace QtVsTools.Core
 
         public static void MarkAsQtPlugin(QtProject qtPro)
         {
-            foreach (VCConfiguration config in qtPro.VCProject.Configurations as IVCCollection) {
+            foreach (VCConfiguration config in qtPro.VcProject.Configurations as IVCCollection) {
                 (config.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage)
                     .SetPropertyValue("QtPlugin", "true");
             }
@@ -738,7 +737,7 @@ namespace QtVsTools.Core
             if (FormatVersion < ProjectFormat.Version.V3ClProperties)
                 return;
 
-            foreach (VCConfiguration config in (IVCCollection)vcPro.Configurations) {
+            foreach (VCConfiguration config in (IVCCollection)VcProject.Configurations) {
                 var idlFile = "\"$(IntDir)/" + envPro.Name + ".idl\"";
                 var tblFile = "\"$(IntDir)/" + envPro.Name + ".tlb\"";
 
@@ -765,7 +764,7 @@ namespace QtVsTools.Core
 
         public bool UsesPrecompiledHeaders()
         {
-            if (vcPro.Configurations is not IVCCollection configurations)
+            if (VcProject.Configurations is not IVCCollection configurations)
                 return false;
 
             const pchOption pchNone = pchOption.pchNone;
@@ -776,7 +775,7 @@ namespace QtVsTools.Core
 
         public string GetPrecompiledHeaderThrough()
         {
-            if (vcPro.Configurations is not IVCCollection configurations)
+            if (VcProject.Configurations is not IVCCollection configurations)
                 return null;
 
             return configurations.Cast<VCConfiguration>()
@@ -1003,19 +1002,19 @@ namespace QtVsTools.Core
 
         public bool QmlDebug
         {
-            get => IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
+            get => IsQtQmlDebugDefined(VcProject) && IsQmlJsDebuggerDefined(VcProject);
             set
             {
-                bool enabled = IsQtQmlDebugDefined(vcPro) && IsQmlJsDebuggerDefined(vcPro);
+                bool enabled = IsQtQmlDebugDefined(VcProject) && IsQmlJsDebuggerDefined(VcProject);
                 if (value == enabled)
                     return;
 
                 if (value) {
-                    DefineQtQmlDebug(vcPro);
-                    DefineQmlJsDebugger(vcPro);
+                    DefineQtQmlDebug(VcProject);
+                    DefineQmlJsDebugger(VcProject);
                 } else {
-                    UndefineQtQmlDebug(vcPro);
-                    UndefineQmlJsDebugger(vcPro);
+                    UndefineQtQmlDebug(VcProject);
+                    UndefineQmlJsDebugger(VcProject);
                 }
             }
         }

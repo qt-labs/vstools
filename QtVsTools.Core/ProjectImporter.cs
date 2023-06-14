@@ -135,7 +135,7 @@ namespace QtVsTools.Core
                 if (qtVersion is not null)
                     QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
 
-                var vcPro = qtPro.VCProject;
+                var vcPro = qtPro.VcProject;
                 if (!SelectSolutionPlatform(dteObject, platformName)
                     || !HasPlatform(vcPro, platformName)) {
                     CreatePlatform(pro, vcPro, dteObject, "Win32", platformName, null, versionInfo);
@@ -231,7 +231,7 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             RemoveResFilesFromGeneratedFilesFilter(qtProject);
-            TranslateFilterNames(qtProject.VCProject);
+            TranslateFilterNames(qtProject.VcProject);
 
             // collapse the generated files/resources filters afterwards
             CollapseFilter(dte, qtProject.VcProject, Filters.ResourceFiles().Name);
@@ -518,11 +518,11 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             fileName = new FileInfo(fileName).FullName;
-            foreach (VCFile vcFile in (IVCCollection)qtPro.VCProject.Files) {
+            foreach (VCFile vcFile in (IVCCollection)qtPro.VcProject.Files) {
                 if (!vcFile.FullPath.Equals(fileName, IgnoreCase))
                     continue;
-                qtPro.VCProject.RemoveFile(vcFile);
-                MoveFileToDeletedFolder(qtPro.VCProject, vcFile);
+                qtPro.VcProject.RemoveFile(vcFile);
+                MoveFileToDeletedFolder(qtPro.VcProject, vcFile);
             }
         }
 
@@ -594,12 +594,12 @@ namespace QtVsTools.Core
                 if (vcFilter is not null)
                     return;
 
-                if (!project.VCProject.CanAddFilter(fakeFilter.Name)) {
+                if (!project.VcProject.CanAddFilter(fakeFilter.Name)) {
                     vcFilter = project.FindFilterFromName(fakeFilter.Name);
                     if (vcFilter is null)
                         throw new QtVSException($"Project cannot add filter {fakeFilter.Name}.");
                 } else {
-                    vcFilter = (VCFilter)project.VCProject.AddFilter(fakeFilter.Name);
+                    vcFilter = (VCFilter)project.VcProject.AddFilter(fakeFilter.Name);
                 }
 
                 vcFilter.UniqueIdentifier = fakeFilter.UniqueIdentifier;

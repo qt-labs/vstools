@@ -242,10 +242,10 @@ namespace QtVsTools
 
             var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
 
-            if (!HelperFunctions.IsVsToolsProject(qtPro.VCProject))
+            if (!HelperFunctions.IsVsToolsProject(qtPro.VcProject))
                 return;
 
-            var file = (VCFile)((IVCCollection)qtPro.VCProject.Files).Item(document.FullName);
+            var file = (VCFile)((IVCCollection)qtPro.VcProject.Files).Item(document.FullName);
 
             if (HelperFunctions.IsUicFile(file.Name)) {
                 if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
@@ -352,7 +352,7 @@ namespace QtVsTools
             if (!HelperFunctions.IsVsToolsProject(project))
                 return;
 
-            var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VCProject);
+            var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VcProject);
             if (vcFile == null)
                 return;
 
