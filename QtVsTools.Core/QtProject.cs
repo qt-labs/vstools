@@ -25,7 +25,7 @@ namespace QtVsTools.Core
     public class QtProject
     {
         private static readonly Dictionary<Project, QtProject> Instances = new();
-        private readonly QtMsBuildContainer qtMsBuild;
+        private readonly QtMsBuildContainer qtMsBuild = new(new VcPropertyStorageProvider());
 
         public static QtProject Create(VCProject vcProject)
         {
@@ -55,7 +55,6 @@ namespace QtVsTools.Core
             if (project == null)
                 throw new QtVSException("Cannot construct a QtProject object without a valid project.");
             VcProject = project.Object as VCProject;
-            qtMsBuild = new QtMsBuildContainer(new VcPropertyStorageProvider());
         }
 
         public VCProject VcProject { get; }
