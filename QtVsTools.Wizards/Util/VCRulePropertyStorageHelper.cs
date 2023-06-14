@@ -23,8 +23,8 @@ namespace QtVsTools.Wizards.Util
             if (modules.Count == 0)
                 return;
 
-            var project = HelperFunctions.GetSelectedQtProject(dte);
-            if (project is not {Object: VCProject {Configurations: IVCCollection collection}})
+            var qtProject = HelperFunctions.GetSelectedQtProject(dte);
+            if (qtProject?.VcProject?.Configurations is not IVCCollection collection)
                 return;
 
             // TODO: There is already code providing such functionality, though it seems overly

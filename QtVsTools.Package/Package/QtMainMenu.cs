@@ -99,14 +99,15 @@ namespace QtVsTools
                 ExtLoader.ImportProFile();
                 break;
             case QtMenus.Package.ImportPriFile:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                var tmp = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                ExtLoader.ImportPriFile(tmp.VcProject.Object as EnvDTE.Project);
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
             case QtMenus.Package.QtProjectSettings:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                if (ProjectFormat.GetVersion(pro) >= ProjectFormat.Version.V3) {
+                if (pro?.FormatVersion >= ProjectFormat.Version.V3) {
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 } else if (pro != null) {
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)

@@ -79,17 +79,20 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                var tmp = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                ExtLoader.ImportPriFile(tmp.VcProject.Object as EnvDTE.Project);
                 break;
             case QtMenus.Package.lUpdateOnProject:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                var tmp2 = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                Translation.RunlUpdate(tmp2.VcProject?.Object as EnvDTE.Project);
                 break;
             case QtMenus.Package.lReleaseOnProject:
-                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                var tmp3 = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                Translation.RunlRelease(tmp3.VcProject?.Object as EnvDTE.Project);
                 break;
             case QtMenus.Package.QtProjectSettingsProject:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                if (ProjectFormat.GetVersion(pro) >= ProjectFormat.Version.V3) {
+                if (pro?.FormatVersion >= ProjectFormat.Version.V3) {
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 } else if (pro != null) {
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)

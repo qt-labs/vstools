@@ -137,17 +137,17 @@ namespace QtVsTools
 
             if (dte.Debugger is { CurrentMode: not dbgDebugMode.dbgDesignMode })
                 return;
-            if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
                 return;
 
-            var version = QtVersionManager.The().GetProjectQtVersion(project);
-            var versionInfo = QtVersionManager.The().GetVersionInfo(version);
+            var versionInfo = qtProject.VersionInfo;
             if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
                 QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
 
-            // Notify about old project format and offer upgrade option.
-            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
+            if (qtProject.FormatVersion >= ProjectFormat.Version.V3)
                 return;
+
+            // Notify about old project format and offer upgrade option.
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
         }
@@ -155,12 +155,13 @@ namespace QtVsTools
         private void DebugStartWithoutDebuggingEvents_BeforeExecute(string guid, int id,
             object customIn, object customOut, ref bool cancelDefault)
         {
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+                return;
+
+            if (qtProject.FormatVersion >= ProjectFormat.Version.V3)
                 return;
 
             // Notify about old project format and offer upgrade option.
-            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
-                return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 Notifications.UpdateProjectFormat.Show();
         }
@@ -348,13 +349,11 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var project = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-            var qtPro = QtProject.Create(project);
-            if (!HelperFunctions.IsVsToolsProject(project))
+            var qtPro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+            if (qtPro == null)
                 return;
 
-            var vcFile = GetVCFileFromProject(projectItem.Name, qtPro.VcProject);
-            if (vcFile == null)
+            if (GetVCFileFromProject(projectItem.Name, qtPro.VcProject) is not {} vcFile)
                 return;
 
             try {
@@ -409,12 +408,8 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-            if (pro == null)
-                return;
-
-            var qtPro = QtProject.Create(pro.Object as VCProject);
-            qtPro.RemoveGeneratedFiles(ProjectItem.Name);
+            HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte)
+                ?.RemoveGeneratedFiles(ProjectItem.Name);
         }
 
         void ProjectItemsEvents_ItemRenamed(ProjectItem ProjectItem, string OldName)
@@ -427,9 +422,7 @@ namespace QtVsTools
             if (pro == null)
                 return;
 
-            var qtPro = QtProject.Create(pro.Object as VCProject);
-            qtPro.RemoveGeneratedFiles(OldName);
-
+            pro.RemoveGeneratedFiles(OldName);
             ProjectItemsEvents_ItemAdded(ProjectItem);
         }
 

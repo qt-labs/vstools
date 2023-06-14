@@ -129,9 +129,8 @@ namespace QtVsTools
                     return false; // suppress single character, operators etc...
 
                 var qtVersion = "$(DefaultQtVersion)";
-                var project = HelperFunctions.GetSelectedQtProject(dte);
-                if (project != null)
-                    qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
+                if (HelperFunctions.GetSelectedQtProject(dte) is {} project)
+                    qtVersion = project.QtVersion;
 
                 var info = QtVersionManager.The().GetVersionInfo(qtVersion);
                 var docPath = info?.QtInstallDocs;

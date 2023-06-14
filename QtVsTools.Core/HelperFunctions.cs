@@ -391,23 +391,30 @@ namespace QtVsTools.Core
                 return false;
             }
         }
-
         public static List<string> GetProjectFiles(Project pro, FilesToList filter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            return GetProjectFiles(pro?.Object as VCProject, filter);
+        }
 
-            VCProject vcpro;
-            try {
-                vcpro = (VCProject)pro.Object;
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(e);
+        public static List<string> GetProjectFiles(QtProject qtProject, FilesToList filter)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return GetProjectFiles(qtProject?.VcProject, filter);
+        }
+
+        public static List<string> GetProjectFiles(VCProject vcPro, FilesToList filter)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (vcPro is not { Files: IVCCollection vcFiles })
                 return null;
-            }
+
+            var configurationName = vcPro.ActiveConfiguration.ConfigurationName;
 
             var fileList = new List<string>();
-            var configurationName = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+            foreach (VCFile vcfile in vcFiles) {
 
-            foreach (VCFile vcfile in (IVCCollection)vcpro.Files) {
                 // Why project files are also returned?
                 if (vcfile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
                     continue;
@@ -489,39 +496,34 @@ namespace QtVsTools.Core
             return null;
         }
 
-        public static Project GetActiveDocumentProject(DTE dteObject)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return dteObject?.ActiveDocument?.ProjectItem?.ContainingProject;
-        }
-
-        public static Project GetSingleProjectInSolution(DTE dteObject)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var projectList = ProjectsInSolution(dteObject);
-            return projectList.Count == 1 ? projectList[0] : null; // no way to know which one to select
-        }
-
         /// <summary>
-        /// Returns the the current selected Qt Project. If not project
-        /// is selected or if the selected project is not a Qt project
-        /// this function returns null.
+        /// Returns the the current selected Qt Project. If not project is selected
+        /// or if the selected project is not a Qt project this function returns null.
         /// </summary>
-        public static Project GetSelectedQtProject(DTE dteObject)
+        public static QtProject GetSelectedQtProject(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            // can happen sometimes shortly after starting VS
-            if (ProjectsInSolution(dteObject).Count == 0)
+            // Can happen sometimes shortly after starting VS.
+            var projectList = ProjectsInSolution(dteObject);
+            if (projectList.Count == 0)
                 return null;
 
-            var pro = GetSelectedProject(dteObject);
-            if (pro == null) {
-                if ((pro = GetSingleProjectInSolution(dteObject)) == null)
-                    pro = GetActiveDocumentProject(dteObject);
-            }
-            return IsVsToolsProject(pro) ? pro : null;
+            EnvDTE.Project project = null;
+            // Grab the first active project.
+            if (GetSelectedProject(dteObject) is {} active)
+                project = active;
+
+            // Grab the first project out of the list of projects. If there are
+            // several projects than there is no way to know which one to select.
+            if (projectList.Count == 1 && projectList[0] is {} first)
+                project = first;
+
+            // Last try, get the project from an active document.
+            if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
+                project = containing;
+
+            return IsVsToolsProject(project) ? QtProject.Create(project) : null;
         }
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)
