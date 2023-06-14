@@ -208,6 +208,7 @@ namespace QtVsTools.Core.CMake
                 {
                     ["name"] = "Debug",
                     ["inherits"] = "Qt-Default",
+                    ["binaryDir"] = "${sourceDir}/out/build",
                     ["cacheVariables"] = new JObject
                     {
                         ["CMAKE_BUILD_TYPE"] = "Debug"
@@ -219,7 +220,7 @@ namespace QtVsTools.Core.CMake
             var versionNames = VersionManager.GetVersions().Prepend("Qt-Default");
 
             // All visible presets must have a reference to a Qt version
-            var isQtVersion = (JToken presetName) =>  versionNames.Contains(presetName.ToString());
+            bool isQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());
             var presetsMissingQtRef = visiblePresets.Where(preset => !preset.ContainsKey("inherits")
                 || (preset["inherits"] is JArray inherits && !inherits.Any(isQtVersion))
                 || (preset["inherits"] is JValue presetName && !isQtVersion(presetName)));

@@ -42,6 +42,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             [DataMember(Name = "inherits", EmitDefaultValue = false, Order = 2)]
             public List<string> Inherits { get; set; }
 
+            [DataMember(Name = "binaryDir", EmitDefaultValue = false, Order = 3)]
+            public string BinaryDir { get; set; }
+
             [DataContract]
             public class ConfigCacheVariables
             {
@@ -117,6 +120,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 {
                     Name = $"{config.Name}-{config.Platform}",
                     DisplayName = $"{config.Name} ({config.Platform})",
+                    BinaryDir = "${sourceDir}/out/build",
                     CacheVariables = new CMakeConfigPreset.ConfigCacheVariables
                     {
                         CMakeBuildType = config.IsDebug ? "Debug" : "Release"

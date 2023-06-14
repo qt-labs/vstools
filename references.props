@@ -27,7 +27,6 @@
     <Version_MSTest_TestFramework>2.2.8</Version_MSTest_TestFramework>
 
     <Name_Newtonsoft_Json>Newtonsoft.Json</Name_Newtonsoft_Json>
-    <Version_Newtonsoft_Json>13.0.1</Version_Newtonsoft_Json>
 
     <Name_Stub_System_Data_SQLite_Core_NetFramework>Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
     <Version_Stub_System_Data_SQLite_Core_NetFramework>1.0.115.5</Version_Stub_System_Data_SQLite_Core_NetFramework>
@@ -49,6 +48,7 @@
     <Version_Microsoft_VisualStudio_Composition>17.4.16</Version_Microsoft_VisualStudio_Composition>
     <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
     <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
+    <Version_Newtonsoft_Json>13.0.1</Version_Newtonsoft_Json>
   </PropertyGroup>
 
   <!-- // Visual Studio 2019 -->
@@ -67,6 +67,7 @@
     <Version_Microsoft_VisualStudio_Composition>16.9.20</Version_Microsoft_VisualStudio_Composition>
     <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
     <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
+    <Version_Newtonsoft_Json>12.0.3</Version_Newtonsoft_Json>
   </PropertyGroup>
 
 </Project>
