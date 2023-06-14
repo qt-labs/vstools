@@ -79,16 +79,13 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                var tmp = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                ExtLoader.ImportPriFile(tmp.VcProject.Object as EnvDTE.Project);
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case QtMenus.Package.lUpdateOnProject:
-                var tmp2 = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                Translation.RunlUpdate(tmp2.VcProject?.Object as EnvDTE.Project);
+                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case QtMenus.Package.lReleaseOnProject:
-                var tmp3 = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                Translation.RunlRelease(tmp3.VcProject?.Object as EnvDTE.Project);
+                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case QtMenus.Package.QtProjectSettingsProject:
                 var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);

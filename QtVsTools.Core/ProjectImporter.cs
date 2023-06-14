@@ -82,8 +82,7 @@ namespace QtVsTools.Core
                     if (qtVersion is not null) {
                         foreach (var prj in HelperFunctions.ProjectsInSolution(dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                            var qtPro = QtProject.Create(prj);
-                            ApplyPostImportSteps(dteObject, qtPro);
+                            ApplyPostImportSteps(dteObject, QtProject.Create(prj));
                         }
                     }
                 }
@@ -127,9 +126,8 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (pro is null)
+                if (QtProject.Create(pro) is not {} qtPro)
                     return;
-                var qtPro = QtProject.Create(pro);
                 var platformName = versionInfo.GetVSPlatformName();
 
                 if (qtVersion is not null)
@@ -286,10 +284,10 @@ namespace QtVsTools.Core
 
         #region ProjectExporter
 
-        public static List<string> ConvertFilesToFullPath(IEnumerable<string> files, string path)
+        public static List<string> ConvertFilesToFullPath(IEnumerable<string> files, QtProject qtProject)
         {
-            return new List<string>(files.Select(file => new FileInfo(
-                    file.IndexOf(':') != 1 ? Path.Combine(path ?? "", file) : file)
+            return new List<string>(files.Select(file => new FileInfo(file.IndexOf(':') != 1
+                    ? Path.Combine(qtProject?.VcProjectDirectory ?? "", file) : file)
                 ).Select(fi => fi.FullName)
             );
         }
@@ -330,7 +328,7 @@ namespace QtVsTools.Core
                 CollectFilters(f, path, ref filterPathTable, ref pathFilterTable);
         }
 
-        public static void SyncIncludeFiles(VCProject vcProject, List<string> priFiles,
+        public static void SyncIncludeFiles(QtProject qtProject, List<string> priFiles,
             List<string> projFiles, bool flat, FakeFilter fakeFilter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -342,13 +340,12 @@ namespace QtVsTools.Core
             var cmpProjFiles = new List<string>(projFiles.Count);
             cmpProjFiles.AddRange(projFiles.Select(s => HelperFunctions.NormalizeFilePath(s).ToUpperInvariant()));
 
-            var qtPro = QtProject.Create(vcProject);
             var filterPathTable = new Dictionary<VCFilter, string>(17);
             var pathFilterTable = new Dictionary<string, VCFilter>(17);
             if (!flat && fakeFilter is not null) {
-                var rootFilter = qtPro.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                var rootFilter = qtProject.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
                 if (rootFilter is null)
-                    AddFilterToProject(qtPro, Filters.SourceFiles());
+                    AddFilterToProject(qtProject, Filters.SourceFiles());
 
                 CollectFilters(rootFilter, null, ref filterPathTable, ref pathFilterTable);
             }
@@ -356,11 +353,11 @@ namespace QtVsTools.Core
             // first check for new files
             foreach (var file in cmpPriFiles.Where(file => cmpProjFiles.IndexOf(file) <= -1)) {
                 if (flat) {
-                    vcProject.AddFile(file);
+                    qtProject.VcProject.AddFile(file);
                     continue; // the file is not in the project
                 }
 
-                var path = HelperFunctions.GetRelativePath(vcProject.ProjectDirectory, file);
+                var path = HelperFunctions.GetRelativePath(qtProject.VcProjectDirectory, file);
                 if (path.StartsWith(".\\", IgnoreCase))
                     path = path.Substring(2);
 
@@ -368,7 +365,7 @@ namespace QtVsTools.Core
                 path = i > -1 ? path.Substring(0, i) : ".";
 
                 if (pathFilterTable.ContainsKey(path)) {
-                    if (pathFilterTable[path] is { } vcFilter)
+                    if (pathFilterTable[path] is {} vcFilter)
                         vcFilter.AddFile(file);
                     continue;
                 }
@@ -395,9 +392,9 @@ namespace QtVsTools.Core
                 // the file is not in the pri file
                 // (only removes it from the project, does not del. the file)
                 var info = new FileInfo(file);
-                RemoveFileInProject(qtPro, file);
+                RemoveFileInProject(qtProject, file);
                 Messages.Print($"--- (Importing .pri file) file: {info.Name} does not exist in "
-                    + $".pri file, move to {vcProject.ProjectDirectory} Deleted");
+                    + $".pri file, move to {qtProject.VcProjectDirectory} Deleted");
             }
         }
 

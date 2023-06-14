@@ -99,8 +99,7 @@ namespace QtVsTools
                 ExtLoader.ImportProFile();
                 break;
             case QtMenus.Package.ImportPriFile:
-                var tmp = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                ExtLoader.ImportPriFile(tmp.VcProject.Object as EnvDTE.Project);
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
