@@ -240,7 +240,8 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtPro = QtProject.Create(document.ProjectItem.ContainingProject);
+            var project = document.ProjectItem.ContainingProject;
+            var qtPro = QtProject.Create(project);
 
             if (!HelperFunctions.IsVsToolsProject(qtPro.VcProject))
                 return;
@@ -278,8 +279,8 @@ namespace QtVsTools
                 return;
             }
 
-            var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(qtPro.Project);
-            var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(qtPro.Project);
+            var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(project);
+            var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(project);
             var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files) {
                 if (fileInFilter.Name != moccedFileName)

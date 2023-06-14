@@ -24,7 +24,6 @@ namespace QtVsTools.Core
     /// </summary>
     public class QtProject
     {
-        private Project envPro;
         private static readonly Dictionary<Project, QtProject> instances = new();
         private readonly QtMsBuildContainer qtMsBuild;
 
@@ -55,14 +54,11 @@ namespace QtVsTools.Core
 
             if (project == null)
                 throw new QtVSException("Cannot construct a QtProject object without a valid project.");
-            envPro = project;
-            VcProject = envPro.Object as VCProject;
+            VcProject = project.Object as VCProject;
             qtMsBuild = new QtMsBuildContainer(new VcPropertyStorageProvider());
         }
 
         public VCProject VcProject { get; }
-
-        public Project Project => envPro;
 
         public static string GetRuleName(VCConfiguration config, string itemType)
         {
@@ -109,8 +105,6 @@ namespace QtVsTools.Core
             if (!isQtMsBuildEnabled.HasValue) {
                 if (VcProject != null)
                     isQtMsBuildEnabled = IsQtMsBuildEnabled(VcProject);
-                else if (envPro != null)
-                    isQtMsBuildEnabled = IsQtMsBuildEnabled(envPro);
                 else
                     return false;
             }
@@ -736,8 +730,8 @@ namespace QtVsTools.Core
                 return;
 
             foreach (VCConfiguration config in (IVCCollection)VcProject.Configurations) {
-                var idlFile = "\"$(IntDir)/" + envPro.Name + ".idl\"";
-                var tblFile = "\"$(IntDir)/" + envPro.Name + ".tlb\"";
+                var idlFile = "\"$(IntDir)/" + VcProject.Name + ".idl\"";
+                var tblFile = "\"$(IntDir)/" + VcProject.Name + ".tlb\"";
 
                 var tool = (VCPostBuildEventTool)((IVCCollection)config.Tools).Item("VCPostBuildEventTool");
                 var idc = "$(QTDIR)\\bin\\idc.exe \"$(TargetPath)\" /idl " + idlFile + " -version " + version;
@@ -753,9 +747,9 @@ namespace QtVsTools.Core
 
                 if (linker != null) {
                     linker.Version = version;
-                    linker.ModuleDefinitionFile = defFile ?? envPro.Name + ".def";
+                    linker.ModuleDefinitionFile = defFile ?? VcProject.Name + ".def";
                 } else {
-                    librarian.ModuleDefinitionFile = defFile ?? envPro.Name + ".def";
+                    librarian.ModuleDefinitionFile = defFile ?? VcProject.Name + ".def";
                 }
             }
         }
