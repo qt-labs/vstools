@@ -1383,7 +1383,7 @@ namespace QtVsTools.Core.MsBuild
             Commit();
         }
 
-        class MSBuildEvaluator : IVSMacroExpander, IDisposable
+        class MSBuildEvaluator : IVsMacroExpander, IDisposable
         {
             private readonly MsBuildXmlFile projFile;
             private string tempProjFilePath;

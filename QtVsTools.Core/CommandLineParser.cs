@@ -13,8 +13,8 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Core.CommandLine
 {
+    using MsBuild;
     using static Utils;
-    using IVSMacroExpander = MsBuild.IVSMacroExpander;
 
     public class Parser
     {
@@ -196,7 +196,7 @@ namespace QtVsTools.Core.CommandLine
                 Trace.TraceWarning("CommandLineParser: Parse() before {0}", method);
         }
 
-        List<string> TokenizeArgs(string commandLine, IVSMacroExpander macros, string execName = "")
+        List<string> TokenizeArgs(string commandLine, IVsMacroExpander macros, string execName = "")
         {
             List<string> arguments = new List<string>();
             StringBuilder arg = new StringBuilder();
@@ -242,7 +242,7 @@ namespace QtVsTools.Core.CommandLine
             return arguments;
         }
 
-        public bool Parse(string commandLine, IVSMacroExpander macros, string execName)
+        public bool Parse(string commandLine, IVsMacroExpander macros, string execName)
         {
             List<string> args = null;
             try {
