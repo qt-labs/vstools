@@ -112,7 +112,7 @@ namespace QtVsTools
                     QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 } else if (pro != null) {
                     if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                        Notifications.UpdateProjectFormat.Show();
+                        QtProject.ShowUpdateFormatMessage();
                 } else {
                     MessageBox.Show("No Project Opened");
                 }

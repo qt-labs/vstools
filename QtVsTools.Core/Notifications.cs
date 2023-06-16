@@ -26,9 +26,6 @@ namespace QtVsTools.Core
         public static NotifyInstall NotifyInstall
             => StaticLazy.Get(() => NotifyInstall, () => new NotifyInstall());
 
-        public static UpdateProjectFormat UpdateProjectFormat
-            => StaticLazy.Get(() => UpdateProjectFormat, () => new UpdateProjectFormat());
-
         public static NotifyMessage NotifyMessage
             => StaticLazy.Get(() => NotifyMessage, () => new NotifyMessage());
     }
@@ -95,46 +92,6 @@ namespace QtVsTools.Core
                     if (Options.Options.Get() is not {} options)
                         return;
                     options.NotifyInstalled = false;
-                    options.SaveSettingsToStorage();
-                }
-            }
-        };
-    }
-
-    public class UpdateProjectFormat : InfoBarMessage
-    {
-        protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
-
-        protected override TextSpan[] Text => new TextSpan[]
-        {
-                new() { Bold = true, Text = "Qt Visual Studio Tools" },
-                new TextSpacer(2),
-                Utils.EmDash,
-                new TextSpacer(2),
-                "You are using some legacy code path of the Qt Visual Studio Tools. We strongly "
-                    + "recommend updating your code base to use our latest development version."
-        };
-
-        protected override Hyperlink[] Hyperlinks => new Hyperlink[]
-        {
-            new()
-            {
-                Text = "Update",
-                CloseInfoBar = true,
-                OnClicked = () => {
-                    ThreadHelper.ThrowIfNotOnUIThread();
-                    QtMsBuildConverter.SolutionToQtMsBuild();
-                }
-            },
-            new()
-            {
-                Text = "Don't show again",
-                CloseInfoBar = true,
-                OnClicked = () =>
-                {
-                    if (Options.Options.Get() is not {} options)
-                        return;
-                    options.UpdateProjectFormat = false;
                     options.SaveSettingsToStorage();
                 }
             }

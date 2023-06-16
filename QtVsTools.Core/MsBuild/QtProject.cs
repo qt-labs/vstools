@@ -22,7 +22,7 @@ namespace QtVsTools.Core.MsBuild
     /// There exists at most one QtProject per EnvDTE.Project.
     /// Use QtProject.Create to get the QtProject for a Project or VCProject.
     /// </summary>
-    public class QtProject
+    public partial class QtProject
     {
         private static readonly Dictionary<VCProject, QtProject> Instances = new();
         private readonly QtMsBuildContainer qtMsBuild = new(new VcPropertyStorageProvider());
@@ -226,9 +226,7 @@ namespace QtVsTools.Core.MsBuild
             if (ProjectFormat.GetVersion(VcProject) >= ProjectFormat.Version.V3) {
                 file.ItemType = QtUic.ItemTypeName;
             } else {
-                // TODO: It would be nice if we can inform the user he's on an old project.
-                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                //    Notifications.UpdateProjectFormat.Show();
+                ShowUpdateFormatMessage();
             }
         }
 
@@ -249,9 +247,7 @@ namespace QtVsTools.Core.MsBuild
                     qtMsBuild.SetItemPropertyByName(config, "QtMocFileName", "%(Filename).moc");
                 }
             } else {
-                // TODO: It would be nice if we can inform the user he's on an old project.
-                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                //    Notifications.UpdateProjectFormat.Show();
+                ShowUpdateFormatMessage();
             }
         }
 
@@ -351,9 +347,7 @@ namespace QtVsTools.Core.MsBuild
             if (ProjectFormat.GetVersion(VcProject) >= ProjectFormat.Version.V3) {
                 qrcFile.ItemType = QtRcc.ItemTypeName;
             } else {
-                // TODO: It would be nice if we can inform the user he's on an old project.
-                //if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                //    Notifications.UpdateProjectFormat.Show();
+                ShowUpdateFormatMessage();
             }
         }
 

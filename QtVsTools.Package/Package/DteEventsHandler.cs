@@ -149,7 +149,7 @@ namespace QtVsTools
 
             // Notify about old project format and offer upgrade option.
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                Notifications.UpdateProjectFormat.Show();
+                QtProject.ShowUpdateFormatMessage();
         }
 
         private void DebugStartWithoutDebuggingEvents_BeforeExecute(string guid, int id,
@@ -163,7 +163,7 @@ namespace QtVsTools
 
             // Notify about old project format and offer upgrade option.
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                Notifications.UpdateProjectFormat.Show();
+                QtProject.ShowUpdateFormatMessage();
         }
 
         public void Disconnect()
@@ -229,7 +229,7 @@ namespace QtVsTools
             if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                Notifications.UpdateProjectFormat.Show();
+                QtProject.ShowUpdateFormatMessage();
         }
 
         void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
@@ -447,7 +447,7 @@ namespace QtVsTools
             if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
                 return;
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                Notifications.UpdateProjectFormat.Show();
+                QtProject.ShowUpdateFormatMessage();
         }
 
         void SolutionEvents_ProjectRemoved(Project project)
@@ -469,7 +469,7 @@ namespace QtVsTools
                 if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
                     continue;
                 if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                    Notifications.UpdateProjectFormat.Show();
+                    QtProject.ShowUpdateFormatMessage();
             }
         }
 
@@ -529,7 +529,7 @@ namespace QtVsTools
             if (ProjectFormat.GetVersion(vcPrj) >= ProjectFormat.Version.V3ClProperties)
                 return; // Ignore property events when using shared compiler properties
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                Notifications.UpdateProjectFormat.Show();
+                QtProject.ShowUpdateFormatMessage();
         }
 
         private void OnVCProjectEngineItemPropertyChange2(
