@@ -94,7 +94,7 @@ namespace QtVsTools.Core
             if (keyword.StartsWith(KeywordV2, StringComparison.Ordinal)) {
                 if (project is not { Globals: { VariableNames: string[] variables } })
                     return Version.V1;
-                return variables.Any(var => HelperFunctions.HasQt5Version(var, project))
+                return variables.Any(var => HasQt5Version(var, project))
                     ? Version.V2 : Version.V1;
             }
 
@@ -126,5 +126,12 @@ namespace QtVsTools.Core
             return project is { Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}" }
                 ? (project.Object as VCProject)?.keyword : null;
         }
+
+        public static readonly Func<string, EnvDTE.Project, bool> HasQt5Version = (global, project) =>
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return global.StartsWith("Qt5Version", StringComparison.Ordinal)
+                && project.Globals.VariablePersists[global];
+        };
     }
 }

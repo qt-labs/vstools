@@ -215,13 +215,6 @@ namespace QtVsTools.Core
             return IsVsToolsProject(proj.Object as VCProject);
         }
 
-        public static readonly Func<string, Project, bool> HasQt5Version = (global, project) =>
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return global.StartsWith("Qt5Version", StringComparison.Ordinal)
-                && project.Globals.VariablePersists[global];
-        };
-
         /// <summary>
         /// Return true if the project is a VS tools project; false otherwise.
         /// </summary>
@@ -238,7 +231,7 @@ namespace QtVsTools.Core
             if (proj.Object is not Project {Globals: {VariableNames: string[] variables}} envPro)
                 return false;
 
-            return variables.Any(var => HasQt5Version(var, envPro));
+            return variables.Any(var => ProjectFormat.HasQt5Version(var, envPro));
         }
 
         /// <summary>
