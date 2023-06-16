@@ -169,6 +169,17 @@
     <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="MsBuild\VcPropertyStorageProvider.cs" />
+    <T4Template Include="Version.cs">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>Version.tt.cs</OutputFile>
+      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
+      <LastGenOutput>Version.tt.cs</LastGenOutput>
+    </T4Template>
+    <Compile Include="Version.tt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Version.cs</DependentUpon>
+    </Compile>
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
     <Compile Include="VisualStudio\StatusBar.cs" />

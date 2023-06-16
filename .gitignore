@@ -272,7 +272,7 @@ ModelManifest.xml
 
 # Generated Files
 MSBuild.MetaInfo.cs
-qtvstools.package/package/Version.tt.cs
+Version.tt.cs
 qtvstools.package/Properties/AssemblyInfo.tt.cs
 qtvstools.package/QtVersionId.vsct
 qtvstools.package/Marketplace/Overview.html

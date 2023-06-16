@@ -121,21 +121,21 @@ namespace QtVsTools.Core
 
         public void SetLatestQtVersionAsDefault()
         {
-            var validVersions = new Dictionary<string, Version>();
+            var validVersions = new Dictionary<string, System.Version>();
             foreach (var version in GetVersions()) {
                 if (version == "$(DefaultQtVersion)")
                     continue;
 
                 var path = GetInstallPath(version);
                 if (!string.IsNullOrEmpty(path) && QMake.Exists(path))
-                    validVersions[version] = new Version(new QtConfig(path).VersionString);
+                    validVersions[version] = new System.Version(new QtConfig(path).VersionString);
             }
 
             if (validVersions.Count <= 0)
                 return;
 
             var defaultName = "";
-            Version defaultVersion = null;
+            System.Version defaultVersion = null;
             foreach (var tmp in validVersions) {
                 var version = tmp.Value;
                 if (defaultVersion == null || defaultVersion < version) {

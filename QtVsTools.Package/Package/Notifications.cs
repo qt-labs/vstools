@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
 {
+    using Core;
     using Common;
     using VisualStudio;
 

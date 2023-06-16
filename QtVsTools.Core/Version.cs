@@ -8,9 +8,9 @@
 ****************************************************************************
 */
 
-namespace QtVsTools
+namespace QtVsTools.Core
 {
-    internal static class Version
+    public static class Version
     {
         public const string PRODUCT_VERSION = "<#=QT_VS_TOOLS_VERSION_MANIFEST#>";
         public const string USER_VERSION = "<#=QT_VS_TOOLS_VERSION_USER#>";

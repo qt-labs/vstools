@@ -482,17 +482,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\menuimages.png" />
-    <T4Template Include="Package\Version.cs">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>Version.tt.cs</OutputFile>
-      <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>Version.tt.cs</LastGenOutput>
-    </T4Template>
-    <Compile Include="Package\Version.tt.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Version.cs</DependentUpon>
-    </Compile>
     <Page Include="Options\QtVersionsTable.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
