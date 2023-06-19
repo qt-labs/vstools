@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -569,35 +570,37 @@ namespace QtVsTools.Core.MsBuild
             // Qt module link libraries, to remove from liker dependencies property
             var moduleLibs = new HashSet<string>();
 
+            var qt5Modules = QtModules.Instance.GetAvailableModules(5);
+            var qt6Modules = QtModules.Instance.GetAvailableModules(6);
+            var modules = new ReadOnlyCollectionBuilder<QtModule>(qt5Modules.Concat(qt6Modules));
+
             // Go through all known Qt modules and check which ones are currently being used
-            foreach (var module in QtModules.Instance.GetAvailableModules(defaultVersion.qtMajor)) {
+            foreach (var module in modules.ToReadOnlyCollection()) {
+                if (!IsModuleUsed(module, compiler, linker, resourceCompiler))
+                    continue;
+                // Qt module names, to copy to QtModules property
+                if (!string.IsNullOrEmpty(module.proVarQT))
+                    moduleNames.UnionWith(module.proVarQT.Split(' '));
 
-                if (IsModuleUsed(module, compiler, linker, resourceCompiler)) {
+                // Qt module macros, to remove from compiler macros property
+                moduleDefines.UnionWith(module.Defines);
 
-                    // Qt module names, to copy to QtModules property
-                    if (!string.IsNullOrEmpty(module.proVarQT))
-                        moduleNames.UnionWith(module.proVarQT.Split(' '));
+                // Qt module includes, to remove from compiler include directories property
+                moduleIncludePaths.UnionWith(
+                    module.IncludePath.Select(Path.GetFileName));
 
-                    // Qt module macros, to remove from compiler macros property
-                    moduleDefines.UnionWith(module.Defines);
+                // Qt module link libraries, to remove from liker dependencies property
+                moduleLibs.UnionWith(
+                    module.AdditionalLibraries.Select(Path.GetFileName));
+                moduleLibs.UnionWith(
+                    module.AdditionalLibrariesDebug.Select(Path.GetFileName));
+                moduleLibs.Add(module.LibRelease);
+                moduleLibs.Add(module.LibDebug);
 
-                    // Qt module includes, to remove from compiler include directories property
-                    moduleIncludePaths.UnionWith(
-                        module.IncludePath.Select(Path.GetFileName));
-
-                    // Qt module link libraries, to remove from liker dependencies property
-                    moduleLibs.UnionWith(
-                        module.AdditionalLibraries.Select(Path.GetFileName));
-                    moduleLibs.UnionWith(
-                        module.AdditionalLibrariesDebug.Select(Path.GetFileName));
-                    moduleLibs.Add(module.LibRelease);
-                    moduleLibs.Add(module.LibDebug);
-
-                    if (IsPrivateIncludePathUsed(module, compiler)) {
-                        // Qt private module names, to copy to QtModules property
-                        moduleNames.UnionWith(module.proVarQT.Split(' ')
-                            .Select(x => $"{x}-private"));
-                    }
+                if (IsPrivateIncludePathUsed(module, compiler)) {
+                    // Qt private module names, to copy to QtModules property
+                    moduleNames.UnionWith(module.proVarQT.Split(' ')
+                        .Select(x => $"{x}-private"));
                 }
             }
 
