@@ -34,7 +34,7 @@ microsoft_Visual_Studio_Project_name_Edit = {"id": "projectNameText", "type": "E
 solutionNameText_Edit = {"container": globalnames.microsoft_Visual_Studio_Window,
                          "id": "solutionNameText", "type": "Edit"}
 comboBox_Edit = {"id": "PART_EditableTextBox", "type": "Edit"}
-ProjectModel_ComboBox = {"id": "ProjectModel", "container": qt_Wizard_Window, "type": "ComboBox"}
+ProjectModel_ComboBox = {"id": "ProjectModelSelection", "container": qt_Wizard_Window, "type": "ComboBox"}
 qt_ConfigTable = {"container": qt_Wizard_Window, "name": "ConfigTable", "type": "Table"}
 qt_Wizard_Class_Name_Edit = {"container": qt_Wizard_Window, "id": "ClassName", "type": "Edit"}
 qt_Wizard_Source_cpp_file_Edit = {"container": qt_Wizard_Window, "id": "ClassSourceFile",
