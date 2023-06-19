@@ -139,10 +139,6 @@ def testAllQtWizards(funcNewProjectDialog, funcPage1, funcPage2, funcPage3):
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
                 try:
                     expectedText = "Welcome to the %s Wizard" % templateName
-                    # work around issue fixed in
-                    # https://codereview.qt-project.org/c/qt-labs/vstools/+/473682
-                    if templateName == "Qt Designer Custom Widget":
-                        expectedText = "Welcome to the Qt Custom Designer Widget"
                     funcPage1(expectedText, templateName)
                     clickButton(waitForObject(names.qt_Wizard_Next_Button))
                     funcPage2(expectedText, qtDirs)

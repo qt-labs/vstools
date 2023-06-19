@@ -55,7 +55,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             {
                 new WizardIntroPage {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt Designer Custom Widget",
+                    Header = @"Welcome to the Qt Designer Custom Widget Wizard",
                     Message = @"This wizard generates a designer custom widget which can be "
                         + @"used in Qt Designer or Visual Studio."
                         + System.Environment.NewLine + System.Environment.NewLine
@@ -67,7 +67,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 },
                 new ConfigPage {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt Designer Custom Widget",
+                    Header = @"Welcome to the Qt Designer Custom Widget Wizard",
                     Message =
                             @"Setup the configurations you want to include in your project. "
                             + @"The recommended settings for this project are selected by default.",
@@ -79,7 +79,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 },
                 new DesignerPage {
                     Data = WizardData,
-                    Header = @"Welcome to the Qt Designer Custom Widget",
+                    Header = @"Welcome to the Qt Designer Custom Widget Wizard",
                     Message = @"This wizard generates a designer custom widget which can be "
                         + @"used in Qt Designer or Visual Studio.",
                     PreviousButtonEnabled = true,
