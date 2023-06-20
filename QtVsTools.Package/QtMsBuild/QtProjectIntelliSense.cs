@@ -32,17 +32,15 @@ namespace QtVsTools.QtMsBuild
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            var projectPath = qtProject?.VcProjectPath;
-            if (qtProject == null || !QtProjectTracker.IsTracked(projectPath))
+            if (QtProjectTracker.GetOrAdd(qtProject) is not {} tracker)
                 return;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Refreshing: [{configId ?? "(all configs)"}] {projectPath}");
+                    + $"Refreshing: [{configId ?? "(all configs)"}] {qtProject.VcProjectPath}");
             }
 
-            var tracker = QtProjectTracker.Get(qtProject);
             await tracker.Initialized;
 
             var properties = new Dictionary<string, string>();

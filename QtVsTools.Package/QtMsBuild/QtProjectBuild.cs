@@ -80,8 +80,10 @@ namespace QtVsTools.QtMsBuild
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
 
+            if (QtProjectTracker.GetOrAdd(qtProject) is not {} tracker)
+                return;
+
             RequestTimer.Restart();
-            var tracker = QtProjectTracker.Get(qtProject);
             await tracker.Initialized;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {

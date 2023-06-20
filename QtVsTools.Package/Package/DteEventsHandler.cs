@@ -394,7 +394,6 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    QtProjectTracker.Add(qtPro);
                     QtProjectIntellisense.Refresh(qtPro);
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
@@ -449,7 +448,6 @@ namespace QtVsTools
             var formatVersion = ProjectFormat.GetVersion(project);
             if (formatVersion >= ProjectFormat.Version.V3) {
                 InitializeVCProject(project);
-                QtProjectTracker.Add(qtProject);
                 QtProjectIntellisense.Refresh(qtProject);
             }
 
@@ -472,7 +470,7 @@ namespace QtVsTools
                 var formatVersion = ProjectFormat.GetVersion(p);
                 if (formatVersion >= ProjectFormat.Version.V3) {
                     InitializeVCProject(p);
-                    QtProjectTracker.Add(QtProject.Create(p));
+                    QtProjectTracker.GetOrAdd(QtProject.Create(p));
                 }
 
                 if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
@@ -554,9 +552,7 @@ namespace QtVsTools
             if (item is not VCConfiguration {project: VCProject {Object: Project project}} vcConfig)
                 return;
 
-            var qtProject = QtProject.Create(project);
-            QtProjectTracker.Add(qtProject);
-            QtProjectIntellisense.Refresh(qtProject, vcConfig.Name);
+            QtProjectIntellisense.Refresh(QtProject.Create(project), vcConfig.Name);
         }
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
