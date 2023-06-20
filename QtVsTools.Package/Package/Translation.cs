@@ -80,14 +80,12 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtPro = QtProject.Create(project);
-            if (project == null || qtPro == null) {
-                Messages.Print(
-                    "translation: Error accessing project interface");
+            if (QtProject.Create(project) is not {} qtProject) {
+                Messages.Print("translation: Error accessing project interface");
                 return;
             }
 
-            if (qtPro.FormatVersion < ProjectFormat.Version.V3) {
+            if (qtProject.FormatVersion < ProjectFormat.Version.V3) {
                 if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                     Notifications.UpdateProjectFormat.Show();
                 return;
@@ -117,7 +115,7 @@ namespace QtVsTools
 
             var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
             QtProjectBuild.StartBuild(
-                project.FullName, activeConfigId, properties, new[] { "QtTranslation" });
+                    qtProject, activeConfigId, properties, new[] { "QtTranslation" });
         }
 
         public static void RunlUpdate(EnvDTE.Solution solution)

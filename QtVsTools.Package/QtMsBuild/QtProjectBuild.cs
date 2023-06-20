@@ -48,7 +48,7 @@ namespace QtVsTools.QtMsBuild
             StatusCenter, VsServiceProvider
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
-        VCProject VcProject { get; set; }
+        private QtProject QtProject { get; set; }
         UnconfiguredProject UnconfiguredProject { get; set; }
         ConfiguredProject ConfiguredProject { get; set; }
         Dictionary<string, string> Properties { get; set; }
@@ -58,31 +58,30 @@ namespace QtVsTools.QtMsBuild
         static Task BuildDispatcher { get; set; }
 
         public static void StartBuild(
-            string projectPath,
+            QtProject qtProject,
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             _ = Task.Run(() => StartBuildAsync(
-                projectPath, configName, properties, targets, verbosity));
+                qtProject, configName, properties, targets, verbosity));
         }
 
         public static async Task StartBuildAsync(
-            string projectPath,
+            QtProject qtProject,
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity)
         {
-            if (string.IsNullOrEmpty(projectPath))
+            if (qtProject == null)
                 throw new ArgumentException("Project cannot be null.");
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
-            if (!QtProjectTracker.IsTracked(projectPath))
-                return;
+
             RequestTimer.Restart();
-            var tracker = QtProjectTracker.Get(projectPath);
+            var tracker = QtProjectTracker.Get(qtProject);
             await tracker.Initialized;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
@@ -108,7 +107,7 @@ namespace QtVsTools.QtMsBuild
 
             BuildQueue.Enqueue(new QtProjectBuild
             {
-                VcProject = tracker.VcProject,
+                QtProject = qtProject,
                 UnconfiguredProject = tracker.UnconfiguredProject,
                 ConfiguredProject = configuredProject,
                 Properties = properties?.ToDictionary(x => x.Key, x => x.Value),
@@ -121,12 +120,12 @@ namespace QtVsTools.QtMsBuild
         }
 
         public static async Task SetOutdatedAsync(
-            string projectPath,
+            QtProject qtProject,
             string configName,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             await StartBuildAsync(
-                projectPath,
+                qtProject,
                 configName,
                 null,
                 new[] { Target.SetOutdated.Cast<string>() },
@@ -344,7 +343,7 @@ namespace QtVsTools.QtMsBuild
                 }
 
                 if (ok) {
-                    var vcConfigs = VcProject.Configurations as IVCCollection;
+                    var vcConfigs = QtProject.VcProject.Configurations as IVCCollection;
                     var vcConfig = vcConfigs.Item(ConfiguredProject.ProjectConfiguration.Name) as VCConfiguration;
                     var props = vcConfig.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage;
                     props?.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));

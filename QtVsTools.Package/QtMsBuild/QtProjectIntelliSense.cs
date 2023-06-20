@@ -19,11 +19,21 @@ namespace QtVsTools.QtMsBuild
     static class QtProjectIntellisense
     {
         public static void Refresh(
-            string projectPath,
+            QtProject qtProject,
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
-            if (!QtProjectTracker.IsTracked(projectPath))
+            _ = Task.Run(() => RefreshAsync(qtProject, configId, selectedFiles));
+        }
+
+        public static async Task RefreshAsync(
+            QtProject qtProject,
+            string configId = null,
+            IEnumerable<string> selectedFiles = null,
+            bool refreshQtVars = false)
+        {
+            var projectPath = qtProject?.VcProjectPath;
+            if (qtProject == null || !QtProjectTracker.IsTracked(projectPath))
                 return;
 
             if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
@@ -31,18 +41,8 @@ namespace QtVsTools.QtMsBuild
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Refreshing: [{configId ?? "(all configs)"}] {projectPath}");
             }
-            _ = Task.Run(() => RefreshAsync(projectPath, configId, selectedFiles));
-        }
 
-        public static async Task RefreshAsync(
-            string projectPath,
-            string configId = null,
-            IEnumerable<string> selectedFiles = null,
-            bool refreshQtVars = false)
-        {
-            if (!QtProjectTracker.IsTracked(projectPath))
-                return;
-            var tracker = QtProjectTracker.Get(projectPath);
+            var tracker = QtProjectTracker.Get(qtProject);
             await tracker.Initialized;
 
             var properties = new Dictionary<string, string>();
@@ -64,11 +64,10 @@ namespace QtVsTools.QtMsBuild
 
             foreach (var config in configs) {
                 if (refreshQtVars) {
-                    await QtProjectBuild.StartBuildAsync(
-                        projectPath, config, properties, targets,
+                    await QtProjectBuild.StartBuildAsync(qtProject, config, properties, targets,
                         LoggerVerbosity.Quiet);
                 } else {
-                    await QtProjectBuild.SetOutdatedAsync(projectPath, config);
+                    await QtProjectBuild.SetOutdatedAsync(qtProject, config);
                 }
             }
         }

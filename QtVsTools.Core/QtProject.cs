@@ -24,23 +24,22 @@ namespace QtVsTools.Core
     /// </summary>
     public class QtProject
     {
-        private static readonly Dictionary<Project, QtProject> Instances = new();
+        private static readonly Dictionary<VCProject, QtProject> Instances = new();
         private readonly QtMsBuildContainer qtMsBuild = new(new VcPropertyStorageProvider());
 
         public static QtProject Create(VCProject vcProject)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return Create((Project)vcProject.Object);
-        }
-
-        public static QtProject Create(Project project)
-        {
             QtProject qtProject = null;
-            if (project != null && !Instances.TryGetValue(project, out qtProject)) {
-                qtProject = new QtProject(project);
-                Instances.Add(project, qtProject);
+            if (vcProject != null && !Instances.TryGetValue(vcProject, out qtProject)) {
+                qtProject = new QtProject(vcProject);
+                Instances.Add(vcProject, qtProject);
             }
             return qtProject;
+        }
+
+        public static QtProject Create(EnvDTE.Project project)
+        {
+            return Create(project?.Object as VCProject);
         }
 
         public static void ClearInstances()
@@ -48,16 +47,19 @@ namespace QtVsTools.Core
             Instances.Clear();
         }
 
-        private QtProject(Project project)
+        private QtProject(VCProject vcProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (project == null)
-                throw new QtVSException("Cannot construct a QtProject object without a valid project.");
-            VcProject = project.Object as VCProject;
+            VcProject = vcProject ?? throw new QtVSException("Cannot construct a QtProject object "
+                + "without a valid Microsoft.VisualStudio.VCProjectEngine project.");
+            VcProjectPath = vcProject.ProjectFile;
+            VcProjectDirectory = vcProject.ProjectDirectory;
         }
 
         public VCProject VcProject { get; }
+        public string VcProjectPath { get; }
+        public string VcProjectDirectory { get; }
 
         public static string GetRuleName(VCConfiguration config, string itemType)
         {
@@ -563,7 +565,7 @@ namespace QtVsTools.Core
         {
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
             if (!HelperFunctions.IsAbsoluteFilePath(fileName)) {
-                fileName = HelperFunctions.NormalizeFilePath(VcProject.ProjectDirectory
+                fileName = HelperFunctions.NormalizeFilePath(VcProjectDirectory
                     + Path.DirectorySeparatorChar + fileName);
             }
             foreach (VCFile f in (IVCCollection)VcProject.Files) {

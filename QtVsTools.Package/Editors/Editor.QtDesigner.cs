@@ -13,6 +13,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Editors
 {
+    using Core;
     using QtMsBuild;
     using VisualStudio;
 
@@ -42,24 +43,27 @@ namespace QtVsTools.Editors
             base.OnStart(process);
             var document = VsShell.GetDocument(Context, ItemId);
 
-            var project = document?.ProjectItem?.ContainingProject;
-            if (project == null || !QtProjectTracker.IsTracked(project.FullName))
+            if (document?.ProjectItem?.ContainingProject is not {} project)
                 return;
-            string projectPath = project.FullName;
-            string filePath = document.FullName;
-            string[] itemId = { document.ProjectItem?.Name };
+
+            var qtProject = QtProject.Create(project);
+            if (qtProject == null || !QtProjectTracker.IsTracked(qtProject.VcProjectPath))
+                return;
+
+            var filePath = document.FullName;
             var lastWriteTime = File.GetLastWriteTime(filePath);
+
             _ = Task.Run(async () =>
             {
                 while (!process.WaitForExit(1000)) {
                     var latestWriteTime = File.GetLastWriteTime(filePath);
                     if (lastWriteTime != latestWriteTime) {
                         lastWriteTime = latestWriteTime;
-                        await QtProjectIntellisense.RefreshAsync(projectPath);
+                        await QtProjectIntellisense.RefreshAsync(qtProject);
                     }
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
-                    await QtProjectIntellisense.RefreshAsync(projectPath);
+                    await QtProjectIntellisense.RefreshAsync(qtProject);
                 }
             });
         }

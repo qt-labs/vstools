@@ -394,8 +394,8 @@ namespace QtVsTools
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
                     qtPro.AddUic4BuildStep(vcFile);
-                    QtProjectTracker.Add(project);
-                    QtProjectIntellisense.Refresh(project.FullName);
+                    QtProjectTracker.Add(qtPro);
+                    QtProjectIntellisense.Refresh(qtPro);
                 } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
                     if (!qtPro.IsQtMsBuildEnabled())
                         HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
@@ -414,7 +414,7 @@ namespace QtVsTools
             if (pro == null)
                 return;
 
-            var qtPro = QtProject.Create(pro);
+            var qtPro = QtProject.Create(pro.Object as VCProject);
             qtPro.RemoveGeneratedFiles(ProjectItem.Name);
         }
 
@@ -428,7 +428,7 @@ namespace QtVsTools
             if (pro == null)
                 return;
 
-            var qtPro = QtProject.Create(pro);
+            var qtPro = QtProject.Create(pro.Object as VCProject);
             qtPro.RemoveGeneratedFiles(OldName);
 
             ProjectItemsEvents_ItemAdded(ProjectItem);
@@ -439,16 +439,18 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Ignore temp projects created by Qt/CMake wizard
-            if (project.Object is VCProject vcPro) {
-                if (QtProject.GetPropertyValue(vcPro.ActiveConfiguration, "QT_CMAKE_TEMPLATE") == "true")
-                    return;
-            }
+            if (QtProject.Create(project) is not {} qtProject)
+                return;
+
+            var activeConfiguration = qtProject.VcProject.ActiveConfiguration;
+            if (QtProject.GetPropertyValue(activeConfiguration, "QT_CMAKE_TEMPLATE") == "true")
+                return;
 
             var formatVersion = ProjectFormat.GetVersion(project);
             if (formatVersion >= ProjectFormat.Version.V3) {
                 InitializeVCProject(project);
-                QtProjectTracker.Add(project);
-                QtProjectIntellisense.Refresh(project.FullName);
+                QtProjectTracker.Add(qtProject);
+                QtProjectIntellisense.Refresh(qtProject);
             }
 
             if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
@@ -470,7 +472,7 @@ namespace QtVsTools
                 var formatVersion = ProjectFormat.GetVersion(p);
                 if (formatVersion >= ProjectFormat.Version.V3) {
                     InitializeVCProject(p);
-                    QtProjectTracker.Add(p);
+                    QtProjectTracker.Add(QtProject.Create(p));
                 }
 
                 if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
@@ -548,10 +550,13 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
-            if (item is VCConfiguration {project: VCProject {Object: Project project}} vcConfig) {
-                QtProjectTracker.Add(project);
-                QtProjectIntellisense.Refresh(project.FullName, vcConfig.Name);
-            }
+
+            if (item is not VCConfiguration {project: VCProject {Object: Project project}} vcConfig)
+                return;
+
+            var qtProject = QtProject.Create(project);
+            QtProjectTracker.Add(qtProject);
+            QtProjectIntellisense.Refresh(qtProject, vcConfig.Name);
         }
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
