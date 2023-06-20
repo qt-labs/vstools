@@ -103,7 +103,10 @@ namespace QtVsTools.Core
             if (null == vcInfo)
                 return;
 
-            ImportQMakeProject(vcInfo, versionInfo);
+            if (!ImportQMakeProject(vcInfo, versionInfo)) {
+                Messages.Print($"Could not convert project file {vcInfo.Name} to Qt/MSBuild.");
+                return;
+            }
 
             try {
                 if (!CheckQtVersion(versionInfo))
@@ -159,8 +162,9 @@ namespace QtVsTools.Core
         private static void ImportQMakeSolution(FileInfo solutionFile, VersionInformation vi)
         {
             var projects = ParseProjectsFromSolution(solutionFile);
-            foreach (var projectInfo in projects.Select(project => new FileInfo(project)))
-                ImportQMakeProject(projectInfo, vi);
+            foreach (var project in projects.Select(project => new FileInfo(project)))
+                if (!ImportQMakeProject(project, vi))
+                    Messages.Print($"Could not convert project file {project.Name} to Qt/MSBuild.");
         }
 
         private static IEnumerable<string> ParseProjectsFromSolution(FileInfo solutionFile)
@@ -183,9 +187,19 @@ namespace QtVsTools.Core
             return projects;
         }
 
-        private static void ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
+        private static bool ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
             var xmlProject = MsBuildProject.Load(projectFile.FullName);
+            if (xmlProject == null)
+                return false;
+            var oldVersion = xmlProject.GetProjectFormatVersion();
+            switch (oldVersion) {
+            case ProjectFormat.Version.Latest:
+                return true; // Nothing to do!
+            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+                return false; // Nothing we can do!
+            }
+
             xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
 
@@ -202,15 +216,14 @@ namespace QtVsTools.Core
                 ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
             }
             if (ok)
-                ok = xmlProject.UpdateProjectFormatVersion();
+                ok = xmlProject.UpdateProjectFormatVersion(oldVersion);
 
             if (ok) {
                 xmlProject.Save();
                 // Initialize Qt variables
                 xmlProject.BuildTarget("QtVarsDesignTime");
-            } else {
-                Messages.Print($"Could not convert project file {projectFile.Name} to Qt/MSBuild.");
             }
+            return ok;
         }
 
         private static void ApplyPostImportSteps(DTE dte, QtProject qtProject)

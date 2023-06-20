@@ -110,10 +110,20 @@ namespace QtVsTools
             return true;
         }
 
-        static bool ConvertProject(string pathToProject)
+        private static bool ConvertProject(string pathToProject)
         {
             var xmlProject = MsBuildProject.Load(pathToProject);
-            bool ok = xmlProject != null;
+            if (xmlProject == null)
+                return false;
+            var oldVersion = xmlProject.GetProjectFormatVersion();
+            switch (oldVersion) {
+            case ProjectFormat.Version.Latest:
+                return true; // Nothing to do!
+            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+                return false; // Nothing we can do!
+            }
+
+            var ok = xmlProject.AddQtMsBuildReferences();
             if (ok)
                 ok = xmlProject.AddQtMsBuildReferences();
             if (ok)
@@ -121,7 +131,7 @@ namespace QtVsTools
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok)
-                ok = xmlProject.UpdateProjectFormatVersion();
+                ok = xmlProject.UpdateProjectFormatVersion(oldVersion);
             if (ok)
                 ok = xmlProject.Save();
 

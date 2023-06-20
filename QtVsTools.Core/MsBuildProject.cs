@@ -228,9 +228,9 @@ namespace QtVsTools.Core
             }
         }
 
-        ProjectFormat.Version ParseProjectFormatVersion(string text)
+        private ProjectFormat.Version ParseProjectFormatVersion(string text)
         {
-            if (ProjectFormatVersion == null)
+            if (string.IsNullOrEmpty(text) || ProjectFormatVersion == null)
                 return ProjectFormat.Version.Unknown;
             try {
                 return (ProjectFormat.Version) ProjectFormatVersion.Parse(text)
@@ -243,6 +243,19 @@ namespace QtVsTools.Core
             }
         }
 
+        public ProjectFormat.Version GetProjectFormatVersion()
+        {
+            var globals = this[Files.Project].xml
+                .Elements(ns + "Project")
+                .Elements(ns + "PropertyGroup")
+                .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
+            // Set Qt project format version
+            var projKeyword = globals?.Elements(ns + "Keyword")
+                .FirstOrDefault(x => x.Value.StartsWith(ProjectFormat.KeywordLatest)
+                    || x.Value.StartsWith(ProjectFormat.KeywordV2));
+            return ParseProjectFormatVersion(projKeyword?.Value);
+        }
+
         /// <summary>
         /// Converts project format version to the latest version:
         ///  * Set latest project version;
@@ -251,11 +264,19 @@ namespace QtVsTools.Core
         ///  * Remove hard-coded macros, include paths and libs related to Qt modules.
         ///  * Set QtModules property;
         /// </summary>
+        /// <param name="oldVersion"></param>
         /// <returns>true if successful</returns>
-        public bool UpdateProjectFormatVersion()
+        public bool UpdateProjectFormatVersion(ProjectFormat.Version oldVersion)
         {
             if (ConfigCondition == null)
                 return false;
+
+            switch (oldVersion) {
+            case ProjectFormat.Version.Latest:
+                return true; // Nothing to do!
+            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+                return false; // Nothing we can do!
+            }
 
             var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
             var defaultVersion = QtVersionManager.The().GetVersionInfo(defaultVersionName);
@@ -279,9 +300,6 @@ namespace QtVsTools.Core
                     || x.Value.StartsWith(ProjectFormat.KeywordV2));
             if (projKeyword == null)
                 return false;
-            var oldVersion = ParseProjectFormatVersion(projKeyword.Value);
-            if (oldVersion is ProjectFormat.Version.Latest)
-                return true; // nothing to do!
 
             projKeyword.SetValue($"QtVS_v{(int)ProjectFormat.Version.Latest}");
 
@@ -303,8 +321,7 @@ namespace QtVsTools.Core
             var propertyGroups = new Dictionary<string, XElement>();
 
             // Upgrading from <= v3.2?
-            if (oldVersion is ProjectFormat.Version.Unknown or < ProjectFormat.Version.V3PropertyEval) {
-
+            if (oldVersion < ProjectFormat.Version.V3PropertyEval) {
                 // Find import of default Qt properties
                 var qtDefaultProps = this[Files.Project].xml
                     .Elements(ns + "Project")
@@ -343,8 +360,7 @@ namespace QtVsTools.Core
             }
 
             // Upgrading from <= v3.1?
-            if (oldVersion is ProjectFormat.Version.Unknown or < ProjectFormat.Version.V3GlobalQtMsBuildProperty) {
-
+            if (oldVersion < ProjectFormat.Version.V3GlobalQtMsBuildProperty) {
                 // Move Qt/MSBuild path to global property
                 var qtMsBuildProperty = globals
                     .ElementsAfterSelf(ns + "PropertyGroup")
