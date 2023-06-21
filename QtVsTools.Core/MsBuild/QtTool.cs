@@ -5,7 +5,6 @@
 
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -75,25 +74,6 @@ namespace QtVsTools.Core.MsBuild
 
             ExtractInputOutput(toolExecName, out inputPath, out outputPath);
             return true;
-        }
-
-        protected static void GenerateCommandLineOption(
-            StringBuilder commandLine,
-            Option option,
-            string values = "",
-            bool useQuotes = false)
-        {
-            var name = option.Names.First();
-            var escape = name.Length == 1 ? "-" : "--";
-
-            if (!string.IsNullOrEmpty(option.ValueName)) {
-                foreach (var value in values.Split(';')) {
-                    commandLine.AppendFormat(
-                        useQuotes ? " {0}{1} \"{2}\"" : " {0}{1} {2}", escape, name, value);
-                }
-            } else {
-                commandLine.AppendFormat(" {0}{1}", escape, name);
-            }
         }
     }
 }

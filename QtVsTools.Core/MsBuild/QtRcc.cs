@@ -4,7 +4,7 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -159,61 +159,23 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        public string GenerateCommandLine(QtMsBuildContainer container, object propertyStorage)
+        /// <summary>
+        /// This function returns <see langword="true" /> if the MsBuild file
+        /// item type is set to QtRcc; <see langword="false" /> otherwise.
+        /// </summary>
+        /// <param name="file"></param>
+        public static bool HasRccItemType(VCFile file)
         {
-            var cmd = new StringBuilder();
-            cmd.AppendFormat(@"""{0}\bin\{1}"" ""{2}"" -o ""{3}""",
-                container.GetPropertyValue(propertyStorage, Property.QTDIR),
-                ToolExecName,
-                container.GetPropertyValue(propertyStorage, Property.InputFile),
-                container.GetPropertyValue(propertyStorage, Property.OutputFile));
+            return file.ItemType == ItemTypeName;
+        }
 
-            var value = container.GetPropertyValue(propertyStorage, Property.InitFuncName);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.InitFuncName], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Root);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Root], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Compression);
-            if (value.StartsWith("level")) {
-                GenerateCommandLineOption(cmd,
-                    options[Property.Compression],
-                    value.Substring(5), true);
-            }
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoCompression) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoCompression]);
-
-            value = container.GetPropertyValue(propertyStorage, Property.CompressThreshold);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.CompressThreshold], value);
-
-            if (container.GetPropertyValue(propertyStorage, Property.BinaryOutput) == "true")
-                GenerateCommandLineOption(cmd, options[Property.BinaryOutput]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoZstd) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoZstd]);
-
-            value = container.GetPropertyValue(propertyStorage, Property.PassNumber);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.PassNumber], value);
-
-            if (container.GetPropertyValue(propertyStorage, Property.Verbose) == "true")
-                GenerateCommandLineOption(cmd, options[Property.Verbose]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.List) == "true")
-                GenerateCommandLineOption(cmd, options[Property.List]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.Project) == "true")
-                GenerateCommandLineOption(cmd, options[Property.Project]);
-
-            value = container.GetPropertyValue(propertyStorage, Property.FormatVersion);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.FormatVersion], value);
-
-            return cmd.ToString();
+        /// <summary>
+        /// This function sets the MSBuild file item type to QtRcc.
+        /// </summary>
+        /// <param name="file">file</param>
+        public static void SetRccItemType(VCFile file)
+        {
+            file.ItemType = ItemTypeName;
         }
     }
 }

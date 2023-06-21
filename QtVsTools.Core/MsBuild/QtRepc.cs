@@ -119,40 +119,5 @@ namespace QtVsTools.Core.MsBuild
 
             return true;
         }
-
-        public string GenerateCommandLine(QtMsBuildContainer container, object propertyStorage)
-        {
-            var cmd = new StringBuilder();
-            cmd.AppendFormat(@"""{0}\bin\{1}""",
-                container.GetPropertyValue(propertyStorage, Property.QTDIR), ToolExecName);
-
-            var inputType = container.GetPropertyValue(propertyStorage, Property.InputFileType);
-            if (!string.IsNullOrEmpty(inputType))
-                GenerateCommandLineOption(cmd, options[Property.InputFileType], inputType);
-
-            var outputType = container.GetPropertyValue(propertyStorage, Property.OutputFileType);
-            if (!string.IsNullOrEmpty(outputType))
-                GenerateCommandLineOption(cmd, options[Property.OutputFileType], outputType);
-
-            var value = container.GetPropertyValue(propertyStorage, Property.IncludePath);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.IncludePath], value, true);
-
-            if (container.GetPropertyValue(propertyStorage, Property.AlwaysClass) == "true")
-                GenerateCommandLineOption(cmd, options[Property.AlwaysClass]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.PrintDebug) == "true")
-                GenerateCommandLineOption(cmd, options[Property.PrintDebug]);
-
-            value = container.GetPropertyValue(propertyStorage, Property.InputFile);
-            if (!string.IsNullOrEmpty(value))
-                cmd.AppendFormat(" \"{0}\"", value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.OutputFile);
-            if (!string.IsNullOrEmpty(value))
-                cmd.AppendFormat(" \"{0}\"", value);
-
-            return cmd.ToString();
-        }
     }
 }

@@ -4,7 +4,7 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -110,48 +110,23 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        public string GenerateCommandLine(QtMsBuildContainer container, object propertyStorage)
+        /// <summary>
+        /// This function returns <see langword="true" /> if the MsBuild file
+        /// item type is set to QtUic; <see langword="false" /> otherwise.
+        /// </summary>
+        /// <param name="file"></param>
+        public static bool HasUicItemType(VCFile file)
         {
-            var cmd = new StringBuilder();
-            cmd.AppendFormat(@"""{0}\bin\{1}"" ""{2}"" -o ""{3}""",
-                container.GetPropertyValue(propertyStorage, Property.QTDIR),
-                ToolExecName,
-                container.GetPropertyValue(propertyStorage, Property.InputFile),
-                container.GetPropertyValue(propertyStorage, Property.OutputFile));
+            return file.ItemType == ItemTypeName;
+        }
 
-            if (container.GetPropertyValue(
-                    propertyStorage,
-                    Property.DisplayDependencies)
-             == "true") {
-                GenerateCommandLineOption(cmd, options[Property.DisplayDependencies]);
-            }
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoProtection) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoProtection]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoImplicitIncludes) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoImplicitIncludes]);
-
-            var value = container.GetPropertyValue(propertyStorage, Property.Postfix);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Postfix], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Translate);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Translate], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Include);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Include], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Generator);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Generator], value);
-
-            if (container.GetPropertyValue(propertyStorage, Property.IdBased) == "true")
-                GenerateCommandLineOption(cmd, options[Property.IdBased]);
-
-            return cmd.ToString();
+        /// <summary>
+        /// This function sets the MSBuild file item type to QtUic.
+        /// </summary>
+        /// <param name="file">file</param>
+        public static void SetUicItemType(VCFile file)
+        {
+            file.ItemType = ItemTypeName;
         }
     }
 }

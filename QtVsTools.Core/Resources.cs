@@ -13,15 +13,6 @@ namespace QtVsTools.Core
         // Project properties labels
         public const string projLabelQtSettings = "QtSettings";
 
-        // If those directories do not equal to the project directory
-        // they have to be added to the include directories for
-        // compiling!
-        public const string generatedFilesDir = "GeneratedFiles";
-
-        public const string mocDirKeyword = "MocDir";
-        public const string uicDirKeyword = "UicDir";
-        public const string rccDirKeyword = "RccDir";
-
         public const string registryRootPath = "Digia";
 
 #if (VS2019 || VS2022)

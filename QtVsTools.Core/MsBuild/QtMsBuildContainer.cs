@@ -281,11 +281,6 @@ namespace QtVsTools.Core.MsBuild
         private static QtMoc _qtMocInstance;
         public static QtMoc QtMocInstance => _qtMocInstance ??= new QtMoc();
 
-        public string GetPropertyValue(object propertyStorage, QtMoc.Property property)
-        {
-            return GetPropertyValueByName(propertyStorage, QtMoc.ItemTypeName, property.ToString());
-        }
-
         public bool SetItemProperty(object propertyStorage, QtMoc.Property property,
             string propertyValue)
         {
@@ -301,11 +296,6 @@ namespace QtVsTools.Core.MsBuild
                 property.Value));
         }
 
-        public string GenerateQtMocCommandLine(object propertyStorage)
-        {
-            return QtMocInstance.GenerateCommandLine(this, propertyStorage);
-        }
-
         #endregion
 
         #region QtRcc
@@ -313,11 +303,6 @@ namespace QtVsTools.Core.MsBuild
         private static QtRcc _qtRccInstance;
 
         private static QtRcc QtRccInstance => _qtRccInstance ??= new QtRcc();
-
-        public string GetPropertyValue(object propertyStorage, QtRcc.Property property)
-        {
-            return GetPropertyValueByName(propertyStorage, QtRcc.ItemTypeName, property.ToString());
-        }
 
         public bool SetItemProperty(object propertyStorage, QtRcc.Property property,
             string propertyValue)
@@ -334,11 +319,6 @@ namespace QtVsTools.Core.MsBuild
                 property.Value));
         }
 
-        public string GenerateQtRccCommandLine(object propertyStorage)
-        {
-            return QtRccInstance.GenerateCommandLine(this, propertyStorage);
-        }
-
         #endregion
 
         #region QtRepc
@@ -346,11 +326,6 @@ namespace QtVsTools.Core.MsBuild
         private static QtRepc _qtRepcInstance;
 
         private static QtRepc QtRepcInstance => _qtRepcInstance ??= new QtRepc();
-
-        public string GetPropertyValue(object propertyStorage, QtRepc.Property property)
-        {
-            return GetPropertyValueByName(propertyStorage, QtRepc.ItemTypeName, property.ToString());
-        }
 
         public bool SetItemProperty(object propertyStorage, QtRepc.Property property,
             string propertyValue)
@@ -367,11 +342,6 @@ namespace QtVsTools.Core.MsBuild
                 property.Value));
         }
 
-        public string GenerateQtRepcCommandLine(object propertyStorage)
-        {
-            return QtRepcInstance.GenerateCommandLine(this, propertyStorage);
-        }
-
         #endregion
 
         #region QtUic
@@ -379,11 +349,6 @@ namespace QtVsTools.Core.MsBuild
         private static QtUic _qtUicInstance;
 
         private static QtUic QtUicInstance => _qtUicInstance ??= new QtUic();
-
-        public string GetPropertyValue(object propertyStorage, QtUic.Property property)
-        {
-            return GetPropertyValueByName(propertyStorage, QtUic.ItemTypeName, property.ToString());
-        }
 
         public bool SetItemProperty(object propertyStorage, QtUic.Property property,
             string propertyValue)
@@ -398,11 +363,6 @@ namespace QtVsTools.Core.MsBuild
                 return false;
             return properties.All(property => SetItemProperty(propertyStorage, property.Key,
                 property.Value));
-        }
-
-        public string GenerateQtUicCommandLine(object propertyStorage)
-        {
-            return QtUicInstance.GenerateCommandLine(this, propertyStorage);
         }
 
         #endregion

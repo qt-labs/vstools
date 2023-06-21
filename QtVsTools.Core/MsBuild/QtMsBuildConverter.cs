@@ -34,14 +34,11 @@ namespace QtVsTools.Core.MsBuild
             if (allProjects.Count == 0)
                 return WarningMessage("No projects to convert.");
 
-            var projects = new List<EnvDTE.Project>();
-            foreach (var project in allProjects.Where(HelperFunctions.IsQtProject)) {
-                if (QtProject.IsQtMsBuildEnabled(project)) {
-                    if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.Latest)
-                        continue;
-                }
-                projects.Add(project);
-            }
+            var projects = (from project in HelperFunctions.ProjectsInSolution(dte)
+                let version = ProjectFormat.GetVersion(project)
+                where version is >= ProjectFormat.Version.V1 and < ProjectFormat.Version.Latest
+                select project).ToList();
+
             if (projects.Count == 0)
                 return WarningMessage("No projects to convert.");
 

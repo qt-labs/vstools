@@ -25,13 +25,10 @@ namespace QtVsTools
     {
         private readonly DTE dte;
         private readonly SolutionEvents solutionEvents;
-        private readonly BuildEvents buildEvents;
         private readonly DocumentEvents documentEvents;
         private readonly ProjectItemsEvents projectItemsEvents;
-        private vsBuildAction currentBuildAction = vsBuildAction.vsBuildActionBuild;
         private VCProjectEngineEvents vcProjectEngineEvents;
         private readonly CommandEvents debugStartEvents;
-        private readonly CommandEvents debugStartWithoutDebuggingEvents;
         private readonly CommandEvents f1HelpEvents;
         private WindowEvents windowEvents;
 
@@ -41,12 +38,6 @@ namespace QtVsTools
 
             dte = _dte;
             var events = dte.Events as Events2;
-
-            buildEvents = events?.BuildEvents;
-            if (buildEvents != null) {
-                buildEvents.OnBuildBegin += buildEvents_OnBuildBegin;
-                buildEvents.OnBuildProjConfigBegin += OnBuildProjConfigBegin;
-            }
 
             documentEvents = events?.DocumentEvents;
             if (documentEvents != null)
@@ -78,17 +69,15 @@ namespace QtVsTools
             if (debugStartEvents != null)
                 debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
 
-            debugStartWithoutDebuggingEvents = events?.CommandEvents[debugCommandsGUID, 368];
-            if (debugStartWithoutDebuggingEvents != null)
-                debugStartWithoutDebuggingEvents.BeforeExecute +=
-                    DebugStartWithoutDebuggingEvents_BeforeExecute;
-
             f1HelpEvents = events?.CommandEvents[typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
                 (int)VSConstants.VSStd97CmdID.F1Help];
             if (f1HelpEvents != null)
                 f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
-            InitializeVCProjects();
+            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
+                if (QtProject.GetOrAdd(project) is {} qtProject)
+                    InitializeVcProject(qtProject);
+            }
         }
 
         private async Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
@@ -137,43 +126,18 @@ namespace QtVsTools
 
             if (dte.Debugger is { CurrentMode: not dbgDebugMode.dbgDesignMode })
                 return;
+
             if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
                 return;
 
             var versionInfo = qtProject.VersionInfo;
             if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
                 QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
-
-            if (qtProject.FormatVersion >= ProjectFormat.Version.V3)
-                return;
-
-            // Notify about old project format and offer upgrade option.
-            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                QtProject.ShowUpdateFormatMessage();
-        }
-
-        private void DebugStartWithoutDebuggingEvents_BeforeExecute(string guid, int id,
-            object customIn, object customOut, ref bool cancelDefault)
-        {
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
-                return;
-
-            if (qtProject.FormatVersion >= ProjectFormat.Version.V3)
-                return;
-
-            // Notify about old project format and offer upgrade option.
-            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                QtProject.ShowUpdateFormatMessage();
         }
 
         public void Disconnect()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (buildEvents != null) {
-                buildEvents.OnBuildBegin -= buildEvents_OnBuildBegin;
-                buildEvents.OnBuildProjConfigBegin -= OnBuildProjConfigBegin;
-            }
 
             if (documentEvents != null)
                 documentEvents.DocumentSaved -= DocumentSaved;
@@ -193,64 +157,33 @@ namespace QtVsTools
             if (debugStartEvents != null)
                 debugStartEvents.BeforeExecute -= DebugStartEvents_BeforeExecute;
 
-            if (debugStartWithoutDebuggingEvents != null)
-                debugStartWithoutDebuggingEvents.BeforeExecute -= DebugStartWithoutDebuggingEvents_BeforeExecute;
-
-            if (vcProjectEngineEvents != null) {
-                vcProjectEngineEvents.ItemPropertyChange -= OnVCProjectEngineItemPropertyChange;
-                vcProjectEngineEvents.ItemPropertyChange2 -= OnVCProjectEngineItemPropertyChange2;
-            }
+            if (vcProjectEngineEvents != null)
+                vcProjectEngineEvents.ItemPropertyChange2 -= OnVcProjectEngineItemPropertyChange2;
 
             if (windowEvents != null)
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
         }
 
-        private void OnBuildProjConfigBegin(string projectName, string projectConfig,
-            string platform, string solutionConfig)
-        {
-            if (currentBuildAction is not vsBuildAction.vsBuildActionBuild
-                and not vsBuildAction.vsBuildActionRebuildAll) {
-                return;     // Don't do anything, if we're not building.
-            }
-
-            bool Predicate(Project p)
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                return p.UniqueName == projectName;
-            }
-            if (HelperFunctions.ProjectsInSolution(dte).FirstOrDefault(Predicate) is not {} project)
-                return;
-
-            if (!HelperFunctions.IsVsToolsProject(project))
-                return;
-
-            // Notify about old project format and offer upgrade option.
-            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
-                return;
-            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                QtProject.ShowUpdateFormatMessage();
-        }
-
-        private void buildEvents_OnBuildBegin(vsBuildScope scope, vsBuildAction action)
-        {
-            currentBuildAction = action;
-        }
-
-        public void DocumentSaved(Document document)
+        private void DocumentSaved(Document document)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var project = document.ProjectItem.ContainingProject;
-            if (!HelperFunctions.IsVsToolsProject(project))
+            if (QtProject.GetOrAdd(document.ProjectItem.ContainingProject) is not {} qtPro)
                 return;
 
-            if (QtProject.GetOrAdd(project) is not {} qtPro)
+            if (qtPro.VcProject.Files is not IVCCollection files)
                 return;
 
-            var file = (VCFile)((IVCCollection)qtPro.VcProject.Files).Item(document.FullName);
-            if (HelperFunctions.IsUicFile(file.Name)) {
-                if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
-                    qtPro.AddUic4BuildStep(file);
+            if (files.Item(document.FullName) is not VCFile file)
+                return;
+
+            if (HelperFunctions.IsUicFile(file.Name) && !QtUic.HasUicItemType(file)) {
+                QtUic.SetUicItemType(file);
+                return;
+            }
+
+            if (HelperFunctions.IsQrcFile(file.Name) && !QtRcc.HasRccItemType(file)) {
+                QtRcc.SetRccItemType(file);
                 return;
             }
 
@@ -258,108 +191,39 @@ namespace QtVsTools
                 return;
 
             if (HelperFunctions.HasQObjectDeclaration(file)) {
-                if (!qtPro.HasMocStep(file))
-                    qtPro.AddMocStep(file);
+                if (!QtMoc.HasMocItemType(file))
+                    QtMoc.SetMocItemType(file);
             } else {
-                if (qtPro.HasMocStep(file))
-                    qtPro.RemoveMocStep(file);
-            }
-
-            if (!HelperFunctions.IsSourceFile(file.Name))
-                return;
-
-            var moccedFileName = "moc_" + file.Name;
-            var moccedFiles = qtPro.GetFilesFromProject(moccedFileName).ToList();
-            if (!moccedFiles.Any())
-                return;
-
-            if (qtPro.IsMoccedFileIncluded(file)) {
-                foreach (var moccedFile in moccedFiles)
-                    QtProject.ExcludeFromAllBuilds(moccedFile);
-                return;
-            }
-
-            var hasDifferentMocFilesPerConfig = QtVSIPSettings.HasDifferentMocFilePerConfig(project);
-            var hasDifferentMocFilesPerPlatform = QtVSIPSettings.HasDifferentMocFilePerPlatform(project);
-            var generatedFiles = qtPro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
-            foreach (VCFile fileInFilter in (IVCCollection)generatedFiles.Files) {
-                if (fileInFilter.Name != moccedFileName)
-                    continue;
-
-                foreach (VCFileConfiguration config in (IVCCollection)fileInFilter.FileConfigurations) {
-                    var exclude = true;
-                    var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                    var platform = vcConfig.Platform as VCPlatform;
-                    var fileInFilterLowered = fileInFilter.RelativePath.ToLower();
-
-                    switch (hasDifferentMocFilesPerConfig) {
-                    case true when hasDifferentMocFilesPerPlatform:
-                        if (fileInFilterLowered.Contains(vcConfig.ConfigurationName.ToLower())
-                            && fileInFilterLowered.Contains(platform.Name.ToLower()))
-                            exclude = false;
-                        break;
-                    case true:
-                        if (fileInFilterLowered.Contains(vcConfig.ConfigurationName.ToLower()))
-                            exclude = false;
-                        break;
-                    default:
-                        if (hasDifferentMocFilesPerPlatform) {
-                            var platformName = platform.Name;
-                            if (fileInFilterLowered.Contains(platformName.ToLower()))
-                                exclude = false;
-                        } else {
-                            exclude = false;
-                        }
-                        break;
-                    }
-                    if (config.ExcludedFromBuild != exclude)
-                        config.ExcludedFromBuild = exclude;
-                }
-            }
-
-            foreach (VCFilter filt in (IVCCollection)generatedFiles.Filters) {
-                foreach (VCFile f in (IVCCollection)filt.Files) {
-                    if (f.Name != moccedFileName)
-                        continue;
-                    foreach (VCFileConfiguration config in (IVCCollection)f.FileConfigurations) {
-                        var vcConfig = config.ProjectConfiguration as VCConfiguration;
-                        var filterToLookFor = string.Empty;
-                        if (hasDifferentMocFilesPerConfig)
-                            filterToLookFor = vcConfig.ConfigurationName;
-                        if (hasDifferentMocFilesPerPlatform) {
-                            var platform = vcConfig.Platform as VCPlatform;
-                            if (!string.IsNullOrEmpty(filterToLookFor))
-                                filterToLookFor += '_';
-                            filterToLookFor += platform.Name;
-                        }
-                        if (filt.Name == filterToLookFor) {
-                            if (config.ExcludedFromBuild)
-                                config.ExcludedFromBuild = false;
-                        } else {
-                            if (!config.ExcludedFromBuild)
-                                config.ExcludedFromBuild = true;
-                        }
-                    }
-                }
+                if (QtMoc.HasMocItemType(file))
+                    QtMoc.RemoveMocItemType(file);
             }
         }
 
-        public void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
+        private void ProjectItemsEvents_ItemAdded(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtPro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-            if (qtPro == null)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtPro)
                 return;
 
-            if (GetVCFileFromProject(projectItem.Name, qtPro.VcProject) is not {} vcFile)
+            if (qtPro.VcProject.Files is not IVCCollection projectFiles)
+                return;
+
+            var vcFile = projectFiles.Cast<VCFile>().FirstOrDefault(file =>
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return file.Name.Equals(projectItem.Name, IgnoreCase);
+            });
+
+            var vcFileName = vcFile?.Name;
+            if (string.IsNullOrEmpty(vcFileName))
                 return;
 
             try {
-                if (HelperFunctions.IsSourceFile(vcFile.Name)) {
-                    if (vcFile.Name.StartsWith("moc_", IgnoreCase))
+                if (HelperFunctions.IsSourceFile(vcFileName)) {
+                    if (vcFileName.StartsWith("moc_", IgnoreCase))
                         return;
-                    if (vcFile.Name.StartsWith("qrc_", IgnoreCase)) {
+                    if (vcFileName.StartsWith("qrc_", IgnoreCase)) {
                         // Do not use precompiled headers with these files
                         QtProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
@@ -367,7 +231,7 @@ namespace QtVsTools
                     var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
                     if (pcHeaderThrough != null) {
                         var pcHeaderCreator = pcHeaderThrough.Remove(pcHeaderThrough.LastIndexOf('.')) + ".cpp";
-                        if (vcFile.Name.EndsWith(pcHeaderCreator, IgnoreCase)
+                        if (vcFileName.EndsWith(pcHeaderCreator, IgnoreCase)
                             && HelperFunctions.CxxFileContainsNotCommented(vcFile, "#include \""
                             + pcHeaderThrough + "\"", IgnoreCase, false)) {
                             //File is used to create precompiled headers
@@ -375,29 +239,19 @@ namespace QtVsTools
                             return;
                         }
                     }
-                    if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
-                        if (!qtPro.IsQtMsBuildEnabled())
-                            HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-                        qtPro.AddMocStep(vcFile);
-                    }
-                } else if (HelperFunctions.IsHeaderFile(vcFile.Name)) {
-                    if (vcFile.Name.StartsWith("ui_", IgnoreCase))
+                    if (HelperFunctions.HasQObjectDeclaration(vcFile))
+                        QtMoc.SetMocItemType(vcFile);
+                } else if (HelperFunctions.IsHeaderFile(vcFileName)) {
+                    if (vcFileName.StartsWith("ui_", IgnoreCase))
                         return;
-                    if (HelperFunctions.HasQObjectDeclaration(vcFile)) {
-                        if (!qtPro.IsQtMsBuildEnabled())
-                            HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-                        qtPro.AddMocStep(vcFile);
-                    }
-                } else if (HelperFunctions.IsUicFile(vcFile.Name)) {
-                    if (!qtPro.IsQtMsBuildEnabled())
-                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-                    qtPro.AddUic4BuildStep(vcFile);
+                    if (HelperFunctions.HasQObjectDeclaration(vcFile))
+                        QtMoc.SetMocItemType(vcFile);
+                } else if (HelperFunctions.IsUicFile(vcFileName)) {
+                    QtUic.SetUicItemType(vcFile);
                     QtProjectIntellisense.Refresh(qtPro);
-                } else if (HelperFunctions.IsQrcFile(vcFile.Name)) {
-                    if (!qtPro.IsQtMsBuildEnabled())
-                        HelperFunctions.EnsureCustomBuildToolAvailable(projectItem);
-                    qtPro.UpdateRccStep(vcFile);
-                } else if (HelperFunctions.IsTranslationFile(vcFile.Name)) {
+                } else if (HelperFunctions.IsQrcFile(vcFileName)) {
+                    QtRcc.SetRccItemType(vcFile);
+                } else if (HelperFunctions.IsTranslationFile(vcFileName)) {
                     Translation.RunlUpdate(vcFile);
                 }
             } catch { }
@@ -407,21 +261,21 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte)
-                ?.RemoveGeneratedFiles(projectItem.Name);
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+                return;
+            qtProject.RemoveGeneratedFiles(projectItem.Name);
         }
 
         private void ProjectItemsEvents_ItemRenamed(ProjectItem projectItem, string oldName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (oldName == null)
+            if (string.IsNullOrEmpty(oldName))
                 return;
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-            if (pro == null)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
                 return;
 
-            pro.RemoveGeneratedFiles(oldName);
+            qtProject.RemoveGeneratedFiles(oldName);
             ProjectItemsEvents_ItemAdded(projectItem);
         }
 
@@ -433,120 +287,72 @@ namespace QtVsTools
             if (QtProject.GetOrAdd(project) is not {} qtProject)
                 return;
 
-            var activeConfiguration = qtProject.VcProject.ActiveConfiguration;
-            if (QtProject.GetPropertyValue(activeConfiguration, "QT_CMAKE_TEMPLATE") == "true")
+            // ignore temporary projects created by Qt/CMake wizard
+            if (qtProject.GetPropertyValue("QT_CMAKE_TEMPLATE") == "true")
                 return;
 
-            var formatVersion = ProjectFormat.GetVersion(project);
-            if (formatVersion >= ProjectFormat.Version.V3) {
-                InitializeVCProject(project);
-                QtProjectIntellisense.Refresh(qtProject);
-            }
-
-            if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
-                return;
-            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                QtProject.ShowUpdateFormatMessage();
+            InitializeVcProject(qtProject);
+            QtProjectIntellisense.Refresh(qtProject);
         }
 
         public void SolutionEvents_Opened()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
-            foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
-                var formatVersion = ProjectFormat.GetVersion(p);
-                if (formatVersion >= ProjectFormat.Version.V3) {
-                    InitializeVCProject(p);
-                    QtProjectTracker.GetOrAdd(QtProject.GetOrAdd(p));
-                }
-
-                if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
+            QtProjectTracker.SolutionPath = dte.Solution.FullName;
+            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
+                if (QtProject.GetOrAdd(project) is not {} qtProject)
                     continue;
-                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                    QtProject.ShowUpdateFormatMessage();
+
+                InitializeVcProject(qtProject);
+                QtProjectTracker.GetOrAdd(qtProject);
             }
         }
 
-        private void SolutionEvents_AfterClosing()
+        private static void SolutionEvents_AfterClosing()
         {
             QtProject.Reset();
             QtProjectTracker.Reset();
             QtProjectTracker.SolutionPath = string.Empty;
         }
 
-        private void InitializeVCProjects()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                if (project != null && HelperFunctions.IsVsToolsProject(project))
-                    InitializeVCProject(project);
-            }
-        }
-
-        private void InitializeVCProject(Project p)
+        // Retrieves the VCProjectEngine from the given project and registers a handler for
+        // VCProjectEngineEvents.
+        private void InitializeVcProject(QtProject qtProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (vcProjectEngineEvents != null)
                 return;
 
-            if (p.Object is not VCProject {VCProjectEngine: VCProjectEngine prjEngine})
+            if (qtProject?.VcProject is not { VCProjectEngine: VCProjectEngine vcProjectEngine })
                 return;
 
-            // Retrieves the VCProjectEngine from the given project and
-            // registers the handlers for VCProjectEngineEvents.
-            vcProjectEngineEvents = prjEngine.Events as VCProjectEngineEvents;
+            vcProjectEngineEvents = vcProjectEngine.Events as VCProjectEngineEvents;
             if (vcProjectEngineEvents == null)
                 return;
             try {
-                vcProjectEngineEvents.ItemPropertyChange += OnVCProjectEngineItemPropertyChange;
-                vcProjectEngineEvents.ItemPropertyChange2 += OnVCProjectEngineItemPropertyChange2;
+                vcProjectEngineEvents.ItemPropertyChange2 += OnVcProjectEngineItemPropertyChange2;
             } catch {
                 Messages.DisplayErrorMessage("VCProjectEngine events could not be registered.");
             }
         }
 
-        private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispId)
-        {
-            var vcPrj = item switch
-            {
-                VCFileConfiguration {File: VCFile vcFile} => vcFile.project as VCProject,
-                VCConfiguration vcCfg => vcCfg.project as VCProject,
-                _ => null
-            };
-
-            if (ProjectFormat.GetVersion(vcPrj) >= ProjectFormat.Version.V3ClProperties)
-                return; // Ignore property events when using shared compiler properties
-
-            if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                QtProject.ShowUpdateFormatMessage();
-        }
-
-        private void OnVCProjectEngineItemPropertyChange2(
-            object item,
-            string propertySheet,
-            string itemType,
-            string propertyName)
+        private static void OnVcProjectEngineItemPropertyChange2(object item, string propertySheet,
+            string itemType, string propertyName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (item is not VCConfiguration vcConfig)
+                return;
+
+            if (QtProject.GetOrAdd(vcConfig.project as VCProject) is not {} qtProject)
+                return;
+
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
 
-            if (item is not VCConfiguration {project: VCProject {Object: Project project}} vcConfig)
-                return;
-
-            QtProjectIntellisense.Refresh(QtProject.GetOrAdd(project), vcConfig.Name);
-        }
-
-        private static VCFile GetVCFileFromProject(string absFileName, VCProject project)
-        {
-            foreach (VCFile f in (IVCCollection)project.Files) {
-                if (f.Name.Equals(absFileName, IgnoreCase))
-                    return f;
-            }
-            return null;
+            QtProjectIntellisense.Refresh(qtProject, vcConfig.Name);
         }
     }
 }

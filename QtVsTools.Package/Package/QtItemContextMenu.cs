@@ -6,7 +6,6 @@
 using System;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
-using EnvDTE;
 
 namespace QtVsTools
 {
@@ -81,20 +80,22 @@ namespace QtVsTools
             if (sender is not OleMenuCommand command)
                 return;
 
-            command.Enabled = false;
-            command.Visible = false;
+            command.Visible = command.Enabled = false;
 
-            var prj = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-            if (!HelperFunctions.IsVsToolsProject(prj) || QtVsToolsPackage.Instance.Dte.SelectedItems.Count <= 0)
+            if (QtVsToolsPackage.Instance.Dte.SelectedItems.Count <= 0)
                 return;
 
-            foreach (SelectedItem si in QtVsToolsPackage.Instance.Dte.SelectedItems) {
+            var dte = QtVsToolsPackage.Instance.Dte;
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+                return;
+
+            foreach (EnvDTE.SelectedItem si in QtVsToolsPackage.Instance.Dte.SelectedItems) {
                 if (!HelperFunctions.IsTranslationFile(si.Name))
                     return; // Don't display commands if one of the selected files is not a .ts file.
             }
 
-            command.Enabled = Translation.ToolsAvailable(prj);
             command.Visible = true;
+            command.Enabled = Translation.ToolsAvailable(qtProject);
         }
     }
 }

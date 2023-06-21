@@ -182,12 +182,10 @@
     <Compile Include="QMakeImport.cs" />
     <Compile Include="QMakeQuery.cs" />
     <Compile Include="QtConfig.cs" />
-    <Compile Include="QtCustomBuildTool.cs" />
     <Compile Include="QtModule.cs" />
     <Compile Include="QtModules.cs" />
     <Compile Include="QtVersionManager.cs" />
     <Compile Include="QtVSException.cs" />
-    <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="MsBuild\VcPropertyStorageProvider.cs" />
     <T4Template Include="Version.cs">

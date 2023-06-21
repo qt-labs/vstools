@@ -166,11 +166,11 @@ namespace QtVsTools.Core
             return versionKey?.GetValue("InstallDir") as string;
         }
 
-        public string GetInstallPath(EnvDTE.Project project)
+        public string GetInstallPath(QtProject qtProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var version = GetProjectQtVersion(project);
+            var version = qtProject?.QtVersion;
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             return version == null ? null : GetInstallPath(version);
@@ -249,87 +249,19 @@ namespace QtVsTools.Core
             return versionAvailable;
         }
 
-        public bool SaveProjectQtVersion(EnvDTE.Project project, string version)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return SaveProjectQtVersion(project, version, project.ConfigurationManager.ActiveConfiguration.PlatformName);
-        }
-
-        public bool SaveProjectQtVersion(EnvDTE.Project project, string version, string platform)
+        public bool SaveProjectQtVersion(QtProject qtProject, string version)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
 
-            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3) {
-                if (project.Object is VCProject vcPro) {
-                    foreach (VCConfiguration3 config in (IVCCollection)vcPro.Configurations) {
-                        config.SetPropertyValue(Resources.projLabelQtSettings, true,
-                            "QtInstall", version);
-                    }
-                    return true;
-                }
+            if (qtProject?.VcProject.Configurations is not IVCCollection configurations)
                 return false;
-            }
-            var key = "Qt5Version " + platform;
-            if (!project.Globals.VariableExists[key] || project.Globals[key].ToString() != version)
-                project.Globals[key] = version;
-            if (!project.Globals.VariablePersists[key])
-                project.Globals.VariablePersists[key] = true;
+
+            foreach (VCConfiguration3 config in configurations)
+                config.SetPropertyValue(Resources.projLabelQtSettings, true, "QtInstall", version);
             return true;
-        }
-
-        public string GetProjectQtVersion(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            EnvDTE.Configuration config = null;
-            try {
-                config = project.ConfigurationManager.ActiveConfiguration;
-            } catch {
-                // Accessing the ActiveConfiguration property throws an exception
-                // if there's an "unconfigured" platform in the Solution platform combo box.
-                config = project.ConfigurationManager.Item(1);
-            }
-            var version = GetProjectQtVersion(project, config);
-
-            if (version == null && project.Globals.VariablePersists["Qt5Version"]) {
-                version = (string)project.Globals["Qt5Version"];
-                ExpandEnvironmentVariablesInQtVersion(ref version);
-                return VerifyIfQtVersionExists(version) ? version : null;
-            }
-            return version;
-        }
-
-        private string GetProjectQtVersion(EnvDTE.Project project, EnvDTE.Configuration config)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (ProjectFormat.GetVersion(project) >= ProjectFormat.Version.V3)
-                return QtProject.GetPropertyValue(project, config, "QtInstall");
-
-            var key = "Qt5Version " + config.PlatformName;
-            if (!project.Globals.VariablePersists[key])
-                return null;
-            var version = (string)project.Globals[key];
-            ExpandEnvironmentVariablesInQtVersion(ref version);
-            return VerifyIfQtVersionExists(version) ? version : null;
-        }
-
-        private static void ExpandEnvironmentVariablesInQtVersion(ref string version)
-        {
-            if (version is not "$(QTDIR)" and not "$(DefaultQtVersion)") {
-                // Make it possible to specify the version name
-                // via an environment variable
-                var regExp =
-                    new System.Text.RegularExpressions.Regex("\\$\\((?<VarName>\\S+)\\)");
-                var match = regExp.Match(version);
-                if (match.Success) {
-                    var env = match.Groups["VarName"].Value;
-                    version = Environment.GetEnvironmentVariable(env);
-                }
-            }
         }
 
         public string GetDefaultVersion()

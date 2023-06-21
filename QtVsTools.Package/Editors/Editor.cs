@@ -16,11 +16,11 @@ using System.Windows.Forms;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Editors
 {
     using Core;
+    using Core.MsBuild;
     using VisualStudio;
 
     using static Core.HelperFunctions;
@@ -52,19 +52,9 @@ namespace QtVsTools.Editors
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                var project = VsShell.GetProject(Context);
-                var vcProject = project?.Object as VCProject;
-                if (vcProject?.Configurations is not IVCCollection vcConfigs)
+                if (QtProject.GetOrAdd(VsShell.GetProject(Context)) is not {} qtProject)
                     return null;
-
-                if (project.ConfigurationManager?.ActiveConfiguration is not {} activeConfig)
-                    return null;
-
-                var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.PlatformName}";
-                if (vcConfigs.Item(activeConfigId) is not VCConfiguration vcConfig)
-                    return null;
-
-                var qtToolsPath = vcConfig.GetEvaluatedPropertyValue("QtToolsPath");
+                var qtToolsPath = qtProject.GetPropertyValue("QtToolsPath");
                 return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
             });
         }

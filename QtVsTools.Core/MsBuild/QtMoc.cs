@@ -4,7 +4,7 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -46,6 +46,7 @@ namespace QtVsTools.Core.MsBuild
         }
 
         private readonly Dictionary<Property, Option> options = new();
+        private static readonly QtMsBuildContainer QtMsBuild = new(new VcPropertyStorageProvider());
 
         public QtMoc()
         {
@@ -231,75 +232,47 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        public string GenerateCommandLine(QtMsBuildContainer container, object propertyStorage)
+        /// <summary>
+        /// This function returns <see langword="true" /> if the MsBuild file
+        /// item type is set to QtMoc; <see langword="false" /> otherwise.
+        /// </summary>
+        /// <param name="file"></param>
+        public static bool HasMocItemType(VCFile file)
         {
-            var cmd = new StringBuilder();
-            cmd.AppendFormat(@"""{0}\bin\{1}"" ""{2}"" -o ""{3}""",
-                container.GetPropertyValue(propertyStorage, Property.QTDIR),
-                ToolExecName,
-                container.GetPropertyValue(propertyStorage, Property.InputFile),
-                container.GetPropertyValue(propertyStorage, Property.OutputFile));
+            return file.ItemType == ItemTypeName;
+        }
 
-            var value = container.GetPropertyValue(propertyStorage, Property.IncludePath);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.IncludePath], value, true);
+        /// <summary>
+        /// This function sets the MSBuild file item type to QtMoc.
+        /// </summary>
+        /// <param name="file">file</param>
+        public static void SetMocItemType(VCFile file)
+        {
+            file.ItemType = ItemTypeName;
+            if (!HelperFunctions.IsSourceFile(file.FullPath))
+                return;
 
-            value = container.GetPropertyValue(propertyStorage, Property.MacFramework);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.MacFramework], value);
+            foreach (VCFileConfiguration config in (IVCCollection)file.FileConfigurations) {
+                QtMsBuild.SetItemProperty(config, Property.DynamicSource, "input");
+                QtMsBuild.SetItemPropertyByName(config, "QtMocFileName", "%(Filename).moc");
+            }
+        }
 
-            if (container.GetPropertyValue(propertyStorage, Property.PreprocessOnly) == "true")
-                GenerateCommandLineOption(cmd, options[Property.PreprocessOnly]);
+        /// <summary>
+        /// This function removes the QtMoc MSBuild file item type.
+        /// </summary>
+        /// <param name="file">file</param>
+        public static void RemoveMocItemType(VCFile file)
+        {
+            if (file.ItemType != ItemTypeName)
+                return;
 
-            value = container.GetPropertyValue(propertyStorage, Property.Define);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Define], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Undefine);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Undefine], value);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Metadata);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Metadata], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.CompilerFlavor);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.CompilerFlavor], value);
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoInclude) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoInclude]);
-
-            value = container.GetPropertyValue(propertyStorage, Property.PathPrefix);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.PathPrefix], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.ForceInclude);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.ForceInclude], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.PrependInclude);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.PrependInclude], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.Include);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.Include], value, true);
-
-            value = container.GetPropertyValue(propertyStorage, Property.NoNotesWarnings);
-            if (!string.IsNullOrEmpty(value))
-                GenerateCommandLineOption(cmd, options[Property.NoNotesWarnings], value, true);
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoNotes) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoNotes]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.NoWarnings) == "true")
-                GenerateCommandLineOption(cmd, options[Property.NoWarnings]);
-
-            if (container.GetPropertyValue(propertyStorage, Property.IgnoreConflicts) == "true")
-                GenerateCommandLineOption(cmd, options[Property.IgnoreConflicts]);
-
-            return cmd.ToString();
+            if (HelperFunctions.IsHeaderFile(file.Name))
+                file.ItemType = "ClInclude";
+            else if (HelperFunctions.IsSourceFile(file.Name))
+                file.ItemType = "ClCompile";
+            else
+                file.ItemType = "None";
         }
     }
 }

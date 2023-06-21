@@ -5,9 +5,7 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
-using EnvDTE;
 
 namespace QtVsTools
 {
@@ -77,35 +75,27 @@ namespace QtVsTools
             if (sender is not OleMenuCommand command)
                 return;
 
+            var dte = QtVsToolsPackage.Instance.Dte;
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte,
-                    QtVsToolsPackage.Instance.PkgInstallPath);
+                ProjectImporter.ImportPriFile(dte, QtVsToolsPackage.Instance.PkgInstallPath);
                 break;
             case QtMenus.Package.lUpdateOnProject:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(dte));
                 break;
             case QtMenus.Package.lReleaseOnProject:
-                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(dte));
                 break;
             case QtMenus.Package.QtProjectSettingsProject:
-                var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
-                if (pro?.FormatVersion >= ProjectFormat.Version.V3) {
-                    QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
-                } else if (pro != null) {
-                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                        QtProject.ShowUpdateFormatMessage();
-                } else {
-                    MessageBox.Show("No Project Opened");
-                }
+                QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                QtMsBuildConverter.ProjectToQtMsBuild(
-                    HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+                QtMsBuildConverter.ProjectToQtMsBuild(HelperFunctions.GetSelectedProject(dte));
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
-                var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                QtProjectIntellisense.Refresh(QtProject.GetOrAdd(project));
+                if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+                    break;
+                QtProjectIntellisense.Refresh(qtProject);
                 break;
             }
         }
@@ -115,58 +105,34 @@ namespace QtVsTools
             if (sender is not OleMenuCommand command)
                 return;
 
+            command.Visible = command.Enabled = false;
             var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-            var isQtProject = HelperFunctions.IsVsToolsProject(project);
-            var isQMakeProject = HelperFunctions.IsQtProject(project);
-            if (!isQtProject && !isQMakeProject) {
-                command.Enabled = command.Visible = false;
-                return;
-            }
 
-            var isQtMsBuildEnabled = QtProject.IsQtMsBuildEnabled(project);
-
-            var status = vsCommandStatus.vsCommandStatusSupported;
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                command.Visible = true;
-                command.Enabled = HelperFunctions.IsVsToolsProject(HelperFunctions
-                    .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+            case QtMenus.Package.QtProjectSettingsProject:
+            case QtMenus.Package.ProjectRefreshIntelliSense:
+                command.Visible = command.Enabled = QtProject.GetOrAdd(project) is {};
                 break;
             case QtMenus.Package.lUpdateOnProject:
             case QtMenus.Package.lReleaseOnProject:
+                if (QtProject.GetOrAdd(project) is not {} qtProject)
+                    break;
                 command.Visible = true;
-                command.Enabled = Translation.ToolsAvailable(project);
-                break;
-            case QtMenus.Package.QtProjectSettingsProject:
-                if (isQtProject)
-                    status |= vsCommandStatus.vsCommandStatusEnabled;
-                else
-                    status |= vsCommandStatus.vsCommandStatusInvisible;
-                command.Enabled = (status & vsCommandStatus.vsCommandStatusEnabled) != 0;
-                command.Visible = (status & vsCommandStatus.vsCommandStatusInvisible) == 0;
+                command.Enabled = Translation.ToolsAvailable(qtProject);
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                command.Visible = true;
-                command.Enabled = !isQtMsBuildEnabled;
-                break;
-            case QtMenus.Package.ProjectRefreshIntelliSense:
-                command.Visible = command.Enabled = isQtMsBuildEnabled;
-                break;
-            }
-
-            if (isQtProject) {
-                var projectVersion = ProjectFormat.GetVersion(project);
-                switch (command.CommandID.ID) {
-                case QtMenus.Package.ProjectConvertToQtMsBuild:
-                    if (projectVersion >= ProjectFormat.Version.Latest) {
-                        command.Visible = command.Enabled = false;
-                    } else {
-                        command.Visible = command.Enabled = true;
-                        if (isQtMsBuildEnabled)
-                            command.Text = "Upgrade to latest Qt project format version";
-                    }
-                    break;
+                switch (ProjectFormat.GetVersion(project)) {
+                case ProjectFormat.Version.V1:
+                case ProjectFormat.Version.V2:
+                    command.Visible = command.Enabled = true;
+                    return;
+                case > ProjectFormat.Version.V3 and < ProjectFormat.Version.Latest:
+                    command.Visible = command.Enabled = true;
+                    command.Text = "Upgrade project to latest Qt project format version";
+                    return;
                 }
+                break;
             }
         }
     }

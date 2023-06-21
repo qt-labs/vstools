@@ -143,8 +143,10 @@ namespace QtVsTools.Core
                     _dteObject.Solution.Open(vcInfo.FullName);
                     if (qtVersion is not null) {
                         foreach (var prj in HelperFunctions.ProjectsInSolution(_dteObject)) {
-                            QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                            ApplyPostImportSteps(QtProject.GetOrAdd(prj));
+                            if (QtProject.GetOrAdd(prj) is not {} qtProject)
+                                continue;
+                            QtVersionManager.The().SaveProjectQtVersion(qtProject, qtVersion);
+                            ApplyPostImportSteps(qtProject);
                         }
                     }
                 }
@@ -188,32 +190,29 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (QtProject.GetOrAdd(pro) is not {} qtPro)
+                if (QtProject.GetOrAdd(pro) is not {} qtProject)
                     return;
-                var platformName = versionInfo.GetVSPlatformName();
 
                 if (qtVersion is not null)
-                    QtVersionManager.The().SaveProjectQtVersion(pro, qtVersion, platformName);
+                    QtVersionManager.The().SaveProjectQtVersion(qtProject, qtVersion);
 
-                var vcPro = qtPro.VcProject;
-                if (!SelectSolutionPlatform(platformName)
-                    || !HasPlatform(vcPro, platformName)) {
+                var platformName = versionInfo.GetVSPlatformName();
+                var vcPro = qtProject.VcProject;
+                if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
                     CreatePlatform(pro, vcPro, "Win32", platformName, null, versionInfo);
                     if (!SelectSolutionPlatform(platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
 
                 // figure out if the imported project is a plugin project
-                var tmp = pro.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+                var tmp = vcPro.ActiveConfiguration.ConfigurationName;
                 var vcConfig = (vcPro.Configurations as IVCCollection)?.Item(tmp)
                     as VCConfiguration;
                 var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
-                if (!string.IsNullOrEmpty(def)
-                    && def.IndexOf("QT_PLUGIN", IgnoreCase) > -1) {
-                    QtProject.MarkAsQtPlugin(qtPro);
-                }
+                if (!string.IsNullOrEmpty(def) && def.IndexOf("QT_PLUGIN", IgnoreCase) > -1)
+                    qtProject.MarkAsQtPlugin();
 
-                ApplyPostImportSteps(qtPro);
+                ApplyPostImportSteps(qtProject);
             } catch (Exception e) {
                 Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
             }
@@ -377,6 +376,9 @@ namespace QtVsTools.Core
             ref Dictionary<VCFilter, string> filterPathTable,
             ref Dictionary<string, VCFilter> pathFilterTable)
         {
+            if (filter == null)
+                return;
+
             path = path is null ? "." : Path.Combine(path, filter.Name);
 
             path = path.ToUpperInvariant().Trim();
@@ -581,7 +583,7 @@ namespace QtVsTools.Core
                 if (!vcFile.FullPath.Equals(fileName, IgnoreCase))
                     continue;
                 qtPro.VcProject.RemoveFile(vcFile);
-                MoveFileToDeletedFolder(qtPro.VcProject, vcFile);
+                MoveFileToDeletedFolder(qtPro.VcProject, fileName);
             }
         }
 
@@ -618,15 +620,14 @@ namespace QtVsTools.Core
 
         #region QtProject
 
-        private static void MoveFileToDeletedFolder(VCProject vcPro, VCFile vcFile)
+        private static void MoveFileToDeletedFolder(VCProject vcPro, string fileName)
         {
-            var srcFile = new FileInfo(vcFile.FullPath);
-
+            var srcFile = new FileInfo(fileName ?? "");
             if (!srcFile.Exists)
                 return;
 
             var destFolder = vcPro.ProjectDirectory + "\\Deleted\\";
-            var destName = destFolder + vcFile.Name.Replace(".", "_") + ".bak";
+            var destName = destFolder + srcFile.Name.Replace(".", "_") + ".bak";
             var fileNr = 0;
 
             try {

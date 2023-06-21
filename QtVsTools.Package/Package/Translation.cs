@@ -82,12 +82,6 @@ namespace QtVsTools
                 return;
             }
 
-            if (qtProject.FormatVersion < ProjectFormat.Version.V3) {
-                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
-                    QtProject.ShowUpdateFormatMessage();
-                return;
-            }
-
             if (qtProject.VcProject.ActiveConfiguration is not {} activeConfig) {
                 Messages.Print("translation: Error accessing build interface");
                 return;
@@ -122,17 +116,16 @@ namespace QtVsTools
                 RunlUpdate(QtProject.GetOrAdd(project));
         }
 
-        public static bool ToolsAvailable(EnvDTE.Project project)
+        public static bool ToolsAvailable(QtProject qtProject)
         {
-            if (project == null)
+            if (qtProject == null)
                 return false;
-            if (QtProject.GetPropertyValue(project, "ApplicationType") == "Linux")
+            if (qtProject.GetPropertyValue("ApplicationType") == "Linux")
                 return true;
 
-            var qtToolsPath = QtProject.GetPropertyValue(project, "QtToolsPath");
+            var qtToolsPath = qtProject.GetPropertyValue("QtToolsPath");
             if (string.IsNullOrEmpty(qtToolsPath)) {
-                var qtVersion = QtVersionManager.The().GetProjectQtVersion(project);
-                var qtInstallPath = QtVersionManager.The().GetInstallPath(qtVersion);
+                var qtInstallPath = QtVersionManager.The().GetInstallPath(qtProject.QtVersion);
                 if (string.IsNullOrEmpty(qtInstallPath))
                     return false;
                 qtToolsPath = Path.Combine(qtInstallPath, "bin");

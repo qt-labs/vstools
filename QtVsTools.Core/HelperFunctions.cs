@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
@@ -43,11 +42,6 @@ namespace QtVsTools.Core
         public static bool IsUicFile(string fileName)
         {
             return ".ui".Equals(Path.GetExtension(fileName), IgnoreCase);
-        }
-
-        public static bool IsMocFile(string fileName)
-        {
-            return ".moc".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
         public static bool IsQrcFile(string fileName)
@@ -163,104 +157,6 @@ namespace QtVsTools.Core
             return ".\\" + result;
         }
 
-        /// <summary>
-        /// Since VS2010 it is possible to have VCCustomBuildTools without commandlines
-        /// for certain filetypes. We are not interested in them and thus try to read the
-        /// tool's commandline. If this causes an exception, we ignore it.
-        /// There does not seem to be another way for checking which kind of tool it is.
-        /// </summary>
-        /// <param name="config">File configuration</param>
-        /// <returns></returns>
-        public static VCCustomBuildTool GetCustomBuildTool(VCFileConfiguration config)
-        {
-            if (config is not { File: VCFile {ItemType: "CustomBuild"}, Tool: VCCustomBuildTool tool })
-                return null;
-
-            try {
-                _ = tool.CommandLine;
-            } catch {
-                return null;
-            }
-            return tool;
-        }
-
-        /// <summary>
-        /// Since VS2010 we have to ensure, that a custom build tool is present
-        /// if we want to use it. In order to do so, the ProjectItem's ItemType
-        /// has to be "CustomBuild"
-        /// </summary>
-        /// <param name="projectItem">Project Item which needs to have custom build tool</param>
-        public static void EnsureCustomBuildToolAvailable(ProjectItem projectItem)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            foreach (Property prop in projectItem.Properties) {
-                if (prop.Name == "ItemType") {
-                    if ((string)prop.Value != "CustomBuild")
-                        prop.Value = "CustomBuild";
-                    break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Return true if the project is a VS tools project; false otherwise.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsVsToolsProject(Project proj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread(); // C++ Project Type GUID
-            if (proj is not {Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"})
-                return false;
-            return IsVsToolsProject(proj.Object as VCProject);
-        }
-
-        /// <summary>
-        /// Return true if the project is a VS tools project; false otherwise.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsVsToolsProject(VCProject proj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            if (!IsQtProject(proj))
-                return false;
-
-            if (ProjectFormat.GetVersion(proj) >= ProjectFormat.Version.V3)
-                return true;
-
-            if (proj.Object is not Project {Globals: {VariableNames: string[] variables}} envPro)
-                return false;
-
-            return variables.Any(var => ProjectFormat.HasQt5Version(var, envPro));
-        }
-
-        /// <summary>
-        /// Return true if the project is a Qt project; false otherwise.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsQtProject(Project proj)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread(); //C++ Project Type GUID
-            if (proj is not {Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}"})
-                return false;
-            return IsQtProject(proj.Object as VCProject);
-        }
-
-        /// <summary>
-        /// Return true if the project is a Qt project; false otherwise.
-        /// </summary>
-        /// <param name="proj">project</param>
-        public static bool IsQtProject(VCProject proj)
-        {
-            if (proj == null)
-                return false;
-            var keyword = proj.keyword;
-            if (string.IsNullOrEmpty(keyword))
-                return false;
-            return keyword.StartsWith(ProjectFormat.KeywordLatest, StringComparison.Ordinal)
-                || keyword.StartsWith(ProjectFormat.KeywordV2, StringComparison.Ordinal);
-        }
-
         public static bool HasQObjectDeclaration(VCFile file)
         {
             return CxxFileContainsNotCommented(file,
@@ -305,9 +201,8 @@ namespace QtVsTools.Core
             // or not. The combination of string.IndexOf(...) and string.Split(...) seems to be
             // way faster then reading the file line by line.
             found = false;
-            CxxStreamReader cxxSr = null;
             try {
-                cxxSr = new CxxStreamReader(content.Split(new[] { "\n", "\r\n" },
+                var cxxSr = new CxxStreamReader(content.Split(new[] { "\n", "\r\n" },
                     StringSplitOptions.RemoveEmptyEntries));
                 while (!found && cxxSr.ReadLine(suppressStrings) is {} strLine) {
                     foreach (var str in searchStrings) {
@@ -317,9 +212,8 @@ namespace QtVsTools.Core
                         }
                     }
                 }
-                cxxSr.Close();
-            } catch (Exception) {
-                cxxSr?.Close();
+            } catch (Exception exception) {
+                exception.Log();
             }
             return found;
         }
@@ -516,7 +410,7 @@ namespace QtVsTools.Core
             if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
                 project = containing;
 
-            return IsVsToolsProject(project) ? QtProject.GetOrAdd(project) : null;
+            return QtProject.GetOrAdd(project);
         }
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)
@@ -637,153 +531,6 @@ namespace QtVsTools.Core
             var subDirs = sourceDir.GetDirectories();
             foreach (var subDir in subDirs)
                 CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
-        }
-
-        /// <summary>
-        /// Performs an in-place expansion of MS Build properties in the form $(PropertyName)
-        /// and project item metadata in the form %(MetadataName).<para/>
-        /// Returns: 'true' if expansion was successful, 'false' otherwise<para/>
-        /// <paramref name="stringToExpand"/>: The string containing properties and/or metadata to
-        /// expand. This string is passed by ref and expansion is performed in-place.<para/>
-        /// <paramref name="config"/>: Either a VCConfiguration or VCFileConfiguration object to
-        /// use as provider of property expansion (through Evaluate()). Cannot be null.<para/>
-        /// </summary>
-        public static bool ExpandString(
-            ref string stringToExpand,
-            object config)
-        {
-            if (config == null)
-                return false;
-
-            /* try property expansion through VCConfiguration.Evaluate()
-             * or VCFileConfiguration.Evaluate() */
-            string expanded = stringToExpand;
-            VCProject vcProj = null;
-            VCFile vcFile = null;
-            string configName = "", platformName = "";
-            if (config is VCConfiguration vcConfig) {
-                vcProj = vcConfig.project as VCProject;
-                configName = vcConfig.ConfigurationName;
-                if (vcConfig.Platform is VCPlatform vcPlatform)
-                    platformName = vcPlatform.Name;
-                try {
-                    expanded = vcConfig.Evaluate(expanded);
-                } catch { }
-            } else {
-                if (config is not VCFileConfiguration vcFileConfig)
-                    return false;
-                vcFile = vcFileConfig.File as VCFile;
-                if (vcFile != null)
-                    vcProj = vcFile.project as VCProject;
-                if (vcFileConfig.ProjectConfiguration is VCConfiguration vcProjConfig) {
-                    configName = vcProjConfig.ConfigurationName;
-                    if (vcProjConfig.Platform is VCPlatform vcPlatform)
-                        platformName = vcPlatform.Name;
-                }
-                try {
-                    expanded = vcFileConfig.Evaluate(expanded);
-                } catch { }
-            }
-
-            /* fail-safe */
-            foreach (Match propNameMatch in Regex.Matches(expanded, @"\$\(([^\)]+)\)")) {
-                string propName = propNameMatch.Groups[1].Value;
-                string propValue;
-                switch (propName) {
-                case "Configuration":
-                case "ConfigurationName":
-                    if (string.IsNullOrEmpty(configName))
-                        return false;
-                    propValue = configName;
-                    break;
-                case "Platform":
-                case "PlatformName":
-                    if (string.IsNullOrEmpty(platformName))
-                        return false;
-                    propValue = platformName;
-                    break;
-                default:
-                    return false;
-                }
-                expanded = expanded.Replace($"$({propName})", propValue);
-            }
-
-            /* because item metadata is not expanded in Evaluate() */
-            foreach (Match metaNameMatch in Regex.Matches(expanded, @"\%\(([^\)]+)\)")) {
-                string metaName = metaNameMatch.Groups[1].Value;
-                string metaValue;
-                switch (metaName) {
-                case "FullPath":
-                    if (vcFile == null)
-                        return false;
-                    metaValue = vcFile.FullPath;
-                    break;
-                case "RootDir":
-                    if (vcFile == null)
-                        return false;
-                    metaValue = Path.GetPathRoot(vcFile.FullPath);
-                    break;
-                case "Filename":
-                    if (vcFile == null)
-                        return false;
-                    metaValue = Path.GetFileNameWithoutExtension(vcFile.FullPath);
-                    break;
-                case "Extension":
-                    if (vcFile == null)
-                        return false;
-                    metaValue = Path.GetExtension(vcFile.FullPath);
-                    break;
-                case "RelativeDir":
-                    if (vcProj == null || vcFile == null)
-                        return false;
-                    metaValue = Path.GetDirectoryName(GetRelativePath(
-                        Path.GetDirectoryName(vcProj.ProjectFile),
-                        vcFile.FullPath));
-                    if (!metaValue.EndsWith("\\"))
-                        metaValue += "\\";
-                    if (metaValue.StartsWith(".\\"))
-                        metaValue = metaValue.Substring(2);
-                    break;
-                case "Directory":
-                    if (vcFile == null)
-                        return false;
-                    metaValue = Path.GetDirectoryName(GetRelativePath(
-                        Path.GetPathRoot(vcFile.FullPath),
-                        vcFile.FullPath));
-                    if (!metaValue.EndsWith("\\"))
-                        metaValue += "\\";
-                    if (metaValue.StartsWith(".\\"))
-                        metaValue = metaValue.Substring(2);
-                    break;
-                case "Identity":
-                    if (vcProj == null || vcFile == null)
-                        return false;
-                    metaValue = GetRelativePath(
-                        Path.GetDirectoryName(vcProj.ProjectFile),
-                        vcFile.FullPath);
-                    if (metaValue.StartsWith(".\\"))
-                        metaValue = metaValue.Substring(2);
-                    break;
-                case "RecursiveDir":
-                case "ModifiedTime":
-                case "CreatedTime":
-                case "AccessedTime":
-                    return false;
-                default:
-                    if (config is not VCFileConfiguration {Tool: IVCRulePropertyStorage store})
-                        return false;
-                    try {
-                        metaValue = store.GetEvaluatedPropertyValue(metaName);
-                    } catch {
-                        return false;
-                    }
-                    break;
-                }
-                expanded = expanded.Replace($"%({metaName})", metaValue);
-            }
-
-            stringToExpand = expanded;
-            return true;
         }
 
         static Parser EnvVarParser => StaticLazy.Get(() => EnvVarParser, () =>
@@ -936,11 +683,6 @@ namespace QtVsTools.Core
                 return canonicalPath;
             }
             return canonicalPath;
-        }
-
-        public static bool PathIsRelativeTo(string path, string subPath)
-        {
-            return CanonicalPath(path).EndsWith(CanonicalPath(subPath), IgnoreCase);
         }
 
         public static string Unquote(string text)

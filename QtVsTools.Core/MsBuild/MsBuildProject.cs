@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
+using Microsoft.Win32;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -976,16 +977,30 @@ namespace QtVsTools.Core.MsBuild
             });
         }
 
-        string AddGeneratedFilesPath(string includePathList)
+        private static string AddGeneratedFilesPath(string includePathList)
         {
-            HashSet<string> includes = new HashSet<string> {
-                    QtVSIPSettings.GetMocDirectory(),
-                    QtVSIPSettings.GetRccDirectory(),
-                    QtVSIPSettings.GetUicDirectory()
+            var includes = new HashSet<string> {
+                GetDirectory("MocDir"),
+                GetDirectory("UicDir"),
+                GetDirectory("RccDir")
             };
             foreach (var includePath in includePathList.Split(';'))
                 includes.Add(includePath);
             return string.Join<string>(";", includes);
+        }
+
+        private const string RegistryPath = "SOFTWARE\\" + Resources.registryPackagePath;
+        private static string GetDirectory(string type)
+        {
+            try {
+                if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} key) {
+                    if (key.GetValue(type, null) is string path)
+                        return NormalizeRelativeFilePath(path);
+                }
+            } catch (Exception exception) {
+                exception.Log();
+            }
+            return type == "MocDir" ? "GeneratedFiles\\$(ConfigurationName)" : "GeneratedFiles";
         }
 
         string CustomBuildMocInput(XElement cbt)
