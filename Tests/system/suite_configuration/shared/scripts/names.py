@@ -41,3 +41,5 @@ qt_Wizard_Source_cpp_file_Edit = {"container": qt_Wizard_Window, "id": "ClassSou
                                   "type": "Edit"}
 qt_Wizard_Header_h_file_Edit = {"container": qt_Wizard_Window, "id": "ClassHeaderFile",
                                 "type": "Edit"}
+no_Qt_version_Label = {"container": qt_Wizard_Window, "id": "ErrorMsg", "type": "Label"}
+qt_Wizard_Finish_Button = {"container": qt_Wizard_Window, "text": "Finish", "type": "Button"}

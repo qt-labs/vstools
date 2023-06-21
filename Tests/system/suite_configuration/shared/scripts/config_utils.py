@@ -114,8 +114,14 @@ def getExpectedName(templateName):
 #            Parameters are strings:
 #            - the expected greeting text on top of the page
 #            - the name of the project
+# setupQtVersions: Optional boolean value whether the function shall configure Qt versions read
+#                  from the environment in the VS Tools' settings before opening any wizard and
+#                  clear them after the tests (True, default) or not change Qt version settings
+#                  at all (False)
 
-def testAllQtWizards(funcNewProjectDialog, funcPage1, funcPage2, funcPage3):
+
+def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, funcPage3=None,
+                     setupQtVersions=True):
     qtDirs = readQtDirs()
     if not qtDirs:
         test.fatal("No Qt versions known", "Did you set SQUISH_VSTOOLS_QTDIRS correctly?")
@@ -123,7 +129,7 @@ def testAllQtWizards(funcNewProjectDialog, funcPage1, funcPage2, funcPage3):
     version = startAppGetVersion()
     if not version:
         return
-    if not configureQtVersions(version, qtDirs):
+    if setupQtVersions and not configureQtVersions(version, qtDirs):
         closeMainWindow()
         return
 
@@ -134,18 +140,24 @@ def testAllQtWizards(funcNewProjectDialog, funcPage1, funcPage2, funcPage3):
                 mouseClick(waitForObject(listItem))
                 expectedName = getExpectedName(templateName)
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
-                funcNewProjectDialog(version, templateName, expectedName)
+                if funcNewProjectDialog:
+                    funcNewProjectDialog(version, templateName, expectedName)
                 projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
                 try:
                     expectedText = "Welcome to the %s Wizard" % templateName
-                    funcPage1(expectedText, templateName)
+                    if funcPage1:
+                        funcPage1(expectedText, templateName)
                     clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                    funcPage2(expectedText, qtDirs)
-                    if templateName in ["Qt ActiveQt Server", "Qt Class Library",
-                                        "Qt Designer Custom Widget", "Qt Widgets Application"]:
+                    if funcPage2:
+                        funcPage2(expectedText, qtDirs)
+                    if setupQtVersions and templateName in ["Qt ActiveQt Server",
+                                                            "Qt Class Library",
+                                                            "Qt Designer Custom Widget",
+                                                            "Qt Widgets Application"]:
                         clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                        funcPage3(expectedText, projectName)
+                        if funcPage3:
+                            funcPage3(expectedText, projectName)
                     else:
                         test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
                 except:
@@ -161,5 +173,6 @@ def testAllQtWizards(funcNewProjectDialog, funcPage1, funcPage2, funcPage3):
                         nativeType("<Escape>")
             dialog.goBack()
 
-    clearQtVersions(version)
+    if setupQtVersions:
+        clearQtVersions(version)
     closeMainWindow()
