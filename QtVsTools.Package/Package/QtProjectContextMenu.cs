@@ -13,7 +13,6 @@ namespace QtVsTools
 {
     using Core;
     using Core.MsBuild;
-    using QtMsBuild;
     using VisualStudio;
 
     /// <summary>

@@ -4,7 +4,7 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 -->
-<UserControl x:Class="QtVsTools.Options.QtVersionsTable"
+<UserControl x:Class="QtVsTools.Core.Options.QtVersionsTable"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

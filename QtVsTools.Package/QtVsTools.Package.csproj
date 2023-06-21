@@ -298,6 +298,8 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
+    <Compile Include="MsBuild\QtModulesEditor.cs" />
+    <Compile Include="MsBuild\QtVersionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -328,15 +330,6 @@
     <Compile Include="Editors\Editor.QtDesigner.cs" />
     <Compile Include="Editors\Editor.QtLinguist.cs" />
     <Compile Include="Editors\Editor.QtResourceEditor.cs" />
-    <Compile Include="Options\QtOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Options\QtVersionsTable.cs">
-      <DependentUpon>QtVersionsTable.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Options\QtVersionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="QML\Classification\QmlAsyncClassifier.cs" />
     <Compile Include="QML\Classification\QmlClassificationFormat.cs" />
     <Compile Include="QML\Classification\QmlExpressionEvalClassifier.cs" />
@@ -386,16 +379,6 @@
     <Compile Include="Package\QtHelp.cs" />
     <Compile Include="Package\QtItemContextMenu.cs" />
     <Compile Include="Package\QtMainMenu.cs" />
-    <Compile Include="Package\QtMsBuildConverter.cs" />
-    <Compile Include="QtMsBuild\QtModulesEditor.cs" />
-    <Compile Include="QtMsBuild\QtModulesPopup.xaml.cs">
-      <DependentUpon>QtModulesPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="QtMsBuild\QtProjectBuild.cs" />
-    <Compile Include="QtMsBuild\QtProjectIntelliSense.cs" />
-    <Compile Include="QtMsBuild\QtProjectLogger.cs" />
-    <Compile Include="QtMsBuild\QtVersionProvider.cs" />
-    <Compile Include="QtMsBuild\QtProjectTracker.cs" />
     <Compile Include="Package\QtProjectContextMenu.cs" />
     <Compile Include="Package\QtSolutionContextMenu.cs" />
     <Compile Include="Package\Translation.cs" />
@@ -482,15 +465,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\menuimages.png" />
-    <Page Include="Options\QtVersionsTable.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Package\QtHelpLinkChooser.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="QtMsBuild\QtModulesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

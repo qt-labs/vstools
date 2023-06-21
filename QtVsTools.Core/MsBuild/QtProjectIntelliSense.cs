@@ -12,12 +12,13 @@ using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 using Thread = System.Threading.Thread;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Core.MsBuild
 {
     using Core;
-    using Core.MsBuild;
+    using Options;
+    using VisualStudio;
 
-    static class QtProjectIntellisense
+    public static class QtProjectIntellisense
     {
         public static void Refresh(
             QtProject qtProject,
@@ -36,7 +37,7 @@ namespace QtVsTools.QtMsBuild
             if (QtProjectTracker.GetOrAdd(qtProject) is not {} tracker)
                 return;
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (Options.Get() is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Refreshing: [{configId ?? "(all configs)"}] {qtProject.VcProjectPath}");
@@ -49,16 +50,16 @@ namespace QtVsTools.QtMsBuild
             if (selectedFiles != null)
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
             var targets = new List<string> { "QtVars" };
-            if (QtVsToolsPackage.Instance.Options.BuildRunQtTools)
+            if (Options.Get() is { BuildRunQtTools: true })
                 targets.Add("Qt");
 
-            IEnumerable<string> configs;
-            if (configId != null) {
-                configs = new[] { configId };
+            var configs = Enumerable.Empty<string>();
+            if (configId == null) {
+                if (tracker.UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
+                    configs = (await service.GetKnownProjectConfigurationsAsync()).Select(
+                        x => x.Name);
             } else {
-                var knownConfigs = await tracker.UnconfiguredProject.Services
-                    .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
-                configs = knownConfigs.Select(x => x.Name);
+                configs = new[] { configId };
             }
 
             foreach (var config in configs) {

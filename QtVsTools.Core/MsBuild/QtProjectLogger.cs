@@ -5,11 +5,11 @@
 
 using Microsoft.Build.Framework;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Core.MsBuild
 {
     using Core;
 
-    class QtProjectLogger : ILogger
+    internal class QtProjectLogger : ILogger
     {
         public LoggerVerbosity Verbosity { get; set; }
         public string Parameters { get; set; }
@@ -42,17 +42,17 @@ namespace QtVsTools.QtMsBuild
 
         private void MessageRaised(object sender, BuildMessageEventArgs e)
         {
-            if (Verbosity <= LoggerVerbosity.Quiet)
-                return;
-            if (Verbosity <= LoggerVerbosity.Minimal && e.SenderName != "Message")
-                return;
-            if (Verbosity <= LoggerVerbosity.Normal && e.Importance != MessageImportance.High)
-                return;
-            if (Verbosity <= LoggerVerbosity.Detailed
-                && (e.Importance == MessageImportance.Low || e.SenderName == "MSBuild")) {
-                return;
+            switch (Verbosity) {
+            case <= LoggerVerbosity.Quiet:
+            case <= LoggerVerbosity.Minimal when e.SenderName != "Message":
+            case <= LoggerVerbosity.Normal when e.Importance != MessageImportance.High:
+            case <= LoggerVerbosity.Detailed
+                when e.Importance == MessageImportance.Low || e.SenderName == "MSBuild":
+                break;
+            default:
+                Messages.Print(e.Message);
+                break;
             }
-            Messages.Print(e.Message);
         }
 
         private void TargetStarted(object sender, TargetStartedEventArgs e)
@@ -85,17 +85,19 @@ namespace QtVsTools.QtMsBuild
 
         private void AnyEventRaised(object sender, BuildEventArgs e)
         {
-            if (Verbosity < LoggerVerbosity.Diagnostic
-                || e is BuildMessageEventArgs or BuildErrorEventArgs or BuildWarningEventArgs
-                    or TargetStartedEventArgs or TargetFinishedEventArgs or TaskStartedEventArgs
-                    or TaskFinishedEventArgs) {
+            if (Verbosity < LoggerVerbosity.Diagnostic)
+                return;
+
+            if (e is BuildMessageEventArgs or BuildErrorEventArgs or BuildWarningEventArgs
+                or TargetStartedEventArgs or TargetFinishedEventArgs or TaskStartedEventArgs
+                or TaskFinishedEventArgs) {
                 return;
             }
+
             Messages.Print(e.Message);
         }
 
         public void Shutdown()
-        {
-        }
+        {}
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.Shell;
 namespace QtVsTools
 {
     using Core;
+    using Core.MsBuild;
     using Common;
     using VisualStudio;
 
@@ -53,7 +54,7 @@ namespace QtVsTools
                 Text = "Select Qt version...",
                 CloseInfoBar = false,
                 OnClicked = () =>
-                    QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage))
+                    QtVsToolsPackage.Instance.ShowOptionPage(typeof(Core.Options.QtVersionsPage))
             }
         };
     }

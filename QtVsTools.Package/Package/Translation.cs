@@ -14,7 +14,6 @@ namespace QtVsTools
 {
     using Core;
     using Core.MsBuild;
-    using QtMsBuild;
 
     /// <summary>
     /// Run Qt translation tools by invoking the corresponding Qt/MSBuild targets

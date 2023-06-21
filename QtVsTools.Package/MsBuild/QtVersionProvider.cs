@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Win32;
+using Microsoft.Build.Framework.XamlTypes;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
-using Microsoft.Build.Framework.XamlTypes;
+using Microsoft.Win32;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Package.MsBuild
 {
     [ExportDynamicEnumValuesProvider("QtVersionProvider")]
     [AppliesTo("IntegratedConsoleDebugging")]
@@ -34,18 +34,16 @@ namespace QtVsTools.QtMsBuild
 
         public async Task<ICollection<IEnumValue>> GetListedValuesAsync()
         {
-            using (var qtVersions = Registry.CurrentUser.OpenSubKey(@"Software\Digia\Versions")) {
-
-                return await Task.FromResult(
-                    qtVersions.GetSubKeyNames()
-                        .Select(x => new PageEnumValue(new EnumValue
-                        {
-                            Name = x,
-                            DisplayName = x
-                        }))
-                        .Cast<IEnumValue>()
-                        .ToList());
-            }
+            using var qtVersions = Registry.CurrentUser.OpenSubKey(@"Software\Digia\Versions");
+            return await Task.FromResult(
+                qtVersions?.GetSubKeyNames()
+                    .Select(x => new PageEnumValue(new EnumValue
+                    {
+                        Name = x,
+                        DisplayName = x
+                    }))
+                    .Cast<IEnumValue>()
+                    .ToList());
         }
 
         public async Task<IEnumValue> TryCreateEnumValueAsync(string userSuppliedValue)

@@ -3,17 +3,18 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using Microsoft.VisualStudio.ProjectSystem;
-using Microsoft.VisualStudio.ProjectSystem.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.ProjectSystem;
+using Microsoft.VisualStudio.ProjectSystem.Properties;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Package.MsBuild
 {
     using Core;
+    using QtVsTools.Core.MsBuild;
 
     [Export(typeof(IPropertyPageUIValueEditor))]
     [ExportMetadata("Name", "QtModulesEditor")]

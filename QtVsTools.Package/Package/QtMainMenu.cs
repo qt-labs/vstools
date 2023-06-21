@@ -12,6 +12,7 @@ using EnvDTE;
 namespace QtVsTools
 {
     using Core;
+    using Core.MsBuild;
     using VisualStudio;
 
     /// <summary>
@@ -117,10 +118,10 @@ namespace QtVsTools
                 }
                 break;
             case QtMenus.Package.QtOptions:
-                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
+                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Core.Options.QtOptionsPage));
                 break;
             case QtMenus.Package.QtVersions:
-                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
+                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Core.Options.QtVersionsPage));
                 break;
             }
         }

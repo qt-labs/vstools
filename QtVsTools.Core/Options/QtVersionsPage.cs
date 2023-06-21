@@ -11,10 +11,11 @@ using System.Windows;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace QtVsTools.Options
+namespace QtVsTools.Core.Options
 {
     using Common;
     using Core;
+    using QtVsTools.VisualStudio;
     using static QtVersionsTable;
     using static Utils;
 
@@ -121,8 +122,8 @@ namespace QtVsTools.Options
                 exception.Log();
             }
 
-            if (Notifications.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)
-                Notifications.NoQtVersion.Close();
+            //if (Notifications.NoQtVersion.IsOpen && VersionManager.GetVersions()?.Any() == true)
+            //    Notifications.NoQtVersion.Close();
         }
 
         protected override void OnApply(PageApplyEventArgs e)
@@ -159,7 +160,7 @@ namespace QtVsTools.Options
                 var errorMessage = "Invalid Qt versions:\r\n"
                     + $"{string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg))}";
                 VsShellUtilities.ShowMessageBox(
-                    QtVsToolsPackage.Instance,
+                    VsServiceProvider.Instance as IServiceProvider,
                     errorMessage,
                     "Qt VS Tools",
                     OLEMSGICON.OLEMSGICON_WARNING,

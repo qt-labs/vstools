@@ -8,18 +8,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 
-namespace QtVsTools
+namespace QtVsTools.Core.MsBuild
 {
     using Core;
-    using Core.MsBuild;
     using VisualStudio;
 
-    static class QtMsBuildConverter
+    public static class QtMsBuildConverter
     {
         private const string CancelConversion = "Project conversion canceled.";
         private const string ErrorConversion = "Error converting project {0}";
@@ -28,7 +28,9 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var allProjects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
+            var dte = VsServiceProvider.GetService<SDTE, DTE>();
+
+            var allProjects = HelperFunctions.ProjectsInSolution(dte);
             if (allProjects.Count == 0)
                 return WarningMessage("No projects to convert.");
 
@@ -69,7 +71,7 @@ namespace QtVsTools
                 })
                 .ToList();
 
-            var solution = QtVsToolsPackage.Instance.Dte.Solution;
+            var solution = dte.Solution;
             string solutionPath = solution.FileName;
             solution.Close(true);
 
@@ -92,7 +94,7 @@ namespace QtVsTools
                 }
                 if (!ConvertProject(projectPath)) {
                     waitDialog?.Stop();
-                    QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
+                    dte.Solution.Open(solutionPath);
                     return ErrorMessage(string.Format(ErrorConversion,
                         Path.GetFileName(projectPath)));
                 }
@@ -101,7 +103,7 @@ namespace QtVsTools
 
             waitDialog?.Stop();
 
-            QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
+            dte.Solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show($"Conversion canceled. {projectPaths.Count - projCount} "
                     + "projects were not converted.", "Qt VS Tools",

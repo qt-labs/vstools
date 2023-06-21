@@ -14,17 +14,18 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.ProjectSystem;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 
+using Task = System.Threading.Tasks.Task;
 using Thread = System.Threading.Thread;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Core.MsBuild
 {
     using Common;
-    using Core;
-    using Core.MsBuild;
+    using Options;
     using VisualStudio;
     using static Common.EnumExt;
 
@@ -50,11 +51,11 @@ namespace QtVsTools.QtMsBuild
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
         private QtProject QtProject { get; set; }
-        UnconfiguredProject UnconfiguredProject { get; set; }
-        ConfiguredProject ConfiguredProject { get; set; }
-        Dictionary<string, string> Properties { get; set; }
-        List<string> Targets { get; set; }
-        LoggerVerbosity LoggerVerbosity { get; set; }
+        private UnconfiguredProject UnconfiguredProject { get; set; }
+        private ConfiguredProject ConfiguredProject { get; set; }
+        private Dictionary<string, string> Properties { get; set; }
+        private List<string> Targets { get; set; }
+        private LoggerVerbosity LoggerVerbosity { get; set; }
 
         static Task BuildDispatcher { get; set; }
 
@@ -87,7 +88,7 @@ namespace QtVsTools.QtMsBuild
             RequestTimer.Restart();
             await tracker.Initialized;
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (Options.Get() is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Request [{configName}] {tracker.UnconfiguredProject.FullPath}");
@@ -143,7 +144,9 @@ namespace QtVsTools.QtMsBuild
         static async Task BuildDispatcherLoopAsync()
         {
             ITaskHandler2 dispatchStatus = null;
-            while (!QtVsToolsPackage.Instance.Zombied) {
+            if (VsServiceProvider.Instance is not AsyncPackage package)
+                return;
+            while (!package.Zombied) {
                 while (BuildQueue.IsEmpty || RequestTimer.ElapsedMilliseconds < 1000) {
                     if (BuildQueue.IsEmpty && dispatchStatus != null) {
                         dispatchStatus.Dismiss();
@@ -213,8 +216,11 @@ namespace QtVsTools.QtMsBuild
                 configProps, null, new ProjectCollection());
 
             var loggerVerbosity = LoggerVerbosity;
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation)
-                loggerVerbosity = QtVsToolsPackage.Instance.Options.BuildLoggerVerbosity;
+            if (Options.Get() is { BuildDebugInformation: true }) {
+                if (Options.Get() is {} options)
+                    loggerVerbosity = options.BuildLoggerVerbosity;
+            }
+
             var buildParams = new BuildParameters
             {
                 Loggers = loggerVerbosity != LoggerVerbosity.Quiet
@@ -227,7 +233,7 @@ namespace QtVsTools.QtMsBuild
                 hostServices: null,
                 flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (Options.Get() is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Build [{ConfiguredProject.ProjectConfiguration.Name}] "
@@ -243,10 +249,9 @@ namespace QtVsTools.QtMsBuild
             BuildResult result = null;
             while (result == null) {
                 try {
-                    result = BuildManager.DefaultBuildManager.Build(
-                        buildParams, buildRequest);
+                    result = BuildManager.DefaultBuildManager.Build(buildParams, buildRequest);
                 } catch (InvalidOperationException) {
-                    if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                    if (Options.Get() is { BuildDebugInformation: true }) {
                         Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                         + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                         + $"[{ConfiguredProject.ProjectConfiguration.Name}] "
@@ -256,7 +261,7 @@ namespace QtVsTools.QtMsBuild
                 }
             }
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (Options.Get() is { BuildDebugInformation: true }) {
                 string resMsg;
                 StringBuilder resInfo = new StringBuilder();
                 if (result.OverallResult == BuildResultCode.Success) {
@@ -317,7 +322,7 @@ namespace QtVsTools.QtMsBuild
                       $"== {path}: starting build...{Environment.NewLine}"
                     + $"  * Properties: {properties}{Environment.NewLine}"
                     + $"  * Targets: {string.Join(";", Targets)}{Environment.NewLine}",
-                    clear: !QtVsToolsPackage.Instance.Options.BuildDebugInformation,
+                    clear: Options.Get() is not { BuildDebugInformation: true },
                     activate: true);
             }
 

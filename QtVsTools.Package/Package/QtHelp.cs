@@ -18,11 +18,10 @@ namespace QtVsTools
 {
     using Core;
     using VisualStudio;
+    using static Core.Options.QtOptionsPage.SourcePreference;
 
     public class QtHelp
     {
-        public enum SourcePreference { Online, Offline }
-
         private static QtHelp Instance
         {
             get;
@@ -141,7 +140,7 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
 
-                var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
+                var offline = QtVsToolsPackage.Instance.Options.HelpPreference == Offline;
 
                 var linksForKeyword = "SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
@@ -222,7 +221,7 @@ namespace QtVsTools
 
         private static bool TryShowGenericSearchResultsOnline(string keyword, uint version)
         {
-            if (QtVsToolsPackage.Instance.Options.HelpPreference != SourcePreference.Online)
+            if (QtVsToolsPackage.Instance.Options.HelpPreference != Online)
                 return false;
 
             VsShellUtilities.OpenSystemBrowser(HelperFunctions.FromNativeSeparators(

@@ -18,16 +18,16 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 using Task = System.Threading.Tasks.Task;
 
-namespace QtVsTools.QtMsBuild
+namespace QtVsTools.Core.MsBuild
 {
     using Common;
     using Core;
-    using Core.MsBuild;
+    using Options;
     using VisualStudio;
 
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
 
-    class QtProjectTracker : Concurrent<QtProjectTracker>
+    public class QtProjectTracker : Concurrent<QtProjectTracker>
     {
         static LazyFactory StaticLazy { get; } = new();
 
@@ -70,7 +70,7 @@ namespace QtVsTools.QtMsBuild
         /// project tracking is disabled by the user (via settings).</returns>
         public static QtProjectTracker GetOrAdd(QtProject project)
         {
-            if (project == null || !QtVsToolsPackage.Instance.Options.ProjectTracking)
+            if (project == null || Options.Get() is not { ProjectTracking: true })
                 return null;
             lock (StaticCriticalSection) {
                 if (Instances.TryGetValue(project.VcProjectPath, out var tracker))
@@ -96,18 +96,19 @@ namespace QtVsTools.QtMsBuild
 
         static async Task InitDispatcherLoopAsync()
         {
-            while (!QtVsToolsPackage.Instance.Zombied) {
+            if (VsServiceProvider.Instance is not AsyncPackage package)
+                return;
+
+            while (!package.Zombied) {
                 while (InitQueue.IsEmpty)
                     await Task.Delay(100);
                 if (InitQueue.TryDequeue(out var tracker)) {
                     if (InitStatus == null) {
-                        await QtVsToolsPackage.Instance.JoinableTaskFactory
-                            .SwitchToMainThreadAsync();
+                        await package.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
                         await TaskScheduler.Default;
                     } else {
-                        await QtVsToolsPackage.Instance.JoinableTaskFactory
-                            .SwitchToMainThreadAsync();
+                        await package.JoinableTaskFactory.SwitchToMainThreadAsync();
                         tracker.UpdateInitStatus(0);
                         await TaskScheduler.Default;
                     }
@@ -157,7 +158,7 @@ namespace QtVsTools.QtMsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
                 configProject.ProjectUnloading += OnProjectUnloadingAsync;
-                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                if (Options.Get() is { BuildDebugInformation: true }) {
                     Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                         + $"QtProjectTracker({Thread.CurrentThread.ManagedThreadId}): "
                         + $"Started tracking [{config.Name}] {QtProject.VcProjectPath}");
@@ -169,7 +170,7 @@ namespace QtVsTools.QtMsBuild
         async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
             if (sender is ConfiguredProject project) {
-                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                if (Options.Get() is { BuildDebugInformation: true }) {
                     Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} QtProjectTracker: "
                         + $"Stopped tracking [{project.ProjectConfiguration.Name}] "
                         + $"{project.UnconfiguredProject.FullPath}");
@@ -205,7 +206,7 @@ namespace QtVsTools.QtMsBuild
                 } catch (Exception exception) {
                     exception.Log();
                 }
-                InitStatus.RegisterTask(new Task(() => throw new InvalidOperationException()));
+                InitStatus?.RegisterTask(new Task(() => throw new InvalidOperationException()));
             }
         }
 

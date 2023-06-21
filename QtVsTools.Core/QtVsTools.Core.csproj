@@ -47,10 +47,12 @@
   // -->
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Windows.Forms" />
@@ -64,8 +66,10 @@
   <ItemGroup>
     <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_ProjectSystem)" Version="$(Version_Microsoft_VisualStudio_ProjectSystem)" />
     <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
     <PackageReference Include="$(Name_Newtonsoft_Json)" Version="$(Version_Newtonsoft_Json)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Composition)" Version="$(Version_Microsoft_VisualStudio_Composition)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
   </ItemGroup>
@@ -132,12 +136,27 @@
     <Compile Include="MsBuild\IPropertyStorageProvider.cs" />
     <Compile Include="MsBuild\IVsMacroExpander.cs" />
     <Compile Include="MsBuild\QtMoc.cs" />
+    <Compile Include="MsBuild\QtModulesPopup.xaml.cs">
+      <DependentUpon>QtModulesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MsBuild\QtMsBuildContainer.cs" />
+    <Compile Include="MsBuild\QtMsBuildConverter.cs" />
     <Compile Include="MsBuild\QtProject.cs" />
+    <Compile Include="MsBuild\QtProjectBuild.cs" />
+    <Compile Include="MsBuild\QtProjectIntelliSense.cs" />
+    <Compile Include="MsBuild\QtProjectLogger.cs" />
+    <Compile Include="MsBuild\QtProjectTracker.cs" />
     <Compile Include="MsBuild\QtRcc.cs" />
     <Compile Include="MsBuild\QtRepc.cs" />
     <Compile Include="MsBuild\QtTool.cs" />
     <Compile Include="MsBuild\QtUic.cs" />
+    <Compile Include="Options\QtOptionsPage.cs" />
+    <Compile Include="Options\QtVersionsPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Options\QtVersionsTable.cs">
+      <DependentUpon>QtVersionsTable.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
@@ -192,6 +211,16 @@
     <EmbeddedResource Include="Resources\delete_d.png" />
     <EmbeddedResource Include="Resources\newitem.png" />
     <EmbeddedResource Include="Resources\newitem_d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MsBuild\QtModulesPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Options\QtVersionsTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />

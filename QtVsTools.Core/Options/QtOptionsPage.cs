@@ -15,12 +15,22 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using EnvDTE;
 
-namespace QtVsTools.Options
+namespace QtVsTools.Core.Options
 {
     using Core;
     using VisualStudio;
     using static Utils;
     using static Common.EnumExt;
+
+    public static class Options
+    {
+        public static QtOptionsPage Get()
+        {
+            if (VsServiceProvider.Instance is not AsyncPackage package)
+                return null;
+            return package.GetDialogPage(typeof(QtOptionsPage)) as QtOptionsPage;
+        }
+    }
 
     public class QtOptionsPage : DialogPage
     {
@@ -77,7 +87,7 @@ namespace QtVsTools.Options
 
         public enum Timeout : uint { Disabled = 0 }
 
-        class TimeoutConverter : EnumConverter
+        private class TimeoutConverter : EnumConverter
         {
             public TimeoutConverter(Type t) : base(t)
             { }
@@ -99,7 +109,9 @@ namespace QtVsTools.Options
                 uint n = 0;
                 try {
                     n = Convert.ToUInt32(value);
-                } catch { }
+                } catch (Exception e) {
+                    e.Log();
+                }
                 return (Timeout)n;
             }
 
@@ -110,12 +122,12 @@ namespace QtVsTools.Options
                 Type destinationType)
             {
                 if (destinationType == typeof(string))
-                    return value.ToString();
+                    return value?.ToString();
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }
 
-        class EnableDisableConverter : BooleanConverter
+        private class EnableDisableConverter : BooleanConverter
         {
             public override object ConvertFrom(
                 ITypeDescriptorContext context,
@@ -144,7 +156,9 @@ namespace QtVsTools.Options
 
         [Category("QML Debugging")]
         [DisplayName("Process debug events")]
-        [Description("Set to false to turn off processing of all debug events by the QML debug engine, effectively excluding it from the debugging environment. Disabling the QML debug engine will skip debugging of QML code for all projects.")]
+        [Description("Set to false to turn off processing of all debug events by the QML debug "
+            + "engine, effectively excluding it from the debugging environment. Disabling the "
+            + "QML debug engine will skip debugging of QML code for all projects.")]
         public bool QmlDebuggerEnabled { get; set; }
 
         [Category("QML Debugging")]
@@ -158,9 +172,11 @@ namespace QtVsTools.Options
         [ReadOnly(true)]
         private string QtHelpKeyBinding { get; set; }
 
+        public enum SourcePreference { Online, Offline }
+
         [Category("Help")]
         [DisplayName("Preferred source")]
-        public QtHelp.SourcePreference HelpPreference { get; set; }
+        public SourcePreference HelpPreference { get; set; }
 
         [Category("Help")]
         [DisplayName("Try Qt documentation when F1 is pressed")]
@@ -241,7 +257,7 @@ namespace QtVsTools.Options
             QtMsBuildPath = "";
             QmlDebuggerEnabled = true;
             QmlDebuggerTimeout = (Timeout)60000;
-            HelpPreference = QtHelp.SourcePreference.Online;
+            HelpPreference = SourcePreference.Online;
             TryQtHelpOnF1Pressed = true;
             DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
 
@@ -257,7 +273,7 @@ namespace QtVsTools.Options
             //
             var dte = VsServiceProvider.GetService<SDTE, DTE>();
             var f1QtHelpBindings = dte.Commands.Item("QtVSTools.F1QtHelp")?.Bindings as Array;
-            var binding = f1QtHelpBindings.Cast<string>()
+            var binding = f1QtHelpBindings?.Cast<string>()
                 .Select(x => x.Split(new[] { "::" }, StringSplitOptions.None))
                 .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
                 .FirstOrDefault();
@@ -272,25 +288,24 @@ namespace QtVsTools.Options
             try {
                 QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");
 
-                using (var key = Registry.CurrentUser
-                    .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false)) {
-                    if (key == null)
-                        return;
-                    Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
-                    Load(() => QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                    Load(() => HelpPreference, key, Help.Preference);
-                    Load(() => TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
-                    Load(() => DesignerDetached, key, Designer.Detached);
-                    Load(() => LinguistDetached, key, Linguist.Detached);
-                    Load(() => ResourceEditorDetached, key, ResEditor.Detached);
-                    Load(() => ProjectTracking, key, BkgBuild.ProjectTracking);
-                    Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
-                    Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
-                    Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                    Load(() => NotifyInstalled, key, Notifications.Installed);
-                    Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
-                    Load(() => LinkNatvis, key, Natvis.Link);
-                }
+                using var key = Registry.CurrentUser
+                    .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false);
+                if (key == null)
+                    return;
+                Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
+                Load(() => QmlDebuggerTimeout, key, QmlDebug.Timeout);
+                Load(() => HelpPreference, key, Help.Preference);
+                Load(() => TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
+                Load(() => DesignerDetached, key, Designer.Detached);
+                Load(() => LinguistDetached, key, Linguist.Detached);
+                Load(() => ResourceEditorDetached, key, ResEditor.Detached);
+                Load(() => ProjectTracking, key, BkgBuild.ProjectTracking);
+                Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
+                Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
+                Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                Load(() => NotifyInstalled, key, Notifications.Installed);
+                Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
+                Load(() => LinkNatvis, key, Natvis.Link);
             } catch (Exception exception) {
                 exception.Log();
             }
@@ -307,31 +322,30 @@ namespace QtVsTools.Options
                         "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
                 }
 
-                using (var key = Registry.CurrentUser
-                    .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath)) {
-                    if (key == null)
-                        return;
-                    Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
-                    Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                    Save(HelpPreference, key, Help.Preference);
-                    Save(TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
-                    Save(DesignerDetached, key, Designer.Detached);
-                    Save(LinguistDetached, key, Linguist.Detached);
-                    Save(ResourceEditorDetached, key, ResEditor.Detached);
-                    Save(ProjectTracking, key, BkgBuild.ProjectTracking);
-                    Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
-                    Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
-                    Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                    Save(NotifyInstalled, key, Notifications.Installed);
-                    Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
-                    Save(LinkNatvis, key, Natvis.Link);
-                }
+                using var key = Registry.CurrentUser
+                    .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath);
+                if (key == null)
+                    return;
+                Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
+                Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
+                Save(HelpPreference, key, Help.Preference);
+                Save(TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
+                Save(DesignerDetached, key, Designer.Detached);
+                Save(LinguistDetached, key, Linguist.Detached);
+                Save(ResourceEditorDetached, key, ResEditor.Detached);
+                Save(ProjectTracking, key, BkgBuild.ProjectTracking);
+                Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
+                Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
+                Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                Save(NotifyInstalled, key, Notifications.Installed);
+                Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
+                Save(LinkNatvis, key, Natvis.Link);
             } catch (Exception exception) {
                 exception.Log();
             }
         }
 
-        void Save<T>(T property, RegistryKey key, Enum name)
+        private static void Save<T>(T property, RegistryKey key, Enum name)
         {
             object value = property;
             if (Equals<T, bool>())
@@ -340,10 +354,11 @@ namespace QtVsTools.Options
                 value = Convert.ToInt32(property);
             else if (typeof(T).IsEnum)
                 value = Enum.GetName(typeof(T), property);
-            key.SetValue(name.Cast<string>(), value);
+            if (value != null)
+                key.SetValue(name.Cast<string>(), value);
         }
 
-        void Load<T>(Expression<Func<T>> propertyByRef, RegistryKey key, Enum name)
+        private void Load<T>(Expression<Func<T>> propertyByRef, RegistryKey key, Enum name)
         {
             var propertyExpr = (MemberExpression)propertyByRef.Body;
             var property = (PropertyInfo)propertyExpr.Member;
@@ -358,7 +373,7 @@ namespace QtVsTools.Options
                 property.SetValue(this, value);
         }
 
-        bool Equals<T1, T2>()
+        private static bool Equals<T1, T2>()
         {
             return typeof(T1) == typeof(T2);
         }

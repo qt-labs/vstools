@@ -14,7 +14,6 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools.Editors
 {
     using Core.MsBuild;
-    using QtMsBuild;
     using VisualStudio;
 
     [Guid(GuidString)]

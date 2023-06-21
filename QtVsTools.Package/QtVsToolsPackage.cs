@@ -24,7 +24,6 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools
 {
     using Core;
-    using QtMsBuild;
     using Package;
     using VisualStudio;
 
@@ -68,19 +67,19 @@ namespace QtVsTools
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 
     // Options page
-    [ProvideOptionPage(typeof(Options.QtOptionsPage),
+    [ProvideOptionPage(typeof(Core.Options.QtOptionsPage),
         "Qt", "General", 0, 0, true, Sort = 0)]
 
     // Qt Versions page
-    [ProvideOptionPage(typeof(Options.QtVersionsPage),
+    [ProvideOptionPage(typeof(Core.Options.QtVersionsPage),
         "Qt", "Versions", 0, 0, true, Sort = 1)]
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {
         public DTE Dte { get; private set; }
         public string PkgInstallPath { get; private set; }
-        public Options.QtOptionsPage Options
-            => GetDialogPage(typeof(Options.QtOptionsPage)) as Options.QtOptionsPage;
+        public Core.Options.QtOptionsPage Options
+            => GetDialogPage(typeof(Core.Options.QtOptionsPage)) as Core.Options.QtOptionsPage;
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
