@@ -101,10 +101,10 @@ namespace QtVsTools.Core.MsBuild
             foreach (var config in knownConfigs) {
                 var configProject = await tracker.UnconfiguredProject
                     .LoadConfiguredProjectAsync(config);
-                if (configProject.ProjectConfiguration.Name == configName) {
-                    configuredProject = configProject;
-                    break;
-                }
+                if (configProject.ProjectConfiguration.Name != configName)
+                    continue;
+                configuredProject = configProject;
+                break;
             }
             if (configuredProject == null)
                 throw new ArgumentException($"Unknown configuration '{configName}'.");

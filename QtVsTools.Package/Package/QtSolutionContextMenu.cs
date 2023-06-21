@@ -61,20 +61,7 @@ namespace QtVsTools
             foreach (int id in Enum.GetValues(typeof(CommandId))) {
                 var command = new OleMenuCommand(execHandler,
                     new CommandID(QtMenus.Package.Guid, id));
-                command.BeforeQueryStatus += beforeQueryStatus;
                 commandService.AddCommand(command);
-            }
-        }
-
-        private void beforeQueryStatus(object sender, EventArgs e)
-        {
-            if (sender is not OleMenuCommand command)
-                return;
-
-            switch (command.CommandID.ID) {
-            default:
-                command.Enabled = command.Visible = true;
-                break;
             }
         }
 

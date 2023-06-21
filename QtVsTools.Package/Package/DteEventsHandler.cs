@@ -241,13 +241,13 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var project = document.ProjectItem.ContainingProject;
-            var qtPro = QtProject.Create(project);
+            if (!HelperFunctions.IsVsToolsProject(project))
+                return;
 
-            if (!HelperFunctions.IsVsToolsProject(qtPro.VcProject))
+            if (QtProject.Create(project) is not {} qtPro)
                 return;
 
             var file = (VCFile)((IVCCollection)qtPro.VcProject.Files).Item(document.FullName);
-
             if (HelperFunctions.IsUicFile(file.Name)) {
                 if (QtVSIPSettings.AutoUpdateUicSteps() && !QtProject.HasUicStep(file))
                     qtPro.AddUic4BuildStep(file);
@@ -510,16 +510,12 @@ namespace QtVsTools
 
         private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispId)
         {
-            VCProject vcPrj = null;
-            if (item is VCFileConfiguration vcFileCfg) {
-                if (vcFileCfg.File is VCFile vcFile)
-                    vcPrj = vcFile.project as VCProject;
-            } else if (item is VCConfiguration vcCfg) {
-                vcPrj = vcCfg.project as VCProject;
-            }
-
-            if (vcPrj is not null && !HelperFunctions.IsVsToolsProject(vcPrj))
-                return;
+            var vcPrj = item switch
+            {
+                VCFileConfiguration {File: VCFile vcFile} => vcFile.project as VCProject,
+                VCConfiguration vcCfg => vcCfg.project as VCProject,
+                _ => null
+            };
 
             if (ProjectFormat.GetVersion(vcPrj) >= ProjectFormat.Version.V3ClProperties)
                 return; // Ignore property events when using shared compiler properties

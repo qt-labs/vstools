@@ -42,20 +42,18 @@ namespace QtVsTools.Core.MsBuild
 
         private void CheckBox_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is CheckBox checkBox) {
-                var module = GetCheckBoxModule(checkBox);
-                if (module != null)
-                    module.CheckBox = checkBox;
-            }
+            if (sender is not CheckBox checkBox)
+                return;
+            if (GetCheckBoxModule(checkBox) is {} module)
+                module.CheckBox = checkBox;
         }
 
         private void Module_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is CheckBox check) {
-                var module = GetCheckBoxModule(check);
-                if (module != null)
-                    module.IsSelected = check.IsChecked == true;
-            }
+            if (sender is not CheckBox check)
+                return;
+            if (GetCheckBoxModule(check) is {} module)
+                module.IsSelected = check.IsChecked == true;
         }
 
         private void PopupListBox_KeyDown(object sender, KeyEventArgs e)

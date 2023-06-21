@@ -191,7 +191,7 @@ namespace QtVsTools.Qml.Debug
                 procCmd = cmdLine;
 
             } catch (Exception e) {
-                Messages.Log(e);
+                e.Log();
                 return false;
             }
 
