@@ -45,7 +45,7 @@ namespace QtVsTools.Editors
             if (document?.ProjectItem?.ContainingProject is not {} project)
                 return;
 
-            var qtProject = QtProject.Create(project);
+            var qtProject = QtProject.GetOrAdd(project);
             if (qtProject == null || !QtProjectTracker.IsTracked(qtProject.VcProjectPath))
                 return;
 

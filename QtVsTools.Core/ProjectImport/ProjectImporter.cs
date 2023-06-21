@@ -144,7 +144,7 @@ namespace QtVsTools.Core
                     if (qtVersion is not null) {
                         foreach (var prj in HelperFunctions.ProjectsInSolution(_dteObject)) {
                             QtVersionManager.The().SaveProjectQtVersion(prj, qtVersion);
-                            ApplyPostImportSteps(QtProject.Create(prj));
+                            ApplyPostImportSteps(QtProject.GetOrAdd(prj));
                         }
                     }
                 }
@@ -188,7 +188,7 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (QtProject.Create(pro) is not {} qtPro)
+                if (QtProject.GetOrAdd(pro) is not {} qtPro)
                     return;
                 var platformName = versionInfo.GetVSPlatformName();
 

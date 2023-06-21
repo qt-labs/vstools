@@ -24,7 +24,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.Create(vcFiles.FirstOrDefault()?.project as VCProject);
+            var qtProject = QtProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
             RunTranslationTarget(BuildAction.Release,
                 qtProject, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
@@ -43,14 +43,14 @@ namespace QtVsTools
                 return;
 
             foreach (var project in HelperFunctions.ProjectsInSolution(solution.DTE))
-                RunlRelease(QtProject.Create(project));
+                RunlRelease(QtProject.GetOrAdd(project));
         }
 
         public static void RunlUpdate(VCFile vcFile)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.Create(vcFile.project as VCProject);
+            var qtProject = QtProject.GetOrAdd(vcFile.project as VCProject);
             RunTranslationTarget(BuildAction.Update,
                 qtProject, new[] { vcFile.RelativePath });
         }
@@ -59,7 +59,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.Create(vcFiles.FirstOrDefault()?.project as VCProject);
+            var qtProject = QtProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
             RunTranslationTarget(BuildAction.Update,
                 qtProject, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
@@ -119,7 +119,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var project in HelperFunctions.ProjectsInSolution(solution?.DTE))
-                RunlUpdate(QtProject.Create(project));
+                RunlUpdate(QtProject.GetOrAdd(project));
         }
 
         public static bool ToolsAvailable(EnvDTE.Project project)

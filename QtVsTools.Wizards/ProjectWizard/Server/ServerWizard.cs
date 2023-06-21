@@ -137,7 +137,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            if (QtProject.Create(project) is {} qtProject)
+            if (QtProject.GetOrAdd(project) is {} qtProject)
                 qtProject.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
         }
     }

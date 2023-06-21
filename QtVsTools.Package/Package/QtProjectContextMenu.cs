@@ -105,7 +105,7 @@ namespace QtVsTools
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
                 var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                QtProjectIntellisense.Refresh(QtProject.Create(project));
+                QtProjectIntellisense.Refresh(QtProject.GetOrAdd(project));
                 break;
             }
         }

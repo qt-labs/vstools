@@ -244,7 +244,7 @@ namespace QtVsTools
             if (!HelperFunctions.IsVsToolsProject(project))
                 return;
 
-            if (QtProject.Create(project) is not {} qtPro)
+            if (QtProject.GetOrAdd(project) is not {} qtPro)
                 return;
 
             var file = (VCFile)((IVCCollection)qtPro.VcProject.Files).Item(document.FullName);
@@ -430,7 +430,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Ignore temp projects created by Qt/CMake wizard
-            if (QtProject.Create(project) is not {} qtProject)
+            if (QtProject.GetOrAdd(project) is not {} qtProject)
                 return;
 
             var activeConfiguration = qtProject.VcProject.ActiveConfiguration;
@@ -458,7 +458,7 @@ namespace QtVsTools
                 var formatVersion = ProjectFormat.GetVersion(p);
                 if (formatVersion >= ProjectFormat.Version.V3) {
                     InitializeVCProject(p);
-                    QtProjectTracker.GetOrAdd(QtProject.Create(p));
+                    QtProjectTracker.GetOrAdd(QtProject.GetOrAdd(p));
                 }
 
                 if (formatVersion is < ProjectFormat.Version.V1 or >= ProjectFormat.Version.Latest)
@@ -470,7 +470,7 @@ namespace QtVsTools
 
         private void SolutionEvents_AfterClosing()
         {
-            QtProject.ClearInstances();
+            QtProject.Reset();
             QtProjectTracker.Reset();
             QtProjectTracker.SolutionPath = string.Empty;
         }
@@ -537,7 +537,7 @@ namespace QtVsTools
             if (item is not VCConfiguration {project: VCProject {Object: Project project}} vcConfig)
                 return;
 
-            QtProjectIntellisense.Refresh(QtProject.Create(project), vcConfig.Name);
+            QtProjectIntellisense.Refresh(QtProject.GetOrAdd(project), vcConfig.Name);
         }
 
         private static VCFile GetVCFileFromProject(string absFileName, VCProject project)

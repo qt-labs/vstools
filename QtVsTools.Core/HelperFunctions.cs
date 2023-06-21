@@ -523,7 +523,7 @@ namespace QtVsTools.Core
             if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
                 project = containing;
 
-            return IsVsToolsProject(project) ? QtProject.Create(project) : null;
+            return IsVsToolsProject(project) ? QtProject.GetOrAdd(project) : null;
         }
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)

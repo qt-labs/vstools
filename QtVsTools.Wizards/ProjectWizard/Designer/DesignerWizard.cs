@@ -143,7 +143,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            if (QtProject.Create(project) is {} qtProject)
+            if (QtProject.GetOrAdd(project) is {} qtProject)
                 QtProject.MarkAsQtPlugin(qtProject);
         }
     }

@@ -22,29 +22,34 @@ namespace QtVsTools.Core.MsBuild
     /// There exists at most one QtProject per EnvDTE.Project.
     /// Use QtProject.Create to get the QtProject for a Project or VCProject.
     /// </summary>
-    public partial class QtProject
+    public partial class QtProject : Concurrent<QtProject>
     {
         private static readonly Dictionary<VCProject, QtProject> Instances = new();
         private readonly QtMsBuildContainer qtMsBuild = new(new VcPropertyStorageProvider());
 
-        public static QtProject Create(VCProject vcProject)
+        public static QtProject GetOrAdd(VCProject vcProject)
         {
-            QtProject qtProject = null;
-            if (vcProject != null && !Instances.TryGetValue(vcProject, out qtProject)) {
+            if (vcProject == null)
+                return null;
+            lock (StaticCriticalSection) {
+                if (Instances.TryGetValue(vcProject, out var qtProject))
+                    return qtProject;
                 qtProject = new QtProject(vcProject);
                 Instances.Add(vcProject, qtProject);
+                return qtProject;
             }
-            return qtProject;
         }
 
-        public static QtProject Create(EnvDTE.Project project)
+        public static QtProject GetOrAdd(EnvDTE.Project project)
         {
-            return Create(project?.Object as VCProject);
+            return GetOrAdd(project?.Object as VCProject);
         }
 
-        public static void ClearInstances()
+        public static void Reset()
         {
-            Instances.Clear();
+            lock (StaticCriticalSection) {
+                Instances.Clear();
+            }
         }
 
         private QtProject(VCProject vcProject)
