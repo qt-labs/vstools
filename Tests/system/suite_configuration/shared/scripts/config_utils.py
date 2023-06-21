@@ -5,13 +5,13 @@
 
 # -*- coding: utf-8 -*-
 
-source("../../shared/testsection.py")
 source("../../shared/utils.py")
 
 import os
 import sys
 
 from newprojectdialog import NewProjectDialog
+from testsection import TestSection
 import names
 
 
