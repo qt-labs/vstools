@@ -10,11 +10,10 @@ using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 
-namespace QtVsTools
+namespace QtVsTools.Core
 {
-    using Core;
-    using Core.MsBuild;
     using Common;
+    using MsBuild;
     using VisualStudio;
 
     public static class Notifications
@@ -54,7 +53,10 @@ namespace QtVsTools
                 Text = "Select Qt version...",
                 CloseInfoBar = false,
                 OnClicked = () =>
-                    QtVsToolsPackage.Instance.ShowOptionPage(typeof(Core.Options.QtVersionsPage))
+                {
+                    if (VsServiceProvider.Instance is AsyncPackage package)
+                        package.ShowOptionPage(typeof(Options.QtVersionsPage));
+                }
             }
         };
     }
@@ -90,8 +92,10 @@ namespace QtVsTools
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    QtVsToolsPackage.Instance.Options.NotifyInstalled = false;
-                    QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
+                    if (Options.Options.Get() is not {} options)
+                        return;
+                    options.NotifyInstalled = false;
+                    options.SaveSettingsToStorage();
                 }
             }
         };
@@ -128,8 +132,10 @@ namespace QtVsTools
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    QtVsToolsPackage.Instance.Options.UpdateProjectFormat = false;
-                    QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
+                    if (Options.Options.Get() is not {} options)
+                        return;
+                    options.UpdateProjectFormat = false;
+                    options.SaveSettingsToStorage();
                 }
             }
         };
@@ -139,6 +145,8 @@ namespace QtVsTools
     {
         public void Show(Message message)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             message.Setup(this);
             Close();
             base.Show();
@@ -146,6 +154,7 @@ namespace QtVsTools
 
         public void Show(string text)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             Show(new Message { text });
         }
 

@@ -382,7 +382,6 @@
     <Compile Include="Package\QtProjectContextMenu.cs" />
     <Compile Include="Package\QtSolutionContextMenu.cs" />
     <Compile Include="Package\Translation.cs" />
-    <Compile Include="Package\Notifications.cs" />
     <Content Include="..\Changelog">
       <Link>Changelog</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

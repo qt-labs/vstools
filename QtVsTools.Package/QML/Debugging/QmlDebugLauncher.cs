@@ -28,7 +28,6 @@ namespace QtVsTools.Qml.Debug
     using VisualStudio;
     using static Utils;
     using static Instances;
-    using static Notifications;
     using static Core.Instances;
     using static SyntaxAnalysis.RegExpr;
 
@@ -206,11 +205,11 @@ namespace QtVsTools.Qml.Debug
         private async Task LaunchDebugAsync(string execPath, string cmd, uint procId)
         {
             if (!Package.IsInitialized)
-                NotifyMessage.Show("QML Debugger: Waiting for package initialization...");
+                Notifications.NotifyMessage.Show("QML Debugger: Waiting for package initialization...");
             await TaskScheduler.Default;
             Package.WaitUntilInitialized();
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            NotifyMessage.Close();
+            Notifications.NotifyMessage.Close();
             LaunchDebug(execPath, cmd, procId);
         }
 
