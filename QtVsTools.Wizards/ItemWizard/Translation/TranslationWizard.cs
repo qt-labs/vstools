@@ -13,7 +13,7 @@ using EnvDTE;
 namespace QtVsTools.Wizards.ItemWizard
 {
     using Common;
-    using Core;
+    using Core.MsBuild;
     using ProjectWizard;
     using QtVsTools.Common;
     using Util;

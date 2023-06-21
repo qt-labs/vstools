@@ -20,6 +20,7 @@ using Process = System.Diagnostics.Process;
 namespace QtVsTools.Core
 {
     using Common;
+    using MsBuild;
     using static Utils;
     using static SyntaxAnalysis.RegExpr;
 

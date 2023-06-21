@@ -4,10 +4,11 @@
 ***************************************************************************************************/
 
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core.QtMsBuild;
 
 namespace QtVsTools.Core
 {
+    using MsBuild;
+
     internal class QtCustomBuildTool
     {
         private readonly QtMsBuildContainer qtMsBuild;

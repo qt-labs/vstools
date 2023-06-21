@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
+    using MsBuild;
     using static Utils;
 
     public static class ProjectImporter

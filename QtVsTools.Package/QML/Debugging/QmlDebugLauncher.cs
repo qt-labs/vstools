@@ -23,7 +23,7 @@ namespace QtVsTools.Qml.Debug
     using AD7;
     using Common;
     using Core;
-    using Core.QtMsBuild;
+    using Core.MsBuild;
     using SyntaxAnalysis;
     using VisualStudio;
     using static Utils;

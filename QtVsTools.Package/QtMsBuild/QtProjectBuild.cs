@@ -24,10 +24,11 @@ namespace QtVsTools.QtMsBuild
 {
     using Common;
     using Core;
+    using Core.MsBuild;
     using VisualStudio;
     using static Common.EnumExt;
 
-    class QtProjectBuild : Concurrent<QtProjectBuild>
+    public class QtProjectBuild : Concurrent<QtProjectBuild>
     {
         static LazyFactory StaticLazy { get; } = new();
 

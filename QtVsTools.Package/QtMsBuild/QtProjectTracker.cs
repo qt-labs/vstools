@@ -22,6 +22,7 @@ namespace QtVsTools.QtMsBuild
 {
     using Common;
     using Core;
+    using Core.MsBuild;
     using VisualStudio;
 
     using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;

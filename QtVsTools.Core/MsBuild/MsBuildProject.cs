@@ -4,25 +4,23 @@
 ***************************************************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Build.Construction;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
 
-namespace QtVsTools.Core
+namespace QtVsTools.Core.MsBuild
 {
-    using QtMsBuild;
     using SyntaxAnalysis;
-
     using static HelperFunctions;
-    using static Utils;
     using static SyntaxAnalysis.RegExpr;
+    using static Utils;
 
     public class MsBuildProject
     {

@@ -15,6 +15,7 @@ using Thread = System.Threading.Thread;
 namespace QtVsTools.QtMsBuild
 {
     using Core;
+    using Core.MsBuild;
 
     static class QtProjectIntellisense
     {

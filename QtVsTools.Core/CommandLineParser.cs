@@ -13,8 +13,8 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Core.CommandLine
 {
-    using IVSMacroExpander = QtMsBuild.IVSMacroExpander;
     using static Utils;
+    using IVSMacroExpander = MsBuild.IVSMacroExpander;
 
     public class Parser
     {

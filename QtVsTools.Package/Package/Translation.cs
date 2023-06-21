@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools
 {
     using Core;
+    using Core.MsBuild;
     using QtMsBuild;
 
     /// <summary>

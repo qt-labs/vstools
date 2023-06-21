@@ -20,7 +20,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
     using Core;
-    using Core.QtMsBuild;
+    using Core.MsBuild;
     using QtVsTools.Common;
     using VisualStudio;
 

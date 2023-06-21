@@ -3,17 +3,16 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace QtVsTools.Core.QtMsBuild
+namespace QtVsTools.Core.MsBuild
 {
     using static Utils;
-    using CommandLineParser = CommandLine.Parser;
     using CommandLineOption = CommandLine.Option;
+    using CommandLineParser = CommandLine.Parser;
 
     public interface IVSMacroExpander
     {

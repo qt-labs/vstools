@@ -12,9 +12,8 @@ using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
-namespace QtVsTools.Core
+namespace QtVsTools.Core.MsBuild
 {
-    using QtMsBuild;
     using static Instances;
     using static Utils;
 

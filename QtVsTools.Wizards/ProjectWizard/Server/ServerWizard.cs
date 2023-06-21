@@ -14,6 +14,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
     using Core;
+    using Core.MsBuild;
     using QtVsTools.Common;
 
     using static QtVsTools.Common.EnumExt;

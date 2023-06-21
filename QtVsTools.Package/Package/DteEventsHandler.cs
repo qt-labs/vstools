@@ -16,6 +16,7 @@ namespace QtVsTools
 {
     using Core;
     using Core.CMake;
+    using Core.MsBuild;
     using QtMsBuild;
     using VisualStudio;
     using static Utils;

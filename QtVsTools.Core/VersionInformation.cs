@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Core
 {
+    using MsBuild;
+
     [DebuggerDisplay("Name = {name}, Version = {qtMajor}.{qtMinor}.{qtPatch}")]
     public class VersionInformation
     {

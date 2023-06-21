@@ -129,10 +129,12 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
+    <Compile Include="MsBuild\QtMsBuild.cs" />
+    <Compile Include="MsBuild\QtProject.cs" />
     <Compile Include="ProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="MsBuildProject.cs" />
+    <Compile Include="MsBuild\MsBuildProject.cs" />
     <Compile Include="OutputWindowPane.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -155,13 +157,11 @@
     <Compile Include="QtCustomBuildTool.cs" />
     <Compile Include="QtModule.cs" />
     <Compile Include="QtModules.cs" />
-    <Compile Include="QtMsBuild.cs" />
-    <Compile Include="QtProject.cs" />
     <Compile Include="QtVersionManager.cs" />
     <Compile Include="QtVSException.cs" />
     <Compile Include="QtVSIPSettings.cs" />
     <Compile Include="Resources.cs" />
-    <Compile Include="VcPropertyStorageProvider.cs" />
+    <Compile Include="MsBuild\VcPropertyStorageProvider.cs" />
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
     <Compile Include="VisualStudio\StatusBar.cs" />

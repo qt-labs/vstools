@@ -5,9 +5,8 @@
 
 using System.Collections.Generic;
 using Microsoft.VisualStudio.VCProjectEngine;
-using QtVsTools.Core.QtMsBuild;
 
-namespace QtVsTools.Core
+namespace QtVsTools.Core.MsBuild
 {
     internal class VcPropertyStorageProvider : IPropertyStorageProvider
     {

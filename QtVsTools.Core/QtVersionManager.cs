@@ -14,6 +14,8 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
+    using MsBuild;
+
     public static partial class Instances
     {
         public static QtVersionManager VersionManager => QtVersionManager.The();
