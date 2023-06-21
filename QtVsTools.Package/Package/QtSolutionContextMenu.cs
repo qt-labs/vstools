@@ -96,11 +96,10 @@ namespace QtVsTools
             case QtMenus.Package.SolutionConvertToQtMsBuild:
                 QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
-            case QtMenus.Package.SolutionEnableProjectTracking: {
-                    foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                        if (HelperFunctions.IsVsToolsProject(project))
-                            QtProjectTracker.GetOrAdd(QtProject.Create(project));
-                    }
+            case QtMenus.Package.SolutionEnableProjectTracking:
+                foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
+                    if (HelperFunctions.IsVsToolsProject(project))
+                        QtProjectTracker.GetOrAdd(QtProject.Create(project));
                 }
                 break;
             }

@@ -56,10 +56,10 @@ namespace QtVsTools.Editors
             {
                 while (!process.WaitForExit(1000)) {
                     var latestWriteTime = File.GetLastWriteTime(filePath);
-                    if (lastWriteTime != latestWriteTime) {
-                        lastWriteTime = latestWriteTime;
-                        await QtProjectIntellisense.RefreshAsync(qtProject);
-                    }
+                    if (lastWriteTime == latestWriteTime)
+                        continue;
+                    lastWriteTime = latestWriteTime;
+                    await QtProjectIntellisense.RefreshAsync(qtProject);
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
                     await QtProjectIntellisense.RefreshAsync(qtProject);

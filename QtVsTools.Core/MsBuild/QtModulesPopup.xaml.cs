@@ -35,7 +35,7 @@ namespace QtVsTools.Core.MsBuild
             PopupListBox.ItemsSource = modules;
         }
 
-        private Module GetCheckBoxModule(CheckBox checkBox)
+        private static Module GetCheckBoxModule(CheckBox checkBox)
         {
             return (checkBox?.TemplatedParent as ContentPresenter)?.Content as Module;
         }
@@ -72,7 +72,7 @@ namespace QtVsTools.Core.MsBuild
                 DragMove();
         }
 
-        private void buttonOk_Click(object sender, RoutedEventArgs e)
+        private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             Close();

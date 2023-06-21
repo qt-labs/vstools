@@ -31,7 +31,7 @@ namespace QtVsTools.Core
         private readonly string strVersionKey;
         private Hashtable versionCache;
 
-        protected QtVersionManager()
+        private QtVersionManager()
         {
             strVersionKey = "Versions";
             regVersionPath = Resources.registryVersionPath;
@@ -76,7 +76,7 @@ namespace QtVsTools.Core
             return GetVersions(Registry.CurrentUser);
         }
 
-        public string[] GetVersions(RegistryKey root)
+        private string[] GetVersions(RegistryKey root)
         {
             var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
             if (key == null)
@@ -153,7 +153,7 @@ namespace QtVsTools.Core
             return GetInstallPath(version, Registry.CurrentUser);
         }
 
-        public string GetInstallPath(string version, RegistryKey root)
+        private string GetInstallPath(string version, RegistryKey root)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion(root);
@@ -236,7 +236,7 @@ namespace QtVsTools.Core
             key.Close();
         }
 
-        internal bool IsVersionAvailable(string version)
+        private bool IsVersionAvailable(string version)
         {
             var versionAvailable = false;
             var versions = GetVersions();
@@ -302,7 +302,7 @@ namespace QtVsTools.Core
             return version;
         }
 
-        public string GetProjectQtVersion(EnvDTE.Project project, EnvDTE.Configuration config)
+        private string GetProjectQtVersion(EnvDTE.Project project, EnvDTE.Configuration config)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -337,7 +337,7 @@ namespace QtVsTools.Core
             return GetDefaultVersion(Registry.CurrentUser);
         }
 
-        public string GetDefaultVersion(RegistryKey root)
+        private string GetDefaultVersion(RegistryKey root)
         {
             string defaultVersion = null;
             try {
@@ -372,7 +372,7 @@ namespace QtVsTools.Core
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
         }
 
-        public string GetDefaultVersionString()
+        private string GetDefaultVersionString()
         {
             string defaultVersion = null;
             try {
@@ -434,7 +434,7 @@ namespace QtVsTools.Core
             }
         }
 
-        internal bool VerifyIfQtVersionExists(string version)
+        private bool VerifyIfQtVersionExists(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();

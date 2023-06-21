@@ -10,6 +10,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
@@ -20,7 +21,7 @@ namespace QtVsTools
     using VisualStudio;
     using static Utils;
 
-    class DteEventsHandler
+    internal class DteEventsHandler
     {
         private readonly DTE dte;
         private readonly SolutionEvents solutionEvents;
@@ -61,7 +62,6 @@ namespace QtVsTools
             solutionEvents = events?.SolutionEvents;
             if (solutionEvents != null) {
                 solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
-                solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
                 solutionEvents.Opened += SolutionEvents_Opened;
                 solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
             }
@@ -186,7 +186,6 @@ namespace QtVsTools
 
             if (solutionEvents != null) {
                 solutionEvents.ProjectAdded -= SolutionEvents_ProjectAdded;
-                solutionEvents.ProjectRemoved -= SolutionEvents_ProjectRemoved;
                 solutionEvents.Opened -= SolutionEvents_Opened;
                 solutionEvents.AfterClosing -= SolutionEvents_AfterClosing;
             }
@@ -232,9 +231,9 @@ namespace QtVsTools
                 QtProject.ShowUpdateFormatMessage();
         }
 
-        void buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
+        private void buildEvents_OnBuildBegin(vsBuildScope scope, vsBuildAction action)
         {
-            currentBuildAction = Action;
+            currentBuildAction = action;
         }
 
         public void DocumentSaved(Document document)
@@ -404,29 +403,29 @@ namespace QtVsTools
             } catch { }
         }
 
-        void ProjectItemsEvents_ItemRemoved(ProjectItem ProjectItem)
+        private void ProjectItemsEvents_ItemRemoved(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte)
-                ?.RemoveGeneratedFiles(ProjectItem.Name);
+                ?.RemoveGeneratedFiles(projectItem.Name);
         }
 
-        void ProjectItemsEvents_ItemRenamed(ProjectItem ProjectItem, string OldName)
+        private void ProjectItemsEvents_ItemRenamed(ProjectItem projectItem, string oldName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (OldName == null)
+            if (oldName == null)
                 return;
             var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
             if (pro == null)
                 return;
 
-            pro.RemoveGeneratedFiles(OldName);
-            ProjectItemsEvents_ItemAdded(ProjectItem);
+            pro.RemoveGeneratedFiles(oldName);
+            ProjectItemsEvents_ItemAdded(projectItem);
         }
 
-        void SolutionEvents_ProjectAdded(Project project)
+        private void SolutionEvents_ProjectAdded(Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -450,10 +449,6 @@ namespace QtVsTools
                 QtProject.ShowUpdateFormatMessage();
         }
 
-        void SolutionEvents_ProjectRemoved(Project project)
-        {
-        }
-
         public void SolutionEvents_Opened()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -473,14 +468,14 @@ namespace QtVsTools
             }
         }
 
-        void SolutionEvents_AfterClosing()
+        private void SolutionEvents_AfterClosing()
         {
             QtProject.ClearInstances();
             QtProjectTracker.Reset();
             QtProjectTracker.SolutionPath = string.Empty;
         }
 
-        void InitializeVCProjects()
+        private void InitializeVCProjects()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -490,7 +485,7 @@ namespace QtVsTools
             }
         }
 
-        void InitializeVCProject(Project p)
+        private void InitializeVCProject(Project p)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -513,7 +508,7 @@ namespace QtVsTools
             }
         }
 
-        private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispid)
+        private void OnVCProjectEngineItemPropertyChange(object item, object tool, int dispId)
         {
             VCProject vcPrj = null;
             if (item is VCFileConfiguration vcFileCfg) {
@@ -528,6 +523,7 @@ namespace QtVsTools
 
             if (ProjectFormat.GetVersion(vcPrj) >= ProjectFormat.Version.V3ClProperties)
                 return; // Ignore property events when using shared compiler properties
+
             if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
                 QtProject.ShowUpdateFormatMessage();
         }

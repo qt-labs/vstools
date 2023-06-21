@@ -73,7 +73,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static bool IsQtMsBuildEnabled(VCProject project)
+        private static bool IsQtMsBuildEnabled(VCProject project)
         {
             try {
                 if (project?.Configurations is IVCCollection configs) {
@@ -194,7 +194,7 @@ namespace QtVsTools.Core.MsBuild
                 propName);
         }
 
-        public static string GetPropertyValue(
+        private static string GetPropertyValue(
             VCProject vcProject,
             string configName,
             string platformName,
@@ -361,7 +361,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        bool IsCppMocFileCustomBuild(VCFile vcFile, VCFile cppFile)
+        private bool IsCppMocFileCustomBuild(VCFile vcFile, VCFile cppFile)
         {
             var mocFilePath = vcFile.FullPath;
             var cppFilePath = cppFile.FullPath;
@@ -378,7 +378,7 @@ namespace QtVsTools.Core.MsBuild
             return string.Equals(Path.GetExtension(mocFilePath), ".cbt", IgnoreCase);
         }
 
-        List<VCFile> GetCppMocOutputs(List<VCFile> mocFiles)
+        private List<VCFile> GetCppMocOutputs(List<VCFile> mocFiles)
         {
             List<VCFile> outputFiles = new List<VCFile>();
             foreach (var mocFile in mocFiles) {
@@ -409,7 +409,7 @@ namespace QtVsTools.Core.MsBuild
             return outputFiles;
         }
 
-        List<VCFile> GetCppMocFiles(VCFile cppFile)
+        private List<VCFile> GetCppMocFiles(VCFile cppFile)
         {
             List<VCFile> mocFiles = new List<VCFile>();
             if (cppFile.project is VCProject vcProj) {
@@ -423,7 +423,7 @@ namespace QtVsTools.Core.MsBuild
             return mocFiles;
         }
 
-        bool IsCppMocFileQtMsBuild(VCFile vcFile, VCFile cppFile)
+        private bool IsCppMocFileQtMsBuild(VCFile vcFile, VCFile cppFile)
         {
             foreach (VCFileConfiguration fileConfig in (IVCCollection)vcFile.FileConfigurations) {
                 string inputFile = qtMsBuild.GetPropertyValue(fileConfig, QtMoc.Property.InputFile);
@@ -434,7 +434,7 @@ namespace QtVsTools.Core.MsBuild
             return false;
         }
 
-        bool HasCppMocFiles(VCFile cppFile)
+        private bool HasCppMocFiles(VCFile cppFile)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -476,7 +476,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public void RemoveMocStepQtMsBuild(VCFile file)
+        private void RemoveMocStepQtMsBuild(VCFile file)
         {
             if (HelperFunctions.IsHeaderFile(file.Name)) {
                 file.ItemType = "ClInclude";
@@ -491,7 +491,7 @@ namespace QtVsTools.Core.MsBuild
         /// Removes the custom build step of a given file.
         /// </summary>
         /// <param name="file">file</param>
-        public void RemoveMocStepCustomBuild(VCFile file)
+        private void RemoveMocStepCustomBuild(VCFile file)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             try {
@@ -582,7 +582,7 @@ namespace QtVsTools.Core.MsBuild
         /// </summary>
         /// <param name="fileName">file name (relative path)</param>
         /// <returns></returns>
-        public VCFile GetFileFromProject(string fileName)
+        private VCFile GetFileFromProject(string fileName)
         {
             fileName = HelperFunctions.NormalizeRelativeFilePath(fileName);
             if (!HelperFunctions.IsAbsoluteFilePath(fileName)) {
@@ -616,7 +616,7 @@ namespace QtVsTools.Core.MsBuild
         /// This file will be deleted!
         /// </summary>
         /// <param name="file">file</param>
-        public void RemoveFileFromFilter(VCFile file, FakeFilter filter)
+        private void RemoveFileFromFilter(VCFile file, FakeFilter filter)
         {
             try {
                 var vfilt = FindFilterFromGuid(filter.UniqueIdentifier)
@@ -636,7 +636,7 @@ namespace QtVsTools.Core.MsBuild
         /// This file will be deleted!
         /// </summary>
         /// <param name="file">file</param>
-        public void RemoveFileFromFilter(VCFile file, VCFilter filter)
+        private void RemoveFileFromFilter(VCFile file, VCFilter filter)
         {
             try {
                 filter.RemoveFile(file);
@@ -830,7 +830,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public class CppConfig
+        private class CppConfig
         {
             public VCConfiguration Config;
             public IVCRulePropertyStorage Cpp;
@@ -867,7 +867,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static IEnumerable<CppConfig> GetCppConfigs(VCProject vcPro)
+        private static IEnumerable<CppConfig> GetCppConfigs(VCProject vcPro)
         {
             return ((IVCCollection)vcPro.Configurations).Cast<VCConfiguration>()
                 .Select(x => new CppConfig
@@ -879,7 +879,7 @@ namespace QtVsTools.Core.MsBuild
                     && x.Config.GetEvaluatedPropertyValue("ApplicationType") != "Linux");
         }
 
-        public static IEnumerable<CppConfig> GetCppDebugConfigs(VCProject vcPro)
+        private static IEnumerable<CppConfig> GetCppDebugConfigs(VCProject vcPro)
         {
             var cppConfigs = GetCppConfigs(vcPro)
                 .Select(x => new { Self = x, x.Cpp });
@@ -896,7 +896,7 @@ namespace QtVsTools.Core.MsBuild
             return cppDebugConfigs;
         }
 
-        public static bool IsQtQmlDebugDefined(VCProject vcPro)
+        private static bool IsQtQmlDebugDefined(VCProject vcPro)
         {
             var cppConfigs = GetCppConfigs(vcPro)
                 .Select(x => new { Self = x, x.Cpp });
@@ -911,7 +911,7 @@ namespace QtVsTools.Core.MsBuild
                 .Any(x => x.Macros.Split(';').Contains("QT_QML_DEBUG"));
         }
 
-        public static void DefineQtQmlDebug(VCProject vcPro)
+        private static void DefineQtQmlDebug(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro).Where(x => x.Cpp
                 .GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
@@ -928,7 +928,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static void UndefineQtQmlDebug(VCProject vcPro)
+        private static void UndefineQtQmlDebug(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro)
                 .Where(x => x.Cpp.GetEvaluatedPropertyValue("PreprocessorDefinitions").Split(';')
@@ -947,7 +947,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static bool IsQmlJsDebuggerDefined(VCProject vcPro)
+        private static bool IsQmlJsDebuggerDefined(VCProject vcPro)
         {
             foreach (var config in GetCppDebugConfigs(vcPro)) {
                 var qmlDebug = config.GetUserPropertyValue("QmlDebug");
@@ -962,7 +962,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        public static void DefineQmlJsDebugger(VCProject vcPro)
+        private static void DefineQmlJsDebugger(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro)
                 .Select(x => new
@@ -987,7 +987,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static void UndefineQmlJsDebugger(VCProject vcPro)
+        private static void UndefineQmlJsDebugger(VCProject vcPro)
         {
             var configs = GetCppDebugConfigs(vcPro)
                 .Select(x => new

@@ -12,7 +12,6 @@ using EnvDTE;
 namespace QtVsTools.Wizards.Util
 {
     using Core;
-    using Core.MsBuild;
     using VisualStudio;
 
     internal class FileExistsinFilterValidationRule : VCLanguageManagerValidationRule

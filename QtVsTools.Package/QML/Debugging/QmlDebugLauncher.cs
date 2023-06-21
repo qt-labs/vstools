@@ -9,14 +9,15 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.VisualStudio.Threading;
-using EnvDTE;
-using Task = System.Threading.Tasks.Task;
+using Microsoft.VisualStudio.VCProjectEngine;
+
 using static Microsoft.VisualStudio.VSConstants;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Qml.Debug
 {
@@ -26,10 +27,10 @@ namespace QtVsTools.Qml.Debug
     using Core.MsBuild;
     using SyntaxAnalysis;
     using VisualStudio;
-    using static Utils;
-    using static Instances;
     using static Core.Instances;
+    using static Instances;
     using static SyntaxAnalysis.RegExpr;
+    using static Utils;
 
     class Launcher : Disposable, IDebugEventCallback2
     {

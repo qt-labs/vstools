@@ -45,8 +45,10 @@ namespace QtVsTools.Core.MsBuild
 
             await tracker.Initialized;
 
-            var properties = new Dictionary<string, string>();
-            properties["QtVSToolsBuild"] = "true";
+            var properties = new Dictionary<string, string>
+            {
+                ["QtVSToolsBuild"] = "true"
+            };
             if (selectedFiles != null)
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
             var targets = new List<string> { "QtVars" };

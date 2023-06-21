@@ -78,7 +78,7 @@
             </ListView>
         </Grid>
         <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button IsDefault="True" Name="buttonOk" Click="buttonOk_Click" MinHeight="23"
+            <Button IsDefault="True" Name="ButtonOk" Click="ButtonOk_Click" MinHeight="23"
                     MinWidth="74" Margin="0,0,10,0">_OK</Button>
             <Button IsCancel="True" MinHeight="23" MinWidth="74">_Cancel</Button>
         </WrapPanel>

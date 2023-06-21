@@ -8,13 +8,11 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
-using Microsoft.VisualStudio.VCProjectEngine;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -25,24 +23,22 @@ namespace QtVsTools.Core.MsBuild
     using Options;
     using VisualStudio;
 
-    using SubscriberAction = ActionBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>;
-
     public class QtProjectTracker : Concurrent<QtProjectTracker>
     {
-        static LazyFactory StaticLazy { get; } = new();
+        private static LazyFactory StaticLazy { get; } = new();
 
-        static ConcurrentDictionary<string, QtProjectTracker> Instances => StaticLazy.Get(() =>
+        private static ConcurrentDictionary<string, QtProjectTracker> Instances => StaticLazy.Get(() =>
             Instances, () => new ConcurrentDictionary<string, QtProjectTracker>());
 
-        static PunisherQueue<QtProjectTracker> InitQueue => StaticLazy.Get(() =>
+        private static PunisherQueue<QtProjectTracker> InitQueue => StaticLazy.Get(() =>
             InitQueue, () => new PunisherQueue<QtProjectTracker>());
 
-        static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
+        private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
             StatusCenter, VsServiceProvider
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
-        static Task InitDispatcher { get; set; }
-        static ITaskHandler2 InitStatus { get; set; }
+        private static Task InitDispatcher { get; set; }
+        private static ITaskHandler2 InitStatus { get; set; }
 
         public static string SolutionPath { get; set; } = string.Empty;
 
@@ -94,7 +90,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        static async Task InitDispatcherLoopAsync()
+        private static async Task InitDispatcherLoopAsync()
         {
             if (VsServiceProvider.Instance is not AsyncPackage package)
                 return;
@@ -114,20 +110,21 @@ namespace QtVsTools.Core.MsBuild
                     }
                     await tracker.InitializeAsync();
                 }
-                if (InitStatus != null
-                    && (InitQueue.IsEmpty
-                    || InitStatus.UserCancellation.IsCancellationRequested)) {
-                    if (InitStatus.UserCancellation.IsCancellationRequested) {
-                        InitQueue.Clear();
-                    }
-                    tracker.EndInitStatus();
-                }
+
+                if (InitStatus == null)
+                    continue;
+                var cancellationRequested = InitStatus.UserCancellation.IsCancellationRequested;
+                if (!InitQueue.IsEmpty && !cancellationRequested)
+                    continue;
+                if (cancellationRequested)
+                    InitQueue.Clear();
+                EndInitStatus();
             }
         }
 
-        async Task InitializeAsync()
+        private async Task InitializeAsync()
         {
-            int p = 0;
+            var p = 0;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             UpdateInitStatus(p += 10);
 
@@ -152,8 +149,8 @@ namespace QtVsTools.Core.MsBuild
 
             Initialized.Set();
 
-            int n = configs.Count;
-            int d = (100 - p) / (n * 2);
+            var n = configs.Count;
+            var d = (100 - p) / (n * 2);
             foreach (var config in configs) {
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
@@ -167,7 +164,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        async Task OnProjectUnloadingAsync(object sender, EventArgs args)
+        private async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
             if (sender is ConfiguredProject project) {
                 if (Options.Get() is { BuildDebugInformation: true }) {
@@ -185,7 +182,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        void BeginInitStatus()
+        private void BeginInitStatus()
         {
             lock (StaticCriticalSection) {
                 if (InitStatus != null)
@@ -210,7 +207,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        void UpdateInitStatus(int percentComplete)
+        private void UpdateInitStatus(int percentComplete)
         {
             lock (StaticCriticalSection) {
                 if (InitStatus == null)
@@ -229,7 +226,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        void EndInitStatus()
+        private static void EndInitStatus()
         {
             lock (StaticCriticalSection) {
                 if (InitStatus == null)

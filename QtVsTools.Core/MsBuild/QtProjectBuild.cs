@@ -31,22 +31,22 @@ namespace QtVsTools.Core.MsBuild
 
     public class QtProjectBuild : Concurrent<QtProjectBuild>
     {
-        static LazyFactory StaticLazy { get; } = new();
+        private static LazyFactory StaticLazy { get; } = new();
 
-        public enum Target
+        private enum Target
         {
             // Mark project as dirty, but do not request a build
             [String("QtVsTools.QtMsBuild.QtProjectBuild.Target.SetOutdated")] SetOutdated
         }
 
-        static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
+        private static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
             BuildQueue, () => new PunisherQueue<QtProjectBuild>(
                 getItemKey: build => build.ConfiguredProject));
 
-        static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
+        private static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
             RequestTimer, () => new ConcurrentStopwatch());
 
-        static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
+        private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
             StatusCenter, VsServiceProvider
                 .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
@@ -57,7 +57,7 @@ namespace QtVsTools.Core.MsBuild
         private List<string> Targets { get; set; }
         private LoggerVerbosity LoggerVerbosity { get; set; }
 
-        static Task BuildDispatcher { get; set; }
+        private static Task BuildDispatcher { get; set; }
 
         public static void StartBuild(
             QtProject qtProject,
@@ -141,7 +141,7 @@ namespace QtVsTools.Core.MsBuild
             BuildQueue.Clear();
         }
 
-        static async Task BuildDispatcherLoopAsync()
+        private static async Task BuildDispatcherLoopAsync()
         {
             ITaskHandler2 dispatchStatus = null;
             if (VsServiceProvider.Instance is not AsyncPackage package)
@@ -154,7 +154,7 @@ namespace QtVsTools.Core.MsBuild
                     }
                     await Task.Delay(100);
                 }
-                if (BuildQueue.TryDequeue(out QtProjectBuild buildRequest)) {
+                if (BuildQueue.TryDequeue(out var buildRequest)) {
                     var progressData = new TaskProgressData
                     {
                         ProgressText = "Refreshing IntelliSense data, "
@@ -187,7 +187,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        async Task<bool> BuildProjectAsync(ProjectWriteLockReleaser writeAccess)
+        private async Task<bool> BuildProjectAsync(ProjectWriteLockReleaser writeAccess)
         {
             var msBuildProject = await writeAccess.GetProjectAsync(ConfiguredProject);
 
@@ -263,7 +263,7 @@ namespace QtVsTools.Core.MsBuild
 
             if (Options.Get() is { BuildDebugInformation: true }) {
                 string resMsg;
-                StringBuilder resInfo = new StringBuilder();
+                var resInfo = new StringBuilder();
                 if (result.OverallResult == BuildResultCode.Success) {
                     resMsg = "Build ok";
                 } else {
@@ -294,7 +294,7 @@ namespace QtVsTools.Core.MsBuild
                     + $"[{ConfiguredProject.ProjectConfiguration.Name}] {resMsg}\r\n{resInfo}");
             }
 
-            bool ok = false;
+            var ok = false;
             if (result is { ResultsByTarget: null, OverallResult: BuildResultCode.Success }) {
                 Messages.Print($"== {Path.GetFileName(UnconfiguredProject.FullPath)}: "
                     + "background build FAILED!");
@@ -311,7 +311,7 @@ namespace QtVsTools.Core.MsBuild
             return ok;
         }
 
-        async Task BuildAsync()
+        private async Task BuildAsync()
         {
             var path = Path.GetFileNameWithoutExtension(UnconfiguredProject.FullPath);
 
@@ -328,7 +328,7 @@ namespace QtVsTools.Core.MsBuild
 
             var lockService = UnconfiguredProject.ProjectService.Services.ProjectLockService;
 
-            bool ok = false;
+            var ok = false;
             try {
                 var timer = ConcurrentStopwatch.StartNew();
                 while (timer.IsRunning) {

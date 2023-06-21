@@ -99,15 +99,13 @@ namespace QtVsTools
                     MessageBox.Show("No Project Opened");
                 }
                 break;
-            case QtMenus.Package.ProjectConvertToQtMsBuild: {
-                    QtMsBuildConverter.ProjectToQtMsBuild(
-                        HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
-                }
+            case QtMenus.Package.ProjectConvertToQtMsBuild:
+                QtMsBuildConverter.ProjectToQtMsBuild(
+                    HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
                 break;
-            case QtMenus.Package.ProjectRefreshIntelliSense: {
-                    var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
-                    QtProjectIntellisense.Refresh(QtProject.Create(project));
-                }
+            case QtMenus.Package.ProjectRefreshIntelliSense:
+                var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+                QtProjectIntellisense.Refresh(QtProject.Create(project));
                 break;
             }
         }

@@ -16,14 +16,11 @@ namespace QtVsTools.Package.MsBuild
 {
     [ExportDynamicEnumValuesProvider("QtVersionProvider")]
     [AppliesTo("IntegratedConsoleDebugging")]
-    internal class QtVersionProvider :
-        IDynamicEnumValuesProvider,
-        IDynamicEnumValuesGenerator
+    internal class QtVersionProvider : IDynamicEnumValuesProvider, IDynamicEnumValuesGenerator
     {
-
         [ImportingConstructor]
         protected QtVersionProvider(UnconfiguredProject project)
-        { }
+        {}
 
         public async Task<IDynamicEnumValuesGenerator> GetProviderAsync(IList<NameValuePair> opts)
         {

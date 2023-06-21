@@ -11,9 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
-using EnvDTE;
 
 using Process = System.Diagnostics.Process;
 
@@ -21,8 +21,8 @@ namespace QtVsTools.Core
 {
     using Common;
     using MsBuild;
-    using static Utils;
     using static SyntaxAnalysis.RegExpr;
+    using static Utils;
 
     public static class HelperFunctions
     {
@@ -414,13 +414,12 @@ namespace QtVsTools.Core
             var configurationName = vcPro.ActiveConfiguration.ConfigurationName;
 
             var fileList = new List<string>();
-            foreach (VCFile vcfile in vcFiles) {
+            foreach (VCFile vcFile in vcFiles) {
+                if (vcFile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
+                    continue; // Why are project files also returned?
 
-                // Why project files are also returned?
-                if (vcfile.ItemName.EndsWith(".vcxproj.filters", StringComparison.Ordinal))
-                    continue;
                 var excluded = false;
-                var fileConfigurations = (IVCCollection)vcfile.FileConfigurations;
+                var fileConfigurations = (IVCCollection)vcFile.FileConfigurations;
                 foreach (VCFileConfiguration config in fileConfigurations) {
                     if (config.ExcludedFromBuild && config.MatchName(configurationName, false)) {
                         excluded = true;
@@ -432,41 +431,41 @@ namespace QtVsTools.Core
                     continue;
 
                 // can be in any filter
-                if (IsTranslationFile(vcfile.Name) && filter == FilesToList.FL_Translation)
-                    fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                if (IsTranslationFile(vcFile.Name) && filter == FilesToList.FL_Translation)
+                    fileList.Add(FromNativeSeparators(vcFile.RelativePath));
 
                 // can also be in any filter
-                if (IsWinRCFile(vcfile.Name) && filter == FilesToList.FL_WinResource)
-                    fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                if (IsWinRCFile(vcFile.Name) && filter == FilesToList.FL_WinResource)
+                    fileList.Add(FromNativeSeparators(vcFile.RelativePath));
 
-                if (IsGenerated(vcfile)) {
+                if (IsGenerated(vcFile)) {
                     if (filter == FilesToList.FL_Generated)
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     continue;
                 }
 
-                if (IsResource(vcfile)) {
+                if (IsResource(vcFile)) {
                     if (filter == FilesToList.FL_Resources)
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     continue;
                 }
 
                 switch (filter) {
                 case FilesToList.FL_UiFiles: // form files
-                    if (IsUicFile(vcfile.Name))
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                    if (IsUicFile(vcFile.Name))
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     break;
                 case FilesToList.FL_HFiles:
-                    if (IsHeaderFile(vcfile.Name))
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                    if (IsHeaderFile(vcFile.Name))
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     break;
                 case FilesToList.FL_CppFiles:
-                    if (IsSourceFile(vcfile.Name))
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                    if (IsSourceFile(vcFile.Name))
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     break;
                 case FilesToList.FL_QmlFiles:
-                    if (IsQmlFile(vcfile.Name))
-                        fileList.Add(FromNativeSeparators(vcfile.RelativePath));
+                    if (IsQmlFile(vcFile.Name))
+                        fileList.Add(FromNativeSeparators(vcFile.RelativePath));
                     break;
                 }
             }
