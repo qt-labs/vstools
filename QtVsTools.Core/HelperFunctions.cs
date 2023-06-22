@@ -431,7 +431,7 @@ namespace QtVsTools.Core
                 return;
 
             // Is this a Visual C++ project?
-            if (prj is { ConfigurationManager: {}, Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}" })
+            if (prj is { ConfigurationManager: {}, Kind: ProjectTypes.C_PLUS_PLUS })
                 projects.Add(prj);
             else // In this case, prj is a solution folder
                 addSubProjects(prj.ProjectItems, ref projects);

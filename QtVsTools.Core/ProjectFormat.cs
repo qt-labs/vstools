@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
+    using static Utils;
+
     public static class ProjectFormat
     {
         /// <summary>
@@ -123,7 +125,7 @@ namespace QtVsTools.Core
         private static string GetKeyword(EnvDTE.Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return project is { Kind: "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}" }
+            return project is { Kind: ProjectTypes.C_PLUS_PLUS }
                 ? (project.Object as VCProject)?.keyword : null;
         }
 
