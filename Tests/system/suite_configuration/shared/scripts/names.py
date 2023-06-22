@@ -43,3 +43,5 @@ qt_Wizard_Header_h_file_Edit = {"container": qt_Wizard_Window, "id": "ClassHeade
                                 "type": "Edit"}
 no_Qt_version_Label = {"container": qt_Wizard_Window, "id": "ErrorMsg", "type": "Label"}
 qt_Wizard_Finish_Button = {"container": qt_Wizard_Window, "text": "Finish", "type": "Button"}
+lower_case_file_names_CheckBox = {"container": qt_Wizard_Window, "text": "Lower case file names",
+                                  "type": "CheckBox"}
