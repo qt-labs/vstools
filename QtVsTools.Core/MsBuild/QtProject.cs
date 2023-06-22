@@ -28,8 +28,6 @@ namespace QtVsTools.Core.MsBuild
 
         public static QtProject GetOrAdd(VCProject vcProject)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (vcProject == null)
                 return null;
             lock (StaticCriticalSection) {
@@ -93,7 +91,6 @@ namespace QtVsTools.Core.MsBuild
         {
             get
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
                 return ProjectFormat.GetVersion(VcProject);
             }
         }

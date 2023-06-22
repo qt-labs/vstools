@@ -4,14 +4,10 @@
 // ************************************************************************************************
 
 using System;
-using System.Linq;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
-    using static Utils;
-
     public static class ProjectFormat
     {
         /// <summary>
@@ -77,7 +73,7 @@ namespace QtVsTools.Core
         /// <para>Attempts to find the format version based on the following conditions:</para>
         /// <example>
         /// <code>
-        /// * The project is a C++ project.
+        /// * Prerequisite: The project is a C++ project.
         /// * The project contains a Qt specific attribute that starts with Qt4VS.
         /// * The project contains a Qt specific attribute that starts with QtVS.
         /// </code>
@@ -85,20 +81,14 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="project">The project to get the format version from.</param>
         /// <returns></returns>
-        public static Version GetVersion(EnvDTE.Project project)
+        public static Version GetVersion(VCProject project)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            var keyword = GetKeyword(project);
+            var keyword = project?.keyword;
             if (string.IsNullOrEmpty(keyword))
                 return Version.Unknown;
 
-            if (keyword.StartsWith(KeywordV2, StringComparison.Ordinal)) {
-                if (project is not { Globals: { VariableNames: string[] variables } })
-                    return Version.V1;
-                return variables.Any(var => HasQt5Version(var, project))
-                    ? Version.V2 : Version.V1;
-            }
+            if (keyword.StartsWith(KeywordV2, StringComparison.Ordinal))
+                return Version.V1;
 
             if (!keyword.StartsWith(KeywordLatest, StringComparison.Ordinal))
                 return Version.Unknown;
@@ -107,33 +97,5 @@ namespace QtVsTools.Core
                 return Version.Unknown;
             return (Version)tmp is >= Version.V3 and <= Version.Latest ? (Version)tmp : Version.Unknown;
         }
-
-        /// <inheritdoc cref="GetVersion(EnvDTE.Project)"/>>
-        public static Version GetVersion(Microsoft.VisualStudio.VCProjectEngine.VCProject project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetVersion(project?.Object as EnvDTE.Project);
-        }
-
-        /// <summary>
-        /// Tries to retrieve the attribute 'Keyword' from the project.
-        /// </summary>
-        /// <param name="project">The project to get the attribute from.</param>
-        /// <returns>
-        /// <see langword="null" /> if the attribute doesn't exist.
-        /// </returns>
-        private static string GetKeyword(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return project is { Kind: ProjectTypes.C_PLUS_PLUS }
-                ? (project.Object as VCProject)?.keyword : null;
-        }
-
-        public static readonly Func<string, EnvDTE.Project, bool> HasQt5Version = (global, project) =>
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return global.StartsWith("Qt5Version", StringComparison.Ordinal)
-                && project.Globals.VariablePersists[global];
-        };
     }
 }
