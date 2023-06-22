@@ -311,26 +311,19 @@ namespace QtVsTools.Core
             return fileList;
         }
 
-        public static Project GetSelectedProject(DTE dteObject)
+        public static VCProject GetSelectedProject(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (dteObject == null)
-                return null;
-
-            Array prjs = null;
             try {
-                prjs = (Array)dteObject.ActiveSolutionProjects;
-            } catch {
+                if (dteObject?.ActiveSolutionProjects is not Array projects || projects.Length == 0)
+                    return null;
+                return (projects.GetValue(0) as Project)?.Object as VCProject;
+            } catch (Exception exception) {
                 // When VS2010 is started from the command line,
                 // we may catch a "Unspecified error" here.
+                exception.Log();
             }
-            if (prjs is not { Length: >= 1 })
-                return null;
-
-            // don't handle multiple selection... use the first one
-            if (prjs.GetValue(0) is Project project)
-                return project;
             return null;
         }
 
@@ -347,7 +340,7 @@ namespace QtVsTools.Core
             if (projectList.Count == 0)
                 return null;
 
-            EnvDTE.Project project = null;
+            VCProject project = null;
             // Grab the first active project.
             if (GetSelectedProject(dteObject) is {} active)
                 project = active;
@@ -359,7 +352,7 @@ namespace QtVsTools.Core
 
             // Last try, get the project from an active document.
             if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
-                project = containing;
+                project = containing.Object as VCProject;
 
             return QtProject.GetOrAdd(project);
         }
@@ -396,14 +389,14 @@ namespace QtVsTools.Core
             return files;
         }
 
-        public static List<Project> ProjectsInSolution(DTE dteObject)
+        public static List<VCProject> ProjectsInSolution(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (dteObject == null)
-                return new List<Project>();
+                return new List<VCProject>();
 
-            var projects = new List<Project>();
+            var projects = new List<VCProject>();
             var solution = dteObject.Solution;
             if (solution != null) {
                 var c = solution.Count;
@@ -412,7 +405,7 @@ namespace QtVsTools.Core
                         var prj = solution.Projects.Item(i);
                         if (prj == null)
                             continue;
-                        addSubProjects(prj, ref projects);
+                        AddSubProjects(prj, ref projects);
                     } catch {
                         // Ignore this exception... maybe the next project is ok.
                         // This happens for example for Intel VTune projects.
@@ -422,7 +415,7 @@ namespace QtVsTools.Core
             return projects;
         }
 
-        private static void addSubProjects(Project prj, ref List<Project> projects)
+        private static void AddSubProjects(Project prj, ref List<VCProject> projects)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -432,12 +425,12 @@ namespace QtVsTools.Core
 
             // Is this a Visual C++ project?
             if (prj is { ConfigurationManager: {}, Kind: ProjectTypes.C_PLUS_PLUS })
-                projects.Add(prj);
+                projects.Add(prj.Object as VCProject);
             else // In this case, prj is a solution folder
-                addSubProjects(prj.ProjectItems, ref projects);
+                AddSubProjects(prj.ProjectItems, ref projects);
         }
 
-        private static void addSubProjects(ProjectItems subItems, ref List<Project> projects)
+        private static void AddSubProjects(ProjectItems subItems, ref List<VCProject> projects)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -445,15 +438,15 @@ namespace QtVsTools.Core
                 return;
 
             foreach (ProjectItem item in subItems) {
-                Project subprj = null;
+                Project subProject = null;
                 try {
-                    subprj = item.SubProject;
+                    subProject = item.SubProject;
                 } catch {
                     // The property "SubProject" might not be implemented.
                     // This is the case for Intel Fortran projects. (QTBUG-11567)
                 }
-                if (subprj != null)
-                    addSubProjects(subprj, ref projects);
+                if (subProject != null)
+                    AddSubProjects(subProject, ref projects);
             }
         }
 

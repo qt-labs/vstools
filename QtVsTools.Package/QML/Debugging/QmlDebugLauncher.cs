@@ -249,13 +249,11 @@ namespace QtVsTools.Qml.Debug
                     return new();
                 solutionDirs.Add(CMake.RootPath);
             } else {
-                if (HelperFunctions.ProjectsInSolution(Package.Dte) is not List<Project> projects)
+                if (HelperFunctions.ProjectsInSolution(Package.Dte) is not {} projects)
                     return new();
-                foreach (var project in HelperFunctions.ProjectsInSolution(Package.Dte)) {
-                    if (project.Object is not VCProject vcProject)
-                        continue;
-                    solutionDirs.Add(vcProject.ProjectDirectory);
-                    var projectRccs = ((IVCCollection)vcProject.Files).Cast<VCFile>()
+                foreach (var project in projects) {
+                    solutionDirs.Add(project.ProjectDirectory);
+                    var projectRccs = ((IVCCollection)project.Files).Cast<VCFile>()
                         .Where(file => file.ItemType == QtRcc.ItemTypeName)
                         .Select(rcc => rcc.FullPath)
                         .ToList();
@@ -268,7 +266,7 @@ namespace QtVsTools.Qml.Debug
                         .ToList()
                         .ForEach(rcc => solutionRccs.Add(rcc));
                 } catch (Exception e) {
-                    Messages.Log(e);
+                    e.Log();
                 }
             }
             return solutionRccs;

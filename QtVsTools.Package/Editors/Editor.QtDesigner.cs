@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -42,7 +43,7 @@ namespace QtVsTools.Editors
             base.OnStart(process);
             var document = VsShell.GetDocument(Context, ItemId);
 
-            if (document?.ProjectItem?.ContainingProject is not {} project)
+            if (document?.ProjectItem?.ContainingProject?.Object is not VCProject project)
                 return;
 
             var qtProject = QtProject.GetOrAdd(project);

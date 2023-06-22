@@ -64,7 +64,7 @@ namespace QtVsTools.Core.MsBuild
                 .Select(x =>
                 {
                     ThreadHelper.ThrowIfNotOnUIThread();
-                    return x.FullName;
+                    return x.ProjectFile;
                 })
                 .ToList();
 
@@ -141,13 +141,13 @@ namespace QtVsTools.Core.MsBuild
             return ok;
         }
 
-        public static bool ProjectToQtMsBuild(EnvDTE.Project project, bool askConfirmation = true)
+        public static bool ProjectToQtMsBuild(VCProject project, bool askConfirmation = true)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (project == null)
                 return ErrorMessage(string.Format(ErrorConversion, ""));
-            var pathToProject = project.FullName;
+            var pathToProject = project.ProjectFile;
 
             if (askConfirmation
                 && MessageBox.Show("Do you really want to convert the selected project?",
@@ -169,14 +169,11 @@ namespace QtVsTools.Core.MsBuild
                 }
             }
 
-            if (project.Object is not VCProject vcProject)
-                return ErrorMessage(string.Format(ErrorConversion, project.Name));
-
             var solution = VsServiceProvider.GetService<SVsSolution, IVsSolution4>();
             if (solution == null)
                 return ErrorMessage(
                     string.Format(ErrorConversion, project.Name));
-            var projectGuid = new Guid(vcProject.ProjectGUID);
+            var projectGuid = new Guid(project.ProjectGUID);
             var projectName = project.Name;
             try {
                 if (solution.UnloadProject(

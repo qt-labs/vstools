@@ -48,12 +48,6 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public static QtProject GetOrAdd(EnvDTE.Project project)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            return GetOrAdd(project?.Object as VCProject);
-        }
-
         public static void Reset()
         {
             lock (StaticCriticalSection) {

@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using EnvDTE;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -143,7 +144,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void OnProjectGenerated(Project project)
         {
-            if (QtProject.GetOrAdd(project) is {} qtProject)
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            if (QtProject.GetOrAdd(project.Object as VCProject) is {} qtProject)
                 qtProject.MarkAsQtPlugin();
         }
     }

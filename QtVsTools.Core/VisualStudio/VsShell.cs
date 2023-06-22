@@ -4,12 +4,13 @@
 ***************************************************************************************************/
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.VisualStudio.Workspace.VSIntegration.Contracts;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.VisualStudio
@@ -58,14 +59,14 @@ namespace QtVsTools.VisualStudio
                 _InstallRootDir = property;
         }
 
-        public static EnvDTE.Project GetProject(IVsHierarchy context)
+        public static VCProject GetProject(IVsHierarchy context)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             int res = context.GetProperty(
                 (uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out object value);
             if (res == VSConstants.S_OK && value is EnvDTE.Project project)
-                return project;
+                return project.Object as VCProject;
             return null;
         }
 

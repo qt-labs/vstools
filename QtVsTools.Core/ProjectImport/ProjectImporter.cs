@@ -176,10 +176,10 @@ namespace QtVsTools.Core
                     return;
                 // no need to add the project again if it's already there...
                 var fullName = vcInfo.FullName;
-                var pro = ProjectFromSolution(fullName);
-                if (pro is null) {
+                var vcPro = ProjectFromSolution(fullName);
+                if (vcPro is null) {
                     try {
-                        pro = _dteObject.Solution.AddFromFile(fullName);
+                        vcPro = _dteObject.Solution.AddFromFile(fullName).Object as VCProject;
                     } catch (Exception /*exception*/) {
                         Messages.Print("--- (Import): Generated project could not be loaded.");
                         Messages.Print("--- (Import): Please look in the output above for errors and warnings.");
@@ -190,16 +190,15 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (QtProject.GetOrAdd(pro) is not {} qtProject)
+                if (QtProject.GetOrAdd(vcPro) is not {} qtProject)
                     return;
 
                 if (qtVersion is not null)
                     QtVersionManager.The().SaveProjectQtVersion(qtProject, qtVersion);
 
                 var platformName = versionInfo.GetVSPlatformName();
-                var vcPro = qtProject.VcProject;
                 if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
-                    CreatePlatform(pro, vcPro, "Win32", platformName, null, versionInfo);
+                    CreatePlatform(vcPro, "Win32", platformName, null, versionInfo);
                     if (!SelectSolutionPlatform(platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
@@ -466,12 +465,11 @@ namespace QtVsTools.Core
 
         #region HelperFunctions
 
-        private static Project ProjectFromSolution(string fullName)
+        private static VCProject ProjectFromSolution(string fullName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            bool Func(Project p) => p.FullName.Equals(new FileInfo(fullName).FullName, IgnoreCase);
-            return HelperFunctions.ProjectsInSolution(_dteObject).FirstOrDefault(Func);
+            return HelperFunctions.ProjectsInSolution(_dteObject).FirstOrDefault(
+                p => p.ProjectFile.Equals(new FileInfo(fullName).FullName, IgnoreCase));
         }
 
         /// <summary>
@@ -783,11 +781,12 @@ namespace QtVsTools.Core
             return false;
         }
 
-        private static void CreatePlatform(Project envPro, VCProject vcPro, string oldPlatform,
+        private static void CreatePlatform(VCProject vcPro, string oldPlatform,
             string newPlatform, VersionInformation viOld, VersionInformation viNew)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            var envPro = vcPro.Object as Project;
             try {
                 var cfgMgr = envPro.ConfigurationManager;
                 cfgMgr.AddPlatform(newPlatform, oldPlatform, true);

@@ -168,7 +168,10 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (QtProject.GetOrAdd(document.ProjectItem.ContainingProject) is not {} qtPro)
+            if (document.ProjectItem?.ContainingProject?.Object is not VCProject vcProject)
+                return;
+
+            if (QtProject.GetOrAdd(vcProject) is not {} qtPro)
                 return;
 
             if (qtPro.VcProject.Files is not IVCCollection files)
@@ -284,7 +287,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Ignore temp projects created by Qt/CMake wizard
-            if (QtProject.GetOrAdd(project) is not {} qtProject)
+            if (QtProject.GetOrAdd(project.Object as VCProject) is not {} qtProject)
                 return;
 
             // ignore temporary projects created by Qt/CMake wizard
