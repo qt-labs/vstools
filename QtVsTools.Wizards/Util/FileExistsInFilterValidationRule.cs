@@ -3,42 +3,58 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell.Interop;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Wizards.Util
 {
     using Core;
     using VisualStudio;
 
-    internal class FileExistsinFilterValidationRule : VCLanguageManagerValidationRule
+    internal class FileExistsInFilterValidationRule : VCLanguageManagerValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is string @string) {
-                var dte = VsServiceProvider.GetService<SDTE, DTE>();
-                if (dte == null)
-                    return ValidationResult.ValidResult;
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-                var project = HelperFunctions.GetSelectedProject(dte);
-                if (project == null)
-                    return ValidationResult.ValidResult;
+            if (value is not string @string)
+                return new ValidationResult(false, @"Invalid file name.");
 
-                var files = HelperFunctions.GetProjectFiles(project, Filter);
-                if (files.Count == 0)
-                    return ValidationResult.ValidResult;
-
-                var fileName = @string.ToUpperInvariant();
-                if (files.FirstOrDefault(x => x.ToUpperInvariant() == fileName) != null)
-                    return new ValidationResult(false, @"File already exists.");
+            if (GetSelectedDteProject() is not {} project)
                 return ValidationResult.ValidResult;
-            }
-            return new ValidationResult(false, @"Invalid file name.");
+
+            var files = HelperFunctions.GetProjectFiles(project, Filter);
+            if (files.Count == 0)
+                return ValidationResult.ValidResult;
+
+            var fileName = @string.ToUpperInvariant();
+            return files.FirstOrDefault(x => x.ToUpperInvariant() == fileName) == null
+                ? ValidationResult.ValidResult
+                : new ValidationResult(false, @"File already exists.");
         }
 
         public FilesToList Filter { get; set; }
+
+        private static Project GetSelectedDteProject()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (VsServiceProvider.GetService<SDTE, DTE>() is not {} dte)
+                return null;
+
+            try {
+                if (dte.ActiveSolutionProjects is not Array projects || projects.Length == 0)
+                    return null;
+                return projects.GetValue(0) as Project;
+            } catch (Exception exception) {
+                exception.Log();
+            }
+            return null;
+        }
     }
 }

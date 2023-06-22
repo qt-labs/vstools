@@ -93,7 +93,7 @@
                                      UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <util:FileNameValidationRule FileExt=".ui" />
-                                    <util:FileExistsinFilterValidationRule Filter="FL_UiFiles" />
+                                    <util:FileExistsInFilterValidationRule Filter="FL_UiFiles" />
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
@@ -109,7 +109,7 @@
                                      UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <util:FileNameValidationRule FileExt=".h" />
-                                    <util:FileExistsinFilterValidationRule Filter="FL_HFiles" />
+                                    <util:FileExistsInFilterValidationRule Filter="FL_HFiles" />
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
@@ -125,7 +125,7 @@
                                      UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <util:FileNameValidationRule FileExt=".cpp" />
-                                    <util:FileExistsinFilterValidationRule Filter="FL_CppFiles" />
+                                    <util:FileExistsInFilterValidationRule Filter="FL_CppFiles" />
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox.Text>
