@@ -143,7 +143,7 @@ namespace QtVsTools.Core.CMake
                     },
                     ["architecture"] = new JObject
                     {
-                        ["strategy"] = "set",
+                        ["strategy"] = "external",
                         ["value"] = platform switch {
                             Platform.x86 => "x86",
                             Platform.x64 => "x64",
@@ -151,7 +151,7 @@ namespace QtVsTools.Core.CMake
                             _ => null
                         }
                     },
-                    ["generator"] = "Visual Studio 16 2019",
+                    ["generator"] = "Ninja",
                     ["vendor"] = new JObject
                     {
                         ["qt-project.org/Version"] = new JObject()
