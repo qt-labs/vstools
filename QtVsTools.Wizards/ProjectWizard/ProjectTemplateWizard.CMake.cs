@@ -52,6 +52,9 @@ namespace QtVsTools.Wizards.ProjectWizard
                 [DataMember(Name = "CMAKE_BUILD_TYPE", EmitDefaultValue = false)]
                 public string CMakeBuildType { get; set; }
 
+                [DataMember(Name = "CMAKE_CXX_FLAGS", EmitDefaultValue = false)]
+                public string CxxFlags { get; set; }
+
                 [DataMember(Name = "QT_MODULES", EmitDefaultValue = false)]
                 public string QtModules { get; set; }
             }
@@ -120,18 +123,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         resultSelector: (x, y) => x.LibraryPrefix.Substring(2));
                 foreach (var module in modules)
                     qtModules.Add(module);
-
-                var configPreset = new CMakeConfigPreset
-                {
-                    Name = $"{config.Name}-{config.Platform}",
-                    DisplayName = $"{config.Name} ({config.Platform})",
-                    BinaryDir = "${sourceDir}/out/build",
-                    CacheVariables = new CMakeConfigPreset.ConfigCacheVariables
-                    {
-                        CMakeBuildType = config.IsDebug ? "Debug" : "Release"
-                    }
-                };
-                userPresets.ConfigurePresets.Add(configPreset);
+                userPresets.ConfigurePresets.Add(ConfigureCMakePreset(config));
             }
             Parameter[CMake.UserPresets] = userPresets.ToJsonString();
             Parameter[CMake.Modules] = string.Join("\r\n        ", qtModules);
@@ -139,6 +131,21 @@ namespace QtVsTools.Wizards.ProjectWizard
                 qtModules.Select(module => $"Qt::{module}"));
             Parameter[CMake.Helper] = QtCMakeHelper;
             Parameter[NewProject.Globals] += @"<QT_CMAKE_TEMPLATE>true</QT_CMAKE_TEMPLATE>";
+        }
+
+        protected virtual CMakeConfigPreset ConfigureCMakePreset(IWizardConfiguration config)
+        {
+            var configPreset = new CMakeConfigPreset
+            {
+                Name = $"{config.Name}-{config.Platform}",
+                DisplayName = $"{config.Name} ({config.Platform})",
+                BinaryDir = "${sourceDir}/out/build",
+                CacheVariables = new CMakeConfigPreset.ConfigCacheVariables
+                {
+                    CMakeBuildType = config.IsDebug ? "Debug" : "Release"
+                }
+            };
+            return configPreset;
         }
 
         protected virtual void OpenCMakeProject()

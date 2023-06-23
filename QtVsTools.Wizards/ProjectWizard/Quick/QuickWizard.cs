@@ -59,5 +59,13 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             Parameter[Qml.Prefix] = Parameter[NewProject.SafeName].ToLower();
         }
+
+        protected override CMakeConfigPreset ConfigureCMakePreset(IWizardConfiguration config)
+        {
+            var preset = base.ConfigureCMakePreset(config);
+            if (config.IsDebug)
+                preset.CacheVariables.CxxFlags = "-DQT_QML_DEBUG";
+            return preset;
+        }
     }
 }

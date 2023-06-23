@@ -38,11 +38,6 @@ set_target_properties($projectname$
         WIN32_EXECUTABLE TRUE
 )
 
-target_compile_definitions($projectname$
-  PRIVATE
-    $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
-)
-
 target_link_libraries($projectname$
     PUBLIC
         $cmake_qt_libs$

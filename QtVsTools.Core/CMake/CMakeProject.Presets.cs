@@ -206,12 +206,23 @@ namespace QtVsTools.Core.CMake
             if (visiblePresets == null || visiblePresets.Count() == 0) {
                 (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                 {
+                    ["name"] = "Release",
+                    ["inherits"] = "Qt-Default",
+                    ["binaryDir"] = "${sourceDir}/out/build",
+                    ["cacheVariables"] = new JObject
+                    {
+                        ["CMAKE_BUILD_TYPE"] = "Release",
+                    }
+                });
+                (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
+                {
                     ["name"] = "Debug",
                     ["inherits"] = "Qt-Default",
                     ["binaryDir"] = "${sourceDir}/out/build",
                     ["cacheVariables"] = new JObject
                     {
-                        ["CMAKE_BUILD_TYPE"] = "Debug"
+                        ["CMAKE_BUILD_TYPE"] = "Debug",
+                        ["CMAKE_CXX_FLAGS"] = "-DQT_QML_DEBUG"
                     }
                 });
                 return;
