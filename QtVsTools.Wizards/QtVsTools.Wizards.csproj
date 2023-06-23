@@ -137,6 +137,7 @@
     <Compile Include="ProjectWizard\Library\LibraryWizard.cs" />
     <Compile Include="ItemWizard\QtClass\QtClassWizard.cs" />
     <Compile Include="ItemWizard\WidgetsClass\WidgetsClassWizard.cs" />
+    <Compile Include="Util\TextAndWhitespace.cs" />
     <Compile Include="Util\VCRulePropertyStorageHelper.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>

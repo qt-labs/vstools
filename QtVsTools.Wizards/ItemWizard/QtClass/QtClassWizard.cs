@@ -9,14 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
     using Common;
     using Core;
-    using Core.MsBuild;
     using ProjectWizard;
     using QtVsTools.Common;
     using Util;
@@ -161,7 +160,7 @@ namespace QtVsTools.Wizards.ItemWizard
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            QtProject.AdjustWhitespace(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
+            TextAndWhitespace.Adjust(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
         }
     }
 }
