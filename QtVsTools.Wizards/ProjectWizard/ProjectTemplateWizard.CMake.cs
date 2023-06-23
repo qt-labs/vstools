@@ -151,12 +151,16 @@ namespace QtVsTools.Wizards.ProjectWizard
                 File.Move(
                     Path.Combine(projectDir.LocalPath, "CMakeUserPresets.json"),
                     Path.Combine(solutionDir.LocalPath, "CMakeUserPresets.json"));
+                var project = Path.GetFileName(solutionDir.LocalPath
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+                var subDir = solutionDir.MakeRelativeUri(projectDir).ToString()
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 File.WriteAllText(Path.Combine(solutionDir.LocalPath, "CMakeLists.txt"), $@"
 cmake_minimum_required(VERSION 3.16)
 
-project(""{Path.GetFileName(solutionDir.LocalPath)}"")
+project(""{project}"")
 
-add_subdirectory(""{Path.GetFileName(solutionDir.MakeRelativeUri(projectDir).ToString())}"")
+add_subdirectory(""{subDir}"")
 ".Trim('\r', '\n'));
             }
             CMakeProject.Convert(solutionDir.LocalPath);
