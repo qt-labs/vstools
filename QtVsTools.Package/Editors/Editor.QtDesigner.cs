@@ -46,8 +46,7 @@ namespace QtVsTools.Editors
             if (document?.ProjectItem?.ContainingProject?.Object is not VCProject project)
                 return;
 
-            var qtProject = QtProject.GetOrAdd(project);
-            if (qtProject == null || !QtProjectTracker.IsTracked(qtProject.VcProjectPath))
+            if (QtProject.GetOrAdd(project) is not { IsTracked: true } qtProject)
                 return;
 
             var filePath = document.FullName;

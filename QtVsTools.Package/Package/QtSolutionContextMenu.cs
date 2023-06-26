@@ -85,7 +85,7 @@ namespace QtVsTools
                 break;
             case QtMenus.Package.SolutionEnableProjectTracking:
                 foreach (var project in HelperFunctions.ProjectsInSolution(dte))
-                    QtProjectTracker.GetOrAdd(QtProject.GetOrAdd(project));
+                    QtProject.GetOrAdd(project);
                 break;
             }
         }

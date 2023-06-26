@@ -11,14 +11,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using Common;
     using Options;
     using VisualStudio;
 
     public partial class QtProject
     {
-        private static LazyFactory StaticLazy { get; } = new();
-
         private class UpdateProjectFormat : InfoBarMessage
         {
             public static UpdateProjectFormat Message =>

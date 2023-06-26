@@ -302,21 +302,18 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            QtProjectTracker.SolutionPath = dte.Solution.FullName;
             foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
                 if (QtProject.GetOrAdd(project) is not {} qtProject)
                     continue;
 
                 InitializeVcProject(qtProject);
-                QtProjectTracker.GetOrAdd(qtProject);
+                qtProject.SolutionPath = dte.Solution.FullName;
             }
         }
 
         private static void SolutionEvents_AfterClosing()
         {
             QtProject.Reset();
-            QtProjectTracker.Reset();
-            QtProjectTracker.SolutionPath = string.Empty;
         }
 
         // Retrieves the VCProjectEngine from the given project and registers a handler for

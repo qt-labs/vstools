@@ -4,7 +4,6 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,77 +17,20 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using Common;
     using Core;
     using Options;
     using VisualStudio;
 
-    public class QtProjectTracker : Concurrent<QtProjectTracker>
+    public partial class QtProject
     {
-        private static LazyFactory StaticLazy { get; } = new();
-
-        private static ConcurrentDictionary<string, QtProjectTracker> Instances => StaticLazy.Get(() =>
-            Instances, () => new ConcurrentDictionary<string, QtProjectTracker>());
-
-        private static PunisherQueue<QtProjectTracker> InitQueue => StaticLazy.Get(() =>
-            InitQueue, () => new PunisherQueue<QtProjectTracker>());
-
-        private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
-            StatusCenter, VsServiceProvider
-                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
+        private static PunisherQueue<QtProject> InitQueue => StaticLazy.Get(() =>
+            InitQueue, () => new PunisherQueue<QtProject>());
 
         private static Task InitDispatcher { get; set; }
         private static ITaskHandler2 InitStatus { get; set; }
 
-        public static string SolutionPath { get; set; } = string.Empty;
-
-        private QtProjectTracker()
-        {
-            Initialized = new EventWaitHandle(false, EventResetMode.ManualReset);
-        }
-
-        public QtProject QtProject { get; private set; }
-
         public UnconfiguredProject UnconfiguredProject { get; private set; }
         public EventWaitHandle Initialized { get; }
-
-        public static bool IsTracked(string projectPath)
-        {
-            return !string.IsNullOrEmpty(projectPath) && Instances.ContainsKey(projectPath);
-        }
-
-        /// <summary>
-        /// Tries to return the Qt project tracker the project belongs to.
-        /// If the project is not tracked it gets added to the tracking cache.
-        /// </summary>
-        /// <param name="project">The tracked project.</param>
-        /// <returns><see langword="null" /> if the given project is <see langword="null" /> or
-        /// project tracking is disabled by the user (via settings).</returns>
-        public static QtProjectTracker GetOrAdd(QtProject project)
-        {
-            if (project == null || Options.Get() is not { ProjectTracking: true })
-                return null;
-            lock (StaticCriticalSection) {
-                if (Instances.TryGetValue(project.VcProjectPath, out var tracker))
-                    return tracker;
-                tracker = new QtProjectTracker
-                {
-                    QtProject = project
-                };
-                Instances[project.VcProjectPath] = tracker;
-                InitQueue.Enqueue(tracker);
-                InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
-                return tracker;
-            }
-        }
-
-        public static void Reset()
-        {
-            lock (StaticCriticalSection) {
-                Instances.Clear();
-                InitQueue.Clear();
-            }
-        }
 
         private static async Task InitDispatcherLoopAsync()
         {
@@ -128,11 +70,9 @@ namespace QtVsTools.Core.MsBuild
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             UpdateInitStatus(p += 10);
 
-            if (QtProject == null)
-                return;
             UpdateInitStatus(p += 10);
 
-            if (QtProject.VcProject.Object is not IVsBrowseObjectContext context)
+            if (VcProject.Object is not IVsBrowseObjectContext context)
                 return;
             UpdateInitStatus(p += 10);
 
@@ -158,7 +98,7 @@ namespace QtVsTools.Core.MsBuild
                 if (Options.Get() is { BuildDebugInformation: true }) {
                     Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                         + $"QtProjectTracker({Thread.CurrentThread.ManagedThreadId}): "
-                        + $"Started tracking [{config.Name}] {QtProject.VcProjectPath}");
+                        + $"Started tracking [{config.Name}] {VcProjectPath}");
                 }
                 UpdateInitStatus(p += d);
             }
@@ -195,7 +135,7 @@ namespace QtVsTools.Core.MsBuild
                         },
                         new TaskProgressData
                         {
-                            ProgressText = $"{QtProject.VcProjectPath} ({InitQueue.Count} projects remaining)",
+                            ProgressText = $"{VcProjectPath} ({InitQueue.Count} projects remaining)",
                             CanBeCanceled = true,
                             PercentComplete = 0
                         })
@@ -215,7 +155,7 @@ namespace QtVsTools.Core.MsBuild
                 try {
                     InitStatus.Progress.Report(new TaskProgressData
                     {
-                        ProgressText = $"{Path.GetFileNameWithoutExtension(QtProject.VcProjectPath)} "
+                        ProgressText = $"{Path.GetFileNameWithoutExtension(VcProjectPath)} "
                             + $"({InitQueue.Count} project(s) remaining)",
                         CanBeCanceled = true,
                         PercentComplete = percentComplete

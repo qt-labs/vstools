@@ -16,7 +16,6 @@ namespace QtVsTools.Core.MsBuild
 {
     using Core;
     using Options;
-    using VisualStudio;
 
     public static class QtProjectIntellisense
     {
@@ -34,7 +33,7 @@ namespace QtVsTools.Core.MsBuild
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            if (QtProjectTracker.GetOrAdd(qtProject) is not {} tracker)
+            if (qtProject == null)
                 return;
 
             if (Options.Get() is { BuildDebugInformation: true }) {
@@ -43,7 +42,7 @@ namespace QtVsTools.Core.MsBuild
                     + $"Refreshing: [{configId ?? "(all configs)"}] {qtProject.VcProjectPath}");
             }
 
-            await tracker.Initialized;
+            await qtProject.Initialized;
 
             var properties = new Dictionary<string, string>
             {
@@ -57,7 +56,7 @@ namespace QtVsTools.Core.MsBuild
 
             var configs = Enumerable.Empty<string>();
             if (configId == null) {
-                if (tracker.UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
+                if (qtProject.UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
                     configs = (await service.GetKnownProjectConfigurationsAsync()).Select(
                         x => x.Name);
             } else {

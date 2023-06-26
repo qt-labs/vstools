@@ -4,26 +4,39 @@
 ***************************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.VCProjectEngine;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.MsBuild
 {
+    using Common;
+    using VisualStudio;
     using static Instances;
     using static Utils;
 
     /// <summary>
     /// QtProject holds the Qt specific properties for a Visual Studio project.
-    /// There exists at most one QtProject per EnvDTE.Project.
-    /// Use QtProject.GetOrAdd to get the QtProject for a Project or VCProject.
+    /// There exists at most one QtProject perVCProject. Use QtProject.GetOrAdd
+    /// to get the QtProject for a VCProject.
     /// </summary>
     public partial class QtProject : Concurrent<QtProject>
     {
-        private static readonly Dictionary<VCProject, QtProject> Instances = new();
-        private readonly QtMsBuildContainer qtMsBuild = new(new VcPropertyStorageProvider());
+        private static LazyFactory StaticLazy { get; } = new();
+
+        private static ConcurrentDictionary<string, QtProject> Instances => StaticLazy.Get(() =>
+            Instances, () => new ConcurrentDictionary<string, QtProject>());
+
+        private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
+            StatusCenter, VsServiceProvider
+            .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
         public static QtProject GetOrAdd(VCProject vcProject)
         {
@@ -31,10 +44,12 @@ namespace QtVsTools.Core.MsBuild
                 return null;
             lock (StaticCriticalSection) {
                 if (ProjectFormat.GetVersion(vcProject) >= ProjectFormat.Version.V3) {
-                    if (Instances.TryGetValue(vcProject, out var qtProject))
+                    if (Instances.TryGetValue(vcProject.ProjectFile, out var qtProject))
                         return qtProject;
                     qtProject = new QtProject(vcProject);
-                    Instances.Add(vcProject, qtProject);
+                    Instances[vcProject.ProjectFile] = qtProject;
+                    InitQueue.Enqueue(qtProject);
+                    InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
                     return qtProject;
                 }
 
@@ -49,6 +64,7 @@ namespace QtVsTools.Core.MsBuild
         {
             lock (StaticCriticalSection) {
                 Instances.Clear();
+                InitQueue.Clear();
             }
         }
 
@@ -59,11 +75,15 @@ namespace QtVsTools.Core.MsBuild
             VcProject = vcProject;
             VcProjectPath = vcProject.ProjectFile;
             VcProjectDirectory = vcProject.ProjectDirectory;
+            Initialized = new EventWaitHandle(false, EventResetMode.ManualReset);
         }
 
         public VCProject VcProject { get; }
         public string VcProjectPath { get; }
         public string VcProjectDirectory { get; }
+
+        public string SolutionPath { get; set; } = "";
+        public bool IsTracked => Instances.ContainsKey(VcProjectPath);
 
         public string QtVersion
         {
