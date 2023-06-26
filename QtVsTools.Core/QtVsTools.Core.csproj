@@ -148,7 +148,7 @@
     <Compile Include="MsBuild\QtProjectBuild.cs" />
     <Compile Include="MsBuild\QtProjectIntelliSense.cs" />
     <Compile Include="MsBuild\QtProjectLogger.cs" />
-    <Compile Include="MsBuild\QtProjectTracker.cs" />
+    <Compile Include="MsBuild\QtProject.Tracker.cs" />
     <Compile Include="MsBuild\QtRcc.cs" />
     <Compile Include="MsBuild\QtRepc.cs" />
     <Compile Include="MsBuild\QtTool.cs" />
