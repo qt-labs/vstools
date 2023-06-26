@@ -145,7 +145,7 @@
     <Compile Include="MsBuild\QtMsBuildConverter.cs" />
     <Compile Include="MsBuild\QtProject.cs" />
     <Compile Include="MsBuild\QtProject.Messages.cs" />
-    <Compile Include="MsBuild\QtProjectBuild.cs" />
+    <Compile Include="MsBuild\QtProject.Build.cs" />
     <Compile Include="MsBuild\QtProjectIntelliSense.cs" />
     <Compile Include="MsBuild\QtProjectLogger.cs" />
     <Compile Include="MsBuild\QtProject.Tracker.cs" />
