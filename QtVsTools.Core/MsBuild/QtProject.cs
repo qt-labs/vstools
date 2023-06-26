@@ -65,18 +65,6 @@ namespace QtVsTools.Core.MsBuild
         public string VcProjectPath { get; }
         public string VcProjectDirectory { get; }
 
-        public static string GetRuleName(VCConfiguration config, string itemType)
-        {
-            if (config == null)
-                return string.Empty;
-            try {
-                return config.GetEvaluatedPropertyValue(itemType + "RuleName");
-            } catch (Exception exception) {
-                exception.Log();
-                return string.Empty;
-            }
-        }
-
         public string QtVersion
         {
             get

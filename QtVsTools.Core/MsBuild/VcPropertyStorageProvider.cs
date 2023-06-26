@@ -3,6 +3,7 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.VCProjectEngine;
 
@@ -21,7 +22,7 @@ namespace QtVsTools.Core.MsBuild
             case VCFileConfiguration { Tool: IVCRulePropertyStorage propertyStorage }:
                 return GetProperty(propertyStorage, propertyName);
             case VCConfiguration vcConfiguration: {
-                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
+                var ruleName = GetRuleName(vcConfiguration, itemType);
                 return GetProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
                     propertyName);
             }
@@ -44,7 +45,7 @@ namespace QtVsTools.Core.MsBuild
             case VCFileConfiguration { Tool: IVCRulePropertyStorage storage }:
                 return SetProperty(storage, propertyName, propertyValue);
             case VCConfiguration vcConfiguration:
-                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
+                var ruleName = GetRuleName(vcConfiguration, itemType);
                 return SetProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
                     propertyName, propertyValue);
             }
@@ -63,7 +64,7 @@ namespace QtVsTools.Core.MsBuild
             case VCFileConfiguration { Tool: IVCRulePropertyStorage storage }:
                 return DeleteProperty(storage, propertyName);
             case VCConfiguration vcConfiguration:
-                var ruleName = QtProject.GetRuleName(vcConfiguration, itemType);
+                var ruleName = GetRuleName(vcConfiguration, itemType);
                 return DeleteProperty(vcConfiguration.Rules.Item(ruleName) as IVCRulePropertyStorage,
                     propertyName);
             }
@@ -133,6 +134,18 @@ namespace QtVsTools.Core.MsBuild
                 }
             }
             return items;
+        }
+
+        private static string GetRuleName(VCConfiguration config, string itemType)
+        {
+            if (config == null)
+                return string.Empty;
+            try {
+                return config.GetEvaluatedPropertyValue(itemType + "RuleName");
+            } catch (Exception exception) {
+                exception.Log();
+                return string.Empty;
+            }
         }
     }
 }
