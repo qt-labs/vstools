@@ -251,7 +251,7 @@ namespace QtVsTools
                         QtMoc.SetMocItemType(vcFile);
                 } else if (HelperFunctions.IsUicFile(vcFileName)) {
                     QtUic.SetUicItemType(vcFile);
-                    QtProjectIntellisense.Refresh(qtPro);
+                    qtPro.Refresh();
                 } else if (HelperFunctions.IsQrcFile(vcFileName)) {
                     QtRcc.SetRccItemType(vcFile);
                 } else if (HelperFunctions.IsTranslationFile(vcFileName)) {
@@ -295,7 +295,7 @@ namespace QtVsTools
                 return;
 
             InitializeVcProject(qtProject);
-            QtProjectIntellisense.Refresh(qtProject);
+            qtProject.Refresh();
         }
 
         public void SolutionEvents_Opened()
@@ -352,7 +352,7 @@ namespace QtVsTools
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
 
-            QtProjectIntellisense.Refresh(qtProject, vcConfig.Name);
+            qtProject.Refresh(vcConfig.Name);
         }
     }
 }

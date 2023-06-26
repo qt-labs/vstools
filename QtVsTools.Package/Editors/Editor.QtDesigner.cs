@@ -59,10 +59,10 @@ namespace QtVsTools.Editors
                     if (lastWriteTime == latestWriteTime)
                         continue;
                     lastWriteTime = latestWriteTime;
-                    await QtProjectIntellisense.RefreshAsync(qtProject);
+                    await qtProject.RefreshAsync();
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
-                    await QtProjectIntellisense.RefreshAsync(qtProject);
+                    await qtProject.RefreshAsync();
                 }
             });
         }

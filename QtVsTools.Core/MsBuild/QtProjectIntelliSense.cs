@@ -17,32 +17,27 @@ namespace QtVsTools.Core.MsBuild
     using Core;
     using Options;
 
-    public static class QtProjectIntellisense
+    public partial class QtProject
     {
-        public static void Refresh(
-            QtProject qtProject,
+        public void Refresh(
             string configId = null,
             IEnumerable<string> selectedFiles = null)
         {
-            _ = Task.Run(() => RefreshAsync(qtProject, configId, selectedFiles));
+            _ = Task.Run(() => RefreshAsync(configId, selectedFiles));
         }
 
-        public static async Task RefreshAsync(
-            QtProject qtProject,
+        public async Task RefreshAsync(
             string configId = null,
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            if (qtProject == null)
-                return;
-
             if (Options.Get() is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Refreshing: [{configId ?? "(all configs)"}] {qtProject.VcProjectPath}");
+                    + $"Refreshing: [{configId ?? "(all configs)"}] {VcProjectPath}");
             }
 
-            await qtProject.Initialized;
+            await Initialized;
 
             var properties = new Dictionary<string, string>
             {
@@ -56,7 +51,7 @@ namespace QtVsTools.Core.MsBuild
 
             var configs = Enumerable.Empty<string>();
             if (configId == null) {
-                if (qtProject.UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
+                if (UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
                     configs = (await service.GetKnownProjectConfigurationsAsync()).Select(
                         x => x.Name);
             } else {
@@ -65,10 +60,10 @@ namespace QtVsTools.Core.MsBuild
 
             foreach (var config in configs) {
                 if (refreshQtVars) {
-                    await qtProject.StartBuildAsync(config, properties, targets,
+                    await StartBuildAsync(config, properties, targets,
                         LoggerVerbosity.Quiet);
                 } else {
-                    await qtProject.SetOutdatedAsync(config);
+                    await SetOutdatedAsync(config);
                 }
             }
         }

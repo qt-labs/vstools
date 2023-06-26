@@ -95,7 +95,7 @@ namespace QtVsTools
             case QtMenus.Package.ProjectRefreshIntelliSense:
                 if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
                     break;
-                QtProjectIntellisense.Refresh(qtProject);
+                qtProject.Refresh();
                 break;
             }
         }
