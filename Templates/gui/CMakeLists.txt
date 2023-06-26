@@ -15,7 +15,6 @@ qt_standard_project_setup()
 
 set(PROJECT_SOURCES
     main.cpp
-    $qrcfilename$
     $uifilename$
     $headerfilename$
     $sourcefilename$
