@@ -150,7 +150,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             public string this[Enum param]
             {
-                get => Template.ParameterValues[ParamKey(param)];
+                get => Template.ParameterValues
+                    .TryGetValue(ParamKey(param), out var value) ? value : string.Empty;
                 set => Template.ParameterValues[ParamKey(param)] = value;
             }
         }
