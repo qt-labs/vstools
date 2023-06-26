@@ -65,10 +65,10 @@ namespace QtVsTools.Core.MsBuild
 
             foreach (var config in configs) {
                 if (refreshQtVars) {
-                    await QtProjectBuild.StartBuildAsync(qtProject, config, properties, targets,
+                    await qtProject.StartBuildAsync(config, properties, targets,
                         LoggerVerbosity.Quiet);
                 } else {
-                    await QtProjectBuild.SetOutdatedAsync(qtProject, config);
+                    await qtProject.SetOutdatedAsync(config);
                 }
             }
         }

@@ -104,8 +104,7 @@ namespace QtVsTools
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
 
             var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.Platform}";
-            QtProjectBuild.StartBuild(
-                    qtProject, activeConfigId, properties, new[] { "QtTranslation" });
+            qtProject.StartBuild(activeConfigId, properties, new[] { "QtTranslation" });
         }
 
         public static void RunlUpdate(EnvDTE.Solution solution)

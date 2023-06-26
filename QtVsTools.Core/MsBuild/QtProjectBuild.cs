@@ -29,28 +29,21 @@ namespace QtVsTools.Core.MsBuild
     using VisualStudio;
     using static Common.EnumExt;
 
-    public class QtProjectBuild : Concurrent<QtProjectBuild>
+    public partial class QtProject
     {
-        private static LazyFactory StaticLazy { get; } = new();
-
         private enum Target
         {
             // Mark project as dirty, but do not request a build
             [String("QtVsTools.QtMsBuild.QtProjectBuild.Target.SetOutdated")] SetOutdated
         }
 
-        private static PunisherQueue<QtProjectBuild> BuildQueue => StaticLazy.Get(() =>
-            BuildQueue, () => new PunisherQueue<QtProjectBuild>(
+        private static PunisherQueue<QtProject> BuildQueue => StaticLazy.Get(() =>
+            BuildQueue, () => new PunisherQueue<QtProject>(
                 getItemKey: build => build.ConfiguredProject));
 
         private static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
             RequestTimer, () => new ConcurrentStopwatch());
 
-        private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
-            StatusCenter, VsServiceProvider
-                .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
-
-        private QtProject QtProject { get; set; }
         private ConfiguredProject ConfiguredProject { get; set; }
         private Dictionary<string, string> Properties { get; set; }
         private List<string> Targets { get; set; }
@@ -58,44 +51,42 @@ namespace QtVsTools.Core.MsBuild
 
         private static Task BuildDispatcher { get; set; }
 
-        public static void StartBuild(
-            QtProject qtProject,
+        private QtProject()
+        {}
+
+        public void StartBuild(
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
-            _ = Task.Run(() => StartBuildAsync(
-                qtProject, configName, properties, targets, verbosity));
+            _ = Task.Run(() => StartBuildAsync(configName, properties, targets, verbosity));
         }
 
-        public static async Task StartBuildAsync(
-            QtProject qtProject,
+        public async Task StartBuildAsync(
             string configName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity)
         {
-            if (qtProject == null)
-                throw new ArgumentException("Project cannot be null.");
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
 
             RequestTimer.Restart();
-            await qtProject.Initialized;
+            await Initialized;
 
             if (Options.Get() is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Request [{configName}] {qtProject.UnconfiguredProject.FullPath}");
+                    + $"Request [{configName}] {UnconfiguredProject.FullPath}");
             }
 
-            var knownConfigs = await qtProject.UnconfiguredProject.Services
+            var knownConfigs = await UnconfiguredProject.Services
                 .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
 
             ConfiguredProject configuredProject = null;
             foreach (var config in knownConfigs) {
-                var configProject = await qtProject.UnconfiguredProject
+                var configProject = await UnconfiguredProject
                     .LoadConfiguredProjectAsync(config);
                 if (configProject.ProjectConfiguration.Name != configName)
                     continue;
@@ -105,9 +96,8 @@ namespace QtVsTools.Core.MsBuild
             if (configuredProject == null)
                 throw new ArgumentException($"Unknown configuration '{configName}'.");
 
-            BuildQueue.Enqueue(new QtProjectBuild
+            BuildQueue.Enqueue(new QtProject
             {
-                QtProject = qtProject,
                 ConfiguredProject = configuredProject,
                 Properties = properties?.ToDictionary(x => x.Key, x => x.Value),
                 Targets = targets?.ToList(),
@@ -118,22 +108,15 @@ namespace QtVsTools.Core.MsBuild
                 .Forget();
         }
 
-        public static async Task SetOutdatedAsync(
-            QtProject qtProject,
+        public async Task SetOutdatedAsync(
             string configName,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             await StartBuildAsync(
-                qtProject,
                 configName,
                 null,
                 new[] { Target.SetOutdated.Cast<string>() },
                 verbosity);
-        }
-
-        public static void Reset()
-        {
-            BuildQueue.Clear();
         }
 
         private static async Task BuildDispatcherLoopAsync()
@@ -177,7 +160,7 @@ namespace QtVsTools.Core.MsBuild
                         dispatchStatus.Dismiss();
                         dispatchStatus = null;
                     }
-                    Reset();
+                    BuildQueue.Clear();
                 }
             }
         }
@@ -192,15 +175,14 @@ namespace QtVsTools.Core.MsBuild
                 return true;
             }
 
-            var solutionPath = QtProject.SolutionPath;
             var configProps = new Dictionary<string, string>(
                 ConfiguredProject.ProjectConfiguration.Dimensions.ToImmutableDictionary())
                 {
-                    { "SolutionPath", solutionPath },
-                    { "SolutionFileName", Path.GetFileName(solutionPath) },
-                    { "SolutionName", Path.GetFileNameWithoutExtension(solutionPath) },
-                    { "SolutionExt", Path.GetExtension(solutionPath) },
-                    { "SolutionDir", Path.GetDirectoryName(solutionPath).TrimEnd(Path.
+                    { "SolutionPath", SolutionPath },
+                    { "SolutionFileName", Path.GetFileName(SolutionPath) },
+                    { "SolutionName", Path.GetFileNameWithoutExtension(SolutionPath) },
+                    { "SolutionExt", Path.GetExtension(SolutionPath) },
+                    { "SolutionDir", Path.GetDirectoryName(SolutionPath).TrimEnd(Path.
                                         DirectorySeparatorChar) + Path.DirectorySeparatorChar }
                 };
 
@@ -232,7 +214,7 @@ namespace QtVsTools.Core.MsBuild
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Build [{ConfiguredProject.ProjectConfiguration.Name}] "
-                    + $"{QtProject.UnconfiguredProject.FullPath}");
+                    + $"{UnconfiguredProject.FullPath}");
                 Messages.Print("=== Targets");
                 foreach (var target in buildRequest.TargetNames)
                     Messages.Print($"    {target}");
@@ -291,7 +273,7 @@ namespace QtVsTools.Core.MsBuild
 
             var ok = false;
             if (result is { ResultsByTarget: null, OverallResult: BuildResultCode.Success }) {
-                Messages.Print($"== {Path.GetFileName(QtProject.UnconfiguredProject.FullPath)}: "
+                Messages.Print($"== {Path.GetFileName(UnconfiguredProject.FullPath)}: "
                     + "background build FAILED!");
             } else {
                 var checkResults = result.ResultsByTarget
@@ -308,7 +290,7 @@ namespace QtVsTools.Core.MsBuild
 
         private async Task BuildAsync()
         {
-            var path = Path.GetFileNameWithoutExtension(QtProject.UnconfiguredProject.FullPath);
+            var path = Path.GetFileNameWithoutExtension(UnconfiguredProject.FullPath);
 
             if (LoggerVerbosity != LoggerVerbosity.Quiet) {
                 var properties = string.Join("", Properties.Select(property =>
@@ -321,7 +303,7 @@ namespace QtVsTools.Core.MsBuild
                     activate: true);
             }
 
-            var lockService = QtProject.UnconfiguredProject.ProjectService.Services.ProjectLockService;
+            var lockService = UnconfiguredProject.ProjectService.Services.ProjectLockService;
 
             var ok = false;
             try {
@@ -346,13 +328,13 @@ namespace QtVsTools.Core.MsBuild
                 }
 
                 if (ok) {
-                    var vcConfigs = QtProject.VcProject.Configurations as IVCCollection;
+                    var vcConfigs = VcProject.Configurations as IVCCollection;
                     var vcConfig = vcConfigs.Item(ConfiguredProject.ProjectConfiguration.Name) as VCConfiguration;
                     var props = vcConfig.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage;
                     props?.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));
                 }
             } catch (Exception e) {
-                Messages.Print($"{Path.GetFileName(QtProject.UnconfiguredProject.FullPath)}: "
+                Messages.Print($"{Path.GetFileName(UnconfiguredProject.FullPath)}: "
                     + $"background build ERROR: {e.Message}");
             }
 
