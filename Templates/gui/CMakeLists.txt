@@ -19,7 +19,7 @@ set(PROJECT_SOURCES
     $uifilename$
     $headerfilename$
     $sourcefilename$
-)
+$cmake_project_sources$)
 
 qt_add_executable($projectname$ ${PROJECT_SOURCES})
 

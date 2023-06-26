@@ -258,10 +258,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Include = Parameter[NewProject.SafeName] + ".rc",
                     Filter = "Resource Files"
                 });
-                File.WriteAllText(
-                    Path.Combine(
-                        Parameter[NewProject.DestinationDirectory],
-                        Parameter[NewProject.SafeName] + ".rc"),
+                File.WriteAllText(Path.Combine(Parameter[NewProject.DestinationDirectory],
+                    Parameter[NewProject.ResourceFile] = Parameter[NewProject.SafeName] + ".rc"),
                     winRcFile.ToString());
             }
 

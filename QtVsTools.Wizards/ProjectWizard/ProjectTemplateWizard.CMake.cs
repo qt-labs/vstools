@@ -27,7 +27,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             [String("cmake_user_presets")] UserPresets,
             [String("cmake_qt_modules")] Modules,
             [String("cmake_qt_libs")] Libs,
-            [String("cmake_qt_helper")] Helper
+            [String("cmake_qt_helper")] Helper,
+            [String("cmake_project_sources")] ProjectSources
         }
 
         [DataContract]
@@ -104,6 +105,10 @@ namespace QtVsTools.Wizards.ProjectWizard
                 "<None Include=\"CMakeLists.txt\" />\r\n",
                 "<None Include=\"CMakeUserPresets.json\" />\r\n",
                 UseQtCMakeHelper ? "<None Include=\"qt.cmake\" />\r\n" : "");
+
+            Parameter[CMake.ProjectSources] = "";
+            if (Parameter[NewProject.ResourceFile] is { Length: > 0 } rcFile)
+                Parameter[CMake.ProjectSources] += $"    {rcFile}\r\n";
 
             var userPresets = new CMakePresets();
             var qtModules = new SortedSet<string>();

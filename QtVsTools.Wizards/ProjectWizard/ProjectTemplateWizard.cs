@@ -176,7 +176,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             QtSettings,
             BuildSettings,
             ProjectItems,
-            FilterItems
+            FilterItems,
+            ResourceFile
         }
 
         protected TemplateParameters Parameter => Lazy.Get(() =>
