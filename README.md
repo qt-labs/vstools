@@ -35,10 +35,8 @@ to the wiki page ["Setting up Gerrit"](https://wiki.qt.io/Setting_up_Gerrit).
 
 ## Qt installation
 
-To build the Qt Visual Studio Tools, an installation of Qt is required. The version of Qt that is
-currently supported is 5.12.9. Either build Qt from the sources available in the
-[Qt Project Git Repository Browser](https://code.qt.io/cgit/qt/qt5.git/tag/?h=v5.12.9)
-or install a [pre-built binary package](https://download.qt.io/official_releases/qt/5.12/5.12.9/).
+To build the Qt Visual Studio Tools, a statically-linked installation of Qt is required. The version
+that is currently supported is [5.15.9](https://code.qt.io/cgit/qt/qt5.git/tag/?h=v5.15.9-lts-lgpl).
 
 ### Building Qt from sources
 
