@@ -396,7 +396,7 @@ namespace QtVsTools.Core.MsBuild
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
                     .Elements(ns + "QtInstall")
-                    .ToDictionary(x => (string)x.Parent.Attribute("Condition"));
+                    .ToDictionary(x => (string)x.Parent?.Attribute("Condition"));
                 oldQtInstall.Values.ToList()
                     .ForEach(x => x.Remove());
 
@@ -804,21 +804,21 @@ namespace QtVsTools.Core.MsBuild
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
-                .Any(x => x.Attribute("Project").Value == @"$(QtMsBuild)\qt.props");
+                .Any(x => x.Attribute("Project")?.Value == @"$(QtMsBuild)\qt.props");
             if (isQtMsBuildEnabled)
                 return true;
 
             var xImportCppProps = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
-                .FirstOrDefault(x => x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.props");
+                .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.props");
             if (xImportCppProps == null)
                 return false;
 
             var xImportCppTargets = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
-                .FirstOrDefault(x => x.Attribute("Project").Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets");
+                .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets");
             if (xImportCppTargets == null)
                 return false;
 
@@ -869,10 +869,10 @@ namespace QtVsTools.Core.MsBuild
             IList<ItemCommandLineReplacement> extraReplacements)
         {
             var query = from customBuild in customBuilds
-                        let itemName = customBuild.Attribute("Include").Value
+                        let itemName = customBuild.Attribute("Include")?.Value
                         from config in configurations
                         from command in customBuild.Elements(ns + "Command")
-                        where command.Attribute("Condition").Value
+                        where command.Attribute("Condition")?.Value
                             == $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"
                         select new { customBuild, itemName, config, command };
 
@@ -957,11 +957,11 @@ namespace QtVsTools.Core.MsBuild
             {
                 item.Elements().ToList().ForEach(prop =>
                 {
-                    var configName = prop.Parent.Attribute("ConfigName").Value;
+                    var configName = prop.Parent?.Attribute("ConfigName")?.Value;
                     prop.SetAttributeValue("Condition",
                         $"'$(Configuration)|$(Platform)'=='{configName}'");
                     prop.Remove();
-                    item.Parent.Add(prop);
+                    item.Parent?.Add(prop);
                 });
                 item.Remove();
             });
@@ -1134,7 +1134,8 @@ namespace QtVsTools.Core.MsBuild
                 };
                 foreach (var cbt in cbtGroup) {
                     var enabledProperties = cbt.Elements().Where(x =>
-                        cbtPropertyNames.Contains(x.Name.LocalName)
+                        x.Parent != null
+                        && cbtPropertyNames.Contains(x.Name.LocalName) 
                         && x.Parent.Elements(ns + "ExcludedFromBuild")
                             .All(y => (string)x.Attribute("Condition") != (string)y.Attribute("Condition")));
                     foreach (var property in enabledProperties)
@@ -1155,7 +1156,7 @@ namespace QtVsTools.Core.MsBuild
 
                 //change type of item in filter
                 cppMocItems = this[Files.Filters]?.xml
-                    .Elements(ns + "Project")
+                    ?.Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
                     .Where(x =>
@@ -1464,7 +1465,7 @@ namespace QtVsTools.Core.MsBuild
                     return expandedString;
 
                 if (evaluateTarget == null) {
-                    projFile.xmlCommitted.Root.Add(evaluateTarget = new XElement(ns + "Target",
+                    projFile.xmlCommitted.Root?.Add(evaluateTarget = new XElement(ns + "Target",
                         new XAttribute("Name", "MSBuildEvaluatorTarget"),
                         new XElement(ns + "PropertyGroup",
                             evaluateProperty = new XElement(ns + "MSBuildEvaluatorProperty"))));
@@ -1651,7 +1652,7 @@ namespace QtVsTools.Core.MsBuild
                     return xmlPropertyStorage.Attribute("ConfigName")?.Value;
 
                 var configName = ConditionParser
-                    .Match(xmlPropertyStorage.Attribute("Condition").Value);
+                    .Match(xmlPropertyStorage.Attribute("Condition")?.Value ?? "");
                 if (!configName.Success || configName.Groups.Count <= 1)
                     return "";
                 return configName.Groups[1].Value;
@@ -1702,8 +1703,8 @@ namespace QtVsTools.Core.MsBuild
                     .Elements(ns + "CustomBuild")
                     .Elements(ns + itemType)
                     .Where(item =>
-                        configName == "" || item.Attribute("ConfigName").Value == configName)
-                    .GroupBy(item => item.Attribute("Include").Value)
+                        configName == "" || item.Attribute("ConfigName")?.Value == configName)
+                    .GroupBy(item => item.Attribute("Include")?.Value)
                     .Select(item => item.First());
             }
         }
