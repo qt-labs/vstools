@@ -106,10 +106,10 @@ namespace QtVsTools.Core.MsBuild
         public bool Save()
         {
             foreach (var file in files) {
-                if (file.isDirty) {
-                    file.xml?.Save(file.filePath, SaveOptions.None);
-                    file.isCommittedDirty = file.isDirty = false;
-                }
+                if (!file.isDirty)
+                    continue;
+                file.xml?.Save(file.filePath, SaveOptions.None);
+                file.isCommittedDirty = file.isDirty = false;
             }
             return true;
         }
@@ -193,14 +193,14 @@ namespace QtVsTools.Core.MsBuild
         {
             get
             {
-                if (_ConfigCondition == null) {
-                    var config = new Token("Configuration", CharWord.Repeat());
-                    var platform = new Token("Platform", CharWord.Repeat());
-                    var expr = "'$(Configuration)|$(Platform)'=='" & config & "|" & platform & "'";
-                    try {
-                        _ConfigCondition = expr.Render();
-                    } catch { }
-                }
+                if (_ConfigCondition != null)
+                    return _ConfigCondition;
+                var config = new Token("Configuration", CharWord.Repeat());
+                var platform = new Token("Platform", CharWord.Repeat());
+                var expr = "'$(Configuration)|$(Platform)'=='" & config & "|" & platform & "'";
+                try {
+                    _ConfigCondition = expr.Render();
+                } catch { }
                 return _ConfigCondition;
             }
         }
@@ -217,15 +217,15 @@ namespace QtVsTools.Core.MsBuild
         {
             get
             {
-                if (_ProjectFormatVersion == null) {
-                    var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
-                    {
-                        new Rule<int> { Capture(int.Parse) }
-                    };
-                    try {
-                        _ProjectFormatVersion = expr.Render();
-                    } catch { }
-                }
+                if (_ProjectFormatVersion != null)
+                    return _ProjectFormatVersion;
+                var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
+                {
+                    new Rule<int> { Capture(int.Parse) }
+                };
+                try {
+                    _ProjectFormatVersion = expr.Render();
+                } catch { }
                 return _ProjectFormatVersion;
             }
         }
@@ -349,12 +349,12 @@ namespace QtVsTools.Core.MsBuild
                 foreach (var pg in uncategorizedPropertyGroups) {
                     foreach (var p in pg.Elements().ToList()) {
                         var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
-                        if (condition != null && propertyGroups
-                            .TryGetValue((string)condition, out XElement configPropertyGroup)) {
-                            p.Remove();
-                            p.SetAttributeValue("Condition", null);
-                            configPropertyGroup.Add(p);
-                        }
+                        if (condition == null || !propertyGroups
+                            .TryGetValue((string)condition, out var configPropertyGroup))
+                            continue;
+                        p.Remove();
+                        p.SetAttributeValue("Condition", null);
+                        configPropertyGroup.Add(p);
                     }
                     if (!pg.Elements().Any())
                         pg.Remove();
@@ -490,13 +490,13 @@ namespace QtVsTools.Core.MsBuild
                 foreach (var configQtSettings in qtSettings) {
                     var configCondition = (string)configQtSettings.Attribute("Condition");
 
-                    if (oldQtInstall.TryGetValue(configCondition, out XElement oldConfigQtInstall))
+                    if (oldQtInstall.TryGetValue(configCondition, out var oldConfigQtInstall))
                         configQtSettings.Add(oldConfigQtInstall);
+                    if (!oldQtSettings.TryGetValue(configCondition, out var oldConfigQtSettings))
+                        continue;
 
-                    if (oldQtSettings.TryGetValue(configCondition, out XElement oldConfigQtSettings)) {
-                        foreach (var qtSetting in oldConfigQtSettings.Elements())
-                            configQtSettings.Add(qtSetting);
-                    }
+                    foreach (var qtSetting in oldConfigQtSettings.Elements())
+                        configQtSettings.Add(qtSetting);
                 }
 
                 this[Files.Project].isDirty = true;
@@ -690,14 +690,14 @@ namespace QtVsTools.Core.MsBuild
                     .Union(x.Elements(ns + "QtUic")));
             foreach (var qtItem in qtItems) {
                 var outputFile = qtItem.Element(ns + "OutputFile");
-                if (outputFile != null) {
-                    var qtTool = qtItem.Name.LocalName;
-                    var outDir = Path.GetDirectoryName(outputFile.Value);
-                    var outFileName = Path.GetFileName(outputFile.Value);
-                    qtItem.Add(new XElement(ns + qtTool + "Dir",
-                        string.IsNullOrEmpty(outDir) ? "$(ProjectDir)" : outDir));
-                    qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
-                }
+                if (outputFile == null)
+                    continue;
+                var qtTool = qtItem.Name.LocalName;
+                var outDir = Path.GetDirectoryName(outputFile.Value);
+                var outFileName = Path.GetFileName(outputFile.Value);
+                qtItem.Add(new XElement(ns + qtTool + "Dir",
+                    string.IsNullOrEmpty(outDir) ? "$(ProjectDir)" : outDir));
+                qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
             }
 
             // Remove old properties from project items
@@ -911,18 +911,19 @@ namespace QtVsTools.Core.MsBuild
                     evaluator.Properties.Clear();
                     foreach (var configProp in row.config.Elements())
                         evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
-                    if (!qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator)) {
-                        int lineNumber = 1;
-                        if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
-                            lineNumber = errorLine.LineNumber;
+                    if (qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator))
+                        continue;
 
-                        Messages.Print($"{projPath}({lineNumber}): error: [{itemType}] "
-                            + $"converting \"{row.itemName}\", configuration \"{configId}\": "
-                            + "failed to convert custom build command");
+                    var lineNumber = 1;
+                    if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
+                        lineNumber = errorLine.LineNumber;
 
-                        item.Remove();
-                        error = true;
-                    }
+                    Messages.Print($"{projPath}({lineNumber}): error: [{itemType}] "
+                      + $"converting \"{row.itemName}\", configuration \"{configId}\": "
+                      + "failed to convert custom build command");
+
+                    item.Remove();
+                    error = true;
                 }
             }
 
@@ -1029,29 +1030,30 @@ namespace QtVsTools.Core.MsBuild
             Dictionary<string, List<XElement>> filterItemsByPath)
         {
             //remove items with generated files
-            bool hasGeneratedFiles = false;
             var cbEval = cbEvals
                 .FirstOrDefault(x => x.ProjectConfig == configName && x.Identity == itemName);
-            if (cbEval != null) {
-                var outputFiles = cbEval.Outputs
-                    .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => CanonicalPath(
-                        Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
-                var outputItems = new List<XElement>();
-                foreach (var outputFile in outputFiles) {
-                    if (projItemsByPath.TryGetValue(outputFile, out List<XElement> mocOutput)) {
-                        outputItems.AddRange(mocOutput);
-                        hasGeneratedFiles |= hasGeneratedFiles || mocOutput
-                            .Any(x => !x.Elements(ns + "ExcludedFromBuild")
-                                .Any(y => (string)y.Attribute("Condition") == $"'$(Configuration)|$(Platform)'=='{configName}'"
-                                 && y.Value == "true"));
-                    }
-                    if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
-                        outputItems.AddRange(mocOutput);
+            if (cbEval == null)
+                return false;
+
+            var hasGeneratedFiles = false;
+            var outputFiles = cbEval.Outputs
+                .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => CanonicalPath(
+                    Path.IsPathRooted(x) ? x : Path.Combine(projDir, x)));
+            var outputItems = new List<XElement>();
+            foreach (var outputFile in outputFiles) {
+                if (projItemsByPath.TryGetValue(outputFile, out var mocOutput)) {
+                    outputItems.AddRange(mocOutput);
+                    hasGeneratedFiles |= hasGeneratedFiles || mocOutput
+                        .Any(x => !x.Elements(ns + "ExcludedFromBuild")
+                            .Any(y => (string)y.Attribute("Condition") == $"'$(Configuration)|$(Platform)'=='{configName}'"
+                             && y.Value == "true"));
                 }
-                foreach (var item in outputItems.Where(x => x.Parent != null))
-                    item.Remove();
+                if (filterItemsByPath.TryGetValue(outputFile, out mocOutput))
+                    outputItems.AddRange(mocOutput);
             }
+            foreach (var item in outputItems.Where(x => x.Parent != null))
+                item.Remove();
             return hasGeneratedFiles;
         }
 
@@ -1428,11 +1430,11 @@ namespace QtVsTools.Core.MsBuild
 
             public void Dispose()
             {
-                if (evaluateTarget != null) {
-                    evaluateTarget.Remove();
-                    if (File.Exists(tempProjFilePath))
-                        File.Delete(tempProjFilePath);
-                }
+                if (evaluateTarget == null)
+                    return;
+                evaluateTarget.Remove();
+                if (File.Exists(tempProjFilePath))
+                    File.Delete(tempProjFilePath);
             }
 
             private string ExpansionCacheKey(string stringToExpand)
@@ -1590,16 +1592,15 @@ namespace QtVsTools.Core.MsBuild
         {
             public string GetProperty(object propertyStorage, string itemType, string propertyName)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    XElement item = xmlPropertyStorage;
-                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                        item = xmlPropertyStorage.Element(ns + itemType);
-                        if (item == null)
-                            return "";
-                    }
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return "";
+
+                var item = xmlPropertyStorage;
+                if (xmlPropertyStorage.Name.LocalName != "ItemDefinitionGroup")
                     return item.Element(ns + propertyName)?.Value;
-                }
-                return "";
+
+                item = xmlPropertyStorage.Element(ns + itemType);
+                return item == null ? "" : item.Element(ns + propertyName)?.Value;
             }
 
             public bool SetProperty(
@@ -1608,22 +1609,22 @@ namespace QtVsTools.Core.MsBuild
                 string propertyName,
                 string propertyValue)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    XElement item = xmlPropertyStorage;
-                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                        item = xmlPropertyStorage.Element(ns + itemType);
-                        if (item == null)
-                            xmlPropertyStorage.Add(item = new XElement(ns + itemType));
-                    }
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return false;
 
-                    var prop = item.Element(ns + propertyName);
-                    if (prop != null)
-                        prop.Value = propertyValue;
-                    else
-                        item.Add(new XElement(ns + propertyName, propertyValue));
-                    return true;
+                var item = xmlPropertyStorage;
+                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                    item = xmlPropertyStorage.Element(ns + itemType);
+                    if (item == null)
+                        xmlPropertyStorage.Add(item = new XElement(ns + itemType));
                 }
-                return false;
+
+                var prop = item.Element(ns + propertyName);
+                if (prop != null)
+                    prop.Value = propertyValue;
+                else
+                    item.Add(new XElement(ns + propertyName, propertyValue));
+                return true;
             }
 
             public bool DeleteProperty(
@@ -1631,53 +1632,52 @@ namespace QtVsTools.Core.MsBuild
                 string itemType,
                 string propertyName)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    XElement item = xmlPropertyStorage;
-                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
-                        item = xmlPropertyStorage.Element(ns + itemType);
-                        if (item == null)
-                            return true;
-                    }
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return false;
 
-                    item.Element(ns + propertyName)?.Remove();
-                    return true;
+                var item = xmlPropertyStorage;
+                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup") {
+                    item = xmlPropertyStorage.Element(ns + itemType);
+                    if (item == null)
+                        return true;
                 }
-                return false;
+
+                item.Element(ns + propertyName)?.Remove();
+                return true;
             }
 
             public string GetConfigName(object propertyStorage)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    if (xmlPropertyStorage.Name.LocalName != "ItemDefinitionGroup")
-                        return xmlPropertyStorage.Attribute("ConfigName")?.Value;
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return "";
 
-                    var configName = ConditionParser
-                        .Match(xmlPropertyStorage.Attribute("Condition").Value);
-                    if (!configName.Success || configName.Groups.Count <= 1)
-                        return "";
-                    return configName.Groups[1].Value;
-                }
-                return "";
+                if (xmlPropertyStorage.Name.LocalName != "ItemDefinitionGroup")
+                    return xmlPropertyStorage.Attribute("ConfigName")?.Value;
+
+                var configName = ConditionParser
+                    .Match(xmlPropertyStorage.Attribute("Condition").Value);
+                if (!configName.Success || configName.Groups.Count <= 1)
+                    return "";
+                return configName.Groups[1].Value;
             }
 
             public string GetItemType(object propertyStorage)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
-                        return "";
-                    return xmlPropertyStorage.Name.LocalName;
-                }
-                return "";
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return "";
+
+                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
+                    return "";
+                return xmlPropertyStorage.Name.LocalName;
             }
 
             public string GetItemName(object propertyStorage)
             {
-                if (propertyStorage is XElement xmlPropertyStorage) {
-                    if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
-                        return "";
-                    return xmlPropertyStorage.Attribute("Include")?.Value;
-                }
-                return "";
+                if (propertyStorage is not XElement xmlPropertyStorage)
+                    return "";
+                if (xmlPropertyStorage.Name.LocalName == "ItemDefinitionGroup")
+                    return "";
+                return xmlPropertyStorage.Attribute("Include")?.Value;
             }
 
             public object GetParentProject(object propertyStorage)
@@ -1689,11 +1689,10 @@ namespace QtVsTools.Core.MsBuild
 
             public object GetProjectConfiguration(object project, string configName)
             {
-                if (project is XElement xmlProject) {
-                    return xmlProject.Elements(ns + "ItemDefinitionGroup")
-                        .FirstOrDefault(config => config.Attribute("Condition").Value.Contains(configName));
-                }
-                return null;
+                if (project is not XElement xmlProject)
+                    return null;
+                return xmlProject.Elements(ns + "ItemDefinitionGroup")
+                    .FirstOrDefault(config => config.Attribute("Condition").Value.Contains(configName));
             }
 
             public IEnumerable<object> GetItems(
@@ -1701,17 +1700,15 @@ namespace QtVsTools.Core.MsBuild
                 string itemType,
                 string configName = "")
             {
-                if (project is XElement xmlProject) {
-                    return xmlProject.Elements(ns + "ItemGroup")
-                        .Elements(ns + "CustomBuild")
-                        .Elements(ns + itemType)
-                        .Where(item =>
-                            configName == "" || item.Attribute("ConfigName").Value == configName)
-                        .GroupBy(item => item.Attribute("Include").Value)
-                        .Select(item => item.First());
-                }
-
-                return new List<object>();
+                if (project is not XElement xmlProject)
+                    return new List<object>();
+                return xmlProject.Elements(ns + "ItemGroup")
+                    .Elements(ns + "CustomBuild")
+                    .Elements(ns + itemType)
+                    .Where(item =>
+                        configName == "" || item.Attribute("ConfigName").Value == configName)
+                    .GroupBy(item => item.Attribute("Include").Value)
+                    .Select(item => item.First());
             }
         }
 
