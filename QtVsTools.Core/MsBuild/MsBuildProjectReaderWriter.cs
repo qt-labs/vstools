@@ -24,7 +24,7 @@ namespace QtVsTools.Core.MsBuild
     using static SyntaxAnalysis.RegExpr;
     using static Utils;
 
-    public class MsBuildProject
+    public class MsBuildProjectReaderWriter
     {
         private class MsBuildXmlFile
         {
@@ -45,7 +45,7 @@ namespace QtVsTools.Core.MsBuild
 
         private readonly MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
 
-        private MsBuildProject()
+        private MsBuildProjectReaderWriter()
         {
             for (var i = 0; i < files.Length; i++)
                 files[i] = new MsBuildXmlFile();
@@ -67,12 +67,12 @@ namespace QtVsTools.Core.MsBuild
 
         private static readonly XNamespace ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 
-        public static MsBuildProject Load(string pathToProject)
+        public static MsBuildProjectReaderWriter Load(string pathToProject)
         {
             if (!File.Exists(pathToProject))
                 return null;
 
-            var project = new MsBuildProject
+            var project = new MsBuildProjectReaderWriter
             {
                 [Files.Project] =
                 {

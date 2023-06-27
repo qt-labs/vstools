@@ -112,7 +112,7 @@ namespace QtVsTools.Core.MsBuild
 
         private static bool ConvertProject(string pathToProject)
         {
-            var xmlProject = MsBuildProject.Load(pathToProject);
+            var xmlProject = MsBuildProjectReaderWriter.Load(pathToProject);
             if (xmlProject == null)
                 return false;
             var oldVersion = xmlProject.GetProjectFormatVersion();

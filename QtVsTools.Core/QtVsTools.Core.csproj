@@ -164,7 +164,7 @@
     <Compile Include="ProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="MsBuild\MsBuildProject.cs" />
+    <Compile Include="MsBuild\MsBuildProjectReaderWriter.cs" />
     <Compile Include="OutputWindowPane.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>

@@ -128,7 +128,7 @@ namespace QtVsTools.Core
                 qmake.Run(setVCVars: true);
 
                 var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
-                var msbuildProj = MsBuildProject.Load(tempVcxproj);
+                var msbuildProj = MsBuildProjectReaderWriter.Load(tempVcxproj);
 
                 Directory.Delete(tempDir, recursive: true);
 

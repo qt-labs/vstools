@@ -247,7 +247,7 @@ namespace QtVsTools.Core
 
         private static bool ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
-            var xmlProject = MsBuildProject.Load(projectFile.FullName);
+            var xmlProject = MsBuildProjectReaderWriter.Load(projectFile.FullName);
             if (xmlProject == null)
                 return false;
             var oldVersion = xmlProject.GetProjectFormatVersion();
