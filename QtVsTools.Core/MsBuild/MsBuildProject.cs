@@ -281,7 +281,6 @@ namespace QtVsTools.Core.MsBuild
             }
 
             var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
-            var defaultVersion = QtVersionManager.The().GetVersionInfo(defaultVersionName);
 
             // Get project configurations
             var configs = this[Files.Project].xml
@@ -859,7 +858,6 @@ namespace QtVsTools.Core.MsBuild
             IEnumerable<XElement> customBuilds,
             string toolExec,
             string itemType,
-            string workingDir,
             IList<ItemCommandLineReplacement> extraReplacements)
         {
             var query = from customBuild in customBuilds
@@ -1166,7 +1164,6 @@ namespace QtVsTools.Core.MsBuild
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds,
                 QtMoc.ToolExecName, QtMoc.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
@@ -1220,7 +1217,6 @@ namespace QtVsTools.Core.MsBuild
             var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds,
                 QtRcc.ToolExecName, QtRcc.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
@@ -1252,7 +1248,6 @@ namespace QtVsTools.Core.MsBuild
             var repcCustomBuilds = GetCustomBuilds(QtRepc.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, repcCustomBuilds,
                 QtRepc.ToolExecName, QtRepc.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[] { })) {
                 Rollback();
                 return false;
@@ -1277,7 +1272,6 @@ namespace QtVsTools.Core.MsBuild
             var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
             if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds,
                 QtUic.ToolExecName, QtUic.ItemTypeName,
-                Path.GetDirectoryName(this[Files.Project].filePath),
                 new ItemCommandLineReplacement[]
                 {
                     (item, cmdLine) => cmdLine.Replace(
