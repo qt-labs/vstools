@@ -971,10 +971,10 @@ namespace QtVsTools.Core.MsBuild
                 var filterCustomBuild = (this[Files.Filters]?.xml
                         .Elements(ns + "Project")
                         .Elements(ns + "ItemGroup")
-                        .Elements(ns + "CustomBuild"))
+                        .Elements(ns + "CustomBuild") ?? Array.Empty<XElement>())
                     .FirstOrDefault(
-                        filterItem => filterItem.Attribute("Include").Value
-                         == customBuild.Attribute("Include").Value);
+                        filterItem => filterItem.Attribute("Include")?.Value
+                         == customBuild.Attribute("Include")?.Value);
                 if (filterCustomBuild != null) {
                     filterCustomBuild.Name = ns + itemTypeName;
                     this[Files.Filters].isDirty = true;
@@ -1084,7 +1084,7 @@ namespace QtVsTools.Core.MsBuild
                 .Where(x => ((string)x.Attribute("Include"))
                     .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                 .GroupBy(x => CanonicalPath(
-                    Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
+                    Path.Combine(projDir ?? "", (string)x.Attribute("Include"))), CaseIgnorer)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
             var filterItemsByPath = this[Files.Filters].xml != null
@@ -1095,7 +1095,7 @@ namespace QtVsTools.Core.MsBuild
                     .Where(x => ((string)x.Attribute("Include"))
                         .IndexOfAny(Path.GetInvalidPathChars()) == -1)
                     .GroupBy(x => CanonicalPath(
-                        Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
+                        Path.Combine(projDir ?? "", (string)x.Attribute("Include"))), CaseIgnorer)
                     .ToDictionary(x => x.Key, x => new List<XElement>(x))
                 : new Dictionary<string, List<XElement>>();
 
@@ -1469,18 +1469,20 @@ namespace QtVsTools.Core.MsBuild
                         new XElement(ns + "PropertyGroup",
                             evaluateProperty = new XElement(ns + "MSBuildEvaluatorProperty"))));
                 }
+
                 if (stringToExpand != (string)evaluateProperty) {
                     evaluateProperty.SetValue(stringToExpand);
                     if (!string.IsNullOrEmpty(tempProjFilePath) && File.Exists(tempProjFilePath))
                         File.Delete(tempProjFilePath);
                     tempProjFilePath = Path.Combine(
-                        Path.GetDirectoryName(projFile.filePath),
+                        Path.GetDirectoryName(projFile.filePath) ?? "",
                         Path.GetRandomFileName());
                     if (File.Exists(tempProjFilePath))
                         File.Delete(tempProjFilePath);
                     projFile.xmlCommitted.Save(tempProjFilePath);
                     projRoot = ProjectRootElement.Open(tempProjFilePath);
                 }
+
                 var projInst = new ProjectInstance(projRoot, Properties,
                     null, new ProjectCollection());
                 var buildRequest = new BuildRequestData(
