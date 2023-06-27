@@ -72,9 +72,14 @@ namespace QtVsTools.Core.MsBuild
             if (!File.Exists(pathToProject))
                 return null;
 
-            var project = new MsBuildProject();
+            var project = new MsBuildProject
+            {
+                [Files.Project] =
+                {
+                    filePath = pathToProject
+                }
+            };
 
-            project[Files.Project].filePath = pathToProject;
             if (!LoadXml(project[Files.Project]))
                 return null;
 
@@ -93,9 +98,8 @@ namespace QtVsTools.Core.MsBuild
         {
             try {
                 var xmlText = File.ReadAllText(xmlFile.filePath, Encoding.UTF8);
-                using (var reader = XmlReader.Create(new StringReader(xmlText))) {
-                    xmlFile.xml = XDocument.Load(reader, LoadOptions.SetLineInfo);
-                }
+                using var reader = XmlReader.Create(new StringReader(xmlText));
+                xmlFile.xml = XDocument.Load(reader, LoadOptions.SetLineInfo);
             } catch (Exception) {
                 return false;
             }
@@ -200,7 +204,9 @@ namespace QtVsTools.Core.MsBuild
                 var expr = "'$(Configuration)|$(Platform)'=='" & config & "|" & platform & "'";
                 try {
                     _ConfigCondition = expr.Render();
-                } catch { }
+                } catch (Exception e) {
+                    e.Log();
+                }
                 return _ConfigCondition;
             }
         }
@@ -225,7 +231,9 @@ namespace QtVsTools.Core.MsBuild
                 };
                 try {
                     _ProjectFormatVersion = expr.Render();
-                } catch { }
+                } catch (Exception e) {
+                    e.Log();
+                }
                 return _ProjectFormatVersion;
             }
         }
@@ -528,7 +536,9 @@ namespace QtVsTools.Core.MsBuild
                                 .Parse((string)config.Attribute("Condition"))
                                 .GetValues<string>("Platform")
                                 .FirstOrDefault();
-                        } catch { }
+                        } catch (Exception e) {
+                            e.Log();
+                        }
 
                         if (!string.IsNullOrEmpty(platform)) {
                             var qtInstallName = $"Qt5Version_x0020_{platform}";
@@ -569,7 +579,7 @@ namespace QtVsTools.Core.MsBuild
             var moduleIncludePaths = new HashSet<string>();
 
             // Qt module link libraries, to remove from liker dependencies property
-            var moduleLibs = new HashSet<string>();
+            var moduleLibs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             var qt5Modules = QtModules.Instance.GetAvailableModules(5);
             var qt6Modules = QtModules.Instance.GetAvailableModules(6);
@@ -622,7 +632,7 @@ namespace QtVsTools.Core.MsBuild
             // Remove Qt module libraries from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x)), CaseIgnorer))));
+                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x))))));
             }
 
             // Remove Qt lib path from linker properties
@@ -730,7 +740,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        private bool IsModuleUsed(
+        private static bool IsModuleUsed(
             QtModule module,
             IEnumerable<XElement> compiler,
             IEnumerable<XElement> linker,
@@ -757,7 +767,7 @@ namespace QtVsTools.Core.MsBuild
                 .Any(x => module.Defines.Contains(x));
         }
 
-        private bool IsPrivateIncludePathUsed(
+        private static bool IsPrivateIncludePathUsed(
             QtModule module,
             IEnumerable<XElement> compiler)
         {
@@ -868,59 +878,58 @@ namespace QtVsTools.Core.MsBuild
 
             var projPath = this[Files.Project].filePath;
             var error = false;
-            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
-                foreach (var row in query) {
+            using var evaluator = new MSBuildEvaluator(this[Files.Project]);
+            foreach (var row in query) {
 
-                    var configId = (string)row.config.Attribute("Include");
-                    if (!row.command.Value.Contains(toolExec)) {
-                        Messages.Print($"{projPath}: warning: [{itemType}] converting "
-                            + $"\"{row.itemName}\", configuration \"{configId}\": "
-                            + $"tool not found: \"{toolExec}\"; applying default options");
-                        continue;
-                    }
-
-                    XElement item;
-                    row.customBuild.Add(item =
-                        new XElement(ns + itemType,
-                            new XAttribute("Include", row.itemName),
-                            new XAttribute("ConfigName", configId)));
-                    var configName = (string)row.config.Element(ns + "Configuration");
-                    var platformName = (string)row.config.Element(ns + "Platform");
-
-                    ///////////////////////////////////////////////////////////////////////////////
-                    // Replace fixed values with VS macros
-                    //
-                    //   * Filename, e.g. foo.ui --> %(Filename)%(Extension)
-                    var commandLine = row.command.Value.Replace(Path.GetFileName(row.itemName),
-                        "%(Filename)%(Extension)", IgnoreCase);
-                    //
-                    //   * Context specific, e.g. ui_foo.h --> ui_%(FileName).h
-                    foreach (var replace in extraReplacements)
-                        commandLine = replace(row.itemName, commandLine);
-                    //
-                    //   * Configuration/platform, e.g. x64\Debug --> $(Platform)\$(Configuration)
-                    //   * ignore any word other than the expected configuration, e.g. lrelease.exe
-                    commandLine = Regex.Replace(commandLine, @"\b" + configName + @"\b",
-                            "$(Configuration)", RegexOptions.IgnoreCase)
-                        .Replace(platformName, "$(Platform)", IgnoreCase);
-
-                    evaluator.Properties.Clear();
-                    foreach (var configProp in row.config.Elements())
-                        evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
-                    if (qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator))
-                        continue;
-
-                    var lineNumber = 1;
-                    if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
-                        lineNumber = errorLine.LineNumber;
-
-                    Messages.Print($"{projPath}({lineNumber}): error: [{itemType}] "
-                      + $"converting \"{row.itemName}\", configuration \"{configId}\": "
-                      + "failed to convert custom build command");
-
-                    item.Remove();
-                    error = true;
+                var configId = (string)row.config.Attribute("Include");
+                if (!row.command.Value.Contains(toolExec)) {
+                    Messages.Print($"{projPath}: warning: [{itemType}] converting "
+                      + $"\"{row.itemName}\", configuration \"{configId}\": "
+                      + $"tool not found: \"{toolExec}\"; applying default options");
+                    continue;
                 }
+
+                XElement item;
+                row.customBuild.Add(item =
+                    new XElement(ns + itemType,
+                        new XAttribute("Include", row.itemName),
+                        new XAttribute("ConfigName", configId)));
+                var configName = (string)row.config.Element(ns + "Configuration");
+                var platformName = (string)row.config.Element(ns + "Platform");
+
+                ///////////////////////////////////////////////////////////////////////////////
+                // Replace fixed values with VS macros
+                //
+                //   * Filename, e.g. foo.ui --> %(Filename)%(Extension)
+                var commandLine = row.command.Value.Replace(Path.GetFileName(row.itemName),
+                    "%(Filename)%(Extension)", IgnoreCase);
+                //
+                //   * Context specific, e.g. ui_foo.h --> ui_%(FileName).h
+                foreach (var replace in extraReplacements)
+                    commandLine = replace(row.itemName, commandLine);
+                //
+                //   * Configuration/platform, e.g. x64\Debug --> $(Platform)\$(Configuration)
+                //   * ignore any word other than the expected configuration, e.g. lrelease.exe
+                commandLine = Regex.Replace(commandLine, @"\b" + configName + @"\b",
+                        "$(Configuration)", RegexOptions.IgnoreCase)
+                    .Replace(platformName, "$(Platform)", IgnoreCase);
+
+                evaluator.Properties.Clear();
+                foreach (var configProp in row.config.Elements())
+                    evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
+                if (qtMsBuild.SetCommandLine(itemType, item, commandLine, evaluator))
+                    continue;
+
+                var lineNumber = 1;
+                if (row.command is IXmlLineInfo errorLine && errorLine.HasLineInfo())
+                    lineNumber = errorLine.LineNumber;
+
+                Messages.Print($"{projPath}({lineNumber}): error: [{itemType}] "
+                  + $"converting \"{row.itemName}\", configuration \"{configId}\": "
+                  + "failed to convert custom build command");
+
+                item.Remove();
+                error = true;
             }
 
             return !error;
@@ -1017,13 +1026,13 @@ namespace QtVsTools.Core.MsBuild
             return outputFile;
         }
 
-        private bool RemoveGeneratedFiles(
+        private static bool RemoveGeneratedFiles(
             string projDir,
-            List<CustomBuildEval> cbEvals,
+            IEnumerable<CustomBuildEval> cbEvals,
             string configName,
             string itemName,
-            Dictionary<string, List<XElement>> projItemsByPath,
-            Dictionary<string, List<XElement>> filterItemsByPath)
+            IReadOnlyDictionary<string, List<XElement>> projItemsByPath,
+            IReadOnlyDictionary<string, List<XElement>> filterItemsByPath)
         {
             //remove items with generated files
             var cbEval = cbEvals
@@ -1316,7 +1325,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        private bool TryReplaceTextInPlace(ref string text, Regex findWhat, string newText)
+        private static bool TryReplaceTextInPlace(ref string text, Regex findWhat, string newText)
         {
             var match = findWhat.Match(text);
             if (!match.Success)
@@ -1329,7 +1338,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        private void ReplaceText(XElement xElem, Regex findWhat, string newText)
+        private static void ReplaceText(XElement xElem, Regex findWhat, string newText)
         {
             var elemValue = (string)xElem;
             if (!string.IsNullOrEmpty(elemValue)
@@ -1338,7 +1347,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        private void ReplaceText(XAttribute xAttr, Regex findWhat, string newText)
+        private static void ReplaceText(XAttribute xAttr, Regex findWhat, string newText)
         {
             var attrValue = (string)xAttr;
             if (!string.IsNullOrEmpty(attrValue)
@@ -1508,73 +1517,66 @@ namespace QtVsTools.Core.MsBuild
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
 
-            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
+            using var evaluator = new MSBuildEvaluator(this[Files.Project]);
+            foreach (var projConfig in projConfigs) {
 
-                foreach (var projConfig in projConfigs) {
+                evaluator.Properties.Clear();
+                foreach (var configProp in projConfig.Elements())
+                    evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
 
-                    evaluator.Properties.Clear();
-                    foreach (var configProp in projConfig.Elements())
-                        evaluator.Properties.Add(configProp.Name.LocalName, (string)configProp);
+                var expandedValue = evaluator.ExpandString(
+                    "@(CustomBuild->'" +
+                    "{%(Identity)}" +
+                    "{%(AdditionalInputs)}" +
+                    "{%(Outputs)}" +
+                    "{%(Message)}" +
+                    "{%(Command)}')");
 
-                    var expandedValue = evaluator.ExpandString(
-                        "@(CustomBuild->'" +
-                            "{%(Identity)}" +
-                            "{%(AdditionalInputs)}" +
-                            "{%(Outputs)}" +
-                            "{%(Message)}" +
-                            "{%(Command)}')");
-
-                    foreach (Match cbEval in pattern.Matches(expandedValue)) {
-                        eval.Add(new CustomBuildEval
-                        {
-                            ProjectConfig = (string)projConfig.Attribute("Include"),
-                            Identity = cbEval.Groups[1].Value,
-                            AdditionalInputs = cbEval.Groups[2].Value,
-                            Outputs = cbEval.Groups[3].Value,
-                            Message = cbEval.Groups[4].Value,
-                            Command = cbEval.Groups[5].Value
-                        });
-                    }
+                foreach (Match cbEval in pattern.Matches(expandedValue)) {
+                    eval.Add(new CustomBuildEval
+                    {
+                        ProjectConfig = (string)projConfig.Attribute("Include"),
+                        Identity = cbEval.Groups[1].Value,
+                        AdditionalInputs = cbEval.Groups[2].Value,
+                        Outputs = cbEval.Groups[3].Value,
+                        Message = cbEval.Groups[4].Value,
+                        Command = cbEval.Groups[5].Value
+                    });
                 }
             }
 
             return eval;
         }
 
-        public bool BuildTarget(string target)
+        public void BuildTarget(string target)
         {
             if (this[Files.Project].isDirty)
-                return false;
+                return;
 
             var configurations = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
 
-            using (var buildManager = new BuildManager()) {
+            using var buildManager = new BuildManager();
+            foreach (var config in configurations) {
+                var configProps = config.Elements()
+                    .ToDictionary(x => x.Name.LocalName, x => x.Value);
 
-                foreach (var config in configurations) {
-
-                    var configProps = config.Elements()
-                        .ToDictionary(x => x.Name.LocalName, x => x.Value);
-
-                    var projectInstance = new ProjectInstance(this[Files.Project].filePath,
-                        new Dictionary<string, string>(configProps)
+                var projectInstance = new ProjectInstance(this[Files.Project].filePath,
+                    new Dictionary<string, string>(configProps)
                         { { "QtVSToolsBuild", "true" } },
-                        null, new ProjectCollection());
+                    null, new ProjectCollection());
 
-                    var buildRequest = new BuildRequestData(projectInstance,
-                        targetsToBuild: new[] { target },
-                        hostServices: null,
-                        flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
+                var buildRequest = new BuildRequestData(projectInstance,
+                    targetsToBuild: new[] { target },
+                    hostServices: null,
+                    flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-                    var result = buildManager.Build(new BuildParameters(), buildRequest);
-                    if (result.OverallResult != BuildResultCode.Success)
-                        return false;
-
-                }
+                var result = buildManager.Build(new BuildParameters(), buildRequest);
+                if (result.OverallResult != BuildResultCode.Success)
+                    return;
             }
-            return true;
         }
 
         private static readonly Regex ConditionParser =
