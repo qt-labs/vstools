@@ -280,8 +280,6 @@ namespace QtVsTools.Core.MsBuild
                 return false; // Nothing we can do!
             }
 
-            var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
-
             // Get project configurations
             var configs = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -504,6 +502,8 @@ namespace QtVsTools.Core.MsBuild
             }
 
             //// Upgrading from v2.0
+
+            var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
 
             // Get project user properties (old format)
             var userProps = this[Files.Project].xml
