@@ -223,6 +223,14 @@ namespace QtVsTools
                         EnvironmentVariableTarget.Process);
                 }
 
+                var defaultVersion = vm.GetInstallPath("$(DefaultQtVersion)");
+                if (defaultVersion != null) {
+                    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("QTDIR"))) {
+                        Environment.SetEnvironmentVariable("QTDIR", defaultVersion,
+                            EnvironmentVariableTarget.Process);
+                    }
+                }
+
                 CopyTextMateLanguageFiles();
                 CopyVisualizersFiles();
                 initTimer.Stop();
