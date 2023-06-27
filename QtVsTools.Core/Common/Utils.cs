@@ -17,5 +17,23 @@ namespace QtVsTools
         public static StringComparison IgnoreCase => StringComparison.OrdinalIgnoreCase;
         public static StringComparer CaseIgnorer => StringComparer.OrdinalIgnoreCase;
         public static string EmDash => "\u2014";
+
+        public static string Replace(this string original, string oldValue, string newValue,
+            StringComparison comparison)
+        {
+            newValue ??= "";
+            if (string.IsNullOrEmpty(original) || string.IsNullOrEmpty(oldValue)
+                || string.Equals(oldValue, newValue, comparison)) {
+                return original;
+            }
+
+            int pos = 0, index;
+            var result = new System.Text.StringBuilder();
+            while ((index = original.IndexOf(oldValue, pos, comparison)) >= 0) {
+                result.Append(original, pos, index - pos).Append(newValue);
+                pos = index + oldValue.Length;
+            }
+            return result.Append(original, pos, original.Length - pos).ToString();
+        }
     }
 }

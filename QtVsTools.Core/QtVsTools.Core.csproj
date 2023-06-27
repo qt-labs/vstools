@@ -131,7 +131,6 @@
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStream.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
