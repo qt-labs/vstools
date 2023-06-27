@@ -47,7 +47,7 @@ namespace QtVsTools.Core.MsBuild
 
         private MsBuildProject()
         {
-            for (int i = 0; i < files.Length; i++)
+            for (var i = 0; i < files.Length; i++)
                 files[i] = new MsBuildXmlFile();
         }
 
@@ -72,7 +72,7 @@ namespace QtVsTools.Core.MsBuild
             if (!File.Exists(pathToProject))
                 return null;
 
-            MsBuildProject project = new MsBuildProject();
+            var project = new MsBuildProject();
 
             project[Files.Project].filePath = pathToProject;
             if (!LoadXml(project[Files.Project]))
@@ -137,33 +137,33 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public string GetProperty(string property_name)
+        public string GetProperty(string propertyName)
         {
             var xProperty = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Elements()
-                .FirstOrDefault(x => x.Name.LocalName == property_name);
+                .FirstOrDefault(x => x.Name.LocalName == propertyName);
             return xProperty?.Value ?? "";
         }
 
-        public string GetProperty(string item_type, string property_name)
+        public string GetProperty(string itemType, string propertyName)
         {
             var xProperty = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + item_type)
+                .Elements(ns + itemType)
                 .Elements()
-                .FirstOrDefault(x => x.Name.LocalName == property_name);
+                .FirstOrDefault(x => x.Name.LocalName == propertyName);
             return xProperty?.Value ?? "";
         }
 
-        public IEnumerable<string> GetItems(string item_type)
+        public IEnumerable<string> GetItems(string itemType)
         {
             return this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
-                .Elements(ns + item_type)
+                .Elements(ns + itemType)
                 .Select(x => (string)x.Attribute("Include"));
         }
 
@@ -333,7 +333,7 @@ namespace QtVsTools.Core.MsBuild
 
                 // Create uncategorized property groups
                 foreach (var config in configs) {
-                    string condition =
+                    var condition =
                         $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'";
                     var group = new XElement(ns + "PropertyGroup",
                                     new XAttribute("Condition", condition));
@@ -403,10 +403,9 @@ namespace QtVsTools.Core.MsBuild
 
             // Find location for import of qt.props and for the QtSettings property group:
             // (cf. ".vcxproj file elements" https://docs.microsoft.com/en-us/cpp/build/reference/vcxproj-file-structure?view=vs-2019#vcxproj-file-elements)
-            XElement insertionPoint = null;
 
             // * After the last UserMacros property group
-            insertionPoint = this[Files.Project].xml
+            var insertionPoint = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros");
@@ -472,7 +471,7 @@ namespace QtVsTools.Core.MsBuild
             }
 
             // Add uncategorized property groups
-            foreach (XElement propertyGroup in propertyGroups.Values)
+            foreach (var propertyGroup in propertyGroups.Values)
                 insertionPoint.AddAfterSelf(propertyGroup);
 
             // Add import of default property values
@@ -521,7 +520,7 @@ namespace QtVsTools.Core.MsBuild
                 .ToList()
                 .ForEach(config =>
                 {
-                    string qtInstallValue = defaultVersionName;
+                    var qtInstallValue = defaultVersionName;
                     if (userProps != null) {
                         string platform = null;
                         try {
@@ -791,8 +790,7 @@ namespace QtVsTools.Core.MsBuild
 
         public bool AddQtMsBuildReferences()
         {
-            bool isQtMsBuildEnabled;
-            isQtMsBuildEnabled = this[Files.Project].xml
+            var isQtMsBuildEnabled = this[Files.Project].xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
@@ -869,7 +867,7 @@ namespace QtVsTools.Core.MsBuild
                         select new { customBuild, itemName, config, command };
 
             var projPath = this[Files.Project].filePath;
-            bool error = false;
+            var error = false;
             using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
                 foreach (var row in query) {
 
@@ -950,7 +948,7 @@ namespace QtVsTools.Core.MsBuild
             {
                 item.Elements().ToList().ForEach(prop =>
                 {
-                    string configName = prop.Parent.Attribute("ConfigName").Value;
+                    var configName = prop.Parent.Attribute("ConfigName").Value;
                     prop.SetAttributeValue("Condition",
                         $"'$(Configuration)|$(Platform)'=='{configName}'");
                     prop.Remove();
@@ -1014,9 +1012,9 @@ namespace QtVsTools.Core.MsBuild
                     return (string)cbt.Attribute("Include");
                 }
             }
-            if (!properties.TryGetValue(QtMoc.Property.InputFile, out string ouputFile))
+            if (!properties.TryGetValue(QtMoc.Property.InputFile, out var outputFile))
                 return (string)cbt.Attribute("Include");
-            return ouputFile;
+            return outputFile;
         }
 
         private bool RemoveGeneratedFiles(
@@ -1087,7 +1085,7 @@ namespace QtVsTools.Core.MsBuild
                     .Elements()
                     .Where(x => ((string)x.Attribute("Include"))
                         .IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                    .GroupBy(x => HelperFunctions.CanonicalPath(
+                    .GroupBy(x => CanonicalPath(
                         Path.Combine(projDir, (string)x.Attribute("Include"))), CaseIgnorer)
                     .ToDictionary(x => x.Key, x => new List<XElement>(x))
                 : new Dictionary<string, List<XElement>>();
@@ -1110,7 +1108,7 @@ namespace QtVsTools.Core.MsBuild
                 || ((string)x.Attribute("Include")).EndsWith(".moc", IgnoreCase))
                 .GroupBy(CustomBuildMocInput);
 
-            List<XElement> cbtToRemove = new List<XElement>();
+            var cbtToRemove = new List<XElement>();
             foreach (var cbtGroup in mocCbtCustomBuilds) {
 
                 //create new CustomBuild item for .cpp
@@ -1119,7 +1117,7 @@ namespace QtVsTools.Core.MsBuild
                     new XElement(ns + "FileType", "Document"));
 
                 //add properties from .moc.cbt items
-                List<string> cbtPropertyNames = new List<string> {
+                var cbtPropertyNames = new List<string> {
                     "AdditionalInputs",
                     "Command",
                     "Message",
@@ -1181,7 +1179,7 @@ namespace QtVsTools.Core.MsBuild
                 Rollback();
                 return false;
             }
-            List<XElement> mocDisableDynamicSource = new List<XElement>();
+            var mocDisableDynamicSource = new List<XElement>();
             foreach (var qtMoc in mocCustomBuilds.Elements(ns + QtMoc.ItemTypeName)) {
                 var itemName = (string)qtMoc.Attribute("Include");
                 var configName = (string)qtMoc.Attribute("ConfigName");
@@ -1381,13 +1379,13 @@ namespace QtVsTools.Core.MsBuild
 
         public void ReplacePath(string oldPath, string newPath)
         {
-            Uri srcUri = new Uri(Path.GetFullPath(oldPath));
-            Uri projUri = new Uri(this[Files.Project].filePath);
+            var srcUri = new Uri(Path.GetFullPath(oldPath));
+            var projUri = new Uri(this[Files.Project].filePath);
 
-            RegExpr absolutePath = GetPathPattern(srcUri.AbsolutePath);
-            RegExpr relativePath = GetPathPattern(projUri.MakeRelativeUri(srcUri).OriginalString);
+            var absolutePath = GetPathPattern(srcUri.AbsolutePath);
+            var relativePath = GetPathPattern(projUri.MakeRelativeUri(srcUri).OriginalString);
 
-            Regex findWhat = (absolutePath | relativePath).Render().Regex;
+            var findWhat = (absolutePath | relativePath).Render().Regex;
 
             foreach (var xElem in this[Files.Project].xml.Descendants()) {
                 if (!xElem.HasElements)
@@ -1453,7 +1451,7 @@ namespace QtVsTools.Core.MsBuild
 
             public string ExpandString(string stringToExpand)
             {
-                if (TryExpansionCache(stringToExpand, out string expandedString))
+                if (TryExpansionCache(stringToExpand, out var expandedString))
                     return expandedString;
 
                 if (evaluateTarget == null) {
