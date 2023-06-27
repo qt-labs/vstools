@@ -26,7 +26,7 @@ namespace QtVsTools.Core.MsBuild
 
     public class MsBuildProject
     {
-        class MsBuildXmlFile
+        private class MsBuildXmlFile
         {
             public string filePath = "";
             public XDocument xml;
@@ -35,7 +35,7 @@ namespace QtVsTools.Core.MsBuild
             public bool isCommittedDirty;
         }
 
-        enum Files
+        private enum Files
         {
             Project = 0,
             Filters,
@@ -43,15 +43,15 @@ namespace QtVsTools.Core.MsBuild
             Count
         }
 
-        readonly MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
+        private readonly MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
 
-        MsBuildProject()
+        private MsBuildProject()
         {
             for (int i = 0; i < files.Length; i++)
                 files[i] = new MsBuildXmlFile();
         }
 
-        MsBuildXmlFile this[Files file]
+        private MsBuildXmlFile this[Files file]
         {
             get => (int)file >= (int)Files.Count ? files[0] : files[(int)file];
         }
@@ -89,7 +89,7 @@ namespace QtVsTools.Core.MsBuild
             return project;
         }
 
-        static bool LoadXml(MsBuildXmlFile xmlFile)
+        private static bool LoadXml(MsBuildXmlFile xmlFile)
         {
             try {
                 var xmlText = File.ReadAllText(xmlFile.filePath, Encoding.UTF8);
@@ -114,7 +114,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        void Commit()
+        private void Commit()
         {
             foreach (var file in files.Where(x => x.xml != null)) {
                 if (file.isDirty) {
@@ -129,7 +129,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        void Rollback()
+        private void Rollback()
         {
             foreach (var file in files.Where(x => x.xml != null)) {
                 file.xml = new XDocument(file.xmlCommitted);
@@ -187,8 +187,9 @@ namespace QtVsTools.Core.MsBuild
         ///     '$(Configuration)|$(Platform)'=='_TOKEN_|_TOKEN_'
         ///
         /// </summary>
-        Parser _ConfigCondition;
-        Parser ConfigCondition
+        private Parser _ConfigCondition;
+
+        private Parser ConfigCondition
         {
             get
             {
@@ -210,8 +211,9 @@ namespace QtVsTools.Core.MsBuild
         ///     QtVS_vNNN
         ///
         /// </summary>
-        Parser _ProjectFormatVersion;
-        Parser ProjectFormatVersion
+        private Parser _ProjectFormatVersion;
+
+        private Parser ProjectFormatVersion
         {
             get
             {
@@ -730,7 +732,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        bool IsModuleUsed(
+        private bool IsModuleUsed(
             QtModule module,
             IEnumerable<XElement> compiler,
             IEnumerable<XElement> linker,
@@ -757,7 +759,7 @@ namespace QtVsTools.Core.MsBuild
                 .Any(x => module.Defines.Contains(x));
         }
 
-        bool IsPrivateIncludePathUsed(
+        private bool IsPrivateIncludePathUsed(
             QtModule module,
             IEnumerable<XElement> compiler)
         {
@@ -849,9 +851,9 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        delegate string ItemCommandLineReplacement(string itemName, string cmdLine);
+        private delegate string ItemCommandLineReplacement(string itemName, string cmdLine);
 
-        bool SetCommandLines(
+        private bool SetCommandLines(
             QtMsBuildContainer qtMsBuild,
             IEnumerable<XElement> configurations,
             IEnumerable<XElement> customBuilds,
@@ -938,7 +940,7 @@ namespace QtVsTools.Core.MsBuild
                 .ToList();
         }
 
-        void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
+        private void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
         {
             customBuilds
                 .Elements().Where(
@@ -1003,7 +1005,7 @@ namespace QtVsTools.Core.MsBuild
             return type == "MocDir" ? "GeneratedFiles\\$(ConfigurationName)" : "GeneratedFiles";
         }
 
-        string CustomBuildMocInput(XElement cbt)
+        private string CustomBuildMocInput(XElement cbt)
         {
             var commandLine = (string)cbt.Element(ns + "Command");
             Dictionary<QtMoc.Property, string> properties;
@@ -1018,7 +1020,7 @@ namespace QtVsTools.Core.MsBuild
             return ouputFile;
         }
 
-        bool RemoveGeneratedFiles(
+        private bool RemoveGeneratedFiles(
             string projDir,
             List<CustomBuildEval> cbEvals,
             string configName,
@@ -1320,7 +1322,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        bool TryReplaceTextInPlace(ref string text, Regex findWhat, string newText)
+        private bool TryReplaceTextInPlace(ref string text, Regex findWhat, string newText)
         {
             var match = findWhat.Match(text);
             if (!match.Success)
@@ -1333,7 +1335,7 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        void ReplaceText(XElement xElem, Regex findWhat, string newText)
+        private void ReplaceText(XElement xElem, Regex findWhat, string newText)
         {
             var elemValue = (string)xElem;
             if (!string.IsNullOrEmpty(elemValue)
@@ -1342,7 +1344,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        void ReplaceText(XAttribute xAttr, Regex findWhat, string newText)
+        private void ReplaceText(XAttribute xAttr, Regex findWhat, string newText)
         {
             var attrValue = (string)xAttr;
             if (!string.IsNullOrEmpty(attrValue)
@@ -1354,7 +1356,7 @@ namespace QtVsTools.Core.MsBuild
         /// <summary>
         /// All path separators
         /// </summary>
-        static readonly char[] slashChars = {
+        private static readonly char[] slashChars = {
             Path.DirectorySeparatorChar,
             Path.AltDirectorySeparatorChar
         };
@@ -1362,13 +1364,13 @@ namespace QtVsTools.Core.MsBuild
         /// <summary>
         /// Pattern that matches one path separator char
         /// </summary>
-        static readonly RegExpr slash = CharSet[slashChars];
+        private static readonly RegExpr slash = CharSet[slashChars];
 
         /// <summary>
         /// Gets a RegExpr that matches a given path, regardless
         /// of case and varying directory separators
         /// </summary>
-        static RegExpr GetPathPattern(string findWhatPath)
+        private static RegExpr GetPathPattern(string findWhatPath)
         {
             return
                 // Make pattern case-insensitive
@@ -1401,7 +1403,7 @@ namespace QtVsTools.Core.MsBuild
             Commit();
         }
 
-        class MSBuildEvaluator : IVsMacroExpander, IDisposable
+        private class MSBuildEvaluator : IVsMacroExpander, IDisposable
         {
             private readonly MsBuildXmlFile projFile;
             private string tempProjFilePath;
@@ -1433,7 +1435,7 @@ namespace QtVsTools.Core.MsBuild
                 }
             }
 
-            string ExpansionCacheKey(string stringToExpand)
+            private string ExpansionCacheKey(string stringToExpand)
             {
                 var key = new StringBuilder();
                 foreach (var property in Properties)
@@ -1442,13 +1444,13 @@ namespace QtVsTools.Core.MsBuild
                 return key.ToString();
             }
 
-            bool TryExpansionCache(string stringToExpand, out string expandedString)
+            private bool TryExpansionCache(string stringToExpand, out string expandedString)
             {
                 return expansionCache.TryGetValue(
                     ExpansionCacheKey(stringToExpand), out expandedString);
             }
 
-            void AddToExpansionCache(string stringToExpand, string expandedString)
+            private void AddToExpansionCache(string stringToExpand, string expandedString)
             {
                 expansionCache[ExpansionCacheKey(stringToExpand)] = expandedString;
             }
@@ -1491,7 +1493,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        class CustomBuildEval
+        private class CustomBuildEval
         {
             public string ProjectConfig { get; set; }
             public string Identity { get; set; }
@@ -1501,7 +1503,7 @@ namespace QtVsTools.Core.MsBuild
             public string Command { get; set; }
         }
 
-        List<CustomBuildEval> EvaluateCustomBuild()
+        private List<CustomBuildEval> EvaluateCustomBuild()
         {
             var eval = new List<CustomBuildEval>();
 
@@ -1581,10 +1583,10 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        static readonly Regex ConditionParser =
+        private static readonly Regex ConditionParser =
             new(@"\'\$\(Configuration[^\)]*\)\|\$\(Platform[^\)]*\)\'\=\=\'([^\']+)\'");
 
-        class MsBuildConverterProvider : IPropertyStorageProvider
+        private class MsBuildConverterProvider : IPropertyStorageProvider
         {
             public string GetProperty(object propertyStorage, string itemType, string propertyName)
             {
