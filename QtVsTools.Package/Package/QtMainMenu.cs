@@ -102,7 +102,7 @@ namespace QtVsTools
                     QtVsToolsPackage.Instance.PkgInstallPath);
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
-                QtMsBuildConverter.SolutionToQtMsBuild();
+                MsBuildProjectConverter.SolutionToQtMsBuild();
                 break;
             case QtMenus.Package.QtProjectSettings:
                 QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
@@ -148,12 +148,12 @@ namespace QtVsTools
             case QtMenus.Package.ConvertToQtMsBuild:
                 command.Visible = command.Enabled = false;
                 foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                    switch (ProjectFormat.GetVersion(project)) {
-                    case ProjectFormat.Version.V1:
-                    case ProjectFormat.Version.V2:
+                    switch (MsBuildProjectFormat.GetVersion(project)) {
+                    case MsBuildProjectFormat.Version.V1:
+                    case MsBuildProjectFormat.Version.V2:
                         command.Visible = command.Enabled = true;
                         return;
-                    case > ProjectFormat.Version.V3 and < ProjectFormat.Version.Latest:
+                    case > MsBuildProjectFormat.Version.V3 and < MsBuildProjectFormat.Version.Latest:
                         command.Visible = command.Enabled = true;
                         command.Text = "Upgrade projects to latest Qt project format version";
                         return;

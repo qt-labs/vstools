@@ -238,22 +238,22 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        private ProjectFormat.Version ParseProjectFormatVersion(string text)
+        private MsBuildProjectFormat.Version ParseProjectFormatVersion(string text)
         {
             if (string.IsNullOrEmpty(text) || ProjectFormatVersion == null)
-                return ProjectFormat.Version.Unknown;
+                return MsBuildProjectFormat.Version.Unknown;
             try {
-                return (ProjectFormat.Version) ProjectFormatVersion.Parse(text)
+                return (MsBuildProjectFormat.Version) ProjectFormatVersion.Parse(text)
                     .GetValues<int>("VERSION")
                     .First();
             } catch {
-                return text.StartsWith(ProjectFormat.KeywordV2, StringComparison.Ordinal)
-                    ? ProjectFormat.Version.V1
-                    : ProjectFormat.Version.Unknown;
+                return text.StartsWith(MsBuildProjectFormat.KeywordV2, StringComparison.Ordinal)
+                    ? MsBuildProjectFormat.Version.V1
+                    : MsBuildProjectFormat.Version.Unknown;
             }
         }
 
-        public ProjectFormat.Version GetProjectFormatVersion()
+        public MsBuildProjectFormat.Version GetProjectFormatVersion()
         {
             var globals = this[Files.Project].xml
                 .Elements(ns + "Project")
@@ -261,8 +261,8 @@ namespace QtVsTools.Core.MsBuild
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
             // Set Qt project format version
             var projKeyword = globals?.Elements(ns + "Keyword")
-                .FirstOrDefault(x => x.Value.StartsWith(ProjectFormat.KeywordLatest)
-                    || x.Value.StartsWith(ProjectFormat.KeywordV2));
+                .FirstOrDefault(x => x.Value.StartsWith(MsBuildProjectFormat.KeywordLatest)
+                    || x.Value.StartsWith(MsBuildProjectFormat.KeywordV2));
             return ParseProjectFormatVersion(projKeyword?.Value);
         }
 
@@ -276,15 +276,15 @@ namespace QtVsTools.Core.MsBuild
         /// </summary>
         /// <param name="oldVersion"></param>
         /// <returns>true if successful</returns>
-        public bool UpdateProjectFormatVersion(ProjectFormat.Version oldVersion)
+        public bool UpdateProjectFormatVersion(MsBuildProjectFormat.Version oldVersion)
         {
             if (ConfigCondition == null)
                 return false;
 
             switch (oldVersion) {
-            case ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Latest:
                 return true; // Nothing to do!
-            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Unknown or > MsBuildProjectFormat.Version.Latest:
                 return false; // Nothing we can do!
             }
 
@@ -303,12 +303,12 @@ namespace QtVsTools.Core.MsBuild
 
             // Set Qt project format version
             var projKeyword = globals?.Elements(ns + "Keyword")
-                .FirstOrDefault(x => x.Value.StartsWith(ProjectFormat.KeywordLatest)
-                    || x.Value.StartsWith(ProjectFormat.KeywordV2));
+                .FirstOrDefault(x => x.Value.StartsWith(MsBuildProjectFormat.KeywordLatest)
+                    || x.Value.StartsWith(MsBuildProjectFormat.KeywordV2));
             if (projKeyword == null)
                 return false;
 
-            projKeyword.SetValue($"QtVS_v{(int)ProjectFormat.Version.Latest}");
+            projKeyword.SetValue($"QtVS_v{(int)MsBuildProjectFormat.Version.Latest}");
 
             // Find import of qt.props
             var qtPropsImport = this[Files.Project].xml
@@ -328,7 +328,7 @@ namespace QtVsTools.Core.MsBuild
             var propertyGroups = new Dictionary<string, XElement>();
 
             // Upgrading from <= v3.2?
-            if (oldVersion < ProjectFormat.Version.V3PropertyEval) {
+            if (oldVersion < MsBuildProjectFormat.Version.V3PropertyEval) {
                 // Find import of default Qt properties
                 var qtDefaultProps = this[Files.Project].xml
                     .Elements(ns + "Project")
@@ -367,7 +367,7 @@ namespace QtVsTools.Core.MsBuild
             }
 
             // Upgrading from <= v3.1?
-            if (oldVersion < ProjectFormat.Version.V3GlobalQtMsBuildProperty) {
+            if (oldVersion < MsBuildProjectFormat.Version.V3GlobalQtMsBuildProperty) {
                 // Move Qt/MSBuild path to global property
                 var qtMsBuildProperty = globals
                     .ElementsAfterSelf(ns + "PropertyGroup")
@@ -382,7 +382,7 @@ namespace QtVsTools.Core.MsBuild
                     qtMsBuildPropertyGroup.Remove();
                 }
             }
-            if (oldVersion > ProjectFormat.Version.V3) {
+            if (oldVersion > MsBuildProjectFormat.Version.V3) {
                 this[Files.Project].isDirty = true;
                 Commit();
                 return true;
@@ -391,7 +391,7 @@ namespace QtVsTools.Core.MsBuild
             // Upgrading from v3.0?
             Dictionary<string, XElement> oldQtInstall = null;
             Dictionary<string, XElement> oldQtSettings = null;
-            if (oldVersion is ProjectFormat.Version.V3) {
+            if (oldVersion is MsBuildProjectFormat.Version.V3) {
                 oldQtInstall = this[Files.Project].xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
@@ -490,7 +490,7 @@ namespace QtVsTools.Core.MsBuild
                         new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
 
             //// Upgrading from v3.0: move Qt settings to newly created import groups
-            if (oldVersion is ProjectFormat.Version.V3) {
+            if (oldVersion is MsBuildProjectFormat.Version.V3) {
                 foreach (var configQtSettings in qtSettings) {
                     var configCondition = (string)configQtSettings.Attribute("Condition");
 
@@ -861,7 +861,7 @@ namespace QtVsTools.Core.MsBuild
         private delegate string ItemCommandLineReplacement(string itemName, string cmdLine);
 
         private bool SetCommandLines(
-            QtMsBuildContainer qtMsBuild,
+            MsBuildProjectContainer qtMsBuild,
             IEnumerable<XElement> configurations,
             IEnumerable<XElement> customBuilds,
             string toolExec,
@@ -1016,7 +1016,7 @@ namespace QtVsTools.Core.MsBuild
             var commandLine = (string)cbt.Element(ns + "Command");
             Dictionary<QtMoc.Property, string> properties;
             using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
-                if (!QtMsBuildContainer.QtMocInstance.ParseCommandLine(
+                if (!MsBuildProjectContainer.QtMocInstance.ParseCommandLine(
                     commandLine, evaluator, out properties)) {
                     return (string)cbt.Attribute("Include");
                 }
@@ -1066,7 +1066,7 @@ namespace QtVsTools.Core.MsBuild
         {
             var cbEvals = EvaluateCustomBuild();
 
-            var qtMsBuild = new QtMsBuildContainer(new MsBuildConverterProvider());
+            var qtMsBuild = new MsBuildProjectContainer(new MsBuildConverterProvider());
             qtMsBuild.BeginSetItemProperties();
 
             var projDir = Path.GetDirectoryName(this[Files.Project].filePath);

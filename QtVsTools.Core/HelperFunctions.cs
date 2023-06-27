@@ -230,16 +230,16 @@ namespace QtVsTools.Core
                 return false;
             }
         }
-        public static List<string> GetProjectFiles(Project pro, FilesToList filter)
+        public static List<string> GetProjectFiles(EnvDTE.Project dteProject, FilesToList filter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return GetProjectFiles(pro?.Object as VCProject, filter);
+            return GetProjectFiles(dteProject?.Object as VCProject, filter);
         }
 
-        public static List<string> GetProjectFiles(QtProject qtProject, FilesToList filter)
+        public static List<string> GetProjectFiles(MsBuildProject project, FilesToList filter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return GetProjectFiles(qtProject?.VcProject, filter);
+            return GetProjectFiles(project?.VcProject, filter);
         }
 
         public static List<string> GetProjectFiles(VCProject vcPro, FilesToList filter)
@@ -331,7 +331,7 @@ namespace QtVsTools.Core
         /// Returns the the current selected Qt Project. If not project is selected
         /// or if the selected project is not a Qt project this function returns null.
         /// </summary>
-        public static QtProject GetSelectedQtProject(DTE dteObject)
+        public static MsBuildProject GetSelectedQtProject(DTE dteObject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -354,7 +354,7 @@ namespace QtVsTools.Core
             if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
                 project = containing.Object as VCProject;
 
-            return QtProject.GetOrAdd(project);
+            return MsBuildProject.GetOrAdd(project);
         }
 
         public static VCFile[] GetSelectedFiles(DTE dteObject)

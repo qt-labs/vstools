@@ -52,9 +52,9 @@ namespace QtVsTools.Editors
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                if (QtProject.GetOrAdd(VsShell.GetProject(Context)) is not {} qtProject)
+                if (MsBuildProject.GetOrAdd(VsShell.GetProject(Context)) is not {} project)
                     return null;
-                var qtToolsPath = qtProject.GetPropertyValue("QtToolsPath");
+                var qtToolsPath = project.GetPropertyValue("QtToolsPath");
                 return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
             });
         }

@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
-    public static class ProjectFormat
+    public static class MsBuildProjectFormat
     {
         /// <summary>
         /// An enumeration containing the version numbers used during the Qt VS Tools development

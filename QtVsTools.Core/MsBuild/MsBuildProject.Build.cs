@@ -29,7 +29,7 @@ namespace QtVsTools.Core.MsBuild
     using VisualStudio;
     using static Common.EnumExt;
 
-    public partial class QtProject
+    public partial class MsBuildProject
     {
         private enum Target
         {
@@ -37,8 +37,8 @@ namespace QtVsTools.Core.MsBuild
             [String("QtVsTools.QtMsBuild.QtProjectBuild.Target.SetOutdated")] SetOutdated
         }
 
-        private static PunisherQueue<QtProject> BuildQueue => StaticLazy.Get(() =>
-            BuildQueue, () => new PunisherQueue<QtProject>(
+        private static PunisherQueue<MsBuildProject> BuildQueue => StaticLazy.Get(() =>
+            BuildQueue, () => new PunisherQueue<MsBuildProject>(
                 getItemKey: build => build.ConfiguredProject));
 
         private static ConcurrentStopwatch RequestTimer => StaticLazy.Get(() =>
@@ -51,7 +51,7 @@ namespace QtVsTools.Core.MsBuild
 
         private static Task BuildDispatcher { get; set; }
 
-        private QtProject()
+        private MsBuildProject()
         {}
 
         public void StartBuild(
@@ -96,7 +96,7 @@ namespace QtVsTools.Core.MsBuild
             if (configuredProject == null)
                 throw new ArgumentException($"Unknown configuration '{configName}'.");
 
-            BuildQueue.Enqueue(new QtProject
+            BuildQueue.Enqueue(new MsBuildProject
             {
                 ConfiguredProject = configuredProject,
                 Properties = properties?.ToDictionary(x => x.Key, x => x.Value),
@@ -201,7 +201,7 @@ namespace QtVsTools.Core.MsBuild
             var buildParams = new BuildParameters
             {
                 Loggers = loggerVerbosity != LoggerVerbosity.Quiet
-                        ? new[] { new QtProjectLogger { Verbosity = loggerVerbosity } }
+                        ? new[] { new MsBuildProjectLogger { Verbosity = loggerVerbosity } }
                         : null
             };
 

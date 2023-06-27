@@ -17,7 +17,7 @@ namespace QtVsTools.Core.MsBuild
     using Core;
     using Options;
 
-    public partial class QtProject
+    public partial class MsBuildProject
     {
         public void Refresh(
             string configId = null,

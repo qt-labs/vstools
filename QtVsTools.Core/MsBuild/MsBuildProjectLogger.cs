@@ -9,7 +9,7 @@ namespace QtVsTools.Core.MsBuild
 {
     using Core;
 
-    internal class QtProjectLogger : ILogger
+    internal class MsBuildProjectLogger : ILogger
     {
         public LoggerVerbosity Verbosity { get; set; }
         public string Parameters { get; set; }

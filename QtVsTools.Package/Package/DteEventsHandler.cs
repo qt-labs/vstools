@@ -74,9 +74,9 @@ namespace QtVsTools
             if (f1HelpEvents != null)
                 f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
-            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                if (QtProject.GetOrAdd(project) is {} qtProject)
-                    InitializeVcProject(qtProject);
+            foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte)) {
+                if (MsBuildProject.GetOrAdd(vcProject) is {} project)
+                    InitializeMsBuildProjectProject(project);
             }
         }
 
@@ -127,10 +127,10 @@ namespace QtVsTools
             if (dte.Debugger is { CurrentMode: not dbgDebugMode.dbgDesignMode })
                 return;
 
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                 return;
 
-            var versionInfo = qtProject.VersionInfo;
+            var versionInfo = project.VersionInfo;
             if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
                 QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
         }
@@ -171,7 +171,7 @@ namespace QtVsTools
             if (document.ProjectItem?.ContainingProject?.Object is not VCProject vcProject)
                 return;
 
-            if (QtProject.GetOrAdd(vcProject) is not {} qtPro)
+            if (MsBuildProject.GetOrAdd(vcProject) is not {} qtPro)
                 return;
 
             if (qtPro.VcProject.Files is not IVCCollection files)
@@ -228,7 +228,7 @@ namespace QtVsTools
                         return;
                     if (vcFileName.StartsWith("qrc_", IgnoreCase)) {
                         // Do not use precompiled headers with these files
-                        QtProject.SetPCHOption(vcFile, pchOption.pchNone);
+                        MsBuildProject.SetPCHOption(vcFile, pchOption.pchNone);
                         return;
                     }
                     var pcHeaderThrough = qtPro.GetPrecompiledHeaderThrough();
@@ -238,7 +238,7 @@ namespace QtVsTools
                             && CxxStream.ContainsNotCommented(vcFile,
                                 $"#include \"{pcHeaderThrough}\"", IgnoreCase, false)) {
                             //File is used to create precompiled headers
-                            QtProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
+                            MsBuildProject.SetPCHOption(vcFile, pchOption.pchCreateUsingSpecific);
                             return;
                         }
                     }
@@ -264,9 +264,9 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                 return;
-            qtProject.RemoveGeneratedFiles(projectItem.Name);
+            project.RemoveGeneratedFiles(projectItem.Name);
         }
 
         private void ProjectItemsEvents_ItemRenamed(ProjectItem projectItem, string oldName)
@@ -275,57 +275,57 @@ namespace QtVsTools
 
             if (string.IsNullOrEmpty(oldName))
                 return;
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                 return;
 
-            qtProject.RemoveGeneratedFiles(oldName);
+            project.RemoveGeneratedFiles(oldName);
             ProjectItemsEvents_ItemAdded(projectItem);
         }
 
-        private void SolutionEvents_ProjectAdded(Project project)
+        private void SolutionEvents_ProjectAdded(EnvDTE.Project dteProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Ignore temp projects created by Qt/CMake wizard
-            if (QtProject.GetOrAdd(project.Object as VCProject) is not {} qtProject)
+            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is not {} project)
                 return;
 
             // ignore temporary projects created by Qt/CMake wizard
-            if (qtProject.GetPropertyValue("QT_CMAKE_TEMPLATE") == "true")
+            if (project.GetPropertyValue("QT_CMAKE_TEMPLATE") == "true")
                 return;
 
-            InitializeVcProject(qtProject);
-            qtProject.Refresh();
+            InitializeMsBuildProjectProject(project);
+            project.Refresh();
         }
 
         public void SolutionEvents_Opened()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            foreach (var project in HelperFunctions.ProjectsInSolution(dte)) {
-                if (QtProject.GetOrAdd(project) is not {} qtProject)
+            foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte)) {
+                if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
                     continue;
 
-                InitializeVcProject(qtProject);
-                qtProject.SolutionPath = dte.Solution.FullName;
+                InitializeMsBuildProjectProject(project);
+                project.SolutionPath = dte.Solution.FullName;
             }
         }
 
         private static void SolutionEvents_AfterClosing()
         {
-            QtProject.Reset();
+            MsBuildProject.Reset();
         }
 
         // Retrieves the VCProjectEngine from the given project and registers a handler for
         // VCProjectEngineEvents.
-        private void InitializeVcProject(QtProject qtProject)
+        private void InitializeMsBuildProjectProject(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (vcProjectEngineEvents != null)
                 return;
 
-            if (qtProject?.VcProject is not { VCProjectEngine: VCProjectEngine vcProjectEngine })
+            if (project?.VcProject is not { VCProjectEngine: VCProjectEngine vcProjectEngine })
                 return;
 
             vcProjectEngineEvents = vcProjectEngine.Events as VCProjectEngineEvents;
@@ -346,13 +346,13 @@ namespace QtVsTools
             if (item is not VCConfiguration vcConfig)
                 return;
 
-            if (QtProject.GetOrAdd(vcConfig.project as VCProject) is not {} qtProject)
+            if (MsBuildProject.GetOrAdd(vcConfig.project as VCProject) is not {} project)
                 return;
 
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
 
-            qtProject.Refresh(vcConfig.Name);
+            project.Refresh(vcConfig.Name);
         }
     }
 }

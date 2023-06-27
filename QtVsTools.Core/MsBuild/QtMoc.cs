@@ -46,7 +46,7 @@ namespace QtVsTools.Core.MsBuild
         }
 
         private readonly Dictionary<Property, Option> options = new();
-        private static readonly QtMsBuildContainer QtMsBuild = new(new VcPropertyStorageProvider());
+        private static readonly MsBuildProjectContainer QtMsBuild = new(new VcPropertyStorageProvider());
 
         public QtMoc()
         {

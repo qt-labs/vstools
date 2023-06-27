@@ -14,7 +14,7 @@ namespace QtVsTools.Core.MsBuild
     using Options;
     using VisualStudio;
 
-    public partial class QtProject
+    public partial class MsBuildProject
     {
         private class UpdateProjectFormat : InfoBarMessage
         {
@@ -41,7 +41,7 @@ namespace QtVsTools.Core.MsBuild
                         CloseInfoBar = true,
                         OnClicked = () => {
                             ThreadHelper.ThrowIfNotOnUIThread();
-                            QtMsBuildConverter.SolutionToQtMsBuild();
+                            MsBuildProjectConverter.SolutionToQtMsBuild();
                         }
                     },
                     new()

@@ -27,33 +27,33 @@ namespace QtVsTools.Core.MsBuild
     /// There exists at most one QtProject perVCProject. Use QtProject.GetOrAdd
     /// to get the QtProject for a VCProject.
     /// </summary>
-    public partial class QtProject : Concurrent<QtProject>
+    public partial class MsBuildProject : Concurrent<MsBuildProject>
     {
         private static LazyFactory StaticLazy { get; } = new();
 
-        private static ConcurrentDictionary<string, QtProject> Instances => StaticLazy.Get(() =>
-            Instances, () => new ConcurrentDictionary<string, QtProject>());
+        private static ConcurrentDictionary<string, MsBuildProject> Instances => StaticLazy.Get(() =>
+            Instances, () => new ConcurrentDictionary<string, MsBuildProject>());
 
         private static IVsTaskStatusCenterService StatusCenter => StaticLazy.Get(() =>
             StatusCenter, VsServiceProvider
             .GetService<SVsTaskStatusCenterService, IVsTaskStatusCenterService>);
 
-        public static QtProject GetOrAdd(VCProject vcProject)
+        public static MsBuildProject GetOrAdd(VCProject vcProject)
         {
             if (vcProject == null)
                 return null;
             lock (StaticCriticalSection) {
-                if (ProjectFormat.GetVersion(vcProject) >= ProjectFormat.Version.V3) {
-                    if (Instances.TryGetValue(vcProject.ProjectFile, out var qtProject))
-                        return qtProject;
-                    qtProject = new QtProject(vcProject);
-                    Instances[vcProject.ProjectFile] = qtProject;
-                    InitQueue.Enqueue(qtProject);
+                if (MsBuildProjectFormat.GetVersion(vcProject) >= MsBuildProjectFormat.Version.V3) {
+                    if (Instances.TryGetValue(vcProject.ProjectFile, out var project))
+                        return project;
+                    project = new MsBuildProject(vcProject);
+                    Instances[vcProject.ProjectFile] = project;
+                    InitQueue.Enqueue(project);
                     InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
-                    return qtProject;
+                    return project;
                 }
 
-                if (ProjectFormat.GetVersion(vcProject) >= ProjectFormat.Version.V1)
+                if (MsBuildProjectFormat.GetVersion(vcProject) >= MsBuildProjectFormat.Version.V1)
                     ShowUpdateFormatMessage();
 
                 return null; // ignore old or unknown projects
@@ -68,7 +68,7 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        private QtProject(VCProject vcProject)
+        private MsBuildProject(VCProject vcProject)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -94,11 +94,11 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public ProjectFormat.Version FormatVersion
+        public MsBuildProjectFormat.Version FormatVersion
         {
             get
             {
-                return ProjectFormat.GetVersion(VcProject);
+                return MsBuildProjectFormat.GetVersion(VcProject);
             }
         }
 

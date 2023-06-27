@@ -166,11 +166,11 @@ namespace QtVsTools.Core
             return versionKey?.GetValue("InstallDir") as string;
         }
 
-        public string GetInstallPath(QtProject qtProject)
+        public string GetInstallPath(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var version = qtProject?.QtVersion;
+            var version = project?.QtVersion;
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             return version == null ? null : GetInstallPath(version);
@@ -249,14 +249,14 @@ namespace QtVsTools.Core
             return versionAvailable;
         }
 
-        public bool SaveProjectQtVersion(QtProject qtProject, string version)
+        public bool SaveProjectQtVersion(MsBuildProject project, string version)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
                 return false;
 
-            if (qtProject?.VcProject.Configurations is not IVCCollection configurations)
+            if (project?.VcProject.Configurations is not IVCCollection configurations)
                 return false;
 
             foreach (VCConfiguration3 config in configurations)

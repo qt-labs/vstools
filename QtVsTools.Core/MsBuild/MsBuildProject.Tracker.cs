@@ -21,10 +21,10 @@ namespace QtVsTools.Core.MsBuild
     using Options;
     using VisualStudio;
 
-    public partial class QtProject
+    public partial class MsBuildProject
     {
-        private static PunisherQueue<QtProject> InitQueue => StaticLazy.Get(() =>
-            InitQueue, () => new PunisherQueue<QtProject>());
+        private static PunisherQueue<MsBuildProject> InitQueue => StaticLazy.Get(() =>
+            InitQueue, () => new PunisherQueue<MsBuildProject>());
 
         private static Task InitDispatcher { get; set; }
         private static ITaskHandler2 InitStatus { get; set; }

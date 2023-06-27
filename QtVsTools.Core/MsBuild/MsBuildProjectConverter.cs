@@ -4,7 +4,6 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,7 +18,7 @@ namespace QtVsTools.Core.MsBuild
     using Core;
     using VisualStudio;
 
-    public static class QtMsBuildConverter
+    public static class MsBuildProjectConverter
     {
         private const string CancelConversion = "Project conversion canceled.";
         private const string ErrorConversion = "Error converting project {0}";
@@ -35,8 +34,8 @@ namespace QtVsTools.Core.MsBuild
                 return WarningMessage("No projects to convert.");
 
             var projects = (from project in HelperFunctions.ProjectsInSolution(dte)
-                let version = ProjectFormat.GetVersion(project)
-                where version is >= ProjectFormat.Version.V1 and < ProjectFormat.Version.Latest
+                let version = MsBuildProjectFormat.GetVersion(project)
+                where version is >= MsBuildProjectFormat.Version.V1 and < MsBuildProjectFormat.Version.Latest
                 select project).ToList();
 
             if (projects.Count == 0)
@@ -117,9 +116,9 @@ namespace QtVsTools.Core.MsBuild
                 return false;
             var oldVersion = xmlProject.GetProjectFormatVersion();
             switch (oldVersion) {
-            case ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Latest:
                 return true; // Nothing to do!
-            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Unknown or > MsBuildProjectFormat.Version.Latest:
                 return false; // Nothing we can do!
             }
 

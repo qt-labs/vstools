@@ -141,14 +141,14 @@
     <Compile Include="MsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MsBuild\QtMsBuildContainer.cs" />
-    <Compile Include="MsBuild\QtMsBuildConverter.cs" />
-    <Compile Include="MsBuild\QtProject.cs" />
-    <Compile Include="MsBuild\QtProject.Messages.cs" />
-    <Compile Include="MsBuild\QtProject.Build.cs" />
-    <Compile Include="MsBuild\QtProject.IntelliSense.cs" />
-    <Compile Include="MsBuild\QtProjectLogger.cs" />
-    <Compile Include="MsBuild\QtProject.Tracker.cs" />
+    <Compile Include="MsBuild\MsBuildProjectContainer.cs" />
+    <Compile Include="MsBuild\MsBuildProjectConverter.cs" />
+    <Compile Include="MsBuild\MsBuildProject.cs" />
+    <Compile Include="MsBuild\MsBuildProject.Messages.cs" />
+    <Compile Include="MsBuild\MsBuildProject.Build.cs" />
+    <Compile Include="MsBuild\MsBuildProject.IntelliSense.cs" />
+    <Compile Include="MsBuild\MsBuildProjectLogger.cs" />
+    <Compile Include="MsBuild\MsBuildProject.Tracker.cs" />
     <Compile Include="MsBuild\QtRcc.cs" />
     <Compile Include="MsBuild\QtRepc.cs" />
     <Compile Include="MsBuild\QtTool.cs" />
@@ -161,7 +161,7 @@
     <Compile Include="Options\QtVersionsTable.cs">
       <DependentUpon>QtVersionsTable.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectFormat.cs" />
+    <Compile Include="MsBuild\MsBuildProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.cs" />

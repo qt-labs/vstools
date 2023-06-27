@@ -24,15 +24,15 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
+            var project = MsBuildProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
             RunTranslationTarget(BuildAction.Release,
-                qtProject, vcFiles.Select(vcFile => vcFile?.RelativePath));
+                project, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
 
-        public static void RunlRelease(QtProject qtProject)
+        public static void RunlRelease(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            RunTranslationTarget(BuildAction.Release, qtProject);
+            RunTranslationTarget(BuildAction.Release, project);
         }
 
         public static void RunlRelease(EnvDTE.Solution solution)
@@ -43,46 +43,46 @@ namespace QtVsTools
                 return;
 
             foreach (var project in HelperFunctions.ProjectsInSolution(solution.DTE))
-                RunlRelease(QtProject.GetOrAdd(project));
+                RunlRelease(MsBuildProject.GetOrAdd(project));
         }
 
         public static void RunlUpdate(VCFile vcFile)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.GetOrAdd(vcFile.project as VCProject);
+            var project = MsBuildProject.GetOrAdd(vcFile.project as VCProject);
             RunTranslationTarget(BuildAction.Update,
-                qtProject, new[] { vcFile.RelativePath });
+                project, new[] { vcFile.RelativePath });
         }
 
         public static void RunlUpdate(VCFile[] vcFiles)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var qtProject = QtProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
+            var project = MsBuildProject.GetOrAdd(vcFiles.FirstOrDefault()?.project as VCProject);
             RunTranslationTarget(BuildAction.Update,
-                qtProject, vcFiles.Select(vcFile => vcFile?.RelativePath));
+                project, vcFiles.Select(vcFile => vcFile?.RelativePath));
         }
 
-        public static void RunlUpdate(QtProject qtProject)
+        public static void RunlUpdate(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            RunTranslationTarget(BuildAction.Update, qtProject);
+            RunTranslationTarget(BuildAction.Update, project);
         }
 
         private enum BuildAction { Update, Release }
 
-        private static void RunTranslationTarget(BuildAction buildAction, QtProject qtProject,
+        private static void RunTranslationTarget(BuildAction buildAction, MsBuildProject project,
             IEnumerable<string> selectedFiles = null)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (qtProject == null) {
+            if (project == null) {
                 Messages.Print("translation: Error accessing project interface");
                 return;
             }
 
-            if (qtProject.VcProject.ActiveConfiguration is not {} activeConfig) {
+            if (project.VcProject.ActiveConfiguration is not {} activeConfig) {
                 Messages.Print("translation: Error accessing build interface");
                 return;
             }
@@ -104,7 +104,7 @@ namespace QtVsTools
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
 
             var activeConfigId = $"{activeConfig.ConfigurationName}|{activeConfig.Platform}";
-            qtProject.StartBuild(activeConfigId, properties, new[] { "QtTranslation" });
+            project.StartBuild(activeConfigId, properties, new[] { "QtTranslation" });
         }
 
         public static void RunlUpdate(EnvDTE.Solution solution)
@@ -112,19 +112,19 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var project in HelperFunctions.ProjectsInSolution(solution?.DTE))
-                RunlUpdate(QtProject.GetOrAdd(project));
+                RunlUpdate(MsBuildProject.GetOrAdd(project));
         }
 
-        public static bool ToolsAvailable(QtProject qtProject)
+        public static bool ToolsAvailable(MsBuildProject project)
         {
-            if (qtProject == null)
+            if (project == null)
                 return false;
-            if (qtProject.GetPropertyValue("ApplicationType") == "Linux")
+            if (project.GetPropertyValue("ApplicationType") == "Linux")
                 return true;
 
-            var qtToolsPath = qtProject.GetPropertyValue("QtToolsPath");
+            var qtToolsPath = project.GetPropertyValue("QtToolsPath");
             if (string.IsNullOrEmpty(qtToolsPath)) {
-                var qtInstallPath = QtVersionManager.The().GetInstallPath(qtProject.QtVersion);
+                var qtInstallPath = QtVersionManager.The().GetInstallPath(project.QtVersion);
                 if (string.IsNullOrEmpty(qtInstallPath))
                     return false;
                 qtToolsPath = Path.Combine(qtInstallPath, "bin");

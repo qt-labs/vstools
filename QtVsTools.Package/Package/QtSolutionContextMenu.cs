@@ -81,11 +81,11 @@ namespace QtVsTools
                 Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
                 break;
             case QtMenus.Package.SolutionConvertToQtMsBuild:
-                QtMsBuildConverter.SolutionToQtMsBuild();
+                MsBuildProjectConverter.SolutionToQtMsBuild();
                 break;
             case QtMenus.Package.SolutionEnableProjectTracking:
-                foreach (var project in HelperFunctions.ProjectsInSolution(dte))
-                    QtProject.GetOrAdd(project);
+                foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte))
+                    MsBuildProject.GetOrAdd(vcProject);
                 break;
             }
         }

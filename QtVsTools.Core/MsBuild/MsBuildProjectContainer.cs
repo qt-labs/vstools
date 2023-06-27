@@ -8,10 +8,10 @@ using System.Linq;
 
 namespace QtVsTools.Core.MsBuild
 {
-    public class QtMsBuildContainer
+    public class MsBuildProjectContainer
     {
         private readonly IPropertyStorageProvider provider;
-        public QtMsBuildContainer(IPropertyStorageProvider provider)
+        public MsBuildProjectContainer(IPropertyStorageProvider provider)
         {
             this.provider = provider;
         }

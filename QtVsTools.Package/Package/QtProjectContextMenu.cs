@@ -90,12 +90,12 @@ namespace QtVsTools
                 QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                QtMsBuildConverter.ProjectToQtMsBuild(HelperFunctions.GetSelectedProject(dte));
+                MsBuildProjectConverter.ProjectToQtMsBuild(HelperFunctions.GetSelectedProject(dte));
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
-                if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+                if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                     break;
-                qtProject.Refresh();
+                project.Refresh();
                 break;
             }
         }
@@ -106,28 +106,28 @@ namespace QtVsTools
                 return;
 
             command.Visible = command.Enabled = false;
-            var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+            var vcProject = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
 
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
             case QtMenus.Package.QtProjectSettingsProject:
             case QtMenus.Package.ProjectRefreshIntelliSense:
-                command.Visible = command.Enabled = QtProject.GetOrAdd(project) is {};
+                command.Visible = command.Enabled = MsBuildProject.GetOrAdd(vcProject) is {};
                 break;
             case QtMenus.Package.lUpdateOnProject:
             case QtMenus.Package.lReleaseOnProject:
-                if (QtProject.GetOrAdd(project) is not {} qtProject)
+                if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
                     break;
                 command.Visible = true;
-                command.Enabled = Translation.ToolsAvailable(qtProject);
+                command.Enabled = Translation.ToolsAvailable(project);
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                switch (ProjectFormat.GetVersion(project)) {
-                case ProjectFormat.Version.V1:
-                case ProjectFormat.Version.V2:
+                switch (MsBuildProjectFormat.GetVersion(vcProject)) {
+                case MsBuildProjectFormat.Version.V1:
+                case MsBuildProjectFormat.Version.V2:
                     command.Visible = command.Enabled = true;
                     return;
-                case > ProjectFormat.Version.V3 and < ProjectFormat.Version.Latest:
+                case > MsBuildProjectFormat.Version.V3 and < MsBuildProjectFormat.Version.Latest:
                     command.Visible = command.Enabled = true;
                     command.Text = "Upgrade project to latest Qt project format version";
                     return;

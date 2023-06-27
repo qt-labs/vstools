@@ -43,10 +43,10 @@ namespace QtVsTools.Editors
             base.OnStart(process);
             var document = VsShell.GetDocument(Context, ItemId);
 
-            if (document?.ProjectItem?.ContainingProject?.Object is not VCProject project)
+            if (document?.ProjectItem?.ContainingProject?.Object is not VCProject vcProject)
                 return;
 
-            if (QtProject.GetOrAdd(project) is not { IsTracked: true } qtProject)
+            if (MsBuildProject.GetOrAdd(vcProject) is not { IsTracked: true } project)
                 return;
 
             var filePath = document.FullName;
@@ -59,10 +59,10 @@ namespace QtVsTools.Editors
                     if (lastWriteTime == latestWriteTime)
                         continue;
                     lastWriteTime = latestWriteTime;
-                    await qtProject.RefreshAsync();
+                    await project.RefreshAsync();
                 }
                 if (lastWriteTime != File.GetLastWriteTime(filePath)) {
-                    await qtProject.RefreshAsync();
+                    await project.RefreshAsync();
                 }
             });
         }

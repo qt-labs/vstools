@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -142,11 +141,11 @@ namespace QtVsTools.Wizards.ProjectWizard
                 $"{WizardData.ClassName[0]}{WizardData.ClassName.Substring(1)}";
         }
 
-        protected override void OnProjectGenerated(Project project)
+        protected override void OnProjectGenerated(EnvDTE.Project dteProject)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-            if (QtProject.GetOrAdd(project.Object as VCProject) is {} qtProject)
-                qtProject.MarkAsQtPlugin();
+            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is {} project)
+                project.MarkAsQtPlugin();
         }
     }
 }

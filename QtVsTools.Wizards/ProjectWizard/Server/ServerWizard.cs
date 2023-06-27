@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using EnvDTE;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -136,11 +135,11 @@ namespace QtVsTools.Wizards.ProjectWizard
                 : Parameter[NewProject.SafeName];
         }
 
-        protected override void OnProjectGenerated(Project project)
+        protected override void OnProjectGenerated(EnvDTE.Project dteProject)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-            if (QtProject.GetOrAdd(project.Object as VCProject) is {} qtProject)
-                qtProject.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
+            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is {} project)
+                project.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
         }
     }
 }

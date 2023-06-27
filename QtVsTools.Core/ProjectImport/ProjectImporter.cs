@@ -78,12 +78,12 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             _dteObject = dte;
-            if (dte is null || HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+            if (dte is null || HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                 return;
 
             using var fd = new OpenFileDialog
             {
-                FileName = $"{qtProject.VcProjectDirectory}{qtProject.VcProject.Name}.pri",
+                FileName = $"{project.VcProjectDirectory}{project.VcProject.Name}.pri",
                 Filter = "Project Include Files (*.pri)|*.pri",
                 Title = "Import from .pri File",
                 Multiselect = false
@@ -107,25 +107,25 @@ namespace QtVsTools.Core
             }
 
             var directoryName = priFileInfo.DirectoryName;
-            var priFiles = ResolveFilesFromQMake(qmake.SourceFiles, qtProject, directoryName);
-            var projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_CppFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
-            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.SourceFiles());
+            var priFiles = ResolveFilesFromQMake(qmake.SourceFiles, project, directoryName);
+            var projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles);
+            projFiles = ConvertFilesToFullPath(projFiles, project);
+            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.SourceFiles());
 
-            priFiles = ResolveFilesFromQMake(qmake.HeaderFiles, qtProject, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_HFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
-            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.HeaderFiles());
+            priFiles = ResolveFilesFromQMake(qmake.HeaderFiles, project, directoryName);
+            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles);
+            projFiles = ConvertFilesToFullPath(projFiles, project);
+            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.HeaderFiles());
 
-            priFiles = ResolveFilesFromQMake(qmake.FormFiles, qtProject, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_UiFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
-            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.FormFiles());
+            priFiles = ResolveFilesFromQMake(qmake.FormFiles, project, directoryName);
+            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles);
+            projFiles = ConvertFilesToFullPath(projFiles, project);
+            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.FormFiles());
 
-            priFiles = ResolveFilesFromQMake(qmake.ResourceFiles, qtProject, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(qtProject, FilesToList.FL_Resources);
-            projFiles = ConvertFilesToFullPath(projFiles, qtProject);
-            SyncIncludeFiles(qtProject, priFiles, projFiles, qmake.IsFlat, Filters.ResourceFiles());
+            priFiles = ResolveFilesFromQMake(qmake.ResourceFiles, project, directoryName);
+            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_Resources);
+            projFiles = ConvertFilesToFullPath(projFiles, project);
+            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.ResourceFiles());
         }
 
         private static void ImportSolution(FileInfo mainInfo, string qtVersion)
@@ -142,11 +142,11 @@ namespace QtVsTools.Core
                 if (CheckQtVersion(versionInfo)) {
                     _dteObject.Solution.Open(vcInfo.FullName);
                     if (qtVersion is not null) {
-                        foreach (var prj in HelperFunctions.ProjectsInSolution(_dteObject)) {
-                            if (QtProject.GetOrAdd(prj) is not {} qtProject)
+                        foreach (var vcProject in HelperFunctions.ProjectsInSolution(_dteObject)) {
+                            if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
                                 continue;
-                            QtVersionManager.The().SaveProjectQtVersion(qtProject, qtVersion);
-                            ApplyPostImportSteps(qtProject);
+                            QtVersionManager.The().SaveProjectQtVersion(project, qtVersion);
+                            ApplyPostImportSteps(project);
                         }
                     }
                 }
@@ -190,11 +190,11 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (QtProject.GetOrAdd(vcPro) is not {} qtProject)
+                if (MsBuildProject.GetOrAdd(vcPro) is not {} project)
                     return;
 
                 if (qtVersion is not null)
-                    QtVersionManager.The().SaveProjectQtVersion(qtProject, qtVersion);
+                    QtVersionManager.The().SaveProjectQtVersion(project, qtVersion);
 
                 var platformName = versionInfo.GetVSPlatformName();
                 if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
@@ -209,9 +209,9 @@ namespace QtVsTools.Core
                     as VCConfiguration;
                 var def = CompilerToolWrapper.Create(vcConfig)?.GetPreprocessorDefinitions();
                 if (!string.IsNullOrEmpty(def) && def.IndexOf("QT_PLUGIN", IgnoreCase) > -1)
-                    qtProject.MarkAsQtPlugin();
+                    project.MarkAsQtPlugin();
 
-                ApplyPostImportSteps(qtProject);
+                ApplyPostImportSteps(project);
             } catch (Exception e) {
                 Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
             }
@@ -252,9 +252,9 @@ namespace QtVsTools.Core
                 return false;
             var oldVersion = xmlProject.GetProjectFormatVersion();
             switch (oldVersion) {
-            case ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Latest:
                 return true; // Nothing to do!
-            case ProjectFormat.Version.Unknown or > ProjectFormat.Version.Latest:
+            case MsBuildProjectFormat.Version.Unknown or > MsBuildProjectFormat.Version.Latest:
                 return false; // Nothing we can do!
             }
 
@@ -284,20 +284,20 @@ namespace QtVsTools.Core
             return ok;
         }
 
-        private static void ApplyPostImportSteps(QtProject qtProject)
+        private static void ApplyPostImportSteps(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            RemoveResFilesFromGeneratedFilesFilter(qtProject);
-            TranslateFilterNames(qtProject.VcProject);
+            RemoveResFilesFromGeneratedFilesFilter(project);
+            TranslateFilterNames(project.VcProject);
 
             // collapse the generated files/resources filters afterwards
-            CollapseFilter(qtProject.VcProject, Filters.ResourceFiles().Name);
-            CollapseFilter(qtProject.VcProject, Filters.GeneratedFiles().Name);
+            CollapseFilter(project.VcProject, Filters.ResourceFiles().Name);
+            CollapseFilter(project.VcProject, Filters.GeneratedFiles().Name);
 
             try {
                 // save the project after modification
-                qtProject.VcProject.Save();
+                project.VcProject.Save();
             } catch { /* ignore */ }
         }
 
@@ -344,10 +344,11 @@ namespace QtVsTools.Core
 
         #region ProjectExporter
 
-        private static List<string> ConvertFilesToFullPath(IEnumerable<string> files, QtProject qtProject)
+        private static List<string> ConvertFilesToFullPath(IEnumerable<string> files,
+            MsBuildProject project)
         {
             return new List<string>(files.Select(file => new FileInfo(file.IndexOf(':') != 1
-                    ? Path.Combine(qtProject?.VcProjectDirectory ?? "", file) : file)
+                    ? Path.Combine(project?.VcProjectDirectory ?? "", file) : file)
                 ).Select(fi => fi.FullName)
             );
         }
@@ -391,7 +392,7 @@ namespace QtVsTools.Core
                 CollectFilters(f, path, ref filterPathTable, ref pathFilterTable);
         }
 
-        private static void SyncIncludeFiles(QtProject qtProject, IReadOnlyCollection<string> priFiles,
+        private static void SyncIncludeFiles(MsBuildProject project, IReadOnlyCollection<string> priFiles,
             IReadOnlyCollection<string> projFiles, bool flat, FakeFilter fakeFilter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -406,9 +407,9 @@ namespace QtVsTools.Core
             var filterPathTable = new Dictionary<VCFilter, string>(17);
             var pathFilterTable = new Dictionary<string, VCFilter>(17);
             if (!flat && fakeFilter is not null) {
-                var rootFilter = qtProject.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                var rootFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
                 if (rootFilter is null)
-                    AddFilterToProject(qtProject, Filters.SourceFiles());
+                    AddFilterToProject(project, Filters.SourceFiles());
 
                 CollectFilters(rootFilter, null, ref filterPathTable, ref pathFilterTable);
             }
@@ -416,11 +417,11 @@ namespace QtVsTools.Core
             // first check for new files
             foreach (var file in cmpPriFiles.Where(file => cmpProjFiles.IndexOf(file) <= -1)) {
                 if (flat) {
-                    qtProject.VcProject.AddFile(file);
+                    project.VcProject.AddFile(file);
                     continue; // the file is not in the project
                 }
 
-                var path = HelperFunctions.GetRelativePath(qtProject.VcProjectDirectory, file);
+                var path = HelperFunctions.GetRelativePath(project.VcProjectDirectory, file);
                 if (path.StartsWith(".\\", IgnoreCase))
                     path = path.Substring(2);
 
@@ -455,9 +456,9 @@ namespace QtVsTools.Core
                 // the file is not in the pri file
                 // (only removes it from the project, does not del. the file)
                 var info = new FileInfo(file);
-                RemoveFileInProject(qtProject, file);
+                RemoveFileInProject(project, file);
                 Messages.Print($"--- (Importing .pri file) file: {info.Name} does not exist in "
-                    + $".pri file, move to {qtProject.VcProjectDirectory} Deleted");
+                    + $".pri file, move to {project.VcProjectDirectory} Deleted");
             }
         }
 
@@ -572,7 +573,7 @@ namespace QtVsTools.Core
         /// </summary>
         /// <param name="qtPro"></param>
         /// <param name="fileName"></param>
-        private static void RemoveFileInProject(QtProject qtPro, string fileName)
+        private static void RemoveFileInProject(MsBuildProject qtPro, string fileName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -645,7 +646,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private static void AddFilterToProject(QtProject project, FakeFilter fakeFilter)
+        private static void AddFilterToProject(MsBuildProject project, FakeFilter fakeFilter)
         {
             try {
                 var vcFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
@@ -685,7 +686,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private static void RemoveResFilesFromGeneratedFilesFilter(QtProject pro)
+        private static void RemoveResFilesFromGeneratedFilesFilter(MsBuildProject pro)
         {
             var generatedFiles = pro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
             if (generatedFiles?.Files is not IVCCollection files)
@@ -952,13 +953,13 @@ namespace QtVsTools.Core
         }
 
         private static List<string> ResolveFilesFromQMake(IEnumerable<string> files,
-            QtProject qtProject, string path)
+            MsBuildProject project, string path)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var lst = new List<string>();
             foreach (var file in files) {
-                var s = ResolveEnvironmentVariables(file, qtProject);
+                var s = ResolveEnvironmentVariables(file, project);
                 if (s is null) {
                     Messages.Print($"--- (importing .pri file) file: {file} cannot be resolved. "
                         + "Skipping file.");
@@ -971,7 +972,7 @@ namespace QtVsTools.Core
             return lst;
         }
 
-        private static string ResolveEnvironmentVariables(string str, QtProject qtProject)
+        private static string ResolveEnvironmentVariables(string str, MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -981,7 +982,7 @@ namespace QtVsTools.Core
                 var env = col[i].Groups[1].ToString();
                 string val;
                 if (env == "QTDIR") {
-                    val = qtProject?.InstallPath ?? Environment.GetEnvironmentVariable(env);
+                    val = project?.InstallPath ?? Environment.GetEnvironmentVariable(env);
                 } else {
                     val = Environment.GetEnvironmentVariable(env);
                 }
