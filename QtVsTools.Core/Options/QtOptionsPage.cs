@@ -235,11 +235,7 @@ namespace QtVsTools.Core.Options
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool UpdateProjectFormat
         {
-#if DISABLE_UPDATEPROJECTFORMAT
-            get => false; set { }
-#else
             get; set;
-#endif
         }
         [Category("Natvis")]
         [DisplayName("Embed .natvis file into PDB")]

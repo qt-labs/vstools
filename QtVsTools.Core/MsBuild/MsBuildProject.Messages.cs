@@ -66,8 +66,9 @@ namespace QtVsTools.Core.MsBuild
 
         public static async Task ShowUpdateFormatMessageAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            UpdateProjectFormat.Message.Show();
+            if (!Options.Get().UpdateProjectFormat)
+                return;
+            await VsShell.UiThreadAsync(UpdateProjectFormat.Message.Show);
         }
     }
 }
