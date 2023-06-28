@@ -38,7 +38,7 @@
                  ReplaceParameters="true">
             <ProjectItem ReplaceParameters="false"
                          OpenInEditor="true">main.cpp</ProjectItem>
-            <ProjectItem ReplaceParameters="false"
+            <ProjectItem ReplaceParameters="true"
                          TargetFileName="$projectname$.vcxproj.filters">console.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
             <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
