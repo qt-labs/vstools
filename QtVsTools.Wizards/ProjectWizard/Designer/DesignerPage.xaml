@@ -160,7 +160,8 @@
                 <TextBox Grid.Column="0"
                          Grid.Row="5"
                          Margin="0,0,0,10"
-                         Name="PluginClass">
+                         Name="PluginClass"
+                         TextChanged="OnClassNameChanged">
                     <TextBox.Text>
                         <Binding Path="Data.PluginClass"
                                  NotifyOnValidationError="True"
