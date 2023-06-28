@@ -143,7 +143,12 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                 if funcNewProjectDialog:
                     funcNewProjectDialog(version, templateName, expectedName)
                 projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
+                devEnvContext = currentApplicationContext()
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
+                if not waitFor("object.exists(names.qt_Wizard_Window)", 10000):
+                    # Sometimes, a "Creating project..." dialog appears and creates
+                    # a second app context. Explicitly set the wanted context.
+                    setApplicationContext(devEnvContext)
                 try:
                     expectedText = "Welcome to the %s Wizard" % templateName
                     if funcPage1:
