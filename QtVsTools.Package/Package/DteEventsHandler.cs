@@ -295,7 +295,6 @@ namespace QtVsTools
                 return;
 
             InitializeMsBuildProjectProject(project);
-            project.Refresh();
         }
 
         public void SolutionEvents_Opened()
@@ -303,11 +302,8 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte)) {
-                if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
-                    continue;
-
-                InitializeMsBuildProjectProject(project);
-                project.SolutionPath = dte.Solution.FullName;
+                if (MsBuildProject.GetOrAdd(vcProject) is {} project)
+                    InitializeMsBuildProjectProject(project);
             }
         }
 
@@ -321,6 +317,9 @@ namespace QtVsTools
         private void InitializeMsBuildProjectProject(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            project.SolutionPath = dte.Solution.FullName;
+            project.Refresh(); //forcefully update IntelliSense
 
             if (vcProjectEngineEvents != null)
                 return;

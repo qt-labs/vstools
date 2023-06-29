@@ -72,8 +72,14 @@ namespace QtVsTools.Core.MsBuild
 
             UpdateInitStatus(p += 10);
 
-            if (VcProject.Object is not IVsBrowseObjectContext context)
+            if (VcProject is not IVsBrowseObjectContext context) {
+                if (VcProject.Object is not EnvDTE.Project project)
+                    return;
+                context = project.Object as IVsBrowseObjectContext;
+            }
+            if (context == null)
                 return;
+
             UpdateInitStatus(p += 10);
 
             UnconfiguredProject = context.UnconfiguredProject;
@@ -83,8 +89,12 @@ namespace QtVsTools.Core.MsBuild
             await TaskScheduler.Default;
             UpdateInitStatus(p += 10);
 
-            var configs = await UnconfiguredProject.Services
-                .ProjectConfigurationsService.GetKnownProjectConfigurationsAsync();
+            var service = UnconfiguredProject.Services
+                .ProjectConfigurationsService;
+            if (service == null)
+                return;
+
+            var configs = await service.GetKnownProjectConfigurationsAsync();
             UpdateInitStatus(p += 10);
 
             Initialized.Set();
