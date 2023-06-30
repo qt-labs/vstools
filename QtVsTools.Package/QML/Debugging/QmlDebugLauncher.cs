@@ -43,6 +43,9 @@ namespace QtVsTools.Qml.Debug
         HashSet<Guid> ExcludedProcesses => Lazy.Get(() =>
             ExcludedProcesses, () => new HashSet<Guid>());
 
+        HashSet<uint> ExcludedProcIds => Lazy.Get(() =>
+            ExcludedProcIds, () => new HashSet<uint>());
+
         public static void Initialize()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -91,9 +94,20 @@ namespace QtVsTools.Qml.Debug
             if (pProcess.GetProcessId(out Guid procGuid) != S_OK)
                 return S_OK;
 
+            bool native;
+            Guid engineId = GetEngineId(pProgram);
+            if (engineId == NativeEngine.Id)
+                native = true;
+            else if (engineId == GdbEngine.Id)
+                native = false;
+            else
+                return S_OK;
+
             // Run only once per process
             if (riidEvent == typeof(IDebugProgramDestroyEvent2).GUID) {
                 ExcludedProcesses.Remove(procGuid);
+                if (GetProcessInfo(pProcess, native, out var terminatedProcId))
+                    ExcludedProcIds.Remove(terminatedProcId);
                 return S_OK;
             }
             if (ExcludedProcesses.Contains(procGuid))
@@ -106,16 +120,7 @@ namespace QtVsTools.Qml.Debug
             if (pProgram == null)
                 return S_OK;
 
-            bool native;
-            Guid engineId = GetEngineId(pProgram);
-            if (engineId == NativeEngine.Id)
-                native = true;
-            else if (engineId == GdbEngine.Id)
-                native = false;
-            else
-                return S_OK;
-
-            if (!GetProcessInfo(pProcess, native, out var execPath, out var procId, out var cmd))
+            if (!GetProcessInfo(pProcess, native, out var procId, out var execPath, out var cmd))
                 return S_OK;
 
             if (!QmlDebugger.CheckCommandLine(execPath, cmd))
@@ -124,6 +129,20 @@ namespace QtVsTools.Qml.Debug
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(
                 async () => await LaunchDebugAsync(execPath, cmd, procId));
             return S_OK;
+        }
+
+        public static bool TryAttachToProcess(uint procId)
+        {
+            if (!Instance.GetProcessInfo(procId, out var execPath, out var cmd))
+                return false;
+
+            if (!QmlDebugger.CheckCommandLine(execPath, cmd))
+                return false;
+
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(
+                async () => await Instance.LaunchDebugAsync(execPath, cmd, procId));
+
+            return true;
         }
 
         Guid GetEngineId(IDebugProgram2 pProgram)
@@ -154,15 +173,22 @@ namespace QtVsTools.Qml.Debug
         };
         static readonly Parser wslPathParser = wslPathRegex.Render();
 
-        bool GetProcessInfo(IDebugProcess2 pProcess, bool native,
-            out string execPath, out uint procId, out string procCmd)
+
+        bool GetProcessInfo(IDebugProcess2 pProcess, bool native, out uint procId)
         {
-            execPath = "";
             procId = 0;
-            procCmd = "";
+            GetProcessInfo(pProcess, native, out procId, out _, out _);
+            return procId != 0;
+        }
+
+        bool GetProcessInfo(IDebugProcess2 pProcess, bool native,
+            out uint procId, out string procExecPath, out string procCmdLine)
+        {
+            procId = 0;
+            procExecPath = "";
+            procCmdLine = "";
 
             try {
-
                 if (pProcess.GetName(enum_GETNAME_TYPE.GN_FILENAME, out var fileName) != S_OK)
                     return false;
 
@@ -171,30 +197,47 @@ namespace QtVsTools.Qml.Debug
                     return false;
 
                 if (native) {
-                    execPath = Path.GetFullPath(fileName);
+                    procExecPath = Path.GetFullPath(fileName);
                 } else {
                     var wslPath = wslPathParser.Parse(fileName)
                         .GetValues<WslPath>("WSLPATH").FirstOrDefault();
-                    execPath = wslPath != null ? Path.GetFullPath(wslPath) : fileName;
+                    procExecPath = wslPath != null ? Path.GetFullPath(wslPath) : fileName;
                 }
 
                 procId = pProcessId[0].dwProcessId;
-
-                using var cmdLineQuery = new ManagementObjectSearcher(
-                    @$"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {procId}");
-
-                var cmdLineQueryResults = cmdLineQuery?.Get()?.Cast<ManagementObject>();
-                if (cmdLineQueryResults?.FirstOrDefault() is not ManagementObject cmdLineResult)
-                    return false;
-                if (cmdLineResult["CommandLine"] is not string cmdLine)
-                    return false;
-                procCmd = cmdLine;
 
             } catch (Exception e) {
                 e.Log();
                 return false;
             }
 
+            return !native || GetProcessInfo(procId, out procExecPath, out procCmdLine);
+        }
+
+        bool GetProcessInfo(uint procId, out string procExecPath, out string procCmdLine)
+        {
+            procExecPath = "";
+            procCmdLine = "";
+
+            try {
+                using var query = new ManagementObjectSearcher(@$"
+                    SELECT ExecutablePath, CommandLine
+                    FROM Win32_Process
+                    WHERE ProcessId = {procId}");
+                if (query?.Get()?.Cast<ManagementObject>()?.FirstOrDefault() is not { } queryResult)
+                    return false;
+                if (queryResult["ExecutablePath"] is not string executablePath)
+                    return false;
+                if (queryResult["CommandLine"] is not string commandLine)
+                    return false;
+
+                procExecPath = executablePath;
+                procCmdLine = commandLine;
+
+            } catch (Exception e) {
+                e.Log();
+                return false;
+            }
             return true;
         }
 
@@ -205,8 +248,14 @@ namespace QtVsTools.Qml.Debug
 
         private async Task LaunchDebugAsync(string execPath, string cmd, uint procId)
         {
+            // Attach only once per process
+            if (ExcludedProcIds.Contains(procId))
+                return;
+            ExcludedProcIds.Add(procId);
+
             if (!Package.IsInitialized)
                 Notifications.NotifyMessage.Show("QML Debugger: Waiting for package initialization...");
+
             await TaskScheduler.Default;
             Package.WaitUntilInitialized();
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

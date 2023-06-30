@@ -302,6 +302,13 @@ namespace QtVsTools
             else if (Dte?.Solution?.IsOpen == true)
                 EventHandler.SolutionEvents_Opened();
 
+            if (Dte.Debugger.CurrentMode != dbgDebugMode.dbgDesignMode) {
+                foreach (EnvDTE.Process proc in Dte.Debugger.DebuggedProcesses) {
+                    if (Qml.Debug.Launcher.TryAttachToProcess((uint)proc.ProcessID))
+                        break;
+                }
+            }
+
             /////////
             // Eable output messages and activate output pane.
             //
