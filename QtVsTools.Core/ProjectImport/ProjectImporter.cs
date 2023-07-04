@@ -392,12 +392,17 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var cmpPriFiles = new List<string>(priFiles.Count);
-            cmpPriFiles.AddRange(priFiles.Select(s => HelperFunctions.NormalizeFilePath(s).ToUpperInvariant()));
-            cmpPriFiles.Sort();
+            var cmpPriFilesDict = new Dictionary<string, string>(priFiles.Count);
+            foreach (var priFile in priFiles) {
+                var normalized = HelperFunctions.NormalizeFilePath(priFile);
+                cmpPriFilesDict.Add(normalized.ToUpperInvariant(), normalized);
+            }
 
-            var cmpProjFiles = new List<string>(projFiles.Count);
-            cmpProjFiles.AddRange(projFiles.Select(s => HelperFunctions.NormalizeFilePath(s).ToUpperInvariant()));
+            var cmpProjFilesDict = new Dictionary<string, string>(projFiles.Count);
+            foreach (var projFile in projFiles) {
+                var normalized = HelperFunctions.NormalizeFilePath(projFile);
+                cmpProjFilesDict.Add(normalized.ToUpperInvariant(), normalized);
+            }
 
             var filterPathTable = new Dictionary<VCFilter, string>(17);
             var pathFilterTable = new Dictionary<string, VCFilter>(17);
@@ -410,7 +415,8 @@ namespace QtVsTools.Core
             }
 
             // first check for new files
-            foreach (var file in cmpPriFiles.Where(file => cmpProjFiles.IndexOf(file) <= -1)) {
+            foreach (var pair in cmpPriFilesDict.Where(pair => !cmpProjFilesDict.ContainsKey(pair.Key))) {
+                var file = pair.Value;
                 if (flat) {
                     project.VcProject.AddFile(file);
                     continue; // the file is not in the project
@@ -445,13 +451,13 @@ namespace QtVsTools.Core
             }
 
             // then check for deleted files
-            foreach (var file in cmpProjFiles) {
-                if (cmpPriFiles.IndexOf(file) != -1)
+            foreach (var file in cmpProjFilesDict) {
+                if (!cmpPriFilesDict.ContainsKey(file.Key))
                     continue;
                 // the file is not in the pri file
                 // (only removes it from the project, does not del. the file)
-                var info = new FileInfo(file);
-                RemoveFileInProject(project, file);
+                var info = new FileInfo(file.Value);
+                RemoveFileInProject(project, file.Value);
                 Messages.Print($"--- (Importing .pri file) file: {info.Name} does not exist in "
                     + $".pri file, move to {project.VcProjectDirectory} Deleted");
             }
