@@ -30,8 +30,9 @@ namespace QtVsTools.Core.CMake
                 e.Log();
                 return;
             }
-            var launchConfigs = launchVs["configurations"]
-                ?.Where(x => x["name"].Value<string>() is "QML Application" or "Qt Application");
+            var launchConfigs = launchVs["configurations"]?.Where(
+                    x => x["name"].Value<string>() is "QML Application" or "Qt Application"
+                ).ToList();
             if (launchConfigs is null && !launchConfigs.Any())
                 return;
             if (launchConfigs.FirstOrDefault() is not { } launchConfig)

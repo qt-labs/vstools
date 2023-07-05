@@ -228,7 +228,7 @@ namespace QtVsTools.Core.CMake
                 return;
             }
 
-            var versionNames = VersionManager.GetVersions().Prepend("Qt-Default");
+            var versionNames = VersionManager.GetVersions().Prepend("Qt-Default").ToHashSet();
 
             // All visible presets must have a reference to a Qt version
             bool isQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());
