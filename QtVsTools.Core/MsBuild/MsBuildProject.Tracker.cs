@@ -26,7 +26,6 @@ namespace QtVsTools.Core.MsBuild
         private static PunisherQueue<MsBuildProject> InitQueue => StaticLazy.Get(() =>
             InitQueue, () => new PunisherQueue<MsBuildProject>());
 
-        private static Task InitDispatcher { get; set; }
         private static ITaskHandler2 InitStatus { get; set; }
 
         public UnconfiguredProject UnconfiguredProject { get; private set; }

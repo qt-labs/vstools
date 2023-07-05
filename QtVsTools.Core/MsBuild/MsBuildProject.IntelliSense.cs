@@ -31,7 +31,9 @@ namespace QtVsTools.Core.MsBuild
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            if (Options.Get() is { BuildDebugInformation: true }) {
+            if (Options.Get() is not { ProjectTracking: true } options)
+                return;
+            if (options is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Refreshing: [{configId ?? "(all configs)"}] {VcProjectPath}");

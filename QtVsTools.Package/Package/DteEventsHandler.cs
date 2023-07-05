@@ -53,6 +53,7 @@ namespace QtVsTools
             solutionEvents = events?.SolutionEvents;
             if (solutionEvents != null) {
                 solutionEvents.ProjectAdded += SolutionEvents_ProjectAdded;
+                solutionEvents.ProjectRemoved += SolutionEvents_ProjectRemoved;
                 solutionEvents.Opened += SolutionEvents_Opened;
                 solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
             }
@@ -295,6 +296,12 @@ namespace QtVsTools
                 return;
 
             InitializeMsBuildProjectProject(project);
+        }
+
+        private static void SolutionEvents_ProjectRemoved(EnvDTE.Project dteProject)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            MsBuildProject.Remove(dteProject.FullName);
         }
 
         public void SolutionEvents_Opened()

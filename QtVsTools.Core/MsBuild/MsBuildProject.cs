@@ -18,6 +18,7 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools.Core.MsBuild
 {
     using Common;
+    using Options;
     using VisualStudio;
     using static Instances;
     using static Utils;
@@ -48,8 +49,10 @@ namespace QtVsTools.Core.MsBuild
                         return project;
                     project = new MsBuildProject(vcProject);
                     Instances[vcProject.ProjectFile] = project;
-                    InitQueue.Enqueue(project);
-                    InitDispatcher ??= Task.Run(InitDispatcherLoopAsync);
+                    if (Options.Get() is { ProjectTracking: true }) {
+                        InitQueue.Enqueue(project);
+                        _ = Task.Run(InitDispatcherLoopAsync);
+                    }
                     return project;
                 }
 
@@ -58,6 +61,12 @@ namespace QtVsTools.Core.MsBuild
 
                 return null; // ignore old or unknown projects
             }
+        }
+
+        public static void Remove(string projectPath)
+        {
+            lock (StaticCriticalSection)
+                Instances.TryRemove(projectPath, out _);
         }
 
         public static void Reset()
@@ -83,7 +92,8 @@ namespace QtVsTools.Core.MsBuild
         public string VcProjectDirectory { get; }
 
         public string SolutionPath { get; set; } = "";
-        public bool IsTracked => Instances.ContainsKey(VcProjectPath);
+        public bool IsTracked =>
+            Options.Get() is { ProjectTracking: true } && Instances.ContainsKey(VcProjectPath);
 
         public string QtVersion
         {

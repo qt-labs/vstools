@@ -75,14 +75,16 @@ namespace QtVsTools.Core.MsBuild
             if (configName == null)
                 throw new ArgumentException("Configuration name cannot be null.");
 
-            RequestTimer.Restart();
-            await Initialized;
-
-            if (Options.Get() is { BuildDebugInformation: true }) {
+            if (Options.Get() is not { ProjectTracking: true } options)
+                return;
+            if (options is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Request [{configName}] {UnconfiguredProject.FullPath}");
             }
+
+            RequestTimer.Restart();
+            await Initialized;
 
             var service = UnconfiguredProject.Services.ProjectConfigurationsService;
             if (service == null)
