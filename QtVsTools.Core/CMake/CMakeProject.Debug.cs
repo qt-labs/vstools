@@ -31,8 +31,7 @@ namespace QtVsTools.Core.CMake
                 return;
             }
             var launchConfigs = launchVs["configurations"]
-                ?.Where(x => x["name"].Value<string>() is { } name
-                    && (name == "QML Application" || name == "Qt Application"));
+                ?.Where(x => x["name"].Value<string>() is "QML Application" or "Qt Application");
             if (launchConfigs is null && !launchConfigs.Any())
                 return;
             if (launchConfigs.FirstOrDefault() is not { } launchConfig)
@@ -84,11 +83,10 @@ namespace QtVsTools.Core.CMake
 
         private async Task SelectLaunchSettingsAsync()
         {
-            var launchConfig = Config.AllProjectFileConfigurations
-                .Where(x => x.LaunchSettings["name"] is { } name
-                    && (name.Equals("QML Application") || name.Equals("Qt Application")))
-                .FirstOrDefault();
-            if (launchConfig is not null) {
+            var launchConfig = Config.AllProjectFileConfigurations.FirstOrDefault(
+                x => x.LaunchSettings["name"] is "QML Application" or "Qt Application"
+            );
+            if (launchConfig is {}) {
                 await Config.SetCurrentProject(launchConfig,
                     launchConfig.LaunchSettings["name"] as string);
             }
