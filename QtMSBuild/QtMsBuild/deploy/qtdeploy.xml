@@ -22,7 +22,7 @@
     Order="999">
     <Rule.DataSource>
       <DataSource
-        Persistence="UserFile"
+        Persistence="ProjectFile"
         ItemType="QtDeploy"
         HasConfigurationCondition="true"/>
     </Rule.DataSource>
