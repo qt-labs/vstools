@@ -89,32 +89,35 @@ namespace QtVsTools.Core.CMake
                     InheritsDefault = PresetInherits(x).Any(y => y == defaultVersion)
                 })
                 .FirstOrDefault(x => x.IsDefault);
-            if (defaultPreset is not { Name: "Qt-Default", InheritsDefault: true }) {
-                defaultPreset?.Self.Remove();
-                (UserPresets["configurePresets"] as JArray)?.Add(new JObject
+
+            if (defaultPreset is { Name: "Qt-Default", InheritsDefault: true })
+                return;
+
+            defaultPreset?.Self.Remove();
+            (UserPresets["configurePresets"] as JArray)?.Add(new JObject
+            {
+                ["hidden"] = true,
+                ["name"] = "Qt-Default",
+                ["inherits"] = defaultVersion,
+                ["vendor"] = new JObject
                 {
-                    ["hidden"] = true,
-                    ["name"] = "Qt-Default",
-                    ["inherits"] = defaultVersion,
-                    ["vendor"] = new JObject
-                    {
-                        ["qt-project.org/Default"] = new JObject()
-                    }
-                });
-            }
+                    ["qt-project.org/Default"] = new JObject()
+                }
+            });
         }
 
-        private IEnumerable<string> PresetInherits(JToken presetToken)
+        private static IEnumerable<string> PresetInherits(JToken presetToken)
         {
             if (presetToken is not JObject preset)
                 return Array.Empty<string>();
             if (preset["inherits"] is not { } inherits)
                 return Array.Empty<string>();
-            if (inherits is JValue inheritsValue)
-                return new[] { inheritsValue.Value<string>() };
-            if (inherits is JArray inheritsValues)
-                return inheritsValues.Values<string>();
-            return Array.Empty<string>();
+            return inherits switch
+            {
+                JValue value => new[] { value.Value<string>() },
+                JArray array => array.Values<string>(),
+                _ => Array.Empty<string>()
+            };
         }
 
         private void CheckQtVersions()
@@ -203,7 +206,7 @@ namespace QtVsTools.Core.CMake
                 .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"])
                 .ToList();
 
-            if (visiblePresets == null || visiblePresets.Count() == 0) {
+            if (visiblePresets == null || !visiblePresets.Any()) {
                 (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                 {
                     ["name"] = "Release",
@@ -211,7 +214,7 @@ namespace QtVsTools.Core.CMake
                     ["binaryDir"] = "${sourceDir}/out/build",
                     ["cacheVariables"] = new JObject
                     {
-                        ["CMAKE_BUILD_TYPE"] = "Release",
+                        ["CMAKE_BUILD_TYPE"] = "Release"
                     }
                 });
                 (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
