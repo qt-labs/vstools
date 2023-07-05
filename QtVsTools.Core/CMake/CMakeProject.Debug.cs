@@ -55,9 +55,8 @@ namespace QtVsTools.Core.CMake
             if (Config is null || Debug is null)
                 return null;
 
-            ILaunchDebugTargetProvider provider = null;
             var path = target;
-            if (!Debug.GetLaunchDebugTargetProviders(path, out provider)) {
+            if (!Debug.GetLaunchDebugTargetProviders(path, out var provider)) {
                 path = target.Split('(', ')').Skip(1).FirstOrDefault();
                 if (!Debug.GetLaunchDebugTargetProviders(path, out provider))
                     return null;
