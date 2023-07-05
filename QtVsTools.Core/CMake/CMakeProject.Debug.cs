@@ -76,10 +76,7 @@ namespace QtVsTools.Core.CMake
             var res = await Config.CustomizeLaunchSettingsAsync(null, null,
                 new ProjectConfiguration(config.FilePath, config.Target, newLaunchSettings),
                 allowDuplicate: true, updateContent: true);
-            if (res?.Item1 is not { } launchVsJsonPath)
-                return null;
-
-            return launchVsJsonPath;
+            return res?.Item1;
         }
 
         private async Task SelectLaunchSettingsAsync()
