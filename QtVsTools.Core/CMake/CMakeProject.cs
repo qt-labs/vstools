@@ -21,7 +21,7 @@ namespace QtVsTools.Core
     public static partial class Instances
     {
         public static (CMakeProject ActiveProject, string RootPath)
-            CMake => new(CMakeProject.ActiveProject, CMakeProject.ActiveProject.RootPath);
+            CMake => new(CMakeProject.ActiveProject, CMakeProject.ActiveProject?.RootPath);
     }
 }
 
