@@ -106,26 +106,21 @@ namespace QtVsTools.Core
                 return;
             }
 
+            var tuples = new List<(string[] Files, FilesToList FilesToList, FakeFilter Filter)>
+            {
+                (qmake.SourceFiles, FilesToList.FL_CppFiles, Filters.SourceFiles()),
+                (qmake.HeaderFiles, FilesToList.FL_HFiles, Filters.HeaderFiles()),
+                (qmake.FormFiles, FilesToList.FL_UiFiles, Filters.FormFiles()),
+                (qmake.ResourceFiles, FilesToList.FL_Resources, Filters.ResourceFiles())
+            };
+
             var directoryName = priFileInfo.DirectoryName;
-            var priFiles = ResolveFilesFromQMake(qmake.SourceFiles, project, directoryName);
-            var projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_CppFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, project);
-            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.SourceFiles());
-
-            priFiles = ResolveFilesFromQMake(qmake.HeaderFiles, project, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_HFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, project);
-            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.HeaderFiles());
-
-            priFiles = ResolveFilesFromQMake(qmake.FormFiles, project, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_UiFiles);
-            projFiles = ConvertFilesToFullPath(projFiles, project);
-            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.FormFiles());
-
-            priFiles = ResolveFilesFromQMake(qmake.ResourceFiles, project, directoryName);
-            projFiles = HelperFunctions.GetProjectFiles(project, FilesToList.FL_Resources);
-            projFiles = ConvertFilesToFullPath(projFiles, project);
-            SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, Filters.ResourceFiles());
+            foreach (var tuple in tuples) {
+                var priFiles = ResolveFilesFromQMake(tuple.Files, project, directoryName);
+                var projFiles = HelperFunctions.GetProjectFiles(project, tuple.FilesToList);
+                projFiles = ConvertFilesToFullPath(projFiles, project);
+                SyncIncludeFiles(project, priFiles, projFiles, qmake.IsFlat, tuple.Filter);
+            }
         }
 
         private static void ImportSolution(FileInfo mainInfo, string qtVersion)
