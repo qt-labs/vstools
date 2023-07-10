@@ -237,6 +237,14 @@
     <Defines>QT_MULTIMEDIA_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Multimedia Widgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtMultimediaWidgets</LibraryPrefix>
+    <proVarQT>multimediawidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtMultimediaWidgets</IncludePath>
+    <Defines>QT_MULTIMEDIAWIDGETS_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt Print Support</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
