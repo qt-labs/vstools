@@ -86,7 +86,7 @@ namespace QtVsTools
                 VsShellUtilities.OpenSystemBrowser("https://www.qt.io/developers");
                 break;
             case QtMenus.Package.ViewGettingStarted:
-                VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/qtvstools-getting-started.html");
+                VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/index.html");
                 break;
             case QtMenus.Package.LaunchDesigner:
                 QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
