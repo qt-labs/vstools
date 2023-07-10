@@ -139,6 +139,9 @@
         \li Select \uicontrol Extensions > \uicontrol {Manage Extensions} >
             \uicontrol Online.
         \li Search for \uicontrol {Qt Visual Studio Tools}.
+            \image qtvstools-manage-extensions.webp {Manage Extensions dialog}
+        \li Select \uicontrol Download.
+        \li Restart Microsoft Visual Studio to have the changes take effect.
     \endlist
 */
 
