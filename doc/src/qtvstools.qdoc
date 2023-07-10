@@ -5,54 +5,55 @@
 
 /*!
     \page index.html
-    \nextpage Getting Started
+
     \title Qt VS Tools Manual
 
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
-    2019, and later. This enables developers to use the standard Windows
-    development environment without having to worry about Qt-related build steps
-    or tools. You can install and update Qt VS Tools directly from Microsoft
-    Visual Studio.
+    2019, and later. You can use the standard Windows development environment
+    without having to worry about Qt-related build steps or tools. Install and
+    update Qt VS Tools directly from Microsoft Visual Studio.
 
     \table
         \row
-            \li {4,1} \b {\l{All Topics}}
+            \li \inlineimage tutorials.webp
+            \li \inlineimage how-to.webp
+            \li \inlineimage explanation.webp
+            \li \inlineimage reference.webp
         \row
-            \li \inlineimage front-gs.png
-            \li \inlineimage front-advanced.png
-            \li \inlineimage front-projects.png
-        \row
-            \li \b {\l{Getting Started}}
+            \li \b {Tutorials}
                 \list
-                    \li \l {Tutorial: Qt Widgets Application}
-                    \li \l {Tutorial: Qt Quick Application}
-                    \li \l {Tutorial: Qt Quick Debugging}
+                    \li \l {Tutorial: Qt Widgets application}
+                    \li \l {Tutorial: Qt Quick application}
+                    \li \l {Tutorial: Qt Quick debugging}
                 \endlist
-            \li \b {\l {Configuring Builds}}
+            \li \b {How-to}
                 \list
-                    \li \l {Managing Qt Versions}
-                    \li \l {Building}
-                    \li \l {Cross-Compiling}
-                    \li \l {Importing and Exporting Projects}
+                    \li \l {Add a Qt version}
+                    \li \l {Add form files}
+                    \li \l {Create Qt translation files}
+                    \li \l {Cross-compile}
+                    \li \l {Debug on Linux}
+                    \li \l {Enable QML debugging}
+                    \li \l {Get help}
+                    \li \l {Install Qt VS Tools}
+                    \li \l {Load Qt projects}
+                    \li \l {Manage resources}
+                    \li \l {Update IntelliSense info}
                 \endlist
-            \li \b {\l {Managing Projects}}
-                \list
-                    \li \l {Creating Projects}
-                    \li \l {Creating Files}
-                    \li \l {Loading Qt Projects}
-                \endlist
-        \row
-            \li \inlineimage front-coding.png
-            \li \inlineimage front-preview.png
-            \li \inlineimage front-help.png
-        \row
-        \li \b {\l {Updating IntelliSense Info}}
-        \li \b {\l {Debugging}}
+        \li \b {Explanation}
             \list
-                \li \l {Debugging Qt Quick Applications}
-                \li \l {Debugging on Linux}
+                \li \l {Building}
+                \li \l {Configuring builds}
+                \li \l {Debugging}
+                \li \l {Debugging Qt Quick applications}
+                \li \l {Features}
+                \li \l {Importing and exporting projects}
             \endlist
-        \li \b {\l {Getting Help}}
+        \li \b {Reference}
+            \list
+                \li \l {Files}
+                \li \l {Projects}
+            \endlist
     \endtable
 */
 
@@ -61,45 +62,50 @@
     \title All Topics
 
     \list
-        \li \l {Getting Started}
+        \li Tutorials
             \list
-                \li \l {Tutorial: Qt Widgets Application}
-                \li \l {Tutorial: Qt Quick Application}
-                \li \l {Tutorial: Qt Quick Debugging}
+                \li \l {Tutorial: Qt Widgets application}
+                \li \l {Tutorial: Qt Quick application}
+                \li \l {Tutorial: Qt Quick debugging}
             \endlist
-        \li \l {Configuring Builds}
+        \li How-to
             \list
-                \li \l {Managing Qt Versions}
+                \li \l {Add a Qt version}
+                \li \l {Add form files}
+                \li \l {Create Qt translation files}
+                \li \l {Cross-compile}
+                \li \l {Debug on Linux}
+                \li \l {Enable QML debugging}
+                \li \l {Get help}
+                \li \l {Install Qt VS Tools}
+                \li \l {Load Qt projects}
+                \li \l {Manage resources}
+                \li \l {Update IntelliSense info}
+            \endlist
+
+        \li Explanation
+            \list
                 \li \l {Building}
-                \li \l {Cross-Compiling}
-                \li \l {Importing and Exporting Projects}
+                \li \l {Configuring builds}
+                \li \l {Debugging}
+                \li \l {Debugging Qt Quick applications}
+                \li \l {Features}
+                \li \l {Importing and exporting projects}
             \endlist
-        \li \l {Managing Projects}
+        \li Reference
             \list
-                \li \l {Creating Projects}
-                \li \l {Creating Files}
-                    \list
-                        \li \l {Adding Form Files}
-                        \li \l {Managing Resources}
-                        \li \l {Creating Qt Translation Files}
-                    \endlist
-                \li \l {Loading Qt Projects}
+                \li \l {Files}
+                \li \l {Projects}
             \endlist
-        \li \l {Updating IntelliSense Info}
-        \li \l {Debugging}
-            \list
-                \li \l {Debugging Qt Quick Applications}
-                \li \l {Debugging on Linux}
-            \endlist
-        \li \l {Getting Help}
+
     \endlist
 */
 
 /*!
-    \page qtvstools-getting-started.html
-    \previouspage Qt VS Tools Manual
-    \nextpage Tutorial: Qt Widgets Application
-    \title Getting Started
+    \page qtvstools-explanation-features.html
+    \ingroup qtvstools-explanation
+
+    \title Features
 
     The main features of Qt VS Tools are:
 
@@ -119,36 +125,28 @@
         \li Integrated Qt documentation.
         \li Debugging extensions for Qt data types.
     \endlist
-
-    \section1 Install Qt VS Tools
-
-    In Microsoft Visual Studio, select \uicontrol Extensions >
-    \uicontrol {Manage Extensions} > \uicontrol Online,
-    and search for \uicontrol {Qt Visual Studio Tools}
-    to install or update Qt VS Tools.
-
-    \section1 Add a Qt Version
-
-    To create a Qt VS Tools project, you must add at least one
-    \l{Managing Qt Versions}{Qt version}.
-
-    \section1 Create a Project
-
-    Follow the tutorials to create your first applications:
-
-    \list
-        \li \l {Tutorial: Qt Widgets Application}
-        \li \l {Tutorial: Qt Quick Application}
-    \endlist
-
-    For all the options you have, see \l {Creating Projects}.
 */
 
 /*!
-    \page qtvstools-qt-widgets-application.html
-    \previouspage Getting Started
-    \nextpage Tutorial: Qt Quick Application
-    \title Tutorial: Qt Widgets Application
+    \page qtvstools-how-to-install.html
+    \ingroup qtvstools-how-to
+
+    \title Install Qt VS Tools
+
+    To install or update Qt VS Tools in Microsoft Visual Studio:
+
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Manage Extensions} >
+            \uicontrol Online.
+        \li Search for \uicontrol {Qt Visual Studio Tools}.
+    \endlist
+*/
+
+/*!
+    \page qtvstools-tutorial-qt-widgets-application.html
+    \ingroup qtvstools-tutorials
+
+    \title Tutorial: Qt Widgets application
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
     application. You will create a project using a project wizard and design a
@@ -157,16 +155,16 @@
 
     You can use Qt VS Tools to develop also \l{Qt Quick} applications.
 
-    \section1 Before You Start
+    \section1 Before you start
 
     Before you start, you have to:
 
     \list
         \li \l {Install Qt VS Tools}
-        \li \l {Add a Qt Version}
+        \li \l {Add a Qt version}
     \endlist
 
-    \section1 Create a Qt Widgets Application Project
+    \section1 Create a Qt Widgets application project
 
     To create a Qt Widgets application project in Visual Studio:
 
@@ -201,7 +199,7 @@
     \uicontrol {Start Without Debugging} (or press \key {Ctrl+F5}) to run it.
     For now, the result is an empty window.
 
-    \section1 Design the Main Window
+    \section1 Design the main window
 
     You can use \QD to design the application's main window, which contains
     some widgets placed in layouts:
@@ -217,7 +215,7 @@
 
     For more information about using \QD, see the \l{Qt Designer Manual}.
 
-    \section2 Add Widgets
+    \section2 Add widgets
 
     To add widgets to the UI and to set properties for them:
 
@@ -246,7 +244,7 @@
     resized correctly when the form is resized, you need to add layouts to the
     form.
 
-    \section2 Add Widgets to Layouts
+    \section2 Add wWidgets to layouts
 
     You will need a vertical layout for the buttons as well as a spacer to push
     the buttons to the top of the layout. In addition, you will need a second
@@ -275,7 +273,7 @@
 
     Build and run the application to check the main window.
 
-    \section1 Add a Dialog
+    \section1 Add a dDialog
 
     Now that the main window is ready, you can move on to add functionality to
     the application. To have the application open a dialog when the user clicks
@@ -288,7 +286,7 @@
     QDialog::accept() and QDialog::reject() slots, respectively. You can use \QD
     to add other widgets to the form.
 
-    \section2 Create the Dialog
+    \section2 Create the dialog
 
     To add a dialog to a project:
 
@@ -310,7 +308,7 @@
             the dialog.
     \endlist
 
-    \section2 Design the Dialog
+    \section2 Design the dialog
 
     \image qtvstools-addressbook-adddialog.png Add Address Dialog
 
@@ -344,7 +342,7 @@
         \li Select \uicontrol File > \uicontrol Save to save the form.
     \endlist
 
-    \section1 Connect to the Dialog's OK Button
+    \section1 Connect to the dialog's OK button
 
     To have the \uicontrol OK button invoke the QDialog::accept() slot, click
     the \uicontrol {Edit Signals/Slots} toolbar button to enter
@@ -399,7 +397,7 @@
     \uicontrol Add button to open the \uicontrol {Add Address} dialog, and then
     select \uicontrol OK to close it.
 
-    \section1 Add Items to the List Widget
+    \section1 Add items to the list widget
 
     When the user selects \uicontrol OK, an item should be added to the
     QListWidget. To implement this function, modify the code in the
@@ -413,7 +411,7 @@
     the \uicontrol Name and \uicontrol Email fields are extracted and a
     QListWidgetItem that contains the specified information is created.
 
-    \section1 Display the Selected Item
+    \section1 Display the selected item
 
     When the user selects an item in the list widget, the \c nameLabel and
     \c emailLabel at the bottom of the form should be updated. This behavior
@@ -436,7 +434,7 @@
     to the QListWidget::currentItemChanged() signal of \c{addressList} and
     invoked whenever the selected item in the list changes.
 
-    \section1 Add Functionality for the Delete Button
+    \section1 Add functionality for the Delete button
 
     To implement a slot for the \uicontrol Delete button, open the
     \c addressbook.h file in Visual Studio and add a declaration for the
@@ -450,7 +448,7 @@
 
     Your application is now complete.
 
-    \section1 Create Qt Project Files
+    \section1 Create Qt project files
 
     To build the application on other platforms, you need to create a \c .pro
     file for the project.
@@ -468,7 +466,7 @@
     \endlist
 
     For more information about \c .pro files and their associated \c .pri files,
-    see \l {Creating Projects}.
+    see \l {Projects}.
 
     You should now have a working \c .pro file and \c .pri file for your
     project. For more complex projects, manually editing the \c .pro file
@@ -477,10 +475,10 @@
 */
 
 /*!
-    \page qtvstools-qt-quick-application.html
-    \previouspage Tutorial: Qt Widgets Application
-    \nextpage Tutorial: Qt Quick Debugging
-    \title Tutorial: Qt Quick Application
+    \page qtvstools-tutorial-qt-quick-application.html
+    \ingroup qtvstools-tutorials
+
+    \title Tutorial: Qt Quick application
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Quick}
     application. You will create a project using a project wizard and design a
@@ -489,7 +487,7 @@
 
     You can use Qt VS Tools to develop also \l{Qt Widgets} applications.
 
-    \section1 Before You Start
+    \section1 Before you start
 
     Before you start, you have to:
 
@@ -498,7 +496,7 @@
         \li \l {Add a Qt Version}
     \endlist
 
-    \section1 Create a Qt Quick Application Project
+    \section1 Create a Qt Quick application project
 
     To create a Qt Quick application project in Visual Studio:
 
@@ -522,7 +520,7 @@
     \uicontrol {Start Without Debugging} (or press \key {Ctrl+F5}) to run it.
     For now, the result is an empty window.
 
-    \section1 Design the Main Window
+    \section1 Design the main window
 
     The wizard created a main QML file for you, which declares a root object of
     the type \l Window. You can modify the file to design the application's main
@@ -535,7 +533,7 @@
     \skipto Window {
     \printuntil title
 
-    \section2 Add a Button
+    \section2 Add a button
 
     To create the \uicontrol Add button, declare an object of the \l Button type
     from the \l {Qt Quick Controls} module. Set the value of the button \c text
@@ -570,7 +568,7 @@
 
     \printuntil }
 
-    \section2 Add a List Model
+    \section2 Add a list model
 
     \image qtvstools-quick-addressbook-entries.png QuickAddressBook entries
 
@@ -582,7 +580,7 @@
     \skipto ListModel {
     \printuntil }
 
-    \section2 Declare a Popup
+    \section2 Declare a popup
 
     Declare an object of the custom \c NewAddressPopup type that
     defines the popup where the users will add address book entries.
@@ -594,7 +592,7 @@
 
     You will create the \c NewAddressPopup type later.
 
-    \section2 Position the Button
+    \section2 Position the button
 
     Declare an object of \l ColumnLayout type to position the \l Button object
     and an instance of the \l Repeater type:
@@ -605,7 +603,7 @@
     the application scalable on different screen sizes. Set the \c spacing
     between the rows in the column to \e 0.
 
-    \section2 Add a Repeater
+    \section2 Add a repeater
 
     The \l Repeater type is used to create a large number of similar items. It
     has a model and a delegate: for each entry in the model, the delegate is
@@ -625,7 +623,7 @@
 
     You will create the \c AddressBookItem type later.
 
-    \section2 Connect the Remove Button to an Action
+    \section2 Connect the Remove button to an action
 
     Use the \c onRemoved signal handler to specify that an address book entry
     is removed from the list when the users click the \uicontrol Remove button
@@ -633,7 +631,7 @@
 
     \printuntil }
 
-    \section1 Add a Popup
+    \section1 Add a popup
 
     Now that the main window is ready, you can move on to create the popup
     where users can add address book entries. The data that the
@@ -648,7 +646,7 @@
     To create custom QML types, you must first add a QML Module Definition
     (\c qmldir) file to the project.
 
-    \section2 Add a QML Module Definition
+    \section2 Add a QML module definition
 
     A QML module definition (\c qmldir) maps each custom QML type to its
     corresponding source file.
@@ -664,7 +662,7 @@
 
     Next, you will create the QML types.
 
-    \section2 Create a Popup
+    \section2 Create a popup
 
     To add a custom QML type to the project:
 
@@ -676,7 +674,7 @@
         \li Select \uicontrol Finish to create a custom QML type.
     \endlist
 
-    \section2 Design the Popup
+    \section2 Design the popup
 
     In \e NewAddressPopup.qml, declare a root object of the type \l Popup to
     create a popup that can be opened within a \l Window. A popup does not
@@ -698,7 +696,7 @@
 
     \printuntil y:
 
-    \section2 Reset Popup Controls
+    \section2 Reset popup controls
 
     When the popup opens, the \uicontrol Name and \uicontrol {E-Mail Address}
     fields should display placeholder text and any values entered previously
@@ -707,7 +705,7 @@
 
     \printuntil }
 
-    \section2 Position Fields
+    \section2 Position fields
 
     Use an instance of the \l ColumnLayout type to position the \l TextField
     objects that specify the \uicontrol Name and \uicontrol {E-Mail Address}
@@ -718,14 +716,14 @@
     \printuntil }
     \printuntil }
 
-    \section2 Position Buttons
+    \section2 Position buttons
 
     Use an instance of a \l RowLayout type to position two \l Button objects
     that specify the \uicontrol Add and \uicontrol Cancel buttons:
 
     \printuntil Layout.fillWidth: true
 
-    \section2 Connect Buttons to Actions
+    \section2 Connect buttons to actions
 
     When the users click the \uicontrol Add button, the values they entered to
     the \uicontrol Name and \uicontrol {E-Mail Address} fields are added to the
@@ -751,7 +749,7 @@
 
     \printuntil }
 
-    \section1 Define an Address Book Entry
+    \section1 Define an address book entry
 
     Address book entries are presented in the main window as specified by a
     custom \c AddressBookItem type.
@@ -760,7 +758,7 @@
     > \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt QML File} >
     \uicontrol Add, to create a new QML file called \e AddressBookItem.qml.
 
-    \section2 Design the Entry
+    \section2 Design the entry
 
     First, you will declare a root object of type \l Rectangle. It is one of the
     basic building blocks you can use to create an application in QML. Give it
@@ -780,7 +778,7 @@
 
     \printuntil height:
 
-    \section2 Connect the Remove Button to an Action
+    \section2 Connect the Remove button to an action
 
     Add the \c removed() signal that you will connect to the \onClicked
     signal handler of the remove button. This removes an address book entry
@@ -788,14 +786,14 @@
 
     \printuntil signal removed()
 
-    \section2 Position the Button and Text
+    \section2 Position the button and text
 
     Use instances of the \l RoundButton and \l Text types within an instance of
     a \l RowLayout type to define an address book entry:
 
     \printuntil }
 
-    \section2 Format the Text
+    \section2 Format the text
 
     Set the value of the \c text property to combine the values of the \c name
     and \c addr fields from the popup and to use bold and italic formatting for
@@ -805,7 +803,7 @@
 
     Your application is now complete.
 
-    \section1 Create Project Files
+    \section1 Create project files
 
     To build the application on other platforms, you need to create a \c .pro
     file for the project, as instructed in \l{Create Qt Project Files}.
@@ -813,9 +811,9 @@
 
 /*!
     \page qtvstools-tutorial-debug-qt-quick.html
-    \previouspage Tutorial: Qt Quick Application
-    \nextpage Configuring Builds
-    \title Tutorial: Qt Quick Debugging
+    \ingroup qtvstools-tutorials
+
+    \title Tutorial: Qt Quick debugging
 
     This tutorial illustrates how to use Qt VS Tools to debug the
     \l {Tutorial: Qt Quick Application}{Qt Quick tutorial application},
@@ -827,7 +825,7 @@
     For more information about all the options you have, see
     \l {Debugging Qt Quick Applications}.
 
-    \section1 Before You Start
+    \section1 Before you start
 
     Before you start, you have to:
 
@@ -837,7 +835,7 @@
         \li \l {Tutorial: Qt Quick Application}{Create a Qt Quick Application}
     \endlist
 
-    \section1 Enable QML Debugging
+    \section1 Enable QML debugging
 
     To enable QML debugging for the project:
 
@@ -851,7 +849,7 @@
         the project.
     \endlist
 
-    \section1 Set a Breakpoint
+    \section1 Set a breakpoint
 
     Select \uicontrol File > \uicontrol Open > \uicontrol {File or Solution} to
     open the \e QuickAddressBook solution.
@@ -865,7 +863,7 @@
 
     The red circle indicates that a breakpoint is now set on that line.
 
-    \section1 Start Debugging
+    \section1 Start debugging
 
     Select \uicontrol Debug > \uicontrol {Start Debugging} or press \key F5.
 
@@ -880,7 +878,7 @@
 
     \image qtvstools-quick-addressbook-breakpoint-hit.webp {Viewing a variable}
 
-    \section1 Step Through Code
+    \section1 Step through code
 
     Select \uicontrol {Debug} > \uicontrol {Step Into} or press \key F11 to step
     into the code in the stack. The \e {NewAddressPopup.qml} file opens in the
@@ -888,7 +886,7 @@
 
     \image qtvstools-quick-addressbook-step-into.webp {Stepping into code}
 
-    \section1 Watch Variable Values
+    \section1 Watch variable values
 
     The \uicontrol {Autos} and \uicontrol {Locals} windows show a subset of
     local variables that Visual Studio considers possibly interesting based
@@ -899,23 +897,24 @@
 
     Step through the code to see how the information changes in the view.
 
-    \section1 Evaluate Expressions
+    \section1 Evaluate expressions
 
     To execute JavaSript commands in the context of the current stack frame, open
     the \uicontrol {Immediate Commands} window and type the expression to
     evaluate.
 
-    \section1 Remove the Breakpoint
+    \section1 Remove the breakpoint
 
     To remove the breakpoint, select \uicontrol {Debug} >
     \uicontrol {Toggle Breakpoint} (or press \key F9).
 */
 
+
 /*!
-    \page qtvstools-managing-projects.html
-    \previouspage Importing and Exporting Projects
-    \nextpage Creating Projects
-    \title Managing Projects
+    \page qtvstools-reference-projects.html
+    \ingroup qtvstools-reference
+
+    \title Projects
 
     Qt VS Tools provide wizards for creating several types of Qt and Qt Quick
     projects and files that you can add to the projects, such as classes, form
@@ -929,20 +928,6 @@
 
     In addition, you can create a Qt translation source (TS) file and start
     \QL from Visual Studio to translate the strings in your application.
-
-    \list
-        \li \l {Creating Projects}
-        \li \l {Creating Files}
-        \li \l {Loading Qt Projects}
-    \endlist
-*/
-
-/*!
-    \page qtvstools-creating-projects.html
-    \previouspage Managing Projects
-    \nextpage Creating Files
-    \title Creating Projects
-
     Once you have installed Qt VS Tools, you can search for and then select
     the following project templates in Visual Studio in \uicontrol File >
     \uicontrol New \uicontrol Project:
@@ -968,7 +953,7 @@
     a skeleton class or QML type instance that you can use to get started.
 
     To start writing Qt code and building your projects, you must tell Visual
-    Studio where to find the \l{Managing Qt Versions}{Qt version} that you want
+    Studio where to find the \l{Add a Qt Version}{Qt version} that you want
     to use.
 
     The application tutorials contain examples of using the project templates:
@@ -980,10 +965,10 @@
 */
 
 /*!
-    \page qtvstools-creating-files.html
-    \previouspage Creating Projects
-    \nextpage Adding Form Files
-    \title Creating Files
+    \page qtvstools-reference-files.html
+    \ingroup qtvstools-reference
+
+    \title Files
 
     You can use file templates to add the following types of files to projects
     by selecting \uicontrol Project > \uicontrol {Add New Item} >
@@ -1017,9 +1002,9 @@
     projects:
 
     \list
-        \li \l {Adding Form Files}
-        \li \l {Managing Resources}
-        \li \l {Creating Qt Translation Files}
+        \li \l {Add form files}
+        \li \l {Manage resources}
+        \li \l {Create Qt translation files}
     \endlist
 
     The application tutorials contain examples of using file templates to add
@@ -1032,10 +1017,10 @@
 */
 
 /*!
-    \page qtvstools-loading-qt-projects.html
-    \previouspage Creating Qt Translation Files
-    \nextpage Updating IntelliSense Info
-    \title Loading Qt Projects
+    \page qtvstools-how-to-load-qt-projects.html
+    \ingroup qtvstools-how-to
+
+    \title Load Qt projects
 
     To open Qt projects (.pro) in Visual Studio, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)}.
@@ -1044,10 +1029,10 @@
 */
 
 /*!
-    \page qtvstools-configuring-builds.html
-    \previouspage Tutorial: Qt Quick Debugging
-    \nextpage Managing Qt Versions
-    \title Configuring Builds
+    \page qtvstools-explanation-configuring-builds.html
+    \ingroup vstools-explanation
+
+    \title Configuring builds
 
     Visual Studio uses the Project System to build C++ projects, where MSBuild
     provides the project file format and build framework. Qt VS Tools integrate
@@ -1060,14 +1045,10 @@
     Qt VS Tools projects into a qmake project, or the other way around.
     Conversion to and from CMakeLists.txt files is currently not supported.
 
-    \list
-        \li \l {Managing Qt Versions}
-        \li \l {Building}
-        \li \l {Cross-Compiling}
-        \li \l {Importing and Exporting Projects}
-   \endlist
+    \sa {Add a Qt version}, {Building}, {Cross-compile},
+    {Importing and Exporting Projects}
 
-    \section1 MSBuild Configurations
+    \section1 MSBuild configurations
 
     At very general level, MSBuild works as follows:
 
@@ -1108,7 +1089,7 @@
             the associated source file references.
     \endlist
 
-    \section2 Qt Settings
+    \section2 Qt settings
 
     Qt VS Tools provide the MSBuild project system with a set of
     Qt-specific targets that describe how to use the appropriate Qt tools to
@@ -1132,10 +1113,10 @@
 */
 
 /*!
-    \page qtvstools-managing-qt-versions.html
-    \previouspage Configuring Builds
-    \nextpage Building
-    \title Managing Qt Versions
+    \page qtvstools-how-to-add-qt-versions.html
+    \ingroup qtvstools-how-to
+
+    \title Add a Qt version
 
     Qt VS Tools provide you with basic Qt version management that enables you to
     use multiple Qt versions in parallel. For example, Qt 5.15.11 and 6.4.0.
@@ -1144,7 +1125,7 @@
 
     \image qtvstools-qt-versions.png Qt Versions
 
-    To manage Qt versions:
+    To add Qt versions:
 
     \list 1
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
@@ -1173,9 +1154,9 @@
 */
 
 /*!
-    \page qtvstools-building.html
-    \previouspage Managing Qt Versions
-    \nextpage Cross-Compiling
+    \page qtvstools-explanation-building.html
+    \ingroup qtvstools-explanation
+
     \title Building
 
     Qt VS Tools includes MSBuild rules and targets specific to
@@ -1205,7 +1186,7 @@
     listed. For example, moc options are available for C++ source and header
     files, whereas uic options are available for UI forms (.ui).
 
-    \section1 Project File Format
+    \section1 Project file format
 
     When importing .pro files, \e {custom build steps} are automatically
     converted into Qt/MSBuild steps. To convert custom build steps into
@@ -1219,7 +1200,7 @@
     \l {https://github.com/qt-labs/vstools/blob/dev/Tests/ProjectFormats/ProjectFormats.md}
     {Qt VS Tools - Project format versions}.
 
-    \section1 Path to Build Files
+    \section1 Path to build files
 
     To set the path to the Qt/MSBuild files, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}.
@@ -1228,10 +1209,10 @@
 */
 
 /*!
-    \page qtvstools-cross-compiling.html
-    \previouspage Building
-    \nextpage Importing and Exporting Projects
-    \title Cross-Compiling
+    \page qtvstools-how-to-cross-compile.html
+    \ingroup qtvstools-how-to
+
+    \title Cross-compile
 
     Qt VS Tools support cross-compilation of Qt projects by integrating
     Qt/MSBuild and the Linux development VS workload. This enables you to
@@ -1289,10 +1270,10 @@
 */
 
 /*!
-    \page qtvstools-importing-and-exporting-projects.html
-    \previouspage Cross-Compiling
-    \nextpage Managing Projects
-    \title Importing and Exporting Projects
+    \page qtvstools-explanation-importing-and-exporting-projects.html
+    \ingroup qtvstools-explanation
+
+    \title Importing and exporting projects
 
     Qt and Visual Studio use different file formats to save projects. If you
     build your application on multiple platforms, you probably already use
@@ -1351,10 +1332,10 @@
 */
 
 /*!
-    \page qtvstools-form-files.html
-    \previouspage Creating Files
-    \nextpage Managing Resources
-    \title Adding Form Files
+    \page qtvstools-how-to-add-form-files.html
+    \ingroup qtvstools-how-to
+
+    \title Add form files
 
     You can start \QD from Qt VS Tools by double-clicking a \c .ui file. For
     more information about using \QD, see the \l{Qt Designer Manual}.
@@ -1371,10 +1352,10 @@
 */
 
 /*!
-    \page qtvstools-managing-resources.html
-    \previouspage Adding Form Files
-    \nextpage Creating Qt Translation Files
-    \title Managing Resources
+    \page qtvstools-how-to-manage-resources.html
+    \ingroup qtvstools-how-to
+
+    \title Manage resources
 
     Adding new resources to a Qt project is similar to adding resources to a
     normal C++ project. The main difference is that \c .qrc files (Qt
@@ -1417,10 +1398,10 @@
 */
 
 /*!
-    \page qtvstools-translation-files.html
-    \previouspage Managing Resources
-    \nextpage Loading Qt Projects
-    \title Creating Qt Translation Files
+    \page qtvstools-how-to-create-qt-translation-files.html
+    \ingroup qtvstools-how-to
+
+    \title Create Qt translation files
 
     To add a new translation file to the project:
 
@@ -1455,9 +1436,10 @@
 */
 
 /*!
-    \page qtvstools-getting-help.html
-    \previouspage Debugging on Linux
-    \title Getting Help
+    \page qtvstools-how-to-get-help.html
+    \ingroup qtvstools-how-to
+
+    \title Get help
 
     By default, Qt VS Tools try to display Qt online documentation when you
     press \key F1. If you often end up in the Qt documentation even though you
@@ -1484,10 +1466,10 @@
 */
 
 /*!
-    \page qtvstools-intellisense-info.html
-    \previouspage Loading Qt Projects
-    \nextpage Debugging
-    \title Updating IntelliSense Info
+    \page qtvstools-how-to-update-intellisense-info.html
+    \ingroup qtvstools-how-to
+
+    \title Update IntelliSense info
 
     Visual Studio provides IntelliSense code editing features for C++ types
     including code completion, parameter info, and member lists.
@@ -1520,9 +1502,9 @@
 */
 
 /*!
-    \page qtvstools-debugging.html
-    \previouspage Updating IntelliSense Info
-    \nextpage Debugging Qt Quick Applications
+    \page qtvstools-explanation-debugging.html
+    \ingroup qtvstools-explanation
+
     \title Debugging
 
     Visual Studio supports debugging Qt C++ applications using the Visual Studio
@@ -1540,17 +1522,15 @@
     To start a debugging session, select \uicontrol Debug >
     \uicontrol {Start Debugging} or press \key F5.
 
-    \list
-        \li \l {Debugging Qt Quick Applications}
-        \li \l {Debugging on Linux}
-    \endlist
+    \sa {Debugging Qt Quick Applications}, {Enable QML debugging},
+    {Debug on Linux}
 */
 
 /*!
-    \page qtvstools-debugging-qt-quick.html
-    \previouspage Debugging
-    \nextpage Debugging on Linux
-    \title Debugging Qt Quick Applications
+    \page qtvstools-explanation-debugging-qt-quick.html
+    \ingroup qtvstools-explanation
+
+    \title Debugging Qt Quick applications
 
     A \e {QML debug engine} extends the Visual Studio debugger with features of
     the \l{QML Debugging Infrastructure}{QML debugging infrastructure}, which is
@@ -1596,7 +1576,14 @@
     The value of that expression in the current context is displayed and can
     be modified.
 
-    \section1 Enabling QML Debugging
+    \sa {Enable QML debugging}, {Debugging}
+*/
+
+/*!
+    \page qtvstools-how-to-enable-qml-debugging.html
+    \ingroup qtvstools-how-to
+
+    \title Enable QML debugging
 
     To enable QML debugging for a project, select \uicontrol {Extensions} >
     \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
@@ -1622,17 +1609,16 @@
     milliseconds, edit the value of \uicontrol {Runtime connection timeout}.
     To remove the timeout, set the value to \uicontrol Disabled.
 
-    For more information about debugging Qt Quick applications on Linux devices,
-    see \l {Remote QML Debugging}.
+    \sa {Debug on Linux}
 */
 
 /*!
-    \page qtvstools-debugging-linux.html
-    \previouspage Debugging Qt Quick Applications
-    \nextpage Getting Help
-    \title Debugging on Linux
+    \page qtvstools-how-to-debug-on-linux.html
+    \ingroup qtvstools-how-to
 
-    If you have set up Qt VS Tools for \l {Cross-Compiling}{cross-compilation}
+    \title Debug on Linux
+
+    If you have set up Qt VS Tools for \l {Cross-compile}{cross-compilation}
     on Linux, you can debug applications running on a Linux devices. First
     launch the application using \c gdbserver and then configure GDB to connect
     to the device and start a remote debugging session.
@@ -1678,7 +1664,7 @@
 
     \section1 Remote QML Debugging
 
-    To debug Qt Quick applications on Linux devices, \l{Enabling QML Debugging}
+    To debug Qt Quick applications on Linux devices, \l{Enable QML debugging}
     {enable QML debugging} and set up program arguments for starting a QML
     debugging session. \uicontrol Project > \uicontrol Properties >
     \uicontrol {Configuration Properties} > \uicontrol Debugging, and then
@@ -1688,4 +1674,6 @@
     \badcode
     -qmljsdebugger=port:<port>,host:<IP_address>,block
     \endcode
+
+    \sa {Debugging}, {Cross-compile}
 */
