@@ -206,7 +206,7 @@
 
     \section1 Design the main window
 
-    You can use \QD to design the application's main window, which contains
+    You can use \QD to design the application's main window, which has
     some widgets placed in layouts:
 
     \image qtvstools-addressbook-mainwindow.webp AddressBook's main dialog
@@ -228,15 +228,15 @@
         \li In Visual Studio's Solution Explorer, double-click the
             \c addressbook.ui file to open it in \QD.
         \li In \QD's \uicontrol {Widget Box}, select \uicontrol {List Widget} and
-            drag and drop it to the form to add a \l QListWidget.
+            Drag it to the form to add a \l QListWidget.
         \li In the \uicontrol {Property Editor}, set the \c ObjectName property
             to \e addressList.
-        \li Drag and drop two \uicontrol {Push Button} widgets to the top-right
+        \li Drag two \uicontrol {Push Button} widgets to the top-right
             corner of the form to add \l QPushButton objects for the
             \uicontrol Add and \uicontrol Delete buttons.
         \li Set the button names to \e addButton and \e deleteButton and
             \uicontrol text property values to \e Add and \e Delete.
-        \li Drag and drop two \uicontrol {Label} widgets to the form to add
+        \li Drag two \uicontrol {Label} widgets to the form to add
             \l QLabel objects for displaying the selected item in the list.
         \li Rename the first label to \e nameLabel and change its
             \uicontrol text property to \e {<No item selected>}.
@@ -244,19 +244,19 @@
             \uicontrol text property empty.
     \endlist
 
-    Position the widgets approximately as they appear in the screenshot above.
-    In order to properly position the widgets and to ensure that they are
-    resized correctly when the form is resized, you need to add layouts to the
+    Position the widgets as they appear in the screenshot above.
+    To properly position the widgets and to automatically resize
+    them when the form is resized, you need to add layouts to the
     form.
 
-    \section2 Add wWidgets to layouts
+    \section2 Add widgets to layouts
 
     You will need a vertical layout for the buttons as well as a spacer to push
     the buttons to the top of the layout. In addition, you will need a second
     layout to manage the positioning of the other widgets as well as the button
     layout.
 
-    To add wigdets to layouts:
+    To add widgets to layouts:
 
     \list 1
         \li Drag a \uicontrol {Vertical Spacer} item to the form to add a
@@ -278,16 +278,16 @@
 
     Build and run the application to check the main window.
 
-    \section1 Add a dDialog
+    \section1 Add a dialog
 
     Now that the main window is ready, you can move on to add functionality to
     the application. To have the application open a dialog when the user clicks
     the \uicontrol Add button, you must create an \uicontrol {Add Address}
-    dialog and invoke the dialog from a slot connected to the \uicontrol Add
-    button.
+    dialog and invoke the dialog from a slot that you connect to the
+    \uicontrol Add button.
 
     You can use a Qt file wizard in Visual Studio to create a UI form that
-    contains the \uicontrol OK and \uicontrol Cancel buttons connected to the
+    has the \uicontrol OK and \uicontrol Cancel buttons connected to the
     QDialog::accept() and QDialog::reject() slots, respectively. You can use \QD
     to add other widgets to the form.
 
@@ -364,11 +364,12 @@
     window, you must add a slot to the \c AddressBook class and invoke
     \c AddDialog from this slot.
 
-    Forms that are created using \QD call QMetaObject::connectSlotsByName() to
-    establish connections between signals emitted by the form's child widgets
-    and slots that follow the naming convention \c {on_<sender>_<signal>()}.
-    For the application to react appropriately when the \uicontrol Add button is
-    clicked, you must implement a slot called \c{on_addButton_clicked()}.
+    Forms that you create using \QD call QMetaObject::connectSlotsByName() to
+    establish connections between signals that the form's child widgets
+    emit and slots that follow the naming convention \c {on_<sender>_<signal>()}.
+    For the application to react appropriately when the user clicks the
+    \uicontrol Add button, you must implement a slot called
+    \c{on_addButton_clicked()}.
 
     To implement the slot, open the \c addressbook.h file in Visual Studio and
     add a declaration for the slot:
@@ -378,7 +379,7 @@
         void on_addButton_clicked();
     \endcode
 
-    Then open \c addressbook.cpp and add the slot definition:
+    Then open \c addressbook.cpp, and add the slot definition:
 
     \badcode
     void AddressBook::on_addButton_clicked()
@@ -405,7 +406,7 @@
     \section1 Add items to the list widget
 
     When the user selects \uicontrol OK, an item should be added to the
-    QListWidget. To implement this function, modify the code in the
+    QListWidget. To implement this function, change the code in the
     \c {on_addButton_clicked()} slot, as follows:
 
     \skipto AddDialog dialog(this);
@@ -414,13 +415,13 @@
 
     The dialog is executed. If the user accepts it by selecting \uicontrol OK,
     the \uicontrol Name and \uicontrol Email fields are extracted and a
-    QListWidgetItem that contains the specified information is created.
+    QListWidgetItem that has the specified information is created.
 
     \section1 Display the selected item
 
-    When the user selects an item in the list widget, the \c nameLabel and
-    \c emailLabel at the bottom of the form should be updated. This behavior
-    requires another slot to be added to the \c AddressBook class.
+    To update the \c nameLabel and the \c emailLabel at the bottom of the form
+    when the user selects an item in the list widget, add another slot to the
+    \c AddressBook class.
 
     In the \c addressbook.h file, add the following code in the
     \c{private slots} section of the class:
@@ -435,9 +436,9 @@
     \skipto on_addressList_currentItemChanged()
     \printuntil /^\}/
 
-    Thanks to the naming convention, this slot will automatically be connected
+    The naming convention enables this slot to be automatically connected
     to the QListWidget::currentItemChanged() signal of \c{addressList} and
-    invoked whenever the selected item in the list changes.
+    be invoked whenever the selected item in the list changes.
 
     \section1 Add functionality for the Delete button
 
@@ -476,7 +477,7 @@
     You should now have a working \c .pro file and \c .pri file for your
     project. For more complex projects, manually editing the \c .pro file
     is required to make it work on all platforms. However, for the example
-    project, the generated \c .pro file is sufficient.
+    project, the generated \c .pro file is enough.
 */
 
 /*!
@@ -528,7 +529,7 @@
     \section1 Design the main window
 
     The wizard created a main QML file for you, which declares a root object of
-    the type \l Window. You can modify the file to design the application's main
+    the type \l Window. You can change the file to design the application's main
     window.
 
     Specify values for the Window \c color and \c title properties to set the
@@ -551,7 +552,7 @@
 
     \image qtvstools-quick-addressbook-mainwindow.png QuickAddressBook's main window
 
-    \section2 Connect the Button to an Action
+    \section2 Connect the button to an action
 
     QML has a signal and handler mechanism, where the signal is the event and
     the signal is responded to through a signal handler. When a signal is
@@ -589,8 +590,8 @@
 
     Declare an object of the custom \c NewAddressPopup type that
     defines the popup where the users will add address book entries.
-    Use the \c onAddressAdded signal handler to determine that address
-    book entries are appended to the \e addressList model:
+    Use the \c onAddressAdded signal handler to append address
+    book entries to the \e addressList model:
 
     \printuntil }
     \printuntil }
@@ -610,12 +611,11 @@
 
     \section2 Add a repeater
 
-    The \l Repeater type is used to create a large number of similar items. It
+    The \l Repeater type creates many similar items. It
     has a model and a delegate: for each entry in the model, the delegate is
-    instantiated in a context seeded with data from the model. A repeater is
-    usually enclosed in an instance of a positioner type such as a
-    \l ColumnLayout to visually position the multiple delegate items created
-    by the repeater.
+    instantiated in a context seeded with data from the model. Enclose the
+    repeater in an instance of a positioner type such as a \l ColumnLayout to
+    visually position the delegate items that the repeater creates.
 
     Specify \e addressList as the \c model to use for the repeater:
 
@@ -630,18 +630,17 @@
 
     \section2 Connect the Remove button to an action
 
-    Use the \c onRemoved signal handler to specify that an address book entry
-    is removed from the list when the users click the \uicontrol Remove button
-    for an address book entry.
+    Use the \c onRemoved signal handler to remove an address book entry from the
+    list when the user clicks its \uicontrol Remove button.
 
     \printuntil }
 
     \section1 Add a popup
 
     Now that the main window is ready, you can move on to create the popup
-    where users can add address book entries. The data that the
-    users enter is instantiated by the repeater in the main window, as
-    specified by the \c AddressBookItem type.
+    where users can add address book entries. The \c AddressBookItem type
+    specifies that the repeater instantiates the data that the users enter
+    in the main window.
 
     \image qtvstools-quick-addressbook-popup.png QuickAddressBook's popup
 
@@ -682,7 +681,7 @@
     \section2 Design the popup
 
     In \e NewAddressPopup.qml, declare a root object of the type \l Popup to
-    create a popup that can be opened within a \l Window. A popup does not
+    create a popup that opens in a \l Window. A popup does not
     provide a layout of its own, so you will use a \l ColumnLayout and a
     \l RowLayout to position the \uicontrol Name and \uicontrol {E-Mail Address}
     fields.
@@ -696,7 +695,7 @@
 
     \printuntil focus:
 
-    Specify values for the \c width, \c x, and \c y properties to determine the
+    Specify values for the \c width, \c x, and \c y properties to set the
     position and size of the popup on top of the main window:
 
     \printuntil y:
@@ -756,8 +755,8 @@
 
     \section1 Define an address book entry
 
-    Address book entries are presented in the main window as specified by a
-    custom \c AddressBookItem type.
+    The custom \c AddressBookItem type specifies how to present address book
+    entries in the main window.
 
     Select \uicontrol Project > \uicontrol {Add New Item} > \uicontrol Installed
     > \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt QML File} >
@@ -878,7 +877,7 @@
 
     When the debugger hits the breakpoint, it interrupts the application.
     Qt VS Tools displays the nested function calls leading to the current
-    position as a call stack trace. You can view and modify the values of
+    position as a call stack trace. You can view and change the values of
     local variables.
 
     \image qtvstools-quick-addressbook-breakpoint-hit.webp {Viewing a variable}
@@ -1059,7 +1058,7 @@
 
     \list
         \li An MSBuild project consists of references to source files and
-            descriptions of actions to take in order to process those source
+            descriptions of actions for processing those source
             files that are called \e targets.
         \li The build process runs in the context of a project configuration,
             such as \e Debug or \e Release. A project may contain any number
@@ -1143,7 +1142,7 @@
         \li In the \uicontrol Path field, enter the path to the qmake.exe for
             the Qt version.
             For example: \c {C:\Qt\6.2.0\msvc2019_64\bin\qmake.exe}.
-        \li In the \uicontrol Default field, select the Qt version to be used
+        \li In the \uicontrol Default field, select the Qt version to use
             by default when creating new projects or importing a project from a
             \c {.pro} file.
         \li Select \uicontrol OK.
@@ -1202,9 +1201,9 @@
 
     \image qtvstools-qt-project-settings.webp "Qt Project Settings"
 
-    To set options for handling a specific file, select \uicontrol Properties
-    in the context menu of the file. Only tools relevant for the file type are
-    listed. For example, moc options are available for C++ source and header
+    To set options for handling a specific file, select \uicontrol Properties in
+    the context menu of the file. The dialog lists only tools relevant for the
+    file type. For example, moc options are available for C++ source and header
     files, whereas uic options are available for UI forms (.ui).
 
     \section1 Project file format
@@ -1247,7 +1246,7 @@
             C++ workloads.
         \li Enable the Windows Subsystem for Linux (WSL) and install a
             Linux distribution.
-        \li Alternatively, create a connection to a remote Linux build server.
+        \li Or, create a connection to a remote Linux build server.
         \li Register the cross-compiled Qt build that resides in a WSL instance
             or the remote build server.
     \endlist
@@ -1283,7 +1282,7 @@
 
     Using absolute Linux paths as value of \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}
-    can lead to incorrect mappings. For example, \c {/home/user/raspi} maps
+    can lead to wrong mappings. For example, \c {/home/user/raspi} maps
     to \c {/mnt/home/user/raspi}.
 
     To avoid this issue, create symbolic links in \c /mnt to other top-level
@@ -1297,13 +1296,13 @@
     \title Importing and exporting projects
 
     Qt and Visual Studio use different file formats to save projects. If you
-    build your application on multiple platforms, you probably already use
+    build your application on several platforms, you probably already use
     Qt \c .pro files with \l {qmake Manual}{qmake}. Otherwise, you might use
     \c .vcproj files and Visual Studio to build your project, which is usually
     more convenient for Windows-only development.
 
-    Qt VS Tools provide a way to combine both approaches so that you do not have
-    to manually maintain \c .pro files and \c .vcproj files in parallel. You
+    You can combine both approaches so that you do not have
+    to manually maintain both \c .pro files and \c .vcproj files. You
     start by creating a \c .vcproj file, as usual. When you need a qmake
     \c .pro file for storing Linux and macOS specific settings, select
     \uicontrol Extensions > \uicontrol {Qt VS Tools} >
@@ -1315,12 +1314,12 @@
     \c .pro file generator can create a master \c .pro file of type \c subdirs
     that includes all of the projects.
 
-    The generated \c .pro file is not meant to be a complete file, but a simple
+    The generated \c .pro file is not a complete file, but a simple
     starting point for porting to other platforms. However, these files
-    should be sufficient for compiling the skeleton projects created by the
-    predefined Qt project wizards. The \c .pro file includes a \c .pri file.
+    should be enough for compiling the skeleton projects that the
+    Qt project wizards create. The \c .pro file includes a \c .pri file.
 
-    The \c .pri file contains the list of source files, header files, \c .ui
+    The \c .pri file has the list of source files, header files, \c .ui
     files, and \c .qrc files in the project. To generate the \c .pri file,
     select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
     \uicontrol {Export Project to .pri File}.
@@ -1338,7 +1337,7 @@
     \uicontrol {Import .pri File to Project} to synchronize the Visual Studio
     project file with the \c .pri file.
 
-    If your project contains platform-specific source files, you should list
+    If your project has platform-specific source files, you should list
     them in the \c .pro file so that they are not overwritten by Qt VS Tools.
 
     To summarize, a cross-platform Qt project consists of the following files:
@@ -1498,7 +1497,7 @@
     To keep IntelliSense info updated also with code generated by
     Qt tools, such as \l {Using the Meta-Object Compiler (moc)}{moc},
     \l {User Interface Compiler (uic)}{uic}, or \l {Resource Compiler (rcc)}
-    {rcc}, they are run in the background when source files change. If this
+    {rcc}, they run in the background when source files change. If this
     creates too much overhead for large solutions, you can disable the
     \uicontrol {Run Qt tools in background build} option to only run
     qmake and update a minimal set of Qt build properties.
@@ -1517,7 +1516,7 @@
             background build of Qt targets when necessary.
         \li \uicontrol {Show debug information} displays debug information about
             IntelliSense info updates.
-        \li \uicontrol {Verbosity of background build log} determines the amount
+        \li \uicontrol {Verbosity of background build log} sets the amount
             of info recorded in the background build log.
     \endlist
 */
@@ -1555,12 +1554,12 @@
 
     A \e {QML debug engine} extends the Visual Studio debugger with features of
     the \l{QML Debugging Infrastructure}{QML debugging infrastructure}, which is
-    a part of the \l{Qt QML} module that provides services for debugging,
+    a part of the \l{Qt QML} module that offers services for debugging,
     inspecting, and profiling applications via a TCP port. The debug engine
     implements interfaces from the Active Debugging 7 (AD7) extensibility
     framework for the Visual Studio debugger.
 
-    If a Qt project contains QML resource files, starting a debugging session
+    If a Qt project has QML resource files, starting a debugging session
     (for example, by pressing \key F5) launches the native application and
     connects to the QML debugging infrastructure of that application. You can see
     this in the \uicontrol {Processes} window of the Visual Studio debugger. It
@@ -1587,15 +1586,14 @@
     breakpoint is hit includes only QML function calls. The C++ context of those
     calls will not be available.
 
-    As in the case of native debugging, while in break mode, it is possible to
-    view and modify the values of local variables in the context of the
-    currently active call stack frame, as well as to create watches for any
+    As in the case of native debugging, while in break mode, you can
+    view and change the values of local variables in the context of the
+    currently active call stack frame, as well as create watches for any
     variable or expression. In the Immediate window, you can evaluate any
     expression in the context of the current stack frame.
 
     Move the mouse over a QML expression to display an instant watch window.
-    The value of that expression in the current context is displayed and can
-    be modified.
+    You can view and change the value of that expression in the current context.
 
     \sa {Enable QML debugging}, {Debugging}
 */
@@ -1669,16 +1667,16 @@
     \list
         \li \l{https://man7.org/linux/man-pages/man8/ld.so.8.html}
             {LD_LIBRARY_PATH} specifies the path to the directory
-            where Qt binaries are installed.
+            where you installed Qt binaries.
         \li \l {Qt for Embedded Linux}{QT_QPA_PLATFORM} specifies the platform
             plugin, such as EGLFS, LinuxFB, DirectFB, or Wayland.
         \li \c QT_QPA_PLATFORM_PLUGIN_PATH specifies the path to the
-            directory where the platform plugin is installed.
+            directory where you installed the platform plugin.
         \li For the \l {EGLFS} platform, \c QT_QPA_EGLFS_PHYSICAL_WIDTH and
             \c QT_QPA_EGLFS_PHYSICAL_HEIGHT specify the screen width and
             height in millimeters.
         \li \l{QML Import Path}{QML2_IMPORT_PATH} specifies the path to the
-            directory where QML modules are installed.
+            directory where you installed QML modules.
     \endlist
 
     Press \key F5 to start the remote debugging session.
