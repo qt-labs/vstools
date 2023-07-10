@@ -28,7 +28,7 @@
                 \endlist
             \li \b {How-to}
                 \list
-                    \li \l {Add a Qt version}
+                    \li \l {Add Qt versions}
                     \li \l {Add form files}
                     \li \l {Create Qt translation files}
                     \li \l {Cross-compile}
@@ -38,6 +38,7 @@
                     \li \l {Install Qt VS Tools}
                     \li \l {Load Qt projects}
                     \li \l {Manage resources}
+                    \li \l {Select Qt versions for a project}
                     \li \l {Update IntelliSense info}
                 \endlist
         \li \b {Explanation}
@@ -70,7 +71,7 @@
             \endlist
         \li How-to
             \list
-                \li \l {Add a Qt version}
+                \li \l {Add Qt versions}
                 \li \l {Add form files}
                 \li \l {Create Qt translation files}
                 \li \l {Cross-compile}
@@ -80,6 +81,7 @@
                 \li \l {Install Qt VS Tools}
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
+                \li \l {Select Qt versions for a project}
                 \li \l {Update IntelliSense info}
             \endlist
 
@@ -164,7 +166,7 @@
 
     \list
         \li \l {Install Qt VS Tools}
-        \li \l {Add a Qt version}
+        \li \l {Add Qt versions}
     \endlist
 
     \section1 Create a Qt Widgets application project
@@ -496,7 +498,7 @@
 
     \list
         \li \l {Install Qt VS Tools}
-        \li \l {Add a Qt Version}
+        \li \l {Add Qt versions}
     \endlist
 
     \section1 Create a Qt Quick application project
@@ -834,7 +836,7 @@
 
     \list
         \li \l {Install Qt VS Tools}
-        \li \l {Add a Qt Version}
+        \li \l {Add Qt versions}
         \li \l {Tutorial: Qt Quick Application}{Create a Qt Quick Application}
     \endlist
 
@@ -956,7 +958,7 @@
     a skeleton class or QML type instance that you can use to get started.
 
     To start writing Qt code and building your projects, you must tell Visual
-    Studio where to find the \l{Add a Qt Version}{Qt version} that you want
+    Studio where to find the \l{Add Qt versions}{Qt version} that you want
     to use.
 
     The application tutorials contain examples of using the project templates:
@@ -1048,7 +1050,7 @@
     Qt VS Tools projects into a qmake project, or the other way around.
     Conversion to and from CMakeLists.txt files is currently not supported.
 
-    \sa {Add a Qt version}, {Building}, {Cross-compile},
+    \sa {Add Qt versions}, {Building}, {Cross-compile},
     {Importing and Exporting Projects}
 
     \section1 MSBuild configurations
@@ -1119,20 +1121,20 @@
     \page qtvstools-how-to-add-qt-versions.html
     \ingroup qtvstools-how-to
 
-    \title Add a Qt version
+    \title Add Qt versions
 
     Qt VS Tools provide you with basic Qt version management that enables you to
-    use multiple Qt versions in parallel. For example, Qt 5.15.11 and 6.4.0.
+    use multiple Qt versions in parallel. For example, Qt 5.15.11 and 6.5.0.
     You have to add at least one Qt version that was built for MSVC to be able
     to create Qt projects.
 
-    \image qtvstools-qt-versions.png Qt Versions
+    \image qtvstools-qt-versions.webp Qt Versions
 
     To add Qt versions:
 
     \list 1
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt Versions} > \inlineimage qtvstools-plus.png
+            \uicontrol {Qt} > \uicontrol {Versions} > \inlineimage plus.png
             .
         \li In the \uicontrol Version field, enter a name for the Qt version.
             If you add the path to Qt first, this field is filled automatically.
@@ -1147,13 +1149,29 @@
         \li Select \uicontrol OK.
     \endlist
 
-    To remove a Qt version, select \inlineimage qtvstools-minus.png
+    To remove a Qt version, select \inlineimage minus.png
     .
 
-    To specify Qt versions for a project, right-click the project in
-    \uicontrol {Solution Explorer} and select \uicontrol Properties in the
-    context menu. Select \uicontrol {Qt Project Settings}, and set the Qt
-    version as the value of the \uicontrol {Qt Installation} option.
+    \sa {Select Qt versions for a project}, {Cross-compile}
+*/
+
+/*!
+    \page qtvstools-how-to-select-qt-versions-for-project.html
+    \ingroup qtvstools-how-to
+
+    \title Select Qt versions for a project
+
+    To select another Qt version than the default Qt version for a project:
+
+    \list 1
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Properties in the context menu.
+        \li Select \uicontrol {Qt Project Settings}.
+            \image qtvstools-qt-project-settings.webp {Qt Project Settings dialog}
+        \li In \uicontrol {Qt Installation}, select the Qt version.
+    \endlist
+
+    \sa {Add Qt versions}, {Cross-compile}
 */
 
 /*!
@@ -1238,7 +1256,7 @@
 
     \list 1
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt Versions} > \inlineimage qtvstools-plus.png
+            \uicontrol {Qt Versions} > \inlineimage plus.png
             to add a new Qt version.
         \li In the \uicontrol Version field, enter a name for the Qt version.
             If you add the path to Qt first, this field is filled automatically.
