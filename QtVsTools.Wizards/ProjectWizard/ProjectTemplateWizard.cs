@@ -379,7 +379,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             // Globals
             //
             xml = new StringBuilder();
-            Parameter[NewProject.ProjectGuid] = HelperFunctions.NewProjectGuid();
+            Parameter[NewProject.ProjectGuid] =  $"{{{Guid.NewGuid().ToString().ToUpper()}}}";
             Parameter[NewProject.Keyword] = MsBuildProjectFormat.QtVsVersionTag;
 
             ///////////////////////////////////////////////////////////////////////////////////////

@@ -641,11 +641,6 @@ namespace QtVsTools.Core
             return text.Substring(1, text.Length - 2);
         }
 
-        public static string NewProjectGuid()
-        {
-            return $"{{{Guid.NewGuid().ToString().ToUpper()}}}";
-        }
-
         public static string SafePath(string path)
         {
             if (string.IsNullOrEmpty(path))
