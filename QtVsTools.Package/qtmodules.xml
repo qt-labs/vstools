@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <QtVsTools>
-  <Module Id="1">
+  <Module>
     <Name>Core</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCore</LibraryPrefix>
@@ -8,7 +8,7 @@
     <IncludePath>$(QTDIR)\include\QtCore</IncludePath>
     <Defines>QT_CORE_LIB</Defines>
   </Module>
-  <Module Id="2">
+  <Module>
     <Name>Xml</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXml</LibraryPrefix>
@@ -16,7 +16,7 @@
     <IncludePath>$(QTDIR)\include\QtXml</IncludePath>
     <Defines>QT_XML_LIB</Defines>
   </Module>
-  <Module Id="3">
+  <Module>
     <Name>Sql</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSql</LibraryPrefix>
@@ -24,7 +24,7 @@
     <IncludePath>$(QTDIR)\include\QtSql</IncludePath>
     <Defines>QT_SQL_LIB</Defines>
   </Module>
-  <Module Id="4">
+  <Module>
     <Name>OpenGL</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtOpenGL</LibraryPrefix>
@@ -32,7 +32,7 @@
     <IncludePath>$(QTDIR)\include\QtOpenGL</IncludePath>
     <Defines>QT_OPENGL_LIB</Defines>
   </Module>
-  <Module Id="5">
+  <Module>
     <Name>Network</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetwork</LibraryPrefix>
@@ -40,7 +40,7 @@
     <IncludePath>$(QTDIR)\include\QtNetwork</IncludePath>
     <Defines>QT_NETWORK_LIB</Defines>
   </Module>
-  <Module Id="7">
+  <Module>
     <Name>Gui</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtGui</LibraryPrefix>
@@ -49,7 +49,7 @@
     <IncludePath>$(QTDIR)\include\QtANGLE</IncludePath>
     <Defines>QT_GUI_LIB</Defines>
   </Module>
-  <Module Id="8">
+  <Module>
     <Name>ActiveQtS</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxServer</LibraryPrefix>
@@ -59,7 +59,7 @@
     <AdditionalLibraries>Qt5AxBase.lib</AdditionalLibraries>
     <AdditionalLibrariesDebug>Qt5AxBased.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="9">
+  <Module>
     <Name>ActiveQtC</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtAxContainer</LibraryPrefix>
@@ -68,12 +68,12 @@
     <AdditionalLibraries>Qt5AxBase.lib</AdditionalLibraries>
     <AdditionalLibrariesDebug>Qt5AxBased.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="10">
+  <Module>
     <Name>Main</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>qtmain</LibraryPrefix>
   </Module>
-  <Module Id="13">
+  <Module>
     <Name>Svg</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSvg</LibraryPrefix>
@@ -81,7 +81,7 @@
     <IncludePath>$(QTDIR)\include\QtSvg</IncludePath>
     <Defines>QT_SVG_LIB</Defines>
   </Module>
-  <Module Id="14">
+  <Module>
     <Name>Designer</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtDesigner</LibraryPrefix>
@@ -89,7 +89,7 @@
     <IncludePath>$(QTDIR)\include\QtDesigner</IncludePath>
     <Defines>QT_DESIGNER_LIB</Defines>
   </Module>
-  <Module Id="15">
+  <Module>
     <Name>Test</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTest</LibraryPrefix>
@@ -97,7 +97,7 @@
     <IncludePath>$(QTDIR)\include\QtTest</IncludePath>
     <Defines>QT_TESTLIB_LIB</Defines>
   </Module>
-  <Module Id="16">
+  <Module>
     <Name>Script</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtScript</LibraryPrefix>
@@ -105,7 +105,7 @@
     <IncludePath>$(QTDIR)\include\QtScript</IncludePath>
     <Defines>QT_SCRIPT_LIB</Defines>
   </Module>
-  <Module Id="17">
+  <Module>
     <Name>Help</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtHelp</LibraryPrefix>
@@ -113,14 +113,14 @@
     <IncludePath>$(QTDIR)\include\QtHelp</IncludePath>
     <Defines>QT_HELP_LIB</Defines>
   </Module>
-  <Module Id="18">
+  <Module>
     <Name>WebKit</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtWebKit</LibraryPrefix>
     <proVarQT>webkit</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebKit</IncludePath>
   </Module>
-  <Module Id="19">
+  <Module>
     <Name>XmlPatterns</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXmlPatterns</LibraryPrefix>
@@ -128,7 +128,7 @@
     <IncludePath>$(QTDIR)\include\QtXmlPatterns</IncludePath>
     <Defines>QT_XMLPATTERNS_LIB</Defines>
   </Module>
-  <Module Id="20">
+  <Module>
     <Name>Enginio</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>Enginio</LibraryPrefix>
@@ -136,7 +136,7 @@
     <IncludePath>$(QTDIR)\include\Enginio</IncludePath>
     <Defines>QT_ENGINIO_LIB</Defines>
   </Module>
-  <Module Id="21">
+  <Module>
     <Name>Multimedia</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimedia</LibraryPrefix>
@@ -144,7 +144,7 @@
     <IncludePath>$(QTDIR)\include\QtMultimedia</IncludePath>
     <Defines>QT_MULTIMEDIA_LIB</Defines>
   </Module>
-  <Module Id="23">
+  <Module>
     <Name>ScriptTools</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtScriptTools</LibraryPrefix>
@@ -152,7 +152,7 @@
     <IncludePath>$(QTDIR)\include\QtScriptTools</IncludePath>
     <Defines>QT_SCRIPTTOOLS_LIB</Defines>
   </Module>
-  <Module Id="24">
+  <Module>
     <Name>UiTools</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtUiTools</LibraryPrefix>
@@ -160,7 +160,7 @@
     <IncludePath>$(QTDIR)\include\QtUiTools</IncludePath>
     <Defines>QT_UITOOLS_LIB</Defines>
   </Module>
-  <Module Id="25">
+  <Module>
     <Name>Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWidgets</LibraryPrefix>
@@ -168,7 +168,7 @@
     <IncludePath>$(QTDIR)\include\QtWidgets</IncludePath>
     <Defines>QT_WIDGETS_LIB</Defines>
   </Module>
-  <Module Id="27">
+  <Module>
     <Name>Location</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtLocation</LibraryPrefix>
@@ -176,7 +176,7 @@
     <IncludePath>$(QTDIR)\include\QtLocation</IncludePath>
     <Defines>QT_LOCATION_LIB</Defines>
   </Module>
-  <Module Id="28">
+  <Module>
     <Name>Nfc</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNfc</LibraryPrefix>
@@ -184,7 +184,7 @@
     <IncludePath>$(QTDIR)\include\QtNfc</IncludePath>
     <Defines>QT_NFC_LIB</Defines>
   </Module>
-  <Module Id="29">
+  <Module>
     <Name>Qml</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQml</LibraryPrefix>
@@ -192,7 +192,7 @@
     <IncludePath>$(QTDIR)\include\QtQml</IncludePath>
     <Defines>QT_QML_LIB</Defines>
   </Module>
-  <Module Id="30">
+  <Module>
     <Name>Bluetooth</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtBluetooth</LibraryPrefix>
@@ -200,7 +200,7 @@
     <IncludePath>$(QTDIR)\include\QtBluetooth</IncludePath>
     <Defines>QT_BLUETOOTH_LIB</Defines>
   </Module>
-  <Module Id="31">
+  <Module>
     <Name>Positioning</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPositioning</LibraryPrefix>
@@ -208,7 +208,7 @@
     <IncludePath>$(QTDIR)\include\QtPositioning</IncludePath>
     <Defines>QT_POSITIONING_LIB</Defines>
   </Module>
-  <Module Id="32">
+  <Module>
     <Name>SerialPort</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialPort</LibraryPrefix>
@@ -216,7 +216,7 @@
     <IncludePath>$(QTDIR)\include\QtSerialPort</IncludePath>
     <Defines>QT_SERIALPORT_LIB</Defines>
   </Module>
-  <Module Id="33">
+  <Module>
     <Name>PrintSupport</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
@@ -224,7 +224,7 @@
     <IncludePath>$(QTDIR)\include\QtPrintSupport</IncludePath>
     <Defines>QT_PRINTSUPPORT_LIB</Defines>
   </Module>
-  <Module Id="34">
+  <Module>
     <Name>WebChannel</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebChannel</LibraryPrefix>
@@ -232,7 +232,7 @@
     <IncludePath>$(QTDIR)\include\QtWebChannel</IncludePath>
     <Defines>QT_WEBCHANNEL_LIB</Defines>
   </Module>
-  <Module Id="35">
+  <Module>
     <Name>WebSockets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebSockets</LibraryPrefix>
@@ -240,7 +240,7 @@
     <IncludePath>$(QTDIR)\include\QtWebSockets</IncludePath>
     <Defines>QT_WEBSOCKETS_LIB</Defines>
   </Module>
-  <Module Id="36">
+  <Module>
     <Name>Sensors</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSensors</LibraryPrefix>
@@ -248,7 +248,7 @@
     <IncludePath>$(QTDIR)\include\QtSensors</IncludePath>
     <Defines>QT_SENSORS_LIB</Defines>
   </Module>
-  <Module Id="37">
+  <Module>
     <Name>WindowsExtras</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWinExtras</LibraryPrefix>
@@ -256,7 +256,7 @@
     <IncludePath>$(QTDIR)\include\QtWinExtras</IncludePath>
     <Defines>QT_WINEXTRAS_LIB</Defines>
   </Module>
-  <Module Id="38">
+  <Module>
     <Name>QuickWidgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickWidgets</LibraryPrefix>
@@ -264,7 +264,7 @@
     <IncludePath>$(QTDIR)\include\QtQuickWidgets</IncludePath>
     <Defines>QT_QUICKWIDGETS_LIB</Defines>
   </Module>
-  <Module Id="40">
+  <Module>
     <Name>Quick</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuick</LibraryPrefix>
@@ -272,7 +272,7 @@
     <IncludePath>$(QTDIR)\include\QtQuick</IncludePath>
     <Defines>QT_QUICK_LIB</Defines>
   </Module>
-  <Module Id="50">
+  <Module>
     <Name>WebkitWidgets</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtWebkitWidgets</LibraryPrefix>
@@ -280,7 +280,7 @@
     <IncludePath>$(QTDIR)\include\QtWebkitWidgets</IncludePath>
     <Defines>QT_WEBKITWIDGETS_LIB</Defines>
   </Module>
-  <Module Id="51">
+  <Module>
     <Name>Concurrent</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtConcurrent</LibraryPrefix>
@@ -288,7 +288,7 @@
     <IncludePath>$(QTDIR)\include\QtConcurrent</IncludePath>
     <Defines>QT_CONCURRENT_LIB</Defines>
   </Module>
-  <Module Id="52">
+  <Module>
     <Name>MultimediaWidgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtMultimediaWidgets</LibraryPrefix>
@@ -296,7 +296,7 @@
     <IncludePath>$(QTDIR)\include\QtMultimediaWidgets</IncludePath>
     <Defines>QT_MULTIMEDIAWIDGETS_LIB</Defines>
   </Module>
-  <Module Id="101">
+  <Module>
     <Name>3D</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DCore</LibraryPrefix>
@@ -326,7 +326,7 @@
     <AdditionalLibrariesDebug>Qt53DLogicd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt53DRenderd.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="102">
+  <Module>
     <Name>3D Quick</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DQuick</LibraryPrefix>
@@ -356,7 +356,7 @@
     <AdditionalLibrariesDebug>Qt53DQuickRenderd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt53DQuickScene2Dd.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="103">
+  <Module>
     <Name>DBus</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDBus</LibraryPrefix>
@@ -364,7 +364,7 @@
     <IncludePath>$(QTDIR)\include\QtDBus</IncludePath>
     <Defines>QT_DBUS_LIB</Defines>
   </Module>
-  <Module Id="104">
+  <Module>
     <Name>Gamepad</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtGamepad</LibraryPrefix>
@@ -372,7 +372,7 @@
     <IncludePath>$(QTDIR)\include\QtGamepad</IncludePath>
     <Defines>QT_GAMEPAD_LIB</Defines>
   </Module>
-  <Module Id="105">
+  <Module>
     <Name>OpenGL Extensions</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtOpenGLExtensions</LibraryPrefix>
@@ -380,7 +380,7 @@
     <IncludePath>$(QTDIR)\include\QtOpenGLExtensions</IncludePath>
     <Defines>QT_OPENGLEXTENSIONS_LIB</Defines>
   </Module>
-  <Module Id="106">
+  <Module>
     <Name>QuickTest</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickTest</LibraryPrefix>
@@ -388,7 +388,7 @@
     <IncludePath>$(QTDIR)\include\QtQuickTest</IncludePath>
     <Defines>QT_QMLTEST_LIB</Defines>
   </Module>
-  <Module Id="107">
+  <Module>
     <Name>Quick Controls2</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtQuickControls2</LibraryPrefix>
@@ -396,7 +396,7 @@
     <IncludePath>$(QTDIR)\include\QtQuickControls2</IncludePath>
     <Defines>QT_QUICKCONTROLS2_LIB</Defines>
   </Module>
-  <Module Id="108">
+  <Module>
     <Name>Scxml</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtScxml</LibraryPrefix>
@@ -404,7 +404,7 @@
     <IncludePath>$(QTDIR)\include\QtScxml</IncludePath>
     <Defines>QT_SCXML_LIB</Defines>
   </Module>
-  <Module Id="109">
+  <Module>
     <Name>Serial Bus</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSerialBus</LibraryPrefix>
@@ -412,7 +412,7 @@
     <IncludePath>$(QTDIR)\include\QtSerialBus</IncludePath>
     <Defines>QT_SERIALBUS_LIB</Defines>
   </Module>
-  <Module Id="110">
+  <Module>
     <Name>UI Plugin</Name>
     <Selectable>false</Selectable>
     <LibraryPrefix>QtUiPlugin</LibraryPrefix>
@@ -421,7 +421,7 @@
     <Defines>QT_UIPLUGIN_LIB</Defines>
     <Defines>QDESIGNER_EXPORT_WIDGETS</Defines>
   </Module>
-  <Module Id="111">
+  <Module>
     <Name>WebEngine</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngine</LibraryPrefix>
@@ -435,7 +435,7 @@
     <AdditionalLibrariesDebug>Qt5WebEngined.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt5WebEngineCored.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="113">
+  <Module>
     <Name>WebEngine Widgets</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebEngineWidgets</LibraryPrefix>
@@ -449,7 +449,7 @@
     <AdditionalLibrariesDebug>Qt5WebEngineWidgetsd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt5WebEngineCored.lib</AdditionalLibrariesDebug>
   </Module>
-  <Module Id="114">
+  <Module>
     <Name>Charts</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtCharts</LibraryPrefix>
@@ -457,7 +457,7 @@
     <IncludePath>$(QTDIR)\include\QtCharts</IncludePath>
     <Defines>QT_CHARTS_LIB</Defines>
   </Module>
-  <Module Id="115">
+  <Module>
     <Name>Data Visualization</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDataVisualization</LibraryPrefix>
@@ -465,7 +465,7 @@
     <IncludePath>$(QTDIR)\include\QtDataVisualization</IncludePath>
     <Defines>QT_DATAVISUALIZATION_LIB</Defines>
   </Module>
-  <Module Id="116">
+  <Module>
     <Name>Network Authorization</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtNetworkAuth</LibraryPrefix>
@@ -473,7 +473,7 @@
     <IncludePath>$(QTDIR)\include\QtNetworkAuth</IncludePath>
     <Defines>QT_NETWORKAUTH_LIB</Defines>
   </Module>
-  <Module Id="117">
+  <Module>
     <Name>Speech</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtTextToSpeech</LibraryPrefix>
@@ -481,7 +481,7 @@
     <IncludePath>$(QTDIR)\include\QtTextToSpeech</IncludePath>
     <Defines>QT_TEXTTOSPEECH_LIB</Defines>
   </Module>
-  <Module Id="118">
+  <Module>
     <Name>Remote Objects</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtRemoteObjects</LibraryPrefix>
@@ -489,37 +489,37 @@
     <IncludePath>$(QTDIR)\include\QtRemoteObjects</IncludePath>
     <Defines>QT_REMOTEOBJECTS_LIB</Defines>
   </Module>
-  <Module Id="119">
+  <Module>
     <Name>WebView</Name>
     <proVarQT>webview</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebView</LibraryPrefix>
   </Module>
-  <Module Id="120">
+  <Module>
     <Name>Purchasing</Name>
     <proVarQT>purchasing</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPurchasing</LibraryPrefix>
   </Module>
-  <Module Id="121">
+  <Module>
     <Name>Virtual Keyboard</Name>
     <proVarQT>virtualkeyboard</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtVirtualKeyboard</LibraryPrefix>
   </Module>
-  <Module Id="122">
+  <Module>
     <Name>X11 Extras</Name>
     <proVarQT>x11extras</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtX11Extras</LibraryPrefix>
   </Module>
-  <Module Id="123">
+  <Module>
     <Name>Wayland Compositor</Name>
     <proVarQT>waylandcompositor</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWaylandCompositor</LibraryPrefix>
   </Module>
-  <Module Id="124">
+  <Module>
     <Name>Qt Automotive Suite</Name>
     <proVarQT>ivicore geniviextras</proVarQT>
     <Selectable>true</Selectable>
@@ -529,7 +529,7 @@
     <AdditionalLibraries>Qt5GeniviExtras.lib</AdditionalLibraries>
     <AdditionalLibraries>Qt5GeniviExtrasd.lib</AdditionalLibraries>
   </Module>
-  <Module Id="125">
+  <Module>
     <Name>Qt for Automation</Name>
     <proVarQT>coap knx mqtt opcua</proVarQT>
     <Selectable>true</Selectable>

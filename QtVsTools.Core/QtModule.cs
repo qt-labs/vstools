@@ -30,12 +30,9 @@ namespace QtVsTools.Core
                 ? "Qt" + majorVersion + LibraryPrefix.Substring(2) + "d.lib"
                 : LibraryPrefix + "d.lib";
 
-        public QtModule(int id, string major)
+        public QtModule(string major)
         {
-            Id = id;
             majorVersion = major;
         }
-
-        public int Id { get; } = -1;
     }
 }

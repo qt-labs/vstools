@@ -16,7 +16,6 @@ namespace QtVsTools.Core.MsBuild
         public class Module
         {
             public string Name { get; set; }
-            public int Id { get; set; }
             public bool IsReadOnly { get; set; }
             public bool IsEnabled => !IsReadOnly;
             public HashSet<string> QT { get; set; }

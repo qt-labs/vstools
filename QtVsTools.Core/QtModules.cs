@@ -17,15 +17,15 @@ namespace QtVsTools.Core
     {
         public static QtModules Instance { get; } = new();
 
-        private readonly Dictionary<int, QtModule> qt5modules = new Dictionary<int, QtModule>();
-        private readonly Dictionary<int, QtModule> qt6modules = new Dictionary<int, QtModule>();
+        private readonly IReadOnlyCollection<QtModule> qt5Modules;
+        private readonly IReadOnlyCollection<QtModule> qt6Modules;
 
-        public IReadOnlyCollection<QtModule> GetAvailableModules(uint major)
+        public IEnumerable<QtModule> GetAvailableModules(uint major)
         {
             return major switch
             {
-                < 6 => qt5modules.Values,
-                6 => qt6modules.Values,
+                < 6 => qt5Modules,
+                6 => qt6Modules,
                 _ => throw new QtVSException("Unsupported Qt version.")
             };
         }
@@ -35,49 +35,52 @@ namespace QtVsTools.Core
             var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             var pkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath));
 
-            FillModules(Path.Combine(pkgInstallPath, "qtmodules.xml"), "5", ref qt5modules);
-            FillModules(Path.Combine(pkgInstallPath, "qt6modules.xml"), "6", ref qt6modules);
+            qt5Modules = FillModules(pkgInstallPath, "qtmodules.xml", "5");
+            qt6Modules = FillModules(pkgInstallPath, "qt6modules.xml", "6");
         }
 
-        private void FillModules(string modulesFile, string major, ref Dictionary<int, QtModule> dict)
+        private static IReadOnlyCollection<QtModule>FillModules(string packagePath,
+            string modulesFile, string major)
         {
-            if (!File.Exists(modulesFile))
-                return;
+            var list = new List<QtModule>();
+            var modulesFilePath = Path.Combine(packagePath, modulesFile);
+            if (!File.Exists(modulesFilePath))
+                return list;
 
-            var xmlText = File.ReadAllText(modulesFile, Encoding.UTF8);
+            var xmlText = File.ReadAllText(modulesFilePath, Encoding.UTF8);
             XDocument xml = null;
             try {
-                using (var reader = XmlReader.Create(new StringReader(xmlText))) {
-                    xml = XDocument.Load(reader);
-                }
-            } catch { }
+                using var reader = XmlReader.Create(new StringReader(xmlText));
+                xml = XDocument.Load(reader);
+            } catch (Exception exception) {
+                exception.Log();
+            }
 
             if (xml == null)
-                return;
+                return list;
 
             foreach (var xModule in xml.Elements("QtVsTools").Elements("Module")) {
-                int id = (int)xModule.Attribute("Id");
-                QtModule module = new QtModule(id, major);
-                module.Name = (string)xModule.Element("Name");
-                module.Selectable = (string)xModule.Element("Selectable") == "true";
-                module.LibraryPrefix = (string)xModule.Element("LibraryPrefix");
-                module.proVarQT = (string)xModule.Element("proVarQT");
-                module.IncludePath = xModule.Elements("IncludePath")
-                    .Select(x => x.Value).ToList();
-                module.Defines = xModule.Elements("Defines")
-                    .Select(x => x.Value).ToList();
-                module.AdditionalLibraries = xModule.Elements("AdditionalLibraries")
-                    .Select(x => x.Value).ToList();
-                module.AdditionalLibrariesDebug =
-                    xModule.Elements("AdditionalLibrariesDebug")
-                    .Select(x => x.Value).ToList();
-                if (string.IsNullOrEmpty(module.Name)
-                    || string.IsNullOrEmpty(module.LibraryPrefix)) {
-                    Messages.Print("\r\nCritical error: incorrect format of qtmodules.xml");
-                    throw new QtVSException("qtmodules.xml");
+                var module = new QtModule(major)
+                {
+                    Name = (string)xModule.Element("Name"),
+                    Selectable = (string)xModule.Element("Selectable") == "true",
+                    LibraryPrefix = (string)xModule.Element("LibraryPrefix"),
+                    proVarQT = (string)xModule.Element("proVarQT"),
+                    IncludePath = xModule.Elements("IncludePath").Select(x => x.Value).ToList(),
+                    Defines = xModule.Elements("Defines").Select(x => x.Value).ToList(),
+                    AdditionalLibraries = xModule.Elements("AdditionalLibraries")
+                        .Select(x => x.Value).ToList(),
+                    AdditionalLibrariesDebug = xModule.Elements("AdditionalLibrariesDebug")
+                        .Select(x => x.Value).ToList()
+                };
+                if (string.IsNullOrEmpty(module.Name) || string.IsNullOrEmpty(module.LibraryPrefix)) {
+                    Messages.Print($"\r\nCritical error: incorrect format of {modulesFile}");
+                    throw new QtVSException($"Critical error: incorrect format of {modulesFile}");
                 }
-                dict.Add(id, module);
+                list.Add(module);
             }
+
+            return list;
         }
     }
 }

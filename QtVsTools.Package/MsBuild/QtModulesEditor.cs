@@ -39,7 +39,6 @@ namespace QtVsTools.Package.MsBuild
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
                 .Select(x => new QtModulesPopup.Module
                 {
-                    Id = x.Id,
                     Name = x.Name,
                     IsReadOnly = !x.Selectable,
                     QT = x.proVarQT.Split(' ').ToHashSet()
