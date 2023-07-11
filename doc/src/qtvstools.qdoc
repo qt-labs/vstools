@@ -48,7 +48,6 @@
                 \li \l {Configuring builds}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
-                \li \l {Importing and exporting projects}
             \endlist
         \li \b {Reference}
             \list
@@ -92,7 +91,6 @@
                 \li \l {Configuring builds}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
-                \li \l {Importing and exporting projects}
             \endlist
         \li Reference
             \list
@@ -113,13 +111,11 @@
 
     \list
         \li Wizards for creating new Qt and Qt Quick projects and files.
-        \li Automated build setup for the \l {Using the Meta-Object Compiler
+        \li Automated build setup for \l {Using the Meta-Object Compiler
             (moc)}{Meta-Object Compiler (moc)}, \l {User Interface Compiler
             (uic)}, and \l {Resource Compiler (rcc)}.
-        \li Import and export of Qt project files (\c .pro) and project include
-            files (\c .pri).
-        \li Automated conversion of a Qt VS Tools project to a \l {qmake Manual}
-            {qmake} project, or the other way around.
+        \li Loading existing Qt projects (\c .pro).
+        \li Using CMake for cross-platform development.
         \li Integrated Qt resource management.
         \li Creating a Qt translation source (TS) file and starting Qt Linguist
             to translate the strings.
@@ -985,10 +981,14 @@
 
     \title Load Qt projects
 
+    If your Qt projects have \c .pro files that you use to build them with
+    \l {qmake Manual}{qmake}, you can load them to Visual Studio and convert
+    them into solutions. You can then use Visual Studio to build them.
+
     To open Qt projects (.pro) in Visual Studio, select \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)}.
 
-    Opening CMakeLists.txt files is currently not supported.
+    \sa {Building}, {Configuring builds}
 */
 
 /*!
@@ -999,17 +999,18 @@
 
     Visual Studio uses the Project System to build C++ projects, where MSBuild
     provides the project file format and build framework. Qt VS Tools integrate
-    with MSBuild to design and build Qt applications as Visual Studio projects.
+    with MSBuild, so that you design and build Qt applications as Visual Studio
+    projects. In addition, Visual Studio supports using \l {Build with CMake}
+    {CMake} to build projects.
 
-    Visual Studio uses \c .vcproj files to build projects, whereas Qt uses
-    \c .pro files with \l {qmake Manual}{qmake} or \c {CMakeLists.txt} files
-    with CMake. Qt VS Tools enable you to import .pro files into Visual Studio
-    and export them back into Qt build files. In addition, you can convert
-    Qt VS Tools projects into a qmake project, or the other way around.
-    Conversion to and from CMakeLists.txt files is currently not supported.
+    When you create new Qt application projects, you can select whether to use
+    MSBuild or CMake to build them. The wizards create the necessary files for
+    you.
 
-    \sa {Add Qt versions}, {Building}, {Cross-compile},
-    {Importing and Exporting Projects}
+    \image qtvstools-wizard-cmake.webp {Selecting CMake in the application wizard}
+
+    You can load .pro files to Visual Studio to continue developing existing Qt
+    application projects that you configured to use qmake.
 
     \section1 MSBuild configurations
 
@@ -1073,6 +1074,8 @@
             exporting and importing them to and from shared \e {property sheet}
             files (\c .props).
     \endlist
+
+    \sa {Add Qt versions}, {Cross-compile}, {Load Qt projects}, {Building}
 */
 
 /*!
@@ -1086,7 +1089,7 @@
     You have to add at least one Qt version that was built for MSVC to be able
     to create Qt projects.
 
-    \image qtvstools-qt-versions.webp Qt Versions
+    \image qtvstools-qt-versions.webp {Qt Versions}
 
     To add Qt versions:
 
@@ -1110,7 +1113,7 @@
     To remove a Qt version, select \inlineimage minus.png
     .
 
-    \sa {Select Qt versions for a project}, {Cross-compile}
+    \sa {Select Qt versions for a project}, {Cross-compile}, {Load Qt projects}
 */
 
 /*!
@@ -1167,7 +1170,7 @@
 
     \section1 Project file format
 
-    When importing .pro files, \e {custom build steps} are automatically
+    When loading .pro files, \e {custom build steps} are automatically
     converted into Qt/MSBuild steps. To convert custom build steps into
     Qt/MSBuild steps for a solution, select \uicontrol Qt >
     \uicontrol {Convert custom build steps to Qt/MSBuild} in the context
@@ -1185,6 +1188,8 @@
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}.
     This corresponds to setting the value of the \c QTMSBUILDS environment
     variable.
+
+    \sa {Load Qt projects}
 */
 
 /*!
@@ -1254,68 +1259,6 @@
 
     \sa {Tutorial: Qt Quick debugging}, {Debug applications}, {Debug on Linux},
     {Enable QML debugging}, {Building}, {Debugging Qt Quick applications}
-*/
-
-/*!
-    \page qtvstools-explanation-importing-and-exporting-projects.html
-    \ingroup qtvstools-explanation
-
-    \title Importing and exporting projects
-
-    Qt and Visual Studio use different file formats to save projects. If you
-    build your application on several platforms, you probably already use
-    Qt \c .pro files with \l {qmake Manual}{qmake}. Otherwise, you might use
-    \c .vcproj files and Visual Studio to build your project, which is usually
-    more convenient for Windows-only development.
-
-    You can combine both approaches so that you do not have
-    to manually maintain both \c .pro files and \c .vcproj files. You
-    start by creating a \c .vcproj file, as usual. When you need a qmake
-    \c .pro file for storing Linux and macOS specific settings, select
-    \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol {Create Basic .pro File}.
-
-    \image qtvstools-export-project.png Export Projects dialog
-
-    If you have multiple Qt projects in one Visual Studio solution, the basic
-    \c .pro file generator can create a master \c .pro file of type \c subdirs
-    that includes all of the projects.
-
-    The generated \c .pro file is not a complete file, but a simple
-    starting point for porting to other platforms. However, these files
-    should be enough for compiling the skeleton projects that the
-    Qt project wizards create. The \c .pro file includes a \c .pri file.
-
-    The \c .pri file has the list of source files, header files, \c .ui
-    files, and \c .qrc files in the project. To generate the \c .pri file,
-    select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol {Export Project to .pri File}.
-    When you add or remove a file from the Visual Studio project file, you must
-    regenerate the \c .pri file to ensure that the application can still be
-    built on other platforms.
-
-    Also, make sure that the \c .pri file included in the \c .pro file points to
-    the correct file. If you saved the \c .pri file using the suggested path and
-    name, this reference should be correct.
-
-    Developers on platforms other than Windows might add or remove files to the
-    project by editing the \c .pri file. When this happens, Windows developers
-    must select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol {Import .pri File to Project} to synchronize the Visual Studio
-    project file with the \c .pri file.
-
-    If your project has platform-specific source files, you should list
-    them in the \c .pro file so that they are not overwritten by Qt VS Tools.
-
-    To summarize, a cross-platform Qt project consists of the following files:
-
-    \list
-        \li A \c .vcproj file containing Windows-specific settings and listing
-            the files in the project.
-        \li A \c .pro file containing Linux and macOS specific settings.
-        \li A \c .pri file (a \c qmake include file) listing the files in the
-            project.
-    \endlist
 */
 
 /*!

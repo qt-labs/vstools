@@ -30,6 +30,7 @@ qhp.QtVSTools.subprojects.manual.title                  = Qt VS Tools Manual
 qhp.QtVSTools.subprojects.manual.type                   = manual
 
 indexes  += $QDOC_INDEX_DIR/qmake/qmake.index \
+            $QDOC_INDEX_DIR/qtcmake/qtcmake.index \
             $QDOC_INDEX_DIR/qtcore/qtcore.index \
             $QDOC_INDEX_DIR/qtdesigner/qtdesigner.index \
             $QDOC_INDEX_DIR/qtdoc/qtdoc.index \
