@@ -837,20 +837,7 @@
         \li \l {Install Qt VS Tools}
         \li \l {Add Qt versions}
         \li \l {Tutorial: Qt Quick Application}{Create a Qt Quick Application}
-    \endlist
-
-    \section1 Enable QML debugging
-
-    To enable QML debugging for the project:
-
-    \list 1
-        \li Select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt Project Settings} > \uicontrol {QML}.
-        \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
-            \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
-        \li Select \uicontrol {OK} to save the project settings.
-        \li Select \uicontrol {Build} > \uicontrol {Rebuild Solution} to rebuild
-        the project.
+        \li \l {Enable QML debugging}
     \endlist
 
     \section1 Set a breakpoint
@@ -911,6 +898,8 @@
 
     To remove the breakpoint, select \uicontrol {Debug} >
     \uicontrol {Toggle Breakpoint} (or press \key F9).
+
+    \sa {Debugging}, {Debugging Qt Quick applications}, {Debug on Linux}
 */
 
 
@@ -1604,31 +1593,36 @@
 
     \title Enable QML debugging
 
-    To enable QML debugging for a project, select \uicontrol {Extensions} >
-    \uicontrol {Qt VS Tools} > \uicontrol {Qt Project Settings} >
-    \uicontrol {QML} > \uicontrol {Enable QML Debugging} > \uicontrol {Yes}.
-    Select \uicontrol {OK} to save the project settings.
+    To enable QML debugging for a project:
 
-    \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
+    \list 1
+        \li Select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
+            \uicontrol {Qt Project Settings} > \uicontrol {QML}.
+        \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
+            \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
+        \li Select \uicontrol {OK} to save the project settings.
+        \li Select \uicontrol {Build} > \uicontrol {Rebuild Solution} to rebuild
+        the project.
+    \endlist
 
-    \note Before launching the debugger, select \uicontrol {Build} >
-    \uicontrol {Rebuild Solution} to rebuild the project.
+    To disable processing of all QML debug events by the QML debug engine:
 
-    To disable processing of all QML
-    debug events by the QML debug engine, select \uicontrol Extensions >
-    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol Qt
-    \uicontrol General > \uicontrol {QML Debugging}, and set
-    \uicontrol {Process debug events} to \uicontrol False.
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt \uicontrol General >
+            \uicontrol {QML Debugging}.
+            \image qtvstools-options-qt-general.png {Qt General Options}
+        \li Set \uicontrol {Process debug events} to \uicontrol False.
+    \endlist
+
     This effectively excludes the QML debug engine from the debugging
     environment and disables debugging of QML code for all projects.
-
-    \image qtvstools-options-qt-general.png {Qt General Options}
 
     To increase or decrease the timeout for debugging connections in
     milliseconds, edit the value of \uicontrol {Runtime connection timeout}.
     To remove the timeout, set the value to \uicontrol Disabled.
 
-    \sa {Debug on Linux}
+    \sa {Debugging}, {Debugging Qt Quick applications}, {Debug on Linux}
 */
 
 /*!
