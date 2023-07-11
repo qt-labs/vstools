@@ -32,6 +32,7 @@
                     \li \l {Add form files}
                     \li \l {Create Qt translation files}
                     \li \l {Cross-compile}
+                    \li \l {Debug applications}
                     \li \l {Debug on Linux}
                     \li \l {Enable QML debugging}
                     \li \l {Get help}
@@ -45,7 +46,6 @@
             \list
                 \li \l {Building}
                 \li \l {Configuring builds}
-                \li \l {Debugging}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
                 \li \l {Importing and exporting projects}
@@ -75,6 +75,7 @@
                 \li \l {Add form files}
                 \li \l {Create Qt translation files}
                 \li \l {Cross-compile}
+                \li \l {Debug applications}
                 \li \l {Debug on Linux}
                 \li \l {Enable QML debugging}
                 \li \l {Get help}
@@ -89,7 +90,6 @@
             \list
                 \li \l {Building}
                 \li \l {Configuring builds}
-                \li \l {Debugging}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
                 \li \l {Importing and exporting projects}
@@ -899,7 +899,8 @@
     To remove the breakpoint, select \uicontrol {Debug} >
     \uicontrol {Toggle Breakpoint} (or press \key F9).
 
-    \sa {Debugging}, {Debugging Qt Quick applications}, {Debug on Linux}
+    \sa {Cross-compile}, {Debug applications}, {Debug on Linux},
+    {Debugging Qt Quick applications}
 */
 
 
@@ -1228,17 +1229,21 @@
     develop widget-based and Qt Quick applications that target both Windows
     and Linux, including embedded devices.
 
+    \section1 Set up cross-compilation
+
     To develop Qt applications for Linux using Visual Studio:
 
-    \list
+    \list 1
         \li Install the Desktop development with C++ and Linux development with
             C++ workloads.
         \li Enable the Windows Subsystem for Linux (WSL) and install a
             Linux distribution.
         \li Or, create a connection to a remote Linux build server.
-        \li Register the cross-compiled Qt build that resides in a WSL instance
+        \li Add the cross-compiled Qt build that resides in a WSL instance
             or the remote build server.
     \endlist
+
+    \section1 Add Qt version for cross-compilation
 
     To add a Qt version for cross-compilation:
 
@@ -1246,6 +1251,7 @@
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions} > \inlineimage plus.png
             to add a new Qt version.
+            \image qtvstools-qt-versions.webp {Qt Versions}
         \li In the \uicontrol Version field, enter a name for the Qt version.
             If you add the path to Qt first, this field is filled automatically.
         \li In \uicontrol Host, select \uicontrol {Linux WSL} or
@@ -1255,7 +1261,7 @@
             The default value is g++.
     \endlist
 
-    \section1 Compiling on WSL
+    \section1 Compile on WSL
 
     Using a WSL instance to run the cross-compiler is faster than using an
     SSH connection to a build host. When using SSH, MSBuild must first upload
@@ -1276,6 +1282,9 @@
 
     To avoid this issue, create symbolic links in \c /mnt to other top-level
     directories in the WSL instance file system.
+
+    \sa {Tutorial: Qt Quick debugging}, {Debug applications}, {Debug on Linux},
+    {Enable QML debugging}, {Building}, {Debugging Qt Quick applications}
 */
 
 /*!
@@ -1511,28 +1520,36 @@
 */
 
 /*!
-    \page qtvstools-explanation-debugging.html
-    \ingroup qtvstools-explanation
+    \page qtvstools-how-to-debug-apps.html
+    \ingroup qtvstools-how-to
 
-    \title Debugging
+    \title Debug applications
 
-    Visual Studio supports debugging Qt C++ applications using the Visual Studio
-    debugger and Qt Quick applications using the \e {QML debug engine}. To debug
-    applications on Linux, you can use GDB.
+    You can debug:
 
-    You can debug Qt and Qt Quick applications in Visual Studio by setting
-    breakpoints in C++ and QML files and stepping through the execution of code.
+    \list
+        \li Qt C++ applications using the Visual Studio debugger.
+        \li Qt Quick applications using the \e {QML debug engine}.
+        \li Applications on Linux using GDB.
+    \endlist
+
+    You can set breakpoints in C++ and QML files and step through the execution
+    of code.
     While in break mode, you can watch variables and change their values, as
     well as evaluate arbitrary expressions. For Qt Quick applications, a QML
     debugging session runs concurrently to a C++ debugging session, which
     enables you to set breakpoints and watch variables in both C++ and QML
     during the same debugging session.
 
-    To start a debugging session, select \uicontrol Debug >
-    \uicontrol {Start Debugging} or press \key F5.
+    To start a debugging session:
 
-    \sa {Debugging Qt Quick Applications}, {Enable QML debugging},
-    {Debug on Linux}
+    \list
+        \li Select \uicontrol Debug > \uicontrol {Start Debugging}.
+        \li Press \key F5.
+    \endlist
+
+    \sa {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug on Linux},
+    {Enable QML debugging}, {Debugging Qt Quick Applications}
 */
 
 /*!
@@ -1541,6 +1558,20 @@
 
     \title Debugging Qt Quick applications
 
+    A debugger lets you see what happens \e inside an application while it runs
+    or when it crashes. A debugger can do the following to help you find errors
+    in the application:
+
+    \list
+        \li Start the application with parameters that specify its behavior.
+        \li Stop the application when conditions are met.
+        \li Examine what happens when the application stops.
+        \li Make changes in the application when you fix an error and continue
+            to find the next one.
+    \endlist
+
+    \section1 QML debug engine
+
     A \e {QML debug engine} extends the Visual Studio debugger with features of
     the \l{QML Debugging Infrastructure}{QML debugging infrastructure}, which is
     a part of the \l{Qt QML} module that offers services for debugging,
@@ -1548,10 +1579,16 @@
     implements interfaces from the Active Debugging 7 (AD7) extensibility
     framework for the Visual Studio debugger.
 
+    \section1 Setting breakpoints
+
     If a Qt project has QML resource files, starting a debugging session
     (for example, by pressing \key F5) launches the native application and
     connects to the QML debugging infrastructure of that application. You can see
-    this in the \uicontrol {Processes} window of the Visual Studio debugger. It
+    this in the \uicontrol {Processes} window of the Visual Studio debugger.
+
+    \image qtvstools-quick-addressbook-step-into.webp {Viewing processes}
+
+    The \uicontrol {Processes} window
     lists two processes: a native process and a QML process. The native process
     corresponds to the actual physical process created for the C++ debugging
     session. The QML process does not correspond to any physical process that is
@@ -1564,6 +1601,8 @@
     breakpoint marker in QML code indicates a valid breakpoint. This means that
     a breakpoint request for that file position was sent to the QML runtime
     and was confirmed by it.
+
+    \section1 Examining data
 
     When a breakpoint is hit, Visual Studio shows the current state of the call
     stack. Unlike other scenarios of debugging applications that mix several
@@ -1584,7 +1623,8 @@
     Move the mouse over a QML expression to display an instant watch window.
     You can view and change the value of that expression in the current context.
 
-    \sa {Enable QML debugging}, {Debugging}
+    \sa {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications},
+    {Debug on Linux}, {Enable QML debugging}
 */
 
 /*!
@@ -1605,6 +1645,8 @@
         the project.
     \endlist
 
+    \section1 Disable QML debugging
+
     To disable processing of all QML debug events by the QML debug engine:
 
     \list 1
@@ -1618,11 +1660,22 @@
     This effectively excludes the QML debug engine from the debugging
     environment and disables debugging of QML code for all projects.
 
+    \section1 Set debugging connection timeout
+
     To increase or decrease the timeout for debugging connections in
-    milliseconds, edit the value of \uicontrol {Runtime connection timeout}.
+    milliseconds:
+
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt \uicontrol General >
+            \uicontrol {QML Debugging}.
+        \li Set the value of \uicontrol {Runtime connection timeout}.
+    \endlist
+
     To remove the timeout, set the value to \uicontrol Disabled.
 
-    \sa {Debugging}, {Debugging Qt Quick applications}, {Debug on Linux}
+    \sa {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications},
+    {Debug on Linux}, {Debugging Qt Quick applications}
 */
 
 /*!
@@ -1636,57 +1689,77 @@
     launch the application using \c gdbserver and then configure GDB to connect
     to the device and start a remote debugging session.
 
-    \image qtvstools-remote-debugging.png
+    \image qtvstools-remote-debugging.jpg
 
     For this to work, the GDB installed in the WSL must support the target
     device architecture. A simple way to achieve this is to install
     \c gdb-multiarch. To ensure the Visual Studio uses the correct debugger,
     create a symbolic link from \c gdb to \c gdb-multiarch.
 
+    \section1 Set up remote debugging
+
     To set up the remote debugging session in Visual Studio, you must
-    pass additional commands to GDB. Select \uicontrol Project >
-    \uicontrol Properties > \uicontrol {Configuration Properties} >
-    \uicontrol Debugging, and then select \uicontrol {GDB Debugger} in
-    \uicontrol {Debugger to launch}. In \uicontrol {Additional Debugger Commands},
-    add the following commands:
+    pass additional commands to GDB:
 
-    \badcode
-    target extended-remote <IP_address>:<port>
-    set remote exec-file <path_to_executable>
-    \endcode
+    \list 1
+        \li Select \uicontrol Project > \uicontrol Properties >
+            \uicontrol {Configuration Properties} > \uicontrol Debugging.
+            \image qtvstools-project-properties-debugging.webp {Debugging properties}
+        \li In \uicontrol {Debugger to launch}, select \uicontrol {GDB Debugger}.
+        \li In \uicontrol {Additional Debugger Commands}, add the following
+            commands:
 
-    Before starting the remote debugging session, set the required environment
-    variables and launch \c gdbserver on the device:
-
-    \list
-        \li \l{https://man7.org/linux/man-pages/man8/ld.so.8.html}
-            {LD_LIBRARY_PATH} specifies the path to the directory
-            where you installed Qt binaries.
-        \li \l {Qt for Embedded Linux}{QT_QPA_PLATFORM} specifies the platform
-            plugin, such as EGLFS, LinuxFB, DirectFB, or Wayland.
-        \li \c QT_QPA_PLATFORM_PLUGIN_PATH specifies the path to the
-            directory where you installed the platform plugin.
-        \li For the \l {EGLFS} platform, \c QT_QPA_EGLFS_PHYSICAL_WIDTH and
-            \c QT_QPA_EGLFS_PHYSICAL_HEIGHT specify the screen width and
-            height in millimeters.
-        \li \l{QML Import Path}{QML2_IMPORT_PATH} specifies the path to the
-            directory where you installed QML modules.
+            \badcode
+            target extended-remote <IP_address>:<port>
+            set remote exec-file <path_to_executable>
+            \endcode
     \endlist
+
+    \section1 Set environment variables
+
+    Before starting the remote debugging session:
+
+    \list 1
+        \li Set the required environment variables:
+            \list
+                \li \l{https://man7.org/linux/man-pages/man8/ld.so.8.html}
+                    {LD_LIBRARY_PATH} specifies the path to the directory
+                    where you installed Qt binaries.
+                \li \l {Qt for Embedded Linux}{QT_QPA_PLATFORM} specifies the
+                    platform plugin, such as EGLFS, LinuxFB, DirectFB, or Wayland.
+                \li \c QT_QPA_PLATFORM_PLUGIN_PATH specifies the path to the
+                    directory where you installed the platform plugin.
+                \li For the \l {EGLFS} platform, \c QT_QPA_EGLFS_PHYSICAL_WIDTH
+                    and \c QT_QPA_EGLFS_PHYSICAL_HEIGHT specify the screen width
+                    and height in millimeters.
+                \li \l{QML Import Path}{QML2_IMPORT_PATH} specifies the path to
+                    the directory where you installed QML modules.
+            \endlist
+        \li Launch \c gdbserver on the device.
+    \endlist
+
+    \section1 Start remote debugging
 
     Press \key F5 to start the remote debugging session.
 
-    \section1 Remote QML Debugging
+    \section1 Set up debugging on Linux devices
 
-    To debug Qt Quick applications on Linux devices, \l{Enable QML debugging}
-    {enable QML debugging} and set up program arguments for starting a QML
-    debugging session. \uicontrol Project > \uicontrol Properties >
-    \uicontrol {Configuration Properties} > \uicontrol Debugging, and then
-    select \uicontrol {GDB Debugger} in \uicontrol {Debugger to launch}. In
-    \uicontrol {Additional Debugger Commands}, add the following command:
+    To debug Qt Quick applications on Linux devices:
 
-    \badcode
-    -qmljsdebugger=port:<port>,host:<IP_address>,block
-    \endcode
+    \list 1
+        \li Enable QML debugging for the project.
+        \li Select \uicontrol Project > \uicontrol Properties >
+            \uicontrol {Configuration Properties} > \uicontrol Debugging
+            to set up program arguments for starting a QML debugging session.
+        \li In \uicontrol {Debugger to launch}, select \uicontrol {GDB Debugger}.
+        \li In \uicontrol {Additional Debugger Commands}, add the following
+            command:
 
-    \sa {Debugging}, {Cross-compile}
+            \badcode
+            -qmljsdebugger=port:<port>,host:<IP_address>,block
+            \endcode
+    \endlist
+
+    \sa  {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications}
+    {Enable QML debugging}, {Debugging Qt Quick applications}
 */
