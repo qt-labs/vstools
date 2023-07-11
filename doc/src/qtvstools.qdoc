@@ -183,11 +183,11 @@
             \uicontrol Next.
         \li Set up the \uicontrol Debug build configuration and select the
             modules to include in the project:
-            \image qtvstools-widgets-app-modules.webp "Selecting Qt modules in Qt Widgets Application Wizard"
+            \image qtvstools-widgets-app-modules.webp {Selecting Qt modules in Qt Widgets Application Wizard}
             The modules that are typically needed in widget application projects
             are selected by default.
         \li Select \uicontrol Next to continue to the class creation page:
-            \image qtvstools-widgets-app-class.webp "Creating a class in Qt Widgets Application Wizard"
+            \image qtvstools-widgets-app-class.webp {Creating a class in Qt Widgets Application Wizard}
         \li In the \uicontrol {Base class} field, enter \uicontrol QWidget as
             the base class type.
         \li Select the \uicontrol {Lower case filenames} check box to
@@ -303,7 +303,7 @@
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
         \li In the \uicontrol Name field, enter \e AddDialog.
-            \image qtvstools-qt-widget-class-wizard.webp "Creating a class in Qt Widgets Class Wizard"
+            \image qtvstools-qt-widget-class-wizard.webp {Creating a class in Qt Widgets Class Wizard}
         \li In the \uicontrol {Base class} field, enter \uicontrol QDialog as
             the base class type.
         \li Select the \uicontrol {Multiple inheritance} radio button.
@@ -517,7 +517,7 @@
         \li To set up debug and release build configurations, click in
             \uicontrol {Qt Modules}, and select the \uicontrol {Qt Quick} and
             \uicontrol {Qt Quick Controls} modules to include in the project:
-            \image qtvstools-qtquick-app-modules.webp "Selecting Qt modules in Qt Quick Application Wizard"
+            \image qtvstools-qtquick-app-modules.webp {Selecting Qt modules in Qt Quick Application Wizard}
         \li Select \uicontrol Finish to create the project.
     \endlist
 
@@ -1069,7 +1069,7 @@
             set of property definitions.
     \endlist
 
-    \image qtvstools-msbuild-diagram.png "Diagram showing Visual Studio Project and MSBuild"
+    \image qtvstools-msbuild-diagram.png {Diagram showing Visual Studio Project and MSBuild}
 
     \section2 Properties
 
@@ -1099,7 +1099,7 @@
     Qt-specific targets that describe how to use the appropriate Qt tools to
     process files such as moc headers.
 
-    \image qtvstools-qt-project-settings.webp "Qt Project Settings"
+    \image qtvstools-qt-project-settings.webp {Qt Project Settings}
 
     Qt settings are fully-fledged project properties, which ensures that:
 
@@ -1199,7 +1199,7 @@
             \uicontrol {Qt Project Settings}.
     \endlist
 
-    \image qtvstools-qt-project-settings.webp "Qt Project Settings"
+    \image qtvstools-qt-project-settings.webp {Qt Project Settings}
 
     To set options for handling a specific file, select \uicontrol Properties in
     the context menu of the file. The dialog lists only tools relevant for the
@@ -1622,7 +1622,7 @@
     This effectively excludes the QML debug engine from the debugging
     environment and disables debugging of QML code for all projects.
 
-    \image qtvstools-options-qt-general.png "Qt General Options"
+    \image qtvstools-options-qt-general.png {Qt General Options}
 
     To increase or decrease the timeout for debugging connections in
     milliseconds, edit the value of \uicontrol {Runtime connection timeout}.
