@@ -155,10 +155,7 @@
 
     This tutorial illustrates how to use Qt VS Tools to create a \l {Qt Widgets}
     application. You will create a project using a project wizard and design a
-    widget-based UI using \QD. In addition, you will learn how to convert a
-    Microsoft Visual Studio project file into a qmake compatible \c .pro file.
-
-    You can use Qt VS Tools to develop also \l{Qt Quick} applications.
+    widget-based UI using \QD.
 
     \section1 Before you start
 
@@ -358,7 +355,7 @@
     \uicontrol {Configure Connection} dialog, connect the button's
     QPushButton::clicked() signal to the form's QDialog::accept() slot.
 
-    \section1 Open Dialogs from the Main Window
+    \section1 Open dialogs from the main window
 
     To invoke the dialog when the user selects \uicontrol Add in the main
     window, you must add a slot to the \c AddressBook class and invoke
@@ -454,30 +451,7 @@
 
     Your application is now complete.
 
-    \section1 Create Qt project files
-
-    To build the application on other platforms, you need to create a \c .pro
-    file for the project.
-
-    To let Qt VS Tools create a basic \c .pro file for you:
-
-    \list 1
-        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Create Basic .pro File}.
-        \li In the \uicontrol {Export Project} dialog, make sure that the
-            \uicontrol {Create .pri file} check box is selected, and then select
-            \uicontrol OK.
-        \li Select \uicontrol Save to use the default location and name for
-            saving the \c .pri file.
-    \endlist
-
-    For more information about \c .pro files and their associated \c .pri files,
-    see \l {Projects}.
-
-    You should now have a working \c .pro file and \c .pri file for your
-    project. For more complex projects, manually editing the \c .pro file
-    is required to make it work on all platforms. However, for the example
-    project, the generated \c .pro file is enough.
+    \sa {Tutorial: Qt Quick application}
 */
 
 /*!
@@ -490,8 +464,6 @@
     application. You will create a project using a project wizard and design a
     Qt Quick UI. In addition, you will learn how to add QML module definitions
     and QML files to your projects.
-
-    You can use Qt VS Tools to develop also \l{Qt Widgets} applications.
 
     \section1 Before you start
 
@@ -807,10 +779,7 @@
 
     Your application is now complete.
 
-    \section1 Create project files
-
-    To build the application on other platforms, you need to create a \c .pro
-    file for the project, as instructed in \l{Create Qt Project Files}.
+    \sa {Tutorial: Qt Quick debugging}, {Tutorial: Qt Widgets application}
 */
 
 /*!
