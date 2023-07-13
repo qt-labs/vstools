@@ -30,7 +30,9 @@
                 \list
                     \li \l {Add Qt versions}
                     \li \l {Add form files}
+                    \li \l {Build solutions that have Qt/MSBuild format 2}
                     \li \l {Create Qt translation files}
+                    \li \l {Convert solutions to latest Qt/MSBuild format}
                     \li \l {Cross-compile}
                     \li \l {Debug applications}
                     \li \l {Debug on Linux}
@@ -72,7 +74,9 @@
             \list
                 \li \l {Add Qt versions}
                 \li \l {Add form files}
+                \li \l {Build solutions that have Qt/MSBuild format 2}
                 \li \l {Create Qt translation files}
+                \li \l {Convert solutions to latest Qt/MSBuild format}
                 \li \l {Cross-compile}
                 \li \l {Debug applications}
                 \li \l {Debug on Linux}
@@ -1168,17 +1172,20 @@
     file type. For example, moc options are available for C++ source and header
     files, whereas uic options are available for UI forms (.ui).
 
-    \section1 Project file format
+    \section1 Qt/MSBuild project format
 
-    When loading .pro files, \e {custom build steps} are automatically
-    converted into Qt/MSBuild steps. To convert custom build steps into
-    Qt/MSBuild steps for a solution, select \uicontrol Qt >
-    \uicontrol {Convert custom build steps to Qt/MSBuild} in the context
-    menu of the solution.
+    The Qt/MSBuild project file format has changed between Qt VS Tools versions.
+    Currently, version 3 and later are supported.
 
-    The Qt/MSBuild project format has changed between Qt VS Tools versions, and
-    therefore you might have to manually update project files of imported
-    projects. For more information about Qt/MSBuild project format versions, see
+    If you open an existing solution that has version 1 project format, you can
+    still build it. If it has version 2 format, you can build it if you set
+    additional command line options and set the default Qt version
+    to the Qt version that you initially created the project for.
+
+    When you load .pro files, Qt VS Tools automatically converts
+    \e {custom build steps} into Qt/MSBuild steps.
+
+    For more information about Qt/MSBuild project format versions, see
     \l {https://github.com/qt-labs/vstools/blob/dev/Tests/ProjectFormats/ProjectFormats.md}
     {Qt VS Tools - Project format versions}.
 
@@ -1189,7 +1196,58 @@
     This corresponds to setting the value of the \c QTMSBUILDS environment
     variable.
 
-    \sa {Load Qt projects}
+    \sa {Build solutions that have Qt/MSBuild format 2},
+    {Convert solutions to latest Qt/MSBuild format}, {Load Qt projects}
+*/
+
+/*!
+    \page qtvstools-how-to-build-older-projects.html
+    \ingroup qtvstools-how-to
+
+    \title Build solutions that have Qt/MSBuild format 2
+
+    The Qt/MSBuild project format has changed between Qt VS Tools versions.
+
+    To build solutions that have project format 2:
+
+    \list 1
+        \li Open the solution.
+        \li In the context menu, select \uicontrol Properties >
+            \uicontrol {C/C++} > \uicontrol {Command Line} to
+            set additional command line options.
+        \li In \uicontrol {Additional Options}, enter the following options:
+            \c {/std:c++17 /Zc:__cplusplus /permissive-}
+            \image qtvstools-convert-project-format.webp {Additional command line options}
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Qt} > \uicontrol {Versions}.
+        \li In the \uicontrol Default field, select the check box next to the
+            Qt version that you initially created the project for.
+            \image qtvstools-qt-versions.webp {Qt Versions}
+    \endlist
+
+    \sa {Add Qt versions}, {Convert solutions to latest Qt/MSBuild format},
+    {Building}
+*/
+
+/*!
+    \page qtvstools-how-to-convert-project-format.html
+    \ingroup qtvstools-how-to
+
+    \title Convert solutions to latest Qt/MSBuild format
+
+    To further develop existing solutions that have old Qt/MSbuild project
+    format, convert them to the supported project format version:
+
+    \list 1
+        \li Open the solution.
+        \li Select \uicontrol Update.
+            \image qtvstools-open-solution-update.webp {Opening a solution with old project format}
+        \li If you don't see the message, right-click the solution and select
+            \uicontrol Qt > \uicontrol {Convert custom build steps to Qt/MSBuild}
+            in the context menu.
+    \endlist
+
+    \sa {Build solutions that have Qt/MSBuild format 2}, {Building}
 */
 
 /*!
