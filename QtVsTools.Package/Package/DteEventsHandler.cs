@@ -349,16 +349,16 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (item is not VCConfiguration vcConfig)
+            if (item is not VCConfiguration vcConfiguration)
                 return;
 
-            if (MsBuildProject.GetOrAdd(vcConfig.project as VCProject) is not {} project)
+            if (MsBuildProject.GetOrAdd(vcConfiguration.project as VCProject) is not {} project)
                 return;
 
             if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
                 return;
 
-            project.Refresh(vcConfig.Name);
+            project.Refresh(vcConfiguration.Name);
         }
     }
 }

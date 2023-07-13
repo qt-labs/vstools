@@ -20,14 +20,14 @@ namespace QtVsTools.Core.MsBuild
     public partial class MsBuildProject
     {
         public void Refresh(
-            string configId = null,
+            string configurationName = null,
             IEnumerable<string> selectedFiles = null)
         {
-            _ = Task.Run(() => RefreshAsync(configId, selectedFiles));
+            _ = Task.Run(() => RefreshAsync(configurationName, selectedFiles));
         }
 
         public async Task RefreshAsync(
-            string configId = null,
+            string configurationName = null,
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
@@ -36,7 +36,7 @@ namespace QtVsTools.Core.MsBuild
             if (options is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Refreshing: [{configId ?? "(all configs)"}] {VcProjectPath}");
+                    + $"Refreshing: [{configurationName ?? "(all configs)"}] {VcProjectPath}");
             }
 
             await Initialized;
@@ -51,22 +51,21 @@ namespace QtVsTools.Core.MsBuild
             if (Options.Get() is { BuildRunQtTools: true })
                 targets.Add("Qt");
 
-            var configs = Enumerable.Empty<string>();
-            if (configId == null) {
-                if (UnconfiguredProject.Services.ProjectConfigurationsService is {} service)
-                    configs = (await service.GetKnownProjectConfigurationsAsync()).Select(
-                        x => x.Name);
+            var configurationNames = Enumerable.Empty<string>();
+            if (string.IsNullOrEmpty(configurationName)) {
+                if (UnconfiguredProject.Services.ProjectConfigurationsService is {} service) {
+                    configurationNames = (await service.GetKnownProjectConfigurationsAsync())
+                        .Select(configuration => configuration.Name);
+                }
             } else {
-                configs = new[] { configId };
+                configurationNames = new[] { configurationName };
             }
 
-            foreach (var config in configs) {
-                if (refreshQtVars) {
-                    await StartBuildAsync(config, properties, targets,
-                        LoggerVerbosity.Quiet);
-                } else {
-                    await SetOutdatedAsync(config);
-                }
+            foreach (var name in configurationNames) {
+                if (refreshQtVars)
+                    await StartBuildAsync(name, properties, targets, LoggerVerbosity.Quiet);
+                else
+                    await SetOutdatedAsync(name);
             }
         }
     }

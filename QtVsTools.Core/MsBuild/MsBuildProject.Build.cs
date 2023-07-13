@@ -58,29 +58,29 @@ namespace QtVsTools.Core.MsBuild
         private static Task BuildDispatcher { get; set; }
 
         public void StartBuild(
-            string configName,
+            string configurationName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
-            _ = Task.Run(() => StartBuildAsync(configName, properties, targets, verbosity));
+            _ = Task.Run(() => StartBuildAsync(configurationName, properties, targets, verbosity));
         }
 
         public async Task StartBuildAsync(
-            string configName,
+            string configurationName,
             Dictionary<string, string> properties,
             IEnumerable<string> targets,
             LoggerVerbosity verbosity)
         {
-            if (configName == null)
-                throw new ArgumentException("Configuration name cannot be null.");
+            if (string.IsNullOrEmpty(configurationName))
+                throw new ArgumentException("Configuration cannot be null.");
 
             if (Options.Get() is not { ProjectTracking: true } options)
                 return;
             if (options is { BuildDebugInformation: true }) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
-                    + $"Request [{configName}] {UnconfiguredProject.FullPath}");
+                    + $"Request [{configurationName}] {VcProjectPath}");
             }
 
             RequestTimer.Restart();
@@ -95,13 +95,13 @@ namespace QtVsTools.Core.MsBuild
             foreach (var config in knownConfigs) {
                 var configProject = await UnconfiguredProject
                     .LoadConfiguredProjectAsync(config);
-                if (configProject.ProjectConfiguration.Name != configName)
+                if (configProject.ProjectConfiguration.Name != configurationName)
                     continue;
                 configuredProject = configProject;
                 break;
             }
             if (configuredProject == null)
-                throw new ArgumentException($"Unknown configuration '{configName}'.");
+                throw new ArgumentException($"Unknown configuration '{configurationName}'.");
 
             BuildQueue.Enqueue(new QueueItem
             {
@@ -119,11 +119,11 @@ namespace QtVsTools.Core.MsBuild
         }
 
         public async Task SetOutdatedAsync(
-            string configName,
+            string configurationName,
             LoggerVerbosity verbosity = LoggerVerbosity.Quiet)
         {
             await StartBuildAsync(
-                configName,
+                configurationName,
                 null,
                 new[] { Target.SetOutdated.Cast<string>() },
                 verbosity);

@@ -82,7 +82,7 @@ namespace QtVsTools
                 return;
             }
 
-            if (project.VcProject.ActiveConfiguration is not {} activeConfig) {
+            if (project.VcProject.ActiveConfiguration is not {} activeConfiguration) {
                 Messages.Print("translation: Error accessing build interface");
                 return;
             }
@@ -103,7 +103,7 @@ namespace QtVsTools
             if (selectedFiles != null)
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
 
-            project.StartBuild(activeConfig.Name, properties, new[] { "QtTranslation" });
+            project.StartBuild(activeConfiguration.Name, properties, new[] { "QtTranslation" });
         }
 
         public static void RunlUpdate(EnvDTE.Solution solution)
