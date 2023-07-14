@@ -5,14 +5,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -139,10 +136,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             string defaultQtVersionName = qtVersionManager.GetDefaultVersion();
             defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
-
-            ErrorIcon.Source = Imaging.CreateBitmapSourceFromHIcon(
-                SystemIcons.Exclamation.Handle, Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
 
             DataContext = this;
             Loaded += OnLoaded;
