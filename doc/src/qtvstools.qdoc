@@ -28,21 +28,15 @@
                 \endlist
             \li \b {How-to}
                 \list
-                    \li \l {Add Qt versions}
-                    \li \l {Add form files}
-                    \li \l {Build solutions that have Qt/MSBuild format 2}
-                    \li \l {Create Qt translation files}
-                    \li \l {Convert solutions to latest Qt/MSBuild format}
-                    \li \l {Cross-compile}
-                    \li \l {Debug applications}
-                    \li \l {Debug on Linux}
-                    \li \l {Enable QML debugging}
-                    \li \l {Get help}
                     \li \l {Install Qt VS Tools}
-                    \li \l {Load Qt projects}
-                    \li \l {Manage resources}
+                    \li \l {Add Qt versions}
                     \li \l {Select Qt versions for a project}
-                    \li \l {Update IntelliSense info}
+                    \li \l {Convert solutions to latest Qt/MSBuild format}
+                    \li \l {Build solutions that have Qt/MSBuild format 2}
+                    \li \l {Load Qt projects}
+                    \li \l {Debug applications}
+                    \li \l {Enable QML debugging}
+                    \li \l {How-to}{See all}
                 \endlist
         \li \b {Explanation}
             \list
@@ -73,10 +67,10 @@
         \li How-to
             \list
                 \li \l {Add Qt versions}
-                \li \l {Add form files}
                 \li \l {Build solutions that have Qt/MSBuild format 2}
-                \li \l {Create Qt translation files}
                 \li \l {Convert solutions to latest Qt/MSBuild format}
+                \li \l {Create Qt translation files}
+                \li \l {Create UI form files}
                 \li \l {Cross-compile}
                 \li \l {Debug applications}
                 \li \l {Debug on Linux}
@@ -86,6 +80,9 @@
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Select Qt versions for a project}
+                \li \l {Start Qt Designer}
+                \li \l {Start Qt Linguist}
+                \li \l {Start Qt Resource Editor}
                 \li \l {Update IntelliSense info}
             \endlist
 
@@ -106,6 +103,34 @@
 */
 
 /*!
+    \page qtvstools-how-to.html
+
+    \title How-to
+
+        \list
+        \li \l {Add Qt versions}
+        \li \l {Build solutions that have Qt/MSBuild format 2}
+        \li \l {Convert solutions to latest Qt/MSBuild format}
+        \li \l {Create Qt translation files}
+        \li \l {Create UI form files}
+        \li \l {Cross-compile}
+        \li \l {Debug applications}
+        \li \l {Debug on Linux}
+        \li \l {Enable QML debugging}
+        \li \l {Get help}
+        \li \l {Install Qt VS Tools}
+        \li \l {Load Qt projects}
+        \li \l {Manage resources}
+        \li \l {Select Qt versions for a project}
+        \li \l {Start Qt Designer}
+        \li \l {Start Qt Linguist}
+        \li \l {Start Qt Resource Editor}
+        \li \l {Update IntelliSense info}
+    \endlist
+
+*/
+
+/*!
     \page qtvstools-explanation-features.html
     \ingroup qtvstools-explanation
 
@@ -123,7 +148,7 @@
         \li Integrated Qt resource management.
         \li Creating a Qt translation source (TS) file and starting Qt Linguist
             to translate the strings.
-        \li Starting Qt Designer to design widget-based UIs for applications.
+        \li Starting \QD to design widget-based UIs for applications.
         \li Integrated Qt documentation.
         \li Debugging extensions for Qt data types.
     \endlist
@@ -890,7 +915,7 @@
     Qt projects.
 
     In addition, you can create a Qt translation source (TS) file and start
-    \QL from Visual Studio to translate the strings in your application.
+    Qt Linguist from Visual Studio to translate the strings in your application.
     Once you have installed Qt VS Tools, you can search for and then select
     the following project templates in Visual Studio in \uicontrol File >
     \uicontrol New \uicontrol Project:
@@ -965,7 +990,7 @@
     projects:
 
     \list
-        \li \l {Add form files}
+        \li \l {Create UI form files}
         \li \l {Manage resources}
         \li \l {Create Qt translation files}
     \endlist
@@ -1323,10 +1348,9 @@
     \page qtvstools-how-to-add-form-files.html
     \ingroup qtvstools-how-to
 
-    \title Add form files
+    \title Create UI form files
 
-    You can start \QD from Qt VS Tools by double-clicking a \c .ui file. For
-    more information about using \QD, see the \l{Qt Designer Manual}.
+    You can use \QD to design widget-based UIs.
 
     To add a new \c .ui file to the project, select \uicontrol Project >
     \uicontrol {Add New Item} > \uicontrol Installed > \uicontrol {Visual C++} >
@@ -1337,6 +1361,39 @@
     Typically, you need to wrap the code generated for the form file into a
     QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
     create a \c .h and \c .cpp file for you, along with an empty UI form.
+
+    \sa {Tutorial: Qt Widgets application}, {Start Qt Designer},
+    {Qt Designer Manual}
+*/
+
+/*!
+    \page qtvstools-how-to-start-qt-designer.html
+    \ingroup qtvstools-how-to
+
+    \title Start Qt Designer
+
+    To start \QD:
+
+    \list
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Launch Qt Designer}.
+        \li Double-click a \c .ui file in the Solution Explorer.
+    \endlist
+
+    \sa {Create UI form files}, {Qt Designer Manual}
+
+    By default, \QD opens in Visual Studio. To open it as a stand-alone
+    application, select \uicontrol Detach.
+
+    To run \QD in a separate window by default:
+
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+        \uicontrol Options > \uicontrol Qt > \uicontrol General >
+        \uicontrol {Qt Designer}.
+        \image qtvstools-options-qt-general.webp {Qt General Options}
+        \li Set \uicontrol {Run in detached window} to \uicontrol True.
+    \endlist
 */
 
 /*!
@@ -1346,20 +1403,10 @@
     \title Manage resources
 
     Adding new resources to a Qt project is similar to adding resources to a
-    normal C++ project. The main difference is that \c .qrc files (Qt
-    resource files) are used instead of Windows \c .rc files. Unlike \c .rc
-    files, \c .qrc files work on all platforms supported by Qt and are trivial
-    to load from Qt code.
-
-    \image qtvstools-qrc-editor.png Qt Resource Editor dialog
-
-    By default, Qt Resource Editor opens in Visual Studio. To run it in a
-    separate window, select \uicontrol Detach.
-
-    To run \uicontrol {Qt Resource Editor} in a separate window by default,
-    select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol Options > \uicontrol {Qt Resource Editor}, and
-    set \uicontrol {Run in detached window} to \uicontrol True.
+    normal C++ project. The main difference is that you use Qt resource files
+    (\c .qrc ) instead of Windows \c .rc files. Unlike \c .rc files , \c .qrc
+    files work on all platforms supported by Qt and are trivial to load from Qt
+    code.
 
     To add new resources:
 
@@ -1367,10 +1414,12 @@
         \li Select \uicontrol Project > \uicontrol {Add New Item} >
             \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt >
             \uicontrol {Qt Resource File}.
+            \image qtvstools-new-project-item-qt-resource-file.webp {Add New Item dialog}
         \li In the \uicontrol Name field, enter a name for the resource file.
         \li In the \uicontrol Location field, specify a location for the file.
         \li Select \uicontrol Add to create a \c .qrc file and to open it in the
             \uicontrol {Qt Resource Editor}.
+            \image qtvstools-qrc-editor.png {Qt Resource Editor}
         \li To add resources to the file, select \uicontrol Add >
             \uicontrol {Add Files}.
         \li In the \uicontrol Prefix field, you can change the prefix.
@@ -1379,10 +1428,37 @@
     When referring to the resources later on from Qt code, you must prepend the
     prefix, the file name, and a colon. For example, \c{:/MyProject/print.bmp}.
 
+    \section1 Add prefixes
+
     To add prefixes to the \c .qrc file, select \uicontrol Add >
     \uicontrol {Add Prefix} in the \uicontrol {Qt Resource Editor}.
 
-    For more information, see \l{The Qt Resource System}.
+    \sa {Start Qt Resource Editor}, {The Qt Resource System}
+*/
+
+/*!
+    \page qtvstools-how-to-start-qt-resource-editor.html
+    \ingroup qtvstools-how-to
+
+    \title Start Qt Resource Editor
+
+    To start Qt Resource Editor, double-click a \c .qrc file in the Solution
+    Explorer.
+
+    \image qtvstools-qrc-editor.png {Qt Resource Editor}
+
+    By default, Qt Resource Editor opens in Visual Studio. To run it in a
+    separate window, select \uicontrol Detach.
+
+    To run \uicontrol {Qt Resource Editor} in a separate window by default:
+
+    \list
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol {Qt Resource Editor}.
+        \li set \uicontrol {Run in detached window} to \uicontrol True.
+    \endlist
+
+    \sa {Manage resources}, {The Qt Resource System}
 */
 
 /*!
@@ -1391,36 +1467,78 @@
 
     \title Create Qt translation files
 
-    To add a new translation file to the project:
+    You can design applications so that they can be adapted to various languages
+    and regions without engineering changes. If you mark UI text as translatable,
+    you can create Qt translation source (TS) files that contain them and start
+    Qt Linguist to translate the strings.
 
-    \image qtvstools-qt-translation-file-wizard.png
+    To add a new translation file to the project:
 
     \list 1
         \li Select \uicontrol Project > \uicontrol {Add New Item} > \uicontrol Installed >
             \uicontrol {Visual C++} > \uicontrol Qt > \uicontrol {Qt Translation File}.
-        \li In \uicontrol {Select a Language}, you can choose a language from the list
-            of supported languages. You can use \uicontrol Search to filter for a specific
+        \li In \uicontrol {Select a Language}, select a language from the list
+            of supported languages. Use \uicontrol Search to filter for a specific
             language.
+            \image qtvstools-qt-translation-file-wizard.png
         \li In the \uicontrol {Save as} field, enter a filename for the translation file.
         \li Select \uicontrol Finish to create the file and have it listed in
             \uicontrol {Translation Files} in Visual Studio's Solution Explorer.
-        \li Right-click a translation file to open a context menu with options
-            for running \c lupdate and \c lrelease.
+        \li Right-click the translation file to open a context menu, and select
+            \c lupdate.
     \endlist
 
-    To start \QL, select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-    \uicontrol {Launch Qt Linguist} or double-click a \c .ts file in the
-    Solution Explorer.
+    After translating the UI text, select \c lrelease in the context menu to
+    create QM files out of TS files. The QM file format is a compact binary
+    format that the localized application uses to look up translations.
 
-    By default, \QL opens in Visual Studio. To open it as a stand-alone
+    \section1 Update translation files
+
+    To update all TS or QM files for a project, select \uicontrol Qt >
+    \uicontrol {lupdate All .ts Files for Project} or
+    \uicontrol {lrelease All .ts Files for Project} in the context menu for the
+    project.
+
+    \section1 Set Qt translation properties
+
+    To set properties for running \c lupdate and \c lrelease for a project,
+    select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
+    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation}.
+
+    \image qtvstools-project-properties-lupdate.webp {Qt Translation project properties}
+
+    \sa {Start Qt Linguist}, {Internationalization with Qt}, {Qt Linguist Manual}
+*/
+
+/*!
+    \page qtvstools-how-to-start-qt-linguist.html
+    \ingroup qtvstools-how-to
+
+    \title Start Qt Linguist
+
+    To start Qt Linguist:
+
+    \list
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Launch Qt Linguist}.
+        \li Double-click a \c .ts file in the Solution Explorer.
+    \endlist
+
+    By default, Qt Linguist opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
 
-    To run \QL in a separate window by default, select \uicontrol Extensions >
-    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {\QL}, and set
-    \uicontrol {Run in detached window} to \uicontrol True.
+    To run Qt Linguist in a separate window by default:
 
-    For more information about Qt's translation tools, see the
-    \l {Qt Linguist Manual}.
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Qt Linguist}.
+            \image qtvstools-options-qt-general.webp {Qt General Options}
+        \li Set \uicontrol {Run in detached window} to \uicontrol True.
+    \endlist
+
+    \sa {Create Qt translation files}, {Internationalization with Qt},
+    {Qt Linguist Manual}
 */
 
 /*!
@@ -1432,19 +1550,33 @@
     By default, Qt VS Tools try to display Qt online documentation when you
     press \key F1. If you often end up in the Qt documentation even though you
     wanted Microsoft documentation, you can turn off this feature and use the
-    default shortcut \key {Alt+F1}. Select \uicontrol Extensions >
-    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol Help, and set
-    \uicontrol {Try Qt documentation when F1 is pressed} to \uicontrol False
+    default shortcut \key {Alt+F1}.
+
+    To access Microsoft documentation when pressing \key F1:
+
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol Help.
+            \image qtvstools-options-qt-general.webp {Qt General Options}
+        \li Set \uicontrol {Try Qt documentation when F1 is pressed} to
+            \uicontrol False.
+    \endlist
+
+    \section1 Access offline help
 
     To read the documentation delivered with your Qt version instead of the
     latest online version, set \uicontrol {Preferred source} to
     \uicontrol Offline.
+
+    \section1 Change Qt online help keyboard shortcut
 
     To set up another keyboard shortcut for Qt online help:
 
     \list 1
         \li Select \uicontrol Tools > \uicontrol Options >
             \uicontrol Environment > \uicontrol Keyboard.
+            \image qtvstools-options-environment-keyboard.webp {Keyboard options}
         \li In the \uicontrol {Show commands containing} field, enter
             \e {Help.F1Help}.
         \li Select the \uicontrol {Press shortcut keys} field and press your
@@ -1467,8 +1599,9 @@
     \l {User Interface Compiler (uic)}{uic}, or \l {Resource Compiler (rcc)}
     {rcc}, they run in the background when source files change. If this
     creates too much overhead for large solutions, you can disable the
-    \uicontrol {Run Qt tools in background build} option to only run
-    qmake and update a minimal set of Qt build properties.
+    \uicontrol {Run Qt tools in background build} option to only update
+    the minimum set of Qt build properties needed to ensure that Qt types
+    are included in the IntelliSense index.
 
     If you disable the option and code completion does not work, try to rebuild
     the project. You might have to wait some time before code completion fully
@@ -1476,16 +1609,30 @@
     code model by selecting \uicontrol {Rescan Solution} in the context menu of
     the project.
 
-    To set options for updating IntelliSense info, select \uicontrol Extensions
-    > \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol IntelliSense:
+    \section1 Refresh IntelliSense info
 
-    \list
-        \li \uicontrol {Auto project tracking} tracks changes and triggers a
-            background build of Qt targets when necessary.
-        \li \uicontrol {Show debug information} displays debug information about
-            IntelliSense info updates.
-        \li \uicontrol {Verbosity of background build log} sets the amount
-            of info recorded in the background build log.
+    To refresh IntelliSense info, select \uicontrol Qt >
+    \uicontrol {Refresh IntelliSense} in the context menu
+    of the project.
+
+    \section1 Set IntelliSense options
+
+    To set options for updating IntelliSense info:
+
+    \list 1
+        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol IntelliSense.
+            \image qtvstools-options-qt-general.webp {Qt General Options}
+        \li Select options:
+            \list
+                \li \uicontrol {Auto project tracking} tracks changes and
+                    triggers a background build of Qt targets when necessary.
+                \li \uicontrol {Show debug information} displays debug
+                    information about IntelliSense info updates.
+                \li \uicontrol {Verbosity of background build log} sets the
+                    amount of info recorded in the background build log.
+            \endlist
     \endlist
 */
 
@@ -1621,9 +1768,9 @@
 
     \list 1
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol Options > \uicontrol Qt \uicontrol General >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Debugging}.
-            \image qtvstools-options-qt-general.png {Qt General Options}
+            \image qtvstools-options-qt-general.webp {Qt General Options}
         \li Set \uicontrol {Process debug events} to \uicontrol False.
     \endlist
 
@@ -1637,7 +1784,7 @@
 
     \list 1
         \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol Options > \uicontrol Qt \uicontrol General >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Debugging}.
         \li Set the value of \uicontrol {Runtime connection timeout}.
     \endlist
@@ -1655,7 +1802,7 @@
     \title Debug on Linux
 
     If you have set up Qt VS Tools for \l {Cross-compile}{cross-compilation}
-    on Linux, you can debug applications running on a Linux devices. First
+    on Linux, you can debug applications running on Linux devices. First
     launch the application using \c gdbserver and then configure GDB to connect
     to the device and start a remote debugging session.
 
@@ -1730,6 +1877,6 @@
             \endcode
     \endlist
 
-    \sa  {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications}
+    \sa  {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications},
     {Enable QML debugging}, {Debugging Qt Quick applications}
 */
