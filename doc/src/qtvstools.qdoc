@@ -84,6 +84,7 @@
                 \li \l {Start Qt Linguist}
                 \li \l {Start Qt Resource Editor}
                 \li \l {Update IntelliSense info}
+                \li \l {Update Qt translation files}
             \endlist
 
         \li Explanation
@@ -126,8 +127,8 @@
         \li \l {Start Qt Linguist}
         \li \l {Start Qt Resource Editor}
         \li \l {Update IntelliSense info}
+        \li \l {Update Qt translation files}
     \endlist
-
 */
 
 /*!
@@ -1526,29 +1527,68 @@
         \li Select \uicontrol Finish to create the file and have it listed in
             \uicontrol {Translation Files} in Visual Studio's Solution Explorer.
         \li Right-click the translation file to open a context menu, and select
-            \c lupdate.
+            \c lupdate. It finds translatable strings in source, header, and UI
+            files and generates or updates TS files.
     \endlist
 
     After translating the UI text, select \c lrelease in the context menu to
     create QM files out of TS files. The QM file format is a compact binary
     format that the localized application uses to look up translations.
 
-    \section1 Update translation files
+    \sa {Start Qt Linguist}, {Update Qt translation files},
+    {Internationalization with Qt}, {Qt Linguist Manual}
+*/
+
+/*!
+    \page qtvstools-how-to-update-qt-translation-files.html
+    \ingroup qtvstools-how-to
+
+    \title Update Qt translation files
 
     To update all TS or QM files for a project, select \uicontrol Qt >
     \uicontrol {lupdate All .ts Files for Project} or
     \uicontrol {lrelease All .ts Files for Project} in the context menu for the
     project.
 
-    \section1 Set Qt translation properties
+    \section1 Run translation tools during builds
 
-    To set properties for running \c lupdate and \c lrelease for a project,
+    To run \l {Using lupdate}{lupdate} or \l {Using lrelease}{lrelease} when you
+    build a project, select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
+    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
+    \uicontrol {General}, and select the tool to run.
+
+    \image qtvstools-project-properties-qt-translation.webp {Qt Translation properties}
+
+    \section1 Set lupdate properties
+
+    To set properties for running \c lupdate for a project,
     select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation}.
+    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
+    \uicontrol lupdate.
 
-    \image qtvstools-project-properties-lupdate.webp {Qt Translation project properties}
+    \image qtvstools-project-properties-lupdate.webp {lupdate properties}
 
-    \sa {Start Qt Linguist}, {Internationalization with Qt}, {Qt Linguist Manual}
+    Select a property to see its description.
+
+    For a list of properties that you can set in \uicontrol {AdditionalOptions},
+    see \l {lupdate options}.
+
+    \section1 Set lrelease properties
+
+    To set properties for running \c lrelease for a project,
+    select \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
+    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
+    \uicontrol lrelease.
+
+    \image qtvstools-project-properties-lrelease.webp {lrelease properties}
+
+    Select a property to see its description.
+
+    For a list of properties that you can set in \uicontrol {AdditionalOptions},
+    see \l {lrelease options}.
+
+    \sa {Create Qt translation files}, {Start Qt Linguist},
+    {Internationalization with Qt}, {Qt Linguist Manual}
 */
 
 /*!
