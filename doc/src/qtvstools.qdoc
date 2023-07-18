@@ -152,6 +152,10 @@
         \li Integrated Qt documentation.
         \li Debugging extensions for Qt data types.
     \endlist
+
+    \sa {Projects}, {Files}, {Building}, {Load Qt projects}, {Cross-compile},
+    {Manage resources}, {Create Qt translation files}, {Create UI form files},
+    {Start Qt Designer}, {Get help}, {Debug applications}
 */
 
 /*!
@@ -916,25 +920,40 @@
 
     In addition, you can create a Qt translation source (TS) file and start
     Qt Linguist from Visual Studio to translate the strings in your application.
-    Once you have installed Qt VS Tools, you can search for and then select
-    the following project templates in Visual Studio in \uicontrol File >
-    \uicontrol New \uicontrol Project:
 
-    \list
-        \li \uicontrol {Qt ActiveQt Server} creates a simple ActiveX server.
-        \li \uicontrol {Qt Class Library} creates a basic Qt-based dynamic
-            library.
-        \li \uicontrol {Qt Console Application} creates a basic Qt console
-            application.
-        \li \uicontrol {Qt Designer Custom Widget} creates a \QD custom widget
-            plugin.
-        \li \uicontrol {Qt Empty Application} creates a an empty Qt application
-            project.
-        \li \uicontrol {Qt Quick Application} creates a Qt Quick application
-            project.
-        \li \uicontrol {Qt Widgets Application} creates a simple Qt widgets
-            application with one form.
-    \endlist
+    To create Qt projects, select \uicontrol File > \uicontrol New >
+    \uicontrol Project, and search for Qt.
+
+    \image qtvstools-projects.webp {Qt project wizard templates}
+
+    You can create following types of projects.
+
+    \table
+    \header
+        \li Template
+        \li Creates
+    \row
+        \li \uicontrol {Qt ActiveQt Server}
+        \li A simple ActiveX server.
+    \row
+        \li \uicontrol {Qt Class Library}
+        \li A basic Qt-based dynamic library.
+    \row
+        \li \uicontrol {Qt Console Application}
+        \li A basic Qt console application.
+    \row
+        \li \uicontrol {Qt Designer Custom Widget}
+        \li A \QD custom widget plugin.
+    \row
+        \li \uicontrol {Qt Empty Application}
+        \li An empty Qt application project.
+    \row
+        \li \uicontrol {Qt Quick Application}
+        \li A Qt Quick application project.
+    \row
+        \li \uicontrol {Qt Widgets Application}
+        \li A simple Qt widgets application with one form.
+    \endtable
 
     Each Qt project provides a wizard that allows you to specify the Qt modules
     required for your project. For some projects, the wizard will also generate
@@ -950,6 +969,8 @@
         \li \l {Tutorial: Qt Widgets Application}
         \li \l {Tutorial: Qt Quick Application}
     \endlist
+
+    \sa {Add Qt versions}, {Files}
 */
 
 /*!
@@ -958,35 +979,53 @@
 
     \title Files
 
-    You can use file templates to add the following types of files to projects
-    by selecting \uicontrol Project > \uicontrol {Add New Item} >
-    \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt:
+    You can use file templates to add files to projects.
 
-    \list
-        \li \uicontrol {Qt Class} adds a Qt class to an Application project.
-        \li \uicontrol {Qt Dialog Form File (Button Bottom)} adds a dialog with
-            \uicontrol OK and \uicontrol Cancel buttons at its bottom to a
-            Qt Widgets Application project.
-        \li \uicontrol {Qt Dialog Form File (Button Right)} adds a dialog with
-            buttons at its right edge to a Qt Widgets Application project.
-        \li \uicontrol {Qt MainWindow Form File} adds a form file to a
-            Qt Widgets Application project.
-        \li \uicontrol {Qt QML File} adds a custom QML type to a Qt Quick
-            Application project.
-        \li \uicontrol {Qt QML Module Definition} adds a qmldir file that
-            specifies the custom QML types used in a Qt Quick Application
-            project.
-        \li \uicontrol {Qt Resource File} adds a Qt resource file (.qrc) to
-            an Application project.
-        \li \uicontrol {Qt Translation File} adds a Qt translation file (.ts)
-            to an Application project.
-        \li \uicontrol {Qt Widget Form File} adds a Qt Widgets form file (.ui)
-            to an Application project.
-        \li \uicontrol {Qt Widgets Class} adds a Qt Widgets class to a
-            Qt Widgets Application project.
-    \endlist
+    Select \uicontrol Project > \uicontrol {Add New Item} >
+    \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt.
 
-    The following sections describe how to add different types of files to
+    \image qtvstools-add-new-item.webp {Add New Item dialog}
+
+    \table
+    \header
+        \li Template
+        \li Adds
+    \row
+        \li \uicontrol {Qt Class}
+        \li A Qt class to an Application project.
+    \row
+        \li \uicontrol {Qt Dialog Form File (Button Bottom)}
+        \li A dialog with \uicontrol OK and \uicontrol Cancel buttons at
+            its bottom to a Qt Widgets Application project.
+    \row
+        \li \uicontrol {Qt Dialog Form File (Button Right)}
+        \li A dialog with buttons at its right edge to a
+            Qt Widgets Application project.
+    \row
+        \li \uicontrol {Qt MainWindow Form File}
+        \li A form file to a Qt Widgets Application project.
+    \row
+        \li \uicontrol {Qt QML File}
+        \li A custom QML type to a Qt Quick Application project.
+    \row
+        \li \uicontrol {Qt QML Module Definition}
+        \li A \c qmldir file that specifies the custom QML types used in a
+            Qt Quick Application project.
+    \row
+        \li \uicontrol {Qt Resource File}
+        \li A Qt resource file (.qrc) to an Application project.
+    \row
+        \li \uicontrol {Qt Translation File}
+        \li A Qt translation file (.ts) to an Application project.
+    \row
+        \li \uicontrol {Qt Widget Form File}
+        \li A Qt Widgets form file (.ui) to an Application project.
+    \row
+        \li \uicontrol {Qt Widgets Class}
+        \li A Qt Widgets class to a Qt Widgets Application project.
+    \endtable
+
+    The following topics describe how to add different types of files to
     projects:
 
     \list
@@ -1002,6 +1041,8 @@
         \li \l {Tutorial: Qt Widgets Application}
         \li \l {Tutorial: Qt Quick Application}
     \endlist
+
+    \sa {Projects}
 */
 
 /*!
