@@ -188,12 +188,17 @@
                       <ComboBox.Template>
                         <ControlTemplate TargetType="ComboBox">
                           <Grid>
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="*" />
+                              <ColumnDefinition Width="16" />
+                            </Grid.ColumnDefinitions>
                             <ListView Name="SelectedModules" ItemsSource="{Binding SelectedModules}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                BorderThickness="0" IsEnabled="False">
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      BorderThickness="0" IsEnabled="False"
+                                      Grid.Column="0">
                               <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                  <WrapPanel />
+                                  <common:UniformWrapPanel IsAutoUniform="false" Rows="2" />
                                 </ItemsPanelTemplate>
                               </ListView.ItemsPanel>
                               <ListView.ItemTemplate>
@@ -205,9 +210,49 @@
                                 </DataTemplate>
                               </ListView.ItemTemplate>
                             </ListView>
-                            <ToggleButton Opacity="0" Name="ToggleButton" Focusable="false"
-                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                ClickMode="Press" Cursor="Hand" />
+                            <ToggleButton Name="DropDownToggle"
+                                          Focusable="false"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          Margin="-1"
+                                          HorizontalContentAlignment="Right"
+                                          ClickMode="Press"
+                                          Cursor="Hand"
+                                          Grid.Column="1"
+                                          Background="Transparent"
+                                          IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,
+                              RelativeSource={RelativeSource TemplatedParent}}">
+                              <Path x:Name="BtnArrow"
+                                    Height="4"
+                                    Width="8"
+                                    Stretch="Uniform"
+                                    Margin="0,0,4,0"
+                                    Fill="Black"
+                                    Data="F1 M 300,-190L 310,-190L 305,-183L 301,-190 Z " />
+                              <ToggleButton.Style>
+                                <Style TargetType="{x:Type ToggleButton}">
+                                  <Setter Property="Template">
+                                    <Setter.Value>
+                                      <ControlTemplate TargetType="ToggleButton">
+                                        <Border BorderThickness="0"
+                                                BorderBrush="Transparent"
+                                                Background="Transparent">
+                                          <ContentPresenter HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center" />
+                                        </Border>
+                                      </ControlTemplate>
+                                    </Setter.Value>
+                                  </Setter>
+                                  <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                      <Setter Property="Background"
+                                              Value="Transparent" />
+                                    </Trigger>
+                                  </Style.Triggers>
+                                </Style>
+                              </ToggleButton.Style>
+                            </ToggleButton>
                             <Popup Name="Popup" Placement="Bottom"
                                 IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"
                                 Focusable="False" PopupAnimation="Slide">
