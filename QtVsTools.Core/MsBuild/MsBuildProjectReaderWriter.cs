@@ -177,8 +177,10 @@ namespace QtVsTools.Core.MsBuild
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile");
-            foreach (var xClCompileDef in xClCompileDefs)
-                xClCompileDef.Add(new XElement(ns + "MultiProcessorCompilation", "true"));
+            foreach (var xClCompileDef in xClCompileDefs) {
+                if (!xClCompileDef.Elements(ns + "MultiProcessorCompilation").Any())
+                    xClCompileDef.Add(new XElement(ns + "MultiProcessorCompilation", "true"));
+            }
 
             this[Files.Project].isDirty = true;
             Commit();
