@@ -6,7 +6,7 @@
 /*!
     \page index.html
 
-    \title Qt VS Tools Manual
+    \title Qt VS Tools
 
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
     2019, and later. You can use the standard Windows development environment
