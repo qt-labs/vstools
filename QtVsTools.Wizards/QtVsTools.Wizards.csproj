@@ -73,6 +73,14 @@
     <When Condition="'$(VisualStudioVersion)'=='17.0'">
       <ItemGroup>
         <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="16.10.10">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
       </ItemGroup>
     </When>
     <When Condition="'$(VisualStudioVersion)'=='16.0'">
