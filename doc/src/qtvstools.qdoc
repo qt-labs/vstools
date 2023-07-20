@@ -241,10 +241,6 @@
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
 
-    To run \QD in a separate window by default, select \uicontrol Extensions >
-    \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {\QD}, and set
-    \uicontrol {Run in detached window} to \uicontrol True.
-
     For more information about using \QD, see the \l{Qt Designer Manual}.
 
     \section2 Add widgets
