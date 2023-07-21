@@ -49,4 +49,9 @@ macro.see                       = "\\sa"
 macro.function                  = "\\fn"
 
 navigation.homepage             = "Qt VS Tools"
+
+# Auto-generate navigation linking based on "All Topics":
+navigation.toctitles = "All Topics"
+navigation.toctitles.inclusive = false
+
 buildversion                    = "Qt VS Tools $QTVSTOOLS_VERSION"
