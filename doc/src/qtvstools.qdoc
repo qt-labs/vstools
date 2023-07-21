@@ -20,32 +20,28 @@
             \li \inlineimage explanation.webp
             \li \inlineimage reference.webp
         \row
-            \li \b {Tutorials}
+            \li \l {Tutorials}
                 \list
                     \li \l {Tutorial: Qt Widgets application}
                     \li \l {Tutorial: Qt Quick application}
                     \li \l {Tutorial: Qt Quick debugging}
                 \endlist
-            \li \b {How-to}
+            \li \l {How-to}
                 \list
-                    \li \l {Install Qt VS Tools}
-                    \li \l {Add Qt versions}
-                    \li \l {Select Qt versions for a project}
-                    \li \l {Convert solutions to latest Qt/MSBuild format}
-                    \li \l {Build solutions that have Qt/MSBuild format 2}
-                    \li \l {Load Qt projects}
-                    \li \l {Debug applications}
-                    \li \l {Enable QML debugging}
-                    \li \l {How-to}{See all}
+                    \li \l {Set up Qt VS Tools}
+                    \li \l {Create}
+                    \li \l {Build}
+                    \li \l {Debug}
+                    \li \l {Localize}
                 \endlist
-        \li \b {Explanation}
+        \li \l {Explanation}
             \list
                 \li \l {Building}
                 \li \l {Configuring builds}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
             \endlist
-        \li \b {Reference}
+        \li \l {Reference}
             \list
                 \li \l {Files}
                 \li \l {Projects}
@@ -58,13 +54,13 @@
     \title All Topics
 
     \list
-        \li Tutorials
+        \li \l{Tutorials}
             \list
                 \li \l {Tutorial: Qt Widgets application}
                 \li \l {Tutorial: Qt Quick application}
                 \li \l {Tutorial: Qt Quick debugging}
             \endlist
-        \li How-to
+        \li \l{How-to}
             \list
                 \li \l {Add Qt versions}
                 \li \l {Build solutions that have Qt/MSBuild format 2}
@@ -86,19 +82,32 @@
                 \li \l {Update IntelliSense info}
                 \li \l {Update Qt translation files}
             \endlist
-
-        \li Explanation
+        \li \l{Explanation}
             \list
                 \li \l {Building}
                 \li \l {Configuring builds}
                 \li \l {Debugging Qt Quick applications}
                 \li \l {Features}
             \endlist
-        \li Reference
+        \li \l{Reference}
             \list
                 \li \l {Files}
                 \li \l {Projects}
             \endlist
+    \endlist
+*/
+
+/*!
+    \page qtvstools-tutorials.html
+
+    \title Tutorials
+
+    The following tutorials describe how to create and debug Qt applications.
+
+    \list
+        \li \l {Tutorial: Qt Widgets application}
+        \li \l {Tutorial: Qt Quick application}
+        \li \l {Tutorial: Qt Quick debugging}
 
     \endlist
 */
@@ -108,26 +117,98 @@
 
     \title How-to
 
-        \list
-        \li \l {Add Qt versions}
-        \li \l {Build solutions that have Qt/MSBuild format 2}
-        \li \l {Convert solutions to latest Qt/MSBuild format}
-        \li \l {Create Qt translation files}
-        \li \l {Create UI form files}
-        \li \l {Cross-compile}
-        \li \l {Debug applications}
-        \li \l {Debug on Linux}
-        \li \l {Enable QML debugging}
-        \li \l {Get help}
+    The following topics describe how to set up Qt VS Tools and to use them to
+    create, build, debug, and localize Qt applications.
+
+    \section1 Set up Qt VS Tools
+
+    Install Qt VS Tools in Microsoft Visual Studio, and then tell it where to
+    find the Qt versions that you want to develop with.
+
+    \list
         \li \l {Install Qt VS Tools}
-        \li \l {Load Qt projects}
-        \li \l {Manage resources}
+        \li \l {Add Qt versions}
+    \endlist
+
+    \section1 Create
+
+    Use wizards to create several types of Qt and Qt Quick projects and files
+    that you can add to the projects, such as classes, form files, or custom
+    QML types.
+
+    \list
         \li \l {Select Qt versions for a project}
+        \li \l {Create UI form files}
         \li \l {Start Qt Designer}
-        \li \l {Start Qt Linguist}
+        \li \l {Manage resources}
         \li \l {Start Qt Resource Editor}
         \li \l {Update IntelliSense info}
+        \li \l {Get help}
+    \endlist
+
+    \section1 Build
+
+    Qt VS Tools integrate with MSBuild, and therefore, you build Qt applications
+    as Visual Studio projects. Special build rules called \e Qt/MSBuild let you
+    run Qt build tools and set build options for them.
+
+    \list
+        \li \l {Load Qt projects}
+        \li \l {Build solutions that have Qt/MSBuild format 2}
+        \li \l {Convert solutions to latest Qt/MSBuild format}
+        \li \l {Cross-compile}
+        \li \l {Update IntelliSense info}
+    \endlist
+
+    \section1 Debug
+
+    A debugger lets you see what happens inside an application while it runs or
+    when it crashes. You can debug Qt Widgets and Qt Quick applications.
+
+    \list
+        \li \l {Debug applications}
+        \li \l {Enable QML debugging}
+        \li \l {Debug on Linux}
+    \endlist
+
+    \section1 Localize
+
+    Use Qt translation tools to adapt applications for a specific region or
+    language by adding locale-specific components such as date, time, and number
+    formats and translating text.
+
+    \list
+        \li \l {Create Qt translation files}
+        \li \l {Start Qt Linguist}
         \li \l {Update Qt translation files}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-explanation.html
+
+    \title Explanation
+
+    The following topics explain building and debugging Qt applications.
+
+    \list
+        \li \l {Building}
+        \li \l {Configuring builds}
+        \li \l {Debugging Qt Quick applications}
+        \li \l {Features}
+    \endlist
+*/
+
+/*!
+    \page qtvstools-reference.html
+
+    \title Reference
+
+    The following topics list the projects and files that you can create.
+
+    \list
+        \li \l {Files}
+        \li \l {Projects}
     \endlist
 */
 
