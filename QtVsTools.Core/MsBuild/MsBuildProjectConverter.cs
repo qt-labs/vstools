@@ -11,7 +11,6 @@ using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core.MsBuild
 {
@@ -20,7 +19,6 @@ namespace QtVsTools.Core.MsBuild
 
     public static class MsBuildProjectConverter
     {
-        private const string CancelConversion = "Project conversion canceled.";
         private const string ErrorConversion = "Error converting project {0}";
 
         public static bool SolutionToQtMsBuild()
@@ -29,24 +27,21 @@ namespace QtVsTools.Core.MsBuild
 
             var dte = VsServiceProvider.GetService<SDTE, DTE>();
 
-            var allProjects = HelperFunctions.ProjectsInSolution(dte);
-            if (allProjects.Count == 0)
-                return WarningMessage("No projects to convert.");
-
             var projects = (from project in HelperFunctions.ProjectsInSolution(dte)
                 let version = MsBuildProjectFormat.GetVersion(project)
                 where version is >= MsBuildProjectFormat.Version.V1 and < MsBuildProjectFormat.Version.Latest
                 select project).ToList();
-
-            if (projects.Count == 0)
-                return WarningMessage("No projects to convert.");
+            if (projects.Count == 0) {
+                Messages.DisplayWarningMessage("No projects to convert.");
+                return true;
+            }
 
             if (MessageBox.Show("Do you really want to convert all projects?",
                     "Project Conversion", MessageBoxButtons.YesNo) != DialogResult.Yes) {
-                return WarningMessage(CancelConversion);
+                return true;
             }
 
-            bool hasDirtyProjects = projects
+            var hasDirtyProjects = projects
                 .Where(project =>
                 {
                     ThreadHelper.ThrowIfNotOnUIThread();
@@ -54,9 +49,9 @@ namespace QtVsTools.Core.MsBuild
                 })
                 .Any();
             if (hasDirtyProjects
-                && MessageBox.Show("Projects must be saved before conversion. Save projects?",
-                    "Project Conversion", MessageBoxButtons.YesNo) != DialogResult.Yes) {
-                return WarningMessage(CancelConversion);
+                && MessageBox.Show("Projects must be saved before conversion. Save and Continue?",
+                    "Project Conversion", MessageBoxButtons.YesNo) == DialogResult.Cancel) {
+                return true;
             }
 
             var projectPaths = projects
@@ -68,14 +63,14 @@ namespace QtVsTools.Core.MsBuild
                 .ToList();
 
             var solution = dte.Solution;
-            string solutionPath = solution.FileName;
+            var solutionPath = solution.FileName;
             solution.Close(true);
 
             var waitDialog = WaitDialog.StartWithProgress("Qt VS Tools",
                 "Converting solution to Qt/MSBuild...", projectPaths.Count, isCancelable: true);
 
-            int projCount = 0;
-            bool canceled = false;
+            var projCount = 0;
+            var canceled = false;
             foreach (var projectPath in projectPaths) {
                 if (waitDialog != null) {
                     waitDialog.Update("Converting solution to Qt/MSBuild..."
@@ -90,7 +85,7 @@ namespace QtVsTools.Core.MsBuild
                 }
                 if (!ConvertProject(projectPath)) {
                     waitDialog?.Stop();
-                    dte.Solution.Open(solutionPath);
+                    solution.Open(solutionPath);
                     return ErrorMessage(string.Format(ErrorConversion,
                         Path.GetFileName(projectPath)));
                 }
@@ -99,7 +94,7 @@ namespace QtVsTools.Core.MsBuild
 
             waitDialog?.Stop();
 
-            dte.Solution.Open(solutionPath);
+            solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show($"Conversion canceled. {projectPaths.Count - projCount} "
                     + "projects were not converted.", "Qt VS Tools",
@@ -140,40 +135,41 @@ namespace QtVsTools.Core.MsBuild
             return ok;
         }
 
-        public static bool ProjectToQtMsBuild(VCProject project, bool askConfirmation = true)
+        public static bool ProjectToQtMsBuild()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (project == null)
-                return ErrorMessage(string.Format(ErrorConversion, ""));
-            var pathToProject = project.ProjectFile;
+            var dte = VsServiceProvider.GetService<SDTE, DTE>();
 
-            if (askConfirmation
-                && MessageBox.Show("Do you really want to convert the selected project?",
-                    "Project Conversion", MessageBoxButtons.YesNo) != DialogResult.Yes) {
-                return WarningMessage(CancelConversion);
+            var project = HelperFunctions.GetSelectedProject(dte);
+            if (project == null)
+                return ErrorMessage("No project to convert.");
+
+            if (MessageBox.Show(
+                "Do you really want to convert the selected project?",
+                "Project Conversion", MessageBoxButtons.YesNo) != DialogResult.Yes) {
+                return true;
             }
 
-            if (project.IsDirty) {
-                if (askConfirmation
-                    && MessageBox.Show("Projects must be saved before conversion. Save projects?",
-                        project.Name, MessageBoxButtons.YesNo) != DialogResult.Yes) {
-                    return WarningMessage(CancelConversion);
-                }
+            var projectName = project.Name;
+            if (project.IsDirty
+                && MessageBox.Show("Project must be saved before conversion. Save and Continue?",
+                    projectName, MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                return true;
+            }
 
-                try {
-                    project.Save();
-                } catch (Exception e) {
-                    return ErrorMessage(string.Format(ErrorConversion, $"{project.Name}\r\n{e.Message}"));
-                }
+            try {
+                project.Save();
+            } catch (Exception e) {
+                return ErrorMessage(string.Format(ErrorConversion, $"{projectName}\r\n{e.Message}"));
             }
 
             var solution = VsServiceProvider.GetService<SVsSolution, IVsSolution4>();
             if (solution == null)
-                return ErrorMessage(
-                    string.Format(ErrorConversion, project.Name));
+                return ErrorMessage(string.Format(ErrorConversion, projectName));
+
+            var projectFile = project.ProjectFile;
             var projectGuid = new Guid(project.ProjectGUID);
-            var projectName = project.Name;
             try {
                 if (solution.UnloadProject(
                     ref projectGuid,
@@ -185,7 +181,7 @@ namespace QtVsTools.Core.MsBuild
                 return ErrorMessage(string.Format(ErrorConversion, $"{projectName}\r\n{e.Message}"));
             }
 
-            bool ok = ConvertProject(pathToProject);
+            var ok = ConvertProject(projectFile);
             try {
                 solution.ReloadProject(ref projectGuid);
             } catch (Exception e) {
@@ -195,16 +191,10 @@ namespace QtVsTools.Core.MsBuild
             return ok || ErrorMessage(string.Format(ErrorConversion, projectName));
         }
 
-        static bool ErrorMessage(string msg)
+        private static bool ErrorMessage(string msg)
         {
             Messages.DisplayErrorMessage(msg);
             return false;
-        }
-
-        static bool WarningMessage(string msg)
-        {
-            Messages.DisplayWarningMessage(msg);
-            return true;
         }
     }
 }

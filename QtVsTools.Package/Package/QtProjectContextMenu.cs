@@ -90,7 +90,7 @@ namespace QtVsTools
                 QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                MsBuildProjectConverter.ProjectToQtMsBuild(HelperFunctions.GetSelectedProject(dte));
+                MsBuildProjectConverter.ProjectToQtMsBuild();
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
                 if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
