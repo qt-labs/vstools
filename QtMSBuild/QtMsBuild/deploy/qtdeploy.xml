@@ -17,24 +17,30 @@
   xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Rule
     Name="QtRule70_Deploy"
-    PageTemplate="tool"
+    PageTemplate="generic"
     DisplayName="Qt Deploy Tool"
-    Order="999">
+    Order="8">
     <Rule.DataSource>
       <DataSource
         Persistence="ProjectFile"
-        ItemType="QtDeploy"
+        Label="QtDeploy"
         HasConfigurationCondition="true"/>
     </Rule.DataSource>
     <Rule.Categories>
-      <Category Name="General" DisplayName="windeployqt"/>
+      <Category Name="General" DisplayName="General"/>
+      <Category Name="Settings" DisplayName="windeployqt"/>
     </Rule.Categories>
+    <BoolProperty
+      Name="QtDeploy"
+      Category="General"
+      DisplayName="Run Deployment Tool"
+      Description="Select whether Qt for Windows Deployment Tool (windeployqt) should be called after build."/>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Application Binary
     // -->
     <StringListProperty
-      Name="QtDeployFiles" DisplayName="Application Binary">
+      Name="QtDeployFiles" Category="Settings" DisplayName="Application Binary">
       <StringListProperty.Description>
         <sys:String>
           <![CDATA[Binaries or directory containing the application binary ( [files] ).]]>
@@ -46,7 +52,7 @@
     // Deployment Directory
     // -->
     <StringProperty
-      Name="QtDeployDir" DisplayName="Deployment Directory">
+      Name="QtDeployDir" Category="Settings" DisplayName="Deployment Directory">
       <StringProperty.Description>
         <sys:String>
           <![CDATA[Use directory instead of binary directory ( --dir <directory> ).]]>
@@ -58,7 +64,7 @@
     // Library Directory
     // -->
     <StringProperty
-      Name="QtDeployLibDir" DisplayName="Library Directory">
+      Name="QtDeployLibDir" Category="Settings" DisplayName="Library Directory">
       <StringProperty.Description>
         <sys:String>
           <![CDATA[Copy libraries to path ( --libdir <path> ).]]>
@@ -70,7 +76,7 @@
     // Plugin Directory
     // -->
     <StringProperty
-      Name="QtDeployPluginDir" DisplayName="Plugin Directory">
+      Name="QtDeployPluginDir" Category="Settings" DisplayName="Plugin Directory">
       <StringProperty.Description>
         <sys:String>
           <![CDATA[Copy plugins to path ( --plugindir <path> ).]]>
@@ -82,7 +88,7 @@
     // Debug/Release Binaries
     // -->
     <EnumProperty
-      Name="QtDeployDebugRelease" DisplayName="Debug/Release Binaries">
+      Name="QtDeployDebugRelease" Category="Settings" DisplayName="Debug/Release Binaries">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Assume debug or release binaries ( --debug | --release ).]]>
@@ -97,7 +103,7 @@
     // Deploy PDB Files
     // -->
     <EnumProperty
-      Name="QtDeployPdb" DisplayName="Deploy PDB Files">
+      Name="QtDeployPdb" Category="Settings" DisplayName="Deploy PDB Files">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Deploy .pdb files (MSVC) ( --pdb ).]]>
@@ -111,7 +117,7 @@
     //
     // -->
     <EnumProperty
-      Name="QtDeployForce" DisplayName="Force Update">
+      Name="QtDeployForce" Category="Settings" DisplayName="Force Update">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Force updating files ( --force ).]]>
@@ -125,7 +131,7 @@
     // Skip Qt5Core Patch
     // -->
     <EnumProperty
-      Name="QtDeployNoPatchQt" DisplayName="Skip Qt5Core Patch">
+      Name="QtDeployNoPatchQt" Category="Settings" DisplayName="Skip Qt5Core Patch">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Do not patch the Qt5Core library ( --no-patchqt ).]]>
@@ -139,7 +145,7 @@
     // Skip Plugins
     // -->
     <EnumProperty
-      Name="QtDeployNoPlugins" DisplayName="Skip Plugins">
+      Name="QtDeployNoPlugins" Category="Settings" DisplayName="Skip Plugins">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Skip plugin deployment ( --no-plugins ).]]>
@@ -153,7 +159,7 @@
     // Skip Libraries
     // -->
     <EnumProperty
-      Name="QtDeployNoLibraries" DisplayName="Skip Libraries">
+      Name="QtDeployNoLibraries" Category="Settings" DisplayName="Skip Libraries">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Skip library deployment ( --no-libraries ).]]>
@@ -167,7 +173,7 @@
     // QML Directories Root
     // -->
     <StringProperty
-      Name="QtDeployQmlDir" DisplayName="QML Directories Root">
+      Name="QtDeployQmlDir" Category="Settings" DisplayName="QML Directories Root">
       <StringProperty.Description>
         <sys:String>
           <![CDATA[Scan for QML-imports starting from directory ( --qmldir <directory> ).]]>
@@ -179,7 +185,7 @@
     // QML Modules Path
     // -->
     <StringListProperty
-      Name="QtDeployQmlImport" DisplayName="QML Modules Path">
+      Name="QtDeployQmlImport"  Category="Settings" DisplayName="QML Modules Path">
       <StringListProperty.Description>
         <sys:String>
           <![CDATA[Add the given path to the QML module search locations ( --qmlimport <directory> ).]]>
@@ -191,7 +197,7 @@
     // Skip Qt Quick Imports
     // -->
     <EnumProperty
-      Name="QtDeployNoQuickImport" DisplayName="Skip Qt Quick Imports">
+      Name="QtDeployNoQuickImport" Category="Settings" DisplayName="Skip Qt Quick Imports">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Skip deployment of Qt Quick imports ( --no-quick-import ).]]>
@@ -205,7 +211,7 @@
     // Skip Translations
     // -->
     <EnumProperty
-      Name="QtDeployNoTranslations" DisplayName="Skip Translations">
+      Name="QtDeployNoTranslations" Category="Settings" DisplayName="Skip Translations">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Skip deployment of translations ( --no-translations ).]]>
@@ -219,7 +225,7 @@
     // Skip Direct3D Compiler
     // -->
     <EnumProperty
-      Name="QtDeployNoSystemD3dCompiler" DisplayName="Skip Direct3D Compiler">
+      Name="QtDeployNoSystemD3dCompiler" Category="Settings" DisplayName="Skip Direct3D Compiler">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Skip deployment of the system D3D compiler ( --no-system-d3d-compiler ).]]>
@@ -233,7 +239,7 @@
     // Skip Virtual Keyboard
     // -->
     <EnumProperty
-      Name="QtDeployNoVirtualKeyboard" DisplayName="Skip Virtual Keyboard">
+      Name="QtDeployNoVirtualKeyboard" Category="Settings" DisplayName="Skip Virtual Keyboard">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Disable deployment of the Virtual Keyboard ( --no-virtualkeyboard ).]]>
@@ -247,7 +253,7 @@
     // Compiler Runtime
     // -->
     <EnumProperty
-      Name="QtDeployCompilerRuntime" DisplayName="Compiler Runtime">
+      Name="QtDeployCompilerRuntime" Category="Settings" DisplayName="Compiler Runtime">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Deploy compiler runtime (Desktop only).]]>
@@ -262,7 +268,7 @@
     // WebKit2 Deployment
     // -->
     <EnumProperty
-      Name="QtDeployWebkit2" DisplayName="WebKit2 Deployment">
+      Name="QtDeployWebkit2" Category="Settings" DisplayName="WebKit2 Deployment">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Deployment of WebKit2 (web process).]]>
@@ -277,7 +283,7 @@
     // ANGLE Deployment
     // -->
     <EnumProperty
-      Name="QtDeployAngle" DisplayName="ANGLE Deployment">
+      Name="QtDeployAngle" Category="Settings" DisplayName="ANGLE Deployment">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Deployment of ANGLE.]]>
@@ -292,7 +298,7 @@
     // Skip Rasterizer Library
     // -->
     <EnumProperty
-      Name="QtDeployNoOpenglSw" DisplayName="Skip Rasterizer Library">
+      Name="QtDeployNoOpenglSw" Category="Settings" DisplayName="Skip Rasterizer Library">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Do not deploy the software rasterizer library ( --no-opengl-sw ).]]>
@@ -306,7 +312,7 @@
     // Include Qt Libraries
     // -->
     <StringListProperty
-      Name="QtDeployIncludeModules" DisplayName="Include Qt Libraries">
+      Name="QtDeployIncludeModules" Category="Settings" DisplayName="Include Qt Libraries">
       <StringListProperty.Description>
         <sys:String>
           <![CDATA[Qt libraries can be added by passing their name ( -<name> ).]]>
@@ -318,7 +324,7 @@
     // Exclude Qt Libraries
     // -->
     <StringListProperty
-      Name="QtDeployExcludeModules" DisplayName="Exclude Qt Libraries">
+      Name="QtDeployExcludeModules"  Category="Settings" DisplayName="Exclude Qt Libraries">
       <StringListProperty.Description>
         <sys:String>
           <![CDATA[Qt libraries can be removed by passing their prepended by --no- ( --no-<name> ).]]>
@@ -330,7 +336,7 @@
     // Set As Solution Deployment Content
     // -->
     <EnumProperty
-      Name="QtDeployVsContent" DisplayName="Set As Solution Deployment Content">
+      Name="QtDeployVsContent" Category="Settings" DisplayName="Set As Solution Deployment Content">
       <EnumProperty.Description>
         <sys:String>
           <![CDATA[Mark deployed files as solution deployment content.]]>
