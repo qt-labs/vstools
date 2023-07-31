@@ -156,15 +156,18 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                     clickButton(waitForObject(names.qt_Wizard_Next_Button))
                     if funcPage2:
                         funcPage2(expectedText, qtDirs)
-                    if setupQtVersions and templateName in ["Qt ActiveQt Server",
-                                                            "Qt Class Library",
-                                                            "Qt Designer Custom Widget",
-                                                            "Qt Widgets Application"]:
-                        clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                        if funcPage3:
-                            funcPage3(expectedText, projectName)
+                    if setupQtVersions:
+                        if templateName in ["Qt ActiveQt Server",
+                                            "Qt Class Library",
+                                            "Qt Designer Custom Widget",
+                                            "Qt Widgets Application"]:
+                            clickButton(waitForObject(names.qt_Wizard_Next_Button))
+                            if funcPage3:
+                                funcPage3(expectedText, projectName)
+                        test.verify(findObject(names.qt_Wizard_Finish_Button).enabled)
                     else:
-                        test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
+                        test.verify(not findObject(names.qt_Wizard_Finish_Button).enabled)
+                    test.verify(not findObject(names.qt_Wizard_Next_Button).enabled)
                 except:
                     eInfo = sys.exc_info()
                     test.fatal("Exception caught", "%s: %s" % (eInfo[0].__name__, eInfo[1]))
