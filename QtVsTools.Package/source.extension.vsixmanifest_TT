@@ -174,5 +174,7 @@
       Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Qml.Debug.pkgdef" />
     <Asset
       Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Icons.pkgdef" />
+    <Asset
+      Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Snippets.pkgdef" />
   </Assets>
 </PackageManifest>

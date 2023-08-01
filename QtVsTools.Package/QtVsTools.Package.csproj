@@ -410,6 +410,9 @@
     <Content Include="Icons\Monikers.imagemanifest">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Snippets\qproperty.snippet">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <DependentUpon>source.extension.vsixmanifest_TT</DependentUpon>
       <SubType>Designer</SubType>
@@ -470,6 +473,9 @@
     <Content Include="QtVsTools.ico" />
     <Content Include="QtVsTools.Qml.Debug.pkgdef">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="QtVsTools.Snippets.pkgdef">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\menuimages.png" />

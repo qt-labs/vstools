@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Q_PROPERTY</Title>
+      <Shortcut>qprop</Shortcut>
+      <Description>Q_PROPERTY snippet for Qt classes</Description>
+      <Author>The Qt Company Ltd.</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Code Language="cpp">
+        <![CDATA[Q_PROPERTY($Type$ $Name$ READ $Name$ WRITE set$Name$ NOTIFY $Name$Changed)$end$]]>
+      </Code>
+      <Declarations>
+        <Literal>
+          <ID>Type</ID>
+          <ToolTip>Property data type</ToolTip>
+          <Default>int</Default>
+        </Literal>
+        <Literal>
+          <ID>Name</ID>
+          <ToolTip>Property name</ToolTip>
+          <Default>myProperty</Default>
+        </Literal>
+        <Literal>
+          <ID>Getter</ID>
+          <ToolTip>Property getter method</ToolTip>
+          <Default>myProperty</Default>
+        </Literal>
+        <Literal>
+          <ID>Setter</ID>
+          <ToolTip>Property setter method</ToolTip>
+          <Default>setMyProperty</Default>
+        </Literal>
+        <Literal>
+          <ID>Signal</ID>
+          <ToolTip>Property change signal</ToolTip>
+          <Default>myPropertyChanged</Default>
+        </Literal>
+      </Declarations>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
