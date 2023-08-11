@@ -210,6 +210,7 @@
     </Compile>
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
+    <Compile Include="VisualStudio\VsEditor.cs" />
     <Compile Include="VisualStudio\StatusBar.cs" />
     <Compile Include="VisualStudio\VsSearch.cs" />
     <Compile Include="VisualStudio\VsServiceProvider.cs" />
