@@ -28,11 +28,10 @@ namespace QtVsTools.Core.MsBuild
     {
         private class MsBuildXmlFile
         {
-            public string filePath = "";
-            public XDocument xml;
-            public bool isDirty;
-            public XDocument xmlCommitted;
-            public bool isCommittedDirty;
+            public string Path { get; set; } = "";
+            public XDocument Xml { get; set; }
+            public XDocument XmlCommitted { get; set; }
+            public bool IsDirty => XmlCommitted?.ToString() != Xml?.ToString();
         }
 
         private enum Files
@@ -56,15 +55,6 @@ namespace QtVsTools.Core.MsBuild
             get => (int)file >= (int)Files.Count ? files[0] : files[(int)file];
         }
 
-        public string ProjectXml
-        {
-            get
-            {
-                var xml = this[Files.Project].xml;
-                return xml?.ToString(SaveOptions.None) ?? "";
-            }
-        }
-
         private static readonly XNamespace ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 
         public static MsBuildProjectReaderWriter Load(string pathToProject)
@@ -76,19 +66,19 @@ namespace QtVsTools.Core.MsBuild
             {
                 [Files.Project] =
                 {
-                    filePath = pathToProject
+                    Path = pathToProject
                 }
             };
 
             if (!LoadXml(project[Files.Project]))
                 return null;
 
-            project[Files.Filters].filePath = pathToProject + ".filters";
-            if (File.Exists(project[Files.Filters].filePath) && !LoadXml(project[Files.Filters]))
+            project[Files.Filters].Path = pathToProject + ".filters";
+            if (File.Exists(project[Files.Filters].Path) && !LoadXml(project[Files.Filters]))
                 return null;
 
-            project[Files.User].filePath = pathToProject + ".user";
-            if (File.Exists(project[Files.User].filePath) && !LoadXml(project[Files.User]))
+            project[Files.User].Path = pathToProject + ".user";
+            if (File.Exists(project[Files.User].Path) && !LoadXml(project[Files.User]))
                 return null;
 
             return project;
@@ -97,53 +87,47 @@ namespace QtVsTools.Core.MsBuild
         private static bool LoadXml(MsBuildXmlFile xmlFile)
         {
             try {
-                var xmlText = File.ReadAllText(xmlFile.filePath, Encoding.UTF8);
-                using var reader = XmlReader.Create(new StringReader(xmlText));
-                xmlFile.xml = XDocument.Load(reader, LoadOptions.SetLineInfo);
+                var xmlText = File.ReadAllText(xmlFile.Path, Encoding.UTF8);
+                xmlFile.Xml = XDocument.Parse(xmlText);
             } catch (Exception) {
                 return false;
             }
-            xmlFile.xmlCommitted = new XDocument(xmlFile.xml);
+            xmlFile.XmlCommitted = new XDocument(xmlFile.Xml);
             return true;
         }
 
         public bool Save()
         {
             foreach (var file in files) {
-                if (!file.isDirty)
+                if (file.Xml is null)
                     continue;
-                file.xml?.Save(file.filePath, SaveOptions.None);
-                file.isCommittedDirty = file.isDirty = false;
+                try {
+                    file.Xml.Save(file.Path, SaveOptions.None);
+                } catch (Exception e) {
+                    e.Log();
+                    return false;
+                }
             }
             return true;
         }
 
         private void Commit()
         {
-            foreach (var file in files.Where(x => x.xml != null)) {
-                if (file.isDirty) {
-                    //file was modified: sync committed copy
-                    file.xmlCommitted = new XDocument(file.xml);
-                    file.isCommittedDirty = true;
-                } else {
-                    //fail-safe: ensure non-dirty files are in sync with committed copy
-                    file.xml = new XDocument(file.xmlCommitted);
-                    file.isDirty = file.isCommittedDirty;
-                }
+            foreach (var file in files.Where(x => x.Xml != null)) {
+                if (file.IsDirty)
+                    file.XmlCommitted = new XDocument(file.Xml);
             }
         }
 
         private void Rollback()
         {
-            foreach (var file in files.Where(x => x.xml != null)) {
-                file.xml = new XDocument(file.xmlCommitted);
-                file.isDirty = file.isCommittedDirty;
-            }
+            foreach (var file in files.Where(x => x.Xml != null))
+                file.Xml = new XDocument(file.XmlCommitted);
         }
 
         public string GetProperty(string propertyName)
         {
-            var xProperty = this[Files.Project].xml
+            var xProperty = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Elements()
@@ -153,7 +137,7 @@ namespace QtVsTools.Core.MsBuild
 
         public string GetProperty(string itemType, string propertyName)
         {
-            var xProperty = this[Files.Project].xml
+            var xProperty = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + itemType)
@@ -164,7 +148,7 @@ namespace QtVsTools.Core.MsBuild
 
         public IEnumerable<string> GetItems(string itemType)
         {
-            return this[Files.Project].xml
+            return this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + itemType)
@@ -173,7 +157,7 @@ namespace QtVsTools.Core.MsBuild
 
         public bool EnableMultiProcessorCompilation()
         {
-            var xClCompileDefs = this[Files.Project].xml
+            var xClCompileDefs = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile");
@@ -182,7 +166,6 @@ namespace QtVsTools.Core.MsBuild
                     xClCompileDef.Add(new XElement(ns + "MultiProcessorCompilation", "true"));
             }
 
-            this[Files.Project].isDirty = true;
             Commit();
             return true;
         }
@@ -257,7 +240,7 @@ namespace QtVsTools.Core.MsBuild
 
         public MsBuildProjectFormat.Version GetProjectFormatVersion()
         {
-            var globals = this[Files.Project].xml
+            var globals = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
@@ -291,14 +274,14 @@ namespace QtVsTools.Core.MsBuild
             }
 
             // Get project configurations
-            var configs = this[Files.Project].xml
+            var configs = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration")
                 .ToList();
 
             // Get project global properties
-            var globals = this[Files.Project].xml
+            var globals = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
@@ -313,7 +296,7 @@ namespace QtVsTools.Core.MsBuild
             projKeyword.SetValue($"QtVS_v{(int)MsBuildProjectFormat.Version.Latest}");
 
             // Find import of qt.props
-            var qtPropsImport = this[Files.Project].xml
+            var qtPropsImport = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
@@ -321,7 +304,7 @@ namespace QtVsTools.Core.MsBuild
             if (qtPropsImport == null)
                 return false;
 
-            var uncategorizedPropertyGroups = this[Files.Project].xml
+            var uncategorizedPropertyGroups = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Where(pg => pg.Attribute("Label") == null)
@@ -332,7 +315,7 @@ namespace QtVsTools.Core.MsBuild
             // Upgrading from <= v3.2?
             if (oldVersion < MsBuildProjectFormat.Version.V3PropertyEval) {
                 // Find import of default Qt properties
-                var qtDefaultProps = this[Files.Project].xml
+                var qtDefaultProps = this[Files.Project].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ImportGroup")
                     .Elements(ns + "Import")
@@ -385,7 +368,6 @@ namespace QtVsTools.Core.MsBuild
                 }
             }
             if (oldVersion > MsBuildProjectFormat.Version.V3) {
-                this[Files.Project].isDirty = true;
                 Commit();
                 return true;
             }
@@ -394,7 +376,7 @@ namespace QtVsTools.Core.MsBuild
             Dictionary<string, XElement> oldQtInstall = null;
             Dictionary<string, XElement> oldQtSettings = null;
             if (oldVersion is MsBuildProjectFormat.Version.V3) {
-                oldQtInstall = this[Files.Project].xml
+                oldQtInstall = this[Files.Project].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
                     .Elements(ns + "QtInstall")
@@ -402,7 +384,7 @@ namespace QtVsTools.Core.MsBuild
                 oldQtInstall.Values.ToList()
                     .ForEach(x => x.Remove());
 
-                oldQtSettings = this[Files.Project].xml
+                oldQtSettings = this[Files.Project].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
                     .Where(x => (string)x.Attribute("Label") == "QtSettings")
@@ -415,33 +397,33 @@ namespace QtVsTools.Core.MsBuild
             // (cf. ".vcxproj file elements" https://docs.microsoft.com/en-us/cpp/build/reference/vcxproj-file-structure?view=vs-2019#vcxproj-file-elements)
 
             // * After the last UserMacros property group
-            var insertionPoint = this[Files.Project].xml
+            var insertionPoint = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros");
 
             // * After the last PropertySheets import group
-            insertionPoint ??= this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .LastOrDefault(x => (string)x.Attribute("Label") == "PropertySheets");
 
             // * Before the first ItemDefinitionGroup
-            insertionPoint ??= this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Select(x => x.ElementsBeforeSelf().Last())
                 .FirstOrDefault();
 
             // * Before the first ItemGroup
-            insertionPoint ??= this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Select(x => x.ElementsBeforeSelf().Last())
                 .FirstOrDefault();
 
             // * Before the import of Microsoft.Cpp.targets
-            insertionPoint ??= this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
                 .Where(x =>
@@ -450,7 +432,7 @@ namespace QtVsTools.Core.MsBuild
                 .FirstOrDefault();
 
             // * At the end of the file
-            insertionPoint ??= this[Files.Project].xml
+            insertionPoint ??= this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements()
                 .LastOrDefault();
@@ -505,7 +487,6 @@ namespace QtVsTools.Core.MsBuild
                         configQtSettings.Add(qtSetting);
                 }
 
-                this[Files.Project].isDirty = true;
                 Commit();
                 return true;
             }
@@ -515,7 +496,7 @@ namespace QtVsTools.Core.MsBuild
             var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
 
             // Get project user properties (old format)
-            var userProps = this[Files.Project].xml
+            var userProps = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ProjectExtensions")
                 .Elements(ns + "VisualStudio")
@@ -523,7 +504,7 @@ namespace QtVsTools.Core.MsBuild
                 .FirstOrDefault();
 
             // Copy Qt build reference to QtInstall project property
-            this[Files.Project].xml
+            this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
@@ -552,20 +533,20 @@ namespace QtVsTools.Core.MsBuild
                 });
 
             // Get C++ compiler properties
-            var compiler = this[Files.Project].xml
+            var compiler = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile")
                 .ToList();
 
             // Get linker properties
-            var linker = this[Files.Project].xml
+            var linker = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "Link")
                 .ToList();
 
-            var resourceCompiler = this[Files.Project].xml
+            var resourceCompiler = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ResourceCompile")
@@ -652,7 +633,7 @@ namespace QtVsTools.Core.MsBuild
             }
 
             // Add Qt module names to QtModules project property
-            this[Files.Project].xml
+            this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
@@ -671,8 +652,8 @@ namespace QtVsTools.Core.MsBuild
             });
 
             // Remove old properties from .user file
-            if (this[Files.User].xml != null) {
-                this[Files.User].xml
+            if (this[Files.User].Xml != null) {
+                this[Files.User].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "PropertyGroup")
                     .Elements()
@@ -687,11 +668,10 @@ namespace QtVsTools.Core.MsBuild
                             userProp.Remove();
                         }
                     });
-                this[Files.User].isDirty = true;
             }
 
             // Convert OutputFile --> <tool>Dir + <tool>FileName
-            var qtItems = this[Files.Project].xml
+            var qtItems = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .SelectMany(x => x.Elements(ns + "ItemDefinitionGroup")
                     .Union(x.Elements(ns + "ItemGroup")))
@@ -714,10 +694,10 @@ namespace QtVsTools.Core.MsBuild
             var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile" };
             var oldCppProps = new[] { "IncludePath", "Define", "Undefine" };
             var oldPropsAny = oldQtProps.Union(oldCppProps);
-            this[Files.Project].xml
+            this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
-                .Union(this[Files.Project].xml
+                .Union(this[Files.Project].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup"))
                 .Elements().ToList().ForEach(item =>
@@ -737,7 +717,6 @@ namespace QtVsTools.Core.MsBuild
                     });
                 });
 
-            this[Files.Project].isDirty = true;
             Commit();
             return true;
         }
@@ -784,7 +763,7 @@ namespace QtVsTools.Core.MsBuild
 
         public bool SetDefaultWindowsSDKVersion(string winSDKVersion)
         {
-            var xGlobals = this[Files.Project].xml
+            var xGlobals = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
@@ -795,14 +774,13 @@ namespace QtVsTools.Core.MsBuild
             xGlobals.Add(
                 new XElement(ns + "WindowsTargetPlatformVersion", winSDKVersion));
 
-            this[Files.Project].isDirty = true;
             Commit();
             return true;
         }
 
         public bool AddQtMsBuildReferences()
         {
-            var isQtMsBuildEnabled = this[Files.Project].xml
+            var isQtMsBuildEnabled = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ImportGroup")
                 .Elements(ns + "Import")
@@ -810,14 +788,14 @@ namespace QtVsTools.Core.MsBuild
             if (isQtMsBuildEnabled)
                 return true;
 
-            var xImportCppProps = this[Files.Project].xml
+            var xImportCppProps = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
                 .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.props");
             if (xImportCppProps == null)
                 return false;
 
-            var xImportCppTargets = this[Files.Project].xml
+            var xImportCppTargets = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "Import")
                 .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets");
@@ -855,7 +833,6 @@ namespace QtVsTools.Core.MsBuild
                     new XElement(ns + "Import",
                         new XAttribute("Project", @"$(QtMsBuild)\qt.targets"))));
 
-            this[Files.Project].isDirty = true;
             Commit();
             return true;
         }
@@ -878,7 +855,7 @@ namespace QtVsTools.Core.MsBuild
                             == $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"
                         select new { customBuild, itemName, config, command };
 
-            var projPath = this[Files.Project].filePath;
+            var projPath = this[Files.Project].Path;
             var error = false;
             using var evaluator = new MSBuildEvaluator(this[Files.Project]);
             foreach (var row in query) {
@@ -939,7 +916,7 @@ namespace QtVsTools.Core.MsBuild
 
         private List<XElement> GetCustomBuilds(string toolExecName)
         {
-            return this[Files.Project].xml
+            return this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "CustomBuild")
@@ -970,20 +947,17 @@ namespace QtVsTools.Core.MsBuild
 
             customBuilds.ForEach(customBuild =>
             {
-                var filterCustomBuild = (this[Files.Filters]?.xml
+                var filterCustomBuild = (this[Files.Filters]?.Xml
                         .Elements(ns + "Project")
                         .Elements(ns + "ItemGroup")
                         .Elements(ns + "CustomBuild") ?? Array.Empty<XElement>())
                     .FirstOrDefault(
                         filterItem => filterItem.Attribute("Include")?.Value
                          == customBuild.Attribute("Include")?.Value);
-                if (filterCustomBuild != null) {
+                if (filterCustomBuild != null)
                     filterCustomBuild.Name = ns + itemTypeName;
-                    this[Files.Filters].isDirty = true;
-                }
 
                 customBuild.Name = ns + itemTypeName;
-                this[Files.Project].isDirty = true;
             });
         }
 
@@ -1071,15 +1045,15 @@ namespace QtVsTools.Core.MsBuild
             var qtMsBuild = new MsBuildProjectContainer(new MsBuildConverterProvider());
             qtMsBuild.BeginSetItemProperties();
 
-            var projDir = Path.GetDirectoryName(this[Files.Project].filePath);
+            var projDir = Path.GetDirectoryName(this[Files.Project].Path);
 
-            var configurations = this[Files.Project].xml
+            var configurations = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration")
                 .ToList();
 
-            var projItemsByPath = this[Files.Project].xml
+            var projItemsByPath = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements()
@@ -1089,8 +1063,8 @@ namespace QtVsTools.Core.MsBuild
                     Path.Combine(projDir ?? "", (string)x.Attribute("Include"))), CaseIgnorer)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
-            var filterItemsByPath = this[Files.Filters].xml != null
-                ? this[Files.Filters].xml
+            var filterItemsByPath = this[Files.Filters].Xml != null
+                ? this[Files.Filters].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements()
@@ -1101,7 +1075,7 @@ namespace QtVsTools.Core.MsBuild
                     .ToDictionary(x => x.Key, x => new List<XElement>(x))
                 : new Dictionary<string, List<XElement>>();
 
-            var cppIncludePaths = this[Files.Project].xml
+            var cppIncludePaths = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile")
@@ -1147,7 +1121,7 @@ namespace QtVsTools.Core.MsBuild
                 cbtGroup.First().AddBeforeSelf(newCbt);
 
                 //remove ClCompile item (cannot have duplicate items)
-                var cppMocItems = this[Files.Project].xml
+                var cppMocItems = this[Files.Project].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
@@ -1157,7 +1131,7 @@ namespace QtVsTools.Core.MsBuild
                     cppMocItem.Remove();
 
                 //change type of item in filter
-                cppMocItems = this[Files.Filters]?.xml
+                cppMocItems = this[Files.Filters]?.Xml
                     ?.Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
@@ -1323,7 +1297,6 @@ namespace QtVsTools.Core.MsBuild
             FinalizeProjectChanges(repcCustomBuilds, QtRepc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds, QtUic.ItemTypeName);
 
-            this[Files.Project].isDirty = this[Files.Filters].isDirty = true;
             Commit();
             return true;
         }
@@ -1392,20 +1365,19 @@ namespace QtVsTools.Core.MsBuild
         public void ReplacePath(string oldPath, string newPath)
         {
             var srcUri = new Uri(Path.GetFullPath(oldPath));
-            var projUri = new Uri(this[Files.Project].filePath);
+            var projUri = new Uri(this[Files.Project].Path);
 
             var absolutePath = GetPathPattern(srcUri.AbsolutePath);
             var relativePath = GetPathPattern(projUri.MakeRelativeUri(srcUri).OriginalString);
 
             var findWhat = (absolutePath | relativePath).Render().Regex;
 
-            foreach (var xElem in this[Files.Project].xml.Descendants()) {
+            foreach (var xElem in this[Files.Project].Xml.Descendants()) {
                 if (!xElem.HasElements)
                     ReplaceText(xElem, findWhat, newPath);
                 foreach (var xAttr in xElem.Attributes())
                     ReplaceText(xAttr, findWhat, newPath);
             }
-            this[Files.Project].isDirty = true;
             Commit();
         }
 
@@ -1467,7 +1439,7 @@ namespace QtVsTools.Core.MsBuild
                     return expandedString;
 
                 if (evaluateTarget == null) {
-                    projFile.xmlCommitted.Root?.Add(evaluateTarget = new XElement(ns + "Target",
+                    projFile.XmlCommitted.Root?.Add(evaluateTarget = new XElement(ns + "Target",
                         new XAttribute("Name", "MSBuildEvaluatorTarget"),
                         new XElement(ns + "PropertyGroup",
                             evaluateProperty = new XElement(ns + "MSBuildEvaluatorProperty"))));
@@ -1478,11 +1450,11 @@ namespace QtVsTools.Core.MsBuild
                     if (!string.IsNullOrEmpty(tempProjFilePath) && File.Exists(tempProjFilePath))
                         File.Delete(tempProjFilePath);
                     tempProjFilePath = Path.Combine(
-                        Path.GetDirectoryName(projFile.filePath) ?? "",
+                        Path.GetDirectoryName(projFile.Path) ?? "",
                         Path.GetRandomFileName());
                     if (File.Exists(tempProjFilePath))
                         File.Delete(tempProjFilePath);
-                    projFile.xmlCommitted.Save(tempProjFilePath);
+                    projFile.XmlCommitted.Save(tempProjFilePath);
                     projRoot = ProjectRootElement.Open(tempProjFilePath);
                 }
 
@@ -1517,7 +1489,7 @@ namespace QtVsTools.Core.MsBuild
 
             var pattern = new Regex(@"{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}{([^}]+)}");
 
-            var projConfigs = this[Files.Project].xml
+            var projConfigs = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
@@ -1555,10 +1527,10 @@ namespace QtVsTools.Core.MsBuild
 
         public void BuildTarget(string target)
         {
-            if (this[Files.Project].isDirty)
+            if (this[Files.Project].IsDirty)
                 return;
 
-            var configurations = this[Files.Project].xml
+            var configurations = this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemGroup")
                 .Elements(ns + "ProjectConfiguration");
@@ -1568,7 +1540,7 @@ namespace QtVsTools.Core.MsBuild
                 var configProps = config.Elements()
                     .ToDictionary(x => x.Name.LocalName, x => x.Value);
 
-                var projectInstance = new ProjectInstance(this[Files.Project].filePath,
+                var projectInstance = new ProjectInstance(this[Files.Project].Path,
                     new Dictionary<string, string>(configProps)
                         { { "QtVSToolsBuild", "true" } },
                     null, new ProjectCollection());
@@ -1710,6 +1682,5 @@ namespace QtVsTools.Core.MsBuild
                     .Select(item => item.First());
             }
         }
-
     }
 }
