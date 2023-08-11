@@ -33,6 +33,9 @@
 
     <Name_System_Management>System.Management</Name_System_Management>
     <Version_System_Management>7.0.0</Version_System_Management>
+
+    <Name_DiffPlex>DiffPlex</Name_DiffPlex>
+    <Version_DiffPlex>1.7.1</Version_DiffPlex>
   </PropertyGroup>
 
   <!-- // Visual Studio 2022 -->

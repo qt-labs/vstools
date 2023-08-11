@@ -72,6 +72,7 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Composition)" Version="$(Version_Microsoft_VisualStudio_Composition)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
+    <PackageReference Include="$(Name_DiffPlex)" Version="$(Version_DiffPlex)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
