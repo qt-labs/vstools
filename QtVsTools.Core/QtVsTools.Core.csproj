@@ -143,6 +143,7 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Filters.cs" />
+    <Compile Include="MsBuild\ConversionReport.cs" />
     <Compile Include="MsBuild\IPropertyStorageProvider.cs" />
     <Compile Include="MsBuild\IVsMacroExpander.cs" />
     <Compile Include="MsBuild\QtMoc.cs" />

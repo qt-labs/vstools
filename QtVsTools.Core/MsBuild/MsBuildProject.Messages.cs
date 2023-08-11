@@ -70,5 +70,48 @@ namespace QtVsTools.Core.MsBuild
                 return;
             await VsShell.UiThreadAsync(UpdateProjectFormat.Message.Show);
         }
+
+        private class ProjectFormatUpdated : InfoBarMessage
+        {
+            public static ProjectFormatUpdated Message =>
+                StaticLazy.Get(() => Message, () => new ProjectFormatUpdated());
+
+            public string ReportPath { get; set; }
+
+            protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
+
+            protected override TextSpan[] Text => new TextSpan[]
+            {
+                new() { Bold = true, Text = "Qt Visual Studio Tools" },
+                new TextSpacer(2),
+                Utils.EmDash,
+                new TextSpacer(2),
+                "Project format conversion complete."
+            };
+
+            protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+            {
+                    new()
+                    {
+                        Text = "View report",
+                        CloseInfoBar = true,
+                        OnClicked = () => {
+                            ThreadHelper.ThrowIfNotOnUIThread();
+                            VsEditor.Open(ReportPath);
+                        }
+                    }
+            };
+        }
+
+        public static void ShowProjectFormatUpdated(string reportPath)
+        {
+            ThreadHelper.JoinableTaskFactory.Run(() => ShowProjectFormatUpdatedAsync(reportPath));
+        }
+
+        public static async Task ShowProjectFormatUpdatedAsync(string reportPath)
+        {
+            ProjectFormatUpdated.Message.ReportPath = reportPath;
+            await VsShell.UiThreadAsync(ProjectFormatUpdated.Message.Show);
+        }
     }
 }

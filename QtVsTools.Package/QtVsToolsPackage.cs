@@ -42,6 +42,13 @@ namespace QtVsTools
     [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
 
+    [ProvideEditorExtension(typeof(Package.MsBuild.ConversionReportViewer),
+        extension: ".qtvscr",
+        priority: 999,
+        DefaultName = "Qt/MSBuild Project Format Conversion Report")]
+    [ProvideEditorLogicalView(typeof(Package.MsBuild.ConversionReportViewer),
+        logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
+
     // Custom editor: Qt Designer
     [ProvideEditorExtension(typeof(Editors.QtDesigner),
         extension: ".ui",
@@ -134,6 +141,7 @@ namespace QtVsTools
                 RegisterEditorFactory(QtDesigner = new Editors.QtDesigner());
                 RegisterEditorFactory(QtLinguist = new Editors.QtLinguist());
                 RegisterEditorFactory(QtResourceEditor = new Editors.QtResourceEditor());
+                RegisterEditorFactory(new Package.MsBuild.ConversionReportViewer());
                 QtHelp.Initialize();
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))

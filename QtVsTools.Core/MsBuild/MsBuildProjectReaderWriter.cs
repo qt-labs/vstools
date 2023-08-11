@@ -44,6 +44,28 @@ namespace QtVsTools.Core.MsBuild
 
         private readonly MsBuildXmlFile[] files = new MsBuildXmlFile[(int)Files.Count];
 
+        public class FileChangeData
+        {
+            public string Path { get; set; }
+            public string Before { get; set; }
+            public string After { get; set; }
+        }
+
+        public class CommitData
+        {
+            public string Message { get; set; }
+            public List<FileChangeData> Changes { get; } = new();
+        }
+
+        public class ConversionData
+        {
+            public DateTime DateTime { get; set; }
+            public List<FileChangeData> FilesChanged { get; set; }
+            public List<CommitData> Commits { get; set; }
+        }
+
+        private List<CommitData> Commits { get; } = new();
+
         private MsBuildProjectReaderWriter()
         {
             for (var i = 0; i < files.Length; i++)
@@ -98,25 +120,71 @@ namespace QtVsTools.Core.MsBuild
 
         public bool Save()
         {
+            var fileChanges = new List<FileChangeData>();
             foreach (var file in files) {
                 if (file.Xml is null)
                     continue;
                 try {
+                    var before = File.ReadAllText(file.Path);
                     file.Xml.Save(file.Path, SaveOptions.None);
+                    var after = File.ReadAllText(file.Path);
+                    if (before == after)
+                        continue;
+                    fileChanges.Add(new FileChangeData
+                    {
+                        Path = file.Path,
+                        Before = before,
+                        After = after
+                    });
                 } catch (Exception e) {
                     e.Log();
                     return false;
                 }
             }
-            return true;
+            if (!fileChanges.Any())
+                return true;
+
+            var conversionData = new ConversionData
+            {
+                DateTime = DateTime.Now,
+                FilesChanged = fileChanges,
+                Commits = Commits
+            };
+            if (ConversionReport.Generate(conversionData) is not { } report)
+                return false;
+
+            return report.Save(Path.ChangeExtension(this[Files.Project].Path, "qtvscr"));
         }
 
-        private void Commit()
+        private void Commit(string message)
         {
+            var commit = new CommitData { Message = message };
             foreach (var file in files.Where(x => x.Xml != null)) {
-                if (file.IsDirty)
-                    file.XmlCommitted = new XDocument(file.Xml);
+                if (!file.IsDirty)
+                    continue;
+                // Log file change
+                try {
+                    var tempXmlCommitted = Path.GetTempFileName();
+                    var tempXml = Path.GetTempFileName();
+                    file.XmlCommitted.Save(tempXmlCommitted);
+                    file.Xml.Save(tempXml);
+                    commit.Changes.Add(new FileChangeData
+                    {
+                        Path = file.Path,
+                        Before = File.ReadAllText(tempXmlCommitted),
+                        After = File.ReadAllText(tempXml)
+                    });
+                    File.Delete(tempXmlCommitted);
+                    File.Delete(tempXml);
+                } catch (Exception e) {
+                    e.Log();
+                }
+                //file was modified: sync committed copy
+                file.XmlCommitted = new XDocument(file.Xml);
+                file.Xml = new XDocument(file.XmlCommitted);
             }
+            if (commit.Changes.Any())
+                Commits.Add(commit);
         }
 
         private void Rollback()
@@ -166,7 +234,7 @@ namespace QtVsTools.Core.MsBuild
                     xClCompileDef.Add(new XElement(ns + "MultiProcessorCompilation", "true"));
             }
 
-            Commit();
+            Commit("Enabling multi-processor compilation");
             return true;
         }
 
@@ -294,6 +362,7 @@ namespace QtVsTools.Core.MsBuild
                 return false;
 
             projKeyword.SetValue($"QtVS_v{(int)MsBuildProjectFormat.Version.Latest}");
+            Commit("Setting project format version");
 
             // Find import of qt.props
             var qtPropsImport = this[Files.Project].Xml
@@ -349,6 +418,7 @@ namespace QtVsTools.Core.MsBuild
                     if (!pg.Elements().Any())
                         pg.Remove();
                 }
+                Commit("Populating uncategorized property groups");
             }
 
             // Upgrading from <= v3.1?
@@ -365,12 +435,11 @@ namespace QtVsTools.Core.MsBuild
                         (string)qtMsBuildPropertyGroup.Attribute("Condition"));
                     globals.Add(qtMsBuildProperty);
                     qtMsBuildPropertyGroup.Remove();
+                    Commit("Moving Qt/MSBuild path to global property");
                 }
             }
-            if (oldVersion > MsBuildProjectFormat.Version.V3) {
-                Commit();
+            if (oldVersion > MsBuildProjectFormat.Version.V3)
                 return true;
-            }
 
             // Upgrading from v3.0?
             Dictionary<string, XElement> oldQtInstall = null;
@@ -383,6 +452,7 @@ namespace QtVsTools.Core.MsBuild
                     .ToDictionary(x => (string)x.Parent?.Attribute("Condition"));
                 oldQtInstall.Values.ToList()
                     .ForEach(x => x.Remove());
+                Commit("Removing outdated QtInstall property");
 
                 oldQtSettings = this[Files.Project].Xml
                     .Elements(ns + "Project")
@@ -391,6 +461,7 @@ namespace QtVsTools.Core.MsBuild
                     .ToDictionary(x => (string)x.Attribute("Condition"));
                 oldQtSettings.Values.ToList()
                     .ForEach(x => x.Remove());
+                Commit("Removing outdated QtSettings properties");
             }
 
             // Find location for import of qt.props and for the QtSettings property group:
@@ -450,6 +521,7 @@ namespace QtVsTools.Core.MsBuild
                     new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt.props')"),
                     new XElement(ns + "Import",
                         new XAttribute("Project", @"$(QtMsBuild)\qt.props"))));
+            Commit("Relocating import of qt.props");
 
             // Create QtSettings property group above import of qt.props
             var qtSettings = new List<XElement>();
@@ -461,10 +533,12 @@ namespace QtVsTools.Core.MsBuild
                 insertionPoint.AddAfterSelf(configQtSettings);
                 qtSettings.Add(configQtSettings);
             }
+            Commit("Creating QtSettings property group");
 
             // Add uncategorized property groups
             foreach (var propertyGroup in propertyGroups.Values)
                 insertionPoint.AddAfterSelf(propertyGroup);
+            Commit("Adding uncategorized property groups");
 
             // Add import of default property values
             insertionPoint.AddAfterSelf(
@@ -472,6 +546,7 @@ namespace QtVsTools.Core.MsBuild
                     new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt_defaults.props')"),
                     new XElement(ns + "Import",
                         new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
+            Commit("Adding import of default property values");
 
             //// Upgrading from v3.0: move Qt settings to newly created import groups
             if (oldVersion is MsBuildProjectFormat.Version.V3) {
@@ -486,8 +561,7 @@ namespace QtVsTools.Core.MsBuild
                     foreach (var qtSetting in oldConfigQtSettings.Elements())
                         configQtSettings.Add(qtSetting);
                 }
-
-                Commit();
+                Commit("Moving Qt build properties to QtSettings import groups");
                 return true;
             }
 
@@ -531,6 +605,7 @@ namespace QtVsTools.Core.MsBuild
                     if (!string.IsNullOrEmpty(qtInstallValue))
                         config.Add(new XElement(ns + "QtInstall", qtInstallValue));
                 });
+            Commit("Copying Qt build reference to QtInstall project property");
 
             // Get C++ compiler properties
             var compiler = this[Files.Project].Xml
@@ -603,6 +678,7 @@ namespace QtVsTools.Core.MsBuild
                 defines.SetValue(string.Join(";", defines.Value.Split(';')
                     .Where(x => !moduleDefines.Contains(x))));
             }
+            Commit("Removing Qt module macros from compiler properties");
 
             // Remove Qt module include paths from compiler properties
             foreach (var inclPath in compiler.Elements(ns + "AdditionalIncludeDirectories")) {
@@ -611,12 +687,14 @@ namespace QtVsTools.Core.MsBuild
                     // Exclude paths rooted on $(QTDIR)
                     .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
+            Commit("Removing Qt module include paths from compiler properties");
 
             // Remove Qt module libraries from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
                     .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x))))));
             }
+            Commit("Removing Qt module libraries from linker properties");
 
             // Remove Qt lib path from linker properties
             foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
@@ -625,12 +703,14 @@ namespace QtVsTools.Core.MsBuild
                     // Exclude paths rooted on $(QTDIR)
                     .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
             }
+            Commit("Removing Qt lib path from linker properties");
 
             // Remove Qt module macros from resource compiler properties
             foreach (var defines in resourceCompiler.Elements(ns + "PreprocessorDefinitions")) {
                 defines.SetValue(string.Join(";", defines.Value.Split(';')
                     .Where(x => !moduleDefines.Contains(x))));
             }
+            Commit("Removing Qt module macros from resource compiler properties");
 
             // Add Qt module names to QtModules project property
             this[Files.Project].Xml
@@ -639,6 +719,7 @@ namespace QtVsTools.Core.MsBuild
                 .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
                 .ToList()
                 .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
+            Commit("Adding Qt module names to QtModules project property");
 
             // Remove project user properties (old format)
             userProps?.Attributes().ToList().ForEach(userProp =>
@@ -650,6 +731,7 @@ namespace QtVsTools.Core.MsBuild
                     userProp.Remove();
                 }
             });
+            Commit("Removing project user properties (format version 2)");
 
             // Remove old properties from .user file
             if (this[Files.User].Xml != null) {
@@ -668,6 +750,7 @@ namespace QtVsTools.Core.MsBuild
                             userProp.Remove();
                         }
                     });
+                Commit("Removing old properties from .user file");
             }
 
             // Convert OutputFile --> <tool>Dir + <tool>FileName
@@ -689,6 +772,7 @@ namespace QtVsTools.Core.MsBuild
                     string.IsNullOrEmpty(outDir) ? "$(ProjectDir)" : outDir));
                 qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
             }
+            Commit("Converting OutputFile to <tool>Dir and <tool>FileName");
 
             // Remove old properties from project items
             var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile" };
@@ -716,8 +800,8 @@ namespace QtVsTools.Core.MsBuild
                         }
                     });
                 });
+            Commit("Removing old properties from project items");
 
-            Commit();
             return true;
         }
 
@@ -774,7 +858,7 @@ namespace QtVsTools.Core.MsBuild
             xGlobals.Add(
                 new XElement(ns + "WindowsTargetPlatformVersion", winSDKVersion));
 
-            Commit();
+            Commit("Setting default Windows SDK");
             return true;
         }
 
@@ -833,7 +917,7 @@ namespace QtVsTools.Core.MsBuild
                     new XElement(ns + "Import",
                         new XAttribute("Project", @"$(QtMsBuild)\qt.targets"))));
 
-            Commit();
+            Commit("Adding reference to Qt/MSBuild");
             return true;
         }
 
@@ -956,7 +1040,6 @@ namespace QtVsTools.Core.MsBuild
                          == customBuild.Attribute("Include")?.Value);
                 if (filterCustomBuild != null)
                     filterCustomBuild.Name = ns + itemTypeName;
-
                 customBuild.Name = ns + itemTypeName;
             });
         }
@@ -1297,7 +1380,7 @@ namespace QtVsTools.Core.MsBuild
             FinalizeProjectChanges(repcCustomBuilds, QtRepc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds, QtUic.ItemTypeName);
 
-            Commit();
+            Commit("Converting custom build steps to Qt/MSBuild items");
             return true;
         }
 
@@ -1378,7 +1461,7 @@ namespace QtVsTools.Core.MsBuild
                 foreach (var xAttr in xElem.Attributes())
                     ReplaceText(xAttr, findWhat, newPath);
             }
-            Commit();
+            Commit($"Replacing paths with \"{newPath}\"");
         }
 
         private class MSBuildEvaluator : IVsMacroExpander, IDisposable
