@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -23,8 +22,9 @@ namespace QtVsTools.Core.MsBuild
     using static HelperFunctions;
     using static SyntaxAnalysis.RegExpr;
     using static Utils;
+    using static MsBuildProjectFormat;
 
-    public class MsBuildProjectReaderWriter
+    public partial class MsBuildProjectReaderWriter
     {
         private class MsBuildXmlFile
         {
@@ -291,22 +291,22 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        private MsBuildProjectFormat.Version ParseProjectFormatVersion(string text)
+        private Version ParseProjectFormatVersion(string text)
         {
             if (string.IsNullOrEmpty(text) || ProjectFormatVersion == null)
-                return MsBuildProjectFormat.Version.Unknown;
+                return Version.Unknown;
             try {
-                return (MsBuildProjectFormat.Version) ProjectFormatVersion.Parse(text)
+                return (Version) ProjectFormatVersion.Parse(text)
                     .GetValues<int>("VERSION")
                     .First();
             } catch {
-                return text.StartsWith(MsBuildProjectFormat.KeywordV2, StringComparison.Ordinal)
-                    ? MsBuildProjectFormat.Version.V1
-                    : MsBuildProjectFormat.Version.Unknown;
+                return text.StartsWith(KeywordV2, StringComparison.Ordinal)
+                    ? Version.V1
+                    : Version.Unknown;
             }
         }
 
-        public MsBuildProjectFormat.Version GetProjectFormatVersion()
+        public Version GetProjectFormatVersion()
         {
             var globals = this[Files.Project].Xml
                 .Elements(ns + "Project")
@@ -314,8 +314,8 @@ namespace QtVsTools.Core.MsBuild
                 .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
             // Set Qt project format version
             var projKeyword = globals?.Elements(ns + "Keyword")
-                .FirstOrDefault(x => x.Value.StartsWith(MsBuildProjectFormat.KeywordLatest)
-                    || x.Value.StartsWith(MsBuildProjectFormat.KeywordV2));
+                .FirstOrDefault(x => x.Value.StartsWith(KeywordLatest)
+                    || x.Value.StartsWith(KeywordV2));
             return ParseProjectFormatVersion(projKeyword?.Value);
         }
 
@@ -329,480 +329,33 @@ namespace QtVsTools.Core.MsBuild
         /// </summary>
         /// <param name="oldVersion"></param>
         /// <returns>true if successful</returns>
-        public bool UpdateProjectFormatVersion(MsBuildProjectFormat.Version oldVersion)
+        public bool UpdateProjectFormatVersion(Version oldVersion)
         {
             if (ConfigCondition == null)
                 return false;
 
             switch (oldVersion) {
-            case MsBuildProjectFormat.Version.Latest:
+            case Version.Latest:
                 return true; // Nothing to do!
-            case MsBuildProjectFormat.Version.Unknown or > MsBuildProjectFormat.Version.Latest:
+            case Version.Unknown or > Version.Latest:
                 return false; // Nothing we can do!
             }
 
-            // Get project configurations
-            var configs = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemGroup")
-                .Elements(ns + "ProjectConfiguration")
-                .ToList();
-
-            // Get project global properties
-            var globals = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .FirstOrDefault(x => (string)x.Attribute("Label") == "Globals");
-
-            // Set Qt project format version
-            var projKeyword = globals?.Elements(ns + "Keyword")
-                .FirstOrDefault(x => x.Value.StartsWith(MsBuildProjectFormat.KeywordLatest)
-                    || x.Value.StartsWith(MsBuildProjectFormat.KeywordV2));
-            if (projKeyword == null)
+            // Set up V3 format infrastructure
+            if (!ConvertToV3())
                 return false;
 
-            projKeyword.SetValue($"QtVS_v{(int)MsBuildProjectFormat.Version.Latest}");
-            Commit("Setting project format version");
-
-            // Find import of qt.props
-            var qtPropsImport = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ImportGroup")
-                .Elements(ns + "Import")
-                .FirstOrDefault(x => (string)x.Attribute("Project") == @"$(QtMsBuild)\qt.props");
-            if (qtPropsImport == null)
-                return false;
-
-            var uncategorizedPropertyGroups = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .Where(pg => pg.Attribute("Label") == null)
-                .ToList();
-
-            var propertyGroups = new Dictionary<string, XElement>();
-
-            // Upgrading from <= v3.2?
-            if (oldVersion < MsBuildProjectFormat.Version.V3PropertyEval) {
-                // Find import of default Qt properties
-                var qtDefaultProps = this[Files.Project].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "ImportGroup")
-                    .Elements(ns + "Import")
-                    .Where(pg => Path.GetFileName((string)pg.Attribute("Project"))
-                        .Equals("qt_defaults.props", IgnoreCase))
-                    .Select(pg => pg.Parent)
-                    .FirstOrDefault();
-
-                // Create uncategorized property groups
-                foreach (var config in configs) {
-                    var condition =
-                        $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'";
-                    var group = new XElement(ns + "PropertyGroup",
-                                    new XAttribute("Condition", condition));
-                    propertyGroups[condition] = group;
-                    // Insert uncategorized groups after Qt defaults, if found
-                    qtDefaultProps?.AddAfterSelf(group);
-                }
-
-                // Move uncategorized properties to newly created groups
-                foreach (var pg in uncategorizedPropertyGroups) {
-                    foreach (var p in pg.Elements().ToList()) {
-                        var condition = p.Attribute("Condition") ?? pg.Attribute("Condition");
-                        if (condition == null || !propertyGroups
-                            .TryGetValue((string)condition, out var configPropertyGroup))
-                            continue;
-                        p.Remove();
-                        p.SetAttributeValue("Condition", null);
-                        configPropertyGroup.Add(p);
-                    }
-                    if (!pg.Elements().Any())
-                        pg.Remove();
-                }
-                Commit("Populating uncategorized property groups");
-            }
-
-            // Upgrading from <= v3.1?
-            if (oldVersion < MsBuildProjectFormat.Version.V3GlobalQtMsBuildProperty) {
-                // Move Qt/MSBuild path to global property
-                var qtMsBuildProperty = globals
-                    .ElementsAfterSelf(ns + "PropertyGroup")
-                    .Elements(ns + "QtMsBuild")
-                    .FirstOrDefault();
-                if (qtMsBuildProperty != null) {
-                    var qtMsBuildPropertyGroup = qtMsBuildProperty.Parent;
-                    qtMsBuildProperty.Remove();
-                    qtMsBuildProperty.SetAttributeValue("Condition",
-                        (string)qtMsBuildPropertyGroup.Attribute("Condition"));
-                    globals.Add(qtMsBuildProperty);
-                    qtMsBuildPropertyGroup.Remove();
-                    Commit("Moving Qt/MSBuild path to global property");
-                }
-            }
-            if (oldVersion > MsBuildProjectFormat.Version.V3)
+            // Upgrading from a previous V3 format; nothing more to do
+            if (oldVersion > Version.V2)
                 return true;
-
-            // Upgrading from v3.0?
-            Dictionary<string, XElement> oldQtInstall = null;
-            Dictionary<string, XElement> oldQtSettings = null;
-            if (oldVersion is MsBuildProjectFormat.Version.V3) {
-                oldQtInstall = this[Files.Project].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "PropertyGroup")
-                    .Elements(ns + "QtInstall")
-                    .ToDictionary(x => (string)x.Parent?.Attribute("Condition"));
-                oldQtInstall.Values.ToList()
-                    .ForEach(x => x.Remove());
-                Commit("Removing outdated QtInstall property");
-
-                oldQtSettings = this[Files.Project].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "PropertyGroup")
-                    .Where(x => (string)x.Attribute("Label") == "QtSettings")
-                    .ToDictionary(x => (string)x.Attribute("Condition"));
-                oldQtSettings.Values.ToList()
-                    .ForEach(x => x.Remove());
-                Commit("Removing outdated QtSettings properties");
-            }
-
-            // Find location for import of qt.props and for the QtSettings property group:
-            // (cf. ".vcxproj file elements" https://docs.microsoft.com/en-us/cpp/build/reference/vcxproj-file-structure?view=vs-2019#vcxproj-file-elements)
-
-            // * After the last UserMacros property group
-            var insertionPoint = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros");
-
-            // * After the last PropertySheets import group
-            insertionPoint ??= this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ImportGroup")
-                .LastOrDefault(x => (string)x.Attribute("Label") == "PropertySheets");
-
-            // * Before the first ItemDefinitionGroup
-            insertionPoint ??= this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Select(x => x.ElementsBeforeSelf().Last())
-                .FirstOrDefault();
-
-            // * Before the first ItemGroup
-            insertionPoint ??= this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemGroup")
-                .Select(x => x.ElementsBeforeSelf().Last())
-                .FirstOrDefault();
-
-            // * Before the import of Microsoft.Cpp.targets
-            insertionPoint ??= this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "Import")
-                .Where(x =>
-                    (string)x.Attribute("Project") == @"$(VCTargetsPath)\Microsoft.Cpp.targets")
-                .Select(x => x.ElementsBeforeSelf().Last())
-                .FirstOrDefault();
-
-            // * At the end of the file
-            insertionPoint ??= this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements()
-                .LastOrDefault();
-
-            if (insertionPoint == null)
-                return false;
-
-            // Move import of qt.props to insertion point
-            if (qtPropsImport.Parent.Elements().SingleOrDefault() == qtPropsImport)
-                qtPropsImport.Parent.Remove(); // Remove import group
-            else
-                qtPropsImport.Remove(); // Remove import (group contains other imports)
-            insertionPoint.AddAfterSelf(
-                new XElement(ns + "ImportGroup",
-                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt.props')"),
-                    new XElement(ns + "Import",
-                        new XAttribute("Project", @"$(QtMsBuild)\qt.props"))));
-            Commit("Relocating import of qt.props");
-
-            // Create QtSettings property group above import of qt.props
-            var qtSettings = new List<XElement>();
-            foreach (var config in configs) {
-                var configQtSettings = new XElement(ns + "PropertyGroup",
-                    new XAttribute("Label", "QtSettings"),
-                    new XAttribute("Condition",
-                        $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"));
-                insertionPoint.AddAfterSelf(configQtSettings);
-                qtSettings.Add(configQtSettings);
-            }
-            Commit("Creating QtSettings property group");
-
-            // Add uncategorized property groups
-            foreach (var propertyGroup in propertyGroups.Values)
-                insertionPoint.AddAfterSelf(propertyGroup);
-            Commit("Adding uncategorized property groups");
-
-            // Add import of default property values
-            insertionPoint.AddAfterSelf(
-                new XElement(ns + "ImportGroup",
-                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt_defaults.props')"),
-                    new XElement(ns + "Import",
-                        new XAttribute("Project", @"$(QtMsBuild)\qt_defaults.props"))));
-            Commit("Adding import of default property values");
-
-            //// Upgrading from v3.0: move Qt settings to newly created import groups
-            if (oldVersion is MsBuildProjectFormat.Version.V3) {
-                foreach (var configQtSettings in qtSettings) {
-                    var configCondition = (string)configQtSettings.Attribute("Condition");
-
-                    if (oldQtInstall.TryGetValue(configCondition, out var oldConfigQtInstall))
-                        configQtSettings.Add(oldConfigQtInstall);
-                    if (!oldQtSettings.TryGetValue(configCondition, out var oldConfigQtSettings))
-                        continue;
-
-                    foreach (var qtSetting in oldConfigQtSettings.Elements())
-                        configQtSettings.Add(qtSetting);
-                }
-                Commit("Moving Qt build properties to QtSettings import groups");
-                return true;
-            }
 
             //// Upgrading from v2.0
 
-            var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
-
-            // Get project user properties (old format)
-            var userProps = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ProjectExtensions")
-                .Elements(ns + "VisualStudio")
-                .Elements(ns + "UserProperties")
-                .FirstOrDefault();
-
-            // Copy Qt build reference to QtInstall project property
-            this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
-                .ToList()
-                .ForEach(config =>
-                {
-                    var qtInstallValue = defaultVersionName;
-                    if (userProps != null) {
-                        string platform = null;
-                        try {
-                            platform = ConfigCondition
-                                .Parse((string)config.Attribute("Condition"))
-                                .GetValues<string>("Platform")
-                                .FirstOrDefault();
-                        } catch (Exception e) {
-                            e.Log();
-                        }
-
-                        if (!string.IsNullOrEmpty(platform)) {
-                            var qtInstallName = $"Qt5Version_x0020_{platform}";
-                            qtInstallValue = (string)userProps.Attribute(qtInstallName);
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(qtInstallValue))
-                        config.Add(new XElement(ns + "QtInstall", qtInstallValue));
-                });
-            Commit("Copying Qt build reference to QtInstall project property");
-
-            // Get C++ compiler properties
-            var compiler = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "ClCompile")
-                .ToList();
-
-            // Get linker properties
-            var linker = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "Link")
-                .ToList();
-
-            var resourceCompiler = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "ResourceCompile")
-                .ToList();
-
-            // Qt module names, to copy to QtModules property
-            var moduleNames = new HashSet<string>();
-
-            // Qt module macros, to remove from compiler macros property
-            var moduleDefines = new HashSet<string>();
-
-            // Qt module includes, to remove from compiler include directories property
-            var moduleIncludePaths = new HashSet<string>();
-
-            // Qt module link libraries, to remove from liker dependencies property
-            var moduleLibs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            var qt5Modules = QtModules.Instance.GetAvailableModules(5);
-            var qt6Modules = QtModules.Instance.GetAvailableModules(6);
-            var modules = new ReadOnlyCollectionBuilder<QtModule>(qt5Modules.Concat(qt6Modules));
-
-            // Go through all known Qt modules and check which ones are currently being used
-            foreach (var module in modules.ToReadOnlyCollection()) {
-                if (!IsModuleUsed(module, compiler, linker, resourceCompiler))
-                    continue;
-                // Qt module names, to copy to QtModules property
-                if (!string.IsNullOrEmpty(module.proVarQT))
-                    moduleNames.UnionWith(module.proVarQT.Split(' '));
-
-                // Qt module macros, to remove from compiler macros property
-                moduleDefines.UnionWith(module.Defines);
-
-                // Qt module includes, to remove from compiler include directories property
-                moduleIncludePaths.UnionWith(
-                    module.IncludePath.Select(Path.GetFileName));
-
-                // Qt module link libraries, to remove from liker dependencies property
-                moduleLibs.UnionWith(
-                    module.AdditionalLibraries.Select(Path.GetFileName));
-                moduleLibs.UnionWith(
-                    module.AdditionalLibrariesDebug.Select(Path.GetFileName));
-                moduleLibs.Add(module.LibRelease);
-                moduleLibs.Add(module.LibDebug);
-
-                if (IsPrivateIncludePathUsed(module, compiler)) {
-                    // Qt private module names, to copy to QtModules property
-                    moduleNames.UnionWith(module.proVarQT.Split(' ')
-                        .Select(x => $"{x}-private"));
-                }
-            }
-
-            // Remove Qt module macros from compiler properties
-            foreach (var defines in compiler.Elements(ns + "PreprocessorDefinitions")) {
-                defines.SetValue(string.Join(";", defines.Value.Split(';')
-                    .Where(x => !moduleDefines.Contains(x))));
-            }
-            Commit("Removing Qt module macros from compiler properties");
-
-            // Remove Qt module include paths from compiler properties
-            foreach (var inclPath in compiler.Elements(ns + "AdditionalIncludeDirectories")) {
-                inclPath.SetValue(string.Join(";", inclPath.Value.Split(';')
-                    .Select(Unquote)
-                    // Exclude paths rooted on $(QTDIR)
-                    .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
-            }
-            Commit("Removing Qt module include paths from compiler properties");
-
-            // Remove Qt module libraries from linker properties
-            foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
-                libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x))))));
-            }
-            Commit("Removing Qt module libraries from linker properties");
-
-            // Remove Qt lib path from linker properties
-            foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
-                libs.SetValue(string.Join(";", libs.Value.Split(';')
-                    .Select(Unquote)
-                    // Exclude paths rooted on $(QTDIR)
-                    .Where(x => !x.StartsWith("$(QTDIR)", IgnoreCase))));
-            }
-            Commit("Removing Qt lib path from linker properties");
-
-            // Remove Qt module macros from resource compiler properties
-            foreach (var defines in resourceCompiler.Elements(ns + "PreprocessorDefinitions")) {
-                defines.SetValue(string.Join(";", defines.Value.Split(';')
-                    .Where(x => !moduleDefines.Contains(x))));
-            }
-            Commit("Removing Qt module macros from resource compiler properties");
-
-            // Add Qt module names to QtModules project property
-            this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
-                .ToList()
-                .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
-            Commit("Adding Qt module names to QtModules project property");
-
-            // Remove project user properties (old format)
-            userProps?.Attributes().ToList().ForEach(userProp =>
-            {
-                if (userProp.Name.LocalName.StartsWith("Qt5Version_x0020_")
-                    || userProp.Name.LocalName is "lupdateOptions" or "lupdateOnBuild"
-                        or "lreleaseOptions" or "MocDir" or "MocOptions" or "RccDir"
-                        or "UicDir") {
-                    userProp.Remove();
-                }
-            });
-            Commit("Removing project user properties (format version 2)");
-
-            // Remove old properties from .user file
-            if (this[Files.User].Xml != null) {
-                this[Files.User].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "PropertyGroup")
-                    .Elements()
-                    .ToList()
-                    .ForEach(userProp =>
-                    {
-                        if (userProp.Name.LocalName is "QTDIR" or "QmlDebug" or "QmlDebugSettings"
-                            || (userProp.Name.LocalName == "LocalDebuggerCommandArguments"
-                                && (string)userProp == "$(QmlDebug)")
-                            || (userProp.Name.LocalName == "LocalDebuggerEnvironment"
-                                && (string)userProp == "PATH=$(QTDIR)\\bin%3b$(PATH)")) {
-                            userProp.Remove();
-                        }
-                    });
-                Commit("Removing old properties from .user file");
-            }
-
-            // Convert OutputFile --> <tool>Dir + <tool>FileName
-            var qtItems = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .SelectMany(x => x.Elements(ns + "ItemDefinitionGroup")
-                    .Union(x.Elements(ns + "ItemGroup")))
-                .SelectMany(x => x.Elements(ns + "QtMoc")
-                    .Union(x.Elements(ns + "QtRcc"))
-                    .Union(x.Elements(ns + "QtUic")));
-            foreach (var qtItem in qtItems) {
-                var outputFile = qtItem.Element(ns + "OutputFile");
-                if (outputFile == null)
-                    continue;
-                var qtTool = qtItem.Name.LocalName;
-                var outDir = Path.GetDirectoryName(outputFile.Value);
-                var outFileName = Path.GetFileName(outputFile.Value);
-                qtItem.Add(new XElement(ns + qtTool + "Dir",
-                    string.IsNullOrEmpty(outDir) ? "$(ProjectDir)" : outDir));
-                qtItem.Add(new XElement(ns + qtTool + "FileName", outFileName));
-            }
-            Commit("Converting OutputFile to <tool>Dir and <tool>FileName");
-
-            // Remove old properties from project items
-            var oldQtProps = new[] { "QTDIR", "InputFile", "OutputFile" };
-            var oldCppProps = new[] { "IncludePath", "Define", "Undefine" };
-            var oldPropsAny = oldQtProps.Union(oldCppProps);
-            this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Union(this[Files.Project].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "ItemGroup"))
-                .Elements().ToList().ForEach(item =>
-                {
-                    var itemName = item.Name.LocalName;
-                    item.Elements().ToList().ForEach(itemProp =>
-                    {
-                        var propName = itemProp.Name.LocalName;
-                        switch (itemName) {
-                        case "QtMoc" when oldPropsAny.Contains(propName):
-                        case "QtRcc" when oldQtProps.Contains(propName):
-                        case "QtUic" when oldQtProps.Contains(propName):
-                        case "QtRepc" when oldPropsAny.Contains(propName):
-                            itemProp.Remove();
-                            break;
-                        }
-                    });
-                });
-            Commit("Removing old properties from project items");
-
-            return true;
+            // Migrate existing V2 definitions into V3
+            //  * Copy / adapt build settings from V2 to V3
+            //  * Clean up outdated V2 definitions
+            //  * Requires V3 infrastructure already set-up
+            return UpgradeFromV2();
         }
 
         private static bool IsModuleUsed(
@@ -859,65 +412,6 @@ namespace QtVsTools.Core.MsBuild
                 new XElement(ns + "WindowsTargetPlatformVersion", winSDKVersion));
 
             Commit("Setting default Windows SDK");
-            return true;
-        }
-
-        public bool AddQtMsBuildReferences()
-        {
-            var isQtMsBuildEnabled = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ImportGroup")
-                .Elements(ns + "Import")
-                .Any(x => x.Attribute("Project")?.Value == @"$(QtMsBuild)\qt.props");
-            if (isQtMsBuildEnabled)
-                return true;
-
-            var xImportCppProps = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "Import")
-                .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.props");
-            if (xImportCppProps == null)
-                return false;
-
-            var xImportCppTargets = this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "Import")
-                .FirstOrDefault(x => x.Attribute("Project")?.Value == @"$(VCTargetsPath)\Microsoft.Cpp.targets");
-            if (xImportCppTargets == null)
-                return false;
-
-            xImportCppProps.AddAfterSelf(
-                new XElement(ns + "PropertyGroup",
-                    new XAttribute("Condition",
-                        @"'$(QtMsBuild)'=='' " +
-                        @"or !Exists('$(QtMsBuild)\qt.targets')"),
-                    new XElement(ns + "QtMsBuild",
-                        @"$(MSBuildProjectDirectory)\QtMsBuild")),
-
-                new XElement(ns + "Target",
-                    new XAttribute("Name", "QtMsBuildNotFound"),
-                    new XAttribute("BeforeTargets", "CustomBuild;ClCompile"),
-                    new XAttribute("Condition",
-                        @"!Exists('$(QtMsBuild)\qt.targets') " +
-                        @"or !Exists('$(QtMsBuild)\qt.props')"),
-                    new XElement(ns + "Message",
-                        new XAttribute("Importance", "High"),
-                        new XAttribute("Text",
-                            "QtMsBuild: could not locate qt.targets, qt.props; " +
-                            "project may not build correctly."))),
-
-                new XElement(ns + "ImportGroup",
-                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt.props')"),
-                    new XElement(ns + "Import",
-                        new XAttribute("Project", @"$(QtMsBuild)\qt.props"))));
-
-            xImportCppTargets.AddAfterSelf(
-                new XElement(ns + "ImportGroup",
-                    new XAttribute("Condition", @"Exists('$(QtMsBuild)\qt.targets')"),
-                    new XElement(ns + "Import",
-                        new XAttribute("Project", @"$(QtMsBuild)\qt.targets"))));
-
-            Commit("Adding reference to Qt/MSBuild");
             return true;
         }
 

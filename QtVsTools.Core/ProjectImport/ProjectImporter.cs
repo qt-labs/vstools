@@ -256,9 +256,7 @@ namespace QtVsTools.Core
             xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
 
-            var ok = xmlProject.AddQtMsBuildReferences();
-            if (ok)
-                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
+            var ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok) {

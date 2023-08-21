@@ -117,11 +117,7 @@ namespace QtVsTools.Core.MsBuild
                 return false; // Nothing we can do!
             }
 
-            var ok = xmlProject.AddQtMsBuildReferences();
-            if (ok)
-                ok = xmlProject.AddQtMsBuildReferences();
-            if (ok)
-                ok = xmlProject.ConvertCustomBuildToQtMsBuild();
+            var ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
             if (ok)
