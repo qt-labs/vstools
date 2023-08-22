@@ -307,6 +307,7 @@
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
     <Compile Include="MsBuild\ConversionReportViewer.cs" />
+    <Compile Include="MsBuild\LegacyProjectFilterProvider.cs" />
     <Compile Include="MsBuild\QtModulesEditor.cs" />
     <Compile Include="MsBuild\QtVersionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.tt.cs">

@@ -16,10 +16,10 @@ namespace QtVsTools
             public const string GuidString = "d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec";
             public static readonly System.Guid Guid = new(GuidString);
             public const int CreateProFileBitmap = 0x0006;
-            public const int ExportProFileBitmap = 0x0005;
             public const int ImportPriFileBitmap = 0x0004;
             public const int LaunchDesignerBitmap = 0x0001;
             public const int LaunchLinguistBitmap = 0x0002;
+            public const int LegacyProjectFilterBitmap = 0x0005;
             public const int OpenProFileBitmap = 0x0003;
             public const int QtLogoBitmap = 0x0007;
         }
@@ -37,6 +37,7 @@ namespace QtVsTools
             public const int LaunchDesigner = 0x0201;
             public const int LaunchLinguist = 0x0202;
             public const int LaunchMenuGroup = 0x0200;
+            public const int LegacyProjectFilter = 0x1200;
             public const int lReleaseOnItem = 0x1102;
             public const int lReleaseOnProject = 0x0902;
             public const int lReleaseOnSolution = 0x0602;
@@ -69,6 +70,14 @@ namespace QtVsTools
             public const int VersionMenuGroup = 0x0100;
             public const int ViewGettingStarted = 0x0104;
             public const int ViewQtHelp = 0x0102;
+        }
+        /// <summary>
+        /// Defines the "UICONTEXT_SolutionExistsAndFullyLoaded" GUIDSymbol and its IDSymbols.
+        /// </summary>
+        internal sealed partial class UICONTEXT_SolutionExistsAndFullyLoaded
+        {
+            public const string GuidString = "10534154-102d-46e2-aba8-a6bfa25ba0be";
+            public static readonly System.Guid Guid = new(GuidString);
         }
     }
 }
