@@ -89,13 +89,13 @@ For example, assuming Qt is installed in the following directory tree:
 
     C:
     +--- build
-         +--- qt_5.12.9_msvc2019_x86
+         +--- qt_5.15.9_msvc2019_x86
          |    +--- bin
          |    +--- include
          |    +--- lib
          |    (etc.)
          |
-         +--- qt_5.12.9_msvc2022_x64
+         +--- qt_5.15.9_msvc2022_x64
               +--- bin
               +--- include
               +--- lib
@@ -103,8 +103,8 @@ For example, assuming Qt is installed in the following directory tree:
 
 In this case, the following environment variables must be set:
 
-    QTBUILD_STATIC_VS2019=C:\build\qt_5.12.9_msvc2019_x86
-    QTBUILD_STATIC_VS2022=C:\build\qt_5.12.9_msvc2022_x64
+    QTBUILD_STATIC_VS2019=C:\build\qt_5.15.9_msvc2019_x86
+    QTBUILD_STATIC_VS2022=C:\build\qt_5.15.9_msvc2022_x64
 
 ### Initialization
 
