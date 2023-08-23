@@ -13,7 +13,8 @@ using Microsoft.VisualStudio.Workspace.Debug;
 using Microsoft.VisualStudio.Workspace.Indexing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Task = System.Threading.Tasks.Task;
+
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.Core
 {
@@ -66,10 +67,10 @@ namespace QtVsTools.Core.CMake
             ThreadHelper.JoinableTaskFactory.Run(async () => await ConvertAsync(projectFolder));
         }
 
-        public static async Task ConvertAsync(string projectFolder)
+        public static async Tasks.Task ConvertAsync(string projectFolder)
         {
             var project = new CMakeProject(projectFolder);
-            if (project.TryLoadPresets())
+            if (await project.TryLoadPresetsAsync())
                 return;
             await project.RefreshAsync();
         }
@@ -94,7 +95,7 @@ namespace QtVsTools.Core.CMake
             RootPath = projectFolder;
         }
 
-        private async Task LoadAsync()
+        private async Tasks.Task LoadAsync()
         {
             Index = await Project.GetServiceAsync<IIndexWorkspaceService3>();
             FileWatcher = await Project.GetServiceAsync<IFileWatcherService>();
@@ -104,7 +105,7 @@ namespace QtVsTools.Core.CMake
             await CheckQtStatusAsync();
         }
 
-        private async Task UnloadAsync()
+        private async Tasks.Task UnloadAsync()
         {
             UnsubscribeEvents();
             await CloseMessagesAsync();
@@ -149,20 +150,21 @@ namespace QtVsTools.Core.CMake
             return cmakeListsParser.Render(HorizSpace);
         });
 
-        private bool HasQtReference(IEnumerable<string> listFiles)
+        private async Tasks.Task<bool> HasQtReferenceAsync(IEnumerable<string> listFiles)
         {
             foreach (var listFile in listFiles) {
                 var listFilePath = Path.Combine(RootPath, listFile);
                 if (!File.Exists(listFilePath))
                     continue;
                 try {
-                    if (!CMakeListsParser.Parse(File.ReadAllText(listFilePath)).Any())
+                    if (!CMakeListsParser.Parse(await Utils.ReadAllTextAsync(listFilePath)).Any())
                         continue;
                     if (IsCompatible())
                         return true;
-                    _ = ThreadHelper.JoinableTaskFactory.RunAsync(ShowIncompatibleProjectAsync);
+                    await ShowIncompatibleProjectAsync();
                     return false;
-                } catch (ParseErrorException) {
+                } catch (ParseErrorException exception) {
+                    exception.Log();
                 }
             }
             return false;

@@ -11,7 +11,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
-using Task = System.Threading.Tasks.Task;
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools
 {
@@ -81,7 +81,7 @@ namespace QtVsTools
             }
         }
 
-        private async Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
+        private async Tasks.Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             OnActiveWorkspaceChanged();
@@ -133,7 +133,8 @@ namespace QtVsTools
 
             var versionInfo = project.VersionInfo;
             if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                QtVsToolsPackage.Instance.CopyVisualizersFiles(versionInfo.Namespace());
+                _ = ThreadHelper.JoinableTaskFactory.RunAsync(() =>
+                    QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(versionInfo.Namespace()));
         }
 
         public void Disconnect()

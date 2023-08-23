@@ -25,7 +25,7 @@ namespace QtVsTools.Core.CMake
 
             JObject launchVs = null;
             try {
-                launchVs = JObject.Parse(File.ReadAllText(launchVsJsonPath));
+                launchVs = JObject.Parse(await Utils.ReadAllTextAsync(launchVsJsonPath));
             } catch (Exception e) {
                 e.Log();
                 return;

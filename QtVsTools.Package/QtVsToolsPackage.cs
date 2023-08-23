@@ -240,7 +240,6 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                CopyVisualizersFiles();
                 initTimer.Stop();
                 Ready.Set();
                 var initMsecs = initTimer.Elapsed.TotalMilliseconds;
@@ -249,8 +248,12 @@ namespace QtVsTools
                 /////////
                 // Continue initialization in background task
                 //
-                await Task.WhenAny(Task.Run(Task.Yield), Task.Run(
-                    async () => await FinalizeInitializationAsync(initMsecs, uiMsecs)));
+                await Task.WhenAny(
+                    Task.Run(Task.Yield, cancellationToken),
+                    Task.Run(async () => await CopyVisualizersFilesAsync(), cancellationToken),
+                    Task.Run(async () =>
+                        await FinalizeInitializationAsync(initMsecs, uiMsecs), cancellationToken)
+                );
 
             } catch (Exception exception) {
                 Ready.Set();
@@ -464,17 +467,17 @@ namespace QtVsTools
             }
         }
 
-        public void CopyVisualizersFiles(string qtNamespace = null)
+        public async Task CopyVisualizersFilesAsync(string qtNamespace = null)
         {
             string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
             foreach (var file in files)
-                CopyVisualizersFile(file, qtNamespace);
+                await CopyVisualizersFileAsync(file, qtNamespace);
         }
 
-        private void CopyVisualizersFile(string filename, string qtNamespace)
+        private async Task CopyVisualizersFileAsync(string filename, string qtNamespace)
         {
             try {
-                var text = File.ReadAllText(Path.Combine(PkgInstallPath, filename));
+                var text = await ReadAllTextAsync(Path.Combine(PkgInstallPath, filename));
 
                 string visualizerFile;
                 if (string.IsNullOrEmpty(qtNamespace)) {
@@ -489,8 +492,7 @@ namespace QtVsTools
                 if (!Directory.Exists(VisualizersPath))
                     Directory.CreateDirectory(VisualizersPath);
 
-                File.WriteAllText(Path.Combine(VisualizersPath, visualizerFile),
-                    text, System.Text.Encoding.UTF8);
+                await WriteAllTextAsync(Path.Combine(VisualizersPath, visualizerFile), text);
             } catch (Exception exception) {
                 exception.Log();
             }

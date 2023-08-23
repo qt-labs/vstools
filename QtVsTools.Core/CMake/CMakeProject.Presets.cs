@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace QtVsTools.Core.CMake
@@ -16,14 +17,14 @@ namespace QtVsTools.Core.CMake
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
-        private bool TryLoadPresets()
+        private async Task<bool> TryLoadPresetsAsync()
         {
             if (File.Exists(PresetsPath))
-                Presets = JObject.Parse(File.ReadAllText(PresetsPath));
+                Presets = JObject.Parse(await ReadAllTextAsync(PresetsPath));
             else
                 Presets = NullPresets.DeepClone() as JObject;
             if (File.Exists(UserPresetsPath))
-                UserPresets = JObject.Parse(File.ReadAllText(UserPresetsPath));
+                UserPresets = JObject.Parse(await ReadAllTextAsync(UserPresetsPath));
             else
                 UserPresets = NullPresets.DeepClone() as JObject;
 

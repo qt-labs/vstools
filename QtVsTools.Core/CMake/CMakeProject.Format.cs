@@ -38,15 +38,15 @@ namespace QtVsTools.Core.CMake
             switch (Status) {
             case QtStatus.False:
             case QtStatus.NullPresets:
-                if (HasQtReference(lists))
-                    Status = TryLoadPresets() ? QtStatus.True : QtStatus.ConversionPending;
+                if (await HasQtReferenceAsync(lists))
+                    Status = await TryLoadPresetsAsync() ? QtStatus.True : QtStatus.ConversionPending;
                 break;
             case QtStatus.ConversionPending:
                 return;
             case QtStatus.True:
-                if (!HasQtReference(lists))
+                if (!await HasQtReferenceAsync(lists))
                     Status = QtStatus.False;
-                else if (!TryLoadPresets())
+                else if (!await TryLoadPresetsAsync())
                     Status = QtStatus.ConversionPending;
                 break;
             }
@@ -56,9 +56,9 @@ namespace QtVsTools.Core.CMake
                 return;
             case QtStatus.NullPresets:
                 try {
-                    if (File.ReadAllText(PresetsPath) == NullPresetsText)
+                    if (await Utils.ReadAllTextAsync(PresetsPath) == NullPresetsText)
                         File.Delete(PresetsPath);
-                    if (File.ReadAllText(UserPresetsPath) == NullPresetsText)
+                    if (await Utils.ReadAllTextAsync(UserPresetsPath) == NullPresetsText)
                         File.Delete(UserPresetsPath);
                 } catch (Exception ex) {
                     ex.Log();
