@@ -15,7 +15,7 @@ namespace QtVsTools
         {
             public const string GuidString = "d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec";
             public static readonly System.Guid Guid = new(GuidString);
-            public const int CreateProFileBitmap = 0x0006;
+            public const int ConvertProjectBitmap = 0x0006;
             public const int ImportPriFileBitmap = 0x0004;
             public const int LaunchDesignerBitmap = 0x0001;
             public const int LaunchLinguistBitmap = 0x0002;

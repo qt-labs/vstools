@@ -190,6 +190,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
+                <Icon guid="MenuImages" id="ConvertProjectBitmap" />
                 <Strings>
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
@@ -209,6 +210,8 @@
                 <Parent guid="Package" id="OptionsMenuGroup" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>IconIsMoniker</CommandFlag>
+                <Icon guid="ImageCatalogGuid" id="Settings"/>
                 <Strings>
                     <ButtonText>Options</ButtonText>
                     <ToolTipText>Configure default Qt settings</ToolTipText>
@@ -219,6 +222,8 @@
                 <Parent guid="Package" id="OptionsMenuGroup" />
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>IconIsMoniker</CommandFlag>
+                <Icon guid="ImageCatalogGuid" id="Property"/>
                 <Strings>
                     <ButtonText>Qt Versions</ButtonText>
                     <ToolTipText>Register installed versions of Qt</ToolTipText>
@@ -255,6 +260,7 @@
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
+                <Icon guid="MenuImages" id="ConvertProjectBitmap" />
                 <Strings>
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
@@ -309,6 +315,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>TextChanges</CommandFlag>
+                <Icon guid="MenuImages" id="ConvertProjectBitmap" />
                 <Strings>
                     <ButtonText>Convert custom build steps to Qt/MSBuild</ButtonText>
                 </Strings>
@@ -387,7 +394,7 @@
             -->
             <Bitmap guid="MenuImages" href="Resources\menuimages.png" usedList="LaunchDesignerBitmap,
                 LaunchLinguistBitmap, OpenProFileBitmap, ImportPriFileBitmap, LegacyProjectFilterBitmap,
-                CreateProFileBitmap, QtLogoBitmap" />
+                ConvertProjectBitmap, QtLogoBitmap" />
         </Bitmaps>
     </Commands>
 
@@ -479,7 +486,7 @@
             <IDSymbol name="OpenProFileBitmap" value="3" />
             <IDSymbol name="ImportPriFileBitmap" value="4" />
             <IDSymbol name="LegacyProjectFilterBitmap" value="5" />
-            <IDSymbol name="CreateProFileBitmap" value="6" /> <!-- TODO: remove -->
+            <IDSymbol name="ConvertProjectBitmap" value="6" />
             <IDSymbol name="QtLogoBitmap" value="7" />
         </GuidSymbol>
 
