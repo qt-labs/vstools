@@ -79,12 +79,6 @@
   </Dependencies>
   <Prerequisites>
     <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
-                  Version="<#=VersionRange#>"
-                  DisplayName="Visual Studio core editor" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CoreIde"
-                  Version="<#=VersionRange#>"
-                  DisplayName="Visual Studio C++ core features" />
     <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
                   Version="<#=VersionRange#>"
                   DisplayName="MSVC C++ x64/x86 build tools" />
