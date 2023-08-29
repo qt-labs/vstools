@@ -90,6 +90,10 @@
 
     <!--// QML debug disabled by default -->
     <QtQMLDebugEnable>false</QtQMLDebugEnable>
+
+    <!--// Default Qt settings -->
+    <QtInstall Condition="'$(QtInstall)' == ''">$(DefaultQtVersion)</QtInstall>
+    <QtModules Condition="'$(QtModules)' == ''">core</QtModules>
   </PropertyGroup>
 
   <!--
