@@ -1,3 +1,37 @@
+Qt Visual Studio Tools version 3.0.0:
+
+This major update of the Qt VS Tools extension adds support for Qt-enabled CMake projects, and drops
+support for legacy Qt projects based on custom build steps.
+
+Changes
+-------
+ - Support for Qt/CMake projects
+ - QML debugging with non-MSBuild projects (e.g. Qt/CMake)
+ - Initialize extension in background task
+ - Load Qt version information at initialization
+ - Remove support for Qt projects with custom build steps for moc, etc.
+ - Project format conversion report
+ - Legacy project solution filter
+ - Drop support for VS 2017
+ - Update VS 2022 support target to 17.4 LTS
+ - Update and add some more icons to the Qt extension menu
+ - Snippet to add a Q_PROPERTY to a class
+ - Fixed QTVSADDINBUG-27: Should have a button to convert a "regular" vcproj to a Qt-enabled vcproj
+ - Fixed QTVSADDINBUG-408: Duplicate .ts file sections added when importing Qt's .pro file
+ - Fixed QTVSADDINBUG-562: Import .pri File to project, filename case not respected
+ - Fixed QTVSADDINBUG-833: The new project wizards, page 2 (configuration), has glitches
+ - Fixed QTVSADDINBUG-880: Make Qt Deploy properties Persistence to ProjectFile instead of User
+ - Fixed QTVSADDINBUG-991: Provide up-to-date Qt 6 Natvis debugging helpers for Visual Studio
+ - Fixed QTVSADDINBUG-1000: Make "Qt Deploy Tool" a static page
+ - Fixed QTVSADDINBUG-1033: lupdate doesn't update my .ts files anymore
+ - Fixed QTVSADDINBUG-1077: Upgrading format results in multiple MultiProcessorCompilation entries
+ - Fixed QTVSADDINBUG-1084: Removed Qt version re-appears after setting default version
+ - Fixed QTVSADDINBUG-1087: "required" keyword breaks syntax highlighting
+ - Fixed QTVSADDINBUG-1092: Last semicolon in qt modules causes the whole project to compile
+ - Fixed QTVSADDINBUG-1108: Names of plugin header and source files don't update
+ - Fixed QTVSADDINBUG-1110: QtMultimediaWidgets is not on the list of components
+
+
 Qt Visual Studio Tools version 2.10.0:
 
 Changes
