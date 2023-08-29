@@ -5,6 +5,7 @@
 
 using System;
 using System.ComponentModel.Design;
+using System.IO;
 using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
@@ -90,7 +91,16 @@ namespace QtVsTools
                 QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                 break;
             case QtMenus.Package.ProjectConvertToQtMsBuild:
-                MsBuildProjectConverter.ProjectToQtMsBuild();
+                if (HelperFunctions.GetSelectedProject(Instances.Package.Dte) is not { } vcProject)
+                    break;
+                switch (MsBuildProjectFormat.GetVersion(vcProject)) {
+                case MsBuildProjectFormat.Version.Latest:
+                    VsEditor.Open(Path.ChangeExtension(vcProject.ProjectFile, ".qtvscr"));
+                    break;
+                default:
+                    MsBuildProjectConverter.ProjectToQtMsBuild();
+                    break;
+                }
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
                 if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
@@ -138,6 +148,12 @@ namespace QtVsTools
                 case MsBuildProjectFormat.Version.Unknown:
                     command.Visible = command.Enabled = true;
                     command.Text = "Convert to Qt/MSBuild project";
+                    return;
+                case MsBuildProjectFormat.Version.Latest:
+                    if (File.Exists(Path.ChangeExtension(vcProject.ProjectFile, ".qtvscr"))) {
+                        command.Visible = command.Enabled = true;
+                        command.Text = "View conversion report";
+                    }
                     return;
                 }
                 break;
