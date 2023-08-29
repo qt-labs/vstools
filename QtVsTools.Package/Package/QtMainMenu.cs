@@ -153,7 +153,7 @@ namespace QtVsTools
                     case MsBuildProjectFormat.Version.V2:
                         command.Visible = command.Enabled = true;
                         return;
-                    case > MsBuildProjectFormat.Version.V3 and < MsBuildProjectFormat.Version.Latest:
+                    case >= MsBuildProjectFormat.Version.V3 and < MsBuildProjectFormat.Version.Latest:
                         command.Visible = command.Enabled = true;
                         command.Text = "Upgrade projects to latest Qt project format version";
                         return;
