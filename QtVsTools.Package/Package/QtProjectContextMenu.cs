@@ -108,6 +108,10 @@ namespace QtVsTools
             command.Visible = command.Enabled = false;
             var vcProject = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
 
+            // Filter out non-VC projects
+            if (vcProject is null)
+                return;
+
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
             case QtMenus.Package.QtProjectSettingsProject:
@@ -130,6 +134,10 @@ namespace QtVsTools
                 case >= MsBuildProjectFormat.Version.V3 and < MsBuildProjectFormat.Version.Latest:
                     command.Visible = command.Enabled = true;
                     command.Text = "Upgrade project to latest Qt project format version";
+                    return;
+                case MsBuildProjectFormat.Version.Unknown:
+                    command.Visible = command.Enabled = true;
+                    command.Text = "Convert to Qt/MSBuild project";
                     return;
                 }
                 break;

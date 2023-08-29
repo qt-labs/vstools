@@ -337,7 +337,7 @@ namespace QtVsTools.Core.MsBuild
             switch (oldVersion) {
             case Version.Latest:
                 return true; // Nothing to do!
-            case Version.Unknown or > Version.Latest:
+            case > Version.Latest:
                 return false; // Nothing we can do!
             }
 
@@ -345,8 +345,8 @@ namespace QtVsTools.Core.MsBuild
             if (!ConvertToV3())
                 return false;
 
-            // Upgrading from a previous V3 format; nothing more to do
-            if (oldVersion > Version.V2)
+            // Converting non-Qt project, or upgrading from a previous V3 format; nothing more to do
+            if (oldVersion == Version.Unknown || oldVersion > Version.V2)
                 return true;
 
             //// Upgrading from v2.0

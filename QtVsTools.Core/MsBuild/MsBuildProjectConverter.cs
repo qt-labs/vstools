@@ -113,7 +113,7 @@ namespace QtVsTools.Core.MsBuild
             switch (oldVersion) {
             case MsBuildProjectFormat.Version.Latest:
                 return true; // Nothing to do!
-            case MsBuildProjectFormat.Version.Unknown or > MsBuildProjectFormat.Version.Latest:
+            case > MsBuildProjectFormat.Version.Latest:
                 return false; // Nothing we can do!
             }
 
