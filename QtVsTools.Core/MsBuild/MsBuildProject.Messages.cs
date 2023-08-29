@@ -71,6 +71,16 @@ namespace QtVsTools.Core.MsBuild
             await VsShell.UiThreadAsync(UpdateProjectFormat.Message.Show);
         }
 
+        public static void CloseUpdateFormatMessage()
+        {
+            ThreadHelper.JoinableTaskFactory.Run(CloseUpdateFormatMessageAsync);
+        }
+
+        public static async Task CloseUpdateFormatMessageAsync()
+        {
+            await VsShell.UiThreadAsync(UpdateProjectFormat.Message.Close);
+        }
+
         private class ProjectFormatUpdated : InfoBarMessage
         {
             public static ProjectFormatUpdated Message =>
@@ -112,6 +122,16 @@ namespace QtVsTools.Core.MsBuild
         {
             ProjectFormatUpdated.Message.ReportPath = reportPath;
             await VsShell.UiThreadAsync(ProjectFormatUpdated.Message.Show);
+        }
+
+        public static void CloseProjectFormatUpdated()
+        {
+            ThreadHelper.JoinableTaskFactory.Run(() => CloseProjectFormatUpdatedAsync());
+        }
+
+        public static async Task CloseProjectFormatUpdatedAsync()
+        {
+            await VsShell.UiThreadAsync(ProjectFormatUpdated.Message.Close);
         }
     }
 }

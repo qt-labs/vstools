@@ -75,6 +75,8 @@ namespace QtVsTools.Core.MsBuild
                 Instances.Clear();
                 InitQueue.Clear();
             }
+            CloseUpdateFormatMessage();
+            CloseProjectFormatUpdated();
         }
 
         private MsBuildProject(VCProject vcProject)
