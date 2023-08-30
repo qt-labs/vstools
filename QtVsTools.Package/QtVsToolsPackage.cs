@@ -111,6 +111,13 @@ namespace QtVsTools
         private DteEventsHandler EventHandler { get; set; }
         private string VisualizersPath { get; set; }
 
+#if VS2022
+        private Guid LegacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
+#elif VS2019
+        private Guid LegacyPackageId = new("C3A906C1-8557-4730-8DFD-33966FAD84F5");
+#endif
+        private const string LegacyPackageName = "QtVsToolsLegacyPackage";
+
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
@@ -118,6 +125,9 @@ namespace QtVsTools
             try {
                 var initTimer = Stopwatch.StartNew();
                 VsServiceProvider.Instance = instance = this;
+
+                var packages = await GetServiceAsync<
+                    SVsPackageInfoQueryService, IVsPackageInfoQueryService>();
 
                 // determine the package installation directory
                 var uri = new Uri(System.Reflection.Assembly
@@ -129,6 +139,9 @@ namespace QtVsTools
                 // Switch to main (UI) thread
                 await JoinableTaskFactory.SwitchToMainThreadAsync();
                 var uiTimer = Stopwatch.StartNew();
+
+                if (packages?.GetPackageInfo(ref LegacyPackageId) is { Name: LegacyPackageName } )
+                    throw new QtVSException("Legacy extension detected.");
 
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new Exception("Unable to get service: DTE");
