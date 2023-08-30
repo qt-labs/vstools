@@ -118,13 +118,11 @@
         </PackageReference>
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='16.0'">
-      <ItemGroup>
-        <Compile Include="Vsix.cs" />
-        <Compile Include="QtMenus.cs" />
-      </ItemGroup>
-    </When>
   </Choose>
+  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'">
+    <Compile Include="Vsix.cs" />
+    <Compile Include="QtMenus.cs" />
+  </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references
