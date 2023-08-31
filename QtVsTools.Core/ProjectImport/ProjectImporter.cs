@@ -108,10 +108,10 @@ namespace QtVsTools.Core
 
             var tuples = new List<(string[] Files, FilesToList FilesToList, FakeFilter Filter)>
             {
-                (qmake.SourceFiles, FilesToList.FL_CppFiles, Filters.SourceFiles()),
-                (qmake.HeaderFiles, FilesToList.FL_HFiles, Filters.HeaderFiles()),
-                (qmake.FormFiles, FilesToList.FL_UiFiles, Filters.FormFiles()),
-                (qmake.ResourceFiles, FilesToList.FL_Resources, Filters.ResourceFiles())
+                (qmake.SourceFiles, FilesToList.FL_CppFiles, FakeFilter.SourceFiles()),
+                (qmake.HeaderFiles, FilesToList.FL_HFiles, FakeFilter.HeaderFiles()),
+                (qmake.FormFiles, FilesToList.FL_UiFiles, FakeFilter.FormFiles()),
+                (qmake.ResourceFiles, FilesToList.FL_Resources, FakeFilter.ResourceFiles())
             };
 
             var directoryName = priFileInfo.DirectoryName;
@@ -285,8 +285,8 @@ namespace QtVsTools.Core
             TranslateFilterNames(project.VcProject);
 
             // collapse the generated files/resources filters afterwards
-            CollapseFilter(project.VcProject, Filters.ResourceFiles().Name);
-            CollapseFilter(project.VcProject, Filters.GeneratedFiles().Name);
+            CollapseFilter(project.VcProject, FakeFilter.ResourceFiles().Name);
+            CollapseFilter(project.VcProject, FakeFilter.GeneratedFiles().Name);
 
             try {
                 // save the project after modification
@@ -407,7 +407,7 @@ namespace QtVsTools.Core
             if (!flat && fakeFilter is not null) {
                 var rootFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
                 if (rootFilter is null)
-                    AddFilterToProject(project, Filters.SourceFiles());
+                    AddFilterToProject(project, FakeFilter.SourceFiles());
 
                 CollectFilters(rootFilter, null, ref filterPathTable, ref pathFilterTable);
             }
@@ -676,18 +676,18 @@ namespace QtVsTools.Core
             foreach (VCFilter filter in filters) {
                 filter.Name = filter.Name switch
                 {
-                    "Form Files" => Filters.FormFiles().Name,
-                    "Generated Files" => Filters.GeneratedFiles().Name,
-                    "Header Files" => Filters.HeaderFiles().Name,
-                    "Resource Files" => Filters.ResourceFiles().Name,
-                    "Source Files" => Filters.SourceFiles().Name, _ => filter.Name
+                    "Form Files" => FakeFilter.FormFiles().Name,
+                    "Generated Files" => FakeFilter.GeneratedFiles().Name,
+                    "Header Files" => FakeFilter.HeaderFiles().Name,
+                    "Resource Files" => FakeFilter.ResourceFiles().Name,
+                    "Source Files" => FakeFilter.SourceFiles().Name, _ => filter.Name
                 };
             }
         }
 
         private static void RemoveResFilesFromGeneratedFilesFilter(MsBuildProject pro)
         {
-            var generatedFiles = pro.FindFilterFromGuid(Filters.GeneratedFiles().UniqueIdentifier);
+            var generatedFiles = pro.FindFilterFromGuid(FakeFilter.GeneratedFiles().UniqueIdentifier);
             if (generatedFiles?.Files is not IVCCollection files)
                 return;
 

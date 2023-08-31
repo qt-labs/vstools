@@ -214,7 +214,7 @@ namespace QtVsTools.Core
         public static bool IsGenerated(VCFile vcfile)
         {
             try {
-                return IsInFilter(vcfile, Filters.GeneratedFiles());
+                return IsInFilter(vcfile, FakeFilter.GeneratedFiles());
             } catch (Exception e) {
                 MessageBox.Show(e.ToString());
                 return true;
@@ -225,7 +225,7 @@ namespace QtVsTools.Core
         public static bool IsResource(VCFile vcfile)
         {
             try {
-                return IsInFilter(vcfile, Filters.ResourceFiles());
+                return IsInFilter(vcfile, FakeFilter.ResourceFiles());
             } catch (Exception) {
                 return false;
             }

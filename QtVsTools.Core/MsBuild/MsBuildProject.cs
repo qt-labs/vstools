@@ -319,7 +319,7 @@ namespace QtVsTools.Core.MsBuild
 
             if (delName != null) {
                 foreach (var delFile in GetFilesFromProject(delName))
-                    RemoveFileFromFilter(delFile, Filters.GeneratedFiles());
+                    RemoveFileFromFilter(delFile, FakeFilter.GeneratedFiles());
             }
         }
     }
