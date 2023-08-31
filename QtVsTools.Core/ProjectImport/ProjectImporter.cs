@@ -405,7 +405,7 @@ namespace QtVsTools.Core
             var filterPathTable = new Dictionary<VCFilter, string>(17);
             var pathFilterTable = new Dictionary<string, VCFilter>(17);
             if (!flat && fakeFilter is not null) {
-                var rootFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                var rootFilter = project.VcProject.FilterFromGuid(fakeFilter);
                 if (rootFilter is null)
                     AddFilterToProject(project, FakeFilter.SourceFiles());
 
@@ -648,12 +648,12 @@ namespace QtVsTools.Core
         private static void AddFilterToProject(MsBuildProject project, FakeFilter fakeFilter)
         {
             try {
-                var vcFilter = project.FindFilterFromGuid(fakeFilter.UniqueIdentifier);
+                var vcFilter = project.VcProject.FilterFromGuid(fakeFilter);
                 if (vcFilter is not null)
                     return;
 
                 if (!project.VcProject.CanAddFilter(fakeFilter.Name)) {
-                    vcFilter = project.FindFilterFromName(fakeFilter.Name);
+                    vcFilter = project.VcProject.FilterFromName(fakeFilter);
                     if (vcFilter is null)
                         throw new QtVSException($"Project cannot add filter {fakeFilter.Name}.");
                 } else {
@@ -687,7 +687,7 @@ namespace QtVsTools.Core
 
         private static void RemoveResFilesFromGeneratedFilesFilter(MsBuildProject pro)
         {
-            var generatedFiles = pro.FindFilterFromGuid(FakeFilter.GeneratedFiles().UniqueIdentifier);
+            var generatedFiles = pro.VcProject.FilterFromGuid(FakeFilter.GeneratedFiles());
             if (generatedFiles?.Files is not IVCCollection files)
                 return;
 

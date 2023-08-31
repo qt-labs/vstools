@@ -156,79 +156,6 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        /// <summary>
-        /// Removes a file from the filter.
-        /// This file will be deleted!
-        /// </summary>
-        /// <param name="file">file</param>
-        private void RemoveFileFromFilter(VCFile file, FakeFilter filter)
-        {
-            try {
-                var vfilt = FindFilterFromGuid(filter.UniqueIdentifier)
-                          ?? FindFilterFromName(filter.Name);
-
-                if (vfilt == null)
-                    return;
-
-                RemoveFileFromFilter(file, vfilt);
-            } catch {
-                throw new QtVSException($"Cannot remove file {file.Name} from filter.");
-            }
-        }
-
-        /// <summary>
-        /// Removes a file from the filter.
-        /// This file will be deleted!
-        /// </summary>
-        /// <param name="file">file</param>
-        private void RemoveFileFromFilter(VCFile file, VCFilter filter)
-        {
-            try {
-                filter.RemoveFile(file);
-                var fi = new FileInfo(file.FullPath);
-                if (fi.Exists)
-                    fi.Delete();
-            } catch {
-            }
-
-            var subfilters = (IVCCollection)filter.Filters;
-            for (var i = subfilters.Count; i > 0; i--) {
-                try {
-                    var subfilter = (VCFilter)subfilters.Item(i);
-                    RemoveFileFromFilter(file, subfilter);
-                } catch {
-                }
-            }
-        }
-
-        public VCFilter FindFilterFromName(string filtername)
-        {
-            try {
-                foreach (VCFilter vcfilt in (IVCCollection)VcProject.Filters) {
-                    if (vcfilt.Name.ToLower() == filtername.ToLower())
-                        return vcfilt;
-                }
-                return null;
-            } catch {
-                throw new QtVSException("Cannot find filter.");
-            }
-        }
-
-        public VCFilter FindFilterFromGuid(string filterguid)
-        {
-            try {
-                foreach (VCFilter vcfilt in (IVCCollection)VcProject.Filters) {
-                    if (vcfilt.UniqueIdentifier != null
-                        && vcfilt.UniqueIdentifier.ToLower() == filterguid.ToLower()) {
-                        return vcfilt;
-                    }
-                }
-                return null;
-            } catch {
-                throw new QtVSException("Cannot find filter.");
-            }
-        }
-
         public void MarkAsQtPlugin()
         {
             if (VcProject.Configurations is not IVCCollection configurations)
@@ -318,8 +245,8 @@ namespace QtVsTools.Core.MsBuild
                 delName = "qrc_" + baseName + ".cpp";
 
             if (delName != null) {
-                foreach (var delFile in GetFilesFromProject(delName))
-                    RemoveFileFromFilter(delFile, FakeFilter.GeneratedFiles());
+                foreach (var vcFile in GetFilesFromProject(delName))
+                    vcFile.DeleteAndRemoveFromFilter(FakeFilter.GeneratedFiles());
             }
         }
     }

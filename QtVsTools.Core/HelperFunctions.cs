@@ -193,28 +193,11 @@ namespace QtVsTools.Core
             return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
         }
 
-        public static bool IsInFilter(VCFile vcfile, FakeFilter filter)
-        {
-            var item = (VCProjectItem)vcfile;
-
-            while (item is { Parent: {}, Kind: not "VCProject" }) {
-                item = (VCProjectItem)item.Parent;
-
-                if (item.Kind == "VCFilter") {
-                    var f = (VCFilter)item;
-                    if (f.UniqueIdentifier != null
-                        && f.UniqueIdentifier.ToLower() == filter.UniqueIdentifier.ToLower())
-                        return true;
-                }
-            }
-            return false;
-        }
-
         // returns true if some exception occurs
-        public static bool IsGenerated(VCFile vcfile)
+        public static bool IsGenerated(VCFile vcFile)
         {
             try {
-                return IsInFilter(vcfile, FakeFilter.GeneratedFiles());
+                return vcFile.IsInFilter(FakeFilter.GeneratedFiles());
             } catch (Exception e) {
                 MessageBox.Show(e.ToString());
                 return true;
@@ -222,10 +205,10 @@ namespace QtVsTools.Core
         }
 
         // returns false if some exception occurs
-        public static bool IsResource(VCFile vcfile)
+        public static bool IsResource(VCFile vcFile)
         {
             try {
-                return IsInFilter(vcfile, FakeFilter.ResourceFiles());
+                return vcFile.IsInFilter(FakeFilter.ResourceFiles());
             } catch (Exception) {
                 return false;
             }
