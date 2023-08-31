@@ -62,5 +62,15 @@ namespace QtVsTools.Core
                 Filter = "moc;h;cpp"
             };
         }
+
+        public static FakeFilter TranslationFiles()
+        {
+            return new FakeFilter
+            {
+                UniqueIdentifier = "{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}",
+                Name = "Translation Files",
+                Filter = "ts;qm"
+            };
+        }
     }
 }

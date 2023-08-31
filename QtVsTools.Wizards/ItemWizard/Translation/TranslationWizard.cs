@@ -13,8 +13,10 @@ using Microsoft.VisualStudio.Shell;
 namespace QtVsTools.Wizards.ItemWizard
 {
     using Common;
+    using Microsoft.VisualStudio.VCProjectEngine;
     using ProjectWizard;
     using QtVsTools.Common;
+    using QtVsTools.Core;
     using Util;
 
     using static QtVsTools.Common.EnumExt;
@@ -91,7 +93,15 @@ namespace QtVsTools.Wizards.ItemWizard
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            TextAndWhitespace.Adjust(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
+
+            if (projectItem.Object is not VCFile vcFile)
+                return;
+
+            var fullPath = vcFile.FullPath;
+            TextAndWhitespace.Adjust(Dte, fullPath);
+
+            if (HelperFunctions.IsTranslationFile(fullPath))
+                vcFile.MoveToFilter(FakeFilter.TranslationFiles());
         }
     }
 }

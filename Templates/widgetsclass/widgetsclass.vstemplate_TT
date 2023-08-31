@@ -29,12 +29,14 @@
         <ProjectTypeTag>Desktop</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <ProjectItem OpenInEditor="true"
+        <ProjectItem OpenInEditor="false"
                      ReplaceParameters="true"
                      TargetFileName="$sourcefilename$">widget.cpp</ProjectItem>
-        <ProjectItem ReplaceParameters="true"
+        <ProjectItem OpenInEditor="false"
+                     ReplaceParameters="true"
                      TargetFileName="$headerfilename$">widget.h</ProjectItem>
-        <ProjectItem ReplaceParameters="true"
+        <ProjectItem OpenInEditor="false"
+                     ReplaceParameters="true"
                      TargetFileName="$uifilename$">widget.ui</ProjectItem>
     </TemplateContent>
     <WizardExtension>

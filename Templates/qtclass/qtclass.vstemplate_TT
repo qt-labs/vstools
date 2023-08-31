@@ -32,10 +32,11 @@
         <ProjectTypeTag>Console</ProjectTypeTag>
     </TemplateData>
     <TemplateContent>
-        <ProjectItem OpenInEditor="true"
+        <ProjectItem OpenInEditor="false"
                      ReplaceParameters="true"
                      TargetFileName="$sourcefilename$">source.cpp</ProjectItem>
-        <ProjectItem ReplaceParameters="true"
+        <ProjectItem OpenInEditor="false"
+                     ReplaceParameters="true"
                      TargetFileName="$headerfilename$">header.h</ProjectItem>
     </TemplateContent>
     <WizardExtension>

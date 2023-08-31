@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Wizards.ItemWizard
 {
@@ -20,6 +21,7 @@ namespace QtVsTools.Wizards.ItemWizard
     using ProjectWizard;
     using QtVsTools.Common;
     using Util;
+    using VisualStudio;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -34,7 +36,8 @@ namespace QtVsTools.Wizards.ItemWizard
             [String("safeitemname")] SafeItemName,
             [String("sourcefilename")] SourceFileName,
             [String("headerfilename")] HeaderFileName,
-            [String("uifilename")] UiFileName
+            [String("uifilename")] UiFileName,
+            [String("rootname")] Rootname
         }
 
         enum NewWidgetsItem
@@ -206,7 +209,28 @@ namespace QtVsTools.Wizards.ItemWizard
         public override void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            TextAndWhitespace.Adjust(Dte, projectItem.Properties.Item("FullPath").Value.ToString());
+
+            if (projectItem.Object is not VCFile vcFile)
+                return;
+
+            var fullPath = vcFile.FullPath;
+            TextAndWhitespace.Adjust(Dte, fullPath);
+
+            if (HelperFunctions.IsUicFile(fullPath))
+                vcFile.MoveToFilter(FakeFilter.FormFiles());
+
+            if (HelperFunctions.IsHeaderFile(fullPath))
+                vcFile.MoveToFilter(FakeFilter.HeaderFiles());
+
+            if (HelperFunctions.IsSourceFile(fullPath))
+                vcFile.MoveToFilter(FakeFilter.SourceFiles());
+        }
+
+        public override void RunFinished()
+        {
+            var rootName = Parameter[NewClass.Rootname];
+            if (!string.IsNullOrEmpty(rootName))
+                VsEditor.Open(rootName + ".cpp");
         }
     }
 }

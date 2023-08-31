@@ -64,6 +64,34 @@ namespace QtVsTools.Core
             }
         }
 
+        public static void MoveToFilter(this VCFile vcFile, FakeFilter fakeFilter)
+        {
+            if (vcFile is not { project: VCProject vcProject })
+                return;
+            if (vcFile.IsInFilter(fakeFilter))
+                return;
+
+            if (vcProject.Filters is not IVCCollection filters)
+                return;
+
+            foreach (VCFilter filter in filters) {
+                if (!vcFile.IsInFilter(filter))
+                    continue;
+
+                // We need to get the path early, since removing a VCFile from an
+                // filter disposes the object and we will get an disposed exception.
+                var fullPath = vcFile.FullPath;
+
+                // Only try to move the file if we can find the right filter.
+                if (vcProject.FilterFromGuid(fakeFilter) is {} newFilter) {
+                    filter.RemoveFile(vcFile);
+                    if (newFilter.CanAddFile(fullPath))
+                        newFilter.AddFile(fullPath);
+                }
+                break;
+            }
+        }
+
         public static VCFilter FilterFromName(this VCProject vcProject, FakeFilter fakeFilter)
         {
             try {
