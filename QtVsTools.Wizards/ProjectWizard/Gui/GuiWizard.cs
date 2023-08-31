@@ -42,6 +42,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             [String("centralwidget")] CentralWidget,
             [String("qrcfilename")] QrcFileName,
+            [String("uiresources")] UiResources,
             [String("uifilename")] UiFileName,
             [String("ui_hdr")] UiHeaderName,
             [String("forward_declare_class")] ForwardDeclClass,
@@ -205,6 +206,15 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewGuiProject.UiHeaderName] =
                 $"ui_{Path.GetFileNameWithoutExtension(WizardData.UiFile)}.h";
             Parameter[NewGuiProject.QrcFileName] = WizardData.QrcFile;
+            Parameter[NewGuiProject.UiResources] = WizardData.ProjectModel switch
+            {
+                WizardData.ProjectModels.CMake => "",
+                _ => $@"
+ <resources>
+   <include location=""{WizardData.QrcFile}""/>
+ </resources>
+".Trim('\r', '\n')
+            };
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewGuiProject.CentralWidget] = FormatParam(@"
