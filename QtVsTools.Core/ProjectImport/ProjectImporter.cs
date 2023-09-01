@@ -282,8 +282,6 @@ namespace QtVsTools.Core
             ThreadHelper.ThrowIfNotOnUIThread();
 
             RemoveResFilesFromGeneratedFilesFilter(project);
-            TranslateFilterNames(project.VcProject);
-
             // collapse the generated files/resources filters afterwards
             CollapseFilter(project.VcProject, FakeFilter.ResourceFiles().Name);
             CollapseFilter(project.VcProject, FakeFilter.GeneratedFiles().Name);
@@ -665,23 +663,6 @@ namespace QtVsTools.Core
                 vcFilter.ParseFiles = fakeFilter.ParseFiles;
             } catch {
                 throw new QtVSException("Cannot add a resource filter.");
-            }
-        }
-
-        private static void TranslateFilterNames(VCProject vcProject)
-        {
-            if (vcProject.Filters is not IVCCollection filters)
-                return;
-
-            foreach (VCFilter filter in filters) {
-                filter.Name = filter.Name switch
-                {
-                    "Form Files" => FakeFilter.FormFiles().Name,
-                    "Generated Files" => FakeFilter.GeneratedFiles().Name,
-                    "Header Files" => FakeFilter.HeaderFiles().Name,
-                    "Resource Files" => FakeFilter.ResourceFiles().Name,
-                    "Source Files" => FakeFilter.SourceFiles().Name, _ => filter.Name
-                };
             }
         }
 
