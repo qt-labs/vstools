@@ -163,7 +163,9 @@ namespace QtVsTools.Core.CMake
                         return true;
                     await ShowIncompatibleProjectAsync();
                     return false;
-                } catch (ParseErrorException exception) {
+                } catch (ParseErrorException) {
+                    continue;
+                } catch (Exception exception) {
                     exception.Log();
                 }
             }
