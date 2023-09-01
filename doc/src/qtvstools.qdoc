@@ -1391,6 +1391,14 @@
             in the context menu.
     \endlist
 
+    \section1 Filter legacy projects within solutions
+
+    If the solution contains several Qt projects, you can select
+    \uicontrol {Legacy Project Filter} on the \uicontrol {Solution Explorer}
+    toolbar to filter the projects that have the old format.
+
+    \image qtvstools-legacy-project-filter.webp {Legacy Project Filter button}
+
     \sa {Build solutions that have Qt/MSBuild format 2}, {Building}
 */
 
