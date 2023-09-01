@@ -1280,6 +1280,27 @@
         \li In \uicontrol {Qt Installation}, select the Qt version.
     \endlist
 
+    \section1 CMake projects
+
+    When you create or load Qt application projects, Qt VS Tools creates the
+    necessary files for you: CMakePresets.json and CMakeUserPresets.json.
+
+    To select a Qt version for a CMake project:
+
+    \list 1
+        \li In the CMakeUserPresets.json file, find the visible preset (that is,
+            without the text \c {"hidden":true}) whose display name matches the
+            configuration.
+        \li In that preset, set the \c {"inherits"} property to the registered
+            name of the target Qt version, as it appears in \uicontrol Tools >
+            \uicontrol Options > \uicontrol Qt > \uicontrol Versions.
+
+            If the preset inherits from a list of presets, make sure that the
+            target Qt version is the only Qt version referenced in the list.
+
+            To select the default Qt version, use \c {"Qt-Default"}.
+    \endlist
+
     \sa {Add Qt versions}, {Cross-compile}
 */
 
