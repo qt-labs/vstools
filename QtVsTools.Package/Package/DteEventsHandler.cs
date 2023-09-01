@@ -31,6 +31,7 @@ namespace QtVsTools
         private readonly CommandEvents debugStartEvents;
         private readonly CommandEvents f1HelpEvents;
         private WindowEvents windowEvents;
+        private OutputWindowEvents outputWindowEvents;
 
         public DteEventsHandler(DTE _dte)
         {
@@ -61,6 +62,10 @@ namespace QtVsTools
             windowEvents = events?.WindowEvents;
             if (windowEvents != null)
                 windowEvents.WindowActivated += WindowEvents_WindowActivated;
+
+            outputWindowEvents = events?.OutputWindowEvents;
+            if (outputWindowEvents != null)
+                outputWindowEvents.PaneUpdated += OutputWindowEvents_PaneUpdated;
 
             if (VsShell.FolderWorkspace.OnActiveWorkspaceChanged != null)
                 VsShell.FolderWorkspace.OnActiveWorkspaceChanged += OnActiveWorkspaceChangedAsync;
@@ -104,6 +109,24 @@ namespace QtVsTools
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
                 windowEvents = null;
                 QtVsToolsPackage.Instance.VsMainWindowActivated();
+            }
+        }
+
+        private void OutputWindowEvents_PaneUpdated(EnvDTE.OutputWindowPane pane)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (pane is not { Name: "Solution" })
+                return;
+            var dteProjects = dte.Solution.Projects.Cast<Project>().ToList();
+            foreach (var dteProject in dteProjects) {
+                if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is not { } project)
+                    continue;
+                if (project.GetPropertyValue("QT_CMAKE_TEMPLATE") != "true")
+                    continue;
+                outputWindowEvents.PaneUpdated -= OutputWindowEvents_PaneUpdated;
+                pane.Clear();
+                outputWindowEvents.PaneUpdated += OutputWindowEvents_PaneUpdated;
+                return;
             }
         }
 
@@ -164,6 +187,9 @@ namespace QtVsTools
 
             if (windowEvents != null)
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
+
+            if (outputWindowEvents != null)
+                outputWindowEvents.PaneUpdated -= OutputWindowEvents_PaneUpdated;
         }
 
         private void DocumentSaved(Document document)
@@ -288,13 +314,11 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            // Ignore temp projects created by Qt/CMake wizard
-            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is not {} project)
+            // Ignore non-VC projects and temp projects created by Qt/CMake wizard
+            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is not { } project
+                || project.GetPropertyValue("QT_CMAKE_TEMPLATE") == "true") {
                 return;
-
-            // ignore temporary projects created by Qt/CMake wizard
-            if (project.GetPropertyValue("QT_CMAKE_TEMPLATE") == "true")
-                return;
+            }
 
             InitializeMsBuildProjectProject(project);
         }
