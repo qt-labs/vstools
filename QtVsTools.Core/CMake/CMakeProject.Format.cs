@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Task = System.Threading.Tasks.Task;
@@ -18,7 +19,12 @@ namespace QtVsTools.Core.CMake
 
         private QtStatus Status { get; set; } = QtStatus.False;
 
-        private async Task CheckQtStatusAsync()
+        public void CheckQtStatus()
+        {
+            ThreadHelper.JoinableTaskFactory.Run(CheckQtStatusAsync);
+        }
+
+        public async Task CheckQtStatusAsync()
         {
             await GetAsync("CheckQtStatus");
             if (ActiveProject != this)

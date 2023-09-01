@@ -169,6 +169,7 @@ namespace QtVsTools.Core.Options
                 e.ApplyBehavior = ApplyKind.CancelNoNavigate;
             } else {
                 base.OnApply(e);
+                Instances.CMake.ActiveProject?.CheckQtStatus();
             }
         }
     }
