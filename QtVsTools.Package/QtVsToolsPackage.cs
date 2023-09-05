@@ -111,11 +111,7 @@ namespace QtVsTools
         private DteEventsHandler EventHandler { get; set; }
         private string VisualizersPath { get; set; }
 
-#if VS2022
         private Guid LegacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
-#elif VS2019
-        private Guid LegacyPackageId = new("C3A906C1-8557-4730-8DFD-33966FAD84F5");
-#endif
         private const string LegacyPackageName = "QtVsToolsLegacyPackage";
 
         protected override async Task InitializeAsync(
