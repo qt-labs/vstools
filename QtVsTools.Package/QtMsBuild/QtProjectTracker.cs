@@ -88,7 +88,7 @@ namespace QtVsTools.QtMsBuild
 
         public static void Add(EnvDTE.Project project)
         {
-            if (!QtVsToolsPackage.Instance.Options.ProjectTracking)
+            if (!QtVsToolsLegacyPackage.Instance.Options.ProjectTracking)
                 return;
 
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -123,17 +123,17 @@ namespace QtVsTools.QtMsBuild
 
         static async Task InitDispatcherLoopAsync()
         {
-            while (!QtVsToolsPackage.Instance.Zombied) {
+            while (!QtVsToolsLegacyPackage.Instance.Zombied) {
                 while (InitQueue.IsEmpty)
                     await Task.Delay(100);
                 if (InitQueue.TryDequeue(out QtProjectTracker tracker)) {
                     if (InitStatus == null) {
-                        await QtVsToolsPackage.Instance.JoinableTaskFactory
+                        await QtVsToolsLegacyPackage.Instance.JoinableTaskFactory
                             .SwitchToMainThreadAsync();
                         tracker.BeginInitStatus();
                         await TaskScheduler.Default;
                     } else {
-                        await QtVsToolsPackage.Instance.JoinableTaskFactory
+                        await QtVsToolsLegacyPackage.Instance.JoinableTaskFactory
                             .SwitchToMainThreadAsync();
                         tracker.UpdateInitStatus(0);
                         await TaskScheduler.Default;
@@ -186,7 +186,7 @@ namespace QtVsTools.QtMsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
                 configProject.ProjectUnloading += OnProjectUnloadingAsync;
-                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectTracker({1}): Started tracking [{2}] {3}",
                         DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -199,7 +199,7 @@ namespace QtVsTools.QtMsBuild
         async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
             if (sender is ConfiguredProject project) {
-                if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                     Messages.Print(string.Format(
                         "{0:HH:mm:ss.FFF} QtProjectTracker: Stopped tracking [{1}] {2}",
                         DateTime.Now,

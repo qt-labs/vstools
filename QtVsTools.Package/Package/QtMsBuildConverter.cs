@@ -47,7 +47,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var allProjects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
+            var allProjects = HelperFunctions.ProjectsInSolution(QtVsToolsLegacyPackage.Instance.Dte);
             if (allProjects.Count == 0)
                 return WarningMessage(SR.GetString("NoProjectsToConvert"));
 
@@ -91,7 +91,7 @@ namespace QtVsTools
                 })
                 .ToList();
 
-            var solution = QtVsToolsPackage.Instance.Dte.Solution;
+            var solution = QtVsToolsLegacyPackage.Instance.Dte.Solution;
             string solutionPath = solution.FileName;
             solution.Close(true);
 
@@ -114,7 +114,7 @@ namespace QtVsTools
                 }
                 if (!ConvertProject(projectPath)) {
                     waitDialog?.Stop();
-                    QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
+                    QtVsToolsLegacyPackage.Instance.Dte.Solution.Open(solutionPath);
                     return ErrorMessage(string.Format(SR.GetString("ErrorConvertingProject"),
                         Path.GetFileName(projectPath)));
                 }
@@ -123,7 +123,7 @@ namespace QtVsTools
 
             waitDialog?.Stop();
 
-            QtVsToolsPackage.Instance.Dte.Solution.Open(solutionPath);
+            QtVsToolsLegacyPackage.Instance.Dte.Solution.Open(solutionPath);
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show(string.Format(SR.GetString("ConvertCanceled"),
                     projectPaths.Count - projCount), SR.GetString("Resources_QtVsTools"),

@@ -110,7 +110,7 @@ namespace QtVsTools
 
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ImportPriFileProjectId:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte));
                 break;
             case CommandId.ExportPriFileProjectId:
                 ExtLoader.ExportPriFile();
@@ -119,16 +119,16 @@ namespace QtVsTools
                 ExtLoader.ExportProFile();
                 break;
             case CommandId.lUpdateOnProjectId:
-                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte));
                 break;
             case CommandId.lReleaseOnProjectId:
-                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                Translation.RunlRelease(HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte));
                 break;
             case CommandId.QtProjectSettingsProjectId: {
-                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
                     int projectVersion = QtProject.GetFormatVersion(pro);
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
-                        QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
+                        QtVsToolsLegacyPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
                         Legacy.QtMenu.ShowFormProjectQtSettings(pro);
                     } else {
@@ -141,11 +141,11 @@ namespace QtVsTools
                 break;
             case CommandId.ProjectConvertToQtMsBuild: {
                     QtMsBuildConverter.ProjectToQtMsBuild(
-                        HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+                        HelperFunctions.GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte));
                 }
                 break;
             case CommandId.ProjectRefreshIntelliSense: {
-                    var selectedProject = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+                    var selectedProject = HelperFunctions.GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte);
                     var tracker = QtProjectTracker.Get(selectedProject, selectedProject.FullName);
                     QtProjectIntellisense.Refresh(tracker.Project);
                 }
@@ -159,7 +159,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+            var project = HelperFunctions.GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte);
             var isQtProject = HelperFunctions.IsVsToolsProject(project);
             var isQMakeProject = HelperFunctions.IsQtProject(project);
             if (!isQtProject && !isQMakeProject) {
@@ -176,7 +176,7 @@ namespace QtVsTools
             case CommandId.ExportProFileProjectId:
                 command.Visible = true;
                 command.Enabled = HelperFunctions.IsVsToolsProject(HelperFunctions
-                    .GetSelectedProject(QtVsToolsPackage.Instance.Dte));
+                    .GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte));
                 break;
             case CommandId.lUpdateOnProjectId:
             case CommandId.lReleaseOnProjectId:

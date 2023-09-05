@@ -44,7 +44,7 @@ namespace QtVsTools.Legacy
 
             using (var form = new FormProjectQtSettings(project)) {
                 form.StartPosition = FormStartPosition.CenterParent;
-                form.ShowDialog(new MainWinWrapper(QtVsToolsPackage.Instance.Dte));
+                form.ShowDialog(new MainWinWrapper(QtVsToolsLegacyPackage.Instance.Dte));
             }
         }
 
@@ -52,13 +52,13 @@ namespace QtVsTools.Legacy
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
             if (!HelperFunctions.IsQtProject(pro))
                 return;
 
             using (var formChangeQtVersion = new FormChangeQtVersion()) {
                 formChangeQtVersion.UpdateContent(ChangeFor.Project);
-                var ww = new MainWinWrapper(QtVsToolsPackage.Instance.Dte);
+                var ww = new MainWinWrapper(QtVsToolsLegacyPackage.Instance.Dte);
                 if (formChangeQtVersion.ShowDialog(ww) == DialogResult.OK) {
                     var qtVersion = formChangeQtVersion.GetSelectedQtVersion();
                     HelperFunctions.SetDebuggingEnvironment(pro, "PATH=" + QtVersionManager
@@ -82,7 +82,7 @@ namespace QtVsTools.Legacy
                 return;
 
             string platform = null;
-            var dte = QtVsToolsPackage.Instance.Dte;
+            var dte = QtVsToolsLegacyPackage.Instance.Dte;
             try {
                 platform = (dte.Solution.SolutionBuild.ActiveConfiguration as SolutionConfiguration2)
                     .PlatformName;

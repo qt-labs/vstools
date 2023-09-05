@@ -37,7 +37,7 @@
     string VersionRange = "";
     switch (VS_NAME) {
         case "2022":
-            PackageId = "QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8";
+            PackageId = "QtVsTools.f3b37dcd-515b-46f9-9069-aa09693e5f16";
             VsProducts = new[]
             {
                 "Microsoft.VisualStudio.Pro",
@@ -49,7 +49,7 @@
             VersionRange = "[17.0, 18.0)";
             break;
         case "2019":
-            PackageId = "QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5";
+            PackageId = "QtVsTools.806c5209-1581-4e75-b6c7-e376fa44321e";
             VsProducts = new[]
             {
                 "Microsoft.VisualStudio.Pro",
@@ -59,18 +59,6 @@
                 "Microsoft.VisualStudio.Enterprise"
             };
             VersionRange = "[16.0, 17.0)";
-            break;
-        case "2017":
-            PackageId = "QtVsTools.13121978-cd02-4fd0-89bd-e36f85abe16a";
-            VsProducts = new[]
-            {
-                "Microsoft.VisualStudio.Pro",
-                "Microsoft.VisualStudio.Premium",
-                "Microsoft.VisualStudio.Ultimate",
-                "Microsoft.VisualStudio.Community",
-                "Microsoft.VisualStudio.Enterprise"
-            };
-            VersionRange = "[15.0.28010.0,16.0)";
             break;
     }
 #>
@@ -85,7 +73,7 @@
       Version="<#=QT_VS_TOOLS_VERSION_MANIFEST#>"
       Language="en-US"
       Publisher="The Qt Company Ltd." />
-    <DisplayName>Qt Visual Studio Tools</DisplayName>
+    <DisplayName>LEGACY Qt Visual Studio Tools</DisplayName>
     <Description xml:space="preserve">The Qt VS Tools for Visual Studio <#=VS_NAME#> allow developers to use the standard development environment without having to worry about any Qt-related build steps or tools.</Description>
     <#=XML_COMMENT_BEGIN#> END Generated Text -->
     <MoreInfo>https://doc.qt.io/qtvstools/index.html</MoreInfo>

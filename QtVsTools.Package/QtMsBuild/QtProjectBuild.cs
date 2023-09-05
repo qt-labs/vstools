@@ -118,7 +118,7 @@ namespace QtVsTools.QtMsBuild
             var tracker = QtProjectTracker.Get(project, projectPath);
             await tracker.Initialized;
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                 "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Request [{2}] {3}",
                 DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -192,7 +192,7 @@ namespace QtVsTools.QtMsBuild
         static async Task BuildDispatcherLoopAsync()
         {
             ITaskHandler2 dispatchStatus = null;
-            while (!QtVsToolsPackage.Instance.Zombied) {
+            while (!QtVsToolsLegacyPackage.Instance.Zombied) {
                 while (BuildQueue.IsEmpty || RequestTimer.ElapsedMilliseconds < 1000) {
                     if (BuildQueue.IsEmpty && dispatchStatus != null) {
                         dispatchStatus.Dismiss();
@@ -269,8 +269,8 @@ namespace QtVsTools.QtMsBuild
                 configProps, null, new ProjectCollection());
 
             var loggerVerbosity = LoggerVerbosity;
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation)
-                loggerVerbosity = QtVsToolsPackage.Instance.Options.BuildLoggerVerbosity;
+            if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation)
+                loggerVerbosity = QtVsToolsLegacyPackage.Instance.Options.BuildLoggerVerbosity;
             var buildParams = new BuildParameters()
             {
                 Loggers = (loggerVerbosity != LoggerVerbosity.Quiet)
@@ -283,7 +283,7 @@ namespace QtVsTools.QtMsBuild
                 hostServices: null,
                 flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                 Messages.Print(string.Format(
                     "{0:HH:mm:ss.FFF} QtProjectBuild({1}): Build [{2}] {3}",
                     DateTime.Now, Thread.CurrentThread.ManagedThreadId,
@@ -305,7 +305,7 @@ namespace QtVsTools.QtMsBuild
                     result = BuildManager.DefaultBuildManager.Build(
                         buildParams, buildRequest);
                 } catch (InvalidOperationException) {
-                    if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+                    if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                         Messages.Print(string.Format(
                             "{0:HH:mm:ss.FFF} QtProjectBuild({1}): [{2}] "
                             + "Warning: Another build is in progress; waiting...",
@@ -317,7 +317,7 @@ namespace QtVsTools.QtMsBuild
                 }
             }
 
-            if (QtVsToolsPackage.Instance.Options.BuildDebugInformation) {
+            if (QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation) {
                 string resMsg;
                 StringBuilder resInfo = new StringBuilder();
                 if (result.OverallResult == BuildResultCode.Success) {
@@ -373,7 +373,7 @@ namespace QtVsTools.QtMsBuild
         async Task BuildAsync()
         {
             if (LoggerVerbosity != LoggerVerbosity.Quiet) {
-                Messages.Print(clear: !QtVsToolsPackage.Instance.Options.BuildDebugInformation, activate: true,
+                Messages.Print(clear: !QtVsToolsLegacyPackage.Instance.Options.BuildDebugInformation, activate: true,
                     text: string.Format(
 @"== {0}: starting build...
   * Properties: {1}

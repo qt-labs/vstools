@@ -90,6 +90,6 @@ namespace QtVsTools.Editors
             });
         }
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.DesignerDetached;
+        protected override bool Detached => QtVsToolsLegacyPackage.Instance.Options.DesignerDetached;
     }
 }

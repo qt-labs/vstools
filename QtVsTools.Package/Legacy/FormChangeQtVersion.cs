@@ -79,14 +79,14 @@ namespace QtVsTools.Legacy
             lbQtVersions.Items.Add("$(DefaultQtVersion)");
             if (change == ChangeFor.Solution) {
                 var qtVer = Legacy.QtVersionManager
-                    .GetSolutionQtVersion(QtVsToolsPackage.Instance.Dte.Solution);
+                    .GetSolutionQtVersion(QtVsToolsLegacyPackage.Instance.Dte.Solution);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();
                 if (qtVer != null)
                     lbQtVersions.SelectedItem = qtVer;
                 Text = "Set Solution's Qt Version";
             } else {
-                var pro = Core.HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+                var pro = Core.HelperFunctions.GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte);
                 var qtVer = vm.GetProjectQtVersion(pro);
                 if (qtVer == null)
                     qtVer = vm.GetDefaultVersion();

@@ -48,7 +48,7 @@ namespace QtVsTools
         {
             string output;
             try {
-                var exeFilePath = QtVsToolsPackage.Instance.QMakeFileReaderPath;
+                var exeFilePath = QtVsToolsLegacyPackage.Instance.QMakeFileReaderPath;
                 if (!System.IO.File.Exists(exeFilePath))
                     return false;
 

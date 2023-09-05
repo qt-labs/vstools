@@ -45,13 +45,13 @@ namespace QtVsTools.Editors
         public override string ExecutableName => "QrcEditor.exe";
 
         protected override string GetToolsPath() =>
-            QtVsToolsPackage.Instance?.PkgInstallPath;
+            QtVsToolsLegacyPackage.Instance?.PkgInstallPath;
 
         public override Func<string, bool> WindowFilter =>
             caption => caption.StartsWith(Title);
 
         protected override string GetTitle(Process editorProcess) => Title;
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.ResourceEditorDetached;
+        protected override bool Detached => QtVsToolsLegacyPackage.Instance.Options.ResourceEditorDetached;
     }
 }

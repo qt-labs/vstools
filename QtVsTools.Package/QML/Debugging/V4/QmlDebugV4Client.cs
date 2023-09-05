@@ -95,7 +95,7 @@ namespace QtVsTools.Qml.Debug.V4
         {
             this.sink = sink;
 
-            QtVsToolsPackage.Instance.JoinableTaskFactory.Run(async () =>
+            QtVsToolsLegacyPackage.Instance.JoinableTaskFactory.Run(async () =>
             {
                 await Task.WhenAny(new[]
                 {
@@ -134,7 +134,7 @@ namespace QtVsTools.Qml.Debug.V4
             if (State != DebugClientState.Unavailable) {
                 NativeMethods.DebugClientShutdown(client);
 
-                QtVsToolsPackage.Instance.JoinableTaskFactory.Run(
+                QtVsToolsLegacyPackage.Instance.JoinableTaskFactory.Run(
                     async () => await Task.WhenAll(new[] { clientThread }));
             }
         }
@@ -179,7 +179,7 @@ namespace QtVsTools.Qml.Debug.V4
                 hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
 
-            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtVsToolsLegacyPackage.Instance.Options.QmlDebuggerTimeout;
             _ = Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
@@ -244,7 +244,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return null;
             }
 
-            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtVsToolsLegacyPackage.Instance.Options.QmlDebuggerTimeout;
             if (timeout != 0) {
                 _ = Task.Run(() =>
                 {

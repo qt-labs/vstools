@@ -410,15 +410,15 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             ECHO ## Deploying to %DEPLOY_DIR%...
             ECHO ################################################################################
             IF "%%t"=="" (
-                ECHO   QtVsTools.vsix -^> qt-vsaddin-msvc%%e-%%q.%%r.%%s.vsix
+                ECHO   QtVsToolsLegacy.vsix -^> qt-LEGACYvsaddin-msvc%%e-%%q.%%r.%%s.vsix
                 MD "%DEPLOY_DIR%\%%q.%%r.%%s.0" > NUL 2>&1
-                COPY /Y QtVsTools.Package\bin\Release\QtVsTools.vsix ^
-                    "%DEPLOY_DIR%\%%q.%%r.%%s.0\qt-vsaddin-msvc%%e-%%q.%%r.%%s.vsix"
+                COPY /Y QtVsTools.Package\bin\Release\QtVsToolsLegacy.vsix ^
+                    "%DEPLOY_DIR%\%%q.%%r.%%s.0\qt-LEGACYvsaddin-msvc%%e-%%q.%%r.%%s.vsix"
             ) ELSE (
-                ECHO   QtVsTools.vsix -^> qt-vsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix
+                ECHO   QtVsToolsLegacy.vsix -^> qt-LEGACYvsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix
                 MD "%DEPLOY_DIR%\%%q.%%r.%%s.%%t" > NUL 2>&1
-                COPY /Y QtVsTools.Package\bin\Release\QtVsTools.vsix ^
-                    "%DEPLOY_DIR%\%%q.%%r.%%s.%%t\qt-vsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix"
+                COPY /Y QtVsTools.Package\bin\Release\QtVsToolsLegacy.vsix ^
+                    "%DEPLOY_DIR%\%%q.%%r.%%s.%%t\qt-LEGACYvsaddin-msvc%%e-%%q.%%r.%%s-rev.%%t.vsix"
             )
             ECHO.
         )
@@ -429,14 +429,12 @@ FOR %%v IN (%VS_VERSIONS%) DO (
             ECHO ################################################################################
             ECHO Removing previous installation...
             IF "%%e"=="2022" (
-                VSIXInstaller /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
+                VSIXInstaller /uninstall:QtVsTools.f3b37dcd-515b-46f9-9069-aa09693e5f16
             ) ELSE IF "%%e"=="2019" (
-                VSIXInstaller /uninstall:QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5
-            ) ELSE IF "%%e"=="2017" (
-                VSIXInstaller /uninstall:QtVsTools.13121978-cd02-4fd0-89bd-e36f85abe16a
+                VSIXInstaller /uninstall:QtVsTools.806c5209-1581-4e75-b6c7-e376fa44321e
             )
             ECHO Installing...
-            VSIXInstaller QtVsTools.Package\bin\Release\QtVsTools.vsix
+            VSIXInstaller QtVsTools.Package\bin\Release\QtVsToolsLegacy.vsix
             ECHO.
         )
 

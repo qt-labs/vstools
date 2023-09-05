@@ -51,6 +51,6 @@ namespace QtVsTools.Editors
             return Title;
         }
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.LinguistDetached;
+        protected override bool Detached => QtVsToolsLegacyPackage.Instance.Options.LinguistDetached;
     }
 }

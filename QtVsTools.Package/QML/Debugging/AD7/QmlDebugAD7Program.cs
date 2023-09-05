@@ -164,9 +164,9 @@ namespace QtVsTools.Qml.Debug.AD7
             var debugMode = new DBGMODE[1];
             int res = VSConstants.S_FALSE;
 
-            QtVsToolsPackage.Instance.JoinableTaskFactory.Run(async () =>
+            QtVsToolsLegacyPackage.Instance.JoinableTaskFactory.Run(async () =>
             {
-                await QtVsToolsPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
+                await QtVsToolsLegacyPackage.Instance.JoinableTaskFactory.SwitchToMainThreadAsync();
                 res = VsDebugger.GetMode(debugMode);
             });
 
@@ -301,7 +301,7 @@ namespace QtVsTools.Qml.Debug.AD7
             get => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                return ((bool)QtVsToolsPackage.Instance.Dte
+                return ((bool)QtVsToolsLegacyPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
                     .Value);
@@ -309,7 +309,7 @@ namespace QtVsTools.Qml.Debug.AD7
             set => ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                QtVsToolsPackage.Instance.Dte
+                QtVsToolsLegacyPackage.Instance.Dte
                     .Properties["Debugging", "General"]
                     .Item("BreakAllProcesses")
                     .let_Value(value ? "True" : "False");

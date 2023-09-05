@@ -50,7 +50,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <RootNamespace>QtVsTools.Package</RootNamespace>
-    <AssemblyName>QtVsTools</AssemblyName>
+    <AssemblyName>QtVsToolsLegacy</AssemblyName>
     <ProjectGuid>{671C3821-7BD9-4C16-9A8D-EC1470EDBC9B}</ProjectGuid>
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
@@ -337,6 +337,7 @@
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Legacy\ChangeFor.cs" />
     <Compile Include="Package\DteEventsHandler.cs" />

@@ -188,7 +188,7 @@
                 <Strings>
                       <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
                       <ButtonText
->Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION_USER#>: Initializing...</ButtonText>
+>LEGACY Qt Visual Studio Tools version <#=QT_VS_TOOLS_VERSION_USER#>: Initializing...</ButtonText>
                       <#=XML_COMMENT_BEGIN#> END Generated Text -->
                  </Strings>
             </Button>
@@ -530,7 +530,7 @@
 
     <Symbols>
         <!-- This is the package guid. -->
-        <GuidSymbol name="PackageGuid" value="{15021976-647e-4876-9040-2507afde45d2}" />
+        <GuidSymbol name="PackageGuid" value="{6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE}" />
 
         <!-- This is the guid used to group the menu commands together -->
         <GuidSymbol name="MainMenuGuid" value="{58f83fff-d39d-4c66-810b-2702e1f04e73}">

@@ -182,7 +182,7 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
 
-                var offline = QtVsToolsPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
+                var offline = QtVsToolsLegacyPackage.Instance.Options.HelpPreference == SourcePreference.Offline;
 
                 var linksForKeyword = string.Format("SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
@@ -199,7 +199,7 @@ namespace QtVsTools
                     using (var connection = new SQLiteConnection(builder.ToString())) {
                         connection.Open();
                         using (var command = new SQLiteCommand(linksForKeyword, connection)) {
-                            var reader = QtVsToolsPackage.Instance.JoinableTaskFactory
+                            var reader = QtVsToolsLegacyPackage.Instance.JoinableTaskFactory
                                 .Run(async () => await command.ExecuteReaderAsync());
                             using (reader) {
                                 while (reader.Read()) {
@@ -246,7 +246,7 @@ namespace QtVsTools
                 uri = HelperFunctions.FromNativeSeparators(uri);
                 var helpUri = new Uri(uri);
                 if (helpUri.IsFile && !File.Exists(helpUri.LocalPath)) {
-                    VsShellUtilities.ShowMessageBox(QtVsToolsPackage.Instance,
+                    VsShellUtilities.ShowMessageBox(QtVsToolsLegacyPackage.Instance,
                         "Your search - " + keyword + " - did match a document, but it could "
                         + "not be found on disk. To use the online help, select: "
                         + "Tools | Options | Qt | Preferred source | Online",
@@ -263,7 +263,7 @@ namespace QtVsTools
 
         private static bool TryShowGenericSearchResultsOnline(string keyword, uint version)
         {
-            if (QtVsToolsPackage.Instance.Options.HelpPreference != SourcePreference.Online)
+            if (QtVsToolsLegacyPackage.Instance.Options.HelpPreference != SourcePreference.Online)
                 return false;
 
             VsShellUtilities.OpenSystemBrowser(HelperFunctions.FromNativeSeparators(

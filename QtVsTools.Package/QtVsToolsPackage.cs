@@ -53,7 +53,7 @@ namespace QtVsTools
 
     using static SyntaxAnalysis.RegExpr;
 
-    [Guid(QtVsToolsPackage.PackageGuidString)]
+    [Guid(QtVsToolsLegacyPackage.PackageGuidString)]
     [InstalledProductRegistration("#110", "#112", Version.PRODUCT_VERSION, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
@@ -96,9 +96,9 @@ namespace QtVsTools
     [ProvideOptionPage(typeof(Legacy.QtOptionsPage),
         "Qt", "Legacy Project Format", 0, 0, true, Sort = 2)]
 
-    public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
+    public sealed class QtVsToolsLegacyPackage : AsyncPackage, IVsServiceProvider, IProjectTracker
     {
-        public const string PackageGuidString = "15021976-647e-4876-9040-2507afde45d2";
+        public const string PackageGuidString = "6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE";
         const StringComparison IGNORE_CASE = StringComparison.InvariantCultureIgnoreCase;
 
         public DTE Dte { get; private set; }
@@ -113,8 +113,8 @@ namespace QtVsTools
 
         static readonly EventWaitHandle initDone = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-        static QtVsToolsPackage instance = null;
-        public static QtVsToolsPackage Instance
+        static QtVsToolsLegacyPackage instance = null;
+        public static QtVsToolsLegacyPackage Instance
         {
             get
             {
@@ -151,7 +151,7 @@ namespace QtVsTools
         private string visualizersPath;
 
 
-        public QtVsToolsPackage()
+        public QtVsToolsLegacyPackage()
         {
         }
 
@@ -285,7 +285,7 @@ namespace QtVsTools
                 CopyNatvisFiles();
 
                 Messages.Print(string.Format("\r\n"
-                    + "== Qt Visual Studio Tools version {0}\r\n"
+                    + "== LEGACY Qt Visual Studio Tools version {0}\r\n"
                     + "\r\n"
                     + "   Initialized in: {1:0.##} msecs\r\n"
                     + "   Main (UI) thread: {2:0.##} msecs\r\n"
@@ -294,15 +294,6 @@ namespace QtVsTools
                     , (timeUiThreadEnd - timeUiThreadBegin).TotalMilliseconds
                     ));
 
-                var devRelease = await GetLatestDevelopmentReleaseAsync();
-                if (devRelease != null) {
-                    Messages.Print(string.Format(@"
-    ================================================================
-      Qt Visual Studio Tools version {1} PREVIEW available at:
-      {0}{1}/
-    ================================================================",
-                        urlDownloadQtIo, devRelease));
-                }
             } catch (Exception exception) {
                 exception.Log();
             } finally {

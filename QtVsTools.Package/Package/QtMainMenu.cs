@@ -121,16 +121,16 @@ namespace QtVsTools
                 VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/qtvstools-getting-started.html");
                 break;
             case CommandId.LaunchDesignerId:
-                QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
+                QtVsToolsLegacyPackage.Instance.QtDesigner.Start(hideWindow: false);
                 break;
             case CommandId.LaunchLinguistId:
-                QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
+                QtVsToolsLegacyPackage.Instance.QtLinguist.Start(hideWindow: false);
                 break;
             case CommandId.OpenProFileId:
                 ExtLoader.ImportProFile();
                 break;
             case CommandId.ImportPriFileId:
-                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte));
+                ExtLoader.ImportPriFile(HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte));
                 break;
             case CommandId.ExportPriFileId:
                 ExtLoader.ExportPriFile();
@@ -142,10 +142,10 @@ namespace QtVsTools
                 QtMsBuildConverter.SolutionToQtMsBuild();
                 break;
             case CommandId.QtProjectSettingsId: {
-                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+                    var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
                     int projectVersion = QtProject.GetFormatVersion(pro);
                     if (projectVersion >= Resources.qtMinFormatVersion_Settings) {
-                        QtVsToolsPackage.Instance.Dte.ExecuteCommand("Project.Properties");
+                        QtVsToolsLegacyPackage.Instance.Dte.ExecuteCommand("Project.Properties");
                     } else if (pro != null) {
                         Legacy.QtMenu.ShowFormProjectQtSettings(pro);
                     } else {
@@ -157,10 +157,10 @@ namespace QtVsTools
                 Legacy.QtMenu.ShowFormChangeProjectQtVersion();
                 break;
             case CommandId.QtOptionsId:
-                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
+                QtVsToolsLegacyPackage.Instance.ShowOptionPage(typeof(Options.QtOptionsPage));
                 break;
             case CommandId.QtVersionsId:
-                QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
+                QtVsToolsLegacyPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage));
                 break;
             }
         }
@@ -173,7 +173,7 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var project = HelperFunctions.GetSelectedProject(QtVsToolsPackage.Instance.Dte);
+            var project = HelperFunctions.GetSelectedProject(QtVsToolsLegacyPackage.Instance.Dte);
 
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.ViewQtHelpId:
@@ -181,7 +181,7 @@ namespace QtVsTools
                 command.Visible = command.Enabled = true;
                 break;
             case CommandId.QtVersionId:
-                command.Text = "Qt Visual Studio Tools version " + Version.USER_VERSION;
+                command.Text = "LEGACY Qt Visual Studio Tools version " + Version.USER_VERSION;
                 command.Visible = true;
                 command.Enabled = false;
                 break;
@@ -225,9 +225,9 @@ namespace QtVsTools
                 break;
             case CommandId.ConvertToQtMsBuild: {
                     command.Visible = true;
-                    command.Enabled = (QtVsToolsPackage.Instance.Dte.Solution != null
-                        && QtVsToolsPackage.Instance.Dte.Solution.Projects != null
-                        && QtVsToolsPackage.Instance.Dte.Solution.Projects.Count > 0);
+                    command.Enabled = (QtVsToolsLegacyPackage.Instance.Dte.Solution != null
+                        && QtVsToolsLegacyPackage.Instance.Dte.Solution.Projects != null
+                        && QtVsToolsLegacyPackage.Instance.Dte.Solution.Projects.Count > 0);
                 }
                 break;
             }

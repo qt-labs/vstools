@@ -185,7 +185,7 @@ namespace QtVsTools.Options
                 var errorMessage = "Invalid Qt versions:\r\n"
                     + $"{string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg))}";
                 VsShellUtilities.ShowMessageBox(
-                    QtVsToolsPackage.Instance,
+                    QtVsToolsLegacyPackage.Instance,
                     errorMessage,
                     "Qt VS Tools",
                     OLEMSGICON.OLEMSGICON_WARNING,

@@ -69,7 +69,7 @@ namespace QtVsTools
                 Text = "Select Qt version...",
                 CloseInfoBar = false,
                 OnClicked = () =>
-                    QtVsToolsPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage))
+                    QtVsToolsLegacyPackage.Instance.ShowOptionPage(typeof(Options.QtVersionsPage))
             }
         };
     }
@@ -84,7 +84,7 @@ namespace QtVsTools
             new TextSpacer(2),
             "\u2014", // Em dash
             new TextSpacer(2),
-            $"Version {Version.USER_VERSION} was recently installed."
+            $"LEGACY version {Version.USER_VERSION} was recently installed."
         };
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]
@@ -105,8 +105,8 @@ namespace QtVsTools
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    QtVsToolsPackage.Instance.Options.NotifyInstalled = false;
-                    QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
+                    QtVsToolsLegacyPackage.Instance.Options.NotifyInstalled = false;
+                    QtVsToolsLegacyPackage.Instance.Options.SaveSettingsToStorage();
                 }
             }
         };
@@ -143,8 +143,8 @@ namespace QtVsTools
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    QtVsToolsPackage.Instance.Options.UpdateProjectFormat = false;
-                    QtVsToolsPackage.Instance.Options.SaveSettingsToStorage();
+                    QtVsToolsLegacyPackage.Instance.Options.UpdateProjectFormat = false;
+                    QtVsToolsLegacyPackage.Instance.Options.SaveSettingsToStorage();
                 }
             }
         };

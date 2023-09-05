@@ -86,7 +86,7 @@ namespace QtVsTools.Qml.Debug.AD7
             Name = string.Format("{0}@{1}:{2}", name, context.FilePath, context.FileLine + 1);
             FrameNumber = number;
             Scopes = scopes;
-            InitThread = QtVsToolsPackage.Instance.JoinableTaskFactory.RunAsync(async () =>
+            InitThread = QtVsToolsLegacyPackage.Instance.JoinableTaskFactory.RunAsync(async () =>
             {
                 InitializeProperties();
                 await Task.Yield();

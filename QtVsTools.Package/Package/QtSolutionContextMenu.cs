@@ -102,7 +102,7 @@ namespace QtVsTools
 
             switch (command.CommandID.ID) {
             case (int)CommandId.ChangeSolutionQtVersionId:
-                var projects = HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte);
+                var projects = HelperFunctions.ProjectsInSolution(QtVsToolsLegacyPackage.Instance.Dte);
                 foreach (var project in projects) {
                     if (!HelperFunctions.IsVsToolsProject(project)
                         && HelperFunctions.IsQtProject(project)) {
@@ -126,13 +126,13 @@ namespace QtVsTools
             if (command == null)
                 return;
 
-            var dte = QtVsToolsPackage.Instance.Dte;
+            var dte = QtVsToolsLegacyPackage.Instance.Dte;
             switch ((CommandId)command.CommandID.ID) {
             case CommandId.lUpdateOnSolutionId:
-                Translation.RunlUpdate(QtVsToolsPackage.Instance.Dte.Solution);
+                Translation.RunlUpdate(QtVsToolsLegacyPackage.Instance.Dte.Solution);
                 break;
             case CommandId.lReleaseOnSolutionId:
-                Translation.RunlRelease(QtVsToolsPackage.Instance.Dte.Solution);
+                Translation.RunlRelease(QtVsToolsLegacyPackage.Instance.Dte.Solution);
                 break;
             case CommandId.ChangeSolutionQtVersionId:
                 Legacy.QtMenu.ShowFormChangeSolutionQtVersion();

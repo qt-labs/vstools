@@ -115,7 +115,7 @@ namespace QtVsTools
             if (dte.MainWindow?.Visible == true) {
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
                 windowEvents = null;
-                QtVsToolsPackage.Instance.VsMainWindowActivated();
+                QtVsToolsLegacyPackage.Instance.VsMainWindowActivated();
             }
         }
 
@@ -123,7 +123,7 @@ namespace QtVsTools
             string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed) {
+            if (QtVsToolsLegacyPackage.Instance.Options.TryQtHelpOnF1Pressed) {
                 if (!QtHelp.ShowEditorContextHelp()) {
                     Messages.Print("No help match was found. You can still try to search online at "
                         + "https://doc.qt.io" + ".", false, true);
@@ -152,7 +152,7 @@ namespace QtVsTools
             var qtVersion = qtProject?.GetQtVersion();
             var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
             if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                QtVsToolsPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
+                QtVsToolsLegacyPackage.Instance.CopyNatvisFiles(versionInfo.Namespace());
 
             if (QtProject.GetFormatVersion(selectedProject) < Resources.qtMinFormatVersion_Settings)
                 qtProject?.SetQtEnvironment();
@@ -214,7 +214,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!QtVsToolsPackage.Instance.LegacyOptions.PreBuildSetup)
+            if (!QtVsToolsLegacyPackage.Instance.LegacyOptions.PreBuildSetup)
                 return;
 
             if (currentBuildAction != vsBuildAction.vsBuildActionBuild &&
@@ -361,7 +361,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var project = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+            var project = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
             var qtPro = QtProject.Create(project);
             if (!HelperFunctions.IsVsToolsProject(project))
                 return;
@@ -421,7 +421,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -435,7 +435,7 @@ namespace QtVsTools
 
             if (OldName == null)
                 return;
-            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsPackage.Instance.Dte);
+            var pro = HelperFunctions.GetSelectedQtProject(QtVsToolsLegacyPackage.Instance.Dte);
             if (pro == null)
                 return;
 
@@ -493,7 +493,7 @@ namespace QtVsTools
                 QtProjectIntellisense.Refresh(project);
             }
             if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
-                if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                if (QtVsToolsLegacyPackage.Instance.Options.UpdateProjectFormat)
                     Notifications.UpdateProjectFormat.Show();
             }
         }
@@ -506,15 +506,15 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            QtProjectTracker.SolutionPath = QtVsToolsPackage.Instance.Dte.Solution.FullName;
-            foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsPackage.Instance.Dte)) {
+            QtProjectTracker.SolutionPath = QtVsToolsLegacyPackage.Instance.Dte.Solution.FullName;
+            foreach (var p in HelperFunctions.ProjectsInSolution(QtVsToolsLegacyPackage.Instance.Dte)) {
                 var formatVersion = QtProject.GetFormatVersion(p);
                 if (formatVersion >= Resources.qtMinFormatVersion_Settings) {
                     InitializeVCProject(p);
                     QtProjectTracker.Add(p);
                 }
                 if (formatVersion >= 100 && formatVersion < Resources.qtProjectFormatVersion) {
-                    if (QtVsToolsPackage.Instance.Options.UpdateProjectFormat)
+                    if (QtVsToolsLegacyPackage.Instance.Options.UpdateProjectFormat)
                         Notifications.UpdateProjectFormat.Show();
                 }
             }

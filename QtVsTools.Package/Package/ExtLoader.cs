@@ -56,8 +56,8 @@ namespace QtVsTools
                 Messages.DisplayErrorMessage(SR.GetString("NoVSSupport"));
                 return;
             }
-            if (QtVsToolsPackage.Instance.Dte != null) {
-                var proFileImporter = new ProjectImporter(QtVsToolsPackage.Instance.Dte);
+            if (QtVsToolsLegacyPackage.Instance.Dte != null) {
+                var proFileImporter = new ProjectImporter(QtVsToolsLegacyPackage.Instance.Dte);
                 proFileImporter.ImportProFile(qtVersion);
             }
         }
@@ -184,15 +184,15 @@ namespace QtVsTools
 
         public static void ExportProFile()
         {
-            if (QtVsToolsPackage.Instance.Dte != null) {
-                var proFileExporter = new ProjectExporter(QtVsToolsPackage.Instance.Dte);
+            if (QtVsToolsLegacyPackage.Instance.Dte != null) {
+                var proFileExporter = new ProjectExporter(QtVsToolsLegacyPackage.Instance.Dte);
                 proFileExporter.ExportToProFile();
             }
         }
 
         public static void ExportPriFile()
         {
-            var dte = QtVsToolsPackage.Instance.Dte;
+            var dte = QtVsToolsLegacyPackage.Instance.Dte;
             if (dte != null) {
                 var proFileExporter = new ProjectExporter(dte);
                 proFileExporter.ExportToPriFile(HelperFunctions.GetSelectedQtProject
