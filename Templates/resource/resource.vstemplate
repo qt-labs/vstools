@@ -13,6 +13,7 @@
         <Icon>resource.ico</Icon>
         <ProjectType>VC</ProjectType>
         <AppliesTo>VisualC</AppliesTo>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
         <DefaultName>Resource.qrc</DefaultName>
         <TemplateGroupID>QtVsTools</TemplateGroupID>
         <TemplateID>QtVsTools-QResource</TemplateID>

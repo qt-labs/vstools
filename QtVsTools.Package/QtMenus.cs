@@ -28,6 +28,7 @@ namespace QtVsTools
         {
             public const string GuidString = "15021976-647e-4876-9040-2507afde45d2";
             public static readonly System.Guid Guid = new(GuidString);
+            public const int AddNewQtCMakeItem = 0x1301;
             public const int ConvertToQtMsBuild = 0x0401;
             public const int ExtensionMenuGroup = 0x0001;
             public const int F1QtHelp = 0x0103;
@@ -70,6 +71,7 @@ namespace QtVsTools
             public const int VersionMenuGroup = 0x0100;
             public const int ViewGettingStarted = 0x0104;
             public const int ViewQtHelp = 0x0102;
+            public const int WorkspaceContextMenuNewItemGroup = 0x1300;
         }
         /// <summary>
         /// Defines the "UICONTEXT_SolutionExistsAndFullyLoaded" GUIDSymbol and its IDSymbols.
@@ -78,6 +80,15 @@ namespace QtVsTools
         {
             public const string GuidString = "10534154-102d-46e2-aba8-a6bfa25ba0be";
             public static readonly System.Guid Guid = new(GuidString);
+        }
+        /// <summary>
+        /// Defines the "WorkspaceContextMenu" GUIDSymbol and its IDSymbols.
+        /// </summary>
+        internal sealed partial class WorkspaceContextMenu
+        {
+            public const string GuidString = "cfb400f1-5c60-4f3c-856e-180d28def0b7";
+            public static readonly System.Guid Guid = new(GuidString);
+            public const int NewQtItemSubmenu = 0x2200;
         }
     }
 }

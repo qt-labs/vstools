@@ -104,6 +104,14 @@
             </Group>
 
             <!-- Endregion Item context menu groups -->
+
+            <!-- Region Add New Item button (cmake only)-->
+
+            <Group guid="Package" id="WorkspaceContextMenuNewItemGroup" priority="0x1400">
+              <Parent guid="WorkspaceContextMenu" id="NewQtItemSubmenu"/>
+            </Group>
+
+            <!-- Endregion Add New Item button (cmake only)-->
         </Groups>
 
         <Buttons>
@@ -370,7 +378,7 @@
             <!-- Region Solution filter button -->
 
             <Button guid="Package" id="LegacyProjectFilter" priority="0x0400" type="Button">
-              <Parent guid="guidSHLMainMenu" id="IDG_VS_TOOLBAR_PROJWIN_FILTERS" />
+              <Parent guid="VSMainMenu" id="IDG_VS_TOOLBAR_PROJWIN_FILTERS" />
               <Icon guid="MenuImages" id="LegacyProjectFilterBitmap" />
               <CommandFlag>DynamicVisibility</CommandFlag>
               <Strings>
@@ -378,8 +386,22 @@
               </Strings>
             </Button>
 
-            <!-- Endegion Solution filter button -->
+            <!-- Endregion Solution filter button -->
 
+            <!-- Region Add New Qt Item button (cmake only)-->
+
+            <Button guid="Package" id="AddNewQtCMakeItem" priority="0x0400" type="Button">
+              <Parent guid="Package" id="WorkspaceContextMenuNewItemGroup" />
+              <CommandFlag>DefaultDisabled</CommandFlag>
+              <CommandFlag>DefaultInvisible</CommandFlag>
+              <CommandFlag>DynamicVisibility</CommandFlag>
+              <Icon guid="MenuImages" id="QtLogoBitmap" />
+              <Strings>
+                <ButtonText>New Qt Item...</ButtonText>
+              </Strings>
+            </Button>
+
+            <!-- Endregion Add New Qt Item button (cmake only)-->
         </Buttons>
 
         <!-- The bitmaps section is used to define the bitmaps that are used for the commands. -->
@@ -397,6 +419,12 @@
                 ConvertProjectBitmap, QtLogoBitmap" />
         </Bitmaps>
     </Commands>
+
+    <CommandPlacements>
+      <CommandPlacement guid="Package" id="AddNewQtCMakeItem" priority="0x0400">
+        <Parent guid="VSMainMenu" id="Project.AddGroup" />
+      </CommandPlacement>
+    </CommandPlacements>
 
     <Symbols>
         <!-- This is the package guid. -->
@@ -478,6 +506,13 @@
             <IDSymbol name="LegacyProjectFilter" value="0x1200" />
 
             <!-- Endregion Solution filter button -->
+
+            <!-- Region Add New Item button (cmake only)-->
+
+            <IDSymbol name="WorkspaceContextMenuNewItemGroup" value="0x1300"/>
+            <IDSymbol name="AddNewQtCMakeItem" value="0x1301" />
+
+            <!-- Endregion Add New Item button (cmake only)-->
         </GuidSymbol>
 
         <GuidSymbol name="MenuImages" value="{d7cf9f1c-0f37-4609-8eb3-72589dc5a5ec}" >
@@ -492,6 +527,15 @@
 
         <GuidSymbol name="UICONTEXT_SolutionExistsAndFullyLoaded"
                     value="{10534154-102D-46E2-ABA8-A6BFA25BA0BE}"/>
+
+        <!-- Region Add New Item button (cmake only)-->
+
+        <GuidSymbol name="WorkspaceContextMenu"
+                    value="{cfb400f1-5c60-4f3c-856e-180d28def0b7}">
+          <IDSymbol name="NewQtItemSubmenu" value="0x2200"/>
+        </GuidSymbol>
+
+        <!-- Region Add New Item button (cmake only)-->
     </Symbols>
 
     <VisibilityConstraints>

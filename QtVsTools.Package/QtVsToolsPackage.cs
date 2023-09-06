@@ -25,6 +25,7 @@ namespace QtVsTools
 {
     using Core;
     using Package;
+    using Package.CMake;
     using VisualStudio;
 
     using static Utils;
@@ -144,6 +145,7 @@ namespace QtVsTools
 
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize();
+                AddCMakeItem.Initialize();
                 QtSolutionContextMenu.Initialize();
                 QtProjectContextMenu.Initialize();
                 QtItemContextMenu.Initialize();

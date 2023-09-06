@@ -13,6 +13,7 @@
         <Icon>widget.ico</Icon>
         <ProjectType>VC</ProjectType>
         <AppliesTo>VisualC</AppliesTo>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
         <DefaultName>Widget.ui</DefaultName>
         <Description>Qt Widget Form File (.ui)</Description>
         <TemplateID>QtVsTools-QWidget</TemplateID>

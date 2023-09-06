@@ -12,7 +12,7 @@ namespace QtVsTools.Wizards.Util
 {
     using Core;
 
-    internal static class TextAndWhitespace
+    public static class TextAndWhitespace
     {
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace QtVsTools.Wizards.Util
         /// </summary>
         /// <param name="dte"></param>
         /// <param name="file"></param>
-        internal static void Adjust(EnvDTE.DTE dte, string file)
+        public static void Adjust(EnvDTE.DTE dte, string file)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 

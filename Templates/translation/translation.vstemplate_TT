@@ -17,7 +17,7 @@
         <Name>Qt Translation File</Name>
         <Description>Qt Translation File (.ts)</Description>
         <ProjectType>VC</ProjectType>
-        <DefaultName>Translation.ts</DefaultName>
+        <DefaultName>Translation</DefaultName>
         <ProvideDefaultName>true</ProvideDefaultName>
         <LocationField>Enabled</LocationField>
         <EnableLocationBrowseButton>true</EnableLocationBrowseButton>

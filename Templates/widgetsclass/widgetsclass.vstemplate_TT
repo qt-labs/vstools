@@ -27,6 +27,7 @@
         <PlatformTag>Linux</PlatformTag>
         <ProjectTypeTag>Qt</ProjectTypeTag>
         <ProjectTypeTag>Desktop</ProjectTypeTag>
+        <TemplateGroupID>QtVsTools</TemplateGroupID>
     </TemplateData>
     <TemplateContent>
         <ProjectItem OpenInEditor="false"

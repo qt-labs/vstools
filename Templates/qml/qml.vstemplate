@@ -13,6 +13,7 @@
         <Icon>qml.ico</Icon>
         <ProjectType>VC</ProjectType>
         <AppliesTo>VisualC</AppliesTo>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
         <DefaultName>NewFile.qml</DefaultName>
         <TemplateGroupID>QtVsTools</TemplateGroupID>
         <TemplateID>QtVsTools-QMLFile</TemplateID>

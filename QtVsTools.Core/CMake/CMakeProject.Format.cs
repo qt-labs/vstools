@@ -15,9 +15,9 @@ namespace QtVsTools.Core.CMake
 {
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
-        private enum QtStatus { False, NullPresets, ConversionPending, True }
+        public enum QtStatus { False, NullPresets, ConversionPending, True }
 
-        private QtStatus Status { get; set; } = QtStatus.False;
+        public QtStatus Status { get; set; } = QtStatus.False;
 
         public void CheckQtStatus()
         {

@@ -304,6 +304,8 @@
       <DependsOn>$(SolutionDir)\version.targets;$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>AssemblyInfo.tt.cs</LastGenOutput>
     </T4Template>
+    <Compile Include="CMake\AddCMakeItem.cs" />
+    <Compile Include="CMake\CMakeVsProject.cs" />
     <Compile Include="MsBuild\ConversionReportViewer.cs" />
     <Compile Include="MsBuild\LegacyProjectFilterProvider.cs" />
     <Compile Include="MsBuild\QtModulesEditor.cs" />

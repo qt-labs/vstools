@@ -30,6 +30,7 @@
         <ProjectTypeTag>IoT</ProjectTypeTag>
         <ProjectTypeTag>Desktop</ProjectTypeTag>
         <ProjectTypeTag>Console</ProjectTypeTag>
+        <TemplateGroupID>QtVsTools</TemplateGroupID>
     </TemplateData>
     <TemplateContent>
         <ProjectItem OpenInEditor="false"

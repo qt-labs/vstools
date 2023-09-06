@@ -26,6 +26,6 @@ namespace QtVsTools.Package
         public const string Name = "Qt Visual Studio Tools";
 
         /// <summary>The version of the extension.</summary>
-        public const string Version = "2.10.1.116";
+        public const string Version = QtVsTools.Core.Version.PRODUCT_VERSION;
     }
 }

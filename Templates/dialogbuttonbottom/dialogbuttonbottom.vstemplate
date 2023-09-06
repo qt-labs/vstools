@@ -13,6 +13,7 @@
         <Icon>dialogbuttonbottom.ico</Icon>
         <ProjectType>VC</ProjectType>
         <AppliesTo>VisualC</AppliesTo>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
         <DefaultName>DialogButtonBottom.ui</DefaultName>
         <TemplateGroupID>QtVsTools</TemplateGroupID>
         <TemplateID>QtVsTools-QDialog.ButtonBottom</TemplateID>
