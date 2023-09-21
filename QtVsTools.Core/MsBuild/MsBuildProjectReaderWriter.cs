@@ -526,7 +526,7 @@ namespace QtVsTools.Core.MsBuild
             customBuilds.ForEach(customBuild =>
             {
                 var filterCustomBuild = (this[Files.Filters]?.Xml
-                        .Elements(ns + "Project")
+                        ?.Elements(ns + "Project")
                         .Elements(ns + "ItemGroup")
                         .Elements(ns + "CustomBuild") ?? Array.Empty<XElement>())
                     .FirstOrDefault(
@@ -640,7 +640,7 @@ namespace QtVsTools.Core.MsBuild
                     Path.Combine(projDir ?? "", (string)x.Attribute("Include"))), CaseIgnorer)
                 .ToDictionary(x => x.Key, x => new List<XElement>(x));
 
-            var filterItemsByPath = this[Files.Filters].Xml != null
+            var filterItemsByPath = this[Files.Filters]?.Xml != null
                 ? this[Files.Filters].Xml
                     .Elements(ns + "Project")
                     .Elements(ns + "ItemGroup")

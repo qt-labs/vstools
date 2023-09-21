@@ -94,7 +94,18 @@ namespace QtVsTools.Core.MsBuild
 
             waitDialog?.Stop();
 
-            solution.Open(solutionPath);
+            try {
+                solution.Open(solutionPath);
+            } catch (Exception exception) {
+                // This can happen if one opens a .vcxproj instead of an already existing
+                // solution, or with no solution at all. The solution.Close(true) forces
+                // saving the solution, but we have no means to get the actual solution path.
+                // Using solution.Open(solutionPath) with an empty path throws an exception.
+                Messages.DisplayWarningMessage("There was a problem reopening the Solution. "
+                    + "Please try to open the Solution from the File menu.");
+                exception.Log();
+            }
+
             if (canceled && projCount < projectPaths.Count) {
                 MessageBox.Show($"Conversion canceled. {projectPaths.Count - projCount} "
                     + "projects were not converted.", "Qt VS Tools",
