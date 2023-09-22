@@ -19,7 +19,7 @@ namespace QtVsTools.Core.MsBuild
     {
         private bool UpgradeFromV2()
         {
-            var defaultVersionName = QtVersionManager.The().GetDefaultVersion();
+            var qtInstallValue = QtVersionManager.The().GetDefaultVersion();
 
             // Get project user properties (old format)
             var userProps = this[Files.Project].Xml
@@ -37,7 +37,6 @@ namespace QtVsTools.Core.MsBuild
                 .ToList()
                 .ForEach(config =>
                 {
-                    var qtInstallValue = defaultVersionName;
                     if (userProps != null) {
                         string platform = null;
                         try {
@@ -163,6 +162,13 @@ namespace QtVsTools.Core.MsBuild
                     .Where(x => !moduleDefines.Contains(x))));
             }
             Commit("Removing Qt module macros from resource compiler properties");
+
+            var qtVersion = QtVersionManager.The().GetVersionInfo(qtInstallValue);
+            moduleNames = moduleNames // remove proVarQT values not provided by the used Qt version
+                .Where(moduleName => QtModules.Instance.GetAvailableModules(qtVersion.qtMajor)
+                    .Select(module => module.proVarQT)
+                    .Contains(moduleName))
+                .ToHashSet();
 
             this[Files.Project].Xml
                 .Elements(ns + "Project")
