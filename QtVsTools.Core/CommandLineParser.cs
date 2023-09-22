@@ -161,7 +161,7 @@ namespace QtVsTools.Core.CommandLine
         }
 
         bool ParseOptionValue(string optionName, string argument,
-             IEnumerator<string> argumentEnumerator, ref bool atEnd)
+             ref IEnumerator<string> argumentEnumerator, ref bool atEnd)
         {
             const char assignChar = '=';
             if (nameHash.TryGetValue(optionName, out int optionOffset)) {
@@ -273,7 +273,7 @@ namespace QtVsTools.Core.CommandLine
                 return false;
             }
 
-            var argumentIterator = args.GetEnumerator();
+            IEnumerator<string> argumentIterator = args.GetEnumerator();
             bool atEnd = false;
 
             while (!atEnd && argumentIterator.MoveNext()) {
@@ -287,7 +287,7 @@ namespace QtVsTools.Core.CommandLine
                             if (!ParseOptionValue(
                                 optionName,
                                 argument,
-                                argumentIterator,
+                                ref argumentIterator,
                                 ref atEnd)) {
                                 error = true;
                             }
@@ -342,7 +342,7 @@ namespace QtVsTools.Core.CommandLine
                             && !ParseOptionValue(
                                 optionName,
                                 argument,
-                                argumentIterator,
+                                ref argumentIterator,
                                 ref atEnd)) {
                             error = true;
                         }
@@ -374,7 +374,7 @@ namespace QtVsTools.Core.CommandLine
                             if (!ParseOptionValue(
                                 optionName,
                                 argument,
-                                argumentIterator,
+                                ref argumentIterator,
                                 ref atEnd)) {
                                 error = true;
                             }
