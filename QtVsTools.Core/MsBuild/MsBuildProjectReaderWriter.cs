@@ -429,9 +429,10 @@ namespace QtVsTools.Core.MsBuild
                         let itemName = customBuild.Attribute("Include")?.Value
                         from config in configurations
                         from command in customBuild.Elements(ns + "Command")
+                        let excludedFromBuild = customBuild.Element(ns + "ExcludedFromBuild")
                         where command.Attribute("Condition")?.Value
                             == $"'$(Configuration)|$(Platform)'=='{(string)config.Attribute("Include")}'"
-                        select new { customBuild, itemName, config, command };
+                        select new { customBuild, itemName, config, command, excludedFromBuild };
 
             var projPath = this[Files.Project].Path;
             var error = false;
@@ -450,7 +451,11 @@ namespace QtVsTools.Core.MsBuild
                 row.customBuild.Add(item =
                     new XElement(ns + itemType,
                         new XAttribute("Include", row.itemName),
-                        new XAttribute("ConfigName", configId)));
+                        new XAttribute("ConfigName", configId),
+                        row.excludedFromBuild
+                    )
+                );
+
                 var configName = (string)row.config.Element(ns + "Configuration");
                 var platformName = (string)row.config.Element(ns + "Platform");
 
