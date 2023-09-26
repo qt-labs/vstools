@@ -10,6 +10,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.CMake
 {
+    using Options;
     using VisualStudio;
     using static Utils;
 
@@ -26,6 +27,22 @@ namespace QtVsTools.Core.CMake
                 "Found a reference to Qt. Projects that use a CMakeSettings.json configuration "
                 + "file are not supported. Please convert to a CMakePresets.json configuration."
             };
+
+            protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+            {
+                new()
+                {
+                    Text = "Don't show again",
+                    CloseInfoBar = true,
+                    OnClicked = () =>
+                    {
+                        if (Options.Get() is not {} options)
+                            return;
+                        options.NotifyCMakeIncompatible = false;
+                        options.SaveSettingsToStorage();
+                    }
+                }
+            };
         }
 
         private static AlertIncompatibleProject IncompatibleProjectMessage => StaticLazy.Get(
@@ -33,6 +50,8 @@ namespace QtVsTools.Core.CMake
 
         private async Task ShowIncompatibleProjectAsync()
         {
+            if (!Options.Get().NotifyCMakeIncompatible)
+                return;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             IncompatibleProjectMessage.Show();
         }
@@ -62,6 +81,18 @@ namespace QtVsTools.Core.CMake
                     Text = "Convert project to Qt/CMake",
                     CloseInfoBar = true,
                     OnClicked = Project.ConfirmConversion
+                },
+                new()
+                {
+                    Text = "Don't show again",
+                    CloseInfoBar = true,
+                    OnClicked = () =>
+                    {
+                        if (Options.Get() is not {} options)
+                            return;
+                        options.NotifyCMakeConversion = false;
+                        options.SaveSettingsToStorage();
+                    }
                 }
             };
         }
@@ -71,6 +102,8 @@ namespace QtVsTools.Core.CMake
 
         private async Task ShowConversionConfirmationAsync()
         {
+            if (!Options.Get().NotifyCMakeConversion)
+                return;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ConversionConfirmationMessage.Show();
         }

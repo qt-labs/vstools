@@ -77,7 +77,9 @@ namespace QtVsTools.Core.Options
         public enum Notifications
         {
             [String("Notifications_Installed")] Installed,
-            [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat
+            [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
+            [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
+            [String("Notifications_CMake_Conversion")] CMakeConversion
         }
 
         public enum Natvis
@@ -237,6 +239,19 @@ namespace QtVsTools.Core.Options
         {
             get; set;
         }
+
+        [Category("Notifications")]
+        [DisplayName("CMake incompatible project")]
+        [Description("Qt reference detected on a project using CMakeSettings.json.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyCMakeIncompatible { get; set; }
+
+        [Category("Notifications")]
+        [DisplayName("CMake conversion confirmation")]
+        [Description("Qt reference detected: ask to confirm conversion to Qt/CMake.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyCMakeConversion { get; set; }
+
         [Category("Natvis")]
         [DisplayName("Embed .natvis file into PDB")]
         [Description("Embeds the debugger visualizations (.natvis file) into the PDB file"
@@ -262,6 +277,8 @@ namespace QtVsTools.Core.Options
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
             NotifyInstalled = true;
             UpdateProjectFormat = true;
+            NotifyCMakeIncompatible = true;
+            NotifyCMakeConversion = true;
             LinkNatvis = true;
 
             ////////
@@ -300,6 +317,8 @@ namespace QtVsTools.Core.Options
                 Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                 Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 Load(() => NotifyInstalled, key, Notifications.Installed);
+                Load(() => NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
+                Load(() => NotifyCMakeConversion, key, Notifications.CMakeConversion);
                 Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Load(() => LinkNatvis, key, Natvis.Link);
             } catch (Exception exception) {
@@ -334,6 +353,8 @@ namespace QtVsTools.Core.Options
                 Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                 Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
                 Save(NotifyInstalled, key, Notifications.Installed);
+                Save(NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
+                Save(NotifyCMakeConversion, key, Notifications.CMakeConversion);
                 Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Save(LinkNatvis, key, Natvis.Link);
             } catch (Exception exception) {
