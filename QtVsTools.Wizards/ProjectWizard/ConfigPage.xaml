@@ -316,12 +316,36 @@
               </DataGridTemplateColumn>
             </DataGrid.Columns>
           </DataGrid>
-          <StackPanel Name="ErrorPanel" Orientation="Horizontal" Grid.Row="2" Margin="0,10"
-            Visibility="Hidden" theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-                                  RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
-            <imaging:CrispImage Width="16" Height="16"
+          <StackPanel Name="ErrorPanel"
+            Orientation="Horizontal"
+            Grid.Row="2"
+            Margin="0,10"
+            Visibility="Hidden"
+            theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+              RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
+            <imaging:CrispImage
+              Width="16"
+              Height="16"
               Moniker="{x:Static catalog:KnownMonikers.StatusInvalidOutline}" />
-            <Label Name="ErrorMsg" Foreground="Red" />
+            <Label x:Name="ErrorMsg" Content="" MouseDown="ErrorMsg_OnMouseDown" >
+              <Label.Style>
+                <Style TargetType="Label">
+                  <Setter Property="Foreground" Value="Black" />
+                  <Setter Property="Cursor" Value="Arrow" />
+                  <Style.Triggers>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                        <Condition Binding="{Binding Path=BrowseQtVersion}" Value="True" />
+                      </MultiDataTrigger.Conditions>
+                      <!-- Apply hyperlink style when both conditions are met -->
+                      <Setter Property="Foreground" Value="Blue" />
+                      <Setter Property="Cursor" Value="Hand" />
+                    </MultiDataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Label.Style>
+            </Label>
           </StackPanel>
         </Grid>
       </Grid>

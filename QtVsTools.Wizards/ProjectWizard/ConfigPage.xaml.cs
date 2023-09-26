@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
 
@@ -116,8 +117,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         const string QT_VERSION_DEFAULT = "<Default>";
         const string QT_VERSION_BROWSE = "<Browse...>";
 
-        IEnumerable<string> qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
-            .Union(QtVersionManager.The().GetVersions());
+        private IEnumerable<string> qtVersionList;
 
         readonly QtVersionManager qtVersionManager = QtVersionManager.The();
         readonly VersionInformation defaultQtVersionInfo;
@@ -142,19 +142,27 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private List<Module> DefaultModules { get; set; } = new();
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnLoaded;
 
             qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
                 .Union(QtVersionManager.The().GetVersions());
 
-            if (defaultQtVersionInfo == null) {
-                Validate();
-                return;
+            if (defaultQtVersionInfo != null) {
+                SetupDefaultConfigsAndConfigTable(defaultQtVersionInfo);
+                initialNextButtonIsEnabled = NextButton.IsEnabled;
+                initialFinishButtonIsEnabled = FinishButton.IsEnabled;
             }
+            Validate();
+        }
 
-            DefaultModules = QtModules.Instance.GetAvailableModules(defaultQtVersionInfo.qtMajor)
+        private void SetupDefaultConfigsAndConfigTable(VersionInformation versionInfo)
+        {
+            if (versionInfo == null)
+                return;
+
+            DefaultModules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
                 .Where(mi => mi.Selectable)
                 .Select(mi => new Module
                 {
@@ -169,48 +177,43 @@ namespace QtVsTools.Wizards.ProjectWizard
                     ConfigPage = this,
                     Name = "Debug",
                     IsDebug = true,
-                    QtVersion = defaultQtVersionInfo,
-                    QtVersionName = defaultQtVersionInfo.name,
-                    Target = defaultQtVersionInfo.isWinRT()
+                    QtVersion = versionInfo,
+                    QtVersionName = versionInfo.name,
+                    Target = versionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
                     Platform
-                        = defaultQtVersionInfo.platform() == Platform.x86
+                        = versionInfo.platform() == Platform.x86
                             ? ProjectPlatforms.Win32.Cast<string>()
-                        : defaultQtVersionInfo.platform() == Platform.x64
-                            ? ProjectPlatforms.X64.Cast<string>()
-                        : defaultQtVersionInfo.platform() == Platform.arm64
-                            ? ProjectPlatforms.ARM64.Cast<string>()
-                        : string.Empty,
+                            : versionInfo.platform() == Platform.x64
+                                ? ProjectPlatforms.X64.Cast<string>()
+                                : versionInfo.platform() == Platform.arm64
+                                    ? ProjectPlatforms.ARM64.Cast<string>()
+                                    : string.Empty,
                     Modules = DefaultModules.ToDictionary(m => m.Name)
                 },
                 new() {
                     ConfigPage = this,
                     Name = "Release",
                     IsDebug = false,
-                    QtVersion = defaultQtVersionInfo,
-                    QtVersionName = defaultQtVersionInfo.name,
-                    Target = defaultQtVersionInfo.isWinRT()
+                    QtVersion = versionInfo,
+                    QtVersionName = versionInfo.name,
+                    Target = versionInfo.isWinRT()
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
                     Platform
-                        = defaultQtVersionInfo.platform() == Platform.x86
+                        = versionInfo.platform() == Platform.x86
                             ? ProjectPlatforms.Win32.Cast<string>()
-                        : defaultQtVersionInfo.platform() == Platform.x64
-                            ? ProjectPlatforms.X64.Cast<string>()
-                        : defaultQtVersionInfo.platform() == Platform.arm64
-                            ? ProjectPlatforms.ARM64.Cast<string>()
-                        : string.Empty,
+                            : versionInfo.platform() == Platform.x64
+                                ? ProjectPlatforms.X64.Cast<string>()
+                                : versionInfo.platform() == Platform.arm64
+                                    ? ProjectPlatforms.ARM64.Cast<string>()
+                                    : string.Empty,
                     Modules = DefaultModules.ToDictionary(m => m.Name)
                 }
             };
             currentConfigs = defaultConfigs.Clone();
             ConfigTable.ItemsSource = currentConfigs;
-
-            initialNextButtonIsEnabled = NextButton.IsEnabled;
-            initialFinishButtonIsEnabled = FinishButton.IsEnabled;
-
-            Validate();
         }
 
         /// <summary>
@@ -220,33 +223,36 @@ namespace QtVsTools.Wizards.ProjectWizard
         /// </summary>
         public Func<IEnumerable<IWizardConfiguration>, string> ValidateConfigs { get; set; }
 
-        void Validate()
+        public bool BrowseQtVersion { get; set; }
+
+        private void Validate()
         {
+            var errorMessage = "";
+            var errorPanelVisibility = Visibility.Visible;
+            var browseQtVersion = false;
+            var nextButtonIsEnabled = false;
+            var finishButtonIsEnabled = false;
+
             if (currentConfigs == null) {
-                ErrorMsg.Content = "Register at least one Qt version using \"Qt VS Tools\"" +
-                    " -> \"Qt Options\".";
-                ErrorPanel.Visibility = Visibility.Visible;
-                NextButton.IsEnabled = false;
-                FinishButton.IsEnabled = false;
+                errorMessage = "No registered Qt version found. Click here to browse for a Qt version.";
+                browseQtVersion = true;
             } else if (currentConfigs // "$(Configuration)|$(Platform)" must be unique
                 .GroupBy(c => $"{c.Name}|{c.Platform}")
                 .Any(g => g.Count() > 1)) {
-                ErrorMsg.Content = "(Configuration, Platform) must be unique";
-                ErrorPanel.Visibility = Visibility.Visible;
-                NextButton.IsEnabled = false;
-                FinishButton.IsEnabled = false;
-            } else if (ValidateConfigs?.Invoke(currentConfigs) is {} errorMsg
-                && !string.IsNullOrEmpty(errorMsg)) {
-                ErrorMsg.Content = errorMsg;
-                ErrorPanel.Visibility = Visibility.Visible;
-                NextButton.IsEnabled = false;
-                FinishButton.IsEnabled = false;
+                errorMessage = "(Configuration, Platform) must be unique";
+            } else if (ValidateConfigs?.Invoke(currentConfigs) is { Length: > 0 } errorMsg) {
+                errorMessage = errorMsg;
             } else {
-                ErrorMsg.Content = string.Empty;
-                ErrorPanel.Visibility = Visibility.Hidden;
-                NextButton.IsEnabled = initialNextButtonIsEnabled;
-                FinishButton.IsEnabled = initialFinishButtonIsEnabled;
+                errorPanelVisibility = Visibility.Hidden;
+                nextButtonIsEnabled = initialNextButtonIsEnabled;
+                finishButtonIsEnabled = initialFinishButtonIsEnabled;
             }
+
+            ErrorMsg.Content = errorMessage;
+            ErrorPanel.Visibility = errorPanelVisibility;
+            BrowseQtVersion = browseQtVersion;
+            NextButton.IsEnabled = nextButtonIsEnabled;
+            FinishButton.IsEnabled = finishButtonIsEnabled;
         }
 
         void RemoveConfig_Click(object sender, RoutedEventArgs e)
@@ -291,41 +297,52 @@ namespace QtVsTools.Wizards.ProjectWizard
             }
         }
 
+        private static string BrowseForAndGetQtVersion()
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "qmake|qmake.exe;qmake.bat"
+            };
+            if (openFileDialog.ShowDialog() != true)
+                return null;
+
+            IEnumerable<string> binPath = Path.GetDirectoryName(openFileDialog.FileName)
+                ?.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            binPath ??= new List<string>();
+            var lastDirName = binPath.LastOrDefault();
+            if ("bin".Equals(lastDirName, IgnoreCase))
+                binPath = binPath.Take(binPath.Count() - 1);
+            return string.Join(Path.DirectorySeparatorChar.ToString(), binPath);
+        }
+
         void QtVersion_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox {IsEnabled: true} comboBoxQtVersion
-                && GetBinding(comboBoxQtVersion) is Config config
-                && config.QtVersionName != comboBoxQtVersion.Text) {
-                var oldQtVersion = config.QtVersion;
-                if (comboBoxQtVersion.Text == QT_VERSION_DEFAULT) {
-                    config.QtVersion = defaultQtVersionInfo;
-                    config.QtVersionName = defaultQtVersionInfo.name;
-                    config.QtVersionPath = defaultQtVersionInfo.qtDir;
-                    comboBoxQtVersion.Text = defaultQtVersionInfo.name;
-                } else if (comboBoxQtVersion.Text == QT_VERSION_BROWSE) {
-                    var openFileDialog = new OpenFileDialog
-                    {
-                        Filter = "qmake|qmake.exe;qmake.bat"
-                    };
-                    if (openFileDialog.ShowDialog() == true) {
-                        IEnumerable<string> binPath = Path.GetDirectoryName(openFileDialog.FileName)
-                            .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                        string lastDirName = binPath.LastOrDefault();
-                        if ("bin".Equals(lastDirName, IgnoreCase))
-                            binPath = binPath.Take(binPath.Count() - 1);
+            if (sender is not ComboBox { IsEnabled: true } comboBoxQtVersion
+                || GetBinding(comboBoxQtVersion) is not Config config
+                || config.QtVersionName == comboBoxQtVersion.Text)
+                return;
 
-                        var qtVersion = string.Join(
-                            Path.DirectorySeparatorChar.ToString(), binPath);
-                        var versionInfo = VersionInformation.Get(qtVersion);
-                        if (versionInfo != null) {
-                            versionInfo.name = qtVersion;
-                            config.QtVersion = versionInfo;
-                            config.QtVersionName = versionInfo.name;
-                            config.QtVersionPath = config.QtVersion.qtDir;
-                        }
+            var oldQtVersion = config.QtVersion;
+            switch (comboBoxQtVersion.Text) {
+            case QT_VERSION_DEFAULT:
+                config.QtVersion = defaultQtVersionInfo;
+                config.QtVersionName = defaultQtVersionInfo.name;
+                config.QtVersionPath = defaultQtVersionInfo.qtDir;
+                comboBoxQtVersion.Text = defaultQtVersionInfo.name;
+                break;
+            case QT_VERSION_BROWSE:
+                if (BrowseForAndGetQtVersion() is {} qtVersion) {
+                    if (VersionInformation.Get(qtVersion) is {} versionInfo) {
+                        versionInfo.name = qtVersion;
+                        config.QtVersion = versionInfo;
+                        config.QtVersionName = versionInfo.name;
+                        config.QtVersionPath = config.QtVersion.qtDir;
                     }
-                    comboBoxQtVersion.Text = config.QtVersionName;
-                } else if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
+                }
+                comboBoxQtVersion.Text = config.QtVersionName;
+                break;
+            default:
+                if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
                     config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
                     config.QtVersionPath = qtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
@@ -333,39 +350,40 @@ namespace QtVsTools.Wizards.ProjectWizard
                     config.QtVersion = null;
                     config.QtVersionName = config.QtVersionPath = comboBoxQtVersion.Text;
                 }
+                break;
+            }
 
-                if (oldQtVersion != config.QtVersion) {
-                    if (config.QtVersion != null) {
-                        config.Target = config.QtVersion.isWinRT()
-                            ? ProjectTargets.WindowsStore.Cast<string>()
-                            : ProjectTargets.Windows.Cast<string>();
-                        config.Platform
-                            = config.QtVersion.platform() == Platform.x86
-                                ? ProjectPlatforms.Win32.Cast<string>()
+            if (oldQtVersion != config.QtVersion) {
+                if (config.QtVersion != null) {
+                    config.Target = config.QtVersion.isWinRT()
+                        ? ProjectTargets.WindowsStore.Cast<string>()
+                        : ProjectTargets.Windows.Cast<string>();
+                    config.Platform
+                        = config.QtVersion.platform() == Platform.x86
+                            ? ProjectPlatforms.Win32.Cast<string>()
                             : config.QtVersion.platform() == Platform.x64
                                 ? ProjectPlatforms.X64.Cast<string>()
-                            : config.QtVersion.platform() == Platform.arm64
-                                ? ProjectPlatforms.ARM64.Cast<string>()
-                            : string.Empty;
-                        config.Modules =
-                            QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
-                                .Where(mi => mi.Selectable)
-                                .Select(mi => new Module
-                                {
-                                    Name = mi.Name,
-                                    Id = mi.proVarQT,
-                                    IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
-                                    IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix)
-                                }).ToDictionary(m => m.Name);
-                    } else if (config.QtVersionPath.StartsWith("SSH:")) {
-                        config.Target = ProjectTargets.LinuxSSH.Cast<string>();
-                    } else if (config.QtVersionPath.StartsWith("WSL:")) {
-                        config.Target = ProjectTargets.LinuxWSL.Cast<string>();
-                    }
-                    ConfigTable.Items.Refresh();
+                                : config.QtVersion.platform() == Platform.arm64
+                                    ? ProjectPlatforms.ARM64.Cast<string>()
+                                    : string.Empty;
+                    config.Modules =
+                        QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
+                            .Where(mi => mi.Selectable)
+                            .Select(mi => new Module
+                            {
+                                Name = mi.Name,
+                                Id = mi.proVarQT,
+                                IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
+                                IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix)
+                            }).ToDictionary(m => m.Name);
+                } else if (config.QtVersionPath.StartsWith("SSH:")) {
+                    config.Target = ProjectTargets.LinuxSSH.Cast<string>();
+                } else if (config.QtVersionPath.StartsWith("WSL:")) {
+                    config.Target = ProjectTargets.LinuxWSL.Cast<string>();
                 }
-                Validate();
+                ConfigTable.Items.Refresh();
             }
+            Validate();
         }
 
         void Target_ComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -499,6 +517,23 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             if (ConfigTable != null)
                 ConfigTable.Columns.Last().Visibility = Visibility.Hidden;
+        }
+
+        private void ErrorMsg_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var qtVersion = BrowseForAndGetQtVersion();
+            if (VersionInformation.Get(qtVersion) is not {} versionInfo)
+                return;
+
+            qtVersionList = new[] { QT_VERSION_BROWSE }.Union(QtVersionManager.The().GetVersions());
+
+            versionInfo.name = qtVersion;
+            SetupDefaultConfigsAndConfigTable(versionInfo);
+
+            initialNextButtonIsEnabled = true;
+            initialFinishButtonIsEnabled = false;
+
+            Validate();
         }
     }
 }
