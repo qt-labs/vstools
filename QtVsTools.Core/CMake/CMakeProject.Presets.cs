@@ -166,43 +166,7 @@ namespace QtVsTools.Core.CMake
 
         private void CheckVisiblePresets()
         {
-            var visiblePresets = Presets["configurePresets"]?
-                .Children<JObject>()
-                .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"]);
-
-            if (visiblePresets != null) {
-                // CMakePresets.json should have no visible presets
-                foreach (var preset in visiblePresets) {
-                    var presetName = preset["name"]?.Value<string>();
-                    if (string.IsNullOrEmpty(presetName))
-                        continue;
-                    if (preset["inherits"] is not JArray presetInherits)
-                        presetInherits = new JArray();
-                    if (preset["inherits"] is JValue)
-                        presetInherits.Add((string)preset["inherits"]);
-                    var userPresetInherits = new JArray(presetInherits)
-                    {
-                        $"_{presetName}"
-                    };
-
-                    if (!preset.ContainsKey("inherits"))
-                        preset["inherits"] = new JArray();
-                    else if (preset["inherits"] is not JArray)
-                        preset["inherits"] = new JArray { (string)preset["inherits"] };
-                    (preset["inherits"] as JArray)?.Add("Qt-Default");
-
-                    (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
-                    {
-                        ["name"] = presetName,
-                        ["inherits"] = userPresetInherits
-                    });
-                    preset["name"] = $"_{presetName}";
-                    preset["hidden"] = true;
-                    preset.Remove("inherits");
-                }
-            }
-
-            visiblePresets = UserPresets["configurePresets"]?
+            var visiblePresets = UserPresets["configurePresets"]?
                 .Children<JObject>()
                 .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"])
                 .ToList();
@@ -210,7 +174,7 @@ namespace QtVsTools.Core.CMake
             if (visiblePresets == null || !visiblePresets.Any()) {
                 (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                 {
-                    ["name"] = "Release",
+                    ["name"] = "Qt-Release",
                     ["inherits"] = "Qt-Default",
                     ["binaryDir"] = "${sourceDir}/out/build",
                     ["cacheVariables"] = new JObject
@@ -220,7 +184,7 @@ namespace QtVsTools.Core.CMake
                 });
                 (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
                 {
-                    ["name"] = "Debug",
+                    ["name"] = "Qt-Debug",
                     ["inherits"] = "Qt-Default",
                     ["binaryDir"] = "${sourceDir}/out/build",
                     ["cacheVariables"] = new JObject
