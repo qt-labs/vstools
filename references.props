@@ -19,6 +19,7 @@
     <Name_Microsoft_VisualStudio_Composition>Microsoft.VisualStudio.Composition</Name_Microsoft_VisualStudio_Composition>
     <Name_Microsoft_VisualStudio_Workspace>Microsoft.VisualStudio.Workspace</Name_Microsoft_VisualStudio_Workspace>
     <Name_Microsoft_VisualStudio_Workspace_VSIntegration>Microsoft.VisualStudio.Workspace.VSIntegration</Name_Microsoft_VisualStudio_Workspace_VSIntegration>
+    <Name_Microsoft_VisualStudio_LanguageServer_Client>Microsoft.VisualStudio.LanguageServer.Client</Name_Microsoft_VisualStudio_LanguageServer_Client>
 
     <Name_MSTest_TestAdapter>MSTest.TestAdapter</Name_MSTest_TestAdapter>
     <Version_MSTest_TestAdapter>2.2.8</Version_MSTest_TestAdapter>
@@ -52,6 +53,7 @@
     <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
     <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
     <Version_Newtonsoft_Json>13.0.1</Version_Newtonsoft_Json>
+    <Version_Microsoft_VisualStudio_LanguageServer_Client>17.4.1068</Version_Microsoft_VisualStudio_LanguageServer_Client>
   </PropertyGroup>
 
   <!-- // Visual Studio 2019 -->
@@ -71,6 +73,7 @@
     <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
     <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
     <Version_Newtonsoft_Json>12.0.3</Version_Newtonsoft_Json>
+    <Version_Microsoft_VisualStudio_LanguageServer_Client>16.10.1220</Version_Microsoft_VisualStudio_LanguageServer_Client>
   </PropertyGroup>
 
 </Project>

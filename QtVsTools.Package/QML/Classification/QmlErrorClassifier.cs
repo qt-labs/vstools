@@ -14,27 +14,26 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace QtVsTools.Qml.Classification
 {
-    [Export(typeof(IViewTaggerProvider))]
-    [ContentType("qml")]
+    [Export(typeof(ITaggerProvider))]
+    [ContentType(QmlContentType.Name)]
     [TagType(typeof(ErrorTag))]
-    internal sealed class QmlErrorClassifierProvider : IViewTaggerProvider
+    internal sealed class QmlErrorClassifierProvider : ITaggerProvider
     {
         [Import]
         internal IClassificationTypeRegistryService classificationTypeRegistry = null;
 
-        public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+        public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
             QmlClassificationType.InitClassificationTypes(classificationTypeRegistry);
-            return new QmlErrorClassifier(textView, buffer) as ITagger<T>;
+            return new QmlErrorClassifier(buffer) as ITagger<T>;
         }
     }
 
     internal sealed class QmlErrorClassifier : QmlAsyncClassifier<ErrorTag>
     {
         internal QmlErrorClassifier(
-            ITextView textView,
             ITextBuffer buffer)
-            : base("Error", textView, buffer)
+            : base("Error", buffer)
         {
         }
 

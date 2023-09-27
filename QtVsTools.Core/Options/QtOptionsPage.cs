@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
@@ -21,6 +22,7 @@ namespace QtVsTools.Core.Options
     using VisualStudio;
     using static Common.Utils;
     using static QtVsTools.Common.EnumExt;
+    using static Instances;
 
     public static class Options
     {
@@ -87,6 +89,14 @@ namespace QtVsTools.Core.Options
             [String("LinkNatvis")] Link
         }
 
+        public enum QmlLsp
+        {
+            [String("QmlLsp_Enable")] Enable,
+            [String("QmlLsp_QtVersion")] QtVersion,
+            [String("QmlLsp_Log")] Log,
+            [String("QmlLsp_LogSize")] LogSize
+        }
+
         public enum Timeout : uint { Disabled = 0 }
 
         private class TimeoutConverter : EnumConverter
@@ -148,6 +158,30 @@ namespace QtVsTools.Core.Options
                 if (value is bool b && destinationType == typeof(string))
                     return b ? "Enable" : "Disable";
                 return base.ConvertTo(context, culture, value, destinationType);
+            }
+        }
+
+        private class QtVersionConverter : StringConverter
+        {
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext _) => true;
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext _)
+            {
+                return new(VersionManager.GetVersions()
+                    .Where(IsCompatible)
+                    .Prepend("$(DefaultQtVersion)")
+                    .Cast<object>()
+                    .ToArray());
+            }
+            protected virtual bool IsCompatible(string qtVersion) => true;
+        }
+
+        private class QmlLspProviderConverter : QtVersionConverter
+        {
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext _) => true;
+            protected override bool IsCompatible(string qtVersion)
+            {
+                return VersionManager.GetVersionInfo(qtVersion) is { } qt
+                    && File.Exists(Path.Combine(qt.LibExecs, "qmlls.exe"));
             }
         }
 
@@ -261,6 +295,29 @@ namespace QtVsTools.Core.Options
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool LinkNatvis { get; set; }
 
+        [Category("QML Language Server")]
+        [DisplayName("Enable")]
+        [Description("Connect to a QML language server for enhanced code editing experience.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool QmlLspEnable { get; set; }
+
+        [Category("QML Language Server")]
+        [DisplayName("Qt Version")]
+        [Description("Look for a QML language server in the specified Qt installation.")]
+        [TypeConverter(typeof(QmlLspProviderConverter))]
+        public string QmlLspVersion { get; set; }
+
+        [Category("QML Language Server")]
+        [DisplayName("Log")]
+        [Description("Write exchanged LSP messages to log file in %TEMP%.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool QmlLspLog { get; set; }
+
+        [Category("QML Language Server")]
+        [DisplayName("Log Size")]
+        [Description("Maximum size (in KB) of QML LSP log file.")]
+        public int QmlLspLogSize { get; set; }
+
         public override void ResetSettings()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -280,6 +337,11 @@ namespace QtVsTools.Core.Options
             NotifyCMakeIncompatible = true;
             NotifyCMakeConversion = true;
             LinkNatvis = true;
+
+            QmlLspEnable = false;
+            QmlLspVersion = "$(DefaultQtVersion)";
+            QmlLspLog = false;
+            QmlLspLogSize = 2500;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -321,6 +383,10 @@ namespace QtVsTools.Core.Options
                 Load(() => NotifyCMakeConversion, key, Notifications.CMakeConversion);
                 Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Load(() => LinkNatvis, key, Natvis.Link);
+                Load(() => QmlLspEnable, key, QmlLsp.Enable);
+                Load(() => QmlLspVersion, key, QmlLsp.QtVersion);
+                Load(() => QmlLspLog, key, QmlLsp.Log);
+                Load(() => QmlLspLogSize, key, QmlLsp.LogSize);
             } catch (Exception exception) {
                 exception.Log();
             }
@@ -336,6 +402,8 @@ namespace QtVsTools.Core.Options
                     Environment.SetEnvironmentVariable(
                         "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
                 }
+                if (QmlLspLogSize < 100)
+                    QmlLspLogSize = 100;
 
                 using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryPackagePath);
                 if (key == null)
@@ -356,6 +424,10 @@ namespace QtVsTools.Core.Options
                 Save(NotifyCMakeConversion, key, Notifications.CMakeConversion);
                 Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Save(LinkNatvis, key, Natvis.Link);
+                Save(QmlLspEnable, key, QmlLsp.Enable);
+                Save(QmlLspVersion, key, QmlLsp.QtVersion);
+                Save(QmlLspLog, key, QmlLsp.Log);
+                Save(QmlLspLogSize, key, QmlLsp.LogSize);
             } catch (Exception exception) {
                 exception.Log();
             }

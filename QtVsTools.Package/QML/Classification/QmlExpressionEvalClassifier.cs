@@ -25,7 +25,7 @@ namespace QtVsTools.Qml.Classification
     using Syntax;
 
     [Export(typeof(IViewTaggerProvider))]
-    [ContentType("qml")]
+    [ContentType(QmlContentType.Name)]
     [TagType(typeof(ClassificationTag))]
     internal sealed class QmlExpressionEvalProvider : IViewTaggerProvider
     {

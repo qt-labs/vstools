@@ -15,42 +15,26 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace QtVsTools.Qml.Classification
 {
-    [Export(typeof(IViewTaggerProvider))]
-    [ContentType("qml")]
+    [Export(typeof(ITaggerProvider))]
+    [ContentType(QmlContentType.Name)]
     [TagType(typeof(ClassificationTag))]
-    internal sealed class QmlSyntaxClassifierProvider : IViewTaggerProvider
+    internal sealed class QmlSyntaxClassifierProvider : ITaggerProvider
     {
-        [Export]
-        [Name("qml")]
-        [BaseDefinition("code")]
-        internal static ContentTypeDefinition qmlContentType = null;
-
-        [Export]
-        [FileExtension(".qml")]
-        [ContentType("qml")]
-        internal static FileExtensionToContentTypeDefinition qmlFileType = null;
-
-        [Export]
-        [FileExtension(".qmlproject")]
-        [ContentType("qml")]
-        internal static FileExtensionToContentTypeDefinition qmlprojectFileType = null;
-
         [Import]
         internal IClassificationTypeRegistryService classificationTypeRegistry = null;
 
-        public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+        public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
             QmlClassificationType.InitClassificationTypes(classificationTypeRegistry);
-            return new QmlSyntaxClassifier(textView, buffer) as ITagger<T>;
+            return new QmlSyntaxClassifier(buffer) as ITagger<T>;
         }
     }
 
     internal sealed class QmlSyntaxClassifier : QmlAsyncClassifier<ClassificationTag>
     {
         internal QmlSyntaxClassifier(
-            ITextView textView,
             ITextBuffer buffer)
-            : base("Syntax", textView, buffer)
+            : base("Syntax", buffer)
         {
         }
 

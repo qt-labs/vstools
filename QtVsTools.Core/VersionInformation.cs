@@ -262,5 +262,7 @@ namespace QtVsTools.Core
         }
 
         public string InstallPrefix => qmakeQuery["QT_INSTALL_PREFIX"];
+
+        public string LibExecs => qmakeQuery["QT_INSTALL_LIBEXECS"];
     }
 }

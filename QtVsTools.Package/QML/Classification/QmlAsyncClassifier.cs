@@ -218,9 +218,16 @@ namespace QtVsTools.Qml.Classification
             string classificationType,
             ITextView textView,
             ITextBuffer buffer)
+            : this(classificationType, buffer)
         {
             TextView = textView;
             textView.Closed += TextView_Closed;
+        }
+
+        protected QmlAsyncClassifier(
+            string classificationType,
+            ITextBuffer buffer)
+        {
             Buffer = buffer;
             buffer.Changed += Buffer_Changed;
 
