@@ -22,12 +22,13 @@ namespace QtVsTools.Core.MsBuild
             var qtInstallValue = QtVersionManager.The().GetDefaultVersion();
 
             // Get project user properties (old format)
-            var userProps = this[Files.Project].Xml
+            var refreshUserProps = () => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ProjectExtensions")
                 .Elements(ns + "VisualStudio")
                 .Elements(ns + "UserProperties")
                 .FirstOrDefault();
+            var userProps = refreshUserProps();
 
             // Copy Qt build reference to QtInstall project property
             this[Files.Project].Xml
@@ -59,24 +60,27 @@ namespace QtVsTools.Core.MsBuild
             Commit("Copying Qt build reference to QtInstall project property");
 
             // Get C++ compiler properties
-            var compiler = this[Files.Project].Xml
+            var refreshCompiler = () => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile")
                 .ToList();
+            var compiler = refreshCompiler();
 
             // Get linker properties
-            var linker = this[Files.Project].Xml
+            var refreshLinker = () => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "Link")
                 .ToList();
+            var linker = refreshLinker();
 
-            var resourceCompiler = this[Files.Project].Xml
+            var refreshResourceCompiler = () => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ResourceCompile")
                 .ToList();
+            var resourceCompiler = refreshResourceCompiler();
 
             // Qt module names, to copy to QtModules property
             var moduleNames = new HashSet<string>();
@@ -132,6 +136,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Removing Qt module macros from compiler properties");
 
             // Remove Qt module include paths from compiler properties
+            compiler = refreshCompiler();
             foreach (var inclPath in compiler.Elements(ns + "AdditionalIncludeDirectories")) {
                 inclPath.SetValue(string.Join(";", inclPath.Value.Split(';')
                     .Select(Unquote)
@@ -141,6 +146,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Removing Qt module include paths from compiler properties");
 
             // Remove Qt module libraries from linker properties
+            linker = refreshLinker();
             foreach (var libs in linker.Elements(ns + "AdditionalDependencies")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
                     .Where(x => !moduleLibs.Contains(Path.GetFileName(Unquote(x))))));
@@ -148,6 +154,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Removing Qt module libraries from linker properties");
 
             // Remove Qt lib path from linker properties
+            linker = refreshLinker();
             foreach (var libs in linker.Elements(ns + "AdditionalLibraryDirectories")) {
                 libs.SetValue(string.Join(";", libs.Value.Split(';')
                     .Select(Unquote)
@@ -157,6 +164,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Removing Qt lib path from linker properties");
 
             // Remove Qt module macros from resource compiler properties
+            resourceCompiler = refreshResourceCompiler();
             foreach (var defines in resourceCompiler.Elements(ns + "PreprocessorDefinitions")) {
                 defines.SetValue(string.Join(";", defines.Value.Split(';')
                     .Where(x => !moduleDefines.Contains(x))));
@@ -179,6 +187,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Adding Qt module names to QtModules project property");
 
             // Remove project user properties (old format)
+            userProps = refreshUserProps();
             userProps?.Attributes().ToList().ForEach(userProp =>
             {
                 if (userProp.Name.LocalName.StartsWith("Qt5Version_x0020_")
