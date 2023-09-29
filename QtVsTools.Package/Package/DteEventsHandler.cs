@@ -9,6 +9,7 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 using Tasks = System.Threading.Tasks;
@@ -21,14 +22,13 @@ namespace QtVsTools
     using VisualStudio;
     using static Utils;
 
-    internal class DteEventsHandler
+    internal class DteEventsHandler : IVsDebuggerEvents
     {
         private readonly DTE dte;
         private readonly SolutionEvents solutionEvents;
         private readonly DocumentEvents documentEvents;
         private readonly ProjectItemsEvents projectItemsEvents;
         private VCProjectEngineEvents vcProjectEngineEvents;
-        private readonly CommandEvents debugStartEvents;
         private readonly CommandEvents f1HelpEvents;
         private WindowEvents windowEvents;
         private OutputWindowEvents outputWindowEvents;
@@ -70,11 +70,6 @@ namespace QtVsTools
             if (VsShell.FolderWorkspace.OnActiveWorkspaceChanged != null)
                 VsShell.FolderWorkspace.OnActiveWorkspaceChanged += OnActiveWorkspaceChangedAsync;
 
-            var debugCommandsGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
-            debugStartEvents = events?.CommandEvents[debugCommandsGUID, 295];
-            if (debugStartEvents != null)
-                debugStartEvents.BeforeExecute += DebugStartEvents_BeforeExecute;
-
             f1HelpEvents = events?.CommandEvents[typeof(VSConstants.VSStd97CmdID).GUID.ToString("B"),
                 (int)VSConstants.VSStd97CmdID.F1Help];
             if (f1HelpEvents != null)
@@ -84,6 +79,9 @@ namespace QtVsTools
                 if (MsBuildProject.GetOrAdd(vcProject) is {} project)
                     InitializeMsBuildProjectProject(project);
             }
+
+            if (VsServiceProvider.GetService<IVsDebugger, IVsDebugger>() is {} service)
+                service.AdviseDebuggerEvents(this, out _);
         }
 
         private async Tasks.Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
@@ -143,21 +141,17 @@ namespace QtVsTools
             }
         }
 
-        private void DebugStartEvents_BeforeExecute(string guid, int iD, object customIn,
-            object customOut, ref bool cancelDefault)
+        public int OnModeChange(DBGMODE dbgmodeNew)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (dte.Debugger is { CurrentMode: not dbgDebugMode.dbgDesignMode })
-                return;
-
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
-                return;
-
-            var versionInfo = project.VersionInfo;
-            if (!string.IsNullOrEmpty(versionInfo?.Namespace()))
-                _ = ThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                    QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(versionInfo.Namespace()));
+            if (dbgmodeNew == DBGMODE.DBGMODE_Run
+                && HelperFunctions.GetSelectedQtProject(dte) is { } project) {
+                var vi = project.VersionInfo;
+                if (!string.IsNullOrEmpty(vi?.Namespace()))
+                    _ = ThreadHelper.JoinableTaskFactory.RunAsync(() =>
+                        QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(vi.Namespace())
+                    );
+            }
+            return VSConstants.S_OK;
         }
 
         public void Disconnect()
@@ -178,9 +172,6 @@ namespace QtVsTools
                 solutionEvents.Opened -= SolutionEvents_Opened;
                 solutionEvents.AfterClosing -= SolutionEvents_AfterClosing;
             }
-
-            if (debugStartEvents != null)
-                debugStartEvents.BeforeExecute -= DebugStartEvents_BeforeExecute;
 
             if (vcProjectEngineEvents != null)
                 vcProjectEngineEvents.ItemPropertyChange2 -= OnVcProjectEngineItemPropertyChange2;
