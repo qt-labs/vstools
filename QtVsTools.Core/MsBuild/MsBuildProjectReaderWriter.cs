@@ -1277,7 +1277,8 @@ namespace QtVsTools.Core.MsBuild
                 if (project is not XElement xmlProject)
                     return null;
                 return xmlProject.Elements(ns + "ItemDefinitionGroup")
-                    .FirstOrDefault(config => config.Attribute("Condition").Value.Contains(configName));
+                    .FirstOrDefault(config =>
+                        config.Attribute("Condition")?.Value.Contains(configName) ?? false);
             }
 
             public IEnumerable<object> GetItems(
