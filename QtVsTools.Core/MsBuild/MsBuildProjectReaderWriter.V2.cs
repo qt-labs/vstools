@@ -22,7 +22,7 @@ namespace QtVsTools.Core.MsBuild
             var qtInstallValue = QtVersionManager.The().GetDefaultVersion();
 
             // Get project user properties (old format)
-            var refreshUserProps = () => this[Files.Project].Xml
+            XElement refreshUserProps() => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ProjectExtensions")
                 .Elements(ns + "VisualStudio")
@@ -60,7 +60,7 @@ namespace QtVsTools.Core.MsBuild
             Commit("Copying Qt build reference to QtInstall project property");
 
             // Get C++ compiler properties
-            var refreshCompiler = () => this[Files.Project].Xml
+            List<XElement> refreshCompiler() => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ClCompile")
@@ -68,14 +68,14 @@ namespace QtVsTools.Core.MsBuild
             var compiler = refreshCompiler();
 
             // Get linker properties
-            var refreshLinker = () => this[Files.Project].Xml
+            List<XElement> refreshLinker() => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "Link")
                 .ToList();
             var linker = refreshLinker();
 
-            var refreshResourceCompiler = () => this[Files.Project].Xml
+            List<XElement> refreshResourceCompiler() => this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "ItemDefinitionGroup")
                 .Elements(ns + "ResourceCompile")
