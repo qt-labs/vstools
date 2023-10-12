@@ -30,7 +30,7 @@
             <li>
                 <a title="Qt VS Tools for Visual Studio 2022"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022">
-                    Qt VS Tools for Visual Studio 2019
+                    Qt VS Tools for Visual Studio 2022
                 </a>
             </li>
         <#}#>
@@ -47,9 +47,8 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
 <p><h3>Documentation</h3></p>
 <ul>
     <li>
-        <a title="Qt VS Tools Manual"
-            href="http://doc.qt.io/qtvstools/qtvstools-getting-started.html">
-            Qt VS Tools Manual
+        <a title="Qt VS Tools Documentation" href="https://doc.qt.io/qtvstools/">
+            Qt VS Tools Documentation
         </a>
     </li>
     <li>
@@ -62,24 +61,26 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
 <p><h3><span>The main features of Qt VS Tools are:</span></h3></p>
 <ul>
     <li>
+        Support for Qt-enabled CMake projects.
+    </li>
+    <li>
         Wizards for creating new Qt and Qt Quick projects and files.
     </li>
     <li>
-        Automated build setup for the <a href="http://doc.qt.io/qt-5/moc.html">
+        Automated build setup for the <a href="https://doc.qt.io/qt/moc.html">
             Meta-Object Compiler (moc)
-        </a>, <a href="http://doc.qt.io/qt-5/uic.html">
+        </a>, <a href="https://doc.qt.io/qt/uic.html">
             User Interface Compiler (uic)
         </a>, and
-        <a href="http://doc.qt.io/qt-5/rcc.html">Resource Compiler (rcc)</a>.
+        <a href="https://doc.qt.io/qt/rcc.html">Resource Compiler (rcc)</a>.
     </li>
     <li>
-        Import and export of Qt project files (<code>.pro</code>) and project include files
+        Import of Qt project files (<code>.pro</code>) and project include files
         (<code>.pri</code>).
     </li>
     <li>
-        Automated conversion of a Qt VS Tools project to a
-        <a href="http://doc.qt.io/qt-5/qmake-manual.html">qmake</a> project, or the other way
-        around.
+        Automated conversion of a <a href="https://doc.qt.io/qt/qmake-manual.html">qmake</a>
+            project into a Qt/MSBuild project.
     </li>
     <li>
         Integrated Qt resource management.
@@ -150,7 +151,7 @@ For more information on how to contribute to the Qt Visual Tools via Qt Labs, pl
 </ul>
 <p>
     You are welcome to join the discussions in
-    <a href="http://lists.qt-project.org/mailman/listinfo"> the Qt Project mailing lists</a>,
+    <a href="https://lists.qt-project.org/mailman/listinfo"> the Qt Project mailing lists</a>,
     <a href="https://forum.qt.io/"> development forums</a> and to
     <a href="https://wiki.qt.io/Qt_Contribution_Guidelines"> contribute to Qt</a>.
 </p>
