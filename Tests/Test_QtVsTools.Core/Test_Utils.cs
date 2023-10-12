@@ -26,7 +26,7 @@ namespace QtVsTools.Test.Core
 
             var text = "the quick brown fox jumped over the lazy dog";
             var haystack = text.ToArray();
-            var find = (string what) =>
+            var find = new Func<string, long>(what =>
             {
                 var needle = what.ToArray();
                 var time = Stopwatch.StartNew();
@@ -34,7 +34,7 @@ namespace QtVsTools.Test.Core
                 time.Stop();
                 Assert.IsTrue(index == text.LastIndexOf(what));
                 return time.ElapsedTicks;
-            };
+            });
 
             var test = new[] { "dog", "fox", "cat", "the", text }
                 .ToDictionary(x => x, x => 0.0);
