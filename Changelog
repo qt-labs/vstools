@@ -1,7 +1,31 @@
-Qt Visual Studio Tools version 3.0.0:
+Qt Visual Studio Tools version 3.0.2:
 
 This major update of the Qt VS Tools extension adds support for Qt-enabled CMake projects, and drops
 support for legacy Qt projects based on custom build steps.
+
+Changes
+-------
+
+ - Fix importing a project with no filters or solution file
+ - Fix null reference exception while converting a Win32Proj project
+ - Fixed QTVSADDINBUG-409: Enable item wizards for cmake based projects
+ - Fixed QTVSADDINBUG-960: In the new-project wizard, allow to select a unregistered Qt version
+ - Fixed QTVSADDINBUG-1133: Add option to not show Qt/CMake notifications
+ - Fixed QTVSADDINBUG-1133: Preserve existing CMake presets
+ - Fixed QTVSADDINBUG-1127: Fix cmd parser duplicating values as free args
+ - Fixed QTVSADDINBUG-1113: Fix broken .vcxproj when auto-generating .qrc files
+ - Fixed QTVSADDINBUG-1126: Properly filter the list of Qt modules used in the project
+
+Qt Visual Studio Tools version 3.0.1:
+
+Changes
+-------
+ - Better legacy package detection
+ - Fixed QTVSADDINBUG-1122: Describe selecting Qt versions for CMake projects
+ - Fixed QTVSADDINBUG-1121: Update CMake presets when Qt versions are modified
+ - Fixed QTVSADDINBUG-1093: Wizard adding new .cpp and .h files under wrong section
+
+Qt Visual Studio Tools version 3.0.0:
 
 Changes
 -------
