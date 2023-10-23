@@ -172,10 +172,11 @@ namespace QtVsTools.Core.MsBuild
             Commit("Removing Qt module macros from resource compiler properties");
 
             var qtVersion = QtVersionManager.The().GetVersionInfo(qtInstallValue);
-            moduleNames = moduleNames // remove proVarQT values not provided by the used Qt version
-                .Where(moduleName => QtModules.Instance.GetAvailableModules(qtVersion.qtMajor)
-                    .Select(module => module.proVarQT)
-                    .Contains(moduleName))
+            moduleNames = QtModules.Instance.GetAvailableModules(qtVersion.qtMajor)
+                // remove proVarQT values not provided by the used Qt version
+                .SelectMany(x => x.proVarQT.Split(' '))
+                .SelectMany(x => x.EndsWith("-private") ? new[] { x } : new[] { x, $"{x}-private" })
+                .Intersect(moduleNames)
                 .ToHashSet();
 
             this[Files.Project].Xml
