@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading.Tasks;
-using EnvDTE;
+using Microsoft.VisualStudio.Debugger.Internal;
 using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -319,6 +319,64 @@ namespace QtVsTools.Qml.Debug
                 }
             }
             return solutionRccs;
+        }
+    }
+
+    internal class ProvideLaunchHookAttribute : RegistrationAttribute
+    {
+        public Type LaunchHookType { get; set; }
+        private string ClassId => $"{LaunchHookType?.GUID:B}";
+        private string ClassKey => @$"CLSID\{ClassId}";
+        private const string HooksKey = @"Debugger\LaunchHooks110";
+
+        public ProvideLaunchHookAttribute()
+        {
+        }
+
+        public ProvideLaunchHookAttribute(Type launchHookType)
+        {
+            LaunchHookType = launchHookType;
+        }
+
+        public override void Register(RegistrationContext context)
+        {
+            using var hook = context.CreateKey(ClassKey);
+            hook.SetValue(string.Empty, LaunchHookType.Name);
+            hook.SetValue("CodeBase", context.CodeBase);
+            hook.SetValue("Class", LaunchHookType.FullName);
+            hook.SetValue("InprocServer32", context.InprocServerPath);
+            hook.SetValue("ThreadingModel", "Both");
+            using var hooks = context.CreateKey(HooksKey);
+            hooks.SetValue(LaunchHookType.Name, ClassId);
+        }
+
+        public override void Unregister(RegistrationContext context)
+        {
+            context.RemoveKey(ClassKey);
+            using var hooks = context.CreateKey(HooksKey);
+            hooks.SetValue(LaunchHookType.Name, null);
+        }
+    }
+
+    public class QmlDebugLaunchHook : IVsDebugLaunchHook110
+    {
+        private IVsDebugLaunchHook110 NextHook { get; set; }
+
+        public int SetNextHook(IVsDebugLaunchHook110 nextHook)
+        {
+            NextHook = nextHook;
+            return S_OK;
+        }
+
+        public int IsProcessRecycleRequired(VsDebugTargetProcessInfo[] proc)
+        {
+            return NextHook?.IsProcessRecycleRequired(proc) ?? S_FALSE;
+        }
+
+        public int OnLaunchDebugTargets(uint targetCount,
+            VsDebugTargetInfo4[] targets, VsDebugTargetProcessInfo[] results)
+        {
+            return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
         }
     }
 }

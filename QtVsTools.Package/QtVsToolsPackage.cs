@@ -26,6 +26,7 @@ namespace QtVsTools
     using Core;
     using Package;
     using Package.CMake;
+    using Qml.Debug;
     using VisualStudio;
 
     using static Utils;
@@ -81,6 +82,8 @@ namespace QtVsTools
     // Qt Versions page
     [ProvideOptionPage(typeof(Core.Options.QtVersionsPage),
         "Qt", "Versions", 0, 0, true, Sort = 1)]
+
+    [ProvideLaunchHook(typeof(QmlDebugLaunchHook))]
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {

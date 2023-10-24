@@ -40,6 +40,7 @@
     <StartAction>Program</StartAction>
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
+    <NoWarn Condition="'$(VisualStudioVersion)'=='16.0'">CS1762</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +65,10 @@
   // -->
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Reference Include="Microsoft.VisualStudio.Debugger.Interop.Internal">
+      <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Debugger.Interop.Internal.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
