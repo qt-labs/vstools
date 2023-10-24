@@ -3,7 +3,9 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -58,6 +60,13 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override void BeforeTemplateExpansion()
         {
             Parameter[Qml.Prefix] = Parameter[NewProject.SafeName].ToLower();
+        }
+
+        protected override void ExpandQtSettings(StringBuilder xml, IWizardConfiguration config)
+        {
+            base.ExpandQtSettings(xml, config);
+            if (config.IsDebug)
+                xml.AppendLine(@"<QtQMLDebugEnable>true</QtQMLDebugEnable>");
         }
 
         protected override CMakeConfigPreset ConfigureCMakePreset(IWizardConfiguration config)

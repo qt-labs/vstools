@@ -504,21 +504,10 @@ namespace QtVsTools.Wizards.ProjectWizard
             xml = new StringBuilder();
             foreach (IWizardConfiguration c in Configurations) {
                 xml.AppendLine(string.Format(@"
-  <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"" Label=""QtSettings"">
-    <QtInstall>{2}</QtInstall>
-    <QtModules>{3}</QtModules>
-    <QtBuildConfig>{4}</QtBuildConfig>",
+  <PropertyGroup Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"" Label=""QtSettings"">",
                     /*{0}*/ c.Name,
-                    /*{1}*/ c.Platform,
-                    /*{2}*/ c.QtVersionName,
-                    /*{3}*/ string.Join(";", c.Modules.Union(ExtraModules)),
-                    /*{4}*/ c.IsDebug ? "debug" : "release"));
-                if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
-                    xml.AppendLine(@"
-    <QtDeploy>true</QtDeploy>
-    <QtDeployToProjectDir>true</QtDeployToProjectDir>
-    <QtDeployVsContent>true</QtDeployVsContent>");
-                }
+                    /*{1}*/ c.Platform));
+                ExpandQtSettings(xml, c);
                 xml.AppendLine(@"
   </PropertyGroup>");
             }
@@ -737,6 +726,20 @@ namespace QtVsTools.Wizards.ProjectWizard
                     /*{0}*/ item.ItemType));
             }
             Parameter[NewProject.FilterItems] = FormatParam(xml);
+        }
+
+        protected virtual void ExpandQtSettings(StringBuilder xml, IWizardConfiguration c)
+        {
+            xml.AppendLine($@"
+    <QtInstall>{c.QtVersionName}</QtInstall>
+    <QtModules>{string.Join(";", c.Modules.Union(ExtraModules))}</QtModules>
+    <QtBuildConfig>{(c.IsDebug ? "debug" : "release")}</QtBuildConfig>");
+            if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
+                xml.AppendLine(@"
+    <QtDeploy>true</QtDeploy>
+    <QtDeployToProjectDir>true</QtDeployToProjectDir>
+    <QtDeployVsContent>true</QtDeployVsContent>");
+            }
         }
 
         // Matches empty lines; captures first newline
