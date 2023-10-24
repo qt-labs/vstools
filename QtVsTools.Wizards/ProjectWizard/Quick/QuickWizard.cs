@@ -63,8 +63,11 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override CMakeConfigPreset ConfigureCMakePreset(IWizardConfiguration config)
         {
             var preset = base.ConfigureCMakePreset(config);
-            if (config.IsDebug)
+            if (config.IsDebug) {
                 preset.CacheVariables.CxxFlags = "-DQT_QML_DEBUG";
+                (preset.Environment ??= new())
+                    .QmlDebugArgs = $"-qmljsdebugger=file:{{{Guid.NewGuid()}}},block";
+            }
             return preset;
         }
     }

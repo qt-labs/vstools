@@ -51,15 +51,16 @@ namespace QtVsTools.Core.CMake
                 && item.Name.Equals("IsDefaultStartupProject")) is not { } defaultStartup) {
                 return;
             }
-            await AddLaunchSettingsAsync(defaultStartup.Target);
+
+            await Task.Yield();
         }
 
         private async Task OnFileEntityChangedAsync(object sender, FileEntityChangedEventArgs args)
         {
             if (Status != QtStatus.True)
                 return;
-            if (args.Path.Equals(@".vs\launch.vs.json", Utils.IgnoreCase))
-                await SelectLaunchSettingsAsync();
+
+            await Task.Yield();
         }
     }
 }

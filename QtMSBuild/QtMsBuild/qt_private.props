@@ -139,11 +139,10 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // QML debugging
   // -->
-  <PropertyGroup>
-    <QmlDebug Condition="'$(QtQMLDebugEnable)' == 'true'"
-      >-qmljsdebugger=file:$(ProjectGuid),block</QmlDebug>
-    <LocalDebuggerCommandArguments
-      >$(QmlDebug)</LocalDebuggerCommandArguments>
+  <PropertyGroup Condition="'$(QtQMLDebugEnable)' == 'true'">
+    <QmlDebug>-qmljsdebugger=file:$(ProjectGuid),block</QmlDebug>
+    <LocalDebuggerEnvironment>QML_DEBUG_ARGS=$(QmlDebug)
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
 
   <!--

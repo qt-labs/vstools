@@ -70,6 +70,9 @@ namespace QtVsTools.Wizards.ProjectWizard
 
                 [DataMember(Name = "PATH", EmitDefaultValue = false, Order = 1)]
                 public string Path { get; set; }
+
+                [DataMember(Name = "QML_DEBUG_ARGS", EmitDefaultValue = false, Order = 2)]
+                public string QmlDebugArgs { get; set; }
             }
 
             [DataMember(Name = "environment", EmitDefaultValue = false, Order = 7)]

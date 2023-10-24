@@ -376,6 +376,18 @@ namespace QtVsTools.Qml.Debug
         public int OnLaunchDebugTargets(uint targetCount,
             VsDebugTargetInfo4[] targets, VsDebugTargetProcessInfo[] results)
         {
+            var isNative = targets[0].guidLaunchDebugEngine == NativeEngine.Id;
+            var hasEnv = targets[0].bstrEnv is { Length: > 0 };
+            var noDebug = (targets[0].LaunchFlags & (uint)__VSDBGLAUNCHFLAGS.DBGLAUNCH_NoDebug) > 0;
+            if (!isNative || !hasEnv || noDebug)
+                return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
+
+            var qmlDebugArgs = targets[0].bstrEnv.Split('\0')
+                .FirstOrDefault(x => x.StartsWith("QML_DEBUG_ARGS=", IgnoreCase));
+            qmlDebugArgs = qmlDebugArgs?.Substring(qmlDebugArgs.IndexOf('=') + 1);
+            if (qmlDebugArgs is { Length: > 0})
+                targets[0].bstrArg = $"{targets[0].bstrArg?.Trim()} {qmlDebugArgs.Trim()}".Trim();
+
             return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
         }
     }

@@ -191,6 +191,10 @@ namespace QtVsTools.Core.CMake
                     {
                         ["CMAKE_BUILD_TYPE"] = "Debug",
                         ["CMAKE_CXX_FLAGS"] = "-DQT_QML_DEBUG"
+                    },
+                    ["environment"] = new JObject
+                    {
+                        ["QML_DEBUG_ARGS"] = $"-qmljsdebugger=file:{{{Guid.NewGuid()}}},block"
                     }
                 });
                 return;
