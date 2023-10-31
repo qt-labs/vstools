@@ -37,6 +37,18 @@
       Description="Select whether Qt for Windows Deployment Tool (windeployqt) should be called after build."/>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Environment
+    // -->
+    <StringListProperty
+      Name="QtDeployEnv" Category="Settings" DisplayName="Environment Variables">
+      <StringListProperty.Description>
+        <sys:String>
+          <![CDATA[Add/update environment variables ( [name=value[;name=value...]] ).]]>
+        </sys:String>
+      </StringListProperty.Description>
+    </StringListProperty>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Application Binary
     // -->
     <StringListProperty

@@ -257,7 +257,8 @@
       <Cmd Condition="'%(Options.PosArg)' != ''">$(Cmd) %(Options.PosArg)</Cmd>
     </PropertyGroup>
     <Message Importance="high" Text="windeployqt: $(Cmd)" />
-    <Exec Command="$(Cmd) > &quot;$(QtDeployLog)&quot;" />
+    <Exec Command="$(Cmd) > &quot;$(QtDeployLog)&quot;"
+          EnvironmentVariables="$(QtDeployEnv)" />
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -13,6 +13,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <QtDeploy Condition="'$(QtDeploy)' == ''">false</QtDeploy>
+    <QtDeployEnv Condition="'$(QtDeployEnv)' == ''">VCINSTALLDIR=$(VCInstallDir)</QtDeployEnv>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <QtDeploy>
