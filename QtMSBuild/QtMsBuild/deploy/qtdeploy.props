@@ -57,5 +57,7 @@
       >false</QtDeployVerbose>
     <QtDeployVsContent Condition="'$(QtDeployVsContent)' == ''"
       >false</QtDeployVsContent>
+    <QtDeployCopyFiles Condition="'$(QtDeployCopyFiles)' == ''"
+      >false</QtDeployCopyFiles>
   </PropertyGroup>
 </Project>

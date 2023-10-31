@@ -28,8 +28,13 @@
     </Rule.DataSource>
     <Rule.Categories>
       <Category Name="General" DisplayName="General"/>
-      <Category Name="Settings" DisplayName="windeployqt"/>
+      <Category Name="Settings" DisplayName="Options"/>
+      <Category Name="Output" DisplayName="Project Output"/>
     </Rule.Categories>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Enable Deployment
+    // -->
     <BoolProperty
       Name="QtDeploy"
       Category="General"
@@ -49,16 +54,30 @@
     </StringListProperty>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Application Binary
+    // Project Output
     // -->
     <StringListProperty
-      Name="QtDeployFiles" Category="Settings" DisplayName="Application Binary">
+      Name="QtDeployFiles" Category="Output" DisplayName="Output Path">
       <StringListProperty.Description>
         <sys:String>
           <![CDATA[Binaries or directory containing the application binary ( [files] ).]]>
         </sys:String>
       </StringListProperty.Description>
     </StringListProperty>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Copy Project Output
+    // -->
+    <EnumProperty
+      Name="QtDeployCopyFiles" Category="Output" DisplayName="Deploy Project Output">
+      <EnumProperty.Description>
+        <sys:String>
+          <![CDATA[Include project output in deployment.]]>
+        </sys:String>
+      </EnumProperty.Description>
+      <EnumValue Name="false" DisplayName="Disabled"/>
+      <EnumValue Name="true" DisplayName="Copy to deployment directory"/>
+    </EnumProperty>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Deployment Directory
