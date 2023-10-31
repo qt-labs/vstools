@@ -23,7 +23,7 @@
     <Rule.DataSource>
       <DataSource
         Persistence="ProjectFile"
-        Label="QtDeploy"
+        Label="QtSettings"
         HasConfigurationCondition="true"/>
     </Rule.DataSource>
     <Rule.Categories>

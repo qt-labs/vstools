@@ -39,6 +39,21 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Fallback to default property values
+  // -->
+  <PropertyGroup Condition="'$(QtDeployFiles)' == ''">
+    <QtDeployFiles>$(TargetPath)</QtDeployFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(QtDeployEnv)' == ''">
+    <QtDeployEnv>VCINSTALLDIR=$(VCInstallDir)</QtDeployEnv>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(QtDeployDir)' == ''">
+    <QtDeployDir Condition="'$(QtDeployToProjectDir)' == 'true'">$(ProjectDir)</QtDeployDir>
+    <QtDeployDir Condition="'$(QtDeployToProjectDir)' != 'true'">$(OutDir)</QtDeployDir>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Deploy Qt files
   // -->
   <Target Name="QtDeploy"
@@ -47,7 +62,34 @@
     Condition="'$(QtDeploy)' == 'true' AND '$(ApplicationType)' != 'Linux'">
 
     <ItemGroup>
-      <QtDeploy Include="$(TargetPath)"/>
+      <QtDeploy Include="$(TargetPath)">
+        <QtDeploy>$(QtDeploy)</QtDeploy>
+        <QtDeployFiles>$(QtDeployFiles)</QtDeployFiles>
+        <QtDeployEnv>$(QtDeployEnv)</QtDeployEnv>
+        <QtDeployDir>$(QtDeployDir)</QtDeployDir>
+        <QtDeployLibDir>$(QtDeployLibDir)</QtDeployLibDir>
+        <QtDeployPluginDir>$(QtDeployPluginDir)</QtDeployPluginDir>
+        <QtDeployDebugRelease>$(QtDeployDebugRelease)</QtDeployDebugRelease>
+        <QtDeployPdb>$(QtDeployPdb)</QtDeployPdb>
+        <QtDeployForce>$(QtDeployForce)</QtDeployForce>
+        <QtDeployNoPatchQt>$(QtDeployNoPatchQt)</QtDeployNoPatchQt>
+        <QtDeployNoPlugins>$(QtDeployNoPlugins)</QtDeployNoPlugins>
+        <QtDeployNoLibraries>$(QtDeployNoLibraries)</QtDeployNoLibraries>
+        <QtDeployQmlDir>$(QtDeployQmlDir)</QtDeployQmlDir>
+        <QtDeployQmlImport>$(QtDeployQmlImport)</QtDeployQmlImport>
+        <QtDeployNoQuickImport>$(QtDeployNoQuickImport)</QtDeployNoQuickImport>
+        <QtDeployNoTranslations>$(QtDeployNoTranslations)</QtDeployNoTranslations>
+        <QtDeployNoSystemD3dCompiler>$(QtDeployNoSystemD3dCompiler)</QtDeployNoSystemD3dCompiler>
+        <QtDeployNoVirtualKeyboard>$(QtDeployNoVirtualKeyboard)</QtDeployNoVirtualKeyboard>
+        <QtDeployCompilerRuntime>$(QtDeployCompilerRuntime)</QtDeployCompilerRuntime>
+        <QtDeployWebkit2>$(QtDeployWebkit2)</QtDeployWebkit2>
+        <QtDeployAngle>$(QtDeployAngle)</QtDeployAngle>
+        <QtDeployNoOpenglSw>$(QtDeployNoOpenglSw)</QtDeployNoOpenglSw>
+        <QtDeployIncludeModules>$(QtDeployIncludeModules)</QtDeployIncludeModules>
+        <QtDeployExcludeModules>$(QtDeployExcludeModules)</QtDeployExcludeModules>
+        <QtDeployVerbose>$(QtDeployVerbose)</QtDeployVerbose>
+        <QtDeployVsContent>$(QtDeployVsContent)</QtDeployVsContent>
+      </QtDeploy>
     </ItemGroup>
 
     <!--
