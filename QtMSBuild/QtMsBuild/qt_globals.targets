@@ -65,12 +65,10 @@
   // -->
   <PropertyGroup Condition="'$(QtInnerBuild)' == ''">
     <QtVarsOutdated>false</QtVarsOutdated>
-    <CleanQtModules
-      >$([System.String]::Join(';',$(QtModules.Split(';',StringSplitOptions.RemoveEmptyEntries))))</CleanQtModules>
     <QtVarsOutdated
       Condition="!Exists('$(QtVarsFilePath)')
         OR '$(QtBkup_QtInstall)'                != '$(QtInstall)'
-        OR '$(QtBkup_QtModules)'                != '$(CleanQtModules)'
+        OR '$(QtBkup_QtModules)'                != '$(QtModules)'
         OR '$(QtBkup_QtPathBinaries)'           != '$(QtPathBinaries)'
         OR '$(QtBkup_QtPathLibraryExecutables)' != '$(QtPathLibraryExecutables)'
         OR '$(QtBkup_QtHeaderSearchPath)'       != '$(QtHeaderSearchPath)'
