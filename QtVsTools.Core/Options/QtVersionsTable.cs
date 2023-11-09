@@ -190,9 +190,10 @@ namespace QtVsTools.Core.Options
                     version.FieldVersionName.ValidationError = null;
                     if (string.IsNullOrEmpty(version.VersionName)) {
                         version.FieldVersionName.ValidationError = "Name cannot be empty";
-                    } else if (Versions.Any(otherVersion => otherVersion != version
-                        && otherVersion.VersionName == version.VersionName)) {
-                        version.FieldVersionName.ValidationError = "Duplicate version names";
+                    } else if (Versions.Any(existing => existing != version
+                        && existing.VersionName == version.VersionName
+                        && existing.State != State.Removed)) {
+                        version.FieldVersionName.ValidationError = "Duplicated version name";
                     }
                     mustRefresh |= version.FieldVersionName.UpdateUi;
                 }
