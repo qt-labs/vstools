@@ -133,23 +133,27 @@ namespace QtVsTools.Core.Options
             try {
                 var versions = VersionsTable.Versions;
                 foreach (var version in versions) {
+                    version.ErrorMessageOnApply = null;
                     if (!version.State.HasFlag(State.Modified) || version.Host != BuildHost.Windows)
                         continue;
-                    if (version.State.HasFlag((State)Column.Path)) {
-                        var versionPath = version.Path;
-                        if (Path.GetFileName(versionPath).Equals("qmake.exe", IgnoreCase))
-                            versionPath = Path.GetDirectoryName(versionPath);
-                        if (Path.GetFileName(versionPath ?? "").Equals("bin", IgnoreCase))
-                            versionPath = Path.GetDirectoryName(versionPath);
+                    if (!version.State.HasFlag((State)Column.Path))
+                        continue;
 
-                        QMakeConf qtConfiguration = new QMakeConf(versionPath);
-                        var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
+                    var versionPath = version.Path;
+                    if (Path.GetFileName(versionPath).Equals("qmake.exe", IgnoreCase))
+                        versionPath = Path.GetDirectoryName(versionPath);
+                    if (Path.GetFileName(versionPath ?? "").Equals("bin", IgnoreCase))
+                        versionPath = Path.GetDirectoryName(versionPath);
 
-                        if (generator is not "MSVC.NET" and not "MSBUILD") {
-                            errorMessages.Add($"{version.VersionName} - Unsupported makefile "
-                              + $"generator: {generator}");
-                        }
-                    }
+                    var qtConfiguration = new QMakeConf(versionPath);
+                    var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
+
+                    if (generator is "MSVC.NET" or "MSBUILD")
+                        continue;
+
+                    errorMessages.Add($"{version.VersionName} - Unsupported makefile "
+                      + $"generator: {generator}");
+                    version.ErrorMessageOnApply = errorMessages.Last();
                 }
             } catch (Exception exception) {
                 errorMessages.Add(exception.Message);

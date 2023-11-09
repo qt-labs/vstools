@@ -37,6 +37,19 @@ namespace QtVsTools.Core.Options
         [String("Linux WSL")] LinuxWSL
     }
 
+    public class ErrorOnApplyTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DefaultTemplate { get; set; }
+        public DataTemplate ErrorTemplate { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is QtVersionsTable.Row dataItem)
+                return dataItem.HasErrorOnApply ? ErrorTemplate : DefaultTemplate;
+            return base.SelectTemplate(item, container);
+        }
+    }
+
     public partial class QtVersionsTable : UserControl
     {
         LazyFactory Lazy { get; } = new();
@@ -156,6 +169,9 @@ namespace QtVsTools.Core.Options
 
             public State State { get; set; } = State.Unknown;
             public bool RowVisible => State != State.Removed;
+
+            public bool HasErrorOnApply => !string.IsNullOrEmpty(ErrorMessageOnApply);
+            public string ErrorMessageOnApply { get; set; }
         }
 
         Field FocusedField { get; set; }

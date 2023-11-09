@@ -13,6 +13,7 @@
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=PresentationFramework"
+             xmlns:local="clr-namespace:QtVsTools.Core.Options"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -131,16 +132,43 @@
                               CanUserResize="False">
         <DataGridTemplateColumn.CellTemplate>
           <DataTemplate>
-            <CheckBox x:Name="IsDefault"
-                      IsChecked="{Binding IsDefault}"
-                      Focusable="{Binding DefaultEnabled}"
-                      Visibility="{Binding RowContentVisibility}"
-                      Background="Transparent"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"
-                      Click="Default_Click"
-                      Loaded="Control_Loaded"
-                      ToolTip="{Binding FieldDefault.ToolTip}"></CheckBox>
+            <ContentControl Content="{Binding}">
+              <ContentControl.ContentTemplateSelector>
+                <local:ErrorOnApplyTemplateSelector>
+                  <local:ErrorOnApplyTemplateSelector.DefaultTemplate>
+                    <DataTemplate>
+                      <CheckBox x:Name="IsDefault"
+                                IsChecked="{Binding IsDefault}"
+                                Focusable="{Binding DefaultEnabled}"
+                                Visibility="{Binding RowContentVisibility}"
+                                Background="Transparent"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                ToolTip="{Binding FieldDefault.ToolTip}"
+                                Click="Default_Click"
+                                Loaded="Control_Loaded">
+                      </CheckBox>
+                    </DataTemplate>
+                  </local:ErrorOnApplyTemplateSelector.DefaultTemplate>
+                  <local:ErrorOnApplyTemplateSelector.ErrorTemplate>
+                    <DataTemplate>
+                      <Grid HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="4"
+                            ToolTip="{Binding ErrorMessageOnApply}"
+                            vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+                            RelativeSource={RelativeSource Self},
+                            Converter={StaticResource BrushToColorConverter}}">
+                        <Rectangle Style="{StaticResource DesignTimeRectangle}" />
+                        <imaging:CrispImage Width="16"
+                                            Height="16"
+                                            Moniker="{x:Static catalog:KnownMonikers.StatusWarning}" />
+                      </Grid>
+                      </DataTemplate>
+                  </local:ErrorOnApplyTemplateSelector.ErrorTemplate>
+                </local:ErrorOnApplyTemplateSelector>
+              </ContentControl.ContentTemplateSelector>
+            </ContentControl>
           </DataTemplate>
         </DataGridTemplateColumn.CellTemplate>
       </DataGridTemplateColumn>
