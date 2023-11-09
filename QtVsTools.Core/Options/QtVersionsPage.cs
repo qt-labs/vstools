@@ -15,7 +15,7 @@ namespace QtVsTools.Core.Options
 {
     using Common;
     using Core;
-    using QtVsTools.VisualStudio;
+    using VisualStudio;
     using static QtVersionsTable;
     using static Utils;
 
@@ -60,7 +60,7 @@ namespace QtVsTools.Core.Options
                     State = State.Unknown
                 });
             }
-            VersionsTable.UpdateVersions(versions);
+            VersionsTable.AddVersions(versions);
         }
 
         public override void SaveSettingsToStorage()

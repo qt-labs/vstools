@@ -15,7 +15,8 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=PresentationFramework"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="800"
+             Loaded="QtVersionsTable_OnLoaded">
   <UserControl.Resources>
     <Style x:Key="DesignTimeStyle"
            TargetType="{x:Type FrameworkElement}">
@@ -45,22 +46,28 @@
     <vsui:BrushToColorConverter x:Key="BrushToColorConverter" />
   </UserControl.Resources>
 
-  <DataGrid Margin="0,0,0,0"
-            Name="DataGrid"
-            AutoGenerateColumns="False"
-            IsReadOnly="True"
-            BorderThickness="1"
-            BorderBrush="LightGray"
-            GridLinesVisibility="All"
-            HorizontalGridLinesBrush="LightGray"
-            VerticalGridLinesBrush="LightGray"
-            CanUserReorderColumns="False"
-            CanUserSortColumns="False"
-            CanUserResizeRows="False"
-            RowHeaderWidth="0"
-            FrozenColumnCount="0"
-            Grid.Row="0"
-            d:ItemsSource="{d:SampleData ItemCount=3}">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <DataGrid Margin="0,0,0,0"
+              Name="DataGrid"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              BorderThickness="1"
+              BorderBrush="LightGray"
+              GridLinesVisibility="All"
+              HorizontalGridLinesBrush="LightGray"
+              VerticalGridLinesBrush="LightGray"
+              CanUserReorderColumns="False"
+              CanUserSortColumns="False"
+              CanUserResizeRows="False"
+              RowHeaderWidth="0"
+              FrozenColumnCount="0"
+              Grid.Row="0"
+              d:ItemsSource="{d:SampleData ItemCount=3}">
     <DataGrid.Resources>
       <Style x:Key="TextBoxStyle"
              TargetType="{x:Type TextBox}">
@@ -287,4 +294,25 @@
       </DataGridTemplateColumn>
     </DataGrid.Columns>
   </DataGrid>
+
+    <StackPanel Grid.Row="1"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right">
+      <Label MinHeight="24"
+             HorizontalAlignment="Right"
+             Margin="0,6,0,0">Register Qt versions from a Qt installer location:</Label>
+      <Button MinWidth="80"
+              MinHeight="24"
+              Margin="0,6,6,0"
+              Padding="10,0,10,0"
+              Click="OnBrowseQtInstallation_Click">Browse</Button>
+      <Button MinWidth="80"
+              MinHeight="24"
+              Margin="0,6,0,0"
+              Padding="10,0,10,0"
+              x:Name="ButtonAutodetect"
+              Click="OnAutodetectQtInstallation_Click">Autodetect</Button>
+    </StackPanel>
+
+  </Grid>
 </UserControl>
