@@ -57,11 +57,31 @@ namespace QtVsTools.QtMsBuild.Tasks
                         string.Format(@"[ ;][%$]\({0}\)$", propertyName),
                         string.Empty);
                 }
-                if (!ExcludeValues.Contains(varValue, StringComparer.InvariantCultureIgnoreCase)) {
-                    var outVar = new TaskItem(varName.Trim());
-                    outVar.SetMetadata("Value", varValue.Trim());
-                    result.Add(outVar);
+                if (ExcludeValues != null && ExcludeValues.Length > 0) {
+                    var varListValue = varValue.Split(';');
+                    var includedValues = new List<string>();
+                    var excludedValuesByType = ExcludeValues.GroupBy(x => x.EndsWith("*"));
+                    var excludedExactValues = excludedValuesByType
+                        .Where(x => !x.Key).SelectMany(x => x);
+                    var excludedPrefixes = excludedValuesByType
+                        .Where(x => x.Key).SelectMany(x => x)
+                        .Select(x => x.Substring(0, x.Length - 1));
+                    foreach (var value in varListValue) {
+                        if (excludedExactValues
+                            .Any(x => value.Equals(x, StringComparison.OrdinalIgnoreCase))) {
+                            continue;
+                        }
+                        if (excludedPrefixes
+                            .Any(x => value.StartsWith(x, StringComparison.OrdinalIgnoreCase))) {
+                            continue;
+                        }
+                        includedValues.Add(value);
+                    }
+                    varValue = string.Join(";", includedValues);
                 }
+                var outVar = new TaskItem(varName.Trim());
+                outVar.SetMetadata("Value", varValue.Trim());
+                result.Add(outVar);
             }
             OutVars = result.ToArray();
             #endregion

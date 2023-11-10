@@ -466,7 +466,7 @@ DummyQmlObject { }
       Condition="'$(QtQMakeTemplate)' == 'vcapp'"
       Project="$(QtVarsWorkDir)\qtvars.vcxproj"
       VarDefs="@(QMake_MSBuild_VarDef)"
-      ExcludeValues="$(QtVarsWorkDir)">
+      ExcludeValues="$(QtVarsWorkDir);$(Temp)*;/include">
       <Output TaskParameter="OutVars" ItemName="QtVar"/>
     </GetVarsFromMSBuild>
 
