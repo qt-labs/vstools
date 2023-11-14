@@ -263,7 +263,7 @@
       <QtVarsProFileInput>
         <!--
 # Selected Qt modules -->
-        QT += @(QtModuleList->'%(Identity)', ' ')
+        QT = @(QtModuleList->'%(Identity)', ' ')
         <!--
 # Custom additional .pro file code (from property page) -->
         @(QMakeCodeLine->'%(Identity)','%0D%0A')
