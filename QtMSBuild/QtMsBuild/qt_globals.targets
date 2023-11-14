@@ -67,15 +67,15 @@
     <QtVarsOutdated>false</QtVarsOutdated>
     <QtVarsOutdated
       Condition="!Exists('$(QtVarsFilePath)')
-        OR '$(QtBkup_QtInstall)'                != '$(QtInstall)'
-        OR '$(QtBkup_QtModules)'                != '$(QtModules)'
-        OR '$(QtBkup_QtPathBinaries)'           != '$(QtPathBinaries)'
-        OR '$(QtBkup_QtPathLibraryExecutables)' != '$(QtPathLibraryExecutables)'
-        OR '$(QtBkup_QtHeaderSearchPath)'       != '$(QtHeaderSearchPath)'
-        OR '$(QtBkup_QtLibrarySearchPath)'      != '$(QtLibrarySearchPath)'
-        OR '$(QtBkup_QtVars)'                   != '$(QtVars)'
-        OR '$(QtBkup_QMakeCodeLines)'           != '$(QMakeCodeLines)'
-        OR '$(QtBkup_QtBuildConfig)'            != '$(QtBuildConfig)'"
+        OR '$(QtBkup_QtInstall)'                != '$(QtCleaned_QtInstall)'
+        OR '$(QtBkup_QtModules)'                != '$(QtCleaned_QtModules)'
+        OR '$(QtBkup_QtPathBinaries)'           != '$(QtCleaned_QtPathBinaries)'
+        OR '$(QtBkup_QtPathLibraryExecutables)' != '$(QtCleaned_QtPathLibraryExecutables)'
+        OR '$(QtBkup_QtHeaderSearchPath)'       != '$(QtCleaned_QtHeaderSearchPath)'
+        OR '$(QtBkup_QtLibrarySearchPath)'      != '$(QtCleaned_QtLibrarySearchPath)'
+        OR '$(QtBkup_QtVars)'                   != '$(QtCleaned_QtVars)'
+        OR '$(QtBkup_QMakeCodeLines)'           != '$(QtCleaned_QMakeCodeLines)'
+        OR '$(QtBkup_QtBuildConfig)'            != '$(QtCleaned_QtBuildConfig)'"
     >true</QtVarsOutdated>
   </PropertyGroup>
 

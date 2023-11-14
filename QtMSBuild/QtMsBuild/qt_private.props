@@ -46,31 +46,6 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Cleanup user input, remove empty entries in lists etc...
-  // -->
-  <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
-    <QtInstall Condition="'$(QtInstall)' != ''"
-      >$([MSBuild]::Unescape($(QtInstall.Split('%3B',StringSplitOptions.RemoveEmptyEntries)[0])))</QtInstall>
-    <QtModules Condition="'$(QtModules)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtModules.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtModules>
-    <QtPathBinaries Condition="'$(QtPathBinaries)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtPathBinaries.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtPathBinaries>
-    <QtPathLibraryExecutables Condition="'$(QtPathLibraryExecutables)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtPathLibraryExecutables.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtPathLibraryExecutables>
-    <QtHeaderSearchPath Condition="'$(QtHeaderSearchPath)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtHeaderSearchPath.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtHeaderSearchPath>
-    <QtLibrarySearchPath Condition="'$(QtLibrarySearchPath)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtLibrarySearchPath.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtLibrarySearchPath>
-    <QtVars Condition="'$(QtVars)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtVars.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtVars>
-    <QMakeCodeLines Condition="'$(QMakeCodeLines)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QMakeCodeLines.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QMakeCodeLines>
-    <QtBuildConfig Condition="'$(QtBuildConfig)' != ''"
-      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtBuildConfig.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtBuildConfig>
-  </PropertyGroup>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Setup Qt installation path
   // -->
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">

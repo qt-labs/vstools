@@ -31,6 +31,31 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Cleanup user input, remove empty entries in lists etc...
+  // -->
+  <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
+    <QtCleaned_QtInstall Condition="'$(QtInstall)' != ''"
+      >$([MSBuild]::Unescape($(QtInstall.Split('%3B',StringSplitOptions.RemoveEmptyEntries)[0])))</QtCleaned_QtInstall>
+    <QtCleaned_QtModules Condition="'$(QtModules)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtModules.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtModules>
+    <QtCleaned_QtPathBinaries Condition="'$(QtPathBinaries)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtPathBinaries.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtPathBinaries>
+    <QtCleaned_QtPathLibraryExecutables Condition="'$(QtPathLibraryExecutables)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtPathLibraryExecutables.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtPathLibraryExecutables>
+    <QtCleaned_QtHeaderSearchPath Condition="'$(QtHeaderSearchPath)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtHeaderSearchPath.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtHeaderSearchPath>
+    <QtCleaned_QtLibrarySearchPath Condition="'$(QtLibrarySearchPath)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtLibrarySearchPath.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtLibrarySearchPath>
+    <QtCleaned_QtVars Condition="'$(QtVars)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtVars.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtVars>
+    <QtCleaned_QMakeCodeLines Condition="'$(QMakeCodeLines)' != ''"
+    >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QMakeCodeLines.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QMakeCodeLines>
+    <QtCleaned_QtBuildConfig Condition="'$(QtBuildConfig)' != ''"
+      >$([MSBuild]::Unescape($([System.String]::Join('%3B', $(QtBuildConfig.Split('%3B', StringSplitOptions.RemoveEmptyEntries))))))</QtCleaned_QtBuildConfig>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtVars
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Call qmake with generated .pro file to export Qt variables into MSBuild .props file
@@ -465,15 +490,15 @@ DummyQmlObject { }
 
     <!--// Qt settings list for backup -->
     <ItemGroup>
-      <QtInstall Include="$(QtInstall)"/>
-      <QtModules Include="$(QtModules)"/>
-      <QtPathBinaries Include="$(QtPathBinaries)"/>
-      <QtPathLibraryExecutables Include="$(QtPathLibraryExecutables)"/>
-      <QtHeaderSearchPath Include="$(QtHeaderSearchPath)"/>
-      <QtLibrarySearchPath Include="$(QtLibrarySearchPath)"/>
-      <QtVariables Include="$(QtVars)"/>
-      <QMakeCodeLines Include="$(QMakeCodeLines)"/>
-      <QtBuildConfig Include="$(QtBuildConfig)"/>
+      <QtInstall Include="$(QtCleaned_QtInstall)"/>
+      <QtModules Include="$(QtCleaned_QtModules)"/>
+      <QtPathBinaries Include="$(QtCleaned_QtPathBinaries)"/>
+      <QtPathLibraryExecutables Include="$(QtCleaned_QtPathLibraryExecutables)"/>
+      <QtHeaderSearchPath Include="$(QtCleaned_QtHeaderSearchPath)"/>
+      <QtLibrarySearchPath Include="$(QtCleaned_QtLibrarySearchPath)"/>
+      <QtVariables Include="$(QtCleaned_QtVars)"/>
+      <QMakeCodeLines Include="$(QtCleaned_QMakeCodeLines)"/>
+      <QtBuildConfig Include="$(QtCleaned_QtBuildConfig)"/>
     </ItemGroup>
 
     <!--// Write end of .props (XML) file
@@ -596,23 +621,23 @@ DummyQmlObject { }
   // -->
   <Target Name="QtVarsPrepare" BeforeTargets="QtVars" Condition="Exists('$(QtVarsFilePath)')">
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtInstall)' != '$(QtInstall)'" />
+        AND '$(QtBkup_QtInstall)' != '$(QtCleaned_QtInstall)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtModules)' != '$(QtModules)'" />
+        AND '$(QtBkup_QtModules)' != '$(QtCleaned_QtModules)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtPathBinaries)' != '$(QtPathBinaries)'" />
+        AND '$(QtBkup_QtPathBinaries)' != '$(QtCleaned_QtPathBinaries)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtPathLibraryExecutables)' != '$(QtPathLibraryExecutables)'" />
+        AND '$(QtBkup_QtPathLibraryExecutables)' != '$(QtCleaned_QtPathLibraryExecutables)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtHeaderSearchPath)' != '$(QtHeaderSearchPath)'" />
+        AND '$(QtBkup_QtHeaderSearchPath)' != '$(QtCleaned_QtHeaderSearchPath)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtLibrarySearchPath)' != '$(QtLibrarySearchPath)'" />
+        AND '$(QtBkup_QtLibrarySearchPath)' != '$(QtCleaned_QtLibrarySearchPath)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtVars)' != '$(QtVars)'" />
+        AND '$(QtBkup_QtVars)' != '$(QtCleaned_QtVars)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QMakeCodeLines)' != '$(QMakeCodeLines)'" />
+        AND '$(QtBkup_QMakeCodeLines)' != '$(QtCleaned_QMakeCodeLines)'" />
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtBuildConfig)' != '$(QtBuildConfig)'" />
+        AND '$(QtBkup_QtBuildConfig)' != '$(QtCleaned_QtBuildConfig)'" />
   </Target>
 
   <!--
