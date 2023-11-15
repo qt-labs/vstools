@@ -645,6 +645,21 @@ namespace QtVsTools.Core.Options
             AddQtVersionsFromPath(versions);
         }
 
+        private void OnCleanupQtInstallations_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var version in Versions) {
+                if (version.State == State.Removed)
+                    continue;
+                if (version.Host != BuildHost.Windows)
+                    continue;
+
+                var path = NormalizePath(version.Path);
+                if (path == null || !QMake.Exists(path))
+                    version.State = State.Removed;
+            }
+            Validate(true);
+        }
+
         private static string GetShortcutTargetPath(string shortcutPath)
         {
             if (!File.Exists(shortcutPath))
