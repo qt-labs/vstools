@@ -28,6 +28,13 @@ namespace QtVsTools.Package.MsBuild
         {
             await Task.Yield();
 
+            var currentModules = currentValue as string;
+
+            if (await ruleProperty.GetValueAsync() is IEnumerable<string> values) {
+                var modulesToAdd = currentModules?.Split(';') ?? Array.Empty<string>();
+                currentModules = string.Join(";", values.Union(modulesToAdd));
+            }
+
             var qtSettings = ruleProperty.ContainingRule;
             var qtVersion = await qtSettings.GetPropertyValueAsync("QtInstall");
 
@@ -47,11 +54,10 @@ namespace QtVsTools.Package.MsBuild
 
             HashSet<string> selectedQt = null;
             IEnumerable<string> extraQt = null;
-            if (currentValue is string currentModules) {
-                var allQt = modules.SelectMany(x => x.QT).ToHashSet();
+            if (!string.IsNullOrEmpty(currentModules)) {
                 selectedQt = currentModules
                     .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToHashSet();
-                extraQt = selectedQt.Except(allQt);
+                extraQt = selectedQt.Except(modules.SelectMany(x => x.QT));
 
                 foreach (var module in modules)
                     module.IsSelected = module.QT.Intersect(selectedQt).Count() == module.QT.Count;
@@ -67,7 +73,7 @@ namespace QtVsTools.Package.MsBuild
                     .Union(extraQt ?? Enumerable.Empty<string>())
                     .ToHashSet();
             }
-            return selectedQt == null ? "" : string.Join(";", selectedQt);
+            return selectedQt?.Any() == true ? string.Join(";", selectedQt) : "";
         }
     }
 }

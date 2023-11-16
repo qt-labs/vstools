@@ -75,6 +75,10 @@ namespace QtVsTools.Core.MsBuild
                         new XAttribute("Label", "QtSettings"),
                         new XAttribute("Condition",
                             $"'$(Configuration)|$(Platform)'=='{config}'")));
+                    // TODO: We might need to issue a conversions problem here for QtBuildConfig
+                    //       in case there is a different configuration, e.g. Test|x64. This is
+                    //       based on the fact that QtBuildConfig might fallback on 'Release'
+                    //       even though Test|x64 could be based on the Debug configuration.
                 }
             }
 
