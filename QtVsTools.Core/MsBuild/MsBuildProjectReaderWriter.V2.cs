@@ -174,7 +174,7 @@ namespace QtVsTools.Core.MsBuild
             var qtVersion = QtVersionManager.The().GetVersionInfo(qtInstallValue);
             moduleNames = QtModules.Instance.GetAvailableModules(qtVersion.qtMajor)
                 // remove proVarQT values not provided by the used Qt version
-                .SelectMany(x => x.proVarQT.Split(' '))
+                .SelectMany(x => x.proVarQT?.Split(' ') ?? Array.Empty<string>())
                 .SelectMany(x => x.EndsWith("-private") ? new[] { x } : new[] { x, $"{x}-private" })
                 .Intersect(moduleNames)
                 .ToHashSet();
