@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************
+-->
+<Project ToolsVersion="$(VisualStudioVersion)" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Sets property TargetFrameworkVersion and LangVersion -->
+  <Import Condition="Exists('$(SolutionDir)\targetframework.props')" Project="$(SolutionDir)\targetframework.props" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D90720E3-0D5E-42A3-90DE-A5265EA22F80}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test_QtMsBuild.Build</RootNamespace>
+    <AssemblyName>Test_QtMsBuild.Build</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">16.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global references
+  // -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.Build">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.Core">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Utilities.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Tasks.Core">
+      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // General package references
+  // -->
+  <Import Condition="Exists('$(SolutionDir)\references.props')" Project="$(SolutionDir)\references.props" />
+  <ItemGroup>
+    <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
+    <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Version specific package references
+  // -->
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)'=='17.0'">
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(VisualStudioVersion)'=='16.0'">
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Solution project references
+  // -->
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\QtMSBuild\QtMSBuild.csproj">
+      <Project>{a618d28b-9352-44f4-aa71-609bf68bf871}</Project>
+      <Name>QtMSBuild</Name>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\QtVsTools.Core\QtVsTools.Core.csproj">
+      <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
+      <Name>QtVsTools.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Project items
+  // -->
+  <ItemGroup>
+    <None Include="app.config" />
+    <Compile Include="TempProject.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Props.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="MsBuild.cs" />
+    <Compile Include="Test_Eval.cs" />
+    <Compile Include="Test_Build.cs" />
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Condition="Exists('$(SolutionDir)\transform.targets')" Project="$(SolutionDir)\transform.targets" />
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Export property evaluation
+  // -->
+  <PropertyGroup>
+    <PropEvalFileName Condition="'$(PropEvalFileName)' == ''">PropEval.csv</PropEvalFileName>
+    <PropEvalPath Condition="'$(PropEvalPath)' == ''">$(IntermediateOutputPath)$(PropEvalFileName)</PropEvalPath>
+  </PropertyGroup>
+  <Target Name="ExportPropertyEval" BeforeTargets="PrepareForBuild" Inputs="$(ProjectPath)" Outputs="$(PropEvalPath)">
+    <ItemGroup>
+      <PropEval Include="MSBuildToolsPath">
+        <Value>$(MSBuildToolsPath)</Value>
+      </PropEval>
+      <PropEval Include="VsInstallRoot">
+        <Value>$(VsInstallRoot)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath">
+        <Value>$(VCTargetsPath)</Value>
+      </PropEval>
+      <PropEval Include="SolutionDir">
+        <Value>$(SolutionDir)</Value>
+      </PropEval>
+    </ItemGroup>
+    <WriteLinesToFile File="$(PropEvalPath)" Lines="@(PropEval->'%(Identity);%(Value)','%0D%0A')" Overwrite="true" />
+    <ItemGroup>
+      <PropEval Remove="@(PropEval)" />
+      <Content Include="$(PropEvalPath)">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <TargetPath>$(PropEvalFileName)</TargetPath>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>
