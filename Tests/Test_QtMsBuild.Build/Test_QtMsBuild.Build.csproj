@@ -110,6 +110,7 @@
     <Compile Include="Props.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MsBuild.cs" />
+    <Compile Include="Test_LateBinding.cs" />
     <Compile Include="Test_Eval.cs" />
     <Compile Include="Test_Build.cs" />
   </ItemGroup>

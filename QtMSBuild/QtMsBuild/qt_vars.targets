@@ -501,6 +501,11 @@ DummyQmlObject { }
       <QtBuildConfig Include="$(QtCleaned_QtBuildConfig)"/>
     </ItemGroup>
 
+    <!--// Late bindings -->
+    <ItemGroup>
+      <QtLateBind Include="$(QtLateBindings)"/>
+    </ItemGroup>
+
     <!--// Write end of .props (XML) file
         //  * Add Qt tools output directories to include path
         //  * Save settings backup
@@ -538,6 +543,12 @@ DummyQmlObject { }
     <QtVersionMinor>$(QtVersionMinor)</QtVersionMinor>
     <QtVersionPatch>$(QtVersionPatch)</QtVersionPatch>
   </PropertyGroup>
+  <ItemGroup>
+    <Qt Remove="@(Qt)"/>
+    <Qt Include="Qt">
+@(QtLateBind->'      %3C%(Identity)%3E%24%28%(Identity)%29%3C/%(Identity)%3E','%0D%0A')
+    </Qt>
+  </ItemGroup>
 </Project>
         ]]>
       </QtVarsDataFileText>

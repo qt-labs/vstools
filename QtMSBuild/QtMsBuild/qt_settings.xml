@@ -22,6 +22,7 @@
     <Category Name="QtSettings_04_QML" DisplayName="QML"/>
     <Category Name="QtSettings_05_AdditionalOptions" DisplayName="Qt Additional Compiler Options"/>
     <Category Name="QtSettings_06_AdditionalLinkOptions" DisplayName="Qt Additional Linker Options"/>
+    <Category Name="QtSettings_07_LateBindings" DisplayName="Qt Settings Late Bindings"/>
   </Rule.Categories>
   <EnumProperty
     Name="Keyword"
@@ -167,4 +168,9 @@ files located in %USERPROFILE%\\Documents\\Visual Studio 2022\\Visualizers).">
     <EnumValue Name="false" DisplayName="No" />
     <EnumValue Name="true" DisplayName="Yes" />
   </EnumProperty>
-  </Rule>
+  <StringListProperty
+    Name="QtLateBindings"
+    Category="QtSettings_07_LateBindings"
+    DisplayName="Property Names"
+    Description="Names of properties available for late bindings."/>
+</Rule>
