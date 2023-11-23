@@ -49,6 +49,8 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Qt/MSBuild global properties
   // -->
+  <Import Project="$(MSBuildThisFileDirectory)\version.targets"
+    Condition="Exists('$(MSBuildThisFileDirectory)\version.targets')"/>
   <Import Project="..\version.targets" Condition="Exists('..\version.targets')"/>
   <PropertyGroup>
     <QtMsBuildVersion>$(QtVSToolsVersion)</QtMsBuildVersion>

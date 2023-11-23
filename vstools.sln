@@ -74,6 +74,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{66ED34F1-F316-49BE-9137-C7AAF22115FF}"
 	ProjectSection(SolutionItems) = preProject
 		Changelog = Changelog
+		version.log = version.log
 		version.targets = version.targets
 		vstools.bat = vstools.bat
 	EndProjectSection

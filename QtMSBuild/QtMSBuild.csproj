@@ -152,6 +152,16 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(SolutionDir)\version.log">
+      <Link>QtMSBuild\version.log</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SolutionDir)\version.targets">
+      <Link>QtMSBuild\version.targets</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild moc property pages and targets

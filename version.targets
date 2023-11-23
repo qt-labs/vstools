@@ -2,6 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(QtVSToolsVersion)' == ''">
     <QtVSToolsVersion
-      >$([System.IO.File]::ReadAllText('$(SolutionDir)\version.log'))</QtVSToolsVersion>
+      >$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)\version.log').Trim())</QtVSToolsVersion>
   </PropertyGroup>
 </Project>
