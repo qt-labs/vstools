@@ -287,6 +287,10 @@
         <Arg Condition="'%(Name)' == 'QtDeployExcludeModules'">--no-%(Value)</Arg>
       </Options>
     </ItemGroup>
+    <ItemGroup>
+      <Args Include="%(Options.Arg)" Condition="'%(Options.Arg)' != ''"/>
+      <PosArgs Include="%(Options.PosArg)" Condition="'%(Options.PosArg)' != ''"/>
+    </ItemGroup>
 
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,8 +299,8 @@
     <PropertyGroup>
       <Cmd><![CDATA["$(QtToolsPath)\windeployqt.exe"]]></Cmd>
       <Cmd>$(Cmd) --list target</Cmd>
-      <Cmd Condition="'%(Options.Arg)' != ''">$(Cmd) %(Options.Arg)</Cmd>
-      <Cmd Condition="'%(Options.PosArg)' != ''">$(Cmd) %(Options.PosArg)</Cmd>
+      <Cmd>$(Cmd) @(Args->'%(Identity)',' ')</Cmd>
+      <Cmd>$(Cmd) @(PosArgs->'%(Identity)',' ')</Cmd>
     </PropertyGroup>
     <Message Importance="high" Text="Qt Deploy: $(Cmd)" />
     <Exec Command="$(Cmd) > &quot;$(QtDeployLog)&quot;"
@@ -328,10 +332,13 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Deploy project output
     // -->
+    <PropertyGroup>
+      <CopyDestinationFolder>$(QtDeployDir)</CopyDestinationFolder>
+    </PropertyGroup>
     <Message Condition="'$(QtDeployCopyFiles)' == 'true'" Importance="high"
       Text="Qt Deploy: Copying project output" />
     <Copy Condition="'$(QtDeployCopyFiles)' == 'true'"
-      SourceFiles="$(TargetPath)" DestinationFolder="$(QtDeployDir)" />
+      SourceFiles="$(TargetPath)" DestinationFolder="$(CopyDestinationFolder)" />
     <PropertyGroup Condition="'$(QtDeployCopyFiles)' == 'true'">
       <QtDeployLog
         >$(QtDeployLog);$(QtDeployDir)\$([System.IO.Path]::GetFileName($(TargetPath)))</QtDeployLog>
@@ -364,12 +371,15 @@
     // -->
     <PropertyGroup>
       <Cmd/>
+      <CopyDestinationFolder/>
     </PropertyGroup>
     <ItemGroup>
       <Options Remove="@(Options)"/>
       <QtDeploy Remove="@(QtDeploy)"/>
       <QtDeployLog Remove="@(QtDeployLog)"/>
       <QtDeployed Remove="@(QtDeployed)"/>
+      <Args Remove="@(Args)"/>
+      <PosArgs Remove="@(PosArgs)"/>
     </ItemGroup>
   </Target>
 </Project>
