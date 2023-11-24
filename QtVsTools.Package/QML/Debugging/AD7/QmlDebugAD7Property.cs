@@ -66,16 +66,11 @@ namespace QtVsTools.Qml.Debug.AD7
             Parent = parent;
             JsValue = value;
 
-            Children = new SortedDictionary<string, Property>();
-            if (Parent?.JsValue is JsObject {IsArray: true} jsObject) {
-                Name = $"[{JsValue.Name}]";
-                foreach (JsValue objProp in jsObject.Properties.Where(x => x.HasData)) {
-                    Children[GetChildKey(objProp.Name)]
-                        = Create(StackFrame, ScopeNumber, objProp, this);
-                }
-            } else {
-                Name = JsValue.Name;
-            }
+            Name = Parent?.JsValue switch
+            {
+                JsObject { IsArray: true } => $"[{JsValue.Name}]",
+                _ => JsValue.Name
+            };
 
             var nameParts = new Stack<string>(new[] { Name });
             for (var p = Parent; p != null && !string.IsNullOrEmpty(p.Name); p = p.Parent) {
@@ -87,6 +82,14 @@ namespace QtVsTools.Qml.Debug.AD7
 
             Type = JsValue.Type.ToString();
             Value = JsValue.ToString();
+
+            Children = new();
+            if (JsValue is JsObject { Properties: not null } jsObject) {
+                foreach (JsValue objProp in jsObject.Properties.Where(x => x.HasData)) {
+                    Children[GetChildKey(objProp.Name)]
+                        = Create(StackFrame, ScopeNumber, objProp, this);
+                }
+            }
 
             return true;
         }
