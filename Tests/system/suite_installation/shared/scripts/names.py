@@ -7,7 +7,9 @@
 
 from objectmaphelper import *
 import globalnames
-pART_Popup_Manage_Extensions_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "Manage Extensions", "type": "MenuItem"}
+pART_Popup_Manage_Extensions_MenuItem = {"container": globalnames.pART_Popup_Popup,
+                                         "text": RegularExpression("^Manage Extensions(\.\.\.)?$"),
+                                         "type": "MenuItem"}
 manage_Extensions_Window = {"text": Wildcard("*Extensions*"), "type": "Window"}
 extensionManager_UI_InstalledExtItem_Qt_Label = {"text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
 manage_Extensions_Close_Button = {"container": manage_Extensions_Window, "text": "Close", "type": "Button"}
