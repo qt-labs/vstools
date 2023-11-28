@@ -13,7 +13,7 @@ import names
 def testForMissingQt(_, __):
     test.compare(waitForObjectExists(names.qt_ConfigTable).rowCount, 0)
     test.compare(waitForObjectExists(names.no_Qt_version_Label).text,
-                 'Register at least one Qt version using "Qt VS Tools" -> "Qt Options".')
+                 'No registered Qt version found. Click here to browse for a Qt version.')
     test.verify(not waitForObjectExists(names.qt_Wizard_Next_Button).enabled,
                 '"Next" button should be disabled when there are no Qt versions')
     test.verify(not waitForObjectExists(names.qt_Wizard_Finish_Button).enabled,
