@@ -7,19 +7,20 @@
 
 from objectmaphelper import *
 import globalnames
-pART_Popup_Manage_Extensions_MenuItem = {"container": globalnames.pART_Popup_Popup,
+extensions_Manage_Extensions_MenuItem = {"container": globalnames.extensions_MenuItem,
                                          "text": RegularExpression("^Manage Extensions(\.\.\.)?$"),
                                          "type": "MenuItem"}
 manage_Extensions_Window = {"text": Wildcard("*Extensions*"), "type": "Window"}
 extensionManager_UI_InstalledExtItem_Qt_Label = {"text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
 manage_Extensions_Close_Button = {"container": manage_Extensions_Window, "text": "Close", "type": "Button"}
-pART_Popup_Extensions_and_Updates_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "Extensions and Updates...", "type": "MenuItem"}
 extensions_and_Updates_lvw_Extensions_ListView = {"container": manage_Extensions_Window, "name": "lvw_Extensions", "type": "ListView"}
 lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem = {"container": extensions_and_Updates_lvw_Extensions_ListView, "id": "Qt Visual Studio Tools", "text": "Microsoft.VisualStudio.ExtensionManager.UI.InstalledExtensionItem", "type": "ListViewItem"}
 extensions_and_Updates_Version_Label = {"container": manage_Extensions_Window, "text": "Version:", "type": "Label"}
 manage_Extensions_Version_Label = {"leftObject": extensions_and_Updates_Version_Label, "type": "Label"}
 help_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "Help", "type": "MenuItem"}
-pART_Popup_About_Microsoft_Visual_Studio_MenuItem = {"container": globalnames.pART_Popup_Popup, "text": "About Microsoft Visual Studio", "type": "MenuItem"}
+help_About_Microsoft_Visual_Studio_MenuItem = {"container": help_MenuItem,
+                                               "text": "About Microsoft Visual Studio",
+                                               "type": "MenuItem"}
 o_Microsoft_Visual_Studio_OK_Button = {"container": globalnames.microsoft_Visual_Studio_Window, "text": "OK", "type": "Button"}
 about_Microsoft_Visual_Studio_Window = {"text": "About Microsoft Visual Studio", "type": "Window"}
 about_Microsoft_Visual_Studio_Edit = {"container": about_Microsoft_Visual_Studio_Window, "type": "Edit"}

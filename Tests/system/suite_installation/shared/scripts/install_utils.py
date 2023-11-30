@@ -10,7 +10,7 @@ import globalnames
 
 def openExtensionManager(version):
     mouseClick(waitForObject(globalnames.extensions_MenuItem))
-    mouseClick(waitForObject(names.pART_Popup_Manage_Extensions_MenuItem))
+    mouseClick(waitForObject(names.extensions_Manage_Extensions_MenuItem))
 
 
 def selectInstalledVsTools(version):

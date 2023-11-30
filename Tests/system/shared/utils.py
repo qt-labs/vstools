@@ -47,7 +47,7 @@ def startAppGetVersion(waitForInitialDialogs=False):
 def openVsToolsMenu(version):
     while True:
         mouseClick(waitForObject(globalnames.extensions_MenuItem))
-        mouseClick(waitForObject(globalnames.pART_Popup_Qt_VS_Tools_MenuItem, 5000))
+        mouseClick(waitForObject(globalnames.extensions_Qt_VS_Tools_MenuItem, 5000))
         if not object.exists(globalnames.Initializing_MenuItem):
             break
         mouseClick(waitForObject(globalnames.extensions_MenuItem))  # close menu
@@ -56,4 +56,4 @@ def openVsToolsMenu(version):
 
 def closeMainWindow():
     mouseClick(waitForObject(globalnames.file_MenuItem))
-    mouseClick(waitForObject(globalnames.pART_Popup_Exit_MenuItem))
+    mouseClick(waitForObject(globalnames.file_Exit_MenuItem))

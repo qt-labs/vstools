@@ -29,7 +29,7 @@ def main():
 
 def checkVSVersion(version):
     mouseClick(waitForObject(names.help_MenuItem))
-    mouseClick(waitForObject(names.pART_Popup_About_Microsoft_Visual_Studio_MenuItem))
+    mouseClick(waitForObject(names.help_About_Microsoft_Visual_Studio_MenuItem))
     vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
     test.verify(version in vsVersionText,
                 "Is this VS %s as expected? Found:\n%s" % (version, vsVersionText))
