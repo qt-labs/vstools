@@ -76,7 +76,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 		Changelog = Changelog
 		version.log = version.log
 		version.targets = version.targets
-		vstools.bat = vstools.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{F96D578B-D78E-47F4-86DA-FE472B9942F0}"
@@ -110,6 +109,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vsconfig", "vsconfig", "{3C
 	ProjectSection(SolutionItems) = preProject
 		vsconfig\2019.vsconfig = vsconfig\2019.vsconfig
 		vsconfig\2022.vsconfig = vsconfig\2022.vsconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4C13509A-C229-41AD-BCF0-86A8370F4B2F}"
+	ProjectSection(SolutionItems) = preProject
+		vstools.bat = vstools.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vstools", "vstools", "{E11ADC3E-FFB9-46B8-B5DE-18919026A0B7}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\vstools\args.cmd = scripts\vstools\args.cmd
+		scripts\vstools\banner.cmd = scripts\vstools\banner.cmd
+		scripts\vstools\clean.cmd = scripts\vstools\clean.cmd
+		scripts\vstools\deploy.cmd = scripts\vstools\deploy.cmd
+		scripts\vstools\error.cmd = scripts\vstools\error.cmd
+		scripts\vstools\globals.cmd = scripts\vstools\globals.cmd
+		scripts\vstools\info.cmd = scripts\vstools\info.cmd
+		scripts\vstools\init.cmd = scripts\vstools\init.cmd
+		scripts\vstools\install.cmd = scripts\vstools\install.cmd
+		scripts\vstools\log_version.cmd = scripts\vstools\log_version.cmd
+		scripts\vstools\msbuild.cmd = scripts\vstools\msbuild.cmd
+		scripts\vstools\startvs.cmd = scripts\vstools\startvs.cmd
+		scripts\vstools\tests.cmd = scripts\vstools\tests.cmd
+		scripts\vstools\usage.cmd = scripts\vstools\usage.cmd
+		scripts\vstools\validate.cmd = scripts\vstools\validate.cmd
+		scripts\vstools\vs_versions.cmd = scripts\vstools\vs_versions.cmd
 	EndProjectSection
 EndProject
 Global
@@ -540,6 +564,7 @@ Global
 		{202F4A6D-77CD-4992-AA53-01B585463287} = {A7918293-56E9-465A-AE1C-0724576ADD66}
 		{4B8FC08C-4901-45D4-BC00-C0C461292FF2} = {D6FB29A4-8921-46F5-B170-B15538AB4D69}
 		{AFD33401-2F15-4E72-AB35-42C3EE12E897} = {D6FB29A4-8921-46F5-B170-B15538AB4D69}
+		{E11ADC3E-FFB9-46B8-B5DE-18919026A0B7} = {4C13509A-C229-41AD-BCF0-86A8370F4B2F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {17FF4AFE-273C-47CD-8D84-F0D023B10BE5}
