@@ -21,3 +21,5 @@ SQUISH_VSTOOLS_VERSION: The expected version of Qt VS Tools
 SQUISH_VSTOOLS_QTDIRS:  A list of Qt installations to be used by the tests, i.e. the paths to the
                         parent directories of the respective Qt versions' bin-directories,
                         separated by semicola.
+SQUISH_VSTOOLS_WORKDIR: A directory in which the tests may create projects.
+                        Please note: The tests may remove contents from this directory.

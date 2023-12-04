@@ -45,3 +45,14 @@ no_Qt_version_Label = {"container": qt_Wizard_Window, "id": "ErrorMsg", "type": 
 qt_Wizard_Finish_Button = {"container": qt_Wizard_Window, "text": "Finish", "type": "Button"}
 lower_case_file_names_CheckBox = {"container": qt_Wizard_Window, "text": "Lower case file names",
                                   "type": "CheckBox"}
+file_Close_Solution_MenuItem = {"container": globalnames.file_MenuItem, "text": "Close Solution",
+                                "type": "MenuItem"}
+microsoft_Visual_Studio_Create_a_new_project_Label = {"container":
+                                                      globalnames.microsoft_Visual_Studio_Window,
+                                                      "text": "Create a _new project",
+                                                      "type": "Label"}
+qt_Microsoft_Visual_Studio_cpp_TabItem = {"container":globalnames.microsoft_Visual_Studio_Window,
+                                          "text": RegularExpression(".*Qt.*\.cpp$|^main\.(cpp|qml)$"),
+                                          "type": "TabItem"}
+qt_cpp_Label = {"container": qt_Microsoft_Visual_Studio_cpp_TabItem,
+                "text": RegularExpression(".+\.(cpp|qml)$"), "type": "Label"}
