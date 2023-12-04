@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test
 {
@@ -29,7 +30,7 @@ namespace QtVsTools.Test
                     .FirstOrDefault(p => p.Id != Process.GetCurrentProcess().Id
                         && !p.MainWindowTitle.StartsWith("vstools"));
                 if (vsProc == null)
-                    throw new InvalidOperationException("VS process not found");
+                    Assert.Inconclusive("VS process not found");
                 vsProcId = vsProc.Id;
             }
             var client = new QtVsTestClient(vsProcId.Value);

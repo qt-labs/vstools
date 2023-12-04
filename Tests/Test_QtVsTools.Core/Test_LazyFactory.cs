@@ -19,7 +19,6 @@ namespace QtVsTools.Test.Core
         class LazyClass
         {
             LazyFactory Lazy { get; } = new();
-
             public ConcurrentBag<int> InitThread { get; } = new();
             public string LazyProperty => Lazy.Get(() =>
                 LazyProperty, () =>
@@ -40,7 +39,8 @@ namespace QtVsTools.Test.Core
                     var n = i;
                     tasks[i] = Task.Run(() =>
                     {
-                        Debug.WriteLine($"Lazy value #{n} is {lazyObject.LazyProperty}");
+                        var lazyValue = lazyObject.LazyProperty;
+                        Debug.WriteLine($"Lazy value #{n} is {lazyValue}");
                     });
                 }
                 await Task.WhenAll(tasks);
