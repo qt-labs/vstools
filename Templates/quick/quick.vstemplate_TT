@@ -41,7 +41,8 @@
                          TargetFileName="$projectname$.vcxproj.filters">quick.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">quick.ico</ProjectItem>
             <ProjectItem ReplaceParameters="true">main.cpp</ProjectItem>
-            <ProjectItem ReplaceParameters="true">main.qml</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         OpenInEditor="true">main.qml</ProjectItem>
             <ProjectItem ReplaceParameters="true">qml.qrc</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
             <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
