@@ -33,7 +33,7 @@ IF "%ARG%" == "-init" (
 ) ELSE IF "%ARG%" == "-version" (
     IF "%2" == "" (
         %##########################%
-        %##% Missing argument after '%ORIGINAL_ARG%' 1>&2
+        %##% %BOLD%%RED%Missing argument after '%ORIGINAL_ARG%'.%RESET% 1>&2
         %##########################%
         CALL %SCRIPTLIB%\usage.cmd
         EXIT /B 1
@@ -59,7 +59,7 @@ IF "%ARG%" == "-init" (
 ) ELSE IF "%ARG%" == "-vcvars" (
     IF "%~2" == "" (
         %##########################%
-        %##% Missing argument after '%ORIGINAL_ARG%' 1>&2
+        %##% %BOLD%%RED%Missing argument after '%ORIGINAL_ARG%'.%RESET% 1>&2
         %##########################%
         CALL %SCRIPTLIB%\usage.cmd
         EXIT /B 1
@@ -69,7 +69,7 @@ IF "%ARG%" == "-init" (
 ) ELSE IF "%ARG%" == "-config" (
     IF "%~2" == "" (
         %##########################%
-        %##% Missing argument after '%ORIGINAL_ARG%' 1>&2
+        %##% %BOLD%%RED%Missing argument after '%ORIGINAL_ARG%'.%RESET% 1>&2
         %##########################%
         CALL %SCRIPTLIB%\usage.cmd
         EXIT /B 1
@@ -79,7 +79,7 @@ IF "%ARG%" == "-init" (
 ) ELSE IF "%ARG%" == "-platform" (
     IF "%~2" == "" (
         %##########################%
-        %##% Missing argument after '%ORIGINAL_ARG%' 1>&2
+        %##% %BOLD%%RED%Missing argument after '%ORIGINAL_ARG%'.%RESET% 1>&2
         %##########################%
         CALL %SCRIPTLIB%\usage.cmd
         EXIT /B 1
@@ -105,7 +105,7 @@ IF "%ARG%" == "-init" (
     EXIT /B 1
 ) ELSE (
     %##########################%
-    %##% Unknown argument '%ORIGINAL_ARG%' 1>&2
+    %##% %BOLD%%RED%Unknown argument '%ORIGINAL_ARG%'.%RESET% 1>&2
     %##########################%
     CALL %SCRIPTLIB%\usage.cmd
     EXIT /B 1

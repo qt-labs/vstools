@@ -14,6 +14,7 @@ IF "%BUILD_PLATFORM%" == "" (
 
 ECHO.
 %##########################%
+%##% %BOLD%Building...%RESET%
 %##% msbuild: vstools.sln
 %##% msbuild: -t:%MSBUILD_TARGETS%
 %##% msbuild: -p:Configuration=%BUILD_CONFIGURATION%
@@ -24,6 +25,7 @@ IF %VERBOSE% (
     %##% msbuild extras: %MSBUILD_EXTRAS%
 )
 %##########################%
+IF NOT %VERBOSE% ECHO %DARK_GRAY%
 msbuild ^
     -nologo ^
     -verbosity:%MSBUILD_VERBOSITY% ^
@@ -34,12 +36,12 @@ msbuild ^
     -t:%MSBUILD_TARGETS% ^
     %MSBUILD_EXTRAS% ^
     vstools.sln
-
+ECHO %RESET%
 IF %ERRORLEVEL% NEQ 0 (
     CALL %SCRIPTLIB%\error.cmd %ERRORLEVEL% "ERROR building solution"
     EXIT /B %ERRORLEVEL%
 )
 
 CALL %SCRIPTLIB%\info.cmd "version"
-%##% Solution build successful.
+%##% %BOLD%%GREEN%Solution build successful.%RESET%
 %##########################%

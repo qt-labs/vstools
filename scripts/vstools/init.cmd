@@ -14,7 +14,7 @@ IF "%BUILD_PLATFORM%" == "" (
 
 ECHO.
 %##########################%
-%##% Building pre-requisites...
+%##% %BOLD%Building pre-requisites...%RESET%
 IF %VERBOSE% (
     %##%  msbuild: vstools.sln
     %##%  msbuild: -t:%DEPENDENCIES%
@@ -24,6 +24,7 @@ IF %VERBOSE% (
     %##%  msbuild extras: %MSBUILD_EXTRAS%
 )
 %##########################%
+IF NOT %VERBOSE% ECHO %DARK_GRAY%
 msbuild ^
     -nologo ^
     -verbosity:%MSBUILD_VERBOSITY% ^
@@ -34,7 +35,7 @@ msbuild ^
     -p:TransformOutOfDateOnly=false ^
     %MSBUILD_EXTRAS% ^
     vstools.sln
-
+ECHO %RESET%
 IF %ERRORLEVEL% NEQ 0 (
     CALL %SCRIPTLIB%\error.cmd %ERRORLEVEL% "ERROR building pre-requisites"
     EXIT /B %ERRORLEVEL%

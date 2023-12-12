@@ -11,7 +11,7 @@
 
 ECHO.
 %##########################%
-%##% Finding tests...
+%##% %BOLD%Finding tests...%RESET%
 
 DEL %TEMP%\vstools.args > NUL 2>&1
 
@@ -30,29 +30,37 @@ FINDSTR /C:dll %TEMP%\vstools.args > NUL 2>&1 ^
     FOR /F %%c in ('TYPE %TEMP%\vstools.args') DO %##%   * %%~nc
     %##########################%
     ECHO.
+    %##########################%
+    %##% %BOLD%Running tests...%RESET%
+    %##########################%
+    IF NOT %VERBOSE% ECHO %DARK_GRAY%
     IF %VERBOSE% (
         %##% vstest.console /logger:console;verbosity=detailed @%TEMP%\vstools.args
         vstest.console /logger:console;verbosity=detailed @%TEMP%\vstools.args ^
         || (
-            GOTO :return
+            ECHO %RESET%
+            GOTO :error
         )
     ) ELSE (
         vstest.console @%TEMP%\vstools.args ^
         || (
-            GOTO :return
+            ECHO %RESET%
+            GOTO :error
         )
     )
 ) || (
-    %##%   * No tests found.
+    %##%   * %BOLD%%YELLOW%No tests found.%RESET%
     %##########################%
     GOTO :eof
 )
 
+ECHO %RESET%
 CALL %SCRIPTLIB%\info.cmd "version"
-%##% Tests completed successfully
+%##% %BOLD%%GREEN%Test run successful.%RESET%
 %##########################%
+GOTO :eof
 
-:return
+:error
 IF %ERRORLEVEL% NEQ 0 (
     CALL %SCRIPTLIB%\error.cmd %ERRORLEVEL% "Tests failed!"
     EXIT /B %ERRORLEVEL%

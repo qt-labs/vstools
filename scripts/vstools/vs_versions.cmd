@@ -20,7 +20,7 @@ FOR %%v IN (%VS_VERSIONS%) DO (
 )
 IF %EMPTY_LOOP% (
     %##########################%
-    %##% No matching Visual Studio instances were found
+    %##% %BOLD%%YELLOW%No matching Visual Studio instances were found%RESET%
     %##########################%
     EXIT /B 1
 )
@@ -95,15 +95,15 @@ CALL "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat" %VCVARS_ARCH% > NUL
 
 WHERE /Q msbuild && (
     FOR /F %ALL% %%m IN (`msbuild -version -nologo`) DO SET MSBUILD_VERSION=%%m
-) || (
-    ECHO ERRORCODE: msbuild not found
+)
+IF %ERRORLEVEL% NEQ 0 (
+    ECHO %BOLD%%RED%ERROR: msbuild not found%RESET%
     ENDLOCAL
     SET ERRORCODE=3
     EXIT /B
 )
 
 CALL %SCRIPTLIB%\info.cmd "version"
-IF %VERBOSE% SET
 
 IF NOT %INIT% IF NOT %REBUILD% IF %START_VS% (
     CALL %SCRIPTLIB%\startvs.cmd

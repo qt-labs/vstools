@@ -10,10 +10,12 @@
 
 ECHO.
 %##########################%
-%##% Logging extension version
-%##########################%
+%##% %BOLD%Logging extension version%RESET%
 IF "%VERSION_REV%" == "" (
     ECHO %VERSION%.0 > version.log
+    %##% %BOLD%%DARK_CYAN%%VERSION%%RESET%
 ) ELSE (
     ECHO %VERSION%.%VERSION_REV% > version.log
+    %##% %BOLD%%DARK_CYAN%%VERSION% ^(rev.%VERSION_REV%^)%RESET%
 )
+%##########################%

@@ -19,7 +19,7 @@ EXIT /B
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO.
 %##########################%
-%##% %VS_NAME% ^(%VS_VERSION%^)
+%##% %BOLD%%VS_NAME%%RESET% ^(%VS_VERSION%^)
 IF NOT "%MSBUILD_VERSION%" == "" (
     IF "%VSCMD_ARG_HOST_ARCH%" == "%VSCMD_ARG_TGT_ARCH%" (
         %##% MSBuild v%MSBUILD_VERSION% ^(%VSCMD_ARG_TGT_ARCH%^)
@@ -28,9 +28,9 @@ IF NOT "%MSBUILD_VERSION%" == "" (
     )
 )
 IF "%VERSION_REV%" == "" (
-    %##% Qt VS Tools version: %VERSION%
+    %##% Qt VS Tools version: %BOLD%%VERSION%%RESET%
 ) ELSE (
-    %##% Qt VS Tools version: %VERSION% ^(rev.%VERSION_REV%^)
+    %##% Qt VS Tools version: %BOLD%%VERSION% ^(rev.%VERSION_REV%^)%RESET%
 )
 IF NOT "%DEPLOY_DIR%" == "" %##% Deploy to: %DEPLOY_DIR%
 %##########################%
@@ -41,8 +41,8 @@ EXIT /B
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO.
 %##########################%
-%##% %VS_NAME% ^(%VS_VERSION%^)
-%##% %VS_PATH%
+%##% %BOLD%%VS_NAME%%RESET% ^(%VS_VERSION%^)
+%##% %DARK_GRAY%%VS_PATH%%RESET%
 %##########################%
 EXIT /B
 

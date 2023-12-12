@@ -121,6 +121,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vstools", "vstools", "{E11A
 		scripts\vstools\args.cmd = scripts\vstools\args.cmd
 		scripts\vstools\banner.cmd = scripts\vstools\banner.cmd
 		scripts\vstools\clean.cmd = scripts\vstools\clean.cmd
+		scripts\vstools\console.cmd = scripts\vstools\console.cmd
 		scripts\vstools\deploy.cmd = scripts\vstools\deploy.cmd
 		scripts\vstools\error.cmd = scripts\vstools\error.cmd
 		scripts\vstools\globals.cmd = scripts\vstools\globals.cmd

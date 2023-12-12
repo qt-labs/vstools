@@ -11,7 +11,7 @@
 
 ECHO.
 %##########################%
-%##% Installing extension package
+%##% %BOLD%Installing extension package%RESET%
 %##########################%
 
 ECHO Removing previous installation...

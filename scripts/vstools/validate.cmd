@@ -12,7 +12,7 @@
 IF %VERBOSE% CALL %SCRIPTLIB%\info.cmd "args"
 
 IF NOT EXIST vstools.sln (
-    ECHO Error: could not find Qt VS Tools solution file.
+    ECHO %BOLD%%RED%Error: could not find Qt VS Tools solution file.%RESET%
     EXIT /B 1
 )
 
@@ -45,12 +45,12 @@ IF %BINARYLOG% (
 )
 
 IF NOT EXIST vstools.sln (
-    ECHO Error: could not find Qt VS Tools solution file.
+    ECHO %BOLD%%RED%Error: could not find Qt VS Tools solution file.%RESET%
     EXIT /B 1
 )
 
 IF NOT EXIST %VSWHERE_EXE% (
-    ECHO Error: could not find Visual Studio Locator tool.
+    ECHO %BOLD%%RED%Error: could not find Visual Studio Locator tool.%RESET%
     EXIT /B 1
 )
 
@@ -74,12 +74,12 @@ FOR /F "tokens=5,6,7 delims=.+ " %%v IN ("%VSWHERE_LOGO%") DO (
     )
 )
 IF NOT %VSWHERE_OK% (
-    ECHO Error: Visual Studio Locator version must be %VSWHERE_VERSION% or greater.
+    ECHO %BOLD%%RED%Error: Visual Studio Locator version must be %VSWHERE_VERSION% or greater.%RESET%
     EXIT /B 1
 )
 
 WHERE /Q git.exe || (
-    ECHO Error: could not find git.
+    ECHO %BOLD%%RED%Error: could not find git.%RESET%
     EXIT /B 1
 )
 IF %VERBOSE% %##% git describe --tags
