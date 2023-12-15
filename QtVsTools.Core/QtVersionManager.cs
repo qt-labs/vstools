@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -226,15 +227,7 @@ namespace QtVsTools.Core
 
         private bool IsVersionAvailable(string version)
         {
-            var versionAvailable = false;
-            var versions = GetVersions();
-            foreach (var ver in versions) {
-                if (version == ver) {
-                    versionAvailable = true;
-                    break;
-                }
-            }
-            return versionAvailable;
+            return GetVersions().Any(ver => version == ver);
         }
 
         public void SaveProjectQtVersion(MsBuildProject project, string version)
