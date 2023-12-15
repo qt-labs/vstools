@@ -80,6 +80,7 @@ namespace QtVsTools.Core
         /// Check if all Qt versions are valid and readable.
         /// </summary>
         /// <param name="errorMessage"></param>
+        /// <param name="defaultVersionInvalid"></param>
         /// <returns>true, if there are one or more invalid Qt version</returns>
         public bool HasInvalidVersions(out string errorMessage, out bool defaultVersionInvalid)
         {
@@ -95,10 +96,10 @@ namespace QtVsTools.Core
                 if (path != null && (path.StartsWith("SSH:") || path.StartsWith("WSL:")))
                     continue;
 
-                if (string.IsNullOrEmpty(path) || !QMake.Exists(path)) {
-                    errorMessage += $" * {version} in {path}\n";
-                    defaultVersionInvalid |= version == defaultVersion;
-                }
+                if (!string.IsNullOrEmpty(path) && QMake.Exists(path))
+                    continue;
+                errorMessage += $" * {version} in {path}\n";
+                defaultVersionInvalid |= version == defaultVersion;
             }
 
             if (!string.IsNullOrEmpty(errorMessage)) {
@@ -129,10 +130,10 @@ namespace QtVsTools.Core
             System.Version defaultVersion = null;
             foreach (var tmp in validVersions) {
                 var version = tmp.Value;
-                if (defaultVersion == null || defaultVersion < version) {
-                    defaultName = tmp.Key;
-                    defaultVersion = version;
-                }
+                if (defaultVersion != null && defaultVersion >= version)
+                    continue;
+                defaultName = tmp.Key;
+                defaultVersion = version;
             }
             SaveDefaultVersion(defaultName);
         }
@@ -152,8 +153,7 @@ namespace QtVsTools.Core
                 return Environment.GetEnvironmentVariable("QTDIR");
 
             var key = root.OpenSubKey(Resources.RegistryRootPath, false);
-            var versionKey = key?
-                .OpenSubKey(VersionsKey + Path.DirectorySeparatorChar + version, false);
+            var versionKey = key?.OpenSubKey(Path.Combine(VersionsKey, version), false);
             return versionKey?.GetValue("InstallDir") as string;
         }
 
@@ -167,11 +167,11 @@ namespace QtVsTools.Core
             return version == null ? null : GetInstallPath(version);
         }
 
-        public bool SaveVersion(string versionName, string path, bool checkPath = true)
+        public void SaveVersion(string versionName, string path, bool checkPath = true)
         {
             var verName = versionName?.Trim().Replace(@"\", "_");
             if (string.IsNullOrEmpty(verName))
-                return false;
+                return;
             var dir = string.Empty;
             if (verName != "$(QTDIR)") {
                 DirectoryInfo di;
@@ -185,27 +185,22 @@ namespace QtVsTools.Core
                 } else if (!checkPath) {
                     dir = path;
                 } else {
-                    return false;
+                    return;
                 }
             }
 
-            using (var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryRootPath)) {
-                if (key == null) {
-                    Messages.Print(
-                        "ERROR: root registry key creation failed");
-                    return false;
-                }
-                var versionKeyPath = VersionsKey + Path.DirectorySeparatorChar + verName;
-                using (var versionKey = key.CreateSubKey(versionKeyPath)) {
-                    if (versionKey == null) {
-                        Messages.Print(
-                            "ERROR: version registry key creation failed");
-                        return false;
-                    }
-                    versionKey.SetValue("InstallDir", dir);
-                }
+            using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryRootPath);
+            if (key == null) {
+                Messages.Print("ERROR: root registry key creation failed");
+                return;
             }
-            return true;
+
+            using var versionKey = key.CreateSubKey(Path.Combine(VersionsKey, verName));
+            if (versionKey == null) {
+                Messages.Print("ERROR: version registry key creation failed");
+            } else {
+                versionKey.SetValue("InstallDir", dir);
+            }
         }
 
         public bool HasVersion(string versionName)
@@ -316,7 +311,6 @@ namespace QtVsTools.Core
 
             var regExp = new System.Text.RegularExpressions.Regex(@"\$\(.*\)");
             return regExp.IsMatch(version) || Directory.Exists(GetInstallPath(version));
-
         }
     }
 }
