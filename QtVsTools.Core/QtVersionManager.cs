@@ -68,16 +68,11 @@ namespace QtVsTools.Core
 
         public string[] GetVersions()
         {
-            return GetVersions(Registry.CurrentUser);
-        }
-
-        private string[] GetVersions(RegistryKey root)
-        {
-            var key = root.OpenSubKey(Resources.RegistryRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryRootPath, false);
             if (key == null)
-                return new string[] { };
+                return Array.Empty<string>();
             var versionKey = key.OpenSubKey(VersionsKey, false);
-            return versionKey?.GetSubKeyNames() ?? new string[] { };
+            return versionKey?.GetSubKeyNames() ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -274,7 +269,6 @@ namespace QtVsTools.Core
             }
 
             if (defaultVersion == null) {
-                MergeVersions();
                 var key = root.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null) {
                     var versions = GetVersions();
@@ -319,44 +313,6 @@ namespace QtVsTools.Core
                 return false;
             key.SetValue("DefaultQtVersion", version);
             return true;
-        }
-
-        private void MergeVersions()
-        {
-            var hkcuVersions = GetVersions();
-            var hklmVersions = GetVersions(Registry.LocalMachine);
-
-            var hkcuInstDirs = new string[hkcuVersions.Length];
-            for (var i = 0; i < hkcuVersions.Length; ++i)
-                hkcuInstDirs[i] = GetInstallPath(hkcuVersions[i]);
-            var hklmInstDirs = new string[hklmVersions.Length];
-            for (var i = 0; i < hklmVersions.Length; ++i)
-                hklmInstDirs[i] = GetInstallPath(hklmVersions[i], Registry.LocalMachine);
-
-            for (var i = 0; i < hklmVersions.Length; ++i) {
-                if (hklmInstDirs[i] == null)
-                    continue;
-
-                var found = false;
-                for (var j = 0; j < hkcuInstDirs.Length; ++j) {
-                    if (hkcuInstDirs[j] != null
-                        && hkcuInstDirs[j].ToLower() == hklmInstDirs[i].ToLower()) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    for (var j = 0; j < hkcuVersions.Length; ++j) {
-                        if (hkcuVersions[j] != null
-                            && hkcuVersions[j] == hklmVersions[i]) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                        SaveVersion(hklmVersions[i], hklmInstDirs[i]);
-                }
-            }
         }
 
         private bool VerifyIfQtVersionExists(string version)
