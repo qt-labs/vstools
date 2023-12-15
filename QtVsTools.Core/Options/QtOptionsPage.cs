@@ -302,7 +302,7 @@ namespace QtVsTools.Core.Options
                 QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");
 
                 using var key = Registry.CurrentUser
-                    .OpenSubKey(@"SOFTWARE\" + Resources.registryPackagePath, writable: false);
+                    .OpenSubKey(Resources.RegistryPackagePath, writable: false);
                 if (key == null)
                     return;
                 Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
@@ -337,8 +337,7 @@ namespace QtVsTools.Core.Options
                         "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
                 }
 
-                using var key = Registry.CurrentUser
-                    .CreateSubKey(@"SOFTWARE\" + Resources.registryPackagePath);
+                using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryPackagePath);
                 if (key == null)
                     return;
                 Save(QmlDebuggerEnabled, key, QmlDebug.Enable);

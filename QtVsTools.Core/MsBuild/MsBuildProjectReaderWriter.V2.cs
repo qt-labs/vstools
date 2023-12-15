@@ -34,7 +34,7 @@ namespace QtVsTools.Core.MsBuild
             this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
+                .Where(x => (string)x.Attribute("Label") == "QtSettings")
                 .ToList()
                 .ForEach(config =>
                 {
@@ -182,7 +182,7 @@ namespace QtVsTools.Core.MsBuild
             this[Files.Project].Xml
                 .Elements(ns + "Project")
                 .Elements(ns + "PropertyGroup")
-                .Where(x => (string)x.Attribute("Label") == Resources.projLabelQtSettings)
+                .Where(x => (string)x.Attribute("Label") == "QtSettings")
                 .ToList()
                 .ForEach(x => x.Add(new XElement(ns + "QtModules", string.Join(";", moduleNames))));
             Commit("Adding Qt module names to QtModules project property");

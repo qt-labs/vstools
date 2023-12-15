@@ -555,11 +555,10 @@ namespace QtVsTools.Core.MsBuild
             return string.Join<string>(";", includes);
         }
 
-        private const string RegistryPath = "SOFTWARE\\" + Resources.registryPackagePath;
         private static string GetDirectory(string type)
         {
             try {
-                if (Registry.CurrentUser.OpenSubKey(RegistryPath) is {} key) {
+                if (Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath) is {} key) {
                     if (key.GetValue(type, null) is string path)
                         return NormalizeRelativeFilePath(path);
                 }

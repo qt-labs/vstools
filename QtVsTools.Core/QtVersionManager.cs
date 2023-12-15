@@ -26,16 +26,11 @@ namespace QtVsTools.Core
     /// </summary>
     public class QtVersionManager
     {
-        private static QtVersionManager instance;
-        private readonly string regVersionPath;
-        private readonly string strVersionKey;
-        private Hashtable versionCache;
+        private const string VersionsKey = "Versions";
+        private const string RegistryVersionsPath = Resources.RegistryRootPath + "\\" + VersionsKey;
 
-        private QtVersionManager()
-        {
-            strVersionKey = "Versions";
-            regVersionPath = Resources.registryVersionPath;
-        }
+        private static QtVersionManager instance;
+        private Hashtable versionCache;
 
         private static readonly EventWaitHandle packageInit = new(false, EventResetMode.ManualReset);
         private static EventWaitHandle packageInitDone;
@@ -78,10 +73,10 @@ namespace QtVsTools.Core
 
         private string[] GetVersions(RegistryKey root)
         {
-            var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            var key = root.OpenSubKey(Resources.RegistryRootPath, false);
             if (key == null)
                 return new string[] { };
-            var versionKey = key.OpenSubKey(strVersionKey, false);
+            var versionKey = key.OpenSubKey(VersionsKey, false);
             return versionKey?.GetSubKeyNames() ?? new string[] { };
         }
 
@@ -160,9 +155,9 @@ namespace QtVsTools.Core
             if (version == "$(QTDIR)")
                 return Environment.GetEnvironmentVariable("QTDIR");
 
-            var key = root.OpenSubKey("SOFTWARE\\" + Resources.registryRootPath, false);
+            var key = root.OpenSubKey(Resources.RegistryRootPath, false);
             var versionKey = key?
-                .OpenSubKey(strVersionKey + Path.DirectorySeparatorChar + version, false);
+                .OpenSubKey(VersionsKey + Path.DirectorySeparatorChar + version, false);
             return versionKey?.GetValue("InstallDir") as string;
         }
 
@@ -198,14 +193,13 @@ namespace QtVsTools.Core
                 }
             }
 
-            var rootKeyPath = "SOFTWARE" + Path.DirectorySeparatorChar + Resources.registryRootPath;
-            using (var key = Registry.CurrentUser.CreateSubKey(rootKeyPath)) {
+            using (var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryRootPath)) {
                 if (key == null) {
                     Messages.Print(
                         "ERROR: root registry key creation failed");
                     return false;
                 }
-                var versionKeyPath = strVersionKey + Path.DirectorySeparatorChar + verName;
+                var versionKeyPath = VersionsKey + Path.DirectorySeparatorChar + verName;
                 using (var versionKey = key.CreateSubKey(versionKeyPath)) {
                     if (versionKey == null) {
                         Messages.Print(
@@ -222,14 +216,13 @@ namespace QtVsTools.Core
         {
             if (string.IsNullOrEmpty(versionName))
                 return false;
-            return Registry.CurrentUser.OpenSubKey(Path.Combine("SOFTWARE", regVersionPath,
-                versionName), false) != null;
+            return Registry.CurrentUser.OpenSubKey(Path.Combine(RegistryVersionsPath, versionName),
+                false) != null;
         }
 
         public void RemoveVersion(string versionName)
         {
-            var key = Registry.CurrentUser.OpenSubKey("SOFTWARE" + Path.DirectorySeparatorChar
-                + regVersionPath, true);
+            var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, true);
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);
@@ -260,7 +253,7 @@ namespace QtVsTools.Core
                 return false;
 
             foreach (VCConfiguration3 config in configurations)
-                config.SetPropertyValue(Resources.projLabelQtSettings, true, "QtInstall", version);
+                config.SetPropertyValue("QtSettings", true, "QtInstall", version);
             return true;
         }
 
@@ -273,7 +266,7 @@ namespace QtVsTools.Core
         {
             string defaultVersion = null;
             try {
-                var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                var key = root.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null)
                     defaultVersion = (string)key.GetValue("DefaultQtVersion");
             } catch {
@@ -282,7 +275,7 @@ namespace QtVsTools.Core
 
             if (defaultVersion == null) {
                 MergeVersions();
-                var key = root.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                var key = root.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null) {
                     var versions = GetVersions();
                     if (versions is {Length: > 0})
@@ -308,7 +301,7 @@ namespace QtVsTools.Core
         {
             string defaultVersion = null;
             try {
-                var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\" + regVersionPath, false);
+                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null)
                     defaultVersion = key.GetValue("DefaultQtVersion") as string;
             } catch {
@@ -321,7 +314,7 @@ namespace QtVsTools.Core
         {
             if (version == "$(DefaultQtVersion)")
                 return false;
-            var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\" + regVersionPath);
+            var key = Registry.CurrentUser.CreateSubKey(RegistryVersionsPath);
             if (key == null)
                 return false;
             key.SetValue("DefaultQtVersion", version);

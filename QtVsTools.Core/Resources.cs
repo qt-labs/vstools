@@ -10,16 +10,7 @@ namespace QtVsTools.Core
     /// </summary>
     public static class Resources
     {
-        // Project properties labels
-        public const string projLabelQtSettings = "QtSettings";
-
-        public const string registryRootPath = "Digia";
-
-#if (VS2019 || VS2022)
-        public const string registryPackagePath = registryRootPath + "\\Qt5VS2017";
-#else
-#error Unknown Visual Studio version!
-#endif
-        public const string registryVersionPath = registryRootPath + "\\Versions";
+        public const string RegistryRootPath = "SOFTWARE\\Digia";
+        public const string RegistryPackagePath = RegistryRootPath + "\\Qt5VS2017";
     }
 }
