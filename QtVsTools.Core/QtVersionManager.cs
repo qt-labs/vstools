@@ -237,19 +237,18 @@ namespace QtVsTools.Core
             return versionAvailable;
         }
 
-        public bool SaveProjectQtVersion(MsBuildProject project, string version)
+        public void SaveProjectQtVersion(MsBuildProject project, string version)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (!IsVersionAvailable(version) && version != "$(DefaultQtVersion)")
-                return false;
+                return;
 
             if (project?.VcProject.Configurations is not IVCCollection configurations)
-                return false;
+                return;
 
             foreach (VCConfiguration3 config in configurations)
                 config.SetPropertyValue("QtSettings", true, "QtInstall", version);
-            return true;
         }
 
         public string GetDefaultVersion()
