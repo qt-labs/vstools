@@ -373,7 +373,7 @@ namespace QtVsTools.Core
             if (string.IsNullOrEmpty(version))
                 return false;
 
-            var regExp = new System.Text.RegularExpressions.Regex("\\$\\(.*\\)");
+            var regExp = new System.Text.RegularExpressions.Regex(@"\$\(.*\)");
             return regExp.IsMatch(version) || Directory.Exists(GetInstallPath(version));
 
         }
