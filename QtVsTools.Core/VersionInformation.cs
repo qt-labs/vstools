@@ -52,12 +52,50 @@ namespace QtVsTools.Core
             return versionInfo;
         }
 
-        public string VC_MinimumVisualStudioVersion { get; }
-        public string VC_ApplicationTypeRevision { get; }
-        public string VC_WindowsTargetPlatformMinVersion { get; }
-        public string VC_WindowsTargetPlatformVersion { get; }
-        public string VC_Link_TargetMachine { get; }
-        private string VC_PlatformToolset { get; }
+        private string vcLinkTargetMachine;
+        public string VC_Link_TargetMachine
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(vcLinkTargetMachine))
+                    return vcLinkTargetMachine;
+
+                // Get VS project settings
+                try {
+                    var tempProData = new StringBuilder();
+                    tempProData.AppendLine("SOURCES = main.cpp");
+
+                    var modules = QtModules.Instance.GetAvailableModules(qtMajor)
+                        .Where(mi => mi.Selectable).ToList();
+
+                    foreach (var mi in modules) {
+                        tempProData.AppendLine(string.Format(
+                            "qtHaveModule({0}): HEADERS += {0}.h", mi.proVarQT));
+                    }
+
+                    var randomName = Path.GetRandomFileName();
+                    var tempDir = Path.Combine(Path.GetTempPath(), randomName);
+                    Directory.CreateDirectory(tempDir);
+
+                    var tempPro = Path.Combine(tempDir, $"{randomName}.pro");
+                    File.WriteAllText(tempPro, tempProData.ToString());
+
+                    var qmake = new QMakeImport(this, tempPro, disableWarnings: true);
+                    if (qmake.Run(setVCVars: true) == 0) {
+                        var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
+                        var msbuildProj = MsBuildProjectReaderWriter.Load(tempVcxproj);
+
+                        Directory.Delete(tempDir, recursive: true);
+
+                        vcLinkTargetMachine = msbuildProj.GetProperty("Link", "TargetMachine");
+                    }
+                } catch (Exception exception) {
+                    exception.Log();
+                    vcLinkTargetMachine = null;
+                }
+                return vcLinkTargetMachine;
+            }
+        }
 
         private VersionInformation(string qtDirIn)
         {
@@ -101,52 +139,6 @@ namespace QtVsTools.Core
                 } catch { }
             } catch {
                 qtDir = null;
-                return;
-            }
-
-            // Get VS project settings
-            try {
-                var tempProData = new StringBuilder();
-                tempProData.AppendLine("SOURCES = main.cpp");
-
-                var modules = QtModules.Instance.GetAvailableModules(qtMajor)
-                    .Where(mi => mi.Selectable).ToList();
-
-                foreach (QtModule mi in modules) {
-                    tempProData.AppendLine(string.Format(
-                        "qtHaveModule({0}): HEADERS += {0}.h", mi.proVarQT));
-                }
-
-                var randomName = Path.GetRandomFileName();
-                var tempDir = Path.Combine(Path.GetTempPath(), randomName);
-                Directory.CreateDirectory(tempDir);
-
-                var tempPro = Path.Combine(tempDir, $"{randomName}.pro");
-                File.WriteAllText(tempPro, tempProData.ToString());
-
-                var qmake = new QMakeImport(this, tempPro, disableWarnings: true);
-                qmake.Run(setVCVars: true);
-
-                var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
-                var msbuildProj = MsBuildProjectReaderWriter.Load(tempVcxproj);
-
-                Directory.Delete(tempDir, recursive: true);
-
-                VC_MinimumVisualStudioVersion =
-                    msbuildProj.GetProperty("MinimumVisualStudioVersion");
-                VC_ApplicationTypeRevision =
-                    msbuildProj.GetProperty("ApplicationTypeRevision");
-                VC_WindowsTargetPlatformVersion =
-                    msbuildProj.GetProperty("WindowsTargetPlatformVersion");
-                VC_WindowsTargetPlatformMinVersion =
-                    msbuildProj.GetProperty("WindowsTargetPlatformMinVersion");
-                VC_PlatformToolset =
-                    msbuildProj.GetProperty("PlatformToolset");
-                VC_Link_TargetMachine =
-                    msbuildProj.GetProperty("Link", "TargetMachine");
-
-            } catch (Exception e) {
-                throw new QtVSException("Error reading VS project settings", e);
             }
         }
 

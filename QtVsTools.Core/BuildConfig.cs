@@ -16,5 +16,10 @@ namespace QtVsTools.Core
 #else
 #error Unknown Visual Studio version!
 #endif
+
+        // Since Visual Studio 2019: WindowsTargetPlatformVersion=10.0
+        // will be treated as "use latest installed Windows 10 SDK".
+        // https://developercommunity.visualstudio.com/comments/407752/view.html
+        public static string WindowsTargetPlatformVersion = "10.0";
     }
 }

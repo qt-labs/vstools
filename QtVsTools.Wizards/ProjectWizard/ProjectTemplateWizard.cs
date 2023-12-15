@@ -387,13 +387,11 @@ namespace QtVsTools.Wizards.ProjectWizard
             //
             foreach (IWizardConfiguration c in Configurations
                 .Where(c => c.Target.EqualTo(ProjectTargets.Windows))) {
-                if (!string.IsNullOrEmpty(c.QtVersion.VC_WindowsTargetPlatformVersion)) {
                     xml.AppendLine(string.Format(@"
     <WindowsTargetPlatformVersion Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">{2}</WindowsTargetPlatformVersion>",
                         /*{0}*/ c.Name,
                         /*{1}*/ c.Platform,
-                        /*{2}*/ c.QtVersion.VC_WindowsTargetPlatformVersion));
-                }
+                        /*{2}*/ BuildConfig.WindowsTargetPlatformVersion));
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////
@@ -411,10 +409,10 @@ namespace QtVsTools.Wizards.ProjectWizard
     <AppContainerApplication Condition=""'$(Configuration)|$(Platform)' == '{0}|{1}'"">true</AppContainerApplication>",
                     /*{0}*/ c.Name,
                     /*{1}*/ c.Platform,
-                    /*{2}*/ c.QtVersion.VC_WindowsTargetPlatformVersion,
-                    /*{3}*/ c.QtVersion.VC_WindowsTargetPlatformMinVersion,
-                    /*{4}*/ c.QtVersion.VC_MinimumVisualStudioVersion,
-                    /*{5}*/ c.QtVersion.VC_ApplicationTypeRevision));
+                    /*{2}*/ BuildConfig.WindowsTargetPlatformVersion,
+                    /*{3}*/ "10.0.17134.0", // windows target platform min version
+                    /*{4}*/ "15.0", // minimum Visual Studio version
+                    /*{5}*/ "10.0")); // application type revision
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////

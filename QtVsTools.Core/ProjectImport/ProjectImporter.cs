@@ -259,13 +259,8 @@ namespace QtVsTools.Core
             var ok = xmlProject.ConvertCustomBuildToQtMsBuild();
             if (ok)
                 ok = xmlProject.EnableMultiProcessorCompilation();
-            if (ok) {
-                // Since Visual Studio 2019: WindowsTargetPlatformVersion=10.0
-                // will be treated as "use latest installed Windows 10 SDK".
-                // https://developercommunity.visualstudio.com/comments/407752/view.html
-                const string versionWin10Sdk = "10.0";
-                ok = xmlProject.SetDefaultWindowsSDKVersion(versionWin10Sdk);
-            }
+            if (ok)
+                ok = xmlProject.SetDefaultWindowsSDKVersion(BuildConfig.WindowsTargetPlatformVersion);
             if (ok)
                 ok = xmlProject.UpdateProjectFormatVersion(oldVersion);
 
