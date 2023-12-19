@@ -228,6 +228,8 @@ namespace QtVsTools.Core.Options
                     version.FieldVersionName.ValidationError = null;
                     if (string.IsNullOrEmpty(version.VersionName)) {
                         version.FieldVersionName.ValidationError = "Name cannot be empty";
+                    } else if (version.VersionName.ToUpperInvariant() is "$(QTDIR)" or "$(DEFAULTQTVERSION)") {
+                        version.FieldVersionName.ValidationError = $"Name cannot be '{version.VersionName}'";
                     } else if (Versions.Any(existing => existing != version
                         && existing.VersionName == version.VersionName
                         && existing.State != State.Removed)) {
