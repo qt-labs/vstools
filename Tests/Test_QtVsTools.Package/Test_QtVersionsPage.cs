@@ -211,7 +211,7 @@ if (Path.GetFileName(qtPath).Equals(""bin"", StringComparison.InvariantCultureIg
         public static void RemoveTestKeys()
         {
             var qtVersions = Registry.CurrentUser
-                .OpenSubKey(@"Software\Digia\Versions", writable: true);
+                .OpenSubKey(@"Software\QtProject\QtVsTools\Versions", writable: true);
             using (qtVersions) {
                 var allVersions = qtVersions.GetSubKeyNames();
                 var testVersions = allVersions.Where(k => k.StartsWith("TEST"));

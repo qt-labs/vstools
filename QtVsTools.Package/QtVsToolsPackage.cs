@@ -168,6 +168,10 @@ namespace QtVsTools
                 await TaskScheduler.Default;
                 uiTimer.Stop();
 
+                MoveRegistryKeys("SOFTWARE\\Digia", Resources.RegistryRootPath);
+                MoveRegistryKeys(Resources.RegistryRootPath + "\\Qt5VS2017",
+                    Resources.RegistryPackagePath);
+
                 var vm = QtVersionManager.The(Ready);
                 if (vm.HasInvalidVersions(out var error, out var defaultInvalid)) {
                     if (defaultInvalid)

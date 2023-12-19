@@ -10,7 +10,7 @@ namespace QtVsTools.Core
     /// </summary>
     public static class Resources
     {
-        public const string RegistryRootPath = "SOFTWARE\\Digia";
-        public const string RegistryPackagePath = RegistryRootPath + "\\Qt5VS2017";
+        public const string RegistryRootPath = @"SOFTWARE\QtProject\QtVsTools";
+        public const string RegistryPackagePath = RegistryRootPath + @"\Settings";
     }
 }
