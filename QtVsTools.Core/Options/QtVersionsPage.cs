@@ -13,11 +13,11 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.Core.Options
 {
-    using Common;
     using Core;
+    using QtVsTools.Common;
     using VisualStudio;
+    using static Common.Utils;
     using static QtVersionsTable;
-    using static Utils;
 
     public class QtVersionsPage : UIElementDialogPage
     {

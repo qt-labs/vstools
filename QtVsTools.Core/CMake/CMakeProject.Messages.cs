@@ -12,7 +12,7 @@ namespace QtVsTools.Core.CMake
 {
     using Options;
     using VisualStudio;
-    using static Utils;
+    using static Common.Utils;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {

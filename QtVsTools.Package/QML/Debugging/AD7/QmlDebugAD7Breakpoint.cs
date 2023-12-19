@@ -3,7 +3,6 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +12,7 @@ using Microsoft.VisualStudio.Debugger.Interop;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
-    using static Utils;
+    using static Core.Common.Utils;
 
     sealed partial class PendingBreakpoint : Disposable,
 

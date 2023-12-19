@@ -29,7 +29,7 @@ namespace QtVsTools.Core
 namespace QtVsTools.Core.CMake
 {
     using Common;
-    using static Common.EnumExt;
+    using QtVsTools.Common;
     using static SyntaxAnalysis.RegExpr;
 
     public partial class CMakeProject : Concurrent<CMakeProject>

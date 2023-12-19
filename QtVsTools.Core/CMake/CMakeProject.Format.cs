@@ -13,6 +13,8 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.CMake
 {
+    using Common;
+
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         public enum QtStatus { False, NullPresets, ConversionPending, True }

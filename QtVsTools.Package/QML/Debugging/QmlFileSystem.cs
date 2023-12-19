@@ -14,7 +14,7 @@ using System.Xml.Linq;
 namespace QtVsTools.Qml.Debug
 {
     using Core;
-    using static Utils;
+    using static Core.Common.Utils;
 
     struct QmlFile
     {

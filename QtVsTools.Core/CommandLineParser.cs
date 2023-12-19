@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace QtVsTools.Core.CommandLine
 {
     using MsBuild;
-    using static Utils;
+    using static Common.Utils;
 
     public class Parser
     {

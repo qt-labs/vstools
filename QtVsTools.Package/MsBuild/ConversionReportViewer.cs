@@ -24,7 +24,7 @@ namespace QtVsTools.Package.MsBuild
 {
     using Core.MsBuild;
     using VisualStudio;
-    using static Utils;
+    using static Core.Common.Utils;
 
     [Guid(GuidString)]
     public partial class ConversionReportViewer : IVsEditorFactory

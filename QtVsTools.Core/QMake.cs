@@ -13,7 +13,7 @@ using System.Text;
 namespace QtVsTools.Core
 {
     using VisualStudio;
-    using static Utils;
+    using static Common.Utils;
 
     public abstract class QMake
     {

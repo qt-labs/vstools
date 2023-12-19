@@ -20,7 +20,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using QtVsTools.Common;
 
     using static Common.WizardData;
-    using static Utils;
+    using static Core.Common.Utils;
 
     public partial class ConfigPage : WizardPage
     {

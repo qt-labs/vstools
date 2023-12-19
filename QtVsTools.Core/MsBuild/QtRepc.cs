@@ -5,11 +5,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QtVsTools.Core.MsBuild
 {
     using CommandLine;
+    using Common;
 
     public sealed class QtRepc : QtTool
     {

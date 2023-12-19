@@ -11,6 +11,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.MsBuild
 {
+    using Common;
     using Options;
     using VisualStudio;
 

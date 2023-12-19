@@ -21,7 +21,7 @@ namespace QtVsTools.Core.MsBuild
     using SyntaxAnalysis;
     using static HelperFunctions;
     using static SyntaxAnalysis.RegExpr;
-    using static Utils;
+    using static Common.Utils;
     using static MsBuildProjectFormat;
 
     public partial class MsBuildProjectReaderWriter

@@ -9,6 +9,8 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
+    using Common;
+
     public static class VcFilterExtensions
     {
         public static bool IsInFilter(this VCFile vcFile, FakeFilter fakeFilter)

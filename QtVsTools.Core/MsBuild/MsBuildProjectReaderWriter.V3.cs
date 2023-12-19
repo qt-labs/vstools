@@ -11,7 +11,7 @@ using System.Xml.Linq;
 namespace QtVsTools.Core.MsBuild
 {
     using static MsBuildProjectFormat;
-    using static Utils;
+    using static Common.Utils;
 
     public partial class MsBuildProjectReaderWriter
     {

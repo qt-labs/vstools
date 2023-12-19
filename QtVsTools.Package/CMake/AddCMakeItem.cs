@@ -19,6 +19,7 @@ using Constants = Microsoft.VisualStudio.OLE.Interop.Constants;
 namespace QtVsTools.Package.CMake
 {
     using QtVsTools.Core.CMake;
+    using QtVsTools.Core.Common;
     using VisualStudio;
 
     using CommandTable = QtMenus.Package;

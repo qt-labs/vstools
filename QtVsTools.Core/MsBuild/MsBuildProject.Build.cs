@@ -24,10 +24,9 @@ using Thread = System.Threading.Thread;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using Common;
     using Options;
     using VisualStudio;
-    using static Common.EnumExt;
+    using static QtVsTools.Common.EnumExt;
 
     public partial class MsBuildProject
     {

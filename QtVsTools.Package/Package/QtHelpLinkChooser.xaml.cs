@@ -3,7 +3,6 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +15,7 @@ using QtVsTools.VisualStudio;
 
 namespace QtVsTools
 {
-    using static Utils;
+    using static Core.Common.Utils;
 
     partial class QtHelpLinkChooser : DialogWindow
     {

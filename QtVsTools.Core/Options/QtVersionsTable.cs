@@ -24,11 +24,11 @@ using Shell32;
 
 namespace QtVsTools.Core.Options
 {
-    using Common;
     using Core;
+    using QtVsTools.Common;
     using VisualStudio;
-    using static Common.EnumExt;
-    using static Utils;
+    using static Common.Utils;
+    using static QtVsTools.Common.EnumExt;
 
     public enum BuildHost
     {

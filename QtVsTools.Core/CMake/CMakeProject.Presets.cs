@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace QtVsTools.Core.CMake
 {
     using static Instances;
-    using static Utils;
+    using static Common.Utils;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {

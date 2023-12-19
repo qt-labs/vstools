@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.Debugger.Interop;
 
 namespace QtVsTools.Qml.Debug.AD7
 {
-    using static Utils;
+    using static Core.Common.Utils;
 
     sealed partial class CodeContext :
 

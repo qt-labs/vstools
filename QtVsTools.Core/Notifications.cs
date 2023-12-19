@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.Shell;
 namespace QtVsTools.Core
 {
     using Common;
-    using MsBuild;
+    using QtVsTools.Common;
     using VisualStudio;
 
     public static class Notifications

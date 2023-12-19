@@ -18,10 +18,10 @@ using Process = System.Diagnostics.Process;
 
 namespace QtVsTools.Core
 {
-    using Common;
     using MsBuild;
+    using QtVsTools.Common;
+    using static Common.Utils;
     using static SyntaxAnalysis.RegExpr;
-    using static Utils;
 
     public static class HelperFunctions
     {

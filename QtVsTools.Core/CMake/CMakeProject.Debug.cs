@@ -14,6 +14,8 @@ using Newtonsoft.Json.Linq;
 
 namespace QtVsTools.Core.CMake
 {
+    using Common;
+
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         private async Task AddLaunchSettingsAsync(string target)

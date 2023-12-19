@@ -9,6 +9,7 @@ using System.Linq;
 namespace QtVsTools.Core.MsBuild
 {
     using CommandLine;
+    using Common;
 
     public abstract class QtTool
     {

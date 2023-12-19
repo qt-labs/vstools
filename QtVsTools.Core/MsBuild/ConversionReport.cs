@@ -20,7 +20,8 @@ using JsonFormatting = Newtonsoft.Json.Formatting;
 namespace QtVsTools.Core.MsBuild
 {
     using Common;
-    using static Utils;
+    using QtVsTools.Common;
+    using static Common.Utils;
     using static MsBuildProjectReaderWriter;
 
     public class ConversionReport

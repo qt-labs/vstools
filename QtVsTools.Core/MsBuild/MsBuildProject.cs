@@ -17,11 +17,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using Common;
     using Options;
+    using QtVsTools.Common;
     using VisualStudio;
+    using static Common.Utils;
     using static Instances;
-    using static Utils;
 
     /// <summary>
     /// QtProject holds the Qt specific properties for a Visual Studio project.

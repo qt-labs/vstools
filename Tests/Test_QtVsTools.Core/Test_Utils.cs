@@ -6,11 +6,12 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.Core
 {
+    using QtVsTools.Core.Common;
+
     [TestClass]
     public class Test_Utils
     {

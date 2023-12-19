@@ -29,7 +29,7 @@ namespace QtVsTools
     using Qml.Debug;
     using VisualStudio;
 
-    using static Utils;
+    using static QtVsTools.Core.Common.Utils;
     using static SyntaxAnalysis.RegExpr;
 
     public static partial class Instances

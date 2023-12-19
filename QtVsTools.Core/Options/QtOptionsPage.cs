@@ -19,8 +19,8 @@ namespace QtVsTools.Core.Options
 {
     using Core;
     using VisualStudio;
-    using static Utils;
-    using static Common.EnumExt;
+    using static Common.Utils;
+    using static QtVsTools.Common.EnumExt;
 
     public static class Options
     {

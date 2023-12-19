@@ -16,7 +16,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using Core.CMake;
     using Json;
-    using static Utils;
+    using static Core.Common.Utils;
     using static QtVsTools.Common.EnumExt;
 
     public abstract partial class ProjectTemplateWizard : IWizard

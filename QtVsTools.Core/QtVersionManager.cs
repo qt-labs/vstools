@@ -15,6 +15,7 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
+    using Common;
     using MsBuild;
 
     public static partial class Instances

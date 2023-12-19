@@ -11,16 +11,17 @@ using System.Reflection;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
-using QtVsTools.Core;
-using QtVsTools.Wizards.Util;
 
 using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
 namespace QtVsTools.Package.CMake
 {
+    using Core;
     using Core.CMake;
     using Microsoft.VisualStudio.Workspace.VSIntegration.UI;
+    using QtVsTools.Core.Common;
     using VisualStudio;
+    using Wizards.Util;
 
     internal class CMakeVsProject : IVsProject
     {

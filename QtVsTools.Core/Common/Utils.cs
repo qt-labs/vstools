@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QtVsTools
+namespace QtVsTools.Core.Common
 {
     public static class Utils
     {

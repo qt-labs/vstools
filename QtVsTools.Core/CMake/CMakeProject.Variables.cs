@@ -11,8 +11,8 @@ using Microsoft.VisualStudio.Workspace.Indexing;
 
 namespace QtVsTools.Core.CMake
 {
-    using Common;
-    using static Common.EnumExt;
+    using QtVsTools.Common;
+    using static QtVsTools.Common.EnumExt;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {

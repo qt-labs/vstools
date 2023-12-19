@@ -20,7 +20,7 @@ namespace QtVsTools
     using Core.CMake;
     using Core.MsBuild;
     using VisualStudio;
-    using static Utils;
+    using static Core.Common.Utils;
 
     internal class DteEventsHandler : IVsDebuggerEvents
     {

@@ -3,7 +3,6 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +14,7 @@ namespace QtVsTools.Wizards.ItemWizard
 {
     using Common;
     using VisualStudio;
-    using static Utils;
+    using static Core.Common.Utils;
 
     public partial class TranslationPage : WizardPage
     {

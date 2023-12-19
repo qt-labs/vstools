@@ -27,10 +27,10 @@ namespace QtVsTools.Qml.Debug
     using Core.MsBuild;
     using SyntaxAnalysis;
     using VisualStudio;
+    using static Core.Common.Utils;
     using static Core.Instances;
     using static Instances;
     using static SyntaxAnalysis.RegExpr;
-    using static Utils;
 
     class Launcher : Disposable, IDebugEventCallback2
     {
