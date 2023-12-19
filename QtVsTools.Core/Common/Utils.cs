@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core.Common
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static class ProjectTypes
         {
