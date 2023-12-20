@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
+using System.Diagnostics;
 
 namespace QtVsTools.Test.QtMsBuild.Build
 {
@@ -130,6 +131,8 @@ namespace QtVsTools.Test.QtMsBuild.Build
                     EventArgs.Enqueue(e);
                 }
             }
+            if (e.GetType().GetProperty("Message")?.GetValue(e)?.ToString() is { Length: > 0 } msg)
+                Debug.WriteLine(msg);
         }
 
         private void GlobalProjectCollection_ProjectXmlChanged(object sender, ProjectXmlChangedEventArgs e)

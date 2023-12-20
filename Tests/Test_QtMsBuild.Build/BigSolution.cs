@@ -3,17 +3,18 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using QtVsTools.Core.MsBuild;
 
-namespace generator
+namespace QtVsTools.Test.QtMsBuild.Build
 {
-    internal class Program
+    public static class BigSolution
     {
         static void GenerateProject(
             StringBuilder genSolutionProjectRef,
@@ -65,21 +66,10 @@ namespace generator
             }
         }
 
-        static void Main(string[] args)
+        public static void Generate(string outputPath, string templatePath, int projectCount)
         {
-            int projectCount;
-            if (args.Length == 0 || !int.TryParse(args[0], out projectCount)) {
-                string userProjectCount;
-                do {
-                    Console.Write("Project count: ");
-                    userProjectCount = Console.ReadLine();
-                } while (!int.TryParse(userProjectCount, out projectCount));
-            }
-            var pathToTemplateDir = Path.GetFullPath(@"..\..\..\template");
-            var pathToGeneratedDir = Path.GetFullPath(
-                $@"..\..\..\generated_{DateTime.Now.ToString("yyyyMMddhhmmssfff")}");
             var templateFiles = Directory.GetFiles(
-                pathToTemplateDir, "*", SearchOption.AllDirectories);
+                templatePath, "*", SearchOption.AllDirectories);
             var solutionFilePath = templateFiles
                 .Where(x => Path.GetExtension(x) == ".sln")
                 .First();
@@ -88,8 +78,8 @@ namespace generator
             var projectFilePaths = templateFiles
                 .Where(x => Path.GetExtension(x) == ".vcxproj");
             var genSolutionText = solutionText;
-            if (Directory.Exists(pathToGeneratedDir))
-                Directory.Delete(pathToGeneratedDir, true);
+            if (Directory.Exists(outputPath))
+                Directory.Delete(outputPath, true);
             foreach (var projectFilePath in projectFilePaths) {
                 var genSolutionProjectRef = new StringBuilder();
                 var genSolutionProjectConfigs = new StringBuilder();
@@ -112,8 +102,8 @@ namespace generator
                 GenerateProject(
                     genSolutionProjectRef,
                     genSolutionProjectConfigs,
-                    pathToTemplateDir,
-                    pathToGeneratedDir,
+                    templatePath,
+                    outputPath,
                     projectCount,
                     projectGuid,
                     projectName,
@@ -123,7 +113,7 @@ namespace generator
                     .Replace(projectRef, genSolutionProjectRef.ToString())
                     .Replace(projectConfigs, genSolutionProjectConfigs.ToString());
             }
-            var genSolutionFilePath = Path.Combine(pathToGeneratedDir, solutionName);
+            var genSolutionFilePath = Path.Combine(outputPath, solutionName);
             File.WriteAllText(genSolutionFilePath, genSolutionText);
         }
     }

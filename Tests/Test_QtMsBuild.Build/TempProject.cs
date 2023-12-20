@@ -46,6 +46,14 @@ namespace QtVsTools.Test.QtMsBuild.Build
             WriteAllText(ProjectPath, xml);
         }
 
+        public void GenerateBigSolution(string templatePath, int projectCount)
+        {
+            Reset();
+            CreateDirectory(ProjectDir);
+            BigSolution.Generate(ProjectDir, templatePath, projectCount);
+            ProjectFileName = GetFileName(EnumerateFiles(ProjectDir, "*.sln").FirstOrDefault());
+        }
+
         protected override void DisposeUnmanaged()
         {
             Reset();

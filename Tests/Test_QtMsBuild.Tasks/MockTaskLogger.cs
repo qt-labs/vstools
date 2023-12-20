@@ -11,7 +11,7 @@ using Microsoft.Build.Framework;
 
 namespace QtVsTools.Test.QtMsBuild.Tasks
 {
-    internal class TestTaskLoggingHelper : QtMSBuild.ITaskLoggingHelper
+    internal class MockTaskLogger : QtMSBuild.ITaskLoggingHelper
     {
         public bool HasLoggedErrors { get; set; } = false;
 

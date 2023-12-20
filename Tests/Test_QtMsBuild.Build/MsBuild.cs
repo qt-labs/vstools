@@ -4,6 +4,8 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.Build.Evaluation;
@@ -33,13 +35,44 @@ namespace QtVsTools.Test.QtMsBuild.Build
         public static Project Evaluate(string path, params (string name, string value)[] globals)
         {
             return ProjectCollection.LoadProject(
-                path, globals.ToDictionary(x => x.name, x => x.value), null);
+                path, globals.ToDictionary(x => x.name, x => x.value), "Current");
         }
 
         public static Project Evaluate(XmlReader xml, params (string name, string value)[] globals)
         {
             return ProjectCollection.LoadProject(
                 xml, globals.ToDictionary(x => x.name, x => x.value), null);
+        }
+
+        public static bool Run(string workDir, params string[] args)
+        {
+            var msbuildStartInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                FileName = Path.Combine(Properties.MSBuildToolsPath, "MSBuild.exe"),
+                Arguments = string.Join(" ", args
+                    .Where(arg => arg is { Length: > 0})
+                    .Select(arg => arg.Contains(" ") ? $"\"{arg}\"" : arg)),
+                WorkingDirectory = workDir
+            };
+            msbuildStartInfo.EnvironmentVariables["VsInstallRoot"] = Properties.VsInstallRoot;
+            msbuildStartInfo.EnvironmentVariables["VCTargetsPath"] = Properties.VCTargetsPath;
+
+            var msbuildProc = new Process
+            {
+                StartInfo = msbuildStartInfo
+            };
+            msbuildProc.OutputDataReceived += (sender, ev) => Debug.WriteLine(ev.Data);
+            msbuildProc.ErrorDataReceived += (sender, ev) => Debug.WriteLine(ev.Data);
+            if (!msbuildProc.Start())
+                return false;
+            msbuildProc.BeginOutputReadLine();
+            msbuildProc.BeginErrorReadLine();
+            msbuildProc.WaitForExit();
+            return msbuildProc.ExitCode == 0;
         }
     }
 }

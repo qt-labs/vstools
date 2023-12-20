@@ -105,6 +105,7 @@
   // -->
   <ItemGroup>
     <None Include="app.config" />
+    <Compile Include="BigSolution.cs" />
     <Compile Include="TempProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logger.cs" />

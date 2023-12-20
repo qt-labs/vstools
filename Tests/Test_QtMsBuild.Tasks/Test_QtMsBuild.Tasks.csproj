@@ -95,7 +95,8 @@
   // -->
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestTaskLoggingHelper.cs" />
+    <Compile Include="MockBuildEngine.cs" />
+    <Compile Include="MockTaskLogger.cs" />
     <Compile Include="Test_GetVarsFromMSBuild.cs" />
     <Compile Include="Test_Join.cs" />
     <Compile Include="Test_QtRunTask.cs" />
