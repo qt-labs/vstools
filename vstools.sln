@@ -95,6 +95,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C7F47BF-D12B-46BA-934B-CDC9C462D116}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		evalprops.targets = evalprops.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_QtMsBuild.Build", "Tests\Test_QtMsBuild.Build\Test_QtMsBuild.Build.csproj", "{D90720E3-0D5E-42A3-90DE-A5265EA22F80}"

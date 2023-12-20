@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Export property evaluation
+  // -->
+  <PropertyGroup>
+    <PropEvalFileName Condition="'$(PropEvalFileName)' == ''">evalprops.csv</PropEvalFileName>
+    <PropEvalPath Condition="'$(PropEvalPath)' == ''">$(IntermediateOutputPath)$(PropEvalFileName)</PropEvalPath>
+  </PropertyGroup>
+  <Target Name="ExportPropertyEval" BeforeTargets="PrepareForBuild" Inputs="$(ProjectPath)" Outputs="$(PropEvalPath)">
+    <ItemGroup>
+      <PropEval Include="MSBuildToolsPath">
+        <Value>$(MSBuildToolsPath)</Value>
+      </PropEval>
+      <PropEval Include="VsInstallRoot">
+        <Value>$(VsInstallRoot)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath">
+        <Value>$(VCTargetsPath)</Value>
+      </PropEval>
+      <PropEval Include="SolutionDir">
+        <Value>$(SolutionDir)</Value>
+      </PropEval>
+      <PropEval Include="Configuration">
+        <Value>$(Configuration)</Value>
+      </PropEval>
+    </ItemGroup>
+    <WriteLinesToFile File="$(PropEvalPath)" Lines="@(PropEval->'%(Identity);%(Value)','%0D%0A')" Overwrite="true" />
+    <ItemGroup>
+      <PropEval Remove="@(PropEval)" />
+      <Content Include="$(PropEvalPath)">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <TargetPath>$(PropEvalFileName)</TargetPath>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>

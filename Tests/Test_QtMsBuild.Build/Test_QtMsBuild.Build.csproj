@@ -107,7 +107,6 @@
     <None Include="app.config" />
     <Compile Include="TempProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Props.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MsBuild.cs" />
     <Compile Include="Test_IntDir.cs" />
@@ -115,39 +114,13 @@
     <Compile Include="Test_Eval.cs" />
     <Compile Include="Test_Build.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(SolutionDir)\EvalProps.cs">
+      <Link>EvalProps.cs</Link>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Condition="Exists('$(SolutionDir)\transform.targets')" Project="$(SolutionDir)\transform.targets" />
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Export property evaluation
-  // -->
-  <PropertyGroup>
-    <PropEvalFileName Condition="'$(PropEvalFileName)' == ''">PropEval.csv</PropEvalFileName>
-    <PropEvalPath Condition="'$(PropEvalPath)' == ''">$(IntermediateOutputPath)$(PropEvalFileName)</PropEvalPath>
-  </PropertyGroup>
-  <Target Name="ExportPropertyEval" BeforeTargets="PrepareForBuild" Inputs="$(ProjectPath)" Outputs="$(PropEvalPath)">
-    <ItemGroup>
-      <PropEval Include="MSBuildToolsPath">
-        <Value>$(MSBuildToolsPath)</Value>
-      </PropEval>
-      <PropEval Include="VsInstallRoot">
-        <Value>$(VsInstallRoot)</Value>
-      </PropEval>
-      <PropEval Include="VCTargetsPath">
-        <Value>$(VCTargetsPath)</Value>
-      </PropEval>
-      <PropEval Include="SolutionDir">
-        <Value>$(SolutionDir)</Value>
-      </PropEval>
-    </ItemGroup>
-    <WriteLinesToFile File="$(PropEvalPath)" Lines="@(PropEval->'%(Identity);%(Value)','%0D%0A')" Overwrite="true" />
-    <ItemGroup>
-      <PropEval Remove="@(PropEval)" />
-      <Content Include="$(PropEvalPath)">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <TargetPath>$(PropEvalFileName)</TargetPath>
-      </Content>
-    </ItemGroup>
-  </Target>
+  <Import Condition="Exists('$(SolutionDir)\EvalProps.targets')" Project="$(SolutionDir)\EvalProps.targets" />
 </Project>
