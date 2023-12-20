@@ -130,7 +130,8 @@
     BeforeTargets="QtWorkPrepare">
 
     <Message Importance="High" Condition="'$(QtDebug)' == 'true'" Text="#### QtPrepare"/>
-    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
 
     <ReadLinesFromFile File="$(QtLogFilePath)">
       <Output TaskParameter="Lines" ItemName="QtLogData"/>
@@ -678,7 +679,8 @@
   <Target
     Name="Qt"
     DependsOnTargets="QtPrepare;QtWork;QtSetAdditionalOptions">
-    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
     <OnError ExecuteTargets="QtLeaveCriticalSection_OnError"/>
   </Target>
 
@@ -689,10 +691,12 @@
   // Synchronize calls to InitializeBuildStatus
   // -->
   <Target Name="QtEnterCriticalSection_InitializeBuildStatus" BeforeTargets="InitializeBuildStatus">
-    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
   </Target>
   <Target Name="QtLeaveCriticalSection_InitializeBuildStatus" AfterTargets="InitializeBuildStatus">
-    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
   </Target>
   <PropertyGroup>
     <!--// Schedule critical section enter/leave targets around InitializeBuildStatus -->
@@ -716,10 +720,12 @@
   // Synchronize calls to FinalizeBuildStatus
   // -->
   <Target Name="QtEnterCriticalSection_FinalizeBuildStatus" BeforeTargets="FinalizeBuildStatus">
-    <CriticalSection Lock="true" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="true" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
   </Target>
   <Target Name="QtLeaveCriticalSection_FinalizeBuildStatus" AfterTargets="FinalizeBuildStatus">
-    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
   </Target>
   <PropertyGroup>
     <!--// Schedule critical section enter/leave targets around FinalizeBuildStatus -->
@@ -743,7 +749,8 @@
   // Fail-safe release of critical section lock, to be used in OnError tasks
   // -->
   <Target Name="QtLeaveCriticalSection_OnError">
-    <CriticalSection Lock="false" Name="$(ProjectGuid)" />
+    <CriticalSection Lock="false" Name="$(ProjectGuid)" Timeout="$(QtCriticalSectionTimeout)"
+      FixedTimeout="$(QtCriticalSectionFixedTimeout)" Delay="$(QtCriticalSectionDelay)" />
   </Target>
 
   <!--

@@ -98,10 +98,17 @@
     <Compile Include="MockBuildEngine.cs" />
     <Compile Include="MockTaskLogger.cs" />
     <Compile Include="Test_GetVarsFromMSBuild.cs" />
+    <Compile Include="Test_CriticalSection.cs" />
     <Compile Include="Test_Join.cs" />
     <Compile Include="Test_QtRunTask.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(SolutionDir)\EvalProps.cs">
+      <Link>EvalProps.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
+  <Import Condition="Exists('$(SolutionDir)\EvalProps.targets')" Project="$(SolutionDir)\EvalProps.targets" />
 </Project>

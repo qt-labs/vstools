@@ -37,6 +37,19 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Defaults for CriticalSection task
+  // -->
+  <PropertyGroup>
+    <QtCriticalSectionTimeout Condition="'$(QtCriticalSectionTimeout)' == ''"
+      >10</QtCriticalSectionTimeout>
+    <QtCriticalSectionFixedTimeout Condition="'$(QtCriticalSectionFixedTimeout)' == ''"
+      >false</QtCriticalSectionFixedTimeout>
+    <QtCriticalSectionDelay Condition="'$(QtCriticalSectionDelay)' == ''"
+      >0</QtCriticalSectionDelay>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Qt Variables Expansion
   // -->
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">

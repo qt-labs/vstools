@@ -34,50 +34,56 @@ namespace QtVsTools.QtMsBuild.Tasks
         public static bool Execute(
         #region Parameters
             System.Boolean Lock,
-            System.String Name)
+            System.String Name,
+            System.Int32 Timeout = 0,
+            System.Boolean FixedTimeout = false,
+            System.Int32 Delay = 0)
         #endregion
         {
             #region Code
             var buildEngine = BuildEngine as IBuildEngine4;
+            Name = Name.Trim(' ', '{', '}');
+            var tmpFile = Path.Combine(Path.GetTempPath(), string.Format("qtmsbuild{0}.tmp", Name));
 
-            // Acquire lock
-            string lockName = string.Format("Global\\{0}", Name);
-            EventWaitHandle buildLock = null;
-            if (!EventWaitHandle.TryOpenExisting(lockName, out buildLock)) {
+            if (Timeout <= 0)
+                Timeout = 10;
+
+            var eventName = string.Format("Global\\QtMSBuild.Lock.Project-{0}", Name);
+            var waitHandle = buildEngine.GetRegisteredTaskObject(eventName,
+                RegisteredTaskObjectLifetime.Build) as EventWaitHandle;
+            if (waitHandle == null && !EventWaitHandle.TryOpenExisting(eventName, out waitHandle)) {
                 // Lock does not exist; create lock
                 bool lockCreated;
-                buildLock = new EventWaitHandle(
-                    true, EventResetMode.AutoReset, lockName, out lockCreated);
+                waitHandle = new EventWaitHandle(
+                    true, EventResetMode.AutoReset, eventName, out lockCreated);
                 if (lockCreated) {
                     // Keep lock alive until end of build
                     buildEngine.RegisterTaskObject(
-                        Name, buildLock, RegisteredTaskObjectLifetime.Build, false);
+                        eventName, waitHandle, RegisteredTaskObjectLifetime.Build, false);
                 }
             }
-            if (buildLock == null) {
-                Log.LogError("Qt::BuildLock[{0}]: Error accessing lock", Name);
-                return false;
+
+            if (!Lock) {
+                if (!FixedTimeout)
+                    File.WriteAllBytes(tmpFile, new byte[0]);
+                if (Delay > 0)
+                    Thread.Sleep(Delay);
+                waitHandle.Set();
+                return true;
             }
-            if (Lock) {
-                // Wait until locked
-                if (!buildLock.WaitOne(1000)) {
-                    var t = Stopwatch.StartNew();
-                    do {
-                        // Check for build errors
-                        if (Log.HasLoggedErrors) {
-                            Log.LogError("Qt::BuildLock[{0}]: Errors logged; wait aborted", Name);
-                            return false;
-                        }
-                        // Timeout after 10 secs.
-                        if (t.ElapsedMilliseconds >= 10000) {
-                            Log.LogError("Qt::BuildLock[{0}]: Timeout; wait aborted", Name);
-                            return false;
-                        }
-                    } while (!buildLock.WaitOne(1000));
+
+            var timeoutReference = DateTime.Now;
+            while (!waitHandle.WaitOne(3000)) {
+                if (Log.HasLoggedErrors) {
+                    Log.LogError("Qt::BuildLock[{0}]: Errors logged; wait aborted", Name);
+                    return false;
                 }
-            } else {
-                // Unlock
-                buildLock.Set();
+                if (!FixedTimeout && File.Exists(tmpFile))
+                    timeoutReference = File.GetLastWriteTime(tmpFile);
+                if (DateTime.Now.Subtract(timeoutReference).TotalSeconds >= Timeout) {
+                    Log.LogError("Qt::BuildLock[{0}]: Timeout; wait aborted", Name);
+                    return false;
+                }
             }
             #endregion
 
