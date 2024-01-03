@@ -54,6 +54,7 @@
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
+  <Import Project="$(SolutionDir)\QtCppConfig.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(LOCALAPPDATA)\qtvstest;$(IncludePath)</IncludePath>
   </PropertyGroup>
@@ -61,11 +62,11 @@
     <IncludePath>$(LOCALAPPDATA)\qtvstest;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>$(DefaultQtVersion)</QtInstall>
+    <QtInstall>$(QtBuild)</QtInstall>
     <QtModules>core;network;testlib</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>$(DefaultQtVersion)</QtInstall>
+    <QtInstall>$(QtBuild)</QtInstall>
     <QtModules>core;network;testlib</QtModules>
   </PropertyGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
