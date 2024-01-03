@@ -31,7 +31,7 @@ FOR /L %%i IN (2,1,%BANNER_WIDTH%) DO (
     CALL SET "##########################=%%##########################%%%##########################%"
 )
 ECHO %##########################%>%BANNER_FILE%
-DIR %BANNER_FILE% /A:-D /-C | FOR /F "tokens=3" %%a IN ('FINDSTR /R /C:"^[^ ]"') DO @EXIT /B %%a
+FSUTIL file queryvaliddata %BANNER_FILE% | FOR /F "tokens=2 delims=()" %%a IN ('FINDSTR /R /C:"^[^ ]"') DO @EXIT /B %%a
 
 SET /A "BANNER_LEN = %ERRORLEVEL% - 2"
 SET /A "BANNER_FILE_SIZE = BANNER_LEN + 1"
@@ -39,7 +39,7 @@ SET /A "BANNER_FILE_SIZE = BANNER_LEN + 1"
 SET ##=%BANNER_FRAME_CHARS%
 FOR /L %%i IN (2,1,%BANNER_FRAME_WIDTH%) DO CALL SET "##=%%##%%%##%"
 ECHO %##%>%BANNER_FILE%
-DIR %BANNER_FILE% /A:-D /-C | FOR /F "tokens=3" %%a IN ('FINDSTR /R /C:"^[^ ]"') DO @EXIT /B %%a
+FSUTIL file queryvaliddata %BANNER_FILE% | FOR /F "tokens=2 delims=()" %%a IN ('FINDSTR /R /C:"^[^ ]"') DO @EXIT /B %%a
 
 SET /A "BANNER_FRAME_LEN = %ERRORLEVEL% - 2"
 SET /A "EMPTY_LEN = BANNER_LEN - (2 * BANNER_FRAME_LEN)"
