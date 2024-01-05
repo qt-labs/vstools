@@ -1,6 +1,6 @@
 ############################################################################
 #
-# Copyright (C) 2023 The Qt Company Ltd.
+# Copyright (C) 2024 The Qt Company Ltd.
 # Contact: https://www.qt.io/licensing/
 #
 # This file is part of the Qt VS Tools.

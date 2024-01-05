@@ -1,5 +1,5 @@
 /***************************************************************************************************
- Copyright (C) 2023 The Qt Company Ltd.
+ Copyright (C) 2024 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ****************************************************************************************************
 <#@output extension="tt.cs" #>
@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Qt Company Ltd.")]
 [assembly: AssemblyProduct("Qt Visual Studio Tools")]
-[assembly: AssemblyCopyright("Copyright (C) 2016-2017 The Qt Company Ltd.")]
+[assembly: AssemblyCopyright("Copyright (C) 2024 The Qt Company Ltd.")]
 [assembly: AssemblyTrademark("The Qt Company Ltd. Qt and their respective logos are trademarks of The Qt Company Ltd. in Finland and/or other countries worldwide. All other trademarks are property of their respective owners.")]
 [assembly: AssemblyCulture("")]
 
