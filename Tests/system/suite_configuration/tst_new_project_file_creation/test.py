@@ -34,6 +34,54 @@ def testCompareRegex(text, pattern, message):
     test.verify(regex.match(text), '%s ("%s"/"%s")' % (message, text, pattern))
 
 
+def listExpectedWrittenFiles(workDir, projectName, templateName):
+    projectDirectory = os.path.join(workDir, projectName, projectName)
+
+    def prependProjectDirectory(fileName):
+        return os.path.join(projectDirectory, fileName)
+
+    msvsFiles = [os.path.join(workDir, projectName, projectName + ".sln")]
+    msvsFiles.extend(map(prependProjectDirectory, [projectName + ".vcxproj",
+                                                   projectName + ".vcxproj.filters",
+                                                   projectName + ".vcxproj.user"]))
+
+    if templateName == "Qt Designer Custom Widget":
+        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+                                                              projectName + ".h",
+                                                              projectName + "Plugin.cpp",
+                                                              projectName + "Plugin.h",
+                                                              projectName.lower() + "plugin.json"]))
+    elif templateName == "Qt Console Application":
+        return msvsFiles + [prependProjectDirectory("main.cpp")]
+    elif templateName == "Qt ActiveQt Server":
+        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+                                                              projectName + ".def",
+                                                              projectName + ".h",
+                                                              projectName + ".ico",
+                                                              projectName + ".rc",
+                                                              projectName + ".ui"]))
+    elif templateName == "Qt Quick Application":
+        return msvsFiles + list(map(prependProjectDirectory, ["main.cpp",
+                                                              "main.qml",
+                                                              "qml.qrc"]))
+    elif templateName == "Qt Empty Application":
+        return msvsFiles
+    elif templateName == "Qt Class Library":
+        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+                                                              projectName + ".h",
+                                                              projectName.lower() + "_global.h"]))
+    elif templateName == "Qt Widgets Application":
+        return msvsFiles + list(map(prependProjectDirectory, ["main.cpp",
+                                                              projectName + ".cpp",
+                                                              projectName + ".h",
+                                                              projectName + ".qrc",
+                                                              projectName + ".ui"]))
+    else:
+        test.fatal("Unexpected template '%s'" % templateName,
+                   "You might need to update function listExpectedWrittenFiles()")
+        return []
+
+
 workDir = os.getenv("SQUISH_VSTOOLS_WORKDIR")
 createdProjects = set()
 
@@ -76,7 +124,8 @@ def main():
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                 type(waitForObject(names.comboBox_Edit), workDir)
                 waitFor("waitForObject(names.comboBox_Edit).text == workDir")
-                createdProjects.add(waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text)
+                projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
+                createdProjects.add(projectName)
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
                 fixAppContext()
                 clickButton(waitForObject(names.qt_Wizard_Next_Button))
@@ -97,6 +146,9 @@ def main():
                 else:
                     test.exception("waitForObjectExists(names.qt_cpp_Label)",
                                    "No file should be opened for %s" % templateName)
+                test.verify(all(map(os.path.exists,
+                                    listExpectedWrittenFiles(workDir, projectName, templateName))),
+                            "Were all expected files created?")
                 mouseClick(waitForObject(globalnames.file_MenuItem))
                 mouseClick(waitForObject(names.file_Close_Solution_MenuItem))
                 # reopens the "New Project" dialog
