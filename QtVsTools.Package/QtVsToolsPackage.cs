@@ -104,7 +104,6 @@ namespace QtVsTools
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
 
-        private EventWaitHandle Ready { get; } = new(false, EventResetMode.ManualReset);
         public EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
         private bool InitializationAwaited { get; set; } = false;
 
@@ -113,7 +112,6 @@ namespace QtVsTools
         {
             get
             {
-                instance.Ready.WaitOne();
                 return instance;
             }
         }
@@ -181,7 +179,7 @@ namespace QtVsTools
                 MoveRegistryKeys(Resources.RegistryRootPath + "\\Qt5VS2017",
                     Resources.RegistryPackagePath);
 
-                var vm = QtVersionManager.The(Ready);
+                var vm = QtVersionManager.The;
                 if (vm.HasInvalidVersions(out var error, out var defaultInvalid)) {
                     if (defaultInvalid)
                         vm.SetLatestQtVersionAsDefault();
@@ -268,7 +266,6 @@ namespace QtVsTools
 
                 CopyTextMateLanguageFiles();
                 initTimer.Stop();
-                Ready.Set();
                 var initMsecs = initTimer.Elapsed.TotalMilliseconds;
                 var uiMsecs = uiTimer.Elapsed.TotalMilliseconds;
 
@@ -283,7 +280,6 @@ namespace QtVsTools
                 );
 
             } catch (Exception exception) {
-                Ready.Set();
                 exception.Log();
             }
         }
@@ -372,7 +368,7 @@ namespace QtVsTools
             await VsShell.UiThreadAsync(() =>
                 StatusBar.SetText("Checking installed Qt versions..."));
 
-            var versions = Core.Instances.VersionManager.GetVersions();
+            var versions = QtVersionManager.GetVersions();
             var statusCenter = await VsServiceProvider
                 .GetServiceAsync<SVsTaskStatusCenterService, IVsTaskStatusCenterService>();
             var status = statusCenter?.PreRegister(
@@ -444,7 +440,7 @@ namespace QtVsTools
 
         public void VsMainWindowActivated()
         {
-            if (QtVersionManager.The().GetVersions()?.Length == 0)
+            if (QtVersionManager.GetVersions().Length == 0)
                 Notifications.NoQtVersion.Show();
             if (Options.NotifyInstalled && TestVersionInstalled())
                 Notifications.NotifyInstall.Show();

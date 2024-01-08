@@ -4,7 +4,7 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,12 +15,11 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
-    using Common;
     using MsBuild;
 
     public static partial class Instances
     {
-        public static QtVersionManager VersionManager => QtVersionManager.The();
+        public static QtVersionManager VersionManager => QtVersionManager.The;
     }
 
     /// <summary>
@@ -31,44 +30,37 @@ namespace QtVsTools.Core
         private const string VersionsKey = "Versions";
         private const string RegistryVersionsPath = Resources.RegistryRootPath + "\\" + VersionsKey;
 
-        private static QtVersionManager instance;
-        private Hashtable versionCache;
+        private static readonly SemaphoreSlim CacheSemaphore = new (1, 1);
+        private static readonly ConcurrentDictionary<string, VersionInformation> VersionCache = new();
 
-        private static readonly EventWaitHandle packageInit = new(false, EventResetMode.ManualReset);
-        private static EventWaitHandle packageInitDone;
-
-        public static QtVersionManager The(EventWaitHandle initDone = null)
-        {
-            if (initDone == null) {
-                packageInit.WaitOne();
-                packageInitDone.WaitOne();
-            } else {
-                packageInitDone = initDone;
-                packageInit.Set();
-            }
-
-            return instance ??= new QtVersionManager();
-        }
+        private static readonly Lazy<QtVersionManager> Instance = new(() => new QtVersionManager());
+        public static QtVersionManager The => Instance.Value;
 
         public VersionInformation GetVersionInfo(string name)
         {
-            if (name == null)
-                return null;
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
-            versionCache ??= new Hashtable();
+            if (name == null)
+                return null;
 
-            if (versionCache[name] is VersionInformation vi)
+            if (VersionCache.TryGetValue(name, out var vi))
                 return vi;
 
-            var qtdir = GetInstallPath(name);
-            versionCache[name] = vi = VersionInformation.Get(qtdir);
-            if (vi != null)
-                vi.name = name;
-            return vi;
+            CacheSemaphore.Wait();
+            try {
+                vi = VersionCache.GetOrAdd(name, VersionInformation.Get(GetInstallPath(name)));
+                if (vi != null)
+                    vi.name = name;
+                return vi;
+            } catch (Exception exception) {
+                exception.Log();
+                return null;
+            } finally {
+                CacheSemaphore.Release();
+            }
         }
 
-        public string[] GetVersions()
+        public static string[] GetVersions()
         {
             var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryRootPath, false);
             if (key == null)
@@ -168,7 +160,7 @@ namespace QtVsTools.Core
             return version == null ? null : GetInstallPath(version);
         }
 
-        public void SaveVersion(string versionName, string path, bool checkPath = true)
+        public static void SaveVersion(string versionName, string path, bool checkPath = true)
         {
             var verName = versionName?.Trim().Replace(@"\", "_");
             if (string.IsNullOrEmpty(verName))
@@ -204,7 +196,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public bool HasVersion(string versionName)
+        public static bool HasVersion(string versionName)
         {
             if (string.IsNullOrEmpty(versionName))
                 return false;
@@ -212,7 +204,7 @@ namespace QtVsTools.Core
                 false) != null;
         }
 
-        public void RemoveVersion(string versionName)
+        public static void RemoveVersion(string versionName)
         {
             var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, true);
             if (key == null)
@@ -221,12 +213,12 @@ namespace QtVsTools.Core
             key.Close();
         }
 
-        private bool IsVersionAvailable(string version)
+        private static bool IsVersionAvailable(string version)
         {
             return GetVersions().Any(ver => version == ver);
         }
 
-        public void SaveProjectQtVersion(MsBuildProject project, string version)
+        public static void SaveProjectQtVersion(MsBuildProject project, string version)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -279,7 +271,7 @@ namespace QtVsTools.Core
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
         }
 
-        private string GetDefaultVersionString()
+        private static string GetDefaultVersionString()
         {
             string defaultVersion = null;
             try {
@@ -292,7 +284,7 @@ namespace QtVsTools.Core
             return defaultVersion ?? Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
         }
 
-        public bool SaveDefaultVersion(string version)
+        public static bool SaveDefaultVersion(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 return false;

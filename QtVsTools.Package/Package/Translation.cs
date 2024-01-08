@@ -123,7 +123,7 @@ namespace QtVsTools
 
             var qtToolsPath = project.GetPropertyValue("QtToolsPath");
             if (string.IsNullOrEmpty(qtToolsPath)) {
-                var qtInstallPath = QtVersionManager.The().GetInstallPath(project.QtVersion);
+                var qtInstallPath = QtVersionManager.The.GetInstallPath(project.QtVersion);
                 if (string.IsNullOrEmpty(qtInstallPath))
                     return false;
                 qtToolsPath = Path.Combine(qtInstallPath, "bin");

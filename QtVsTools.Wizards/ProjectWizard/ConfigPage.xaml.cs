@@ -119,7 +119,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private IEnumerable<string> qtVersionList;
 
-        readonly QtVersionManager qtVersionManager = QtVersionManager.The();
+        readonly QtVersionManager qtVersionManager = QtVersionManager.The;
         readonly VersionInformation defaultQtVersionInfo;
 
         CloneableList<Config> defaultConfigs;
@@ -147,7 +147,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Loaded -= OnLoaded;
 
             qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
-                .Union(QtVersionManager.The().GetVersions());
+                .Union(QtVersionManager.GetVersions());
 
             if (defaultQtVersionInfo != null)
                 SetupDefaultConfigsAndConfigTable(defaultQtVersionInfo);
@@ -343,7 +343,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 comboBoxQtVersion.Text = config.QtVersionName;
                 break;
             default:
-                if (qtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
+                if (QtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
                     config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
                     config.QtVersionPath = qtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
@@ -532,15 +532,15 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var versionName = $"{Path.GetFileName(qtVersionDir)}"
                     + $"_{Path.GetFileName(qmakePath)}".Replace(" ", "_");
 
-                qtVersionManager.SaveVersion(versionName, qmakePath);
-                qtVersionManager.SaveDefaultVersion(versionName);
+                QtVersionManager.SaveVersion(versionName, qmakePath);
+                QtVersionManager.SaveDefaultVersion(versionName);
                 versionInfo.name = versionName;
             } catch (Exception exception) {
                 Messages.Print("Could not save Qt version.");
                 exception.Log();
             }
 
-            qtVersionList = new[] { QT_VERSION_BROWSE }.Union(QtVersionManager.The().GetVersions());
+            qtVersionList = new[] { QT_VERSION_BROWSE }.Union(QtVersionManager.GetVersions());
 
             SetupDefaultConfigsAndConfigTable(versionInfo);
 

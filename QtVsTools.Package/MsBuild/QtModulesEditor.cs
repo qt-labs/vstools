@@ -38,7 +38,7 @@ namespace QtVsTools.Package.MsBuild
             var qtSettings = ruleProperty.ContainingRule;
             var qtVersion = await qtSettings.GetPropertyValueAsync("QtInstall");
 
-            var vm = QtVersionManager.The();
+            var vm = QtVersionManager.The;
             var versionInfo = vm.GetVersionInfo(qtVersion)
                             ?? vm.GetVersionInfo(vm.GetDefaultVersion());
 

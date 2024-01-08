@@ -126,7 +126,7 @@ namespace QtVsTools.Core.CMake
             var versionRecords = GetRecords(UserPresets, "qt-project.org/Version")
                 .ToDictionary(x => x["name"], x => x);
 
-            var missingVersionNames = VersionManager.GetVersions()
+            var missingVersionNames = QtVersionManager.GetVersions()
                 .Where(x => !versionRecords.ContainsKey(x));
 
             var missingVersions = missingVersionNames
@@ -200,7 +200,7 @@ namespace QtVsTools.Core.CMake
                 return;
             }
 
-            var versionNames = VersionManager.GetVersions().Prepend("Qt-Default").ToHashSet();
+            var versionNames = QtVersionManager.GetVersions().Prepend("Qt-Default").ToHashSet();
 
             // All visible presets must have a reference to a Qt version
             bool isQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());

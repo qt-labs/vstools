@@ -23,7 +23,7 @@ namespace QtVsTools.Core.Options
     {
         static LazyFactory Lazy { get; } = new();
 
-        QtVersionManager VersionManager => QtVersionManager.The();
+        QtVersionManager VersionManager => QtVersionManager.The;
 
         QtVersionsTable VersionsTable => Lazy.Get(() =>
             VersionsTable, () => new QtVersionsTable());
@@ -33,7 +33,7 @@ namespace QtVsTools.Core.Options
         public override void LoadSettingsFromStorage()
         {
             var versions = new List<Row>();
-            foreach (var versionName in VersionManager.GetVersions()) {
+            foreach (var versionName in QtVersionManager.GetVersions()) {
                 var versionPath = VersionManager.GetInstallPath(versionName);
                 if (string.IsNullOrEmpty(versionPath))
                     continue;
@@ -68,8 +68,8 @@ namespace QtVsTools.Core.Options
             void RemoveVersion(string versionName)
             {
                 try {
-                    if (VersionManager.HasVersion(versionName))
-                        VersionManager.RemoveVersion(versionName);
+                    if (QtVersionManager.HasVersion(versionName))
+                        QtVersionManager.RemoveVersion(versionName);
                 } catch (Exception exception) {
                     exception.Log();
                 }
@@ -91,16 +91,16 @@ namespace QtVsTools.Core.Options
                         string compiler = version.Compiler;
                         if (compiler == "g++")
                             compiler = string.Empty;
-                        VersionManager.SaveVersion(name, $"{access}:{path}:{compiler}",
+                        QtVersionManager.SaveVersion(name, $"{access}:{path}:{compiler}",
                             checkPath: false);
                     } else {
                         if (version.State.HasFlag((State)Column.Path))
-                            VersionManager.SaveVersion(version.VersionName, version.Path);
+                            QtVersionManager.SaveVersion(version.VersionName, version.Path);
                     }
 
                     if (version.State.HasFlag((State)Column.VersionName)) {
                         try {
-                            VersionManager.SaveVersion(version.VersionName, version.Path);
+                            QtVersionManager.SaveVersion(version.VersionName, version.Path);
                         } catch (Exception exception) {
                             exception.Log();
                         }
@@ -117,7 +117,7 @@ namespace QtVsTools.Core.Options
                 var defaultVersion =
                     versions.FirstOrDefault(v => v is { IsDefault: true, State: not State.Removed })
                         ?? versions.FirstOrDefault(v => v.State != State.Removed);
-                VersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
+                QtVersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
             } catch (Exception exception) {
                 exception.Log();
             }

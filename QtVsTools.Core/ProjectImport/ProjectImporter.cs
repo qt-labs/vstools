@@ -67,9 +67,9 @@ namespace QtVsTools.Core
                     }
                 }
 
-                ImportSolution(mainInfo, QtVersionManager.The().GetDefaultVersion());
+                ImportSolution(mainInfo, QtVersionManager.The.GetDefaultVersion());
             } else {
-                ImportProject(mainInfo, QtVersionManager.The().GetDefaultVersion());
+                ImportProject(mainInfo, QtVersionManager.The.GetDefaultVersion());
             }
         }
 
@@ -127,7 +127,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            var versionInfo = QtVersionManager.The.GetVersionInfo(qtVersion);
             var vcInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == vcInfo)
                 return;
@@ -140,7 +140,7 @@ namespace QtVsTools.Core
                         foreach (var vcProject in HelperFunctions.ProjectsInSolution(_dteObject)) {
                             if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
                                 continue;
-                            QtVersionManager.The().SaveProjectQtVersion(project, qtVersion);
+                            QtVersionManager.SaveProjectQtVersion(project, qtVersion);
                             ApplyPostImportSteps(project);
                         }
                     }
@@ -156,7 +156,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.The().GetVersionInfo(qtVersion);
+            var versionInfo = QtVersionManager.The.GetVersionInfo(qtVersion);
             var vcInfo = RunQmake(mainInfo, ProjectFileExtension, false, versionInfo);
             if (null == vcInfo)
                 return;
@@ -189,7 +189,7 @@ namespace QtVsTools.Core
                     return;
 
                 if (qtVersion is not null)
-                    QtVersionManager.The().SaveProjectQtVersion(project, qtVersion);
+                    QtVersionManager.SaveProjectQtVersion(project, qtVersion);
 
                 var platformName = versionInfo.GetVSPlatformName();
                 if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
@@ -918,7 +918,7 @@ namespace QtVsTools.Core
 
         private static string GetQtInstallPath()
         {
-            var vm = QtVersionManager.The();
+            var vm = QtVersionManager.The;
             var qtVersion = vm.GetDefaultVersion();
             var path = vm.GetInstallPath(qtVersion);
 

@@ -32,15 +32,14 @@ namespace QtVsTools.Package.MsBuild
 
         public async Task<ICollection<IEnumValue>> GetListedValuesAsync()
         {
-            return await Task.FromResult(
-                QtVersionManager.The().GetVersions()
-                    .Select(x => new PageEnumValue(new EnumValue
-                    {
-                        Name = x,
-                        DisplayName = x
-                    }))
-                    .Cast<IEnumValue>()
-                    .ToList());
+            return await Task.FromResult(QtVersionManager.GetVersions()
+                .Select(x => new PageEnumValue(new EnumValue
+                {
+                    Name = x,
+                    DisplayName = x
+                }))
+                .Cast<IEnumValue>()
+                .ToList());
         }
 
         public async Task<IEnumValue> TryCreateEnumValueAsync(string userSuppliedValue)
