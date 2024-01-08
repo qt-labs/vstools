@@ -4,6 +4,7 @@
 ***************************************************************************************************/
 
 using System;
+using System.Linq;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -72,6 +73,20 @@ namespace QtVsTools.Core.Common
             }
         }
 
+        public static int IndexOfSpan<T>(this ReadOnlySpan<T> self, ReadOnlySpan<T> that)
+            where T : IEquatable<T>
+        {
+            if (that.IsEmpty || self.Length < that.Length)
+                return -1;
+            for (var i = 0; i + that.Length < self.Length; ++i) {
+                if (!self[i].Equals(that[0]))
+                    continue;
+                if (that.SequenceEqual(self.Slice(i, that.Length)))
+                    return i;
+            }
+            return -1;
+        }
+
         public static int LastIndexOfSpan<T>(this ReadOnlySpan<T> self, ReadOnlySpan<T> that)
             where T : IEquatable<T>
         {
@@ -84,6 +99,12 @@ namespace QtVsTools.Core.Common
                     return i;
             }
             return -1;
+        }
+
+        public static int IndexOfArray<T>(this T[] self, T[] that)
+            where T : IEquatable<T>
+        {
+            return IndexOfSpan<T>(self, that);
         }
 
         public static int LastIndexOfArray<T>(this T[] self, T[] that)

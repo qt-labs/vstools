@@ -138,6 +138,7 @@
     <Compile Include="Common\PunisherQueue.cs" />
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="Common\Utils.cs" />
+    <Compile Include="Common\Utils.LogFile.cs" />
     <Compile Include="Common\Utils.Registry.cs" />
     <Compile Include="Common\VsTemplate.cs" />
     <Compile Include="CompilerToolWrapper.cs" />

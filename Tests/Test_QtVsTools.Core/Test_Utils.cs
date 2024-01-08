@@ -6,11 +6,12 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.Core
 {
-    using QtVsTools.Core.Common;
+    using static QtVsTools.Core.Common.Utils;
 
     [TestClass]
     public class Test_Utils
@@ -50,6 +51,39 @@ namespace QtVsTools.Test.Core
             Debug.WriteLine($"  * Best case...{min * NanosecondsPerTick:F0} nsecs");
             Debug.WriteLine($"  * Average.....{avg * NanosecondsPerTick:F0} nsecs");
             Debug.WriteLine($"  * Worst case..{max * NanosecondsPerTick:F0} nsecs");
+        }
+
+        [TestMethod]
+        public void Test_LogFile()
+        {
+            Assert.ThrowsException<ArgumentException>(() => new LogFile("<foo>", 0, 0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 0, 20));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 20));
+
+            string logFilePath = @$"{Path.GetTempPath()}\logtest.txt";
+            if (File.Exists(logFilePath))
+                File.WriteAllBytes(logFilePath, Array.Empty<byte>());
+
+            var sTx = "[";
+            var eTx = "]\r\n";
+            var logTx = (int i) => $"{sTx}Log entry #{i}{eTx}";
+            var log = new LogFile(logFilePath, 50, 40, sTx);
+
+            log.Write(logTx(1));
+            Assert.AreEqual(logTx(1), File.ReadAllText(logFilePath));
+
+            log.Write(logTx(2));
+            Assert.AreEqual(logTx(1) + logTx(2), File.ReadAllText(logFilePath));
+
+            log.Write(logTx(3));
+            Assert.AreEqual(logTx(1) + logTx(2) + logTx(3), File.ReadAllText(logFilePath));
+
+            log.Write(logTx(4));
+            Assert.AreEqual(logTx(3) + logTx(4), File.ReadAllText(logFilePath));
+
+            log.Write(logTx(5));
+            Assert.AreEqual(logTx(3) + logTx(4) + logTx(5), File.ReadAllText(logFilePath));
         }
     }
 }
