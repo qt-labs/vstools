@@ -179,10 +179,9 @@ namespace QtVsTools
                 MoveRegistryKeys(Resources.RegistryRootPath + "\\Qt5VS2017",
                     Resources.RegistryPackagePath);
 
-                var vm = QtVersionManager.The;
-                if (vm.HasInvalidVersions(out var error, out var defaultInvalid)) {
+                if (QtVersionManager.HasInvalidVersions(out var error, out var defaultInvalid)) {
                     if (defaultInvalid)
-                        vm.SetLatestQtVersionAsDefault();
+                        QtVersionManager.SetLatestQtVersionAsDefault();
                     Messages.Print(error);
                 }
 
@@ -256,7 +255,7 @@ namespace QtVsTools
                         EnvironmentVariableTarget.Process);
                 }
 
-                var defaultVersion = vm.GetInstallPath("$(DefaultQtVersion)");
+                var defaultVersion = QtVersionManager.GetInstallPath("$(DefaultQtVersion)");
                 if (defaultVersion != null) {
                     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("QTDIR"))) {
                         Environment.SetEnvironmentVariable("QTDIR", defaultVersion,
@@ -397,7 +396,7 @@ namespace QtVsTools
                 Messages.Print($@"
 --- Checking {version} ...");
                 var timer = Stopwatch.StartNew();
-                var qt = Core.Instances.VersionManager.GetVersionInfo(version);
+                var qt = QtVersionManager.GetVersionInfo(version);
                 if (Directory.Exists(qt?.InstallPrefix ?? string.Empty)) {
                     Messages.Print($@"
 --- {version} check OK ({timer.Elapsed.TotalSeconds:0.##} secs)");

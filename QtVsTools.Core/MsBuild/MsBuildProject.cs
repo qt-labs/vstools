@@ -21,7 +21,6 @@ namespace QtVsTools.Core.MsBuild
     using QtVsTools.Common;
     using VisualStudio;
     using static Common.Utils;
-    using static Instances;
 
     /// <summary>
     /// QtProject holds the Qt specific properties for a Visual Studio project.
@@ -119,7 +118,7 @@ namespace QtVsTools.Core.MsBuild
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return VersionManager.GetInstallPath(this);
+                return QtVersionManager.GetInstallPath(this);
             }
         }
 
@@ -128,7 +127,7 @@ namespace QtVsTools.Core.MsBuild
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return VersionManager.GetVersionInfo(QtVersion);
+                return QtVersionManager.GetVersionInfo(QtVersion);
             }
         }
 

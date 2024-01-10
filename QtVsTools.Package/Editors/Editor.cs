@@ -61,12 +61,8 @@ namespace QtVsTools.Editors
 
         string GetDefaultQtToolsPath()
         {
-            var versionMgr = QtVersionManager.The;
-            if (versionMgr == null)
-                return null;
-
-            var defaultVersion = versionMgr.GetDefaultVersion();
-            var defaultVersionInfo = versionMgr.GetVersionInfo(defaultVersion);
+            var defaultVersion = QtVersionManager.GetDefaultVersion();
+            var defaultVersionInfo = QtVersionManager.GetVersionInfo(defaultVersion);
             if (defaultVersionInfo == null || string.IsNullOrEmpty(defaultVersionInfo.qtDir))
                 return null;
 

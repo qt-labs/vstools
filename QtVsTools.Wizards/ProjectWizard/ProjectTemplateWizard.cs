@@ -183,8 +183,6 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected TemplateParameters Parameter => Lazy.Get(() =>
             Parameter, () => new TemplateParameters { Template = this });
 
-        protected QtVersionManager VersionManager => QtVersionManager.The;
-
         public virtual void ProjectItemFinishedGenerating(ProjectItem projectItem) { }
         public virtual void BeforeOpeningFile(ProjectItem projectItem) { }
 

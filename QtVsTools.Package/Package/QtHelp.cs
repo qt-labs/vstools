@@ -131,7 +131,7 @@ namespace QtVsTools
                 if (HelperFunctions.GetSelectedQtProject(dte) is {} project)
                     qtVersion = project.QtVersion;
 
-                var info = QtVersionManager.The.GetVersionInfo(qtVersion);
+                var info = QtVersionManager.GetVersionInfo(qtVersion);
                 var docPath = info?.QtInstallDocs;
                 if (string.IsNullOrEmpty(docPath) || !Directory.Exists(docPath))
                     return false;

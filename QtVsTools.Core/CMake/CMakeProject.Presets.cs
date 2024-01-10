@@ -12,7 +12,6 @@ using Newtonsoft.Json.Linq;
 
 namespace QtVsTools.Core.CMake
 {
-    using static Instances;
     using static Common.Utils;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
@@ -69,7 +68,7 @@ namespace QtVsTools.Core.CMake
                 .Where(x => x["vendor"]?["qt-project.org/Version"] != null)
                 .ToList();
             foreach (var versionPreset in versionPresets) {
-                if (VersionManager.GetVersionInfo((string)versionPreset["name"]) is { } version) {
+                if (QtVersionManager.GetVersionInfo((string)versionPreset["name"]) is { } version) {
                     var qtDir = version.InstallPrefix.Replace('\\', '/');
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
                     if (qtDir.Equals(presetQtDir, IgnoreCase))
@@ -80,7 +79,7 @@ namespace QtVsTools.Core.CMake
                 }
             }
 
-            var defaultVersion = VersionManager.GetDefaultVersion();
+            var defaultVersion = QtVersionManager.GetDefaultVersion();
             var defaultPreset = UserPresets["configurePresets"]
                 .Select(x => new
                 {
@@ -130,7 +129,7 @@ namespace QtVsTools.Core.CMake
                 .Where(x => !versionRecords.ContainsKey(x));
 
             var missingVersions = missingVersionNames
-                .Select(VersionManager.GetVersionInfo)
+                .Select(QtVersionManager.GetVersionInfo)
                 .Where(x => x != null && !string.IsNullOrEmpty(x.InstallPrefix));
 
             foreach (var missingVersion in missingVersions) {

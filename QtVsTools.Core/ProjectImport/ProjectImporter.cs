@@ -67,9 +67,9 @@ namespace QtVsTools.Core
                     }
                 }
 
-                ImportSolution(mainInfo, QtVersionManager.The.GetDefaultVersion());
+                ImportSolution(mainInfo, QtVersionManager.GetDefaultVersion());
             } else {
-                ImportProject(mainInfo, QtVersionManager.The.GetDefaultVersion());
+                ImportProject(mainInfo, QtVersionManager.GetDefaultVersion());
             }
         }
 
@@ -127,7 +127,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.The.GetVersionInfo(qtVersion);
+            var versionInfo = QtVersionManager.GetVersionInfo(qtVersion);
             var vcInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == vcInfo)
                 return;
@@ -156,7 +156,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.The.GetVersionInfo(qtVersion);
+            var versionInfo = QtVersionManager.GetVersionInfo(qtVersion);
             var vcInfo = RunQmake(mainInfo, ProjectFileExtension, false, versionInfo);
             if (null == vcInfo)
                 return;
@@ -918,9 +918,8 @@ namespace QtVsTools.Core
 
         private static string GetQtInstallPath()
         {
-            var vm = QtVersionManager.The;
-            var qtVersion = vm.GetDefaultVersion();
-            var path = vm.GetInstallPath(qtVersion);
+            var qtVersion = QtVersionManager.GetDefaultVersion();
+            var path = QtVersionManager.GetInstallPath(qtVersion);
 
             if (path is null)
                 Messages.DisplayErrorMessage("Cannot find qmake. Make sure you have specified a Qt version.");

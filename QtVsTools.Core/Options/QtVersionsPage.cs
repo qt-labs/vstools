@@ -23,8 +23,6 @@ namespace QtVsTools.Core.Options
     {
         static LazyFactory Lazy { get; } = new();
 
-        QtVersionManager VersionManager => QtVersionManager.The;
-
         QtVersionsTable VersionsTable => Lazy.Get(() =>
             VersionsTable, () => new QtVersionsTable());
 
@@ -34,7 +32,7 @@ namespace QtVsTools.Core.Options
         {
             var versions = new List<Row>();
             foreach (var versionName in QtVersionManager.GetVersions()) {
-                var versionPath = VersionManager.GetInstallPath(versionName);
+                var versionPath = QtVersionManager.GetInstallPath(versionName);
                 if (string.IsNullOrEmpty(versionPath))
                     continue;
 
@@ -48,7 +46,7 @@ namespace QtVsTools.Core.Options
                     if (linuxPaths.Length > 2 && !string.IsNullOrEmpty(linuxPaths[2]))
                         compiler = linuxPaths[2];
                 }
-                var defaultVersion = VersionManager.GetDefaultVersion();
+                var defaultVersion = QtVersionManager.GetDefaultVersion();
                 versions.Add(new Row
                 {
                     IsDefault = versionName == defaultVersion,

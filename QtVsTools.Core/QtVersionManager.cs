@@ -17,15 +17,10 @@ namespace QtVsTools.Core
 {
     using MsBuild;
 
-    public static partial class Instances
-    {
-        public static QtVersionManager VersionManager => QtVersionManager.The;
-    }
-
     /// <summary>
     /// Summary description for QtVersionManager.
     /// </summary>
-    public class QtVersionManager
+    public static class QtVersionManager
     {
         private const string VersionsKey = "Versions";
         private const string RegistryVersionsPath = Resources.RegistryRootPath + "\\" + VersionsKey;
@@ -33,10 +28,7 @@ namespace QtVsTools.Core
         private static readonly SemaphoreSlim CacheSemaphore = new (1, 1);
         private static readonly ConcurrentDictionary<string, VersionInformation> VersionCache = new();
 
-        private static readonly Lazy<QtVersionManager> Instance = new(() => new QtVersionManager());
-        public static QtVersionManager The => Instance.Value;
-
-        public VersionInformation GetVersionInfo(string name)
+        public static VersionInformation GetVersionInfo(string name)
         {
             if (name == "$(DefaultQtVersion)")
                 name = GetDefaultVersion();
@@ -75,7 +67,7 @@ namespace QtVsTools.Core
         /// <param name="errorMessage"></param>
         /// <param name="defaultVersionInvalid"></param>
         /// <returns>true, if there are one or more invalid Qt version</returns>
-        public bool HasInvalidVersions(out string errorMessage, out bool defaultVersionInvalid)
+        public static bool HasInvalidVersions(out string errorMessage, out bool defaultVersionInvalid)
         {
             var defaultVersion = GetDefaultVersionString();
             defaultVersionInvalid = string.IsNullOrEmpty(defaultVersion);
@@ -104,7 +96,7 @@ namespace QtVsTools.Core
             return errorMessage != null;
         }
 
-        public void SetLatestQtVersionAsDefault()
+        public static void SetLatestQtVersionAsDefault()
         {
             var validVersions = new Dictionary<string, System.Version>();
             foreach (var version in GetVersions()) {
@@ -131,14 +123,14 @@ namespace QtVsTools.Core
             SaveDefaultVersion(defaultName);
         }
 
-        public string GetInstallPath(string version)
+        public static string GetInstallPath(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
             return GetInstallPath(version, Registry.CurrentUser);
         }
 
-        private string GetInstallPath(string version, RegistryKey root)
+        private static string GetInstallPath(string version, RegistryKey root)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion(root);
@@ -150,7 +142,7 @@ namespace QtVsTools.Core
             return versionKey?.GetValue("InstallDir") as string;
         }
 
-        public string GetInstallPath(MsBuildProject project)
+        public static string GetInstallPath(MsBuildProject project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -232,12 +224,12 @@ namespace QtVsTools.Core
                 config.SetPropertyValue("QtSettings", true, "QtInstall", version);
         }
 
-        public string GetDefaultVersion()
+        public static string GetDefaultVersion()
         {
             return GetDefaultVersion(Registry.CurrentUser);
         }
 
-        private string GetDefaultVersion(RegistryKey root)
+        private static string GetDefaultVersion(RegistryKey root)
         {
             string defaultVersion = null;
             try {
@@ -295,7 +287,7 @@ namespace QtVsTools.Core
             return true;
         }
 
-        private bool VerifyIfQtVersionExists(string version)
+        private static bool VerifyIfQtVersionExists(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();

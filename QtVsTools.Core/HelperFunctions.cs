@@ -488,8 +488,7 @@ namespace QtVsTools.Core
         public static string VcPath { get; set; }
         public static bool SetVcVars(VersionInformation versionInfo, ProcessStartInfo startInfo)
         {
-            var vm = QtVersionManager.The;
-            versionInfo ??= vm.GetVersionInfo(vm.GetDefaultVersion());
+            versionInfo ??= QtVersionManager.GetVersionInfo(QtVersionManager.GetDefaultVersion());
 
             if (string.IsNullOrEmpty(VcPath))
                 return false;

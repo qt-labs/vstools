@@ -119,7 +119,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private IEnumerable<string> qtVersionList;
 
-        readonly QtVersionManager qtVersionManager = QtVersionManager.The;
         readonly VersionInformation defaultQtVersionInfo;
 
         CloneableList<Config> defaultConfigs;
@@ -133,8 +132,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             InitializeComponent();
 
-            string defaultQtVersionName = qtVersionManager.GetDefaultVersion();
-            defaultQtVersionInfo = qtVersionManager.GetVersionInfo(defaultQtVersionName);
+            string defaultQtVersionName = QtVersionManager.GetDefaultVersion();
+            defaultQtVersionInfo = QtVersionManager.GetVersionInfo(defaultQtVersionName);
 
             DataContext = this;
             Loaded += OnLoaded;
@@ -344,9 +343,9 @@ namespace QtVsTools.Wizards.ProjectWizard
                 break;
             default:
                 if (QtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
-                    config.QtVersion = qtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
+                    config.QtVersion = QtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
-                    config.QtVersionPath = qtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
+                    config.QtVersionPath = QtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
                 } else {
                     config.QtVersion = null;
                     config.QtVersionName = config.QtVersionPath = comboBoxQtVersion.Text;
