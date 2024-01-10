@@ -281,8 +281,8 @@
         LIBS += $(QtLibs)
       </QtVarsProFileInput>
       <!--
-# Undef UNICODE macro if project is configured with multi-byte char set -->
-      <QtVarsProFileInput Condition="'$(CharacterSet)' == 'MultiByte'">
+# Undef UNICODE macro if project is not configured with unicode char set -->
+      <QtVarsProFileInput Condition="'$(CharacterSet)' != 'Unicode'">
         $(QtVarsProFileInput)
         DEFINES -= UNICODE _UNICODE
       </QtVarsProFileInput>
