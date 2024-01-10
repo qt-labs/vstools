@@ -424,11 +424,11 @@
 
       <!--// Get relative path to output -->
       <output_relative
->$([MSBuild]::MakeRelative($(ProjectDir), %(QtMoc.OutputFile)).TrimStart('\'))</output_relative>
+>$([MSBuild]::MakeRelative('$(ProjectDir)', '%(QtMoc.OutputFile)').TrimStart('\'))</output_relative>
 
       <!--// Get relative path to input -->
       <input_relative
->$([MSBuild]::MakeRelative($(ProjectDir), %(QtMoc.InputFile)).TrimStart('\'))</input_relative>
+>$([MSBuild]::MakeRelative('$(ProjectDir)', '%(QtMoc.InputFile)').TrimStart('\'))</input_relative>
     </PropertyGroup>
 
     <!--

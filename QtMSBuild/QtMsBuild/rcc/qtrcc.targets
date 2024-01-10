@@ -465,7 +465,7 @@
 
       <!--// Get relative path to output -->
       <output_relative
->$([MSBuild]::MakeRelative($(ProjectDir), %(QtRcc.OutputFile)).TrimStart('\'))</output_relative>
+>$([MSBuild]::MakeRelative('$(ProjectDir)', '%(QtRcc.OutputFile)').TrimStart('\'))</output_relative>
     </PropertyGroup>
 
     <!--

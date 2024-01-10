@@ -250,7 +250,7 @@
       <!--
       // $(relative_path) ::= path of filtered file, relative to project directory -->
       <relative_path Condition="'%(QtRccFilter.QtQmlCacheItems)' != ''"
->$([MSBuild]::MakeRelative($(MSBuildProjectDirectory),$(full_path)).TrimStart('\'))</relative_path>
+>$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(full_path)').TrimStart('\'))</relative_path>
       <!--
       // $(run_parallel) ::= run qmlcachegen in a parallel process
       // $(run_single)   ::= run qmlcachegen in single process mode -->
@@ -410,7 +410,7 @@
       <!--// Get relative path to output -->
       <cache_loader_path>@(loader->'%(QmlCacheLoaderFile)')</cache_loader_path>
       <output_relative
->$([MSBuild]::MakeRelative($(ProjectDir), $(cache_loader_path)).TrimStart('\'))</output_relative>
+>$([MSBuild]::MakeRelative('$(ProjectDir)', '$(cache_loader_path)').TrimStart('\'))</output_relative>
     </PropertyGroup>
     <ItemGroup>
       <!--
@@ -540,7 +540,7 @@
 
       <!--// Get relative path to output -->
       <output_relative
->$([MSBuild]::MakeRelative($(ProjectDir), %(QtQmlCacheItem.OutputFile)).TrimStart('\'))</output_relative>
+>$([MSBuild]::MakeRelative('$(ProjectDir)', '%(QtQmlCacheItem.OutputFile)').TrimStart('\'))</output_relative>
     </PropertyGroup>
     <ItemGroup>
       <!--
