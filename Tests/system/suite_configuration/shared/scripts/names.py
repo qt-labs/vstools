@@ -56,3 +56,12 @@ qt_Microsoft_Visual_Studio_cpp_TabItem = {"container":globalnames.microsoft_Visu
                                           "type": "TabItem"}
 qt_cpp_Label = {"container": qt_Microsoft_Visual_Studio_cpp_TabItem,
                 "text": RegularExpression(".+\.(cpp|qml)$"), "type": "Label"}
+build_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "Build",
+                  "type": "MenuItem"}
+build_Build_Solution_MenuItem = {"container": build_MenuItem, "text": "Build Solution",
+                                 "type": "MenuItem"}
+Microsoft_Visual_Studio_ToolBar = {"container": globalnames.microsoft_Visual_Studio_Window,
+                                   "type": "ToolBar"}
+platforms_ComboBox = {"container": Microsoft_Visual_Studio_ToolBar,
+                      "tooltip": "Solution Platforms", "type": "ComboBox"}
+x64_ComboBoxItem = {"container": platforms_ComboBox, "id": "x64", "type": "ComboBoxItem"}

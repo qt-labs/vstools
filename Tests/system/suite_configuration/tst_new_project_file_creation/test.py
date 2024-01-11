@@ -82,6 +82,30 @@ def listExpectedWrittenFiles(workDir, projectName, templateName):
         return []
 
 
+def getExpectedBuiltFile(workDir, projectName, templateName):
+    buildPath = os.path.join(workDir, projectName)
+    expand(waitForObject(names.platforms_ComboBox))
+    try:
+        waitForObjectExists(names.x64_ComboBoxItem, 5000)
+        buildPath = os.path.join(buildPath, "x64")
+    except:
+        pass
+    collapse(waitForObject(names.platforms_ComboBox))
+    if templateName in ["Qt Console Application",
+                        "Qt Quick Application",
+                        "Qt Widgets Application"]:
+        return os.path.join(buildPath, "Debug", projectName + ".exe")
+    elif templateName in ["Qt Class Library",
+                          "Qt Designer Custom Widget"]:
+        return os.path.join(buildPath, "Debug", projectName + ".dll")
+    elif templateName == "Qt Empty Application":
+        return os.path.join(buildPath, "Debug")
+    else:
+        test.fatal("Unexpected template '%s'" % templateName,
+                   "You might need to update function getExpectedBuiltFile()")
+        return ""
+
+
 workDir = os.getenv("SQUISH_VSTOOLS_WORKDIR")
 createdProjects = set()
 
@@ -149,6 +173,12 @@ def main():
                 test.verify(all(map(os.path.exists,
                                     listExpectedWrittenFiles(workDir, projectName, templateName))),
                             "Were all expected files created?")
+                if templateName != "Qt ActiveQt Server":
+                    builtFile = getExpectedBuiltFile(workDir, projectName, templateName)
+                    mouseClick(waitForObject(names.build_MenuItem))
+                    mouseClick(waitForObject(names.build_Build_Solution_MenuItem))
+                    test.verify(waitFor("os.path.exists(builtFile)", 15000),
+                                "Was %s built as expected?" % builtFile)
                 mouseClick(waitForObject(globalnames.file_MenuItem))
                 mouseClick(waitForObject(names.file_Close_Solution_MenuItem))
                 # reopens the "New Project" dialog
