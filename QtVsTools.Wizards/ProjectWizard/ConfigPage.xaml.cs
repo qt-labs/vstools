@@ -522,13 +522,26 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private void ErrorMsg_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var qtVersion = BrowseForAndGetQtVersion();
-            if (VersionInformation.Get(qtVersion) is not {} versionInfo)
+            var qmakePath = BrowseForAndGetQtVersion();
+            if (VersionInformation.Get(qmakePath) is not {} versionInfo)
                 return;
+            versionInfo.name = qmakePath;
+
+            try {
+                var qtVersionDir = Path.GetDirectoryName(qmakePath);
+                var versionName = $"{Path.GetFileName(qtVersionDir)}"
+                    + $"_{Path.GetFileName(qmakePath)}".Replace(" ", "_");
+
+                qtVersionManager.SaveVersion(versionName, qmakePath);
+                qtVersionManager.SaveDefaultVersion(versionName);
+                versionInfo.name = versionName;
+            } catch (Exception exception) {
+                Messages.Print("Could not save Qt version.");
+                exception.Log();
+            }
 
             qtVersionList = new[] { QT_VERSION_BROWSE }.Union(QtVersionManager.The().GetVersions());
 
-            versionInfo.name = qtVersion;
             SetupDefaultConfigsAndConfigTable(versionInfo);
 
             Validate();
