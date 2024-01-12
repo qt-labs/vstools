@@ -149,11 +149,12 @@ namespace QtVsTools.Wizards.ProjectWizard
             qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
                 .Union(QtVersionManager.The().GetVersions());
 
-            if (defaultQtVersionInfo != null) {
+            if (defaultQtVersionInfo != null)
                 SetupDefaultConfigsAndConfigTable(defaultQtVersionInfo);
-                initialNextButtonIsEnabled = NextButton.IsEnabled;
-                initialFinishButtonIsEnabled = FinishButton.IsEnabled;
-            }
+
+            initialNextButtonIsEnabled = NextButton.IsEnabled;
+            initialFinishButtonIsEnabled = FinishButton.IsEnabled;
+
             Validate();
         }
 
@@ -529,9 +530,6 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             versionInfo.name = qtVersion;
             SetupDefaultConfigsAndConfigTable(versionInfo);
-
-            initialNextButtonIsEnabled = true;
-            initialFinishButtonIsEnabled = false;
 
             Validate();
         }
