@@ -38,8 +38,8 @@ namespace QtVsTools.Package.MsBuild
             var qtSettings = ruleProperty.ContainingRule;
             var qtVersion = await qtSettings.GetPropertyValueAsync("QtInstall");
 
-            var versionInfo = QtVersionManager.GetVersionInfo(qtVersion)
-                ?? QtVersionManager.GetVersionInfo(QtVersionManager.GetDefaultVersion());
+            var versionInfo = VersionInformation.GetOrAddByName(qtVersion)
+                ?? VersionInformation.GetOrAddByName(QtVersionManager.GetDefaultVersion());
 
             var modules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))

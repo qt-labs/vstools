@@ -4,15 +4,17 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace QtVsTools.Core
 {
+    using Common;
     using MsBuild;
 
     [DebuggerDisplay("Name = {name}, Version = {qtMajor}.{qtMinor}.{qtPatch}")]
@@ -28,28 +30,58 @@ namespace QtVsTools.Core
         private QMakeConf qmakeConf;
         private readonly QMakeQuery qmakeQuery;
         private string vsPlatformName;
-        private static readonly Hashtable _cache = new();
 
-        public static VersionInformation Get(string qtDir)
+        private static readonly SemaphoreSlim CacheSemaphore = new (1, 1);
+        private static readonly ConcurrentDictionary<string, VersionInformation> Cache
+            = new(Utils.CaseIgnorer);
+
+        public static VersionInformation GetOrAddByName(string name)
         {
-            qtDir ??= Environment.GetEnvironmentVariable("QTDIR");
-            if (qtDir == null || !Directory.Exists(qtDir))
-                return null;
-
             try {
-                qtDir = new FileInfo(qtDir).FullName.ToUpperInvariant();
+                if (!string.IsNullOrEmpty(name))
+                    return GetOrAddByPath(QtVersionManager.GetInstallPath(name), name);
+            } catch (Exception exception) {
+                exception.Log();
+            }
+            return null;
+        }
+
+        public static VersionInformation GetOrAddByPath(string dir, string name = null)
+        {
+            try {
+                dir ??= Environment.GetEnvironmentVariable("QTDIR");
+                dir = new FileInfo(dir?.TrimEnd('\\', '/', ' ') ?? "").FullName;
             } catch {
                 return null;
             }
+            if (!Directory.Exists(dir))
+                return null;
 
-            if (_cache[qtDir] is not VersionInformation versionInfo) {
-                versionInfo = new VersionInformation(qtDir);
-                _cache.Add(qtDir, versionInfo);
-            } else if (versionInfo.qtDir == null) {
-                versionInfo = new VersionInformation(qtDir);
-                _cache[qtDir] = versionInfo;
+            CacheSemaphore.Wait();
+            try {
+                var vi = Cache.AddOrUpdate(dir,
+                    _ =>  // Add value factory
+                    {
+                        var vi = new VersionInformation(dir);
+                        if (string.IsNullOrEmpty(vi.name) && !string.IsNullOrEmpty(name))
+                            vi.name = name;
+                        return vi;
+                    },
+                    (key, value) => // Update value factory
+                    {
+                        if (string.IsNullOrEmpty(value.qtDir))
+                            value = new VersionInformation(key);
+                        if (string.IsNullOrEmpty(value.name) && !string.IsNullOrEmpty(name))
+                            value.name = name;
+                        return value;
+                    });
+                return vi;
+            } catch (Exception exception) {
+                exception.Log();
+                return null;
+            } finally {
+                CacheSemaphore.Release();
             }
-            return versionInfo;
         }
 
         private string vcLinkTargetMachine;
@@ -100,7 +132,6 @@ namespace QtVsTools.Core
         private VersionInformation(string qtDirIn)
         {
             qtDir = qtDirIn;
-
             try {
                 qmakeQuery = new QMakeQuery(qtDirIn);
                 SetupPlatformSpecificData();

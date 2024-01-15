@@ -127,7 +127,7 @@ namespace QtVsTools.Core.MsBuild
             get
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return QtVersionManager.GetVersionInfo(QtVersion);
+                return VersionInformation.GetOrAddByName(QtVersion);
             }
         }
 

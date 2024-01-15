@@ -4,11 +4,9 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.Win32;
@@ -24,33 +22,6 @@ namespace QtVsTools.Core
     {
         private const string VersionsKey = "Versions";
         private const string RegistryVersionsPath = Resources.RegistryRootPath + "\\" + VersionsKey;
-
-        private static readonly SemaphoreSlim CacheSemaphore = new (1, 1);
-        private static readonly ConcurrentDictionary<string, VersionInformation> VersionCache = new();
-
-        public static VersionInformation GetVersionInfo(string name)
-        {
-            if (name == "$(DefaultQtVersion)")
-                name = GetDefaultVersion();
-            if (name == null)
-                return null;
-
-            if (VersionCache.TryGetValue(name, out var vi))
-                return vi;
-
-            CacheSemaphore.Wait();
-            try {
-                vi = VersionCache.GetOrAdd(name, VersionInformation.Get(GetInstallPath(name)));
-                if (vi != null)
-                    vi.name = name;
-                return vi;
-            } catch (Exception exception) {
-                exception.Log();
-                return null;
-            } finally {
-                CacheSemaphore.Release();
-            }
-        }
 
         public static string[] GetVersions()
         {

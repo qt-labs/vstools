@@ -34,7 +34,7 @@ namespace QtVsTools.Core
             if (_dteObject is null || GetQtInstallPath() is not {} qtDir)
                 return;
 
-            var vi = VersionInformation.Get(qtDir);
+            var vi = VersionInformation.GetOrAddByPath(qtDir);
             if (vi.qtMajor < 5) {
                 Messages.DisplayErrorMessage("The default Qt version does not support Visual "
                     + "Studio. To import .pro files, specify Qt 5.0 or later as the default.");
@@ -127,7 +127,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.GetVersionInfo(qtVersion);
+            var versionInfo = VersionInformation.GetOrAddByName(qtVersion);
             var vcInfo = RunQmake(mainInfo, ".sln", true, versionInfo);
             if (null == vcInfo)
                 return;
@@ -156,7 +156,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var versionInfo = QtVersionManager.GetVersionInfo(qtVersion);
+            var versionInfo = VersionInformation.GetOrAddByName(qtVersion);
             var vcInfo = RunQmake(mainInfo, ProjectFileExtension, false, versionInfo);
             if (null == vcInfo)
                 return;

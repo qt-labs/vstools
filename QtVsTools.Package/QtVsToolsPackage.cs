@@ -396,7 +396,7 @@ namespace QtVsTools
                 Messages.Print($@"
 --- Checking {version} ...");
                 var timer = Stopwatch.StartNew();
-                var qt = QtVersionManager.GetVersionInfo(version);
+                var qt = VersionInformation.GetOrAddByName(version);
                 if (Directory.Exists(qt?.InstallPrefix ?? string.Empty)) {
                     Messages.Print($@"
 --- {version} check OK ({timer.Elapsed.TotalSeconds:0.##} secs)");

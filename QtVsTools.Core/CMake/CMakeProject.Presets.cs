@@ -68,7 +68,7 @@ namespace QtVsTools.Core.CMake
                 .Where(x => x["vendor"]?["qt-project.org/Version"] != null)
                 .ToList();
             foreach (var versionPreset in versionPresets) {
-                if (QtVersionManager.GetVersionInfo((string)versionPreset["name"]) is { } version) {
+                if (VersionInformation.GetOrAddByName((string)versionPreset["name"]) is {} version) {
                     var qtDir = version.InstallPrefix.Replace('\\', '/');
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
                     if (qtDir.Equals(presetQtDir, IgnoreCase))
@@ -129,7 +129,7 @@ namespace QtVsTools.Core.CMake
                 .Where(x => !versionRecords.ContainsKey(x));
 
             var missingVersions = missingVersionNames
-                .Select(QtVersionManager.GetVersionInfo)
+                .Select(VersionInformation.GetOrAddByName)
                 .Where(x => x != null && !string.IsNullOrEmpty(x.InstallPrefix));
 
             foreach (var missingVersion in missingVersions) {

@@ -133,7 +133,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             InitializeComponent();
 
             string defaultQtVersionName = QtVersionManager.GetDefaultVersion();
-            defaultQtVersionInfo = QtVersionManager.GetVersionInfo(defaultQtVersionName);
+            defaultQtVersionInfo = VersionInformation.GetOrAddByName(defaultQtVersionName);
 
             DataContext = this;
             Loaded += OnLoaded;
@@ -332,7 +332,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 break;
             case QT_VERSION_BROWSE:
                 if (BrowseForAndGetQtVersion() is {} qtVersion) {
-                    if (VersionInformation.Get(qtVersion) is {} versionInfo) {
+                    if (VersionInformation.GetOrAddByPath(qtVersion) is {} versionInfo) {
                         versionInfo.name = qtVersion;
                         config.QtVersion = versionInfo;
                         config.QtVersionName = versionInfo.name;
@@ -343,7 +343,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 break;
             default:
                 if (QtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
-                    config.QtVersion = QtVersionManager.GetVersionInfo(comboBoxQtVersion.Text);
+                    config.QtVersion = VersionInformation.GetOrAddByName(comboBoxQtVersion.Text);
                     config.QtVersionName = comboBoxQtVersion.Text;
                     config.QtVersionPath = QtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
                 } else {
@@ -522,7 +522,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         private void ErrorMsg_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             var qmakePath = BrowseForAndGetQtVersion();
-            if (VersionInformation.Get(qmakePath) is not {} versionInfo)
+            if (VersionInformation.GetOrAddByPath(qmakePath) is not {} versionInfo)
                 return;
             versionInfo.name = qmakePath;
 
