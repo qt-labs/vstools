@@ -23,7 +23,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
+    using Common;
     using Core;
+    using Core.Options;
     using Package;
     using Package.CMake;
     using Qml.Debug;
@@ -87,10 +89,17 @@ namespace QtVsTools
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {
+        LazyFactory Lazy { get; } = new();
+
         public DTE Dte { get; private set; }
         public string PkgInstallPath { get; private set; }
-        public Core.Options.QtOptionsPage Options
-            => GetDialogPage(typeof(Core.Options.QtOptionsPage)) as Core.Options.QtOptionsPage;
+        public QtOptionsPage Options => Lazy.Get(() => Options, () =>
+            ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                return GetDialogPage(typeof(QtOptionsPage)) as QtOptionsPage;
+            }));
+
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
