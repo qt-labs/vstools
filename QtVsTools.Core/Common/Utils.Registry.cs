@@ -33,8 +33,8 @@ namespace QtVsTools.Core.Common
             // Copy keys and values
             CopyRegistryKeys(sourcePath, destinationPath);
 
-            // Delete source keys recursively
-            Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
+            // TODO v3.2.0: Delete source keys recursively
+            // Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
         }
     }
 }
