@@ -193,7 +193,7 @@ namespace QtVsTools.Core
 
                 var platformName = versionInfo.GetVSPlatformName();
                 if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
-                    CreatePlatform(vcPro, "Win32", platformName, null, versionInfo);
+                    CreatePlatform(vcPro, "Win32", platformName, versionInfo);
                     if (!SelectSolutionPlatform(platformName))
                         Messages.Print($"Can't select the platform {platformName}.");
                 }
@@ -758,7 +758,7 @@ namespace QtVsTools.Core
         }
 
         private static void CreatePlatform(VCProject vcPro, string oldPlatform,
-            string newPlatform, VersionInformation viOld, VersionInformation viNew)
+            string newPlatform, VersionInformation versionInfo)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -784,23 +784,10 @@ namespace QtVsTools.Core
                 var platform = (VCPlatform)config.Platform;
                 if (platform.Name != newPlatform)
                     continue;
-                if (viOld != null)
-                    RemovePlatformDependencies(config, viOld);
-                SetupConfiguration(config, viNew);
+                SetupConfiguration(config, versionInfo);
             }
 
             SelectSolutionPlatform(newPlatform);
-        }
-
-        private static void RemovePlatformDependencies(VCConfiguration config, VersionInformation viOld)
-        {
-            if (CompilerToolWrapper.Create(config) is not {} compiler)
-                return;
-
-            var defines = new HashSet<string>(compiler.PreprocessorDefinitions);
-            defines.ExceptWith(viOld.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
-            compiler.SetPreprocessorDefinitions(string.Join(",", defines));
-
         }
 
         private static void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
