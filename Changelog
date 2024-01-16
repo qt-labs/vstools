@@ -1,3 +1,28 @@
+Qt Visual Studio Tools version 3.1.0:
+
+Changes
+-------
+ - Cleanup of non-existent Qt versions
+ - Integration with QML LSP server (experimental, disabled by default)
+ - Fixed QTVSADDINBUG-860: Intermediate directory ignored
+ - Fixed QTVSADDINBUG-872: Intermediate directory ignored
+ - Fixed QTVSADDINBUG-899: UNICODE macro set by default but not compatible with QApplication
+ - Fixed QTVSADDINBUG-921: Timeout waiting for Qt::BuildLock
+ - Fixed QTVSADDINBUG-1022: Cannot add Qt version to the Qt VS Tools
+ - Fixed QTVSADDINBUG-1081: Locate installer-provided Qt installation
+ - Fixed QTVSADDINBUG-1089: Project always rebuilds
+ - Fixed QTVSADDINBUG-1092: Semicolon in Qt settings causes project to compile
+ - Fixed QTVSADDINBUG-1095: vcvars.bat not called before windeployqt
+ - Fixed QTVSADDINBUG-1097: Temp path in Qt_INCLUDEPATH_ causes project to compile
+ - Fixed QTVSADDINBUG-1124: moc fails if source path contains spaces
+ - Fixed QTVSADDINBUG-1134: The Qt Deploy Tool doesn't take the given arguments
+ - Fixed QTVSADDINBUG-1135: Running an application built using an imported cmakelists.txt hangs
+ - Fixed QTVSADDINBUG-1137: Private headers broken
+ - Fixed QTVSADDINBUG-1138: Object properties not shown in QML debugger
+ - Fixed QTVSADDINBUG-1142: core and gui modules are always available
+ - Fixed QTVSADDINBUG-1145: Qt license header in generated projects
+
+
 Qt Visual Studio Tools version 3.0.2:
 
 This major update of the Qt VS Tools extension adds support for Qt-enabled CMake projects, and drops
