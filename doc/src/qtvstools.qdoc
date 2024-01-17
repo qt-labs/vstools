@@ -1242,9 +1242,9 @@
     To add Qt versions:
 
     \list 1
-        \li Select \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt} > \uicontrol {Versions} > \inlineimage plus.png
-            .
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol {Qt Versions}.
+        \li Select \inlineimage plus.png.
         \li In the \uicontrol Version field, enter a name for the Qt version.
             If you add the path to Qt first, this field is filled automatically.
         \li In the \uicontrol Host field, select \uicontrol Windows, unless you
@@ -1260,6 +1260,17 @@
 
     To remove a Qt version, select \inlineimage minus.png
     .
+
+    \section1 Register installed Qt versions
+
+    Qt VS Tools can automatically detect Qt versions that you install with \QOI.
+    To detect installed Qt versions from a folder, select \uicontrol Browse and
+    locate the Qt installation folder.
+
+    To automatically detect Qt versions, select \uicontrol Autodetect.
+
+    To remove entries for Qt versions that you have uninstalled, select
+    \uicontrol {Cleanup}.
 
     \sa {Select Qt versions for a project}, {Cross-compile}, {Load Qt projects}
 */
