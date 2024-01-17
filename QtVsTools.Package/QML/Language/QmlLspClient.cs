@@ -131,18 +131,15 @@ namespace QtVsTools.Qml.Language
 
         public async Task OnLoadedAsync()
         {
-            if (VersionManager is null)
-                return;
-
             if (!Package.Options.QmlLspEnable)
                 return;
             var qtVersionName = Package.Options.QmlLspVersion switch
             {
                 { Length: > 0} x when !x.Equals("$(DefaultQtVersion)", IgnoreCase) => x,
-                _ => VersionManager.GetDefaultVersion()
+                _ => QtVersionManager.GetDefaultVersion()
             };
 
-            if (VersionManager.GetVersionInfo(qtVersionName) is not { } qtVersion)
+            if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
                 return;
 
             var qtPath = qtVersion.InstallPrefix.Replace('/', '\\').TrimEnd('\\');

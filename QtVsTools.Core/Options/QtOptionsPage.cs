@@ -166,7 +166,7 @@ namespace QtVsTools.Core.Options
             public override bool GetStandardValuesSupported(ITypeDescriptorContext _) => true;
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext _)
             {
-                return new(VersionManager.GetVersions()
+                return new(QtVersionManager.GetVersions()
                     .Where(IsCompatible)
                     .Prepend("$(DefaultQtVersion)")
                     .Cast<object>()
@@ -180,7 +180,7 @@ namespace QtVsTools.Core.Options
             public override bool GetStandardValuesExclusive(ITypeDescriptorContext _) => true;
             protected override bool IsCompatible(string qtVersion)
             {
-                return VersionManager.GetVersionInfo(qtVersion) is { } qt
+                return VersionInformation.GetOrAddByName(qtVersion) is { } qt
                     && File.Exists(Path.Combine(qt.LibExecs, "qmlls.exe"));
             }
         }
