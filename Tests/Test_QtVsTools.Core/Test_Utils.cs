@@ -67,7 +67,7 @@ namespace QtVsTools.Test.Core
 
             var sTx = "[";
             var eTx = "]\r\n";
-            var logTx = (int i) => $"{sTx}Log entry #{i}{eTx}";
+            Func<int, string> logTx = (int i) => $"{sTx}Log entry #{i}{eTx}";
             var log = new LogFile(logFilePath, 50, 40, sTx);
 
             log.Write(logTx(1));

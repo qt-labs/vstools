@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.BraceCompletion;
 using Microsoft.VisualStudio.Text.Editor;
 
+using Task = System.Threading.Tasks.Task;
 namespace QtVsTools.Qml.Language
 {
     using Core;
@@ -161,7 +162,14 @@ namespace QtVsTools.Qml.Language
             await Task.Yield();
         }
 
-        public async Task<InitializationFailureContext> OnServerInitializeFailedAsync(
+
+#if VS2019
+        public async Task OnServerInitializeFailedAsync(Exception e)
+        {
+            await Task.Yield();
+        }
+#else
+        public async Task<InitializationFailureContext>OnServerInitializeFailedAsync(
             ILanguageClientInitializationInfo initializationState)
         {
             await Task.Yield();
@@ -170,6 +178,7 @@ namespace QtVsTools.Qml.Language
                 FailureMessage = initializationState.StatusMessage
             };
         }
+#endif
 
         public IEnumerable<string> ConfigurationSections => null;
 
