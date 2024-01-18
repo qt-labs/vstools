@@ -107,7 +107,8 @@ namespace QtVsTools.Core
                 version = GetDefaultVersion(root);
             if (version == "$(QTDIR)")
                 return Environment.GetEnvironmentVariable("QTDIR");
-
+            if (string.IsNullOrEmpty(version))
+                return null;
             var key = root.OpenSubKey(Resources.RegistryRootPath, false);
             var versionKey = key?.OpenSubKey(Path.Combine(VersionsKey, version), false);
             return versionKey?.GetValue("InstallDir") as string;
