@@ -30,6 +30,7 @@
                 \list
                     \li \l {Set up Qt VS Tools}
                     \li \l {Create}
+                    \li \l {Edit}
                     \li \l {Build}
                     \li \l {Debug}
                     \li \l {Localize}
@@ -79,6 +80,7 @@
                 \li \l {Start Qt Designer}
                 \li \l {Start Qt Linguist}
                 \li \l {Start Qt Resource Editor}
+                \li \l {Turn on QML language server}
                 \li \l {Update IntelliSense info}
                 \li \l {Update Qt translation files}
             \endlist
@@ -142,8 +144,17 @@
         \li \l {Start Qt Designer}
         \li \l {Manage resources}
         \li \l {Start Qt Resource Editor}
-        \li \l {Update IntelliSense info}
         \li \l {Get help}
+    \endlist
+
+    \section1 Edit
+
+    With IntelliSense information and the QML Language Server support, you get
+    code editing features for C++ and QML types.
+
+    \list
+        \li \l {Turn on QML language server}
+        \li \l {Update IntelliSense info}
     \endlist
 
     \section1 Build
@@ -1832,6 +1843,52 @@
                     amount of info recorded in the background build log.
             \endlist
     \endlist
+
+    \sa {Turn on QML Language Server}
+*/
+
+/*!
+    \page qtvstools-how-to-enable-qmlls.html
+    \ingroup qtvstools-how-to
+
+    \title Turn on QML language server
+
+    For several programming languages, a language server offers information
+    about the code to IDEs as long as they support communication via the
+    \l{QML Language Server}{language server protocol (LSP)}. The IDE can then
+    offer services, such as code completion.
+
+    Turn on the QML language server to get code editing services when developing
+    Qt Quick applications if:
+
+    \list
+        \li The default Qt version supports the \l {QML Language Server}
+            (available since Qt 6.5).
+        \li The Visual Studio version supports
+            \l {https://learn.microsoft.com/en-us/visualstudio/extensibility/adding-an-lsp-extension}
+            {LSP}.
+    \endlist
+
+    The services you get depend on the Qt version and Visual Studio version
+    that you use.
+
+    To turn on the QML language server:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {QML Language Server}.
+            \image qtvstools-options-general-qmlls.webp {QML Language Server section in Qt General Options}
+        \li In \uicontrol Enable, select \uicontrol Enable to turn on the
+            QML language server.
+        \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
+            a log file in a temporary folder.
+        \li In \uicontrol {Log size}, set the maximum size of the log gile in KB.
+        \li In \uicontrol {Qt version}, select an installed Qt version that
+            supports the QML language server.
+    \endlist
+
+    \sa {Update IntelliSense info}
 */
 
 /*!
