@@ -742,6 +742,8 @@ namespace QtVsTools.Core.Options
 
             // Create a list of new versions
             foreach (var qmakePath in allQMakePath) {
+                if (!File.Exists(qmakePath))
+                    continue;
                 var qmakeBinDir = Path.GetDirectoryName(qmakePath);
                 var compilerDir = Path.GetDirectoryName(qmakeBinDir);
                 var qtVersionDir = Path.GetDirectoryName(compilerDir);
