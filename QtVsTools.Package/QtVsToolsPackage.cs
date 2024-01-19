@@ -125,12 +125,15 @@ namespace QtVsTools
         private Guid LegacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
         private const string LegacyPackageName = "QtVsToolsLegacyPackage";
 
+        ConcurrentStopwatch InitTimer { get; set; }
+        ConcurrentStopwatch UiTimer { get; set; }
+
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
         {
             try {
-                var initTimer = Stopwatch.StartNew();
+                InitTimer = ConcurrentStopwatch.StartNew();
                 VsServiceProvider.Instance = instance = this;
 
                 var packages = await GetServiceAsync<
@@ -145,7 +148,7 @@ namespace QtVsTools
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
                 await JoinableTaskFactory.SwitchToMainThreadAsync();
-                var uiTimer = Stopwatch.StartNew();
+                UiTimer = ConcurrentStopwatch.StartNew();
 
                 if (packages?.GetPackageInfo(ref LegacyPackageId) is { Name: LegacyPackageName } )
                     throw new QtVSException("Legacy extension detected.");
@@ -173,7 +176,7 @@ namespace QtVsTools
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
                 await TaskScheduler.Default;
-                uiTimer.Stop();
+                UiTimer.Stop();
 
                 QtVersionManager.MoveRegisteredQtVersions();
                 if (QtVersionManager.HasInvalidVersions(out var error, out var defaultInvalid)) {
@@ -261,31 +264,26 @@ namespace QtVsTools
                 }
 
                 CopyTextMateLanguageFiles();
-                initTimer.Stop();
-                var initMsecs = initTimer.Elapsed.TotalMilliseconds;
-                var uiMsecs = uiTimer.Elapsed.TotalMilliseconds;
-
-                /////////
-                // Continue initialization in background task
-                //
-                await Task.WhenAny(
-                    Task.Run(Task.Yield, cancellationToken),
-                    Task.Run(async () => await CopyVisualizersFilesAsync(), cancellationToken),
-                    Task.Run(async () =>
-                        await FinalizeInitializationAsync(initMsecs, uiMsecs), cancellationToken)
-                );
+                InitTimer.Stop();
 
             } catch (Exception exception) {
                 exception.Log();
             }
         }
 
-        private async Task FinalizeInitializationAsync(double initMsecs, double uiMsecs)
+        protected override async Task OnAfterPackageLoadedAsync(CancellationToken cancellationToken)
         {
-            /////////
-            // Initialize Qt versions information
-            //
-            await CheckVersionsAsync();
+            await Task.WhenAll(
+
+                /////////
+                // Initialize Qt versions information
+                //
+                CheckVersionsAsync(),
+
+                /////////
+                // Copy natvis files
+                //
+                CopyVisualizersFilesAsync());
 
             /////////
             // Show banner
@@ -296,8 +294,8 @@ namespace QtVsTools
     ################################################################
         == Qt Visual Studio Tools version {Version.USER_VERSION} ==
             Extension package initialized in:
-             * Total: {initMsecs:0.##} msecs
-             * UI thread: {uiMsecs:0.##} msecs
+             * Total: {InitTimer.Elapsed.TotalMilliseconds:0.##} msecs
+             * UI thread: {UiTimer.Elapsed.TotalMilliseconds:0.##} msecs
     ################################################################");
 
             /////////
@@ -349,6 +347,8 @@ namespace QtVsTools
             // Signal package initialization complete.
             //
             Initialized.Set();
+
+            await base.OnAfterPackageLoadedAsync(cancellationToken);
         }
 
         public bool WaitUntilInitialized(int timeout = -1)
