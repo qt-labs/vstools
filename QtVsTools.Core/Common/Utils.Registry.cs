@@ -10,7 +10,7 @@ namespace QtVsTools.Core.Common
 {
     public static partial class Utils
     {
-        private static void CopyRegistryKeys(string sourcePath, string destinationPath)
+        public static void CopyRegistryKeys(string sourcePath, string destinationPath)
         {
             using var sourceKey = Registry.CurrentUser.OpenSubKey(sourcePath);
             using var destinationKey = Registry.CurrentUser.CreateSubKey(destinationPath);
@@ -33,8 +33,8 @@ namespace QtVsTools.Core.Common
             // Copy keys and values
             CopyRegistryKeys(sourcePath, destinationPath);
 
-            // TODO v3.2.0: Delete source keys recursively
-            // Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
+            // Delete source keys recursively
+            Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
         }
     }
 }

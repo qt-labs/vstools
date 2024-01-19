@@ -14,6 +14,7 @@ using Microsoft.Win32;
 namespace QtVsTools.Core
 {
     using MsBuild;
+    using static Common.Utils;
 
     /// <summary>
     /// Summary description for QtVersionManager.
@@ -268,6 +269,21 @@ namespace QtVsTools.Core
 
             var regExp = new System.Text.RegularExpressions.Regex(@"\$\(.*\)");
             return regExp.IsMatch(version) || Directory.Exists(GetInstallPath(version));
+        }
+
+        public static void MoveRegisteredQtVersions()
+        {
+            const string keyName = @"HKEY_CURRENT_USER\SOFTWARE\Digia";
+            const string valueName = "Copied";
+            if (Registry.GetValue(keyName, valueName, null) != null)
+                return;
+
+            // TODO v3.2.0: Use MoveRegistryKeys and delete source keys
+            CopyRegistryKeys("SOFTWARE\\Digia", Resources.RegistryRootPath);
+            MoveRegistryKeys(Resources.RegistryRootPath + "\\Qt5VS2017",
+                Resources.RegistryPackagePath);
+
+            Registry.SetValue(keyName, valueName, "");
         }
     }
 }
