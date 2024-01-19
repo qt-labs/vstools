@@ -16,6 +16,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using Core.CMake;
     using Json;
+    using VisualStudio;
     using static Core.Common.Utils;
     using static QtVsTools.Common.EnumExt;
 
@@ -182,6 +183,22 @@ add_subdirectory(""{subDir}"")
             }
             CMakeProject.Convert(solutionDir.LocalPath);
             Dte.ExecuteCommand("File.OpenFolder", solutionDir.LocalPath);
+
+            // Hack: Manually open OpenInEditor items.
+            var template = new VsTemplate(ParameterValues["$templatepath$"]);
+            var openInEditorItems = template.ProjectItems.Where(x => x.OpenInEditor);
+            foreach (var item in openInEditorItems) {
+                string fileName;
+                if (item.TargetFileName != null) {
+                    fileName = item.TargetFileName;
+                    if (ParameterValues.TryGetValue("$sourcefilename$", out var value))
+                        fileName = fileName.Replace("$sourcefilename$", value);
+                }
+                else {
+                    fileName = item.TemplateFileName;
+                }
+                VsEditor.Open(Path.Combine(projectDir.LocalPath, fileName));
+            }
         }
 
         private static string QtCMakeHelper { get; } = @"

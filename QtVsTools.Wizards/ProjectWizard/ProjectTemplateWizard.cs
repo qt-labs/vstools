@@ -257,6 +257,9 @@ namespace QtVsTools.Wizards.ProjectWizard
             Dte = automationObject as DTE;
             ParameterValues = parameterValues;
 
+            if (customParams?[0] is {} templatePath)
+                ParameterValues["$templatepath$"] = templatePath.ToString();
+
             Debug.Assert(WizardWindow != null);
 
             BeforeWizardRun();

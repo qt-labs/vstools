@@ -57,8 +57,10 @@ namespace QtVsTools
                 .Select(e => e.Value)
                 .Where(value => !string.IsNullOrWhiteSpace(value));
 
-            ProjectItems = templateElement.Elements(ns + "TemplateContent")
-                .Elements(ns + "ProjectItem")
+            var contentScope = templateElement.Elements(ns + "TemplateContent");
+            if (Type == "Project")
+                contentScope = contentScope.Elements(ns + "Project");
+            ProjectItems = contentScope.Elements(ns + "ProjectItem")
                 .Select(e => new ProjectItem
                 {
                     OpenInEditor = bool.TryParse(
@@ -71,9 +73,9 @@ namespace QtVsTools
                 .Where(item => !string.IsNullOrWhiteSpace(item.TargetFileName)
                      || !string.IsNullOrWhiteSpace(item.TemplateFileName));
 
-            IsValid = Version is >= 2 and <= 4 && Type == "Item"
-                && ProjectTypes.Contains("Qt") && TemplateGroupIds.Contains("QtVsTools")
-                && ProjectItems.Any();
+            IsValid = Version is >= 2 and <= 4 && ProjectTypes.Contains("Qt") && ProjectItems.Any();
+            if (Type == "Item")
+                IsValid &= TemplateGroupIds.Contains("QtVsTools");
 
             if (templateElement.Element(ns + "WizardExtension") is not {} wizardExtensionElement)
                 return;
