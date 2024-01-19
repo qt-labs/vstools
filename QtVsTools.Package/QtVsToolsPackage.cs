@@ -178,13 +178,6 @@ namespace QtVsTools
                 await TaskScheduler.Default;
                 UiTimer.Stop();
 
-                QtVersionManager.MoveRegisteredQtVersions();
-                if (QtVersionManager.HasInvalidVersions(out var error, out var defaultInvalid)) {
-                    if (defaultInvalid)
-                        QtVersionManager.SetLatestQtVersionAsDefault();
-                    Messages.Print(error);
-                }
-
                 ///////////
                 // Install Qt/MSBuild files from package folder to standard location
                 //  -> %LOCALAPPDATA%\QtMsBuild
@@ -255,14 +248,6 @@ namespace QtVsTools
                         EnvironmentVariableTarget.Process);
                 }
 
-                var defaultVersion = QtVersionManager.GetInstallPath("$(DefaultQtVersion)");
-                if (defaultVersion != null) {
-                    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("QTDIR"))) {
-                        Environment.SetEnvironmentVariable("QTDIR", defaultVersion,
-                            EnvironmentVariableTarget.Process);
-                    }
-                }
-
                 CopyTextMateLanguageFiles();
                 InitTimer.Stop();
 
@@ -285,6 +270,8 @@ namespace QtVsTools
 
         protected override async Task OnAfterPackageLoadedAsync(CancellationToken cancellationToken)
         {
+            QtVersionManager.MoveRegisteredQtVersions();
+
             await Task.WhenAll(
 
                 /////////
@@ -296,6 +283,15 @@ namespace QtVsTools
                 // Copy natvis files
                 //
                 CopyVisualizersFilesAsync());
+
+            if (QtVersionManager.GetInstallPath("$(DefaultQtVersion)") is {} path) {
+                if (!new[] { "SSH:", "WSL:" }.Any(path.StartsWith)) {
+                    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("QTDIR"))) {
+                        Environment.SetEnvironmentVariable("QTDIR", path,
+                            EnvironmentVariableTarget.Process);
+                    }
+                }
+            }
 
             /////////
             // Show banner
@@ -350,7 +346,7 @@ namespace QtVsTools
             }
 
             /////////
-            // Eable output messages and activate output pane.
+            // Enable output messages and activate output pane.
             //
             Messages.Initialized = true;
             Messages.ActivateMessagePane();
@@ -375,6 +371,10 @@ namespace QtVsTools
         {
             await VsShell.UiThreadAsync(() =>
                 StatusBar.SetText("Checking installed Qt versions..."));
+
+            Messages.Print($"--- Checking default Qt version...{Environment.NewLine}"
+                + (QMake.Exists(QtVersionManager.GetDefaultVersionInstallPath() ?? "")
+                  ? "--- default Qt version check OK" : "--> default Qt version missing."));
 
             var versions = QtVersionManager.GetVersions();
             var statusCenter = await VsServiceProvider

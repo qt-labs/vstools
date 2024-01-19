@@ -4,7 +4,6 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.Shell;
@@ -33,84 +32,15 @@ namespace QtVsTools.Core
             return versionKey?.GetSubKeyNames() ?? Array.Empty<string>();
         }
 
-        /// <summary>
-        /// Check if all Qt versions are valid and readable.
-        /// </summary>
-        /// <param name="errorMessage"></param>
-        /// <param name="defaultVersionInvalid"></param>
-        /// <returns>true, if there are one or more invalid Qt version</returns>
-        public static bool HasInvalidVersions(out string errorMessage, out bool defaultVersionInvalid)
-        {
-            var defaultVersion = GetDefaultVersionString();
-            defaultVersionInvalid = string.IsNullOrEmpty(defaultVersion);
-
-            errorMessage = null;
-            foreach (var version in GetVersions()) {
-                if (version == "$(DefaultQtVersion)")
-                    continue;
-
-                var path = GetInstallPath(version);
-                if (path != null && (path.StartsWith("SSH:") || path.StartsWith("WSL:")))
-                    continue;
-
-                if (!string.IsNullOrEmpty(path) && QMake.Exists(path))
-                    continue;
-                errorMessage += $" * {version} in {path}\n";
-                defaultVersionInvalid |= version == defaultVersion;
-            }
-
-            if (!string.IsNullOrEmpty(errorMessage)) {
-                errorMessage = "These Qt version are inaccessible:\n"
-                    + errorMessage
-                    + "Make sure that you have read access to all files in your Qt directories.";
-            }
-
-            return errorMessage != null;
-        }
-
-        public static void SetLatestQtVersionAsDefault()
-        {
-            var validVersions = new Dictionary<string, System.Version>();
-            foreach (var version in GetVersions()) {
-                if (version == "$(DefaultQtVersion)")
-                    continue;
-
-                var path = GetInstallPath(version);
-                if (!string.IsNullOrEmpty(path) && QMake.Exists(path))
-                    validVersions[version] = new System.Version(new QtConfig(path).VersionString);
-            }
-
-            if (validVersions.Count <= 0)
-                return;
-
-            var defaultName = "";
-            System.Version defaultVersion = null;
-            foreach (var tmp in validVersions) {
-                var version = tmp.Value;
-                if (defaultVersion != null && defaultVersion >= version)
-                    continue;
-                defaultName = tmp.Key;
-                defaultVersion = version;
-            }
-            SaveDefaultVersion(defaultName);
-        }
-
         public static string GetInstallPath(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();
-            return GetInstallPath(version, Registry.CurrentUser);
-        }
-
-        private static string GetInstallPath(string version, RegistryKey root)
-        {
-            if (version == "$(DefaultQtVersion)")
-                version = GetDefaultVersion(root);
             if (version == "$(QTDIR)")
                 return Environment.GetEnvironmentVariable("QTDIR");
             if (string.IsNullOrEmpty(version))
                 return null;
-            var key = root.OpenSubKey(Resources.RegistryRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryRootPath, false);
             var versionKey = key?.OpenSubKey(Path.Combine(VersionsKey, version), false);
             return versionKey?.GetValue("InstallDir") as string;
         }
@@ -199,14 +129,9 @@ namespace QtVsTools.Core
 
         public static string GetDefaultVersion()
         {
-            return GetDefaultVersion(Registry.CurrentUser);
-        }
-
-        private static string GetDefaultVersion(RegistryKey root)
-        {
             string defaultVersion = null;
             try {
-                var key = root.OpenSubKey(RegistryVersionsPath, false);
+                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null)
                     defaultVersion = (string)key.GetValue("DefaultQtVersion");
             } catch {
@@ -214,7 +139,7 @@ namespace QtVsTools.Core
             }
 
             if (defaultVersion == null) {
-                var key = root.OpenSubKey(RegistryVersionsPath, false);
+                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null) {
                     var versions = GetVersions();
                     if (versions is {Length: > 0})
@@ -236,17 +161,21 @@ namespace QtVsTools.Core
             return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
         }
 
-        private static string GetDefaultVersionString()
+        public static string GetDefaultVersionInstallPath()
         {
-            string defaultVersion = null;
             try {
-                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
-                if (key != null)
-                    defaultVersion = key.GetValue("DefaultQtVersion") as string;
+                using var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
+                var defaultVersion = key?.GetValue("DefaultQtVersion") as string;
+
+                if (string.IsNullOrEmpty(defaultVersion))
+                    return Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
+
+                var versionKey = key.OpenSubKey(defaultVersion, false);
+                return versionKey?.GetValue("InstallDir") as string;
             } catch {
                 Messages.Print("Cannot read the default Qt version from registry.");
             }
-            return defaultVersion ?? Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
+            return null;
         }
 
         public static bool SaveDefaultVersion(string version)
