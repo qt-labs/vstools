@@ -466,15 +466,19 @@ namespace QtVsTools.Wizards.ProjectWizard
     <PlatformToolset>WSL_1_0</PlatformToolset>");
                     break;
                 }
-                if (IsLinux(c)) {
-                    xml.AppendLine(string.Format(@"
+                xml.AppendLine(string.Format(@"
     <UseDebugLibraries>{0}</UseDebugLibraries>",
                         /*{0}*/ c.IsDebug ? "true" : "false"));
-                } else if (target == ProjectTargets.WindowsStore) {
+                if (target == ProjectTargets.WindowsStore) {
                     xml.AppendLine(@"
     <GenerateManifest>false</GenerateManifest>
     <EmbedManifest>false</EmbedManifest>");
                 }
+                if (!c.IsDebug)
+                    xml.AppendLine(@"
+    <WholeProgramOptimization>true</WholeProgramOptimization>");
+                xml.AppendLine(@"
+    <CharacterSet>Unicode</CharacterSet>");
                 xml.AppendLine(@"
   </PropertyGroup>");
             }
@@ -532,17 +536,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     // Windows
                     xml.AppendLine(@"
     <ClCompile>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>");
-                    if (c.IsDebug) {
-                        xml.AppendLine(@"
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>");
-                    } else {
-                        xml.AppendLine(@"
-      <DebugInformationFormat>None</DebugInformationFormat>
-      <Optimization>MaxSpeed</Optimization>");
-                    }
                     if (c.Target.EqualTo(ProjectTargets.WindowsStore)) {
                         xml.AppendLine(@"
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -565,6 +559,15 @@ namespace QtVsTools.Wizards.ProjectWizard
       <{0}>{1}</{0}>",
                             /*{0}*/ p.Key,
                             /*{1}*/ p.Value));
+                    }
+                    xml.AppendLine(@"
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>");
+                    if (!c.IsDebug) {
+                        xml.AppendLine(@"
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>");
                     }
                     xml.AppendLine(@"
     </ClCompile>");
@@ -600,6 +603,11 @@ namespace QtVsTools.Wizards.ProjectWizard
       <{0}>{1}</{0}>",
                             /*{0}*/ p.Key,
                             /*{1}*/ p.Value));
+                    }
+                    if (!c.IsDebug) {
+                        xml.AppendLine(@"
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>");
                     }
                     xml.AppendLine(@"
     </Link>");
