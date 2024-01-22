@@ -1883,7 +1883,7 @@
             QML language server.
         \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
             a log file in a temporary folder.
-        \li In \uicontrol {Log size}, set the maximum size of the log gile in KB.
+        \li In \uicontrol {Log size}, set the maximum size of the log file in KB.
         \li In \uicontrol {Qt version}, select an installed Qt version that
             supports the QML language server.
     \endlist
