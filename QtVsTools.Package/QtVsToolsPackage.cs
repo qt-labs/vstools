@@ -11,13 +11,13 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
-using EnvDTE;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -266,8 +266,20 @@ namespace QtVsTools
                 CopyTextMateLanguageFiles();
                 InitTimer.Stop();
 
-            } catch (Exception exception) {
-                exception.Log();
+            } catch (Exception ex) {
+                var activityLog = await GetServiceAsync<SVsActivityLog, IVsActivityLog>();
+                activityLog?.LogEntry((uint)__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ToString(),
+                    $"Failed to load QtVsTools package. Exception details:\n"
+                        + $" Message: {ex.Message}\n"
+                        + $" Source: {ex.Source}\n"
+                        + $" Stack Trace: {ex.StackTrace}\n"
+                        + $" Target Site: {ex.TargetSite}\n"
+                        + (ex.InnerException != null
+                            ? $"Inner Exception Message: {ex.InnerException.Message}\n"
+                                + $" Inner Exception Stack Trace: {ex.InnerException.StackTrace}\n"
+                            : "")
+                );
+                throw; // VS will catch the exception and mark the extension as failed to load.
             }
         }
 
