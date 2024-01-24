@@ -47,10 +47,10 @@ lower_case_file_names_CheckBox = {"container": qt_Wizard_Window, "text": "Lower 
                                   "type": "CheckBox"}
 file_Close_Solution_MenuItem = {"container": globalnames.file_MenuItem, "text": "Close Solution",
                                 "type": "MenuItem"}
-microsoft_Visual_Studio_Create_a_new_project_Label = {"container":
-                                                      globalnames.microsoft_Visual_Studio_Window,
-                                                      "text": "Create a _new project",
-                                                      "type": "Label"}
+msvs_Create_a_new_project_Label = {"container":
+                                   globalnames.microsoft_Visual_Studio_Window,
+                                   "text": "Create a _new project",
+                                   "type": "Label"}
 qt_Microsoft_Visual_Studio_cpp_TabItem = {"container":globalnames.microsoft_Visual_Studio_Window,
                                           "text": RegularExpression(".*Qt.*\.cpp$|^main\.(cpp|qml)$"),
                                           "type": "TabItem"}
@@ -65,3 +65,10 @@ Microsoft_Visual_Studio_ToolBar = {"container": globalnames.microsoft_Visual_Stu
 platforms_ComboBox = {"container": Microsoft_Visual_Studio_ToolBar,
                       "tooltip": "Solution Platforms", "type": "ComboBox"}
 x64_ComboBoxItem = {"container": platforms_ComboBox, "id": "x64", "type": "ComboBoxItem"}
+projectModelSelection_ComboBoxItem = {"container": ProjectModel_ComboBox, "type": "ComboBoxItem"}
+build_BuildAll_MenuItem = {"container": build_MenuItem, "text": "Build All", "type": "MenuItem"}
+file_Close_Folder_MenuItem = {"container": globalnames.file_MenuItem, "text": "Close Folder",
+                              "type": "MenuItem"}
+selectStartupItemButton = {"tooltip": RegularExpression("^(Local Windows Debugger|Select Startup Item)$"),
+                           "type": "Button"}
+selectStartupItemLabel = {"container": selectStartupItemButton, "type": "Label"}

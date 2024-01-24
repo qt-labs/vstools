@@ -34,47 +34,56 @@ def testCompareRegex(text, pattern, message):
     test.verify(regex.match(text), '%s ("%s"/"%s")' % (message, text, pattern))
 
 
-def listExpectedWrittenFiles(workDir, projectName, templateName):
+def listExpectedWrittenFiles(workDir, projectName, templateName, cmakeBased):
     projectDirectory = os.path.join(workDir, projectName, projectName)
 
     def prependProjectDirectory(fileName):
         return os.path.join(projectDirectory, fileName)
 
-    msvsFiles = [os.path.join(workDir, projectName, projectName + ".sln")]
-    msvsFiles.extend(map(prependProjectDirectory, [projectName + ".vcxproj",
-                                                   projectName + ".vcxproj.filters",
-                                                   projectName + ".vcxproj.user"]))
+    if cmakeBased:
+        projFiles = [os.path.join(workDir, projectName, "CMakeLists.txt"),
+                     os.path.join(workDir, projectName, "CMakePresets.json"),
+                     os.path.join(workDir, projectName, "CMakeUserPresets.json")]
+        projFiles.extend(map(prependProjectDirectory, ["CMakeLists.txt",
+                                                       "qt.cmake"]))
+    else:
+        projFiles = [os.path.join(workDir, projectName, projectName + ".sln")]
+        projFiles.extend(map(prependProjectDirectory, [projectName + ".vcxproj",
+                                                       projectName + ".vcxproj.filters",
+                                                       projectName + ".vcxproj.user"]))
 
     if templateName == "Qt Designer Custom Widget":
-        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+        return projFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
                                                               projectName + ".h",
                                                               projectName + "Plugin.cpp",
                                                               projectName + "Plugin.h",
                                                               projectName.lower() + "plugin.json"]))
     elif templateName == "Qt Console Application":
-        return msvsFiles + [prependProjectDirectory("main.cpp")]
+        return projFiles + [prependProjectDirectory("main.cpp")]
     elif templateName == "Qt ActiveQt Server":
-        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+        return projFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
                                                               projectName + ".def",
                                                               projectName + ".h",
                                                               projectName + ".ico",
                                                               projectName + ".rc",
                                                               projectName + ".ui"]))
     elif templateName == "Qt Quick Application":
-        return msvsFiles + list(map(prependProjectDirectory, ["main.cpp",
-                                                              "main.qml",
-                                                              "qml.qrc"]))
+        if not cmakeBased:
+            projFiles.append(prependProjectDirectory("qml.qrc"))
+        return projFiles + list(map(prependProjectDirectory, ["main.cpp",
+                                                              "main.qml"]))
     elif templateName == "Qt Empty Application":
-        return msvsFiles
+        return projFiles
     elif templateName == "Qt Class Library":
-        return msvsFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
+        return projFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
                                                               projectName + ".h",
                                                               projectName.lower() + "_global.h"]))
     elif templateName == "Qt Widgets Application":
-        return msvsFiles + list(map(prependProjectDirectory, ["main.cpp",
+        if not cmakeBased:
+            projFiles.append(prependProjectDirectory(projectName + ".qrc"))
+        return projFiles + list(map(prependProjectDirectory, ["main.cpp",
                                                               projectName + ".cpp",
                                                               projectName + ".h",
-                                                              projectName + ".qrc",
                                                               projectName + ".ui"]))
     else:
         test.fatal("Unexpected template '%s'" % templateName,
@@ -82,28 +91,49 @@ def listExpectedWrittenFiles(workDir, projectName, templateName):
         return []
 
 
-def getExpectedBuiltFile(workDir, projectName, templateName):
+def getExpectedBuiltFile(workDir, projectName, templateName, cmakeBased):
     buildPath = os.path.join(workDir, projectName)
-    expand(waitForObject(names.platforms_ComboBox))
-    try:
-        waitForObjectExists(names.x64_ComboBoxItem, 5000)
-        buildPath = os.path.join(buildPath, "x64")
-    except:
-        pass
-    collapse(waitForObject(names.platforms_ComboBox))
+    if cmakeBased:
+        buildPath = os.path.join(buildPath, "out", "build", projectName)
+    else:
+        expand(waitForObject(names.platforms_ComboBox))
+        try:
+            waitForObjectExists(names.x64_ComboBoxItem, 5000)
+            buildPath = os.path.join(buildPath, "x64")
+        except:
+            pass
+        collapse(waitForObject(names.platforms_ComboBox))
+        buildPath = os.path.join(buildPath, "Debug")
     if templateName in ["Qt Console Application",
                         "Qt Quick Application",
                         "Qt Widgets Application"]:
-        return os.path.join(buildPath, "Debug", projectName + ".exe")
+        return os.path.join(buildPath, projectName + ".exe")
     elif templateName in ["Qt Class Library",
                           "Qt Designer Custom Widget"]:
-        return os.path.join(buildPath, "Debug", projectName + ".dll")
+        return os.path.join(buildPath, projectName + ".dll")
     elif templateName == "Qt Empty Application":
-        return os.path.join(buildPath, "Debug")
+        return os.path.join(buildPath)
     else:
         test.fatal("Unexpected template '%s'" % templateName,
                    "You might need to update function getExpectedBuiltFile()")
         return ""
+
+
+def buildSolution(cmakeBased):
+    if cmakeBased:
+        labelObject = waitForObjectExists(names.selectStartupItemLabel)
+        if not waitFor("labelObject.text != 'Select Startup Item...'", 230000):
+            test.fail("Could not start building the project.",
+                      "Did configuring fail?")  # See QTVSADDINBUG-1162
+            return False
+    mouseClick(waitForObject(names.build_MenuItem))
+    mouseClick(waitForObject(names.build_BuildAll_MenuItem if cmakeBased
+                             else names.build_Build_Solution_MenuItem))
+    # make sure building finished
+    labelObject = waitForObjectExists(names.selectStartupItemLabel)
+    waitFor("not labelObject.enabled", 5000)
+    waitFor("labelObject.enabled", 100000)
+    return True
 
 
 workDir = os.getenv("SQUISH_VSTOOLS_WORKDIR")
@@ -139,50 +169,74 @@ def main():
                      "Qt Widgets Application": "^QtWidgets.*\.cpp$"}
 
     with NewProjectDialog() as dialog:
-        for listItem, templateName in listedTemplates:
-            with TestSection(templateName):
-                if not templateName in expectedFiles:
-                    test.warning("Template %s is not supported, skipping..." % templateName)
-                    continue
-                mouseClick(waitForObject(listItem))
-                clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
-                type(waitForObject(names.comboBox_Edit), workDir)
-                waitFor("waitForObject(names.comboBox_Edit).text == workDir")
-                projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
-                createdProjects.add(projectName)
-                clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
-                fixAppContext()
-                clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                if templateName in ["Qt ActiveQt Server",
-                                    "Qt Class Library",
-                                    "Qt Designer Custom Widget",
-                                    "Qt Widgets Application"]:
-                    clickButton(waitForObject(names.qt_Wizard_Next_Button))
-                clickButton(waitForObject(names.qt_Wizard_Finish_Button))
-                fixAppContext()
-                if expectedFiles[templateName]:
-                    try:
-                        testCompareRegex(waitForObjectExists(names.qt_cpp_Label).text,
-                                         expectedFiles[templateName],
-                                         "Was a file with an expected name opened?")
-                    except:
-                        test.fail("There was no expected file opened for %s" % templateName)
-                else:
-                    test.exception("waitForObjectExists(names.qt_cpp_Label)",
-                                   "No file should be opened for %s" % templateName)
-                test.verify(all(map(os.path.exists,
-                                    listExpectedWrittenFiles(workDir, projectName, templateName))),
-                            "Were all expected files created?")
-                if templateName != "Qt ActiveQt Server":
-                    builtFile = getExpectedBuiltFile(workDir, projectName, templateName)
-                    mouseClick(waitForObject(names.build_MenuItem))
-                    mouseClick(waitForObject(names.build_Build_Solution_MenuItem))
-                    test.verify(waitFor("os.path.exists(builtFile)", 15000),
-                                "Was %s built as expected?" % builtFile)
-                mouseClick(waitForObject(globalnames.file_MenuItem))
-                mouseClick(waitForObject(names.file_Close_Solution_MenuItem))
-                # reopens the "New Project" dialog
-                mouseClick(waitForObject(names.microsoft_Visual_Studio_Create_a_new_project_Label))
+        for buildSystem in ["Qt Visual Studio Project (Qt/MSBuild)",
+                            "CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"]:
+            cmakeBased = buildSystem.startswith("CMake")
+            if cmakeBased and version == "2019":
+                test.warning("MSVS2019 often freezes when opening CMake-based projects, skipping.")
+                continue
+            with TestSection("Build System: " + buildSystem):
+                for listItem, templateName in listedTemplates:
+                    with TestSection(templateName):
+                        if not templateName in expectedFiles:
+                            test.warning("Template %s is not supported, skipping..."
+                                         % templateName)
+                            continue
+                        if (cmakeBased and templateName in ["Qt ActiveQt Server"]):
+                            test.log("Skipping '%s' because it does not support CMake."
+                                     % templateName)
+                            continue
+                        mouseClick(waitForObject(listItem))
+                        clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
+                        type(waitForObject(names.comboBox_Edit), workDir)
+                        waitFor("waitForObject(names.comboBox_Edit).text == workDir")
+                        projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
+                        createdProjects.add(projectName)
+                        clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
+                        fixAppContext()
+                        clickButton(waitForObject(names.qt_Wizard_Next_Button))
+                        if (templateName in ["Qt ActiveQt Server"]):
+                            test.verify(not findObject(names.ProjectModel_ComboBox).enabled,
+                                        "'%s' should not allow changing its build system"
+                                        % templateName)
+                            test.compare(findObject(names.ProjectModel_ComboBox).nativeObject.Text,
+                                         buildSystem)
+                        else:
+                            expand(waitForObject(names.ProjectModel_ComboBox))
+                            mouseClick(waitForObject(names.projectModelSelection_ComboBoxItem
+                                                     | {"text": buildSystem}))
+                        if templateName in ["Qt ActiveQt Server",
+                                            "Qt Class Library",
+                                            "Qt Designer Custom Widget",
+                                            "Qt Widgets Application"]:
+                            clickButton(waitForObject(names.qt_Wizard_Next_Button))
+                        clickButton(waitForObject(names.qt_Wizard_Finish_Button))
+                        fixAppContext()
+                        if expectedFiles[templateName]:
+                            try:
+                                testCompareRegex(waitForObjectExists(names.qt_cpp_Label).text,
+                                                 expectedFiles[templateName],
+                                                 "Was a file with an expected name opened?")
+                            except:
+                                message = "There was no expected file opened for %s" % templateName
+                                test.fail(message)
+                        else:
+                            test.exception("waitForObjectExists(names.qt_cpp_Label)",
+                                           "No file should be opened for %s" % templateName)
+                        test.verify(all(map(os.path.exists,
+                                            listExpectedWrittenFiles(workDir, projectName,
+                                                                     templateName, cmakeBased))),
+                                    "Were all expected files created?")
+                        if (templateName != "Qt ActiveQt Server" and buildSolution(cmakeBased)):
+                            builtFile = getExpectedBuiltFile(workDir, projectName,
+                                                             templateName, cmakeBased)
+                            test.verify(waitFor("os.path.exists(builtFile)", 15000),
+                                        "Was %s built as expected?" % builtFile)
+                        mouseClick(waitForObject(globalnames.file_MenuItem))
+                        mouseClick(waitForObject(names.file_Close_Folder_MenuItem if cmakeBased
+                                                 else names.file_Close_Solution_MenuItem))
+                        # reopens the "New Project" dialog
+                        mouseClick(waitForObject(names.msvs_Create_a_new_project_Label))
     clearQtVersions(version)
     closeMainWindow()
 
