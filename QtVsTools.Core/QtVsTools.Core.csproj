@@ -137,6 +137,7 @@
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\PunisherQueue.cs" />
     <Compile Include="Common\Timestamp.cs" />
+    <Compile Include="Common\Utils.EnvParser.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\Utils.LogFile.cs" />
     <Compile Include="Common\Utils.Registry.cs" />

@@ -13,8 +13,12 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core.Common
 {
+    using QtVsTools.Common;
+
     public static partial class Utils
     {
+        private static LazyFactory StaticLazy { get; } = new();
+
         public static class ProjectTypes
         {
             public const string C_PLUS_PLUS = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
