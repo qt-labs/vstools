@@ -52,10 +52,6 @@ namespace QtVsTools.Core.CMake
                     {
                         ["CMAKE_PREFIX_PATH"] = "$env{QTDIR}"
                     },
-                    ["environment"] = new JObject
-                    {
-                        ["PATH"] = "$penv{PATH};$env{QTDIR}/bin"
-                    },
                     ["vendor"] = new JObject
                     {
                         ["qt-project.org/Qt"] = new JObject()

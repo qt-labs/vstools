@@ -382,10 +382,16 @@ namespace QtVsTools.Qml.Debug
             if (!isNative || !hasEnv || noDebug)
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
-            var qmlDebugArgs = targets[0].bstrEnv.Split('\0')
-                .FirstOrDefault(x => x.StartsWith("QML_DEBUG_ARGS=", IgnoreCase));
-            qmlDebugArgs = qmlDebugArgs?.Substring(qmlDebugArgs.IndexOf('=') + 1);
-            if (qmlDebugArgs is { Length: > 0})
+            var envString = string.Join("\r\n", targets[0].bstrEnv.Split('\0'));
+            if (ParseEnvironment(envString) is not { Count: > 0} env)
+                return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
+
+            if (env.ContainsKey("PATH") && env.ContainsKey("QTDIR")) {
+                env["PATH"] += ";%QTDIR%/bin";
+                targets[0].bstrEnv = string.Join("\0", env.Select(x => $"{x.Key}={x.Value}"));
+            }
+
+            if (env.TryGetValue("QML_DEBUG_ARGS", out var qmlDebugArgs))
                 targets[0].bstrArg = $"{targets[0].bstrArg?.Trim()} {qmlDebugArgs.Trim()}".Trim();
 
             return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
