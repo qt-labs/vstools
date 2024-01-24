@@ -14,7 +14,7 @@ myProjectName = ""
 
 def setNames(_, __, expectedName):
     global myProjectName
-    projectNameEdit = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit)
+    projectNameEdit = waitForObjectExists(names.msvs_Project_name_Edit)
     myProjectName = "My%sProject" % expectedName
     type(projectNameEdit, myProjectName)
     solutionNameEdit = waitForObjectExists(names.solutionNameText_Edit)

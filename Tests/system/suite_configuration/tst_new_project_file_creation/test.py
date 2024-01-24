@@ -148,7 +148,7 @@ def main():
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                 type(waitForObject(names.comboBox_Edit), workDir)
                 waitFor("waitForObject(names.comboBox_Edit).text == workDir")
-                projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
+                projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
                 createdProjects.add(projectName)
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
                 fixAppContext()

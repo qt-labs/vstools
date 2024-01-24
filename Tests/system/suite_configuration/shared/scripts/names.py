@@ -30,7 +30,7 @@ qt_Wizard_Welcome_Label = {"class": "System.Windows.Controls.TextBlock",
                            "container": qt_Wizard_Window, "type": "Label"}
 outputPathTextBlock_Label = {"container": globalnames.microsoft_Visual_Studio_Window,
                              "id": "outputPathTextBlock", "type": "Label"}
-microsoft_Visual_Studio_Project_name_Edit = {"id": "projectNameText", "type": "Edit"}
+msvs_Project_name_Edit = {"id": "projectNameText", "type": "Edit"}
 solutionNameText_Edit = {"container": globalnames.microsoft_Visual_Studio_Window,
                          "id": "solutionNameText", "type": "Edit"}
 comboBox_Edit = {"id": "PART_EditableTextBox", "type": "Edit"}

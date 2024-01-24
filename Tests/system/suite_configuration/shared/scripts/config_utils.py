@@ -142,7 +142,7 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                 if funcNewProjectDialog:
                     funcNewProjectDialog(version, templateName, expectedName)
-                projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
+                projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
                 devEnvContext = currentApplicationContext()
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
                 if not waitFor("object.exists(names.qt_Wizard_Window)", 10000):

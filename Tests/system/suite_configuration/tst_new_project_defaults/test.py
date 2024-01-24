@@ -16,7 +16,7 @@ import names
 def testNewProjectDialog(version, templateName, expectedName):
     test.compare(waitForObjectExists(names.project_template_name_Label).text, templateName,
                  'Does the "Configure your new project" dialog show the right template name?')
-    projectName = waitForObjectExists(names.microsoft_Visual_Studio_Project_name_Edit).text
+    projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
     solutionName = waitForObjectExists(names.solutionNameText_Edit).text
     test.verify(projectName.startswith(expectedName),
                 "Project name is based on template name?")
