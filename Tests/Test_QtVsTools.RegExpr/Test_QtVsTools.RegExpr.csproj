@@ -76,10 +76,6 @@
   // Project items
   // -->
   <ItemGroup>
-    <Compile Include="$(SolutionDir)\QtVsTest\MacroParser.cs">
-      <Link>MacroParser.cs</Link>
-    </Compile>
-    <Compile Include="Test_MacroParser.cs" />
     <Compile Include="Test_Matches.cs" />
     <Compile Include="Test_XmlIntParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
