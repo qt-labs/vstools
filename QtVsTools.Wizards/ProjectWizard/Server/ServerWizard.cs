@@ -71,6 +71,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     NextButtonEnabled = true,
                     FinishButtonEnabled = false,
                     CancelButtonEnabled = true,
+                    ProjectModelEnabled = false,
                     ValidateConfigs = ValidateConfigsForActiveQtServer
                 },
                 new ServerPage {
