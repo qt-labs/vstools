@@ -5,28 +5,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
-using Process = System.Diagnostics.Process;
-
 namespace QtVsTools.Core
 {
     using MsBuild;
-    using QtVsTools.Common;
     using static Common.Utils;
-    using static SyntaxAnalysis.RegExpr;
 
     public static class HelperFunctions
     {
-        static LazyFactory StaticLazy { get; } = new();
-
         static readonly HashSet<string> _sources = new(new[] { ".c", ".cpp", ".cxx" }, CaseIgnorer);
         public static bool IsSourceFile(string fileName)
         {
@@ -473,122 +465,6 @@ namespace QtVsTools.Core
             var subDirs = sourceDir.GetDirectories();
             foreach (var subDir in subDirs)
                 CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
-        }
-
-        static Parser EnvVarParser => StaticLazy.Get(() => EnvVarParser, () =>
-        {
-            Token tokenName = new Token("name", (~Chars["=\r\n"]).Repeat(atLeast: 1));
-            Token tokenValuePart = new Token("value_part", (~Chars[";\r\n"]).Repeat(atLeast: 1));
-            Token tokenValue = new Token("value", (tokenValuePart | Chars[';']).Repeat())
-            {
-                new Rule<List<string>>
-                {
-                    Capture(_ => new List<string>()),
-                    Update("value_part", (List<string> parts, string part) => parts.Add(part))
-                }
-            };
-            Token tokenEnvVar = new Token("env_var", tokenName & "=" & tokenValue & LineBreak)
-            {
-                new Rule<KeyValuePair<string, List<string>>>
-                {
-                    Create("name", (string name)
-                        => new KeyValuePair<string, List<string>>(name, null)),
-                    Transform("value", (KeyValuePair<string, List<string>> prop, List<string> value)
-                        => new KeyValuePair<string, List<string>>(prop.Key, value))
-                }
-            };
-            return tokenEnvVar.Render();
-        });
-
-        public static string VcPath { get; set; }
-        public static bool SetVcVars(VersionInformation versionInfo, ProcessStartInfo startInfo)
-        {
-            versionInfo ??= VersionInformation.GetOrAddByName(QtVersionManager.GetDefaultVersion());
-
-            if (string.IsNullOrEmpty(VcPath))
-                return false;
-
-            // Select vcvars script according to host and target platforms
-            var osIs64Bit = Environment.Is64BitOperatingSystem;
-            var vcVarsCmd = "";
-            switch (versionInfo.Platform) {
-            case Platform.x86:
-                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
-                        ? @"Auxiliary\Build\vcvarsamd64_x86.bat"
-                        : @"Auxiliary\Build\vcvars32.bat");
-                break;
-            case Platform.x64:
-                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
-                        ? @"Auxiliary\Build\vcvars64.bat"
-                        : @"Auxiliary\Build\vcvarsx86_amd64.bat");
-                break;
-            case Platform.arm64:
-                vcVarsCmd = Path.Combine(VcPath, osIs64Bit
-                        ? @"Auxiliary\Build\vcvarsamd64_arm64.bat"
-                        : @"Auxiliary\Build\vcvarsx86_arm64.bat");
-                if (!File.Exists(vcVarsCmd)) {
-                    vcVarsCmd = Path.Combine(VcPath, osIs64Bit
-                            ? @"Auxiliary\Build\vcvars64.bat"
-                            : @"Auxiliary\Build\vcvarsx86_amd64.bat");
-                }
-                break;
-            }
-
-            if (!File.Exists(vcVarsCmd)) {
-                Messages.Print(">>> vcvars: NOT FOUND");
-                return false;
-            }
-
-            // Run vcvars and print environment variables
-            var stdOut = new StringBuilder();
-            var command = $"/c \"{vcVarsCmd}\" && set";
-            var comspecPath = Environment.GetEnvironmentVariable("COMSPEC");
-            var vcVarsStartInfo = new ProcessStartInfo(comspecPath, command)
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true
-            };
-
-            var process = Process.Start(vcVarsStartInfo);
-            if (process == null)
-                return false;
-
-            var vcVarsProcId = process.Id;
-            Messages.Print($"--- vcvars({vcVarsProcId}): {vcVarsCmd}");
-            process.OutputDataReceived += (_, e) =>
-            {
-                if (string.IsNullOrEmpty(e.Data))
-                    return;
-                var data = e.Data.TrimEnd('\r', '\n');
-                if (!string.IsNullOrEmpty(data))
-                    stdOut.Append($"{data}\r\n");
-            };
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-            var ok = process.ExitCode == 0;
-            process.Close();
-            if (!ok)
-                return false;
-
-            // Parse command output: copy environment variables to startInfo
-            var envVars = EnvVarParser.Parse(stdOut.ToString())
-                .GetValues<KeyValuePair<string, List<string>>>("env_var")
-                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value ?? new(), CaseIgnorer);
-            foreach (var vcVar in envVars)
-                startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
-
-            // Warn if cl.exe is not in PATH
-            var clPath = envVars["PATH"]
-                .Select(path => Path.Combine(path, "cl.exe"))
-                .FirstOrDefault(File.Exists);
-            if (!string.IsNullOrEmpty(clPath))
-                Messages.Print($"--- vcvars({vcVarsProcId}): cl path: {clPath}");
-            else
-                Messages.Print($">>> vcvars({vcVarsProcId}): cl path NOT FOUND");
-
-            return true;
         }
 
         /// <summary>

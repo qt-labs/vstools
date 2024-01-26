@@ -65,8 +65,7 @@ namespace QtVsTools.Core
                     var tempPro = Path.Combine(tempDir, $"{randomName}.pro");
                     File.WriteAllText(tempPro, tempProData.ToString());
 
-                    var qmake = new QMakeImport(this, tempPro, disableWarnings: true);
-                    if (qmake.Run(setVCVars: true) == 0) {
+                    if (QMakeImport.Run(this, tempPro, disableWarnings: true) == 0) {
                         var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
                         var msbuildProj = MsBuildProjectReaderWriter.Load(tempVcxproj);
 

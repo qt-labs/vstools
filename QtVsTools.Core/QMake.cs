@@ -154,20 +154,24 @@ namespace QtVsTools.Core
 
         public virtual int Run()
         {
-            int exitCode = -1;
-            using (var qmakeProc = CreateProcess()) {
-                try {
-                    if (qmakeProc.Start()) {
-                        InfoStart(qmakeProc);
-                        qmakeProc.BeginOutputReadLine();
-                        qmakeProc.BeginErrorReadLine();
-                        qmakeProc.WaitForExit();
-                        exitCode = qmakeProc.ExitCode;
-                        InfoExit(qmakeProc);
-                    }
-                } catch (Exception exception) {
-                    exception.Log();
+            using var qmakeProc = CreateProcess();
+            return Run(qmakeProc);
+        }
+
+        protected virtual int Run(Process qmakeProc)
+        {
+            var exitCode = -1;
+            try {
+                if (qmakeProc.Start()) {
+                    InfoStart(qmakeProc);
+                    qmakeProc.BeginOutputReadLine();
+                    qmakeProc.BeginErrorReadLine();
+                    qmakeProc.WaitForExit();
+                    exitCode = qmakeProc.ExitCode;
+                    InfoExit(qmakeProc);
                 }
+            } catch (Exception exception) {
+                exception.Log();
             }
             return exitCode;
         }

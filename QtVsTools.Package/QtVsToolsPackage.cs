@@ -166,7 +166,7 @@ namespace QtVsTools
                 QtHelp.Initialize();
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
-                    HelperFunctions.VcPath = Path.Combine(VsShell.InstallRootDir, "VC");
+                    QMakeImport.VcPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
                 SetVisualizersPathProperty();
 
