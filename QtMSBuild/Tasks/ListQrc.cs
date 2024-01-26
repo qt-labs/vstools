@@ -13,6 +13,7 @@
 #region Using
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 #endregion
@@ -38,6 +39,9 @@ namespace QtVsTools.QtMsBuild.Tasks
         #endregion
         {
             #region Code
+            Result = null;
+            if (!File.Exists(QrcFilePath))
+                return false;
             XDocument qrc = XDocument.Load(QrcFilePath, LoadOptions.SetLineInfo);
             IEnumerable<XElement> files = qrc
                 .Element("RCC")
