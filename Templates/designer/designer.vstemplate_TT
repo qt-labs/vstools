@@ -49,6 +49,9 @@
                          TargetFileName="$headerfilename$">widget.h</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$projectname$.vcxproj.filters">designer.vcxproj.filters</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
