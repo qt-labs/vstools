@@ -211,6 +211,13 @@
                 NoNotes;
                 NoWarnings;
                 IgnoreConflicts;
+                OutputJson;
+                DebugIncludes;
+                CollectJson;
+                OutputDepFile;
+                DepFilePath;
+                DepFileRuleName;
+                RequireCompleteTypes;
                 OptionsFile">
       <Output
         TaskParameter="Result" ItemName="LocalOptions" />
@@ -388,6 +395,60 @@
       <options>
         <Value Condition="'%(Name)' == 'IgnoreConflicts' AND '%(Value)' == 'true'"
           >--ignore-option-clashes</Value>
+      </options>
+
+      <!--//   -output-json               Create a machine-readable json file matching output -->
+      <options>
+        <Value Condition="'%(Name)' == 'OutputJson' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'OutputJson' AND '%(Value)' == 'true'">--output-json</Value>
+      </options>
+
+      <!--//   -debug-includes            Display debug messages of each include path -->
+      <options>
+        <Value Condition="'%(Name)' == 'DebugIncludes' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'DebugIncludes' AND '%(Value)' == 'true'"
+          >--debug-includes</Value>
+      </options>
+
+      <!--//   -collect-json              Collect generated json output into a single file -->
+      <options>
+        <Value Condition="'%(Name)' == 'CollectJson' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'CollectJson' AND '%(Value)' == 'true'"
+          >--collect-json</Value>
+      </options>
+
+      <!--//   -output-dep-file           Output a make-style dep file for build system -->
+      <options>
+        <Value Condition="'%(Name)' == 'OutputDepFile' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'OutputDepFile' AND '%(Value)' == 'true'"
+          >--output-dep-file</Value>
+      </options>
+
+      <!--//   -dep-file-path <file>      Path where to write the dep file -->
+      <options>
+        <Value Condition="'%(Name)' == 'DepFilePath'">--dep-file-path %(Value)</Value>
+      </options>
+
+      <!--//   -dep-file-rule-name <rule> The rule name (first line) of the dep file -->
+      <options>
+        <Value Condition="'%(Name)' == 'DepFileRuleName'">--dep-file-rule-name %(Value)</Value>
+      </options>
+
+      <!--//   -require-complete-types    Require complete types for better performance -->
+      <options>
+        <Value Condition="'%(Name)' == 'RequireCompleteTypes' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'RequireCompleteTypes' AND '%(Value)' == 'true'"
+          >--require-complete-types</Value>
       </options>
 
       <!--//  [@option-file]              Read additional options from option-file-->

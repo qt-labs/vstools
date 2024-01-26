@@ -37,6 +37,13 @@ namespace QtVsTools.Core.MsBuild
             NoNotes,
             NoWarnings,
             IgnoreConflicts,
+            OutputJson,
+            DebugIncludes,
+            CollectJson,
+            OutputDepFile,
+            DepFilePath,
+            DepFileRuleName,
+            RequireCompleteTypes,
             OptionsFile,
             CommandLineTemplate,
             AdditionalOptions,
@@ -138,6 +145,33 @@ namespace QtVsTools.Core.MsBuild
 
             Parser.AddOption(options[Property.IgnoreConflicts] =
                 new Option("ignore-option-clashes"));
+
+            Parser.AddOption(options[Property.OutputJson] =
+                new Option("output-json"));
+
+            Parser.AddOption(options[Property.DebugIncludes] =
+                new Option("debug-includes"));
+
+            Parser.AddOption(options[Property.CollectJson] =
+                new Option("collect-json"));
+
+            Parser.AddOption(options[Property.OutputDepFile] =
+                new Option("output-dep-file"));
+
+            Parser.AddOption(options[Property.DepFilePath] =
+                new Option("dep-file-path")
+                {
+                    ValueName = "file"
+                });
+
+            Parser.AddOption(options[Property.DepFileRuleName] =
+                new Option("dep-file-rule-name")
+                {
+                    ValueName = "rule name"
+                });
+
+            Parser.AddOption(options[Property.RequireCompleteTypes] =
+                new Option("require-complete-types"));
         }
 
         public bool ParseCommandLine(string commandLine, IVsMacroExpander macros,
@@ -228,6 +262,29 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.IgnoreConflicts]))
                 properties[Property.IgnoreConflicts] = "true";
+
+            if (Parser.IsSet(options[Property.OutputJson]))
+                properties[Property.OutputJson] = "true";
+
+            if (Parser.IsSet(options[Property.DebugIncludes]))
+                properties[Property.DebugIncludes] = "true";
+
+            if (Parser.IsSet(options[Property.CollectJson]))
+                properties[Property.CollectJson] = "true";
+
+            if (Parser.IsSet(options[Property.OutputDepFile]))
+                properties[Property.OutputDepFile] = "true";
+
+            if (Parser.IsSet(options[Property.DepFilePath]))
+                properties[Property.DepFilePath] = Parser.Value(options[Property.DepFilePath]);
+
+            if (Parser.IsSet(options[Property.DepFileRuleName])) {
+                properties[Property.DepFileRuleName] =
+                    Parser.Value(options[Property.DepFileRuleName]);
+            }
+
+            if (Parser.IsSet(options[Property.RequireCompleteTypes]))
+                properties[Property.RequireCompleteTypes] = "true";
 
             return true;
         }
