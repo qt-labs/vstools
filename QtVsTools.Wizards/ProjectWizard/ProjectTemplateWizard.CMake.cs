@@ -128,6 +128,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                     qtModules.Add(module);
                 userPresets.ConfigurePresets.Add(ConfigureCMakePreset(config));
             }
+            if (!qtModules.Any())
+                qtModules.Add("QtCore");
             Parameter[CMake.UserPresets] = userPresets.ToJsonString();
             Parameter[CMake.Modules] = string.Join("\r\n        ", qtModules);
             Parameter[CMake.Libs] = string.Join("\r\n        ",

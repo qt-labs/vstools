@@ -19,7 +19,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new WizardData
             {
-                DefaultModules = new List<string>()
+                DefaultModules = new List<string> { "QtCore" }
             });
 
         protected override WizardWindow WizardWindow => Lazy.Get(() =>

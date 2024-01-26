@@ -36,6 +36,9 @@
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$projectname$.vcxproj.filters">empty.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="false">empty.ico</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>
