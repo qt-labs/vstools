@@ -151,10 +151,10 @@ namespace QtVsTools
                 UiTimer = ConcurrentStopwatch.StartNew();
 
                 if (packages?.GetPackageInfo(ref LegacyPackageId) is { Name: LegacyPackageName } )
-                    throw new QtVSException("Legacy extension detected.");
+                    throw new InvalidOperationException("Legacy extension detected.");
 
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
-                    throw new Exception("Unable to get service: DTE");
+                    throw new InvalidOperationException("Unable to get service: DTE");
 
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize();

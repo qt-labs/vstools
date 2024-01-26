@@ -3,6 +3,7 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -103,7 +104,7 @@ namespace QtVsTools.Core
                 return filters.Cast<VCFilter>().FirstOrDefault(filter =>
                     filter.Name.Equals(name, Utils.IgnoreCase));
             } catch {
-                throw new QtVSException("Cannot find filter.");
+                throw new KeyNotFoundException("Cannot find filter.");
             }
         }
 
@@ -117,7 +118,7 @@ namespace QtVsTools.Core
                     filter.UniqueIdentifier != null
                         && filter.UniqueIdentifier.Equals(uid, Utils.IgnoreCase));
             } catch {
-                throw new QtVSException("Cannot find filter.");
+                throw new KeyNotFoundException("Cannot find filter.");
             }
         }
     }

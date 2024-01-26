@@ -242,7 +242,7 @@ namespace QtVsTools.Core
                 }
             }
 
-            throw new QtVSException("qglobal.h not found");
+            throw new FileNotFoundException("qglobal.h not found");
         }
 
         public Platform platform()
@@ -257,7 +257,7 @@ namespace QtVsTools.Core
                 var qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
                 return qmakeXSpec.StartsWith("winrt");
             } catch {
-                throw new QtVSException("Error: unexpected result of qmake query");
+                throw new InvalidOperationException("Error: unexpected result of qmake query");
             }
         }
 

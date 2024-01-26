@@ -26,7 +26,7 @@ namespace QtVsTools.Core
             {
                 < 6 => qt5Modules,
                 6 => qt6Modules,
-                _ => throw new QtVSException("Unsupported Qt version.")
+                _ => throw new ArgumentException("Unsupported Qt version.")
             };
         }
 
@@ -75,7 +75,7 @@ namespace QtVsTools.Core
                 };
                 if (string.IsNullOrEmpty(module.Name) || string.IsNullOrEmpty(module.LibraryPrefix)) {
                     Messages.Print($"\r\nCritical error: incorrect format of {modulesFile}");
-                    throw new QtVSException($"Critical error: incorrect format of {modulesFile}");
+                    throw new FormatException($"Critical error: incorrect format of {modulesFile}");
                 }
                 list.Add(module);
             }

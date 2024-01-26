@@ -10,11 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using EnvDTE;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TemplateWizard;
-using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -23,10 +23,8 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core.MsBuild;
     using QtVsTools.Common;
     using VisualStudio;
-
-    using WhereConfig = Func<IWizardConfiguration, bool>;
-
     using static QtVsTools.Common.EnumExt;
+    using WhereConfig = Func<IWizardConfiguration, bool>;
 
     public interface IWizardConfiguration
     {
@@ -271,7 +269,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 iVsUIShell.EnableModeless(0);
                 iVsUIShell.GetDialogOwnerHwnd(out IntPtr hwnd);
                 WindowHelper.ShowModal(WizardWindow, hwnd);
-            } catch (QtVSException exception) {
+            } catch (Exception exception) {
                 exception.Log(false, true);
                 throw;
             } finally {

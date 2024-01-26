@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace QtVsTools.Core
@@ -28,15 +29,15 @@ namespace QtVsTools.Core
 
                 string qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
                 if (string.IsNullOrEmpty(qtPrefix))
-                    throw new QtVSException("qmake error: no value for QT_INSTALL_PREFIX");
+                    throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_PREFIX");
 
                 string qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA"];
                 if (string.IsNullOrEmpty(qtArchData))
-                    throw new QtVSException("qmake error: no value for QT_INSTALL_ARCHDATA");
+                    throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_ARCHDATA");
 
                 string qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
                 if (string.IsNullOrEmpty(qtArchData))
-                    throw new QtVSException("qmake error: no value for QMAKE_XSPEC");
+                    throw new KeyNotFoundException("qmake error: no value for QMAKE_XSPEC");
 
                 qmakeConf = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec, "qmake.conf");
 
@@ -44,15 +45,15 @@ namespace QtVsTools.Core
                     // Check if this is a shadow build of Qt.
                     qtPrefix = qmakeQuery["QT_INSTALL_PREFIX/src"];
                     if (string.IsNullOrEmpty(qtPrefix))
-                        throw new QtVSException("qmake error: no value for QT_INSTALL_PREFIX/src");
+                        throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_PREFIX/src");
                     qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA/src"];
                     if (string.IsNullOrEmpty(qtArchData))
-                        throw new QtVSException("qmake error: no value for QT_INSTALL_ARCHDATA/src");
+                        throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_ARCHDATA/src");
 
                     qmakeConf = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec, "qmake.conf");
                 }
                 if (!File.Exists(qmakeConf))
-                    throw new QtVSException("qmake.conf expected at " + qmakeConf + " not found");
+                    throw new KeyNotFoundException("qmake.conf expected at " + qmakeConf + " not found");
             }
 
             ParseFile(qmakeConf);

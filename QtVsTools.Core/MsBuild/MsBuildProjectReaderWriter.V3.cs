@@ -5,13 +5,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using static MsBuildProjectFormat;
     using static Common.Utils;
+    using static MsBuildProjectFormat;
 
     public partial class MsBuildProjectReaderWriter
     {
@@ -202,7 +204,7 @@ namespace QtVsTools.Core.MsBuild
         private const string QtTargetsPath = @"$(QtMsBuild)\qt.targets";
 
         private XDocument ProjectFile => this[Files.Project].Xml
-            ?? throw new QtVSException("Missing project file.");
+            ?? throw new FileNotFoundException("Missing project file.");
 
         private IEnumerable<string> Configs => ProjectFile
             .Elements(ns + "Project")
@@ -211,13 +213,13 @@ namespace QtVsTools.Core.MsBuild
             .Attributes("Include")
             .Select(x => x.Value)
             is { } configs && configs.Any() ? configs
-            : throw new QtVSException("Missing \"ProjectConfiguration\" items.");
+            : throw new XmlException("Missing \"ProjectConfiguration\" items.");
 
         private XElement Globals => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "PropertyGroup")
             .FirstOrDefault(x => x.Attribute("Label").Value.Equals("Globals", IgnoreCase))
-            ?? throw new QtVSException("Missing \"Globals\" property group.");
+            ?? throw new XmlException("Missing \"Globals\" property group.");
 
         private XElement ImportCppProps => ProjectFile
             .Elements(ns + "Project")
@@ -226,7 +228,7 @@ namespace QtVsTools.Core.MsBuild
                 && project.Value.Equals(@"$(VCTargetsPath)\Microsoft.Cpp.props", IgnoreCase))
             .Select(x => x.Parent.Name == ns + "ImportGroup" ? x.Parent : x)
             .FirstOrDefault()
-            ?? throw new QtVSException("Missing \"Microsoft.Cpp.props\" import.");
+            ?? throw new XmlException("Missing \"Microsoft.Cpp.props\" import.");
 
         private XElement ImportCppTargets => ProjectFile
             .Elements(ns + "Project")
@@ -235,30 +237,30 @@ namespace QtVsTools.Core.MsBuild
                 && project.Value.Equals(@"$(VCTargetsPath)\Microsoft.Cpp.targets", IgnoreCase))
             .Select(x => x.Parent.Name == ns + "ImportGroup" ? x.Parent : x)
             .FirstOrDefault()
-            ?? throw new QtVSException("Missing \"Microsoft.Cpp.targets\" import.");
+            ?? throw new XmlException("Missing \"Microsoft.Cpp.targets\" import.");
 
         private IEnumerable<XElement> PropertySheetGroups => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "ImportGroup")
             .Where(x => x.Attribute("Label")?.Value.Equals("PropertySheets") == true)
             is { } propertySheetGroups && propertySheetGroups.Any() ? propertySheetGroups
-            : throw new QtVSException("Missing \"PropertySheets\" import groups.");
+            : throw new XmlException("Missing \"PropertySheets\" import groups.");
 
         private XElement UserMacros => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "PropertyGroup")
             .LastOrDefault(x => (string)x.Attribute("Label") == "UserMacros")
-            ?? throw new QtVSException("Missing \"UserMacros\" property group.");
+            ?? throw new XmlException("Missing \"UserMacros\" property group.");
 
         private XElement QtDefaultProps => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "Import")
             .FirstOrDefault(x => x.Attribute("Project").Value
                 .Equals(QtDefaultPropsPath, IgnoreCase))
-            ?? throw new QtVSException("Missing \"qt_defaults.props\" import.");
+            ?? throw new XmlException("Missing \"qt_defaults.props\" import.");
 
         private IEnumerable<XElement> QtSettings => FindPropertyGroups("QtSettings")
             is { } qtSettings && qtSettings.Any() ? qtSettings
-            : throw new QtVSException("Missing \"QtSettings\" property groups.");
+            : throw new XmlException("Missing \"QtSettings\" property groups.");
     }
 }

@@ -645,19 +645,20 @@ namespace QtVsTools.Core
                 if (vcFilter is not null)
                     return;
 
-                if (!project.VcProject.CanAddFilter(fakeFilter.Name)) {
+                var name = fakeFilter.Name;
+                if (!project.VcProject.CanAddFilter(name)) {
                     vcFilter = project.VcProject.FilterFromName(fakeFilter);
                     if (vcFilter is null)
-                        throw new QtVSException($"Project cannot add filter {fakeFilter.Name}.");
+                        throw new InvalidOperationException($"Project cannot add filter {name}.");
                 } else {
-                    vcFilter = (VCFilter)project.VcProject.AddFilter(fakeFilter.Name);
+                    vcFilter = (VCFilter)project.VcProject.AddFilter(name);
                 }
 
                 vcFilter.UniqueIdentifier = fakeFilter.UniqueIdentifier;
                 vcFilter.Filter = fakeFilter.Filter;
                 vcFilter.ParseFiles = fakeFilter.ParseFiles;
             } catch {
-                throw new QtVSException("Cannot add a resource filter.");
+                throw new InvalidOperationException("Cannot add a resource filter.");
             }
         }
 

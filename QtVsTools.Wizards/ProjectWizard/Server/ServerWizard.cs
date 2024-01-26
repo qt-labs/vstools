@@ -3,6 +3,7 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 ***************************************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,7 +14,6 @@ using Microsoft.VisualStudio.VCProjectEngine;
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
-    using Core;
     using Core.MsBuild;
     using QtVsTools.Common;
 
@@ -99,7 +99,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             // midl.exe does not support spaces in project name. Fails while generating the
             // IDL file (library attribute), e.g. 'library Active QtServer1Lib' is illegal.
             if (Parameter[NewProject.SafeName].Contains(" "))
-                throw new QtVSException("Project name shall not contain spaces.");
+                throw new ArgumentException("Project name shall not contain spaces.");
 
             var className = Parameter[NewProject.SafeName];
             className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
