@@ -37,8 +37,10 @@ ECHO.
 %##%
 %##% == 'Options' can be one or more of the following
 %##%  -vcvars ^<ARCH^> ......... Select ARCH as the argument to the vcvars script
-%##%                           Can be one of: x86, amd64, x86_amd64, x86_arm,
-%##%                           x86_arm64, amd64_x86, amd64_arm, amd64_arm64
+%##%                           Can be one of:  x86, x64, arm64, amd64, x86_amd64
+%##%                           x86_x64, x86_arm, x86_arm64, amd64_x86, x64_x86,
+%##%                           amd64_arm, x64_arm, amd64_arm64, x64_arm64,
+%##%                           arm64_amd64, arm64_x64, arm64_x86, arm64_arm
 %##%  -config ^<NAME^> ......... Select NAME as the build configuration
 %##%                           Defaults to the 'Release' configuration
 %##%                           Only valid with -build or -rebuild

@@ -91,7 +91,7 @@ IF "%VCVARS_ARCH%" == "" (
 )
 
 IF %VERBOSE% %##% CALL "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat %VCVARS_ARCH%"
-CALL "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat" %VCVARS_ARCH% > NUL
+CALL "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %VCVARS_ARCH% > NUL
 
 WHERE /Q msbuild && (
     FOR /F %ALL% %%m IN (`msbuild -version -nologo`) DO SET MSBUILD_VERSION=%%m

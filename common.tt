@@ -95,6 +95,11 @@
         }
     }
 
+    string VS_TARGET_ARCH = Environment.GetEnvironmentVariable("VSCMD_ARG_TGT_ARCH");
+    if (string.IsNullOrEmpty(VS_TARGET_ARCH))
+        throw new Exception("Unable to obtain 'VS_TARGET_ARCH' parameter.");
+
+
 /***************************************************************************/
     string WARNING_GENERATED_FILE = "This file was generated automatically.";
     string XML_COMMENT_BEGIN      = "<!--";

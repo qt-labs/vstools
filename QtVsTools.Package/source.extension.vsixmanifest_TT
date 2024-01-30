@@ -10,7 +10,9 @@
 <#
     string PackageId = "";
     string[] VsProducts = new string[0];
+    string PrerequisiteId = "Microsoft.VisualStudio.Component.VC.Tools.x86.x64";
     string VersionRange = "";
+    string DisplayName = "MSVC C++ x64/x86 build tools";
     switch (VS_NAME) {
         case "2022":
             PackageId = "QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8";
@@ -23,7 +25,16 @@
                 "Microsoft.VisualStudio.Enterprise"
             };
             VersionRange = "[17.4, 18.0)";
-            break;
+            switch (VS_TARGET_ARCH) {
+              case "x64":
+                VS_TARGET_ARCH = "amd64";
+                break;
+              case "arm64":
+                PrerequisiteId = "Microsoft.VisualStudio.Component.VC.Tools.ARM64";
+                DisplayName = "MSVC v143 - VS 2022 C++ ARM64 build tools (Latest)";
+                break;
+            }
+        break;
         case "2019":
             PackageId = "QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5";
             VsProducts = new[]
@@ -63,25 +74,25 @@
     <#foreach (var VsProduct in VsProducts) {#>
       <InstallationTarget Id="<#=VsProduct#>" Version="<#=VersionRange#>">
         <#if (VS_NAME == "2022") {#>
-          <ProductArchitecture>amd64</ProductArchitecture>
+          <ProductArchitecture><#=VS_TARGET_ARCH#></ProductArchitecture>
         <#}#>
       </InstallationTarget>
-    <#}#>
-    <#=XML_COMMENT_BEGIN#> END Generated Text -->
+    <#}#><#=XML_COMMENT_BEGIN#> END Generated Text -->
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-      <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
-      <#if (VS_NAME == "2022") {#>
-        <Dependency Id="Microsoft.VisualStudio.MPF.16.0" DisplayName="Visual Studio MPF 16.0" d:Source="Installed" Version="[16.0,17.0)" />
-      <#}#>
-      <#=XML_COMMENT_BEGIN#> END Generated Text -->
+    <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+    <#if (VS_NAME == "2022" && VS_TARGET_ARCH == "x64") {#>
+      <Dependency Id="Microsoft.VisualStudio.MPF.16.0" DisplayName="Visual Studio MPF 16.0" d:Source="Installed" Version="[16.0,17.0)" />
+    <#} else if (VS_NAME == "2022" && VS_TARGET_ARCH == "arm64") {#>
+      <Dependency Id="Microsoft.VisualStudio.MPF.17.0" DisplayName="Visual Studio MPF 17.0" d:Source="Installed" Version="[17.0,18.0)" />
+    <#}#><#=XML_COMMENT_BEGIN#> END Generated Text -->
   </Dependencies>
   <Prerequisites>
     <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+    <Prerequisite Id="<#=PrerequisiteId#>"
                   Version="<#=VersionRange#>"
-                  DisplayName="MSVC C++ x64/x86 build tools" />
+                  DisplayName="<#=DisplayName#>" />
     <#=XML_COMMENT_BEGIN#> END Generated Text -->
   </Prerequisites>
   <Assets>

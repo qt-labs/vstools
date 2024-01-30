@@ -23,7 +23,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' OR '$(Configuration)|$(Platform)' == 'Debug|arm64' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' OR '$(Configuration)|$(Platform)' == 'Release|arm64' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -49,8 +49,8 @@
     <Reference Include="System" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Runtime" />
-    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
-    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
+    <Reference Condition="'$(Platform)' != 'arm64'" Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+    <Reference Condition="'$(Platform)' != 'arm64'" Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -396,8 +396,6 @@
     <Compile Include="Tasks\CriticalSection.cs" />
     <Compile Include="Tasks\QtRunTask.cs" />
     <Compile Include="Tasks\GetVarsFromMSBuild.cs" />
-    <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
-    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
     <Compile Include="Tasks\ListQrc.cs" />
     <Compile Include="Tasks\ParseVarDefs.cs" />
     <Compile Include="Tasks\GetVarsFromMakefile.cs" />
@@ -409,10 +407,20 @@
     <Compile Include="Tasks\DumpItems.cs" />
     <Compile Include="Tasks\HostTranslatePaths_Windows.cs" />
     <Compile Include="Tasks\HostExec_Windows.cs" />
-    <Compile Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
-    <Compile Include="Tasks\HostExec_LinuxSSL.cs" />
-    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
-    <Compile Include="Tasks\HostExec_LinuxWSL.cs" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(Platform)' != 'arm64'">
+      <ItemGroup>
+        <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
+        <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
+        <Compile Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
+        <Compile Include="Tasks\HostExec_LinuxSSL.cs" />
+        <Compile Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
+        <Compile Include="Tasks\HostExec_LinuxWSL.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
     <T4Template Include="QtMSBuild\qt_tasks.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>qt_tasks.targets</OutputFile>
