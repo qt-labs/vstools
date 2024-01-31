@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 ***************************************************************************************************
  Copyright (C) 2024 The Qt Company Ltd.
@@ -49,18 +49,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.Build">
-      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Framework">
-      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Utilities.Core">
-      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Utilities.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Tasks.Core">
-      <HintPath>$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,6 +58,8 @@
   <ItemGroup>
     <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
     <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
+    <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(Version_Microsoft_Build_Tasks_Core)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
