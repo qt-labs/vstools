@@ -189,13 +189,21 @@
       Metadata="InputFile;
                 OutputFile;
                 DisplayDependencies;
+                NoAutoconnection;
                 NoProtection;
                 NoImplicitIncludes;
                 Postfix;
+                NoQtNamespace;
                 Translate;
                 Include;
                 Generator;
-                IdBased">
+                Connections;
+                IdBased;
+                FromImports;
+                AbsoluteImports;
+                RcPrefix;
+                StarImports;
+                PythonPaths">
       <Output
         TaskParameter="Result" ItemName="LocalOptions" />
     </Flatten>
@@ -243,17 +251,17 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Generate tool command line arguments
     // -->
-      <!--//  [uifile]                      Input file (*.ui) -->
+      <!--//  [uifile]                       Input file (*.ui) -->
       <options>
         <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
       </options>
 
-      <!--//  -o,  -output <file>           Place the output into <file> -->
+      <!--//  -o,  -output <file>            Place the output into <file> -->
       <options>
         <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
       </options>
 
-      <!--//  -d,  -dependencies            Display the dependencies -->
+      <!--//  -d,  -dependencies             Display the dependencies -->
       <options>
         <Value Condition="'%(Name)' == 'DisplayDependencies' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -262,7 +270,16 @@
           >--dependencies</Value>
       </options>
 
-      <!--//  -p,  -no-protection           Disable header protection -->
+      <!--//  -a,  -no-autoconnection        Do not generate a call to connectSlotsByName() -->
+      <options>
+        <Value Condition="'%(Name)' == 'NoAutoconnection' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'NoAutoconnection' AND '%(Value)' == 'true'"
+          >--no-autoconnection</Value>
+      </options>
+
+      <!--//  -p,  -no-protection            Disable header protection -->
       <options>
         <Value Condition="'%(Name)' == 'NoProtection' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -271,7 +288,7 @@
           >--no-protection</Value>
       </options>
 
-      <!--//  -n,  -no-implicit-includes    Disable generation of #include-directives -->
+      <!--//  -n,  -no-implicit-includes     Disable generation of #include-directives -->
       <options>
         <Value Condition="'%(Name)' == 'NoImplicitIncludes' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -280,32 +297,87 @@
           >--no-implicit-includes</Value>
       </options>
 
-      <!--//   -postfix <postfix>           Postfix to add to all generated classnames -->
+      <!--//  -postfix <postfix>             Postfix to add to all generated classnames -->
       <options>
         <Value Condition="'%(Name)' == 'Postfix'">--postfix %(Value)</Value>
       </options>
 
-      <!--//   -tr,  -translate <function>  Use <function> for i18n -->
+      <!--//  -no-qt-namespace               Disable wrapping the class in QT_NAMESPACE -->
+      <options>
+        <Value Condition="'%(Name)' == 'NoQtNamespace' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'NoQtNamespace' AND '%(Value)' == 'true'"
+          >--no-qt-namespace</Value>
+      </options>
+
+      <!--//  -tr,  -translate <function>    Use <function> for i18n -->
       <options>
         <Value Condition="'%(Name)' == 'Translate'">--tr %(Value)</Value>
       </options>
 
-      <!--//   -include <include-file>      Add #include <include-file> to <file> -->
+      <!--//  -include <include-file>        Add #include <include-file> to <file> -->
       <options>
         <Value Condition="'%(Name)' == 'Include'">--include %(Value)</Value>
       </options>
 
-      <!--//  -g,  -generator <java|cpp>    Select generator -->
+      <!--//  -g,  -generator <python|cpp>   Select generator -->
       <options>
         <Value Condition="'%(Name)' == 'Generator'">-g %(Value)</Value>
       </options>
 
-      <!--//   -idbased                     Use id based function for i18n -->
+      <!--//  -c,  -connections <pmf|string> Connection syntax -->
+      <options>
+        <Value Condition="'%(Name)' == 'Connections'">-c %(Value)</Value>
+      </options>
+
+      <!--//  -idbased                       Use id based function for i18n -->
       <options>
         <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' != 'true'"></Value>
       </options>
       <options>
         <Value Condition="'%(Name)' == 'IdBased' AND '%(Value)' == 'true'">--idbased</Value>
+      </options>
+
+      <!--//  -from-imports                  Python: generate imports relative to '.' -->
+      <options>
+        <Value Condition="'%(Name)' == 'FromImports' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'FromImports' AND '%(Value)' == 'true'"
+          >--from-imports</Value>
+      </options>
+
+      <!--//  -absolute-imports              Python: generate absolute imports -->
+      <options>
+        <Value Condition="'%(Name)' == 'AbsoluteImports' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'AbsoluteImports' AND '%(Value)' == 'true'"
+          >--absolute-imports</Value>
+      </options>
+
+      <!--//  -rc-prefix                     Python: Generate "rc_file" instead of "file_rc" -->
+      <options>
+        <Value Condition="'%(Name)' == 'RcPrefix' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'RcPrefix' AND '%(Value)' == 'true'"
+          >--rc-prefix</Value>
+      </options>
+
+      <!--//  -star-imports                  Python: Use * imports -->
+      <options>
+        <Value Condition="'%(Name)' == 'StarImports' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'StarImports' AND '%(Value)' == 'true'"
+          >--star-imports</Value>
+      </options>
+
+      <!--//  -python-paths <pathlist>       Python paths for -absolute-imports -->
+      <options>
+        <Value Condition="'%(Name)' == 'PythonPaths'">--python-paths %(Value)</Value>
       </options>
     </ItemGroup>
     <PropertyGroup>

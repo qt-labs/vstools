@@ -22,13 +22,21 @@ namespace QtVsTools.Core.MsBuild
             InputFile,
             OutputFile,
             DisplayDependencies,
+            NoAutoconnection,
             NoProtection,
             NoImplicitIncludes,
             Postfix,
+            NoQtNamespace,
             Translate,
             Include,
             Generator,
+            Connections,
             IdBased,
+            FromImports,
+            AbsoluteImports,
+            RcPrefix,
+            StarImports,
+            PythonPaths,
             CommandLineTemplate,
             AdditionalOptions,
             ParallelProcess,
@@ -42,6 +50,9 @@ namespace QtVsTools.Core.MsBuild
             Parser.AddOption(options[Property.DisplayDependencies] =
                 new Option(new[] { "d", "dependencies" }));
 
+            Parser.AddOption(options[Property.NoAutoconnection] =
+                new Option(new[] { "a", "no-autoconnection" }));
+
             Parser.AddOption(options[Property.NoProtection] =
                 new Option(new[] { "p", "no-protection" }));
 
@@ -51,6 +62,9 @@ namespace QtVsTools.Core.MsBuild
             Parser.AddOption(options[Property.Postfix] =
                 new Option("postfix", "postfix"));
 
+            Parser.AddOption(options[Property.NoQtNamespace] =
+                new Option("no-qt-namespace"));
+
             Parser.AddOption(options[Property.Translate] =
                 new Option(new[] { "tr", "translate" }, "function"));
 
@@ -58,10 +72,28 @@ namespace QtVsTools.Core.MsBuild
                 new Option("include", "include-file"));
 
             Parser.AddOption(options[Property.Generator] =
-                new Option(new[] { "g", "generator" }, "java|cpp"));
+                new Option(new[] { "g", "generator" }, "python|cpp"));
+
+            Parser.AddOption(options[Property.Connections] =
+                new Option(new[] { "c", "connections" }, "pmf|string"));
 
             Parser.AddOption(options[Property.IdBased] =
                 new Option("idbased"));
+
+            Parser.AddOption(options[Property.FromImports] =
+                new Option("from-imports"));
+
+            Parser.AddOption(options[Property.AbsoluteImports] =
+                new Option("absolute-imports"));
+
+            Parser.AddOption(options[Property.RcPrefix] =
+                new Option("rc-prefix"));
+
+            Parser.AddOption(options[Property.StarImports] =
+                new Option("star-imports"));
+
+            Parser.AddOption(options[Property.PythonPaths] =
+                new Option("python-paths", "pathlist"));
         }
 
         public bool ParseCommandLine(string commandLine, IVsMacroExpander macros,
@@ -86,6 +118,9 @@ namespace QtVsTools.Core.MsBuild
             if (Parser.IsSet(options[Property.DisplayDependencies]))
                 properties[Property.DisplayDependencies] = "true";
 
+            if (Parser.IsSet(options[Property.NoAutoconnection]))
+                properties[Property.NoAutoconnection] = "true";
+
             if (Parser.IsSet(options[Property.NoProtection]))
                 properties[Property.NoProtection] = "true";
 
@@ -94,6 +129,9 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.Postfix]))
                 properties[Property.Postfix] = Parser.Value(options[Property.Postfix]);
+
+            if (Parser.IsSet(options[Property.NoQtNamespace]))
+                properties[Property.NoQtNamespace] = "true";
 
             if (Parser.IsSet(options[Property.Translate]))
                 properties[Property.Translate] = Parser.Value(options[Property.Translate]);
@@ -104,8 +142,28 @@ namespace QtVsTools.Core.MsBuild
             if (Parser.IsSet(options[Property.Generator]))
                 properties[Property.Generator] = Parser.Value(options[Property.Generator]);
 
+            if (Parser.IsSet(options[Property.Connections]))
+                properties[Property.Connections] = Parser.Value(options[Property.Connections]);
+
             if (Parser.IsSet(options[Property.IdBased]))
                 properties[Property.IdBased] = "true";
+
+            if (Parser.IsSet(options[Property.FromImports]))
+                properties[Property.FromImports] = "true";
+
+            if (Parser.IsSet(options[Property.AbsoluteImports]))
+                properties[Property.AbsoluteImports] = "true";
+
+            if (Parser.IsSet(options[Property.RcPrefix]))
+                properties[Property.RcPrefix] = "true";
+
+            if (Parser.IsSet(options[Property.StarImports]))
+                properties[Property.StarImports] = "true";
+
+            if (Parser.IsSet(options[Property.PythonPaths])) {
+                properties[Property.PythonPaths] =
+                    string.Join(";", Parser.Values(options[Property.PythonPaths]));
+            }
 
             return true;
         }
