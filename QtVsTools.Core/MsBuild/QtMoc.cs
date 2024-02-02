@@ -58,84 +58,43 @@ namespace QtVsTools.Core.MsBuild
         public QtMoc()
         {
             Parser.AddOption(options[Property.IncludePath] =
-                new Option("I")
-                {
-                    ValueName = "dir",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("I", "dir"));
 
             Parser.AddOption(options[Property.MacFramework] =
-                new Option("F")
-                {
-                    ValueName = "framework",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("F", "framework"));
 
             Parser.AddOption(options[Property.PreprocessOnly] =
                 new Option("E"));
 
             Parser.AddOption(options[Property.Define] =
-                new Option("D")
-                {
-                    ValueName = "macro[=def]",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("D", "macro[=def]"));
 
             Parser.AddOption(options[Property.Undefine] =
-                new Option("U")
-                {
-                    ValueName = "macro",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("U", "macro"));
 
             Parser.AddOption(options[Property.Metadata] =
-                new Option("M")
-                {
-                    ValueName = "key=value",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("M", "key=value"));
 
             Parser.AddOption(options[Property.CompilerFlavor] =
-                new Option("compiler-flavor")
-                {
-                    ValueName = "flavor"
-                });
+                new Option("compiler-flavor", "flavor"));
 
             Parser.AddOption(options[Property.NoInclude] =
                 new Option("i"));
 
             Parser.AddOption(options[Property.PathPrefix] =
-                new Option("p")
-                {
-                    ValueName = "path",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("p", "path"));
 
             Parser.AddOption(options[Property.ForceInclude] =
-                new Option("f")
-                {
-                    ValueName = "file",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("f", "file"));
 
             Parser.AddOption(options[Property.PrependInclude] =
-                new Option("b")
-                {
-                    ValueName = "file"
-                });
+                new Option("b", "file"));
 
             Parser.AddOption(options[Property.Include] =
-                new Option("include")
-                {
-                    ValueName = "file"
-                });
+                new Option("include", "file"));
 
             Parser.AddOption(options[Property.NoNotesWarnings] =
-                new Option("n")
-                {
-                    ValueName = "which",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("n", "which"));
 
             Parser.AddOption(options[Property.NoNotes] =
                 new Option("no-notes"));
@@ -159,16 +118,10 @@ namespace QtVsTools.Core.MsBuild
                 new Option("output-dep-file"));
 
             Parser.AddOption(options[Property.DepFilePath] =
-                new Option("dep-file-path")
-                {
-                    ValueName = "file"
-                });
+                new Option("dep-file-path", "file"));
 
             Parser.AddOption(options[Property.DepFileRuleName] =
-                new Option("dep-file-rule-name")
-                {
-                    ValueName = "rule name"
-                });
+                new Option("dep-file-rule-name", "rule name"));
 
             Parser.AddOption(options[Property.RequireCompleteTypes] =
                 new Option("require-complete-types"));
