@@ -107,14 +107,7 @@ namespace QtVsTools
         public EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
         private bool InitializationAwaited { get; set; } = false;
 
-        private static QtVsToolsPackage instance;
-        public static QtVsToolsPackage Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
+        public static QtVsToolsPackage Instance { get; private set; }
 
         private static readonly HttpClient http = new();
         private const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
@@ -134,7 +127,7 @@ namespace QtVsTools
         {
             try {
                 InitTimer = ConcurrentStopwatch.StartNew();
-                VsServiceProvider.Instance = instance = this;
+                VsServiceProvider.Instance = Instance = this;
 
                 var packages = await GetServiceAsync<
                     SVsPackageInfoQueryService, IVsPackageInfoQueryService>();
