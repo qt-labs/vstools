@@ -83,7 +83,7 @@
       Name="OutputFile"
       DisplayName="Output File"
       Visible="false"/>
-    <StringProperty
+    <StringListProperty
       Name="MacFramework"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="macOS Framework"

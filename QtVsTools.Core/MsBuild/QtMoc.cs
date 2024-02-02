@@ -223,16 +223,14 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.CompilerFlavor])) {
                 properties[Property.CompilerFlavor] =
-                    string.Join(";", Parser.Values(options[Property.CompilerFlavor]));
+                    Parser.Value(options[Property.CompilerFlavor]);
             }
 
             if (Parser.IsSet(options[Property.NoInclude]))
                 properties[Property.NoInclude] = "true";
 
-            if (Parser.IsSet(options[Property.PathPrefix])) {
-                properties[Property.PathPrefix] =
-                    string.Join(";", Parser.Values(options[Property.PathPrefix]));
-            }
+            if (Parser.IsSet(options[Property.PathPrefix]))
+                properties[Property.PathPrefix] = Parser.Value(options[Property.PathPrefix]);
 
             if (Parser.IsSet(options[Property.ForceInclude])) {
                 properties[Property.ForceInclude] =
