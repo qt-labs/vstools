@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
     using Common;
     using QtVsTools.Common;
     using VisualStudio;
+
+    using static Options.QtOptionsPage;
 
     public static class Notifications
     {
@@ -25,6 +28,9 @@ namespace QtVsTools.Core
 
         public static NotifyInstall NotifyInstall
             => StaticLazy.Get(() => NotifyInstall, () => new NotifyInstall());
+
+        public static SearchDevRelease NotifySearchDevRelease
+            => StaticLazy.Get(() => NotifySearchDevRelease, () => new SearchDevRelease());
 
         public static NotifyMessage NotifyMessage
             => StaticLazy.Get(() => NotifyMessage, () => new NotifyMessage());
@@ -92,6 +98,61 @@ namespace QtVsTools.Core
                     if (Options.Options.Get() is not {} options)
                         return;
                     options.NotifyInstalled = false;
+                    options.SaveSettingsToStorage();
+                }
+            }
+        };
+    }
+
+    public class SearchDevRelease : InfoBarMessage
+    {
+        private readonly bool isSearchEnabled;
+        private readonly string keyName = DevelopmentReleases.SearchDevRelease.ToString();
+
+        public SearchDevRelease()
+        {
+            using var key = Registry.CurrentUser
+                .OpenSubKey(Resources.RegistryPackagePath, writable: false);
+            isSearchEnabled = key?.GetBoolValue(keyName) ?? false;
+        }
+
+        protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
+
+        protected override TextSpan[] Text => new TextSpan[]
+        {
+            new() { Bold = true, Text = "Qt Visual Studio Tools" },
+            new TextSpacer(2),
+            Utils.EmDash,
+            new TextSpacer(2),
+            "can automatically search for development releases during startup."
+        };
+
+        protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+        {
+            new()
+            {
+                Text = isSearchEnabled ? "Disable" : "Enable",
+                CloseInfoBar = false,
+                OnClicked= () =>
+                {
+                    try {
+                        using var key =
+                            Registry.CurrentUser.CreateSubKey(Resources.RegistryPackagePath);
+                        key?.SetValue(keyName, Convert.ToInt32(!isSearchEnabled));
+                    } catch (Exception ex) {
+                        ex.Log();
+                    }
+                }
+            },
+            new()
+            {
+                Text = "Don't show again",
+                CloseInfoBar = true,
+                OnClicked = () =>
+                {
+                    if (Options.Options.Get() is not {} options)
+                        return;
+                    options.NotifySearchDevRelease = false;
                     options.SaveSettingsToStorage();
                 }
             }

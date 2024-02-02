@@ -31,8 +31,10 @@ namespace QtVsTools
     using Qml.Debug;
     using VisualStudio;
 
+    using static Core.Options.QtOptionsPage;
     using static QtVsTools.Core.Common.Utils;
     using static SyntaxAnalysis.RegExpr;
+    using Notifications = Core.Notifications;
 
     public static partial class Instances
     {
@@ -108,9 +110,6 @@ namespace QtVsTools
         private bool InitializationAwaited { get; set; } = false;
 
         public static QtVsToolsPackage Instance { get; private set; }
-
-        private static readonly HttpClient http = new();
-        private const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
 
         private DteEventsHandler EventHandler { get; set; }
         private string VisualizersPath { get; set; }
@@ -300,16 +299,20 @@ namespace QtVsTools
     ################################################################");
 
             /////////
-            // Show link to dev release, if any
+            // If configured, show link to dev release, if any
             //
-            var devRelease = await GetLatestDevelopmentReleaseAsync();
-            if (devRelease != null) {
-                Messages.Print(trim: false, text: $@"
+            using var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath, false);
+            if (key?.GetBoolValue(DevelopmentReleases.SearchDevRelease.ToString()) ?? false) {
+                var result = await GetLatestDevelopmentReleaseAsync();
+                if (result != null) {
+                    Messages.Print(
+                        trim: false, text: $@"
 
     ################################################################
-      Qt Visual Studio Tools version {devRelease} PREVIEW available at:
-      {urlDownloadQtIo}{devRelease}/
+      Qt Visual Studio Tools version {result.Value.Version} PREVIEW available at:
+      {result.Value.Uri}
     ################################################################");
+                }
             }
 
             /////////
@@ -445,6 +448,8 @@ namespace QtVsTools
                 Notifications.NoQtVersion.Show();
             if (Options.NotifyInstalled && TestVersionInstalled())
                 Notifications.NotifyInstall.Show();
+            if (Options.NotifySearchDevRelease)
+                Notifications.NotifySearchDevRelease.Show();
         }
 
         protected override int QueryClose(out bool canClose)
@@ -536,10 +541,18 @@ namespace QtVsTools
             return await GetServiceAsync(typeof(T)) as I;
         }
 
-        private static async Task<string> GetLatestDevelopmentReleaseAsync()
+        private static async Task<(string Version, string Uri)?> GetLatestDevelopmentReleaseAsync()
         {
+            const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
+
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
             try {
+                using var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath, false);
+                var timeout = key?.GetValue(DevelopmentReleases.SearchDevReleaseTimeout.ToString()) as int?
+                    ?? SearchDevReleaseDefaultTimeout;
+
+                using var http = new HttpClient();
+                http.Timeout = TimeSpan.FromSeconds(timeout);
                 var response = await http.GetAsync(urlDownloadQtIo);
                 if (!response.IsSuccessStatusCode)
                     return null;
@@ -560,8 +573,9 @@ namespace QtVsTools
                 if (devVersion == null)
                     return null;
 
-                response = await http.GetAsync($"{urlDownloadQtIo}{devVersion}/");
-                return response.IsSuccessStatusCode ? devVersion.ToString() : null;
+                var requestUri = $"{urlDownloadQtIo}{devVersion}/";
+                response = await http.GetAsync(requestUri);
+                return response.IsSuccessStatusCode ? (devVersion.ToString(), requestUri) : null;
             } catch {
                 return null;
             }

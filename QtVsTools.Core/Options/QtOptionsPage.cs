@@ -6,15 +6,15 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.IO;
 using System.Reflection;
+using EnvDTE;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
-using EnvDTE;
 
 namespace QtVsTools.Core.Options
 {
@@ -22,7 +22,6 @@ namespace QtVsTools.Core.Options
     using VisualStudio;
     using static Common.Utils;
     using static QtVsTools.Common.EnumExt;
-    using static Instances;
 
     public static class Options
     {
@@ -96,6 +95,13 @@ namespace QtVsTools.Core.Options
             [String("QmlLsp_Log")] Log,
             [String("QmlLsp_LogSize")] LogSize
         }
+
+        public enum DevelopmentReleases
+        {
+            [String("NotifySearchDevRelease")] NotifySearchDevRelease,
+            [String("SearchDevRelease")] SearchDevRelease,
+            [String("SearchDevReleaseTimeout")]  SearchDevReleaseTimeout
+        };
 
         public enum Timeout : uint { Disabled = 0 }
 
@@ -269,10 +275,7 @@ namespace QtVsTools.Core.Options
         [Description("Show notification when a project uses some legacy code path of the Qt "
             + "Visual Studio Tools.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool UpdateProjectFormat
-        {
-            get; set;
-        }
+        public bool UpdateProjectFormat { get; set; }
 
         [Category("Notifications")]
         [DisplayName("CMake incompatible project")]
@@ -318,6 +321,27 @@ namespace QtVsTools.Core.Options
         [Description("Maximum size (in KB) of QML LSP log file.")]
         public int QmlLspLogSize { get; set; }
 
+        [Category("Development releases")]
+        [DisplayName("Notification")]
+        [Description("Show a notification to allow the user to enable automatic searching for "
+            + "development releases.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifySearchDevRelease { get; set; }
+
+        [Category("Development releases")]
+        [DisplayName("Search automatically")]
+        [Description("If enabled, automatically searches for development releases on "
+            + "Visual Studio startup.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool SearchDevRelease { get; set; }
+
+        [Category("Development releases")]
+        [DisplayName("Search timeout")]
+        [Description("Sets the time in seconds to wait before the search request for development "
+            + "releases times out.")]
+        public int SearchDevReleaseTimeout { get; set; }
+        public const int SearchDevReleaseDefaultTimeout = 3;
+
         public override void ResetSettings()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -342,6 +366,10 @@ namespace QtVsTools.Core.Options
             QmlLspVersion = "$(DefaultQtVersion)";
             QmlLspLog = false;
             QmlLspLogSize = 2500;
+
+            NotifySearchDevRelease = true;
+            SearchDevRelease = false;
+            SearchDevReleaseTimeout = SearchDevReleaseDefaultTimeout;
 
             ////////
             // Get Qt Help keyboard shortcut
@@ -387,6 +415,9 @@ namespace QtVsTools.Core.Options
                 Load(() => QmlLspVersion, key, QmlLsp.QtVersion);
                 Load(() => QmlLspLog, key, QmlLsp.Log);
                 Load(() => QmlLspLogSize, key, QmlLsp.LogSize);
+                Load(() => NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
+                Load(() => SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
+                Load(() => SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);
             } catch (Exception exception) {
                 exception.Log();
             }
@@ -428,6 +459,9 @@ namespace QtVsTools.Core.Options
                 Save(QmlLspVersion, key, QmlLsp.QtVersion);
                 Save(QmlLspLog, key, QmlLsp.Log);
                 Save(QmlLspLogSize, key, QmlLsp.LogSize);
+                Save(NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
+                Save(SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
+                Save(SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);
             } catch (Exception exception) {
                 exception.Log();
             }
