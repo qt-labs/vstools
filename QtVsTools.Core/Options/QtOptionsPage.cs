@@ -180,8 +180,8 @@ namespace QtVsTools.Core.Options
             public override bool GetStandardValuesExclusive(ITypeDescriptorContext _) => true;
             protected override bool IsCompatible(string qtVersion)
             {
-                return VersionInformation.GetOrAddByName(qtVersion) is { } qt
-                    && File.Exists(Path.Combine(qt.LibExecs, "qmlls.exe"));
+                return VersionInformation.GetOrAddByName(qtVersion) is {LibExecs: {}  libExecs}
+                    && File.Exists(Path.Combine(libExecs, "qmlls.exe"));
             }
         }
 
