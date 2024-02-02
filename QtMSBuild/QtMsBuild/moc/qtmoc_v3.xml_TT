@@ -106,14 +106,21 @@
 "Add key/value pair to plugin meta data; separate with semicolons if more than one.
 (-M&lt;key=value&gt;)"
       Switch="-M[value]" />
-    <StringProperty
+    <EnumProperty
       Name="CompilerFlavor"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
       DisplayName="Compiler Flavor"
       Description=
 "Set the compiler &lt;flavor&gt;: either &quot;msvc&quot; or &quot;unix&quot;.
 (--compiler-flavor &lt;flavor&gt;)"
-      Switch="--compiler-flavor [value]"/>
+      Switch="--compiler-flavor [value]">
+      <EnumValue
+        Name="msvc"
+        DisplayName="MSVC"/>
+      <EnumValue
+        Name="unix"
+        DisplayName="Unix"/>
+    </EnumProperty>
     <BoolProperty
       Name="NoInclude"
       HelpUrl="http://doc.qt.io/qt-5/moc.html"
