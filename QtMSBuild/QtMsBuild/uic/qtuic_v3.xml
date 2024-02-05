@@ -108,18 +108,32 @@
       DisplayName="Include"
       Description="Add #include &lt;file&gt; to the output. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;" />
-    <StringProperty
+    <EnumProperty
       Name="Generator"
       HelpUrl="http://doc.qt.io/qt-5/uic.html"
       DisplayName="Generator"
       Description="Select generator. (-g &lt;python|cpp&gt;)"
-      Switch="-g [value]" />
-    <StringProperty
+      Switch="-g [value]">
+      <EnumValue
+        Name="python"
+        DisplayName="Python"/>
+      <EnumValue
+        Name="cpp"
+        DisplayName="CPP"/>
+    </EnumProperty>
+    <EnumProperty
       Name="Connections"
       HelpUrl="http://doc.qt.io/qt-5/uic.html"
       DisplayName="Connections"
       Description="Connection syntax. (-c &lt;pmf|string&gt;)"
-      Switch="-c [value]" />
+      Switch="-c [value]">
+      <EnumValue
+        Name="pmf"
+        DisplayName="PMF"/>
+      <EnumValue
+        Name="string"
+        DisplayName="String"/>
+    </EnumProperty>
     <BoolProperty
       Name="IdBased"
       HelpUrl="http://doc.qt.io/qt-5/uic.html"
