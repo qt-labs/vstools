@@ -35,25 +35,13 @@ namespace QtVsTools.Core.MsBuild
             : base(defaultInputOutput: false)
         {
             Parser.AddOption(options[Property.InputFileType] =
-                new Option("i")
-                {
-                    ValueName = "<rep|src>",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("i", "<rep|src>"));
 
             Parser.AddOption(options[Property.OutputFileType] =
-                new Option("o")
-                {
-                    ValueName = "<source|replica|merged|rep>",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("o", "<source|replica|merged|rep>"));
 
             Parser.AddOption(options[Property.IncludePath] =
-                new Option("I")
-                {
-                    ValueName = "dir",
-                    Flags = Option.Flag.ShortOptionStyle
-                });
+                new Option("I", "dir"));
 
             Parser.AddOption(options[Property.AlwaysClass] =
                 new Option("c"));
@@ -92,7 +80,7 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.InputFileType])) {
                 properties[Property.InputFileType] =
-                    string.Join(";", Parser.Values(options[Property.InputFileType]));
+                    Parser.Value(options[Property.InputFileType]);
             }
 
             if (!string.IsNullOrEmpty(inputPath))
@@ -100,7 +88,7 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.OutputFileType])) {
                 properties[Property.OutputFileType] =
-                    string.Join(";", Parser.Values(options[Property.OutputFileType]));
+                    Parser.Value(options[Property.OutputFileType]);
             }
 
             if (!string.IsNullOrEmpty(outputPath))
