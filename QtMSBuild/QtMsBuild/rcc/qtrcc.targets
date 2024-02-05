@@ -235,9 +235,9 @@
                 CompressionAlgorithm;
                 Compression;
                 NoCompression;
+                NoZstd;
                 CompressThreshold;
                 BinaryOutput;
-                NoZstd;
                 Generator;
                 PassNumber;
                 NoNamespace;
@@ -381,6 +381,14 @@
           Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
       </options>
 
+      <!--//  -no-zstd                   Disable usage of zstd compression -->
+      <options>
+        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' == 'true'">--no-zstd</Value>
+      </options>
+
       <!--//  -threshold <level>         Threshold to consider compressing files -->
       <options>
         <Value Condition="'%(Name)' == 'CompressThreshold'">--threshold %(Value)</Value>
@@ -392,14 +400,6 @@
       </options>
       <options>
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--binary</Value>
-      </options>
-
-      <!--//  -no-zstd                   Disable usage of zstd compression -->
-      <options>
-        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' != 'true'"></Value>
-      </options>
-      <options>
-        <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' == 'true'">--no-zstd</Value>
       </options>
 
       <!--//  -g,  -generator <cpp|python|python2>  Select generator -->

@@ -181,6 +181,12 @@
       DisplayName="No Compression"
       Description="Disable all compression. (--no-compress)"
       Switch="--no-compress"/>
+    <BoolProperty
+      Name="NoZstd"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="No Zstd"
+      Description="Disable usage of zstd compression. (--no-zstd)"
+      Switch="--no-zstd"/>
     <StringProperty
       Name="CompressThreshold"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
@@ -194,12 +200,6 @@
       DisplayName="Binary Output"
       Description="Output a binary file for use as a dynamic resource. (--binary)"
       Switch="--binary"/>
-    <BoolProperty
-      Name="NoZstd"
-      HelpUrl="http://doc.qt.io/qt-6/rcc.html"
-      DisplayName="No Zstd"
-      Description="Disable usage of zstd compression. (--no-zstd)"
-      Switch="--no-zstd"/>
     <EnumProperty
       Name="Generator"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"

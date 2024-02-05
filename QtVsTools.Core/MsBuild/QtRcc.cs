@@ -27,9 +27,9 @@ namespace QtVsTools.Core.MsBuild
             CompressionAlgorithm,
             Compression,
             NoCompression,
+            NoZstd,
             CompressThreshold,
             BinaryOutput,
-            NoZstd,
             Generator,
             PassNumber,
             NoNamespace,
@@ -68,14 +68,14 @@ namespace QtVsTools.Core.MsBuild
             Parser.AddOption(options[Property.NoCompression] =
                 new Option("no-compress"));
 
+            Parser.AddOption(options[Property.NoZstd] =
+                new Option("no-zstd"));
+
             Parser.AddOption(options[Property.CompressThreshold] =
                 new Option("threshold", "level"));
 
             Parser.AddOption(options[Property.BinaryOutput] =
                 new Option("binary"));
-
-            Parser.AddOption(options[Property.NoZstd] =
-                new Option("no-zstd"));
 
             Parser.AddOption(options[Property.Generator] =
                 new Option(new[] { "g", "generator" }, "cpp|python|python2"));
@@ -124,6 +124,9 @@ namespace QtVsTools.Core.MsBuild
             if (!string.IsNullOrEmpty(outputPath))
                 properties[Property.OutputFile] = outputPath;
 
+            if (Parser.IsSet(options[Property.TempFile]))
+                properties[Property.TempFile] = Parser.Value(options[Property.TempFile]);
+
             if (Parser.IsSet(options[Property.InitFuncName]))
                 properties[Property.InitFuncName] = Parser.Value(options[Property.InitFuncName]);
 
@@ -148,6 +151,9 @@ namespace QtVsTools.Core.MsBuild
             if (Parser.IsSet(options[Property.NoCompression]))
                 properties[Property.NoCompression] = "true";
 
+            if (Parser.IsSet(options[Property.NoZstd]))
+                properties[Property.NoZstd] = "true";
+
             if (Parser.IsSet(options[Property.CompressThreshold])) {
                 properties[Property.CompressThreshold] =
                     Parser.Value(options[Property.CompressThreshold]);
@@ -155,9 +161,6 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.BinaryOutput]))
                 properties[Property.BinaryOutput] = "true";
-
-            if (Parser.IsSet(options[Property.NoZstd]))
-                properties[Property.NoZstd] = "true";
 
             if (Parser.IsSet(options[Property.Generator]))
                 properties[Property.Generator] = Parser.Value(options[Property.Generator]);
