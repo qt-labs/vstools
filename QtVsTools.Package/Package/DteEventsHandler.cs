@@ -4,6 +4,7 @@
 ***************************************************************************************************/
 
 using System;
+using System.IO;
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
@@ -59,9 +60,13 @@ namespace QtVsTools
                 solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
             }
 
-            windowEvents = events?.WindowEvents;
-            if (windowEvents != null)
-                windowEvents.WindowActivated += WindowEvents_WindowActivated;
+            if (dte.MainWindow?.Visible == false) {
+                windowEvents = events?.WindowEvents;
+                if (windowEvents != null)
+                    windowEvents.WindowActivated += WindowEvents_WindowActivated;
+            } else {
+                VsMainWindowActivated(); // might happen without splash screen, direct .sln loading
+            }
 
             outputWindowEvents = events?.OutputWindowEvents;
             if (outputWindowEvents != null)
@@ -106,8 +111,32 @@ namespace QtVsTools
             if (dte.MainWindow?.Visible == true) {
                 windowEvents.WindowActivated -= WindowEvents_WindowActivated;
                 windowEvents = null;
-                QtVsToolsPackage.Instance.VsMainWindowActivated();
+                VsMainWindowActivated();
             }
+        }
+
+        private static void VsMainWindowActivated()
+        {
+            if (QtVersionManager.GetVersions().Length == 0)
+                Notifications.NoQtVersion.Show();
+            if (QtVsToolsPackage.Instance.Options.NotifyInstalled && TestVersionInstalled())
+                Notifications.NotifyInstall.Show();
+            if (QtVsToolsPackage.Instance.Options.NotifySearchDevRelease)
+                Notifications.NotifySearchDevRelease.Show();
+        }
+
+        private static bool TestVersionInstalled()
+        {
+            var newVersion = true;
+            var versionFile = Path.Combine(QtVsToolsPackage.Instance.PkgInstallPath,
+                "lastversion.txt");
+            if (File.Exists(versionFile)) {
+                var lastVersion = File.ReadAllText(versionFile);
+                newVersion = lastVersion!= Version.PRODUCT_VERSION;
+            }
+            if (newVersion)
+                File.WriteAllText(versionFile, Version.PRODUCT_VERSION);
+            return newVersion;
         }
 
         private void OutputWindowEvents_PaneUpdated(EnvDTE.OutputWindowPane pane)

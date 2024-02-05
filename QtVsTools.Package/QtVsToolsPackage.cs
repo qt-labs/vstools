@@ -34,7 +34,6 @@ namespace QtVsTools
     using static Core.Options.QtOptionsPage;
     using static QtVsTools.Core.Common.Utils;
     using static SyntaxAnalysis.RegExpr;
-    using Notifications = Core.Notifications;
 
     public static partial class Instances
     {
@@ -427,29 +426,6 @@ namespace QtVsTools
                 await VsShell.UiThreadAsync(StatusBar.ResetProgress);
             await VsShell.UiThreadAsync(StatusBar.Clear);
             status?.Dismiss();
-        }
-
-        private bool TestVersionInstalled()
-        {
-            var newVersion = true;
-            var versionFile = Path.Combine(PkgInstallPath, "lastversion.txt");
-            if (File.Exists(versionFile)) {
-                var lastVersion = File.ReadAllText(versionFile);
-                newVersion = lastVersion!= Version.PRODUCT_VERSION;
-            }
-            if (newVersion)
-                File.WriteAllText(versionFile, Version.PRODUCT_VERSION);
-            return newVersion;
-        }
-
-        public void VsMainWindowActivated()
-        {
-            if (QtVersionManager.GetVersions().Length == 0)
-                Notifications.NoQtVersion.Show();
-            if (Options.NotifyInstalled && TestVersionInstalled())
-                Notifications.NotifyInstall.Show();
-            if (Options.NotifySearchDevRelease)
-                Notifications.NotifySearchDevRelease.Show();
         }
 
         protected override int QueryClose(out bool canClose)
