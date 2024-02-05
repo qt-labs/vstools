@@ -232,15 +232,19 @@
                 TempFile;
                 InitFuncName;
                 Root;
+                CompressionAlgorithm;
                 Compression;
                 NoCompression;
                 CompressThreshold;
                 BinaryOutput;
                 NoZstd;
+                Generator;
                 PassNumber;
                 NoNamespace;
                 Verbose;
                 List;
+                ListMapping;
+                DepFile;
                 Project;
                 FormatVersion">
       <Output
@@ -309,17 +313,22 @@
         <Value Condition="'%(Name)' == 'TempFile'">--temp %(Value)</Value>
       </options>
 
-      <!--//   -name <name>              Create an external initialization function with <name> -->
+      <!--//  -name <name>               Create an external initialization function with <name> -->
       <options>
         <Value Condition="'%(Name)' == 'InitFuncName'">--name %(Value)</Value>
       </options>
 
-      <!--//   -root <path>              Prefix resource access path with root path -->
+      <!--//  -root <path>               Prefix resource access path with root path -->
       <options>
         <Value Condition="'%(Name)' == 'Root'">--root %(Value)</Value>
       </options>
 
-      <!--//   -compress <level>         Compress input files by <level> -->
+      <!--//  -compress-algo <algo>      Compress input files using algorithm -->
+      <options>
+        <Value Condition="'%(Name)' == 'CompressionAlgorithm'">--compress-algo %(Value)</Value>
+      </options>
+
+      <!--//  -compress <level>          Compress input files by <level> -->
       <options>
         <Value
           Condition="'%(Name)' == 'Compression' AND '%(Value)' == 'level1'">--compress 1</Value>
@@ -362,7 +371,7 @@
           AND !$([System.String]::Copy('%(Value)').StartsWith('--compress'))"></Value>
       </options>
 
-      <!--//   -no-compress              Disable all compression -->
+      <!--//  -no-compress               Disable all compression -->
       <options>
         <Value
           Condition="'%(Name)' == 'NoCompression' AND '%(Value)' != 'true'"></Value>
@@ -372,12 +381,12 @@
           Condition="'%(Name)' == 'NoCompression' AND '%(Value)' == 'true'">--no-compress</Value>
       </options>
 
-      <!--//   -threshold <level>        Threshold to consider compressing files -->
+      <!--//  -threshold <level>         Threshold to consider compressing files -->
       <options>
         <Value Condition="'%(Name)' == 'CompressThreshold'">--threshold %(Value)</Value>
       </options>
 
-      <!--//   -binary                   Output a binary file for use as a dynamic source -->
+      <!--//  -binary                    Output a binary file for use as a dynamic source -->
       <options>
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -385,7 +394,7 @@
         <Value Condition="'%(Name)' == 'BinaryOutput' AND '%(Value)' == 'true'">--binary</Value>
       </options>
 
-      <!--//   -no-zstd                 Disable usage of zstd compression -->
+      <!--//  -no-zstd                   Disable usage of zstd compression -->
       <options>
         <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -393,12 +402,17 @@
         <Value Condition="'%(Name)' == 'NoZstd' AND '%(Value)' == 'true'">--no-zstd</Value>
       </options>
 
-      <!--//   -pass <number>            Pass number for big resources -->
+      <!--//  -g,  -generator <cpp|python|python2>  Select generator -->
+      <options>
+        <Value Condition="'%(Name)' == 'Generator'">--generator %(Value)</Value>
+      </options>
+
+      <!--//  -pass <number>             Pass number for big resources -->
       <options>
         <Value Condition="'%(Name)' == 'PassNumber'">--pass %(Value)</Value>
       </options>
 
-      <!--//   -namespace                Turn off namespace macros -->
+      <!--//  -namespace                 Turn off namespace macros -->
       <options>
         <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -406,7 +420,7 @@
         <Value Condition="'%(Name)' == 'NoNamespace' AND '%(Value)' == 'true'">--namespace</Value>
       </options>
 
-      <!--//   -verbose                  Enable verbose mode -->
+      <!--//  -verbose                   Enable verbose mode -->
       <options>
         <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -414,7 +428,7 @@
         <Value Condition="'%(Name)' == 'Verbose' AND '%(Value)' == 'true'">--verbose</Value>
       </options>
 
-      <!--//   -list                     Only list .qrc file entries, do not generate code -->
+      <!--//  -list                      Only list .qrc file entries, do not generate code -->
       <options>
         <Value Condition="'%(Name)' == 'List' AND '%(Value)' != 'true'"></Value>
       </options>
@@ -422,7 +436,21 @@
         <Value Condition="'%(Name)' == 'List' AND '%(Value)' == 'true'">--list</Value>
       </options>
 
-      <!--//   -project                  Output a resource file containing all files from the
+      <!--//  -list-mapping              Only output a mapping of resource paths to FS paths -->
+      <options>
+        <Value Condition="'%(Name)' == 'ListMapping' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'ListMapping' AND '%(Value)' == 'true'"
+          >--list-mapping</Value>
+      </options>
+
+      <!--//  -d,  -depfile <file>       Write a depfile with the .qrc dependencies to <file> -->
+      <options>
+        <Value Condition="'%(Name)' == 'DepFile'">--depfile %(Value)</Value>
+      </options>
+
+      <!--//  -project                   Output a resource file containing all files from the
           //                             current directory -->
       <options>
         <Value Condition="'%(Name)' == 'Project' AND '%(Value)' != 'true'"></Value>
@@ -431,7 +459,7 @@
         <Value Condition="'%(Name)' == 'Project' AND '%(Value)' == 'true'">--project</Value>
       </options>
 
-      <!--//   -format-version <number>  The RCC format version to write -->
+      <!--//  -format-version <number>   The RCC format version to write -->
       <options>
         <Value Condition="'%(Name)' == 'FormatVersion'">--format-version %(Value)</Value>
       </options>

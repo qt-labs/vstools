@@ -24,15 +24,19 @@ namespace QtVsTools.Core.MsBuild
             TempFile,
             InitFuncName,
             Root,
+            CompressionAlgorithm,
             Compression,
             NoCompression,
             CompressThreshold,
             BinaryOutput,
             NoZstd,
+            Generator,
             PassNumber,
             NoNamespace,
             Verbose,
             List,
+            ListMapping,
+            DepFile,
             Project,
             FormatVersion,
             CommandLineTemplate,
@@ -55,6 +59,9 @@ namespace QtVsTools.Core.MsBuild
             Parser.AddOption(options[Property.Root] =
                 new Option("root", "path"));
 
+            Parser.AddOption(options[Property.CompressionAlgorithm] =
+                new Option("compress-algo", "algo"));
+
             Parser.AddOption(options[Property.Compression] =
                 new Option("compress", "level"));
 
@@ -70,6 +77,9 @@ namespace QtVsTools.Core.MsBuild
             Parser.AddOption(options[Property.NoZstd] =
                 new Option("no-zstd"));
 
+            Parser.AddOption(options[Property.Generator] =
+                new Option(new[] { "g", "generator" }, "cpp|python|python2"));
+
             Parser.AddOption(options[Property.PassNumber] =
                 new Option("pass", "number"));
 
@@ -81,6 +91,12 @@ namespace QtVsTools.Core.MsBuild
 
             Parser.AddOption(options[Property.List] =
                 new Option("list"));
+
+            Parser.AddOption(options[Property.ListMapping] =
+                new Option("list-mapping"));
+
+            Parser.AddOption(options[Property.DepFile] =
+                new Option(new[] { "d", "depfile" }, "file"));
 
             Parser.AddOption(options[Property.Project] =
                 new Option("project"));
@@ -114,6 +130,11 @@ namespace QtVsTools.Core.MsBuild
             if (Parser.IsSet(options[Property.Root]))
                 properties[Property.Root] = Parser.Value(options[Property.Root]);
 
+            if (Parser.IsSet(options[Property.CompressionAlgorithm])) {
+                properties[Property.CompressionAlgorithm] =
+                    Parser.Value(options[Property.CompressionAlgorithm]);
+            }
+
             if (Parser.IsSet(options[Property.Compression])) {
                 if (!int.TryParse(Parser.Value(options[Property.Compression]), out var level))
                     return false;
@@ -138,6 +159,9 @@ namespace QtVsTools.Core.MsBuild
             if (Parser.IsSet(options[Property.NoZstd]))
                 properties[Property.NoZstd] = "true";
 
+            if (Parser.IsSet(options[Property.Generator]))
+                properties[Property.Generator] = Parser.Value(options[Property.Generator]);
+
             if (Parser.IsSet(options[Property.PassNumber]))
                 properties[Property.PassNumber] = Parser.Value(options[Property.PassNumber]);
 
@@ -149,6 +173,12 @@ namespace QtVsTools.Core.MsBuild
 
             if (Parser.IsSet(options[Property.List]))
                 properties[Property.List] = "true";
+
+            if (Parser.IsSet(options[Property.ListMapping]))
+                properties[Property.ListMapping] = "true";
+
+            if (Parser.IsSet(options[Property.DepFile]))
+                properties[Property.DepFile] = Parser.Value(options[Property.DepFile]);
 
             if (Parser.IsSet(options[Property.Project]))
                 properties[Property.Project] = "true";

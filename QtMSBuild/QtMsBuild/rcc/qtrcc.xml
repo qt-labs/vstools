@@ -158,7 +158,7 @@
       Switch="--binary"/>
     <BoolProperty
       Name="NoZstd"
-      HelpUrl="http://doc.qt.io/qt-6/rcc.html"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="No Zstd"
       Description="Disable usage of zstd compression. (--no-zstd)"
       Switch="--no-zstd"/>

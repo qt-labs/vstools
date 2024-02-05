@@ -102,6 +102,23 @@
       Description="Prefix resource access path with root &lt;path&gt;. (--root &lt;path&gt;)"
       Switch="--root &quot;[value]&quot;" />
     <EnumProperty
+      Name="CompressionAlgorithm"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="Compression Algorithm"
+      Description=
+"Compress input files using algorithm &lt;algo&gt;. (--compress-algo &lt;algo&gt;)"
+      Switch="--compress-algo [value]">
+      <EnumValue
+        Name="Zstd"
+        DisplayName="zstd"/>
+      <EnumValue
+        Name="Zlib"
+        DisplayName="zlib"/>
+      <EnumValue
+        Name="None"
+        DisplayName="none"/>
+    </EnumProperty>
+    <EnumProperty
       Name="Compression"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
       DisplayName="Compression"
@@ -183,6 +200,22 @@
       DisplayName="No Zstd"
       Description="Disable usage of zstd compression. (--no-zstd)"
       Switch="--no-zstd"/>
+    <EnumProperty
+      Name="Generator"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="Generator"
+      Description="Select generator. (--generator &lt;cpp|python|python2&gt;)"
+      Switch="--generator [value]">
+      <EnumValue
+        Name="cpp"
+        DisplayName="CPP"/>
+      <EnumValue
+        Name="python"
+        DisplayName="Python"/>
+      <EnumValue
+        Name="python2"
+        DisplayName="Python 2"/>
+    </EnumProperty>
     <StringProperty
       Name="PassNumber"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
@@ -207,6 +240,21 @@
       DisplayName="List"
       Description="Only list .qrc file entries, do not generate code. (--list)"
       Switch="--list"/>
+    <BoolProperty
+      Name="ListMapping"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="List Mapping"
+      Description=
+"Only output a mapping of resource paths to file system paths defined in the .qrc file,
+do not generate code. (--list-mapping)"
+      Switch="--list-mapping"/>
+    <StringProperty
+      Name="DepFile"
+      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      DisplayName="Dep File"
+      Description=
+"Write a depfile with the .qrc dependencies to &lt;file&gt;. (--depfile &lt;file&gt;)"
+      Switch="--depfile &quot;[value]&quot;" />
     <BoolProperty
       Name="Project"
       HelpUrl="http://doc.qt.io/qt-5/rcc.html"
