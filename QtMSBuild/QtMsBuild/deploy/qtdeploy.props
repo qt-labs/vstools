@@ -19,6 +19,8 @@
   <PropertyGroup>
     <QtDeploy Condition="'$(QtDeploy)' == ''">false</QtDeploy>
     <QtDeployEnv Condition="'$(QtDeployEnv)' == ''">VCINSTALLDIR=$(VCInstallDir)</QtDeployEnv>
+    <QtDeployAddToolsDirToPath Condition="'$(QtDeployAddToolsDirToPath)' == ''"
+      >true</QtDeployAddToolsDirToPath>
     <QtDeployFiles Condition="'$(QtDeployFiles)' == ''"
       >$(TargetPath)</QtDeployFiles>
     <QtDeployDir Condition="'$(QtDeployDir)' == '' AND '$(QtDeployToProjectDir)' == 'true'"

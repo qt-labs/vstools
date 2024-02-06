@@ -54,6 +54,22 @@
     </StringListProperty>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add Tools Directory To Path
+    // -->
+    <EnumProperty
+      Name="QtDeployAddToolsDirToPath"
+      Category="Settings"
+      DisplayName="Add Tools Directory To Path">
+      <EnumProperty.Description>
+        <sys:String>
+          <![CDATA[Add the Qt tools binary directory to path.]]>
+        </sys:String>
+      </EnumProperty.Description>
+      <EnumValue Name="false" DisplayName="Disabled"/>
+      <EnumValue Name="true" DisplayName="Enabled"/>
+    </EnumProperty>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Project Output
     // -->
     <StringListProperty
