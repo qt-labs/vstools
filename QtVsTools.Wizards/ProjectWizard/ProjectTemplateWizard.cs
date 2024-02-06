@@ -264,6 +264,12 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             BeforeWizardRun();
 
+            if (VsServiceProvider.Instance == null) {
+                Messages.DisplayErrorMessage(Environment.NewLine + "The Qt VS Tools extension has "
+                    + "not been fully loaded yet; the wizard is not available.");
+                throw new WizardBackoutException();
+            }
+
             var iVsUIShell = VsServiceProvider.GetService<SVsUIShell, IVsUIShell>();
             if (iVsUIShell == null)
                 throw new NullReferenceException("IVsUIShell");
