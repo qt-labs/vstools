@@ -16,7 +16,7 @@ namespace QtVsTools.Core.Common
         /// <summary>
         /// Auto-rotating log file.
         /// </summary>
-        public class LogFile : Concurrent
+        public class LogFile : Concurrent<LogFile>
         {
             public string FilePath { get; }
             public int MaxSize { get; }
@@ -76,7 +76,7 @@ namespace QtVsTools.Core.Common
             public void Write(string logEntry)
             {
                 var data = Encoding.UTF8.GetBytes(logEntry);
-                lock (CriticalSection) {
+                lock (StaticCriticalSection) {
                     try {
                         using var log = new FileStream(FilePath,
                             FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read, MaxSize);

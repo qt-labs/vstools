@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,58 +20,139 @@ using Microsoft.VisualStudio.Text.BraceCompletion;
 using Microsoft.VisualStudio.Text.Editor;
 
 using Task = System.Threading.Tasks.Task;
+
+namespace QtVsTools
+{
+    using Qml.Language;
+    public static partial class Instances
+    {
+        public static QmlLspClient QmlLspClient => QmlLspClient.Instance;
+    }
+}
+
 namespace QtVsTools.Qml.Language
 {
     using Core;
-    using static Core.Common.Utils;
     using static Instances;
-    using static Core.Instances;
+    using static Core.Common.Utils;
 
     [Export(typeof(ILanguageClient))]
     [Export(typeof(IBraceCompletionSessionProvider))]
     [BracePair('{', '}')]
     [ContentType(QmlContentType.Name)]
-    public class QmlLspClient :
+    public class QmlLspClient : Concurrent<QmlLspClient>,
         ILanguageClient,
-        IBraceCompletionSessionProvider
+        IBraceCompletionSessionProvider,
+        IDisposable
     {
-        public bool TryCreateSession(ITextView textView, SnapshotPoint openingPoint,
-            char openingBrace, char closingBrace, out IBraceCompletionSession session)
-        {
-            session = null;
-            return true;
-        }
-
         public event AsyncEventHandler<EventArgs> StartAsync;
         public event AsyncEventHandler<EventArgs> StopAsync;
-
-        public QmlLspClient()
-        {
-        }
-
-        public string Name => "QML Language Client";
-
-        private string PathToQt { get; set; }
-        private string PathToServer { get; set; }
+        public string Name => "QML LSP Client";
 
         private static string LogFilePath { get; } = @$"{Path.GetTempPath()}\qmllsp.log.txt";
         private LogFile Log { get; set; }
 
-        private NamedPipeClientStream StdIn { get; set; }
-        private NamedPipeClientStream StdOut { get; set; }
-        private NamedPipeClientStream StdErr { get; set; }
-
-        private Task StdInListner { get; set; }
-        private Task StdOutListner { get; set; }
-        private Task StdErrListner { get; set; }
-        private Task ServerAwaiter { get; set; }
-
         private Process Server { get; set; }
+
+        private StreamMonitor StdIn { get; } = new();
+        private StreamMonitor StdOut { get; } = new();
+        private StreamMonitor StdErr { get; } = new();
+        private Connection Connection { get; set; }
+
+        public static QmlLspClient Instance { get; private set; }
+
+        public QmlLspClient()
+        {
+            Instance = this;
+        }
+
+        public void Dispose()
+        {
+            Disconnect();
+        }
+
+        public async Task OnLoadedAsync()
+        {
+            if (!Package.Options.QmlLspEnable)
+                Disconnect();
+            else
+                await StartAsync.InvokeAsync(this, EventArgs.Empty);
+        }
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
-            if (!Package.Options.QmlLspEnable)
-                return null;
+            SetupLog();
+
+            StdIn.StreamData += OnStdInData;
+            StdIn.Disconnected += OnDisconnected;
+            StdOut.StreamData += OnStdOutData;
+            StdOut.Disconnected += OnDisconnected;
+            StdErr.StreamData += OnStdErrData;
+            StdErr.Disconnected += OnDisconnected;
+
+            if (Server is { HasExited: false })
+                Disconnect();
+
+            var qtVersionName = Package.Options.QmlLspVersion switch
+            {
+                { Length: > 0 } x when !x.Equals("$(DefaultQtVersion)", IgnoreCase) => x,
+                _ => QtVersionManager.GetDefaultVersion()
+            };
+            if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
+                return Disconnect();
+
+            var qtPath = qtVersion.InstallPrefix.Replace('/', '\\').TrimEnd('\\');
+            if (qtPath is not { Length: > 0 } || !Directory.Exists(qtPath))
+                return Disconnect();
+
+            var qmLlsPath = $"{qtVersion.LibExecs.Replace('/', '\\').TrimEnd('\\')}\\qmlls.exe";
+            if (qmLlsPath is not { Length: > 0 } || !File.Exists(qmLlsPath))
+                return Disconnect();
+
+            Server = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = qmLlsPath,
+                    Arguments = $"-b \"{qtPath}\"",
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            try {
+                if (!Server.Start())
+                    return Disconnect();
+            } catch (Exception e) {
+                e.Log();
+                return Disconnect();
+            }
+
+            if (!Package.Options.QmlLspLog) {
+                StdIn.SetStream(Server.StandardInput);
+                StdOut.SetStream(Server.StandardOutput);
+                StdErr.SetStream(Server.StandardError);
+            } else {
+                await Task.WhenAll(
+                    StdIn.ConnectAsync(Server.StandardInput),
+                    StdOut.ConnectAsync(Server.StandardOutput),
+                    StdErr.ConnectAsync(Server.StandardError));
+                if (!StdIn.IsConnected || !StdOut.IsConnected || !StdErr.IsConnected)
+                    return Disconnect();
+            }
+
+            return Connect();
+        }
+
+        private void SetupLog()
+        {
+            if (!Package.Options.QmlLspLog) {
+                Log = null;
+                return;
+            }
 
             var logMaxSize = 1000 * (Package.Options.QmlLspLogSize switch
             {
@@ -81,87 +161,77 @@ namespace QtVsTools.Qml.Language
             });
             var logTruncSize = 2 * logMaxSize / 3;
 
-            if (PathToServer is not { Length: > 0 })
-                return null;
-
-            if (PathToQt is not { Length: > 0 })
-                return null;
-
-            if (Server is { HasExited: false }) {
-                try {
-                    Server.Kill();
-                    Server.WaitForExit();
-                } catch (Exception ex) {
-                    ex.Log();
-                }
-                Server = null;
-            }
-
-            var server = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = PathToServer,
-                    Arguments = $"-b \"{PathToQt}\"",
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            try {
-                if (!server.Start())
-                    return null;
-                if (token.IsCancellationRequested) {
-                    await StopAsync.InvokeAsync(this, EventArgs.Empty);
-                    await server.WaitForExitAsync();
-                    return null;
-                }
-            } catch (Exception e) {
-                e.Log();
-                return null;
-            }
-
-            Server = server;
-            if (Package.Options.QmlLspLog)
-                return await LogConnectionAsync(server, logMaxSize, logTruncSize);
-
-            return new(server.StandardOutput.BaseStream, server.StandardInput.BaseStream);
+            Log = new LogFile(LogFilePath, logMaxSize, logTruncSize, "===");
         }
 
-        public async Task OnLoadedAsync()
+        private string Timestamp => $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}";
+
+        private Connection Connect()
         {
-            if (!Package.Options.QmlLspEnable)
-                return;
-            var qtVersionName = Package.Options.QmlLspVersion switch
-            {
-                { Length: > 0} x when !x.Equals("$(DefaultQtVersion)", IgnoreCase) => x,
-                _ => QtVersionManager.GetDefaultVersion()
-            };
+            Log?.Write(@$"
+CLIENT CONNECTED [{Timestamp}]
+===".Trim(' ', '\r', '\n') + "\r\n");
 
-            if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
-                return;
-
-            var qtPath = qtVersion.InstallPrefix.Replace('/', '\\').TrimEnd('\\');
-            if (!Directory.Exists(qtPath))
-                return;
-
-            var qmlLsPath = $"{qtVersion.LibExecs.Replace('/', '\\').TrimEnd('\\')}\\qmlls.exe";
-            if (!File.Exists(qmlLsPath))
-                return;
-
-            PathToQt = qtPath;
-            PathToServer = qmlLsPath;
-
-            await StartAsync.InvokeAsync(this, EventArgs.Empty);
+            return Connection = new(StdOut, StdIn);
         }
 
-        public async Task OnServerInitializedAsync()
+        public Connection Disconnect()
         {
-            await Task.Yield();
+            if (Server is { HasExited: false })
+                Server.Kill();
+            Server = null;
+
+            StdIn.StreamData -= OnStdInData;
+            StdIn.Disconnected -= OnDisconnected;
+            StdOut.StreamData -= OnStdOutData;
+            StdOut.Disconnected -= OnDisconnected;
+            StdErr.StreamData -= OnStdErrData;
+            StdErr.Disconnected -= OnDisconnected;
+
+            StdIn.Dispose();
+            StdOut.Dispose();
+            StdErr.Dispose();
+
+            _ = Task.Run(async () => await StopAsync.InvokeAsync(this, EventArgs.Empty));
+
+            Log?.Write(@$"
+CLIENT DISCONNECTED [{Timestamp}]
+===".Trim(' ', '\r', '\n') + "\r\n");
+
+            Connection?.Dispose();
+            return Connection = null;
         }
 
+        private void OnDisconnected(object sender, EventArgs args)
+        {
+            Disconnect();
+        }
+
+        private void OnStdInData(object sender, StreamDataEventArgs args)
+        {
+            Log?.Write(@$"
+CLIENT --> SERVER [{Timestamp}]
+{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
+===".Trim(' ', '\r', '\n') + "\r\n");
+        }
+
+        private void OnStdOutData(object sender, StreamDataEventArgs args)
+        {
+            Log?.Write(@$"
+SERVER --> CLIENT [{Timestamp}]
+{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
+===".Trim(' ', '\r', '\n') + "\r\n");
+        }
+
+        private void OnStdErrData(object sender, StreamDataEventArgs args)
+        {
+            Log?.Write(@$"
+SERVER ERROR [{Timestamp}]
+{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
+===".Trim(' ', '\r', '\n') + "\r\n");
+        }
+
+        #region ### BOILERPLATE ###################################################################
 
 #if VS2019
         public async Task OnServerInitializeFailedAsync(Exception e)
@@ -169,7 +239,7 @@ namespace QtVsTools.Qml.Language
             await Task.Yield();
         }
 #else
-        public async Task<InitializationFailureContext>OnServerInitializeFailedAsync(
+        public async Task<InitializationFailureContext> OnServerInitializeFailedAsync(
             ILanguageClientInitializationInfo initializationState)
         {
             await Task.Yield();
@@ -188,127 +258,15 @@ namespace QtVsTools.Qml.Language
 
         public bool ShowNotificationOnInitializeFailed => false;
 
-        private async Task<Connection> LogConnectionAsync(Process server, int size, int truncSize)
+        public async Task OnServerInitializedAsync() => await Task.Yield();
+
+        public bool TryCreateSession(ITextView textView, SnapshotPoint openingPoint,
+            char openingBrace, char closingBrace, out IBraceCompletionSession session)
         {
-            Log = new(LogFilePath, size, truncSize, "===");
-            StdInListner = Task.Run(async () =>
-            {
-                var data = new byte[4096];
-                using var stdIn = new NamedPipeServerStream("qmllsp_stdin", PipeDirection.In);
-                await stdIn.WaitForConnectionAsync();
-                while (!server.HasExited) {
-                    try {
-                        var taskRead = stdIn.ReadAsync(data, 0, data.Length);
-                        var taskWaitForExit = server.WaitForExitAsync();
-                        await Task.WhenAny(taskRead, taskWaitForExit);
-                        if (!server.HasExited && taskRead.IsCompleted) {
-                            var size = await taskRead;
-                            Log.Write(@$"
-CLI <<< SRV [{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}]
-{Encoding.UTF8.GetString(data, 0, size)}
-===".Trim(' ', '\r', '\n') + "\r\n");
-                            await server.StandardInput.BaseStream.WriteAsync(data, 0, size);
-                            await server.StandardInput.BaseStream.FlushAsync();
-                        }
-                    } catch (Exception ex) {
-                        ex.Log();
-                        return;
-                    }
-                }
-            });
-
-            StdOutListner = Task.Run(async () =>
-            {
-                var data = new byte[4096];
-                using var stdOut = new NamedPipeServerStream("qmllsp_stdout", PipeDirection.Out);
-                await stdOut.WaitForConnectionAsync();
-                while (!server.HasExited) {
-                    try {
-                        var taskRead = server.StandardOutput.BaseStream.ReadAsync(data, 0, data.Length);
-                        var taskWaitForExit = server.WaitForExitAsync();
-                        var completedTask = await Task.WhenAny(taskRead, taskWaitForExit);
-                        if (!server.HasExited && taskRead.IsCompleted) {
-                            var size = await taskRead;
-                            Log.Write(@$"
-CLI >>> SRV [{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}]
-{Encoding.UTF8.GetString(data, 0, size)}
-===".Trim(' ', '\r', '\n') + "\r\n");
-                            await stdOut.WriteAsync(data, 0, size);
-                            await stdOut.FlushAsync();
-                        }
-                    } catch (Exception ex) {
-                        ex.Log();
-                        return;
-                    }
-                }
-            });
-
-            StdErrListner = Task.Run(async () =>
-            {
-                var data = new byte[4096];
-                using var stdErr = new NamedPipeServerStream("qmllsp_stderr", PipeDirection.Out);
-                await stdErr.WaitForConnectionAsync();
-                while (!server.HasExited) {
-                    try {
-                        var taskRead = server.StandardError.BaseStream.ReadAsync(data, 0, data.Length);
-                        var taskWaitForExit = server.WaitForExitAsync();
-                        var completedTask = await Task.WhenAny(taskRead, taskWaitForExit);
-                        if (!server.HasExited && taskRead.IsCompleted) {
-                            var size = await taskRead;
-                            Log.Write(@$"
-CLI !!! [{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}]
-{Encoding.UTF8.GetString(data, 0, size)}
-===".Trim(' ', '\r', '\n') + "\r\n");
-                            await stdErr.WriteAsync(data, 0, size);
-                            await stdErr.FlushAsync();
-                        }
-                    } catch (Exception ex) {
-                        ex.Log();
-                        return;
-                    }
-                }
-            });
-
-            StdIn = new NamedPipeClientStream(".", "qmllsp_stdin", PipeDirection.Out);
-            while (!StdIn.IsConnected) {
-                try {
-                    await StdIn.ConnectAsync();
-                } catch (Exception ex) {
-                    ex.Log();
-                    await Task.Delay(100);
-                }
-            }
-
-            StdOut = new NamedPipeClientStream(".", "qmllsp_stdout", PipeDirection.In);
-            while (!StdOut.IsConnected) {
-                try {
-                    await StdOut.ConnectAsync();
-                } catch (Exception ex) {
-                    ex.Log();
-                    await Task.Delay(100);
-                }
-            }
-
-            StdErr = new NamedPipeClientStream(".", "qmllsp_stderr", PipeDirection.In);
-            while (!StdErr.IsConnected) {
-                try {
-                    await StdErr.ConnectAsync();
-                } catch (Exception ex) {
-                    ex.Log();
-                    await Task.Delay(100);
-                }
-            }
-
-            ServerAwaiter = Task.Run(async () =>
-            {
-                server.WaitForExit();
-                await server.WaitForExitAsync();
-                StdIn.Dispose();
-                StdOut.Dispose();
-                StdErr.Dispose();
-            });
-
-            return new(StdOut, StdIn);
+            session = null;
+            return true;
         }
+
+        #endregion
     }
 }

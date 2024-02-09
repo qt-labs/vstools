@@ -103,6 +103,7 @@ namespace QtVsTools
                 CMakeProject.Load(workspace);
             else
                 CMakeProject.Unload();
+            Instances.QmlLspClient?.Disconnect();
         }
 
         private void WindowEvents_WindowActivated(Window gotFocus, Window lostFocus)
@@ -362,6 +363,7 @@ namespace QtVsTools
         private static void SolutionEvents_AfterClosing()
         {
             MsBuildProject.Reset();
+            Instances.QmlLspClient?.Disconnect();
         }
 
         // Retrieves the VCProjectEngine from the given project and registers a handler for
