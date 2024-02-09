@@ -84,26 +84,26 @@
       Visible="false"/>
     <StringProperty
       Name="TempFile"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Temporary File"
       Description="Use temporary &lt;file&gt; for big resources. (--temp &lt;file&gt;)"
       Switch="--temp &quot;[value]&quot;" />
     <StringProperty
       Name="InitFuncName"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Initialization Function Name"
       Description=
 "Create an external initialization function with &lt;name&gt;. (--name &lt;name&gt;)"
       Switch="--name [value]" />
     <StringProperty
       Name="Root"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Root"
       Description="Prefix resource access path with root &lt;path&gt;. (--root &lt;path&gt;)"
       Switch="--root &quot;[value]&quot;" />
     <EnumProperty
       Name="CompressionAlgorithm"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Compression Algorithm"
       Description=
 "Compress input files using algorithm &lt;algo&gt;. (--compress-algo &lt;algo&gt;)"
@@ -120,7 +120,7 @@
     </EnumProperty>
     <EnumProperty
       Name="Compression"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Compression"
       Description="Compress input files to the given compression level.">
       <EnumValue
@@ -177,32 +177,32 @@
     </EnumProperty>
     <BoolProperty
       Name="NoCompression"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="No Compression"
       Description="Disable all compression. (--no-compress)"
       Switch="--no-compress"/>
     <BoolProperty
       Name="NoZstd"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="No Zstd"
       Description="Disable usage of zstd compression. (--no-zstd)"
       Switch="--no-zstd"/>
     <StringProperty
       Name="CompressThreshold"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Compression Threshold"
       Description=
 "Threshold &lt;level&gt; to consider compressing files. (--threshold &lt;level&gt;)"
       Switch="--threshold [value]" />
     <BoolProperty
       Name="BinaryOutput"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Binary Output"
       Description="Output a binary file for use as a dynamic resource. (--binary)"
       Switch="--binary"/>
     <EnumProperty
       Name="Generator"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Generator"
       Description="Select generator. (--generator &lt;cpp|python|python2&gt;)"
       Switch="--generator [value]">
@@ -218,31 +218,31 @@
     </EnumProperty>
     <StringProperty
       Name="PassNumber"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Pass Number"
       Description="Pass &lt;number&gt; for big resources. (--pass &lt;number&gt;)"
       Switch="--pass [value]" />
     <BoolProperty
       Name="NoNamespace"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Disable Namespace Macros"
       Description="Turn off namespace macros. (--namespace)"
       Switch="--namespace"/>
     <BoolProperty
       Name="Verbose"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Verbose"
       Description="Enable verbose mode. (--verbose)"
       Switch="--verbose"/>
     <BoolProperty
       Name="List"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="List"
       Description="Only list .qrc file entries, do not generate code. (--list)"
       Switch="--list"/>
     <BoolProperty
       Name="ListMapping"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="List Mapping"
       Description=
 "Only output a mapping of resource paths to file system paths defined in the .qrc file,
@@ -250,21 +250,21 @@ do not generate code. (--list-mapping)"
       Switch="--list-mapping"/>
     <StringProperty
       Name="DepFile"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Dep File"
       Description=
 "Write a depfile with the .qrc dependencies to &lt;file&gt;. (--depfile &lt;file&gt;)"
       Switch="--depfile &quot;[value]&quot;" />
     <BoolProperty
       Name="Project"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Project"
       Description=
 "Output a resource file containing all files from the current directory. (--project)"
       Switch="--project"/>
     <StringProperty
       Name="FormatVersion"
-      HelpUrl="http://doc.qt.io/qt-5/rcc.html"
+      HelpUrl="https://doc.qt.io/qt-6/rcc.html"
       DisplayName="Format Version"
       Description="The RCC format version to write. (--format-version &lt;number&gt;)"
       Switch="--format-version [value]" />

@@ -65,61 +65,61 @@
       Visible="false"/>
     <StringProperty
       Name="InputFile"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Input File"
       Description="Specifies the full path of the input file. (&lt;file&gt;)"
       Switch="&quot;[value]&quot;" />
     <StringProperty
       Name="OutputFile"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Output File"
       Description="Specifies the full path of the output file. (-o &lt;file&gt;)"
       Switch="-o &quot;[value]&quot;" />
     <BoolProperty
       Name="DisplayDependencies"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Display Dependencies"
       Description="Display the dependencies. (--dependencies)"
       Switch="--dependencies"/>
     <BoolProperty
       Name="NoProtection"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Protection"
       Description="Disable header protection. (--no-protection)"
       Switch="--no-protection"/>
     <BoolProperty
       Name="NoImplicitIncludes"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Implicit Includes"
       Description="Disable generation of #include-directives. (--no-implicit-includes)"
       Switch="--no-implicit-includes"/>
     <StringProperty
       Name="Postfix"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Postfix"
       Description="&lt;postfix&gt; to add to all generated classnames. (--postfix &lt;postfix&gt;)"
       Switch="--postfix [value]"/>
     <StringProperty
       Name="Translate"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Translate"
       Description="Use &lt;function&gt; for i18n. (--tr &lt;function&gt;)"
       Switch="--tr [value]" />
     <StringProperty
       Name="Include"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Include"
       Description="Add #include &lt;file&gt; to the output. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;" />
     <StringProperty
       Name="Generator"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Generator"
       Description="Select generator. (-g &lt;java|cpp&gt;)"
       Switch="-g [value]" />
     <BoolProperty
       Name="IdBased"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="ID Based"
       Description="Use id based function for i18n. (--idbased)"
       Switch="--idbased"/>

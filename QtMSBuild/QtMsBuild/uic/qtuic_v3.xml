@@ -60,37 +60,37 @@
       Visible="false"/>
     <BoolProperty
       Name="DisplayDependencies"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Display Dependencies"
       Description="Display the dependencies. (--dependencies)"
       Switch="--dependencies"/>
     <BoolProperty
       Name="NoAutoconnection"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Autoconnection"
       Description="Do not generate a call to QObject::connectSlotsByName(). (--no-autoconnection)"
       Switch="--no-autoconnection"/>
     <BoolProperty
       Name="NoProtection"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Protection"
       Description="Disable header protection. (--no-protection)"
       Switch="--no-protection"/>
     <BoolProperty
       Name="NoImplicitIncludes"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Implicit Includes"
       Description="Disable generation of #include-directives. (--no-implicit-includes)"
       Switch="--no-implicit-includes"/>
     <StringProperty
       Name="Postfix"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Postfix"
       Description="&lt;postfix&gt; to add to all generated classnames. (--postfix &lt;postfix&gt;)"
       Switch="--postfix [value]"/>
     <BoolProperty
       Name="NoQtNamespace"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="No Qt Namespace"
       Description=
 "Disable wrapping the definition of the generated class in QT_{BEGIN,END}_NAMESPACE.
@@ -98,19 +98,19 @@
       Switch="--no-qt-namespace"/>
     <StringProperty
       Name="Translate"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Translate"
       Description="Use &lt;function&gt; for i18n. (--tr &lt;function&gt;)"
       Switch="--tr [value]" />
     <StringProperty
       Name="Include"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Include"
       Description="Add #include &lt;file&gt; to the output. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;" />
     <EnumProperty
       Name="Generator"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Generator"
       Description="Select generator. (-g &lt;python|cpp&gt;)"
       Switch="-g [value]">
@@ -123,7 +123,7 @@
     </EnumProperty>
     <EnumProperty
       Name="Connections"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Connections"
       Description="Connection syntax. (-c &lt;pmf|string&gt;)"
       Switch="-c [value]">
@@ -136,38 +136,38 @@
     </EnumProperty>
     <BoolProperty
       Name="IdBased"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="ID Based"
       Description="Use id based function for i18n. (--idbased)"
       Switch="--idbased"/>
     <BoolProperty
       Name="FromImports"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="From Imports"
       Description="Python: generate imports relative to '.'. (--from-imports)"
       Switch="--from-imports"/>
     <BoolProperty
       Name="AbsoluteImports"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Absolute Imports"
       Description="Python: generate absolute imports. (--absolute-imports)"
       Switch="--absolute-imports"/>
     <BoolProperty
       Name="RcPrefix"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="RC Prefix"
       Description=
 "Python: Generate &quot;rc_file&quot; instead of &quot;file_rc&quot; import. (--rc-prefix)"
       Switch="--rc-prefix"/>
     <BoolProperty
       Name="StarImports"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Star Imports"
       Description="Python: Use * imports. (--star-imports)"
       Switch="--star-imports"/>
     <StringListProperty
       Name="PythonPaths"
-      HelpUrl="http://doc.qt.io/qt-5/uic.html"
+      HelpUrl="https://doc.qt.io/qt-6/uic.html"
       DisplayName="Python Paths"
       Description=
 "Python paths for --absolute-imports; separate with semicolons if more than one.

@@ -67,7 +67,7 @@
       Description="Path to installation of Qt."/>
     <EnumProperty
       Name="InputFileType"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Input File Type">
       <EnumValue
         Name="rep"
@@ -78,12 +78,12 @@
     </EnumProperty>
     <StringProperty
       Name="InputFile"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Input File"
       Description="Input header/rep file to read from. ([header-file/rep-file])" />
     <EnumProperty
       Name="OutputFileType"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Output File Type">
       <EnumValue
         Name="source"
@@ -100,17 +100,17 @@
     </EnumProperty>
     <StringProperty
       Name="OutputFile"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Output File"
       Description="Output header/rep file to write to. ([rep-file/header-file])" />
     <BoolProperty
       Name="AlwaysClass"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Always Output Class Type"
       Description="Always output 'class' type for .rep files and never 'POD'. (-c)"/>
     <BoolProperty
       Name="PrintDebug"
-      HelpUrl="https://doc.qt.io/qt-5/qtremoteobjects-repc.html"
+      HelpUrl="https://doc.qt.io/qt-6/qtremoteobjects-repc.html"
       DisplayName="Print Debug Information"
       Description="Print out parsing debug information (for troubleshooting). (-d)"/>
     <StringProperty

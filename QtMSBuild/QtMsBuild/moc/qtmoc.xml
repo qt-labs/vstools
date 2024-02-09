@@ -55,20 +55,20 @@
       Description="Path to installation of Qt."/>
     <StringProperty
       Name="InputFile"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Input File"
       Description="Specifies the full path of the input file. (&lt;file&gt;)"
       Switch="&quot;[value]&quot;" />
     <StringProperty
       Name="OutputFile"
       Category="General"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Output File"
       Description="Specifies the full path of the output file. (-o &lt;file&gt;)"
       Switch="-o &quot;[value]&quot;" />
     <StringListProperty
       Name="IncludePath"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Include Path"
       Description=
 "Add &lt;dir&gt; to the include path for header files; separate with semicolons if more than one.
@@ -76,7 +76,7 @@
       Switch="&quot;-I[value]&quot;" />
     <StringProperty
       Name="MacFramework"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="macOS Framework"
       Description=
 "Add macOS &lt;framework&gt; to the include path for header files. (-F &lt;framework&gt;)"
@@ -84,14 +84,14 @@
       Visible="False"/>
     <BoolProperty
       Name="PreprocessOnly"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Preprocess Only"
       Description="Preprocess only; do not generate meta object code. (-E)"
       Switch="-E"
       Visible="False"/>
     <StringListProperty
       Name="Define"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Macro Definitions"
       Description=
 "Define macro, with optional definition; separate with semicolons if more than one.
@@ -99,13 +99,13 @@
       Switch="-D " />
     <StringListProperty
       Name="Undefine"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Undefine Macro Definitions"
       Description="Undefine macro; separate with semicolons if more than one. (-U&lt;macro&gt;)"
       Switch="-U[value]" />
     <StringListProperty
       Name="Metadata"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Plugin Meta Data"
       Description=
 "Add key/value pair to plugin meta data; separate with semicolons if more than one.
@@ -113,7 +113,7 @@
       Switch="-M[value]" />
     <StringProperty
       Name="CompilerFlavor"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Compiler Flavor"
       Description=
 "Set the compiler &lt;flavor&gt;: either &quot;msvc&quot; or &quot;unix&quot;.
@@ -121,19 +121,19 @@
       Switch="--compiler-flavor [value]"/>
     <BoolProperty
       Name="NoInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Include"
       Description="Do not generate an #include statement. (-i)"
       Switch="-i"/>
     <StringProperty
       Name="PathPrefix"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Path Prefix"
       Description="&lt;path&gt; prefix for included file. (-p &lt;path&gt;)"
       Switch="-p [value]"/>
     <StringListProperty
       Name="ForceInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Force Include"
       Description=
 "Force #include &lt;file&gt; (overwrite default); separate with semicolons if more than one.
@@ -141,7 +141,7 @@
       Switch="-f &quot;[value]&quot;"/>
     <StringListProperty
       Name="PrependInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Prepend Include"
       Description=
 "Prepend #include &lt;file&gt; (preserve default); separate with semicolons if more than one.
@@ -149,7 +149,7 @@
       Switch="-b &quot;[value]&quot;"/>
     <StringListProperty
       Name="Include"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Include"
       Description=
 "Parse &lt;file&gt; as an #include before the main source(s); separate with semicolons if more
@@ -157,7 +157,7 @@ than one. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;"/>
     <StringListProperty
       Name="NoNotesWarnings"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Notes Or Warnings"
       Description=
 "Do not display notes (-nn) or warnings (-nw); Compatibility option; separate with semicolons if
@@ -166,19 +166,19 @@ more than one. (-n&lt;n|w&gt;)"
       Visible="False"/>
     <BoolProperty
       Name="NoNotes"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Notes"
       Description="Do not display notes. (--no-notes)"
       Switch="--no-notes"/>
     <BoolProperty
       Name="NoWarnings"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Warnings"
       Description="Do not display warnings (implies --no-notes). (--no-warnings)"
       Switch="--no-warnings"/>
     <BoolProperty
       Name="IgnoreConflicts"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Ignore Conflicts"
       Description=
 "Ignore all options that conflict with compilers, like -pthread conflicting with moc's -p option.
@@ -186,7 +186,7 @@ more than one. (-n&lt;n|w&gt;)"
       Switch="--ignore-option-clashes"/>
     <StringProperty
       Name="OptionsFile"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Options File"
       Description="Read additional command-line options from &lt;file&gt;. (@&lt;file&gt;)"
       Switch="&quot;@[value]&quot;" />

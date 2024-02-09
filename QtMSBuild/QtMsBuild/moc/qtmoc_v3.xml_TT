@@ -85,7 +85,7 @@
       Visible="false"/>
     <StringListProperty
       Name="MacFramework"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="macOS Framework"
       Description=
 "Add macOS &lt;framework&gt; to the include path for header files. (-F &lt;framework&gt;)"
@@ -93,14 +93,14 @@
       Visible="False"/>
     <BoolProperty
       Name="PreprocessOnly"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Preprocess Only"
       Description="Preprocess only; do not generate meta object code. (-E)"
       Switch="-E"
       Visible="False"/>
     <StringListProperty
       Name="Metadata"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Plugin Meta Data"
       Description=
 "Add key/value pair to plugin meta data; separate with semicolons if more than one.
@@ -108,7 +108,7 @@
       Switch="-M[value]" />
     <EnumProperty
       Name="CompilerFlavor"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Compiler Flavor"
       Description=
 "Set the compiler &lt;flavor&gt;: either &quot;msvc&quot; or &quot;unix&quot;.
@@ -123,19 +123,19 @@
     </EnumProperty>
     <BoolProperty
       Name="NoInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Include"
       Description="Do not generate an #include statement. (-i)"
       Switch="-i"/>
     <StringProperty
       Name="PathPrefix"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Path Prefix"
       Description="&lt;path&gt; prefix for included file. (-p &lt;path&gt;)"
       Switch="-p [value]"/>
     <StringListProperty
       Name="ForceInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Force Include"
       Description=
 "Force #include &lt;file&gt; (overwrite default); separate with semicolons if more than one.
@@ -143,7 +143,7 @@
       Switch="-f &quot;[value]&quot;"/>
     <StringListProperty
       Name="PrependInclude"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Prepend Include"
       Description=
 "Prepend #include &lt;file&gt; (preserve default); separate with semicolons if more than one.
@@ -151,7 +151,7 @@
       Switch="-b &quot;[value]&quot;"/>
     <StringListProperty
       Name="Include"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Include"
       Description=
 "Parse &lt;file&gt; as an #include before the main source(s); separate with semicolons if more
@@ -159,7 +159,7 @@ than one. (--include &lt;file&gt;)"
       Switch="--include &quot;[value]&quot;"/>
     <StringListProperty
       Name="NoNotesWarnings"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Notes Or Warnings"
       Description=
 "Do not display notes (-nn) or warnings (-nw); Compatibility option; separate with semicolons if
@@ -168,19 +168,19 @@ more than one. (-n&lt;n|w&gt;)"
       Visible="False"/>
     <BoolProperty
       Name="NoNotes"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Notes"
       Description="Do not display notes. (--no-notes)"
       Switch="--no-notes"/>
     <BoolProperty
       Name="NoWarnings"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="No Warnings"
       Description="Do not display warnings (implies --no-notes). (--no-warnings)"
       Switch="--no-warnings"/>
     <BoolProperty
       Name="IgnoreConflicts"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Ignore Conflicts"
       Description=
 "Ignore all options that conflict with compilers, like -pthread conflicting with moc's -p option.
@@ -188,7 +188,7 @@ more than one. (-n&lt;n|w&gt;)"
       Switch="--ignore-option-clashes"/>
     <BoolProperty
       Name="OutputJson"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Output JSON"
       Description=
 "In addition to generating C++ code, create a machine-readable JSON file in a file that matches the
@@ -196,13 +196,13 @@ output file and an extra .json extension. (--output-json)"
       Switch="--output-json"/>
     <BoolProperty
       Name="DebugIncludes"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Debug Includes"
       Description="Display debug messages of each considered include path. (--debug-includes)"
       Switch="--debug-includes"/>
     <BoolProperty
       Name="CollectJson"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Collect JSON"
       Description=
 "Instead of processing C++ code, collect previously generated JSON output into a single file.
@@ -210,32 +210,32 @@ output file and an extra .json extension. (--output-json)"
       Switch="--collect-json"/>
     <BoolProperty
       Name="OutputDepFile"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Output Dep File"
       Description="Output a Make-style dep file for build system consumption. (--output-dep-file)"
       Switch="--output-dep-file"/>
     <StringProperty
       Name="DepFilePath"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Dep File Path"
       Description="Path where to write the dep file. (--dep-file-path &lt;file&gt;)"
       Switch="--dep-file-path [value]"/>
     <StringProperty
       Name="DepFileRuleName"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Dep File Rule Name"
       Description=
 "The rule name (first line) of the dep file. (--dep-file-rule-name &lt;rule name&gt;)"
       Switch="--dep-file-rule-name [value]"/>
     <BoolProperty
       Name="RequireCompleteTypes"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Require Complete Types"
       Description="Require complete types for better performance. (--require-complete-types)"
       Switch="--require-complete-types"/>
     <StringProperty
       Name="OptionsFile"
-      HelpUrl="http://doc.qt.io/qt-5/moc.html"
+      HelpUrl="https://doc.qt.io/qt-6/moc.html"
       DisplayName="Options File"
       Description="Read additional command-line options from &lt;file&gt;. (@&lt;file&gt;)"
       Switch="&quot;@[value]&quot;" />
