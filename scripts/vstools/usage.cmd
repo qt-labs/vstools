@@ -30,6 +30,7 @@ ECHO.
 %##%  -init ..... Initialize vstools solution for the specified version of VS
 %##%              If multiple versions are specified, the last one is selected
 %##%  -startvs .. Open vstools solution in selected VS version
+%##%  -cmd ...... Open command line with selected 'vcvars' environment
 %##%  -list ..... Print list of Visual Studio installations
 %##%  -help ..... Print tool usage instructions
 %##%

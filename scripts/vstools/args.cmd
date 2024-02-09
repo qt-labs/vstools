@@ -54,6 +54,8 @@ IF "%ARG%" == "-init" (
     SET FLAG_VS2019=
 ) ELSE IF "%ARG%" == "-startvs" (
     SET START_VS=%TRUE%
+) ELSE IF "%ARG%" == "-cmd" (
+    SET START_CMD=%TRUE%
 ) ELSE IF "%ARG%" == "-list" (
     SET LIST_VERSIONS=%TRUE%
 ) ELSE IF "%ARG%" == "-vcvars" (
