@@ -253,11 +253,11 @@ namespace QtVsTools.Qml.Debug
                 return;
             ExcludedProcIds.Add(procId);
 
-            if (!Package.IsInitialized)
+            if (!QtVsToolsPackage.IsInitialized)
                 Notifications.NotifyMessage.Show("QML Debugger: Waiting for package initialization...");
 
             await TaskScheduler.Default;
-            Package.WaitUntilInitialized();
+            await QtVsToolsPackage.WaitUntilInitializedAsync();
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             Notifications.NotifyMessage.Close();
             LaunchDebug(execPath, cmd, procId);

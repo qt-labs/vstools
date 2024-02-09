@@ -21,6 +21,8 @@ using Microsoft.Win32;
 
 using Task = System.Threading.Tasks.Task;
 
+using static Microsoft.VisualStudio.Shell.PackageAutoLoadFlags;
+
 namespace QtVsTools
 {
     using Common;
@@ -44,8 +46,12 @@ namespace QtVsTools
     [InstalledProductRegistration(Vsix.Name, Vsix.Description, Version.PRODUCT_VERSION)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [ProvideAutoLoad(UIContextGuids.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
-    [ProvideAutoLoad(UIContextGuids.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.SolutionExists, BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.NoSolution, BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.EmptySolution, BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.SolutionHasSingleProject, BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.SolutionHasMultipleProjects, BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids.CodeWindow, BackgroundLoad)]
 
     [ProvideEditorExtension(typeof(Package.MsBuild.ConversionReportViewer),
         extension: ".qtvscr",
@@ -105,8 +111,8 @@ namespace QtVsTools
         public Editors.QtLinguist QtLinguist { get; private set; }
         private Editors.QtResourceEditor QtResourceEditor { get; set; }
 
-        public EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
-        private bool InitializationAwaited { get; set; } = false;
+        public static EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
+        private static bool InitializationAwaited { get; set; } = false;
 
         public static QtVsToolsPackage Instance { get; private set; }
 
@@ -354,13 +360,13 @@ namespace QtVsTools
             await base.OnAfterPackageLoadedAsync(cancellationToken);
         }
 
-        public bool WaitUntilInitialized(int timeout = -1)
+        public static async Task WaitUntilInitializedAsync()
         {
             InitializationAwaited = true;
-            return Initialized.WaitOne(timeout);
+            await Initialized;
         }
 
-        public bool IsInitialized => WaitUntilInitialized(0);
+        public static bool IsInitialized => Initialized.WaitOne(0);
 
         private async Task CheckVersionsAsync()
         {

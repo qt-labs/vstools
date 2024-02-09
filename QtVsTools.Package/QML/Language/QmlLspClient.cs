@@ -74,6 +74,8 @@ namespace QtVsTools.Qml.Language
 
         public async Task OnLoadedAsync()
         {
+            await QtVsToolsPackage.WaitUntilInitializedAsync();
+
             if (!Package.Options.QmlLspEnable)
                 Disconnect();
             else
