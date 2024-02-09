@@ -33,6 +33,7 @@ namespace QtVsTools
 namespace QtVsTools.Qml.Language
 {
     using Core;
+    using Core.CMake;
     using static Instances;
     using static Core.Common.Utils;
 
@@ -101,10 +102,6 @@ namespace QtVsTools.Qml.Language
             if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
                 return Disconnect();
 
-            var qtPath = qtVersion.InstallPrefix.Replace('/', '\\').TrimEnd('\\');
-            if (qtPath is not { Length: > 0 } || !Directory.Exists(qtPath))
-                return Disconnect();
-
             var qmLlsPath = $"{qtVersion.LibExecs.Replace('/', '\\').TrimEnd('\\')}\\qmlls.exe";
             if (qmLlsPath is not { Length: > 0 } || !File.Exists(qmLlsPath))
                 return Disconnect();
@@ -114,7 +111,7 @@ namespace QtVsTools.Qml.Language
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = qmLlsPath,
-                    Arguments = $"-b \"{qtPath}\"",
+                    Arguments = $"-b \"{await GetBuildDirAsync()}\"",
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -145,6 +142,22 @@ namespace QtVsTools.Qml.Language
             }
 
             return Connect();
+        }
+
+        private async Task<string> GetBuildDirAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (Package.Dte.Solution?.FullName is { Length: > 0 } slnPath)
+                return Directory.Exists(slnPath) ? slnPath : Path.GetDirectoryName(slnPath);
+
+            if (CMakeProject.ActiveProject?.RootPath is { Length: > 0 } cmakePath)
+                return cmakePath;
+
+            if (Package.Dte.ActiveDocument?.FullName is { Length: > 0 } docPath)
+                return Path.GetDirectoryName(docPath);
+
+            return Environment.CurrentDirectory;
         }
 
         private void SetupLog()
