@@ -144,7 +144,7 @@ namespace QtVsTools.Core.Options
                         versionPath = Path.GetDirectoryName(versionPath);
 
                     var qtConfiguration = new QMakeConf(versionPath);
-                    var generator = qtConfiguration.Entries["MAKEFILE_GENERATOR"].ToString();
+                    var generator = qtConfiguration["MAKEFILE_GENERATOR"];
 
                     if (generator is "MSVC.NET" or "MSBUILD")
                         continue;

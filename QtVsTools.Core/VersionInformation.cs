@@ -35,10 +35,7 @@ namespace QtVsTools.Core
 
         public string VsPlatformName { get; }
         public string QMakeSpecDirectory { get; }
-        public string GetQMakeConfEntry(string entryName)
-        {
-            return qmakeConf.Entries[entryName].ToString();
-        }
+        public string GetQMakeConfEntry(string entryName) => qmakeConf[entryName];
 
         private string targetMachine;
         public string TargetMachine
@@ -165,7 +162,7 @@ namespace QtVsTools.Core
                 InstallPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
                 IsWinRt = qmakeQuery["QMAKE_XSPEC"].StartsWith("winrt");
 
-                qmakeConf = new QMakeConf(qtDir, qmakeQuery);
+                qmakeConf = new QMakeConf(qmakeQuery);
                 QMakeSpecDirectory = qmakeConf?.QMakeSpecDirectory;
             } catch (Exception exception) {
                 exception.Log();
