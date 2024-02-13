@@ -16,10 +16,6 @@ namespace QtVsTools.Core
 
         public string QMakeSpecDirectory { get; }
 
-        public QMakeConf(string qtVersionDir)
-            : this(new QMakeQuery(qtVersionDir))
-        {}
-
         public QMakeConf(QMakeQuery qmakeQuery)
         {
             var qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
