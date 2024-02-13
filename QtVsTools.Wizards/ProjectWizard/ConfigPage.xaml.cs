@@ -532,7 +532,9 @@ namespace QtVsTools.Wizards.ProjectWizard
                 return;
 
             var qtVersionDir = Path.GetDirectoryName(qmakePath);
-            var versionName = $"{Path.GetFileName(qtVersionDir)}_{Path.GetFileName(qmakePath)}";
+            var versionName = QtVersionManager.SanitizeVersionName(
+                $"{Path.GetFileName(qtVersionDir)}_{Path.GetFileName(qmakePath)}"
+            );
 
             try {
                 QtVersionManager.SaveVersion(versionName, qmakePath);

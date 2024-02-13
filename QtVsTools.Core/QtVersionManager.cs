@@ -55,9 +55,20 @@ namespace QtVsTools.Core
             return version == null ? null : GetInstallPath(version);
         }
 
+        /// <summary>
+        /// Sanitizes the provided version name by removing leading and trailing whitespaces,
+        /// replacing backslashes and spaces with underscores.
+        /// </summary>
+        /// <param name="name">The version name to be sanitized.</param>
+        /// <returns>A sanitized version of the input name.</returns>
+        public static string SanitizeVersionName(string name)
+        {
+            return name?.Trim().Replace('\\', '_').Replace(' ', '_');
+        }
+
         public static void SaveVersion(string versionName, string path, bool checkPath = true)
         {
-            var verName = versionName?.Trim().Replace(@"\", "_");
+            var verName = SanitizeVersionName(versionName);
             if (string.IsNullOrEmpty(verName))
                 return;
             var dir = string.Empty;
@@ -184,6 +195,10 @@ namespace QtVsTools.Core
                 return false;
             var key = Registry.CurrentUser.CreateSubKey(RegistryVersionsPath);
             if (key == null)
+                return false;
+
+            version = SanitizeVersionName(version);
+            if (string.IsNullOrEmpty(version))
                 return false;
             key.SetValue("DefaultQtVersion", version);
             return true;
