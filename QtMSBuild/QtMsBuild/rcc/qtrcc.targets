@@ -524,6 +524,7 @@
         ///////////////////////////////////////////////////////////////////////////////////////////
         // C++ dynamic source -->
         <ClCompile Condition="'%(QtRcc.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
+        <ClCompile_DisableSpecificWarnings>4711</ClCompile_DisableSpecificWarnings>
       </QtWork>
     </ItemGroup>
 

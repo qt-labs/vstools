@@ -463,17 +463,23 @@
     </ItemGroup>
 
     <!-- // Copy default C++ compiler properties -->
+    <ItemGroup>
+      <QtWork_ClCompile_Template Include="QtWork_ClCompile_Template">
+        <DisableSpecificWarnings>
+          <![CDATA[%<DisableSpecificWarnings>;%<ClCompile_DisableSpecificWarnings>]]>
+        </DisableSpecificWarnings>
+      </QtWork_ClCompile_Template>
+    </ItemGroup>
     <Expand Condition="'@(QtWork_ClCompile)' != ''"
       Items="@(QtWork_ClCompile)"
-      BaseItem="@(ClCompile->WithMetadataValue('Identity', 'DefaultClCompile'))">
+      BaseItem="@(ClCompile->WithMetadataValue('Identity', 'DefaultClCompile'))"
+      Template="@(QtWork_ClCompile_Template)">
       <Output TaskParameter="Result" ItemName="QtWork_ClCompile_Expanded"/>
     </Expand>
 
     <!-- // Force pre-compiled header include -->
     <ItemGroup Condition="'$(ApplicationType)' != 'Linux'">
       <QtWork_ClCompile_Expanded>
-        <AdditionalIncludeDirectories
-          >$(ProjectDir);%(QtWork_ClCompile_Expanded.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
           >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
         <AdditionalOptions>$([System.String]::Copy(
@@ -523,13 +529,14 @@
     // Clean-up
     // -->
     <ItemGroup>
-      <ClCompile    Remove="DefaultClCompile" />
-      <QtWork       Remove="@(QtWork)"/>
-      <QtWorkResult Remove="@(QtWorkResult)"/>
-      <QtWorkLog    Remove="@(QtWorkLog)"/>
-      <read_log     Remove="@(read_log)"/>
-      <write_log    Remove="@(write_log)"/>
-      <clean_log    Remove="@(clean_log)"/>
+      <ClCompile                 Remove="DefaultClCompile"/>
+      <QtWork                    Remove="@(QtWork)"/>
+      <QtWork_ClCompile_Template Remove="@(QtWork_ClCompile_Template)"/>
+      <QtWorkResult              Remove="@(QtWorkResult)"/>
+      <QtWorkLog                 Remove="@(QtWorkLog)"/>
+      <read_log                  Remove="@(read_log)"/>
+      <write_log                 Remove="@(write_log)"/>
+      <clean_log                 Remove="@(clean_log)"/>
     </ItemGroup>
   </Target>
 
