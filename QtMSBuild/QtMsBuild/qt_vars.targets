@@ -205,7 +205,7 @@
       <QMakeArgsList Include="CONFIG -= debug release debug_and_release"/>
       <QMakeArgsList Include="CONFIG += $(QtBuildConfig) warn_off"/>
       <QMakeArgsList Condition="'$(QtPlugin)' == 'true'" Include="CONFIG += plugin"/>
-      <QMakeArgsList Include="$(QMakeExtraArgs)"/>
+      <QMakeExtraArgs Include="$(QMakeExtraArgs)"/>
     </ItemGroup>
     <ItemGroup>
       <QMakeArgsList>
@@ -218,6 +218,7 @@
     <PropertyGroup>
       <QMakeArgs>@(QMakeArgsList->'%(Escaped)', ' ')</QMakeArgs>
       <QMakeArgs Condition="'$(QtQMakeTemplate)' == 'vcapp'"> -tp vc $(QMakeArgs)</QMakeArgs>
+      <QMakeArgs>$(QMakeArgs) @(QMakeExtraArgs->'%(Identity)',' ')</QMakeArgs>
     </PropertyGroup>
 
     <!--// Modules and additional .pro file lines -->
@@ -426,7 +427,7 @@ DummyQmlObject { }
     <Error
       Condition="'$(QMakeError)' == 'true'"
       File="$(MSBuildProjectFile)"
-      Text="ERROR running qmake%0D%0Aqmake: @(QMakeError->'%(Identity)','%0D%0Aqmake: ')%0D%0A"/>
+      Text="ERROR running qmake: $(cmd)%0D%0Aqmake: @(QMakeError->'%(Identity)','%0D%0Aqmake: ')"/>
     <Message
       Importance="high"
       Condition="'$(QMakeError)' != 'true' AND '$(QtVarsDebug)' == 'true'"
