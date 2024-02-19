@@ -186,7 +186,7 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
       <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
         >QT_QML_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Qt_INCLUDEPATH_)' != ''"
-        >%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_)</AdditionalIncludeDirectories>
+        >%(AdditionalIncludeDirectories);$(ProjectDir);$(Qt_INCLUDEPATH_)</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
         >$(Qt_STDCPP_)</LanguageStandard>
       <RuntimeLibrary Condition="'$(Qt_RUNTIME_)' != ''"
