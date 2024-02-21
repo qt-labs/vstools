@@ -490,7 +490,7 @@
 
     <!-- // Add C++ source items and clean-up temp items -->
     <ItemGroup>
-      <ClCompile Include="@(QtWork_ClCompile_Expanded)"/>
+      <ClCompile Include="@(QtWork_ClCompile_Expanded)" RemoveMetadata="ExitCode" />
       <QtWork_ClCompile_Expanded Remove="@(QtWork_ClCompile_Expanded)"/>
       <QtWork_ClCompile Remove="@(QtWork_ClCompile)"/>
     </ItemGroup>
