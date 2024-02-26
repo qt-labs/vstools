@@ -169,6 +169,21 @@ namespace QtVsTools.Core
                 StringComparison.Ordinal, true);
         }
 
+        public static bool MoveToRelativePath(this VCFile file, string relativePath)
+        {
+            var prevPath = file.FullPath;
+            var prevRelativePath = file.RelativePath;
+            try {
+                file.RelativePath = relativePath;
+                Directory.CreateDirectory(Path.GetDirectoryName(file.FullPath));
+                File.Move(prevPath, file.FullPath);
+                return true;
+            } catch {
+                file.RelativePath = prevRelativePath;
+                return false;
+            }
+        }
+
         /// <summary>
         /// Converts all directory separators of the path to the alternate character
         /// directory separator. For instance, FromNativeSeparators("c:\\winnt\\system32")

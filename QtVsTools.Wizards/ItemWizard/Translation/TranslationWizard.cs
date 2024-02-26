@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
@@ -100,8 +101,13 @@ namespace QtVsTools.Wizards.ItemWizard
             var fullPath = vcFile.FullPath;
             TextAndWhitespace.Adjust(Dte, fullPath);
 
-            if (HelperFunctions.IsTranslationFile(fullPath))
+            if (HelperFunctions.IsTranslationFile(fullPath)) {
+                if (WizardData is TsWizardData ts &&
+                    !string.IsNullOrEmpty(Path.GetDirectoryName(ts.TsFile))) {
+                    vcFile.MoveToRelativePath(ts.TsFile);
+                }
                 vcFile.MoveToFilter(FakeFilter.TranslationFiles());
+            }
         }
     }
 }

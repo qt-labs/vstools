@@ -216,14 +216,23 @@ namespace QtVsTools.Wizards.ItemWizard
             var fullPath = vcFile.FullPath;
             TextAndWhitespace.Adjust(Dte, fullPath);
 
-            if (HelperFunctions.IsUicFile(fullPath))
+            if (HelperFunctions.IsUicFile(fullPath)) {
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.UiFile)))
+                    vcFile.MoveToRelativePath(WizardData.UiFile);
                 vcFile.MoveToFilter(FakeFilter.FormFiles());
+            }
 
-            if (HelperFunctions.IsHeaderFile(fullPath))
+            if (HelperFunctions.IsHeaderFile(fullPath)) {
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassHeaderFile)))
+                    vcFile.MoveToRelativePath(WizardData.ClassHeaderFile);
                 vcFile.MoveToFilter(FakeFilter.HeaderFiles());
+            }
 
-            if (HelperFunctions.IsSourceFile(fullPath))
+            if (HelperFunctions.IsSourceFile(fullPath)) {
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassSourceFile)))
+                    vcFile.MoveToRelativePath(WizardData.ClassSourceFile);
                 vcFile.MoveToFilter(FakeFilter.SourceFiles());
+            }
         }
 
         public override void RunFinished()
