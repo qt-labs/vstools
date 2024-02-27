@@ -188,16 +188,16 @@ add_subdirectory(""{subDir}"")
             var template = new VsTemplate(ParameterValues["$templatepath$"]);
             var openInEditorItems = template.ProjectItems.Where(x => x.OpenInEditor);
             foreach (var item in openInEditorItems) {
-                string fileName;
+                string fileName = null;
                 if (item.TargetFileName != null) {
-                    fileName = item.TargetFileName;
-                    if (ParameterValues.TryGetValue("$sourcefilename$", out var value))
-                        fileName = fileName.Replace("$sourcefilename$", value);
+                    if (ParameterValues.TryGetValue(item.TargetFileName, out var value))
+                        fileName = value;
                 }
                 else {
                     fileName = item.TemplateFileName;
                 }
-                VsEditor.Open(Path.Combine(projectDir.LocalPath, fileName));
+                if (fileName != null)
+                    VsEditor.Open(Path.Combine(projectDir.LocalPath, fileName));
             }
         }
 
