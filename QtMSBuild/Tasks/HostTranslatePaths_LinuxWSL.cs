@@ -1,6 +1,6 @@
 /***************************************************************************************************
  Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 ***************************************************************************************************/
 
 #region Task TaskName="HostTranslatePaths" Condition="('$(VisualStudioVersion)' == '16.0' OR '$(VisualStudioVersion)' == '17.0') AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
