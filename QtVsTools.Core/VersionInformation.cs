@@ -31,6 +31,9 @@ namespace QtVsTools.Core
         private readonly QMakeQuery qmakeQuery;
         private string vsPlatformName;
 
+        public static implicit operator System.Version(VersionInformation v) =>
+            new((int)v.qtMajor, (int)v.qtMinor, (int)v.qtPatch);
+
         private static readonly SemaphoreSlim CacheSemaphore = new (1, 1);
         private static readonly ConcurrentDictionary<string, VersionInformation> Cache
             = new(Utils.CaseIgnorer);

@@ -237,8 +237,10 @@ namespace QtVsTools.Wizards.ProjectWizard
             var fileName = Path.GetFileName(filePath);
             if (IsCMakeFile(fileName))
                 return WizardData.ProjectModel == WizardData.ProjectModels.CMake;
-            else if (WizardData.ProjectModel == WizardData.ProjectModels.CMake)
+            if (WizardData.ProjectModel == WizardData.ProjectModels.CMake &&
+                WizardData.Configs.Any(x => x.QtVersion >= new System.Version(6, 2))) {
                 return !HelperFunctions.IsQrcFile(filePath);
+            }
             return true;
         }
 
