@@ -402,7 +402,7 @@ namespace QtVsTools
             if (MsBuildProject.GetOrAdd(vcConfiguration.project as VCProject) is not {} project)
                 return;
 
-            if (!propertyName.StartsWith("Qt") || propertyName == "QtLastBackgroundBuild")
+            if (!propertyName.StartsWith("Qt") || propertyName == "QtTouchProperty")
                 return;
 
             project.Refresh(vcConfiguration.Name);

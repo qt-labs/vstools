@@ -339,11 +339,16 @@ namespace QtVsTools.Core.MsBuild
                 }
 
                 if (ok) {
+                    // Hack: Modify the QtTouchProperty in the project user file to trigger an
+                    // update to MOC/UIC/... as well as IntelliSense. Revert it immediately to avoid
+                    // changing the project user file.
                     var vcConfigs = item.VcProject.Configurations as IVCCollection;
                     var vcConfig = vcConfigs?.Item(item.ConfiguredProject.ProjectConfiguration.Name)
                         as VCConfiguration;
-                    var props = vcConfig?.Rules.Item("QtRule10_Settings") as IVCRulePropertyStorage;
-                    props?.SetPropertyValue("QtLastBackgroundBuild", DateTime.UtcNow.ToString("o"));
+                    if (vcConfig?.Rules.Item("QtRule10_Settings") is IVCRulePropertyStorage props) {
+                        props.SetPropertyValue("QtTouchProperty", " ");
+                        props.SetPropertyValue("QtTouchProperty", "");
+                    }
                 }
             } catch (Exception e) {
                 Messages.Print($"{Path.GetFileName(item.UnconfiguredProject.FullPath)}: "

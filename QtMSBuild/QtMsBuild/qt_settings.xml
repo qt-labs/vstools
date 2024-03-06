@@ -41,8 +41,8 @@
     <EnumValue Name="QtVS_v304" DisplayName="Version 3.4"/>
   </EnumProperty>
   <StringProperty
-    Name="QtLastBackgroundBuild"
-    DisplayName="Last Background Build"
+    Name="QtTouchProperty"
+    DisplayName="Touch Property"
     Category="QtSettings_01_General"
     Visible="False">
     <StringProperty.DataSource>
