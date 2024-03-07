@@ -169,7 +169,7 @@ namespace QtVsTools.Core
                         defaultVersion = name;
                 }
             }
-            return VerifyIfQtVersionExists(defaultVersion) ? defaultVersion : null;
+            return VersionExists(defaultVersion) ? defaultVersion : null;
         }
 
         public static string GetDefaultVersionInstallPath()
@@ -204,7 +204,7 @@ namespace QtVsTools.Core
             return true;
         }
 
-        private static bool VerifyIfQtVersionExists(string version)
+        public static bool VersionExists(string version)
         {
             if (version == "$(DefaultQtVersion)")
                 version = GetDefaultVersion();

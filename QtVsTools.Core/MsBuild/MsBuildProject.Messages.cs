@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 // ************************************************************************************************
 
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -17,6 +19,86 @@ namespace QtVsTools.Core.MsBuild
 
     public partial class MsBuildProject
     {
+        private class UpdateQtInstallation : InfoBarMessage
+        {
+            private UpdateQtInstallation(MsBuildProject project = null) => Project = project;
+
+            private static UpdateQtInstallation MessageImpl =>
+                StaticLazy.Get(() => MessageImpl, () => null);
+
+            public static UpdateQtInstallation Message(MsBuildProject project = null) =>
+                StaticLazy.Get(() => MessageImpl, () => new UpdateQtInstallation(project));
+
+            protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
+
+            protected override TextSpan[] Text => new TextSpan[]
+            {
+                new() { Bold = true, Text = "Qt Visual Studio Tools" },
+                new TextSpacer(2),
+                Utils.EmDash,
+                new TextSpacer(2),
+                "The project's 'Qt Installation' property is not set correctly. Please specify a "
+                    + "valid Qt version or path."
+            };
+
+            protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+            {
+                    new()
+                    {
+                        Text = "Open project properties",
+                        CloseInfoBar = true,
+                        OnClicked = () => {
+                            if (!Project.SelectInSolutionExplorer())
+                                return;
+                            if (VsServiceProvider.GetService<SVsUIShell, IVsUIShell>() is not {} shell)
+                                return;
+
+                            var guid = typeof(VSConstants.VSStd97CmdID).GUID;
+                            const uint id = (uint)VSConstants.VSStd97CmdID.ProjectProperties;
+                            ThreadHelper.ThrowIfNotOnUIThread();
+                            shell.PostExecCommand(guid, id, 0, null);
+                        }
+                    },
+                    new()
+                    {
+                        Text = "Don't show again",
+                        CloseInfoBar = true,
+                        OnClicked = () =>
+                        {
+                            if (Options.Get() is not {} options)
+                                return;
+                            options.UpdateQtInstallation = false;
+                            options.SaveSettingsToStorage();
+                        }
+                    }
+            };
+
+            private MsBuildProject Project { get; }
+        }
+
+        public static void ShowUpdateQtInstallationMessage(MsBuildProject project)
+        {
+            ThreadHelper.JoinableTaskFactory.Run(() =>
+                ShowUpdateQtInstallationMessageAsync(project));
+        }
+
+        public static async Task ShowUpdateQtInstallationMessageAsync(MsBuildProject project)
+        {
+            if (!Options.Get().UpdateQtInstallation)
+                return;
+            await VsShell.UiThreadAsync(UpdateQtInstallation.Message(project).Show);
+        }
+
+        public static void CloseUpdateQtInstallationMessage()
+        {
+            ThreadHelper.JoinableTaskFactory.Run(CloseUpdateQtInstallationMessageAsync);
+        }
+
+        public static async Task CloseUpdateQtInstallationMessageAsync()
+        {
+            await VsShell.UiThreadAsync(UpdateQtInstallation.Message().Close);
+        }
+
         private class UpdateProjectFormat : InfoBarMessage
         {
             public static UpdateProjectFormat Message =>

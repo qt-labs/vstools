@@ -79,6 +79,7 @@ namespace QtVsTools.Core.Options
         {
             [String("Notifications_AutoActivatePane")] AutoActivatePane,
             [String("Notifications_Installed")] Installed,
+            [String("Notifications_UpdateQtInstallation")] UpdateQtInstallation,
             [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
             [String("Notifications_CMake_Conversion")] CMakeConversion
@@ -285,6 +286,12 @@ namespace QtVsTools.Core.Options
         public bool NotifyInstalled { get; set; }
 
         [Category("Notifications")]
+        [DisplayName("Update Qt installation")]
+        [Description("Show notification when a project uses an invalid Qt Installation.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool UpdateQtInstallation { get; set; }
+
+        [Category("Notifications")]
         [DisplayName("Update project format")]
         [Description("Show notification when a project uses some legacy code path of the Qt "
             + "Visual Studio Tools.")]
@@ -392,6 +399,7 @@ namespace QtVsTools.Core.Options
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
             AutoActivatePane = true;
             NotifyInstalled = true;
+            UpdateQtInstallation = true;
             UpdateProjectFormat = true;
             NotifyCMakeIncompatible = true;
             NotifyCMakeConversion = true;
@@ -448,6 +456,7 @@ namespace QtVsTools.Core.Options
                 Load(() => NotifyInstalled, key, Notifications.Installed);
                 Load(() => NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
                 Load(() => NotifyCMakeConversion, key, Notifications.CMakeConversion);
+                Load(() => UpdateQtInstallation, key, Notifications.UpdateQtInstallation);
                 Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Load(() => LinkNatvis, key, Natvis.Link);
                 Load(() => QmlLspEnable, key, QmlLsp.Enable);
@@ -495,6 +504,7 @@ namespace QtVsTools.Core.Options
                 Save(NotifyInstalled, key, Notifications.Installed);
                 Save(NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
                 Save(NotifyCMakeConversion, key, Notifications.CMakeConversion);
+                Save(UpdateQtInstallation, key, Notifications.UpdateQtInstallation);
                 Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
                 Save(LinkNatvis, key, Natvis.Link);
                 Save(QmlLspEnable, key, QmlLsp.Enable);

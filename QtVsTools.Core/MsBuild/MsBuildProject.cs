@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.VCProjectEngine;
 
@@ -52,6 +54,19 @@ namespace QtVsTools.Core.MsBuild
                         InitQueue.Enqueue(project);
                         _ = Task.Run(InitDispatcherLoopAsync);
                     }
+
+                    var configs = (vcProject.Configurations as IVCCollection)
+                        ?.OfType<VCConfiguration>() ?? Enumerable.Empty<VCConfiguration>();
+                    foreach (var config in configs) {
+                        if (config.Rules.Item("QtRule10_Settings") is not
+                            IVCRulePropertyStorage props) {
+                            continue;
+                        }
+                        var qtInstall = props.GetEvaluatedPropertyValue("QtInstall");
+                        if (!QtVersionManager.VersionExists(qtInstall))
+                            ShowUpdateQtInstallationMessage(project);
+                    }
+
                     return project;
                 }
 
@@ -247,6 +262,27 @@ namespace QtVsTools.Core.MsBuild
                 foreach (var vcFile in GetFilesFromProject(delName))
                     vcFile.DeleteAndRemoveFromFilter(FakeFilter.GeneratedFiles());
             }
+        }
+
+        public bool SelectInSolutionExplorer()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (VsServiceProvider.Instance is not IServiceProvider provider)
+                return false;
+            var explorer = VsShellUtilities.GetUIHierarchyWindow(provider,
+                VSConstants.StandardToolWindows.SolutionExplorer);
+            var hierarchy = VsShellUtilities.GetHierarchy(provider,
+                Guid.Parse(VcProject.ProjectGUID)) as IVsUIHierarchy;
+
+            if (explorer == null || hierarchy == null)
+                return false;
+
+            explorer.ExpandItem(hierarchy, VSConstants.VSITEMID_ROOT, EXPANDFLAGS.EXPF_SelectItem);
+            var ret = explorer.GetItemState(hierarchy, VSConstants.VSITEMID_ROOT,
+                (uint)__VSHIERARCHYITEMSTATE.HIS_Selected, out var state);
+
+            return !ErrorHandler.Failed(ret) && state == (uint)__VSHIERARCHYITEMSTATE.HIS_Selected;
         }
     }
 }
