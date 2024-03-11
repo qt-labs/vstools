@@ -81,7 +81,8 @@ namespace QtVsTools.Wizards.ItemWizard
         {
             if (WizardData is TsWizardData ts) {
                 Parameter[NewTranslationItem.CultureInfoName] = ts.CultureInfoName;
-                Parameter[NewTranslationItem.TsFileName] = $"{ts.TsFile}_{ts.CultureInfoName}.ts";
+                Parameter[NewTranslationItem.TsFileName] =
+                    HelperFunctions.FromNativeSeparators($"{ts.TsFile}_{ts.CultureInfoName}.ts");
             }
         }
 
@@ -102,10 +103,9 @@ namespace QtVsTools.Wizards.ItemWizard
             TextAndWhitespace.Adjust(Dte, fullPath);
 
             if (HelperFunctions.IsTranslationFile(fullPath)) {
-                if (WizardData is TsWizardData ts &&
-                    !string.IsNullOrEmpty(Path.GetDirectoryName(ts.TsFile))) {
-                    vcFile.MoveToRelativePath(ts.TsFile);
-                }
+                var tsFileName = Parameter[NewTranslationItem.TsFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(tsFileName)))
+                    vcFile.MoveToRelativePath(tsFileName);
                 vcFile.MoveToFilter(FakeFilter.TranslationFiles());
             }
         }

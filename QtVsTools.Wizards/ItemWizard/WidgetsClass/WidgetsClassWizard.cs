@@ -136,9 +136,12 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeTemplateExpansion()
         {
-            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
-            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
-            Parameter[NewClass.UiFileName] = WizardData.UiFile;
+            Parameter[NewClass.HeaderFileName] =
+                HelperFunctions.FromNativeSeparators(WizardData.ClassHeaderFile);
+            Parameter[NewClass.SourceFileName] =
+                HelperFunctions.FromNativeSeparators(WizardData.ClassSourceFile);
+            Parameter[NewClass.UiFileName] =
+                HelperFunctions.FromNativeSeparators(WizardData.UiFile);
 
             var array = WizardData.ClassName.Split(new[] { "::" },
                 StringSplitOptions.RemoveEmptyEntries);
@@ -152,14 +155,14 @@ namespace QtVsTools.Wizards.ItemWizard
             if (qtProject?.UsesPrecompiledHeaders() == true)
                 include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
 
-            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
+            include.AppendLine($"#include \"{Parameter[NewClass.HeaderFileName]}\"");
             Parameter[NewWidgetsItem.Include] = FormatParam(include);
 
             Parameter[NewWidgetsItem.QObject] = WizardData.InsertQObjectMacro
                                                     ? "\r\n    Q_OBJECT\r\n" : "";
 
             Parameter[NewWidgetsItem.UiHeaderName] =
-                $"ui_{Path.GetFileNameWithoutExtension(WizardData.UiFile)}.h";
+                $"ui_{Path.GetFileNameWithoutExtension(Parameter[NewClass.UiFileName])}.h";
 
             if (WizardData.BaseClass == "QMainWindow") {
                 Parameter[NewWidgetsItem.CentralWidget] = FormatParam(
@@ -216,30 +219,34 @@ namespace QtVsTools.Wizards.ItemWizard
             var fullPath = vcFile.FullPath;
             TextAndWhitespace.Adjust(Dte, fullPath);
 
-            if (HelperFunctions.IsUicFile(fullPath)) {
-                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.UiFile)))
-                    vcFile.MoveToRelativePath(WizardData.UiFile);
-                vcFile.MoveToFilter(FakeFilter.FormFiles());
-            }
-
             if (HelperFunctions.IsHeaderFile(fullPath)) {
-                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassHeaderFile)))
-                    vcFile.MoveToRelativePath(WizardData.ClassHeaderFile);
+                var headerFileName = Parameter[NewClass.HeaderFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(headerFileName)))
+                    vcFile.MoveToRelativePath(headerFileName);
                 vcFile.MoveToFilter(FakeFilter.HeaderFiles());
             }
 
             if (HelperFunctions.IsSourceFile(fullPath)) {
-                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassSourceFile)))
-                    vcFile.MoveToRelativePath(WizardData.ClassSourceFile);
+                var sourceFileName = Parameter[NewClass.SourceFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(sourceFileName)))
+                    vcFile.MoveToRelativePath(sourceFileName);
                 vcFile.MoveToFilter(FakeFilter.SourceFiles());
+            }
+
+            if (HelperFunctions.IsUicFile(fullPath)) {
+                var uiFileName = Parameter[NewClass.UiFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(uiFileName)))
+                    vcFile.MoveToRelativePath(uiFileName);
+                vcFile.MoveToFilter(FakeFilter.FormFiles());
             }
         }
 
         public override void RunFinished()
         {
-            var rootName = Parameter[NewClass.Rootname];
-            if (!string.IsNullOrEmpty(rootName))
-                VsEditor.Open(rootName + ".cpp");
+            var rootDir = Path.GetDirectoryName(Parameter[NewClass.Rootname]);
+            var sourceFileName = Parameter[NewClass.SourceFileName];
+            if (!string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(sourceFileName))
+                VsEditor.Open(Path.Combine(rootDir, sourceFileName));
         }
     }
 }

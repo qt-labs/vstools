@@ -117,8 +117,10 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeTemplateExpansion()
         {
-            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
-            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
+            Parameter[NewClass.HeaderFileName] =
+                HelperFunctions.FromNativeSeparators(WizardData.ClassHeaderFile);
+            Parameter[NewClass.SourceFileName] =
+                HelperFunctions.FromNativeSeparators(WizardData.ClassSourceFile);
 
             var array = WizardData.ClassName.Split(new[] { "::" },
                 StringSplitOptions.RemoveEmptyEntries);
@@ -133,7 +135,7 @@ namespace QtVsTools.Wizards.ItemWizard
             if (qtProject?.UsesPrecompiledHeaders() == true)
                 include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
 
-            include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
+            include.AppendLine($"#include \"{Parameter[NewClass.HeaderFileName]}\"");
             Parameter[NewQtItem.Include] = FormatParam(include);
 
             if (!string.IsNullOrEmpty(baseClass)) {
@@ -172,23 +174,26 @@ namespace QtVsTools.Wizards.ItemWizard
             TextAndWhitespace.Adjust(Dte, fullPath);
 
             if (HelperFunctions.IsHeaderFile(fullPath)) {
-                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassHeaderFile)))
-                    vcFile.MoveToRelativePath(WizardData.ClassHeaderFile);
+                var headerFileName = Parameter[NewClass.HeaderFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(headerFileName)))
+                    vcFile.MoveToRelativePath(headerFileName);
                 vcFile.MoveToFilter(FakeFilter.HeaderFiles());
             }
 
             if (HelperFunctions.IsSourceFile(fullPath)) {
-                if (!string.IsNullOrEmpty(Path.GetDirectoryName(WizardData.ClassSourceFile)))
-                    vcFile.MoveToRelativePath(WizardData.ClassSourceFile);
+                var sourceFileName = Parameter[NewClass.SourceFileName];
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(sourceFileName)))
+                    vcFile.MoveToRelativePath(sourceFileName);
                 vcFile.MoveToFilter(FakeFilter.SourceFiles());
             }
         }
 
         public override void RunFinished()
         {
-            var rootName = Parameter[NewClass.Rootname];
-            if (!string.IsNullOrEmpty(rootName))
-                VsEditor.Open(rootName + ".cpp");
+            var rootDir = Path.GetDirectoryName(Parameter[NewClass.Rootname]);
+            var sourceFileName = Parameter[NewClass.SourceFileName];
+            if (!string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(sourceFileName))
+                VsEditor.Open(Path.Combine(rootDir, sourceFileName));
         }
     }
 }
