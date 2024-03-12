@@ -13,11 +13,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
-using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.BraceCompletion;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Utilities;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -34,8 +34,9 @@ namespace QtVsTools.Qml.Language
 {
     using Core;
     using Core.CMake;
-    using static Instances;
     using static Core.Common.Utils;
+    using static Core.HelperFunctions;
+    using static Instances;
 
     [Export(typeof(ILanguageClient))]
     [Export(typeof(IBraceCompletionSessionProvider))]
@@ -104,7 +105,7 @@ namespace QtVsTools.Qml.Language
             if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
                 return Disconnect();
 
-            var qmLlsPath = $"{qtVersion.LibExecs.Replace('/', '\\').TrimEnd('\\')}\\qmlls.exe";
+            var qmLlsPath = Path.Combine(ToNativeSeparator(qtVersion.LibExecs), "qmlls.exe");
             if (qmLlsPath is not { Length: > 0 } || !File.Exists(qmLlsPath))
                 return Disconnect();
 

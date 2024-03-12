@@ -65,7 +65,7 @@ namespace QtVsTools.Core.CMake
                 .ToList();
             foreach (var versionPreset in versionPresets) {
                 if (VersionInformation.GetOrAddByName((string)versionPreset["name"]) is {} version) {
-                    var qtDir = version.InstallPrefix.Replace('\\', '/');
+                    var qtDir = HelperFunctions.FromNativeSeparators(version.InstallPrefix);
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
                     if (qtDir.Equals(presetQtDir, IgnoreCase))
                         continue;
@@ -138,7 +138,7 @@ namespace QtVsTools.Core.CMake
                     ["inherits"] = "Qt",
                     ["environment"] = new JObject
                     {
-                        ["QTDIR"] = qtDir.Replace('\\', '/')
+                        ["QTDIR"] = HelperFunctions.FromNativeSeparators(qtDir)
                     },
                     ["architecture"] = new JObject
                     {
