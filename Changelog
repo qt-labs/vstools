@@ -1,3 +1,25 @@
+Qt Visual Studio Tools version 3.2.0:
+
+This update of the Qt VS Tools extension adds experimental QML LSP server, disabled by default.
+
+Changes
+-------
+ - Extended QML LSP server support, with stream monitoring and additional file logging
+ - Searching for dev releases is now an opt-in (new Settings entry)
+ - Updated VS interface of Qt command line tools to match Qt 6.6.1
+ - Fixed QTVSADDINBUG-528: Enable file wizards to accept relative paths
+ - Fixed QTVSADDINBUG-1162: Qt Quick project creation with Qt 5 and CMake
+ - Fixed QTVSADDINBUG-989: MultiToolTask on VS 2019 failed unexpectedly
+ - Fixed QTVSADDINBUG-1179: Change source license to LicenseRef-Qt-Commercial or GPL-3.0-only
+ - Fixed QTVSADDINBUG-1158: Properly recognize QMake extra arguments
+ - Fixed QTVSADDINBUG-992: RCC failure when using precompiled headers and /W4 /WX
+ - Fixes QTVSADDINBUG-1055: Support Qt VS Tools on ARM64
+ - Fixes QTVSADDINBUG-807: Unify the project settings for standard VS and Qt templates
+ - Fixed QTVSADDINBUG-1160: Open source files in CMake projects after project creation
+ - Fixed QTVSADDINBUG-1159: Update more templates for Qt/CMake
+ - Fixed QTVSADDINBUG-1164: Add QTDIR to PATH when debugging
+
+
 Qt Visual Studio Tools version 3.1.0:
 
 Changes
