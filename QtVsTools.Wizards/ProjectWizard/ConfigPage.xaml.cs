@@ -119,7 +119,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private IEnumerable<string> qtVersionList;
 
-        readonly VersionInformation defaultQtVersionInfo;
+        private readonly (string Name, VersionInformation VersionInfo) defaultVersion;
 
         CloneableList<Config> defaultConfigs;
         List<Config> currentConfigs;
@@ -133,8 +133,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             InitializeComponent();
 
-            string defaultQtVersionName = QtVersionManager.GetDefaultVersion();
-            defaultQtVersionInfo = VersionInformation.GetOrAddByName(defaultQtVersionName);
+            var name = QtVersionManager.GetDefaultVersion();
+            defaultVersion = (name, VersionInformation.GetOrAddByName(name));
 
             DataContext = this;
             Loaded += OnLoaded;
@@ -149,21 +149,26 @@ namespace QtVsTools.Wizards.ProjectWizard
             qtVersionList = new[] { QT_VERSION_DEFAULT, QT_VERSION_BROWSE }
                 .Union(QtVersionManager.GetVersions());
 
-            if (defaultQtVersionInfo != null)
-                SetupDefaultConfigsAndConfigTable(defaultQtVersionInfo);
-
+            if (defaultVersion.VersionInfo != null)
+                SetupDefaultConfigsAndConfigTable(defaultVersion);
+            else {
+                if (qtVersionList.Count() > 2) {
+                    var name = qtVersionList.Last();
+                    SetupDefaultConfigsAndConfigTable((name, VersionInformation.GetOrAddByName(name)));
+                }
+            }
             initialNextButtonIsEnabled = NextButton.IsEnabled;
             initialFinishButtonIsEnabled = FinishButton.IsEnabled;
 
             Validate();
         }
 
-        private void SetupDefaultConfigsAndConfigTable(VersionInformation versionInfo)
+        private void SetupDefaultConfigsAndConfigTable((string Name, VersionInformation VersionInfo) version)
         {
-            if (versionInfo == null)
+            if (version.VersionInfo is not {} versionInfo)
                 return;
 
-            DefaultModules = QtModules.Instance.GetAvailableModules(versionInfo.qtMajor)
+            DefaultModules = QtModules.Instance.GetAvailableModules(versionInfo.Major)
                 .Where(mi => mi.Selectable)
                 .Select(mi => new Module
                 {
@@ -179,16 +184,16 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Name = "Debug",
                     IsDebug = true,
                     QtVersion = versionInfo,
-                    QtVersionName = versionInfo.name,
-                    Target = versionInfo.isWinRT()
+                    QtVersionName = version.Name,
+                    Target = versionInfo.IsWinRt
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
                     Platform
-                        = versionInfo.platform() == Platform.x86
+                        = versionInfo.Platform == Platform.x86
                             ? ProjectPlatforms.Win32.Cast<string>()
-                            : versionInfo.platform() == Platform.x64
+                            : versionInfo.Platform == Platform.x64
                                 ? ProjectPlatforms.X64.Cast<string>()
-                                : versionInfo.platform() == Platform.arm64
+                                : versionInfo.Platform == Platform.arm64
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty,
                     Modules = DefaultModules.ToDictionary(m => m.Name)
@@ -198,16 +203,16 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Name = "Release",
                     IsDebug = false,
                     QtVersion = versionInfo,
-                    QtVersionName = versionInfo.name,
-                    Target = versionInfo.isWinRT()
+                    QtVersionName = version.Name,
+                    Target = versionInfo.IsWinRt
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>(),
                     Platform
-                        = versionInfo.platform() == Platform.x86
+                        = versionInfo.Platform == Platform.x86
                             ? ProjectPlatforms.Win32.Cast<string>()
-                            : versionInfo.platform() == Platform.x64
+                            : versionInfo.Platform == Platform.x64
                                 ? ProjectPlatforms.X64.Cast<string>()
-                                : versionInfo.platform() == Platform.arm64
+                                : versionInfo.Platform == Platform.arm64
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty,
                     Modules = DefaultModules.ToDictionary(m => m.Name)
@@ -326,27 +331,27 @@ namespace QtVsTools.Wizards.ProjectWizard
             var oldQtVersion = config.QtVersion;
             switch (comboBoxQtVersion.Text) {
             case QT_VERSION_DEFAULT:
-                config.QtVersion = defaultQtVersionInfo;
-                config.QtVersionName = defaultQtVersionInfo.name;
-                config.QtVersionPath = defaultQtVersionInfo.qtDir;
-                comboBoxQtVersion.Text = defaultQtVersionInfo.name;
+                config.QtVersion = defaultVersion.VersionInfo;
+                config.QtVersionName = defaultVersion.Name;
+                config.QtVersionPath = defaultVersion.VersionInfo.QtDir;
+                comboBoxQtVersion.Text = defaultVersion.Name;
                 break;
             case QT_VERSION_BROWSE:
                 if (BrowseForAndGetQtVersion() is {} qtVersion) {
                     if (VersionInformation.GetOrAddByPath(qtVersion) is {} versionInfo) {
-                        versionInfo.name = qtVersion;
                         config.QtVersion = versionInfo;
-                        config.QtVersionName = versionInfo.name;
-                        config.QtVersionPath = config.QtVersion.qtDir;
+                        config.QtVersionName = qtVersion;
+                        config.QtVersionPath = config.QtVersion.QtDir;
                     }
                 }
                 comboBoxQtVersion.Text = config.QtVersionName;
                 break;
             default:
                 if (QtVersionManager.GetVersions().Contains(comboBoxQtVersion.Text)) {
-                    config.QtVersion = VersionInformation.GetOrAddByName(comboBoxQtVersion.Text);
+                    var path = QtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
+                    config.QtVersion = VersionInformation.GetOrAddByPath(path);
                     config.QtVersionName = comboBoxQtVersion.Text;
-                    config.QtVersionPath = QtVersionManager.GetInstallPath(comboBoxQtVersion.Text);
+                    config.QtVersionPath = path;
                 } else {
                     config.QtVersion = null;
                     config.QtVersionName = config.QtVersionPath = comboBoxQtVersion.Text;
@@ -356,19 +361,19 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             if (oldQtVersion != config.QtVersion) {
                 if (config.QtVersion != null) {
-                    config.Target = config.QtVersion.isWinRT()
+                    config.Target = config.QtVersion.IsWinRt
                         ? ProjectTargets.WindowsStore.Cast<string>()
                         : ProjectTargets.Windows.Cast<string>();
                     config.Platform
-                        = config.QtVersion.platform() == Platform.x86
+                        = config.QtVersion.Platform == Platform.x86
                             ? ProjectPlatforms.Win32.Cast<string>()
-                            : config.QtVersion.platform() == Platform.x64
+                            : config.QtVersion.Platform == Platform.x64
                                 ? ProjectPlatforms.X64.Cast<string>()
-                                : config.QtVersion.platform() == Platform.arm64
+                                : config.QtVersion.Platform == Platform.arm64
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty;
                     config.Modules =
-                        QtModules.Instance.GetAvailableModules(config.QtVersion.qtMajor)
+                        QtModules.Instance.GetAvailableModules(config.QtVersion.Major)
                             .Where(mi => mi.Selectable)
                             .Select(mi => new Module
                             {
@@ -525,16 +530,13 @@ namespace QtVsTools.Wizards.ProjectWizard
             var qmakePath = BrowseForAndGetQtVersion();
             if (VersionInformation.GetOrAddByPath(qmakePath) is not {} versionInfo)
                 return;
-            versionInfo.name = qmakePath;
+
+            var qtVersionDir = Path.GetDirectoryName(qmakePath);
+            var versionName = $"{Path.GetFileName(qtVersionDir)}_{Path.GetFileName(qmakePath)}";
 
             try {
-                var qtVersionDir = Path.GetDirectoryName(qmakePath);
-                var versionName = $"{Path.GetFileName(qtVersionDir)}"
-                    + $"_{Path.GetFileName(qmakePath)}".Replace(" ", "_");
-
                 QtVersionManager.SaveVersion(versionName, qmakePath);
                 QtVersionManager.SaveDefaultVersion(versionName);
-                versionInfo.name = versionName;
             } catch (Exception exception) {
                 Messages.Print("Could not save Qt version.");
                 exception.Log();
@@ -542,7 +544,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
             qtVersionList = new[] { QT_VERSION_BROWSE }.Union(QtVersionManager.GetVersions());
 
-            SetupDefaultConfigsAndConfigTable(versionInfo);
+            SetupDefaultConfigsAndConfigTable((versionName, versionInfo));
 
             Validate();
         }

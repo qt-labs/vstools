@@ -63,10 +63,10 @@ namespace QtVsTools.Editors
         {
             var defaultVersion = QtVersionManager.GetDefaultVersion();
             var defaultVersionInfo = VersionInformation.GetOrAddByName(defaultVersion);
-            if (defaultVersionInfo == null || string.IsNullOrEmpty(defaultVersionInfo.qtDir))
+            if (defaultVersionInfo == null || string.IsNullOrEmpty(defaultVersionInfo.QtDir))
                 return null;
 
-            return Path.Combine(defaultVersionInfo.qtDir, "bin");
+            return Path.Combine(defaultVersionInfo.QtDir, "bin");
         }
 
         [EnvironmentPermission(SecurityAction.Demand, Unrestricted = true)]

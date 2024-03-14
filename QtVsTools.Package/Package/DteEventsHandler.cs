@@ -176,9 +176,9 @@ namespace QtVsTools
             if (dbgmodeNew == DBGMODE.DBGMODE_Run
                 && HelperFunctions.GetSelectedQtProject(dte) is { } project) {
                 var vi = project.VersionInfo;
-                if (!string.IsNullOrEmpty(vi?.Namespace()))
+                if (!string.IsNullOrEmpty(vi?.Namespace))
                     _ = ThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                        QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(vi.Namespace())
+                        QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(vi.Namespace)
                     );
             }
             return VSConstants.S_OK;

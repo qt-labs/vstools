@@ -138,7 +138,7 @@ namespace QtVsTools
 
                 var qchFiles = Directory.GetFiles(docPath, "*?.qch");
                 if (qchFiles.Length == 0)
-                    return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
+                    return TryShowGenericSearchResultsOnline(keyword, info.Major);
 
                 var offline = QtVsToolsPackage.Instance.Options.HelpPreference == Offline;
 
@@ -170,7 +170,7 @@ namespace QtVsTools
                                             GetString(reader, 2), GetString(reader, 3));
                                     } else {
                                         path = "https://" + Path.Combine("doc.qt.io",
-                                            $"qt-{info.qtMajor}", GetString(reader, 3));
+                                            $"qt-{info.Major}", GetString(reader, 3));
                                     }
                                     if (!string.IsNullOrWhiteSpace(GetString(reader, 4)))
                                         path += "#" + GetString(reader, 4);
@@ -184,7 +184,7 @@ namespace QtVsTools
                 string uri;
                 switch (links.Values.Count) {
                 case 0:
-                    return TryShowGenericSearchResultsOnline(keyword, info.qtMajor);
+                    return TryShowGenericSearchResultsOnline(keyword, info.Major);
                 case 1:
                     uri = links.First().Value;
                     break;

@@ -121,7 +121,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             var qtModules = new SortedSet<string>();
             foreach (IWizardConfiguration config in Configurations) {
                 var modules = QtModules.Instance
-                    .GetAvailableModules(config.QtVersion.qtMajor)
+                    .GetAvailableModules(config.QtVersion.Major)
                     .Join(config.Modules,
                         x => x.proVarQT, y => y, comparer: CaseIgnorer,
                         resultSelector: (x, y) => x.LibraryPrefix.Substring(2));

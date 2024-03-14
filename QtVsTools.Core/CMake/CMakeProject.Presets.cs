@@ -125,16 +125,16 @@ namespace QtVsTools.Core.CMake
                 .Where(x => !versionRecords.ContainsKey(x));
 
             var missingVersions = missingVersionNames
-                .Select(VersionInformation.GetOrAddByName)
-                .Where(x => x != null && !string.IsNullOrEmpty(x.InstallPrefix));
+                .Select(name => (Name: name, Info: VersionInformation.GetOrAddByName(name)))
+                .Where(x => x.Info != null && !string.IsNullOrEmpty(x.Info.InstallPrefix));
 
-            foreach (var missingVersion in missingVersions) {
-                var platform = missingVersion.platform();
+            foreach (var (name, missingVersion) in missingVersions) {
+                var platform = missingVersion.Platform;
                 var qtDir = missingVersion.InstallPrefix;
                 (UserPresets["configurePresets"] as JArray)?.Add(new JObject
                 {
                     ["hidden"] = true,
-                    ["name"] = missingVersion.name,
+                    ["name"] = name,
                     ["inherits"] = "Qt",
                     ["environment"] = new JObject
                     {

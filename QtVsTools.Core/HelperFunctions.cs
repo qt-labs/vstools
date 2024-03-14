@@ -511,7 +511,7 @@ namespace QtVsTools.Core
             // Select vcvars script according to host and target platforms
             var osIs64Bit = Environment.Is64BitOperatingSystem;
             var vcVarsCmd = "";
-            switch (versionInfo.platform()) {
+            switch (versionInfo.Platform) {
             case Platform.x86:
                 vcVarsCmd = Path.Combine(VcPath, osIs64Bit
                         ? @"Auxiliary\Build\vcvarsamd64_x86.bat"

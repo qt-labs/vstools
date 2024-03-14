@@ -18,7 +18,7 @@ namespace QtVsTools.Core
             private readonly VersionInformation qtVersion;
 
             public QMakeProcess(VersionInformation qtVersion, EnvDTE.DTE dte)
-                : base(qtVersion.qtDir, dte)
+                : base(qtVersion.QtDir, dte)
             {
                 this.qtVersion = qtVersion;
             }

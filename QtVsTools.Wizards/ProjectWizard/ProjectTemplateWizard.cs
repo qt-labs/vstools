@@ -604,7 +604,7 @@ namespace QtVsTools.Wizards.ProjectWizard
       <GenerateManifest>false</GenerateManifest>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <TargetMachine>{0}</TargetMachine>",
-                            /*{0}*/ c.QtVersion.VC_Link_TargetMachine));
+                            /*{0}*/ c.QtVersion.TargetMachine));
                     }
                     foreach (ItemProperty p in linkProperties) {
                         xml.AppendLine(string.Format(@"

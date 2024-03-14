@@ -35,7 +35,7 @@ namespace QtVsTools.Core
                 return;
 
             var vi = VersionInformation.GetOrAddByPath(qtDir);
-            if (vi.qtMajor < 5) {
+            if (vi.Major < 5) {
                 Messages.DisplayErrorMessage("The default Qt version does not support Visual "
                     + "Studio. To import .pro files, specify Qt 5.0 or later as the default.");
                 return;
@@ -191,7 +191,7 @@ namespace QtVsTools.Core
                 if (qtVersion is not null)
                     QtVersionManager.SaveProjectQtVersion(project, qtVersion);
 
-                var platformName = versionInfo.GetVSPlatformName();
+                var platformName = versionInfo.VsPlatformName;
                 if (!SelectSolutionPlatform(platformName) || !HasPlatform(vcPro, platformName)) {
                     CreatePlatform(vcPro, "Win32", platformName, versionInfo);
                     if (!SelectSolutionPlatform(platformName))
@@ -253,7 +253,7 @@ namespace QtVsTools.Core
                 return false; // Nothing we can do!
             }
 
-            xmlProject.ReplacePath(vi.qtDir, "$(QTDIR)");
+            xmlProject.ReplacePath(vi.QtDir, "$(QTDIR)");
             xmlProject.ReplacePath(projectFile.DirectoryName, ".");
 
             var ok = xmlProject.ConvertCustomBuildToQtMsBuild();
@@ -319,7 +319,7 @@ namespace QtVsTools.Core
 
         private static bool CheckQtVersion(VersionInformation vi)
         {
-            if (vi.qtMajor >= 5)
+            if (vi.Major >= 5)
                 return true;
             Messages.DisplayWarningMessage("QMake has generated a .vcproj file, but it needs "
                 + "to be converted. To do this you must open and edit the.vcproj file manually. "
@@ -872,7 +872,7 @@ namespace QtVsTools.Core
             if (match.Success) {
                 linker.TargetMachine = TranslateMachineType(match.Groups[1].Value);
             } else {
-                var platformName = versionInfo.GetVSPlatformName();
+                var platformName = versionInfo.VsPlatformName;
                 linker.TargetMachine = platformName switch
                 {
                     "Win32" => machineTypeOption.machineX86,
