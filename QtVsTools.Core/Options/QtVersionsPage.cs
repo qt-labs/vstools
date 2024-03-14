@@ -120,8 +120,11 @@ namespace QtVsTools.Core.Options
                 exception.Log();
             }
 
-            if (Notifications.NoQtVersion.IsOpen && QtVersionManager.GetVersions()?.Any() == true)
-                Notifications.NoQtVersion.Close();
+            if (!Notifications.NoQtVersion.IsOpen || QtVersionManager.GetVersions()?.Any() != true)
+                return;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+            Notifications.NoQtVersion.Close();
         }
 
         protected override void OnApply(PageApplyEventArgs e)
