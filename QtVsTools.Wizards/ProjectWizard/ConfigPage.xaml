@@ -59,299 +59,397 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
-          <ComboBox Name="ProjectModelSelection" Grid.Row="0" Margin="0, 15, 0, 0"
-                    IsEnabled="{Binding Path=ProjectModelEnabled}">
-            <ComboBoxItem Content="Qt Visual Studio Project (Qt/MSBuild)" IsSelected="True"
-                          Selector.IsSelected="True" Selected="QtMSBuild_Selected"/>
-            <ComboBoxItem Content="CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"
-                          Selected="QtCMake_Selected"/>
-          </ComboBox>
-          <DataGrid Margin="0,5,0,0" Name="ConfigTable" AutoGenerateColumns="False"
-              IsReadOnly="True" BorderThickness="1" BorderBrush="LightGray"
-              GridLinesVisibility="All" HorizontalGridLinesBrush="LightGray"
-              VerticalGridLinesBrush="LightGray" CanUserReorderColumns="False"
-              CanUserSortColumns="False" CanUserResizeRows="False" RowHeaderWidth="0"
-              FrozenColumnCount="1" Grid.Row="1">
-            <DataGrid.Resources>
-              <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-              <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
-            </DataGrid.Resources>
-            <DataGrid.CellStyle>
-              <Style TargetType="DataGridCell">
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-              </Style>
-            </DataGrid.CellStyle>
-            <DataGrid.Columns>
-              <DataGridTemplateColumn Header="Configuration">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                      <Button Cursor="Hand" ButtonBase.Click="DuplicateConfig_Click">
-                        <Button.Template>
-                          <ControlTemplate TargetType="Button">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  Margin="2,0"
-                                  ToolTip="Duplicate Configuration"
-                                  theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+          <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Content="Build System:" />
+            <ComboBox Name="ProjectModelSelection"
+                      Grid.Row="1"
+                      Margin="15, 0, 0, 0"
+                      IsEnabled="{Binding Path=ProjectModelEnabled}">
+              <ComboBoxItem Content="Qt Visual Studio Project (Qt/MSBuild)"
+                            IsSelected="True"
+                            Selector.IsSelected="True"
+                            Selected="QtMSBuild_Selected" />
+              <ComboBoxItem Content="CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"
+                            Selected="QtCMake_Selected" />
+            </ComboBox>
+          </Grid>
+          <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Margin="0,10,0,0"
+                   Content="Build Configurations:" />
+            <DataGrid Grid.Row="1"
+                      Margin="15,0,0,0"
+                      Name="ConfigTable"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      BorderThickness="1"
+                      BorderBrush="LightGray"
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="LightGray"
+                      VerticalGridLinesBrush="LightGray"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="False"
+                      CanUserResizeRows="False"
+                      RowHeaderWidth="0"
+                      FrozenColumnCount="1">
+              <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="Transparent" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                                 Color="Transparent" />
+              </DataGrid.Resources>
+              <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                  <Setter Property="BorderThickness"
+                          Value="0" />
+                  <Setter Property="FocusVisualStyle"
+                          Value="{x:Null}" />
+                </Style>
+              </DataGrid.CellStyle>
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Configuration">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <StackPanel Orientation="Horizontal"
+                                  VerticalAlignment="Center">
+                        <Button Cursor="Hand"
+                                ButtonBase.Click="DuplicateConfig_Click">
+                          <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                              <Grid HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="2,0"
+                                    ToolTip="Duplicate Configuration"
+                                    theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
                                   RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
-                              <imaging:CrispImage Width="16"
-                                                  Height="16"
-                                                  Moniker="{x:Static catalog:KnownMonikers.Add}" />
-                            </Grid>
-                          </ControlTemplate>
-                        </Button.Template>
-                      </Button>
-                      <Button Cursor="Hand" ButtonBase.Click="RemoveConfig_Click">
-                        <Button.Template>
-                          <ControlTemplate TargetType="Button">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  Margin="2,0"
-                                  ToolTip="Remove Configuration"
-                                  theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    Moniker="{x:Static catalog:KnownMonikers.Add}" />
+                              </Grid>
+                            </ControlTemplate>
+                          </Button.Template>
+                        </Button>
+                        <Button Cursor="Hand"
+                                ButtonBase.Click="RemoveConfig_Click">
+                          <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                              <Grid HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="2,0"
+                                    ToolTip="Remove Configuration"
+                                    theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
                                   RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
-                              <imaging:CrispImage Width="16"
-                                                  Height="16"
-                                                  Moniker="{x:Static catalog:KnownMonikers.Remove}" />
-                            </Grid>
-                          </ControlTemplate>
-                        </Button.Template>
-                      </Button>
-                      <TextBox Text="{Binding Name}" Margin="2,8" BorderThickness="0"
-                          Background="Transparent" TextBoxBase.TextChanged="Name_TextChanged">
-                        <TextBox.Resources>
+                                <imaging:CrispImage Width="16"
+                                                    Height="16"
+                                                    Moniker="{x:Static catalog:KnownMonikers.Remove}" />
+                              </Grid>
+                            </ControlTemplate>
+                          </Button.Template>
+                        </Button>
+                        <TextBox Text="{Binding Name}"
+                                 Margin="2,8"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 TextBoxBase.TextChanged="Name_TextChanged">
+                          <TextBox.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                             Color="LimeGreen" />
+                          </TextBox.Resources>
+                        </TextBox>
+                      </StackPanel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Qt Version">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <ComboBox Text="{Binding QtVersionName}"
+                                IsEditable="True"
+                                Height="22"
+                                SelectedIndex="0"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                FrameworkElement.Loaded="QtVersion_ComboBox_Loaded"
+                                TextBoxBase.TextChanged="QtVersion_TextChanged">
+                        <ComboBox.Resources>
                           <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                                            Color="LimeGreen" />
-                        </TextBox.Resources>
-                      </TextBox>
-                    </StackPanel>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn Header="Qt Version">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <ComboBox Text="{Binding QtVersionName}" IsEditable="True" Height="22"
-                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
-                        FrameworkElement.Loaded="QtVersion_ComboBox_Loaded"
-                        TextBoxBase.TextChanged="QtVersion_TextChanged">
-                      <ComboBox.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                                         Color="LimeGreen" />
-                      </ComboBox.Resources>
-                    </ComboBox>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn Header="Target">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <ComboBox Text="{Binding Target}" IsEditable="True" Height="22"
-                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
-                        FrameworkElement.Loaded="Target_ComboBox_Loaded"
-                        TextBoxBase.TextChanged="Target_TextChanged">
-                      <ComboBox.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                                         Color="LimeGreen" />
-                      </ComboBox.Resources>
-                    </ComboBox>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn Header="Platform">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <ComboBox Text="{Binding Platform}" IsEditable="True" Height="22"
-                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
-                        FrameworkElement.Loaded="Platform_ComboBox_Loaded"
-                        TextBoxBase.TextChanged="Platform_TextChanged">
-                      <ComboBox.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                                         Color="LimeGreen" />
-                      </ComboBox.Resources>
-                    </ComboBox>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn Header="Debug">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <CheckBox VerticalAlignment="Center" HorizontalAlignment="Center"
-                        IsChecked="{Binding IsDebug}" Click="Debug_Click" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn Header="Qt Modules" Width="*">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <ComboBox Name="Modules">
-                      <ComboBox.Template>
-                        <ControlTemplate TargetType="ComboBox">
-                          <Grid>
-                            <Grid.ColumnDefinitions>
-                              <ColumnDefinition Width="*" />
-                              <ColumnDefinition Width="16" />
-                            </Grid.ColumnDefinitions>
-                            <ListView Name="SelectedModules" ItemsSource="{Binding SelectedModules}"
-                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                      BorderThickness="0" IsEnabled="False"
-                                      Grid.Column="0">
-                              <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                  <common:UniformWrapPanel IsAutoUniform="false" Rows="2" />
-                                </ItemsPanelTemplate>
-                              </ListView.ItemsPanel>
-                              <ListView.ItemTemplate>
-                                <DataTemplate>
-                                  <Grid>
-                                    <Rectangle Fill="#FF36B31A" RadiusX="4" RadiusY="4" Height="20" />
-                                    <Label Content="{Binding Name}" Foreground="White" />
-                                  </Grid>
-                                </DataTemplate>
-                              </ListView.ItemTemplate>
-                            </ListView>
-                            <ToggleButton Name="DropDownToggle"
-                                          Focusable="false"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          Margin="-1"
-                                          HorizontalContentAlignment="Right"
-                                          ClickMode="Press"
-                                          Cursor="Hand"
-                                          Grid.Column="1"
-                                          Background="Transparent"
-                                          IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,
+                        </ComboBox.Resources>
+                      </ComboBox>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Target">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <ComboBox Text="{Binding Target}"
+                                IsEditable="True"
+                                Height="22"
+                                SelectedIndex="0"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                FrameworkElement.Loaded="Target_ComboBox_Loaded"
+                                TextBoxBase.TextChanged="Target_TextChanged">
+                        <ComboBox.Resources>
+                          <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                           Color="LimeGreen" />
+                        </ComboBox.Resources>
+                      </ComboBox>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Platform">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <ComboBox Text="{Binding Platform}"
+                                IsEditable="True"
+                                Height="22"
+                                SelectedIndex="0"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                FrameworkElement.Loaded="Platform_ComboBox_Loaded"
+                                TextBoxBase.TextChanged="Platform_TextChanged">
+                        <ComboBox.Resources>
+                          <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                           Color="LimeGreen" />
+                        </ComboBox.Resources>
+                      </ComboBox>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Debug">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <CheckBox VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                IsChecked="{Binding IsDebug}"
+                                Click="Debug_Click" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Qt Modules"
+                                        Width="*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <ComboBox Name="Modules">
+                        <ComboBox.Template>
+                          <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                              </Grid.ColumnDefinitions>
+                              <ListView Name="SelectedModules"
+                                        ItemsSource="{Binding SelectedModules}"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                        BorderThickness="0"
+                                        IsEnabled="False"
+                                        Grid.Column="0">
+                                <ListView.ItemsPanel>
+                                  <ItemsPanelTemplate>
+                                    <common:UniformWrapPanel IsAutoUniform="false"
+                                                             Rows="2" />
+                                  </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                  <DataTemplate>
+                                    <Grid>
+                                      <Rectangle Fill="#FF36B31A"
+                                                 RadiusX="4"
+                                                 RadiusY="4"
+                                                 Height="20" />
+                                      <Label Content="{Binding Name}"
+                                             Foreground="White" />
+                                    </Grid>
+                                  </DataTemplate>
+                                </ListView.ItemTemplate>
+                              </ListView>
+                              <ToggleButton Name="DropDownToggle"
+                                            Focusable="false"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Margin="-1"
+                                            HorizontalContentAlignment="Right"
+                                            ClickMode="Press"
+                                            Cursor="Hand"
+                                            Grid.Column="1"
+                                            Background="Transparent"
+                                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,
                               RelativeSource={RelativeSource TemplatedParent}}">
-                              <Path x:Name="BtnArrow"
-                                    Height="4"
-                                    Width="8"
-                                    Stretch="Uniform"
-                                    Margin="0,0,4,0"
-                                    Fill="Black"
-                                    Data="F1 M 300,-190L 310,-190L 305,-183L 301,-190 Z " />
-                              <ToggleButton.Style>
-                                <Style TargetType="{x:Type ToggleButton}">
-                                  <Setter Property="Template">
-                                    <Setter.Value>
-                                      <ControlTemplate TargetType="ToggleButton">
-                                        <Border BorderThickness="0"
-                                                BorderBrush="Transparent"
-                                                Background="Transparent">
-                                          <ContentPresenter HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center" />
-                                        </Border>
-                                      </ControlTemplate>
-                                    </Setter.Value>
-                                  </Setter>
-                                  <Style.Triggers>
-                                    <Trigger Property="IsChecked"
-                                             Value="True">
-                                      <Setter Property="Background"
-                                              Value="Transparent" />
-                                    </Trigger>
-                                  </Style.Triggers>
-                                </Style>
-                              </ToggleButton.Style>
-                            </ToggleButton>
-                            <Popup Name="Popup" Placement="Bottom"
-                                IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"
-                                Focusable="False" PopupAnimation="Slide">
-                              <Grid Name="DropDown" SnapsToDevicePixels="True"
-                                  MinWidth="{TemplateBinding ActualWidth}"
-                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                <Border x:Name="DropDownBorder" Background="White"
-                                    BorderThickness="2" BorderBrush="Gray" />
-                                <ListView Name="PopupListBox" BorderThickness="0"
-                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    Margin="10,10,10,10" ItemsSource="{Binding AllModules}">
-                                  <ListView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                      <WrapPanel Orientation="Vertical" />
-                                    </ItemsPanelTemplate>
-                                  </ListView.ItemsPanel>
-                                  <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                      <CheckBox Content="{Binding Name}"
-                                          IsChecked="{Binding IsSelected}"
-                                          IsEnabled="{Binding IsEnabled}" VerticalAlignment="Center"
-                                          VerticalContentAlignment="Center" Click="Module_Click"
-                                          Margin="4">
-                                        <CheckBox.ContentTemplate>
-                                          <DataTemplate>
-                                            <Grid>
-                                              <Rectangle Fill="#FF36B31A" RadiusX="4" RadiusY="4"
-                                                  Height="20" />
-                                              <Label Content="{Binding}" Foreground="White" />
-                                            </Grid>
-                                          </DataTemplate>
-                                        </CheckBox.ContentTemplate>
-                                      </CheckBox>
-                                    </DataTemplate>
-                                  </ListView.ItemTemplate>
-                                  <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                      <Style.Setters>
-                                        <Setter Property="Template">
-                                          <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-                                              <ContentPresenter
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </ControlTemplate>
-                                          </Setter.Value>
-                                        </Setter>
-                                      </Style.Setters>
-                                    </Style>
-                                  </ListView.ItemContainerStyle>
-                                </ListView>
-                              </Grid>
-                            </Popup>
-                          </Grid>
-                        </ControlTemplate>
-                      </ComboBox.Template>
-                    </ComboBox>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-            </DataGrid.Columns>
-          </DataGrid>
-          <StackPanel Name="ErrorPanel"
-            Orientation="Horizontal"
-            Grid.Row="2"
-            Margin="0,10"
-            Visibility="Hidden"
-            theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-              RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
-            <imaging:CrispImage
-              Width="16"
-              Height="16"
-              Moniker="{x:Static catalog:KnownMonikers.StatusInvalidOutline}" />
-            <Label x:Name="ErrorMsg" Content="" MouseDown="ErrorMsg_OnMouseDown" >
-              <Label.Style>
-                <Style TargetType="Label">
-                  <Setter Property="Foreground" Value="Black" />
-                  <Setter Property="Cursor" Value="Arrow" />
-                  <Style.Triggers>
-                    <MultiDataTrigger>
-                      <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
-                        <Condition Binding="{Binding Path=BrowseQtVersion}" Value="True" />
-                      </MultiDataTrigger.Conditions>
-                      <!-- Apply hyperlink style when both conditions are met -->
-                      <Setter Property="Foreground" Value="Blue" />
-                      <Setter Property="Cursor" Value="Hand" />
-                    </MultiDataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Label.Style>
-            </Label>
-          </StackPanel>
+                                <Path x:Name="BtnArrow"
+                                      Height="4"
+                                      Width="8"
+                                      Stretch="Uniform"
+                                      Margin="0,0,4,0"
+                                      Fill="Black"
+                                      Data="F1 M 300,-190L 310,-190L 305,-183L 301,-190 Z " />
+                                <ToggleButton.Style>
+                                  <Style TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="Template">
+                                      <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                          <Border BorderThickness="0"
+                                                  BorderBrush="Transparent"
+                                                  Background="Transparent">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center" />
+                                          </Border>
+                                        </ControlTemplate>
+                                      </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                      <Trigger Property="IsChecked"
+                                               Value="True">
+                                        <Setter Property="Background"
+                                                Value="Transparent" />
+                                      </Trigger>
+                                    </Style.Triggers>
+                                  </Style>
+                                </ToggleButton.Style>
+                              </ToggleButton>
+                              <Popup Name="Popup"
+                                     Placement="Bottom"
+                                     IsOpen="{TemplateBinding IsDropDownOpen}"
+                                     AllowsTransparency="True"
+                                     Focusable="False"
+                                     PopupAnimation="Slide">
+                                <Grid Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                  <Border x:Name="DropDownBorder"
+                                          Background="White"
+                                          BorderThickness="2"
+                                          BorderBrush="Gray" />
+                                  <ListView Name="PopupListBox"
+                                            BorderThickness="0"
+                                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                            Margin="10,10,10,10"
+                                            ItemsSource="{Binding AllModules}">
+                                    <ListView.ItemsPanel>
+                                      <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Vertical" />
+                                      </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                      <DataTemplate>
+                                        <CheckBox Content="{Binding Name}"
+                                                  IsChecked="{Binding IsSelected}"
+                                                  IsEnabled="{Binding IsEnabled}"
+                                                  VerticalAlignment="Center"
+                                                  VerticalContentAlignment="Center"
+                                                  Click="Module_Click"
+                                                  Margin="4">
+                                          <CheckBox.ContentTemplate>
+                                            <DataTemplate>
+                                              <Grid>
+                                                <Rectangle Fill="#FF36B31A"
+                                                           RadiusX="4"
+                                                           RadiusY="4"
+                                                           Height="20" />
+                                                <Label Content="{Binding}"
+                                                       Foreground="White" />
+                                              </Grid>
+                                            </DataTemplate>
+                                          </CheckBox.ContentTemplate>
+                                        </CheckBox>
+                                      </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                      <Style TargetType="ListViewItem">
+                                        <Style.Setters>
+                                          <Setter Property="Template">
+                                            <Setter.Value>
+                                              <ControlTemplate TargetType="ListViewItem">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                              </ControlTemplate>
+                                            </Setter.Value>
+                                          </Setter>
+                                        </Style.Setters>
+                                      </Style>
+                                    </ListView.ItemContainerStyle>
+                                  </ListView>
+                                </Grid>
+                              </Popup>
+                            </Grid>
+                          </ControlTemplate>
+                        </ComboBox.Template>
+                      </ComboBox>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Row="2"
+                        Name="ErrorPanel"
+                        Orientation="Horizontal"
+                        Margin="15,3,0,0"
+                        Visibility="Collapsed"
+                        theming:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+            RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
+              <imaging:CrispImage Width="16"
+                                  Height="16"
+                                  Moniker="{x:Static catalog:KnownMonikers.StatusInvalidOutline}" />
+              <Label x:Name="ErrorMsg"
+                     Content=""
+                     MouseDown="ErrorMsg_OnMouseDown">
+                <Label.Style>
+                  <Style TargetType="Label">
+                    <Setter Property="Foreground"
+                            Value="Black" />
+                    <Setter Property="Cursor"
+                            Value="Arrow" />
+                    <Style.Triggers>
+                      <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                          <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                     Value="True" />
+                          <Condition Binding="{Binding Path=BrowseQtVersion}"
+                                     Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <!-- Apply hyperlink style when both conditions are met -->
+                        <Setter Property="Foreground"
+                                Value="Blue" />
+                        <Setter Property="Cursor"
+                                Value="Hand" />
+                      </MultiDataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Label.Style>
+              </Label>
+            </StackPanel>
+          </Grid>
+          <Grid Grid.Row="2"
+                Visibility="{Binding Path=PchSupportVisible}">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Margin="0,10,0,0"
+                   Content="Project Settings:" />
+            <CheckBox Grid.Row="1"
+                      Margin="15,0,3,3"
+                      Content="Enable PCH Support"
+                      IsChecked="{Binding Path=Data.UsePrecompiledHeader}"/>
+          </Grid>
         </Grid>
       </Grid>
       <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2"
-          Margin="0,0,0,10">
+          Margin="0,15,0,10">
         <Button Click="OnPreviousButtonClick" Name="PreviousButton"
             IsEnabled="{Binding Path=PreviousButtonEnabled}" MinWidth="75">&lt; _Previous</Button>
         <Button MinWidth="75" Name="NextButton" Click="OnNextButtonClick"

@@ -4,6 +4,7 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
+using System.Windows;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
@@ -45,7 +46,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                     PreviousButtonEnabled = true,
                     NextButtonEnabled = false,
                     FinishButtonEnabled = true,
-                    CancelButtonEnabled = true
+                    CancelButtonEnabled = true,
+                    PchSupportVisible = Visibility.Collapsed
                 }
             });
     }

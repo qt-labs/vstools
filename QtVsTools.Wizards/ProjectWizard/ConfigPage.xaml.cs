@@ -127,6 +127,8 @@ namespace QtVsTools.Wizards.ProjectWizard
         bool initialFinishButtonIsEnabled;
 
         public bool ProjectModelEnabled { get; set; } = true;
+        public Visibility PchSupportVisible { get; set; } = Visibility.Visible;
+
         public ProjectModels ProjectModel => (ProjectModels)ProjectModelSelection.SelectedIndex;
 
         public ConfigPage()
@@ -249,7 +251,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             } else if (ValidateConfigs?.Invoke(currentConfigs) is { Length: > 0 } errorMsg) {
                 errorMessage = errorMsg;
             } else {
-                errorPanelVisibility = Visibility.Hidden;
+                errorPanelVisibility = Visibility.Collapsed;
                 nextButtonIsEnabled = initialNextButtonIsEnabled;
                 finishButtonIsEnabled = initialFinishButtonIsEnabled;
             }

@@ -36,13 +36,15 @@
         <Project TargetFileName="$projectname$.vcxproj"
                  File="console.vcxproj"
                  ReplaceParameters="true">
-            <ProjectItem ReplaceParameters="false"
+            <ProjectItem ReplaceParameters="true"
                          OpenInEditor="true">main.cpp</ProjectItem>
             <ProjectItem ReplaceParameters="true"
                          TargetFileName="$projectname$.vcxproj.filters">console.vcxproj.filters</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
             <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
+            <ProjectItem ReplaceParameters="false">stdafx.cpp</ProjectItem>
+            <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

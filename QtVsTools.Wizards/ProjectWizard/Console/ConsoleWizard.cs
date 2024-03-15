@@ -4,17 +4,25 @@
 ***************************************************************************************************/
 
 using System.Collections.Generic;
+using System.Text;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
     using QtVsTools.Common;
 
+    using static QtVsTools.Common.EnumExt;
+
     public class ConsoleWizard : ProjectTemplateWizard
     {
         LazyFactory Lazy { get; } = new();
 
         protected override Options TemplateType => Options.Application | Options.ConsoleSystem;
+
+        private enum Project
+        {
+            [String("include")] Include
+        }
 
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new WizardData
@@ -50,6 +58,15 @@ namespace QtVsTools.Wizards.ProjectWizard
                     ValidateConfigs = ValidateConfigsForConsoleApp
                 }
             });
+
+        protected override void BeforeTemplateExpansion()
+        {
+            var include = new StringBuilder();
+            if (UsePrecompiledHeaders)
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine("#include <QtCore/QCoreApplication>");
+            Parameter[Project.Include] = FormatParam(include);
+        }
 
         string ValidateConfigsForConsoleApp(IEnumerable<IWizardConfiguration> configs)
         {

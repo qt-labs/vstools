@@ -21,7 +21,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected enum Qml
         {
-            [String("qml_prefix")] Prefix
+            [String("qml_prefix")] Prefix,
+            [String("include")] Include
         }
 
         protected override WizardData WizardData => Lazy.Get(() =>
@@ -60,6 +61,13 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override void BeforeTemplateExpansion()
         {
             Parameter[Qml.Prefix] = Parameter[NewProject.SafeName].ToLower();
+
+            var include = new StringBuilder();
+            if (UsePrecompiledHeaders)
+                include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
+            include.AppendLine("#include <QGuiApplication>");
+            include.AppendLine("#include <QQmlApplicationEngine>");
+            Parameter[Qml.Include] = FormatParam(include);
         }
 
         protected override void ExpandQtSettings(StringBuilder xml, IWizardConfiguration config)

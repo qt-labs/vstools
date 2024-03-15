@@ -206,11 +206,6 @@
                               Name="LowerCaseFileNames"
                               TabIndex="9"
                               Click="OnLowerCaseFileNamesClick" />
-                    <CheckBox Content="Precompiled header"
-                              Margin="0,0,0,5"
-                              IsChecked="{Binding Path=Data.UsePrecompiledHeader}"
-                              TabIndex="10"
-                              Visibility="{Binding Path=ClassPageVisible}"/>
                     <CheckBox Content="Add default application icon"
                               Margin="0,0,0,0"
                               IsChecked="{Binding Path=Data.AddDefaultAppIcon}"

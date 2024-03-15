@@ -106,6 +106,8 @@
     <Content Include="CMakeLists.txt" />
     <Content Include="qt.cmake" />
     <Content Include="CMakeUserPresets.json" />
+    <Content Include="stdafx.cpp" />
+    <Content Include="stdafx.h" />
     <None Include="console.ico" />
     <None Include="console.vcxproj">
       <SubType>Designer</SubType>

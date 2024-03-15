@@ -47,6 +47,8 @@
             <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
             <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
             <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
+            <ProjectItem ReplaceParameters="false">stdafx.cpp</ProjectItem>
+            <ProjectItem ReplaceParameters="false">stdafx.h</ProjectItem>
         </Project>
     </TemplateContent>
     <WizardExtension>

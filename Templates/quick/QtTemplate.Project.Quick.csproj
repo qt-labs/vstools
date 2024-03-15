@@ -105,6 +105,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="stdafx.cpp" />
+    <Content Include="stdafx.h" />
     <None Include="qml.qrc" />
     <Content Include="qt.cmake" />
     <None Include="quick.ico" />
