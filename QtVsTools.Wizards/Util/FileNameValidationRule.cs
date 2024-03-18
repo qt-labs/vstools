@@ -14,7 +14,7 @@ namespace QtVsTools.Wizards.Util
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is string filename) {
+            if (value is string { Length: > 0 } filename) {
                 if (!string.IsNullOrEmpty(Path.GetDirectoryName(filename)))
                     filename = Path.GetFileName(filename);
 
