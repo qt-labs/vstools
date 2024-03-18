@@ -153,6 +153,11 @@ namespace QtVsTools
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new InvalidOperationException("Unable to get service: DTE");
 
+                if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true) {
+                    Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRootPath, false);
+                    Registry.CurrentUser.DeleteSubKeyTree(Resources.CurrentRootPath, false);
+                }
+
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize();
                 AddCMakeItem.Initialize();

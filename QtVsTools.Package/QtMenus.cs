@@ -54,6 +54,7 @@ namespace QtVsTools
             public const int ProjectConvertToQtMsBuild = 0x1001;
             public const int ProjectMenuGroup = 0x0300;
             public const int ProjectRefreshIntelliSense = 0x1002;
+            public const int QtClearSettings = 0x0503;
             public const int QtMainMenu = 0x0002;
             public const int QtOptions = 0x0501;
             public const int QtProjectSettings = 0x0402;

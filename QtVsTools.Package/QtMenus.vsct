@@ -238,6 +238,14 @@
                 </Strings>
             </Button>
 
+            <Button guid="Package" id="QtClearSettings" priority="0x0100" type="Button">
+                <Parent guid="Package" id="OptionsMenuGroup" />
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <Strings>
+                    <ButtonText>Clear Settings</ButtonText>
+                </Strings>
+            </Button>
+
             <!-- Endregion Main menu buttons -->
 
             <!-- Region Solution context menu button -->
@@ -456,6 +464,7 @@
             <IDSymbol name="OptionsMenuGroup" value="0x0500" />
             <IDSymbol name="QtOptions" value="0x0501" />
             <IDSymbol name="QtVersions" value="0x0502" />
+            <IDSymbol name="QtClearSettings" value="0x0503" />
 
             <!-- Endregion Main menu buttons Ids -->
 
