@@ -306,7 +306,7 @@ namespace QtVsTools
             /////////
             // If configured, show link to dev release, if any
             //
-            using var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath, false);
+            using var key = Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath, false);
             if (key?.GetBoolValue(DevelopmentReleases.SearchDevRelease.ToString()) ?? false) {
                 var result = await GetLatestDevelopmentReleaseAsync();
                 if (result != null) {
@@ -529,7 +529,7 @@ namespace QtVsTools
 
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
             try {
-                using var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath, false);
+                using var key = Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath, false);
                 var timeout = key?.GetValue(DevelopmentReleases.SearchDevReleaseTimeout.ToString()) as int?
                     ?? SearchDevReleaseDefaultTimeout;
 

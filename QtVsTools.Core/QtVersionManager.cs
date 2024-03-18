@@ -21,11 +21,11 @@ namespace QtVsTools.Core
     public static class QtVersionManager
     {
         private const string VersionsKey = "Versions";
-        private const string RegistryVersionsPath = Resources.RegistryRootPath + "\\" + VersionsKey;
+        private const string RegistryVersionsPath = Resources.CurrentRootPath + "\\" + VersionsKey;
 
         public static string[] GetVersions()
         {
-            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.CurrentRootPath, false);
             if (key == null)
                 return Array.Empty<string>();
             var versionKey = key.OpenSubKey(VersionsKey, false);
@@ -40,7 +40,7 @@ namespace QtVsTools.Core
                 return Environment.GetEnvironmentVariable("QTDIR");
             if (string.IsNullOrEmpty(version))
                 return null;
-            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.CurrentRootPath, false);
             var versionKey = key?.OpenSubKey(Path.Combine(VersionsKey, version), false);
             return versionKey?.GetValue("InstallDir") as string;
         }
@@ -88,7 +88,7 @@ namespace QtVsTools.Core
                 }
             }
 
-            using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryRootPath);
+            using var key = Registry.CurrentUser.CreateSubKey(Resources.CurrentRootPath);
             if (key == null) {
                 Messages.Print("ERROR: root registry key creation failed");
                 return;
@@ -217,17 +217,16 @@ namespace QtVsTools.Core
 
         public static void MoveRegisteredQtVersions()
         {
-            const string keyName = @"HKEY_CURRENT_USER\SOFTWARE\Digia";
             const string valueName = "Copied";
-            if (Registry.GetValue(keyName, valueName, null) != null)
+            if (Registry.CurrentUser.GetValue(Resources.ObsoleteRootPath, valueName) != null)
                 return;
 
             // TODO v3.2.0: Use MoveRegistryKeys and delete source keys
-            CopyRegistryKeys("SOFTWARE\\Digia", Resources.RegistryRootPath);
-            MoveRegistryKeys(Resources.RegistryRootPath + "\\Qt5VS2017",
-                Resources.RegistryPackagePath);
+            CopyRegistryKeys(Resources.ObsoleteRootPath, Resources.CurrentRootPath);
+            MoveRegistryKeys(Resources.CurrentRootPath + "\\Qt5VS2017",
+                Resources.PackageSettingsPath);
 
-            Registry.SetValue(keyName, valueName, "");
+            Registry.CurrentUser.SetValue(Resources.ObsoleteRootPath, valueName);
         }
     }
 }

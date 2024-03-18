@@ -113,7 +113,7 @@ namespace QtVsTools.Core
         public SearchDevRelease()
         {
             using var key = Registry.CurrentUser
-                .OpenSubKey(Resources.RegistryPackagePath, writable: false);
+                .OpenSubKey(Resources.PackageSettingsPath, writable: false);
             isSearchEnabled = key?.GetBoolValue(keyName) ?? false;
         }
 
@@ -138,7 +138,7 @@ namespace QtVsTools.Core
                 {
                     try {
                         using var key =
-                            Registry.CurrentUser.CreateSubKey(Resources.RegistryPackagePath);
+                            Registry.CurrentUser.CreateSubKey(Resources.PackageSettingsPath);
                         key?.SetValue(keyName, Convert.ToInt32(!isSearchEnabled));
                     } catch (Exception ex) {
                         ex.Log();

@@ -558,7 +558,7 @@ namespace QtVsTools.Core.MsBuild
         private static string GetDirectory(string type)
         {
             try {
-                if (Registry.CurrentUser.OpenSubKey(Resources.RegistryPackagePath) is {} key) {
+                if (Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath) is {} key) {
                     if (key.GetValue(type, null) is string path)
                         return NormalizeRelativeFilePath(path);
                 }

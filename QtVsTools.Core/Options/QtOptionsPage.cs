@@ -438,7 +438,7 @@ namespace QtVsTools.Core.Options
                 QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");
 
                 using var key = Registry.CurrentUser
-                    .OpenSubKey(Resources.RegistryPackagePath, writable: false);
+                    .OpenSubKey(Resources.PackageSettingsPath, writable: false);
                 if (key == null)
                     return;
                 Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
@@ -486,7 +486,7 @@ namespace QtVsTools.Core.Options
                 if (QmlLspLogSize < 100)
                     QmlLspLogSize = 100;
 
-                using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryPackagePath);
+                using var key = Registry.CurrentUser.CreateSubKey(Resources.PackageSettingsPath);
                 if (key == null)
                     return;
                 Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
