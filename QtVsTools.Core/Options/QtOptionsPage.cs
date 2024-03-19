@@ -96,6 +96,12 @@ namespace QtVsTools.Core.Options
             [String("QmlLsp_LogSize")] LogSize
         }
 
+        public enum Style
+        {
+            [String("Style_ColorTheme")] ColorTheme,
+            [String("Style_CustomStylesheetPath")] StylesheetPath
+        }
+
         public enum DevelopmentReleases
         {
             [String("NotifySearchDevRelease")] NotifySearchDevRelease,
@@ -322,6 +328,25 @@ namespace QtVsTools.Core.Options
         [Description("Maximum size (in KB) of QML LSP log file.")]
         public int QmlLspLogSize { get; set; }
 
+        public enum EditorColorTheme
+        {
+            Consistent,
+            Dark,
+            Light
+        }
+
+        [Category("Style")]
+        [DisplayName("Color theme")]
+        [Description("Color theme used in editors (Qt Designer, Qt Linguist, Qt Resource Editor). "
+            + "By default consistent with the Visual Studio color theme.")]
+        public EditorColorTheme ColorTheme { get; set; }
+
+        [Category("Style")]
+        [DisplayName("Path to stylesheet")]
+        [Description("Path to stylesheet used in editors (Qt Designer, Qt Linguist, Qt Resource "
+            + "Editor).")]
+        public string StylesheetPath { get; set; }
+
         [Category("Development releases")]
         [DisplayName("Notification")]
         [Description("Show a notification to allow the user to enable automatic searching for "
@@ -367,6 +392,9 @@ namespace QtVsTools.Core.Options
             QmlLspVersion = "$(DefaultQtVersion)";
             QmlLspLog = false;
             QmlLspLogSize = 2500;
+
+            ColorTheme = EditorColorTheme.Consistent;
+            StylesheetPath = string.Empty;
 
             NotifySearchDevRelease = true;
             SearchDevRelease = false;
@@ -416,6 +444,8 @@ namespace QtVsTools.Core.Options
                 Load(() => QmlLspVersion, key, QmlLsp.QtVersion);
                 Load(() => QmlLspLog, key, QmlLsp.Log);
                 Load(() => QmlLspLogSize, key, QmlLsp.LogSize);
+                Load(() => ColorTheme, key, Style.ColorTheme);
+                Load(() => StylesheetPath, key, Style.StylesheetPath);
                 Load(() => NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
                 Load(() => SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
                 Load(() => SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);
@@ -460,6 +490,8 @@ namespace QtVsTools.Core.Options
                 Save(QmlLspVersion, key, QmlLsp.QtVersion);
                 Save(QmlLspLog, key, QmlLsp.Log);
                 Save(QmlLspLogSize, key, QmlLsp.LogSize);
+                Save(ColorTheme, key, Style.ColorTheme);
+                Save(StylesheetPath, key, Style.StylesheetPath);
                 Save(NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
                 Save(SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
                 Save(SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);

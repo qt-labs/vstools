@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -24,6 +25,7 @@ namespace QtVsTools.Editors
     using VisualStudio;
 
     using static Core.HelperFunctions;
+    using static Core.Options.QtOptionsPage;
 
     public abstract class Editor : IVsEditorFactory
     {
@@ -142,10 +144,21 @@ namespace QtVsTools.Editors
             string qtToolsPath,
             bool hideWindow)
         {
+            var arguments = SafePath(filePath);
+            var options = QtVsToolsPackage.Instance.Options;
+            if (options.ColorTheme == EditorColorTheme.Dark ||
+                (options.ColorTheme == EditorColorTheme.Consistent
+                && VSColorTheme.GetThemedColor(EnvironmentColors.EditorExpansionFillBrushKey)
+                .GetBrightness() < 0.5f)) {
+                arguments += " -style fusion";
+            }
+            if (!string.IsNullOrEmpty(options.StylesheetPath))
+                arguments += $" -stylesheet {SafePath(options.StylesheetPath)}";
+
             return new ProcessStartInfo
             {
                 FileName = Path.GetFullPath(Path.Combine(qtToolsPath, ExecutableName)),
-                Arguments = SafePath(filePath),
+                Arguments = arguments,
                 WindowStyle = hideWindow ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
             };
         }
