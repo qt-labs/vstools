@@ -46,9 +46,9 @@ namespace QtVsTools.VisualStudio
 
         private MessageUI UI { get; set; }
 
-        public InfoBarMessage()
+        public InfoBarMessage(IVsInfoBarHost host = null)
         {
-            UI = new MessageUI { Message = this };
+            UI = new MessageUI(this, host);
         }
 
         public virtual void Show()
@@ -74,12 +74,19 @@ namespace QtVsTools.VisualStudio
             static IVsInfoBarUIFactory Factory => StaticLazy.Get(() =>
                 Factory, VsServiceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>);
 
+            private IVsInfoBarHost Host { get; set; }
             private IVsInfoBarUIElement UIElement { get; set; }
             private uint eventNotificationCookie;
 
             public bool IsOpen => UIElement != null;
 
             public InfoBarMessage Message { get; set; }
+
+            public MessageUI(InfoBarMessage message, IVsInfoBarHost host = null)
+            {
+                Message = message;
+                Host = host;
+            }
 
             public void Show()
             {
@@ -102,7 +109,10 @@ namespace QtVsTools.VisualStudio
                 UIElement = Factory.CreateInfoBar(model);
                 if (UIElement != null) {
                     UIElement.Advise(this, out eventNotificationCookie);
-                    VsShell.InfoBarHost?.AddInfoBar(UIElement);
+                    if (Host != null)
+                        Host.AddInfoBar(UIElement);
+                    else
+                        VsShell.InfoBarHost?.AddInfoBar(UIElement);
                 }
             }
 

@@ -186,8 +186,6 @@ namespace QtVsTools.Editors
             private string QtToolsPath { get; }
 
             private TableLayoutPanel EditorContainer { get; set; }
-            private Label EditorTitle { get; }
-            private LinkLabel EditorDetachButton { get; }
             private Panel EditorControl { get; }
             public override IWin32Window Window => EditorContainer;
 
@@ -197,51 +195,29 @@ namespace QtVsTools.Editors
             private int EditorWindowStyleExt { get; set; }
             private IntPtr EditorIcon { get; set; }
 
+            private NotifyDetach NotifyDetach { get; set; }
+
             public EditorPane(Editor editor, string qtToolsPath)
             {
                 Editor = editor;
                 QtToolsPath = qtToolsPath;
-
-                var titleBar = new FlowLayoutPanel
-                {
-                    AutoSize = true,
-                    Dock = DockStyle.Fill,
-                    BackColor = Color.FromArgb(201, 221, 201)
-                };
-                titleBar.Controls.Add(EditorTitle = new Label
-                {
-                    Text = Editor.ExecutableName,
-                    ForeColor = Color.FromArgb(9, 16, 43),
-                    Font = new Font("Segoe UI", 8F, FontStyle.Bold, GraphicsUnit.Point),
-                    AutoSize = true,
-                    Margin = new Padding(8)
-                });
-                titleBar.Controls.Add(EditorDetachButton = new LinkLabel
-                {
-                    Text = "Detach",
-                    Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point),
-                    AutoSize = true,
-                    Margin = new Padding(0, 8, 8, 8)
-                });
-                EditorDetachButton.Click += EditorDetachButton_Click;
 
                 EditorControl = new Panel
                 {
                     BackColor = SystemColors.Window,
                     Dock = DockStyle.Fill
                 };
+                EditorControl.Margin = Padding.Empty;
                 EditorControl.Resize += EditorControl_Resize;
 
                 EditorContainer = new TableLayoutPanel
                 {
                     ColumnCount = 1,
-                    RowCount = 2
+                    RowCount = 1
                 };
                 EditorContainer.ColumnStyles.Add(new ColumnStyle());
                 EditorContainer.RowStyles.Add(new RowStyle());
-                EditorContainer.RowStyles.Add(new RowStyle());
-                EditorContainer.Controls.Add(titleBar, 0, 0);
-                EditorContainer.Controls.Add(EditorControl, 0, 1);
+                EditorContainer.Controls.Add(EditorControl, 0, 0);
             }
 
             protected override void Dispose(bool disposing)
@@ -274,9 +250,9 @@ namespace QtVsTools.Editors
                     Editor.OnStart(EditorProcess);
                     CloseParentFrame();
                     return VSConstants.S_OK;
+                } else {
+                    ShowDetachBar();
                 }
-
-                EditorTitle.Text = Editor.GetTitle(EditorProcess);
 
                 EditorProcess.WaitForInputIdle();
                 EditorProcess.EnableRaisingEvents = true;
@@ -376,7 +352,27 @@ namespace QtVsTools.Editors
                 }
             }
 
-            private void EditorDetachButton_Click(object sender, EventArgs e)
+            private void ShowDetachBar()
+            {
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                    if (GetService(typeof(SVsWindowFrame)) is not IVsWindowFrame parentFrame)
+                        return;
+
+                    var result = parentFrame.GetProperty((int)__VSFPROPID7.VSFPROPID_InfoBarHost,
+                        out var value);
+                    if (ErrorHandler.Failed(result) || value is not IVsInfoBarHost infoBarHost)
+                        return;
+
+                    NotifyDetach?.Close();
+                    NotifyDetach = new NotifyDetach(Detach, infoBarHost);
+                    NotifyDetach.Show();
+                });
+            }
+
+            public void Detach()
             {
                 if (EditorProcess != null) {
                     var editorWindow = EditorWindow;

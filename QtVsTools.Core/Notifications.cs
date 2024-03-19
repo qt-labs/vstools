@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 
 namespace QtVsTools.Core
@@ -235,5 +236,36 @@ namespace QtVsTools.Core
 
         private List<Hyperlink> MessageHyperlinks { get; set; } = new();
         protected override Hyperlink[] Hyperlinks => MessageHyperlinks.ToArray();
+    }
+
+    public class NotifyDetach : InfoBarMessage
+    {
+        private Action DetachAction { get; }
+
+        public NotifyDetach(Action detachAction, IVsInfoBarHost host = null) : base(host)
+        {
+            DetachAction = detachAction;
+        }
+
+        protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
+
+        protected override TextSpan[] Text => new TextSpan[]
+        {
+            new() { Bold = true, Text = "Qt Visual Studio Tools" },
+            new TextSpacer(2),
+            Utils.EmDash,
+            new TextSpacer(2),
+            "This window is detachable. Click detach to launch in a separate window."
+        };
+
+        protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+        {
+            new()
+            {
+                Text = "Detach",
+                CloseInfoBar = false,
+                OnClicked = DetachAction
+            }
+        };
     }
 }
