@@ -152,8 +152,18 @@ namespace QtVsTools.Editors
                 .GetBrightness() < 0.5f)) {
                 arguments += " -style fusion";
             }
-            if (!string.IsNullOrEmpty(options.StylesheetPath))
+            if (!string.IsNullOrEmpty(options.StylesheetPath)) {
                 arguments += $" -stylesheet {SafePath(options.StylesheetPath)}";
+            } else if (!Detached) {
+                // Hack: Apply stylesheet resizing embedded window widgets to reasonable defaults.
+                var tempPath = Path.Combine(Path.GetTempPath(), "default.qss");
+                if (!File.Exists(tempPath)) {
+                    var writer = new StreamWriter(tempPath);
+                    writer.WriteLine("QTreeView { min-width: 256; min-height: 256 }");
+                    writer.Close();
+                }
+                arguments += $" -stylesheet {SafePath(tempPath)}";
+            }
 
             return new ProcessStartInfo
             {
