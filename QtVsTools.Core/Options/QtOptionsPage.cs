@@ -77,6 +77,7 @@ namespace QtVsTools.Core.Options
 
         public enum Notifications
         {
+            [String("Notifications_AutoActivatePane")] AutoActivatePane,
             [String("Notifications_Installed")] Installed,
             [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
@@ -271,6 +272,13 @@ namespace QtVsTools.Core.Options
         public LoggerVerbosity BuildLoggerVerbosity { get; set; }
 
         [Category("Notifications")]
+        [DisplayName("Auto activate console pane")]
+        [Description("Automatically activate the Qt Visual Studio Tools pane of the console on "
+            + "new messages.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool AutoActivatePane { get; set; }
+
+        [Category("Notifications")]
         [DisplayName("New version installed")]
         [Description("Show notification when a new version was recently installed.")]
         [TypeConverter(typeof(EnableDisableConverter))]
@@ -382,6 +390,7 @@ namespace QtVsTools.Core.Options
             BuildRunQtTools = ProjectTracking = true;
             BuildDebugInformation = false;
             BuildLoggerVerbosity = LoggerVerbosity.Quiet;
+            AutoActivatePane = true;
             NotifyInstalled = true;
             UpdateProjectFormat = true;
             NotifyCMakeIncompatible = true;
@@ -435,6 +444,7 @@ namespace QtVsTools.Core.Options
                 Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
                 Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
                 Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                Load(() => AutoActivatePane, key, Notifications.AutoActivatePane);
                 Load(() => NotifyInstalled, key, Notifications.Installed);
                 Load(() => NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
                 Load(() => NotifyCMakeConversion, key, Notifications.CMakeConversion);
@@ -481,6 +491,7 @@ namespace QtVsTools.Core.Options
                 Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
                 Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
                 Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
+                Save(AutoActivatePane, key, Notifications.AutoActivatePane);
                 Save(NotifyInstalled, key, Notifications.Installed);
                 Save(NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
                 Save(NotifyCMakeConversion, key, Notifications.CMakeConversion);

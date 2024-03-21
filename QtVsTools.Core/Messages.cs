@@ -186,7 +186,7 @@ namespace QtVsTools.Core
                                 await OutputWindowPane_ClearAsync();
                             if (msgText.Length > 0)
                                 await OutputWindowPane_PrintAsync(msgText.ToString());
-                            if (activate)
+                            if (activate && Options.Options.Get() is { AutoActivatePane: true })
                                 await OutputWindowPane_ActivateAsync();
                         }
                     });
