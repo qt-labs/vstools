@@ -221,7 +221,7 @@ def main():
                                 message = "There was no expected file opened for %s" % templateName
                                 test.fail(message)
                         else:
-                            test.exception("waitForObjectExists(names.qt_cpp_Label)",
+                            test.exception("waitForObjectExists(names.qt_cpp_Label, 10000)",
                                            "No file should be opened for %s" % templateName)
                         test.verify(all(map(os.path.exists,
                                             listExpectedWrittenFiles(workDir, projectName,

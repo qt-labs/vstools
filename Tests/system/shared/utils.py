@@ -48,7 +48,7 @@ def openVsToolsMenu(version):
     while True:
         mouseClick(waitForObject(globalnames.extensions_MenuItem))
         mouseClick(waitForObject(globalnames.extensions_Qt_VS_Tools_MenuItem, 5000))
-        if not object.exists(globalnames.Initializing_MenuItem):
+        if not waitFor("object.exists(globalnames.Initializing_MenuItem)", 500):
             break
         mouseClick(waitForObject(globalnames.extensions_MenuItem))  # close menu
         snooze(4)

@@ -57,7 +57,7 @@ def main():
 
 def checkSelectQtLabel():
     try:
-        waitForObjectExists(names.You_must_select_a_Qt_version_Label, 1000)
+        waitForObjectExists(names.You_must_select_a_Qt_version_Label, 5000)
         return True
     except:
         return False
