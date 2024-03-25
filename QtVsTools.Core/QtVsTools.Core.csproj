@@ -147,6 +147,9 @@
     <Compile Include="CxxStream.cs" />
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
+    <Compile Include="Common\SettingsAttribute.cs" />
+    <Compile Include="Options\QtOptionsPageSettings.cs" />
+    <Compile Include="Common\SettingsBase.cs" />
     <Compile Include="VcFilterExtensions.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.V2.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.V3.cs" />
