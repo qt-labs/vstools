@@ -104,7 +104,7 @@ namespace QtVsTools.Core.MsBuild
                 var configProject = await UnconfiguredProject.LoadConfiguredProjectAsync(config);
                 UpdateInitStatus(p += d);
                 configProject.ProjectUnloading += OnProjectUnloadingAsync;
-                if (Options.Get() is { BuildDebugInformation: true }) {
+                if (QtOptionsPage.BuildDebugInformation) {
                     Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                         + $"QtProjectTracker({Thread.CurrentThread.ManagedThreadId}): "
                         + $"Started tracking [{config.Name}] {VcProjectPath}");
@@ -116,7 +116,7 @@ namespace QtVsTools.Core.MsBuild
         private async Task OnProjectUnloadingAsync(object sender, EventArgs args)
         {
             if (sender is ConfiguredProject project) {
-                if (Options.Get() is { BuildDebugInformation: true }) {
+                if (QtOptionsPage.BuildDebugInformation) {
                     Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} QtProjectTracker: "
                         + $"Stopped tracking [{project.ProjectConfiguration.Name}] "
                         + $"{project.UnconfiguredProject.FullPath}");

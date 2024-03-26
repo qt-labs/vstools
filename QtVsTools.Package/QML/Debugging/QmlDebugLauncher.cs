@@ -25,6 +25,7 @@ namespace QtVsTools.Qml.Debug
     using Common;
     using Core;
     using Core.MsBuild;
+    using Core.Options;
     using SyntaxAnalysis;
     using VisualStudio;
     using static Core.Common.Utils;
@@ -80,7 +81,7 @@ namespace QtVsTools.Qml.Debug
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!QtVsToolsPackage.Instance.Options.QmlDebuggerEnabled)
+            if (!QtOptionsPage.QmlDebuggerEnabled)
                 return S_OK;
 
             if (riidEvent != typeof(IDebugThreadCreateEvent2).GUID

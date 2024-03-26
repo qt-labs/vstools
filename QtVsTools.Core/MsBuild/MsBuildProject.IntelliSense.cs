@@ -31,9 +31,9 @@ namespace QtVsTools.Core.MsBuild
             IEnumerable<string> selectedFiles = null,
             bool refreshQtVars = false)
         {
-            if (Options.Get() is not { ProjectTracking: true } options)
+            if (!QtOptionsPage.ProjectTracking)
                 return;
-            if (options is { BuildDebugInformation: true }) {
+            if (QtOptionsPage.BuildDebugInformation) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectIntellisense({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Refreshing: [{configurationName ?? "(all configs)"}] {VcProjectPath}");
@@ -48,7 +48,7 @@ namespace QtVsTools.Core.MsBuild
             if (selectedFiles != null)
                 properties["SelectedFiles"] = string.Join(";", selectedFiles);
             var targets = new List<string> { "QtVars" };
-            if (Options.Get() is { BuildRunQtTools: true })
+            if (QtOptionsPage.BuildRunQtTools)
                 targets.Add("Qt");
 
             var configurationNames = Enumerable.Empty<string>();

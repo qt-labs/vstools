@@ -10,15 +10,13 @@ using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 
 namespace QtVsTools.Core
 {
     using Common;
+    using Options;
     using QtVsTools.Common;
     using VisualStudio;
-
-    using static Options.QtOptionsPage;
 
     public static class Notifications
     {
@@ -96,10 +94,8 @@ namespace QtVsTools.Core
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    if (Options.Options.Get() is not {} options)
-                        return;
-                    options.NotifyInstalled = false;
-                    options.SaveSettingsToStorage();
+                    QtOptionsPage.NotifyInstalled = false;
+                    QtOptionsPage.SaveSettingsToStorageStatic();
                 }
             }
         };
@@ -107,15 +103,7 @@ namespace QtVsTools.Core
 
     public class SearchDevRelease : InfoBarMessage
     {
-        private readonly bool isSearchEnabled;
-        private readonly string keyName = DevelopmentReleases.SearchDevRelease.ToString();
-
-        public SearchDevRelease()
-        {
-            using var key = Registry.CurrentUser
-                .OpenSubKey(Resources.PackageSettingsPath, writable: false);
-            isSearchEnabled = key?.GetBoolValue(keyName) ?? false;
-        }
+        private readonly bool isSearchEnabled = QtOptionsPage.NotifySearchDevRelease;
 
         protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
 
@@ -137,9 +125,8 @@ namespace QtVsTools.Core
                 OnClicked= () =>
                 {
                     try {
-                        using var key =
-                            Registry.CurrentUser.CreateSubKey(Resources.PackageSettingsPath);
-                        key?.SetValue(keyName, Convert.ToInt32(!isSearchEnabled));
+                        QtOptionsPage.NotifySearchDevRelease = !isSearchEnabled;
+                        QtOptionsPageSettings.Instance.SaveSettings();
                     } catch (Exception ex) {
                         ex.Log();
                     }
@@ -151,10 +138,12 @@ namespace QtVsTools.Core
                 CloseInfoBar = true,
                 OnClicked = () =>
                 {
-                    if (Options.Options.Get() is not {} options)
-                        return;
-                    options.NotifySearchDevRelease = false;
-                    options.SaveSettingsToStorage();
+                    try {
+                        QtOptionsPage.NotifySearchDevRelease = false;
+                        QtOptionsPage.SaveSettingsToStorageStatic();
+                    } catch (Exception ex) {
+                        ex.Log();
+                    }
                 }
             }
         };

@@ -50,7 +50,7 @@ namespace QtVsTools.Core.MsBuild
                         return project;
                     project = new MsBuildProject(vcProject);
                     Instances[vcProject.ProjectFile] = project;
-                    if (Options.Get() is { ProjectTracking: true }) {
+                    if (QtOptionsPage.ProjectTracking) {
                         InitQueue.Enqueue(project);
                         _ = Task.Run(InitDispatcherLoopAsync);
                     }
@@ -109,7 +109,7 @@ namespace QtVsTools.Core.MsBuild
 
         public string SolutionPath { get; set; } = "";
         public bool IsTracked =>
-            Options.Get() is { ProjectTracking: true } && Instances.ContainsKey(VcProjectPath);
+            QtOptionsPage.ProjectTracking && Instances.ContainsKey(VcProjectPath);
 
         public string QtVersion
         {

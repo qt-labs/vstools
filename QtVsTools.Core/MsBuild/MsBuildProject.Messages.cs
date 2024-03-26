@@ -65,10 +65,8 @@ namespace QtVsTools.Core.MsBuild
                         CloseInfoBar = true,
                         OnClicked = () =>
                         {
-                            if (Options.Get() is not {} options)
-                                return;
-                            options.UpdateQtInstallation = false;
-                            options.SaveSettingsToStorage();
+                            QtOptionsPage.UpdateQtInstallation = false;
+                            QtOptionsPage.SaveSettingsToStorageStatic();
                         }
                     }
             };
@@ -84,9 +82,8 @@ namespace QtVsTools.Core.MsBuild
 
         public static async Task ShowUpdateQtInstallationMessageAsync(MsBuildProject project)
         {
-            if (!Options.Get().UpdateQtInstallation)
-                return;
-            await VsShell.UiThreadAsync(UpdateQtInstallation.Message(project).Show);
+            if (QtOptionsPage.UpdateQtInstallation)
+                await VsShell.UiThreadAsync(UpdateQtInstallation.Message(project).Show);
         }
 
         public static void CloseUpdateQtInstallationMessage()
@@ -133,10 +130,8 @@ namespace QtVsTools.Core.MsBuild
                         CloseInfoBar = true,
                         OnClicked = () =>
                         {
-                            if (Options.Get() is not {} options)
-                                return;
-                            options.UpdateProjectFormat = false;
-                            options.SaveSettingsToStorage();
+                            QtOptionsPage.UpdateProjectFormat = false;
+                            QtOptionsPage.SaveSettingsToStorageStatic();
                         }
                     }
             };
@@ -149,7 +144,7 @@ namespace QtVsTools.Core.MsBuild
 
         public static async Task ShowUpdateFormatMessageAsync()
         {
-            if (!Options.Get().UpdateProjectFormat)
+            if (!QtOptionsPage.UpdateProjectFormat)
                 return;
             await VsShell.UiThreadAsync(UpdateProjectFormat.Message.Show);
         }

@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 
 namespace QtVsTools.Editors
 {
+    using Core.Options;
+
     [Guid(GuidString)]
     public class QtResourceEditor : Editor
     {
@@ -28,6 +30,6 @@ namespace QtVsTools.Editors
 
         protected override string GetTitle(Process editorProcess) => Title;
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.ResourceEditorDetached;
+        protected override bool Detached => QtOptionsPage.ResourceEditorDetached;
     }
 }

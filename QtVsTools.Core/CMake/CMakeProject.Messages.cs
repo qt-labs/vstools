@@ -36,10 +36,8 @@ namespace QtVsTools.Core.CMake
                     CloseInfoBar = true,
                     OnClicked = () =>
                     {
-                        if (Options.Get() is not {} options)
-                            return;
-                        options.NotifyCMakeIncompatible = false;
-                        options.SaveSettingsToStorage();
+                        QtOptionsPage.NotifyCMakeIncompatible = false;
+                        QtOptionsPage.SaveSettingsToStorageStatic();
                     }
                 }
             };
@@ -50,7 +48,7 @@ namespace QtVsTools.Core.CMake
 
         private async Task ShowIncompatibleProjectAsync()
         {
-            if (!Options.Get().NotifyCMakeIncompatible)
+            if (!QtOptionsPage.NotifyCMakeIncompatible)
                 return;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             IncompatibleProjectMessage.Show();
@@ -88,10 +86,8 @@ namespace QtVsTools.Core.CMake
                     CloseInfoBar = true,
                     OnClicked = () =>
                     {
-                        if (Options.Get() is not {} options)
-                            return;
-                        options.NotifyCMakeConversion = false;
-                        options.SaveSettingsToStorage();
+                        QtOptionsPage.NotifyCMakeConversion = false;
+                        QtOptionsPage.SaveSettingsToStorageStatic();
                     }
                 }
             };
@@ -102,7 +98,7 @@ namespace QtVsTools.Core.CMake
 
         private async Task ShowConversionConfirmationAsync()
         {
-            if (!Options.Get().NotifyCMakeConversion)
+            if (!QtOptionsPage.NotifyCMakeConversion)
                 return;
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ConversionConfirmationMessage.Show();

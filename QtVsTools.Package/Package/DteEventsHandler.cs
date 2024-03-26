@@ -20,6 +20,7 @@ namespace QtVsTools
     using Core;
     using Core.CMake;
     using Core.MsBuild;
+    using Core.Options;
     using VisualStudio;
     using static Core.Common.Utils;
 
@@ -120,10 +121,12 @@ namespace QtVsTools
         {
             if (QtVersionManager.GetVersions().Length == 0)
                 Notifications.NoQtVersion.Show();
-            if (QtVsToolsPackage.Instance.Options.NotifyInstalled && TestVersionInstalled())
+            if (QtOptionsPage.NotifyInstalled && TestVersionInstalled())
                 Notifications.NotifyInstall.Show();
-            if (QtVsToolsPackage.Instance.Options.NotifySearchDevRelease)
+            if (QtOptionsPage.NotifySearchDevRelease)
                 Notifications.NotifySearchDevRelease.Show();
+            if (QtOptionsPage.AutoActivatePane)
+                Messages.ActivateMessagePane();
         }
 
         private static bool TestVersionInstalled()
@@ -162,7 +165,7 @@ namespace QtVsTools
             string Guid, int ID, object CustomIn, object CustomOut, ref bool CancelDefault)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (QtVsToolsPackage.Instance.Options.TryQtHelpOnF1Pressed) {
+            if (QtOptionsPage.TryQtHelpOnF1Pressed) {
                 if (!QtHelp.ShowEditorContextHelp()) {
                     Messages.Print("No help match was found. You can still try to search online at "
                         + "https://doc.qt.io" + ".", false, true);

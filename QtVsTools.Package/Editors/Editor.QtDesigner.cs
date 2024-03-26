@@ -15,6 +15,7 @@ using Task = System.Threading.Tasks.Task;
 namespace QtVsTools.Editors
 {
     using Core.MsBuild;
+    using Core.Options;
     using VisualStudio;
 
     [Guid(GuidString)]
@@ -67,6 +68,6 @@ namespace QtVsTools.Editors
             });
         }
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.DesignerDetached;
+        protected override bool Detached => QtOptionsPage.DesignerDetached;
     }
 }

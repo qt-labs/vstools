@@ -34,6 +34,7 @@ namespace QtVsTools.Qml.Language
 {
     using Core;
     using Core.CMake;
+    using Core.Options;
     using static Core.Common.Utils;
     using static Core.HelperFunctions;
     using static Instances;
@@ -77,7 +78,7 @@ namespace QtVsTools.Qml.Language
         {
             await QtVsToolsPackage.WaitUntilInitializedAsync();
 
-            if (!Package.Options.QmlLspEnable)
+            if (!QtOptionsPage.QmlLspEnable)
                 Disconnect();
             else
                 await StartAsync.InvokeAsync(this, EventArgs.Empty);
@@ -97,7 +98,7 @@ namespace QtVsTools.Qml.Language
             if (Server is { HasExited: false })
                 Disconnect();
 
-            var qtVersionName = Package.Options.QmlLspVersion switch
+            var qtVersionName = QtOptionsPage.QmlLspVersion switch
             {
                 { Length: > 0 } x when !x.Equals("$(DefaultQtVersion)", IgnoreCase) => x,
                 _ => QtVersionManager.GetDefaultVersion()
@@ -131,7 +132,7 @@ namespace QtVsTools.Qml.Language
                 return Disconnect();
             }
 
-            if (!Package.Options.QmlLspLog) {
+            if (!QtOptionsPage.QmlLspLog) {
                 StdIn.SetStream(Server.StandardInput);
                 StdOut.SetStream(Server.StandardOutput);
                 StdErr.SetStream(Server.StandardError);
@@ -165,14 +166,14 @@ namespace QtVsTools.Qml.Language
 
         private void SetupLog()
         {
-            if (!Package.Options.QmlLspLog) {
+            if (!QtOptionsPage.QmlLspLog) {
                 Log = null;
                 return;
             }
 
-            var logMaxSize = 1000 * (Package.Options.QmlLspLogSize switch
+            var logMaxSize = 1000 * (QtOptionsPage.QmlLspLogSize switch
             {
-                >= 10 and <= 10000 => Package.Options.QmlLspLogSize,
+                >= 10 and <= 10000 => QtOptionsPage.QmlLspLogSize,
                 _ => 2500
             });
             var logTruncSize = 2 * logMaxSize / 3;

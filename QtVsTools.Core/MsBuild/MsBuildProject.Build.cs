@@ -74,9 +74,9 @@ namespace QtVsTools.Core.MsBuild
             if (string.IsNullOrEmpty(configurationName))
                 throw new ArgumentException("Configuration cannot be null.");
 
-            if (Options.Get() is not { ProjectTracking: true } options)
+            if (!QtOptionsPage.ProjectTracking)
                 return;
-            if (options is { BuildDebugInformation: true }) {
+            if (QtOptionsPage.BuildDebugInformation) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Request [{configurationName}] {VcProjectPath}");
@@ -204,10 +204,8 @@ namespace QtVsTools.Core.MsBuild
                 configProps, null, new ProjectCollection());
 
             var loggerVerbosity = item.LoggerVerbosity;
-            if (Options.Get() is { BuildDebugInformation: true }) {
-                if (Options.Get() is {} options)
-                    loggerVerbosity = options.BuildLoggerVerbosity;
-            }
+            if (QtOptionsPage.BuildDebugInformation)
+                loggerVerbosity = QtOptionsPage.BuildLoggerVerbosity;
 
             var buildParams = new BuildParameters
             {
@@ -221,7 +219,7 @@ namespace QtVsTools.Core.MsBuild
                 hostServices: null,
                 flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild);
 
-            if (Options.Get() is { BuildDebugInformation: true }) {
+            if (QtOptionsPage.BuildDebugInformation) {
                 Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                     + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                     + $"Build [{item.ConfiguredProject.ProjectConfiguration.Name}] "
@@ -239,7 +237,7 @@ namespace QtVsTools.Core.MsBuild
                 try {
                     result = BuildManager.DefaultBuildManager.Build(buildParams, buildRequest);
                 } catch (InvalidOperationException) {
-                    if (Options.Get() is { BuildDebugInformation: true }) {
+                    if (QtOptionsPage.BuildDebugInformation) {
                         Messages.Print($"{DateTime.Now:HH:mm:ss.FFF} "
                         + $"QtProjectBuild({Thread.CurrentThread.ManagedThreadId}): "
                         + $"[{item.ConfiguredProject.ProjectConfiguration.Name}] "
@@ -249,7 +247,7 @@ namespace QtVsTools.Core.MsBuild
                 }
             }
 
-            if (Options.Get() is { BuildDebugInformation: true }) {
+            if (QtOptionsPage.BuildDebugInformation) {
                 string resMsg;
                 var resInfo = new StringBuilder();
                 if (result.OverallResult == BuildResultCode.Success) {
@@ -310,7 +308,7 @@ namespace QtVsTools.Core.MsBuild
                       $"== {path}: starting build...{Environment.NewLine}"
                     + $"  * Properties: {properties}{Environment.NewLine}"
                     + $"  * Targets: {string.Join(";", item.Targets)}{Environment.NewLine}",
-                    clear: Options.Get() is not { BuildDebugInformation: true },
+                    clear: !QtOptionsPage.BuildDebugInformation,
                     activate: true);
             }
 

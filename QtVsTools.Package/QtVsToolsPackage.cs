@@ -33,7 +33,6 @@ namespace QtVsTools
     using Qml.Debug;
     using VisualStudio;
 
-    using static Core.Options.QtOptionsPage;
     using static QtVsTools.Core.Common.Utils;
     using static SyntaxAnalysis.RegExpr;
 
@@ -311,8 +310,7 @@ namespace QtVsTools
             /////////
             // If configured, show link to dev release, if any
             //
-            using var key = Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath, false);
-            if (key?.GetBoolValue(DevelopmentReleases.SearchDevRelease.ToString()) ?? false) {
+            if (QtOptionsPage.SearchDevRelease) {
                 var result = await GetLatestDevelopmentReleaseAsync();
                 if (result != null) {
                     Messages.Print(
@@ -534,12 +532,8 @@ namespace QtVsTools
 
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
             try {
-                using var key = Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath, false);
-                var timeout = key?.GetValue(DevelopmentReleases.SearchDevReleaseTimeout.ToString()) as int?
-                    ?? SearchDevReleaseDefaultTimeout;
-
                 using var http = new HttpClient();
-                http.Timeout = TimeSpan.FromSeconds(timeout);
+                http.Timeout = TimeSpan.FromSeconds(QtOptionsPage.SearchDevReleaseTimeout);
                 var response = await http.GetAsync(urlDownloadQtIo);
                 if (!response.IsSuccessStatusCode)
                     return null;

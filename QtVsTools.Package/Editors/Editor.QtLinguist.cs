@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 
 namespace QtVsTools.Editors
 {
+    using Core.Options;
+
     [Guid(GuidString)]
     public class QtLinguist : Editor
     {
@@ -28,6 +30,6 @@ namespace QtVsTools.Editors
             return Title;
         }
 
-        protected override bool Detached => QtVsToolsPackage.Instance.Options.LinguistDetached;
+        protected override bool Detached => QtOptionsPage.LinguistDetached;
     }
 }

@@ -8,30 +8,18 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using EnvDTE;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 
 namespace QtVsTools.Core.Options
 {
+    using Common;
     using Core;
     using VisualStudio;
     using static Common.Utils;
     using static QtVsTools.Common.EnumExt;
-
-    public static class Options
-    {
-        public static QtOptionsPage Get()
-        {
-            if (VsServiceProvider.Instance is not AsyncPackage package)
-                return null;
-            return package.GetDialogPage(typeof(QtOptionsPage)) as QtOptionsPage;
-        }
-    }
 
     public class QtOptionsPage : DialogPage
     {
@@ -109,7 +97,7 @@ namespace QtVsTools.Core.Options
             [String("NotifySearchDevRelease")] NotifySearchDevRelease,
             [String("SearchDevRelease")] SearchDevRelease,
             [String("SearchDevReleaseTimeout")]  SearchDevReleaseTimeout
-        };
+        }
 
         public enum Timeout : uint { Disabled = 0 }
 
@@ -209,12 +197,28 @@ namespace QtVsTools.Core.Options
         [Description("Set to false to turn off processing of all debug events by the QML debug "
             + "engine, effectively excluding it from the debugging environment. Disabling the "
             + "QML debug engine will skip debugging of QML code for all projects.")]
-        public bool QmlDebuggerEnabled { get; set; }
+        public bool QmlDebuggerEnabledOption
+        {
+            get => QmlDebuggerEnabled;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlDebuggerEnabled, value);
+        }
+
+        [Settings(QmlDebug.Enable, true)]
+        public static bool QmlDebuggerEnabled =>
+            QtOptionsPageSettings.Instance.GetValue(() => QmlDebuggerEnabled);
 
         [Category("QML Debugging")]
         [DisplayName("Runtime connection timeout (msecs)")]
         [TypeConverter(typeof(TimeoutConverter))]
-        public Timeout QmlDebuggerTimeout { get; set; }
+        public Timeout QmlDebuggerTimeoutOption
+        {
+            get => QmlDebuggerTimeout;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlDebuggerTimeout, value);
+        }
+
+        [Settings(QmlDebug.Timeout, (Timeout)60000)]
+        public static Timeout QmlDebuggerTimeout =>
+            QtOptionsPageSettings.Instance.GetValue(() => QmlDebuggerTimeout);
 
         [Category("Help")]
         [DisplayName("Keyboard shortcut")]
@@ -226,23 +230,63 @@ namespace QtVsTools.Core.Options
 
         [Category("Help")]
         [DisplayName("Preferred source")]
-        public SourcePreference HelpPreference { get; set; }
+        public SourcePreference HelpPreferenceOption
+        {
+            get => HelpPreference;
+            set => QtOptionsPageSettings.Instance.SetValue(() => HelpPreference, value);
+        }
+
+        [Settings(Help.Preference, SourcePreference.Online)]
+        public static SourcePreference HelpPreference =>
+            QtOptionsPageSettings.Instance.GetValue(() => HelpPreference);
 
         [Category("Help")]
         [DisplayName("Try Qt documentation when F1 is pressed")]
-        public bool TryQtHelpOnF1Pressed { get; set; }
+        public bool TryQtHelpOnF1PressedOption
+        {
+            get => TryQtHelpOnF1Pressed;
+            set => QtOptionsPageSettings.Instance.SetValue(() => TryQtHelpOnF1Pressed, value);
+        }
+
+        [Settings(Help.TryOnF1Pressed, true)]
+        public static bool TryQtHelpOnF1Pressed =>
+            QtOptionsPageSettings.Instance.GetValue(() => TryQtHelpOnF1Pressed);
 
         [Category("Qt Designer")]
         [DisplayName("Run in detached window")]
-        public bool DesignerDetached { get; set; }
+        public bool DesignerDetachedOption
+        {
+            get => DesignerDetached;
+            set => QtOptionsPageSettings.Instance.SetValue(() => DesignerDetached, value);
+        }
+
+        [Settings(Designer.Detached, false)]
+        public static bool DesignerDetached =>
+            QtOptionsPageSettings.Instance.GetValue(() => DesignerDetached);
 
         [Category("Qt Linguist")]
         [DisplayName("Run in detached window")]
-        public bool LinguistDetached { get; set; }
+        public bool LinguistDetachedOption
+        {
+            get => LinguistDetached;
+            set => QtOptionsPageSettings.Instance.SetValue(() => LinguistDetached, value);
+        }
+
+        [Settings(Linguist.Detached, false)]
+        public static bool LinguistDetached =>
+            QtOptionsPageSettings.Instance.GetValue(() => LinguistDetached);
 
         [Category("Qt Resource Editor")]
         [DisplayName("Run in detached window")]
-        public bool ResourceEditorDetached { get; set; }
+        public bool ResourceEditorDetachedOption
+        {
+            get => ResourceEditorDetached;
+            set => QtOptionsPageSettings.Instance.SetValue(() => ResourceEditorDetached, value);
+        }
+
+        [Settings(ResEditor.Detached, false)]
+        public static bool ResourceEditorDetached =>
+            QtOptionsPageSettings.Instance.GetValue(() => ResourceEditorDetached);
 
         [Category("IntelliSense")]
         [DisplayName("Auto project tracking")]
@@ -250,7 +294,15 @@ namespace QtVsTools.Core.Options
             "Enable this option to automatically keep track of project changes and trigger a"
             + " background build of Qt targets if required to keep IntelliSense updated.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool ProjectTracking { get; set; }
+        public bool ProjectTrackingOption
+        {
+            get => ProjectTracking;
+            set => QtOptionsPageSettings.Instance.SetValue(() => ProjectTracking, value);
+        }
+
+        [Settings(BkgBuild.ProjectTracking, true)]
+        public static bool ProjectTracking =>
+            QtOptionsPageSettings.Instance.GetValue(() => ProjectTracking);
 
         [Category("IntelliSense")]
         [DisplayName("Run Qt tools in background build")]
@@ -259,56 +311,143 @@ namespace QtVsTools.Core.Options
             + " background update of IntelliSense information. If disabled, only qmake will be"
             + " invoked during background builds, to update a minimal set of Qt build properties.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildRunQtTools { get; set; }
+        public bool BuildRunQtToolsOption
+        {
+            get => BuildRunQtTools;
+            set => QtOptionsPageSettings.Instance.SetValue(() => BuildRunQtTools, value);
+        }
+
+        [Settings(BkgBuild.RunQtTools, true)]
+        public static bool BuildRunQtTools =>
+            QtOptionsPageSettings.Instance.GetValue(() => BuildRunQtTools);
 
         [Category("IntelliSense")]
         [DisplayName("Show debug information")]
         [Description("Enable this option to display debug information about IntelliSense updates.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool BuildDebugInformation { get; set; }
+        public bool BuildDebugInformationOption
+        {
+            get => BuildDebugInformation;
+            set => QtOptionsPageSettings.Instance.SetValue(() => BuildDebugInformation, value);
+        }
+
+        [Settings(BkgBuild.DebugInfo, false)]
+        public static bool BuildDebugInformation =>
+            QtOptionsPageSettings.Instance.GetValue(() => BuildDebugInformation);
 
         [Category("IntelliSense")]
         [DisplayName("Verbosity of background build log")]
         [Description("Configure verbosity level of background build log.")]
-        public LoggerVerbosity BuildLoggerVerbosity { get; set; }
+        public LoggerVerbosity BuildLoggerVerbosityOption
+        {
+            get => BuildLoggerVerbosity;
+            set => QtOptionsPageSettings.Instance.SetValue(() => BuildLoggerVerbosity, value);
+        }
+
+        [Settings(BkgBuild.LoggerVerbosity, LoggerVerbosity.Quiet)]
+        public static LoggerVerbosity BuildLoggerVerbosity
+            => QtOptionsPageSettings.Instance.GetValue(() => BuildLoggerVerbosity);
 
         [Category("Notifications")]
         [DisplayName("Auto activate console pane")]
         [Description("Automatically activate the Qt Visual Studio Tools pane of the console on "
             + "new messages.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool AutoActivatePane { get; set; }
+        public bool AutoActivatePaneOption
+        {
+            get => AutoActivatePane;
+            set => QtOptionsPageSettings.Instance.SetValue(() => AutoActivatePane, value);
+        }
+
+        [Settings(Notifications.AutoActivatePane, true)]
+        public static bool AutoActivatePane
+            => QtOptionsPageSettings.Instance.GetValue(() => AutoActivatePane);
 
         [Category("Notifications")]
         [DisplayName("New version installed")]
         [Description("Show notification when a new version was recently installed.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool NotifyInstalled { get; set; }
+        public bool NotifyInstalledOption
+        {
+            get => NotifyInstalled;
+            set => NotifyInstalled = value;
+        }
+
+        [Settings(Notifications.Installed, true)]
+        public static bool NotifyInstalled
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyInstalled);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyInstalled, value);
+        }
 
         [Category("Notifications")]
         [DisplayName("Update Qt installation")]
         [Description("Show notification when a project uses an invalid Qt Installation.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool UpdateQtInstallation { get; set; }
+        public bool UpdateQtInstallationOption
+        {
+            get => UpdateQtInstallation;
+            set => UpdateProjectFormat = value;
+        }
+
+        [Settings(Notifications.UpdateQtInstallation, true)]
+        public static bool UpdateQtInstallation
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => UpdateProjectFormat);
+            set => QtOptionsPageSettings.Instance.SetValue(() => UpdateProjectFormat, value);
+        }
 
         [Category("Notifications")]
         [DisplayName("Update project format")]
         [Description("Show notification when a project uses some legacy code path of the Qt "
             + "Visual Studio Tools.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool UpdateProjectFormat { get; set; }
+        public bool UpdateProjectFormatOption
+        {
+            get => UpdateProjectFormat;
+            set => UpdateProjectFormat = value;
+        }
+
+        [Settings(Notifications.UpdateProjectFormat, true)]
+        public static bool UpdateProjectFormat
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => UpdateProjectFormat);
+            set => QtOptionsPageSettings.Instance.SetValue(() => UpdateProjectFormat, value);
+        }
 
         [Category("Notifications")]
         [DisplayName("CMake incompatible project")]
         [Description("Qt reference detected on a project using CMakeSettings.json.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool NotifyCMakeIncompatible { get; set; }
+        public bool NotifyCMakeIncompatibleOption
+        {
+            get => NotifyCMakeIncompatible;
+            set => NotifyCMakeIncompatible = value;
+        }
+
+        [Settings(Notifications.CMakeIncompatible, true)]
+        public static bool NotifyCMakeIncompatible
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyCMakeIncompatible);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyCMakeIncompatible, value);
+        }
 
         [Category("Notifications")]
         [DisplayName("CMake conversion confirmation")]
         [Description("Qt reference detected: ask to confirm conversion to Qt/CMake.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool NotifyCMakeConversion { get; set; }
+        public bool NotifyCMakeConversionOption
+        {
+            get => NotifyCMakeConversion;
+            set => NotifyCMakeConversion = value;
+        }
+
+        [Settings(Notifications.CMakeConversion, true)]
+        public static bool NotifyCMakeConversion
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyCMakeConversion);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyCMakeConversion, value);
+        }
 
         [Category("Natvis")]
         [DisplayName("Embed .natvis file into PDB")]
@@ -317,31 +456,68 @@ namespace QtVsTools.Core.Options
             + "take precedence over user-specific Natvis files(for example the files"
             + "located in %USERPROFILE%\\Documents\\Visual Studio 2022\\Visualizers).")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool LinkNatvis { get; set; }
+        [Settings(Natvis.Link, true)]
+        public bool LinkNatvis
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => LinkNatvis);
+            set => QtOptionsPageSettings.Instance.SetValue(() => LinkNatvis, value);
+        }
 
         [Category("QML Language Server")]
         [DisplayName("Enable")]
         [Description("Connect to a QML language server for enhanced code editing experience. "
             + "Restarting Visual Studio might be required after enabling the QML Language server.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool QmlLspEnable { get; set; }
+        public bool QmlLspEnableOption
+        {
+            get => QmlLspEnable;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspEnable, value);
+        }
+
+        [Settings(QmlLsp.Enable, false)]
+        public static bool QmlLspEnable
+             => QtOptionsPageSettings.Instance.GetValue(() => QmlLspEnable);
 
         [Category("QML Language Server")]
         [DisplayName("Qt Version")]
         [Description("Look for a QML language server in the specified Qt installation.")]
         [TypeConverter(typeof(QmlLspProviderConverter))]
-        public string QmlLspVersion { get; set; }
+        public string QmlLspVersionOption
+        {
+            get => QmlLspVersion;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspVersion, value);
+        }
+
+        [Settings(QmlLsp.QtVersion, "$(DefaultQtVersion)")]
+        public static string QmlLspVersion
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspVersion);
 
         [Category("QML Language Server")]
         [DisplayName("Log")]
         [Description("Write exchanged LSP messages to log file in %TEMP%.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool QmlLspLog { get; set; }
+        public bool QmlLspLogOption
+        {
+            get => QmlLspLog;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspLog, value);
+        }
+
+        [Settings(QmlLsp.Log, false)]
+        public static bool QmlLspLog
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspLog);
 
         [Category("QML Language Server")]
         [DisplayName("Log Size")]
         [Description("Maximum size (in KB) of QML LSP log file.")]
-        public int QmlLspLogSize { get; set; }
+        public int QmlLspLogSizeOption
+        {
+            get => QmlLspLogSize;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspLogSize, value);
+        }
+
+        [Settings(QmlLsp.LogSize, 2500)]
+        public static int QmlLspLogSize
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspLogSize);
 
         public enum EditorColorTheme
         {
@@ -354,120 +530,93 @@ namespace QtVsTools.Core.Options
         [DisplayName("Color theme")]
         [Description("Color theme used in editors (Qt Designer, Qt Linguist, Qt Resource Editor). "
             + "By default consistent with the Visual Studio color theme.")]
-        public EditorColorTheme ColorTheme { get; set; }
+        public EditorColorTheme ColorThemeOption
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => ColorTheme);
+            set => QtOptionsPageSettings.Instance.SetValue(() => ColorTheme, value);
+        }
+
+        [Settings(Style.ColorTheme, EditorColorTheme.Consistent)]
+        public static EditorColorTheme ColorTheme =>
+            QtOptionsPageSettings.Instance.GetValue(() => ColorTheme);
 
         [Category("Style")]
         [DisplayName("Path to stylesheet")]
         [Description("Path to stylesheet used in editors (Qt Designer, Qt Linguist, Qt Resource "
             + "Editor).")]
-        public string StylesheetPath { get; set; }
+        public string StylesheetPathOption
+        {
+            get => StylesheetPath;
+            set => QtOptionsPageSettings.Instance.SetValue(() => StylesheetPath, value);
+        }
+
+        [Settings(Style.StylesheetPath, "")]
+        public static string StylesheetPath =>
+            QtOptionsPageSettings.Instance.GetValue(() => StylesheetPath);
 
         [Category("Development releases")]
         [DisplayName("Notification")]
         [Description("Show a notification to allow the user to enable automatic searching for "
             + "development releases.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool NotifySearchDevRelease { get; set; }
+        public bool NotifySearchDevReleaseOption
+        {
+            get => NotifySearchDevRelease;
+            set => NotifySearchDevRelease = value;
+        }
+
+        [Settings(DevelopmentReleases.NotifySearchDevRelease, true)]
+        public static bool NotifySearchDevRelease
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifySearchDevRelease);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifySearchDevRelease, value);
+        }
 
         [Category("Development releases")]
         [DisplayName("Search automatically")]
         [Description("If enabled, automatically searches for development releases on "
             + "Visual Studio startup.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool SearchDevRelease { get; set; }
+        public bool SearchDevReleaseOption
+        {
+            get => SearchDevRelease;
+            set => QtOptionsPageSettings.Instance.SetValue(() => SearchDevRelease, value);
+        }
+
+        [Settings(DevelopmentReleases.SearchDevRelease, false)]
+        public static bool SearchDevRelease =>
+            QtOptionsPageSettings.Instance.GetValue(() => SearchDevRelease);
 
         [Category("Development releases")]
         [DisplayName("Search timeout")]
         [Description("Sets the time in seconds to wait before the search request for development "
             + "releases times out.")]
-        public int SearchDevReleaseTimeout { get; set; }
-        public const int SearchDevReleaseDefaultTimeout = 3;
-
-        public override void ResetSettings()
+        public int SearchDevReleaseTimeoutOption
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            QtMsBuildPath = "";
-            QmlDebuggerEnabled = true;
-            QmlDebuggerTimeout = (Timeout)60000;
-            HelpPreference = SourcePreference.Online;
-            TryQtHelpOnF1Pressed = true;
-            DesignerDetached = LinguistDetached = ResourceEditorDetached = false;
-
-            BuildRunQtTools = ProjectTracking = true;
-            BuildDebugInformation = false;
-            BuildLoggerVerbosity = LoggerVerbosity.Quiet;
-            AutoActivatePane = true;
-            NotifyInstalled = true;
-            UpdateQtInstallation = true;
-            UpdateProjectFormat = true;
-            NotifyCMakeIncompatible = true;
-            NotifyCMakeConversion = true;
-            LinkNatvis = true;
-
-            QmlLspEnable = false;
-            QmlLspVersion = "$(DefaultQtVersion)";
-            QmlLspLog = false;
-            QmlLspLogSize = 2500;
-
-            ColorTheme = EditorColorTheme.Consistent;
-            StylesheetPath = string.Empty;
-
-            NotifySearchDevRelease = true;
-            SearchDevRelease = false;
-            SearchDevReleaseTimeout = SearchDevReleaseDefaultTimeout;
-
-            ////////
-            // Get Qt Help keyboard shortcut
-            //
-            var dte = VsServiceProvider.GetService<SDTE, DTE>();
-            var f1QtHelpBindings = dte.Commands.Item("QtVSTools.F1QtHelp")?.Bindings as Array;
-            var binding = f1QtHelpBindings?.Cast<string>()
-                .Select(x => x.Split(new[] { "::" }, StringSplitOptions.None))
-                .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
-                .FirstOrDefault();
-            QtHelpKeyBinding = binding != null ? $"[{binding.Scope}] {binding.Shortcut}" : "";
+            get => SearchDevReleaseTimeout;
+            set => QtOptionsPageSettings.Instance.SetValue(() => SearchDevReleaseTimeout, value);
         }
+
+        [Settings(DevelopmentReleases.SearchDevReleaseTimeout, 3)]
+        public static int SearchDevReleaseTimeout =>
+            QtOptionsPageSettings.Instance.GetValue(() => SearchDevReleaseTimeout);
 
         public override void LoadSettingsFromStorage()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            ResetSettings();
             try {
+                ////////
+                // Get Qt Help keyboard shortcut
+                //
+                var dte = VsServiceProvider.GetService<SDTE, DTE>();
+                var f1QtHelpBindings = dte.Commands.Item("QtVSTools.F1QtHelp")?.Bindings as Array;
+                var binding = f1QtHelpBindings?.Cast<string>()
+                    .Select(x => x.Split(new[] { "::" }, StringSplitOptions.None))
+                    .Select(x => new { Scope = x.FirstOrDefault(), Shortcut = x.LastOrDefault() })
+                    .FirstOrDefault();
+                QtHelpKeyBinding = binding != null ? $"[{binding.Scope}] {binding.Shortcut}" : "";
                 QtMsBuildPath = Environment.GetEnvironmentVariable("QTMSBUILD");
-
-                using var key = Registry.CurrentUser
-                    .OpenSubKey(Resources.PackageSettingsPath, writable: false);
-                if (key == null)
-                    return;
-                Load(() => QmlDebuggerEnabled, key, QmlDebug.Enable);
-                Load(() => QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                Load(() => HelpPreference, key, Help.Preference);
-                Load(() => TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
-                Load(() => DesignerDetached, key, Designer.Detached);
-                Load(() => LinguistDetached, key, Linguist.Detached);
-                Load(() => ResourceEditorDetached, key, ResEditor.Detached);
-                Load(() => ProjectTracking, key, BkgBuild.ProjectTracking);
-                Load(() => BuildRunQtTools, key, BkgBuild.RunQtTools);
-                Load(() => BuildDebugInformation, key, BkgBuild.DebugInfo);
-                Load(() => BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                Load(() => AutoActivatePane, key, Notifications.AutoActivatePane);
-                Load(() => NotifyInstalled, key, Notifications.Installed);
-                Load(() => NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
-                Load(() => NotifyCMakeConversion, key, Notifications.CMakeConversion);
-                Load(() => UpdateQtInstallation, key, Notifications.UpdateQtInstallation);
-                Load(() => UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
-                Load(() => LinkNatvis, key, Natvis.Link);
-                Load(() => QmlLspEnable, key, QmlLsp.Enable);
-                Load(() => QmlLspVersion, key, QmlLsp.QtVersion);
-                Load(() => QmlLspLog, key, QmlLsp.Log);
-                Load(() => QmlLspLogSize, key, QmlLsp.LogSize);
-                Load(() => ColorTheme, key, Style.ColorTheme);
-                Load(() => StylesheetPath, key, Style.StylesheetPath);
-                Load(() => NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
-                Load(() => SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
-                Load(() => SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);
             } catch (Exception exception) {
                 exception.Log();
             }
@@ -483,75 +632,18 @@ namespace QtVsTools.Core.Options
                     Environment.SetEnvironmentVariable(
                         "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
                 }
-                if (QmlLspLogSize < 100)
-                    QmlLspLogSize = 100;
 
-                using var key = Registry.CurrentUser.CreateSubKey(Resources.PackageSettingsPath);
-                if (key == null)
-                    return;
-                Save(QmlDebuggerEnabled, key, QmlDebug.Enable);
-                Save(QmlDebuggerTimeout, key, QmlDebug.Timeout);
-                Save(HelpPreference, key, Help.Preference);
-                Save(TryQtHelpOnF1Pressed, key, Help.TryOnF1Pressed);
-                Save(DesignerDetached, key, Designer.Detached);
-                Save(LinguistDetached, key, Linguist.Detached);
-                Save(ResourceEditorDetached, key, ResEditor.Detached);
-                Save(ProjectTracking, key, BkgBuild.ProjectTracking);
-                Save(BuildRunQtTools, key, BkgBuild.RunQtTools);
-                Save(BuildDebugInformation, key, BkgBuild.DebugInfo);
-                Save(BuildLoggerVerbosity, key, BkgBuild.LoggerVerbosity);
-                Save(AutoActivatePane, key, Notifications.AutoActivatePane);
-                Save(NotifyInstalled, key, Notifications.Installed);
-                Save(NotifyCMakeIncompatible, key, Notifications.CMakeIncompatible);
-                Save(NotifyCMakeConversion, key, Notifications.CMakeConversion);
-                Save(UpdateQtInstallation, key, Notifications.UpdateQtInstallation);
-                Save(UpdateProjectFormat, key, Notifications.UpdateProjectFormat);
-                Save(LinkNatvis, key, Natvis.Link);
-                Save(QmlLspEnable, key, QmlLsp.Enable);
-                Save(QmlLspVersion, key, QmlLsp.QtVersion);
-                Save(QmlLspLog, key, QmlLsp.Log);
-                Save(QmlLspLogSize, key, QmlLsp.LogSize);
-                Save(ColorTheme, key, Style.ColorTheme);
-                Save(StylesheetPath, key, Style.StylesheetPath);
-                Save(NotifySearchDevRelease, key, DevelopmentReleases.NotifySearchDevRelease);
-                Save(SearchDevRelease, key, DevelopmentReleases.SearchDevRelease);
-                Save(SearchDevReleaseTimeout, key, DevelopmentReleases.SearchDevReleaseTimeout);
+                if (QmlLspLogSizeOption < 100)
+                    QmlLspLogSizeOption = 100;
+                SaveSettingsToStorageStatic();
             } catch (Exception exception) {
                 exception.Log();
             }
         }
 
-        private static void Save<T>(T property, RegistryKey key, Enum name)
+        public static void SaveSettingsToStorageStatic()
         {
-            object value = property;
-            if (Equals<T, bool>())
-                value = (bool)(object)property ? 1 : 0;
-            else if (Equals<T, Timeout>())
-                value = Convert.ToInt32(property);
-            else if (typeof(T).IsEnum)
-                value = Enum.GetName(typeof(T), property);
-            if (value != null)
-                key.SetValue(name.Cast<string>(), value);
-        }
-
-        private void Load<T>(Expression<Func<T>> propertyByRef, RegistryKey key, Enum name)
-        {
-            var propertyExpr = (MemberExpression)propertyByRef.Body;
-            var property = (PropertyInfo)propertyExpr.Member;
-            var regValue = key.GetValue(name.Cast<string>());
-            if (Equals<T, bool>() && regValue is int numValue)
-                property.SetValue(this, numValue == 1);
-            else if (Equals<T, Timeout>() && regValue is int timeout)
-                property.SetValue(this, (Timeout)timeout);
-            else if (typeof(T).IsEnum && regValue is string enumValue)
-                property.SetValue(this, Enum.Parse(typeof(T), enumValue));
-            else if (regValue is T value)
-                property.SetValue(this, value);
-        }
-
-        private static bool Equals<T1, T2>()
-        {
-            return typeof(T1) == typeof(T2);
+            QtOptionsPageSettings.Instance.SaveSettings();
         }
     }
 }

@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace QtVsTools
 {
     using Core;
+    using Core.Options;
     using VisualStudio;
     using static Core.Options.QtOptionsPage.SourcePreference;
 
@@ -140,8 +141,6 @@ namespace QtVsTools
                 if (qchFiles.Length == 0)
                     return TryShowGenericSearchResultsOnline(keyword, info.Major);
 
-                var offline = QtVsToolsPackage.Instance.Options.HelpPreference == Offline;
-
                 var linksForKeyword = "SELECT d.Title, f.Name, e.Name, "
                     + "d.Name, a.Anchor FROM IndexTable a, FileNameTable d, FolderTable e, "
                     + "NamespaceTable f WHERE a.FileId=d.FileId AND d.FolderId=e.Id AND "
@@ -165,7 +164,7 @@ namespace QtVsTools
                                     if (string.IsNullOrWhiteSpace(title))
                                         title = keyword + ':' + GetString(reader, 3);
                                     string path;
-                                    if (offline) {
+                                    if (QtOptionsPage.HelpPreference == Offline) {
                                         path = "file:///" + Path.Combine(docPath,
                                             GetString(reader, 2), GetString(reader, 3));
                                     } else {
@@ -221,7 +220,7 @@ namespace QtVsTools
 
         private static bool TryShowGenericSearchResultsOnline(string keyword, uint version)
         {
-            if (QtVsToolsPackage.Instance.Options.HelpPreference != Online)
+            if (QtOptionsPage.HelpPreference != Online)
                 return false;
 
             VsShellUtilities.OpenSystemBrowser(HelperFunctions.FromNativeSeparators(

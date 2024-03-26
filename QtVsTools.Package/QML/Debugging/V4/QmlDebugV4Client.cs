@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Qml.Debug.V4
 {
+    using Core.Options;
+
     enum DebugClientState { Unavailable, Disconnected, Connecting, Connected, Disconnecting }
 
     interface IConnectionEventSink
@@ -153,7 +155,7 @@ namespace QtVsTools.Qml.Debug.V4
                 hostName = "localhost";
             var hostNameData = Encoding.UTF8.GetBytes(hostName);
 
-            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtOptionsPage.QmlDebuggerTimeout;
             _ = Task.Run(() =>
             {
                 var connectTimer = new System.Diagnostics.Stopwatch();
@@ -218,7 +220,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return null;
             }
 
-            uint timeout = (uint)QtVsToolsPackage.Instance.Options.QmlDebuggerTimeout;
+            uint timeout = (uint)QtOptionsPage.QmlDebuggerTimeout;
             if (timeout != 0) {
                 _ = Task.Run(() =>
                 {
