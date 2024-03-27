@@ -48,9 +48,26 @@ def main():
     # Check that Qt versions were removed
     openVsToolsMenu(version)
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
-    test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 1,
-                 "The table should have exactly one line after removing all Qt versions.")
-    clickButton(waitForObject(names.options_OK_Button))
+    if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 1,
+                    "The table should have exactly one line after removing all Qt versions."):
+
+        # test handling of invalid directory
+        def testErrorMessage(nameEntered):
+            clickButton(waitForObject(names.options_OK_Button))
+            dialogText = waitForObjectExists(names.msvs_Qt_VS_Tools_Invalid_Qt_versions).text
+            test.verify(("Name cannot be empty" in dialogText) ^ nameEntered)
+            test.verify("Cannot find qmake.exe" in dialogText)
+            clickButton(waitForObject(names.microsoft_Visual_Studio_OK_Button))
+
+        nonExistingDir = "C:\\this\does\\not\\exist"
+        while os.path.exists(nonExistingDir):
+            nonExistingDir += "x"
+        mouseClick(waitForObject(tableCell(1, 0)))
+        typeToEdit(tableCellEdit(3, 0), nonExistingDir)
+        testErrorMessage(False)
+        typeToEdit(tableCellEdit(1, 0), "some name")
+        testErrorMessage(True)
+    clickButton(waitForObject(names.options_Cancel_Button))
     waitFor("not object.exists(names.options_Dialog)")
     closeMainWindow()
 

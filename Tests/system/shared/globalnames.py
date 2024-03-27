@@ -22,3 +22,4 @@ pART_Popup_New_MenuItem = {"text": "New", "type": "MenuItem"}
 pART_Popup_Project_MenuItem = {"text": "Project...", "type": "MenuItem"}
 msvs_Account_Settings_Window = {"text": "Microsoft Visual Studio Account Settings", "type": "Window"}
 msvs_Account_Close_Button = {"container": msvs_Account_Settings_Window, "text": "Close", "type": "Button"}
+microsoft_Visual_Studio_Dialog = {"text": "Microsoft Visual Studio", "type": "Dialog"}
