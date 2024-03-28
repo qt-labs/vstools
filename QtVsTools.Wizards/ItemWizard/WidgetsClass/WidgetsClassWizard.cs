@@ -27,24 +27,10 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class WidgetsClassWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.GUISystem;
-
-        enum NewClass
-        {
-            [String("safeitemname")] SafeItemName,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("uifilename")] UiFileName,
-            [String("rootname")] Rootname
-        }
 
         enum NewWidgetsItem
         {
-            [String("classname")] ClassName,
-            [String("baseclass")] BaseClass,
-            [String("include")] Include,
             [String("qobject")] QObject,
             [String("ui_hdr")] UiHeaderName,
             [String("centralwidget")] CentralWidget,
@@ -147,8 +133,8 @@ namespace QtVsTools.Wizards.ItemWizard
                 StringSplitOptions.RemoveEmptyEntries);
             var className = array.LastOrDefault();
 
-            Parameter[NewWidgetsItem.ClassName] = className;
-            Parameter[NewWidgetsItem.BaseClass] = WizardData.BaseClass;
+            Parameter[NewClass.ClassName] = className;
+            Parameter[NewClass.BaseClass] = WizardData.BaseClass;
 
             var include = new StringBuilder();
             var qtProject = HelperFunctions.GetSelectedQtProject(Dte);
@@ -156,7 +142,7 @@ namespace QtVsTools.Wizards.ItemWizard
                 include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
 
             include.AppendLine($"#include \"{Parameter[NewClass.HeaderFileName]}\"");
-            Parameter[NewWidgetsItem.Include] = FormatParam(include);
+            Parameter[NewClass.Include] = FormatParam(include);
 
             Parameter[NewWidgetsItem.QObject] = WizardData.InsertQObjectMacro
                                                     ? "\r\n    Q_OBJECT\r\n" : "";

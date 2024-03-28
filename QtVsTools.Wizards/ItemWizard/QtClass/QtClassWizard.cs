@@ -27,23 +27,10 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class QtClassWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.ConsoleSystem;
-
-        enum NewClass
-        {
-            [String("safeitemname")] SafeItemName,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("rootname")] Rootname
-        }
 
         enum NewQtItem
         {
-            [String("classname")] ClassName,
-            [String("baseclass")] BaseClass,
-            [String("include")] Include,
             [String("qobject")] QObject,
             [String("baseclassdecl")] BaseClassDecl,
             [String("signature")] Signature,
@@ -127,8 +114,8 @@ namespace QtVsTools.Wizards.ItemWizard
             var className = array.LastOrDefault();
             var baseClass = WizardData.BaseClass;
 
-            Parameter[NewQtItem.ClassName] = className;
-            Parameter[NewQtItem.BaseClass] = baseClass;
+            Parameter[NewClass.ClassName] = className;
+            Parameter[NewClass.BaseClass] = baseClass;
 
             var include = new StringBuilder();
             var qtProject = HelperFunctions.GetSelectedQtProject(Dte);
@@ -136,7 +123,7 @@ namespace QtVsTools.Wizards.ItemWizard
                 include.AppendLine($"#include \"{qtProject.GetPrecompiledHeaderThrough()}\"");
 
             include.AppendLine($"#include \"{Parameter[NewClass.HeaderFileName]}\"");
-            Parameter[NewQtItem.Include] = FormatParam(include);
+            Parameter[NewClass.Include] = FormatParam(include);
 
             if (!string.IsNullOrEmpty(baseClass)) {
                 Parameter[NewQtItem.QObject] = WizardData.InsertQObjectMacro

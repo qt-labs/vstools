@@ -22,28 +22,16 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class GuiWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
         readonly Func<IWizardConfiguration, bool> whereConfigTargetIsWindowsStore
             = config => config.Target.EqualTo(ProjectTargets.WindowsStore);
-
-        enum NewClass
-        {
-            [String("classname")] ClassName,
-            [String("baseclass")] BaseClass,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("include")] Include
-        }
 
         enum NewGuiProject
         {
             [String("centralwidget")] CentralWidget,
             [String("qrcfilename")] QrcFileName,
             [String("uiresources")] UiResources,
-            [String("uifilename")] UiFileName,
             [String("ui_hdr")] UiHeaderName,
             [String("forward_declare_class")] ForwardDeclClass,
             [String("multiple_inheritance")] MultipleInheritance,
@@ -195,7 +183,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewClass.BaseClass] = WizardData.BaseClass;
             Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
-            Parameter[NewGuiProject.UiFileName] = WizardData.UiFile;
+            Parameter[NewClass.UiFileName] = WizardData.UiFile;
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)

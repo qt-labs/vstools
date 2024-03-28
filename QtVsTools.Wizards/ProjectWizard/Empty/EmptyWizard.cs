@@ -9,12 +9,9 @@ using System.Windows;
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
-    using QtVsTools.Common;
 
     public class EmptyWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
         protected override WizardData WizardData => Lazy.Get(() =>

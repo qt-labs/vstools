@@ -56,7 +56,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public abstract partial class ProjectTemplateWizard : IWizard
     {
-        LazyFactory Lazy { get; } = new();
+        protected LazyFactory Lazy { get; } = new();
 
         private readonly WhereConfig WhereConfig_SelectAll = x => true;
 
@@ -176,6 +176,19 @@ namespace QtVsTools.Wizards.ProjectWizard
             ProjectItems,
             FilterItems,
             ResourceFile
+        }
+
+        protected enum NewClass
+        {
+            [String("classname")] ClassName,
+            [String("baseclass")] BaseClass,
+            [String("sourcefilename")] SourceFileName,
+            [String("headerfilename")] HeaderFileName,
+            [String("include")] Include,
+
+            [String("rootname")] Rootname,
+            [String("uifilename")] UiFileName,
+            [String("safeitemname")] SafeItemName
         }
 
         protected TemplateParameters Parameter => Lazy.Get(() =>

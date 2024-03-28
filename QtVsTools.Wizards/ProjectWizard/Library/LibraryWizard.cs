@@ -11,23 +11,16 @@ using System.Windows.Controls;
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
-    using QtVsTools.Common;
 
     using static QtVsTools.Common.EnumExt;
 
     public class LibraryWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.GUISystem
             | (WizardData.CreateStaticLibrary ? Options.StaticLibrary : Options.DynamicLibrary);
 
         enum NewLibClass
         {
-            [String("classname")] ClassName,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("include")] Include,
             [String("saveglobal")] GlobalHeader,
             [String("pro_lib_define")] LibDefine,
             [String("pro_lib_export")] LibExport,
@@ -97,15 +90,15 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void BeforeTemplateExpansion()
         {
-            Parameter[NewLibClass.ClassName] = WizardData.ClassName;
-            Parameter[NewLibClass.HeaderFileName] = WizardData.ClassHeaderFile;
-            Parameter[NewLibClass.SourceFileName] = WizardData.ClassSourceFile;
+            Parameter[NewClass.ClassName] = WizardData.ClassName;
+            Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
+            Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)
                 include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
             include.AppendLine($"#include \"{WizardData.ClassHeaderFile}\"");
-            Parameter[NewLibClass.Include] = FormatParam(include);
+            Parameter[NewClass.Include] = FormatParam(include);
 
             var safeprojectname = Parameter[NewProject.SafeName];
             Parameter[NewLibClass.GlobalHeader] = safeprojectname.ToLower();

@@ -14,10 +14,9 @@ using Microsoft.VisualStudio.Shell;
 namespace QtVsTools.Wizards.ItemWizard
 {
     using Common;
+    using Core;
     using Microsoft.VisualStudio.VCProjectEngine;
     using ProjectWizard;
-    using QtVsTools.Common;
-    using QtVsTools.Core;
     using Util;
 
     using static QtVsTools.Common.EnumExt;
@@ -31,13 +30,10 @@ namespace QtVsTools.Wizards.ItemWizard
 
     public sealed class TranslationWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.ConsoleSystem | Options.GUISystem;
 
         enum NewTranslationItem
         {
-            [String("safeitemname")] SafeItemName,
             [String("tsfilename")] TsFileName,
             [String("cultureinfoname")] CultureInfoName
         }
@@ -67,7 +63,7 @@ namespace QtVsTools.Wizards.ItemWizard
         protected override void BeforeWizardRun()
         {
             if (WizardData is TsWizardData tmp) {
-                tmp.TsFile = Parameter[NewTranslationItem.SafeItemName];
+                tmp.TsFile = Parameter[NewClass.SafeItemName];
                 tmp.CultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures)
                     .ToDictionary(
                         mc => mc.Name.Replace("-", "_"),

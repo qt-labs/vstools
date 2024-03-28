@@ -10,19 +10,15 @@ using System.Text;
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
-    using QtVsTools.Common;
     using static QtVsTools.Common.EnumExt;
 
     public class QuickWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.Application | Options.GUISystem;
 
         protected enum Qml
         {
-            [String("qml_prefix")] Prefix,
-            [String("include")] Include
+            [String("qml_prefix")] Prefix
         }
 
         protected override WizardData WizardData => Lazy.Get(() =>
@@ -67,7 +63,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 include.AppendLine($"#include \"{PrecompiledHeader.Include}\"");
             include.AppendLine("#include <QGuiApplication>");
             include.AppendLine("#include <QQmlApplicationEngine>");
-            Parameter[Qml.Include] = FormatParam(include);
+            Parameter[NewClass.Include] = FormatParam(include);
         }
 
         protected override void ExpandQtSettings(StringBuilder xml, IWizardConfiguration config)

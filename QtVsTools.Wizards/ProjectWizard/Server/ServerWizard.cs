@@ -21,22 +21,11 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class ServerWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType => Options.DynamicLibrary | Options.GUISystem;
-
-        enum NewClass
-        {
-            [String("classname")] ClassName,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("include")] Include
-        }
 
         enum NewActiveQtProject
         {
             [String("pro_name")] Name,
-            [String("uifilename")] UiFileName,
             [String("ui_hdr")] UiHeaderName
         }
 
@@ -120,7 +109,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewClass.ClassName] = WizardData.ClassName;
             Parameter[NewClass.HeaderFileName] = WizardData.ClassHeaderFile;
             Parameter[NewClass.SourceFileName] = WizardData.ClassSourceFile;
-            Parameter[NewActiveQtProject.UiFileName] = WizardData.UiFile;
+            Parameter[NewClass.UiFileName] = WizardData.UiFile;
 
             var include = new StringBuilder();
             if (UsePrecompiledHeaders)

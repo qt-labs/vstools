@@ -19,19 +19,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class DesignerWizard : ProjectTemplateWizard
     {
-        LazyFactory Lazy { get; } = new();
-
         protected override Options TemplateType =>
             Options.PluginProject | Options.DynamicLibrary | Options.GUISystem;
-
-        enum NewClass
-        {
-            [String("classname")] ClassName,
-            [String("baseclass")] BaseClass,
-            [String("sourcefilename")] SourceFileName,
-            [String("headerfilename")] HeaderFileName,
-            [String("include")] Include
-        }
 
         enum NewDesignerPlugin
         {
