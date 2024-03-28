@@ -43,7 +43,6 @@ def downloadQtVsTools(version):
         clickButton(waitForObject(names.manage_Extensions_Close_Button))
         return False
     clickButton(downloadButton)
-    test.verify(waitFor(changesScheduledLabelExists, 60000),
-                "Were changes to the installation scheduled?")
+    testChangesScheduledLabel(60000)
     clickButton(waitForObject(names.manage_Extensions_Close_Button))
     return True

@@ -25,8 +25,19 @@ def selectInstalledVsTools(version):
     return vsToolsLabel.text
 
 
-def changesScheduledLabelExists():
-    return object.exists(names.changes_scheduled_Label)
+def testChangesScheduledLabel(timeout=5000):
+    expectedMessages = {"Your changes will be scheduled.  The modifications will begin when all "
+                        "Microsoft Visual Studio windows are closed.",  # VS2019
+                        "These changes will take effect the next time Microsoft Visual Studio is "
+                        "opened."  # VS2022
+                        }
+    try:
+        changesLabel = waitForObject(names.changes_scheduled_Label, timeout)
+        test.passes("Changes to the installation were scheduled.")
+        test.verify(changesLabel.text in expectedMessages,
+                    "Did the message about scheduled changes display an expected text?")
+    except:
+        test.fail("Message about scheduled changes to the installation was not found.")
 
 
 def readFile(filename):

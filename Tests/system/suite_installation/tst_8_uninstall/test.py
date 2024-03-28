@@ -29,7 +29,6 @@ def uninstallQtVsTools(version):
     selectInstalledVsTools(version)
     mouseClick(waitForObject(names.msvs_ExtensionManager_UI_InstalledExtItem_Uninstall_Label))
     clickButton(waitForObject(names.microsoft_Visual_Studio_Yes_Button))
-    test.verify(waitFor(changesScheduledLabelExists, 5000),
-                "Were changes to the installation scheduled?")
+    testChangesScheduledLabel()
     clickButton(waitForObject(names.manage_Extensions_Close_Button))
     return True
