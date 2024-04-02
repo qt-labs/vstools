@@ -171,7 +171,7 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Normalize QtVars (incl. backup)
+  // Normalize QtVars
   // -->
   <PropertyGroup>
     <QtVars
@@ -181,13 +181,6 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
         .Replace('%0a', '')
         .Replace('%0d', '')
         .Trim(';'))</QtVars>
-    <QtBkup_QtVars
-      Condition="'$(QtBkup_QtVars)' !=''"
-      >$(QtBkup_QtVars
-        .Replace(' ', '')
-        .Replace('%0a', '')
-        .Replace('%0d', '')
-        .Trim(';'))</QtBkup_QtVars>
   </PropertyGroup>
 
   <!--

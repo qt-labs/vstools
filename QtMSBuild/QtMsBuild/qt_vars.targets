@@ -502,6 +502,33 @@ DummyQmlObject { }
       <QtBuildConfig Include="$(QtCleaned_QtBuildConfig)"/>
     </ItemGroup>
 
+    <!--// Construct Qt hash list for comparison to backup -->
+    <ItemGroup>
+      <QtHashList Include="$(QtCleaned_QtInstall)"/>
+      <QtHashList Include="$(QtCleaned_QtModules)"/>
+      <QtHashList Include="$(QtCleaned_QtPathBinaries)"/>
+      <QtHashList Include="$(QtCleaned_QtPathLibraryExecutables)"/>
+      <QtHashList Include="$(QtCleaned_QtHeaderSearchPath)"/>
+      <QtHashList Include="$(QtCleaned_QtLibrarySearchPath)"/>
+      <QtHashList Include="$(QtCleaned_QtVars)"/>
+      <QtHashList Include="$(QtCleaned_QMakeCodeLines)"/>
+      <QtHashList Include="$(QtCleaned_QtBuildConfig)"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <QtHashListString>@(QtHashList->'%(Identity)',' ')</QtHashListString>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <QtHashListString Include="$(QtHashListString)"></QtHashListString>
+    </ItemGroup>
+
+    <!--// Construct hash -->
+    <GetItemHash Condition="'@(QtHashListString)' != ''"
+      Item="@(QtHashListString)" Keys="Identity">
+      <Output TaskParameter="Hash" PropertyName="QtHash" />
+    </GetItemHash>
+
     <!--// Late bindings -->
     <ItemGroup>
       <QtLateBind Include="$(QtLateBindings)"/>
@@ -521,24 +548,7 @@ DummyQmlObject { }
         <![CDATA[
     <Qt_INCLUDEPATH_
       >%24(Qt_INCLUDEPATH_)%3B@(QtIncludePath->Distinct(),'%3B')</Qt_INCLUDEPATH_>
-    <QtBkup_QtInstall
-      >@(QtInstall,'%3B')</QtBkup_QtInstall>
-    <QtBkup_QtModules
-      >@(QtModules,'%3B')</QtBkup_QtModules>
-    <QtBkup_QtPathBinaries
-      >@(QtPathBinaries,'%3B')</QtBkup_QtPathBinaries>
-    <QtBkup_QtPathLibraryExecutables
-      >@(QtPathLibraryExecutables,'%3B')</QtBkup_QtPathLibraryExecutables>
-    <QtBkup_QtHeaderSearchPath
-      >@(QtHeaderSearchPath,'%3B')</QtBkup_QtHeaderSearchPath>
-    <QtBkup_QtLibrarySearchPath
-      >@(QtLibrarySearchPath,'%3B')</QtBkup_QtLibrarySearchPath>
-    <QtBkup_QtVars
-      >@(QtVariables,'%3B')</QtBkup_QtVars>
-    <QtBkup_QMakeCodeLines
-      >@(QMakeCodeLines,'%3B')</QtBkup_QMakeCodeLines>
-    <QtBkup_QtBuildConfig
-      >@(QtBuildConfig,'%3B')</QtBkup_QtBuildConfig>
+    <QtBkup_QtHash>$(QtHash)</QtBkup_QtHash>
     <QtVersion>$(QtVersion)</QtVersion>
     <QtVersionMajor>$(QtVersionMajor)</QtVersionMajor>
     <QtVersionMinor>$(QtVersionMinor)</QtVersionMinor>
@@ -613,6 +623,7 @@ DummyQmlObject { }
       <QMake_Makefile_VarDef Remove="@(QMake_Makefile_VarDef)"/>
       <QMake_MSBuild_VarDef Remove="@(QMake_MSBuild_VarDef)"/>
       <QtVar Remove="@(QtVar)"/>
+      <QtHash Remove="@(QtHash)"/>
     </ItemGroup>
     <PropertyGroup>
       <QtIncludes/>
@@ -633,23 +644,7 @@ DummyQmlObject { }
   // -->
   <Target Name="QtVarsPrepare" BeforeTargets="QtVars" Condition="Exists('$(QtVarsFilePath)')">
     <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtInstall)' != '$(QtCleaned_QtInstall)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtModules)' != '$(QtCleaned_QtModules)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtPathBinaries)' != '$(QtCleaned_QtPathBinaries)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtPathLibraryExecutables)' != '$(QtCleaned_QtPathLibraryExecutables)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtHeaderSearchPath)' != '$(QtCleaned_QtHeaderSearchPath)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtLibrarySearchPath)' != '$(QtCleaned_QtLibrarySearchPath)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtVars)' != '$(QtCleaned_QtVars)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QMakeCodeLines)' != '$(QtCleaned_QMakeCodeLines)'" />
-    <Delete Files="$(QtVarsFilePath)" Condition="Exists('$(QtVarsFilePath)')
-        AND '$(QtBkup_QtBuildConfig)' != '$(QtCleaned_QtBuildConfig)'" />
+        AND '$(QtHash)' != '$(QtBkup_Hash)'" />
   </Target>
 
   <!--
