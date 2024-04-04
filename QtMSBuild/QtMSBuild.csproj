@@ -452,4 +452,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\transform.targets" />
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Create .zip package
+  // -->
+  <Target Name="ZipBuild" AfterTargets="Build">
+    <Delete Files="$(OutputPath)\QtMSBuild.zip"/>
+    <ZipDirectory
+      SourceDirectory="$(OutputPath)\QtMSBuild"
+      DestinationFile="$(OutputPath)\QtMSBuild.zip"/>
+  </Target>
 </Project>
