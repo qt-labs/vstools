@@ -30,11 +30,7 @@ namespace QtVsTools.Core.MsBuild
             if (!defaultInputOutput)
                 return;
 
-            Parser.AddOption(outputOption = new Option("o")
-            {
-                ValueName = "file",
-                Flags = Option.Flag.ShortOptionStyle
-            });
+            Parser.AddOption(outputOption = new Option("o", "file", Option.Flag.ShortOptionStyle));
         }
 
         protected virtual void ExtractInputOutput(

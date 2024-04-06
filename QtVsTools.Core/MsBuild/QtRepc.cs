@@ -35,13 +35,13 @@ namespace QtVsTools.Core.MsBuild
             : base(defaultInputOutput: false)
         {
             Parser.AddOption(options[Property.InputFileType] =
-                new Option("i", "<rep|src>"));
+                new Option("i", "<rep|src>", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.OutputFileType] =
-                new Option("o", "<source|replica|merged|rep>"));
+                new Option("o", "<source|replica|merged|rep>", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.IncludePath] =
-                new Option("I", "dir"));
+                new Option("I", "dir", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.AlwaysClass] =
                 new Option("c"));

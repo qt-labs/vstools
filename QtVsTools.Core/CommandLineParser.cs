@@ -448,18 +448,18 @@ namespace QtVsTools.Core.CommandLine
             ShortOptionStyle = 0x2
         }
 
-        public Option(string name, string valueName = "")
+        public Option(string name, string valueName = "", Flag flags = 0)
         {
             Names = new[] { name };
             ValueName = valueName;
-            Flags = 0;
+            Flags = flags;
         }
 
-        public Option(IEnumerable<string> names, string valueName = "")
+        public Option(IEnumerable<string> names, string valueName = "", Flag flags = 0)
         {
             Names = names;
             ValueName = valueName;
-            Flags = 0;
+            Flags = flags;
         }
 
         public Option(Option other)

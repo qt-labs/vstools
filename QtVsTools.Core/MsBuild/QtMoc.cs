@@ -58,22 +58,22 @@ namespace QtVsTools.Core.MsBuild
         public QtMoc()
         {
             Parser.AddOption(options[Property.IncludePath] =
-                new Option("I", "dir"));
+                new Option("I", "dir", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.MacFramework] =
-                new Option("F", "framework"));
+                new Option("F", "framework", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.PreprocessOnly] =
                 new Option("E"));
 
             Parser.AddOption(options[Property.Define] =
-                new Option("D", "macro[=def]"));
+                new Option("D", "macro[=def]", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.Undefine] =
-                new Option("U", "macro"));
+                new Option("U", "macro", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.Metadata] =
-                new Option("M", "key=value"));
+                new Option("M", "key=value", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.CompilerFlavor] =
                 new Option("compiler-flavor", "flavor"));
@@ -82,19 +82,19 @@ namespace QtVsTools.Core.MsBuild
                 new Option("i"));
 
             Parser.AddOption(options[Property.PathPrefix] =
-                new Option("p", "path"));
+                new Option("p", "path", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.ForceInclude] =
-                new Option("f", "file"));
+                new Option("f", "file", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.PrependInclude] =
-                new Option("b", "file"));
+                new Option("b", "file", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.Include] =
                 new Option("include", "file"));
 
             Parser.AddOption(options[Property.NoNotesWarnings] =
-                new Option("n", "which"));
+                new Option("n", "which", Option.Flag.ShortOptionStyle));
 
             Parser.AddOption(options[Property.NoNotes] =
                 new Option("no-notes"));
