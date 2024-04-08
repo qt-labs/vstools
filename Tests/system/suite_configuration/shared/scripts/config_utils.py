@@ -36,7 +36,7 @@ def typeToEdit(editId, text):
     mouseClick(edit)
     type(edit, text)
     snooze(1)
-    waitFor("waitForObject(editId).text == text")
+    waitFor(lambda: waitForObject(editId).text == text)
 
 
 def tableCell(col, row):
@@ -68,7 +68,7 @@ def configureQtVersions(msvsVersion, qtDirs, withTests=False):
                          "The table should have %d lines after adding %d Qt versions."
                          % (i + 2, i + 1))
     clickButton(waitForObject(names.options_OK_Button))
-    waitFor("not object.exists(names.options_Dialog)")
+    waitFor(lambda: not object.exists(names.options_Dialog))
     return True
 
 
@@ -81,7 +81,7 @@ def clearQtVersions(msvsVersion):
                                    "text": "", "type": "Button"}))
     snooze(1)
     clickButton(waitForObject(names.options_OK_Button))
-    waitFor("not object.exists(names.options_Dialog)")
+    waitFor(lambda: not object.exists(names.options_Dialog))
 
 
 def getExpectedName(templateName):
@@ -145,7 +145,7 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                 projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
                 devEnvContext = currentApplicationContext()
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
-                if not waitFor("object.exists(names.qt_Wizard_Window)", 10000):
+                if not waitFor(lambda: object.exists(names.qt_Wizard_Window), 10000):
                     # Sometimes, a "Creating project..." dialog appears and creates
                     # a second app context. Explicitly set the wanted context.
                     setApplicationContext(devEnvContext)

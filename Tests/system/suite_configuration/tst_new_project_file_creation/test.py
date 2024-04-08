@@ -16,7 +16,7 @@ import names
 
 
 def fixAppContext():
-    waitFor("len(applicationContextList()) > 1", 10000)
+    waitFor(lambda: len(applicationContextList()) > 1, 10000)
     appContexts = applicationContextList()
     if len(appContexts) == 1:  # Might have changed after waitFor()
         if appContexts[0].name != "devenv":
@@ -122,7 +122,7 @@ def getExpectedBuiltFile(workDir, projectName, templateName, cmakeBased):
 def buildSolution(cmakeBased):
     if cmakeBased:
         labelObject = waitForObjectExists(names.selectStartupItemLabel)
-        if not waitFor("labelObject.text != 'Select Startup Item...'", 230000):
+        if not waitFor(lambda: labelObject.text != 'Select Startup Item...', 230000):
             test.fail("Could not start building the project.",
                       "Did configuring fail?")  # See QTVSADDINBUG-1162
             return False
@@ -131,8 +131,8 @@ def buildSolution(cmakeBased):
                              else names.build_Build_Solution_MenuItem))
     # make sure building finished
     labelObject = waitForObjectExists(names.selectStartupItemLabel)
-    waitFor("not labelObject.enabled", 5000)
-    waitFor("labelObject.enabled", 100000)
+    waitFor(lambda: not labelObject.enabled, 5000)
+    waitFor(lambda: labelObject.enabled, 100000)
     return True
 
 
@@ -189,7 +189,7 @@ def main():
                         mouseClick(waitForObject(listItem))
                         clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                         type(waitForObject(names.comboBox_Edit), workDir)
-                        waitFor("waitForObject(names.comboBox_Edit).text == workDir")
+                        waitFor(lambda: waitForObject(names.comboBox_Edit).text == workDir)
                         projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
                         createdProjects.add(projectName)
                         clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
@@ -230,7 +230,7 @@ def main():
                         if (templateName != "Qt ActiveQt Server" and buildSolution(cmakeBased)):
                             builtFile = getExpectedBuiltFile(workDir, projectName,
                                                              templateName, cmakeBased)
-                            test.verify(waitFor("os.path.exists(builtFile)", 15000),
+                            test.verify(waitFor(lambda: os.path.exists(builtFile), 15000),
                                         "Was %s built as expected?" % builtFile)
                         mouseClick(waitForObject(globalnames.file_MenuItem))
                         mouseClick(waitForObject(names.file_Close_Folder_MenuItem if cmakeBased

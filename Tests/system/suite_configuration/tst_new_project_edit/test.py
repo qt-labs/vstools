@@ -32,7 +32,7 @@ def testWizardPage3(_, __):
     # Check that changing class name changes file names
     type(classNameEdit, "HereIs")
     changedClassName = "HereIs" + myProjectName
-    waitFor("classNameEdit.text == changedClassName", 2000)
+    waitFor(lambda: classNameEdit.text == changedClassName, 2000)
     test.compare(classNameEdit.text, changedClassName)
     test.compare(headerEdit.text, changedClassName + ".h")
     test.compare(sourceEdit.text, changedClassName + ".cpp")
@@ -53,10 +53,10 @@ def testWizardPage3(_, __):
         previousText = edit.text
         type(edit, "<Ctrl+a>")
         type(edit, "<Delete>")
-        waitFor("edit.text == ''")
+        waitFor(lambda: edit.text == '')
         test.verify(not waitForObjectExists(names.qt_Wizard_Finish_Button).enabled)
         type(edit, previousText)
-        waitFor("edit.text == previousText")
+        waitFor(lambda: edit.text == previousText)
         test.verify(waitForObjectExists(names.qt_Wizard_Finish_Button).enabled)
 
     clearAndRestoreEdit(sourceEdit)

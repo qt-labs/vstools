@@ -44,7 +44,7 @@ def main():
                                            "text": "", "type": "Button"}))
         snooze(1)
         clickButton(waitForObject(closeButton))
-        waitFor("not object.exists(names.options_Dialog)")
+        waitFor(lambda: not object.exists(names.options_Dialog))
     # Check that Qt versions were removed
     openVsToolsMenu(version)
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
@@ -68,7 +68,7 @@ def main():
         typeToEdit(tableCellEdit(1, 0), "some name")
         testErrorMessage(True)
     clickButton(waitForObject(names.options_Cancel_Button))
-    waitFor("not object.exists(names.options_Dialog)")
+    waitFor(lambda: not object.exists(names.options_Dialog))
     closeMainWindow()
 
 

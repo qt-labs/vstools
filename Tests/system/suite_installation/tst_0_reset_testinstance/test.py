@@ -23,7 +23,7 @@ def main():
     installationPath = getAppProperty("installationPath")
     closeMainWindow()
     # Wait for MSVS to shut down
-    waitFor("not currentApplicationContext().isRunning")
+    waitFor(lambda: not currentApplicationContext().isRunning)
     snooze(2)
     # Reset the experimental environment
     subprocess.check_output('"%s/VSSDK/VisualStudioIntegration/Tools/Bin/'
