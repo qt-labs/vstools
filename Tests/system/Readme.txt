@@ -1,5 +1,8 @@
 This directory contains tests for The Qt VS Tools to be run with Squish.
 
+WARNING: Do not run these tests in an environment where you use the Qt VS Tools.
+         They will permanently delete the settings you saved, see QTVSADDINBUG-1088
+
 To run these tests:
 1. Run Windows with English or German UI.
 2. Have Visual Studio with English language pack and the Visual Studio SDK installed.

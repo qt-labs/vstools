@@ -17,7 +17,7 @@ import subprocess
 
 def main():
     # Start MSVS to determine its version and instanceID, then close it immediately.
-    version = startAppGetVersion(True)
+    version = startAppGetVersion(True, False)
     vsVersionNr = {"2019":"16.0", "2022":"17.0"}[version]
     vsInstance = "_".join([vsVersionNr, getAppProperty("instanceID")])
     installationPath = getAppProperty("installationPath")
@@ -31,7 +31,7 @@ def main():
                             % (installationPath, vsInstance, rootSuffix))
     try:
         # Start MSVS again to click away the nagscreens shown on first start
-        startAppGetVersion(True)
+        startAppGetVersion(True, False)
         closeMainWindow()
     except (LookupError, TypeError) as e:
         if version != "2019":

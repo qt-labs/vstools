@@ -35,3 +35,5 @@ msvs_ExtensionManager_UI_InstalledExtItem_Uninstall_Label= {"container": lvw_Ext
 microsoft_Visual_Studio_Yes_Button= {"container": globalnames.microsoft_Visual_Studio_Dialog,
                                      "text": RegularExpression("Yes|Ja"), "type": "Button"}
 pART_Popup_qt_io_MenuItem = {"text": "qt.io", "type": "MenuItem"}
+Command_not_valid_Label = {"container": globalnames.microsoft_Visual_Studio_Dialog, "id": "65535",
+                           "type": "Label"}

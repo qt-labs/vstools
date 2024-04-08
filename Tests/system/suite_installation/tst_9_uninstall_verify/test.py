@@ -12,7 +12,7 @@ import names
 
 
 def main():
-    version = startAppGetVersion()
+    version = startAppGetVersion(clearSettings=False)
     if not version:
         return
     vsToolsLabelText = selectInstalledVsTools(version)

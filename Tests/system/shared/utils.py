@@ -22,8 +22,11 @@ def getAppProperty(property):
     return plv.decode().strip()
 
 
-def startAppGetVersion(waitForInitialDialogs=False):
-    startApplication("devenv /LCID 1033 /RootSuffix %s" % rootSuffix)
+def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
+    command = "devenv /LCID 1033 /RootSuffix %s"
+    if clearSettings:
+        command += " /Command QtVSTools.ClearSettings"
+    startApplication(command % rootSuffix)
     version = getAppProperty("catalog_productLineVersion")
     if waitForInitialDialogs:
         try:
@@ -34,7 +37,20 @@ def startAppGetVersion(waitForInitialDialogs=False):
             clickButton(waitForObject(globalnames.msvs_Start_Visual_Studio_Button))
         except:
             pass
-    mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
+    if clearSettings:
+        try:
+            label = waitForObjectExists(names.Command_not_valid_Label, 3000)
+            if label.text == 'Command "QtVSTools.ClearSettings" is not valid.':
+                test.warning('Command "QtVSTools.ClearSettings" could not be handled.',
+                             'Qt VS Tools might be outdated or inactive.')
+            else:
+                test.warning('An unexpected error message appeared.', label.text)
+            clickButton(waitForObject(globalnames.microsoft_Visual_Studio_OK_Button))
+        except:
+            # "QtVSTools.ClearSettings" was handled successfully
+            pass
+    else:
+        mouseClick(waitForObject(globalnames.continueWithoutCode_Label))
     try:
         if version == "2022":
             # If it appears, close the "Sign in" nagscreen.

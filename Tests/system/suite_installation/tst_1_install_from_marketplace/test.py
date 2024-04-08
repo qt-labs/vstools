@@ -15,7 +15,7 @@ def main():
     test.warning("This is a semi-manual test.",
                  "It is designed to run on VS without Qt VS Tools installed "
                  "and requires manual steps.")
-    version = startAppGetVersion()
+    version = startAppGetVersion(clearSettings=False)
     if not version:
         return
     if downloadQtVsTools(version):
