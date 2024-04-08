@@ -29,14 +29,6 @@ def main():
     subprocess.check_output('"%s/VSSDK/VisualStudioIntegration/Tools/Bin/'
                             'CreateExpInstance.exe" /Reset /VSInstance=%s /RootSuffix=%s'
                             % (installationPath, vsInstance, rootSuffix))
-    try:
-        # Start MSVS again to click away the nagscreens shown on first start
-        startAppGetVersion(True, False)
-        closeMainWindow()
-    except (LookupError, TypeError) as e:
-        if version != "2019":
-            raise
-        # After clicking away the nagscreens, MSVS2019 seems to restart itself. After the restart,
-        # Squish can't find objects anymore. Just ignore the thrown exception. The instance was
-        # reset already at that point.
-        test.log("Caught %s from MSVS2019" % builtins.type(e), str(e))
+    # Start MSVS again to click away the nagscreens shown on first start
+    startAppGetVersion(True, False)
+    closeMainWindow()

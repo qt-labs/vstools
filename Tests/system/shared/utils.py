@@ -22,6 +22,20 @@ def getAppProperty(property):
     return plv.decode().strip()
 
 
+def fixAppContext():
+    waitFor(lambda: len(applicationContextList()) > 1, 30000)
+    appContexts = applicationContextList()
+    if len(appContexts) == 1:  # Might have changed after waitFor()
+        if appContexts[0].name != "devenv":
+            test.fatal("The only application context is " + appContexts[0].name)
+    else:
+        for ctxt in appContexts:
+            if ctxt.name == "devenv":
+                setApplicationContext(ctxt)
+                return
+        test.fatal("There's no devenv application context, only: " + appContexts)
+
+
 def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
     command = "devenv /LCID 1033 /RootSuffix %s"
     if clearSettings:
@@ -33,8 +47,10 @@ def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
             if version == "2022":
                 clickButton(waitForObject(globalnames.msvs_Skip_this_for_now_Button, 10000))
             else:
-                mouseClick(waitForObject(globalnames.msvs_Not_now_maybe_later_Label, 10000))
+                mouseClick(waitForObject(globalnames.msvs_Not_now_maybe_later_Label, 20000))
             clickButton(waitForObject(globalnames.msvs_Start_Visual_Studio_Button))
+            if version == "2019":
+                fixAppContext()
         except:
             pass
     if clearSettings:

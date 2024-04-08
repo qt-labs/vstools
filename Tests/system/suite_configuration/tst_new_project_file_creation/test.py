@@ -15,20 +15,6 @@ from newprojectdialog import NewProjectDialog
 import names
 
 
-def fixAppContext():
-    waitFor(lambda: len(applicationContextList()) > 1, 10000)
-    appContexts = applicationContextList()
-    if len(appContexts) == 1:  # Might have changed after waitFor()
-        if appContexts[0].name != "devenv":
-            test.fatal("The only application context is " + appContexts[0].name)
-    else:
-        for ctxt in appContexts:
-            if ctxt.name == "devenv":
-                setApplicationContext(ctxt)
-                return
-        test.fatal("There's no devenv application context, only: " + appContexts)
-
-
 def testCompareRegex(text, pattern, message):
     regex = re.compile(pattern)
     test.verify(regex.match(text), '%s ("%s"/"%s")' % (message, text, pattern))
