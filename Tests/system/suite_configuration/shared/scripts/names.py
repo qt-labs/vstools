@@ -72,7 +72,5 @@ file_Close_Folder_MenuItem = {"container": globalnames.file_MenuItem, "text": "C
 selectStartupItemButton = {"tooltip": RegularExpression("^(Local Windows Debugger|Select Startup Item)$"),
                            "type": "Button"}
 selectStartupItemLabel = {"container": selectStartupItemButton, "type": "Label"}
-microsoft_Visual_Studio_OK_Button = {"container": globalnames.microsoft_Visual_Studio_Dialog,
-                                     "text": "OK", "type": "Button"}
 msvs_Qt_VS_Tools_Invalid_Qt_versions = {"container": globalnames.microsoft_Visual_Studio_Dialog,
                                         "id": "65535", "type": "Label"}
