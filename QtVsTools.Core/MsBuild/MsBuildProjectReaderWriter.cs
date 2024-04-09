@@ -668,7 +668,7 @@ namespace QtVsTools.Core.MsBuild
 
             // replace each set of .moc.cbt custom build steps
             // with a single .cpp custom build step
-            var mocCbtCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName)
+            var mocCbtCustomBuilds = GetCustomBuilds("moc_predefs")
                 .Where(x =>
                 ((string)x.Attribute("Include")).EndsWith(".cbt", IgnoreCase)
                 || ((string)x.Attribute("Include")).EndsWith(".moc", IgnoreCase))
@@ -695,8 +695,11 @@ namespace QtVsTools.Core.MsBuild
                         && cbtPropertyNames.Contains(x.Name.LocalName) 
                         && x.Parent.Elements(ns + "ExcludedFromBuild")
                             .All(y => (string)x.Attribute("Condition") != (string)y.Attribute("Condition")));
-                    foreach (var property in enabledProperties)
+                    foreach (var property in enabledProperties) {
+                        property.Value = property.Value.Replace("debug", "$(IntDir)")
+                            .Replace("release", "$(IntDir)");
                         newCbt.Add(new XElement(property));
+                    }
                     cbtToRemove.Add(cbt);
                 }
                 cbtGroup.First().AddBeforeSelf(newCbt);
