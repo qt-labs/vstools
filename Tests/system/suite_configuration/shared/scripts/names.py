@@ -74,3 +74,16 @@ selectStartupItemButton = {"tooltip": RegularExpression("^(Local Windows Debugge
 selectStartupItemLabel = {"container": selectStartupItemButton, "type": "Label"}
 msvs_Qt_VS_Tools_Invalid_Qt_versions = {"container": globalnames.microsoft_Visual_Studio_Dialog,
                                         "id": "65535", "type": "Label"}
+msvs_SolutionExplorer_List = {"container": globalnames.microsoft_Visual_Studio_Window,
+                              "name": "SolutionExplorer", "type": "List"}
+msvs_WpfTextView_WPFControl = {"container": globalnames.microsoft_Visual_Studio_Window,
+                               "name": "WpfTextView", "type": "WPFControl"}
+qtQuickApplication_Window = {"text": RegularExpression("QtQuickApplication\d+"), "type": "Window"}
+view_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text": "View",
+                 "type": "MenuItem"}
+view_Error_List_MenuItem = {"container": view_MenuItem, "text": "Error List", "type": "MenuItem"}
+continue_Button = {"text": "", "tooltip": "Continue", "type": "Button"}
+thread_ComboBox = {"tooltip": "Thread (Ctrl+6)", "type": "ComboBox"}
+stackFrame_ComboBox = {"tooltip": "Stack Frame (Ctrl+7)", "type": "ComboBox"}
+breakAll_Button = {"text": "", "tooltip": "Break All (Ctrl+Alt+Break)", "type": "Button"}
+stopDebugging_Button = {"text": "", "tooltip": "Stop Debugging (Shift+F5)", "type": "Button"}

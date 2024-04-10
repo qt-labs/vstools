@@ -24,10 +24,14 @@ microsoft_Visual_Studio_Close_Button = {"container": globalnames.microsoft_Visua
 
 class NewProjectDialog:
 
-    def __enter__(self):
+    @staticmethod
+    def open():
         squish.mouseClick(squish.waitForObject(globalnames.file_MenuItem))
         squish.mouseClick(squish.waitForObject(globalnames.pART_Popup_New_MenuItem))
         squish.mouseClick(squish.waitForObject(globalnames.pART_Popup_Project_MenuItem))
+
+    def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, _, __, ___):
