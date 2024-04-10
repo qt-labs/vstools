@@ -121,7 +121,8 @@ namespace QtVsTools.Core
                     }
                     if (endPos > startPos) {
                         var varName = value.Substring(startPos, endPos - startPos);
-                        var varValue = Properties[varName] ?? string.Empty;
+                        if (!Properties.TryGetValue(varName, out var varValue))
+                            varValue = "";
                         value = value.Substring(0, pos) + varValue + value.Substring(endPos);
                         endPos = pos + varValue.Length;
                     }
@@ -134,11 +135,10 @@ namespace QtVsTools.Core
 
         private void RemoveValue(string key, string valueToRemove)
         {
-            if (!Properties.ContainsKey(key))
+            if (!Properties.TryGetValue(key, out var value))
                 return;
 
             int pos;
-            var value = Properties[key];
             do {
                 pos = value.IndexOf(valueToRemove, StringComparison.Ordinal);
                 if (pos >= 0)
