@@ -48,19 +48,20 @@ namespace QtVsTools.Test.QtMsBuild.Build
             using TempProject temp = new();
             temp.Clone($@"{Properties.SolutionDir}Tests\ProjectFormats\304\QtProjectV304.vcxproj");
 
-            var project = MsBuild.Evaluate(temp.ProjectPath, ("Platform", "x64"),
-                ("QtMsBuild", Path.Combine(Environment.CurrentDirectory, "QtMsBuild")));
+            var project = MsBuild.Evaluate(temp.ProjectPath, ("Platform", "x64"));
             Assert.AreEqual(
                 project.ExpandString("$(QtDeployDir)"), project.ExpandString("$(OutDir)"),
                 ignoreCase: true);
 
-            var xml = ProjectRootElement.Open(temp.ProjectPath);
+            using TempProject temp2 = new();
+            temp2.Clone(temp.ProjectPath);
+
+            var xml = ProjectRootElement.Open(temp2.ProjectPath);
             var props = xml.AddPropertyGroup();
-            props.AddProperty("OutDir", @$"{temp.ProjectDir}\out\");
+            props.AddProperty("OutDir", @$"{temp2.ProjectDir}\out\");
             xml.Save();
 
-            project = MsBuild.Evaluate(temp.ProjectPath, ("Platform", "x64"),
-                ("QtMsBuild", Path.Combine(Environment.CurrentDirectory, "QtMsBuild")));
+            project = MsBuild.Evaluate(temp2.ProjectPath, ("Platform", "x64"));
             Assert.AreEqual(
                 project.ExpandString("$(QtDeployDir)"), project.ExpandString("$(OutDir)"),
                 ignoreCase: true);

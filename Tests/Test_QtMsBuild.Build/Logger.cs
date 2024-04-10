@@ -4,16 +4,14 @@
 ***************************************************************************************************/
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
-using System.Diagnostics;
 
 namespace QtVsTools.Test.QtMsBuild.Build
 {
-    public class Logger : ILogger
+    public partial class Logger : ILogger
     {
         public readonly object CriticalSection = new();
 
@@ -28,9 +26,10 @@ namespace QtVsTools.Test.QtMsBuild.Build
 
         public void Reset()
         {
-            SeenEvents.Clear();
-            EventArgs.Clear();
-            Project = null;
+            lock (CriticalSection) {
+                SeenEvents.Clear();
+                EventArgs = new();
+            }
         }
 
         public LoggerVerbosity Verbosity
@@ -48,17 +47,7 @@ namespace QtVsTools.Test.QtMsBuild.Build
         private IEventSource EventSource { get; set; }
 
         private HashSet<EventArgs> SeenEvents { get; set; } = new();
-        private Queue<EventArgs> EventArgs { get; set; } = new();
-        public IEnumerable<EventArgs> Events => EventArgs.ToList();
-        public IEnumerable<EventArgs> Errors => EventArgs
-            .Where(x => x.GetType().Name.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0)
-            .ToList();
-
-        public IEnumerable<string> Messages => EventArgs
-            .Select(x => x.GetType().GetProperty("Message")?.GetValue(x)?.ToString())
-            .Where(x => x is { Length: > 0 });
-
-        public ProjectInstance Project { get; set; }
+        private ConcurrentQueue<EventArgs> EventArgs { get; set; } = new();
 
         public void Initialize(IEventSource eventSource)
         {
@@ -123,16 +112,21 @@ namespace QtVsTools.Test.QtMsBuild.Build
             MsBuild.ProjectXmlChanged -= GlobalProjectCollection_ProjectXmlChanged;
         }
 
+        public delegate void EventAddedHandler(object sender, EventArgs e);
+        public event EventAddedHandler EventAdded;
+
         private void OnEvent(object sender, EventArgs e)
         {
+            bool eventAdded = false;
             lock (CriticalSection) {
                 if (!SeenEvents.Contains(e)) {
                     SeenEvents.Add(e);
                     EventArgs.Enqueue(e);
+                    eventAdded = true;
                 }
             }
-            if (e.GetType().GetProperty("Message")?.GetValue(e)?.ToString() is { Length: > 0 } msg)
-                Debug.WriteLine(msg);
+            if (eventAdded)
+                EventAdded?.Invoke(this, e);
         }
 
         private void GlobalProjectCollection_ProjectXmlChanged(object sender, ProjectXmlChangedEventArgs e)

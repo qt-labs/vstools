@@ -19,17 +19,95 @@
       <PropEval Include="MSBuildToolsPath">
         <Value>$(MSBuildToolsPath)</Value>
       </PropEval>
+      <PropEval Include="MSBuildToolsPath32">
+        <Value>$(MSBuildToolsPath32)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildToolsPath64">
+        <Value>$(MSBuildToolsPath64)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildSDKsPath">
+        <Value>$(MSBuildSDKsPath)</Value>
+      </PropEval>
+      <PropEval Include="FrameworkSDKRoot">
+        <Value>$(FrameworkSDKRoot)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildRuntimeVersion">
+        <Value>$(MSBuildRuntimeVersion)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildFrameworkToolsPath">
+        <Value>$(MSBuildFrameworkToolsPath)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildFrameworkToolsPath32">
+        <Value>$(MSBuildFrameworkToolsPath32)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildFrameworkToolsPath64">
+        <Value>$(MSBuildFrameworkToolsPath64)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildFrameworkToolsPathArm64">
+        <Value>$(MSBuildFrameworkToolsPathArm64)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildFrameworkToolsRoot">
+        <Value>$(MSBuildFrameworkToolsRoot)</Value>
+      </PropEval>
+      <PropEval Include="SDK35ToolsPath">
+        <Value>$(SDK35ToolsPath)</Value>
+      </PropEval>
+      <PropEval Include="SDK40ToolsPath">
+        <Value>$(SDK40ToolsPath)</Value>
+      </PropEval>
+      <PropEval Include="WindowsSDK80Path">
+        <Value>$(WindowsSDK80Path)</Value>
+      </PropEval>
       <PropEval Include="VsInstallRoot">
         <Value>$(VsInstallRoot)</Value>
       </PropEval>
+      <PropEval Include="MSBuildToolsRoot">
+        <Value>$(MSBuildToolsRoot)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildExtensionsPath">
+        <Value>$(MSBuildExtensionsPath)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildExtensionsPath32">
+        <Value>$(MSBuildExtensionsPath32)</Value>
+      </PropEval>
+      <PropEval Include="MSBuildExtensionsPath64">
+        <Value>$(MSBuildExtensionsPath64)</Value>
+      </PropEval>
+      <PropEval Include="RoslynTargetsPath">
+        <Value>$(RoslynTargetsPath)</Value>
+      </PropEval>
       <PropEval Include="VCTargetsPath">
         <Value>$(VCTargetsPath)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath14">
+        <Value>$(VCTargetsPath14)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath12">
+        <Value>$(VCTargetsPath12)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath11">
+        <Value>$(VCTargetsPath11)</Value>
+      </PropEval>
+      <PropEval Include="VCTargetsPath10">
+        <Value>$(VCTargetsPath10)</Value>
+      </PropEval>
+      <PropEval Include="AndroidTargetsPath">
+        <Value>$(AndroidTargetsPath)</Value>
+      </PropEval>
+      <PropEval Include="iOSTargetsPath">
+        <Value>$(iOSTargetsPath)</Value>
+      </PropEval>
+      <PropEval Include="VSToolsPath">
+        <Value>$(VSToolsPath)</Value>
       </PropEval>
       <PropEval Include="SolutionDir">
         <Value>$(SolutionDir)</Value>
       </PropEval>
       <PropEval Include="Configuration">
         <Value>$(Configuration)</Value>
+      </PropEval>
+      <PropEval Include="Platform">
+        <Value>$(Platform)</Value>
       </PropEval>
     </ItemGroup>
     <WriteLinesToFile File="$(PropEvalPath)" Lines="@(PropEval->'%(Identity);%(Value)','%0D%0A')" Overwrite="true" />

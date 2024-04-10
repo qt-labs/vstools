@@ -25,8 +25,7 @@ namespace QtVsTools.Test.QtMsBuild.Build
             xml.Save();
 
             var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"), ("Configuration", "Debug"),
-                ("QtMsBuild", Path.Combine(Environment.CurrentDirectory, "QtMsBuild")));
+                ("Platform", "x64"), ("Configuration", "Debug"));
             Assert.IsTrue(project.Build("Rebuild"));
             Assert.IsTrue(
                 File.Exists(project.ExpandString($@"$(IntDir)\qmake\temp\props.txt")));

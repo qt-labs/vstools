@@ -82,7 +82,7 @@
   // Solution project references
   // -->
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)\QtMSBuild\QtMSBuild.csproj">
+    <ProjectReference Include="..\..\QtMSBuild\QtMSBuild.csproj">
       <Project>{a618d28b-9352-44f4-aa71-609bf68bf871}</Project>
       <Name>QtMSBuild</Name>
     </ProjectReference>
@@ -90,14 +90,20 @@
       <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
       <Name>QtVsTools.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
+      <Project>{a2831b9b-4d3b-46cb-85df-1b5c277c17db}</Project>
+      <Name>QtVsTools.RegExpr</Name>
+    </ProjectReference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Project items
   // -->
   <ItemGroup>
-    <None Include="app.config" />
+    <Compile Include="AssemblyResolver.cs" />
     <Compile Include="BigSolution.cs" />
+    <Compile Include="Logger.Format.cs" />
+    <Compile Include="Logger.Views.cs" />
     <Compile Include="TempProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logger.cs" />
