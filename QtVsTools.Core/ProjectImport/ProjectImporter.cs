@@ -34,8 +34,7 @@ namespace QtVsTools.Core
             if (_dteObject is null || GetQtInstallPath() is not {} qtDir)
                 return;
 
-            var vi = VersionInformation.GetOrAddByPath(qtDir);
-            if (vi.Major < 5) {
+            if (VersionInformation.GetOrAddByPath(qtDir) is not { Major: >= 5 }) {
                 Messages.DisplayErrorMessage("The default Qt version does not support Visual "
                     + "Studio. To import .pro files, specify Qt 5.0 or later as the default.");
                 return;
@@ -242,6 +241,8 @@ namespace QtVsTools.Core
 
         private static bool ImportQMakeProject(FileInfo projectFile, VersionInformation vi)
         {
+            if (vi == null)
+                return false;
             var xmlProject = MsBuildProjectReaderWriter.Load(projectFile.FullName);
             if (xmlProject == null)
                 return false;

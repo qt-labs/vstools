@@ -40,6 +40,8 @@ namespace QtVsTools.Package.MsBuild
 
             var versionInfo = VersionInformation.GetOrAddByName(qtVersion)
                 ?? VersionInformation.GetOrAddByName(QtVersionManager.GetDefaultVersion());
+            if (versionInfo == null)
+                return "";
 
             var modules = QtModules.Instance.GetAvailableModules(versionInfo.Major)
                 .Where(x => !string.IsNullOrEmpty(x.proVarQT))
