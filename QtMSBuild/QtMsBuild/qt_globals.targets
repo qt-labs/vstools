@@ -447,11 +447,6 @@
         <ObjectFileName>$(IntDir)%(Filename).o</ObjectFileName>
       </QtWork_ClCompile>
     </ItemGroup>
-    <ItemGroup Condition="'$(ApplicationType)' != 'Linux'">
-      <QtWork_ClCompile Condition="'%(QtWork_ClCompile.DynamicSource)' != 'input'">
-        <ObjectFileName>%(RootDir)%(Directory)%(Filename).obj</ObjectFileName>
-      </QtWork_ClCompile>
-    </ItemGroup>
 
     <!-- // Copy default C++ compiler properties -->
     <ItemGroup>
