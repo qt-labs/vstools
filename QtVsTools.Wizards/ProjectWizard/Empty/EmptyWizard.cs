@@ -12,7 +12,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
     public class EmptyWizard : ProjectTemplateWizard
     {
-        protected override Options TemplateType => Options.Application | Options.GUISystem;
+        protected override Options TemplateType => Options.Application | Options.ConsoleSystem;
 
         protected override WizardData WizardData => Lazy.Get(() =>
             WizardData, () => new WizardData
