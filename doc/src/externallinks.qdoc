@@ -13,3 +13,7 @@
 \title Qt Account
 */
 
+/*!
+\externalpage https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html
+\title QML Language Server Reference
+*/

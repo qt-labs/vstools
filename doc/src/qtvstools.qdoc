@@ -305,14 +305,14 @@
             \image qtvstools-widgets-app-modules.webp {Selecting Qt modules in Qt Widgets Application Wizard}
             The modules that are typically needed in widget application projects
             are selected by default.
+        \li Select \uicontrol {Enable PCH Support} to use a precompiled header
+            file.
         \li Select \uicontrol Next to continue to the class creation page:
             \image qtvstools-widgets-app-class.webp {Creating a class in Qt Widgets Application Wizard}
         \li In \uicontrol {Base class}, enter \uicontrol QWidget as
             the base class type.
         \li Select \uicontrol {Lower case filenames} to
             only use lower case characters in the names of the generated files.
-        \li Select \uicontrol {Precompiled header} to use a
-            precompiled header file.
         \li Select \uicontrol {Add default application icon} to
             use a default application icon for the application.
         \li Select \uicontrol Finish to create the project.
@@ -1855,14 +1855,14 @@
 
     For several programming languages, a language server offers information
     about the code to IDEs as long as they support communication via the
-    \l{QML Language Server}{language server protocol (LSP)}. The IDE can then
-    offer services, such as code completion.
+    \l{QML Language Server Reference}{language server protocol (LSP)}. The IDE
+    can then offer services, such as code completion.
 
     Turn on the QML language server to get code editing services when developing
     Qt Quick applications if:
 
     \list
-        \li The default Qt version supports the \l {QML Language Server}
+        \li The default Qt version supports the QML Language Server
             (available since Qt 6.5).
         \li The Visual Studio version supports
             \l {https://learn.microsoft.com/en-us/visualstudio/extensibility/adding-an-lsp-extension}
