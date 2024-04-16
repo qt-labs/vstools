@@ -88,6 +88,9 @@
     <!--// Qt Plugin default-->
     <QtPlugin>false</QtPlugin>
 
+    <!--// MOC macro names defaults -->
+    <MocMacroNames>Q_OBJECT;Q_GADGET;Q_NAMESPACE;Q_NAMESPACE_EXPORT</MocMacroNames>
+
     <!--// QML debug disabled by default -->
     <QtQMLDebugEnable>false</QtQMLDebugEnable>
 

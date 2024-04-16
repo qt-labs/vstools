@@ -17,12 +17,13 @@
   </Rule.DataSource>
   <Rule.Categories>
     <Category Name="QtSettings_01_General" DisplayName="General"/>
-    <Category Name="QtSettings_02_Paths" DisplayName="Paths"/>
-    <Category Name="QtSettings_03_QMake" DisplayName="qmake"/>
-    <Category Name="QtSettings_04_QML" DisplayName="QML"/>
-    <Category Name="QtSettings_05_AdditionalOptions" DisplayName="Qt Additional Compiler Options"/>
-    <Category Name="QtSettings_06_AdditionalLinkOptions" DisplayName="Qt Additional Linker Options"/>
-    <Category Name="QtSettings_07_LateBindings" DisplayName="Qt Settings Late Bindings"/>
+    <Category Name="QtSettings_02_MOC" DisplayName="MOC"/>
+    <Category Name="QtSettings_03_Paths" DisplayName="Paths"/>
+    <Category Name="QtSettings_04_QMake" DisplayName="qmake"/>
+    <Category Name="QtSettings_05_QML" DisplayName="QML"/>
+    <Category Name="QtSettings_06_AdditionalOptions" DisplayName="Qt Additional Compiler Options"/>
+    <Category Name="QtSettings_07_AdditionalLinkOptions" DisplayName="Qt Additional Linker Options"/>
+    <Category Name="QtSettings_08_LateBindings" DisplayName="Qt Settings Late Bindings"/>
   </Rule.Categories>
   <EnumProperty
     Name="Keyword"
@@ -87,29 +88,35 @@
     <EnumValue Name="true" DisplayName="Run Qt Tools"/>
     <EnumValue Name="false" DisplayName="Skip Qt Tools"/>
   </EnumProperty>
+  <StringListProperty
+    Name="MocMacroNames"
+    Category="QtSettings_02_MOC"
+    DisplayName="MOC Macro Names"
+    Description=
+"A list of macro names to determine if a C++ file needs to be processed by MOC."/>
   <StringProperty
     Name="QtPathBinaries"
-    Category="QtSettings_02_Paths"
+    Category="QtSettings_03_Paths"
     DisplayName="Qt Binaries"
     Description=
 "Path to folder containing executables of Qt tools (qmake, moc, etc.) When a non-rooted path is specified, it will be considered relative to the Qt installation directory."/>
   <StringProperty
     Name="QtPathLibraryExecutables"
-    Category="QtSettings_02_Paths"
+    Category="QtSettings_03_Paths"
     DisplayName="Qt Library Executables"
     Description=
 "Path to folder containing executable files of Qt modules. When a non-rooted path is specified, it will be considered relative to the Qt installation directory."/>
   <StringListProperty
     Name="QtHeaderSearchPath"
-    Category="QtSettings_02_Paths"
+    Category="QtSettings_03_Paths"
     DisplayName="Additional Qt header search paths" />
   <StringListProperty
     Name="QtLibrarySearchPath"
-    Category="QtSettings_02_Paths"
+    Category="QtSettings_03_Paths"
     DisplayName="Additional Qt library search paths" />
   <EnumProperty
     Name="QtQMakeTemplate"
-    Category="QtSettings_03_QMake"
+    Category="QtSettings_04_QMake"
     DisplayName="Template"
     Description="Template of generated project files for extraction of Qt build settings.">
     <EnumValue Name="vcapp" DisplayName="MSBuild" />
@@ -117,34 +124,34 @@
   </EnumProperty>
   <StringListProperty
     Name="QtVars"
-    Category="QtSettings_03_QMake"
+    Category="QtSettings_04_QMake"
     DisplayName="Extract Variables"
     Visible="False" />
   <StringListProperty
     Name="QMakeExtraArgs"
-    Category="QtSettings_03_QMake"
+    Category="QtSettings_04_QMake"
     DisplayName="Additional Command Arguments" />
   <StringListProperty
     Name="QMakeCodeLines"
-    Category="QtSettings_03_QMake"
+    Category="QtSettings_04_QMake"
     DisplayName="Additional Project Settings" />
   <BoolProperty
     Name="QtQMLDebugEnable"
-    Category="QtSettings_04_QML"
+    Category="QtSettings_05_QML"
     DisplayName="Enable QML Debugging"
     Description="Select whether to launch a QML session when debugging.">
   </BoolProperty>
   <StringProperty
     Name="Qt_CL_OPTIONS_"
     ReadOnly="true"
-    Category="QtSettings_05_AdditionalOptions"
+    Category="QtSettings_06_AdditionalOptions"
     DisplayName="Additional Options"
     Description="
 Additional compiler options required by Qt. These options will be passed
 to the compiler, unless specifically excluded in the next field." />
   <StringProperty
     Name="QtExcludedOptions"
-    Category="QtSettings_05_AdditionalOptions"
+    Category="QtSettings_06_AdditionalOptions"
     DisplayName="Excluded Options"
     Description="
 Options to exclude from the above compiler options required by Qt.
@@ -152,13 +159,13 @@ These options will NOT be passed to the compiler. Prefix options
 with '/' or '-', and separate them with spaces." />
   <BoolProperty
     Name="QtOptionsBuildLog"
-    Category="QtSettings_05_AdditionalOptions"
+    Category="QtSettings_06_AdditionalOptions"
     DisplayName="Show in Build Log"
     Description="
 Print to the build log the list of additional options passed to the compiler." />
   <EnumProperty
     Name="QtLinkNatvisFile"
-    Category="QtSettings_06_AdditionalLinkOptions"
+    Category="QtSettings_07_AdditionalLinkOptions"
     DisplayName="Embed .natvis file into PDB"
     Description=
 "Embeds the debugger visualizations (.natvis file) into the PDB file
@@ -170,7 +177,7 @@ files located in %USERPROFILE%\\Documents\\Visual Studio 2022\\Visualizers).">
   </EnumProperty>
   <StringListProperty
     Name="QtLateBindings"
-    Category="QtSettings_07_LateBindings"
+    Category="QtSettings_08_LateBindings"
     DisplayName="Property Names"
     Description="Names of properties available for late bindings."/>
 </Rule>

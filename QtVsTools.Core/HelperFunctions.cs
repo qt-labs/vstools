@@ -151,14 +151,12 @@ namespace QtVsTools.Core
 
         public static bool HasQObjectDeclaration(VCFile file)
         {
-            return CxxStream.ContainsNotCommented(file,
-                new[]
-                {
-                    "Q_OBJECT",
-                    "Q_GADGET",
-                    "Q_NAMESPACE"
-                },
-                StringComparison.Ordinal, true);
+            var macroNames = Array.Empty<string>();
+            var project = file?.project as VCProject;
+            var config = project?.ActiveConfiguration;
+            if (config?.Rules.Item("QtRule10_Settings") is IVCRulePropertyStorage props)
+                macroNames = props.GetEvaluatedPropertyValue("MocMacroNames").Split(';');
+            return CxxStream.ContainsNotCommented(file, macroNames, StringComparison.Ordinal, true);
         }
 
         public static bool MoveToRelativePath(this VCFile file, string relativePath)
