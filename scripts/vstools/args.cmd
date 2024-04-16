@@ -94,6 +94,10 @@ IF "%ARG%" == "-init" (
     SHIFT
 ) ELSE IF "%ARG%" == "-install" (
     SET DO_INSTALL=%TRUE%
+    IF NOT "%~2" == "" (
+        SET VSIX_INSTALLER_ARG=%~2
+        SHIFT
+    )
 ) ELSE IF "%ARG%" == "-all" (
     SET QUERY=%QUERY_ALL%
 ) ELSE IF "%ARG%" == "-verbose" (
