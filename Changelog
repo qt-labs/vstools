@@ -1,12 +1,31 @@
 Qt Visual Studio Tools version 3.2.0:
 
 This update of the Qt VS Tools extension adds experimental QML LSP server, disabled by default.
+The update also introduces additional settings to provide more fine-grained control over the
+notification behavior of the Qt Visual Studio Tools extension.
+Furthermore we will now provide the QtMsBuild files as separate ZIP file from our download server.
 
 Changes
 -------
  - Extended QML LSP server support, with stream monitoring and additional file logging
- - Searching for dev releases is now an opt-in (new Settings entry)
  - Updated VS interface of Qt command line tools to match Qt 6.6.1
+ - Provide QtMsBuild as a standalone distribution in ZIP file format
+ - Searching for dev releases is now an opt-in (Notification item)
+ - Add option for activating the console pane on new messages (Notification item)
+ - Inform user if project Qt installation property is invalid (Notification item)
+ - Fixed QTVSADDINBUG-1191: Enable batching of CL calls for dynamic sources
+ - Fixed QTVSADDINBUG-987: Correct conversion of moc_predef steps and set output path to $(IntDir)
+ - Fixed QTVSADDINBUG-779 and QTVSADDINBUG-1157: Add QtMSBuild stand-alone distribution
+ - Fixed QTVSADDINBUG-1148: Replace QtBkup_* and QtCleaned_* comparisons with hash comparisons
+ - Fixed QTVSADDINBUG-347: Unify precompiled header support, now settable on the configuration page
+ - Fixed QTVSADDINBUG-1132: Inform user if project Qt installation property is invalid
+ - Fixed QTVSADDINBUG-1184: Add option for activating the console pane on new messages
+ - Fixed QTVSADDINBUG-885: Add default stylesheet setting the size of embedded editor widgets
+ - Fixed QTVSADDINBUG-1060 and QTVSADDINBUG-862: Add dark mode and stylesheet support for editors
+ - Fixed QTVSADDINBUG-959: Use VS embedded info bar to show the detach option of editors
+ - Fixed QTVSADDINBUG-1182: Ensure non-empty filename prior to getting directory in file validation
+ - Fixed QTVSADDINBUG-1172: Move Qt variables expansion from qt.targets to qt_private.props
+ - Fixed QTVSADDINBUG-935: Avoid modifying .vcxproj.user
  - Fixed QTVSADDINBUG-528: Enable file wizards to accept relative paths
  - Fixed QTVSADDINBUG-1162: Qt Quick project creation with Qt 5 and CMake
  - Fixed QTVSADDINBUG-989: MultiToolTask on VS 2019 failed unexpectedly
