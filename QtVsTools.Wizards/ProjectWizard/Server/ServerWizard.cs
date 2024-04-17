@@ -129,7 +129,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is {} project)
-                project.AddActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
+                project.EnableActiveQtBuildStep("1.0", Parameter[NewProject.SafeName] + ".def");
         }
     }
 }

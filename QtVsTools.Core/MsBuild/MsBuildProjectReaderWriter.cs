@@ -510,6 +510,17 @@ namespace QtVsTools.Core.MsBuild
                 .ToList();
         }
 
+        private List<XElement> GetPostBuildEvents(string toolExecName)
+        {
+            return this[Files.Project].Xml
+                .Elements(ns + "Project")
+                .Elements(ns + "ItemDefinitionGroup")
+                .Elements(ns + "PostBuildEvent")
+                .Where(x => x.Elements(ns + "Command")
+                    .Any(y => y.Value.Contains(toolExecName)))
+                .ToList();
+        }
+
         private void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
         {
             customBuilds
@@ -898,6 +909,17 @@ namespace QtVsTools.Core.MsBuild
 
                 qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.BuildAction, "lrelease");
                 qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.InputFile, "%(FullPath)");
+            }
+
+            // convert idc custom build steps
+            var idcPostBuilds = GetPostBuildEvents("idc.exe");
+            foreach (var idcPostBuild in idcPostBuilds) {
+                this[Files.Project].Xml.Root.Add(new XElement(ns + "PropertyGroup",
+                    new XAttribute("Label", "QtIDC"),
+                    idcPostBuild.Parent.Attribute("Condition"),
+                    new XElement(ns + "QtIDC", new XText("true")),
+                    new XElement(ns + "QtIDCVersion", new XText("1.0"))));
+                idcPostBuild.Remove();
             }
 
             qtMsBuild.EndSetItemProperties();

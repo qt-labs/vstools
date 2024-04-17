@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************/
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <QtIDC Condition="'$(QtIDC)' == ''">false</QtIDC>
+    <QtIDCVersion Condition="'$(QtIDCVersion)' == ''">1.0</QtIDCVersion>
+    <QtIDCPerUser Condition="'$(QtIDCPerUser)' == ''">false</QtIDCPerUser>
+  </PropertyGroup>
+</Project>

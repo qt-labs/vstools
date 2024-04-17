@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************/
+-->
+<ProjectSchemaDefinitions
+  xmlns="http://schemas.microsoft.com/build/2009/properties"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="QtRule80_IDC"
+    PageTemplate="generic"
+    DisplayName="Qt IDC Tool"
+    Order="8">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        Label="QtIDC"
+        HasConfigurationCondition="true"/>
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category Name="General" DisplayName="General"/>
+    </Rule.Categories>
+
+    <BoolProperty
+      Name="QtIDC"
+      Category="General"
+      DisplayName="Run IDC Tool"
+      Description="Whether Qt Interface Description Compiler (idc) should be called after build."/>
+    <StringProperty
+      Name="QtIDCVersion"
+      Category="General"
+      DisplayName="Interface Version"
+      Description="Specify the interface version ( -version &lt;version&gt; )."/>
+    <BoolProperty
+      Name="QtIDCPerUser"
+      Category="General"
+      DisplayName="Register/Unregister Per-User"
+      Description=
+"Register and unregister the server per-user ( -regserverperuser, -unregserverperuser )."/>
+  </Rule>
+</ProjectSchemaDefinitions>

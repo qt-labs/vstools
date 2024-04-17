@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************/
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Condition="'$(ApplicationType)' != 'Linux' AND
+                        '$(ConfigurationType)' == 'DynamicLibrary'">
+    <!-- Add IDC property page -->
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)qtidc.xml"/>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(QtIDC)' == 'true' AND
+                            '$(ApplicationType)' != 'Linux' AND
+                            '$(ConfigurationType)' == 'DynamicLibrary'">
+    <!-- Schedule IDC targets -->
+    <BuildLinkTargets>QtIDCPreBuild;$(BuildLinkTargets);QtIDCPostBuild</BuildLinkTargets>
+    <!-- Set hidden property defaults -->
+    <QtIDCExe Condition="'$(QtIDCExe)' == ''"
+      ><![CDATA["$(QtToolsPath)\idc.exe"]]></QtIDCExe>
+    <QtIDCEnvVars Condition="'$(QtIDCEnvVars)' == ''"
+      >VCINSTALLDIR=$(VCInstallDir)</QtIDCEnvVars>
+    <QtIDCDLLPath Condition="'$(QtIDCDLLPath)' == ''"
+      >$(TargetPath)</QtIDCDLLPath>
+    <QtIDCIDLPath Condition="'$(QtIDCIDLPath)' == ''"
+      >$(IntDir)$(TargetName).idl</QtIDCIDLPath>
+    <QtIDCTLBPath Condition="'$(QtIDCTLBPath)' == ''"
+      >$(IntDir)$(TargetName).tlb</QtIDCTLBPath>
+    <QtIDCLogPath Condition="'$(QtIDCLogPath)' == ''"
+      >$(IntDir)$(TargetName).idc.log</QtIDCLogPath>
+    <QtIDCLogPipe Condition="'$(QtIDCLogPipe)' == ''"
+      >&gt; &quot;$(QtIDCLogPath)&quot;</QtIDCLogPipe>
+  </PropertyGroup>
+
+  <Target Name="QtIDCPreBuild"
+          BeforeTargets="BeforeBuild"
+          Inputs="$(QtIDCDLLPath)"
+          Outputs="$(QtIDCLogPath)"
+          Condition="'$(QtIDC)' == 'true' AND
+                     '$(ApplicationType)' != 'Linux' AND
+                     '$(ConfigurationType)' == 'DynamicLibrary'">
+    <PropertyGroup>
+      <QtIDCUnregCommand Condition="'$(QtIDCPerUser)' != 'true'"
+        >$(QtIDCExe) $(QtIDCDLLPath) -unregserver $(QtIDCLogPipe)</QtIDCUnregCommand>
+      <QtIDCUnregCommand Condition="'$(QtIDCPerUser)' == 'true'"
+        >$(QtIDCExe) $(QtIDCDLLPath) -unregserverperuser $(QtIDCLogPipe)</QtIDCUnregCommand>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Qt IDC: $(QtIDCUnregCommand)"/>
+    <Exec Command="$(QtIDCUnregCommand)" EnvironmentVariables="$(QtIDCEnvVars)"
+      IgnoreExitCode="true"/>
+
+    <ItemGroup>
+      <QtIDCLog Include="$(QtIDCLogPath)"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(TLogLocation)idc.read.1u.tlog"
+      Lines="^$(ProjectPath)"
+      Overwrite="true" Encoding="Unicode"/>
+    <WriteLinesToFile
+      File="$(TLogLocation)idc.write.1u.tlog"
+      Lines="^$(ProjectPath);@(QtIDCLog->'%(Fullpath)')"
+      Overwrite="true" Encoding="Unicode"/>
+    <WriteLinesToFile
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^$(ProjectFileName);@(QtIDCLog->'%(Fullpath)')"
+      Overwrite="false" Encoding="Unicode"/>
+    <ItemGroup>
+      <QtIDCLog Remove="@(QtIDCLog)"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="QtIDCPostBuild"
+          AfterTargets="Link"
+          Inputs="$(QtIDCDLLPath)"
+          Outputs="$(QtIDCLogPath)"
+          Condition="'$(QtIDC)' == 'true' AND
+                     '$(ApplicationType)' != 'Linux' AND
+                     '$(ConfigurationType)' == 'DynamicLibrary'">
+    <PropertyGroup>
+      <QtIDCIDLCommand
+        >$(QtIDCExe) $(QtIDCDLLPath) -idl $(QtIDCIDLPath) -version $(QtIDCVersion) $(QtIDCLogPipe)</QtIDCIDLCommand>
+      <QtIDCMIDLCommand
+        >midl $(QtIDCIDLPath) -tlb $(QtIDCTLBPath) $(QtIDCLogPipe)</QtIDCMIDLCommand>
+      <QtIDCTLBCommand
+        >$(QtIDCExe) $(QtIDCDLLPath) -tlb $(QtIDCTLBPath) $(QtIDCLogPipe)</QtIDCTLBCommand>
+      <QtIDCRegCommand Condition="'$(QtIDCPerUser)' != 'true'"
+        >$(QtIDCExe) $(QtIDCDLLPath) -regserver $(QtIDCLogPipe)</QtIDCRegCommand>
+      <QtIDCRegCommand Condition="'$(QtIDCPerUser)' == 'true'"
+        >$(QtIDCExe) $(QtIDCDLLPath) -regserverperuser $(QtIDCLogPipe)</QtIDCRegCommand>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Qt IDC: $(QtIDCIDLCommand)"/>
+    <Exec Command="$(QtIDCIDLCommand)" EnvironmentVariables="$(QtIDCEnvVars)"/>
+
+    <Message Importance="high" Text="Qt IDC: $(QtIDCMIDLCommand)"/>
+    <Exec Command="$(QtIDCMIDLCommand)" EnvironmentVariables="$(QtIDCEnvVars)"/>
+
+    <Message Importance="high" Text="Qt IDC: $(QtIDCTLBCommand)"/>
+    <Exec Command="$(QtIDCTLBCommand)" EnvironmentVariables="$(QtIDCEnvVars)"/>
+
+    <Message Importance="high" Text="Qt IDC: $(QtIDCRegCommand)"/>
+    <Exec Command="$(QtIDCRegCommand)" EnvironmentVariables="$(QtIDCEnvVars)"/>
+
+    <ItemGroup>
+      <QtIDCLog Include="$(QtIDCLogPath)"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(TLogLocation)idc.read.1u.tlog"
+      Lines="^$(ProjectPath)"
+      Overwrite="true" Encoding="Unicode"/>
+    <WriteLinesToFile
+      File="$(TLogLocation)idc.write.1u.tlog"
+      Lines="^$(ProjectPath);@(QtIDCLog->'%(Fullpath)')"
+      Overwrite="true" Encoding="Unicode"/>
+    <WriteLinesToFile
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^$(ProjectFileName);@(QtIDCLog->'%(Fullpath)')"
+      Overwrite="false" Encoding="Unicode"/>
+    <ItemGroup>
+      <QtIDCLog Remove="@(QtIDCLog)"/>
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup Condition="'$(QtIDC)' == 'true' AND
+                            '$(ApplicationType)' != 'Linux' AND
+                            '$(ConfigurationType)' == 'DynamicLibrary'">
+    <!-- Unset commands -->
+    <QtIDCUnregCommand/>
+    <QtIDCIDLCommand/>
+    <QtIDCMIDLCommand/>
+    <QtIDCTLBCommand/>
+    <QtIDCRegCommand/>
+  </PropertyGroup>
+</Project>

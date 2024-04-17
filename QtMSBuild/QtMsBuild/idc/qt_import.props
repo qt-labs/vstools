@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************/
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <QtMsBuildProps>
+      $(QtMsBuildProps);
+      $(MSBuildThisFileDirectory)qtidc.props
+    </QtMsBuildProps>
+    <QtMsBuildTargets>
+      $(QtMsBuildTargets);
+      $(MSBuildThisFileDirectory)qtidc.targets
+    </QtMsBuildTargets>
+  </PropertyGroup>
+</Project>

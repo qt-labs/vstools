@@ -181,22 +181,15 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        public void AddActiveQtBuildStep(string version, string defFile = null)
+        public void EnableActiveQtBuildStep(string version, string defFile = null)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (VCConfiguration config in (IVCCollection)VcProject.Configurations) {
-                var idlFile = "\"$(IntDir)/" + VcProject.Name + ".idl\"";
-                var tblFile = "\"$(IntDir)/" + VcProject.Name + ".tlb\"";
-
-                var tool = (VCPostBuildEventTool)((IVCCollection)config.Tools).Item("VCPostBuildEventTool");
-                var idc = "$(QTDIR)\\bin\\idc.exe \"$(TargetPath)\" /idl " + idlFile + " -version " + version;
-                var midl = "midl " + idlFile + " /tlb " + tblFile;
-                var idc2 = "$(QTDIR)\\bin\\idc.exe \"$(TargetPath)\" /tlb " + tblFile;
-                var idc3 = "$(QTDIR)\\bin\\idc.exe \"$(TargetPath)\" /regserver";
-
-                tool.CommandLine = idc + "\r\n" + midl + "\r\n" + idc2 + "\r\n" + idc3;
-                tool.Description = string.Empty;
+                if (config.Rules.Item("QtRule80_IDC") is IVCRulePropertyStorage rule) {
+                    rule.SetPropertyValue("QtIDC", "true");
+                    rule.SetPropertyValue("QtIDCVersion", version);
+                }
 
                 var linker = (VCLinkerTool)((IVCCollection)config.Tools).Item("VCLinkerTool");
                 var librarian = (VCLibrarianTool)((IVCCollection)config.Tools).Item("VCLibrarianTool");

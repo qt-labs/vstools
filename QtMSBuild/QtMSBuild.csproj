@@ -375,6 +375,24 @@
     </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild idc properties and targets
+    // -->
+    <Content Include="QtMSBuild\idc\qt_import.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="QtMSBuild\idc\qtidc.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\idc\qtidc.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\idc\qtidc.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild translation tools property pages and targets
     // -->
     <Content Include="QtMSBuild\translation\qttranslation.props">
