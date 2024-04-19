@@ -65,9 +65,9 @@ namespace QtVsTools.Core.CMake
             case QtStatus.NullPresets:
                 try {
                     if (await Utils.ReadAllTextAsync(PresetsPath) == NullPresetsText)
-                        File.Delete(PresetsPath);
+                        Utils.DeleteFile(PresetsPath);
                     if (await Utils.ReadAllTextAsync(UserPresetsPath) == NullPresetsText)
-                        File.Delete(UserPresetsPath);
+                        Utils.DeleteFile(UserPresetsPath);
                 } catch (Exception ex) {
                     ex.Log();
                 }

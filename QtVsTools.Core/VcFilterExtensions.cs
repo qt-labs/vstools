@@ -52,9 +52,7 @@ namespace QtVsTools.Core
             try {
                 if (vcFile.IsInFilter(filter)) {
                     filter.RemoveFile(vcFile);
-                    var fi = new FileInfo(fullPath);
-                    if (fi.Exists)
-                        fi.Delete();
+                    Utils.DeleteFile(fullPath);
                 }
             } catch { }
 

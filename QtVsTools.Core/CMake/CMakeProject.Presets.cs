@@ -12,18 +12,18 @@ using Newtonsoft.Json.Linq;
 
 namespace QtVsTools.Core.CMake
 {
-    using static Common.Utils;
+    using Common;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
         private async Task<bool> TryLoadPresetsAsync()
         {
             if (File.Exists(PresetsPath))
-                Presets = JObject.Parse(await ReadAllTextAsync(PresetsPath));
+                Presets = JObject.Parse(await Utils.ReadAllTextAsync(PresetsPath));
             else
                 Presets = NullPresets.DeepClone() as JObject;
             if (File.Exists(UserPresetsPath))
-                UserPresets = JObject.Parse(await ReadAllTextAsync(UserPresetsPath));
+                UserPresets = JObject.Parse(await Utils.ReadAllTextAsync(UserPresetsPath));
             else
                 UserPresets = NullPresets.DeepClone() as JObject;
 
@@ -67,7 +67,7 @@ namespace QtVsTools.Core.CMake
                 if (VersionInformation.GetOrAddByName((string)versionPreset["name"]) is {} version) {
                     var qtDir = HelperFunctions.FromNativeSeparators(version.InstallPrefix);
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
-                    if (qtDir.Equals(presetQtDir, IgnoreCase))
+                    if (qtDir.Equals(presetQtDir, Utils.IgnoreCase))
                         continue;
                     (versionPreset["environment"] ??= new JObject())["QTDIR"] = qtDir;
                 } else {

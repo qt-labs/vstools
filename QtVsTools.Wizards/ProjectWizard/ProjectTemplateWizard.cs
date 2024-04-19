@@ -22,7 +22,9 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using Core.MsBuild;
     using QtVsTools.Common;
+    using QtVsTools.Core.Common;
     using VisualStudio;
+
     using static QtVsTools.Common.EnumExt;
     using WhereConfig = Func<IWizardConfiguration, bool>;
 
@@ -300,10 +302,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 iVsUIShell.EnableModeless(1);
             }
             if (!WizardWindow.DialogResult ?? false) {
-                try {
-                    Directory.Delete(Parameter[NewProject.DestinationDirectory]);
-                    Directory.Delete(Parameter[NewProject.SolutionDirectory]);
-                } catch { }
+                Utils.DeleteDirectory(Parameter[NewProject.DestinationDirectory]);
+                Utils.DeleteDirectory(Parameter[NewProject.SolutionDirectory]);
                 throw new WizardBackoutException();
             }
 

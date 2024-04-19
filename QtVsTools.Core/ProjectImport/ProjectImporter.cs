@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Core
 {
+    using Common;
     using MsBuild;
     using static Common.Utils;
 
@@ -818,8 +819,7 @@ namespace QtVsTools.Core
             AddPlatformToVcProj(myXmlDocument, oldPlatformName, newPlatformName);
             myXmlDocument.Save(projectFileName);
 
-            fi = new FileInfo(tempFileName);
-            fi.Delete();
+            Utils.DeleteFile(tempFileName);
         }
 
         private static void AddPlatformToVcProj(XmlDocument doc, string oldPlatformName,

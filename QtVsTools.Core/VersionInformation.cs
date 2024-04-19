@@ -69,7 +69,7 @@ namespace QtVsTools.Core
                         var tempVcxproj = Path.Combine(tempDir, $"{randomName}.vcxproj");
                         var msbuildProj = MsBuildProjectReaderWriter.Load(tempVcxproj);
 
-                        Directory.Delete(tempDir, true);
+                        Utils.DeleteDirectory(tempDir, Utils.Option.Recursive);
 
                         targetMachine = msbuildProj.GetProperty("Link", "TargetMachine");
                     }

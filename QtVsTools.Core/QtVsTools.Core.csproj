@@ -139,6 +139,7 @@
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="Common\Utils.EnvParser.cs" />
     <Compile Include="Common\Utils.cs" />
+    <Compile Include="Common\Utils.IO.cs" />
     <Compile Include="Common\Utils.LogFile.cs" />
     <Compile Include="Common\Utils.StreamMonitor.cs" />
     <Compile Include="Common\Utils.Registry.cs" />

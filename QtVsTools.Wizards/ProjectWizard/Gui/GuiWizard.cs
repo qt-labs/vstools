@@ -17,6 +17,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Common;
     using Core;
     using QtVsTools.Common;
+    using QtVsTools.Core.Common;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -312,8 +313,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var qmakeAssetsDir = Path.Combine(qmakeTmpDir, "assets");
                 var projAssetsDir = Path.Combine(projDir, "assets");
                 if (Directory.Exists(qmakeAssetsDir)) {
-                    if (Directory.Exists(projAssetsDir))
-                        Directory.Delete(projAssetsDir, recursive: true);
+                    Utils.DeleteDirectory(projAssetsDir, Utils.Option.Recursive);
                     Directory.Move(qmakeAssetsDir, projAssetsDir);
                 }
 
@@ -322,7 +322,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     File.Move(manifestFile, Path.Combine(projDir, "Package.appxmanifest"));
                 }
 
-                Directory.Delete(qmakeTmpDir, recursive: true);
+                Utils.DeleteDirectory(qmakeTmpDir, Utils.Option.Recursive);
             }
         }
     }

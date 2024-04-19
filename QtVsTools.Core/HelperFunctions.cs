@@ -439,33 +439,6 @@ namespace QtVsTools.Core
         }
 
         /// <summary>
-        /// This method copies the specified directory and all its child directories and files to
-        /// the specified destination. The destination directory is created if it does not exist.
-        /// </summary>
-        public static void CopyDirectory(string directory, string targetPath)
-        {
-            var sourceDir = new DirectoryInfo(directory);
-            if (!sourceDir.Exists)
-                return;
-
-            try {
-                if (!Directory.Exists(targetPath))
-                    Directory.CreateDirectory(targetPath);
-
-                var files = sourceDir.GetFiles();
-                foreach (var file in files) {
-                    try {
-                        file.CopyTo(Path.Combine(targetPath, file.Name), true);
-                    } catch { }
-                }
-            } catch { }
-
-            var subDirs = sourceDir.GetDirectories();
-            foreach (var subDir in subDirs)
-                CopyDirectory(subDir.FullName, Path.Combine(targetPath, subDir.Name));
-        }
-
-        /// <summary>
         /// Rooted canonical path is the absolute path for the specified path string
         /// (cf. Path.GetFullPath()) without a trailing path separator.
         /// </summary>

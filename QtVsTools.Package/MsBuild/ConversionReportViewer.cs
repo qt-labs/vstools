@@ -23,8 +23,8 @@ using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 namespace QtVsTools.Package.MsBuild
 {
     using Core.MsBuild;
+    using QtVsTools.Core.Common;
     using VisualStudio;
-    using static Core.Common.Utils;
 
     [Guid(GuidString)]
     public partial class ConversionReportViewer : IVsEditorFactory
@@ -76,10 +76,10 @@ namespace QtVsTools.Package.MsBuild
                 foreach (var file in files.Properties()) {
                     File.WriteAllText(TempBefore[file.Name]
                         = $@"{Path.GetTempPath()}\{Path.GetRandomFileName()}.xml",
-                        FromZipBase64(file.Value["before"].Value<string>()));
+                        Utils.FromZipBase64(file.Value["before"].Value<string>()));
                     File.WriteAllText(TempAfter[file.Name]
                         = $@"{Path.GetTempPath()}\{Path.GetRandomFileName()}.xml",
-                        FromZipBase64(file.Value["after"].Value<string>()));
+                        Utils.FromZipBase64(file.Value["after"].Value<string>()));
                 }
             } catch (Exception) {
                 return VSConstants.E_FAIL;
@@ -143,9 +143,9 @@ namespace QtVsTools.Package.MsBuild
 
         public int Close()
         {
-            foreach (var tempFile in TempBefore.Values.Union(TempAfter.Values).ToList()) {
-                try { File.Delete(tempFile); } catch (Exception) { }
-            }
+            foreach (var tempFile in TempBefore.Values.Union(TempAfter.Values).ToList())
+                Utils.DeleteFile(tempFile);
+
             TempBefore.Clear();
             TempAfter.Clear();
             return VSConstants.S_OK;

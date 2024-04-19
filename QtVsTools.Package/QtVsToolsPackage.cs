@@ -20,7 +20,6 @@ using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 
 using Task = System.Threading.Tasks.Task;
-
 using static Microsoft.VisualStudio.Shell.PackageAutoLoadFlags;
 
 namespace QtVsTools
@@ -31,9 +30,9 @@ namespace QtVsTools
     using Package;
     using Package.CMake;
     using Qml.Debug;
+    using QtVsTools.Core.Common;
     using VisualStudio;
 
-    using static QtVsTools.Core.Common.Utils;
     using static SyntaxAnalysis.RegExpr;
 
     public static partial class Instances
@@ -209,7 +208,7 @@ namespace QtVsTools
                             const string qtPrivateImport
                                 = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
                             Func<string, bool> isUpdateQtProps = _ => Path.GetFileName(targetPath)
-                                    .Equals("Qt.props", IgnoreCase)
+                                    .Equals("Qt.props", Utils.IgnoreCase)
                                 && File.ReadAllText(targetPath).Contains(qtPrivateImport);
 
                             if (!File.Exists(targetPath)) {
@@ -223,7 +222,7 @@ namespace QtVsTools
                             } else {
                                 // Target file *is* the updated Qt.props; skip!
                                 //  -> Remove temp file
-                                File.Delete(targetPathTemp);
+                                Utils.DeleteFile(targetPathTemp);
                             }
                         }
                     }
@@ -449,14 +448,12 @@ namespace QtVsTools
         {
             var qtTmLanguagePath = Environment.
                 ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
-            HelperFunctions.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"),
-                qtTmLanguagePath); // always copy .pri/.pro TextMate Language Grammar file
 
-            try { //Remove TextMate-based QML syntax highlighting
-                var qmlTextMate = Path.Combine(qtTmLanguagePath, "qml");
-                if (Directory.Exists(qmlTextMate))
-                    Directory.Delete(qmlTextMate, true);
-            } catch { }
+            // always copy .pri/.pro TextMate Language Grammar file
+            Utils.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"), qtTmLanguagePath);
+
+            //Remove TextMate-based QML syntax highlighting
+            Utils.DeleteDirectory(Path.Combine(qtTmLanguagePath, "qml"), Utils.Option.Recursive);
         }
 
         private void SetVisualizersPathProperty()
@@ -491,7 +488,7 @@ namespace QtVsTools
         private async Task CopyVisualizersFileAsync(string filename, string qtNamespace)
         {
             try {
-                var text = await ReadAllTextAsync(Path.Combine(PkgInstallPath, filename));
+                var text = await Utils.ReadAllTextAsync(Path.Combine(PkgInstallPath, filename));
 
                 string visualizerFile;
                 if (string.IsNullOrEmpty(qtNamespace)) {
@@ -506,7 +503,7 @@ namespace QtVsTools
                 if (!Directory.Exists(VisualizersPath))
                     Directory.CreateDirectory(VisualizersPath);
 
-                await WriteAllTextAsync(Path.Combine(VisualizersPath, visualizerFile), text);
+                await Utils.WriteAllTextAsync(Path.Combine(VisualizersPath, visualizerFile), text);
             } catch (Exception exception) {
                 exception.Log();
             }

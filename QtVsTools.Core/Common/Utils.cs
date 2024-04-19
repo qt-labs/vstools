@@ -9,7 +9,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace QtVsTools.Core.Common
 {
@@ -126,18 +125,6 @@ namespace QtVsTools.Core.Common
             dataUtf8.Write(text);
             dataRaw.Seek(0, SeekOrigin.Begin);
             return sha256.ComputeHash(dataRaw);
-        }
-
-        public static async Task<string> ReadAllTextAsync(string filePath)
-        {
-            using var reader = File.OpenText(filePath);
-            return await reader.ReadToEndAsync();
-        }
-
-        public static async Task WriteAllTextAsync(string filePath, string text)
-        {
-            using var writer = File.CreateText(filePath);
-            await writer.WriteAsync(text);
         }
     }
 }

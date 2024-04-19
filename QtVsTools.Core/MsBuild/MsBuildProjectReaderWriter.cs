@@ -18,7 +18,9 @@ using Microsoft.Win32;
 
 namespace QtVsTools.Core.MsBuild
 {
+    using Common;
     using SyntaxAnalysis;
+
     using static HelperFunctions;
     using static SyntaxAnalysis.RegExpr;
     using static Common.Utils;
@@ -174,8 +176,8 @@ namespace QtVsTools.Core.MsBuild
                         Before = File.ReadAllText(tempXmlCommitted),
                         After = File.ReadAllText(tempXml)
                     });
-                    File.Delete(tempXmlCommitted);
-                    File.Delete(tempXml);
+                    Utils.DeleteFile(tempXmlCommitted);
+                    Utils.DeleteFile(tempXml);
                 } catch (Exception e) {
                     e.Log();
                 }
@@ -1025,8 +1027,7 @@ namespace QtVsTools.Core.MsBuild
                 if (evaluateTarget == null)
                     return;
                 evaluateTarget.Remove();
-                if (File.Exists(tempProjFilePath))
-                    File.Delete(tempProjFilePath);
+                Utils.DeleteFile(tempProjFilePath);
             }
 
             private string ExpansionCacheKey(string stringToExpand)
@@ -1063,13 +1064,12 @@ namespace QtVsTools.Core.MsBuild
 
                 if (stringToExpand != (string)evaluateProperty) {
                     evaluateProperty.SetValue(stringToExpand);
-                    if (!string.IsNullOrEmpty(tempProjFilePath) && File.Exists(tempProjFilePath))
-                        File.Delete(tempProjFilePath);
+                    if (!string.IsNullOrEmpty(tempProjFilePath))
+                        Utils.DeleteFile(tempProjFilePath);
                     tempProjFilePath = Path.Combine(
                         Path.GetDirectoryName(projFile.Path) ?? "",
                         Path.GetRandomFileName());
-                    if (File.Exists(tempProjFilePath))
-                        File.Delete(tempProjFilePath);
+                    Utils.DeleteFile(tempProjFilePath);
                     projFile.XmlCommitted.Save(tempProjFilePath);
                     projRoot = ProjectRootElement.Open(tempProjFilePath);
                 }
