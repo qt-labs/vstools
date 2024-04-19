@@ -1916,6 +1916,9 @@
 
     \list
         \li Go to \uicontrol Debug > \uicontrol {Start Debugging}.
+        \li To debug a CMake project, select the main source
+            file in\uicontrol {Solution Explorer} and then select
+            \uicontrol {Set as Startup Item} in the context menu.
         \li Press \key F5.
     \endlist
 
