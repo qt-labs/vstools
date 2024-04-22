@@ -15,7 +15,6 @@
     string DisplayName = "MSVC C++ x64/x86 build tools";
     switch (VS_NAME) {
         case "2022":
-            PackageId = "QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8";
             VsProducts = new[]
             {
                 "Microsoft.VisualStudio.Pro",
@@ -28,8 +27,10 @@
             switch (VS_TARGET_ARCH) {
               case "x64":
                 VS_TARGET_ARCH = "amd64";
+                PackageId = "QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8";
                 break;
               case "arm64":
+                PackageId = "QtVsTools.32c0f213-ae14-4cc2-bae9-8fa56ad8bddf";
                 PrerequisiteId = "Microsoft.VisualStudio.Component.VC.Tools.ARM64";
                 DisplayName = "MSVC v143 - VS 2022 C++ ARM64 build tools (Latest)";
                 break;
