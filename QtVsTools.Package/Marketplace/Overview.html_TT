@@ -42,6 +42,12 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
                 </a>
             </li>
         <#}#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2022 on ARM"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022ARM">
+                    Qt VS Tools for Visual Studio 2022 on ARM
+                </a>
+            </li>
     </ul>
 </p>
 <p><h3>Documentation</h3></p>
@@ -94,7 +100,15 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
     <li>
         QML debug engine for debugging Qt Quick applications.
     </li>
+    <li>
+        Experimental support for QML language server.
+    </li>
 </ul>
+<p><h3>Qt MSBuild file support</h3></p>
+Alongside providing Qt-related MSBuild files within the Qt VS Tools package, we now offer them as
+a separate .zip download for your convenience. Starting from version 3.2.0, access the standalone
+Qt MSBuild files by visiting our public server download location:
+<a title="Official releases"href="https://download.qt.io/official_releases/vsaddin">Official releases</a>.
 <p><h3>How to set up F1 help</h3></p>
 <ol class="1" type="1">
     <li>
