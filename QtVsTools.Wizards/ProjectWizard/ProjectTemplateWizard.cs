@@ -208,32 +208,26 @@ namespace QtVsTools.Wizards.ProjectWizard
                     solutionDir = projectDir;
 
                 var slnFiles = Directory.GetFiles(solutionDir, "*.sln");
-                foreach (var slnFile in slnFiles) {
-                    if (File.Exists(slnFile))
-                        File.Delete(slnFile);
-                }
+                foreach (var slnFile in slnFiles)
+                    Utils.DeleteFile(slnFile);
 
-                var dotVsDir = Path.Combine(solutionDir, ".vs");
-                if (Directory.Exists(dotVsDir))
-                    Directory.Delete(dotVsDir, recursive: true);
+                Utils.DeleteDirectory(Path.Combine(solutionDir, ".vs"), Utils.Option.Recursive);
 
                 var vcxProjFiles = Directory.GetFiles(projectDir, "*.vcxproj*");
-                foreach (var vcxProjFile in vcxProjFiles) {
-                    if (File.Exists(vcxProjFile))
-                        File.Delete(vcxProjFile);
-                }
+                foreach (var vcxProjFile in vcxProjFiles)
+                    Utils.DeleteFile(vcxProjFile);
 
                 var qtVarsProFiles = Directory.GetFiles(projectDir, "qtvars.pro",
                     SearchOption.AllDirectories);
-                foreach (string qtVarProFile in qtVarsProFiles) {
+                foreach (var qtVarProFile in qtVarsProFiles) {
                     var projDirUri = new Uri(projectDir);
-                    var proFileDirInfo = new DirectoryInfo(Path.GetDirectoryName(qtVarProFile));
-                    while (new Uri(proFileDirInfo.Parent.FullName) != projDirUri)
+                    var proFileDirInfo = new DirectoryInfo(Path.GetDirectoryName(qtVarProFile) ?? "");
+                    while (proFileDirInfo.Parent != null && new Uri(proFileDirInfo.Parent.FullName) != projDirUri)
                         proFileDirInfo = proFileDirInfo.Parent;
-                    proFileDirInfo.Delete(recursive: true);
+                    Utils.DeleteDirectory(proFileDirInfo, Utils.Option.Recursive);
                 }
-            } catch (Exception e) {
-                Messages.Log(e);
+            } catch (Exception exception) {
+                exception.Log();
             }
         }
 
