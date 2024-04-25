@@ -217,16 +217,23 @@ namespace QtVsTools.Core
 
         public static void MoveRegisteredQtVersions()
         {
-            const string valueName = "Copied";
-            if (Registry.CurrentUser.GetValue(Resources.ObsoleteRootPath, valueName) != null)
-                return;
+            try {
+                if (Registry.CurrentUser.OpenSubKey(Resources.ObsoleteRootPath, true) is not {} key)
+                    return;
 
-            // TODO v3.2.0: Use MoveRegistryKeys and delete source keys
-            CopyRegistryKeys(Resources.ObsoleteRootPath, Resources.CurrentRootPath);
-            MoveRegistryKeys(Resources.CurrentRootPath + "\\Qt5VS2017",
-                Resources.PackageSettingsPath);
+                const string valueName = "Copied";
+                if (key.GetValue(valueName) != null)
+                    return;
 
-            Registry.CurrentUser.SetValue(Resources.ObsoleteRootPath, valueName);
+                // TODO v3.2.0: Use MoveRegistryKeys and delete source keys
+                CopyRegistryKeys(Resources.ObsoleteRootPath, Resources.CurrentRootPath);
+                MoveRegistryKeys(Resources.CurrentRootPath + "\\Qt5VS2017",
+                    Resources.PackageSettingsPath);
+
+                key.SetValue(valueName, "");
+            } catch (Exception exception) {
+                exception.Log();
+            }
         }
     }
 }
