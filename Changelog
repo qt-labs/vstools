@@ -5,6 +5,11 @@ The update also introduces additional settings to provide more fine-grained cont
 notification behavior of the Qt Visual Studio Tools extension.
 Furthermore we will now provide the QtMsBuild files as separate ZIP file from our download server.
 
+Rev. 43
+-------
+ - Fixed QTVSADDINBUG-1195: User settings not migrated after upgrading to version 3.2.0
+ - Fixed QTVSADDINBUG-905: Support for user-defined MOC macros
+
 Changes
 -------
  - Extended QML LSP server support, with stream monitoring and additional file logging
