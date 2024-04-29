@@ -57,13 +57,13 @@ namespace QtVsTools.Core
 
         /// <summary>
         /// Sanitizes the provided version name by removing leading and trailing whitespaces,
-        /// replacing backslashes and spaces with underscores.
+        /// and replacing backslashes with underscores.
         /// </summary>
         /// <param name="name">The version name to be sanitized.</param>
         /// <returns>A sanitized version of the input name.</returns>
         public static string SanitizeVersionName(string name)
         {
-            return name?.Trim().Replace('\\', '_').Replace(' ', '_');
+            return name?.Trim().Replace('\\', '_');
         }
 
         public static void SaveVersion(string versionName, string path, bool checkPath = true)
