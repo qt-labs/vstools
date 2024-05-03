@@ -200,6 +200,7 @@ def main():
                         fixAppContext()
                         if expectedFiles[templateName]:
                             try:
+                                waitFor(lambda: object.exists(names.qt_Microsoft_Visual_Studio_cpp_TabItem), 1000)
                                 testCompareRegex(waitForObjectExists(names.qt_cpp_Label).text,
                                                  expectedFiles[templateName],
                                                  "Was a file with an expected name opened?")
