@@ -82,7 +82,7 @@
 
     <!--// Path to Qt variables property file -->
     <QtVarsOutputDir Condition="'$(QtVarsOutputDir)' == ''"
-      >$([System.IO.Path]::Combine('$(Temp)', '$(ProjectGuid)', 'qmake'))</QtVarsOutputDir>
+      >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
     <QtVarsFileName Condition="'$(QtVarsFileName)' == ''"
       >qtvars_$(Platform.Replace(' ','_'))_$(Configuration.Replace(' ','_')).props</QtVarsFileName>
     <QtVarsFilePath Condition="'$(QtVarsFilePath)' == ''"
