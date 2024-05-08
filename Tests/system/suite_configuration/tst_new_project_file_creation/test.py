@@ -105,10 +105,10 @@ def getExpectedBuiltFile(workDir, projectName, templateName, cmakeBased):
         return ""
 
 
-def buildSolution(cmakeBased):
+def buildSolution(projectName, cmakeBased):
     if cmakeBased:
         labelObject = waitForObjectExists(names.selectStartupItemLabel)
-        if not waitFor(lambda: labelObject.text != 'Select Startup Item...', 230000):
+        if not waitFor(lambda: str(labelObject.text).startswith(projectName), 230000):
             test.fail("Could not start building the project.",
                       "Did configuring fail?")  # See QTVSADDINBUG-1162
             return False
@@ -214,7 +214,8 @@ def main():
                                             listExpectedWrittenFiles(workDir, projectName,
                                                                      templateName, cmakeBased))),
                                     "Were all expected files created?")
-                        if (templateName != "Qt ActiveQt Server" and buildSolution(cmakeBased)):
+                        if (templateName != "Qt ActiveQt Server"
+                            and buildSolution(projectName, cmakeBased)):
                             builtFile = getExpectedBuiltFile(workDir, projectName,
                                                              templateName, cmakeBased)
                             test.verify(waitFor(lambda: os.path.exists(builtFile), 15000),
