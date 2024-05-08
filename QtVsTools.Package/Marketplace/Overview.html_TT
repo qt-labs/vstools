@@ -16,11 +16,20 @@
 <body>
 <!-- BEGIN Visual Studio Marketplace Extension Page: Overview -->
 <!-- CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv -->
+<#if (VS_TARGET_ARCH != "arm64") {#>
 <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #></h1></p>
 
 <p>
     Qt Visual Studio Tools integrate the Qt development tools into Microsoft Visual Studio
-    <#=VS_NAME #>. This enables developers to use the standard Windows development environment
+    <#=VS_NAME #>.
+<#} else {#>
+    <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #> on ARM</h1></p>
+
+<p>
+    Qt Visual Studio Tools integrate the Qt development tools into Microsoft Visual Studio
+    <#=VS_NAME #> on ARM.
+<#}#>
+    This enables developers to use the standard Windows development environment
     without having to worry about Qt-related build steps or tools.
 </p>
 <p>
