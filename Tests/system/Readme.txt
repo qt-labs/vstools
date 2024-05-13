@@ -13,6 +13,9 @@ To run these tests:
    from the marketplace and start its installation.
 6. Run individual tests or the entire test suite.
 
+While tests are running, do not turn off the screen. If you did, Visual Studio might not create
+dialogs correctly, resulting in errors in the tests.
+
 The tests will run in the experimental environment which you get when starting devenv.exe with
 parameters "/RootSuffix SquishTestInstance". Except for the preconditions listed above, each test
 is expected to set up what it needs and to clean up after itself. Should that fail for some reason,
