@@ -175,7 +175,9 @@
     <Compile Include="MsBuild\QtTool.cs" />
     <Compile Include="MsBuild\QtUic.cs" />
     <Compile Include="Notifications.cs" />
-    <Compile Include="Options\QtOptionsPage.cs" />
+    <Compile Include="Options\QtOptionsPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Options\QtVersionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
