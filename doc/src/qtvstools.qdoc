@@ -112,6 +112,10 @@
         \li \l {Tutorial: Qt Quick debugging}
 
     \endlist
+
+    To learn the basics of Qt VS Tools, take the
+    \l{https://www.qt.io/academy/course-catalog#getting-started-with-qt-tools-for-visual-studio-}
+    {Getting Started with Qt Tools for Visual Studio} course in Qt Academy.
 */
 
 /*!
