@@ -1,79 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************
+-->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Package References names/version
   // -->
-  <!-- // Common -->
+
+  <!-- Microsoft.Build, etc. -->
   <PropertyGroup>
-    <Name_Microsoft_Build>Microsoft.Build</Name_Microsoft_Build>
-    <Name_Microsoft_Build_Tasks_Core>Microsoft.Build.Tasks.Core</Name_Microsoft_Build_Tasks_Core>
-    <Name_Microsoft_VSSDK_BuildTools>Microsoft.VSSDK.BuildTools</Name_Microsoft_VSSDK_BuildTools>
-    <Name_Microsoft_VisualStudio_SDK>Microsoft.VisualStudio.SDK</Name_Microsoft_VisualStudio_SDK>
-    <Name_Microsoft_VisualStudio_Validation>Microsoft.VisualStudio.Validation</Name_Microsoft_VisualStudio_Validation>
-    <Name_Microsoft_VisualStudio_RpcContracts>Microsoft.VisualStudio.RpcContracts</Name_Microsoft_VisualStudio_RpcContracts>
-    <Name_Microsoft_VisualStudio_ProjectSystem>Microsoft.VisualStudio.ProjectSystem</Name_Microsoft_VisualStudio_ProjectSystem>
-    <Name_Microsoft_VisualStudio_VCProjectEngine>Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
-    <Name_Microsoft_VisualStudio_Shell_15>Microsoft.VisualStudio.Shell.15.0</Name_Microsoft_VisualStudio_Shell_15>
-    <Name_Microsoft_VisualStudio_TemplateWizardInterface>Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Name_Microsoft_VisualStudio_Composition>Microsoft.VisualStudio.Composition</Name_Microsoft_VisualStudio_Composition>
-    <Name_Microsoft_VisualStudio_Workspace>Microsoft.VisualStudio.Workspace</Name_Microsoft_VisualStudio_Workspace>
-    <Name_Microsoft_VisualStudio_Workspace_VSIntegration>Microsoft.VisualStudio.Workspace.VSIntegration</Name_Microsoft_VisualStudio_Workspace_VSIntegration>
-    <Name_Microsoft_VisualStudio_LanguageServer_Client>Microsoft.VisualStudio.LanguageServer.Client</Name_Microsoft_VisualStudio_LanguageServer_Client>
-
-    <Name_MSTest_TestAdapter>MSTest.TestAdapter</Name_MSTest_TestAdapter>
-    <Version_MSTest_TestAdapter>2.2.8</Version_MSTest_TestAdapter>
-
-    <Name_MSTest_TestFramework>MSTest.TestFramework</Name_MSTest_TestFramework>
-    <Version_MSTest_TestFramework>2.2.8</Version_MSTest_TestFramework>
-
-    <Name_Newtonsoft_Json>Newtonsoft.Json</Name_Newtonsoft_Json>
-
-    <Name_Stub_System_Data_SQLite_Core_NetFramework>Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
-    <Version_Stub_System_Data_SQLite_Core_NetFramework>1.0.115.5</Version_Stub_System_Data_SQLite_Core_NetFramework>
-
-    <Name_System_Management>System.Management</Name_System_Management>
-    <Version_System_Management>7.0.0</Version_System_Management>
-
-    <Name_DiffPlex>DiffPlex</Name_DiffPlex>
-    <Version_DiffPlex>1.7.1</Version_DiffPlex>
+    <Name_Microsoft_Build
+      >Microsoft.Build</Name_Microsoft_Build>
+    <Name_Microsoft_Build_Framework
+      >Microsoft.Build.Framework</Name_Microsoft_Build_Framework>
+    <Name_Microsoft_Build_Tasks_Core
+      >Microsoft.Build.Tasks.Core</Name_Microsoft_Build_Tasks_Core>
+    <Name_Microsoft_Build_Utilities_Core
+      >Microsoft.Build.Utilities.Core</Name_Microsoft_Build_Utilities_Core>
+    <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.11.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.0</Version_Microsoft_Build>
+    <Version_Microsoft_Build Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >17.9.5</Version_Microsoft_Build>
   </PropertyGroup>
 
-  <!-- // Visual Studio 2022 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <Version_Microsoft_Build>17.4.0</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Tasks_Core>17.4.0</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VSSDK_BuildTools>17.4.2120</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_Bcl_AsyncInterfaces>7.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
-    <Version_Microsoft_VisualStudio_SDK>17.4.33103.184</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VisualStudio_ProjectSystem>17.2.402-pre</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface>17.4.33103.184</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_Shell_15>17.4.33103.184</Version_Microsoft_VisualStudio_Shell_15>
-    <Version_Microsoft_VisualStudio_Composition>17.4.16</Version_Microsoft_VisualStudio_Composition>
+  <!-- Microsoft.VisualStudio.Composition -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_Composition
+      >Microsoft.VisualStudio.Composition</Name_Microsoft_VisualStudio_Composition>
+    <Version_Microsoft_VisualStudio_Composition Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.9.20</Version_Microsoft_VisualStudio_Composition>
+    <Version_Microsoft_VisualStudio_Composition Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.16</Version_Microsoft_VisualStudio_Composition>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.LanguageServer.Client -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_LanguageServer_Client
+      >Microsoft.VisualStudio.LanguageServer.Client</Name_Microsoft_VisualStudio_LanguageServer_Client>
+    <Version_Microsoft_VisualStudio_LanguageServer_Client Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.1220</Version_Microsoft_VisualStudio_LanguageServer_Client>
+    <Version_Microsoft_VisualStudio_LanguageServer_Client Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.1068</Version_Microsoft_VisualStudio_LanguageServer_Client>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.ProjectSystem -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_ProjectSystem
+      >Microsoft.VisualStudio.ProjectSystem</Name_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_ProjectSystem Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.2.133-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+    <Version_Microsoft_VisualStudio_ProjectSystem Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.2.402-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.RpcContracts -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_RpcContracts
+      >Microsoft.VisualStudio.RpcContracts</Name_Microsoft_VisualStudio_RpcContracts>
+    <Version_Microsoft_VisualStudio_RpcContracts Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.23</Version_Microsoft_VisualStudio_RpcContracts>
+    <Version_Microsoft_VisualStudio_RpcContracts Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.9</Version_Microsoft_VisualStudio_RpcContracts>
+    <Version_Microsoft_VisualStudio_RpcContracts Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >17.9.7</Version_Microsoft_VisualStudio_RpcContracts>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.SDK -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_SDK
+      >Microsoft.VisualStudio.SDK</Name_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_VisualStudio_SDK Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.31321.278</Version_Microsoft_VisualStudio_SDK>
+    <Version_Microsoft_VisualStudio_SDK Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.33103.184</Version_Microsoft_VisualStudio_SDK>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.Shell.15.0 -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_Shell_15
+      >Microsoft.VisualStudio.Shell.15.0</Name_Microsoft_VisualStudio_Shell_15>
+    <Version_Microsoft_VisualStudio_Shell_15 Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.31321.278</Version_Microsoft_VisualStudio_Shell_15>
+    <Version_Microsoft_VisualStudio_Shell_15 Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.33103.184</Version_Microsoft_VisualStudio_Shell_15>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.TemplateWizardInterface -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_TemplateWizardInterface
+      >Microsoft.VisualStudio.TemplateWizardInterface</Name_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Version_Microsoft_VisualStudio_TemplateWizardInterface Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+    <Version_Microsoft_VisualStudio_TemplateWizardInterface Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.33103.184</Version_Microsoft_VisualStudio_TemplateWizardInterface>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.Validation -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_Validation
+      >Microsoft.VisualStudio.Validation</Name_Microsoft_VisualStudio_Validation>
+    <Version_Microsoft_VisualStudio_Validation Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.35</Version_Microsoft_VisualStudio_Validation>
+    <Version_Microsoft_VisualStudio_Validation Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.0.71</Version_Microsoft_VisualStudio_Validation>
+    <Version_Microsoft_VisualStudio_Validation Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >17.8.8</Version_Microsoft_VisualStudio_Validation>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.VCProjectEngine -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_VCProjectEngine
+      >Microsoft.VisualStudio.VCProjectEngine</Name_Microsoft_VisualStudio_VCProjectEngine>
+    <Version_Microsoft_VisualStudio_VCProjectEngine Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.10.31320.204</Version_Microsoft_VisualStudio_VCProjectEngine>
+    <Version_Microsoft_VisualStudio_VCProjectEngine Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.33103.184</Version_Microsoft_VisualStudio_VCProjectEngine>
+    <Version_Microsoft_VisualStudio_VCProjectEngine Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >17.9.37000</Version_Microsoft_VisualStudio_VCProjectEngine>
+  </PropertyGroup>
+
+  <!-- Microsoft.VisualStudio.Workspace -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_Workspace
+      >Microsoft.VisualStudio.Workspace</Name_Microsoft_VisualStudio_Workspace>
     <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
-    <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
-    <Version_Newtonsoft_Json>13.0.1</Version_Newtonsoft_Json>
-    <Version_Microsoft_VisualStudio_LanguageServer_Client>17.4.1068</Version_Microsoft_VisualStudio_LanguageServer_Client>
   </PropertyGroup>
 
-  <!-- // Visual Studio 2019 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
-    <Version_Microsoft_Build>16.11.0</Version_Microsoft_Build>
-    <Version_Microsoft_Build_Tasks_Core>16.11.0</Version_Microsoft_Build_Tasks_Core>
-    <Version_Microsoft_VSSDK_BuildTools>16.11.35</Version_Microsoft_VSSDK_BuildTools>
-    <Version_Microsoft_Bcl_AsyncInterfaces>5.0.0</Version_Microsoft_Bcl_AsyncInterfaces>
-    <Version_Microsoft_VisualStudio_SDK>16.10.31321.278</Version_Microsoft_VisualStudio_SDK>
-    <Version_Microsoft_VisualStudio_Validation>16.10.35</Version_Microsoft_VisualStudio_Validation>
-    <Version_Microsoft_VisualStudio_RpcContracts>17.0.51</Version_Microsoft_VisualStudio_RpcContracts>
-    <Version_Microsoft_VisualStudio_ProjectSystem>16.2.133-pre</Version_Microsoft_VisualStudio_ProjectSystem>
-    <Version_Microsoft_VisualStudio_VCProjectEngine>16.10.31320.204</Version_Microsoft_VisualStudio_VCProjectEngine>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface>16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_Shell_15>16.10.31321.278</Version_Microsoft_VisualStudio_Shell_15>
-    <Version_Microsoft_VisualStudio_Composition>16.9.20</Version_Microsoft_VisualStudio_Composition>
-    <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
-    <Version_Microsoft_VisualStudio_Workspace_VSIntegration>16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
-    <Version_Newtonsoft_Json>12.0.3</Version_Newtonsoft_Json>
-    <Version_Microsoft_VisualStudio_LanguageServer_Client>16.10.1220</Version_Microsoft_VisualStudio_LanguageServer_Client>
+  <!-- Microsoft.VisualStudio.Workspace.VSIntegration -->
+  <PropertyGroup>
+    <Name_Microsoft_VisualStudio_Workspace_VSIntegration
+      >Microsoft.VisualStudio.Workspace.VSIntegration</Name_Microsoft_VisualStudio_Workspace_VSIntegration>
+    <Version_Microsoft_VisualStudio_Workspace_VSIntegration
+      >16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
   </PropertyGroup>
 
+  <!-- Microsoft.VSSDK.BuildTools -->
+  <PropertyGroup>
+    <Name_Microsoft_VSSDK_BuildTools
+      >Microsoft.VSSDK.BuildTools</Name_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_VSSDK_BuildTools Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.11.35</Version_Microsoft_VSSDK_BuildTools>
+    <Version_Microsoft_VSSDK_BuildTools Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.4.2120</Version_Microsoft_VSSDK_BuildTools>
+  </PropertyGroup>
+
+  <!-- Community.VisualStudio.SourceGenerators -->
+  <PropertyGroup>
+    <Name_Community_VisualStudio_SourceGenerators
+      >Community.VisualStudio.SourceGenerators</Name_Community_VisualStudio_SourceGenerators>
+    <Version_Community_VisualStudio_SourceGenerators
+      >1.0.3</Version_Community_VisualStudio_SourceGenerators>
+  </PropertyGroup>
+
+  <!-- Community.VisualStudio.VSCT -->
+  <PropertyGroup>
+    <Name_Community_VisualStudio_VSCT
+      >Community.VisualStudio.VSCT</Name_Community_VisualStudio_VSCT>
+    <Version_Community_VisualStudio_VSCT
+      >16.0.29.6</Version_Community_VisualStudio_VSCT>
+  </PropertyGroup>
+
+  <!-- MSTest.TestAdapter -->
+  <PropertyGroup>
+    <Name_MSTest_TestAdapter
+      >MSTest.TestAdapter</Name_MSTest_TestAdapter>
+    <Version_MSTest_TestAdapter Condition="'$(VisualStudioVersion)'=='16.0'"
+      >2.2.7</Version_MSTest_TestAdapter>
+    <Version_MSTest_TestAdapter Condition="'$(VisualStudioVersion)'=='17.0'"
+      >2.2.8</Version_MSTest_TestAdapter>
+    <Version_MSTest_TestAdapter Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >2.2.10</Version_MSTest_TestAdapter>
+  </PropertyGroup>
+
+  <!-- MSTest.TestFramework -->
+  <PropertyGroup>
+    <Name_MSTest_TestFramework
+      >MSTest.TestFramework</Name_MSTest_TestFramework>
+    <Version_MSTest_TestFramework Condition="'$(VisualStudioVersion)'=='16.0'"
+      >2.2.7</Version_MSTest_TestFramework>
+    <Version_MSTest_TestFramework Condition="'$(VisualStudioVersion)'=='17.0'"
+      >2.2.8</Version_MSTest_TestFramework>
+    <Version_MSTest_TestFramework Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >2.2.10</Version_MSTest_TestFramework>
+  </PropertyGroup>
+
+  <!-- Newtonsoft.Json -->
+  <PropertyGroup>
+    <Name_Newtonsoft_Json
+      >Newtonsoft.Json</Name_Newtonsoft_Json>
+    <Version_Newtonsoft_Json Condition="'$(VisualStudioVersion)'=='16.0'"
+      >12.0.3</Version_Newtonsoft_Json>
+    <Version_Newtonsoft_Json Condition="'$(VisualStudioVersion)'=='17.0'"
+      >13.0.1</Version_Newtonsoft_Json>
+  </PropertyGroup>
+
+  <!-- Stub.System.Data.SQLite.Core.NetFramework -->
+  <PropertyGroup>
+    <Name_Stub_System_Data_SQLite_Core_NetFramework
+      >Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
+    <Version_Stub_System_Data_SQLite_Core_NetFramework
+      >1.0.115.5</Version_Stub_System_Data_SQLite_Core_NetFramework>
+  </PropertyGroup>
+
+  <!-- System.Management -->
+  <PropertyGroup>
+    <Name_System_Management
+      >System.Management</Name_System_Management>
+    <Version_System_Management
+      >7.0.0</Version_System_Management>
+  </PropertyGroup>
+
+  <!-- DiffPlex -->
+  <PropertyGroup>
+    <Name_DiffPlex
+      >DiffPlex</Name_DiffPlex>
+    <Version_DiffPlex
+      >1.7.1</Version_DiffPlex>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Disable reference resolution warnings
+  // -->
+  <PropertyGroup Condition="'$(ResolveAssemblyReferencesSilent)' == ''">
+    <ResolveAssemblyReferencesSilent>true</ResolveAssemblyReferencesSilent>
+  </PropertyGroup>
 </Project>
