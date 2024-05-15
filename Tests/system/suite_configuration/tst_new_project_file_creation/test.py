@@ -231,5 +231,6 @@ def main():
 
 def cleanup():
     if workDir:
+        waitFor(lambda: len(applicationContextList()) == 0, 5000)
         for project in createdProjects:
             shutil.rmtree(os.path.join(workDir, project))
