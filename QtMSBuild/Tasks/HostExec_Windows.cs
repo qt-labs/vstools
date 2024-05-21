@@ -7,7 +7,6 @@
 
 #region Reference
 //$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll
-//$(MSBuildToolsPath)\Microsoft.Build.Utilities.Core.dll
 #endregion
 
 #region Using
