@@ -6,6 +6,7 @@
 # -*- coding: utf-8 -*-
 
 import globalnames
+import names
 
 
 def openExtensionManager(version):
@@ -15,7 +16,11 @@ def openExtensionManager(version):
 
 def selectInstalledVsTools(version):
     openExtensionManager(version)
-    mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}))
+    try:
+        mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}, 5000))
+    except:
+        # MSVS >= 17.10.0
+        clickButton(waitForObject({"type": "Button", "id": "TabButton", "text": "Installed"}))
     try:
         vsToolsLabel = waitForObject(names.extensionManager_UI_InstalledExtItem_Qt_Label,
                                      5000)
@@ -60,8 +65,21 @@ def readExpectedVsToolsVersion():
 
 
 def verifyVsToolsVersion():
-    displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label).text
+    try:
+        displayedVersion = waitForObjectExists(names.manage_Extensions_Version_Label, 5000).text
+    except:
+        # MSVS >= 17.10.0
+        displayedVersion = waitForObjectExists(names.extension_Manager_Version_Label).text
     expectedVersion = readExpectedVsToolsVersion()
     if expectedVersion:
         test.compare(displayedVersion, expectedVersion,
                      "Expected version of VS Tools is displayed?")
+
+
+def closeExtensionManager():
+    try:
+        clickButton(waitForObject(names.manage_Extensions_Close_Button, 2000))
+    except:
+        # MSVS >= 17.10.0
+        mouseClick(waitForObject(globalnames.file_MenuItem))
+        mouseClick(waitForObject(names.file_Close_MenuItem))

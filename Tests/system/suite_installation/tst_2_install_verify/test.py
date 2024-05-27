@@ -22,7 +22,7 @@ def main():
                     "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
                     % (version, vsToolsLabelText))
         verifyVsToolsVersion()
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
+    closeExtensionManager()
     checkMenuItems(version)
     closeMainWindow()
 

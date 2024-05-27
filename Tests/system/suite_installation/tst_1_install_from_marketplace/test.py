@@ -40,9 +40,9 @@ def downloadQtVsTools(version):
         test.fatal("Could not find the download button.",
                    "If the Qt VS Tools are already installed, "
                    "please remove them before running this test.")
-        clickButton(waitForObject(names.manage_Extensions_Close_Button))
+        closeExtensionManager()
         return False
     clickButton(downloadButton)
     testChangesScheduledLabel(60000)
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
+    closeExtensionManager()
     return True

@@ -8,8 +8,6 @@
 source("../../shared/utils.py")
 source("../shared/scripts/install_utils.py")
 
-import names
-
 
 def main():
     version = startAppGetVersion(clearSettings=False)
@@ -18,7 +16,7 @@ def main():
     vsToolsLabelText = selectInstalledVsTools(version)
     test.compare(vsToolsLabelText, None,
                 "Are 'Qt VS Tools for Visual Studio %s' installed?" % version)
-    clickButton(waitForObject(names.manage_Extensions_Close_Button))
+    closeExtensionManager()
     checkMenuItems(version)
     closeMainWindow()
 

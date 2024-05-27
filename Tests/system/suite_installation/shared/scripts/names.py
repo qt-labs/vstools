@@ -37,3 +37,11 @@ microsoft_Visual_Studio_Yes_Button= {"container": globalnames.microsoft_Visual_S
 pART_Popup_qt_io_MenuItem = {"text": "qt.io", "type": "MenuItem"}
 Command_not_valid_Label = {"container": globalnames.microsoft_Visual_Studio_Dialog, "id": "65535",
                            "type": "Label"}
+extension_Manager_WPFControl = {"class": "System.Windows.Controls.UserControl",
+                                "container": globalnames.microsoft_Visual_Studio_Window,
+                                "type": "WPFControl"}
+qt_Visual_Studio_Tools_Label = {"container": extension_Manager_WPFControl,
+                                "text": "Qt Visual Studio Tools", "type": "Label"}
+extension_Manager_Version_Label = {"container": extension_Manager_WPFControl,
+                                   "leftObject": qt_Visual_Studio_Tools_Label, "type": "Label"}
+file_Close_MenuItem = {"container": globalnames.file_MenuItem, "text": "Close", "type": "MenuItem"}
