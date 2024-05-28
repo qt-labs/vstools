@@ -10,6 +10,8 @@ using System.Xml;
 
 namespace QtVsTools.Core
 {
+    using static Common.Utils;
+
     public class QMakeWrapper
     {
         public string QtDir { get; set; }
@@ -44,7 +46,7 @@ namespace QtVsTools.Core
                 using (var process = new Process()) {
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.FileName = exeFilePath;
-                    process.StartInfo.Arguments = ShellQuote(QtDir) + ' ' + ShellQuote(filePath);
+                    process.StartInfo.Arguments = SafeQuote(QtDir) + ' ' + SafeQuote(filePath);
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     if (!process.Start())
@@ -71,13 +73,6 @@ namespace QtVsTools.Core
                 return false;
             }
             return true;
-        }
-
-        private static string ShellQuote(string filePath)
-        {
-            if (filePath.Contains(" "))
-                return '"' + filePath + '"';
-            return filePath;
         }
 
         private static string[] ReadFileElements(XmlReader reader, string tag)

@@ -23,9 +23,8 @@ namespace QtVsTools.Editors
     using Core;
     using Core.MsBuild;
     using Core.Options;
+    using QtVsTools.Core.Common;
     using VisualStudio;
-
-    using static Core.HelperFunctions;
 
     public abstract class Editor : IVsEditorFactory
     {
@@ -144,7 +143,7 @@ namespace QtVsTools.Editors
             string qtToolsPath,
             bool hideWindow)
         {
-            var arguments = SafePath(filePath);
+            var arguments = Utils.SafeQuote(filePath);
             if (QtOptionsPage.ColorTheme == QtOptionsPage.EditorColorTheme.Dark
                 || (QtOptionsPage.ColorTheme == QtOptionsPage.EditorColorTheme.Consistent
                 && VSColorTheme.GetThemedColor(EnvironmentColors.EditorExpansionFillBrushKey)
@@ -152,7 +151,7 @@ namespace QtVsTools.Editors
                 arguments += " -style fusion";
             }
             if (!string.IsNullOrEmpty(QtOptionsPage.StylesheetPath)) {
-                arguments += $" -stylesheet {SafePath(QtOptionsPage.StylesheetPath)}";
+                arguments += $" -stylesheet {Utils.SafeQuote(QtOptionsPage.StylesheetPath)}";
             } else if (!Detached) {
                 // Hack: Apply stylesheet resizing embedded window widgets to reasonable defaults.
                 var tempPath = Path.Combine(Path.GetTempPath(), "default.qss");
@@ -161,7 +160,7 @@ namespace QtVsTools.Editors
                     writer.WriteLine("QTreeView { min-width: 256; min-height: 256 }");
                     writer.Close();
                 }
-                arguments += $" -stylesheet {SafePath(tempPath)}";
+                arguments += $" -stylesheet {Utils.SafeQuote(tempPath)}";
             }
 
             return new ProcessStartInfo

@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
@@ -471,30 +470,6 @@ namespace QtVsTools.Core
                 return canonicalPath;
             }
             return canonicalPath;
-        }
-
-        public static string Unquote(string text)
-        {
-            text = text.Trim();
-            if (string.IsNullOrEmpty(text)
-                || text.Length < 3
-                || !text.StartsWith("\"")
-                || !text.EndsWith("\"")) {
-                return text;
-            }
-            return text.Substring(1, text.Length - 2);
-        }
-
-        public static string SafePath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return null;
-            path = path.Replace("\"", "");
-            if (!path.Contains(' '))
-                return path;
-            if (path.EndsWith("\\"))
-                path += Path.DirectorySeparatorChar;
-            return $"\"{path}\"";
         }
     }
 }

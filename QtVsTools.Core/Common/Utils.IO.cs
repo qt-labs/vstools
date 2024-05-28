@@ -5,14 +5,32 @@
 
 using System;
 using System.IO;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.Build.Tasks;
 
 namespace QtVsTools.Core.Common
 {
     public static partial class Utils
     {
+        public static string Unquote(string path)
+        {
+            path = path.Trim();
+            if (!string.IsNullOrEmpty(path) && path.StartsWith("\"") && path.EndsWith("\""))
+                return path.Substring(1, path.Length - 2);
+            return path;
+        }
+
+        public static string SafeQuote(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return null;
+            path = Unquote(path);
+            if (!path.Contains(" "))
+                return path;
+            if (path.EndsWith("\\"))
+                path += Path.DirectorySeparatorChar;
+            return $"\"{path}\"";
+        }
+
         /// <summary>
         /// Recursively copies the contents of the given directory and all its children to the
         /// specified target path. If the target path does not exist, it will be created.
