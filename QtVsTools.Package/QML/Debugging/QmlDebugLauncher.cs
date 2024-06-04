@@ -392,8 +392,10 @@ namespace QtVsTools.Qml.Debug
                 targets[0].bstrEnv = string.Join("\0", env.Select(x => $"{x.Key}={x.Value}"));
             }
 
-            if (env.TryGetValue("QML_DEBUG_ARGS", out var qmlDebugArgs))
+            if (QtOptionsPage.QmlDebuggerEnabled && env.TryGetValue("QML_DEBUG_ARGS",
+                out var qmlDebugArgs)) {
                 targets[0].bstrArg = $"{targets[0].bstrArg?.Trim()} {qmlDebugArgs.Trim()}".Trim();
+            }
 
             return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
         }
