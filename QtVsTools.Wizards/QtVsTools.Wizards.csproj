@@ -115,6 +115,10 @@
       <DependentUpon>TranslationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemWizard\Translation\TranslationWizard.cs" />
+    <Compile Include="ProjectWizard\Test\TestPage.xaml.cs">
+      <DependentUpon>TestPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectWizard\Test\TestWizard.cs" />
     <Compile Include="ProjectWizard\ConfigPage.xaml.cs">
       <DependentUpon>ConfigPage.xaml</DependentUpon>
     </Compile>
@@ -177,6 +181,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ItemWizard\Translation\TranslationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProjectWizard\Test\TestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

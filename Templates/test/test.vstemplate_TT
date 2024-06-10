@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+****************************************************************************************************
+<#@output extension="vstemplate" #>
+<#@include file="$(SolutionDir)\version.tt" #>
+**          <#=WARNING_GENERATED_FILE#>
+****************************************************************************************************
+-->
+
+<VSTemplate Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005"
+            xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
+            Type="Project" >
+    <TemplateData>
+        <Name>Qt Test Application</Name>
+        <Description>This wizard generates a Qt test application project.</Description>
+        <ProjectType>VC</ProjectType>
+        <SortOrder>1000</SortOrder>
+        <CreateNewFolder>true</CreateNewFolder>
+        <DefaultName>QtTest</DefaultName>
+        <ProvideDefaultName>true</ProvideDefaultName>
+        <LocationField>Enabled</LocationField>
+        <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+        <Icon>test.ico</Icon>
+        <LanguageTag>Cpp</LanguageTag>
+        <PlatformTag>Windows</PlatformTag>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
+        <ProjectTypeTag>Test</ProjectTypeTag>
+        <ProjectTypeTag>QtTest</ProjectTypeTag>
+        <ProjectTypeTag>CMake</ProjectTypeTag>
+    </TemplateData>
+    <TemplateContent>
+        <Project TargetFileName="$projectname$.vcxproj"
+                 File="test.vcxproj"
+                 ReplaceParameters="true">
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$sourcefilename$"
+                         OpenInEditor="true">test.cpp</ProjectItem>
+            <ProjectItem ReplaceParameters="true"
+                         TargetFileName="$projectname$.vcxproj.filters">test.vcxproj.filters</ProjectItem>
+            <ProjectItem>.runsettings</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeLists.txt</ProjectItem>
+            <ProjectItem ReplaceParameters="true">qt.cmake</ProjectItem>
+            <ProjectItem ReplaceParameters="true">CMakeUserPresets.json</ProjectItem>
+        </Project>
+    </TemplateContent>
+    <WizardExtension>
+        <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
+        <Assembly>QtVsTools.Wizards, Version=<#=QT_VS_TOOLS_VERSION_ASSEMBLY#>, Culture=neutral, PublicKeyToken=null</Assembly>
+        <#=XML_COMMENT_BEGIN#> END Generated Text -->
+        <FullClassName>QtVsTools.Wizards.ProjectWizard.TestWizard</FullClassName>
+    </WizardExtension>
+</VSTemplate>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+*************************************************************************************************-->
+
+<VSTemplate Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005"
+            xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010"
+            Type="Item">
+    <TemplateData>
+        <Name>Qt .runsettings File</Name>
+        <Icon>qt.ico</Icon>
+        <ProjectType>VC</ProjectType>
+        <AppliesTo>VisualC</AppliesTo>
+        <LanguageTag>Cpp</LanguageTag>
+        <PlatformTag>Windows</PlatformTag>
+        <ProjectTypeTag>Qt</ProjectTypeTag>
+        <ProjectTypeTag>Test</ProjectTypeTag>
+        <ProjectTypeTag>QtTest</ProjectTypeTag>
+        <ProjectTypeTag>CMake</ProjectTypeTag>
+        <DefaultName>.runsettings</DefaultName>
+        <TemplateGroupID>QtVsTools</TemplateGroupID>
+        <TemplateID>QtVsTools-Runsettings</TemplateID>
+        <Description>Qt .runsettings file is a configuration file used in Qt VS Tools development
+ environment to specify settings and options for test execution.</Description>
+    </TemplateData>
+    <TemplateContent>
+        <ProjectItem TargetFileName="$fileinputname$.runsettings">.runsettings</ProjectItem>
+    </TemplateContent>
+</VSTemplate>

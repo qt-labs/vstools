@@ -110,6 +110,10 @@
       Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="QtVsTools.Wizards"
       Path="|QtVsTools.Wizards|" AssemblyName="|QtVsTools.Wizards;AssemblyName|" />
     <Asset
+      Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Test"
+      d:TargetPath="|QtTemplate.Project.Test;TemplateProjectOutputGroup|" Path="ProjectTemplates"
+      d:VsixSubPath="ProjectTemplates" />
+    <Asset
       Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Console"
       d:TargetPath="|QtTemplate.Project.Console;TemplateProjectOutputGroup|" Path="ProjectTemplates"
       d:VsixSubPath="ProjectTemplates" />
@@ -178,6 +182,9 @@
     <Asset
       Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Translation"
       d:TargetPath="|QtTemplate.Item.Translation;TemplateProjectOutputGroup|" Path="ItemTemplates"
+      d:VsixSubPath="ItemTemplates" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="Runsettings"
+      d:TargetPath="|QtTemplate.Item.Runsettings;TemplateProjectOutputGroup|" Path="ItemTemplates"
       d:VsixSubPath="ItemTemplates" />
     <Asset
       Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="QtVsTools.Qml.Debug.pkgdef" />

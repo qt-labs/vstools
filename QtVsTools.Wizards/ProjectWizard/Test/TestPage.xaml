@@ -1,0 +1,176 @@
+﻿<!--************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+*************************************************************************************************-->
+
+<common:WizardPage  x:Class="QtVsTools.Wizards.ProjectWizard.TestPage"
+                    xmlns:common="clr-namespace:QtVsTools.Wizards.Common"
+                    xmlns:util="clr-namespace:QtVsTools.Wizards.Util"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    KeepAlive="True"
+                    mc:Ignorable="d"
+                    d:DesignHeight="445"
+                    d:DesignWidth="585">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="100" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Image Grid.Column="0"
+           HorizontalAlignment="Center"
+           Source="/QtVsTools.Wizards;component/Resources/Qt-logo-small.png"
+           VerticalAlignment="Top"
+           Margin="0,25,0,0"
+           RenderTransformOrigin="1,0">
+      <Image.RenderTransform>
+        <TransformGroup>
+          <ScaleTransform ScaleY="0.86"
+                          ScaleX="0.86" />
+        </TransformGroup>
+      </Image.RenderTransform>
+    </Image>
+    <Grid Grid.Column="1"
+          Margin="25,25,10,0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock TextWrapping="Wrap"
+                 Grid.Row="0">
+                <Run FontWeight="Bold"
+                     Text="{Binding Path=Header}" />
+                <LineBreak />
+                <LineBreak />
+                <Run Text="{Binding Path=Message}" />
+                <LineBreak />
+      </TextBlock>
+      <Grid Grid.Row="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+          <Style TargetType="TextBox">
+            <Style.Triggers>
+              <Trigger Property="Validation.HasError"
+                       Value="true">
+                <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={RelativeSource Self},
+                                         Path=(Validation.Errors)[0].ErrorContent}" />
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </Grid.Resources>
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Text="Class Name:"
+                   Margin="0,0,0,0" />
+        <TextBox Grid.Row="1"
+                 Grid.Column="0"
+                 Margin="0,0,0,5"
+                 Name="ClassName"
+                 TextChanged="OnClassNameChanged">
+          <TextBox.Text>
+            <Binding Path="Data.ClassName"
+                     NotifyOnValidationError="True"
+                     UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <util:ClassNameValidationRule />
+              </Binding.ValidationRules>
+            </Binding>
+          </TextBox.Text>
+        </TextBox>
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="0,0,0,5"
+                   Text="Source (.cpp) file:" />
+        <TextBox Grid.Row="3"
+                 Grid.Column="0"
+                 Margin="0,0,0,20"
+                 Name="ClassSourceFile">
+          <TextBox.Text>
+            <Binding Path="Data.ClassSourceFile"
+                     NotifyOnValidationError="True"
+                     UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <util:FileNameValidationRule FileExt=".cpp" />
+              </Binding.ValidationRules>
+            </Binding>
+          </TextBox.Text>
+        </TextBox>
+        <CheckBox Grid.Row="4"
+                  Grid.Column="0"
+                  Content="Lower case file names"
+                  Name="LowerCaseFileNames"
+                  Click="OnLowerCaseFileNamesClick"
+                  Margin="0,0,0,5" />
+        <CheckBox Grid.Row="5"
+                  Grid.Column="0"
+                  Content="Add .runsettings file to project"
+                  IsChecked="{Binding Path=Data.AddRunSettingsToProject}" />
+      </Grid>
+      <StackPanel HorizontalAlignment="Right"
+                  Orientation="Horizontal"
+                  Grid.Row="2"
+                  Margin="0,0,0,10">
+        <Button Click="OnPreviousButtonClick"
+                Name="PreviousButton"
+                IsEnabled="{Binding Path=PreviousButtonEnabled}"
+                MinWidth="75">&lt; _Previous</Button>
+        <Button MinWidth="75"
+                Name="NextButton"
+                Click="OnNextButtonClick"
+                IsEnabled="{Binding Path=NextButtonEnabled}"
+                Margin="10,0,0,0">_Next &gt;</Button>
+        <Button MinWidth="75"
+                Click="OnFinishButtonClick"
+                Margin="10,0,0,0"
+                IsDefault="True"
+                Name="FinishButton"
+                Content="_Finish"
+                VerticalAlignment="Bottom">
+          <Button.Style>
+            <Style TargetType="Button">
+              <Setter Property="IsEnabled"
+                      Value="false" />
+              <Style.Triggers>
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=FinishButtonEnabled}"
+                               Value="true" />
+                    <Condition Binding="{Binding ElementName=ClassName,
+                                            Path=(Validation.HasError)}"
+                               Value="false" />
+                    <Condition Binding="{Binding ElementName=ClassSourceFile,
+                                            Path=(Validation.HasError)}"
+                               Value="false" />
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="IsEnabled"
+                          Value="true" />
+                </MultiDataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Button.Style>
+        </Button>
+        <Button Click="OnCancelButtonClick"
+                MinWidth="75"
+                Margin="10,0,0,0"
+                Name="CancelButton"
+                IsEnabled="{Binding Path=CancelButtonEnabled}"
+                IsCancel="True">_Cancel</Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</common:WizardPage>

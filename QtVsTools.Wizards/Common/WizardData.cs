@@ -39,6 +39,8 @@ namespace QtVsTools.Wizards.Common
         public bool InsertQObjectMacro { get; set; }
         public bool LowerCaseFileNames { get; set; }
         public UiClassInclusion UiClassInclusion { get; set; }
+        public bool AddRunSettingsToProject { get; set; }
+
 
         public enum ProjectModels
         {

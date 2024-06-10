@@ -295,6 +295,7 @@ templates/mainwindow/Properties/AssemblyInfo.tt.cs
 templates/resource/Properties/AssemblyInfo.tt.cs
 templates/server/Properties/AssemblyInfo.tt.cs
 templates/widget/Properties/AssemblyInfo.tt.cs
+templates/test/test.vstemplate
 templates/console/console.vstemplate
 templates/designer/designer.vstemplate
 templates/empty/empty.vstemplate
@@ -302,6 +303,8 @@ templates/quick/quick.vstemplate
 templates/gui/gui.vstemplate
 templates/lib/lib.vstemplate
 templates/server/server.vstemplate
+templates/test/Properties/AssemblyInfo.tt.cs
+templates/runsettings/Properties/AssemblyInfo.tt.cs
 qtmsbuild/Properties/AssemblyInfo.tt.cs
 qtmsbuild/QtMsBuild/moc/qtmoc_v3.xml
 qtmsbuild/QtMsBuild/moc/qtmoc_cl.targets

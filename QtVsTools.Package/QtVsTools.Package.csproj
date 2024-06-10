@@ -177,6 +177,13 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\Templates\runsettings\QtTemplate.Item.Runsettings.csproj">
+      <Project>{C572826C-735C-450D-9EC4-8FACAA809BB3}</Project>
+      <Name>QtTemplate.Item.Runsettings</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\Templates\translation\QtTemplate.Item.Translation.csproj">
       <Project>{202F4A6D-77CD-4992-AA53-01B585463287}</Project>
       <Name>QtTemplate.Item.Translation</Name>
@@ -195,6 +202,14 @@
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
       <Name>VsQml</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Templates\test\QtTemplate.Project.Test.csproj">
+      <Project>{FC32F5AD-FB9A-409B-BFA2-2510FD8C2469}</Project>
+      <Name>QtTemplate.Project.Test</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <TemplateType>Project</TemplateType>
     </ProjectReference>
     <ProjectReference Include="..\Templates\console\QtTemplate.Project.Console.csproj">
       <Project>{71e4f2b9-3628-45e2-a664-a2f6e3aafe55}</Project>
