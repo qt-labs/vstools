@@ -24,7 +24,6 @@ using static Microsoft.VisualStudio.Shell.PackageAutoLoadFlags;
 
 namespace QtVsTools
 {
-    using Common;
     using Core;
     using Core.Options;
     using Package;
@@ -94,15 +93,7 @@ namespace QtVsTools
 
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {
-        LazyFactory Lazy { get; } = new();
-
         public DTE Dte { get; private set; }
-        public QtOptionsPage Options => Lazy.Get(() => Options, () =>
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                return GetDialogPage(typeof(QtOptionsPage)) as QtOptionsPage;
-            }));
 
         public Editors.QtDesigner QtDesigner { get; private set; }
         public Editors.QtLinguist QtLinguist { get; private set; }
