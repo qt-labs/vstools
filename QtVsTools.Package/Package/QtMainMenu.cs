@@ -11,6 +11,7 @@ namespace QtVsTools
 {
     using Core;
     using Core.MsBuild;
+    using QtVsTools.Core.Common;
     using VisualStudio;
 
     /// <summary>
@@ -99,7 +100,7 @@ namespace QtVsTools
                 break;
             case QtMenus.Package.ImportPriFile:
                 ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte,
-                    QtVsToolsPackage.Instance.PkgInstallPath);
+                    Utils.PackageInstallPath);
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 MsBuildProjectConverter.SolutionToQtMsBuild();

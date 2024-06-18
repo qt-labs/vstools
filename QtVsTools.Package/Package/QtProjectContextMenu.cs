@@ -12,6 +12,7 @@ namespace QtVsTools
 {
     using Core;
     using Core.MsBuild;
+    using QtVsTools.Core.Common;
     using VisualStudio;
 
     /// <summary>
@@ -79,7 +80,7 @@ namespace QtVsTools
             var dte = QtVsToolsPackage.Instance.Dte;
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                ProjectImporter.ImportPriFile(dte, QtVsToolsPackage.Instance.PkgInstallPath);
+                ProjectImporter.ImportPriFile(dte, Utils.PackageInstallPath);
                 break;
             case QtMenus.Package.lUpdateOnProject:
                 Translation.RunlUpdate(HelperFunctions.GetSelectedQtProject(dte));

@@ -9,8 +9,17 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core.Common
 {
+    using QtVsTools.Common;
+
     public static partial class Utils
     {
+        private static LazyFactory Lazy { get; } = new();
+        public static string PackageInstallPath => Lazy.Get(() => PackageInstallPath, () =>
+        {
+            var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
+            return Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+        });
+
         public static string Unquote(string path)
         {
             path = path.Trim();

@@ -97,7 +97,6 @@ namespace QtVsTools
         LazyFactory Lazy { get; } = new();
 
         public DTE Dte { get; private set; }
-        public string PkgInstallPath { get; private set; }
         public QtOptionsPage Options => Lazy.Get(() => Options, () =>
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
@@ -133,12 +132,6 @@ namespace QtVsTools
 
                 var packages = await GetServiceAsync<
                     SVsPackageInfoQueryService, IVsPackageInfoQueryService>();
-
-                // determine the package installation directory
-                var uri = new Uri(System.Reflection.Assembly
-                    .GetExecutingAssembly().EscapedCodeBase);
-                PkgInstallPath = Path.GetDirectoryName(
-                    Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to main (UI) thread
@@ -186,7 +179,7 @@ namespace QtVsTools
                     Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
                 try {
                     var qtMsBuildDefaultUri = new Uri(qtMsBuildDefault + Path.DirectorySeparatorChar);
-                    var qtMsBuildVsixPath = Path.Combine(PkgInstallPath, "QtMsBuild");
+                    var qtMsBuildVsixPath = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
                     var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + Path.DirectorySeparatorChar);
                     if (qtMsBuildVsixUri != qtMsBuildDefaultUri) {
                         var qtMsBuildVsixFiles = Directory
@@ -230,7 +223,7 @@ namespace QtVsTools
                     /////////
                     // Error copying files to standard location.
                     //  -> FAIL-SAFE: use source folder (within package) as the standard location
-                    qtMsBuildDefault = Path.Combine(PkgInstallPath, "QtMsBuild");
+                    qtMsBuildDefault = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
                 }
 
                 ///////
@@ -450,7 +443,8 @@ namespace QtVsTools
                 ExpandEnvironmentVariables("%USERPROFILE%\\.vs\\Extensions\\qttmlanguage");
 
             // always copy .pri/.pro TextMate Language Grammar file
-            Utils.CopyDirectory(Path.Combine(PkgInstallPath, "qttmlanguage"), qtTmLanguagePath);
+            Utils.CopyDirectory(Path.Combine(Utils.PackageInstallPath, "qttmlanguage"),
+                qtTmLanguagePath);
 
             //Remove TextMate-based QML syntax highlighting
             Utils.DeleteDirectory(Path.Combine(qtTmLanguagePath, "qml"), Utils.Option.Recursive);
@@ -488,7 +482,8 @@ namespace QtVsTools
         private async Task CopyVisualizersFileAsync(string filename, string qtNamespace)
         {
             try {
-                var text = await Utils.ReadAllTextAsync(Path.Combine(PkgInstallPath, filename));
+                var text = await Utils.ReadAllTextAsync(Path.Combine(Utils.PackageInstallPath,
+                    filename));
 
                 string visualizerFile;
                 if (string.IsNullOrEmpty(qtNamespace)) {

@@ -13,6 +13,8 @@ using System.Xml.Linq;
 
 namespace QtVsTools.Core
 {
+    using Common;
+
     public class QtModules
     {
         public static QtModules Instance { get; } = new();
@@ -32,18 +34,14 @@ namespace QtVsTools.Core
 
         private QtModules()
         {
-            var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-            var pkgInstallPath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath));
-
-            qt5Modules = FillModules(pkgInstallPath, "qtmodules.xml", "5");
-            qt6Modules = FillModules(pkgInstallPath, "qt6modules.xml", "6");
+            qt5Modules = FillModules("qtmodules.xml", "5");
+            qt6Modules = FillModules("qt6modules.xml", "6");
         }
 
-        private static IReadOnlyCollection<QtModule>FillModules(string packagePath,
-            string modulesFile, string major)
+        private static IReadOnlyCollection<QtModule>FillModules(string modulesFile, string major)
         {
             var list = new List<QtModule>();
-            var modulesFilePath = Path.Combine(packagePath, modulesFile);
+            var modulesFilePath = Path.Combine(Utils.PackageInstallPath, modulesFile);
             if (!File.Exists(modulesFilePath))
                 return list;
 

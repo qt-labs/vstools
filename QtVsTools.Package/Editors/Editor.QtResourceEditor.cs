@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 namespace QtVsTools.Editors
 {
     using Core.Options;
+    using QtVsTools.Core.Common;
 
     [Guid(GuidString)]
     public class QtResourceEditor : Editor
@@ -22,8 +23,7 @@ namespace QtVsTools.Editors
 
         public override string ExecutableName => "QrcEditor.exe";
 
-        protected override string GetToolsPath() =>
-            QtVsToolsPackage.Instance?.PkgInstallPath;
+        protected override string GetToolsPath() => Utils.PackageInstallPath;
 
         public override Func<string, bool> WindowFilter =>
             caption => caption.StartsWith(Title);

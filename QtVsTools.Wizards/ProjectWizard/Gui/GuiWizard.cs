@@ -222,12 +222,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 var iconExists = File.Exists(projectIcon);
                 if (!iconExists) {
                     try {
-                        var uri =
-                            new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
-                        var pkgInstallPath
-                            = Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
-                        var templateIcon
-                            = Path.Combine(pkgInstallPath, @"ProjectTemplates\VC\Qt\1033\gui\gui.ico");
+                        var templateIcon = Path.Combine(Utils.PackageInstallPath,
+                            @"ProjectTemplates\VC\Qt\1033\gui\gui.ico");
                         File.Copy(templateIcon, projectIcon);
                         File.SetAttributes(projectIcon,
                             File.GetAttributes(projectIcon) & ~FileAttributes.ReadOnly);

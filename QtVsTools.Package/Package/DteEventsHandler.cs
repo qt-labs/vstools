@@ -132,8 +132,7 @@ namespace QtVsTools
         private static bool TestVersionInstalled()
         {
             var newVersion = true;
-            var versionFile = Path.Combine(QtVsToolsPackage.Instance.PkgInstallPath,
-                "lastversion.txt");
+            var versionFile = Path.Combine(PackageInstallPath, "lastversion.txt");
             if (File.Exists(versionFile)) {
                 var lastVersion = File.ReadAllText(versionFile);
                 newVersion = lastVersion!= Version.PRODUCT_VERSION;
