@@ -82,12 +82,8 @@ namespace QtVsTools.Wizards.ItemWizard
 
         protected override void BeforeWizardRun()
         {
-            var className = Parameter[NewClass.SafeItemName];
-            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
-            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-            var result = new ClassNameValidationRule().Validate(className, null);
-            if (result != ValidationResult.ValidResult)
-                className = @"QtClass";
+            var className = ClassNameValidationRule.SafeName(Parameter[NewClass.SafeItemName],
+                "QtClass");
 
             WizardData.ClassName = className;
             WizardData.BaseClass = @"QObject";

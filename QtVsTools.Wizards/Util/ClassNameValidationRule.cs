@@ -39,5 +39,15 @@ namespace QtVsTools.Wizards.Util
         public bool AllowEmptyIdentifier { get; set; }
 
         const string pattern = @"^[a-zA-Z_][a-zA-Z0-9_]*$";
+
+        public static string SafeName(string safeName, string @default)
+        {
+            safeName = Regex.Replace(safeName, "[^a-zA-Z0-9_]", string.Empty);
+            safeName = Regex.Replace(safeName, @"^[\d-]*\s*", string.Empty);
+            var result = new ClassNameValidationRule().Validate(safeName, null);
+            if (result != ValidationResult.ValidResult)
+                safeName = @default;
+            return safeName;
+        }
     }
 }

@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -16,6 +14,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Common;
     using Core.MsBuild;
     using QtVsTools.Common;
+    using Util;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -91,12 +90,8 @@ namespace QtVsTools.Wizards.ProjectWizard
             if (Parameter[NewProject.SafeName].Contains(" "))
                 throw new ArgumentException("Project name shall not contain spaces.");
 
-            var className = Parameter[NewProject.SafeName];
-            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
-            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-            var result = new Util.ClassNameValidationRule().Validate(className, null);
-            if (result != ValidationResult.ValidResult)
-                className = @"ActiveQtServer";
+            var className = ClassNameValidationRule.SafeName(Parameter[NewProject.SafeName],
+                "ActiveQtServer");
 
             WizardData.ClassName = className;
             WizardData.ClassHeaderFile = className + @".h";

@@ -5,12 +5,11 @@
 
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace QtVsTools.Wizards.ProjectWizard
 {
     using Common;
+    using Util;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -76,12 +75,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void BeforeWizardRun()
         {
-            var safeprojectname = Parameter[NewProject.SafeName];
-            safeprojectname = Regex.Replace(safeprojectname, @"[^a-zA-Z0-9_]", string.Empty);
-            safeprojectname = Regex.Replace(safeprojectname, @"^[\d-]*\s*", string.Empty);
-            var result = new Util.ClassNameValidationRule().Validate(safeprojectname, null);
-            if (result != ValidationResult.ValidResult)
-                safeprojectname = @"QtClassLibrary";
+            var safeprojectname = ClassNameValidationRule.SafeName(Parameter[NewProject.SafeName],
+                "QtClassLibrary");
 
             WizardData.ClassName = safeprojectname;
             WizardData.ClassHeaderFile = safeprojectname + @".h";

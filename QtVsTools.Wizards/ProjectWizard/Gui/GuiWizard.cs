@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 using EnvDTE;
 
 namespace QtVsTools.Wizards.ProjectWizard
@@ -18,6 +16,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Core;
     using QtVsTools.Common;
     using QtVsTools.Core.Common;
+    using Util;
 
     using static QtVsTools.Common.EnumExt;
 
@@ -147,12 +146,8 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         protected override void BeforeWizardRun()
         {
-            var className = Parameter[NewProject.SafeName];
-            className = Regex.Replace(className, @"[^a-zA-Z0-9_]", string.Empty);
-            className = Regex.Replace(className, @"^[\d-]*\s*", string.Empty);
-            var result = new Util.ClassNameValidationRule().Validate(className, null);
-            if (result != ValidationResult.ValidResult)
-                className = @"QtWidgetsApplication";
+            var className = ClassNameValidationRule.SafeName(Parameter[NewProject.SafeName],
+                "QtWidgetsApplication");
 
             WizardData.ClassName = className;
             WizardData.BaseClass = @"QMainWindow";

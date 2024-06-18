@@ -20,8 +20,8 @@ namespace QtVsTools.Wizards.Util
 
             ValidatesOnTargetUpdated = true;
 
-            var dte = VsServiceProvider.GetService<DTE>();
-            Vclm = dte.GetObject("VCLanguageManager") as VCLanguageManager;
+            if (VsServiceProvider.GetService<DTE>() is {} dte)
+                Vclm = dte.GetObject("VCLanguageManager") as VCLanguageManager;
         }
 
         public string FileExt { get; set; }

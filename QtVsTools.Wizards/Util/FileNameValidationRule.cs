@@ -18,9 +18,9 @@ namespace QtVsTools.Wizards.Util
                 if (!string.IsNullOrEmpty(Path.GetDirectoryName(filename)))
                     filename = Path.GetFileName(filename);
 
-                if (FileExt is @".ui" or @".qrc") {
-                    filename = filename.ToLower().Replace(@".h", @".x");
-                    filename = filename.Replace(FileExt, @".h");
+                if (FileExt is ".ui" or ".qrc") {
+                    filename = filename.ToLower().Replace(".h", ".x");
+                    filename = filename.Replace(FileExt, ".h");
                 }
 
                 if (Vclm.ValidateFileName(filename)
@@ -28,7 +28,7 @@ namespace QtVsTools.Wizards.Util
                     return ValidationResult.ValidResult;
                 }
             }
-            return new ValidationResult(false, @"Invalid file name.");
+            return new ValidationResult(false, "Invalid file name.");
         }
     }
 }
