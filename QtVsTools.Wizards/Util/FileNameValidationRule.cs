@@ -23,7 +23,7 @@ namespace QtVsTools.Wizards.Util
                     filename = filename.Replace(FileExt, ".h");
                 }
 
-                if (Vclm.ValidateFileName(filename)
+                if (Vclm != null && Vclm.ValidateFileName(filename)
                     && !Path.GetInvalidFileNameChars().Any(filename.Contains)) {
                     return ValidationResult.ValidResult;
                 }

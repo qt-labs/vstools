@@ -29,8 +29,10 @@ namespace QtVsTools.Wizards.Util
                         identifier = identifier.Substring(index + 2);
                 }
 
-                if (Regex.IsMatch(identifier, pattern) && !Vclm.IsReservedName(identifier))
+                if (Vclm != null && !Vclm.IsReservedName(identifier)
+                    && Regex.IsMatch(identifier, pattern)) {
                     return ValidationResult.ValidResult;
+                }
             }
             return new ValidationResult(false, @"Invalid identifier.");
         }

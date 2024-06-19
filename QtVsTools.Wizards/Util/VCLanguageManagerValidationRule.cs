@@ -4,9 +4,9 @@
 ***************************************************************************************************/
 
 using System.Windows.Controls;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCCodeModel;
-using EnvDTE;
 
 namespace QtVsTools.Wizards.Util
 {
@@ -25,6 +25,6 @@ namespace QtVsTools.Wizards.Util
         }
 
         public string FileExt { get; set; }
-        public VCLanguageManager Vclm { get; }
+        protected VCLanguageManager Vclm { get; }
     }
 }
