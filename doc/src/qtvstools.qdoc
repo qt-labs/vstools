@@ -912,7 +912,7 @@
     \title Tutorial: Qt Quick debugging
 
     This tutorial illustrates how to use Qt VS Tools to debug the
-    \l {Tutorial: Qt Quick Application}{Qt Quick tutorial application},
+    \l {Tutorial: Qt Quick application}{Qt Quick tutorial application},
     \e QuickAddressBook. After you enable QML debugging for the project,
     set breakpoints in QML files and step through the execution
     of code. While in break mode, watch variables and change their
@@ -928,7 +928,7 @@
     \list
         \li \l {Install Qt VS Tools}
         \li \l {Add Qt versions}
-        \li \l {Tutorial: Qt Quick Application}{Create a Qt Quick Application}
+        \li \l {Tutorial: Qt Quick application}{Create a Qt Quick Application}
         \li \l {Enable QML debugging}
     \endlist
 
@@ -1060,8 +1060,8 @@
     The application tutorials contain examples of using the project templates:
 
     \list
-        \li \l {Tutorial: Qt Widgets Application}
-        \li \l {Tutorial: Qt Quick Application}
+        \li \l {Tutorial: Qt Widgets application}
+        \li \l {Tutorial: Qt Quick application}
     \endlist
 
     \sa {Add Qt versions}, {Files}
@@ -1132,8 +1132,8 @@
     files to projects:
 
     \list
-        \li \l {Tutorial: Qt Widgets Application}
-        \li \l {Tutorial: Qt Quick Application}
+        \li \l {Tutorial: Qt Widgets application}
+        \li \l {Tutorial: Qt Quick application}
     \endlist
 
     \sa {Projects}
