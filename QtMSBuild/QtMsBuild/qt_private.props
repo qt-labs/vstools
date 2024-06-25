@@ -81,8 +81,9 @@
   <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
 
     <!--// Path to Qt variables property file -->
+    <QtProjectDirHash>$([MSBuild]::StableStringHash('$(ProjectDir)'))</QtProjectDirHash>
     <QtVarsOutputDir Condition="'$(QtVarsOutputDir)' == ''"
-      >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qmake'))</QtVarsOutputDir>
+      >$([System.IO.Path]::Combine('$(Temp)', '$(ProjectGuid)', '$(QtProjectDirHash)', 'qmake'))</QtVarsOutputDir>
     <QtVarsFileName Condition="'$(QtVarsFileName)' == ''"
       >qtvars_$(Platform.Replace(' ','_'))_$(Configuration.Replace(' ','_')).props</QtVarsFileName>
     <QtVarsFilePath Condition="'$(QtVarsFilePath)' == ''"
