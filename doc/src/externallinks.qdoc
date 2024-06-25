@@ -17,3 +17,13 @@
 \externalpage https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html
 \title QML Language Server Reference
 */
+
+/*!
+\externalpage https://doc.qt.io/qt-6/qtest-overview.html
+\title Qt Test Overview
+*/
+
+/*!
+\externalpage https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file
+\title Configure unit tests by using a .runsettings file
+*/

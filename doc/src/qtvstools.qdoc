@@ -25,6 +25,7 @@
                     \li \l {Tutorial: Qt Widgets application}
                     \li \l {Tutorial: Qt Quick application}
                     \li \l {Tutorial: Qt Quick debugging}
+                    \li \l {Tutorial: Qt Test application}
                 \endlist
             \li \l {How-to}
                 \list
@@ -33,6 +34,7 @@
                     \li \l {Edit}
                     \li \l {Build}
                     \li \l {Debug}
+                    \li \l {Test}
                     \li \l {Localize}
                 \endlist
         \li \l {Explanation}
@@ -46,6 +48,7 @@
             \list
                 \li \l {Files}
                 \li \l {Projects}
+                \li \l {Test Adapter settings}
             \endlist
     \endtable
 */
@@ -60,11 +63,13 @@
                 \li \l {Tutorial: Qt Widgets application}
                 \li \l {Tutorial: Qt Quick application}
                 \li \l {Tutorial: Qt Quick debugging}
+                \li \l {Tutorial: Qt Test application}
             \endlist
         \li \l{How-to}
             \list
                 \li \l {Add Qt versions}
                 \li \l {Build solutions that have Qt/MSBuild format 2}
+                \li \l {Configure Qt tests using a .runsettings file}
                 \li \l {Convert solutions to latest Qt/MSBuild format}
                 \li \l {Create Qt translation files}
                 \li \l {Create UI form files}
@@ -95,6 +100,7 @@
             \list
                 \li \l {Files}
                 \li \l {Projects}
+                \li \l {Test Adapter settings}
             \endlist
     \endlist
 */
@@ -110,7 +116,7 @@
         \li \l {Tutorial: Qt Widgets application}
         \li \l {Tutorial: Qt Quick application}
         \li \l {Tutorial: Qt Quick debugging}
-
+        \li \l {Tutorial: Qt Test application}
     \endlist
 
     To learn the basics of Qt VS Tools, take the
@@ -186,6 +192,16 @@
         \li \l {Debug on Linux}
     \endlist
 
+    \section1 Test
+
+    Use QtTest, the Qt Testing Framework, to unit test Qt-based applications and
+    libraries. Write tests, use Test Explorer, create test suites, and test
+    graphical user interfaces.
+
+    \list
+        \li \l {Configure Qt tests using a .runsettings file}
+    \endlist
+
     \section1 Localize
 
     Use Qt translation tools to adapt applications for a specific region or
@@ -224,6 +240,7 @@
     \list
         \li \l {Files}
         \li \l {Projects}
+        \li \l {Test Adapter settings}
     \endlist
 */
 
@@ -236,7 +253,8 @@
     The main features of Qt VS Tools are:
 
     \list
-        \li Wizards for creating new Qt and Qt Quick projects and files.
+        \li Wizards for creating new Qt and Qt Quick projects and files, as
+            well as unit tests.
         \li Automated build setup for \l {Using the Meta-Object Compiler
             (moc)}{Meta-Object Compiler (moc)}, \l {User Interface Compiler
             (uic)}, and \l {Resource Compiler (rcc)}.
@@ -1045,6 +1063,9 @@
         \li \uicontrol {Qt Quick Application}
         \li A Qt Quick application project.
     \row
+        \li \uicontrol {Qt Test Application}
+        \li A simple Qt test application.
+    \row
         \li \uicontrol {Qt Widgets Application}
         \li A simple Qt widgets application with one form.
     \endtable
@@ -1062,6 +1083,7 @@
     \list
         \li \l {Tutorial: Qt Widgets application}
         \li \l {Tutorial: Qt Quick application}
+        \li \l {Tutorial: Qt Test application}
     \endlist
 
     \sa {Add Qt versions}, {Files}
@@ -1084,6 +1106,9 @@
     \header
         \li Template
         \li Adds
+    \row
+        \li \uicontrol {Qt .runsettings File}
+        \li A Qt .runsettings file to a Qt Test Application project.
     \row
         \li \uicontrol {Qt Class}
         \li A Qt class to an Application project.
@@ -2141,4 +2166,354 @@
 
     \sa  {Tutorial: Qt Quick debugging}, {Cross-compile}, {Debug applications},
     {Enable QML debugging}, {Debugging Qt Quick applications}
+*/
+
+/*!
+    \page qtvstools-tutorial-qt-test-project.html
+    \ingroup qtvstools-tutorials
+
+    \title Tutorial: Qt Test application
+
+    This tutorial describes how to use Qt VS Tools with the Unit Test Explorer
+    provided by Microsoft to visualize and run unit test cases. Write the test
+    cases with the \l{Qt Test Overview}{Qt Test} framework.
+
+    \section1 Before you start
+
+    Before you start, you have to:
+
+    \list
+        \li \l {Install Qt VS Tools}
+        \li \l {Add Qt versions}
+    \endlist
+
+    \section1 Create a Qt Test application
+
+    \list 1
+        \li Go to \uicontrol File > \uicontrol New > \uicontrol Project.
+        \li Search for \uicontrol {Qt Test Application}.
+        \li Select the project wizard, and then select \uicontrol Next.
+        \li In \uicontrol {Project name}, enter \e QtTest,
+            and then select \uicontrol OK.
+        \li To acknowledge the \uicontrol Welcome dialog, select
+            \uicontrol Next.
+        \li Set up the \uicontrol Debug build configuration and select the
+            modules to include in the project:
+            \image qtvstools-wizard-test.webp {Selecting Qt modules in Qt Test Application Wizard}
+            The modules that are typically needed in test application projects
+            are selected by default.
+        \li Select \uicontrol Next to continue to the class creation page:
+            \image qtvstools-wizard-test-finish.webp {Creating a class in Qt Test Application Wizard}
+        \li Select \uicontrol {Lower case filenames} to
+            only use lower case characters in the names of the generated files.
+        \li Select \uicontrol {Add .runsettings file to project} to
+            use a default .runsettings file for the application. To use a
+            solution-wide .runsettings file, add a \c QtTest run configuration
+            section, as instructed in \l{Test Adapter settings}.
+        \li Select \uicontrol Finish to create the project.
+    \endlist
+
+    You now have a small working Qt Test application. Go to \uicontrol Test >
+    \uicontrol {Test Explorer} (or press \key {Ctrl+E, T}) to open the Visual
+    Studio Unit Test Explorer.
+
+    \section1 Write your test cases
+
+    Use functions and macros of the Qt Testing framework to define tests.
+    The created test application provides a set of common functions,
+    as well as one test function.
+
+    \code
+
+#include <QtTest>
+
+class QtTest : public QObject
+{
+    Q_OBJECT
+
+private slots:
+
+    void initTestCase_data()
+    {
+        qDebug("Creates a global test data table.");
+    }
+
+    void initTestCase()
+    {
+        qDebug("Called before the first test function is executed.");
+    }
+
+    void init()
+    {
+        qDebug("Called before each test function is executed.");
+    }
+
+    void myTest()
+    {
+        QVERIFY(true); // check that a condition is satisfied
+        QCOMPARE(1, 1); // compare two values
+    }
+
+    void cleanup()
+    {
+        qDebug("Called after every test function.");
+    }
+
+    void cleanupTestCase()
+    {
+        qDebug("Called after the last test function was executed.");
+    }
+};
+
+QTEST_MAIN(QtTest)
+#include "QtTest.moc"
+
+    \endcode
+
+    \section1 Discover tests with Unit Test Explorer
+
+    Now that you have test application project with test functions, use the
+    Unit Test Explorer to discover and manage the test functions.
+
+    To build the solution, go to \uicontrol Build > \uicontrol {Build Solution}
+    (or press \key Ctrl+Shift+B). This step is crucial as it compiles the test
+    binaries that the Unit Test Explorer discovers.
+
+    The Unit Test Explorer automatically discovers tests after a successful
+    build. If the tests do not appear, select \uicontrol {Run All} or
+    \uicontrol Refresh on the Test Explorer toolbar to manually trigger test
+    discovery.
+
+    \image ute.webp {Unit Test Explorer}
+
+    \section1 Run and analyze tests with Unit Test Explorer
+
+    In the Unit Test Explorer, select \uicontrol {Run All} to run all tests.
+    To run specific tests or test groups, select them from the list and select
+    \uicontrol {Run Selected Tests}. Right-click on individual tests or test
+    groups for more options, such as debugging specific tests.
+
+    The Unit Test Explorer displays the results of your tests, showing which
+    tests passed or failed. For failed tests, select the test name to see
+    detailed information, including error messages and stack traces. Use the
+    filtering and grouping options in the Test Explorer to organize and manage
+    your test results effectively.
+
+    \image ute-finish.webp {Test results in Unit Test Explorer}
+
+    Usually, Qt tests require a project-local or solution-wide.runsettings file
+    for configuring various testing parameters and environments.
+
+    \sa {Configure Qt tests using a .runsettings file}
+*/
+
+/*!
+    \page qtvstools-configure-runsettings.html
+    \ingroup qtvstools-how-to
+
+    \title Configure Qt tests using a .runsettings file
+
+    Visual Studio uses XML-based .runsettings files to define and customize the
+    behavior of unit tests. The files control the discovery, execution, and
+    reporting of tests.
+
+    To specify global settings for the entire solution, go to \uicontrol Tools >
+    \uicontrol Options > \uicontrol Qt > \uicontrol {Test Adapter}.
+
+    \image ute-settings.webp {Test Adapter settings}
+
+    If there is no project-specific or solution-wide .runsettings file, the
+    values of global settings are used as default values.
+
+    The values from a project-specific or solution-wide .runsettings file
+    override the global settings. The settings are merged to customize test
+    behavior.
+
+    \sa {Test Adapter settings}
+*/
+
+/*!
+    \page qtvstools-reference-runsettings.html
+    \ingroup qtvstools-reference
+
+    \title Test Adapter settings
+
+    A .runsettings file is structured as an XML document. The root element,
+    \c <RunSettings>, has settings specific to your testing framework. The
+    \c <QtTest> element has settings for Qt unit tests.
+
+    For more information about using .runsettings files in Visual Studio, see
+    \l{Configure unit tests by using a .runsettings file}.
+
+    \section1 Mandatory element
+
+    You must set the Qt version in the \c <QtTest> element.
+
+    \table
+    \header
+        \li Name
+        \li Description
+        \li Example
+    \row
+        \li QtInstall
+        \li Specifies the Qt version used to build and run the
+                tests.
+        \li \c {<QtInstall>$(DefaultQtVersion)</QtInstall>}
+    \endtable
+
+    \section2 Minimum runsettings example
+
+    \badcode
+        <RunSettings>
+            <QtTest>
+                <QtInstall>$(DefaultQtVersion)</QtInstall> <!-- Mandatory -->
+            </QtTest>
+        </RunSettings>
+    \endcode
+
+
+    \section1 Optional elements
+
+    The following table lists optional elements in the \c <QtTest> element.
+
+    \table
+    \header
+        \li Name
+        \li Description
+        \li Occurrence
+        \li Default value
+        \li Example
+    \row
+        \li ShowAdapterOutput
+        \li Shows output from the test adapter in \uicontrol Output >
+            \uicontrol Tests.
+        \li Once
+        \li \c false
+        \li \c {<ShowAdapterOutput>false</ShowAdapterOutput>}
+    \row
+        \li TestTimeout
+        \li Sets a timeout for individual tests in milliseconds.
+            A value of -1 means no timeout.
+        \li Once
+        \li -1
+        \li \c {<TestTimeout>-1</TestTimeout>}
+    \row
+        \li DiscoveryTimeout
+        \li Sets a timeout for test discovery in milliseconds.
+            A value of -1 means no timeout.
+        \li Once
+        \li 2000
+        \li \c {<DiscoveryTimeout>2000</DiscoveryTimeout>}
+    \row
+        \li ParsePdbFiles
+        \li Parses PDB files to retrieve the source file and line number of test
+            functions.
+        \li Once
+        \li \c true
+        \li \c {<ParsePdbFiles>true</ParsePdbFiles>}
+    \row
+        \li SubsystemConsoleOnly
+        \li Scans only console binaries for Qt test functions.
+        \li Once
+        \li \c true
+        \li \c {<SubsystemConsoleOnly>true</SubsystemConsoleOnly>}
+    \endtable
+
+    \section2 Output section
+
+    Control the location and format of the logs generated during test runs.
+
+    \table
+    \header
+        \li Name
+        \li Description
+        \li Occurrence
+        \li Example
+    \row
+        \li FilenameFormat
+        \li Defines how and where the test results are written. Supported output
+            formats are: txt, csv, junitxml, xml, lightxml, teamcity, and tap.
+        \li Multiple
+        \li \c {<FilenameFormat>PATH,OUTPUTFORMAT</FilenameFormat>}
+    \endtable
+
+    \section2 Verbosity section
+
+    Influence the amount of detail in the logs generated during test runs.
+
+    \table
+    \header
+        \li Name
+        \li Description
+        \li Occurrence
+        \li Default value
+        \li Example
+    \row
+        \li Level
+        \li The amount of detail reported in test logs.
+        \li Once
+        \li empty
+        \li \c {<Level>silent</Level>} for minimal output.
+    \row
+        \li LogSignals
+        \li Logs all emitted signals and the slot invocations resulting from
+            those signals.
+        \li Once
+        \li \c false
+        \li \c {<LogSignals>false</LogSignals>}
+    \endtable
+
+    \section2 Commands section
+
+    Influence how tests are run and control the test execution environment.
+
+    \table
+    \header
+        \li Name
+        \li Description
+        \li Occurrence
+        \li Default value
+        \li Example
+    \row
+        \li EventDelay
+        \li Control delays in event simulations.
+        \li Once
+        \li -1
+        \li \c {<EventDelay>-1</EventDelay>}
+    \row
+        \li KeyDelay
+        \li Control delays in event simulations.
+        \li Once
+        \li -1
+        \li \c {<KeyDelay>-1</KeyDelay>}
+    \row
+        \li MouseDelay
+        \li Control delays in event simulations.
+        \li Once
+        \li -1
+        \li \c {<MouseDelay>-1</MouseDelay>}
+    \row
+        \li MaxWarnings
+        \li The maximum number of warnings to output.
+        \li Once
+        \li 2000
+        \li \c { <MaxWarnings>2000</MaxWarnings>}
+    \row
+        \li NoCrashHandler
+        \li Enables or disables the Windows Error Reporting dialog.
+        \li Once
+        \li \c false
+        \li \c {<NoCrashHandler>false</NoCrashHandler>}
+    \endtable
+
+    \section1 Example .runsettings file
+
+    The following XML shows the contents of a default Qt .runsettings file. The
+    \c {<QtInstall>} is mandatory, all other elements or sections are optional
+    because the Qt test adapter provides default values.
+
+    \quotefile ../../Templates/runsettings/.runsettings
+
+    \sa {Tutorial: Qt Test application},
+    {Configure Qt tests using a .runsettings file}, {Files}
 */
