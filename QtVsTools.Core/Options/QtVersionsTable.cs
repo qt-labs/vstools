@@ -423,7 +423,7 @@ namespace QtVsTools.Core.Options
                 CheckPathExists = true,
                 Filter = "qmake|qmake.exe;qmake.bat",
                 Title = "Qt VS Tools - Select qmake.exe",
-                InitialDirectory = VersionPath.Text
+                InitialDirectory = NormalizePath(VersionPath.Text) ?? ""
             };
             if (openFileDialog.ShowDialog() != true)
                 return;
@@ -557,6 +557,20 @@ namespace QtVsTools.Core.Options
                 var qtVersionDir = Path.GetDirectoryName(compilerDir);
                 var versionName = $"{Path.GetFileName(qtVersionDir)}"
                   + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");
+
+                if (VersionInformation.GetOrAddByPath(compilerDir) is not {} versionInfo) {
+                    Messages.Print($"Skip Qt version: {versionName}, "
+                      + $"path: '{compilerDir}', failed to load version information.");
+                    continue;
+                }
+
+                var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                if (generator is not ("MSVC.NET" or "MSBUILD")) {
+                    Messages.Print($"Skip incompatible Qt version: {versionName}, "
+                      + $"path: '{compilerDir}', makefile generator: {generator}.");
+                    continue;
+                }
+
                 versions.Add(
                     new QtVersion
                     {
