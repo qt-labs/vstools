@@ -140,15 +140,7 @@ namespace QtVsTools.Core
 
         public static string GetDefaultVersion()
         {
-            string defaultVersion = null;
-            try {
-                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
-                if (key != null)
-                    defaultVersion = (string)key.GetValue("DefaultQtVersion");
-            } catch {
-                Messages.DisplayWarningMessage("Cannot load the default Qt version.");
-            }
-
+            var defaultVersion = GetDefaultVersionName();
             if (defaultVersion == null) {
                 var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
                 if (key != null) {
@@ -172,19 +164,30 @@ namespace QtVsTools.Core
             return VersionExists(defaultVersion) ? defaultVersion : null;
         }
 
+        public static string GetDefaultVersionName()
+        {
+            try {
+                return Registry.CurrentUser.OpenSubKey(RegistryVersionsPath)
+                    ?.GetValue("DefaultQtVersion") as string;
+            } catch (Exception exception) {
+                Messages.Print("Cannot read the name of the default Qt version.");
+                exception.Log();
+            }
+            return null;
+        }
+
         public static string GetDefaultVersionInstallPath()
         {
             try {
-                using var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
-                var defaultVersion = key?.GetValue("DefaultQtVersion") as string;
-
+                var defaultVersion = GetDefaultVersionName();
                 if (string.IsNullOrEmpty(defaultVersion))
                     return Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
 
-                var versionKey = key.OpenSubKey(defaultVersion, false);
-                return versionKey?.GetValue("InstallDir") as string;
-            } catch {
-                Messages.Print("Cannot read the default Qt version from registry.");
+                return Registry.CurrentUser.OpenSubKey($"{RegistryVersionsPath}\\{defaultVersion}")
+                    ?.GetValue("InstallDir") as string;
+            } catch (Exception exception) {
+                Messages.Print("Cannot read the install path of the default Qt version.");
+                exception.Log();
             }
             return null;
         }

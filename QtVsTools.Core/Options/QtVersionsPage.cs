@@ -4,7 +4,7 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -17,27 +17,28 @@ namespace QtVsTools.Core.Options
     using QtVsTools.Common;
     using VisualStudio;
     using static Common.Utils;
-    using static QtVersionsTable;
+    using static HelperFunctions;
 
     public class QtVersionsPage : UIElementDialogPage
     {
-        static LazyFactory Lazy { get; } = new();
+        private static LazyFactory Lazy { get; } = new();
 
-        QtVersionsTable VersionsTable => Lazy.Get(() =>
+        private static QtVersionsTable VersionsTable => Lazy.Get(() =>
             VersionsTable, () => new QtVersionsTable());
 
         protected override UIElement Child => VersionsTable;
 
         public override void LoadSettingsFromStorage()
         {
-            var versions = new List<Row>();
+            var versions = new ObservableCollection<QtVersion>();
+            var defaultVersion = QtVersionManager.GetDefaultVersionName();
             foreach (var versionName in QtVersionManager.GetVersions()) {
                 var versionPath = QtVersionManager.GetInstallPath(versionName);
                 if (string.IsNullOrEmpty(versionPath))
                     continue;
 
-                BuildHost host = BuildHost.Windows;
-                string compiler = "msvc";
+                var host = BuildHost.Windows;
+                var compiler = "msvc";
                 if (versionPath.StartsWith("SSH:") || versionPath.StartsWith("WSL:")) {
                     var linuxPaths = versionPath.Split(':');
                     versionPath = linuxPaths[1];
@@ -46,24 +47,28 @@ namespace QtVsTools.Core.Options
                     if (linuxPaths.Length > 2 && !string.IsNullOrEmpty(linuxPaths[2]))
                         compiler = linuxPaths[2];
                 }
-                var defaultVersion = QtVersionManager.GetDefaultVersion();
-                versions.Add(new Row
+
+                var isDefault = versionName == defaultVersion;
+                versions.Insert(isDefault ? 0 : versions.Count, new QtVersion
                 {
-                    IsDefault = versionName == defaultVersion,
-                    VersionName = versionName,
-                    InitialVersionName = versionName,
+                    IsDefault = isDefault,
+                    InitialIsDefault = versionName == defaultVersion,
+                    Name = versionName,
+                    InitialName = versionName,
                     Path = versionPath,
+                    InitialPath = FromNativeSeparators(NormalizePath(versionPath) ?? ""),
                     Host = host,
+                    InitialHost = host,
                     Compiler = compiler,
-                    State = State.Unknown
+                    InitialCompiler = compiler
                 });
             }
-            VersionsTable.AddVersions(versions);
+            VersionsTable.QtVersions = versions;
         }
 
         public override void SaveSettingsToStorage()
         {
-            void RemoveVersion(string versionName)
+            static void RemoveVersion(string versionName)
             {
                 try {
                     if (QtVersionManager.HasVersion(versionName))
@@ -73,49 +78,48 @@ namespace QtVsTools.Core.Options
                 }
             }
 
-            var versions = VersionsTable.Versions.ToList();
-            foreach (var version in versions) {
-                if (version.State.HasFlag(State.Removed))
-                    RemoveVersion(version.VersionName);
+            foreach (var qtVersion in VersionsTable.RemovedQtVersions)
+                RemoveVersion(qtVersion.InitialName);
+            VersionsTable.RemovedQtVersions.Clear();
 
-                if (!version.State.HasFlag(State.Modified))
-                    continue;
-
+            foreach (var version in VersionsTable.QtVersions) {
                 try {
-                    if (version.Host != BuildHost.Windows) {
-                        string name = version.VersionName;
-                        string access = version.Host == BuildHost.LinuxSSH ? "SSH" : "WSL";
-                        string path = version.Path;
-                        string compiler = version.Compiler;
-                        if (compiler == "g++")
-                            compiler = string.Empty;
-                        QtVersionManager.SaveVersion(name, $"{access}:{path}:{compiler}",
-                            checkPath: false);
-                    } else {
-                        if (version.State.HasFlag((State)Column.Path))
-                            QtVersionManager.SaveVersion(version.VersionName, version.Path);
+                    if (version.State.HasFlag(State.HostModified) || version.State.HasFlag(State.CompilerModified)) {
+                        if (version.Host != BuildHost.Windows) {
+                            var access = version.Host == BuildHost.LinuxSSH ? "SSH" : "WSL";
+                            var compiler = version.Compiler;
+                            if (compiler == "g++")
+                                compiler = string.Empty;
+                            QtVersionManager.SaveVersion(version.Name,
+                                $"{access}:{version.Path}:{compiler}", checkPath: false);
+                        } else {
+                            QtVersionManager.SaveVersion(version.Name, version.Path);
+                        }
+                        RemoveVersion(version.InitialName);
+                        continue;
                     }
 
-                    if (version.State.HasFlag((State)Column.VersionName)) {
-                        try {
-                            QtVersionManager.SaveVersion(version.VersionName, version.Path);
-                        } catch (Exception exception) {
-                            exception.Log();
-                        }
-                        RemoveVersion(version.InitialVersionName);
+                    if (version.State.HasFlag(State.PathModified))
+                        QtVersionManager.SaveVersion(version.Name, version.Path);
+
+                    if (!version.State.HasFlag(State.NameModified))
+                        continue;
+                    try {
+                        QtVersionManager.SaveVersion(version.Name, version.Path);
+                    } catch (Exception exception) {
+                        exception.Log();
                     }
+                    RemoveVersion(version.InitialName);
                 } catch (Exception exception) {
                     exception.Log();
-                    version.State = State.Removed;
-                    RemoveVersion(version.VersionName);
+                    RemoveVersion(version.Name);
                 }
             }
 
             try {
                 var defaultVersion =
-                    versions.FirstOrDefault(v => v is { IsDefault: true, State: not State.Removed })
-                        ?? versions.FirstOrDefault(v => v.State != State.Removed);
-                QtVersionManager.SaveDefaultVersion(defaultVersion?.VersionName ?? "");
+                    VersionsTable.QtVersions.FirstOrDefault(v => v is { IsDefault: true });
+                QtVersionManager.SaveDefaultVersion(defaultVersion?.Name ?? "");
             } catch (Exception exception) {
                 exception.Log();
             }
@@ -130,17 +134,15 @@ namespace QtVsTools.Core.Options
         protected override void OnApply(PageApplyEventArgs e)
         {
             var errorMessages = VersionsTable.GetErrorMessages().ToList();
-
             try {
-                var versions = VersionsTable.Versions;
+                var versions = VersionsTable.QtVersions;
                 foreach (var version in versions) {
-                    version.ErrorMessageOnApply = null;
-                    if (!version.State.HasFlag(State.Modified) || version.Host != BuildHost.Windows)
-                        continue;
-                    if (!version.State.HasFlag((State)Column.Path))
+                    if (!version.State.HasFlag(State.PathModified) || version.Host != BuildHost.Windows)
                         continue;
 
                     var versionPath = version.Path;
+                    if (string.IsNullOrEmpty(versionPath))
+                        continue;
                     if (Path.GetFileName(versionPath).Equals("qmake.exe", IgnoreCase))
                         versionPath = Path.GetDirectoryName(versionPath);
                     if (Path.GetFileName(versionPath ?? "").Equals("bin", IgnoreCase))
@@ -152,9 +154,9 @@ namespace QtVsTools.Core.Options
                     if (generator is "MSVC.NET" or "MSBUILD")
                         continue;
 
-                    errorMessages.Add($"{version.VersionName} - Unsupported makefile "
-                      + $"generator: {generator}");
-                    version.ErrorMessageOnApply = errorMessages.Last();
+                    var message = $"{version.Name} - Incompatible makefile generator: {generator}";
+                    errorMessages.Add(message);
+                    version.ErrorMessage = message;
                 }
             } catch (Exception exception) {
                 errorMessages.Add(exception.Message);
@@ -162,12 +164,17 @@ namespace QtVsTools.Core.Options
 
             if (errorMessages.Any()) {
                 VersionsTable.Focus();
-                var errorMessage = "Invalid Qt versions:\r\n"
-                    + $"{string.Join("\r\n", errorMessages.Select(errMsg => " * " + errMsg))}";
+                var distinctErrorMessages = errorMessages
+                    .SelectMany(errMsg => errMsg.Split(new[] { Environment.NewLine },
+                                            StringSplitOptions.RemoveEmptyEntries))
+                    .Distinct()
+                    .Select(message => " * " + message);
+                var errorMessage = "Invalid Qt versions:" + Environment.NewLine
+                    + Environment.NewLine + string.Join(Environment.NewLine, distinctErrorMessages);
+
                 VsShellUtilities.ShowMessageBox(
                     VsServiceProvider.Instance as IServiceProvider,
-                    errorMessage,
-                    "Qt VS Tools",
+                    errorMessage, null,
                     OLEMSGICON.OLEMSGICON_WARNING,
                     OLEMSGBUTTON.OLEMSGBUTTON_OK,
                     OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);

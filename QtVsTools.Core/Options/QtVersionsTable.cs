@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,6 +15,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Xml.Linq;
 using Microsoft.Internal.VisualStudio.PlatformUI;
@@ -24,10 +29,12 @@ using Shell32;
 
 namespace QtVsTools.Core.Options
 {
+    using Common;
     using Core;
     using QtVsTools.Common;
     using VisualStudio;
-    using static Common.Utils;
+
+    using static HelperFunctions;
     using static QtVsTools.Common.EnumExt;
 
     public enum BuildHost
@@ -37,22 +44,74 @@ namespace QtVsTools.Core.Options
         [String("Linux WSL")] LinuxWSL
     }
 
-    public class ErrorOnApplyTemplateSelector : DataTemplateSelector
+    [Flags]
+    public enum State
     {
-        public DataTemplate DefaultTemplate { get; set; }
-        public DataTemplate ErrorTemplate { get; set; }
+        Unknown = 0x00,
+        Existing = 0x01,
+        DefaultModified = 0x02,
+        NameModified = 0x04,
+        PathModified = 0x08,
+        HostModified = 0x10,
+        CompilerModified = 0x20
+    }
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+    public class UiAdorner : Adorner
+    {
+        private readonly Pen pen;
+        private readonly Control control;
+
+        public UiAdorner(Control adornedElement)
+            : base(adornedElement)
         {
-            if (item is QtVersionsTable.Row dataItem)
-                return dataItem.HasErrorOnApply ? ErrorTemplate : DefaultTemplate;
-            return base.SelectTemplate(item, container);
+            pen = new Pen(Brushes.Red, 1);
+            pen.Freeze();
+            IsHitTestVisible = false;
+            control = adornedElement;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            var rect = new Rect(control.RenderSize);
+            drawingContext.DrawRectangle(null, pen, rect);
         }
     }
 
-    public partial class QtVersionsTable : UserControl
+    public class BuildHostConverter : IValueConverter
     {
-        LazyFactory Lazy { get; } = new();
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is BuildHost buildHost ? buildHost.Cast<string>() : "";
+        }
+
+        public object ConvertBack(
+            object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is string buildHost ? buildHost.Cast(BuildHost.Windows) : value;
+        }
+    }
+
+    public class ErrorTooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var errorMessage = value as string;
+            return string.IsNullOrEmpty(errorMessage)
+                ? null : new ToolTip { Content = errorMessage };
+        }
+
+        public object ConvertBack(
+            object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public partial class QtVersionsTable
+    {
+        private UiAdorner nameAdorner;
+        private UiAdorner pathAdorner;
+        private UiAdorner compilerAdorner;
 
         private const string QtMaintenanceToolLnk = "Qt\\Qt Maintenance Tool.lnk";
         private const string QtVersionsXmlCreator = @"QtProject\qtcreator\qtversion.xml";
@@ -60,517 +119,45 @@ namespace QtVsTools.Core.Options
             @"Tools\QtCreator\share\qtcreator\" + QtVersionsXmlCreator;
         private const string MaintenanceToolDat = "MaintenanceTool.dat";
 
+        public ObservableCollection<QtVersion> QtVersions
+        {
+            set
+            {
+                if (ReferenceEquals(DataGrid.ItemsSource, value))
+                    return;
+                DataGrid.ItemsSource = value;
+            }
+            get => DataGrid.ItemsSource as ObservableCollection<QtVersion>;
+        }
+
+        public List<QtVersion> RemovedQtVersions { get; } = new();
+
         public QtVersionsTable()
         {
             InitializeComponent();
         }
 
-        [Flags] public enum Column
-        {
-            IsDefault = 0x10,
-            VersionName = 0x20,
-            Host = 0x40,
-            Path = 0x80,
-            Compiler = 0x100
-        }
-
-        [Flags] public enum State
-        {
-            Unknown = 0x00,
-            Existing = 0x01,
-            Removed = 0x02,
-            Modified = 0x04
-        }
-
-        public class Field
-        {
-            public string Value { get; set; }
-            public Control Control { get; set; }
-            public DataGridCell Cell { get; set; }
-            private string error;
-            public string ValidationError {
-                set {
-                    UpdateUi = value != error;
-                    error = value;
-                }
-                get => error;
-            }
-            public bool IsValid => string.IsNullOrEmpty(ValidationError);
-            public ToolTip ToolTip
-                => IsValid ? null : new ToolTip { Content = ValidationError };
-            public int SelectionStart { get; set; }
-            public bool UpdateUi { get; private set; }
-        }
-
-        public class Row
-        {
-            LazyFactory Lazy { get; } = new();
-
-            public Dictionary<Column, Field> Fields => Lazy.Get(() =>
-                Fields, () => GetValues<Column>()
-                    .Select(field => new KeyValuePair<Column, Field>(field, null))
-                    .ToDictionary(keyValue => keyValue.Key, keyValue => keyValue.Value));
-
-            public Field FieldDefault => Fields[Column.IsDefault]
-                ?? (Fields[Column.IsDefault] = new Field());
-            public bool IsDefault
-            {
-                get => FieldDefault.Value == true.ToString();
-                set => FieldDefault.Value = value.ToString();
-            }
-
-            public Field FieldVersionName => Fields[Column.VersionName]
-                ?? (Fields[Column.VersionName] = new Field());
-            public string VersionName
-            {
-                get => FieldVersionName.Value;
-                set => FieldVersionName.Value = value;
-            }
-            public string InitialVersionName { get; set; }
-
-            public Field FieldHost => Fields[Column.Host]
-                ?? (Fields[Column.Host] = new Field());
-            public BuildHost Host
-            {
-                get => FieldHost.Value.Cast(defaultValue: BuildHost.Windows);
-                set => FieldHost.Value = value.Cast<string>();
-            }
-
-            public Field FieldPath => Fields[Column.Path]
-                ?? (Fields[Column.Path] = new Field());
-            public string Path
-            {
-                get => FieldPath.Value;
-                set => FieldPath.Value = value;
-            }
-
-            public Field FieldCompiler => Fields[Column.Compiler]
-                ?? (Fields[Column.Compiler] = new Field());
-            public string Compiler
-            {
-                get => FieldCompiler.Value;
-                set => FieldCompiler.Value = value;
-            }
-
-            public bool LastRow { get; set; }
-
-            public bool DefaultEnabled => !IsDefault && !LastRow;
-            public bool NameEnabled => !LastRow;
-            public bool CompilerEnabled => Host != BuildHost.Windows;
-            public Visibility RowContentVisibility
-                => LastRow ? Visibility.Hidden : Visibility.Visible;
-            public Visibility ButtonAddVisibility
-                => LastRow ? Visibility.Visible : Visibility.Hidden;
-            public Visibility ButtonBrowseVisibility
-                => !LastRow && Host == BuildHost.Windows ? Visibility.Visible : Visibility.Hidden;
-            public Thickness PathMargin => new(Host == BuildHost.Windows ? 24 : 2, 4, 4, 4);
-            public FontWeight FontWeight
-                => IsDefault ? FontWeights.Bold : FontWeights.Normal;
-
-            public State State { get; set; } = State.Unknown;
-            public bool RowVisible => State != State.Removed;
-
-            public bool HasErrorOnApply => !string.IsNullOrEmpty(ErrorMessageOnApply);
-            public string ErrorMessageOnApply { get; set; }
-        }
-
-        Field FocusedField { get; set; }
-
-        List<Row> Rows => Lazy.Get(() => Rows, () => new List<Row>());
-        public IEnumerable<Row> Versions => Rows.TakeWhile(item => !item.LastRow);
-
-        public void AddVersions(IEnumerable<Row> versions)
-        {
-            UpdateVersions(versions);
-            Rows.ForEach(item => item.State = State.Existing);
-        }
-
-        private void UpdateVersions(IEnumerable<Row> versions)
-        {
-            Rows.Clear();
-            Rows.AddRange(versions);
-            Rows.Add(new Row { LastRow = true });
-            DataGrid.ItemsSource = Rows;
-            FocusedField = null;
-            Validate(true);
-        }
-
         public IEnumerable<string> GetErrorMessages()
         {
-            Validate(true);
-            return Versions
-                .Where(v => v.State != State.Removed)
-                .SelectMany(v => v.Fields.Values.Select(f => f.ValidationError))
-                .Where(s => !string.IsNullOrEmpty(s))
+            return QtVersions
+                .Where(qtVersion => qtVersion.HasError)
+                .Select(qtVersion => qtVersion.ErrorMessage)
                 .Distinct();
         }
 
-        void Validate(bool mustRefresh)
+        private void OnQtVersionTable_Loaded(object sender, RoutedEventArgs e)
         {
-            ////////////////////////
-            // Validate cell values
-            foreach (var version in Versions) {
-                if (!version.State.HasFlag(State.Modified))
-                    continue;
+            ClearAdornerLayer();
+            VersionHost.SelectedIndex = 0;
 
-                //////////////////////
-                // Default validation
-                if (version.State.HasFlag((State)Column.IsDefault)) {
-                    version.FieldDefault.ValidationError = null;
-                    if (version is { IsDefault: true, Host: not BuildHost.Windows })
-                        version.FieldDefault.ValidationError = "Default version: Host must be Windows";
-                    mustRefresh |= version.FieldDefault.UpdateUi;
-                }
-
-                ///////////////////
-                // Name validation
-                if (version.State.HasFlag((State)Column.VersionName)) {
-                    version.FieldVersionName.ValidationError = null;
-                    if (string.IsNullOrEmpty(version.VersionName)) {
-                        version.FieldVersionName.ValidationError = "Name cannot be empty";
-                    } else if (version.VersionName.ToUpperInvariant() is "$(QTDIR)" or "$(DEFAULTQTVERSION)") {
-                        version.FieldVersionName.ValidationError = $"Name cannot be '{version.VersionName}'";
-                    } else if (Versions.Any(existing => existing != version
-                        && existing.VersionName == version.VersionName
-                        && existing.State != State.Removed)) {
-                        version.FieldVersionName.ValidationError = "Duplicated version name";
-                    }
-                    mustRefresh |= version.FieldVersionName.UpdateUi;
-                }
-
-                ///////////////////
-                // Host validation
-                if (version.State.HasFlag((State)Column.Host)) {
-                    version.FieldHost.ValidationError = null;
-                    if (version is { IsDefault: true, Host: not BuildHost.Windows })
-                        version.FieldHost.ValidationError = "Default version: Host must be Windows";
-                    mustRefresh |= version.FieldHost.UpdateUi;
-                }
-
-                ///////////////////
-                // Path validation
-                if (version.State.HasFlag((State)Column.Path)) {
-                    version.FieldPath.ValidationError = null;
-                    if (string.IsNullOrEmpty(version.Path)) {
-                        version.FieldPath.ValidationError = "Path cannot be empty";
-                    } else if (version.Host == BuildHost.Windows) {
-                        string path = NormalizePath(version.Path);
-                        if (path == null) {
-                            version.FieldPath.ValidationError = "Invalid path format";
-                        } else {
-                            if (!QMake.Exists(path))
-                                version.FieldPath.ValidationError = "Cannot find qmake.exe";
-                        }
-                    } else if (version.Host != BuildHost.Windows) {
-                        if (version.Path.Contains(':'))
-                            version.FieldPath.ValidationError = "Invalid character in path";
-                    }
-                    mustRefresh |= version.FieldPath.UpdateUi;
-                }
-
-                ///////////////////////
-                // Compiler validation
-                if (version.State.HasFlag((State)Column.Compiler)) {
-                    version.FieldCompiler.ValidationError = null;
-                    if (string.IsNullOrEmpty(version.Compiler)) {
-                        version.FieldCompiler.ValidationError = "Compiler cannot be empty";
-                    } else if (version.Host != BuildHost.Windows) {
-                        if (version.Compiler.Contains(':'))
-                            version.FieldCompiler.ValidationError = "Invalid character in name";
-                    }
-                    mustRefresh |= version.FieldCompiler.UpdateUi;
-                }
+            if (DataGrid.Items.Count > 0) {
+                DataGrid.SelectedItem = DataGrid.Items[0];
+                DataGrid.ScrollIntoView(DataGrid.SelectedItem);
+                SetControlsEnabled(true, false);
+            } else {
+                SetControlsEnabled(false, true);
             }
 
-            //////////////////////////////////////
-            // Refresh versions table if required
-            if (mustRefresh) {
-                // Reset bindings
-                foreach (var version in Versions) {
-                    foreach (var field in version.Fields.Values) {
-                        field.Control = null;
-                        field.Cell = null;
-                    }
-                }
-                // Refresh UI
-                DataGrid.Items.Refresh();
-            }
-        }
-
-        static readonly Brush InvalidCellBackground = new DrawingBrush
-        {
-            TileMode = TileMode.Tile,
-            Viewport = new Rect(0.0, 0.0, 10.0, 10.0),
-            ViewportUnits = BrushMappingMode.Absolute,
-            Viewbox = new Rect(0.0, 0.0, 10.0, 10.0),
-            ViewboxUnits = BrushMappingMode.Absolute,
-            Drawing = new DrawingGroup
-            {
-                Children = new DrawingCollection
-                {
-                    new GeometryDrawing
-                    {
-                        Brush = Brushes.Red,
-                        Geometry = new RectangleGeometry(new Rect(5, 0, 5, 10))
-                    }
-                }
-            },
-            Transform = new RotateTransform
-            {
-                Angle = -135.0,
-                CenterX = 0.5,
-                CenterY = 0.5
-            },
-            Opacity = 0.25
-        };
-
-        void Control_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is Control control && GetBinding(control) is Row version) {
-                if (version.LastRow)
-                    return;
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
-                    return;
-
-                var field = version.Fields[column];
-                field.Control = control;
-                field.Cell = FindContainingCell(control);
-                if (field.Cell != null) {
-                    field.Cell.Background =
-                        field.IsValid ? Brushes.Transparent : InvalidCellBackground;
-                }
-                if (field == FocusedField)
-                    control.Focus();
-                if (control is TextBox textBox && field.SelectionStart >= 0)
-                    textBox.Select(field.SelectionStart, 0);
-            }
-        }
-
-        void ComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is ComboBox comboBox && GetBinding(comboBox) is Row version) {
-                comboBox.IsEnabled = false;
-                var hosts = GetValues<string>(typeof(BuildHost));
-                comboBox.ItemsSource = hosts;
-                comboBox.Text = version.Host.Cast<string>();
-                comboBox.SelectedIndex = (int)version.Host;
-                comboBox.IsEnabled = true;
-            }
-            Control_Loaded(sender, e);
-        }
-
-        void Control_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (sender is Control control && GetBinding(control) is Row version) {
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
-                    return;
-
-                var field = version.Fields[column];
-                if (field.Control != control)
-                    return;
-                FocusedField = field;
-            }
-        }
-
-        void Control_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (sender is Control control && GetBinding(control) is Row version) {
-                if (string.IsNullOrEmpty(control.Name) || !control.Name.TryCast(out Column column))
-                    return;
-
-                var field = version.Fields[column];
-                if (field != FocusedField || field.Control != control)
-                    return;
-                FocusedField = null;
-            }
-        }
-
-        void TextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBox textBox && GetBinding(textBox) is Row version) {
-                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out Column column))
-                    return;
-
-                var field = version.Fields[column];
-                if (field.Control != textBox)
-                    return;
-                field.SelectionStart = textBox.SelectionStart;
-            }
-        }
-
-        void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is TextBox textBox && GetBinding(textBox) is Row version) {
-                if (string.IsNullOrEmpty(textBox.Name) || !textBox.Name.TryCast(out Column column))
-                    return;
-
-                var field = version.Fields[column];
-                if (field == null
-                    || field.Control != textBox
-                    || field.Value == textBox.Text)
-                    return;
-
-                field.SelectionStart = textBox.SelectionStart;
-                field.Value = textBox.Text;
-                version.State |= State.Modified | (State)column;
-
-                Validate(false);
-            }
-        }
-
-        void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is ComboBox comboBox && GetBinding(comboBox) is Row version) {
-                if (!comboBox.IsEnabled || comboBox.SelectedIndex < 0)
-                    return;
-                if (string.IsNullOrEmpty(comboBox.Name) || !comboBox.Name.TryCast(out Column column))
-                    return;
-
-                string comboBoxValue = comboBox.Items[comboBox.SelectedIndex] as string;
-                var field = version.Fields[column];
-                if (field == null
-                    || field.Control != comboBox
-                    || field.Value == comboBoxValue)
-                    return;
-
-                field.Value = comboBoxValue;
-                version.State |= State.Modified | (State)Column.Host;
-
-                bool mustRefresh = false;
-                if (version.Host != BuildHost.Windows && version.Compiler == "msvc") {
-                    version.Compiler = "g++";
-                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
-                    version.State |= (State)Column.Compiler;
-                    mustRefresh = true;
-                } else if (version is { Host: BuildHost.Windows, Compiler: not "msvc" }) {
-                    version.Compiler = "msvc";
-                    version.FieldCompiler.SelectionStart = version.Compiler.Length;
-                    version.State |= (State)Column.Compiler;
-                    mustRefresh = true;
-                }
-
-                Validate(mustRefresh);
-            }
-        }
-
-        static void SetDefaultState(ref Row version, bool value)
-        {
-            version.IsDefault = value;
-            version.State |= State.Modified | (State)Column.IsDefault;
-        }
-
-        void Default_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox checkBox && GetBinding(checkBox) is Row version) {
-                var defaultVersion =
-                    Rows.FirstOrDefault(row => row is { IsDefault: true, RowVisible: true });
-                if (defaultVersion != null)
-                    SetDefaultState(ref defaultVersion, false);
-                SetDefaultState(ref version, true);
-                Validate(true);
-            }
-        }
-
-        void Add_Click(object sender, RoutedEventArgs e)
-        {
-            var version = new Row
-            {
-                IsDefault = Versions.All(x => x.State == State.Removed),
-                Host = BuildHost.Windows,
-                Path = "",
-                Compiler = "msvc",
-                LastRow = false,
-                State = State.Modified | (State)Column.VersionName | (State)Column.Host
-                                       | (State)Column.Path | (State)Column.Compiler
-            };
-            if (version.IsDefault)
-                version.State |= (State)Column.IsDefault;
-            Rows.Insert(Rows.Count - 1, version);
-            FocusedField = version.FieldVersionName;
-            Validate(true);
-        }
-
-        void Remove_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && GetBinding(button) is Row version) {
-                version.State = State.Removed;
-                if (version.IsDefault) {
-                    var first = Versions.FirstOrDefault(x => x.State != State.Removed);
-                    if (first != null)
-                        SetDefaultState(ref first, true);
-                }
-                Validate(true);
-            }
-        }
-
-        static string NormalizePath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return path;
-            try {
-                return Path.GetFullPath(new Uri(path).LocalPath)
-                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                    .ToUpperInvariant();
-            } catch (Exception) {
-                return null;
-            }
-        }
-
-        void Explorer_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && GetBinding(button) is Row version) {
-                var openFileDialog = new OpenFileDialog
-                {
-                    AddExtension = false,
-                    CheckFileExists = true,
-                    CheckPathExists = true,
-                    Filter = "qmake|qmake.exe;qmake.bat",
-                    Title = "Qt VS Tools - Select qmake.exe"
-                };
-                if (openFileDialog.ShowDialog() == true) {
-                    var qmakePath = openFileDialog.FileName;
-                    var qmakeDir = Path.GetDirectoryName(qmakePath);
-                    var previousPath = NormalizePath(version.Path);
-                    if (Path.GetFileName(qmakeDir ?? "").Equals("bin", IgnoreCase)) {
-                        qmakeDir = Path.GetDirectoryName(qmakeDir);
-                        version.Path = qmakeDir;
-                    } else {
-                        version.Path = qmakePath;
-                    }
-
-                    if (previousPath != NormalizePath(version.Path))
-                        version.State |= State.Modified | (State)Column.Path;
-
-                    if (string.IsNullOrEmpty(version.VersionName)) {
-                        version.VersionName = $"{Path.GetFileName(Path.GetDirectoryName(qmakeDir))}"
-                          + $"_{Path.GetFileName(qmakeDir)}".Replace(" ", "_");
-                        version.State |= State.Modified | (State)Column.VersionName;
-                    }
-
-                    Validate(true);
-                }
-            }
-        }
-
-        static object GetBinding(FrameworkElement control)
-        {
-            if (control?.BindingGroup == null)
-                return null;
-            return control.BindingGroup.Items.Count == 0 ? null : control.BindingGroup.Items[0];
-        }
-
-        static DataGridCell FindContainingCell(DependencyObject control)
-        {
-            while (control != null) {
-                if (control is ContentPresenter {Parent: DataGridCell cell})
-                    return cell;
-                control = VisualTreeHelper.GetParent(control);
-            }
-            return null;
-        }
-
-        private void QtVersionsTable_OnLoaded(object sender, RoutedEventArgs e)
-        {
             var enableAutodetect = new[]
             {
                 Environment.GetFolderPath(Environment.SpecialFolder.Programs),
@@ -580,6 +167,95 @@ namespace QtVsTools.Core.Options
                 Environment.SpecialFolder.ApplicationData), QtVersionsXmlCreator));
 
             ButtonAutodetect.IsEnabled = enableAutodetect;
+        }
+
+        #region Table modifier
+
+        private void OnDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+            VersionHost.SelectedItem = qtVersion.Host.Cast<string>();
+        }
+
+        private void OnAddNewVersion_Click(object sender, RoutedEventArgs e)
+        {
+            var newVersion = new QtVersion
+            {
+                IsDefault = DataGrid.Items.Count <= 0,
+                Name = "",
+                Path = "",
+                Host = BuildHost.Windows,
+                Compiler = "msvc",
+                State = State.NameModified | State.PathModified | State.HostModified
+                    | State.CompilerModified
+            };
+
+            SortDescription? activeSortDescription = null;
+            if (CollectionViewSource.GetDefaultView(DataGrid.ItemsSource) is var view) {
+                if (view.SortDescriptions.Count > 0)
+                    activeSortDescription = view.SortDescriptions[0];
+                view.SortDescriptions.Clear();
+            }
+
+            if (DataGrid.SelectedItem is QtVersion selectedVersion) {
+                var selectedIndex = QtVersions.IndexOf(selectedVersion);
+                if (selectedIndex >= 0 && selectedIndex < QtVersions.Count)
+                    QtVersions.Insert(selectedIndex + 1, newVersion);
+            } else {
+                QtVersions.Add(newVersion);
+            }
+
+            DataGrid.Items.Refresh();
+
+            if (activeSortDescription.HasValue) {
+                view.SortDescriptions.Add(activeSortDescription.Value);
+                view.Refresh();
+            }
+
+            DataGrid.SelectedItem = newVersion;
+            DataGrid.ScrollIntoView(DataGrid.SelectedItem);
+
+            if (QtVersions.Count == 1)
+                SetControlsEnabled(true, false);
+
+            VersionName.Focus();
+            OnVersionName_TextChanged(VersionName, null);
+            OnVersionPath_TextChanged(VersionPath, null);
+        }
+
+        private void OnRemoveVersion_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            var selectedIndex = DataGrid.SelectedIndex;
+            QtVersions.Remove(qtVersion);
+            RemovedQtVersions.Add(qtVersion);
+
+            if (!QtVersions.Any())
+                SetControlsEnabled(false, true);
+
+            UpdateSelection(selectedIndex);
+        }
+
+        private void OnSetAsDefault_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            foreach (var version in QtVersions) {
+                version.IsDefault = version == qtVersion;
+                switch (version.InitialIsDefault) {
+                case true when version.IsDefault:
+                case false when !version.IsDefault:
+                    version.State &= ~State.DefaultModified;
+                    break;
+                default:
+                    version.State |= State.DefaultModified;
+                    break;
+                }
+            }
         }
 
         private void OnBrowseQtInstallation_Click(object sender, RoutedEventArgs e)
@@ -602,6 +278,7 @@ namespace QtVsTools.Core.Options
                         pwzDlgTitle = "Please select a Qt installer location"
                     }
                 };
+
                 var result = iVsUiShell.GetDirectoryViaBrowseDlg(browseInfo);
                 if (result == VSConstants.OLE_E_PROMPTSAVECANCELLED)
                     return;
@@ -615,7 +292,6 @@ namespace QtVsTools.Core.Options
                 if (pDirName != IntPtr.Zero)
                     Marshal.FreeCoTaskMem(pDirName);
             }
-
 
             var waitDialog = WaitDialog.Start("Qt VS Tools", "Searching for Qt Installations",
                 delay: 2, isCancelable: true);
@@ -643,7 +319,7 @@ namespace QtVsTools.Core.Options
             waitDialog.Stop();
         }
 
-        private void OnAutodetectQtInstallation_Click(object sender, RoutedEventArgs e)
+        private void OnAutodetectQtInstallations_Click(object sender, RoutedEventArgs e)
         {
             var versions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -665,18 +341,148 @@ namespace QtVsTools.Core.Options
 
         private void OnCleanupQtInstallations_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var version in Versions) {
-                if (version.State == State.Removed)
-                    continue;
-                if (version.Host != BuildHost.Windows)
+            var selectedIndex = DataGrid.SelectedIndex;
+
+            var updateDefault = false;
+            for (var i = QtVersions.Count - 1; i >= 0; --i) {
+                var tmp = QtVersions[i];
+                if (tmp.Host != BuildHost.Windows)
                     continue;
 
-                var path = NormalizePath(version.Path);
-                if (path == null || !QMake.Exists(path))
-                    version.State = State.Removed;
+                var path = NormalizePath(tmp.Path);
+                if (path != null && QMake.Exists(path))
+                    continue;
+
+                updateDefault |= tmp.IsDefault;
+
+                QtVersions.RemoveAt(i);
+                RemovedQtVersions.Add(tmp);
             }
-            Validate(true);
+
+            if (updateDefault
+                && QtVersions.FirstOrDefault(v => v.Host == BuildHost.Windows) is {} version) {
+                version.IsDefault = true;
+                version.State |= State.DefaultModified;
+            }
+
+            if (!QtVersions.Any())
+                SetControlsEnabled(false, true);
+
+            UpdateSelection(selectedIndex);
         }
+
+        #endregion
+
+        #region Version details
+
+        private void OnVersionName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox { Text: { } text } box)
+                return;
+
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            if (qtVersion.State.HasFlag(State.Existing)) {
+                if (qtVersion.InitialName.Equals(text, StringComparison.Ordinal))
+                    qtVersion.State &= ~State.NameModified;
+                else
+                    qtVersion.State |= State.NameModified;
+            }
+
+            Validate(qtVersion);
+            HandleError(ValidateVersionName(qtVersion), box, ref nameAdorner);
+        }
+
+        private void OnVersionPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox { Text: { } text } box)
+                return;
+
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            if (qtVersion.State.HasFlag(State.Existing)) {
+                var normalized = FromNativeSeparators(NormalizePath(text) ?? "");
+                if (qtVersion.InitialPath.Equals(normalized, Utils.IgnoreCase))
+                    qtVersion.State &= ~State.PathModified;
+                else
+                    qtVersion.State |= State.PathModified;
+            }
+
+            Validate(qtVersion);
+            HandleError(ValidateVersionPath(qtVersion), box, ref pathAdorner);
+        }
+
+        private void OnUpdateVersionPath_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                AddExtension = false,
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Filter = "qmake|qmake.exe;qmake.bat",
+                Title = "Qt VS Tools - Select qmake.exe",
+                InitialDirectory = VersionPath.Text
+            };
+            if (openFileDialog.ShowDialog() != true)
+                return;
+
+            var qmakeBinDir = Path.GetDirectoryName(openFileDialog.FileName);
+            VersionPath.Text = Path.GetDirectoryName(qmakeBinDir) ?? "";
+            if (!string.IsNullOrEmpty(VersionName.Text))
+                return;
+
+            var compilerDir = Path.GetDirectoryName(qmakeBinDir);
+            var qtVersionDir = Path.GetDirectoryName(compilerDir);
+            VersionName.Text = $"{Path.GetFileName(qtVersionDir)}"
+                + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");
+        }
+
+        private void OnVersionHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            qtVersion.Host = VersionHost.SelectedItem.ToString().Cast(BuildHost.Windows);
+            qtVersion.State = qtVersion.InitialHost == qtVersion.Host ?
+                qtVersion.State & ~State.HostModified :
+                qtVersion.State | State.HostModified;
+
+            if (qtVersion.Host != BuildHost.Windows) {
+                if (VersionCompiler.Text == "msvc")
+                    VersionCompiler.Text = "g++";
+            } else {
+                VersionCompiler.Text = "msvc";
+            }
+            VersionCompiler.IsEnabled = qtVersion.Host != BuildHost.Windows;
+
+            Validate(qtVersion);
+            HandleError(ValidateVersionHost(qtVersion), VersionPath, ref compilerAdorner);
+        }
+
+        private void OnVersionCompiler_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox { Text: { } text } box)
+                return;
+
+            if (DataGrid.SelectedItem is not QtVersion qtVersion)
+                return;
+
+            if (qtVersion.State.HasFlag(State.Existing)) {
+                if (qtVersion.InitialCompiler.Equals(text, StringComparison.Ordinal))
+                    qtVersion.State &= ~State.CompilerModified;
+                else
+                    qtVersion.State |= State.CompilerModified;
+            }
+
+            Validate(qtVersion);
+            HandleError(ValidateVersionCompiler(qtVersion), box, ref compilerAdorner);
+        }
+
+        #endregion
+
+        #region Helper functions
 
         private static string GetShortcutTargetPath(string shortcutPath)
         {
@@ -694,6 +500,7 @@ namespace QtVsTools.Core.Options
             return "";
         }
 
+
         private static IEnumerable<string> ParseQtVersionsXml(string xmlData)
         {
             var xmlDoc = XDocument.Parse(xmlData);
@@ -702,6 +509,7 @@ namespace QtVsTools.Core.Options
                 .FirstOrDefault(e => (string)e.Attribute("key") == "QMakePath")?.Value)
                 .Where(value => value != null);
         }
+
 
         // Search for the given file name file starting from the given directory and
         // recursively moving up the directory tree until the root directory is reached.
@@ -738,7 +546,7 @@ namespace QtVsTools.Core.Options
 
         private void AddQtVersionsFromPath(IEnumerable<string> allQMakePath)
         {
-            var versions = new List<Row>();
+            var versions = new List<QtVersion>();
 
             // Create a list of new versions
             foreach (var qmakePath in allQMakePath) {
@@ -748,38 +556,165 @@ namespace QtVsTools.Core.Options
                 var compilerDir = Path.GetDirectoryName(qmakeBinDir);
                 var qtVersionDir = Path.GetDirectoryName(compilerDir);
                 var versionName = $"{Path.GetFileName(qtVersionDir)}"
-                    + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");
+                  + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");
                 versions.Add(
-                    new Row
+                    new QtVersion
                     {
                         IsDefault = false,
-                        VersionName = versionName,
+                        Name = versionName,
                         Path = compilerDir,
                         Host = BuildHost.Windows,
                         Compiler = "msvc",
-                        State = State.Modified | (State)Column.VersionName | (State)Column.Path
-                            | (State)Column.Host | (State)Column.Compiler
+                        State = State.NameModified | State.PathModified | State.HostModified
+                            | State.CompilerModified
                     });
             }
 
             if (!versions.Any())
                 return;
 
-            var activeVersions = Versions.Where(version => version.State != State.Removed).ToList();
-
-            // Set the default flag if necessary
-            var isDefault = !activeVersions.Any(version => version.IsDefault);
-            if (isDefault && versions.FirstOrDefault() is {} row) {
-                row.IsDefault = true;
-                row.State |= State.Modified | (State)Column.IsDefault;
+            if (versions.FirstOrDefault() is {} version) {
+                version.IsDefault = DataGrid.Items.Count <= 0;
+                version.State |= version.IsDefault ? State.DefaultModified : State.Unknown;
             }
 
-            // Remove duplicates based on the VersionName
-            versions = versions.Where(version =>
-                    activeVersions.All(active => active.VersionName != version.VersionName))
-                .ToList();
+            foreach (var qtVersion in versions)
+                Validate(qtVersion);
 
-            UpdateVersions(Versions.Concat(versions).ToList());
+            QtVersions = new ObservableCollection<QtVersion>(
+                QtVersions
+                    .Union(versions)
+                    .GroupBy(qt => qt.Name)
+                    .Select(group => group.First()));
+
+            if (QtVersions.Any())
+                SetControlsEnabled(true, false);
         }
+
+        private void Validate(QtVersion version)
+        {
+            if (version == null)
+                return;
+
+            var validationFunctions = new List<Func<QtVersion, string>>
+            {
+                ValidateIsDefault,
+                ValidateVersionName,
+                ValidateVersionPath,
+                ValidateVersionHost,
+                ValidateVersionCompiler
+            };
+
+            var errorMessage = string.Join(Environment.NewLine, validationFunctions
+                .Select(validationFunction => validationFunction(version))
+                .Where(message => !string.IsNullOrEmpty(message)));
+
+            version.ErrorMessage = errorMessage;
+        }
+
+        private static string ValidateIsDefault(QtVersion version)
+        {
+            if (!version.State.HasFlag(State.DefaultModified))
+                return "";
+            return version is { IsDefault: true, Host: not BuildHost.Windows }
+                ? "Default version: Host must be Windows" : "";
+        }
+
+        private string ValidateVersionName(QtVersion version)
+        {
+            if (!version.State.HasFlag(State.NameModified))
+                return "";
+            if (string.IsNullOrEmpty(version.Name))
+                return "Name cannot be empty";
+            if (version.Name.ToUpperInvariant() is "$(QTDIR)" or "$(DEFAULTQTVERSION)")
+                return $"Name cannot be '{version.Name}'";
+            return QtVersions.Any(otherVersion => otherVersion != version
+                    && otherVersion.Name == version.Name)
+                ? "Version name must be unique" : "";
+        }
+
+        private static string ValidateVersionPath(QtVersion version)
+        {
+            if (!version.State.HasFlag(State.PathModified))
+                return "";
+            if (string.IsNullOrEmpty(version.Path))
+                return "Location cannot be empty";
+            if (version.Host != BuildHost.Windows)
+                return version.Path.Contains(':') ? "Invalid character in path" : "";
+            var path = NormalizePath(version.Path);
+            if (string.IsNullOrEmpty(path))
+                return "Invalid path format";
+            return !QMake.Exists(path) ? "Cannot find qmake.exe" : "";
+        }
+
+        private static string ValidateVersionHost(QtVersion version)
+        {
+            if (!version.State.HasFlag(State.HostModified))
+                return "";
+            if (version.Host != BuildHost.Windows)
+                return version.Path.Contains(':') ? "Invalid character in path" : "";
+            return version is { IsDefault: true, Host: not BuildHost.Windows }
+                ? "Default version: Host must be Windows" : "";
+        }
+
+        private static string ValidateVersionCompiler(QtVersion version)
+        {
+            if (!version.State.HasFlag(State.CompilerModified))
+                return "";
+            if (string.IsNullOrEmpty(version.Compiler))
+                return "Compiler cannot be empty";
+            if (version.Host == BuildHost.Windows)
+                return "";
+            return version.Compiler.Contains(':') ? "Invalid character in name" : "";
+        }
+
+        private void UpdateSelection(int index)
+        {
+            if (index < QtVersions.Count) {
+                // current row or row behind
+                DataGrid.SelectedIndex = index;
+            } else if (index > 0) {
+                // row before
+                DataGrid.SelectedIndex = index - 1;
+            } else {
+                // no more rows available
+                ClearAdornerLayer();
+                DataGrid.SelectedItem = null;
+            }
+        }
+
+        private void SetControlsEnabled(bool enabled, bool includeCompiler)
+        {
+            VersionName.IsEnabled = enabled;
+            VersionPath.IsEnabled = enabled;
+            VersionHost.IsEnabled = enabled;
+            if (includeCompiler)
+                VersionCompiler.IsEnabled = enabled;
+        }
+
+        private void ClearAdornerLayer()
+        {
+            HandleError("", VersionName, ref nameAdorner);
+            HandleError("", VersionPath, ref pathAdorner);
+            HandleError("", VersionCompiler, ref compilerAdorner);
+        }
+
+        private static void HandleError(string errorMessage, Control control, ref UiAdorner adorner)
+        {
+            control.ToolTip = string.IsNullOrEmpty(errorMessage) ? null : errorMessage;
+            if (string.IsNullOrEmpty(errorMessage)) {
+                if (adorner == null)
+                    return;
+                AdornerLayer.GetAdornerLayer(control)?.Remove(adorner);
+                adorner = null;
+            } else {
+                if (adorner != null)
+                    return;
+                adorner = new UiAdorner(control);
+                AdornerLayer.GetAdornerLayer(control)?.Add(adorner);
+            }
+        }
+
+        #endregion
     }
 }

@@ -9,39 +9,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:options="clr-namespace:QtVsTools.Core.Options"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
-             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
-             xmlns:scm="clr-namespace:System.ComponentModel;assembly=PresentationFramework"
-             xmlns:local="clr-namespace:QtVsTools.Core.Options"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              mc:Ignorable="d"
-             d:DesignHeight="450"
              d:DesignWidth="800"
-             Loaded="QtVersionsTable_OnLoaded">
+             d:DesignHeight="450"
+             Loaded="OnQtVersionTable_Loaded">
   <UserControl.Resources>
-    <Style x:Key="DesignTimeStyle"
-           TargetType="{x:Type FrameworkElement}">
-      <Style.Triggers>
-        <Trigger Property="scm:DesignerProperties.IsInDesignMode"
-                 Value="True">
-          <Setter Property="Visibility"
-                  Value="Visible" />
-        </Trigger>
-      </Style.Triggers>
-    </Style>
+    <ObjectDataProvider x:Key="EnumStringValues"
+                        MethodName="BuildHostStrings"
+                        ObjectType="{x:Type options:QtVersion}">
+    </ObjectDataProvider>
 
-    <Style x:Key="DesignTimeRectangle"
-           TargetType="{x:Type Rectangle}"
-           BasedOn="{StaticResource DesignTimeStyle}">
-      <Setter Property="Height"
-              Value="16" />
-      <Setter Property="Width"
-              Value="16" />
-      <Setter Property="Stroke"
-              Value="Red" />
-      <Setter Property="Visibility"
-              Value="Hidden" />
-    </Style>
+    <options:BuildHostConverter x:Key="BuildHostConverter" />
 
     <BooleanToVisibilityConverter x:Key="b2v" />
     <vsui:BrushToColorConverter x:Key="BrushToColorConverter" />
@@ -50,278 +32,178 @@
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <DataGrid Margin="0,0,0,0"
-              Name="DataGrid"
-              AutoGenerateColumns="False"
+    <DataGrid Grid.Row="0"
+              x:Name="DataGrid"
               IsReadOnly="True"
-              BorderThickness="1"
-              BorderBrush="LightGray"
-              GridLinesVisibility="All"
-              HorizontalGridLinesBrush="LightGray"
-              VerticalGridLinesBrush="LightGray"
-              CanUserReorderColumns="False"
-              CanUserSortColumns="False"
-              CanUserResizeRows="False"
-              RowHeaderWidth="0"
-              FrozenColumnCount="0"
-              Grid.Row="0"
+              CanUserAddRows="False"
+              SelectionUnit="FullRow"
+              CanUserDeleteRows="False"
+              CanUserSortColumns="True"
+              GridLinesVisibility="None"
+              HeadersVisibility="Column"
+              AutoGenerateColumns="False"
+              ToolTipService.ShowOnDisabled="True"
+              SelectionChanged="OnDataGrid_SelectionChanged"
               d:ItemsSource="{d:SampleData ItemCount=3}">
-    <DataGrid.Resources>
-      <Style x:Key="TextBoxStyle"
-             TargetType="{x:Type TextBox}">
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="HorizontalAlignment"
-                Value="Stretch" />
-        <Setter Property="VerticalAlignment"
-                Value="Center" />
-        <Setter Property="Visibility"
-                Value="{Binding RowContentVisibility}" />
+      <DataGrid.DataContext>
+        <options:QtVersion />
+      </DataGrid.DataContext>
 
-        <EventSetter Event="Loaded"
-                     Handler="Control_Loaded" />
-        <EventSetter Event="GotFocus"
-                     Handler="Control_GotFocus" />
-        <EventSetter Event="LostFocus"
-                     Handler="Control_LostFocus" />
-        <EventSetter Event="TextChanged"
-                     Handler="TextBox_TextChanged" />
-        <EventSetter Event="SelectionChanged"
-                     Handler="TextBox_SelectionChanged" />
-        <Style.Resources>
-          <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                           Color="LimeGreen" />
-        </Style.Resources>
-      </Style>
+      <DataGrid.Resources>
+        <Style TargetType="DataGridCell">
+          <Setter Property="BorderThickness"
+                  Value="0" />
+          <Style.Triggers>
+            <Trigger Property="IsSelected"
+                     Value="True">
+              <Setter Property="Background"
+                      Value="LightSkyBlue" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
 
-      <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                       Color="Transparent" />
-      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
-                       Color="Transparent" />
-      <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
-                       Color="Transparent" />
-    </DataGrid.Resources>
+        <Style x:Key="NoAccessKeyLabelStyle"
+               TargetType="Label">
+          <Setter Property="MinHeight"
+                  Value="30" />
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="Label">
+                <ContentPresenter VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  Margin="3,0"
+                                  RecognizesAccessKey="False" />
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Style>
+      </DataGrid.Resources>
 
-    <DataGrid.RowStyle>
-      <Style TargetType="{x:Type DataGridRow}"
-             BasedOn="{StaticResource DesignTimeStyle}">
-        <Style.Setters>
-          <Setter Property="Visibility"
-                  Value="{Binding RowVisible, Converter={StaticResource b2v}}" />
-        </Style.Setters>
-      </Style>
-    </DataGrid.RowStyle>
+      <DataGrid.RowStyle>
+        <Style TargetType="DataGridRow">
+          <Setter Property="Margin"
+                  Value="0,1,0,1" />
+          <Setter Property="ToolTip">
+            <Setter.Value>
+              <Binding Path="ErrorMessage">
+                <Binding.Converter>
+                  <options:ErrorTooltipConverter />
+                </Binding.Converter>
+              </Binding>
+            </Setter.Value>
+          </Setter>
+        </Style>
+      </DataGrid.RowStyle>
 
-    <DataGrid.CellStyle>
-      <Style TargetType="DataGridCell">
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="FocusVisualStyle"
-                Value="{x:Null}" />
-      </Style>
-    </DataGrid.CellStyle>
+      <DataGrid.Columns>
+        <!--//// Default ////-->
+        <DataGridTemplateColumn Width="Auto"
+                                Header="Default"
+                                CanUserResize="False"
+                                CanUserReorder="False"
+                                x:Name="IsDefaultColumn"
+                                SortMemberPath="IsDefault">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Grid MinHeight="30"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
+                                                RelativeSource={RelativeSource Self},
+                                                Converter={StaticResource BrushToColorConverter}}">
+                <imaging:CrispImage Width="16"
+                                    Height="16">
+                  <imaging:CrispImage.Style>
+                    <Style TargetType="imaging:CrispImage">
+                      <Style.Triggers>
+                        <MultiDataTrigger>
+                          <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsDefault}"
+                                       Value="True" />
+                            <Condition Binding="{Binding HasError}"
+                                       Value="False" />
+                          </MultiDataTrigger.Conditions>
+                          <Setter Property="Moniker"
+                                  Value="{x:Static catalog:KnownMonikers.Favorite}" />
+                          <Setter Property="Visibility"
+                                  Value="{Binding IsDefault, Converter={StaticResource b2v}}" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding HasError}"
+                                     Value="True">
+                          <Setter Property="Moniker"
+                                  Value="{x:Static catalog:KnownMonikers.StatusWarning}" />
+                          <Setter Property="Visibility"
+                                  Value="Visible" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </imaging:CrispImage.Style>
+                </imaging:CrispImage>
+              </Grid>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-    <DataGrid.Columns>
-      <!--//// Default ////-->
-      <DataGridTemplateColumn Header="Default"
-                              CanUserResize="False">
-        <DataGridTemplateColumn.CellTemplate>
-          <DataTemplate>
-            <ContentControl Content="{Binding}">
-              <ContentControl.ContentTemplateSelector>
-                <local:ErrorOnApplyTemplateSelector>
-                  <local:ErrorOnApplyTemplateSelector.DefaultTemplate>
-                    <DataTemplate>
-                      <CheckBox x:Name="IsDefault"
-                                IsChecked="{Binding IsDefault}"
-                                Focusable="{Binding DefaultEnabled}"
-                                Visibility="{Binding RowContentVisibility}"
-                                Background="Transparent"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                ToolTip="{Binding FieldDefault.ToolTip}"
-                                Click="Default_Click"
-                                Loaded="Control_Loaded">
-                      </CheckBox>
-                    </DataTemplate>
-                  </local:ErrorOnApplyTemplateSelector.DefaultTemplate>
-                  <local:ErrorOnApplyTemplateSelector.ErrorTemplate>
-                    <DataTemplate>
-                      <Grid HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="4"
-                            ToolTip="{Binding ErrorMessageOnApply}"
-                            vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-                            RelativeSource={RelativeSource Self},
-                            Converter={StaticResource BrushToColorConverter}}">
-                        <Rectangle Style="{StaticResource DesignTimeRectangle}" />
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.StatusWarning}" />
-                      </Grid>
-                      </DataTemplate>
-                  </local:ErrorOnApplyTemplateSelector.ErrorTemplate>
-                </local:ErrorOnApplyTemplateSelector>
-              </ContentControl.ContentTemplateSelector>
-            </ContentControl>
-          </DataTemplate>
-        </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
+        <!--//// Version ////-->
+        <DataGridTemplateColumn Width="*"
+                                Header="Name"
+                                SortMemberPath="Name"
+                                x:Name="VersionNameColumn">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Label Content="{Binding Name}"
+                     Style="{StaticResource NoAccessKeyLabelStyle}" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-      <!--//// Version ////-->
-      <DataGridTemplateColumn Header="Version">
-        <DataGridTemplateColumn.CellTemplate>
-          <DataTemplate>
-            <Grid>
-              <Button Cursor="Hand"
-                      Visibility="{Binding RowContentVisibility}"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Center"
-                      Click="Remove_Click">
-                <Button.Template>
-                  <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Margin="4"
-                          ToolTip="Remove Qt version"
-                          vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-                            RelativeSource={RelativeSource Self},
-                            Converter={StaticResource BrushToColorConverter}}">
-                      <Rectangle Style="{StaticResource DesignTimeRectangle}" />
-                      <imaging:CrispImage Width="16"
-                                          Height="16"
-                                          Moniker="{x:Static catalog:KnownMonikers.Remove}" />
-                    </Grid>
-                  </ControlTemplate>
-                </Button.Template>
-              </Button>
-              <Button Cursor="Hand"
-                      Visibility="{Binding ButtonAddVisibility}"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Center"
-                      Click="Add_Click">
-                <Button.Template>
-                  <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Stretch"
-                          VerticalAlignment="Center"
-                          Margin="4">
-                      <Grid HorizontalAlignment="Left"
-                            vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-                              RelativeSource={RelativeSource Self},
-                              Converter={StaticResource BrushToColorConverter}}">
-                        <Rectangle Style="{StaticResource DesignTimeRectangle}" />
-                        <imaging:CrispImage Width="16"
-                                            Height="16"
-                                            Moniker="{x:Static catalog:KnownMonikers.Add}" />
-                      </Grid>
-                      <TextBlock Text="&lt;add new Qt version&gt;"
-                                 Foreground="SlateGray"
-                                 Margin="20,4,0,4"
-                                 HorizontalAlignment="Stretch"
-                                 VerticalAlignment="Center" />
-                    </Grid>
-                  </ControlTemplate>
-                </Button.Template>
-              </Button>
-              <TextBox Style="{StaticResource TextBoxStyle}"
-                       x:Name="VersionName"
-                       Text="{Binding VersionName}"
-                       Margin="24,4,4,4"
-                       IsEnabled="{Binding NameEnabled}"
-                       FontWeight="{Binding FontWeight}"
-                       ToolTip="{Binding FieldVersionName.ToolTip}">
-              </TextBox>
-            </Grid>
-          </DataTemplate>
-        </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
+        <!--//// Path ////-->
+        <DataGridTemplateColumn Width="2*"
+                                Header="Location"
+                                SortMemberPath="Path"
+                                x:Name="VersionPathColumn">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Label Content="{Binding Path}"
+                     Style="{StaticResource NoAccessKeyLabelStyle}" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-      <!--//// Host ////-->
-      <DataGridTemplateColumn Header="Host">
-        <DataGridTemplateColumn.CellTemplate>
-          <DataTemplate>
-            <ComboBox x:Name="Host"
-                      Visibility="{Binding RowContentVisibility}"
-                      IsEditable="True"
-                      IsReadOnly="True"
-                      BorderThickness="0"
-                      Background="Transparent"
-                      Margin="4"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Center"
-                      FrameworkElement.Loaded="ComboBox_Loaded"
-                      SelectionChanged="ComboBox_SelectionChanged"
-                      ToolTip="{Binding FieldHost.ToolTip}">
-              <ComboBox.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                                 Color="LimeGreen" />
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
-                                 Color="Transparent" />
-              </ComboBox.Resources>
-            </ComboBox>
-          </DataTemplate>
-        </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
+        <!--//// Host ////-->
+        <DataGridTemplateColumn Width="Auto"
+                                Header="Host"
+                                SortMemberPath="Host"
+                                x:Name="VersionHostColumn">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Label Style="{StaticResource NoAccessKeyLabelStyle}"
+                     Content="{Binding Host, Converter={StaticResource BuildHostConverter}}" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-      <!--//// Path ////-->
-      <DataGridTemplateColumn Header="Path">
-        <DataGridTemplateColumn.CellTemplate>
-          <DataTemplate>
-            <Grid>
-              <Button Cursor="Hand"
-                      Visibility="{Binding ButtonBrowseVisibility}"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Center"
-                      Click="Explorer_Click">
-                <Button.Template>
-                  <ControlTemplate TargetType="Button">
-                    <Grid HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Margin="4"
-                          vsui:ImageThemingUtilities.ImageBackgroundColor="{Binding Background,
-                            RelativeSource={RelativeSource Self},
-                            Converter={StaticResource BrushToColorConverter}}">
-                      <Rectangle Style="{StaticResource DesignTimeRectangle}" />
-                      <imaging:CrispImage Width="16"
-                                          Height="16"
-                                          Moniker="{x:Static catalog:KnownMonikers.OpenFolder}" />
-                    </Grid>
-                  </ControlTemplate>
-                </Button.Template>
-              </Button>
-              <TextBox Style="{StaticResource TextBoxStyle}"
-                       x:Name="Path"
-                       d:Margin="24,4,4,4"
-                       Text="{Binding Path}"
-                       Margin="{Binding PathMargin}"
-                       ToolTip="{Binding FieldPath.ToolTip}">
-              </TextBox>
-            </Grid>
-          </DataTemplate>
-        </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
+        <!--//// Compiler ////-->
+        <DataGridTemplateColumn Width="Auto"
+                                Header="Compiler"
+                                SortMemberPath="Compiler"
+                                x:Name="VersionCompilerColumn">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Label Content="{Binding Compiler}"
+                     Style="{StaticResource NoAccessKeyLabelStyle}" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-      <!--//// Compiler ////-->
-      <DataGridTemplateColumn Header="Compiler">
-        <DataGridTemplateColumn.CellTemplate>
-          <DataTemplate>
-            <TextBox Style="{StaticResource TextBoxStyle}"
-                     x:Name="Compiler"
-                     Text="{Binding Compiler}"
-                     Margin="4"
-                     IsEnabled="{Binding CompilerEnabled}"
-                     ToolTip="{Binding FieldCompiler.ToolTip}">
-            </TextBox>
-          </DataTemplate>
-        </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
-    </DataGrid.Columns>
-  </DataGrid>
+        <DataGridTemplateColumn Width="*"
+                                CanUserReorder="False" />
+      </DataGrid.Columns>
+    </DataGrid>
 
     <Grid Grid.Row="1">
       <Grid.ColumnDefinitions>
@@ -330,35 +212,215 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+
       </Grid.ColumnDefinitions>
 
-      <Label Grid.Column="0"
-             MinHeight="24"
-             Margin="0,6,0,0">Register Qt versions from a Qt installer location:</Label>
+      <Button Grid.Column="0"
+              MinWidth="80"
+              MinHeight="24"
+              Margin="0,6,6,0"
+              Padding="10,0,0,0"
+              Click="OnAddNewVersion_Click">Add</Button>
       <Button Grid.Column="1"
               MinWidth="80"
               MinHeight="24"
               Margin="0,6,6,0"
+              Content="Remove"
               Padding="10,0,10,0"
-              Click="OnBrowseQtInstallation_Click">Browse</Button>
+              Click="OnRemoveVersion_Click">
+        <Button.Style>
+          <Style TargetType="Button">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=DataGrid, Path=SelectedItem.IsDefault}"
+                           Value="True">
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding ElementName=DataGrid, Path=Items.Count}"
+                           Value="1">
+                <Setter Property="IsEnabled"
+                        Value="True" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding ElementName=DataGrid, Path=Items.Count}"
+                           Value="0">
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
+      </Button>
       <Button Grid.Column="2"
               MinWidth="80"
               MinHeight="24"
-              Margin="0,6,0,0"
+              Margin="0,6,6,0"
+              Padding="10,0,10,0"
+              Content="Default"
+              ToolTip="Set the selected Qt version as default for new projects"
+              Click="OnSetAsDefault_Click">
+        <Button.Style>
+          <Style TargetType="Button">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=DataGrid, Path=Items.Count}"
+                           Value="0">
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </DataTrigger>
+              <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                  <Condition Binding="{Binding ElementName=DataGrid, Path=SelectedItem.IsDefault}"
+                             Value="True" />
+                  <Condition Binding="{Binding ElementName=VersionHost, Path=SelectedItem}"
+                             Value="Windows" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </MultiDataTrigger>
+              <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                  <Condition Binding="{Binding ElementName=DataGrid, Path=SelectedItem.IsDefault}"
+                             Value="False" />
+                  <Condition Binding="{Binding ElementName=VersionHost, Path=SelectedItem}"
+                             Value="Linux SSH" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </MultiDataTrigger>
+              <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                  <Condition Binding="{Binding ElementName=DataGrid, Path=SelectedItem.IsDefault}"
+                             Value="False" />
+                  <Condition Binding="{Binding ElementName=VersionHost, Path=SelectedItem}"
+                             Value="Linux WSL" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </MultiDataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
+      </Button>
+      <Label MinHeight="24"
+             Grid.Column="3"
+             HorizontalAlignment="Right"
+             Margin="0,6,0,0">Manage Qt versions:</Label>
+      <Button Grid.Column="4"
+              MinWidth="80"
+              MinHeight="24"
+              Margin="0,6,6,0"
+              Padding="10,0,10,0"
+              Click="OnBrowseQtInstallation_Click"
+              ToolTip="Import from a Qt installer directory">Browse</Button>
+      <Button Grid.Column="5"
+              MinWidth="80"
+              MinHeight="24"
+              Margin="0,6,6,0"
               Padding="10,0,10,0"
               x:Name="ButtonAutodetect"
-              Click="OnAutodetectQtInstallation_Click">Autodetect</Button>
-      <Label Grid.Column="3"
-             MinHeight="24"
-             HorizontalContentAlignment="Right"
-             Margin="0,6,0,0">Cleanup non-existent Qt versions:</Label>
-      <Button Grid.Column="4"
+              Click="OnAutodetectQtInstallations_Click"
+              ToolTip="Automatically detect Qt versions from Qt Creator">Autodetect</Button>
+      <Button Grid.Column="6"
               MinWidth="80"
               MinHeight="24"
               Margin="0,6,0,0"
               Padding="10,0,10,0"
-              Click="OnCleanupQtInstallations_Click">Cleanup</Button>
+              x:Name="ButtonCleanup"
+              Click="OnCleanupQtInstallations_Click"
+              ToolTip="Cleanup non-existent Qt versions">Cleanup</Button>
     </Grid>
 
+    <Grid Grid.Row="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <!-- First row -->
+      <Label Grid.Row="0"
+             MinHeight="24"
+             Grid.Column="0"
+             Margin="0,10,0,0">Name:</Label>
+      <TextBox  Grid.Row="0"
+                MinHeight="24"
+                Grid.Column="1"
+                Margin="0,10,0,0"
+                IsEnabled="False"
+                x:Name="VersionName"
+                VerticalContentAlignment="Center"
+                TextChanged="OnVersionName_TextChanged"
+                Text="{Binding ElementName=DataGrid, Path=SelectedItem.Name,
+                   UpdateSourceTrigger=PropertyChanged}" />
+      <Label Grid.Row="0"
+             MinHeight="24"
+             Grid.Column="2"
+             Margin="2,10,2,0">Location:</Label>
+      <TextBox Grid.Row="0"
+               MinHeight="24"
+               Grid.Column="3"
+               Margin="0,10,0,0"
+               IsEnabled="False"
+               x:Name="VersionPath"
+               VerticalContentAlignment="Center"
+               TextChanged="OnVersionPath_TextChanged"
+               Text="{Binding ElementName=DataGrid, Path=SelectedItem.Path,
+                        UpdateSourceTrigger=PropertyChanged}" />
+      <Button Grid.Row="0"
+              MinWidth="24"
+              MinHeight="24"
+              Grid.Column="4"
+              Margin="6,10,2,0"
+              Padding="10,0,10,0"
+              Click="OnUpdateVersionPath_Click">...</Button>
+      <!-- Second row -->
+      <Label Grid.Row="1"
+             MinHeight="24"
+             Grid.Column="0"
+             Margin="0,6,0,2">Host:</Label>
+      <ComboBox Grid.Row="1"
+                MinHeight="24"
+                Grid.Column="1"
+                Margin="0,6,0,2"
+                IsEnabled="False"
+                x:Name="VersionHost"
+                VerticalContentAlignment="Center"
+                SelectionChanged="OnVersionHost_SelectionChanged"
+                ItemsSource="{Binding Source={StaticResource EnumStringValues}}">
+        <ComboBox.ItemContainerStyle>
+          <Style TargetType="ComboBoxItem">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=DataGrid, Path=SelectedItem.IsDefault}"
+                           Value="True">
+                <Setter Property="IsEnabled"
+                        Value="False" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ComboBox.ItemContainerStyle>
+      </ComboBox>
+      <Label Grid.Row="1"
+             MinHeight="24"
+             Grid.Column="2"
+             Margin="0,6,0,2">Compiler:</Label>
+      <TextBox Grid.Row="1"
+               MinHeight="24"
+               Grid.Column="3"
+               Margin="0,6,2,2"
+               IsEnabled="False"
+               Grid.ColumnSpan="2"
+               x:Name="VersionCompiler"
+               VerticalContentAlignment="Center"
+               TextChanged="OnVersionCompiler_TextChanged"
+               Text="{Binding ElementName=DataGrid, Path=SelectedItem.Compiler,
+                        UpdateSourceTrigger=PropertyChanged}" />
+    </Grid>
   </Grid>
+
 </UserControl>

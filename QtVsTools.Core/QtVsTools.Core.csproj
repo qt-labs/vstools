@@ -179,6 +179,7 @@
     <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Options\QtVersion.cs" />
     <Compile Include="Options\QtVersionsPage.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -55,6 +55,19 @@ namespace QtVsTools.Core
             return ".qml".Equals(Path.GetExtension(fileName), IgnoreCase);
         }
 
+        public static string NormalizePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+            try {
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
+            } catch (Exception) {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Returns the normalized file path of a given file.
         /// </summary>
