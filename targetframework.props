@@ -8,7 +8,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>9.0</LangVersion> <!-- C# 9.0 is supported by both VS2019 and VS2022 -->
   </PropertyGroup>
 
   <!-- // Visual Studio 2022 -->
