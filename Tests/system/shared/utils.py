@@ -22,18 +22,18 @@ def getAppProperty(property):
     return plv.decode().strip()
 
 
-def fixAppContext():
+def fixAppContext(wantedName="devenv"):
     waitFor(lambda: len(applicationContextList()) > 1, 30000)
     appContexts = applicationContextList()
     if len(appContexts) == 1:  # Might have changed after waitFor()
-        if appContexts[0].name != "devenv":
+        if appContexts[0].name != wantedName:
             test.fatal("The only application context is " + appContexts[0].name)
     else:
         for ctxt in appContexts:
-            if ctxt.name == "devenv":
+            if ctxt.name == wantedName:
                 setApplicationContext(ctxt)
                 return
-        test.fatal("There's no devenv application context, only: " + appContexts)
+        test.fatal("There's no %s application context, only: %s" % (wantedName, appContexts))
 
 
 def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
