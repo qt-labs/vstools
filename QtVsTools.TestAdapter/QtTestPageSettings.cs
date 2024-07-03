@@ -13,13 +13,15 @@ namespace QtVsTools.TestAdapter
     using Core;
     using QtVsTools.Core.Common;
 
+    using static QtVsTools.Core.Resources;
+
     public sealed class QtTestPageSettings : SettingsBase<QtTestPage>
     {
         public static QtTestPageSettings Instance => StaticLazy.Get(() => Instance, () => new());
 
         public override void SaveSettings()
         {
-            using var key = Registry.CurrentUser.CreateSubKey(Resources.TestSettingsPath);
+            using var key = Registry.CurrentUser.CreateSubKey(TestAdapterSettingsPath);
             if (key == null)
                 return;
 
@@ -45,7 +47,7 @@ namespace QtVsTools.TestAdapter
 
         protected override Dictionary<string, object> LoadSettings()
         {
-            using var registry = Registry.CurrentUser.OpenSubKey(Resources.TestSettingsPath);
+            using var registry = Registry.CurrentUser.OpenSubKey(TestAdapterSettingsPath);
 
             var loadedSettings = new Dictionary<string, object>();
             var properties = typeof(QtTestPage).GetProperties();

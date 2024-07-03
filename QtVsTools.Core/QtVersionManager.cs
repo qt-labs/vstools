@@ -21,7 +21,7 @@ namespace QtVsTools.Core
     public static class QtVersionManager
     {
         private const string VersionsKey = "Versions";
-        private const string RegistryVersionsPath = Resources.CurrentRootPath + "\\" + VersionsKey;
+        private static string RegistryVersionsPath => $"{Resources.CurrentRootPath}\\{VersionsKey}";
 
         public static string[] GetVersions()
         {

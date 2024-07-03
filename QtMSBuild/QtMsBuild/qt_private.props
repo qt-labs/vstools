@@ -145,8 +145,7 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(QtLinkNatvisFile)' == ''">
     <LinkNatvisRegValue>$([MSBuild]::GetRegistryValue(
-      'HKEY_CURRENT_USER\SOFTWARE\QtProject\QtVsTools\Settings','LinkNatvis'
-      ))</LinkNatvisRegValue>
+      '$(QtRegistryPath)\Settings','LinkNatvis'))</LinkNatvisRegValue>
     <LinkNatvisFile>true</LinkNatvisFile>
     <LinkNatvisFile Condition="'$(LinkNatvisRegValue)' == '0'">false</LinkNatvisFile>
   </PropertyGroup>

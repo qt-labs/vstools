@@ -10,8 +10,12 @@ namespace QtVsTools.Core
     /// </summary>
     public static class Resources
     {
-        public const string CurrentRootPath = @"SOFTWARE\QtProject\QtVsTools";
-        public const string PackageSettingsPath = CurrentRootPath + @"\Settings";
+        public const string RegistryRoot = @"SOFTWARE\QtProject\QtVsTools";
+        public static string RegistrySuffix { get; set; } = "";
+        public static string CurrentRootPath => RegistryRoot + RegistrySuffix;
+        public static string PackageSettingsPath => CurrentRootPath + @"\Settings";
+        public static string TestAdapterSettingsPath => CurrentRootPath + @"\TestAdapter";
+
         public const string ObsoleteRootPath = @"SOFTWARE\Digia";
     }
 }

@@ -86,9 +86,17 @@
       LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions;
     </QMake_MSBuild>
 
+    <!--// Registry -->
+    <QtRegistryRoot Condition="'$(QtRegistryRoot)' == ''"
+      >HKEY_CURRENT_USER\Software\QtProject\QtVsTools</QtRegistryRoot>
+    <QtRegistrySuffix Condition="'$(VSROOTSUFFIX)' != ''"
+      >\$(VSROOTSUFFIX)</QtRegistrySuffix>
+    <QtRegistryPath Condition="'$(QtRegistryPath)' == ''"
+      >$(QtRegistryRoot)$(QtRegistrySuffix)</QtRegistryPath>
+
     <!--// Default Qt version -->
     <QtVersionsRegKey Condition="'$(QtVersionsRegKey)' == ''"
-      >HKEY_CURRENT_USER\Software\QtProject\QtVsTools\Versions</QtVersionsRegKey>
+      >$(QtRegistryPath)\Versions</QtVersionsRegKey>
     <DefaultQtVersion Condition="'$(DefaultQtVersion)' == ''"
       >$([MSBuild]::GetRegistryValue('$(QtVersionsRegKey)','DefaultQtVersion'))</DefaultQtVersion>
 

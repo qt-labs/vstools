@@ -8,8 +8,6 @@ using System.Collections.Generic;
 
 namespace QtVsTools.TestAdapter
 {
-    using static QtVsTools.Core.Resources;
-
     public static class Resources
     {
         internal const string FileExtension = ".exe";
@@ -18,7 +16,6 @@ namespace QtVsTools.TestAdapter
 
         internal const string SettingsName = "QtTest";
         public const string GlobalSettingsName = "QtTestGlobal";
-        internal const string TestSettingsPath = CurrentRootPath + @"\TestAdapter";
 
         internal static readonly HashSet<string> SupportedOutputFormats = new()
         {

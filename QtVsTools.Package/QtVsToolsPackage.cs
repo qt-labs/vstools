@@ -139,6 +139,14 @@ namespace QtVsTools
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new InvalidOperationException("Unable to get service: DTE");
 
+                if (await VsServiceProvider.GetServiceAsync<IVsAppCommandLine>() is {} cmd) {
+                    var result = cmd.GetOption("rootSuffix", out var exists, out var suffix);
+                    if (result == VSConstants.S_OK && exists > 0)
+                        Resources.RegistrySuffix = @"\" + suffix;
+                } else {
+                    Messages.Print("Unable to get service: IVsAppCommandLine");
+                }
+
                 if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true) {
                     Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRootPath, false);
                     Registry.CurrentUser.DeleteSubKeyTree(Resources.CurrentRootPath, false);
