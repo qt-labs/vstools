@@ -5,17 +5,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace QtVsTools.Core
 {
-    using VisualStudio;
-    using static Common.Utils;
-
-    public abstract class QMake
+    public class QMake : QtBuildTool<QMake>
     {
         public Dictionary<string, string> Vars { get; set; }
         public string OutputFile { get; set; }
@@ -23,61 +18,27 @@ namespace QtVsTools.Core
         public string TemplatePrefix { get; set; }
         public bool Recursive { get; set; }
         public string ProFile { get; set; }
-        public string Query { get; protected set; }
+        public string Query { get; set; }
         public bool DisableWarnings { get; set; }
 
-        private readonly string qtDir;
+        public QMake(string qtDir, EnvDTE.DTE dte = null)
+            : base(qtDir, dte)
+        {}
 
-        private EnvDTE.DTE Dte { get; }
-
-        protected QMake(string qtDir, EnvDTE.DTE dte = null)
-        {
-            Debug.Assert(!string.IsNullOrEmpty(qtDir));
-            this.qtDir = qtDir;
-            Dte = dte ?? VsServiceProvider.GetService<EnvDTE.DTE>();
-        }
-
-        protected virtual string QMakeExe
-        {
-            get
-            {
-                var qmakePath = Path.Combine(qtDir, "bin", "qmake.exe");
-                if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(qtDir, "qmake.exe");
-                if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(qtDir, "bin", "qmake.bat");
-                if (!File.Exists(qmakePath))
-                    qmakePath = Path.Combine(qtDir, "qmake.bat");
-                return qmakePath;
-            }
-        }
-
-        protected virtual string WorkingDirectory => Path.GetDirectoryName(ProFile);
-
-        string MakeRelative(string absolutePath)
-        {
-            var workDir = new Uri(Path.GetDirectoryName(ProFile) + Path.DirectorySeparatorChar);
-            var path = new Uri(absolutePath);
-            if (workDir.IsBaseOf(path))
-                return HelperFunctions.ToNativeSeparator(workDir.MakeRelativeUri(path).OriginalString);
-            return absolutePath;
-        }
-
-        protected virtual string QMakeArgs
+        protected override string ToolArgs
         {
             get
             {
                 var args = new StringBuilder();
                 if (Vars != null) {
-                    foreach (KeyValuePair<string, string> v in Vars) {
+                    foreach (var v in Vars)
                         args.AppendFormat(" {0}={1}", v.Key, v.Value);
-                    }
                 }
 
                 if (!string.IsNullOrEmpty(OutputFile))
                     args.AppendFormat(" -o \"{0}\"", MakeRelative(OutputFile));
 
-                for (int i = 0; i < DebugLevel; ++i)
+                for (var i = 0; i < DebugLevel; ++i)
                     args.Append(" -d");
 
                 if (!string.IsNullOrEmpty(TemplatePrefix))
@@ -99,98 +60,14 @@ namespace QtVsTools.Core
             }
         }
 
-        protected virtual Process CreateProcess()
+        protected override string WorkingDirectory => Path.GetDirectoryName(ProFile);
+
+        private string MakeRelative(string absolutePath)
         {
-            var qmakeStartInfo = new ProcessStartInfo
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                FileName = QMakeExe,
-                Arguments = QMakeArgs,
-                WorkingDirectory = WorkingDirectory
-            };
-            qmakeStartInfo.EnvironmentVariables["QTDIR"] = qtDir;
-
-            var qmakeProc = new Process
-            {
-                StartInfo = qmakeStartInfo
-            };
-            qmakeProc.OutputDataReceived += (sender, ev) => OutMsg(qmakeProc, ev.Data);
-            qmakeProc.ErrorDataReceived += (sender, ev) => ErrMsg(qmakeProc, ev.Data);
-
-            return qmakeProc;
-        }
-
-        protected virtual void OutMsg(Process qmakeProc, string msg)
-        {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print($"+++ qmake({qmakeProc.Id}): {msg}");
-        }
-
-        protected virtual void ErrMsg(Process qmakeProc, string msg)
-        {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print($">>> qmake({qmakeProc.Id}): {msg}");
-        }
-
-        protected virtual void InfoMsg(Process qmakeProc, string msg)
-        {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
-                Messages.Print($"--- qmake({qmakeProc.Id}): {msg}");
-        }
-
-        protected virtual void InfoStart(Process qmakeProc)
-        {
-            InfoMsg(qmakeProc, $"Started {qmakeProc.StartInfo.FileName}");
-        }
-
-        protected virtual void InfoExit(Process qmakeProc)
-        {
-            InfoMsg(qmakeProc, $"Exit code {qmakeProc.ExitCode} "
-                + $"({(qmakeProc.ExitTime - qmakeProc.StartTime).TotalMilliseconds:0.##} msecs)");
-        }
-
-        public virtual int Run()
-        {
-            using var qmakeProc = CreateProcess();
-            return Run(qmakeProc);
-        }
-
-        protected virtual int Run(Process qmakeProc)
-        {
-            var exitCode = -1;
-            try {
-                if (qmakeProc.Start()) {
-                    InfoStart(qmakeProc);
-                    qmakeProc.BeginOutputReadLine();
-                    qmakeProc.BeginErrorReadLine();
-                    qmakeProc.WaitForExit();
-                    exitCode = qmakeProc.ExitCode;
-                    InfoExit(qmakeProc);
-                }
-            } catch (Exception exception) {
-                exception.Log();
-            }
-            return exitCode;
-        }
-
-        public static bool Exists(string path)
-        {
-            var possibleQMakePaths = new[] {
-                // Path points to qmake.exe or qmake.bat
-                path,
-                // Path points to folder containing qmake.exe or qmake.bat
-                Path.Combine(path, "qmake.exe"),
-                Path.Combine(path, "qmake.bat"),
-                // Path points to folder containing bin\qmake.exe or bin\qmake.bat
-                Path.Combine(path, "bin", "qmake.exe"),
-                Path.Combine(path, "bin", "qmake.bat")
-            };
-            return possibleQMakePaths.Where(File.Exists).Select(Path.GetFileName)
-                .Any(file => file.Equals("qmake.exe", IgnoreCase)
-                  || file.Equals("qmake.bat", IgnoreCase));
+            var workDir = new Uri(Path.GetDirectoryName(ProFile) + Path.DirectorySeparatorChar);
+            var path = new Uri(absolutePath);
+            return HelperFunctions.ToNativeSeparator(
+                workDir.IsBaseOf(path) ? workDir.MakeRelativeUri(path).OriginalString : absolutePath);
         }
     }
 }
