@@ -1193,7 +1193,7 @@
             set of property definitions.
     \endlist
 
-    \image qtvstools-msbuild-diagram.png {Diagram showing Visual Studio Project and MSBuild}
+    \image qtvstools-msbuild-configurations.webp {Diagram showing Visual Studio Project and MSBuild}
 
     \section2 Properties
 
