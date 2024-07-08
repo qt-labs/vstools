@@ -5,6 +5,7 @@
 
 # -*- coding: utf-8 -*-
 
+source("../../shared/utils.py")
 source("../shared/scripts/config_utils.py")
 
 import os
@@ -77,11 +78,15 @@ def listExpectedWrittenFiles(workDir, projectName, templateName, cmakeBased):
         return []
 
 
-def getExpectedBuiltFile(workDir, projectName, templateName, cmakeBased):
+def getExpectedBuiltFile(projectsBuiltBefore, workDir, projectName, templateName, cmakeBased):
     buildPath = os.path.join(workDir, projectName)
     if cmakeBased:
         buildPath = os.path.join(buildPath, "out", "build", projectName)
     else:
+        if projectsBuiltBefore != 0 and getMsvsVersionAsList() >= [17, 10, 0]:
+            # Handle MSVS changing the build directory
+            # https://developercommunity.visualstudio.com/t/Changing-location-of-built-exe/10677463
+            buildPath = os.path.join(buildPath, projectName)
         expand(waitForObject(names.platforms_ComboBox))
         try:
             waitForObjectExists(names.x64_ComboBoxItem, 5000)
@@ -155,6 +160,7 @@ def main():
                      "Qt Widgets Application": "^QtWidgets.*\.cpp$"}
 
     with NewProjectDialog() as dialog:
+        projectsBuiltBefore = 0
         for buildSystem in ["Qt Visual Studio Project (Qt/MSBuild)",
                             "CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"]:
             cmakeBased = buildSystem.startswith("CMake")
@@ -216,10 +222,11 @@ def main():
                                     "Were all expected files created?")
                         if (templateName != "Qt ActiveQt Server"
                             and buildSolution(projectName, cmakeBased)):
-                            builtFile = getExpectedBuiltFile(workDir, projectName,
-                                                             templateName, cmakeBased)
+                            builtFile = getExpectedBuiltFile(projectsBuiltBefore, workDir,
+                                                             projectName, templateName, cmakeBased)
                             test.verify(waitFor(lambda: os.path.exists(builtFile), 15000),
                                         "Was %s built as expected?" % builtFile)
+                            projectsBuiltBefore += 1
                         mouseClick(waitForObject(globalnames.file_MenuItem))
                         mouseClick(waitForObject(names.file_Close_Folder_MenuItem if cmakeBased
                                                  else names.file_Close_Solution_MenuItem))

@@ -5,6 +5,7 @@
 
 # -*- coding: utf-8 -*-
 
+import builtins
 import os
 import subprocess
 
@@ -20,6 +21,17 @@ def getAppProperty(property):
                                   '-path "%s" -property %s'
                                   % (programFilesDir, vsDirectory, property))
     return plv.decode().strip()
+
+
+msvsVersion = None
+
+
+def getMsvsVersionAsList():
+    global msvsVersion
+    if not msvsVersion:
+        versionString = getAppProperty("catalog_productDisplayVersion")
+        msvsVersion = list(map(builtins.int, versionString.split(".")))
+    return msvsVersion
 
 
 def fixAppContext(wantedName="devenv"):
