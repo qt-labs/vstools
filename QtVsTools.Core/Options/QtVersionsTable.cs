@@ -350,7 +350,7 @@ namespace QtVsTools.Core.Options
                     continue;
 
                 var path = NormalizePath(tmp.Path);
-                if (path != null && QMake.Exists(path))
+                if (QtPaths.Exists(path) || QMake.Exists(path))
                     continue;
 
                 updateDefault |= tmp.IsDefault;
@@ -421,8 +421,8 @@ namespace QtVsTools.Core.Options
                 AddExtension = false,
                 CheckFileExists = true,
                 CheckPathExists = true,
-                Filter = "qmake|qmake.exe;qmake.bat",
-                Title = "Qt VS Tools - Select qmake.exe",
+                Filter = "Qt Tools (qtpaths, qmake)|qtpaths;qtpaths.exe;qmake;qmake.exe;qmake.bat",
+                Title = "Qt VS Tools - Select qtpaths or qmake",
                 InitialDirectory = NormalizePath(VersionPath.Text) ?? ""
             };
             if (openFileDialog.ShowDialog() != true)
@@ -538,7 +538,7 @@ namespace QtVsTools.Core.Options
                     if (waitDialog.Canceled)
                         yield break;
                     var fileName = Path.GetFileName(file);
-                    if (Regex.IsMatch(fileName, @"^qmake(\.exe|\.bat)?$", RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(fileName, @"^(qtpaths|qmake)(\.exe|\.bat)?$", RegexOptions.IgnoreCase))
                         yield return file;
                 }
             }
@@ -658,7 +658,7 @@ namespace QtVsTools.Core.Options
             var path = NormalizePath(version.Path);
             if (string.IsNullOrEmpty(path))
                 return "Invalid path format";
-            return !QMake.Exists(path) ? "Cannot find qmake.exe" : "";
+            return QtPaths.Exists(path) || QMake.Exists(path) ? "" : "Cannot find qtpaths or qmake";
         }
 
         private static string ValidateVersionHost(QtVersion version)

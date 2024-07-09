@@ -363,8 +363,9 @@ namespace QtVsTools
             await VsShell.UiThreadAsync(() =>
                 StatusBar.SetText("Checking installed Qt versions..."));
 
+            var defaultPath = QtVersionManager.GetDefaultVersionInstallPath();
             Messages.Print($"--- Checking default Qt version...{Environment.NewLine}"
-                + (QMake.Exists(QtVersionManager.GetDefaultVersionInstallPath() ?? "")
+                + (QtPaths.Exists(defaultPath) || QMake.Exists(defaultPath)
                   ? "--- default Qt version check OK" : "--> default Qt version missing."));
 
             var versions = QtVersionManager.GetVersions();
