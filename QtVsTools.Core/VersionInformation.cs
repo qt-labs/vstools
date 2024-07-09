@@ -150,18 +150,18 @@ namespace QtVsTools.Core
                     _ => null
                 };
 
-                var qmakeQuery = new QMakeQuery(qtDir);
-                var success = SetVersionComponents(qmakeQuery["QT_VERSION"]);
+                var query = QtBuildToolQuery.Get(qtDir);
+                var success = SetVersionComponents(query["QT_VERSION"]);
                 if (!success && !SetVersionComponents(qtConfig.VersionString)) {
                     QtDir = null;
                     return;
                 }
-                LibExecs = qmakeQuery["QT_INSTALL_LIBEXECS"];
-                QtInstallDocs = qmakeQuery["QT_INSTALL_DOCS"];
-                InstallPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
-                IsWinRt = qmakeQuery["QMAKE_XSPEC"].StartsWith("winrt");
+                LibExecs = query["QT_INSTALL_LIBEXECS"];
+                QtInstallDocs = query["QT_INSTALL_DOCS"];
+                InstallPrefix = query["QT_INSTALL_PREFIX"];
+                IsWinRt = query["QMAKE_XSPEC"].StartsWith("winrt");
 
-                qmakeConf = new QMakeConf(qmakeQuery);
+                qmakeConf = new QMakeConf(query);
                 QMakeSpecDirectory = qmakeConf?.QMakeSpecDirectory;
             } catch (Exception exception) {
                 exception.Log();

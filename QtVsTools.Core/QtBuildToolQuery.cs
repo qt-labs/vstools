@@ -43,7 +43,7 @@ namespace QtVsTools.Core
                 }
             }
 
-            return null;
+            return QMake.Exists(qtDir) ? new QMakeQuery { QtDir = qtDir } : null;
         }
 
         public string this[string name] =>

@@ -16,25 +16,25 @@ namespace QtVsTools.Core
 
         public string QMakeSpecDirectory { get; }
 
-        public QMakeConf(QMakeQuery qmakeQuery)
+        public QMakeConf(QtBuildToolQuery query)
         {
-            var qtPrefix = qmakeQuery["QT_INSTALL_PREFIX"];
+            var qtPrefix = query["QT_INSTALL_PREFIX"];
             if (string.IsNullOrEmpty(qtPrefix))
                 throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_PREFIX");
-            var qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA"];
+            var qtArchData = query["QT_INSTALL_ARCHDATA"];
             if (string.IsNullOrEmpty(qtArchData))
                 throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_ARCHDATA");
-            var qmakeXSpec = qmakeQuery["QMAKE_XSPEC"];
+            var qmakeXSpec = query["QMAKE_XSPEC"];
             if (string.IsNullOrEmpty(qtArchData))
                 throw new KeyNotFoundException("qmake error: no value for QMAKE_XSPEC");
             QMakeSpecDirectory = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec);
             var qmakeConf = Path.Combine(QMakeSpecDirectory, "qmake.conf");
             if (!File.Exists(qmakeConf)) {
                 // Check if this is a shadow build of Qt.
-                qtPrefix = qmakeQuery["QT_INSTALL_PREFIX/src"];
+                qtPrefix = query["QT_INSTALL_PREFIX/src"];
                 if (string.IsNullOrEmpty(qtPrefix))
                     throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_PREFIX/src");
-                qtArchData = qmakeQuery["QT_INSTALL_ARCHDATA/src"];
+                qtArchData = query["QT_INSTALL_ARCHDATA/src"];
                 if (string.IsNullOrEmpty(qtArchData))
                     throw new KeyNotFoundException("qmake error: no value for QT_INSTALL_ARCHDATA/src");
                 QMakeSpecDirectory = Path.Combine(qtPrefix, qtArchData, "mkspecs", qmakeXSpec);
