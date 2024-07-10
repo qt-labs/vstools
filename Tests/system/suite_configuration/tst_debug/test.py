@@ -84,7 +84,7 @@ def main():
 
     doubleClick(waitForObjectItem(names.msvs_SolutionExplorer_List, "Source Files"))
     doubleClick(waitForObjectItem(names.msvs_SolutionExplorer_List, "main.cpp"))
-    for _ in range(12): # move to line "engine.load(...)"
+    for _ in range(13): # move to line "if (engine.rootObjects().isEmpty())"
         type(waitForObject(names.msvs_WpfTextView_WPFControl), "<Down>")
     type(waitForObject(names.msvs_WpfTextView_WPFControl), "<F9>") # Toggle Breakpoint
     test.verify(not object.exists(names.continue_Button),
