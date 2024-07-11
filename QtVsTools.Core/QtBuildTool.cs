@@ -10,19 +10,16 @@ using System.Linq;
 
 namespace QtVsTools.Core
 {
-    using VisualStudio;
     using static Common.Utils;
 
     public abstract class QtBuildTool<T> where T : QtBuildTool<T>
     {
         private string QtDir { get; }
-        private EnvDTE.DTE Dte { get; }
 
-        protected QtBuildTool(string qtDir, EnvDTE.DTE dte = null)
+        protected QtBuildTool(string qtDir)
         {
             Debug.Assert(!string.IsNullOrEmpty(qtDir));
             QtDir = qtDir;
-            Dte = dte ?? VsServiceProvider.GetService<EnvDTE.DTE>();
         }
 
         protected abstract string ToolArgs { get; }
@@ -72,19 +69,19 @@ namespace QtVsTools.Core
 
         protected virtual void OutMsg(Process toolProc, string msg)
         {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
+            if (!string.IsNullOrEmpty(msg))
                 Messages.Print($"+++ {typeof(T).Name}({toolProc.Id}): {msg}");
         }
 
         protected virtual void ErrMsg(Process toolProc, string msg)
         {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
+            if (!string.IsNullOrEmpty(msg))
                 Messages.Print($">>> {typeof(T).Name}({toolProc.Id}): {msg}");
         }
 
         protected virtual void InfoMsg(Process toolProc, string msg)
         {
-            if (Dte != null && !string.IsNullOrEmpty(msg))
+            if (!string.IsNullOrEmpty(msg))
                 Messages.Print($"--- {typeof(T).Name}({toolProc.Id}): {msg}");
         }
 

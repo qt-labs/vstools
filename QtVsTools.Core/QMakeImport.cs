@@ -24,8 +24,8 @@ namespace QtVsTools.Core
         {
             private readonly VersionInformation qtVersion;
 
-            public QMakeProcess(VersionInformation versionInfo, EnvDTE.DTE dte)
-                : base(versionInfo.QtDir, dte)
+            public QMakeProcess(VersionInformation versionInfo)
+                : base(versionInfo.QtDir)
             {
                 qtVersion = versionInfo;
             }
@@ -175,10 +175,10 @@ namespace QtVsTools.Core
         public static string VcPath { get; set; }
 
         public static int Run(VersionInformation versionInfo, string proFilePath,
-            bool recursiveRun = false, bool disableWarnings = false, EnvDTE.DTE dte = null)
+            bool recursiveRun = false, bool disableWarnings = false)
         {
             versionInfo ??= VersionInformation.GetOrAddByName(QtVersionManager.GetDefaultVersion());
-            var qmake = new QMakeProcess(versionInfo, dte) {
+            var qmake = new QMakeProcess(versionInfo) {
                 ProFile = proFilePath,
                 TemplatePrefix = "vc",
                 Recursive = recursiveRun,

@@ -21,8 +21,8 @@ namespace QtVsTools.Core
         public string Query { get; set; }
         public bool DisableWarnings { get; set; }
 
-        public QMake(string qtDir, EnvDTE.DTE dte = null)
-            : base(qtDir, dte)
+        public QMake(string qtDir)
+            : base(qtDir)
         {}
 
         protected override string ToolArgs

@@ -311,8 +311,7 @@ namespace QtVsTools.Core
             var waitDialog = WaitDialog.Start("Open Qt Project File",
                 "Generating Visual Studio project...", delay: 2);
 
-            var exitCode = QMakeImport.Run(vi, mainInfo.FullName, recursiveRun: recursive,
-                dte: _dteObject);
+            var exitCode = QMakeImport.Run(vi, mainInfo.FullName, recursiveRun: recursive);
 
             waitDialog.Stop();
 
