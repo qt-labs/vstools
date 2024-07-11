@@ -18,11 +18,11 @@
     Condition="'$(QtMsBuildProps_BeforeQml)' != ''"
     Project="$(QtMsBuildProps_BeforeQml)"/>
 
-  <!-- Default QML work dir = $(IntDir)\qml
+  <!-- Default QML work dir = $(IntDir)qt\qml
          * can be overridden in property sheets -->
   <PropertyGroup>
     <QtQmlIntDir Condition="'$(QtQmlIntDir)' == ''"
-      >$([System.IO.Path]::Combine('$(ProjectDir)', '$(IntDir)', 'qml'))</QtQmlIntDir>
+      >$([System.IO.Path]::Combine('$(ProjectDir)', '$(QtIntDir)', 'qml'))</QtQmlIntDir>
   </PropertyGroup>
 
   <!--

@@ -48,7 +48,7 @@
   </Choose>
   <ItemGroup>
     <AvailableItemName Include="QtMoc">
-      <Targets>Qt;_ClCompile</Targets>
+      <Targets>QtMoc;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
@@ -168,7 +168,7 @@
   // -->
   <PropertyGroup>
     <QtMocDependsOn>
-      QtPrepare;
+      QtVarsLoad;
       QtMocPrepare;
       QtMocSetModified;
       QtMocOverrideCpp;
@@ -535,6 +535,10 @@
       <options Remove="@(options)"/>
       <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
+  </Target>
+
+  <Target Name="QtMocClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)moc"/>
   </Target>
 
   <!--

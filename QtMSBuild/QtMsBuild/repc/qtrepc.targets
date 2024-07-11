@@ -48,7 +48,7 @@
   </Choose>
   <ItemGroup>
     <AvailableItemName Include="QtRepc">
-      <Targets>Qt</Targets>
+      <Targets>QtRepc;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
@@ -161,7 +161,7 @@
   // -->
   <PropertyGroup>
     <QtRepcDependsOn>
-      QtPrepare;
+      QtVarsLoad;
       QtRepcPrepare;
       QtRepcSetModified;
       QtRepcOverrideCpp;
@@ -351,6 +351,10 @@
       <options Remove="@(options)"/>
       <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
+  </Target>
+
+  <Target Name="QtUicClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)repc"/>
   </Target>
 
   <!--

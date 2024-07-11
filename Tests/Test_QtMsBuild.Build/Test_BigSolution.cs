@@ -4,54 +4,27 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Build.Construction;
-using Microsoft.Build.Execution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.VisualStudio.Workspace.Build;
 
 namespace QtVsTools.Test.QtMsBuild.Build
 {
     [TestClass]
     public class Test_BigSolution
     {
-        private bool Build(int count, bool fixedTimeout = false, int delay = -1, int timeout = -1)
+        [TestMethod]
+        public void BigSolution_Build()
         {
+            if (Properties.Configuration == "Release")
+                Assert.Inconclusive("Disabled in the 'Release' configuration.");
+
             using var temp = new TempProject();
             temp.GenerateBigSolution(
-                $@"{Properties.SolutionDir}Tests\BigSolution\template", count);
-            return MsBuild.Run(temp.ProjectDir,
+                $@"{Properties.SolutionDir}Tests\BigSolution\template", 100);
+            Assert.IsTrue(MsBuild.Run(temp.ProjectDir,
                 $"-p:QtMsBuild={Path.Combine(Environment.CurrentDirectory, "QtMsBuild")}",
-                timeout >= 0 ? $"-p:QtCriticalSectionTimeout={timeout}" : null,
-                fixedTimeout ? "-p:QtCriticalSectionFixedTimeout=true" : null,
-                delay >= 0 ? $"-p:QtCriticalSectionDelay={delay}" : null,
                 "-p:Platform=x64", "-p:Configuration=Release",
-                "-m", "-t:Build", temp.ProjectFileName);
-        }
-
-        [TestMethod]
-        public void BigSolution_FailByTimeout()
-        {
-            if (Properties.Configuration == "Release")
-                Assert.Inconclusive("Disabled in the 'Release' configuration.");
-
-            Assert.IsTrue(Build(2, true, 1000));
-
-            if (Build(100, true, 1000))
-                Assert.Inconclusive();
-        }
-
-        [TestMethod]
-        public void BigSolution_TimeoutAdjustment()
-        {
-            if (Properties.Configuration == "Release")
-                Assert.Inconclusive("Disabled in the 'Release' configuration.");
-
-            Assert.IsTrue(Build(100));
+                "-m", "-t:Build", temp.ProjectFileName));
         }
     }
 }

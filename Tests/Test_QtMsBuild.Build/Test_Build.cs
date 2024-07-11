@@ -40,9 +40,9 @@ namespace QtVsTools.Test.QtMsBuild.Build
                 var intDir = Path.Combine(
                     TestBuild.Project.ExpandString("$(ProjectDir)"),
                     TestBuild.Project.ExpandString("$(IntDir)"));
-                Assert.IsTrue(File.Exists($@"{intDir}moc\moc_QtProjectV304.cpp"));
-                Assert.IsTrue(File.Exists($@"{intDir}uic\ui_QtProjectV304.h"));
-                Assert.IsTrue(File.Exists($@"{intDir}rcc\qrc_QtProjectV304.cpp"));
+                Assert.IsTrue(File.Exists($@"{intDir}qt\moc\moc_QtProjectV304.cpp"));
+                Assert.IsTrue(File.Exists($@"{intDir}qt\uic\ui_QtProjectV304.h"));
+                Assert.IsTrue(File.Exists($@"{intDir}qt\rcc\qrc_QtProjectV304.cpp"));
             }
         }
     }

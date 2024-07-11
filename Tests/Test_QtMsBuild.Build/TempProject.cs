@@ -4,11 +4,10 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using Microsoft.Build.Evaluation;
+using System.Threading;
 
 using static System.IO.Path;
 using static System.IO.File;
@@ -23,8 +22,16 @@ namespace QtVsTools.Test.QtMsBuild.Build
         public string ProjectPath => Combine(ProjectDir, ProjectFileName);
 
         private void Reset() {
-            if (Directory.Exists(ProjectDir))
-                Delete(ProjectDir, true);
+            var t = Stopwatch.StartNew();
+            while (Directory.Exists(ProjectDir)) {
+                try {
+                    Delete(ProjectDir, true);
+                } catch {
+                    if (t.ElapsedMilliseconds > 3000)
+                        break;
+                    Thread.Sleep(500);
+                }
+            }
         }
 
         public void Clone(string path)

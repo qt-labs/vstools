@@ -37,7 +37,7 @@
         >$(ProjectDir)GeneratedFiles\$(Configuration)\qrc_%(Filename).cpp</OutputFile>
 
       <QtRccDir Condition="'$(QtVsProjectSettings)' == 'true'"
-        >$(IntDir)rcc\</QtRccDir>
+        >$(QtIntDir)rcc\</QtRccDir>
       <QtRccFileName Condition="'$(QtVsProjectSettings)' == 'true'"
         >qrc_%(Filename).cpp</QtRccFileName>
 

@@ -48,7 +48,7 @@
   </Choose>
   <ItemGroup>
     <AvailableItemName Include="QtUic">
-      <Targets>Qt</Targets>
+      <Targets>QtUic;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
@@ -162,7 +162,7 @@
   // -->
   <PropertyGroup>
     <QtUicDependsOn>
-      QtPrepare;
+      QtVarsLoad;
       QtUicPrepare;
       QtUicSetModified;
       $(QtUicDependsOn)
@@ -442,6 +442,10 @@
       <options Remove="@(options)"/>
       <selected_files Remove="@(selected_files)"/>
     </ItemGroup>
+  </Target>
+
+  <Target Name="QtUicClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)uic"/>
   </Target>
 
   <!--

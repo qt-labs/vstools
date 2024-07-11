@@ -20,7 +20,7 @@ namespace QtVsTools.Test.QtMsBuild.Build
             using var temp = new TempProject();
             temp.Clone($@"{Properties.SolutionDir}Tests\ProjectFormats\304\QtProjectV304.vcxproj");
             var project = MsBuild.Evaluate(temp.ProjectPath, ("Platform", "x64"));
-            Assert.AreEqual(project.ExpandString("$(QtMsBuildVersion)"), Version.PRODUCT_VERSION);
+            Assert.AreEqual(project.ExpandString("$(QtVSToolsVersion)"), Version.PRODUCT_VERSION);
         }
     }
 }

@@ -21,6 +21,17 @@
     <QtDefaultsLoaded>true</QtDefaultsLoaded>
   </PropertyGroup>
 
+  <!-- // Qt VS Tools Version -->
+  <PropertyGroup>
+    <QtVSToolsVersion Condition="Exists('$(MSBuildThisFileDirectory)\..\..\version.log')"
+      >$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)\..\..\version.log'))</QtVSToolsVersion>
+    <QtVSToolsVersion Condition="Exists('$(MSBuildThisFileDirectory)\version.log')"
+      >$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)\version.log'))</QtVSToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <QtVSToolsVersion>$(QtVSToolsVersion.Trim('%0D').Trim('%0A').Trim())</QtVSToolsVersion>
+  </PropertyGroup>
+
   <!-- // Qt VS Project Format Version -->
   <PropertyGroup>
     <QtVsProjectVersion>0</QtVsProjectVersion>
@@ -101,37 +112,11 @@
 
   <!--// Default late bindings -->
   <ItemGroup>
-    <Qt Include="Qt">
+    <_- Include="_-">
       <IntDir>$(IntDir)</IntDir>
       <OutDir>$(OutDir)</OutDir>
-    </Qt>
-    <QtLateBindings Include="IntDir" />
-    <QtLateBindings Include="OutDir" />
-    <QtLateBindings Include="QtInstall" />
-    <QtLateBindings Include="QtModules" />
-    <QtLateBindings Include="QtPlugin" />
-    <QtLateBindings Include="QtBuildConfig" />
-    <QtLateBindings Include="QtToolsDesignTime" />
-    <QtLateBindings Include="QtPathBinaries" />
-    <QtLateBindings Include="QtPathLibraryExecutables" />
-    <QtLateBindings Include="QtHeaderSearchPath" />
-    <QtLateBindings Include="QtLibrarySearchPath" />
-    <QtLateBindings Include="QtQMakeTemplate" />
-    <QtLateBindings Include="QtVars" />
-    <QtLateBindings Include="QMakeExtraArgs" />
-    <QtLateBindings Include="QMakeCodeLines" />
-    <QtLateBindings Include="QtQMLDebugEnable" />
-    <QtLateBindings Include="Qt_CL_OPTIONS_" />
-    <QtLateBindings Include="QtExcludedOptions" />
-    <QtLateBindings Include="QtOptionsBuildLog" />
-    <QtLateBindings Include="QtLinkNatvisFile" />
-    <QtLateBindings Include="QtInstallDir" />
-    <QtLateBindings Include="QtToolsPath" />
-    <QtLateBindings Include="QtDllPath" />
+    </_->
   </ItemGroup>
-  <PropertyGroup>
-    <QtLateBindings Condition="'$(QtLateBindings)' == ''">@(QtLateBindings)</QtLateBindings>
-  </PropertyGroup>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

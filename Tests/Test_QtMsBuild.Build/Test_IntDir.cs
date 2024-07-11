@@ -28,9 +28,9 @@ namespace QtVsTools.Test.QtMsBuild.Build
                 ("Platform", "x64"), ("Configuration", "Debug"));
             Assert.IsTrue(project.Build("Rebuild"));
             Assert.IsTrue(
-                File.Exists(project.ExpandString($@"$(IntDir)\qmake\temp\props.txt")));
+                File.Exists(project.ExpandString($@"$(IntDir)qt\qmake\props.txt")));
             Assert.IsFalse(
-                File.Exists(project.ExpandString($@"$(OldIntDir)\qmake\temp\props.txt")));
+                File.Exists(project.ExpandString($@"$(OldIntDir)qt\qmake\props.txt")));
         }
     }
 }

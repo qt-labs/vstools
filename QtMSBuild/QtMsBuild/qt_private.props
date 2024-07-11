@@ -76,58 +76,6 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Qt Variables Expansion
-  // -->
-  <PropertyGroup Condition="'$(QtVsProjectSettings)' == 'true'">
-
-    <!--// Path to Qt variables property file -->
-    <QtProjectDirHash>$([MSBuild]::StableStringHash('$(ProjectDir)'))</QtProjectDirHash>
-    <QtVarsOutputDir Condition="'$(QtVarsOutputDir)' == ''"
-      >$([System.IO.Path]::Combine('$(Temp)', '$(ProjectGuid)', '$(QtProjectDirHash)', 'qmake'))</QtVarsOutputDir>
-    <QtVarsFileName Condition="'$(QtVarsFileName)' == ''"
-      >qtvars_$(Platform.Replace(' ','_'))_$(Configuration.Replace(' ','_')).props</QtVarsFileName>
-    <QtVarsFilePath Condition="'$(QtVarsFilePath)' == ''"
-      >$(QtVarsOutputDir)\$(QtVarsFileName)</QtVarsFilePath>
-
-    <!--// Path to temp work folder -->
-    <QtVarsWorkDirName
-      >temp</QtVarsWorkDirName>
-    <QtVarsWorkDir
-      >$([System.IO.Path]::Combine('$(QtVarsOutputDir)','$(QtVarsWorkDirName)'))</QtVarsWorkDir>
-    <QtVarsWorkPath
-      >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
-    <QtVarsIndexPathDesignTime
-      >$(QtVarsWorkDir)\$(ProjectGuid.Replace('{','').Replace('}','')).$(ProjectName).designtime.idx</QtVarsIndexPathDesignTime>
-    <QtVarsDesignTime Condition="Exists('$(QtVarsIndexPathDesignTime)')"
-      >$([System.String]::Copy($([System.IO.File]::ReadAllText('$(QtVarsIndexPathDesignTime)'))).Replace('&#xD;&#xA;',''))</QtVarsDesignTime>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!--// Path to Qt variables .props: full build -->
-    <QtVarsImportPath
-      Condition="'$(QtDesignTimeBuild)' != 'true'
-        AND Exists('$(QtVarsFilePath)')"
-      >$(QtVarsFilePath)</QtVarsImportPath>
-
-    <!--// Path to Qt variables .props: design-time build -->
-    <QtVarsImportPath
-      Condition="'$(QtDesignTimeBuild)' == 'true'
-        AND Exists('$(QtVarsDesignTime)')"
-      >$(QtVarsDesignTime)</QtVarsImportPath>
-
-    <!--// Path to Qt variables .props: fall-back -->
-    <QtVarsImportPath
-      Condition="'$(QtDesignTimeBuild)' == 'true'
-        AND !Exists('$(QtVarsDesignTime)')
-        AND  Exists('$(QtVarsFilePath)')"
-      >$(QtVarsFilePath)</QtVarsImportPath>
-  </PropertyGroup>
-
-  <!--// Import Qt vars property file -->
-  <Import Condition="Exists('$(QtVarsImportPath)')" Project="$(QtVarsImportPath)"/>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Add Qt DLL path to debugger definitions
   // -->
   <PropertyGroup>

@@ -30,7 +30,7 @@
       <QTDIR Condition="'$(QtVsProjectSettings)' != 'true'">$(QTDIR)</QTDIR>
       <InputFile>%(FullPath)</InputFile>
       <OutputFileType>replica</OutputFileType>
-      <OutputFile><![CDATA[$(IntDir)\repc\rep_%(Filename)_%<OutputFileType>.h]]></OutputFile>
+      <OutputFile><![CDATA[$(QtIntDir)repc\rep_%(Filename)_%<OutputFileType>.h]]></OutputFile>
       <InputFileType>rep</InputFileType>
       <DynamicSource>moc_cpp</DynamicSource>
       <ParallelProcess>true</ParallelProcess>

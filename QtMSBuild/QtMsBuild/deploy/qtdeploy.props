@@ -26,7 +26,7 @@
     <QtDeployDir Condition="'$(QtDeployDir)' == '' AND '$(QtDeployToProjectDir)' == 'true'"
       >$(ProjectDir)</QtDeployDir>
     <QtDeployDir Condition="'$(QtDeployDir)' == '' AND '$(QtDeployToProjectDir)' != 'true'"
-      >@(Qt->'%(OutDir)')</QtDeployDir>
+      >@(_-->'%(OutDir)')</QtDeployDir>
     <QtDeployQmlDir Condition="'$(QtDeployQmlDir)' == ''"
       >$(ProjectDir)</QtDeployQmlDir>
     <QtDeployDebugRelease Condition="'$(QtDeployDebugRelease)' == ''"

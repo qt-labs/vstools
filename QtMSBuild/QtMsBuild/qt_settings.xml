@@ -142,14 +142,6 @@
     Description="Select whether to launch a QML session when debugging.">
   </BoolProperty>
   <StringProperty
-    Name="Qt_CL_OPTIONS_"
-    ReadOnly="true"
-    Category="QtSettings_06_AdditionalOptions"
-    DisplayName="Additional Options"
-    Description="
-Additional compiler options required by Qt. These options will be passed
-to the compiler, unless specifically excluded in the next field." />
-  <StringProperty
     Name="QtExcludedOptions"
     Category="QtSettings_06_AdditionalOptions"
     DisplayName="Excluded Options"
@@ -175,9 +167,4 @@ files located in %USERPROFILE%\\Documents\\Visual Studio 2022\\Visualizers).">
     <EnumValue Name="false" DisplayName="No" />
     <EnumValue Name="true" DisplayName="Yes" />
   </EnumProperty>
-  <StringListProperty
-    Name="QtLateBindings"
-    Category="QtSettings_08_LateBindings"
-    DisplayName="Property Names"
-    Description="Names of properties available for late bindings."/>
 </Rule>

@@ -46,6 +46,10 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="QtQmlClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)qml"/>
+  </Target>
+
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Import dependants

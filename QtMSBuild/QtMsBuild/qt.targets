@@ -37,15 +37,11 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Defaults for CriticalSection task
+  // Path to Qt tools work log
   // -->
   <PropertyGroup>
-    <QtCriticalSectionTimeout Condition="'$(QtCriticalSectionTimeout)' == ''"
-      >10</QtCriticalSectionTimeout>
-    <QtCriticalSectionFixedTimeout Condition="'$(QtCriticalSectionFixedTimeout)' == ''"
-      >false</QtCriticalSectionFixedTimeout>
-    <QtCriticalSectionDelay Condition="'$(QtCriticalSectionDelay)' == ''"
-      >0</QtCriticalSectionDelay>
+    <QtIntDir Condition="'$(QtIntDir)' == ''">$(IntDir)qt\</QtIntDir>
+    <QtLogFilePath Condition="'$(QtLogFilePath)' == ''">$(QtIntDir)qt_work.log</QtLogFilePath>
   </PropertyGroup>
 
   <!--
@@ -56,6 +52,8 @@
   <Import Project="qt_settings.targets"/>
   <Import Project="qt_tasks.targets"/>
   <Import Project="qt_vars.targets"/>
+  <Import Project="qt_work.targets"/>
+  <Import Project="qt_build.targets"/>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

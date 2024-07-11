@@ -48,7 +48,7 @@
   </Choose>
   <ItemGroup>
     <AvailableItemName Include="QtRcc">
-      <Targets>Qt;_ClCompile</Targets>
+      <Targets>QtRcc;_ClCompile</Targets>
     </AvailableItemName>
   </ItemGroup>
   <PropertyGroup>
@@ -198,7 +198,7 @@
   // -->
   <PropertyGroup>
     <QtRccDependsOn>
-      QtPrepare;
+      QtVarsLoad;
       QtRccPrepare;
       QtRccSetModified;
       QtRccOverrideCpp;
@@ -598,6 +598,10 @@
       ;QtRccPass2_Lib;
     </ComputeLibInputsTargets>
   </PropertyGroup>
+
+  <Target Name="QtRccClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)rcc"/>
+  </Target>
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

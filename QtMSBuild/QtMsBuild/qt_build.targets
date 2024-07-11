@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/***************************************************************************************************
+ Copyright (C) 2024 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+***************************************************************************************************/
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/// Qt build integration
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Build dependencies
+  // -->
+  <PropertyGroup>
+    <DetermineProjectTypeTargets>
+      $(DetermineProjectTypeTargets);
+      QtUpdatePaths
+    </DetermineProjectTypeTargets>
+    <ComputeCompileInputsTargets>
+      $(ComputeCompileInputsTargets);
+      QtAddCompilerSources
+    </ComputeCompileInputsTargets>
+    <FixupCLCompileOptionsDependsOn>
+      $(FixupCLCompileOptionsDependsOn);
+      QtUpdateCompilerOptions
+    </FixupCLCompileOptionsDependsOn>
+    <CleanDependsOn>
+      $(CleanDependsOn);
+      QtClean
+    </CleanDependsOn>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtGetDefaultClCompile
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Get default C++ properties
+  // -->
+  <Target Name="QtGetDefaultClCompile">
+    <ItemGroup>
+      <ClCompile Include="DefaultClCompile"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUpdatePaths
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // -->
+  <Target Name="QtUpdatePaths" DependsOnTargets="QtVarsLoad">
+    <Message Importance="high" Text="TARGET QtUpdatePaths" />
+    <PropertyGroup>
+      <IncludePath>$(IncludePath);$(Qt_INCLUDEPATH_)</IncludePath>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtAddCompilerSources
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // -->
+  <Target Name="QtAddCompilerSources" DependsOnTargets="QtWork" BeforeTargets="ClCompile">
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add dynamic C++ sources to build
+    // -->
+    <ItemGroup>
+      <QtWork_ClCompile
+        Condition="'%(QtWorkResult.ExitCode)' == '0' AND '%(QtWorkResult.ClCompile)' != ''"
+        Include="@(QtWorkResult->'%(ClCompile)')"/>
+      <QtWork_ClCompile
+        Condition="Exists('$(QtVarsOutputDir)\qtvars_plugin_import.cpp')"
+        Include="$(QtVarsOutputDir)\qtvars_plugin_import.cpp"/>
+      <!-- Add QML static plugins -->
+      <QtWork_ClCompile
+        Condition="Exists('$(QtQmlPluginImportCpp)')"
+        Include="$(QtQmlPluginImportCpp)"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(ApplicationType)' == 'Linux'">
+      <QtWork_ClCompile Condition="'%(QtWork_ClCompile.ObjectFileName)' == ''">
+        <ObjectFileName>$(IntDir)%(Filename).o</ObjectFileName>
+      </QtWork_ClCompile>
+    </ItemGroup>
+
+    <!-- // Copy default C++ compiler properties -->
+    <ItemGroup>
+      <QtWork_ClCompile_Template Include="QtWork_ClCompile_Template">
+        <DisableSpecificWarnings>
+          <![CDATA[%<DisableSpecificWarnings>;%<ClCompile_DisableSpecificWarnings>]]>
+        </DisableSpecificWarnings>
+      </QtWork_ClCompile_Template>
+    </ItemGroup>
+    <Expand Condition="'@(QtWork_ClCompile)' != ''"
+      Items="@(QtWork_ClCompile)"
+      BaseItem="@(ClCompile->WithMetadataValue('Identity', 'DefaultClCompile'))"
+      Template="@(QtWork_ClCompile_Template)">
+      <Output TaskParameter="Result" ItemName="QtWork_ClCompile_Expanded"/>
+    </Expand>
+
+    <!-- // Force pre-compiled header include -->
+    <ItemGroup Condition="'$(ApplicationType)' != 'Linux'">
+      <QtWork_ClCompile_Expanded>
+        <ForcedIncludeFiles Condition="'%(PrecompiledHeader)' == 'Use'"
+          >%(PrecompiledHeaderFile)</ForcedIncludeFiles>
+        <AdditionalOptions>
+          $([System.String]::Copy(
+          '%(QtWork_ClCompile_Expanded.AdditionalOptions) %(QtWork_ClCompile_Expanded.AdditionalCppOptions)')
+          .Trim())
+        </AdditionalOptions>
+      </QtWork_ClCompile_Expanded>
+    </ItemGroup>
+
+    <!-- // Add C++ source items and clean-up temp items -->
+    <ItemGroup>
+      <ClCompile Include="@(QtWork_ClCompile_Expanded)" RemoveMetadata="ExitCode" />
+      <QtWork_ClCompile_Expanded Remove="@(QtWork_ClCompile_Expanded)"/>
+      <QtWork_ClCompile Remove="@(QtWork_ClCompile)"/>
+    </ItemGroup>
+
+    <!--// If sources were manually selected (e.g. by the 'Compile' option in the context menu for
+        // project items), add generated C++ sources to the list of selected files -->
+    <PropertyGroup Condition="'$(SelectedFiles)' != ''">
+      <SelectedClCompile>@(QtWorkResult->'%(ClCompile)')</SelectedClCompile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SelectedClCompile)' != ''">
+      <SelectedFiles>$(SelectedFiles);$(SelectedClCompile)</SelectedFiles>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(SelectedClCompile)' != ''">
+      <SelectedFiles Include="$(SelectedClCompile)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUpdateCompilerOptions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // -->
+  <Target Name="QtUpdateCompilerOptions"
+          DependsOnTargets="QtAddCompilerSources"
+          BeforeTargets="ClCompile">
+
+    <ItemGroup>
+      <QtIncludePath Include="$(Qt_INCLUDEPATH_)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <QtIncludePath>@(QtIncludePath->Distinct())</QtIncludePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <ClCompile>
+        <AdditionalIncludeDirectories Condition="'$(QtIncludePath)' != ''"
+        >$(QtIncludePath);%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <PreprocessorDefinitions Condition="'$(Qt_DEFINES_)' != ''"
+          >$(Qt_DEFINES_);%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+        <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
+          >QT_QML_DEBUG;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+        <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
+          >$(Qt_STDCPP_)</LanguageStandard>
+        <RuntimeLibrary Condition="'$(Qt_RUNTIME_)' != ''"
+          >$(Qt_RUNTIME_)</RuntimeLibrary>
+      </ClCompile>
+    </ItemGroup>
+
+    <!-- Command line parser regex -->
+    <PropertyGroup>
+      <regex>"[^"]*"|[^\s]+</regex>
+      <options>$(Qt_CL_OPTIONS_)</options>
+    </PropertyGroup>
+
+    <!-- Parse compiler options from Qt -->
+    <PropertyGroup>
+      <cl_cmd
+>$([System.Text.RegularExpressions.Regex]::Matches('$(options)', '$(regex)'))</cl_cmd>
+    </PropertyGroup>
+
+    <!-- Calculate command line for each source file in the project -->
+    <QtRunTask
+      Items="@(ClCompile)"
+      AssemblyPath="$(VCTargetsPath)\Microsoft.Build.CPPTasks.Common.dll"
+      TaskName="Microsoft.Build.CPPTasks.CLCommandLine"
+      TaskInput="Sources"
+      TaskOutput="CommandLines"
+      NewMetadata="ProjectOptions">
+      <Output TaskParameter="Result" ItemName="ClCompile_CmdLine" />
+    </QtRunTask>
+
+    <!-- Append excluded Qt options to calculated command line -->
+    <ItemGroup>
+      <ClCompile_CmdLine Condition="'$(QtExcludedOptions)' != ''">
+        <ProjectOptions>%(ProjectOptions) $(QtExcludedOptions)</ProjectOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
+    <!-- Parse compiler command line of each source file -->
+    <ItemGroup>
+      <ClCompile_CmdLine>
+        <ProjectOptions
+>$([System.Text.RegularExpressions.Regex]::Matches('%(ProjectOptions)','$(regex)'))</ProjectOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
+    <!-- Add (previously parsed) Qt options to each source file -->
+    <ItemGroup>
+      <ClCompile_CmdLine>
+        <QtOptions>$(cl_cmd)</QtOptions>
+      </ClCompile_CmdLine>
+    </ItemGroup>
+
+    <!-- Result of parsing command lines, per source file:
+          * ClCompile_CmdLine ::= (Item x ProjectOptions x QtOptions), where:
+             * Item ::= source file
+             * ProjectOptions ::= list of tokens from the compiler command line for Item
+             * QtOptions ::= list of tokens from the Qt additional options -->
+
+    <!-- Flatten results into a list of tokens per source file:
+          * ClOptions ::= (Item x Name x Value), where:
+             * Item  ::= source file
+             * Name  ::= token origin: from compiler command line or from Qt
+             * Value ::= token value -->
+    <Flatten Items="@(ClCompile_CmdLine)" Metadata="ProjectOptions;QtOptions">
+      <Output TaskParameter="Result" ItemName="ClOptions" />
+    </Flatten>
+
+    <!-- Remove non-switch tokens, i.e. tokens that do not start with '/' or '-' -->
+    <ItemGroup>
+      <ClOptions
+        Remove="@(ClOptions)"
+        Condition="!$([System.String]::Copy('%(Value)').StartsWith('-'))
+               AND !$([System.String]::Copy('%(Value)').StartsWith('/'))"/>
+    </ItemGroup>
+
+    <!-- Calculate option id: token without leading '/' or '-', and without trailing '-' -->
+    <ItemGroup>
+      <ClOptions>
+        <OptionId>$([System.String]::Copy('%(Value)').Substring(1).TrimEnd('-'))</OptionId>
+      </ClOptions>
+    </ItemGroup>
+
+    <!-- Split into list of Qt options and list of project options -->
+    <ItemGroup>
+      <QtOptions
+        Include="@(ClOptions->'%(Item)')"
+        Condition="'%(ClOptions.Name)' == 'QtOptions'"/>
+      <ProjectOptions
+        Include="@(ClOptions->'%(Item)')"
+        Condition="'%(ClOptions.Name)' == 'ProjectOptions'"/>
+    </ItemGroup>
+
+    <!-- Find conflicting options, i.e. defined both in Qt options and project options -->
+    <ItemGroup>
+      <QtOptions
+        Condition="'@(QtOptions)' != ''
+               AND '@(ProjectOptions)' != ''
+               AND '%(Item)' != ''
+               AND '%(OptionId)' != ''">
+        <Conflict>true</Conflict>
+      </QtOptions>
+    </ItemGroup>
+
+    <!-- Set additional compiler options for all source files -->
+    <ItemGroup>
+      <ClCompile Condition="'%(Identity)' != '' AND '%(QtOptions.Conflict)' != 'true'">
+        <AdditionalOptions
+          >@(QtOptions->'%(Value)', ' ') @(ClCompile->'%(AdditionalOptions)')</AdditionalOptions>
+      </ClCompile>
+      <ClCompile Condition="'%(AdditionalOptions)' != ''">
+        <AdditionalOptions
+          >$([System.String]::Copy('%(AdditionalOptions)').Trim())</AdditionalOptions>
+      </ClCompile>
+    </ItemGroup>
+
+    <!-- Print result to build log, if requested -->
+    <Message
+      Condition="'$(QtOptionsBuildLog)' == 'true'"
+      Importance="High"
+      Text=" Qt - Additional Compiler Options"/>
+    <Message
+      Condition="'$(QtOptionsBuildLog)' == 'true'
+             AND '%(Identity)' != '' AND '%(QtOptions.Conflict)' != 'true'"
+      Importance="High"
+      Text="    [%(Identity)]: @(QtOptions->'%(Value)', ' ')"/>
+
+    <!-- Clean-up -->
+    <PropertyGroup>
+      <regex/>
+      <options/>
+      <cl_cmd/>
+    </PropertyGroup>
+    <ItemGroup>
+      <ClCompile_CmdLine Remove="@(ClCompile_CmdLine)"/>
+      <ClOptions Remove="@(ClOptions)"/>
+      <ProjectOptions Remove="@(ProjectOptions)"/>
+      <QtOptions Remove="@(QtOptions)"/>
+      <ClCompile Remove="DefaultClCompile"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtUpdateLinkOptions
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // -->
+  <Target Name="QtUpdateLinkOptions"
+          DependsOnTargets="QtWork"
+          AfterTargets="ComputeLinkSwitches"
+          BeforeTargets="Link">
+    <ItemGroup>
+      <Link>
+        <AdditionalDependencies Condition="'$(Qt_LIBS_)' != ''"
+          >%(Link.AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+        <AdditionalLibraryDirectories Condition="'$(Qt_LIBPATH_)' != ''"
+          >%(Link.AdditionalLibraryDirectories);$(Qt_LIBPATH_)</AdditionalLibraryDirectories>
+        <SharedLibrarySearchPath Condition="'$(Qt_LIBPATH_)' != ''"
+          >%(Link.SharedLibrarySearchPath);$(Qt_LIBPATH_)</SharedLibrarySearchPath>
+        <AdditionalOptions Condition="'$(Qt_LINK_OPTIONS_)' != ''"
+          >$(Qt_LINK_OPTIONS_) %(Link.AdditionalOptions)</AdditionalOptions>
+        <AdditionalOptions Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'"
+          >/NATVIS:&quot;$(IntDir)qt.natvis&quot; %(Link.AdditionalOptions)</AdditionalOptions>
+      </Link>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtNatvis
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Copies the .natvis file matching the Qt version and replaces the namespace placeholder
+  // -->
+  <Target Name="QtNatvis" DependsOnTargets="QtVarsLoad" BeforeTargets="QtUpdateLinkOptions"
+          Condition="'$(Configuration)' == 'Debug' AND '$(LinkNatvisFile)' == 'true'"
+          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml"
+          Outputs="$(IntDir)qt.natvis">
+    <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
+      Overwrite="true"
+      File="$(IntDir)qt.natvis"
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml')
+        .Replace('##NAMESPACE##::',''))" />
+    <WriteLinesToFile Condition="'$(QtNamespace)' != ''"
+      Overwrite="true"
+      File="$(IntDir)qt.natvis"
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml')
+        .Replace('##NAMESPACE##','$(QtNamespace)'))" />
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtNatvisClean
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // -->
+  <Target Name="QtNatvisClean" BeforeTargets="QtClean">
+    <Delete Files="$(IntDir)qt.natvis"/>
+  </Target>
+</Project>
