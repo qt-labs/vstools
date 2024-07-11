@@ -2067,7 +2067,7 @@
     launch the application using \c gdbserver and then configure GDB to connect
     to the device and start a remote debugging session.
 
-    \image qtvstools-remote-debugging.jpg
+    \image qtvstools-remote-debugging.webp {Debugging applications running on Linux devices}
 
     For this to work, the GDB installed in the WSL must support the target
     device architecture. A simple way to achieve this is to install
