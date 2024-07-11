@@ -464,7 +464,7 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             return HelperFunctions.ProjectsInSolution(_dteObject).FirstOrDefault(
-                p => p.ProjectFile.Equals(new FileInfo(fullName).FullName, IgnoreCase));
+                p => string.Equals(p.ProjectFile, new FileInfo(fullName).FullName, IgnoreCase));
         }
 
         /// <summary>
@@ -573,7 +573,7 @@ namespace QtVsTools.Core
 
             fileName = new FileInfo(fileName).FullName;
             foreach (VCFile vcFile in (IVCCollection)qtPro.VcProject.Files) {
-                if (!vcFile.FullPath.Equals(fileName, IgnoreCase))
+                if (!string.Equals(vcFile.FullPath, fileName, IgnoreCase))
                     continue;
                 qtPro.VcProject.RemoveFile(vcFile);
                 MoveFileToDeletedFolder(qtPro.VcProject, fileName);

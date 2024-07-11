@@ -384,7 +384,7 @@ namespace QtVsTools.Core.Options
                 return;
 
             if (qtVersion.State.HasFlag(State.Existing)) {
-                if (qtVersion.InitialName.Equals(text, StringComparison.Ordinal))
+                if (string.Equals(qtVersion.InitialName, text, StringComparison.Ordinal))
                     qtVersion.State &= ~State.NameModified;
                 else
                     qtVersion.State |= State.NameModified;
@@ -404,7 +404,7 @@ namespace QtVsTools.Core.Options
 
             if (qtVersion.State.HasFlag(State.Existing)) {
                 var normalized = FromNativeSeparators(NormalizePath(text) ?? "");
-                if (qtVersion.InitialPath.Equals(normalized, Utils.IgnoreCase))
+                if (string.Equals(qtVersion.InitialPath, normalized, Utils.IgnoreCase))
                     qtVersion.State &= ~State.PathModified;
                 else
                     qtVersion.State |= State.PathModified;
@@ -470,7 +470,7 @@ namespace QtVsTools.Core.Options
                 return;
 
             if (qtVersion.State.HasFlag(State.Existing)) {
-                if (qtVersion.InitialCompiler.Equals(text, StringComparison.Ordinal))
+                if (string.Equals(qtVersion.InitialCompiler, text, StringComparison.Ordinal))
                     qtVersion.State &= ~State.CompilerModified;
                 else
                     qtVersion.State |= State.CompilerModified;

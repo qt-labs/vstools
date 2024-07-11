@@ -77,7 +77,7 @@ namespace QtVsTools.Package.CMake
             if (addItemOperation != VSADDITEMOPERATION.VSADDITEMOP_RUNWIZARD)
                 throw new NotSupportedException("Item operations was not run wizard.");
 
-            if (!Path.GetExtension(filesToOpen[0]).Equals(".vstemplate", Utils.IgnoreCase))
+            if (!string.Equals(Path.GetExtension(filesToOpen[0]), ".vstemplate", Utils.IgnoreCase))
                 throw new NotSupportedException("No .vstemplate file was provided.");
 
             var vsTemplate = new VsTemplate(filesToOpen[0]);

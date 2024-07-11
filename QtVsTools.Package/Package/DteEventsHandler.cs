@@ -266,7 +266,7 @@ namespace QtVsTools
             var vcFile = projectFiles.Cast<VCFile>().FirstOrDefault(file =>
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                return file.Name.Equals(projectItem.Name, IgnoreCase);
+                return string.Equals(file.Name, projectItem.Name, IgnoreCase);
             });
 
             var vcFileName = vcFile?.Name;

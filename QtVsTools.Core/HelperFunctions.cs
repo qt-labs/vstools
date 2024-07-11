@@ -135,7 +135,7 @@ namespace QtVsTools.Core
             var minLen = fiArray.Length < diArray.Length ? fiArray.Length : diArray.Length;
             int i = 0, j, commonParts = 0;
 
-            while (i < minLen && fiArray[i].ToLower() == diArray[i].ToLower()) {
+            while (i < minLen && string.Equals(fiArray[i], diArray[i], IgnoreCase)) {
                 commonParts++;
                 i++;
             }

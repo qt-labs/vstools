@@ -99,9 +99,9 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private bool IsCMakeFile(string fileName)
         {
-            return fileName.Equals("CMakeLists.txt", IgnoreCase)
-                || fileName.Equals("CMakeUserPresets.json", IgnoreCase)
-                || !UseQtCMakeHelper || fileName.Equals("qt.cmake", IgnoreCase);
+            return string.Equals(fileName, "CMakeLists.txt", IgnoreCase)
+                || string.Equals(fileName, "CMakeUserPresets.json", IgnoreCase)
+                || !UseQtCMakeHelper || string.Equals(fileName, "qt.cmake", IgnoreCase);
         }
 
         private void ExpandCMake()

@@ -143,9 +143,9 @@ namespace QtVsTools.Core.Options
                     var versionPath = version.Path;
                     if (string.IsNullOrEmpty(versionPath))
                         continue;
-                    if (Path.GetFileName(versionPath).Equals("qmake.exe", IgnoreCase))
+                    if (string.Equals(Path.GetFileName(versionPath), "qmake.exe", IgnoreCase))
                         versionPath = Path.GetDirectoryName(versionPath);
-                    if (Path.GetFileName(versionPath ?? "").Equals("bin", IgnoreCase))
+                    if (string.Equals(Path.GetFileName(versionPath ?? ""), "bin", IgnoreCase))
                         versionPath = Path.GetDirectoryName(versionPath);
 
                     var versionInfo = VersionInformation.GetOrAddByPath(versionPath);

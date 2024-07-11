@@ -28,15 +28,12 @@ namespace QtVsTools.Qml.Debug.AD7
         public uint FileLine { get; private set; }
 
         public enum Language { QML, JavaScript, Other }
-        public Language FileType
+        public Language FileType => Path.GetExtension(FilePath) switch
         {
-            get => Path.GetExtension(FilePath) switch
-            {
-                {} path when path.Equals(".qml", IgnoreCase) => Language.QML,
-                {} path when path.Equals(".js", IgnoreCase) => Language.JavaScript,
-                _ => Language.Other
-            };
-        }
+            {} path when string.Equals(path, ".qml", IgnoreCase) => Language.QML,
+            {} path when string.Equals(path, ".js", IgnoreCase) => Language.JavaScript,
+            _ => Language.Other
+        };
 
         public static CodeContext Create(
             QmlEngine engine, Program program,

@@ -139,8 +139,8 @@ namespace QtVsTools.Core
                 Path.Combine(path, "bin", $"{typeof(T).Name}.bat")
             };
             return possibleToolPaths.Where(File.Exists).Select(Path.GetFileName)
-                .Any(file => file.Equals($"{typeof(T).Name}.exe", IgnoreCase)
-                    || file.Equals($"{typeof(T).Name}.bat", IgnoreCase));
+                .Any(file => string.Equals(file, $"{typeof(T).Name}.exe", IgnoreCase)
+                    || string.Equals(file, $"{typeof(T).Name}.bat", IgnoreCase));
         }
     }
 }

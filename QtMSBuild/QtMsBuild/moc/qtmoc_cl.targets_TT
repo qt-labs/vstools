@@ -35,7 +35,7 @@
         <!-- BEGIN Generated Text <#=XML_COMMENT_END#>
 <#=
 XmlPrint(xmlRule.Elements()
-    .Where(x => x.Name.ToString().Equals("StringListProperty"))
+    .Where(x => string.Equals(x.Name.ToString(), "StringListProperty"))
     .Where(x => (string)x.Attribute("Visible") != "false")
     .Where(x => (string)x.Attribute("Category") != "Command Line")
     .Where(x => !x.Descendants("DataSource").Any())

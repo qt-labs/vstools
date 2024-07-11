@@ -48,7 +48,7 @@ namespace QtVsTools.Core.CMake
                 return;
 
             if (values.FirstOrDefault(item => item.Type == DebugLaunchActionContext.ContextTypeGuid
-                && item.Name.Equals("IsDefaultStartupProject")) is not { } defaultStartup) {
+                && string.Equals(item.Name, "IsDefaultStartupProject")) is not { } defaultStartup) {
                 return;
             }
 

@@ -100,7 +100,7 @@ namespace QtVsTools.Qml.Language
 
             var qtVersionName = QtOptionsPage.QmlLspVersion switch
             {
-                { Length: > 0 } x when !x.Equals("$(DefaultQtVersion)", IgnoreCase) => x,
+                { Length: > 0 } x when !string.Equals(x, "$(DefaultQtVersion)", IgnoreCase) => x,
                 _ => QtVersionManager.GetDefaultVersion()
             };
             if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)

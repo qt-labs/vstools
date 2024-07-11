@@ -90,7 +90,7 @@ namespace QtVsTools.Core.MsBuild
                 var condition = qtSettings.Attribute("Condition")?.Value?.Replace(" ", "");
                 var qtInstall = qtInstallProps.LastOrDefault(x =>
                     x.Parent?.Attribute("Condition")?.Value is not { } qtInstallCondition
-                    || qtInstallCondition.Replace(" ", "").Equals(condition, IgnoreCase));
+                    || string.Equals(qtInstallCondition.Replace(" ", ""), condition, IgnoreCase));
                 if (qtInstall is null)
                     continue;
                 qtSettings.Add(new XElement(qtInstall));
@@ -152,7 +152,7 @@ namespace QtVsTools.Core.MsBuild
                 .Elements(ns + "PropertyGroup")
                 .Where(x => label switch {
                     { Length: > 0 } => x.Attribute("Label") is { } groupLabel
-                        && groupLabel.Value.Equals(label, IgnoreCase),
+                        && string.Equals(groupLabel.Value, label, IgnoreCase),
                     _ => x.Attribute("Label") is null
                 });
         }
@@ -179,7 +179,7 @@ namespace QtVsTools.Core.MsBuild
             var imports = ProjectFile
                 .Element(ns + "Project")
                 .Descendants(ns + "Import")
-                .Where(x => x.Attribute("Project").Value.Equals(name, IgnoreCase));
+                .Where(x => string.Equals(x.Attribute("Project")?.Value, name, IgnoreCase));
             foreach (var import in imports.ToList()) {
                 if (import.Parent is { } importGroup && importGroup.Name.LocalName == "ImportGroup"
                     && importGroup.Elements().Count() == 1) {
@@ -195,7 +195,7 @@ namespace QtVsTools.Core.MsBuild
             var target = ProjectFile
                 .Element(ns + "Project")
                 .Elements(ns + "Target")
-                .FirstOrDefault(x => x.Attribute("Name").Value.Equals(name, IgnoreCase));
+                .FirstOrDefault(x => string.Equals(x.Attribute("Name")?.Value, name, IgnoreCase));
             target?.Remove();
         }
 
@@ -218,14 +218,14 @@ namespace QtVsTools.Core.MsBuild
         private XElement Globals => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "PropertyGroup")
-            .FirstOrDefault(x => x.Attribute("Label").Value.Equals("Globals", IgnoreCase))
+            .FirstOrDefault(x => string.Equals(x.Attribute("Label")?.Value, "Globals", IgnoreCase))
             ?? throw new XmlException("Missing \"Globals\" property group.");
 
         private XElement ImportCppProps => ProjectFile
             .Elements(ns + "Project")
             .Descendants(ns + "Import")
             .Where(x => x.Attribute("Project") is { } project
-                && project.Value.Equals(@"$(VCTargetsPath)\Microsoft.Cpp.props", IgnoreCase))
+                && string.Equals(project.Value, @"$(VCTargetsPath)\Microsoft.Cpp.props", IgnoreCase))
             .Select(x => x.Parent.Name == ns + "ImportGroup" ? x.Parent : x)
             .FirstOrDefault()
             ?? throw new XmlException("Missing \"Microsoft.Cpp.props\" import.");
@@ -234,7 +234,7 @@ namespace QtVsTools.Core.MsBuild
             .Elements(ns + "Project")
             .Descendants(ns + "Import")
             .Where(x => x.Attribute("Project") is { } project
-                && project.Value.Equals(@"$(VCTargetsPath)\Microsoft.Cpp.targets", IgnoreCase))
+                && string.Equals(project.Value, @"$(VCTargetsPath)\Microsoft.Cpp.targets", IgnoreCase))
             .Select(x => x.Parent.Name == ns + "ImportGroup" ? x.Parent : x)
             .FirstOrDefault()
             ?? throw new XmlException("Missing \"Microsoft.Cpp.targets\" import.");
@@ -242,7 +242,7 @@ namespace QtVsTools.Core.MsBuild
         private IEnumerable<XElement> PropertySheetGroups => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "ImportGroup")
-            .Where(x => x.Attribute("Label")?.Value.Equals("PropertySheets") == true)
+            .Where(x => string.Equals(x.Attribute("Label")?.Value, "PropertySheets") == true)
             is { } propertySheetGroups && propertySheetGroups.Any() ? propertySheetGroups
             : throw new XmlException("Missing \"PropertySheets\" import groups.");
 
@@ -255,8 +255,8 @@ namespace QtVsTools.Core.MsBuild
         private XElement QtDefaultProps => ProjectFile
             .Elements(ns + "Project")
             .Elements(ns + "Import")
-            .FirstOrDefault(x => x.Attribute("Project").Value
-                .Equals(QtDefaultPropsPath, IgnoreCase))
+            .FirstOrDefault(x =>
+                string.Equals(x.Attribute("Project")?.Value, QtDefaultPropsPath, IgnoreCase))
             ?? throw new XmlException("Missing \"qt_defaults.props\" import.");
 
         private IEnumerable<XElement> QtSettings => FindPropertyGroups("QtSettings")

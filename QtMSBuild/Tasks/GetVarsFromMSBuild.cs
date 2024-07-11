@@ -68,7 +68,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                         .Select(x => x.Substring(0, x.Length - 1));
                     foreach (var value in varListValue) {
                         if (excludedExactValues
-                            .Any(x => value.Equals(x, StringComparison.OrdinalIgnoreCase))) {
+                            .Any(x => string.Equals(value, x, StringComparison.OrdinalIgnoreCase))) {
                             continue;
                         }
                         if (excludedPrefixes

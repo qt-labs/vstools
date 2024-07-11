@@ -31,7 +31,7 @@ namespace QtVsTools.Core
                     continue;
                 if (item is not VCFilter {UniqueIdentifier: {} uniqueIdentifier})
                     continue;
-                if (uniqueIdentifier.Equals(filter?.UniqueIdentifier, Utils.IgnoreCase))
+                if (string.Equals(uniqueIdentifier, filter?.UniqueIdentifier, Utils.IgnoreCase))
                     return true;
             }
             return false;
@@ -98,9 +98,8 @@ namespace QtVsTools.Core
             try {
                 if (vcProject.Filters is not IVCCollection filters)
                     return null;
-                var name = fakeFilter.Name;
                 return filters.Cast<VCFilter>().FirstOrDefault(filter =>
-                    filter.Name.Equals(name, Utils.IgnoreCase));
+                    string.Equals(filter.Name, fakeFilter.Name, Utils.IgnoreCase));
             } catch {
                 throw new KeyNotFoundException("Cannot find filter.");
             }
@@ -111,10 +110,8 @@ namespace QtVsTools.Core
             try {
                 if (vcProject.Filters is not IVCCollection filters)
                     return null;
-                var uid = fakeFilter.UniqueIdentifier;
-                return filters.Cast<VCFilter>().FirstOrDefault(filter =>
-                    filter.UniqueIdentifier != null
-                        && filter.UniqueIdentifier.Equals(uid, Utils.IgnoreCase));
+                return filters.Cast<VCFilter>().FirstOrDefault(filter => string.Equals(
+                    filter.UniqueIdentifier, fakeFilter.UniqueIdentifier, Utils.IgnoreCase));
             } catch {
                 throw new KeyNotFoundException("Cannot find filter.");
             }

@@ -77,12 +77,12 @@ namespace QtVsTools.QtMsBuild.Tasks
                     var rightItem = RightItems[rightRowNum];
                     bool match = true;
                     foreach (string field in matchFields) {
-                        if (field.Equals("ROW_NUMBER", StringComparison.OrdinalIgnoreCase)) {
+                        if (string.Equals(field, "ROW_NUMBER", StringComparison.OrdinalIgnoreCase)) {
                             match = leftRowNum == rightRowNum;
                         } else {
                             string leftField = leftItem.GetMetadata(field);
                             string rightField = rightItem.GetMetadata(field);
-                            match = leftField.Equals(rightField, StringComparison.OrdinalIgnoreCase);
+                            match = string.Equals(leftField, rightField, StringComparison.OrdinalIgnoreCase);
                         }
                         if (!match)
                             break;

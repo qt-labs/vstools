@@ -195,15 +195,15 @@ namespace QtVsTools
                             //
                             const string qtPrivateImport
                                 = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
-                            Func<string, bool> isUpdateQtProps = _ => Path.GetFileName(targetPath)
-                                    .Equals("Qt.props", Utils.IgnoreCase)
-                                && File.ReadAllText(targetPath).Contains(qtPrivateImport);
+                            static bool IsUpdateQtProps(string path) =>
+                                string.Equals(Path.GetFileName(path), "Qt.props", Utils.IgnoreCase)
+                                    && File.ReadAllText(path).Contains(qtPrivateImport);
 
                             if (!File.Exists(targetPath)) {
                                 // Target file does not exist
                                 //  -> Create new
                                 File.Move(targetPathTemp, targetPath);
-                            } else if (!isUpdateQtProps(targetPath)) {
+                            } else if (!IsUpdateQtProps(targetPath)) {
                                 // Target file is not the updated Qt.props
                                 //  -> Overwrite
                                 File.Replace(targetPathTemp, targetPath, null);

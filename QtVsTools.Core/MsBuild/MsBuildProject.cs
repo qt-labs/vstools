@@ -165,7 +165,7 @@ namespace QtVsTools.Core.MsBuild
         {
             var fi = new FileInfo(HelperFunctions.NormalizeRelativeFilePath(fileName));
             foreach (VCFile f in (IVCCollection)VcProject.Files) {
-                if (f.Name.Equals(fi.Name, IgnoreCase))
+                if (string.Equals(f.Name, fi.Name, IgnoreCase))
                     yield return f;
             }
         }

@@ -172,7 +172,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                         string metadataValue = item.GetMetadata(name);
                         var propertyType = taskProperty.PropertyType;
                         if (propertyType == typeof(bool)) {
-                            taskProperty.SetValue(task, metadataValue.Equals("true",
+                            taskProperty.SetValue(task, string.Equals(metadataValue, "true",
                                 StringComparison.InvariantCultureIgnoreCase));
                         } else if (propertyType == typeof(string)) {
                             taskProperty.SetValue(task, metadataValue);

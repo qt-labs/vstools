@@ -116,7 +116,7 @@ namespace QtVsTools.Package.CMake
             if (CMakeProject.ActiveProject is not { Status: CMakeProject.QtStatus.True })
                 return false;
 
-            if (!CMakeProject.ActiveProject.RootPath.Equals(workspace.Location, Utils.IgnoreCase))
+            if (!string.Equals(CMakeProject.ActiveProject.RootPath, workspace.Location, Utils.IgnoreCase))
                 return false;
 
             IsQtCMakeProject = true;

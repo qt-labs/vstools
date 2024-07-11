@@ -369,8 +369,8 @@ namespace QtVsTools.Core.MsBuild
             // Module .lib is present in linker additional dependencies
             if (linker.Elements(ns + "AdditionalDependencies")
                 .SelectMany(x => x.Value.Split(';'))
-                .Any(x => Path.GetFileName(Unquote(x)).Equals(module.LibRelease, IgnoreCase)
-                    || Path.GetFileName(Unquote(x)).Equals(module.LibDebug, IgnoreCase))) {
+                .Any(x => string.Equals(Path.GetFileName(Unquote(x)), module.LibRelease, IgnoreCase)
+                    || string.Equals(Path.GetFileName(Unquote(x)), module.LibDebug, IgnoreCase))) {
                 return true;
             }
 
@@ -723,7 +723,7 @@ namespace QtVsTools.Core.MsBuild
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
                     .Where(x =>
-                        cbtGroup.Key.Equals((string)x.Attribute("Include"), IgnoreCase));
+                        string.Equals(cbtGroup.Key, (string)x.Attribute("Include"), IgnoreCase));
                 foreach (var cppMocItem in cppMocItems)
                     cppMocItem.Remove();
 
@@ -733,7 +733,7 @@ namespace QtVsTools.Core.MsBuild
                     .Elements(ns + "ItemGroup")
                     .Elements(ns + "ClCompile")
                     .Where(x =>
-                        cbtGroup.Key.Equals((string)x.Attribute("Include"), IgnoreCase));
+                        string.Equals(cbtGroup.Key, (string)x.Attribute("Include"), IgnoreCase));
                 foreach (var cppMocItem in cppMocItems)
                     cppMocItem.Name = ns + "CustomBuild";
             }

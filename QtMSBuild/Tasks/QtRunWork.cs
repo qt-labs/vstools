@@ -78,7 +78,7 @@ namespace QtVsTools.QtMsBuild.Tasks
                         .Select(y => KeyString(y, x.ItemSpec))
                         .Where(y => workItemKeys.Contains(y)))
                     .GroupBy(y => y, Comparer).Select(y => y.Key)
-                    .Where(y => !y.Equals(Key(x), Comparison))),
+                    .Where(y => !string.Equals(y, Key(x), Comparison))),
                 ProcessStartInfo = new ProcessStartInfo
                 {
                     FileName = x.GetMetadata("ToolPath"),

@@ -67,7 +67,7 @@ namespace QtVsTools.Core.CMake
                 if (VersionInformation.GetOrAddByName((string)versionPreset["name"]) is {} version) {
                     var qtDir = HelperFunctions.FromNativeSeparators(version.InstallPrefix);
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
-                    if (qtDir.Equals(presetQtDir, Utils.IgnoreCase))
+                    if (string.Equals(qtDir, presetQtDir, Utils.IgnoreCase))
                         continue;
                     (versionPreset["environment"] ??= new JObject())["QTDIR"] = qtDir;
                 } else {
