@@ -93,12 +93,15 @@
       >\$(VSROOTSUFFIX)</QtRegistrySuffix>
     <QtRegistryPath Condition="'$(QtRegistryPath)' == ''"
       >$(QtRegistryRoot)$(QtRegistrySuffix)</QtRegistryPath>
+    <QtSettingsRegistryPath Condition="'$(QtSettingsRegistryPath)' == ''"
+      >$(QtRegistryPath)\Settings</QtSettingsRegistryPath>
+    <QtVersionsRegistryPath Condition="'$(QtVersionsRegistryPath)' == ''"
+      >$(QtRegistryPath)\Versions</QtVersionsRegistryPath>
 
     <!--// Default Qt version -->
-    <QtVersionsRegKey Condition="'$(QtVersionsRegKey)' == ''"
-      >$(QtRegistryPath)\Versions</QtVersionsRegKey>
     <DefaultQtVersion Condition="'$(DefaultQtVersion)' == ''"
-      >$([MSBuild]::GetRegistryValue('$(QtVersionsRegKey)','DefaultQtVersion'))</DefaultQtVersion>
+      >$([MSBuild]::GetRegistryValue('$(QtVersionsRegistryPath)','DefaultQtVersion'
+        ))</DefaultQtVersion>
 
     <!--// Qt build config -->
     <QtBuildConfig Condition="'$(Configuration)' == 'Debug'">debug</QtBuildConfig>
