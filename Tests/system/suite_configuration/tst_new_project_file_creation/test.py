@@ -13,6 +13,7 @@ import re
 import shutil
 
 from newprojectdialog import NewProjectDialog
+from testsection import TestSection
 import names
 
 
